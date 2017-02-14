@@ -1,0 +1,6 @@
+Script registry loading time: 3ms
+Sprite registry loading time: 15ms
+Audio clip registry loading time: 17ms
+Sprite font registry loading time: 5ms
+We found a save at this location : C:/Users/test1/AppData/LocalLow/Nobody's Getting Paid Here/Create Your Frisk/save.gd
+We found an almighty save at this location : C:/Users/test1/AppData/LocalLow/Nobody's Getting Paid Here/Create Your Frisk/AlMightySave.gd

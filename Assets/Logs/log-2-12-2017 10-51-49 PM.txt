@@ -1,0 +1,13 @@
+Script registry loading time: 3ms
+Sprite registry loading time: 33ms
+Audio clip registry loading time: 19ms
+Sprite font registry loading time: 67ms
+We found a save at this location : C:/Users/test1/AppData/LocalLow/Nobody's Getting Paid Here/Create Your Frisk/save.gd
+We found an almighty save at this location : C:/Users/test1/AppData/LocalLow/Nobody's Getting Paid Here/Create Your Frisk/AlMightySave.gd
+Selecting directory ex3
+Loading test
+Script registry loading time: 438ms
+Sprite registry loading time: 7ms
+Audio clip registry loading time: 18ms
+Sprite font registry loading time: 0ms
+By DEBUG : [WARN]The audio file slice doesn't exist.

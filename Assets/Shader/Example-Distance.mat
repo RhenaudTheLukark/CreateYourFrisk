@@ -1,0 +1,82 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: Example-Distance
+  m_Shader: {fileID: 4800000, guid: 094f997d54a7b384ea242557baff439d, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 5
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  m_SavedProperties:
+    serializedVersion: 2
+    m_TexEnvs:
+      data:
+        first:
+          name: _MainTex
+        second:
+          m_Texture: {fileID: 2800000, guid: fd1abb8787710a847beac9d445d008bd, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+    m_Floats:
+      data:
+        first:
+          name: _InvFade
+        second: 0.4
+      data:
+        first:
+          name: _MASK
+        second: 0
+      data:
+        first:
+          name: _DEBUGUV
+        second: 0
+      data:
+        first:
+          name: _DEBUGDISTANCEFADE
+        second: 0
+      data:
+        first:
+          name: _MIRROR_EDGE
+        second: 0
+      data:
+        first:
+          name: _CullMode
+        second: 2
+      data:
+        first:
+          name: _CullMode1
+        second: 0
+    m_Colors:
+      data:
+        first:
+          name: _Color
+        second: {r: 1, g: 1, b: 1, a: 0.822}
+      data:
+        first:
+          name: _IntensityAndScrolling
+        second: {r: 0.1, g: 0.1, b: 0.3, a: 0.5}
+      data:
+        first:
+          name: _Intensity
+        second: {r: 0.1, g: 0.1, b: 0.1, a: 0.5}
+      data:
+        first:
+          name: _PivotAndAngle
+        second: {r: 0.5, g: 0.5, b: 0, a: 0}
+      data:
+        first:
+          name: _NearFarParams
+        second: {r: 0, g: 50, b: 0, a: 0}
+      data:
+        first:
+          name: _DistanceFade
+        second: {r: 0, g: 30, b: 0, a: 0}
+      data:
+        first:
+          name: _ColorIntensityFade
+        second: {r: 0, g: 0.05, b: 0, a: 0}

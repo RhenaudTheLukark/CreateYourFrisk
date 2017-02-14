@@ -1,0 +1,14 @@
+Script registry loading time: 3ms
+Sprite registry loading time: 11ms
+Audio clip registry loading time: 13ms
+Sprite font registry loading time: 0ms
+We found a save at this location : C:/Users/test1/AppData/LocalLow/Nobody's Getting Paid Here/Create Your Frisk/save.gd
+We found an almighty save at this location : C:/Users/test1/AppData/LocalLow/Nobody's Getting Paid Here/Create Your Frisk/AlMightySave.gd
+Selecting directory background new
+Loading encounter
+By DEBUG : [WARN]The audio file slice doesn't exist.
+Script registry loading time: 33ms
+Sprite registry loading time: 197ms
+Audio clip registry loading time: 151ms
+Sprite font registry loading time: 0ms
+It's a Lua error! : error in script encounter\n\nC:\Users\test1\Desktop\CSP\Unitale Modified 5.3.5f1\Assets\Mods/background new\Lua/Animations/Ascendant.lua:(32,15-44): attempt to index a nil value

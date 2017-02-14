@@ -1,0 +1,112 @@
+Script registry loading time: 10ms
+Sprite registry loading time: 39ms
+Audio clip registry loading time: 48ms
+Sprite font registry loading time: 1ms
+We found a save at this location : C:/Users/test1/AppData/LocalLow/Nobody's Getting Paid Here/Create Your Frisk/save.gd
+We found an almighty save at this location : C:/Users/test1/AppData/LocalLow/Nobody's Getting Paid Here/Create Your Frisk/AlMightySave.gd
+Selecting directory Examples
+Loading 01 - Two monsters
+Script registry loading time: 153ms
+Sprite registry loading time: 41ms
+Audio clip registry loading time: 109ms
+Sprite font registry loading time: 2ms
+By DEBUG : [WARN]The audio file slice doesn't exist.
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false
+By DEBUG : MusicManager, Audio == nil => false

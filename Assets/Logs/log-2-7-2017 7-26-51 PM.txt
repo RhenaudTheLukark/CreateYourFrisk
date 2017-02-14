@@ -1,0 +1,22 @@
+Script registry loading time: 9ms
+Sprite registry loading time: 34ms
+Audio clip registry loading time: 43ms
+Sprite font registry loading time: 1ms
+We found a save at this location : C:/Users/test1/AppData/LocalLow/Nobody's Getting Paid Here/Create Your Frisk/save.gd
+We found an almighty save at this location : C:/Users/test1/AppData/LocalLow/Nobody's Getting Paid Here/Create Your Frisk/AlMightySave.gd
+Selecting directory Examples
+Loading 01 - Two monsters
+Script registry loading time: 36ms
+Sprite registry loading time: 9ms
+Audio clip registry loading time: 31ms
+Sprite font registry loading time: 0ms
+By DEBUG : [WARN]The audio file slice doesn't exist.
+By DEBUG : [WARN]The audio file Audio/mus_zz_megalovanie doesn't exist.
+By DEBUG : [WARN]The audio file Sounds/Voices/papyrus doesn't exist.
+By DEBUG : [WARN]The audio file Audio/slice doesn't exist.
+By DEBUG : music:mus_zz_megalovanie
+By DEBUG : voice:papyrus
+By DEBUG : music:slice
+By DEBUG : music:mus_zz_megalovanie
+By DEBUG : voice:papyrus
+By DEBUG : music:slice
