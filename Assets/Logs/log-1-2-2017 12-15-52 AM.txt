@@ -1,4 +1,0 @@
-Script registry loading time: 1ms
-Sprite registry loading time: 5ms
-Audio clip registry loading time: 6ms
-Sprite font registry loading time: 0ms

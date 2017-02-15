@@ -1,7 +1,0 @@
-Script registry loading time: 9ms
-Sprite registry loading time: 34ms
-Audio clip registry loading time: 48ms
-Sprite font registry loading time: 2ms
-We found a save at this location : C:/Users/test1/AppData/LocalLow/Nobody's Getting Paid Here/Create Your Frisk/save.gd
-We found an almighty save at this location : C:/Users/test1/AppData/LocalLow/Nobody's Getting Paid Here/Create Your Frisk/AlMightySave.gd
-It's a Lua error! : error in script IntroManager\n\nThe effect  doesn't exist.
