@@ -17,7 +17,12 @@ class AutoloadResourcesFromRegistry : MonoBehaviour {
     [Header("Audio Resource")]
     public bool Loop;
     public string SoundPath;
+    [Header("Animatior Resource")]
+    public string AnimatorPath;
+
     public bool done = false;
+    private bool doneFromLoadedScene = false;
+    private bool handleDictErrors = false;
 
     /*void Awake() {
         //if (StaticInits.Initialized)
@@ -36,24 +41,48 @@ class AutoloadResourcesFromRegistry : MonoBehaviour {
 
     void OnDisable() { StaticInits.Loaded -= LateStart; }
 
-    void LateStart() {
+    /*void LateStart() {
         if (!done) {
             done = true;
             if (!string.IsNullOrEmpty(SpritePath)) {
                 Image img = GetComponent<Image>();
                 if (img != null) {
-                    img.sprite = SpriteRegistry.Get(SpritePath);
-                    img.sprite.name = SpritePath.ToLower();
+                    //img.sprite = SpriteRegistry.Get(SpritePath);
+                    //if (SetNativeSize)
+                    //    img.SetNativeSize();
+                    //img.sprite = SpriteRegistry.Get(SpritePath);
+                    if (img.sprite == null && handleDictErrors) {
+                        UnitaleUtil.displayLuaError("AutoloadResourcesFromRegistry", "You tried to load the sprite \"" + SpritePath + "\", but it doesn't exist.");
+                        return;
+                    }
+                    if (img.sprite != false) {
+                        //img.sprite.name = SpritePath.ToLower(); TODO: Find a way to store the sprite's path
+                        if (SetNativeSize) {
+                            img.SetNativeSize();
+                            if (!GameObject.FindObjectOfType<TextManager>().overworld) {
+                                img.rectTransform.sizeDelta = new Vector2(img.sprite.texture.width, img.sprite.texture.height);
+                                img.rectTransform.localScale = new Vector3(1, 1, 1);
+                            } else {
+                                img.rectTransform.sizeDelta = new Vector2(img.sprite.texture.width / 100f, img.sprite.texture.height / 100f);
+                                img.rectTransform.localScale = new Vector3(100, 100, 1);
+                            }
+                        }
+                    }
                 } else {
                     SpriteRenderer img2 = GetComponent<SpriteRenderer>();
                     if (img2 != null)
                         img2.sprite = SpriteRegistry.Get(SpritePath);
                     else
                         throw new InvalidOperationException("The GameObject " + gameObject.name + " doesn't have an Image or SpriteRenderer component.");
-                    img2.sprite.name = SpritePath.ToLower();
+                    if (SetNativeSize)
+                        if (!GameObject.FindObjectOfType<TextManager>().overworld) {
+                            img2.GetComponent<RectTransform>().sizeDelta = new Vector2(img2.sprite.texture.width, img2.sprite.texture.height);
+                            img2.transform.localScale = new Vector3(1, 1, 1);
+                        } else {
+                            img2.GetComponent<RectTransform>().sizeDelta = new Vector2(img2.sprite.texture.width / 100f, img2.sprite.texture.height / 100f);
+                            img2.transform.localScale = new Vector3(100, 100, 1);
+                        }
                 }
-                if (SetNativeSize)
-                    img.SetNativeSize();
 
                 ParticleSystem psys = GetComponent<ParticleSystem>();
                 if (psys != null) {
@@ -67,6 +96,82 @@ class AutoloadResourcesFromRegistry : MonoBehaviour {
                 aSrc.clip = AudioClipRegistry.Get(SoundPath);
                 aSrc.loop = Loop;
             }
+        }
+    }*/
+
+    void LateStart() {
+        if ((!done && this.handleDictErrors) || (!doneFromLoadedScene && !this.handleDictErrors)) {
+            if (!done && this.handleDictErrors)
+                done = true;
+            else
+                doneFromLoadedScene = true;
+            bool handleDictErrors = this.handleDictErrors;
+            this.handleDictErrors = true;
+            if (!string.IsNullOrEmpty(SpritePath)) {
+                Image img = GetComponent<Image>();
+                SpriteRenderer img2 = GetComponent<SpriteRenderer>();
+                if (img != null) {
+                    img.sprite = SpriteRegistry.Get(SpritePath);
+                    if (img.sprite == null && handleDictErrors) {
+                        UnitaleUtil.displayLuaError("AutoloadResourcesFromRegistry", "You tried to load the sprite \"" + SpritePath + "\", but it doesn't exist.");
+                        return;
+                    }
+                    if (img.sprite != false) {
+                        //img.sprite.name = SpritePath.ToLower(); TODO: Find a way to store the sprite's path
+                        if (SetNativeSize) {
+                            img.SetNativeSize();
+                            if (!GameObject.FindObjectOfType<TextManager>().overworld) {
+                                img.rectTransform.sizeDelta = new Vector2(img.sprite.texture.width, img.sprite.texture.height);
+                                img.rectTransform.localScale = new Vector3(1, 1, 1);
+                            } else {
+                                img.rectTransform.sizeDelta = new Vector2(img.sprite.texture.width / 100f, img.sprite.texture.height / 100f);
+                                img.rectTransform.localScale = new Vector3(100, 100, 1);
+                            }
+                        }
+                    }
+                } else if (img2 != null) {
+                    img2.sprite = SpriteRegistry.Get(SpritePath);
+                    if (img2.sprite == null && handleDictErrors) {
+                        UnitaleUtil.displayLuaError("AutoloadResourcesFromRegistry", "You tried to load the sprite \"" + SpritePath + "\", but it doesn't exist.");
+                        return;
+                    }
+                    if (img2.sprite != false) {
+                        //img2.sprite.name = SpritePath.ToLower();
+                        if (SetNativeSize) {
+                            if (!GameObject.FindObjectOfType<TextManager>().overworld) {
+                                img2.GetComponent<RectTransform>().sizeDelta = new Vector2(img2.sprite.texture.width, img2.sprite.texture.height);
+                                img2.transform.localScale = new Vector3(1, 1, 1);
+                            } else {
+                                img2.GetComponent<RectTransform>().sizeDelta = new Vector2(img2.sprite.texture.width / 100f, img2.sprite.texture.height / 100f);
+                                img2.transform.localScale = new Vector3(100, 100, 1);
+                            }
+                        }
+                    }
+                } else
+                    throw new InvalidOperationException("The GameObject " + gameObject.name + " doesn't have an Image or SpriteRenderer component.");
+
+                ParticleSystem psys = GetComponent<ParticleSystem>();
+                if (psys != null) {
+                    ParticleSystemRenderer prender = GetComponent<ParticleSystemRenderer>();
+                    prender.material.mainTexture = SpriteRegistry.Get(SpritePath).texture;
+                }
+            }
+
+            if (!string.IsNullOrEmpty(SoundPath)) {
+                AudioSource aSrc = GetComponent<AudioSource>();
+                aSrc.clip = AudioClipRegistry.Get(SoundPath);
+                /*if (aSrc.clip == null && handleDictErrors) { //TODO: Need to fix "slice not existing"
+                    UnitaleUtil.displayLuaError("AutoloadResourcesFromRegistry", "You tried to load the music \"" + SoundPath + "\", but it doesn't exist.");
+                    return;
+                }*/
+                aSrc.loop = Loop;
+            }
+
+
+
+            /* TODO: Make so AnimatorControllers can be loaded from a file
+            if (gameObject.GetComponent<Animator>() && !string.IsNullOrEmpty(AnimatorPath))
+                LoadAnimatorController();*/
         }
     }
 }

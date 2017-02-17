@@ -319,7 +319,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 9681ff43a078f014a8400e290fa741a3, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 4143a427589d4464cb2e6328aa51019e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -567,6 +567,7 @@ GameObject:
   - component: {fileID: 1160652448}
   - component: {fileID: 1160652447}
   - component: {fileID: 1160652446}
+  - component: {fileID: 1160652451}
   m_Layer: 21
   m_Name: Bpie
   m_TagString: Event
@@ -656,7 +657,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 11d83aeeeb829554a823cf6c90e3620b, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 3b31b9091708cb64287f3b3a76856ac9, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -676,8 +677,24 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 167, y: 301}
-  m_SizeDelta: {x: 0.4, y: 0.28}
+  m_SizeDelta: {x: 1, y: 1}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1160652451
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1160652445}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b6761159c8f6224a8a895abea10dd25, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SetNativeSize: 1
+  SpritePath: Overworld/Bpie
+  Loop: 0
+  SoundPath: 
+  done: 0
 --- !u!1 &1174268683
 GameObject:
   m_ObjectHideFlags: 0
@@ -808,11 +825,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22460244, guid: eadfbd6437c330a4e8538c4969ddbb0d, type: 2}
       propertyPath: m_SizeDelta.x
-      value: 0.4
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 22460244, guid: eadfbd6437c330a4e8538c4969ddbb0d, type: 2}
       propertyPath: m_SizeDelta.y
-      value: 0.38
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 22460244, guid: eadfbd6437c330a4e8538c4969ddbb0d, type: 2}
       propertyPath: m_AnchorMin.x
@@ -841,6 +858,26 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: eadfbd6437c330a4e8538c4969ddbb0d, type: 2}
   m_IsPrefabParent: 0
+--- !u!1 &1441977560 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 174636, guid: eadfbd6437c330a4e8538c4969ddbb0d, type: 2}
+  m_PrefabInternal: {fileID: 1441977559}
+--- !u!114 &1441977561
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1441977560}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b6761159c8f6224a8a895abea10dd25, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SetNativeSize: 1
+  SpritePath: Overworld/Save1
+  Loop: 0
+  SoundPath: 
+  done: 0
 --- !u!1 &1534585418
 GameObject:
   m_ObjectHideFlags: 0
@@ -935,11 +972,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22437642, guid: a0add8308da8d24468328221253c3ec7, type: 2}
       propertyPath: m_SizeDelta.x
-      value: 0.2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 22437642, guid: a0add8308da8d24468328221253c3ec7, type: 2}
       propertyPath: m_SizeDelta.y
-      value: 0.19
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 22437642, guid: a0add8308da8d24468328221253c3ec7, type: 2}
       propertyPath: m_AnchorMin.x

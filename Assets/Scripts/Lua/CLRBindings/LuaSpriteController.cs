@@ -343,7 +343,11 @@ public class LuaSpriteController {
         if (!img) throw new ScriptRuntimeException("You can't set the parent of a removed sprite.");
         if (tag == "enemy" || tag == "bubble")
             return;
-        img.transform.SetParent(parent.img.transform);
+        try {
+            img.transform.SetParent(parent.img.transform);
+        } catch {
+            throw new ScriptRuntimeException("You tried to set a removed sprite/unexisting sprite as this sprite's parent.");
+        }
     }
     
     // Sets the pivot of a sprite (its rotation point)

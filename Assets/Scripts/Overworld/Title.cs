@@ -164,7 +164,14 @@ public class Title : MonoBehaviour {
         PlayerCharacter.instance.Reset();
         LuaScriptBinder.ClearVariables();
         GlobalControls.MapEventPages.Clear();
+        GameObject.DontDestroyOnLoad(gameObject);
         SceneManager.LoadScene("TransitionOverworld");
+        yield return 0;
+        yield return Application.isLoadingLevel;
+        StaticInits si = GameObject.Find("Main Camera OW").GetComponent<StaticInits>();
+        StaticInits.Initialized = false;
+        si.initAll();
+        GameObject.Destroy(gameObject);
     }
 
     public float calcTotalLength(TextManager txtmgr, float addNextValue = 0, int fromLetter = -1, int toLetter = -1) {

@@ -32,10 +32,10 @@ public class TransitionOverworld : MonoBehaviour {
             LuaScriptBinder.Set(null, "PlayerMap", DynValue.NewString(mapName2));
             LuaScriptBinder.Set(null, "ModFolder", DynValue.NewString(FirstModFolder));
 
-            StaticInits si = GameObject.Find("Main Camera OW").GetComponent<StaticInits>();
             StaticInits.MODFOLDER = FirstModFolder;
+            /*
             StaticInits.Initialized = false;
-            si.initAll();
+            GameObject.Find("Main Camera OW").GetComponent<StaticInits>().initAll();*/
             GlobalControls.realName = PlayerCharacter.instance.Name;
         }
         GameObject temp = GameObject.Find("Main Camera OW");

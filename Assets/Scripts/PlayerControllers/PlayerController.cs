@@ -336,7 +336,7 @@ public class PlayerController : MonoBehaviour {
     /// <summary>
     /// Built-in Unity function for initialization.
     /// </summary>
-    private void Awake() {
+    public void Awake() {
         //HP = PlayerCharacter.instance.MaxHP;
         self = GetComponent<RectTransform>();
         selfImg = GetComponent<Image>();

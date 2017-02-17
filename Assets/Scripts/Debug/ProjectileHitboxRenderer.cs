@@ -30,29 +30,15 @@ public class ProjectileHitboxRenderer : MonoBehaviour {
         yield return new WaitForEndOfFrame(); // need to wait for UI to finish drawing first, or it'll appear under the UI
         // note: it kinda still appears under the UI due to its rendering settings
         projectiles = root.GetComponentsInChildren<Projectile>();
-        gos = new GameObject[projectiles.Length + 1];
+        gos = new GameObject[projectiles.Length];
         for (int i = 0; i < projectiles.Length; i ++) 
             gos[i] = projectiles[i].gameObject;
-        gos[gos.Length - 1] = GameObject.Find("player");
         foreach (GameObject go in gos) {
-            if (go == GameObject.Find("player")) {
-                bottomRight = go.GetComponent<RectTransform>().position;
-                topLeft.Set    (bottomRight.x - go.GetComponent<RectTransform>().rect.width / 4, bottomRight.y + go.GetComponent<RectTransform>().rect.height / 4, zIndex);
-                topRight.Set   (bottomRight.x + go.GetComponent<RectTransform>().rect.width / 4, bottomRight.y + go.GetComponent<RectTransform>().rect.height / 4, zIndex);
-                bottomLeft.Set (bottomRight.x - go.GetComponent<RectTransform>().rect.width / 4, bottomRight.y - go.GetComponent<RectTransform>().rect.height / 4, zIndex);
-                bottomRight.Set(bottomRight.x + go.GetComponent<RectTransform>().rect.width / 4, bottomRight.y - go.GetComponent<RectTransform>().rect.height / 4, zIndex);
-            } else /*if (go.GetComponent<Projectile>().ppcollision)*/ {
-                bottomRight = go.GetComponent<Projectile>().selfAbs.center;
-                topLeft.Set    (bottomRight.x - go.GetComponent<Projectile>().selfAbs.width / 2, bottomRight.y + go.GetComponent<Projectile>().selfAbs.height / 2, zIndex);
-                topRight.Set   (bottomRight.x + go.GetComponent<Projectile>().selfAbs.width / 2, bottomRight.y + go.GetComponent<Projectile>().selfAbs.height / 2, zIndex);
-                bottomLeft.Set (bottomRight.x - go.GetComponent<Projectile>().selfAbs.width / 2, bottomRight.y - go.GetComponent<Projectile>().selfAbs.height / 2, zIndex);
-                bottomRight.Set(bottomRight.x + go.GetComponent<Projectile>().selfAbs.width / 2, bottomRight.y - go.GetComponent<Projectile>().selfAbs.height / 2, zIndex);
-            } /*else {
-                topLeft.Set    (bottomRight.x - go.GetComponent<RectTransform>().rect.width / 2, bottomRight.y + go.GetComponent<RectTransform>().rect.height / 2, zIndex);
-                topRight.Set   (bottomRight.x + go.GetComponent<RectTransform>().rect.width / 2, bottomRight.y + go.GetComponent<RectTransform>().rect.height / 2, zIndex);
-                bottomLeft.Set (bottomRight.x - go.GetComponent<RectTransform>().rect.width / 2, bottomRight.y - go.GetComponent<RectTransform>().rect.height / 2, zIndex);
-                bottomRight.Set(bottomRight.x + go.GetComponent<RectTransform>().rect.width / 2, bottomRight.y - go.GetComponent<RectTransform>().rect.height / 2, zIndex);
-            }*/
+            bottomRight = go.GetComponent<Projectile>().selfAbs.center;
+            topLeft.Set    (bottomRight.x - go.GetComponent<Projectile>().selfAbs.width / 2, bottomRight.y + go.GetComponent<Projectile>().selfAbs.height / 2, zIndex);
+            topRight.Set   (bottomRight.x + go.GetComponent<Projectile>().selfAbs.width / 2, bottomRight.y + go.GetComponent<Projectile>().selfAbs.height / 2, zIndex);
+            bottomLeft.Set (bottomRight.x - go.GetComponent<Projectile>().selfAbs.width / 2, bottomRight.y - go.GetComponent<Projectile>().selfAbs.height / 2, zIndex);
+            bottomRight.Set(bottomRight.x + go.GetComponent<Projectile>().selfAbs.width / 2, bottomRight.y - go.GetComponent<Projectile>().selfAbs.height / 2, zIndex);
 
             topLeft.Set(topLeft.x / Screen.width, topLeft.y / Screen.height, zIndex);
             topRight.Set(topRight.x / Screen.width, topRight.y / Screen.height, zIndex);
@@ -65,8 +51,7 @@ public class ProjectileHitboxRenderer : MonoBehaviour {
             GL.LoadOrtho();
             //GL.MultMatrix(transform.localToWorldMatrix);
             GL.Begin(GL.LINES);
-            if (go == GameObject.Find("player")) GL.Color(Color.black);
-            else GL.Color(Color.magenta);
+            GL.Color(Color.magenta);
 
             GL.Vertex(topLeft); GL.Vertex(topRight);
             GL.Vertex(topRight); GL.Vertex(bottomRight);
@@ -77,14 +62,15 @@ public class ProjectileHitboxRenderer : MonoBehaviour {
             GL.PopMatrix();
         }
         
-        player = new Rect(player.x / Screen.width, player.y / Screen.height, player.width / Screen.width, player.height / Screen.height);
+        player = new Rect(PlayerController.instance.playerAbs.x / Screen.width, PlayerController.instance.playerAbs.y / Screen.height,
+                          PlayerController.instance.playerAbs.width / Screen.width, PlayerController.instance.playerAbs.height / Screen.height);
 
         GL.PushMatrix();
         mat.SetPass(0);
         GL.LoadOrtho();
         //GL.MultMatrix(transform.localToWorldMatrix);
         GL.Begin(GL.LINES);
-        GL.Color(Color.yellow);
+        GL.Color(Color.black);
 
         GL.Vertex(new Vector3(player.x, player.y, -9));                                GL.Vertex(new Vector3(player.x + player.width, player.y, -9));
         GL.Vertex(new Vector3(player.x + player.width, player.y, -9));                 GL.Vertex(new Vector3(player.x + player.width, player.y + player.height, -9));

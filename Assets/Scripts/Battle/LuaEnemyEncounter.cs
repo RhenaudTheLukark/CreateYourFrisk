@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Collections.Generic;
 using MoonSharp.Interpreter;
 using UnityEngine;
@@ -118,7 +119,6 @@ internal class LuaEnemyEncounter : EnemyEncounter {
                         UnitaleUtil.displayLuaError(StaticInits.ENCOUNTER, "The wave " + nextWaves.Table.Get(i + 1).String + " doesn't exist.");
                     else
                         UnitaleUtil.displayLuaError("somewhere", ex.Message + "\n\n" + ex.StackTrace);
-
                 }
             }
             Table luaWaveTable = new Table(null);

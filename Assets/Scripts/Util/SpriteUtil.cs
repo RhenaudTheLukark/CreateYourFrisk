@@ -90,7 +90,7 @@ public static class SpriteUtil {
         SpriteTexture.LoadImage(FileLoader.getBytesFrom(filename));
         SpriteTexture.filterMode = FilterMode.Point;
         SpriteTexture.wrapMode = TextureWrapMode.Clamp;
-        newSprite = Sprite.Create(SpriteTexture, new Rect(0, 0, SpriteTexture.width, SpriteTexture.height), new Vector2(0, 0), PIXELS_PER_UNIT);
+        newSprite = Sprite.Create(SpriteTexture, new Rect(0, 0, SpriteTexture.width, SpriteTexture.height), new Vector2(0.5f, 0.5f), PIXELS_PER_UNIT);
         //optional XML loading
         FileInfo fi = new FileInfo(Path.ChangeExtension(filename, "xml"));
         if (fi.Exists) {

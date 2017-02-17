@@ -34,7 +34,7 @@ public class NewMusicManager {
 
     public static string GetAudioName(string name) {
         if (!audiolist.ContainsKey(name)) throw new InvalidOperationException("The audio channel " + name + " doesn't exist.");
-        return (string)((object[])audiolist[name])[1];
+        return audioname[name];
     }
 
     public static float GetTotalTime(string name) {

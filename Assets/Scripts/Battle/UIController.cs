@@ -1108,27 +1108,12 @@ public class UIController : MonoBehaviour {
             GameObject.Destroy(GameOverBehavior.gameOverContainer);
         GameOverBehavior.gameOverContainer = GameObject.Find("GameOverContainer");
         GameOverBehavior.gameOverContainer.SetActive(false);
-
-    }
-
-    // Use this for initialization
-    private void LateStart() {
-        GameObject.Destroy(GameObject.Find("HideEncounter"));
         MusicManager.src = Camera.main.GetComponent<AudioSource>();
         NewMusicManager.OnLevelWasLoaded();
         GameObject.Destroy(GameObject.Find("Canvas OW"));
         GameObject.Destroy(GameObject.Find("Player"));
         GameObject.Destroy(GameObject.Find("Main Camera OW"));
-        psContainer = new GameObject("psContainer");
-        psContainer.transform.SetAsFirstSibling();
 
-        //Play that funky music
-        if (MusicManager.isStoppedOrNull(PlayerOverworld.audioKept))
-            GameObject.Find("Main Camera").GetComponent<AudioSource>().Play();
-
-        //if (StaticInits.MODFOLDER == "Examples 2" && StaticInits.ENCOUNTER == "04 - Animation")
-        //    GlobalControls.ppcollision = true;
-        //else
         GlobalControls.ppcollision = false;
         ControlPanel.instance.FrameBasedMovement = false;
         textmgr = GameObject.Find("TextManager").GetComponent<TextManager>();
@@ -1144,15 +1129,30 @@ public class UIController : MonoBehaviour {
             actBtn.sprite = SpriteRegistry.Get("UI/Buttons/catbt_0");
             itemBtn.sprite = SpriteRegistry.Get("UI/Buttons/tembt_0");
             mercyBtn.sprite = SpriteRegistry.Get("UI/Buttons/mecrybt_0");
-        } else {
-            fightBtn.sprite = SpriteRegistry.Get("UI/Buttons/fightbt_0");
-            actBtn.sprite = SpriteRegistry.Get("UI/Buttons/actbt_0");
-            itemBtn.sprite = SpriteRegistry.Get("UI/Buttons/itembt_0");
-            mercyBtn.sprite = SpriteRegistry.Get("UI/Buttons/mercybt_0");
         }
+    }
+
+    // Use this for initialization
+    private void LateStart() {
+        GameObject.Destroy(GameObject.Find("HideEncounter"));
+        psContainer = new GameObject("psContainer");
+        psContainer.transform.SetAsFirstSibling();
+
+        //Play that funky music
+        if (MusicManager.isStoppedOrNull(PlayerOverworld.audioKept))
+            GameObject.Find("Main Camera").GetComponent<AudioSource>().Play();
+
+        //if (StaticInits.MODFOLDER == "Examples 2" && StaticInits.ENCOUNTER == "04 - Animation")
+        //    GlobalControls.ppcollision = true;
+        //else
 
         ArenaManager.instance.ResizeImmediate(ArenaManager.UIWidth, ArenaManager.UIHeight);
         //ArenaManager.instance.MoveToImmediate(0, -160, false);
+
+        if (SendToStaticInits != null)
+            SendToStaticInits();
+
+        PlayerController.instance.Awake();
         PlayerController.instance.setControlOverride(true);
         PlayerController.instance.SetPosition(48, 25, true);
         fightUI = GameObject.Find("FightUI").GetComponent<FightUIController>();
@@ -1201,9 +1201,6 @@ public class UIController : MonoBehaviour {
             GameObject.Find("Text").transform.SetParent(UserDebugger.instance.transform);
             UserDebugger.instance.transform.SetAsLastSibling();
         }
-
-        if (SendToStaticInits != null)
-            SendToStaticInits();
 
         if (state == UIState.NONE)
             SwitchState(UIState.ACTIONSELECT, true);

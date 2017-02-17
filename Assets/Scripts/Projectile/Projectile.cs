@@ -24,6 +24,7 @@ public abstract class Projectile : MonoBehaviour {
     protected internal RectTransform self; // RectTransform of this projectile
     protected internal ProjectileController ctrl;
     protected internal Color32[] texture;
+    private Image img;
     public bool needUpdateTex = true;
     public Rect selfAbs; // Rectangle containing position and size of this projectile
 
@@ -46,7 +47,7 @@ public abstract class Projectile : MonoBehaviour {
     /// </summary>
     private void OnEnable() {
         self = GetComponent<RectTransform>();
-        Image img = GetComponent<Image>();
+        img = GetComponent<Image>();
         img.color = Color.white;
         img.rectTransform.eulerAngles = Vector3.zero;
         Vector2 half = new Vector2(0.5f, 0.5f);
@@ -111,8 +112,8 @@ public abstract class Projectile : MonoBehaviour {
             selfAbs.width = Mathf.FloorToInt(realX) + 2;
             selfAbs.height = Mathf.FloorToInt(realY) + 2;
         } else {
-            selfAbs.width = self.rect.width;
-            selfAbs.height = self.rect.height;
+            selfAbs.width = self.sizeDelta.x;
+            selfAbs.height = self.sizeDelta.y;
         }
         float rot = -(self.eulerAngles.z + 90) * Mathf.Deg2Rad,
               Px = (0.5f - self.pivot.x) * selfAbs.width, 

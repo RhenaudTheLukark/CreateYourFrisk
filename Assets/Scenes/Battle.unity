@@ -230,6 +230,7 @@ MonoBehaviour:
   SpritePath: UI/spr_hpname_0
   Loop: 0
   SoundPath: 
+  AnimatorPath: 
   done: 0
 --- !u!1 &141548671
 GameObject:
@@ -480,6 +481,7 @@ MonoBehaviour:
   SpritePath: UI/Buttons/itembt_0
   Loop: 0
   SoundPath: 
+  AnimatorPath: 
   done: 0
 --- !u!1 &540649434
 GameObject:
@@ -743,7 +745,8 @@ MonoBehaviour:
   SetNativeSize: 0
   SpritePath: UI/Battle/spr_target_0
   Loop: 0
-  SoundPath: slice
+  SoundPath: 
+  AnimatorPath: 
   done: 0
 --- !u!1 &639286007
 GameObject:
@@ -1355,6 +1358,7 @@ MonoBehaviour:
   SpritePath: UI/Buttons/actbt_0
   Loop: 0
   SoundPath: 
+  AnimatorPath: 
   done: 0
 --- !u!1 &1003495342
 GameObject:
@@ -1580,6 +1584,7 @@ MonoBehaviour:
   SpritePath: UI/Buttons/mercybt_0
   Loop: 0
   SoundPath: 
+  AnimatorPath: 
   done: 0
 --- !u!1 &1304618329
 GameObject:
@@ -1712,6 +1717,7 @@ MonoBehaviour:
   SpritePath: UI/Battle/spr_targetchoice_0
   Loop: 0
   SoundPath: 
+  AnimatorPath: 
   done: 0
 --- !u!114 &1306673878
 MonoBehaviour:
@@ -2241,6 +2247,7 @@ MonoBehaviour:
   SpritePath: ut-heart
   Loop: 0
   SoundPath: 
+  AnimatorPath: 
   done: 0
 --- !u!114 &1509689750
 MonoBehaviour:
@@ -2920,6 +2927,7 @@ MonoBehaviour:
   SpritePath: UI/Buttons/fightbt_0
   Loop: 0
   SoundPath: 
+  AnimatorPath: 
   done: 0
 --- !u!1 &1776304109
 GameObject:
