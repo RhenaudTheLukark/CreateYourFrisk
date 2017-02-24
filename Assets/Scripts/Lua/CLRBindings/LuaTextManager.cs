@@ -47,7 +47,7 @@ public class LuaTextManager : TextManager {
                         countFrames++;
             }
             if (canSkip() && !lineComplete() && GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED)
-                    skipLine();
+                skipLine();
         }
     }
 

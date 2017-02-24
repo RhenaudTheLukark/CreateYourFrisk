@@ -13,9 +13,6 @@ public class RotatingEffect : TextEffect {
         for (int i = 0; i < textMan.letterReferences.Length; i++) {
             if (textMan.letterReferences[i] == null)
                 continue;
-            if (i < letters.Count)
-                if (letters[i].effect != null)
-                    continue;
             RectTransform rt = textMan.letterReferences[i].GetComponent<RectTransform>();
             float iDiv = sinTimer * rotSpeed + (i / 3.0f);
             rt.anchoredPosition = new Vector2(textMan.letterPositions[i].x + intensity * -Mathf.Sin(iDiv), textMan.letterPositions[i].y + intensity * Mathf.Cos(iDiv));

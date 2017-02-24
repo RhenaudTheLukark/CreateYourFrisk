@@ -243,7 +243,7 @@ public class LuaEnemyController : EnemyController {
             if (script.GetVar("cancheck") == null) CanCheck = true;*/
         }
         catch (InterpreterException ex) { UnitaleUtil.displayLuaError(scriptName, ex.DecoratedMessage); }
-        catch (Exception ex)            { UnitaleUtil.displayLuaError(scriptName, "Unknown error. Usually means you're missing a sprite.\nSee documentation for details.\nStacktrace below in case you wanna notify a dev.\n" + ex.StackTrace); }
+        catch (Exception ex)            { UnitaleUtil.displayLuaError(scriptName, "Unknown error. Usually means you're missing a sprite.\nSee documentation for details.\nStacktrace below in case you wanna notify a dev.\n\nError: " + ex.Message + "\n\n" + ex.StackTrace); }
     }
 
     public override void HandleAttack(int hitStatus) { TryCall("HandleAttack", new DynValue[] { DynValue.NewNumber(hitStatus) }); }

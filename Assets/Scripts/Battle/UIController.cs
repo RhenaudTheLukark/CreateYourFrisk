@@ -41,7 +41,7 @@ public class UIController : MonoBehaviour {
     private Image itemBtn;
     private Image mercyBtn;
 
-    private TextManager[] monDialogues;
+    public TextManager[] monDialogues;
 
     // DEBUG Making running away a bit more fun. Remove this later.
     private bool musicPausedFromRunning = false;
@@ -54,6 +54,7 @@ public class UIController : MonoBehaviour {
     private int mecry = 0;
     public int exp = 0;
     public int gold = 0;
+    //public int frameDebug = 0;
     public UIState state;
     public UIState returnstate = UIState.NONE;
     private UIState stateAfterDialogs = UIState.DEFENDING;
@@ -489,7 +490,7 @@ public class UIController : MonoBehaviour {
         }
     }
 
-    private void doNextMonsterDialogue(bool singleLineAll = false, int index = -1) {
+    public void doNextMonsterDialogue(bool singleLineAll = false, int index = -1) {
         bool complete = true, foiled = false;
         if (index != -1) {
             if (monDialogues[index] == null)
@@ -793,7 +794,6 @@ public class UIController : MonoBehaviour {
                             if (!enabledEnTemp.Contains(encounter.enemies[i]))
                                 continue;
                             if (canspare[i]) {
-                                //print(i);
                                 if (!encounter.enemies[i].TryCall("OnSpare"))
                                     encounter.enemies[i].DoSpare();
                                 else
@@ -848,9 +848,11 @@ public class UIController : MonoBehaviour {
                             break;
                         }
                     }
-                    if (singleLineAll)
-                        doNextMonsterDialogue(true);
-                    else if (!ArenaManager.instance.isResizeInProgress()) {
+                    if (singleLineAll) {
+                        foreach (TextManager mgr in monDialogues)
+                            mgr.doSkipFromPlayer();
+                        textmgr.nextMonsterDialogueOnce = true;
+                    } else if (!ArenaManager.instance.isResizeInProgress()) {
                         bool readyToSkip = true;
                         foreach (bool b in readyToNextLine) {
                             if (!b) {
@@ -1023,7 +1025,8 @@ public class UIController : MonoBehaviour {
             case UIState.ACTIONSELECT:
             case UIState.DIALOGRESULT:
                 if (textmgr.canSkip() && !textmgr.lineComplete())
-                    textmgr.skipText();
+                    textmgr.doSkipFromPlayer();
+                    //textmgr.skipText();
                 break;
 
             case UIState.ENEMYDIALOGUE:
@@ -1042,7 +1045,8 @@ public class UIController : MonoBehaviour {
                     break;
 
                 foreach (TextManager mgr in monDialogues)
-                    mgr.skipText();
+                    mgr.doSkipFromPlayer();
+                    //mgr.skipText();
                 break;
 
             case UIState.ACTMENU:
@@ -1253,6 +1257,8 @@ public class UIController : MonoBehaviour {
 
     // Update is called once per frame
     private void Update() {
+        //frameDebug++;
+        stated = false;
         if (!inited) {
             if (!ArenaManager.instance.firstTurn) {
                 inited = true;
@@ -1368,7 +1374,5 @@ public class UIController : MonoBehaviour {
         //if (state == UIState.ENEMYDIALOGUE)
         //    if ((Vector2)arenaParent.transform.position == new Vector2(320, 90))
         //        PlayerController.instance.setControlOverride(false);
-
-        stated = false;
     }
 }

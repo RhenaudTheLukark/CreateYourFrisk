@@ -1,6 +1,5 @@
 #Unitale ignored directories
-/Assets/Default/
-/Assets/Mods/
+/Assets/Logs/Logs*
 /Assets/Sprites/ScreenReference/
 /Assets/Scripts/Unused/
 /Assets/Tests/
@@ -36,6 +35,7 @@ ExportedObj/
 
 # Unity3D generated meta files
 *.pidb.meta
+*.meta
 
 # Unity3D Generated File On Crash Reports
 sysinfo.txt

@@ -3,9 +3,9 @@
 public class TwitchEffectLetter : TextEffectLetter {
     private int updateCount = 0;
     private float intensity;
-    private int minWigFrames = 200;
-    private int wigFrameVariety = 300;
-    private int nextWigInFrames = 100;
+    private int minWigFrames = 300;
+    private int wigFrameVariety = 750;
+    private int nextWigInFrames = 300;
 
     public TwitchEffectLetter(Letter letter, float intensity = 2.0f) : base(letter) {
         this.intensity = intensity != 0 ? intensity : 2.0f;
@@ -26,6 +26,6 @@ public class TwitchEffectLetter : TextEffectLetter {
         float yWig = Mathf.Cos(random) * intensity;
         nextWigInFrames = minWigFrames + (int)(wigFrameVariety * UnityEngine.Random.value);
         RectTransform rt = letter.GetComponent<RectTransform>();
-        rt.position = new Vector2(letter.basisPos.x + xWig, letter.basisPos.y + yWig);
+        rt.position = new Vector2(rt.position.x + xWig, rt.position.y + yWig);
     }
 }

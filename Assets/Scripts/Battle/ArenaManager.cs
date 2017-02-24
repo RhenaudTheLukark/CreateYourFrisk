@@ -30,6 +30,7 @@ public class ArenaManager : MonoBehaviour {
     internal float newX; // Desired x of the arena; internal so the Lua Arena object may refer to it (lazy)
     internal float newY; // Desired y of the arena; internal so the Lua Arena object may refer to it (lazy)
     private bool movePlayer;
+    private int errCount = 1;
 
     /// <summary>
     /// Initialization.
@@ -38,9 +39,11 @@ public class ArenaManager : MonoBehaviour {
         // unlike the player we really dont want this on two components at the same time
         if (instance != null)
             throw new InvalidOperationException("Currently, the ArenaManager may only be attached to one object.");
-        
-        outer = GameObject.Find("arena_border_outer").GetComponent<RectTransform>();
-        inner = GameObject.Find("arena").GetComponent<RectTransform>();
+
+        inner = GameObject.FindObjectOfType<FightUIController>().transform.parent.GetComponent<RectTransform>();
+        outer = inner.parent.GetComponent<RectTransform>();
+        /*outer = GameObject.Find("arena_border_outer").GetComponent<RectTransform>();
+        inner = GameObject.Find("arena").GetComponent<RectTransform>();*/
         newWidth = currentWidth;
         newHeight = currentHeight;
         instance = this;
@@ -50,13 +53,20 @@ public class ArenaManager : MonoBehaviour {
     private void Start() { LateUpdater.lateActions.Add(LateStart); }
 
     private void LateStart() {
-        arenaAbs = new Rect(inner.position.x - inner.rect.width / 2, inner.position.y - inner.rect.height / 2, inner.rect.width, inner.rect.height);
-        arenaCenter = RTUtil.AbsCenterOf(inner);
-        newX = currentX = 320;
-        newY = currentY = 90;
-        currentWidth = inner.rect.width;
-        currentHeight = inner.rect.height;
-        basisCoordinates = arenaCenter;
+        try {
+            /*inner = GameObject.FindObjectOfType<FightUIController>().transform.parent.GetComponent<RectTransform>();
+            outer = inner.parent.GetComponent<RectTransform>();*/
+            arenaAbs = new Rect(inner.position.x - inner.rect.width / 2, inner.position.y - inner.rect.height / 2, inner.rect.width, inner.rect.height);
+            arenaCenter = RTUtil.AbsCenterOf(inner);
+            newX = currentX = 320;
+            newY = currentY = 90;
+            currentWidth = inner.rect.width;
+            currentHeight = inner.rect.height;
+            basisCoordinates = arenaCenter;
+        } catch {
+            LateUpdater.lateActions.Add(LateStart);
+            UnitaleUtil.writeInLogAndDebugger("Error during the Arena's initialization! (#" + errCount++ + ")");
+        }
         //outer.localPosition = new Vector3(0, -50, 0);
         //outer.position = new Vector3(320, 90, outer.position.z);
     }

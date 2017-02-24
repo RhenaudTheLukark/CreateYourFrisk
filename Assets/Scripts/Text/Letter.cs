@@ -9,6 +9,7 @@ public class Letter : MonoBehaviour {
     public Image img;
     //public Color currentColor = Color.white;
     public TextEffectLetter effect = null;
+    public bool started = false;
 
     private void Start() {
         img = GetComponent<Image>();
@@ -22,11 +23,12 @@ public class Letter : MonoBehaviour {
     }
 
     private void LateStart() {
-        basisPos = GetComponent<RectTransform>().position;
+        started = true;
+        basisPos = transform.position;
     }
     
     private void Update() {
-        if (effect != null)
+        if (effect != null && started)
             effect.updateEffects();
     }
 }

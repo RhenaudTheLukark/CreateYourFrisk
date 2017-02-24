@@ -22,6 +22,7 @@ public class TextManager : MonoBehaviour {
     public int currentReferenceCharacter = 0;
     private bool displayImmediate = false;
     private bool currentSkippable = true;
+    public bool nextMonsterDialogueOnce = false, nmd2 = false, wasStated = false;
     private RectTransform self;
     public Vector2 offset;
     private bool offsetSet = false;
@@ -32,6 +33,8 @@ public class TextManager : MonoBehaviour {
     private bool autoSkipThis = false;
     private bool autoSkipAll = false;
     private bool autoSkip = false;
+    private bool instantCommand = false;
+    private bool skipFromPlayer = false;
     internal float hSpacing = 3;
     internal float vSpacing = 0;
     private Image mugshot;
@@ -111,7 +114,11 @@ public class TextManager : MonoBehaviour {
 
     public bool isPaused() { return this.paused; }
 
-    public bool isFinished() { return currentCharacter >= letterReferences.Length; }
+    public bool isFinished() {
+        if (letterReferences == null)
+            return false;
+        return currentCharacter >= letterReferences.Length;
+    }
 
     public void setMute(bool muted) { this.muted = muted; }
 
@@ -226,6 +233,8 @@ public class TextManager : MonoBehaviour {
                     autoSkipThis = false;
                     autoSkip = false;
                     autoSkipAll = false;
+                    instantCommand = false;
+                    skipFromPlayer = false;
                     letterSound.clip = Charset.Sound;
                     timePerLetter = singleFrameTiming;
                     letterTimer = 0.0f;
@@ -236,6 +245,7 @@ public class TextManager : MonoBehaviour {
                     currentCharacter = 0;
                     currentReferenceCharacter = 0;
                     letterEffect = "none";
+                    textEffect = null;
                     letterIntensity = 0;
                     letterSpeed = 1;
                     displayImmediate = textQueue[line].ShowImmediate;
@@ -295,6 +305,14 @@ public class TextManager : MonoBehaviour {
                 currentCharacter++;
             }
         }
+    }
+
+    public void doSkipFromPlayer() {
+        skipFromPlayer = true;
+        if (LuaEnemyEncounter.script.GetVar("playerskipdocommand").Boolean)
+            instantCommand = true;
+        else
+            skipText();
     }
 
     public void skipLine() {
@@ -537,6 +555,11 @@ public class TextManager : MonoBehaviour {
                 //if (lastLetterTimer != letterTimer || lastTimePerLetter != timePerLetter)
                 //if (currentCharacter >= textQueue[currentLine].Text.Length)
                 //    return true;
+
+                if (!overworld && !wasStated)
+                    if (UIController.instance.stated)
+                        wasStated = true;
+
                 return true;
             }
             currentCharacter = currentChar;
@@ -546,7 +569,19 @@ public class TextManager : MonoBehaviour {
     }
 
     protected virtual void Update() {
-        if (textQueue == null || textQueue.Length == 0)           
+        if (!overworld && nextMonsterDialogueOnce) {
+            bool test = true;
+            foreach (TextManager mgr in UIController.instance.monDialogues)
+                if (!mgr.isFinished())
+                    test = false;
+            if (test) {
+                if (!wasStated)
+                    UIController.instance.doNextMonsterDialogue(true);
+                nextMonsterDialogueOnce = false;
+            }
+        }
+
+        if (textQueue == null || textQueue.Length == 0)
             return;
         if (paused)
             return;
@@ -556,7 +591,7 @@ public class TextManager : MonoBehaviour {
         }*/
 
         if (textEffect != null)
-            textEffect.updateEffects();        
+            textEffect.updateEffects();
 
         if (displayImmediate)
             return;
@@ -572,10 +607,9 @@ public class TextManager : MonoBehaviour {
         }
 
         letterTimer += Time.deltaTime;
-
         if (letterTimer > timePerLetter) {
-            
-            if (letterOnceValue != 0) {
+            bool soundPlayed = false;
+            if (letterOnceValue != 0 && !instantCommand) {
                 while (letterOnceValue != 0 && currentCharacter < letterReferences.Length) {
                     if (CheckCommand())
                         return;
@@ -587,16 +621,18 @@ public class TextManager : MonoBehaviour {
                             case "shake": letterReferences[currentCharacter].GetComponent<Letter>().effect = new ShakeEffectLetter(letterReferences[currentCharacter].GetComponent<Letter>(), letterIntensity); break;
                             default: letterReferences[currentCharacter].GetComponent<Letter>().effect = null; break;
                         }
-                        if (letterSound != null && !muted)
-                            if (letterSound.isPlaying)  UnitaleUtil.PlaySound("BubbleSound", letterSound.clip.name);
-                            else                        letterSound.Play();
+                        if (letterSound != null && !muted && !soundPlayed) {
+                            soundPlayed = true;
+                            if (letterSound.isPlaying) UnitaleUtil.PlaySound("BubbleSound", letterSound.clip.name);
+                            else letterSound.Play();
+                        }
                     }
                     currentReferenceCharacter++;
                     currentCharacter++;
-                    letterOnceValue --;
+                    letterOnceValue--;
                 }
             } else {
-                for (int i = 0; i < letterSpeed && currentCharacter < letterReferences.Length; i++) {
+                for (int i = 0; (instantCommand || i < letterSpeed) && currentCharacter < letterReferences.Length; i++) {
                     if (CheckCommand())
                         return;
                     if (letterReferences[currentCharacter] != null) {
@@ -607,9 +643,11 @@ public class TextManager : MonoBehaviour {
                             case "shake": letterReferences[currentCharacter].GetComponent<Letter>().effect = new ShakeEffectLetter(letterReferences[currentCharacter].GetComponent<Letter>(), letterIntensity); break;
                             default: letterReferences[currentCharacter].GetComponent<Letter>().effect = null; break;
                         }
-                        if (letterSound != null && !muted)
-                            if (letterSound.isPlaying)  UnitaleUtil.PlaySound("BubbleSound", letterSound.clip.name);
-                            else                        letterSound.Play();
+                        if (letterSound != null && !muted && !soundPlayed) {
+                            soundPlayed = true;
+                            if (letterSound.isPlaying) UnitaleUtil.PlaySound("BubbleSound", letterSound.clip.name);
+                            else letterSound.Play();
+                        }
                     }
                     currentReferenceCharacter++;
                     currentCharacter++;
@@ -669,8 +707,6 @@ public class TextManager : MonoBehaviour {
             cmds[1] = args[0];
         }
         switch (cmds[0].ToLower()) {
-            case "noskip":      currentSkippable = false;                          break;
-            case "instant":     displayImmediate = true;                           break;
             case "color":       currentColor = ParseUtil.getColor(cmds[1]);        break;
             case "charspacing": setHorizontalSpacing(ParseUtil.getFloat(cmds[1])); break;
             case "linespacing": setVerticalSpacing(ParseUtil.getFloat(cmds[1]));   break;
@@ -720,26 +756,59 @@ public class TextManager : MonoBehaviour {
     private void inUpdateControlCommand(DynValue command) {
         string[] cmds = UnitaleUtil.specialSplit(':', command.String);
         string[] args = new string[0];
-        if (cmds.Length == 2) {
+        if (cmds.Length >= 2) {
+            if (cmds[1] == "skipover" && instantCommand)           return;
+            else if (cmds[1] == "skiponly" && !instantCommand)     return;
+            else if (cmds.Length == 3)
+                if (cmds[2] == "skipover" && instantCommand)       return;
+                else if (cmds[2] == "skiponly" && !instantCommand) return;
             args = UnitaleUtil.specialSplit(',', cmds[1], true);
             cmds[1] = args[0];
         }
         switch (cmds[0].ToLower()) {
-            case "w":            letterTimer = timePerLetter - (singleFrameTiming * ParseUtil.getInt(cmds[1]));  break;
+            case "w":
+                if (!instantCommand)
+                    letterTimer = timePerLetter - (singleFrameTiming * ParseUtil.getInt(cmds[1]));
+                break;
+
+            case "noskip":
+                if (args.Length == 0)      currentSkippable = false;
+                else if (args[0] == "off") currentSkippable = true;
+                break;
             case "waitall":      timePerLetter = singleFrameTiming * ParseUtil.getInt(cmds[1]);                  break;
             case "novoice":      letterSound.clip = null;                                                        break;
             case "next":         autoSkipAll = true;                                                             break;
             case "finished":     autoSkipThis = true;                                                            break;
             case "nextthisnow":  autoSkip = true;                                                                break;
+            case "noskipatall":  blockSkip = true;                                                               break;
             case "font":         letterSound.clip = SpriteFontRegistry.Get(cmds[1].ToLower()).Sound;             break;
             case "waitfor":      waitingChar = (KeyCode)Enum.Parse(typeof(KeyCode), cmds[1]);                    break;
             case "speed":        letterSpeed = Int32.Parse(args[0]);                                             break;
-            case "letters":      letterOnceValue = Int32.Parse(args[0]);                                         break;
-            case "noskipatall":  blockSkip = true;                                                               break;
+
+            case "letters":
+                if (!instantCommand)
+                    letterOnceValue = Int32.Parse(args[0]);
+                break;
 
             case "voice":
                 if (cmds[1].ToLower() == "default")  letterSound.clip = SpriteFontRegistry.Get(SpriteFontRegistry.UI_DEFAULT_NAME).Sound;
                 else                                 letterSound.clip = AudioClipRegistry.GetVoice(cmds[1].ToLower());
+                break;
+                
+            case "instant":
+                if (args.Length == 0) {
+                    if (!skipFromPlayer)
+                        displayImmediate = true;
+                } else {
+                    switch (args[0].ToLower()) {
+                        case "allowcommand": instantCommand = true; break;
+                        case "stop":
+                            if (!skipFromPlayer)
+                                instantCommand = false;
+                            break;
+                        case "stopall": instantCommand = false; break;
+                    }
+                }
                 break;
 
             case "func":

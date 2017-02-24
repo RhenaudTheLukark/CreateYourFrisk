@@ -10,7 +10,7 @@ public class RotatingEffectLetter : TextEffectLetter {
     protected override void updateInternal() {
         RectTransform rt = letter.GetComponent<RectTransform>();
         float iDiv = sinTimer * rotSpeed;
-        rt.position = new Vector2(letter.basisPos.x + intensity * -Mathf.Sin(iDiv), letter.basisPos.y + intensity * Mathf.Cos(iDiv));
+        rt.position = new Vector2(rt.position.x + intensity * -Mathf.Sin(iDiv), rt.position.y + intensity * Mathf.Cos(iDiv));
         sinTimer += Time.deltaTime;
     }
 }

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<spritesheet type="single">
+    <sprite name="leftshort">
+        <border x="9" y="7" z="21" w="7"/>
+    </sprite>
+    <wideness>70</wideness>
+</spritesheet>

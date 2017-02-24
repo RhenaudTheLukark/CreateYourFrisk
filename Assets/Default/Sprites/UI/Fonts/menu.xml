@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<font>
+<voice>monsterfont</voice>
+<color>ffffff</color>
+<linespacing>18</linespacing>
+<spritesheet>
+    <sprite name="0">
+        <rect x="160" y="114" w="8" h="10"/>
+    </sprite>
+    <sprite name="1">
+        <rect x="136" y="96" w="8" h="10"/>
+    </sprite>
+    <sprite name="2">
+        <rect x="100" y="68" w="8" h="10"/>
+    </sprite>
+    <sprite name="3">
+        <rect x="148" y="96" w="8" h="10"/>
+    </sprite>
+    <sprite name="4">
+        <rect x="88" y="96" w="8" h="10"/>
+    </sprite>
+    <sprite name="5">
+        <rect x="100" y="96" w="8" h="10"/>
+    </sprite>
+    <sprite name="6">
+        <rect x="184" y="96" w="8" h="10"/>
+    </sprite>
+    <sprite name="7">
+        <rect x="64" y="96" w="8" h="10"/>
+    </sprite>
+    <sprite name="8">
+        <rect x="220" y="96" w="8" h="10"/>
+    </sprite>
+    <sprite name="9">
+        <rect x="52" y="82" w="8" h="10"/>
+    </sprite>
+    <sprite name="G">
+        <rect x="160" y="96" w="8" h="10"/>
+    </sprite>
+    <sprite name="H">
+        <rect x="148" y="114" w="8" h="10"/>
+    </sprite>
+    <sprite name="L">
+        <rect x="28" y="96" w="8" h="10"/>
+    </sprite>
+    <sprite name="P">
+        <rect x="28" y="82" w="8" h="10"/>
+    </sprite>
+    <sprite name="V">
+        <rect x="4" y="68" w="8" h="10"/>
+    </sprite>
+    <sprite name="space">
+        <rect x="4" y="114" w="8" h="10"/>
+    </sprite>
+    <sprite name="slash">
+        <rect x="28" y="54" w="8" h="10"/>
+    </sprite>
+</spritesheet>
+</font>

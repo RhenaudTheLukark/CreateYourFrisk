@@ -32,7 +32,6 @@ public class LuaSpriteController {
     // The x position of the sprite, relative to the arena position and its anchor.
     public float x {
         get {
-            if (!img) throw new ScriptRuntimeException("You can't get the x position of a removed sprite.");
             return img.GetComponent<RectTransform>().anchoredPosition.x;
         }
         set { img.GetComponent<RectTransform>().anchoredPosition = new Vector2(value, img.GetComponent<RectTransform>().anchoredPosition.y); }
@@ -41,7 +40,6 @@ public class LuaSpriteController {
     // The y position of the sprite, relative to the arena position and its anchor.
     public float y {
         get {
-            if (!img) throw new ScriptRuntimeException("You can't get the y position of a removed sprite.");
             return img.GetComponent<RectTransform>().anchoredPosition.y;
         }
         set { img.GetComponent<RectTransform>().anchoredPosition = new Vector2(img.GetComponent<RectTransform>().anchoredPosition.x, value); }
@@ -50,7 +48,6 @@ public class LuaSpriteController {
     // The x position of the sprite, relative to the bottom left corner of the screen.
     public float absx {
         get {
-            if (!img) throw new ScriptRuntimeException("You can't get the absx position of a removed sprite.");
             return img.GetComponent<RectTransform>().position.x; }
         set { img.GetComponent<RectTransform>().position = new Vector2(value, img.GetComponent<RectTransform>().position.y); }
     }
@@ -58,7 +55,6 @@ public class LuaSpriteController {
     // The y position of the sprite, relative to the bottom left corner of the screen.
     public float absy {
         get {
-            if (!img) throw new ScriptRuntimeException("You can't get the absy position of a removed sprite.");
             return img.GetComponent<RectTransform>().position.y;
         }
         set { img.GetComponent<RectTransform>().position = new Vector2(img.GetComponent<RectTransform>().position.x, value); }
@@ -67,7 +63,6 @@ public class LuaSpriteController {
     // The x scale of the sprite. This variable is used for the same purpose as img, to be able to do other things when setting the variable
     public float xscale {
         get {
-            if (!img) throw new ScriptRuntimeException("You can't get the scale of a removed sprite.");
             return xScale;
         }
         set {
@@ -79,7 +74,6 @@ public class LuaSpriteController {
     // The y scale of the sprite. 
     public float yscale {
         get {
-            if (!img) throw new ScriptRuntimeException("You can't get the scale of a removed sprite.");
             return yScale;
         }
         set {
@@ -98,7 +92,6 @@ public class LuaSpriteController {
     // The original width of the sprite
     public float width {
         get {
-            if (!img) throw new ScriptRuntimeException("You can't get the width of a removed sprite.");
             if (img.GetComponent<Image>())  return img.GetComponent<Image>().mainTexture.width;
             else                            return img.GetComponent<SpriteRenderer>().sprite.texture.width;
         }
@@ -107,7 +100,6 @@ public class LuaSpriteController {
     // The original height of the sprite
     public float height {
         get {
-            if (!img) throw new ScriptRuntimeException("You can't get the height of a removed sprite.");
             if (img.GetComponent<Image>())  return img.GetComponent<Image>().mainTexture.height;
             else                            return img.GetComponent<SpriteRenderer>().sprite.texture.height;
         }
@@ -116,7 +108,6 @@ public class LuaSpriteController {
     // Is the current animation finished? True if there is a finished animation, false otherwise
     public bool animcomplete {
         get {
-            if (!img) throw new ScriptRuntimeException("You can't get the animcomplete value of a removed sprite.");
             if (keyframes == null)
                 if (img.GetComponent<KeyframeCollection>())
                     keyframes = img.GetComponent<KeyframeCollection>();
@@ -131,7 +122,6 @@ public class LuaSpriteController {
     // The loop mode of the animation
     public string loopmode {
         get {
-            if (!img) throw new ScriptRuntimeException("You can't get the loopmode of a removed sprite.");
             return loop.ToString();
         }
         set {
@@ -146,7 +136,6 @@ public class LuaSpriteController {
     // The color of the sprite. It uses an array of three floats between 0 and 1
     public float[] color {
         get {
-            if (!img) throw new ScriptRuntimeException("You can't get the color of a removed sprite.");
             if (img.GetComponent<Image>()) {
                 Image imgtemp = img.GetComponent<Image>();
                 return new float[] { imgtemp.color.r, imgtemp.color.g, imgtemp.color.b };
@@ -176,7 +165,6 @@ public class LuaSpriteController {
     public float[] color32 {
         // We need first to convert the Color into a Color32, and then get the values.
         get {
-            if (!img) throw new ScriptRuntimeException("You can't get the color of a removed sprite.");
             if (img.GetComponent<Image>()) {
                 Image imgtemp = img.GetComponent<Image>();
                 return new float[] { ((Color32)imgtemp.color).r, ((Color32)imgtemp.color).g, ((Color32)imgtemp.color).b };
@@ -205,7 +193,6 @@ public class LuaSpriteController {
     // The alpha of the sprite. It is clamped between 0 and 1
     public float alpha {
         get {
-            if (!img) throw new ScriptRuntimeException("You can't get the alpha of a removed sprite.");
             if (img.GetComponent<Image>()) {
                 Image imgtemp = img.GetComponent<Image>();
                 return imgtemp.color.a;
@@ -228,7 +215,6 @@ public class LuaSpriteController {
     // The alpha of the sprite in a 32 bits format. It is clamped between 0 and 255
     public float alpha32 {
         get {
-            if (!img) throw new ScriptRuntimeException("You can't get the alpha of a removed sprite.");
             if (img.GetComponent<Image>()) {
                 Image imgtemp = img.GetComponent<Image>();
                 return ((Color32)imgtemp.color).a;
@@ -253,7 +239,6 @@ public class LuaSpriteController {
     // The rotation of the sprite
     public float rotation {
         get {
-            if (!img) throw new ScriptRuntimeException("You can't get the rotation of a removed sprite.");
             return internalRotation.z;
         }
         set {
@@ -267,7 +252,6 @@ public class LuaSpriteController {
     public string layer {
         // You can't get or set the layer on an enemy sprite
         get {
-            if (!img) throw new ScriptRuntimeException("You can't get the layer of a removed sprite.");
             if (tag == "enemy" || tag == "bubble")
                 return "none";
             if (tag == "projectile" && !img.transform.parent.name.Contains("Layer"))
@@ -319,7 +303,6 @@ public class LuaSpriteController {
 
     // Changes the sprite of this instance
     public void Set(string name) {
-        if (!img) throw new ScriptRuntimeException("You can't set the sprite of a removed sprite.");
         // Change the sprite
         if (img.GetComponent<Image>()) {
             Image imgtemp = img.GetComponent<Image>();
@@ -340,7 +323,6 @@ public class LuaSpriteController {
 
     // Sets the parent of a sprite. Can't be used on an enemy
     public void SetParent(LuaSpriteController parent) {
-        if (!img) throw new ScriptRuntimeException("You can't set the parent of a removed sprite.");
         if (tag == "enemy" || tag == "bubble")
             return;
         try {
@@ -352,20 +334,17 @@ public class LuaSpriteController {
     
     // Sets the pivot of a sprite (its rotation point)
     public void SetPivot(float x, float y) {
-        if (!img) throw new ScriptRuntimeException("You can't set the pivot of a removed sprite.");
         img.GetComponent<RectTransform>().pivot = new Vector2(x, y);
     }
 
     // Sets the anchor of a sprite
     public void SetAnchor(float x, float y) {
-        if (!img) throw new ScriptRuntimeException("You can't set the anchor of a removed sprite.");
         img.GetComponent<RectTransform>().anchorMin = new Vector2(x, y);
         img.GetComponent<RectTransform>().anchorMax = new Vector2(x, y);
     }
 
     // Sets both xScale and yScale of a sprite 
     public void Scale(float xs, float ys) {
-        if (!img) throw new ScriptRuntimeException("You can't set the scale of a removed sprite.");
         xScale = xs;
         yScale = ys;
         if (img.GetComponent<Image>())
@@ -391,7 +370,6 @@ public class LuaSpriteController {
 
     // Sets an animation for this instance with a frame timer
     public void SetAnimation(string[] spriteNames, float frametime) {
-        if (!img) throw new ScriptRuntimeException("You can't set the animation of a removed sprite.");
         Keyframe[] kfArray = new Keyframe[spriteNames.Length];
         for (int i = 0; i < spriteNames.Length; i++)
             kfArray[i] = new Keyframe(SpriteRegistry.Get(spriteNames[i]), spriteNames[i].ToLower());
@@ -406,7 +384,6 @@ public class LuaSpriteController {
     }
 
     public void StopAnimation() {
-        if (!img) throw new ScriptRuntimeException("You can't stop the animation of a removed sprite.");
         if (keyframes != null) {
             keyframes.enabled = false;
 
@@ -421,31 +398,26 @@ public class LuaSpriteController {
     }
 
     public void MoveTo(float x, float y) {
-        if (!img) throw new ScriptRuntimeException("You can't move a removed sprite.");
         img.GetComponent<RectTransform>().anchoredPosition = new Vector2(x, y);
     }
 
     public void MoveToAbs(float x, float y) {
-        if (!img) throw new ScriptRuntimeException("You can't move a removed sprite.");
         img.GetComponent<RectTransform>().position = new Vector2(x, y);
     }
 
     public void SendToTop() {
-        if (!img) throw new ScriptRuntimeException("You can't send a removed sprite to the top of the sprite list.");
         if (tag == "enemy" || tag == "bubble")
             return;
         img.GetComponent<RectTransform>().SetAsLastSibling();
     }
 
     public void SendToBottom() {
-        if (!img) throw new ScriptRuntimeException("You can't send a removed sprite to the bottom of the sprite list.");
         if (tag == "enemy" || tag == "bubble")
             return;
         img.GetComponent<RectTransform>().SetAsFirstSibling();
     }
 
     public void Remove() {
-        if (!img) throw new ScriptRuntimeException("You can't remove a removed sprite.");
         if (tag == "enemy" || tag == "bubble")
             return;
 
@@ -460,7 +432,6 @@ public class LuaSpriteController {
     }
 
     public void Dust(bool playDust = true, bool removeObject = false) {
-        if (!img) throw new ScriptRuntimeException("You can't dust a removed sprite to the top of the sprite list.");
         if (tag == "enemy" || tag == "bubble")
             return;
         GameObject go = GameObject.Instantiate(Resources.Load<GameObject>("Prefabs/MonsterDuster"));
