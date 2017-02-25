@@ -83,12 +83,8 @@ public class ProjectileController {
     public bool isactive {
         get { return p != null; }
     }
-
-    private bool persist = false;
-    public bool isPersistent {
-        get { return persist; }
-        set { persist = value; }
-    }
+    
+    public bool isPersistent = false;
 
     public string layer {
         get { return spr.img.transform.parent.name.Substring(0, spr.img.transform.parent.name.Length - 5); }

@@ -12,6 +12,7 @@ internal class LuaEnemyEncounter : EnemyEncounter {
     private ScriptWrapper[] waves;
     private string[] waveNames;
     public bool gameOverStance = false;
+    public static bool doNotGivePreviousEncounterToSelf = false;
 
     public override Vector2 ArenaSize {
         get {
@@ -45,6 +46,7 @@ internal class LuaEnemyEncounter : EnemyEncounter {
     /// </summary>
     /// <returns>True if initialization succeeded, false if there was an error.</returns>
     private bool initScript() {
+        doNotGivePreviousEncounterToSelf = true;
         script = new ScriptWrapper();
         script.scriptname = StaticInits.ENCOUNTER;
         string scriptText = ScriptRegistry.Get(ScriptRegistry.ENCOUNTER_PREFIX + StaticInits.ENCOUNTER);

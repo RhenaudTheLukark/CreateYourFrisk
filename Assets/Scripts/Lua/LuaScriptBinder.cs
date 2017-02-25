@@ -78,7 +78,10 @@ public static class LuaScriptBinder {
             script.Globals["GetCurrentState"] = (Func<string>)GetState;
             script.Globals["EndWave"] = (Action)endWave;
             script.Globals["BattleDialog"] = (Action<DynValue>)LuaEnemyEncounter.BattleDialog;
-            script.Globals["Encounter"] = LuaEnemyEncounter.script_ref;
+            if (LuaEnemyEncounter.doNotGivePreviousEncounterToSelf)
+                LuaEnemyEncounter.doNotGivePreviousEncounterToSelf = false;
+            else
+                script.Globals["Encounter"] = LuaEnemyEncounter.script_ref;
             script.Globals["DEBUG"] = (Action<string>)UnitaleUtil.writeInLogAndDebugger;
             DynValue PlayerStatus = UserData.Create(PlayerController.luaStatus);
             script.Globals.Set("Player", PlayerStatus);

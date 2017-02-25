@@ -1,5 +1,5 @@
 #Unitale ignored directories
-/Assets/Logs/Logs*
+/Assets/Logs/*
 /Assets/Sprites/ScreenReference/
 /Assets/Scripts/Unused/
 /Assets/Tests/

@@ -5,11 +5,12 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 public class Letter : MonoBehaviour {
-    public Vector2 basisPos;
+    public Vector2 basisPos = new Vector2();
     public Image img;
     //public Color currentColor = Color.white;
     public TextEffectLetter effect = null;
     public bool started = false;
+    private bool goodInit = false;
 
     private void Start() {
         img = GetComponent<Image>();
@@ -24,11 +25,19 @@ public class Letter : MonoBehaviour {
 
     private void LateStart() {
         started = true;
-        basisPos = transform.position;
+        try {
+            basisPos = transform.position;
+            goodInit = true;
+        } catch { }
     }
-    
+
     private void Update() {
-        if (effect != null && started)
+        if (effect != null && started) {
+            if (!goodInit) {
+                basisPos = transform.position;
+                goodInit = true;
+            }
             effect.updateEffects();
+        }
     }
 }
