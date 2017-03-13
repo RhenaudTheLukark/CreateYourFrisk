@@ -68,7 +68,7 @@ public abstract class Projectile : MonoBehaviour {
     /// </summary>
     public void renewController() { ctrl = new ProjectileController(this); }
 
-    public bool isPP() { return (ppcollision && ppchanged) || (GlobalControls.ppcollision && !ppchanged); }
+    public bool isPP() { return (ppcollision && ppchanged) || (GlobalControls.ppcollision &&!ppchanged); }
 
     /// <summary>
     /// Built-in Unity function run on every frame
@@ -105,7 +105,7 @@ public abstract class Projectile : MonoBehaviour {
     /// Updates the projectile's hitbox.
     /// </summary>
     public virtual void UpdateHitRect() {
-        if (ppcollision && ppchanged || GlobalControls.ppcollision && !ppchanged) {
+        if (ppcollision && ppchanged || GlobalControls.ppcollision &&!ppchanged) {
             float cst = ctrl.sprite.rotation * Mathf.Deg2Rad,
                   realX = self.sizeDelta.x * Mathf.Abs(Mathf.Cos(cst)) + self.sizeDelta.y * Mathf.Abs(Mathf.Sin(cst)),
                   realY = self.sizeDelta.y * Mathf.Abs(Mathf.Cos(cst)) + self.sizeDelta.x * Mathf.Abs(Mathf.Sin(cst));

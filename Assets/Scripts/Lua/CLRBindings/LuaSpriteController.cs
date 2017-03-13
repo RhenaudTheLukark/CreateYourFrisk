@@ -9,9 +9,9 @@ public class LuaSpriteController {
     internal GameObject img { // A image that returns the real image. We use this to be able to detect if the real image is null, and if it is, throw an exception
         get {
             if (_img == null)
-                throw new ScriptRuntimeException("Attempted to perform action on removed sprite.");
-            if (!_img.activeInHierarchy && !firstFrame)
-                throw new ScriptRuntimeException("Attempted to perform action on removed sprite.");
+                throw new CYFException("Attempted to perform action on removed sprite.");
+            if (!_img.activeInHierarchy &&!firstFrame)
+                throw new CYFException("Attempted to perform action on removed sprite.");
             return _img;
         }
         set { _img = value; }
@@ -129,7 +129,7 @@ public class LuaSpriteController {
                 loop = (KeyframeCollection.LoopMode)Enum.Parse(typeof(KeyframeCollection.LoopMode), value.ToUpper(), true);
                 if (keyframes != null)
                     keyframes.loop = (KeyframeCollection.LoopMode)Enum.Parse(typeof(KeyframeCollection.LoopMode), value.ToUpper(), true);
-            } catch { throw new ScriptRuntimeException("sprite.loopmode can only have either \"ONESHOT\", \"ONESHOTEMPTY\" or \"LOOP\", but you entered \"" + value.ToUpper() + "\"."); }
+            } catch { throw new CYFException("sprite.loopmode can only have either \"ONESHOT\", \"ONESHOTEMPTY\" or \"LOOP\", but you entered \"" + value.ToUpper() + "\"."); }
         }
     }
 
@@ -150,13 +150,13 @@ public class LuaSpriteController {
                 // If we don't have three floats, we throw an error
                 if (value.Length == 3)      imgtemp.color = new Color(value[0], value[1], value[2], alpha);
                 else if (value.Length == 4) imgtemp.color = new Color(value[0], value[1], value[2], value[3]);
-                else                        throw new ScriptRuntimeException("You need 3 or 4 numeric values when setting a sprite's color.");
+                else                        throw new CYFException("You need 3 or 4 numeric values when setting a sprite's color.");
             } else {
                 SpriteRenderer imgtemp = img.GetComponent<SpriteRenderer>();
                 // If we don't have three floats, we throw an error
                 if (value.Length == 3)      imgtemp.color = new Color(value[0], value[1], value[2], alpha);
                 else if (value.Length == 4) imgtemp.color = new Color(value[0], value[1], value[2], value[3]);
-                else                        throw new ScriptRuntimeException("You need 3 or 4 numeric values when setting a sprite's color.");
+                else                        throw new CYFException("You need 3 or 4 numeric values when setting a sprite's color.");
             }
         }
     }
@@ -179,13 +179,13 @@ public class LuaSpriteController {
                 // If we don't have three/four floats, we throw an error
                 if (value.Length == 3)      imgtemp.color = new Color32((byte)value[0], (byte)value[1], (byte)value[2], (byte)alpha32);
                 else if (value.Length == 4) imgtemp.color = new Color32((byte)value[0], (byte)value[1], (byte)value[2], (byte)value[3]);
-                else                        throw new ScriptRuntimeException("You need 3 or 4 numeric values when setting a sprite's color.");
+                else                        throw new CYFException("You need 3 or 4 numeric values when setting a sprite's color.");
             } else {
                 SpriteRenderer imgtemp = img.GetComponent<SpriteRenderer>();
                 // If we don't have three/four floats, we throw an error
                 if (value.Length == 3)      imgtemp.color = new Color32((byte)value[0], (byte)value[1], (byte)value[2], (byte)alpha32);
                 else if (value.Length == 4) imgtemp.color = new Color32((byte)value[0], (byte)value[1], (byte)value[2], (byte)value[3]);
-                else                        throw new ScriptRuntimeException("You need 3 or 4 numeric values when setting a sprite's color.");
+                else                        throw new CYFException("You need 3 or 4 numeric values when setting a sprite's color.");
             }
         }
     }
@@ -254,7 +254,7 @@ public class LuaSpriteController {
         get {
             if (tag == "enemy" || tag == "bubble")
                 return "none";
-            if (tag == "projectile" && !img.transform.parent.name.Contains("Layer"))
+            if (tag == "projectile" &&!img.transform.parent.name.Contains("Layer"))
                 return "BulletPool";
             return img.transform.parent.name.Substring(0, img.transform.parent.name.Length - 5);
         } set {
@@ -304,6 +304,8 @@ public class LuaSpriteController {
     // Changes the sprite of this instance
     public void Set(string name) {
         // Change the sprite
+        if (name == null)
+            throw new CYFException("You can't set a sprite as nil!");
         if (img.GetComponent<Image>()) {
             Image imgtemp = img.GetComponent<Image>();
             SpriteUtil.SwapSpriteFromFile(imgtemp, name);
@@ -328,7 +330,7 @@ public class LuaSpriteController {
         try {
             img.transform.SetParent(parent.img.transform);
         } catch {
-            throw new ScriptRuntimeException("You tried to set a removed sprite/unexisting sprite as this sprite's parent.");
+            throw new CYFException("You tried to set a removed sprite/unexisting sprite as this sprite's parent.");
         }
     }
     

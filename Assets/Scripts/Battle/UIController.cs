@@ -154,9 +154,7 @@ public class UIController : MonoBehaviour {
             childStateCalled = true;
         }
 
-        // TODO: Quick and dirty addition to add some humor to the Run away command.
-        // Will be removed without question.
-        // TONOTDO: Sure about that? :P Don't think so XP
+        // Quick and dirty addition to add some humor to the Run away command.
         if (musicPausedFromRunning) {
             Camera.main.GetComponent<AudioSource>().UnPause();
             musicPausedFromRunning = false;
@@ -175,7 +173,7 @@ public class UIController : MonoBehaviour {
             mercyBtn.overrideSprite = null;
             textmgr.setPause(true);
         } else {
-            if (!first && !ArenaManager.instance.firstTurn)
+            if (!first &&!ArenaManager.instance.firstTurn)
                 ArenaManager.instance.resetArena();
             PlayerController.instance.invulTimer = 0.0f;
             PlayerController.instance.setControlOverride(true);
@@ -195,7 +193,6 @@ public class UIController : MonoBehaviour {
         this.state = state;
         //encounter.CallOnSelfOrChildren("Entered" + Enum.GetName(typeof(UIState), state).Substring(0, 1)
         //                                         + Enum.GetName(typeof(UIState), state).Substring(1, Enum.GetName(typeof(UIState), state).Length - 1).ToLower());
-        //print("Entered" + Enum.GetName(typeof(UIState), state).Substring(0, 1) + Enum.GetName(typeof(UIState), state).Substring(1, Enum.GetName(typeof(UIState), state).Length - 1).ToLower());
         if (oldstate == UIState.DEFENDING && this.state != UIState.DEFENDING)
             encounter.endWave();
         switch (this.state) {
@@ -460,8 +457,8 @@ public class UIController : MonoBehaviour {
                 sbTextMan.setFont(SpriteFontRegistry.Get(encounter.enabledEnemies[i].Font));
                 if (encounter.enabledEnemies[i].Voice != "")
                     sbTextMan.letterSound.clip = AudioClipRegistry.GetVoice(encounter.enabledEnemies[i].Voice);
-            } catch (Exception e) {
-                print(e.Message + "\nerror monster n°" + i);
+            } catch {
+                new CYFException("Error while updating the monster n°" + i);
             }
         }
     }
@@ -843,7 +840,7 @@ public class UIController : MonoBehaviour {
                     foreach (TextManager mgr in monDialogues) {
                         if (mgr == null)
                             continue;
-                        if (mgr.lineCount() > 1 || !mgr.canSkip()) {
+                        if (mgr.lineCount() > 1 ||!mgr.canSkip()) {
                             singleLineAll = false;
                             break;
                         }
@@ -877,7 +874,7 @@ public class UIController : MonoBehaviour {
 
         switch (state) {
             case UIState.ACTIONSELECT:
-                if (!left && !right)
+                if (!left &&!right)
                     break;
 
                 fightBtn.overrideSprite = null;
@@ -898,7 +895,7 @@ public class UIController : MonoBehaviour {
             case UIState.ENEMYSELECT:
                 bool unpair = false;
                 if (encounter.enabledEnemies.Length > 3) {
-                    if (!up && !down && !right && !left) break;
+                    if (!up &&!down &&!right &&!left) break;
                     if (right) {
                         if (selectedEnemy % 2 == 1)
                             unpair = true;
@@ -926,7 +923,7 @@ public class UIController : MonoBehaviour {
                     }
                     setPlayerOnSelection(selectedEnemy % 2 * 2);
                 } else {
-                    if (!up && !down) break;
+                    if (!up &&!down) break;
                     else if (up) selectedEnemy--;
                     else if (down) selectedEnemy++;
                     selectedEnemy = (selectedEnemy + encounter.enabledEnemies.Length) % encounter.enabledEnemies.Length;
@@ -935,7 +932,7 @@ public class UIController : MonoBehaviour {
                 break;
 
             case UIState.ACTMENU:
-                if (!up && !down && !left && !right)
+                if (!up &&!down &&!left &&!right)
                     return;
 
                 int xCol = selectedAction % 2; // can just use remainder here, xCol will never be negative at this part
@@ -960,7 +957,7 @@ public class UIController : MonoBehaviour {
                 break;
 
             case UIState.ITEMMENU:
-                if (!up && !down && !left && !right)
+                if (!up &&!down &&!left &&!right)
                     return;
 
                 int xColI = Math.mod(selectedItem, 2);
@@ -1009,7 +1006,7 @@ public class UIController : MonoBehaviour {
                 break;
 
             case UIState.MERCYMENU:
-                if (!up && !down)     break;
+                if (!up &&!down)     break;
                 if (up)               selectedMercy--;
                 if (down)             selectedMercy++;
                 if (encounter.CanRun) selectedMercy = Math.mod(selectedMercy, 2);
@@ -1024,7 +1021,7 @@ public class UIController : MonoBehaviour {
         switch (state) {
             case UIState.ACTIONSELECT:
             case UIState.DIALOGRESULT:
-                if (textmgr.canSkip() && !textmgr.lineComplete())
+                if (textmgr.canSkip() &&!textmgr.lineComplete())
                     textmgr.doSkipFromPlayer();
                     //textmgr.skipText();
                 break;
@@ -1130,9 +1127,13 @@ public class UIController : MonoBehaviour {
         mercyBtn = GameObject.Find("MercyBt").GetComponent<Image>();
         if (GlobalControls.crate) {
             fightBtn.sprite = SpriteRegistry.Get("UI/Buttons/gifhtbt_0");
+            fightBtn.GetComponent<AutoloadResourcesFromRegistry>().SpritePath = "UI/Buttons/gifhtbt_0";
             actBtn.sprite = SpriteRegistry.Get("UI/Buttons/catbt_0");
+            actBtn.GetComponent<AutoloadResourcesFromRegistry>().SpritePath = "UI/Buttons/catbt_0";
             itemBtn.sprite = SpriteRegistry.Get("UI/Buttons/tembt_0");
+            itemBtn.GetComponent<AutoloadResourcesFromRegistry>().SpritePath = "UI/Buttons/tembt_0";
             mercyBtn.sprite = SpriteRegistry.Get("UI/Buttons/mecrybt_0");
+            mercyBtn.GetComponent<AutoloadResourcesFromRegistry>().SpritePath = "UI/Buttons/mecrybt_0";
         }
     }
 
@@ -1167,8 +1168,8 @@ public class UIController : MonoBehaviour {
         for (int i = 0; i < spareList.Length; i ++)
             spareList[i] = false;
         bindEncounterScriptInteraction();
-        GameObject.Find("Main Camera").GetComponent<ProjectileHitboxRenderer>().enabled = !GameObject.Find("Main Camera").GetComponent<ProjectileHitboxRenderer>().enabled;
-        //There are scene init bugs, let's fix them !
+        GameObject.Find("Main Camera").GetComponent<ProjectileHitboxRenderer>().enabled =!GameObject.Find("Main Camera").GetComponent<ProjectileHitboxRenderer>().enabled;
+        //There are scene init bugs, let's fix them!
         /*if (GameObject.Find("TopLayer").transform.parent != GameObject.Find("Canvas").transform) {
             RectTransform[] rts = GameObject.Find("Canvas").GetComponentsInChildren<RectTransform>(true);
             rts[rts.Length - 1].SetParent(rts[rts.Length - 2]);
@@ -1276,7 +1277,7 @@ public class UIController : MonoBehaviour {
         //    psList.Add(true);
         int a = pss.Length;
         for (int i = 0; i < a; i++) {
-            //if (pss[i].IsAlive() && !psList[i])
+            //if (pss[i].IsAlive() &&!psList[i])
             //    psList[i] = true;
             if (!pss[i].IsAlive() && pss[i].gameObject.name.Contains("MonsterDuster(Clone)")) {
                 pss[i].gameObject.SetActive(false);
@@ -1286,7 +1287,7 @@ public class UIController : MonoBehaviour {
             }
         }
 
-        if (textmgr.isPaused() && !ArenaManager.instance.isResizeInProgress())
+        if (textmgr.isPaused() &&!ArenaManager.instance.isResizeInProgress())
             textmgr.setPause(false);
 
         if (state == UIState.DIALOGRESULT)
@@ -1319,7 +1320,7 @@ public class UIController : MonoBehaviour {
         }
 
         if (InputUtil.Pressed(GlobalControls.input.Confirm)) {
-            if (state == UIState.ACTIONSELECT && !ArenaManager.instance.isMoveInProgress() && !ArenaManager.instance.isResizeInProgress() || state != UIState.ACTIONSELECT)
+            if (state == UIState.ACTIONSELECT &&!ArenaManager.instance.isMoveInProgress() &&!ArenaManager.instance.isResizeInProgress() || state != UIState.ACTIONSELECT)
                 HandleAction();
         } else if (InputUtil.Pressed(GlobalControls.input.Cancel)) HandleCancel();
         else HandleArrows();
@@ -1334,7 +1335,7 @@ public class UIController : MonoBehaviour {
             int tempIndex = 0;
             foreach (LuaEnemyController enemycontroller in encounter.enabledEnemies) {
                 int hp = enemycontroller.HP;
-                if (hp <= 0 && !enemycontroller.Unkillable) {
+                if (hp <= 0 &&!enemycontroller.Unkillable) {
                     // fightUI.disableImmediate();
                     if (!enemycontroller.TryCall("OnDeath")) {
                         noOnDeath = false;
@@ -1361,7 +1362,7 @@ public class UIController : MonoBehaviour {
         if (state == UIState.MERCYMENU || state == UIState.SPAREIDLE) {
             bool toSpare = false;
             for (int i = 0; i < spareList.Length; i++) {
-                if (spareList[i] && !encounter.enemies[i].spared) {
+                if (spareList[i] &&!encounter.enemies[i].spared) {
                     if (state != UIState.SPAREIDLE)
                         state = UIState.SPAREIDLE;
                     encounter.enemies[i].TryCall("OnSpare");

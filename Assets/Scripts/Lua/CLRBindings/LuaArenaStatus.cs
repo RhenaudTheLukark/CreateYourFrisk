@@ -27,7 +27,7 @@ public class LuaArenaStatus {
     }
 
     public float currentx {
-        get { return ArenaManager.arenaAbs.x; }
+        get { return ArenaManager.arenaAbs.x + ArenaManager.arenaAbs.width / 2; } //this being a rect value, it's centered on the bottom left corner of the object.
     }
 
     public float currenty {

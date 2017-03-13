@@ -12,15 +12,20 @@ public class TransitionOverworld : MonoBehaviour {
 
     public void Start() {
         bool isStart = false;
-        if (GameOverBehavior.gameOverContainer)
-            GameObject.Destroy(GameOverBehavior.gameOverContainer);
+
         GameOverBehavior.gameOverContainer = GameObject.Find("GameOverContainer");
-        GameObject.DontDestroyOnLoad(GameOverBehavior.gameOverContainer);
         GameOverBehavior.gameOverContainer.SetActive(false);
+        if (GameObject.Find("GameOverContainer")) {
+            GameObject.Destroy(GameOverBehavior.gameOverContainer);
+            GameOverBehavior.gameOverContainer = GameObject.Find("GameOverContainer");
+            GameOverBehavior.gameOverContainer.SetActive(false);
+        }
+        GameObject.DontDestroyOnLoad(GameOverBehavior.gameOverContainer);
+
         GlobalControls.beginPosition = BeginningPosition;
-        //Used only for the 1st scene
         if (GameObject.Find("Main Camera"))
             GameObject.Destroy(GameObject.Find("Main Camera"));
+        //Used only for the 1st scene
         if (LuaScriptBinder.Get(null, "PlayerMap") == null) {
             isStart = true;
             SaveLoad.Start();
@@ -33,8 +38,7 @@ public class TransitionOverworld : MonoBehaviour {
             LuaScriptBinder.Set(null, "ModFolder", DynValue.NewString(FirstModFolder));
 
             StaticInits.MODFOLDER = FirstModFolder;
-            /*
-            StaticInits.Initialized = false;
+            /*StaticInits.Initialized = false;
             GameObject.Find("Main Camera OW").GetComponent<StaticInits>().initAll();*/
             GlobalControls.realName = PlayerCharacter.instance.Name;
         }
@@ -43,9 +47,9 @@ public class TransitionOverworld : MonoBehaviour {
         if (GameObject.Find("Main Camera OW")) {
             GameObject.Destroy(GameObject.Find("Main Camera OW"));
             temp.GetComponent<EventManager>().readyToReLaunch = true;
-        }
-        
+        }        
         temp.SetActive(true);
+
         //MIONNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
         /*GameObject goodluck = Resources.Load<GameObject>("Prefabs/MIONNNNNNNNNNNN");
         GameObject gl = Instantiate(goodluck);
@@ -72,29 +76,37 @@ public class TransitionOverworld : MonoBehaviour {
         //THERE IS NO WAY TO KNOW IF A SCENE EXISTS WTF
         /*bool loaded = false;
         for (int i = 0; i < SceneManager.sceneCountInBuildSettings; i++) {
-            print(SceneManager.GetSceneAt(i).name + " == " + mapName);
             if (SceneManager.GetSceneAt(i).name == mapName) {
                 loaded = true;*/
                 SceneManager.LoadScene(mapName);
-                /*break;
+        /*break;
             }
         }
         if (!loaded) {
             UnitaleUtil.displayLuaError("TransitionOverworld", "The map named \"" + mapName + "\" doesn't exist.");
             return;
         }*/
-        gameObject.GetComponent<Image>().color = new Color(0, 0, 0, 0);
-        StartCoroutine(GetIntoDaMap());
+        GameObject.Find("Don't show it again").GetComponent<Image>().color = new Color(0, 0, 0, 0);
+        StartCoroutine(GetIntoDaMap("transitionoverworld", null));
     }
 
-    public IEnumerator GetIntoDaMap() {
-        GlobalControls.fadeAuto = true;
+    public IEnumerator GetIntoDaMap(string call, object[] neededArgs) {
+        //GlobalControls.fadeAuto = true;
+        GameObject.Find("Main Camera OW").GetComponent<EventManager>().readyToReLaunch = true;
 
         yield return 0;
         PlayerOverworld.instance.eventmgr.ResetEvents();
         yield return Application.isLoadingLevel;
 
-        GameObject.Find("Main Camera OW").GetComponent<EventManager>().ResetEvents();
+        GameObject.Find("utHeart").GetComponent<Image>().color = new Color(GameObject.Find("utHeart").GetComponent<Image>().color.r, 
+                                                                           GameObject.Find("utHeart").GetComponent<Image>().color.g,
+                                                                           GameObject.Find("utHeart").GetComponent<Image>().color.b, 0);
+        if (call == "tphandler") {
+            Transform playerPos = GameObject.Find("Player").GetComponent<Transform>();
+            playerPos.position = (Vector2)neededArgs[0];
+        }
+
+        //GameObject.Find("Main Camera OW").GetComponent<EventManager>().ResetEvents();
 
         //Permits to reload the current data if needed
         MapInfos mi = GameObject.Find("Background").GetComponent<MapInfos>();
@@ -104,7 +116,8 @@ public class TransitionOverworld : MonoBehaviour {
             StaticInits.Initialized = false;
             si.initAll();
             LuaScriptBinder.Set(null, "ModFolder", MoonSharp.Interpreter.DynValue.NewString(StaticInits.MODFOLDER));
-            PlayerOverworld.instance.eventmgr.scriptLaunched = false;
+            if (call == "transitionoverworld")
+                PlayerOverworld.instance.eventmgr.scriptLaunched = false;
         }
 
         AudioSource audio;
@@ -143,10 +156,19 @@ public class TransitionOverworld : MonoBehaviour {
             PlayerOverworld.audioKept.Stop();
             PlayerOverworld.audioKept.clip = null;
         }
+        float fadeTime2 = GameObject.Find("FadingBlack").GetComponent<Fading>().BeginFade(-1);
 
-        yield return new WaitForSeconds(GameObject.Find("FadingBlack").GetComponent<Fading>().fadeSpeed);
-        
-        GlobalControls.fadeAuto = false;
-        GameObject.Destroy(gameObject);
+        yield return new WaitForSeconds(fadeTime2);
+
+        //yield return new WaitForSeconds(GameObject.Find("FadingBlack").GetComponent<Fading>().fadeSpeed);
+        if (call == "tphandler") {
+            ((TPHandler)neededArgs[1]).activated = false;
+            GameObject.Destroy(((TPHandler)neededArgs[1]).gameObject);
+        }
+
+        if (GameObject.Find("Don't show it again"))
+            GameObject.Destroy(GameObject.Find("Don't show it again"));
+        //GlobalControls.fadeAuto = false;
+        //GameObject.Destroy(gameObject);
     }
 }

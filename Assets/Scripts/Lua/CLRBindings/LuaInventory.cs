@@ -67,7 +67,7 @@ let's discuss what void does for example
 void is the return type of the function : you can replace it by int, float, string, LuaINventory etc..
 As the function returns nothing, the return type is "void"
 ok, so if I understand correctly, everything that is 'void' will run, but not return, and everything that is not will?
-Eveything that is not "void" will need a return value !
+Eveything that is not "void" will need a return value!
 Example :
 Here it works, 
 :P
@@ -90,7 +90,7 @@ Yup
 So, let's get to the point. Normally, you'll need one file for each class, but as it is an example, you'll use this file.
 
 Can you make a normal class, with two functions called "DoesAThing" and "HANDZ" : the first returns nothing and the second an object "Handz", 
-one variable called "yes" that is an int and "no" that is a boolean. Here you go !
+one variable called "yes" that is an int and "no" that is a boolean. Here you go!
 The nae of the class will be "ANormalCClass"
 
 one final question: by object we mean? - I'll probably jump around a lot at first; and it will be a public class
@@ -101,14 +101,14 @@ ah!
 it appears I'm still confused with returning an object
 You can't make classes in classes. I can show it to you, but it'll not be nice
 Just show me an example where it is done and I'll go from thre
-Here you go !
+Here you go!
 AH! I get it now; I think :D
 ok, so I know how to return a single value, that's no problem, but I still have difficulty understanding how to return two different types
 Wait, I'll do sth
 Do I have to show you the answer ?
 So, here's the answer
 
-Here's your class ! Good job !
+Here's your class! Good job!
 I think I must have misunderstood the task it seems
 Yeah, I must havebeen more clear about that, soory :/
 I thought I had to put
@@ -178,8 +178,8 @@ I start some tests)
 So, as we can say, if I go to Background and I disable the Image component...
 No more background :P
 gasp, I have to say
-And if I enable it again, the background returns !
-There is lots and lots of Component types, and you can even create your own types ! 
+And if I enable it again, the background returns!
+There is lots and lots of Component types, and you can even create your own types! 
 But we'll see that later :P
 Lots and lots of types
 I think this is the kind of thing that can be learned in depth

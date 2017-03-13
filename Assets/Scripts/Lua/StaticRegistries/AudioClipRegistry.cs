@@ -76,7 +76,7 @@ public class AudioClipRegistry {
             AudioClip temp;
             dict.TryGetValue(voiceName, out temp);
 
-            if (dict.ContainsKey(voiceName) && temp == FileLoader.getAudioClip(directoryPath, file.FullName) && !mod)
+            if (dict.ContainsKey(voiceName) && temp == FileLoader.getAudioClip(directoryPath, file.FullName) &&!mod)
                 continue;
 
             //string voiceName = FileLoader.getRelativePathWithoutExtension(directoryPath, file.FullName).ToLower();

@@ -82,10 +82,10 @@ public static class LuaScriptBinder {
                 LuaEnemyEncounter.doNotGivePreviousEncounterToSelf = false;
             else
                 script.Globals["Encounter"] = LuaEnemyEncounter.script_ref;
-            script.Globals["DEBUG"] = (Action<string>)UnitaleUtil.writeInLogAndDebugger;
             DynValue PlayerStatus = UserData.Create(PlayerController.luaStatus);
             script.Globals.Set("Player", PlayerStatus);
         }
+        script.Globals["DEBUG"] = (Action<string>)UnitaleUtil.writeInLogAndDebugger;
         // clr bindings
         DynValue MusicMgr = UserData.Create(mgr);
         script.Globals.Set("Audio", MusicMgr);
@@ -297,7 +297,7 @@ public static class LuaScriptBinder {
         LuaTextManager luatm = go.GetComponentInChildren<LuaTextManager>();
         go.GetComponent<RectTransform>().position = new Vector2((float)position.Table.Get(1).Number, (float)position.Table.Get(2).Number);
         go.GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth + 24, 100);
-        UnitaleUtil.GetChildPerName(go.transform, "BubbleContainer").GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth + 20, 100);     //To set the borders
+        UnitaleUtil.GetChildPerName(go.transform, "BubbleContainer").GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth + 20, 100);     //Used to set the borders
         UnitaleUtil.GetChildPerName(go.transform, "BackHorz").GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth + 20, 100 - 20 * 2);   //BackHorz
         UnitaleUtil.GetChildPerName(go.transform, "BackVert").GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth - 20, 100);            //BackVert
         UnitaleUtil.GetChildPerName(go.transform, "CenterHorz").GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth + 16, 96 - 16 * 2);  //CenterHorz

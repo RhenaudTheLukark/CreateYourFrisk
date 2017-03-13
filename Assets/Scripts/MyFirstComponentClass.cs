@@ -39,7 +39,7 @@ let's discuss what void does for example
 void is the return type of the function : you can replace it by int, float, string, LuaINventory etc..
 As the function returns nothing, the return type is "void"
 ok, so if I understand correctly, everything that is 'void' will run, but not return, and everything that is not will?
-Eveything that is not "void" will need a return value !
+Eveything that is not "void" will need a return value!
 Example :
 Here it works, 
 :P
@@ -62,7 +62,7 @@ Yup
 So, let's get to the point. Normally, you'll need one file for each class, but as it is an example, you'll use this file.
 
 Can you make a normal class, with two functions called "DoesAThing" and "HANDZ" : the first returns nothing and the second an object "Handz", 
-one variable called "yes" that is an int and "no" that is a boolean. Here you go !
+one variable called "yes" that is an int and "no" that is a boolean. Here you go!
 The nae of the class will be "ANormalCClass"
 
 one final question: by object we mean? - I'll probably jump around a lot at first; and it will be a public class
@@ -73,14 +73,14 @@ ah!
 it appears I'm still confused with returning an object
 You can't make classes in classes. I can show it to you, but it'll not be nice
 Just show me an example where it is done and I'll go from thre
-Here you go !
+Here you go!
 AH! I get it now; I think :D
 ok, so I know how to return a single value, that's no problem, but I still have difficulty understanding how to return two different types
 Wait, I'll do sth
 Do I have to show you the answer ?
 So, here's the answer
 
-Here's your class ! Good job !
+Here's your class! Good job!
 I think I must have misunderstood the task it seems
 Yeah, I must havebeen more clear about that, soory :/
 I thought I had to put
@@ -151,8 +151,8 @@ I start some tests)
 So, as we can say, if I go to Background and I disable the Image component...
 No more background :P
 gasp, I have to say
-And if I enable it again, the background returns !
-There is lots and lots of Component types, and you can even create your own types ! 
+And if I enable it again, the background returns!
+There is lots and lots of Component types, and you can even create your own types! 
 But we'll see that later :P
 Lots and lots of types
 I think this is the kind of thing that can be learned in depth
@@ -229,17 +229,17 @@ So MonoBehavious is an existing class in Unity, of which we take the features of
 Yup, exactly
 And by making functions such as Start(), Update() and OnApplicationQuit(), we're overriding MonoBehaviour's functions
 Now, we'll be able to do great things
-Scripts can be used as components on gameObjects, so we'll give to a gameObject this class as a component !
+Scripts can be used as components on gameObjects, so we'll give to a gameObject this class as a component!
 Can you do it ?
 I guess :D
-Your turn ! Add your script to this new GameObject !
+Your turn! Add your script to this new GameObject!
 So I appear to have difficulties clicking a simple button :D
 xD
 Try again :P
-Good !
+Good!
 So now, everything that you do here will be repercuted on the game, while this gameObject is active.
 Cool, so now we'll see how to load and unload classes via script
-In Unity 5.2.0, you didn't need another library to load classes, but now you do : UnityEngine.SceneManagement. Add it to your class first !
+In Unity 5.2.0, you didn't need another library to load classes, but now you do : UnityEngine.SceneManagement. Add it to your class first!
 Is it like the time when we put a class in a "variable" technically?
 Nope
 You have to add it like we added UnityEngine
@@ -259,8 +259,8 @@ Yeah
 So, why don't we see the result now ?
 So, let's go see the result of our code
 You spam 'R', nothing happened
-It works !
-We got to test !
+It works!
+We got to test!
 And as you could see, the scene queue was visible if you spam "R"
 I don't know why it didn't work for me :/
 Try again :P TV is capricious
@@ -318,7 +318,7 @@ So, now, how to access positions ? First, you better create your function update
 well, there it is, standing on its own and being sad :D
 You better access sr first
 jumping
-sr. ... boxes in boxes !
+sr. ... boxes in boxes!
 OH
 SORRY
 I'm wrong :P
@@ -371,7 +371,7 @@ You never stated where to put it ;)
 BWAHAHAHAHA!
 ZombiMionn :P
 WEEEEEEEEEEEEEEEEEEEEEEE
-Well, now you're ready ! This lesson is over, I'm hungry af...so I'm gonna eat :P
+Well, now you're ready! This lesson is over, I'm hungry af...so I'm gonna eat :P
 */
 
 //LESSON 3
@@ -435,7 +435,7 @@ The given type between < and > is the type of the object you'll store : the game
 in a variable.
 So, telling Resources.Load<GameObject>(sth) will give the GameObject object of the prefab at "Resources/sth".
 got it
-Okay, good luck ! Then, I'll tell you why it'll not work ^^
+Okay, good luck! Then, I'll tell you why it'll not work ^^
 ;P
 what type is this again?
 You wrote it
@@ -451,7 +451,7 @@ well, it's something now, that doesn't give me red lines :3
 It'll work, but you'll see that it'll not work :3
 woot!
 You'll see ;P Let's launch the app
-ERROR ! No MIONNNNNNNN detected.
+ERROR! No MIONNNNNNNN detected.
 this is where instantiation comes in?
 You instantiated MIONNNNNNNN
 But
@@ -520,14 +520,14 @@ I'll let you do it :)
 um, what did we forget again?
 sooo..?
 Now, the other way : accessing the gameObject directly
-Try to access it !
+Try to access it!
 Would I do it with 'gl'?
 Here, in this script
 We haven't instantiated it here, no?
 I'll tell you something.
 Every script that inherits from MonoBehaviour is used as a Component.
 Every Component has a GameObject.
-Now, find this GameObject !
+Now, find this GameObject!
 Tell me
 I don't think I get it yet :/
 huh... so...
@@ -551,7 +551,7 @@ Just asking because we still haven't covered array type of variables :P
 :P
 Do you want to stop here, or shall we continue ?
 I think it's about time to learn about arrays and indexing :P
-Okay, let's get to the point !
+Okay, let's get to the point!
 ...but first, ~~let me take a selfie~~ I have to drink
 Back
 h0i
@@ -564,7 +564,7 @@ Don't worry, Dictionaries are simple :D
 Well, arrays. They are initialized like normal variables, with one little exception : these are complex variables.
 If you remember about the last time, how do we initialize complex variables ?
 with 'new' before the value as far as I know.
-Exact ! Here is how you create an array :
+Exact! Here is how you create an array :
 There is 3 ways to do so : empty arrays (1), defined arrays (2) and instantied arrays (3)
 You can't expand arrays, if you instancied a 5-long int array, you can't add a 6th int.
 Understood ?
@@ -652,7 +652,7 @@ Now you know :D
 Then it's understandable that I can't ask for a sub-array's length separately :D
 Don't mind the blue link
 We need to press "L" in the game to activate SpriteAnalyser
-It works ! Kinda
+It works! Kinda
 Should it be length-1? <- ? :)
 Yup, but look at the code.
 I'm looking.
@@ -743,8 +743,7 @@ public class MyFirstComponentClass : MonoBehaviour {
     }
 
     /*public void Update() {
-        print("Update");
-        // bool == true and bool are the same, bool == false and !bool are the same
+        // bool == true and bool are the same, bool == false and!bool are the same
         // Now I'll jump around, because I don't remember the syntax exactly for cases.
         if (Input.GetKeyDown(KeyCode.R)) SceneManager.LoadScene("test");
     }*/

@@ -141,7 +141,6 @@ public class EnterNameScript : MonoBehaviour {
 
     IEnumerator waitConfirm(bool isForbidden = false) {
         yield return 0;
-        print("*" + confirmText + "*");
         if (confirmText != null)
             tmInstr.setTextQueue(new TextMessage[] { new TextMessage("[noskipatall]" + confirmText, false, true) });
         else if (GlobalControls.crate)
@@ -165,7 +164,7 @@ public class EnterNameScript : MonoBehaviour {
                 tmName.transform.localPosition = new Vector3(actualX - (((tmName.transform.localScale.x - 1f) * diff ) / 2 ), actualY - (((tmName.transform.localScale.x - 1f) * diff) / 6), tmName.transform.localPosition.z);
             }
             if ((GlobalControls.input.Left == UndertaleInput.ButtonState.PRESSED || GlobalControls.input.Right == UndertaleInput.ButtonState.PRESSED)
-                    && GameObject.Find("Done").GetComponent<SpriteRenderer>().enabled && !isForbidden) {
+                    && GameObject.Find("Done").GetComponent<SpriteRenderer>().enabled &&!isForbidden) {
                 if (choiceLetter == "Quit")     setColor("Done");
                 else                            setColor("Quit");
                 uiAudio.PlayOneShot(AudioClipRegistry.GetSound("menumove"));

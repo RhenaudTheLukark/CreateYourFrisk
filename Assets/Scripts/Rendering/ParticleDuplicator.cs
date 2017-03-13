@@ -15,7 +15,6 @@ public class ParticleDuplicator : MonoBehaviour {
 
         int xLength = Mathf.Abs(Mathf.FloorToInt(sprctrl.xscale * sprite.texture.width)),
             yLength = Mathf.Abs(Mathf.FloorToInt(sprctrl.yscale * sprite.texture.height));
-        //print("xLength = " + xLength + ", yLength = " + yLength + ", xLength * yLength = " + (xLength * yLength));
         GetComponentsInChildren<ParticleSystem>(true);
         ps = FindObjectOfType<ParticleSystem>();
         ps.transform.SetAsLastSibling();
@@ -33,10 +32,8 @@ public class ParticleDuplicator : MonoBehaviour {
         //Vector2 topRight = new Vector2(rt.position.x + (1 - rt.anchorMin.x) * rt.sizeDelta.x, rt.position.y + (1 - rt.anchorMin.x) * rt.sizeDelta.y);
         //Vector2 vpbl = Camera.main.ViewportToWorldPoint(bottomLeft);
         //Vector2 vptr = Camera.main.ViewportToWorldPoint(topRight);
-        //print("vpbl = " + vpbl + " ///// vpbl = " + vpbl);
         //float pxWidth = (topRight.x - vpbl.x) / rt.sizeDelta.x;
         //float pxHeight = (topRight.y - vpbl.y) / rt.sizeDelta.y;
-        //print("topRight = " + topRight + " ///// bottomLeft = " + bottomLeft);
         //Modify particle placement to reform the original sprite, and put back into particle system
         int particleCount = 0;
         bool xIncrement = sprctrl.xscale > 0, yIncrement = sprctrl.yscale > 0;
@@ -44,8 +41,6 @@ public class ParticleDuplicator : MonoBehaviour {
             float REALY = yIncrement ? y / sprctrl.yscale : (y / sprctrl.yscale + sprite.texture.height - 1);
             int realY = yIncrement ? Mathf.FloorToInt(REALY) : Mathf.CeilToInt(REALY);
             float yFrac = (yLength - y) / (float)yLength;
-            /*print("X = " + (bottomLeft.x + Mathf.RoundToInt(0     * sprctrl.xscale) + (xIncrement ? 0 : xLength)) + " => " + bottomLeft.x + " + Mathf.RoundToInt(" + 0     + " * " + sprctrl.xscale + ") + " + (xIncrement ? 0 : xLength) + "\n" +
-                    "Y = " + (bottomLeft.y + Mathf.RoundToInt(REALY * sprctrl.yscale) + (yIncrement ? 0 : yLength)) + " => " + bottomLeft.y + " + Mathf.RoundToInt(" + REALY + " * " + sprctrl.yscale + ") + " + (yIncrement ? 0 : yLength));*/
             for (int x = 0; x < xLength; x++) {
                 float REALX = xIncrement ? x / sprctrl.xscale : (x / sprctrl.xscale + sprite.texture.width - 1);
                 int realX = yIncrement ? Mathf.FloorToInt(REALX) : Mathf.CeilToInt(REALX);
@@ -55,7 +50,6 @@ public class ParticleDuplicator : MonoBehaviour {
                 //particles[particleCount].position = new Vector3(vpbl.x + x * pxWidth, vpbl.y + y * pxHeight, -5.0f);
                 particles[particleCount].position = new Vector3(bottomLeft.x + Mathf.RoundToInt(REALX * sprctrl.xscale) + (xIncrement ? 0 : xLength), 
                                                                 bottomLeft.y + Mathf.RoundToInt(REALY * sprctrl.yscale) + (yIncrement ? 0 : yLength), -5.0f);
-                //print("particlePosition = " + particles[particleCount].position); NEVER AGAIN
                 particles[particleCount].startColor = c;
                 particles[particleCount].startSize = 1; // we have to assume a square aspect ratio for pixels here
                 particles[particleCount].remainingLifetime = yFrac * 1.5f + UnityEngine.Random.value * 0.3f;

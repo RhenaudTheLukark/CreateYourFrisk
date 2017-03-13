@@ -22,15 +22,12 @@ public class KeyframeCollection : MonoBehaviour {
     public Keyframe getCurrent() {
         if (loop == LoopMode.LOOP) {
             int index = (int)(((Time.time - registrationTime) % totalTime) / timePerFrame);
-            //print("i: "+index+"  tt: " + totalTime + "  mod: " + (Time.time-registrationTime)%totalTime);
             return keyframes[index];
         } else {
             int index = (int)((Time.time - registrationTime) / timePerFrame);
-            //print(index + " / " + keyframes.Length);
             if (index >= keyframes.Length)
                 if (loop == LoopMode.ONESHOT) return null;
                 else                          return EMPTY_KEYFRAME;
-            //print(index + " + " + timePerFrame + " + " + registrationTime + " / " + keyframes.Length);
             return keyframes[index];
         }
     }

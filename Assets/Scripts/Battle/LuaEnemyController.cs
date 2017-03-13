@@ -230,7 +230,7 @@ public class LuaEnemyController : EnemyController {
             if (spriteFile != null)
                 SetSprite(spriteFile);
             else
-                throw new InvalidOperationException("missing sprite");
+                throw new CYFException("missing sprite");
             sprite.spritename = spriteFile.ToLower();
 
             ui = FindObjectOfType<UIController>();
@@ -291,11 +291,12 @@ public class LuaEnemyController : EnemyController {
     }
 
     protected override void HandleCustomCommand(string command) {
-        //print(command);
         TryCall("HandleCustomCommand", new DynValue[] { DynValue.NewString(command) });
     }
 
     public void SetSprite(string filename) {
+        if (filename == null)
+            throw new CYFException("The enemy's sprite can't be nil!");
         SpriteUtil.SwapSpriteFromFile(this, filename);
         sprite.spritename = filename.ToLower();
     }
@@ -355,7 +356,6 @@ public class LuaEnemyController : EnemyController {
     public void Move(float x, float y, bool bindToArena = false) {
         if (!canMove)
             return;
-        //print(GetComponent<RectTransform>().position);
         GetComponent<RectTransform>().position = new Vector2(GetComponent<RectTransform>().position.x + x, GetComponent<RectTransform>().position.y + y);
     }
 
@@ -377,7 +377,7 @@ public class LuaEnemyController : EnemyController {
         } else {
             foreach (LuaEnemyController luaec in GameObject.FindObjectsOfType<LuaEnemyController>())
                 if (luaec.transform.parent.name == "arena_container" && luaec.index <= index && 
-                    ((isUnderArena && luaec.transform.GetSiblingIndex() < GameObject.Find("arena_border_outer").transform.GetSiblingIndex()) || !isUnderArena))  count++;
+                    ((isUnderArena && luaec.transform.GetSiblingIndex() < GameObject.Find("arena_border_outer").transform.GetSiblingIndex()) ||!isUnderArena))  count++;
             if (!isUnderArena) count++;
             transform.SetParent(GameObject.Find("arena_container").transform, true);
         }
@@ -391,7 +391,7 @@ public class LuaEnemyController : EnemyController {
             script.SetVar("posx", DynValue.NewNumber(GetComponent<RectTransform>().position.x));
             script.SetVar("posy", DynValue.NewNumber(GetComponent<RectTransform>().position.y));
         } catch { }
-        if (!ArenaManager.instance.firstTurn && !canMove) {
+        if (!ArenaManager.instance.firstTurn &&!canMove) {
             canMove = true;
             script.SetVar("canmove", DynValue.NewBoolean(true));
         }

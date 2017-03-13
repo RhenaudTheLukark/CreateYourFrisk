@@ -13,7 +13,7 @@ public class TPHandler : MonoBehaviour {
     private Collider2D objectC2D;       //This object's Collider2D
     private Fading blackFont;           //The fading animation
     private bool playOnce = false;      //Used to play the music only once
-    private bool activated = false;     //Checks if we're already in a TP
+    public bool activated = false;     //Checks if we're already in a TP
     private bool uduu;                  //You'll see it
     private GameObject blackPic;        //A black picture
 
@@ -29,6 +29,7 @@ public class TPHandler : MonoBehaviour {
         blackFont = blackPic.GetComponent<Fading>();
     }
 
+    
     void OnTriggerEnter2D(Collider2D col) {
         if (!activated && col == playerC2D) {
             PlayerOverworld.inText = true;  //UnitaleUtil.writeInLogAndDebugger("TPDetected true");
@@ -45,19 +46,19 @@ public class TPHandler : MonoBehaviour {
     IEnumerator launchTP() {
         switch (GlobalControls.uduu) {
             case 0:
-                if (gameObject.name == "TP Up Right")      GlobalControls.uduu ++;
+                if (gameObject.name == "TP Up Right") GlobalControls.uduu++;
                 break;
             case 1:
-                if (gameObject.name == "TP Down Right")    GlobalControls.uduu ++;
-                else                                       GlobalControls.uduu = 0;
+                if (gameObject.name == "TP Down Right") GlobalControls.uduu++;
+                else GlobalControls.uduu = 0;
                 break;
             case 2:
-                if (gameObject.name == "TP Up Right")      GlobalControls.uduu++;
-                else                                       GlobalControls.uduu = 0;
+                if (gameObject.name == "TP Up Right") GlobalControls.uduu++;
+                else GlobalControls.uduu = 0;
                 break;
             case 3:
-                if (gameObject.name == "TP Up Right")      GlobalControls.uduu++;
-                else                                       GlobalControls.uduu = 0;
+                if (gameObject.name == "TP Up Right") GlobalControls.uduu++;
+                else GlobalControls.uduu = 0;
                 break;
             default:
                 if (gameObject.name == "TP Up Left")
@@ -68,7 +69,7 @@ public class TPHandler : MonoBehaviour {
         uduu2 = GlobalControls.uduu;
         float fadeTime = blackFont.BeginFade(1);
         yield return new WaitForSeconds(fadeTime);
-        
+
         Animator anim = GameObject.Find("Player").GetComponent<Animator>();
         if (anim) {
             GameObject.Find("Player").GetComponent<PlayerOverworld>().forcedAnim = true;
@@ -123,8 +124,10 @@ public class TPHandler : MonoBehaviour {
             sceneName = "Secret";
         }
         SceneManager.LoadScene(sceneName);
-        GlobalControls.fadeAuto = true;
-        
+        StartCoroutine(GameObject.FindObjectOfType<TransitionOverworld>().GetIntoDaMap("tphandler", new object[] { position, this }));
+    }
+
+    /*public IEnumerator GetIntoDaMap() {        
         Transform playerPos = GameObject.Find("Player").GetComponent<Transform>();
         playerPos.position = new Vector2 (position.x, position.y);
 
@@ -186,8 +189,8 @@ public class TPHandler : MonoBehaviour {
 
         yield return new WaitForSeconds(fadeTime2);
 
-        playOnce = activated = GlobalControls.fadeAuto = false;
+        playOnce = activated = false; //GlobalControls.fadeAuto = false;
 
         GameObject.Destroy(gameObject);
-    }
+    }*/
 }

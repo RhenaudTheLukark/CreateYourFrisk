@@ -1,0 +1,99 @@
+A CYF font is not that hard to create, you only have to know little tricks to make a new
+font easily :P
+
+If you haven't moved this file, you're actually in Default/Sprites/UI/Fonts/, so to create
+a new font, you'll need to recreate that architecture on your mod: your font has to be 
+located in YOURMOD/Sprites/UI/Fonts/ in order to work.
+
+First of all, a font has two files: 
+- A PNG file that stores the letters that you'll use for the font,
+- A XML file that'll "map" the PNG file to know where the letters are.
+
+
+The first step to create your own font is to put all your characters in a big png file.
+I'd recommend you to put at least one pixel between the characters for more readability
+and to order the characters: don't follow the examples here, all the letters are mixed up
+and it's hard to decode it!
+Don't forget that the letters have to be white and that the font will be transparent.
+Plus, the font must have an even height, as the space between lines will be computed 
+will be equal to the space's height x 1.5. 
+Here is an example to show you what you should have. However, don't mind the back font, 
+it's just here to see where the letters are:
+https://cdn.discordapp.com/attachments/147063257436258305/287693398947921922/unknown.png
+
+
+When this will be done, you'll get into the real thing: the XML file. 
+We'll first look at monster.xml's architecture:
+https://cdn.discordapp.com/attachments/147063257436258305/287692796096413696/unknown.png
+
+That's a lot of things in here, the file seems to be always the same excepted the beginning.
+If you don't know what XML is, I greatly recommend you to look at a tutorial about that.
+You can do it without that, but knowing what you're about to do is always a good thing.
+Tutorial link: https://www.w3schools.com/xml/
+
+So, supposing that you have a minimum of knowledge in XML, we can see several nodes:
+- <font> = It's the main XML node, every XML file needs one, don't change it.
+- <voice> = Default voice used by the font. Overridden by the monster's voice and the 
+[voice] text command. 
+Default value: uifont for encounter fonts, monsterfont for monster fonts.
+- <charspacing> = Pixels between each character, horizontally. Default value: 3
+- <linespacing> = Pixels between each line, vertically.
+Default value: The space's height x 1.5.
+- <color> = Default color of the font. Must be set.
+Default value: ffffff for encounter fonts, 000000 for monster fonts.
+- <spritesheet> = This is where all your letters will be stored. Continue to see how to 
+include letters into your XML!
+- <sprite> = A letter value. You must set its name as the letter that you'll input.
+Some characters can't be entered like this, so here are their "replacement" key:
+    - '/' => "slash"
+    - '.' => "dot"
+    - '\' => "backslash"
+    - ':' => "colon"
+    - '?' => "questionmark"
+    - '"' => "doublequote"
+    - '*' => "asterisk"
+    - ' ' => "space"
+    - '<' => "lt"
+    - '>' => "rt"
+    - '&' => "ampersand"
+I believe that some of them are not necessary. If you find some of these characters 
+that can be used without this replacement key, please tell me so that I can update the 
+tutorial!
+- <rect> = The rectangle of the letter. Explications below.
+- <border> = The shift of the letter. Explications below.
+
+
+For each letter, you'll need to take the position in pixels of the bottom left 
+corner of the letter from the bottom left corner of the image.
+Look at the example link to see how you can map a "W":
+
+https://cdn.discordapp.com/attachments/122029647272607745/287685067755618304/unknown.png
+Here, you can see that x = "22" and y = "62".
+
+https://cdn.discordapp.com/attachments/122029647272607745/287685428948107274/unknown.png
+Here, w = "8" and "z" = "12".
+
+So, the result of this data will lead to this:
+    <sprite name="W">
+        <rect x="22" y="62" w="8" h="12"/>
+    </sprite>
+
+However, for some letters like the "q", you'll need them to not be aligned with the other 
+letters but to go a bit lower or upper...
+To do this you can use <border>! Only use the x and y values of <border>, I wouldn't 
+trust the other values if I were you :P
+
+Be aware though! The coordinates are not used the same way as for sprites and all!
+x => +x = right, -x = left
+y => +y = DOWN, -y = UP 
+
+After that, here is the code for the "q" of the monster font:
+    <sprite name="q">
+        <rect x="65" y="111" w="8" h="9"/>
+        <border x="0" y="1" z="0" w="0"/>
+    </sprite>
+
+
+And all that you'll need to do is to do the same with all the other characters!
+It's tedious, but at the end you'll have a brand new font to use for your own project :P
+Enjoy! ^^

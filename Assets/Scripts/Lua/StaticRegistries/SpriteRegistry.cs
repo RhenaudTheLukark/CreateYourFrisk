@@ -32,7 +32,10 @@ public static class SpriteRegistry {
         if (dict.ContainsKey(key))              return dict[key];
         else if (dictMod.ContainsKey(key))      dict[key] = SpriteUtil.fromFile(dictMod[key].FullName);
         else if (dictDefault.ContainsKey(key))  dict[key] = SpriteUtil.fromFile(dictDefault[key].FullName);
-        else                                    return null;
+        else {
+            //UnitaleUtil.writeInLogAndDebugger("[WARN]The sprite file \"" + key + "\" doesn't exist.");
+            return null;
+        }
         return dict[key];
     }
 
@@ -74,7 +77,7 @@ public static class SpriteRegistry {
             Sprite temp;
             dict.TryGetValue(imageName, out temp);
 
-            if (dict.ContainsKey(imageName) && temp == SpriteUtil.fromFile(file.FullName) && !mod)
+            if (dict.ContainsKey(imageName) && temp == SpriteUtil.fromFile(file.FullName) &&!mod)
                 continue;
             else if (dict.ContainsKey(imageName))
                 dict.Remove(imageName);

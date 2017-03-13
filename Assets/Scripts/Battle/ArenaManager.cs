@@ -38,9 +38,9 @@ public class ArenaManager : MonoBehaviour {
     private void Awake() {
         // unlike the player we really dont want this on two components at the same time
         if (instance != null)
-            throw new InvalidOperationException("Currently, the ArenaManager may only be attached to one object.");
+            throw new CYFException("Currently, the ArenaManager may only be attached to one object.");
 
-        inner = GameObject.FindObjectOfType<FightUIController>().transform.parent.GetComponent<RectTransform>();
+        inner = GameObject.Find("arena").GetComponent<RectTransform>();
         outer = inner.parent.GetComponent<RectTransform>();
         /*outer = GameObject.Find("arena_border_outer").GetComponent<RectTransform>();
         inner = GameObject.Find("arena").GetComponent<RectTransform>();*/
@@ -54,9 +54,12 @@ public class ArenaManager : MonoBehaviour {
 
     private void LateStart() {
         try {
-            /*inner = GameObject.FindObjectOfType<FightUIController>().transform.parent.GetComponent<RectTransform>();
-            outer = inner.parent.GetComponent<RectTransform>();*/
-            arenaAbs = new Rect(inner.position.x - inner.rect.width / 2, inner.position.y - inner.rect.height / 2, inner.rect.width, inner.rect.height);
+            if (inner == null || outer == null) {
+                UnitaleUtil.writeInLogAndDebugger(outer == null && inner == null ? "outer & inner = null" : (outer == null ? "outer == null" : "inner == null"));
+                inner = GameObject.Find("arena").GetComponent<RectTransform>();
+                outer = inner.parent.GetComponent<RectTransform>();
+            }
+            arenaAbs = new Rect(inner.position.x - inner.sizeDelta.x / 2, inner.position.y - inner.sizeDelta.y / 2, inner.rect.width, inner.rect.height);
             arenaCenter = RTUtil.AbsCenterOf(inner);
             newX = currentX = 320;
             newY = currentY = 90;
@@ -242,7 +245,7 @@ public class ArenaManager : MonoBehaviour {
                 if (!nope)
                     falseInit = true;
             }
-            if (yup)       firstTurn = false;
+            if (yup)        firstTurn = false;
             if (falseInit)  yup = true;
             return;
         }
@@ -310,8 +313,8 @@ public class ArenaManager : MonoBehaviour {
         if (!firstTurn) {
             outer.position = new Vector2(arenaX, arenaY);
             outer.localPosition = new Vector3(outer.localPosition.x, outer.localPosition.y, 0);
-            arenaAbs.x = inner.position.x - inner.rect.width / 2;
-            arenaAbs.y = inner.position.y - inner.rect.height / 2;
+            arenaAbs.x = inner.position.x - inner.sizeDelta.x / 2;
+            arenaAbs.y = inner.position.y - inner.sizeDelta.y / 2;
         }
         arenaAbs.width = inner.rect.width;
         arenaAbs.height = inner.rect.height;

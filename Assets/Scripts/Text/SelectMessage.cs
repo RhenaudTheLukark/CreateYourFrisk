@@ -14,14 +14,14 @@ public class SelectMessage : TextMessage {
 
         // If there is no option, there is an error somewhere : Let's create it then by throwing an ArgumentException
         if (options.Length == 0)
-            throw new ArgumentException("Can't create a text message for zero options.");
+            throw new CYFException("Can't create a text message for zero options.");
 
         // For each option...
         for (int i = 0; i < options.Length; i++) {
             string intermedPrefix = "";
             string intermedSuffix = "";
             // If the option isn't null, has an existing color and this color isn't null or empty, we'll add the color as a prefix and put a white color tag as a suffix
-            if (colorPrefixes != null && i < colorPrefixes.Length && !String.IsNullOrEmpty(colorPrefixes[i])) {
+            if (colorPrefixes != null && i < colorPrefixes.Length &&!String.IsNullOrEmpty(colorPrefixes[i])) {
                 intermedPrefix = colorPrefixes[i];
                 intermedSuffix = "[color:ffffff]";
             }

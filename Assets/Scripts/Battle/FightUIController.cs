@@ -207,7 +207,7 @@ public class FightUIController : MonoBehaviour {
             } else if (boundFightUiInstances.Count != 0) {
                 bool pass = true;
                 for (int i = 0; i < boundFightUiInstances.Count; i++)
-                    if (!(boundFightUiInstances[i].slice.animcomplete && !boundFightUiInstances[i].slice.keyframes.enabled && stopped && boundFightUiInstances[i].waitingToFade)) {
+                    if (!(boundFightUiInstances[i].slice.animcomplete &&!boundFightUiInstances[i].slice.keyframes.enabled && stopped && boundFightUiInstances[i].waitingToFade)) {
                         pass = false;
                         break;
                     }

@@ -9,7 +9,6 @@ public class RotatingEffect : TextEffect {
     public RotatingEffect(TextManager textMan, float intensity = 1.5f) : base(textMan) { this.intensity = intensity; }
 
     protected override void updateInternal() {
-        List<Letter> letters = textMan.letters;
         for (int i = 0; i < textMan.letterReferences.Length; i++) {
             if (textMan.letterReferences[i] == null)
                 continue;

@@ -46,7 +46,7 @@ public class LuaTextManager : TextManager {
                     } else
                         countFrames++;
             }
-            if (canSkip() && !lineComplete() && GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED)
+            if (canSkip() &&!lineComplete() && GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED)
                 skipLine();
         }
     }
@@ -66,7 +66,7 @@ public class LuaTextManager : TextManager {
         get { return progress.ToString(); }
         set {
             try { progress = (ProgressMode)Enum.Parse(typeof(ProgressMode), value.ToUpper()); } 
-            catch { throw new ScriptRuntimeException("text.progressmode can only have either \"AUTO\", \"MANUAL\" or \"NONE\", but you entered \"" + value.ToUpper() + "\"."); }
+            catch { throw new CYFException("text.progressmode can only have either \"AUTO\", \"MANUAL\" or \"NONE\", but you entered \"" + value.ToUpper() + "\"."); }
         }
     }
 
@@ -97,16 +97,16 @@ public class LuaTextManager : TextManager {
         set {
             Transform parent = container.transform.parent;
             try { container.transform.SetParent(GameObject.Find(value + "Layer").transform); } 
-            catch { throw new ScriptRuntimeException("The layer \"" + value + "\" doesn't exist."); }
+            catch { throw new CYFException("The layer \"" + value + "\" doesn't exist."); }
         }
     }
 
     public void SetText(DynValue text) {
         TextMessage[] msgs = null;
         if (text == null)
-            throw new ScriptRuntimeException("In Text.SetText: the text argument must be a non-empty array.");
+            throw new CYFException("In Text.SetText: the text argument must be a non-empty array.");
         if (text.Type != DataType.Table)
-            throw new ScriptRuntimeException("In Text.SetText: the text argument must be a non-empty array.");
+            throw new CYFException("In Text.SetText: the text argument must be a non-empty array.");
 
         msgs = new TextMessage[text.Table.Length];
         for (int i = 0; i < text.Table.Length; i++)
@@ -133,7 +133,7 @@ public class LuaTextManager : TextManager {
     public void SetFont(string fontName) {
         UnderFont uf = SpriteFontRegistry.Get(fontName);
         if (uf == null)
-            throw new ScriptRuntimeException("The font \"" + fontName + "\" doesn't exist.\nYou should check if you haven't made a typo or if the font really is in your mod.");
+            throw new CYFException("The font \"" + fontName + "\" doesn't exist.\nYou should check if you haven't made a typo or if the font really is in your mod.");
         setFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_DAMAGETEXT_NAME));
     }
 
@@ -159,7 +159,7 @@ public class LuaTextManager : TextManager {
                 break;
 
             default:
-                throw new ScriptRuntimeException("The effect \"" + effect + "\" doesn't exist.\nYou can only choose between \"none\", \"twitch\", \"shake\" and \"rotate\".");
+                throw new CYFException("The effect \"" + effect + "\" doesn't exist.\nYou can only choose between \"none\", \"twitch\", \"shake\" and \"rotate\".");
         }
     }
 
@@ -175,7 +175,7 @@ public class LuaTextManager : TextManager {
     public void SetSpeechThingPositionAndSide(string side, DynValue position) {
         bubbleLastVar = position;
         try { bubbleSide = side != null ? (BubbleSide)Enum.Parse(typeof(BubbleSide), side.ToUpper()) : BubbleSide.NONE; } 
-        catch { throw new ScriptRuntimeException("The speech thing can only take \"RIGHT\", \"DOWN\" ,\"LEFT\" ,\"UP\" or \"NONE\" as value, but you entered \"" + side.ToUpper() + "\"."); }
+        catch { throw new CYFException("The speech thing can only take \"RIGHT\", \"DOWN\" ,\"LEFT\" ,\"UP\" or \"NONE\" as value, but you entered \"" + side.ToUpper() + "\"."); }
 
         if (bubbleSide != BubbleSide.NONE) {
             speechThing.gameObject.SetActive(true);
@@ -206,16 +206,16 @@ public class LuaTextManager : TextManager {
                             float percentage = Mathf.Clamp01(ParseUtil.getFloat(str.Replace("%", "")) / 100);
                             speechThing.localPosition = speechThingShadow.localPosition = new Vector2(isSide ? otherShift : 10 + Mathf.Round(percentage * size) - shift,
                                                                                                       isSide ? 10 + Mathf.Round(percentage * size) - shift : otherShift);
-                        } catch { throw new ScriptRuntimeException("If you use a '%' in your string, you should only have a number with it."); }
+                        } catch { throw new CYFException("If you use a '%' in your string, you should only have a number with it."); }
                     } else
-                        throw new ScriptRuntimeException("You need to use a '%' in order to exploit the string.");
+                        throw new CYFException("You need to use a '%' in order to exploit the string.");
                     /*else {
                         str = str.Replace("middle", "0").Replace("top", (size / 2).ToString());
                         try {
                             float f = ParseUtil.getFloat(str);
                             speechThing.localPosition = speechThingShadow.localPosition = new Vector2(isSide ? otherShift : Mathf.Clamp(f + shift, -size / 2 + 10, size / 2 - 10),
                                                                                                       isSide ? Mathf.Clamp(f + shift, -size / 2 + 10, size / 2 - 10) : otherShift);
-                        } catch { throw new ScriptRuntimeException("The only keywords are \"middle\" and \"top\", but you entered \"" + position.String + "\"."); }
+                        } catch { throw new CYFException("The only keywords are \"middle\" and \"top\", but you entered \"" + position.String + "\"."); }
                     }*/
                 }
             }

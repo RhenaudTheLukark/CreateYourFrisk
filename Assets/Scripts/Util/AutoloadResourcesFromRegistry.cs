@@ -32,6 +32,7 @@ class AutoloadResourcesFromRegistry : MonoBehaviour {
 
     void OnEnable() {
         StaticInits.Loaded += LateStart;
+        Fading.StartFade += LateStart;
         foreach (AutoloadResourcesFromRegistry a in FindObjectsOfType<AutoloadResourcesFromRegistry>())
             if (a.done) {
                 LateStart();
@@ -39,7 +40,10 @@ class AutoloadResourcesFromRegistry : MonoBehaviour {
             }
     }
 
-    void OnDisable() { StaticInits.Loaded -= LateStart; }
+    void OnDisable() {
+        StaticInits.Loaded -= LateStart;
+        Fading.StartFade -= LateStart;
+    }
 
     /*void LateStart() {
         if (!done) {
@@ -73,7 +77,7 @@ class AutoloadResourcesFromRegistry : MonoBehaviour {
                     if (img2 != null)
                         img2.sprite = SpriteRegistry.Get(SpritePath);
                     else
-                        throw new InvalidOperationException("The GameObject " + gameObject.name + " doesn't have an Image or SpriteRenderer component.");
+                        throw new CYFException("The GameObject " + gameObject.name + " doesn't have an Image or SpriteRenderer component.");
                     if (SetNativeSize)
                         if (!GameObject.FindObjectOfType<TextManager>().overworld) {
                             img2.GetComponent<RectTransform>().sizeDelta = new Vector2(img2.sprite.texture.width, img2.sprite.texture.height);
@@ -100,7 +104,7 @@ class AutoloadResourcesFromRegistry : MonoBehaviour {
     }*/
 
     void LateStart() {
-        if ((!done && this.handleDictErrors) || (!doneFromLoadedScene && !this.handleDictErrors)) {
+        if ((!done && this.handleDictErrors) || (!doneFromLoadedScene &&!this.handleDictErrors)) {
             if (!done && this.handleDictErrors)
                 done = true;
             else
@@ -148,7 +152,7 @@ class AutoloadResourcesFromRegistry : MonoBehaviour {
                         }
                     }
                 } else
-                    throw new InvalidOperationException("The GameObject " + gameObject.name + " doesn't have an Image or SpriteRenderer component.");
+                    throw new CYFException("The GameObject " + gameObject.name + " doesn't have an Image or SpriteRenderer component.");
 
                 ParticleSystem psys = GetComponent<ParticleSystem>();
                 if (psys != null) {
@@ -160,7 +164,7 @@ class AutoloadResourcesFromRegistry : MonoBehaviour {
             if (!string.IsNullOrEmpty(SoundPath)) {
                 AudioSource aSrc = GetComponent<AudioSource>();
                 aSrc.clip = AudioClipRegistry.Get(SoundPath);
-                /*if (aSrc.clip == null && handleDictErrors) { //TODO: Need to fix "slice not existing"
+                /*if (aSrc.clip == null && handleDictErrors) {
                     UnitaleUtil.displayLuaError("AutoloadResourcesFromRegistry", "You tried to load the music \"" + SoundPath + "\", but it doesn't exist.");
                     return;
                 }*/
@@ -170,7 +174,7 @@ class AutoloadResourcesFromRegistry : MonoBehaviour {
 
 
             /* TODO: Make so AnimatorControllers can be loaded from a file
-            if (gameObject.GetComponent<Animator>() && !string.IsNullOrEmpty(AnimatorPath))
+            if (gameObject.GetComponent<Animator>() &&!string.IsNullOrEmpty(AnimatorPath))
                 LoadAnimatorController();*/
         }
     }

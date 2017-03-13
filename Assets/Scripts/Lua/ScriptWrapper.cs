@@ -5,6 +5,7 @@ using System;
 public class ScriptWrapper {
     public Script script;
     public string scriptname = "???";
+    public string text = "";
 
     public DynValue this[string key] {
         get { return this.GetVar(key); }
@@ -14,7 +15,9 @@ public class ScriptWrapper {
     public ScriptWrapper(bool overworld = false) {
         script = LuaScriptBinder.boundScript(overworld);
         this.Bind("_getv", (Func<Script, string, DynValue>)this.GetVar);
-        script.DoString("setmetatable({}, {__index=function(t, name) return _getv(name); end})");
+        string toDoString = "setmetatable({}, {__index=function(t, name) return _getv(name) end}) ";
+        text = toDoString;
+        script.DoString(toDoString);
     }
 
     internal DynValue DoString(string source) { return script.DoString(source); }
@@ -37,7 +40,7 @@ public class ScriptWrapper {
 
     public DynValue Call(Script caller, string function, DynValue[] args = null, bool checkExist = false) {
         if (script.Globals[function] == null || script.Globals.Get(function) == null) {
-            if (checkExist && !GlobalControls.retroMode)
+            if (checkExist &&!GlobalControls.retroMode)
                 UnitaleUtil.displayLuaError(scriptname, "Attempted to call the function " + function + " but it didn't exist.");
             //Debug.LogWarning("Attempted to call the function " + function + " but it didn't exist.");
             return DynValue.Nil;
@@ -49,16 +52,25 @@ public class ScriptWrapper {
                 if (args[0].Type == DataType.Table && args.Length == 1) {
                     DynValue[] argsNew = UnitaleUtil.TableToDynValueArray(args[0].Table);
                     try { d = script.Call(script.Globals[function], argsNew); } 
-                    catch (InterpreterException ex) { UnitaleUtil.displayLuaError(scriptname, ex.DecoratedMessage); }
-                    catch (Exception ex) { Debug.LogError(ex.Message); }
-                } else if (e.GetType() == typeof(ScriptRuntimeException))
-                    UnitaleUtil.displayLuaError(scriptname, ((ScriptRuntimeException)e).DecoratedMessage);
+                    catch (InterpreterException ex) { UnitaleUtil.displayLuaError(scriptname, ex.DecoratedMessage); } 
+                    catch (Exception ex) {
+                        if (!GlobalControls.retroMode)
+                            UnitaleUtil.displayLuaError(scriptname + ", calling the function " + function, "This is a " + ex.GetType() + " error. Contact the dev and show him this screen, this must be an engine-side error.\n\n" + ex.Message + "\n\n" + ex.StackTrace + "\n");
+                    }
+                } else if (e.GetType() == typeof(InterpreterException) || e.GetType().BaseType == typeof(InterpreterException) || e.GetType().BaseType.BaseType == typeof(InterpreterException))
+                    UnitaleUtil.displayLuaError(scriptname, ((InterpreterException)e).DecoratedMessage);
+                else if (!GlobalControls.retroMode)
+                    UnitaleUtil.displayLuaError(scriptname + ", calling the function " + function, "This is a " + e.GetType() + " error. Contact the dev and show him this screen, this must be an engine-side error.\n\n" + e.Message + "\n\n" + e.StackTrace + "\n");
             }
             return d;
         } else {
             DynValue d = DynValue.Nil;
             try { d = script.Call(script.Globals[function]); } 
-            catch (InterpreterException ex) { UnitaleUtil.displayLuaError(scriptname, ex.DecoratedMessage); }
+            catch (InterpreterException ex) { UnitaleUtil.displayLuaError(scriptname, ex.DecoratedMessage); } 
+            catch (Exception ex) {
+                if (!GlobalControls.retroMode)
+                    UnitaleUtil.displayLuaError(scriptname + ", calling the function " + function, "This is a " + ex.GetType() + " error. Contact the dev and show him this screen, this must be an engine-side error.\n\n" + ex.Message + "\n\n" + ex.StackTrace + "\n");
+            }
             return d;
         }
     }
@@ -73,8 +85,8 @@ public class ScriptWrapper {
             EventManager em = GameObject.Find("Main Camera OW").GetComponent<EventManager>();
             //I have to keep the type only, I don't need the script where it belongs (it would not work if I don't do this)
             if (func.GetType().ToString().Split('+')[1] == typeof(Action<DynValue, DynValue, DynValue, DynValue, DynValue, DynValue, DynValue, DynValue, DynValue, DynValue>).ToString().Split('+')[1])
-                script.Globals[key] = (Action<DynValue, DynValue, DynValue, DynValue, DynValue, DynValue, DynValue, DynValue, DynValue, DynValue>)((v1, v2, v3, v4, v5, v6, v7, v8, v9, v10) 
-                                       => em.AddToDoListByText(key, new DynValue[] { v1, v2, v3, v4, v5, v6, v7, v8, v9, v10 } ));
+                script.Globals[key] = (Action<DynValue, DynValue, DynValue, DynValue, DynValue, DynValue, DynValue, DynValue, DynValue, DynValue>)
+                                      ((v1, v2, v3, v4, v5, v6, v7, v8, v9, v10) => em.FunctionLauncher(key, new DynValue[] { v1, v2, v3, v4, v5, v6, v7, v8, v9, v10 } ));
         } catch { }
     }
 

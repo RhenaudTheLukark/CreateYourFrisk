@@ -1,4 +1,4 @@
-﻿#if !UNITY_WEBPLAYER
+﻿#if!UNITY_WEBPLAYER
 // Note: This parital class is not compiled in for WebPlayer builds.
 // The Unity Webplayer is deprecated. If you *must* use it then make sure Tiled2Unity assets are imported via another build target first.
 using System;
@@ -108,10 +108,51 @@ namespace Tiled2Unity
             return GetStringAsEnum<T>(enumString);
         }
 
-
         public static string GetAttributeAsFullPath(XElement elem, string attrName)
         {
-            return Path.GetFullPath(elem.Attribute(attrName).Value);
+            return System.IO.Path.GetFullPath(elem.Attribute(attrName).Value);
+        }
+
+        public static Color GetAttributeAsColor(XElement elem, string attrName)
+        {
+            string htmlColor = GetAttributeAsString(elem, attrName);
+
+            // Sometimes Tiled saves out color without the leading # but we expect it to be there
+            if (!htmlColor.StartsWith("#"))
+            {
+                htmlColor = "#" + htmlColor;
+            }
+
+            if (htmlColor.Length == 9)
+            {
+                // ARBG
+                byte a = byte.Parse(htmlColor.Substring(1, 2), System.Globalization.NumberStyles.HexNumber);
+                byte r = byte.Parse(htmlColor.Substring(3, 2), System.Globalization.NumberStyles.HexNumber);
+                byte g = byte.Parse(htmlColor.Substring(5, 2), System.Globalization.NumberStyles.HexNumber);
+                byte b = byte.Parse(htmlColor.Substring(7, 2), System.Globalization.NumberStyles.HexNumber);
+                return new Color32(r, g, b, a);
+            }
+            else if (htmlColor.Length == 7)
+            {
+                // RBA
+                byte r = byte.Parse(htmlColor.Substring(1, 2), System.Globalization.NumberStyles.HexNumber);
+                byte g = byte.Parse(htmlColor.Substring(3, 2), System.Globalization.NumberStyles.HexNumber);
+                byte b = byte.Parse(htmlColor.Substring(5, 2), System.Globalization.NumberStyles.HexNumber);
+                return new Color32(r, g, b, 255);
+            }
+
+            // If we're here then we've got a bad color format. Just return an ugly color.
+            return Color.magenta;
+        }
+
+        public static Color GetAttributeAsColor(XElement elem, string attrName, Color defaultValue)
+        {
+            XAttribute attr = elem.Attribute(attrName);
+            if (attr == null)
+            {
+                return defaultValue;
+            }
+            return GetAttributeAsColor(elem, attrName);
         }
 
         public static void ReadyToWrite(string path)
@@ -125,6 +166,24 @@ namespace Tiled2Unity
             {
                 throw new UnityException(String.Format("{0} is read-only", path));
             }
+        }
+
+        // From: http://answers.unity3d.com/questions/24929/assetdatabase-replacing-an-asset-but-leaving-refer.html
+        public static T CreateOrReplaceAsset<T>(T asset, string path) where T : UnityEngine.Object
+        {
+            T existingAsset = (T)AssetDatabase.LoadAssetAtPath(path, typeof(T));
+
+            if (existingAsset == null)
+            {
+                AssetDatabase.CreateAsset(asset, path);
+                existingAsset = asset;
+            }
+            else
+            {
+                EditorUtility.CopySerialized(asset, existingAsset);
+            }
+
+            return existingAsset;
         }
 
         public static byte[] Base64ToBytes(string base64)

@@ -108,6 +108,11 @@ namespace Tiled2Unity
 
         private void Update()
         {
+            UpdateSpriteDepth();
+        }
+
+        public void UpdateSpriteDepth()
+        {
             var orientation = this.AttachedMap.Orientation;
             bool isStaggered = this.AttachedMap.AreTilesStaggered();
             float tileHeight = this.AttachedMap.TileHeight;

@@ -137,6 +137,7 @@ MonoBehaviour:
   position: {x: 240, y: 200}
   uduu2: 0
   direction: 6
+  activated: 0
 --- !u!50 &43529140
 Rigidbody2D:
   serializedVersion: 4
@@ -475,6 +476,7 @@ MonoBehaviour:
   position: {x: 60, y: 880}
   uduu2: 0
   direction: 6
+  activated: 0
 --- !u!50 &1101070595
 Rigidbody2D:
   serializedVersion: 4
@@ -694,6 +696,7 @@ MonoBehaviour:
   SpritePath: Overworld/Bpie
   Loop: 0
   SoundPath: 
+  AnimatorPath: 
   done: 0
 --- !u!1 &1174268683
 GameObject:
@@ -741,6 +744,7 @@ MonoBehaviour:
   position: {x: 40, y: 240}
   uduu2: 0
   direction: 6
+  activated: 0
 --- !u!50 &1174268686
 Rigidbody2D:
   serializedVersion: 4
@@ -877,6 +881,7 @@ MonoBehaviour:
   SpritePath: Overworld/Save1
   Loop: 0
   SoundPath: 
+  AnimatorPath: 
   done: 0
 --- !u!1 &1534585418
 GameObject:

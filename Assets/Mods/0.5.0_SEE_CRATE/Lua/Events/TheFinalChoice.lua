@@ -2,10 +2,8 @@ function EventPage1()
     Wait(30)
     CenterEventOnCamera("TheFinalChoice", 2, true)
     Wait(30)
-    GetSpriteOfEvent("TheFinalChoice")
-	if GetRealGlobal("GetSpriteOfEventTheFinalChoice") != null then
-	    GetRealGlobal("GetSpriteOfEventTheFinalChoice").Set("Punderbolt/PunderLeft1")
-	end
+    local sprite = GetSpriteOfEvent("TheFinalChoice")
+	sprite.Set("Punderbolt/PunderLeft1")
     Wait(30)
 	SetDialog({"[voice:punderbolt]Oh! There you are!"}, true, {"pundermug"})
 	SetEventPage("TheFinalChoice", -1)

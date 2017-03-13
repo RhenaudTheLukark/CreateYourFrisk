@@ -1,0 +1,11 @@
+Plan d'attaque:
+
+Launch event
+No text, direct compilation
+In a C# coroutine: (IEnumerator) 
+    Launch compilation lua code in another coroutine (coroutine.create(), coroutine.resume())
+	While the coroutine is running:
+		Launch the event in map (Action/Func?) ???
+	    "Stop" the lua coroutine (coroutine.yield())
+		If needed, store the return value in another value
+		"Relaunch" the lua coroutine (coroutine.resume())  ???

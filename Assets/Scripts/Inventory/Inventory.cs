@@ -95,7 +95,7 @@ public static class Inventory {
                         container.RemoveAt(ID);
                     else
                         usedItemNoDelete = false;
-                    if ((type == 1 || type == 2) && mess.Length != 0 && !UIController.instance.battleDialogued)
+                    if ((type == 1 || type == 2) && mess.Length != 0 &&!UIController.instance.battleDialogued)
                         UIController.instance.ActionDialogResult(mess, UIController.UIState.ENEMYDIALOGUE);
                     return;
                 }
@@ -252,7 +252,7 @@ public static class Inventory {
                     case "Starfait": mess = new TextMessage[] { new TextMessage("[health:14]You ate the Starfait.[w:10]\nYou recovered 14 HP!", true, false) }; break;
                     case "Glamburger": mess = new TextMessage[] { new TextMessage("[health:27]You ate the Glamburger.[w:10]\nYou recovered 27 HP!", true, false) }; break;
                     case "Legendary Hero":
-                        mess = new TextMessage[] { new TextMessage("[health:40][sound:LegHero]You ate the Legendary Hero.[w:10]\nATTACK increased by 4 ![w:10]\nYou recovered 40 HP!", true, false),
+                        mess = new TextMessage[] { new TextMessage("[health:40][sound:LegHero]You ate the Legendary Hero.[w:10]\nATTACK increased by 4![w:10]\nYou recovered 40 HP!", true, false),
                                                                  new TextMessage("[music:pause][waitall:10]...[waitall:1]but for now stats\rdoesn't change.", true, false),
                                                                  new TextMessage("[noskip][music:unpause][next]", true, false)}; break;
                     case "Steak in the Shape of Mettaton's Face": mess = new TextMessage[] { new TextMessage("[health:60]You ate the Face Steak.[w:10]\nYou recovered 60 HP!", true, false) }; break;
@@ -331,7 +331,7 @@ public static class Inventory {
         }
         foreach (string str in addedItems) {
 
-            if (str == PlayerCharacter.instance.Weapon && PlayerCharacter.instance.Weapon != "Stick" && !NametoDesc.ContainsValue(str)) {
+            if (str == PlayerCharacter.instance.Weapon && PlayerCharacter.instance.Weapon != "Stick" &&!NametoDesc.ContainsValue(str)) {
                 for (int i = 0; i < container.Count; i++)
                     if (container[i].Name == "Stick") {
                         container.RemoveAt(i);
@@ -347,7 +347,7 @@ public static class Inventory {
                 //UnitaleUtil.writeInLog("The item \"" + str + "\" has been setted to the right value for Weapon.");
             }
 
-            if (str == PlayerCharacter.instance.Armor && PlayerCharacter.instance.Armor != "Bandage" && !NametoDesc.ContainsValue(str)) {
+            if (str == PlayerCharacter.instance.Armor && PlayerCharacter.instance.Armor != "Bandage" &&!NametoDesc.ContainsValue(str)) {
                 for (int i = 0; i < container.Count; i++)
                     if (container[i].Name == "Bandage") {
                         container.RemoveAt(i);

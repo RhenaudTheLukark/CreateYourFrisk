@@ -89,7 +89,7 @@ public class GameOverBehavior : MonoBehaviour {
     public void Revive() { revived = true; }
 
     public void StartDeath(string[] deathText = null, string deathMusic = null) {
-        if (!GlobalControls.modDev && !LuaEnemyEncounter.script.GetVar("revive").Boolean)
+        if (!GlobalControls.modDev &&!LuaEnemyEncounter.script.GetVar("revive").Boolean)
             SaveLoad.Load();
 
         if (SceneManager.GetActiveScene().name == "Battle") overworld = false;
@@ -128,7 +128,7 @@ public class GameOverBehavior : MonoBehaviour {
 
         /*battleContainer = new GameObject("BattleContainer");
         foreach (Transform go in UnitaleUtil.GetFirstChildren(null, false))
-            if (go.name != battleContainer.name && !go.GetComponent<LuaEnemyEncounter>() && go.name != Player.name && !go.name.Contains("AudioChannel"))
+            if (go.name != battleContainer.name &&!go.GetComponent<LuaEnemyEncounter>() && go.name != Player.name &&!go.name.Contains("AudioChannel"))
                 go.SetParent(battleContainer.transform);
         battleContainer.SetActive(false);*/
 
@@ -296,7 +296,7 @@ public class GameOverBehavior : MonoBehaviour {
                     }
                 }
                 internalTimer += Time.deltaTime; // this is actually dangerous because done can be true before everything's done if timers are modified
-            } else if (!exiting && !gameOverTxt.allLinesComplete())
+            } else if (!exiting &&!gameOverTxt.allLinesComplete())
                 // Note: [noskip] only affects the UI controller's ability to skip, so we have to redo that here.
                 if (InputUtil.Pressed(GlobalControls.input.Confirm) && gameOverTxt.lineComplete())
                     gameOverTxt.nextLine();
@@ -304,13 +304,13 @@ public class GameOverBehavior : MonoBehaviour {
             /*if (internalTimer <= breakHeartAfter) {
 
             } else {*/
-            if (reviveTextSet && !reviveText.allLinesComplete()) {
+            if (reviveTextSet &&!reviveText.allLinesComplete()) {
                 // Note: [noskip] only affects the UI controller's ability to skip, so we have to redo that here.
                 if (InputUtil.Pressed(GlobalControls.input.Confirm) && reviveText.lineComplete())
                     reviveText.nextLine();
-            } else if (reviveTextSet && !exiting) {
+            } else if (reviveTextSet &&!exiting) {
                 exiting = true;
-            } else if (internalTimerRevive >= 5.0f && !reviveTextSet && breakHeartReviveAfter) {
+            } else if (internalTimerRevive >= 5.0f &&!reviveTextSet && breakHeartReviveAfter) {
                 if (deathText != null) {
                     reviveText.setHorizontalSpacing(7);
                     List<TextMessage> text = new List<TextMessage>();
@@ -345,7 +345,7 @@ public class GameOverBehavior : MonoBehaviour {
             if (internalTimer > fluffybunsAfter) { }
 
             if (!done) { } 
-            else if (!exiting && !reviveText.allLinesComplete()) { }
+            else if (!exiting &&!reviveText.allLinesComplete()) { }
 
             if (!reviveTextSet) internalTimerRevive += Time.deltaTime;
 

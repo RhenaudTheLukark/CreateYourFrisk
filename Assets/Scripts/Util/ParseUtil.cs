@@ -12,13 +12,13 @@ public static class ParseUtil {
     public static int getInt(string s) {
         int i;
         if (int.TryParse(s, NumberStyles.Any, CultureInfo.InvariantCulture, out i))  return i;
-        else                                                                         throw new InvalidOperationException("Int parse failed : \"" + s + "\"");
+        else                                                                         throw new CYFException("Int parse failed : \"" + s + "\"");
     }
 
     public static float getFloat(string s) {
         float f;
         if (float.TryParse(s, NumberStyles.Any, CultureInfo.InvariantCulture, out f))  return f;
-        else                                                                           throw new InvalidOperationException("Float parse failed : \"" + s + "\"");
+        else                                                                           throw new CYFException("Float parse failed : \"" + s + "\"");
     }
 
     public static Color getColor(string s) {
@@ -29,6 +29,6 @@ public static class ParseUtil {
             float b = (intColor & 255) / 255.0f;
             return new Color(r, g, b);
         } else
-            throw new InvalidOperationException("Float parse failed : \"" + s + "\"");
+            throw new CYFException("Float parse failed : \"" + s + "\"");
     }
 }

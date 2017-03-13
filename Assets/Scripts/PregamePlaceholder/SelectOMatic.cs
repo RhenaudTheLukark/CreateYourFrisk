@@ -101,7 +101,7 @@ public class SelectOMatic : MonoBehaviour {
                     if (GlobalControls.retroMode) but3.GetComponentInChildren<Text>().text = "0.2.1a retrocompatibility: On";
                     else but3.GetComponentInChildren<Text>().text = "0.2.1a retrocompatibility: Off";
                     but3.onClick.AddListener(() => {
-                        GlobalControls.retroMode = !GlobalControls.retroMode;
+                        GlobalControls.retroMode =!GlobalControls.retroMode;
                         if (GlobalControls.retroMode) but3.GetComponentInChildren<Text>().text = "0.2.1a retrocompatibility: On";
                         else but3.GetComponentInChildren<Text>().text = "0.2.1a retrocompatibility: Off";
                     });
@@ -113,7 +113,7 @@ public class SelectOMatic : MonoBehaviour {
                     if (ControlPanel.instance.Safe) but4.GetComponentInChildren<Text>().text = "Safe mode: On";
                     else but4.GetComponentInChildren<Text>().text = "Safe mode: Off";
                     but4.onClick.AddListener(() => {
-                        ControlPanel.instance.Safe = !ControlPanel.instance.Safe;
+                        ControlPanel.instance.Safe =!ControlPanel.instance.Safe;
                         if (ControlPanel.instance.Safe) but4.GetComponentInChildren<Text>().text = "Safe mode: On";
                         else but4.GetComponentInChildren<Text>().text = "Safe mode: Off";
                     });

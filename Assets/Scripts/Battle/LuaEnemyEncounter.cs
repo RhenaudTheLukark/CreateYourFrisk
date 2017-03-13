@@ -64,6 +64,8 @@ internal class LuaEnemyEncounter : EnemyEncounter {
 
     [HideInInspector]public DynValue CreateProjectileAbs(Script s, string sprite, float xpos, float ypos, string layerName = "") {
         LuaProjectile projectile = (LuaProjectile)BulletPool.instance.Retrieve();
+        if (sprite == null)
+            throw new CYFException("You can't create a projectile with a nil sprite!");
         SpriteUtil.SwapSpriteFromFile(projectile, sprite);
         projectile.owner = s;
         projectile.gameObject.SetActive(true); 
@@ -115,12 +117,11 @@ internal class LuaEnemyEncounter : EnemyEncounter {
                     waves[i].DoString(ScriptRegistry.Get(ScriptRegistry.WAVE_PREFIX + nextWaves.Table.Get(i + 1).String));
                     indexes.Add(i);
                 } catch (InterpreterException ex) { UnitaleUtil.displayLuaError(nextWaves.Table.Get(i + 1).String + ".lua", ex.DecoratedMessage);
-                } catch (InvalidOperationException ex) { UnitaleUtil.displayLuaError(nextWaves.Table.Get(i + 1).String + ".lua", ex.Message);
                 } catch (Exception ex) {
-                    if (!GlobalControls.retroMode && !ScriptRegistry.dict.ContainsKey(ScriptRegistry.WAVE_PREFIX + nextWaves.Table.Get(i + 1).String))
+                    if (!GlobalControls.retroMode &&!ScriptRegistry.dict.ContainsKey(ScriptRegistry.WAVE_PREFIX + nextWaves.Table.Get(i + 1).String))
                         UnitaleUtil.displayLuaError(StaticInits.ENCOUNTER, "The wave " + nextWaves.Table.Get(i + 1).String + " doesn't exist.");
                     else
-                        UnitaleUtil.displayLuaError("somewhere", ex.Message + "\n\n" + ex.StackTrace);
+                        UnitaleUtil.displayLuaError("<UNKNOWN LOCATION>", ex.Message + "\n\n" + ex.StackTrace);
                 }
             }
             Table luaWaveTable = new Table(null);
@@ -315,7 +316,7 @@ internal class LuaEnemyEncounter : EnemyEncounter {
             }
         if (!GlobalControls.retroMode) {
             foreach (LuaProjectile p in FindObjectsOfType<LuaProjectile>())
-                if (p.gameObject.activeInHierarchy && !p.ctrl.isPersistent)
+                if (p.gameObject.activeInHierarchy &&!p.ctrl.isPersistent)
                     p.ctrl.Remove();
         } else
             foreach (LuaProjectile p in FindObjectsOfType<LuaProjectile>())

@@ -192,7 +192,7 @@ public class PlayerController : MonoBehaviour {
             rt.position = new Vector3(rt.position.x, rt.position.y, -1000);
             gameObject.GetComponent<GameOverBehavior>().StartDeath(deathText, deathMusic);
             return;
-        } else if (newhp > PlayerCharacter.instance.MaxHP * 1.5 && !actualDamage)
+        } else if (newhp > PlayerCharacter.instance.MaxHP * 1.5 &&!actualDamage)
             if (newhp > ControlPanel.instance.HPLimit)
                 HP = ControlPanel.instance.HPLimit;
             else
@@ -210,7 +210,7 @@ public class PlayerController : MonoBehaviour {
 
     public void setMaxHPShift(int shift, float invulnerabilitySeconds = 1.7f, bool set = false, bool canHeal = false) {
         invulTimer = invulnerabilitySeconds;
-        if ((PlayerCharacter.instance.MaxHP + shift <= 0 && !set) || (shift <= 0 && set)) {
+        if ((PlayerCharacter.instance.MaxHP + shift <= 0 &&!set) || (shift <= 0 && set)) {
             shift = 0;
             set = true;
             canHeal = true;

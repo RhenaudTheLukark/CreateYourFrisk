@@ -19,8 +19,7 @@ public static class SpriteUtil {
                     xmld.Load(fi.FullName);
                     if (xmld["spritesheet"] != null && "single".Equals(xmld["spritesheet"].GetAttribute("type")))
                         if (!GameObject.FindObjectOfType<TextManager>().overworld)
-                            UIController.instance.encounter.enabledEnemies[bubbleID].bubbleWideness
-                                = ParseUtil.getFloat(xmld["spritesheet"].GetElementsByTagName("wideness")[0].InnerText);
+                            UIController.instance.encounter.enabledEnemies[bubbleID].bubbleWideness = ParseUtil.getFloat(xmld["spritesheet"].GetElementsByTagName("wideness")[0].InnerText);
                 } else
                     UIController.instance.encounter.enabledEnemies[bubbleID].bubbleWideness = 0;
             }
@@ -104,13 +103,15 @@ public static class SpriteUtil {
     public static DynValue MakeIngameSprite(string filename, int childNumber = -1) { return MakeIngameSprite(filename, "BelowArena", childNumber); }
 
     public static DynValue MakeIngameSprite(string filename, string tag = "BelowArena", int childNumber = -1) {
-        if (ParseUtil.testInt(tag)) {
+        if (ParseUtil.testInt(tag) && childNumber == -1) {
             childNumber = ParseUtil.getInt(tag);
             tag = "BelowArena";
         }
         Image i = GameObject.Instantiate<Image>(SpriteRegistry.GENERIC_SPRITE_PREFAB);
         if (!string.IsNullOrEmpty(filename))
             SwapSpriteFromFile(i, filename);
+        else
+            throw new CYFException("You can't create a sprite object with a nil sprite!");
         if (!GameObject.Find(tag + "Layer"))
             UnitaleUtil.displayLuaError("Creating a sprite", "The sprite layer " + tag + " doesn't exists.");
         else {
@@ -139,7 +140,7 @@ public static class SpriteUtil {
             for (int j = 0; j < rts.Length; j++) {
                 if (rts[j].name == testName || wentIn) {
                     wentIn = true;
-                    if (relatedTag == "BasisNewest" && rts[j].name.Contains("Layer") && !rts[j].name.Contains("Audio"))
+                    if (relatedTag == "BasisNewest" && rts[j].name.Contains("Layer") &&!rts[j].name.Contains("Audio"))
                         continue;
                     wentIn = false;
                     index = j;

@@ -556,7 +556,7 @@ public class TextManager : MonoBehaviour {
                 //if (currentCharacter >= textQueue[currentLine].Text.Length)
                 //    return true;
 
-                if (!overworld && !wasStated)
+                if (SceneManager.GetActiveScene().name == "Battle" &&!wasStated)
                     if (UIController.instance.stated)
                         wasStated = true;
 
@@ -609,7 +609,7 @@ public class TextManager : MonoBehaviour {
         letterTimer += Time.deltaTime;
         if (letterTimer > timePerLetter) {
             bool soundPlayed = false;
-            if (letterOnceValue != 0 && !instantCommand) {
+            if (letterOnceValue != 0 &&!instantCommand) {
                 while (letterOnceValue != 0 && currentCharacter < letterReferences.Length) {
                     if (CheckCommand())
                         return;
@@ -621,7 +621,7 @@ public class TextManager : MonoBehaviour {
                             case "shake": letterReferences[currentCharacter].GetComponent<Letter>().effect = new ShakeEffectLetter(letterReferences[currentCharacter].GetComponent<Letter>(), letterIntensity); break;
                             default: letterReferences[currentCharacter].GetComponent<Letter>().effect = null; break;
                         }
-                        if (letterSound != null && !muted && !soundPlayed) {
+                        if (letterSound != null &&!muted &&!soundPlayed) {
                             soundPlayed = true;
                             if (letterSound.isPlaying) UnitaleUtil.PlaySound("BubbleSound", letterSound.clip.name);
                             else letterSound.Play();
@@ -643,7 +643,7 @@ public class TextManager : MonoBehaviour {
                             case "shake": letterReferences[currentCharacter].GetComponent<Letter>().effect = new ShakeEffectLetter(letterReferences[currentCharacter].GetComponent<Letter>(), letterIntensity); break;
                             default: letterReferences[currentCharacter].GetComponent<Letter>().effect = null; break;
                         }
-                        if (letterSound != null && !muted && !soundPlayed) {
+                        if (letterSound != null &&!muted &&!soundPlayed) {
                             soundPlayed = true;
                             if (letterSound.isPlaying) UnitaleUtil.PlaySound("BubbleSound", letterSound.clip.name);
                             else letterSound.Play();
@@ -758,10 +758,10 @@ public class TextManager : MonoBehaviour {
         string[] args = new string[0];
         if (cmds.Length >= 2) {
             if (cmds[1] == "skipover" && instantCommand)           return;
-            else if (cmds[1] == "skiponly" && !instantCommand)     return;
+            else if (cmds[1] == "skiponly" &&!instantCommand)     return;
             else if (cmds.Length == 3)
                 if (cmds[2] == "skipover" && instantCommand)       return;
-                else if (cmds[2] == "skiponly" && !instantCommand) return;
+                else if (cmds[2] == "skiponly" &&!instantCommand) return;
             args = UnitaleUtil.specialSplit(',', cmds[1], true);
             cmds[1] = args[0];
         }
@@ -836,7 +836,6 @@ public class TextManager : MonoBehaviour {
                                 //Array
                                 /*} else if (type != typeof(string)) {
                                     int rank = 0;
-                                    print("type = " + type.ToString());
                                     Type basisType = type;
                                     while (basisType.IsArray) {
                                         rank++;
@@ -942,11 +941,11 @@ public class TextManager : MonoBehaviour {
                 else if (args[0] == "Max-1")                                                    args[0] = "0"; //Does nothing
                 else if (args[0] == "Max" && PlayerCharacter.instance.HP < PlayerCharacter.instance.MaxHP)        setHP(PlayerCharacter.instance.MaxHP);
                 else if (args[0] == "Max")                                                      args[0] = "0"; //Does nothing
-                else if (args.Length > 1 && !killable) {
+                else if (args.Length > 1 &&!killable) {
                     if (args[1] == "set")
                         if (ParseUtil.getInt(args[0]) < 1)                                      setHP(1);
                         else                                                                    setHP(ParseUtil.getInt(args[0]));
-                } else if (PlayerCharacter.instance.HP + ParseUtil.getInt(args[0]) <= 0 && !killable)    setHP(1);
+                } else if (PlayerCharacter.instance.HP + ParseUtil.getInt(args[0]) <= 0 &&!killable)    setHP(1);
                 else                                                                            setHP(PlayerCharacter.instance.HP + ParseUtil.getInt(args[0]));
                 break;
 

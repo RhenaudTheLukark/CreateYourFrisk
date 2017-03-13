@@ -67,8 +67,13 @@ public class ProjectileController {
     }*/
 
     public bool ppcollision {
-        get { return p.isPP(); }
+        get {
+            if (p == null)
+                throw new CYFException("Attempted to get the collision mode of a removed bullet.");
+            return p.isPP(); }
         set {
+            if (p == null)
+                throw new CYFException("Attempted to set the collision mode of a removed bullet.");
             if (!p.isPP() && value)
                 p.texture = ((Texture2D)p.GetComponent<Image>().mainTexture).GetPixels32();
             p.ppcollision = value;
@@ -77,7 +82,11 @@ public class ProjectileController {
     }
 
     public bool ppchanged {
-        get { return p.ppchanged; }
+        get {
+            if (p == null)
+                throw new CYFException("Attempted to get the value used to determine if a bullet's personal ppcollision value has been changed of a removed bullet.");
+            return p.ppchanged;
+        }
     }
 
     public bool isactive {
@@ -107,6 +116,8 @@ public class ProjectileController {
     }
 
     public void ResetCollisionSystem() {
+        if (p == null)
+            throw new CYFException("Attempted to reset the personal collision system of a removed bullet.");
         p.ppchanged = false;
         p.ppcollision = GlobalControls.ppcollision;
     }
@@ -115,11 +126,8 @@ public class ProjectileController {
         if (isactive) {
             Transform[] pcs = UnitaleUtil.GetFirstChildren(p.transform);
             for (int i = 1; i < pcs.Length; i++)
-                try {
-                    pcs[i].GetComponent<Projectile>().ctrl.Remove();
-                } catch {
-                    new LuaSpriteController(pcs[i].GetComponent<Image>()).Remove();
-                }
+                try { pcs[i].GetComponent<Projectile>().ctrl.Remove(); } 
+                catch { new LuaSpriteController(pcs[i].GetComponent<Image>()).Remove(); }
             spr.StopAnimation();
             BulletPool.instance.Requeue(p);
             p = null;
@@ -132,7 +140,7 @@ public class ProjectileController {
 
     public void MoveToAbs(float x, float y) {
         if (p == null)
-            throw new ScriptRuntimeException("Attempted to move a removed bullet. You can use a bullet's isactive property to check if it has been removed.");
+            throw new CYFException("Attempted to move a removed bullet. You can use a bullet's isactive property to check if it has been removed.");
         p.self.anchoredPosition = new Vector2(x, y);
     }
 
@@ -154,6 +162,8 @@ public class ProjectileController {
     }
 
     public bool isColliding() {
+        if (p == null)
+            return false;
         if (p.isPP())  return p.HitTestPP();
         else           return p.HitTest();
     }

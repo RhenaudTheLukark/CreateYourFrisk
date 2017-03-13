@@ -12,7 +12,6 @@ internal class ShakeEffect : TextEffect {
             skipNextFrame = false;
             return;
         }
-        List<Letter> letters = textMan.letters;
         for (int i = 0; i < textMan.letterReferences.Length; i++) {
             if (textMan.letterReferences[i] == null)
                 continue;

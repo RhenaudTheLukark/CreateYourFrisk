@@ -31,9 +31,10 @@ public static class UnitaleUtil {
 
     public static void writeInLogAndDebugger(string mess) {
         try {
-            sr.WriteLine("By DEBUG : " + mess.Replace("\n", "\\n").Replace("\r", "\\r").Replace("\t", "\\t"));
+            sr.WriteLine("By DEBUG: " + mess.Replace("\n", "\\n").Replace("\r", "\\r").Replace("\t", "\\t"));
             sr.Flush();
             UserDebugger.instance.userWriteLine(mess);
+            Debug.Log("Frame " + GlobalControls.frame + ": " + mess);
         } catch (Exception e) { Debug.Log("Couldn't write on the log:\n" + e.Message + "\nMessage: " + mess); }
     }
 
@@ -141,12 +142,17 @@ public static class UnitaleUtil {
 
     public static DynValue[] TableToDynValueArray(Table table) {
         DynValue[] array = new DynValue[table.Length];
-
-        for (int i = 1, l = table.Length; i <= l; i++) {
+        string test = "{ ";
+        for (int i = 1; i <= table.Length; i++) {
             DynValue v = table.Get(i);
             array[i - 1] = v;
+            if (v.Type == DataType.Boolean)     test += v.Boolean;
+            else if (v.Type == DataType.Number) test += v.Number;
+            else if (v.Type == DataType.String) test += v.String;
+            if (i < table.Length)               test += ", ";
         }
-
+        test += " }";
+        Debug.Log(test);
         return array;
     }
 
@@ -360,10 +366,10 @@ public static class UnitaleUtil {
                 if (str[i] == '{')
                     tableStack++;
             if (str[i] == '"') {
-                inString = !inString;
+                inString =!inString;
                 continue;
             }
-            if (str[i] == c && !inString && ((tableStack == 0 && countTables) || !countTables)) {
+            if (str[i] == c &&!inString && ((tableStack == 0 && countTables) ||!countTables)) {
                 tempArray.Add(str.Substring(lastIndex, i - lastIndex).Trim());
                 lastIndex = i + 1;
             }
@@ -571,7 +577,7 @@ public static class UnitaleUtil {
         while (number != 0) {
             number *= 10;
             if (!something) {
-                if (!zeromode && !ninemode) {
+                if (!zeromode &&!ninemode) {
                     if (Mathf.Floor(number) == 0)      zeromode = true;
                     else if (Mathf.Floor(number) == 9) ninemode = true;
                     else                               something = true;
@@ -768,7 +774,7 @@ public static class UnitaleUtil {
 
     public static Transform GetChildPerName(Transform parent, string name, bool isInclusive = false, bool getInactive = false) {
         if (parent == null)
-            throw new InvalidCastException("If you want the parent to be null, search the object with GameObject.Find() directly.");
+            throw new CYFException("If you want the parent to be null, search the object with GameObject.Find() directly.");
 
         Transform[] children = parent.GetComponentsInChildren<Transform>(getInactive);
         foreach (Transform go in children)

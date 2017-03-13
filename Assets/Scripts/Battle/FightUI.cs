@@ -107,7 +107,7 @@ public class FightUI : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-        if (isCoroutine && !shakeInProgress && showedup) {
+        if (isCoroutine &&!shakeInProgress && showedup) {
             for (int i = 0; i < FightUIController.instance.allFightUiInstances.Count; i ++)
                 if (FightUIController.instance.allFightUiInstances[i] == this)
                     FightUIController.instance.allFightUiInstances.RemoveAt(i);
@@ -135,7 +135,7 @@ public class FightUI : MonoBehaviour {
             shakeTimer += Time.deltaTime;
             if (shakeTimer >= totalShakeTime)
                 shakeInProgress = false;
-        } else if (!shakeInProgress && (slice.animcomplete && !slice.img.GetComponent<KeyframeCollection>().enabled && stopped && !showedup) || needAgain) {
+        } else if (!shakeInProgress && (slice.animcomplete &&!slice.img.GetComponent<KeyframeCollection>().enabled && stopped &&!showedup) || needAgain) {
             needAgain = true;
             if (!wait1frame) {
                 slice.StopAnimation();

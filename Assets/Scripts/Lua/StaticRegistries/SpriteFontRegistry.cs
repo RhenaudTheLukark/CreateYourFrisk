@@ -123,7 +123,6 @@ public static class SpriteFontRegistry {
                     case "lt":            letters.Add('<', s);   break;
                     case "rt":            letters.Add('>', s);   break;
                     case "ampersand":     letters.Add('&', s);   break;
-                    case "infinity":      letters.Add('∞', s);   break;
                 }
         }
         return letters;

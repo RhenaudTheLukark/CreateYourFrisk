@@ -8,8 +8,8 @@ using UnityEngine.SceneManagement;
 /// Controls that should be active on all screens. Pretty much a hack to allow people to reset. Now it's more useful.
 /// </summary>
 public class GlobalControls : MonoBehaviour {
+    public static int frame = -1;
     public static PlayerOverworld po;
-    //public static Windows windows = null;
     public static Misc misc;
     public static UndertaleInput input = new KeyboardInput();
     public static LuaInputBinding luaInput = new LuaInputBinding(input);
@@ -19,7 +19,6 @@ public class GlobalControls : MonoBehaviour {
     public static string lastScene = "test2";
     public static int uduu; //A secret for everyone :)
     public static int fleeIndex = 0;
-    public static bool fadeAuto = false;
     public static bool modDev = false;
     public static bool lastSceneUnitale = false;
     public static bool lastTitle = false;
@@ -35,7 +34,6 @@ public class GlobalControls : MonoBehaviour {
     public static Dictionary<int, Dictionary<string, int>> MapEventPages = new Dictionary<int, Dictionary<string, int>>();
 
     /*void Start() {
-        print(Application.platform.ToString());
         if ((Application.platform == RuntimePlatform.WindowsEditor || Application.platform == RuntimePlatform.WindowsPlayer) && windows == null)
             windows = new Windows();
         else if (window == null
@@ -50,24 +48,25 @@ public class GlobalControls : MonoBehaviour {
     /// Control checking, and way more.
     /// </summary>
 	void Update () {
+        frame ++;
         if (SceneManager.GetActiveScene().name == "EncounterSelect") lastSceneUnitale = true;
         else                                                         lastSceneUnitale = false;
-        if ((!nonOWScenes.Contains(SceneManager.GetActiveScene().name) || SceneManager.GetActiveScene().name == "Battle") && Input.GetKeyDown(KeyCode.F9)) {
+        if (UserDebugger.instance && Input.GetKeyDown(KeyCode.F9)) {
             if (UserDebugger.instance.gameObject.activeSelf)
                 GameObject.Find("Text").transform.SetParent(UserDebugger.instance.gameObject.transform);
             UserDebugger.instance.gameObject.SetActive(!UserDebugger.instance.gameObject.activeSelf);
-            GameObject.Find("Main Camera").GetComponent<FPSDisplay>().enabled = !GameObject.Find("Main Camera").GetComponent<FPSDisplay>().enabled;
+            Camera.main.GetComponent<FPSDisplay>().enabled = !Camera.main.GetComponent<FPSDisplay>().enabled;
         } else if (SceneManager.GetActiveScene().name == "Battle" && Input.GetKeyDown(KeyCode.H))
-            GameObject.Find("Main Camera").GetComponent<ProjectileHitboxRenderer>().enabled = !GameObject.Find("Main Camera").GetComponent<ProjectileHitboxRenderer>().enabled;
+            GameObject.Find("Main Camera").GetComponent<ProjectileHitboxRenderer>().enabled =!GameObject.Find("Main Camera").GetComponent<ProjectileHitboxRenderer>().enabled;
         else if (Input.GetKeyDown(KeyCode.Escape) && canTransOW.Contains(SceneManager.GetActiveScene().name)) {
             if (SceneManager.GetActiveScene().name == "Battle" && LuaEnemyEncounter.script.GetVar("unescape").Boolean)
                 return;
             UIController.EndBattle();
             //StaticInits.Reset();
-        } else if (input.Menu == UndertaleInput.ButtonState.PRESSED && !nonOWScenes.Contains(SceneManager.GetActiveScene().name) && !PlayerOverworld.menuRunning[3] && !PlayerOverworld.inText)
+        } else if (input.Menu == UndertaleInput.ButtonState.PRESSED &&!nonOWScenes.Contains(SceneManager.GetActiveScene().name) &&!PlayerOverworld.menuRunning[3] &&!PlayerOverworld.inText)
             StartCoroutine(PlayerOverworld.LaunchMenu());
-        else if (Input.GetKeyDown(KeyCode.F4))
-            Screen.fullScreen = !Screen.fullScreen;
+        if (Input.GetKeyDown(KeyCode.F4))
+            Screen.fullScreen =!Screen.fullScreen;
         //else if (Input.GetKeyDown(KeyCode.L))
         //    MyFirstComponentClass.SpriteAnalyser();
         if (SceneManager.GetActiveScene().name == "Battle")

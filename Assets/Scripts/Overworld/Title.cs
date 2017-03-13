@@ -83,7 +83,7 @@ public class Title : MonoBehaviour {
                         UnitaleUtil.displayLuaError(StaticInits.ENCOUNTER, "Have you saved on one of a previous CYF version ? The save isn't retrocompatible.\n\n"
                                                                          + "To not have this error anymore, you'll have to delete the save file. Here it is : \n"
                                                                          + Application.persistentDataPath + "/save.gd\n"
-                                                                         + "Tell me if you have some more problems, and thanks for following my fork ! ^^\n\n"
+                                                                         + "Tell me if you have some more problems, and thanks for following my fork! ^^\n\n"
                                                                          + "PS : Don't try to press ESCAPE, or bad things can happen ;)");
                 }
             } else {

@@ -20,14 +20,14 @@ public class BlueSoul : AbstractSoul {
 
     public override Vector2 GetMovement(float xDir, float yDir) {
         // pressing up arrow
-        if (yDir == 1 && !jumping && !falling) {
+        if (yDir == 1 &&!jumping &&!falling) {
             ySpeed = jumpYSpeed;
             jumping = true;
             falling = false;
         }
 
         // releasing up arrow
-        if (yDir == 0 && jumping && !falling) {
+        if (yDir == 0 && jumping &&!falling) {
             if (ySpeed > 0)
                 ySpeed = 0;
             jumping = false;

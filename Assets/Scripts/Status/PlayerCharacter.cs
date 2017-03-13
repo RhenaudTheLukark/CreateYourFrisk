@@ -87,7 +87,7 @@ using System.ComponentModel;
     public bool checkLevel() {
         if (LV > 20) return false; //In case that you want to go further than LV 20, the level won't be resetted.
 
-        for (int i = 0; i > -1; i++)
+        for (int i = 0; i < LevelUpTable.Length; i++)
             if (EXP < LevelUpTable[i]) {
                 if (LV != i + 1) {
                     //UnitaleUtil.writeInLog(i);

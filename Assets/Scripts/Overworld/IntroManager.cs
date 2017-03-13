@@ -47,7 +47,7 @@ public class IntroManager : MonoBehaviour {
 	void Update () {
         timer += Time.deltaTime;
         //Effect update
-        if (CheckEffect() && !start && !finish && !fadeMusic)
+        if (CheckEffect() &&!start &&!finish &&!fadeMusic)
             UpdateEffect();
         //Stop the intro
         if (Input.anyKeyDown) {
@@ -56,11 +56,11 @@ public class IntroManager : MonoBehaviour {
             SceneManager.LoadScene("TitleScreen");
         }
         //Fade out
-        if (finish && !fadeMusic && !CheckEffect()) {
-            if (timer < 1.75f && !pause)
+        if (finish &&!fadeMusic &&!CheckEffect()) {
+            if (timer < 1.75f &&!pause)
                 pause = true;
 
-            if (timer < 1.75f && timer > 1 && !sameImage)
+            if (timer < 1.75f && timer > 1 &&!sameImage)
                 img.color = new Color(img.color.r, img.color.g, img.color.b, (-timer + 1.75f) * 4/3);
             else if (timer > 1.75f && pause) {
                 pause = false;
@@ -85,8 +85,8 @@ public class IntroManager : MonoBehaviour {
                 }
             }
         //Fade in
-        } else if (start && !fadeMusic) {
-            if (timer < 0.5f && !sameImage)
+        } else if (start &&!fadeMusic) {
+            if (timer < 0.5f &&!sameImage)
                 img.color = new Color(img.color.r, img.color.g, img.color.b, 2 * timer);
             else {
                 start = false;
@@ -109,7 +109,7 @@ public class IntroManager : MonoBehaviour {
                 SceneManager.LoadScene("TitleScreen");
             }
         //End of current page
-        } else if (text.lineComplete() && !start && !CheckEffect()) {
+        } else if (text.lineComplete() &&!start &&!CheckEffect()) {
             finish = true;
             timer = 0;
         }

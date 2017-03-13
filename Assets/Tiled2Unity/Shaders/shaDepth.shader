@@ -20,8 +20,8 @@
 
 		Cull Off
 		Lighting Off
-		ZWrite Off
-		ZTest Always
+		ZWrite On
+		ZTest LEqual
 		Fog{ Mode Off }
 		Blend SrcAlpha OneMinusSrcAlpha
 

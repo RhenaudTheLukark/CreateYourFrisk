@@ -11,7 +11,11 @@ public class LuaProjectile : Projectile {
         GetComponent<Image>().enabled = true;
     }
 
-    public void setSprite(string name) { SpriteUtil.SwapSpriteFromFile(this, name); }
+    public void setSprite(string name) {
+        if (name == null)
+            throw new CYFException("You can't set a projectile's sprite to nil!");
+        SpriteUtil.SwapSpriteFromFile(this, name);
+    }
 
     //public override void OnUpdate() {
         // destroy projectiles outside of the screen
@@ -21,7 +25,7 @@ public class LuaProjectile : Projectile {
 
     public override void OnProjectileHit() {
         if (owner.Globals["OnHit"] != null && owner.Globals.Get("OnHit") != null)
-            try { owner.Call(owner.Globals["OnHit"], this.ctrl); }
+            try { owner.Call(owner.Globals["OnHit"], this.ctrl); } 
             catch (ScriptRuntimeException ex) { UnitaleUtil.displayLuaError("[wave script filename here]\n(should be a filename, sorry! missing feature)", ex.DecoratedMessage); }
         else
             PlayerController.instance.Hurt(3);
