@@ -34,7 +34,7 @@ class AutoloadResourcesFromRegistry : MonoBehaviour {
         StaticInits.Loaded += LateStart;
         Fading.StartFade += LateStart;
         foreach (AutoloadResourcesFromRegistry a in FindObjectsOfType<AutoloadResourcesFromRegistry>())
-            if (a.done) {
+            if (a.done || a.doneFromLoadedScene) {
                 LateStart();
                 return;
             }
@@ -104,6 +104,7 @@ class AutoloadResourcesFromRegistry : MonoBehaviour {
     }*/
 
     void LateStart() {
+
         if ((!done && this.handleDictErrors) || (!doneFromLoadedScene &&!this.handleDictErrors)) {
             if (!done && this.handleDictErrors)
                 done = true;
@@ -114,6 +115,7 @@ class AutoloadResourcesFromRegistry : MonoBehaviour {
             if (!string.IsNullOrEmpty(SpritePath)) {
                 Image img = GetComponent<Image>();
                 SpriteRenderer img2 = GetComponent<SpriteRenderer>();
+                ParticleSystemRenderer img3 = GetComponent<ParticleSystemRenderer>();
                 if (img != null) {
                     img.sprite = SpriteRegistry.Get(SpritePath);
                     if (img.sprite == null && handleDictErrors) {
@@ -151,14 +153,10 @@ class AutoloadResourcesFromRegistry : MonoBehaviour {
                             }
                         }
                     }
-                } else
+                } else if (img3 != null)
+                    img3.material.mainTexture = SpriteRegistry.Get(SpritePath).texture;
+                else
                     throw new CYFException("The GameObject " + gameObject.name + " doesn't have an Image or SpriteRenderer component.");
-
-                ParticleSystem psys = GetComponent<ParticleSystem>();
-                if (psys != null) {
-                    ParticleSystemRenderer prender = GetComponent<ParticleSystemRenderer>();
-                    prender.material.mainTexture = SpriteRegistry.Get(SpritePath).texture;
-                }
             }
 
             if (!string.IsNullOrEmpty(SoundPath)) {
@@ -170,8 +168,6 @@ class AutoloadResourcesFromRegistry : MonoBehaviour {
                 }*/
                 aSrc.loop = Loop;
             }
-
-
 
             /* TODO: Make so AnimatorControllers can be loaded from a file
             if (gameObject.GetComponent<Animator>() &&!string.IsNullOrEmpty(AnimatorPath))

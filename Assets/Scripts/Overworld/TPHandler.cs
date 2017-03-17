@@ -8,12 +8,12 @@ public class TPHandler : MonoBehaviour {
     public Vector2 position;            //The future position of our player
     public int uduu2 = GlobalControls.uduu;
     public int direction = 0;           //The direction of the player
+    public bool activated = false;      //Checks if we're already in a TP
     
     private Collider2D playerC2D;       //The player's Collider2D
     private Collider2D objectC2D;       //This object's Collider2D
     private Fading blackFont;           //The fading animation
     private bool playOnce = false;      //Used to play the music only once
-    public bool activated = false;     //Checks if we're already in a TP
     private bool uduu;                  //You'll see it
     private GameObject blackPic;        //A black picture
 
@@ -28,11 +28,10 @@ public class TPHandler : MonoBehaviour {
         blackPic = GameObject.Find("FadingBlack");
         blackFont = blackPic.GetComponent<Fading>();
     }
-
     
     void OnTriggerEnter2D(Collider2D col) {
-        if (!activated && col == playerC2D) {
-            PlayerOverworld.inText = true;  //UnitaleUtil.writeInLogAndDebugger("TPDetected true");
+        if (!activated && col == playerC2D && PlayerOverworld.instance.isReady) {
+            PlayerOverworld.inText = true;
             activated = true;
             objectC2D.enabled = false;
             StaticInits.MODFOLDER = GameObject.Find("Background").GetComponent<MapInfos>().modToLoad;

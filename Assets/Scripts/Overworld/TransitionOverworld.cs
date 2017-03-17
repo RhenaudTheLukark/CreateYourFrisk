@@ -115,14 +115,14 @@ public class TransitionOverworld : MonoBehaviour {
             StaticInits.MODFOLDER = mi.modToLoad;
             StaticInits.Initialized = false;
             si.initAll();
-            LuaScriptBinder.Set(null, "ModFolder", MoonSharp.Interpreter.DynValue.NewString(StaticInits.MODFOLDER));
+            LuaScriptBinder.Set(null, "ModFolder", DynValue.NewString(StaticInits.MODFOLDER));
             if (call == "transitionoverworld")
                 PlayerOverworld.instance.eventmgr.scriptLaunched = false;
         }
 
         AudioSource audio;
         if (mi.isMusicKeptBetweenBattles) audio = PlayerOverworld.audioKept;
-        else audio = MusicManager.src;
+        else                              audio = Camera.main.GetComponent<AudioSource>();
 
         //Starts the music if there's no music
         if (audio.clip == null) {

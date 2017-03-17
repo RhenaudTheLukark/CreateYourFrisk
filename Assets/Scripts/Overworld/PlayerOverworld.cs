@@ -34,7 +34,7 @@ public class PlayerOverworld : MonoBehaviour {
     public TextManager textmgr;             //The map's text manager
     //private bool lockedCamera = false;    //Used to stop the camera's position refresh
     private bool inBattleAnim = false;
-    private bool isReady = false;
+    public bool isReady = false;
     public int rolled = 0;
 
     //Start overrides the Start function of MovingObject
@@ -116,8 +116,15 @@ public class PlayerOverworld : MonoBehaviour {
                         if (!textmgr.allLinesComplete() && textmgr.lineComplete())
                             textmgr.nextLine();
                         else if (textmgr.allLinesComplete() && textmgr.lineCount() != 0) {
-                            textmgr.destroyText();
-                            eventmgr.script.Call("CYFEventNextCommand");
+                            if (eventmgr.scriptLaunched) {
+                                textmgr.setTextQueue(null);
+                                eventmgr.script.Call("CYFEventNextCommand");
+                            } else {
+                                textmgr.destroyText();
+                                GameObject.Find("textframe_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 0);
+                                GameObject.Find("textframe_interior").GetComponent<Image>().color = new Color(0, 0, 0, 0);
+                                inText = false;
+                            }
                         }
                     } /*else if (textmgr.blockSkip && textmgr.skipNowIfBlocked) {
                         textmgr.blockSkip = textmgr.skipNowIfBlocked = false;
@@ -136,7 +143,7 @@ public class PlayerOverworld : MonoBehaviour {
 
     private void Update() {
         if (GameObject.Find("textframe_border_outer").GetComponent<Image>().color.a != 0)
-            inText = true;  //UnitaleUtil.writeInLogAndDebugger("TextBox true");
+            inText = true;
         
         if ((Vector2)PlayerPos.position == new Vector2(0, 0))
             PlayerPos.position = GlobalControls.beginPosition;
@@ -830,11 +837,8 @@ public class PlayerOverworld : MonoBehaviour {
         GameObject.Find("textframe_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 0);
         GameObject.Find("textframe_interior").GetComponent<Image>().color = new Color(0, 0, 0, 0);
         GameObject.Find("TextManager OW").GetComponent<TextManager>().skipNowIfBlocked = true;
-        if (endOfinText) {
-            inText = false;  //UnitaleUtil.writeInLogAndDebugger("MenuEOT false");
-        } else {
-            inText = true;  //UnitaleUtil.writeInLogAndDebugger("MenuNotEOT true");
-        }
+        if (endOfinText) inText = false;
+        else             inText = true;
         return true;
     }
 }

@@ -307,6 +307,7 @@ public class LuaEnemyController : EnemyController {
     public void DoSpare() {
         if (!inFight)
             return;
+        print("DoSpare()");
         UIController.instance.gold += Gold;
         // We have to code the particles separately because they don't work well in UI screenspace. Great stuff.
         ParticleSystem spareSmoke = Resources.Load<ParticleSystem>("Prefabs/MonsterSpareParticleSys");

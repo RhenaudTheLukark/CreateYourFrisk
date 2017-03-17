@@ -16,9 +16,9 @@ public class EventManager : MonoBehaviour {
     private Hashtable sprCtrls = new Hashtable();
     private TextManager textmgr;            //The current TextManager
     private int actualEventIndex = -1;      //ID of the actual event we're running
-    public  bool readyToReLaunch = false;    //Used to prevent overworld GameOver errors
+    public  bool readyToReLaunch = false;   //Used to prevent overworld GameOver errors
     private bool bgmCoroutine = false;      //Check if the BGM is already fading
-    public  bool passPressOnce = false;      //Boolean used because events are boring
+    public  bool passPressOnce = false;     //Boolean used because events are boring
     public  bool scriptLaunched = false;
     private bool relaunchReset1 = false, relaunchReset2 = false;
     private bool needReturn = false;
@@ -29,7 +29,7 @@ public class EventManager : MonoBehaviour {
                                        "SetReturnPoint", "SupprVarOW", "SetBattle", "DispImg", "SupprImg", "WaitForInput", "SetTone", "RotateEvent",
                                        "GameOver", "SetAnimSwitch", "PlayBGMOW", "StopBGMOW", "PlaySoundOW", "Rumble", "Flash", "Save", "Heal",
                                        "Hurt", "AddItem", "RemoveItem", "StopEvent", "RemoveEvent", "AddMoney", "SetEventPage", "GetSpriteOfEvent",
-                                       "CenterEventOnCamera", "ResetCameraPosition", "MoveCamera", "Wait"};
+                                       "CenterEventOnCamera", "ResetCameraPosition", "MoveCamera", "Wait", "GetPosition"};
 
     // Use this for initialization
     public void Start() {
@@ -363,6 +363,7 @@ public class EventManager : MonoBehaviour {
         script.Bind("FMoveCamera", new Action<int, int, int, bool>(MoveCamera));
         script.Bind("FResetCameraPosition", new Action<int, bool>(ResetCameraPosition));
         script.Bind("FWait", new Action<int>(Wait));
+        script.Bind("FGetPosition", new Func<string, DynValue>(GetPosition));
 
         return true;
     }
@@ -373,104 +374,12 @@ public class EventManager : MonoBehaviour {
     public void FunctionLauncher(DynValue parameter1, DynValue parameter2, DynValue parameter3, DynValue parameter4, DynValue parameter5, 
                                  DynValue parameter6, DynValue parameter7, DynValue parameter8, DynValue parameter9, DynValue parameter10) { }
 
-    private void SetChoice(DynValue choices, string question = null) {
-        bool threeLines = false;
-        TextMessage textMsgChoice = new TextMessage("", false, false, true);
-        textMsgChoice.addToText("[mugshot:null]");
-        string[] finalText = new string[3];
-
-        //Do not put more than 3 lines and 2 choices
-        //If the 3rd parameter is a string, it has to be a question
-        if (question != null) {
-            textMsgChoice.addToText(question);
-
-            int lengthAfter = question.Split('\n').Length;
-            if (question.Split('\n').Length > lengthAfter) lengthAfter = question.Split('\n').Length;
-
-            if (lengthAfter > 2) textMsgChoice.addToText(finalText[0] + "\n");
-            else                 textMsgChoice.addToText(finalText[0] + "\n\n"); 
-        }
-        
-        for (int i = 0; i < choices.Table.Length; i++) {
-            //If there's no text, just don't print it
-            if (i == 2 && question != null)
-                break;
-            if (choices.Table.Get(i + 1).String == null)
-                continue;
-
-            string[] preText = choices.Table.Get(i + 1).String.Split('\n'), text = new string[3];
-            if (preText.Length == 3)
-                threeLines = true;
-            for (int j = 0; j < 3; j++) {
-                if (j < preText.Length) text[j] = preText[j];
-                else text[j] = "";
-            }
-
-            for (int k = 0; k < 3; k++) {
-                if (text[k] != "")
-                    if (k == 0) text[k] = "* " + text[k];
-                    else text[k] = "  " + text[k];
-
-                finalText[k] += text[k] + '\t';
-                if (k == text.Length - 1)
-                    break;
-            }
-        }
-
-        //Add the text to the text to print then the SetChoice function with its parameters
-        textMsgChoice.addToText(finalText[0] + "\n" + finalText[1] + "\n" + finalText[2]);
-        textmgr.setText(textMsgChoice);
-
-        StartCoroutine(ISetChoice(question != null, threeLines));
-    }
-
-    IEnumerator ISetChoice(bool question, bool threeLines) {
-        //Omg a new GameObject ! One more heart on the screen ! Wooh !
-        GameObject tempHeart = new GameObject("tempHeart", typeof(RectTransform));
-        tempHeart.GetComponent<RectTransform>().sizeDelta = new Vector2(16, 16);
-        tempHeart.transform.SetParent(GameObject.Find("Canvas OW").transform);
-        Image img = tempHeart.AddComponent<Image>();
-        img.sprite = PlayerOverworld.instance.utHeart.sprite;
-        img.color = new Color(1, 0, 0, 1);
-        int actualChoice = 0;
-
-        //We'll need to set the heart to the good positions, to be able to know where is our selection
-        setPlayerOnSelection(0, question, threeLines);
-        while (true) {
-            if (GlobalControls.input.Right == UndertaleInput.ButtonState.PRESSED || GlobalControls.input.Left == UndertaleInput.ButtonState.PRESSED) {
-                actualChoice = (actualChoice + 1) % 2;
-                setPlayerOnSelection(actualChoice, question, threeLines);
-            } else if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED)
-                break;
-            yield return 0;
-        }
-        //Hide the heart, we don't need it anymore
-        img.color = new Color(img.color.r, img.color.g, img.color.b, 0);
-        //Add a new variable that can be used in lua functions named Temp plus the index we gave earlier (or else a free index)
-        /*if (varIndex == -1) {
-            for (int i = 1; i > -1; i++)
-                if (LuaScriptBinder.Get(null, "Choice" + i) == null) {
-                    LuaScriptBinder.Set(null, "Choice" + i, DynValue.NewNumber(actualChoice));
-                    break;
-                }
-        } else {*/
-        LuaScriptBinder.Set(null, "lastChoice", DynValue.NewNumber(actualChoice));
-        //}
-        //HEARTBROKEN
-        GameObject.Destroy(tempHeart);
-        //Here we don't need our textmgr.skipNowIfBlocked = true, because we execute the event again, and doing this will display the next page correctly
-        //try {
-        scriptLaunched = false;
-        executeEvent(events[actualEventIndex], textmgr.currentLine + 1);
-        //} catch { }
-    }
-
     /// <summary>
     /// Used to add an element into the Text Event
     /// </summary>
     /// <param name="function">Name of the function</param>
     /// <param name="parameters">Parameters of the function</param>
-    public void FunctionLauncher(string function, DynValue[] parameters = null) {
+    /*public void FunctionLauncher(string function, DynValue[] parameters = null) {
         //Nobody cares about spaces, so let's just remove them from the function's name
         function = function.TrimStart('"').TrimEnd('"').Replace(" ", string.Empty);
 
@@ -540,7 +449,7 @@ public class EventManager : MonoBehaviour {
             textmgr.addToTextQueue(textMsgChoice);
         }
         textmgr.ResetCurrentCharacter();
-    }
+    }*/
 
     /// <summary>
     /// Used in SetChoice, permits to set the temporary GameObject we created to stars' positions
@@ -610,19 +519,18 @@ public class EventManager : MonoBehaviour {
         PlayerOverworld.instance.textmgr.setTextFrameAlpha(0);
         PlayerOverworld.instance.textmgr.textQueue = new TextMessage[] { };
         PlayerOverworld.instance.textmgr.destroyText();
-        PlayerOverworld.inText = false; //UnitaleUtil.writeInLogAndDebugger("endTextEvent false");
+        PlayerOverworld.inText = false;
     }
 
     //-----------------------------------------------------------------------------------------------------------
     //                                        ---   Lua Functions   ---
     //
-    //                If the function isn't a text, the function have to be ended manually with 
-    //                 "/*textmgr.skipNowIfBlocked = true;*/": if you don't do that, the text will
-    //                   be blocked in an infinite loop, waiting for this value to be true.
+    //                All event commands have to be finished with script.Call("CYFEventNextCommand");
+    //                If you need to return a value to the lua script, try to use try ... finally! :P
     //
-    //                 Plus, if you want to create functions, test first if the GameObject the
-    //                  player is accessing to is an event: if you don't, you'll be a really
-    //                            nasty person and you'll go to hell. Don't ask why.
+    //                    Plus, if you want to create functions, test first if the GameObject the
+    //                     player is accessing to is an event: if you don't, you'll be a really
+    //                             bad person and you'll go to hell. Don't ask why tho.
     //-----------------------------------------------------------------------------------------------------------
 
     /// <summary>
@@ -636,6 +544,97 @@ public class EventManager : MonoBehaviour {
         for (int i = 0; i < texts.GetLength().Number; i++)
             textmsgs[i] = new TextMessage(texts.Table.Get(i + 1).String, formatted, false, mugshots.ToString() != "void" ? mugshots.Table.Get(i + 1).String : null);
         textmgr.setTextQueue(textmsgs);
+    }
+
+    private void SetChoice(DynValue choices, string question = null) {
+        bool threeLines = false;
+        TextMessage textMsgChoice = new TextMessage("", false, false, true);
+        textMsgChoice.addToText("[mugshot:null]");
+        string[] finalText = new string[3];
+
+        //Do not put more than 3 lines and 2 choices
+        //If the 3rd parameter is a string, it has to be a question
+        if (question != null) {
+            textMsgChoice.addToText(question);
+
+            int lengthAfter = question.Split('\n').Length;
+            if (question.Split('\n').Length > lengthAfter) lengthAfter = question.Split('\n').Length;
+
+            if (lengthAfter > 2) textMsgChoice.addToText(finalText[0] + "\n");
+            else textMsgChoice.addToText(finalText[0] + "\n\n");
+        }
+
+        for (int i = 0; i < choices.Table.Length; i++) {
+            //If there's no text, just don't print it
+            if (i == 2 && question != null)
+                break;
+            if (choices.Table.Get(i + 1).String == null)
+                continue;
+
+            string[] preText = choices.Table.Get(i + 1).String.Split('\n'), text = new string[3];
+            if (preText.Length == 3)
+                threeLines = true;
+            for (int j = 0; j < 3; j++) {
+                if (j < preText.Length) text[j] = preText[j];
+                else text[j] = "";
+            }
+
+            for (int k = 0; k < 3; k++) {
+                if (text[k] != "")
+                    if (k == 0) text[k] = "* " + text[k];
+                    else text[k] = "  " + text[k];
+
+                finalText[k] += text[k] + '\t';
+                if (k == text.Length - 1)
+                    break;
+            }
+        }
+
+        //Add the text to the text to print then the SetChoice function with its parameters
+        textMsgChoice.addToText(finalText[0] + "\n" + finalText[1] + "\n" + finalText[2]);
+        textmgr.setText(textMsgChoice);
+
+        StartCoroutine(ISetChoice(question != null, threeLines));
+    }
+
+    IEnumerator ISetChoice(bool question, bool threeLines) {
+        //Omg a new GameObject ! One more heart on the screen ! Wooh !
+        GameObject tempHeart = new GameObject("tempHeart", typeof(RectTransform));
+        tempHeart.GetComponent<RectTransform>().sizeDelta = new Vector2(16, 16);
+        tempHeart.transform.SetParent(GameObject.Find("Canvas OW").transform);
+        Image img = tempHeart.AddComponent<Image>();
+        img.sprite = PlayerOverworld.instance.utHeart.sprite;
+        img.color = new Color(1, 0, 0, 1);
+        int actualChoice = 0;
+
+        //We'll need to set the heart to the good positions, to be able to know where is our selection
+        setPlayerOnSelection(0, question, threeLines);
+        while (true) {
+            if (GlobalControls.input.Right == UndertaleInput.ButtonState.PRESSED || GlobalControls.input.Left == UndertaleInput.ButtonState.PRESSED) {
+                actualChoice = (actualChoice + 1) % 2;
+                setPlayerOnSelection(actualChoice, question, threeLines);
+            } else if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED)
+                break;
+            yield return 0;
+        }
+        //Hide the heart, we don't need it anymore
+        img.color = new Color(img.color.r, img.color.g, img.color.b, 0);
+        //Add a new variable that can be used in lua functions named Temp plus the index we gave earlier (or else a free index)
+        /*if (varIndex == -1) {
+            for (int i = 1; i > -1; i++)
+                if (LuaScriptBinder.Get(null, "Choice" + i) == null) {
+                    LuaScriptBinder.Set(null, "Choice" + i, DynValue.NewNumber(actualChoice));
+                    break;
+                }
+        } else {*/
+        LuaScriptBinder.Set(null, "lastChoice", DynValue.NewNumber(actualChoice));
+        //}
+        //HEARTBROKEN
+        GameObject.Destroy(tempHeart);
+        //Here we don't need our textmgr.skipNowIfBlocked = true, because we execute the event again, and doing this will display the next page correctly
+        //try {
+        script.Call("CYFEventNextCommand");
+        //} catch { }
     }
 
     /// <summary>
@@ -1299,7 +1298,7 @@ public class EventManager : MonoBehaviour {
                 txtName.destroyText(); txtLevel.destroyText(); txtTime.destroyText(); txtMap.destroyText(); txtSave.destroyText(); txtReturn.destroyText();
                 GameObject.Find("save_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 0);
                 GameObject.Find("save_interior").GetComponent<Image>().color = new Color(0, 0, 0, 0);
-                /*textmgr.skipNowIfBlocked = true;*/
+                script.Call("CYFEventNextCommand");
                 yield break;
             } else if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED) {
                 if (save) {
@@ -1427,10 +1426,6 @@ public class EventManager : MonoBehaviour {
         foreach (object key in sprCtrls.Keys) {
             if (key.ToString() == name) {
                 script.script.Globals.Set("test", UserData.Create((LuaSpriteController)sprCtrls[name], LuaSpriteController.data));
-                //LuaScriptBinder.SetBattle(null, "GetSpriteOfEvent" + name, UserData.Create((LuaSpriteController)sprCtrls[name], LuaSpriteController.data));
-                scriptLaunched = false;
-                //executeEvent(events[actualEventIndex], textmgr.currentLine + 1);
-                /*textmgr.skipNowIfBlocked = true;*/
                 try { return UserData.Create((LuaSpriteController)sprCtrls[name], LuaSpriteController.data); }
                 finally {
                     script.script.Globals.Set(DynValue.NewString("CYFEventLameNeedReturn"), DynValue.NewBoolean(true));

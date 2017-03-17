@@ -345,6 +345,7 @@ public class UIController : MonoBehaviour {
                 encounter.CallOnSelfOrChildren("EnemyDialogueStarting");
                 monDialogues = new TextManager[encounter.enabledEnemies.Length];
                 readyToNextLine = new bool[encounter.enabledEnemies.Length];
+                print("Enemydialogue");
                 for (int i = 0; i < encounter.enabledEnemies.Length; i++) {
                     this.msgs.Remove(i);
                     this.msgs.Add(i, encounter.enabledEnemies[i].GetDefenseDialog());
@@ -784,7 +785,6 @@ public class UIController : MonoBehaviour {
                         int count = encounter.enemies.Length;
                         for (int i = 0; i < count; i++)
                             canspare[i] = encounter.enemies[i].CanSpare;
-                        encounter.CallOnSelfOrChildren("HandleSpare");
                         LuaEnemyController[] enabledEnTemp = encounter.enabledEnemies;
                         //bool sparedAny = false;
                         for (int i = 0; i < count; i++) {
@@ -798,6 +798,7 @@ public class UIController : MonoBehaviour {
                                 //sparedAny = true;
                             }
                         }
+                        encounter.CallOnSelfOrChildren("HandleSpare");
                         /*if (encounter.enabledEnemies.Length > 0)
                             encounter.CallOnSelfOrChildren("HandleSpare");*/
 

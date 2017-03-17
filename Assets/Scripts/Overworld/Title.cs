@@ -67,7 +67,6 @@ public class Title : MonoBehaviour {
                         GameObject.Find("TextManagerName").GetComponent<TextManager>().setTextQueue(new TextMessage[] { new TextMessage("[noskipatall]" + PlayerCharacter.instance.Name, false, true) });
                         if (GlobalControls.crate)  GameObject.Find("TextManagerLevel").GetComponent<TextManager>().setTextQueue(new TextMessage[] { new TextMessage("[noskipatall]VL" + PlayerCharacter.instance.LV, false, true) });
                         else                       GameObject.Find("TextManagerLevel").GetComponent<TextManager>().setTextQueue(new TextMessage[] { new TextMessage("[noskipatall]LV" + PlayerCharacter.instance.LV, false, true) });
-                        GameObject.Find("TextManagerLevel").GetComponent<TextManager>().setTextQueue(new TextMessage[] { new TextMessage("[noskipatall]LV" + PlayerCharacter.instance.LV, false, true) });
                         GameObject.Find("TextManagerTime").GetComponent<TextManager>().setTextQueue(new TextMessage[] { new TextMessage("[noskipatall]0:00", false, true) });
                         GameObject.Find("TextManagerMap").GetComponent<TextManager>().setTextQueue(new TextMessage[] { new TextMessage("[noskipatall]" + SaveLoad.savedGame.lastScene, false, true) });
                         tmName.setTextQueue(new TextMessage[] { new TextMessage(PlayerCharacter.instance.Name, false, true) });
