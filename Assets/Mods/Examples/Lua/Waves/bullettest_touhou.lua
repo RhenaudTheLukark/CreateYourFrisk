@@ -42,5 +42,5 @@ function Update()
 end
 
 function OnHit(bullet)
-    Player.Hurt(3000)
+    Player.Hurt(300)
 end

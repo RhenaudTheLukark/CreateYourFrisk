@@ -52,13 +52,13 @@ public class ScriptWrapper {
                 if (args[0].Type == DataType.Table && args.Length == 1) {
                     DynValue[] argsNew = UnitaleUtil.TableToDynValueArray(args[0].Table);
                     try { d = script.Call(script.Globals[function], argsNew); } 
-                    catch (InterpreterException ex) { UnitaleUtil.displayLuaError(scriptname, ex.DecoratedMessage); } 
+                    catch (InterpreterException ex) { UnitaleUtil.displayLuaError(scriptname, ex.DecoratedMessage == null ? ex.Message : ex.DecoratedMessage); } 
                     catch (Exception ex) {
                         if (!GlobalControls.retroMode)
                             UnitaleUtil.displayLuaError(scriptname + ", calling the function " + function, "This is a " + ex.GetType() + " error. Contact the dev and show him this screen, this must be an engine-side error.\n\n" + ex.Message + "\n\n" + ex.StackTrace + "\n");
                     }
                 } else if (e.GetType() == typeof(InterpreterException) || e.GetType().BaseType == typeof(InterpreterException) || e.GetType().BaseType.BaseType == typeof(InterpreterException))
-                    UnitaleUtil.displayLuaError(scriptname, ((InterpreterException)e).DecoratedMessage);
+                    UnitaleUtil.displayLuaError(scriptname, ((InterpreterException)e).DecoratedMessage == null ? ((InterpreterException)e).Message : ((InterpreterException)e).DecoratedMessage);
                 else if (!GlobalControls.retroMode)
                     UnitaleUtil.displayLuaError(scriptname + ", calling the function " + function, "This is a " + e.GetType() + " error. Contact the dev and show him this screen, this must be an engine-side error.\n\n" + e.Message + "\n\n" + e.StackTrace + "\n");
             }
@@ -66,7 +66,7 @@ public class ScriptWrapper {
         } else {
             DynValue d = DynValue.Nil;
             try { d = script.Call(script.Globals[function]); } 
-            catch (InterpreterException ex) { UnitaleUtil.displayLuaError(scriptname, ex.DecoratedMessage); } 
+            catch (InterpreterException ex) { UnitaleUtil.displayLuaError(scriptname, ex.DecoratedMessage == null ? ex.Message : ex.DecoratedMessage); } 
             catch (Exception ex) {
                 if (!GlobalControls.retroMode)
                     UnitaleUtil.displayLuaError(scriptname + ", calling the function " + function, "This is a " + ex.GetType() + " error. Contact the dev and show him this screen, this must be an engine-side error.\n\n" + ex.Message + "\n\n" + ex.StackTrace + "\n");

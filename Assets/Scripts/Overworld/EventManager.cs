@@ -684,7 +684,8 @@ public class EventManager : MonoBehaviour {
                 int direction = -1;
                 if (wallPass)
                     foreach (GameObject go2 in colliders)
-                        go2.SetActive(false);
+                        if (go2.name != "Background")
+                            go2.SetActive(false);
                 go.gameObject.GetComponent<Rigidbody2D>().isKinematic = true;
                 Vector2 endPoint = new Vector2(dirX - go.transform.position.x, dirY - go.transform.position.y), endPointFromNow = endPoint;
                 //The animation process is automatic, if you renamed the Animation's triggers and animations as the Player's
@@ -705,7 +706,8 @@ public class EventManager : MonoBehaviour {
                             PlayerOverworld.instance.forcedMove = false;
                             if (wallPass)
                                 foreach (GameObject go2 in colliders)
-                                    go2.SetActive(true);
+                                    if (go2.name != "Background")
+                                        go2.SetActive(true);
                             go.gameObject.GetComponent<Rigidbody2D>().isKinematic = false;
                             script.Call("CYFEventNextCommand");
                             yield break;
@@ -1248,7 +1250,8 @@ public class EventManager : MonoBehaviour {
     IEnumerator ISave() {
         bool save = true;
         Color c = PlayerOverworld.instance.utHeart.color;
-        PlayerOverworld.instance.utHeart.transform.position = new Vector3(151, 233, PlayerOverworld.instance.utHeart.transform.position.z);
+        PlayerOverworld.instance.utHeart.transform.position = new Vector3(151 + Camera.main.transform.position.x - 320, 233 + Camera.main.transform.position.y - 240, 
+                                                                          PlayerOverworld.instance.utHeart.transform.position.z);
         PlayerOverworld.instance.utHeart.color = new Color(c.r, c.g, c.b, 1);
         GameObject.Find("save_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 1);
         GameObject.Find("save_interior").GetComponent<Image>().color = new Color(0, 0, 0, 1);
@@ -1289,9 +1292,11 @@ public class EventManager : MonoBehaviour {
         while (true) {
             if (GlobalControls.input.Left == UndertaleInput.ButtonState.PRESSED || GlobalControls.input.Right == UndertaleInput.ButtonState.PRESSED) {
                 if (!save)
-                    PlayerOverworld.instance.utHeart.transform.position = new Vector3(151, PlayerOverworld.instance.utHeart.transform.position.y, PlayerOverworld.instance.utHeart.transform.position.z);
+                    PlayerOverworld.instance.utHeart.transform.position = new Vector3(151 + Camera.main.transform.position.x - 320, PlayerOverworld.instance.utHeart.transform.position.y, 
+                                                                                      PlayerOverworld.instance.utHeart.transform.position.z);
                 else
-                    PlayerOverworld.instance.utHeart.transform.position = new Vector3(331, PlayerOverworld.instance.utHeart.transform.position.y, PlayerOverworld.instance.utHeart.transform.position.z);
+                    PlayerOverworld.instance.utHeart.transform.position = new Vector3(331 + Camera.main.transform.position.x - 320, PlayerOverworld.instance.utHeart.transform.position.y, 
+                                                                                      PlayerOverworld.instance.utHeart.transform.position.z);
                 save = !save;
             } else if (GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED) {
                 PlayerOverworld.instance.utHeart.color = new Color(c.r, c.g, c.b, 0);

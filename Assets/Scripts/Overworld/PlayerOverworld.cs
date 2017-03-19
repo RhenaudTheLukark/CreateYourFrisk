@@ -103,38 +103,36 @@ public class PlayerOverworld : MonoBehaviour {
         inText = false;
     }
 
+    private void NextText() {
+        if (!textmgr.allLinesComplete() && (textmgr.canAutoSkipAll() || textmgr.lineComplete()))
+            textmgr.nextLine();
+        else if ((textmgr.allLinesComplete() || textmgr.canAutoSkipAll()) && textmgr.lineCount() != 0) {
+            if (eventmgr.scriptLaunched) {
+                textmgr.destroyText();
+                textmgr.setTextQueue(null);
+                eventmgr.script.Call("CYFEventNextCommand");
+            } else {
+                textmgr.destroyText();
+                GameObject.Find("textframe_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 0);
+                GameObject.Find("textframe_interior").GetComponent<Image>().color = new Color(0, 0, 0, 0);
+                inText = false;
+            }
+        }
+    }
+
     IEnumerator textCoroutine() {
         while (true) {
             //UnitaleUtil.writeInLogAndDebugger("inText = " + inText + ", textmgr.lineCount = " + textmgr.lineCount());
-            if (inText /*&& textmgr.lineCount() != 0*/) {
+            if (inText) {
                 //UnitaleUtil.writeInLogAndDebugger("blockskip = " + textmgr.blockSkip + ", skipNowIfBlocked = " + textmgr.skipNowIfBlocked);
                 yield return 0;
                 try {
-                    if (GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED &&!textmgr.blockSkip &&!textmgr.lineComplete() && textmgr.canSkip())
+                    if (textmgr.canAutoSkipAll())
+                        NextText();
+                    if (GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED && !textmgr.blockSkip && !textmgr.lineComplete() && textmgr.canSkip())
                         textmgr.skipLine();
-                    else if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED &&!textmgr.blockSkip) {
-                        if (!textmgr.allLinesComplete() && textmgr.lineComplete())
-                            textmgr.nextLine();
-                        else if (textmgr.allLinesComplete() && textmgr.lineCount() != 0) {
-                            if (eventmgr.scriptLaunched) {
-                                textmgr.setTextQueue(null);
-                                eventmgr.script.Call("CYFEventNextCommand");
-                            } else {
-                                textmgr.destroyText();
-                                GameObject.Find("textframe_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 0);
-                                GameObject.Find("textframe_interior").GetComponent<Image>().color = new Color(0, 0, 0, 0);
-                                inText = false;
-                            }
-                        }
-                    } /*else if (textmgr.blockSkip && textmgr.skipNowIfBlocked) {
-                        textmgr.blockSkip = textmgr.skipNowIfBlocked = false;
-                        //UnitaleUtil.writeInLogAndDebugger(textmgr.currentLine + " / " + (textmgr.textQueue.Length - 1));
-                        if (textmgr.currentLine == textmgr.textQueue.Length - 1) {
-                            //UnitaleUtil.writeInLogAndDebugger("CurrentLine = last for events");
-                            eventmgr.endTextEvent();
-                        } else
-                            textmgr.nextLine();
-                    }*/
+                    else if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED && !textmgr.blockSkip)
+                        NextText();
                 } catch { }
             } else
                 yield return 0;

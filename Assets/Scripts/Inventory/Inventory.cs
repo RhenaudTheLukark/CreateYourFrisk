@@ -77,7 +77,11 @@ public static class Inventory {
     public static void UseItem(int ID) {
         if (SceneManager.GetActiveScene().name == "Battle")  overworld = false;
         else                                                 overworld = true;
-        string Name = container[ID].Name, replacement = null; bool inverseRemove = false; int type = container[ID].Type, amount = 0;
+        tempAmount = 0;
+        string Name = container[ID].Name, replacement = null;
+        bool inverseRemove = false;
+        int type = container[ID].Type;
+        float amount = 0;
         CallOnSelf("HandleItem", new DynValue[] { DynValue.NewString(Name.ToUpper()) });
 
         TextMessage[] mess = new TextMessage[] { };
@@ -101,8 +105,10 @@ public static class Inventory {
                 }
         }
         ItemLibrary(Name, type, out mess, out replacement, out amount);
-        if (type == 1 || type == 2)
+        if (type == 1 || type == 2) {
+            tempAmount = (int)amount;
             mess = ChangeEquipment(type, Name, mess, out replacement);
+        }
         if (replacement != null) {
             container.RemoveAt(ID);
             container.Insert(ID, new UnderItem(replacement));
@@ -174,60 +180,118 @@ public static class Inventory {
     }
 
     public static void UpdateEquipBonuses() {
-        TextMessage[] mess = new TextMessage[] { }; int amount; string replacement;
+        TextMessage[] mess = new TextMessage[] { }; float amount; string replacement;
         ItemLibrary(PlayerCharacter.instance.Weapon, 1, out mess, out replacement, out amount);
-        PlayerCharacter.instance.WeaponATK = amount;
+        PlayerCharacter.instance.WeaponATK = (int)amount;
         ItemLibrary(PlayerCharacter.instance.Armor, 2, out mess, out replacement, out amount);
-        PlayerCharacter.instance.ArmorDEF = amount;
+        PlayerCharacter.instance.ArmorDEF = (int)amount;
     }
 
-    public static void ItemLibrary(string name, int type, out TextMessage[] mess, out string replacement, out int amount) {
+    public static void ItemLibrary(string name, int type, out TextMessage[] mess, out string replacement, out float amount) {
         replacement = null; mess = new TextMessage[] { }; amount = 0;
         switch (type) {
             case 0:
                 switch (name) {
-                    case "Bandage": mess = new TextMessage[] { new TextMessage("[health:10]You re-applied the bandage.[w:10]\rStill kind of gooey.[w:10]\nYou recovered 10 HP!", true, false) }; break;
-                    case "Monster Candy": mess = new TextMessage[] { new TextMessage("[health:10]You ate the Monster Candy.[w:10]\rVery un-licorice-like.[w:10]\nYou recovered 10 HP!", true, false) }; break;
-                    case "Spider Donut": mess = new TextMessage[] { new TextMessage("[health:12]Don't worry,[w:5]spider didn't.[w:10]\nYou recovered 12 HP!", true, false) }; break;
-                    case "Spider Cider": mess = new TextMessage[] { new TextMessage("[health:24]You drank the Spider Cider.[w:10]\nYou recovered 24 HP!", true, false) }; break;
-                    case "Butterscotch Pie": mess = new TextMessage[] { new TextMessage("[health:Max]You ate the Butterscotch Pie.[w:10]\nYour HP was maxed out.", true, false) }; break;
-                    case "Snail Pie": mess = new TextMessage[] { new TextMessage("[health:Max - 1]You ate the Snail Pie.[w:10]\nYour HP was maxed out.", true, false) }; break;
-                    case "Snowman Piece": mess = new TextMessage[] { new TextMessage("[health:45]You ate the Snowman Piece.[w:10]\nYou recovered 45 HP!", true, false) }; break;
+                    case "Bandage":
+                        amount = 10;
+                        mess = new TextMessage[] { new TextMessage("You re-applied the bandage.[w:10]\rStill kind of gooey.[w:10]\nYou recovered 10 HP!", true, false) };
+                        break;
+                    case "Monster Candy":
+                        amount = 10;
+                        mess = new TextMessage[] { new TextMessage("You ate the Monster Candy.[w:10]\rVery un-licorice-like.[w:10]\nYou recovered 10 HP!", true, false) };
+                        break;
+                    case "Spider Donut":
+                        amount = 12;
+                        mess = new TextMessage[] { new TextMessage("Don't worry,[w:5]spider didn't.[w:10]\nYou recovered 12 HP!", true, false) };
+                        break;
+                    case "Spider Cider":
+                        amount = 24;
+                        mess = new TextMessage[] { new TextMessage("You drank the Spider Cider.[w:10]\nYou recovered 24 HP!", true, false) };
+                        break;
+                    case "Butterscotch Pie":
+                        amount = 999;
+                        mess = new TextMessage[] { new TextMessage("You ate the Butterscotch Pie.[w:10]\nYour HP was maxed out.", true, false) };
+                        break;
+                    case "Snail Pie":
+                        amount = PlayerCharacter.instance.MaxHP - (int)PlayerCharacter.instance.HP - 1;
+                        mess = new TextMessage[] { new TextMessage("You ate the Snail Pie.[w:10]\nYour HP was maxed out.", true, false) };
+                        break;
+                    case "Snowman Piece":
+                        amount = 45;
+                        mess = new TextMessage[] { new TextMessage("You ate the Snowman Piece.[w:10]\nYou recovered 45 HP!", true, false) };
+                        break;
                     case "Nice Cream":
-                        int randomCream = Math.randomRange(0, 8); string sentenceCream = "[w:10]\nYou recovered 15 HP!";
+                        amount = 15;
+                        int randomCream = Math.randomRange(0, 8);
+                        string sentenceCream = "[w:10]\nYou recovered 15 HP!";
                         switch (randomCream) {
-                            case 0: sentenceCream = "[health:15]You're super spiffy!" + sentenceCream; break;
-                            case 1: sentenceCream = "[health:15]Are those claws natural?" + sentenceCream; break;
-                            case 2: sentenceCream = "[health:15]Love yourself! I love you!" + sentenceCream; break;
-                            case 3: sentenceCream = "[health:15]You look nice today!" + sentenceCream; break;
-                            case 4: sentenceCream = "[health:15](An illustration of a hug)" + sentenceCream; break;
-                            case 5: sentenceCream = "[health:15]Have a wonderful day!" + sentenceCream; break;
-                            case 6: sentenceCream = "[health:15]Is this as sweet as you?" + sentenceCream; break;
-                            case 7: sentenceCream = "[health:15]You're just great!" + sentenceCream; break;
+                            case 0: sentenceCream = "You're super spiffy!" + sentenceCream; break;
+                            case 1: sentenceCream = "Are those claws natural?" + sentenceCream; break;
+                            case 2: sentenceCream = "Love yourself! I love you!" + sentenceCream; break;
+                            case 3: sentenceCream = "You look nice today!" + sentenceCream; break;
+                            case 4: sentenceCream = "(An illustration of a hug)" + sentenceCream; break;
+                            case 5: sentenceCream = "Have a wonderful day!" + sentenceCream; break;
+                            case 6: sentenceCream = "Is this as sweet as you?" + sentenceCream; break;
+                            case 7: sentenceCream = "You're just great!" + sentenceCream; break;
                         }
                         mess = new TextMessage[] { new TextMessage(sentenceCream, true, false) }; break;
                     case "Bisicle":
-                        mess = new TextMessage[] { new TextMessage("[health:11]You ate one half of\rthe Bisicle.[w:10]\nYou recovered 11 HP!", true, false) };
-                        replacement = "Unisicle"; break;
-                    case "Unisicle": mess = new TextMessage[] { new TextMessage("[health:11]You ate the Unisicle.[w:10]\nYou recovered 11 HP!", true, false) }; break;
-                    case "Cinnabon Bunny": mess = new TextMessage[] { new TextMessage("[health:22]You ate the Cinnabon Bun.[w:10]\nYou recovered 22 HP!", true, false) }; break;
-                    case "Astronaut Food": mess = new TextMessage[] { new TextMessage("[health:21]You ate the Astronaut Food.[w:10]\nYou recovered 21 HP!", true, false) }; break;
-                    case "Crab Apple": mess = new TextMessage[] { new TextMessage("[health:18]You ate the Crab Apple.[w:10]\nYou recovered 18 HP!", true, false) }; break;
+                        amount = 11;
+                        mess = new TextMessage[] { new TextMessage("You ate one half of\rthe Bisicle.[w:10]\nYou recovered 11 HP!", true, false) };
+                        replacement = "Unisicle";
+                        break;
+                    case "Unisicle":
+                        amount = 11;
+                        mess = new TextMessage[] { new TextMessage("You ate the Unisicle.[w:10]\nYou recovered 11 HP!", true, false) };
+                        break;
+                    case "Cinnabon Bunny":
+                        amount = 22;
+                        mess = new TextMessage[] { new TextMessage("You ate the Cinnabon Bun.[w:10]\nYou recovered 22 HP!", true, false) };
+                        break;
+                    case "Astronaut Food":
+                        amount = 21;
+                        mess = new TextMessage[] { new TextMessage("You ate the Astronaut Food.[w:10]\nYou recovered 21 HP!", true, false) };
+                        break;
+                    case "Crab Apple":
+                        amount = 18;
+                        mess = new TextMessage[] { new TextMessage("[health:18]You ate the Crab Apple.[w:10]\nYou recovered 18 HP!", true, false) };
+                        break;
                     case "Sea Tea":
-                        mess = new TextMessage[] { new TextMessage("[health:10][sound:SeaTea]You drank the Sea Tea.[w:10]\nYour SPEED boosts![w:10]\nYou recovered 18 HP!", true, false),
-                                                                 new TextMessage("[music:pause][waitall:10]...[waitall:1]but for now stats\rdoesn't change.", true, false),
-                                                                 new TextMessage("[noskip][music:unpause][next]", true, false)}; break;
-                    case "Abandoned Quiche": mess = new TextMessage[] { new TextMessage("[health:34]You ate the quiche.[w:10]\nYou recovered 34 HP!", true, false) }; break;
-                    case "Temmie Flakes": mess = new TextMessage[] { new TextMessage("[health:2]You ate the Temmie Flakes.[w:10]\nYou recovered 2 HP!", true, false) }; break;
+                        amount = 18;
+                        mess = new TextMessage[] { new TextMessage("[sound:SeaTea]You drank the Sea Tea.[w:10]\nYour SPEED boosts![w:10]\nYou recovered 18 HP!", true, false),
+                                                   new TextMessage("[music:pause][waitall:10]...[waitall:1]but for now stats\rdon't change.", true, false),
+                                                   new TextMessage("[noskip][music:unpause][next]", true, false)}; break;
+                    case "Abandoned Quiche":
+                        amount = 34;
+                        mess = new TextMessage[] { new TextMessage("You ate the quiche.[w:10]\nYou recovered 34 HP!", true, false) };
+                        break;
+                    case "Temmie Flakes":
+                        amount = 2;
+                        mess = new TextMessage[] { new TextMessage("You ate the Temmie Flakes.[w:10]\nYou recovered 2 HP!", true, false) };
+                        break;
                     case "Dog Salad":
-                        int randomSalad = Math.randomRange(0, 4); string sentenceSalad;
+                        int randomSalad = Math.randomRange(0, 4);
+                        string sentenceSalad;
                         switch (randomSalad) {
-                            case 0: sentenceSalad = "[health:2]Oh. These are bones...[w:10]\rYou recovered 2 HP!"; break;
-                            case 1: sentenceSalad = "[health:10]Oh. Fries tennis ball...[w:10]\rYou recovered 10 HP!"; break;
-                            case 2: sentenceSalad = "[health:30]Oh. Tastes yappy...[w:10]\rYou recovered 30 HP!"; break;
-                            default: sentenceSalad = "[health:Max]It's literally garbage???[w:10]\rYour HP was maxed out."; break;
+                            case 0:
+                                amount = 2;
+                                sentenceSalad = "[health:2]Oh. These are bones...[w:10]\rYou recovered 2 HP!";
+                                break;
+                            case 1:
+                                amount = 10;
+                                sentenceSalad = "[health:10]Oh. Fries tennis ball...[w:10]\rYou recovered 10 HP!";
+                                break;
+                            case 2:
+                                amount = 30;
+                                sentenceSalad = "[health:30]Oh. Tastes yappy...[w:10]\rYou recovered 30 HP!";
+                                break;
+                            default:
+                                amount = 9999;
+                                sentenceSalad = "[health:Max]It's literally garbage???[w:10]\rYour HP was maxed out.";
+                                break;
                         }
-                        mess = new TextMessage[] { new TextMessage(sentenceSalad, true, false) }; break;
+                        mess = new TextMessage[] { new TextMessage(sentenceSalad, true, false) };
+                        break;
                     case "Instant Noodles":
                         mess = new TextMessage[] { new TextMessage("You remove the Instant\rNoodles from their\rpackaging.", true, false),
                                                    new TextMessage("You put some water in\rthe pot and place it\ron the heat.", true, false),
@@ -244,26 +308,64 @@ public static class Inventory {
                                                    new TextMessage("You add the flavor packet.", true, false),
                                                    new TextMessage("That's better.", true, false),
                                                    new TextMessage("Not great,[w:5] but better.", true, false),
-                                                   new TextMessage("[music:unpause][health:4]You ate the Instant Noodles.[w:10]\nYou recovered 4 HP!", true, false)}; break;
-                    case "Hot Dog...?": mess = new TextMessage[] { new TextMessage("[health:20][sound:HotDog]You ate the Hot Dog.[w:10]\nYou recovered 20 HP!", true, false) }; break;
-                    case "Hot Cat": mess = new TextMessage[] { new TextMessage("[health:21][sound:HotCat]You ate the Hot Cat.[w:10]\nYou recovered 21 HP!", true, false) }; break;
-                    case "Junk Food": mess = new TextMessage[] { new TextMessage("[health:17]You ate the Junk Food.[w:10]\nYou recovered 17 HP!", true, false) }; break;
-                    case "Hush Puppy": mess = new TextMessage[] { new TextMessage("[health:65]You ate the Hush Puppy.[w:10]\rDog-magic is neutralized.[w:10]\nYou recovered 65 HP!", true, false) }; break;
-                    case "Starfait": mess = new TextMessage[] { new TextMessage("[health:14]You ate the Starfait.[w:10]\nYou recovered 14 HP!", true, false) }; break;
-                    case "Glamburger": mess = new TextMessage[] { new TextMessage("[health:27]You ate the Glamburger.[w:10]\nYou recovered 27 HP!", true, false) }; break;
-                    case "Legendary Hero":
-                        mess = new TextMessage[] { new TextMessage("[health:40][sound:LegHero]You ate the Legendary Hero.[w:10]\nATTACK increased by 4![w:10]\nYou recovered 40 HP!", true, false),
-                                                                 new TextMessage("[music:pause][waitall:10]...[waitall:1]but for now stats\rdoesn't change.", true, false),
-                                                                 new TextMessage("[noskip][music:unpause][next]", true, false)}; break;
-                    case "Steak in the Shape of Mettaton's Face": mess = new TextMessage[] { new TextMessage("[health:60]You ate the Face Steak.[w:10]\nYou recovered 60 HP!", true, false) }; break;
-                    case "Popato Chisps": mess = new TextMessage[] { new TextMessage("[health:13]You ate the Popato Chisps.[w:10]\nYou recovered 13 HP!", true, false) }; break;
-                    case "Bad Memory":
-                        if (PlayerCharacter.instance.HP <= 3) mess = new TextMessage[] { new TextMessage("[health:Max]You consume the Bad Memory.[w:10]\nYour HP was maxed out.", true, false) };
-                        else mess = new TextMessage[] { new TextMessage("[health:-1]You consume the Bad Memory.[w:10]\nYou lost 1 HP.", true, false) };
+                                                   new TextMessage("[music:unpause][health:4]You ate the Instant Noodles.[w:10]\nYou recovered 4 HP!", true, false)};
                         break;
-                    case "Last Dream": mess = new TextMessage[] { new TextMessage("[health:17]Through DETERMINATION,\rthe dream became true.[w:10]\nYou recovered 17 HP!", true, false) }; break;
-                    default: UnitaleUtil.writeInLog("The item doesn't exists in this pool."); break;
+                    case "Hot Dog...?":
+                        amount = 20;
+                        mess = new TextMessage[] { new TextMessage("[sound:HotDog]You ate the Hot Dog.[w:10]\nYou recovered 20 HP!", true, false) };
+                        break;
+                    case "Hot Cat":
+                        amount = 21;
+                        mess = new TextMessage[] { new TextMessage("[sound:HotCat]You ate the Hot Cat.[w:10]\nYou recovered 21 HP!", true, false) };
+                        break;
+                    case "Junk Food":
+                        amount = 17;
+                        mess = new TextMessage[] { new TextMessage("You ate the Junk Food.[w:10]\nYou recovered 17 HP!", true, false) };
+                        break;
+                    case "Hush Puppy":
+                        amount = 65;
+                        mess = new TextMessage[] { new TextMessage("You ate the Hush Puppy.[w:10]\rDog-magic is neutralized.[w:10]\nYou recovered 65 HP!", true, false) };
+                        break;
+                    case "Starfait":
+                        amount = 14;
+                        mess = new TextMessage[] { new TextMessage("You ate the Starfait.[w:10]\nYou recovered 14 HP!", true, false) };
+                        break;
+                    case "Glamburger":
+                        amount = 27;
+                        mess = new TextMessage[] { new TextMessage("You ate the Glamburger.[w:10]\nYou recovered 27 HP!", true, false) }; break;
+                    case "Legendary Hero":
+                        amount = 40;
+                        mess = new TextMessage[] { new TextMessage("[sound:LegHero]You ate the Legendary Hero.[w:10]\nATTACK increased by 4![w:10]\nYou recovered 40 HP!", true, false),
+                                                   new TextMessage("[music:pause][waitall:10]...[waitall:1]but for now stats\rdon't change.", true, false),
+                                                   new TextMessage("[noskip][music:unpause][next]", true, false)};
+                        break;
+                    case "Steak in the Shape of Mettaton's Face":
+                        amount = 60;
+                        mess = new TextMessage[] { new TextMessage("You ate the Face Steak.[w:10]\nYou recovered 60 HP!", true, false) };
+                        break;
+                    case "Popato Chisps":
+                        amount = 13;
+                        mess = new TextMessage[] { new TextMessage("You ate the Popato Chisps.[w:10]\nYou recovered 13 HP!", true, false) };
+                        break;
+                    case "Bad Memory":
+                        if (PlayerCharacter.instance.HP <= 3) {
+                            amount = 9999;
+                            mess = new TextMessage[] { new TextMessage("You consume the Bad Memory.[w:10]\nYour HP was maxed out.", true, false) };
+                        } else {
+                            amount = -1;
+                            mess = new TextMessage[] { new TextMessage("[health:-1]You consume the Bad Memory.[w:10]\nYou lost 1 HP.", true, false) };
+                        }
+                        break;
+                    case "Last Dream":
+                        amount = 17;
+                        mess = new TextMessage[] { new TextMessage("[health:17]Through DETERMINATION,\rthe dream became true.[w:10]\nYou recovered 17 HP!", true, false) };
+                        break;
+                    default:
+                        UnitaleUtil.writeInLog("The item doesn't exists in this pool.");
+                        break;
                 }
+                if (amount != 0)
+                    PlayerController.instance.Hurt(-amount, 0);
                 break;
             case 1:
                 switch (name) {
@@ -313,6 +415,7 @@ public static class Inventory {
             PlayerCharacter.instance.Armor = Name;
         } else
             UnitaleUtil.displayLuaError("Equip an item", "The item \"" + Name + "\" can't be equipped.");
+        Debug.Log("tempAmount = " + tempAmount);
         if (mess.Length == 0) mess = new TextMessage[] { new TextMessage("You equipped " + Name + ".", true, false) };
         else                  mess = new TextMessage[] { };
         return mess;
@@ -341,9 +444,9 @@ public static class Inventory {
                 PlayerCharacter.instance.WeaponATK = 0;
                 //UnitaleUtil.writeInLog("The item \"" + str + "\" has been removed from the weapon Equipment.");
             } else if (str == PlayerCharacter.instance.Weapon && PlayerCharacter.instance.Weapon != "Stick" && NametoDesc.ContainsValue(str)) {
-                TextMessage[] mess; string replacement; int amount;
+                TextMessage[] mess; string replacement; float amount;
                 ItemLibrary(str, 1, out mess, out replacement, out amount);
-                PlayerCharacter.instance.WeaponATK = amount;
+                PlayerCharacter.instance.WeaponATK = (int)amount;
                 //UnitaleUtil.writeInLog("The item \"" + str + "\" has been setted to the right value for Weapon.");
             }
 
@@ -356,9 +459,9 @@ public static class Inventory {
                 PlayerCharacter.instance.Armor = "Bandage";
                 //UnitaleUtil.writeInLog("The item \"" + str + "\" has been removed from the armor Equipment.");
             } else if (str == PlayerCharacter.instance.Armor && PlayerCharacter.instance.Armor != "Bandage" && NametoDesc.ContainsValue(str)) {
-                TextMessage[] mess; string replacement; int amount;
+                TextMessage[] mess; string replacement; float amount;
                 ItemLibrary(str, 2, out mess, out replacement, out amount);
-                PlayerCharacter.instance.ArmorDEF = amount;
+                PlayerCharacter.instance.ArmorDEF = (int)amount;
                 //UnitaleUtil.writeInLog("The item \"" + str + "\" has been setted to the right value for Armor.");
             }
         }

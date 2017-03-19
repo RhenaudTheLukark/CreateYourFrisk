@@ -106,5 +106,5 @@ function EndingWave()
 end
 
 function OnHit(bullet)
-    Player.Hurt(3)
+    Player.Hurt(300)
 end

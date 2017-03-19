@@ -2,7 +2,8 @@ function EventPage1()
 	SetAnimSwitch("Player", "MovingUp")
     Wait(60)
 	MoveEventToPoint("Player", 320, 400, true)
-	SetDialog({"Erm[waitall:3]...[waitall:1][w:10] Why did you go here?"}, true, {"papyrus_mugshot_2"})
+	--SetDialog({"Erm[waitall:3]...[waitall:1][w:10] Why did you go here?"}, true, {"papyrus_mugshot_2"})
+    SetDialog({"I hate you![mugshot:rtlukark_surprised]", "[instant]I love you!"}, true, {"rtlukark_angry", "rtlukark_determined"})
 end
 
 function EventPage2Old()

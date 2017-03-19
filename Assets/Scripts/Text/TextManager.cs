@@ -20,7 +20,7 @@ public class TextManager : MonoBehaviour {
     public int currentLine = 0;
     private int currentCharacter = 0;
     public int currentReferenceCharacter = 0;
-    private bool displayImmediate = false;
+    private bool displayImmediate = false, instantLaunched = false;
     private bool currentSkippable = true;
     public bool nextMonsterDialogueOnce = false, nmd2 = false, wasStated = false;
     private RectTransform self;
@@ -249,6 +249,7 @@ public class TextManager : MonoBehaviour {
                     letterIntensity = 0;
                     letterSpeed = 1;
                     displayImmediate = textQueue[line].ShowImmediate;
+                    instantLaunched = false;
                     spawnText();
                     //if (!overworld)
                     //    UIController.instance.encounter.CallOnSelfOrChildren("AfterText");
@@ -595,6 +596,7 @@ public class TextManager : MonoBehaviour {
 
         if (displayImmediate)
             return;
+
         if (currentCharacter >= letterReferences.Length)
             return;
 
@@ -718,6 +720,13 @@ public class TextManager : MonoBehaviour {
                     letterReferences[indexOfStar].color = starColor;
                 break;
 
+            case "instant":
+                if (args.Length == 0)
+                    print("skipFromPlayer = " + skipFromPlayer);
+                    if (!skipFromPlayer)
+                        displayImmediate = true;
+                break;
+
             case "font":
                 AudioClip oldClip = letterSound.clip;
                 float oldLineThing = Charset.LineSpacing;
@@ -796,10 +805,7 @@ public class TextManager : MonoBehaviour {
                 break;
                 
             case "instant":
-                if (args.Length == 0) {
-                    if (!skipFromPlayer)
-                        displayImmediate = true;
-                } else {
+                if (args.Length != 0) {
                     switch (args[0].ToLower()) {
                         case "allowcommand": instantCommand = true; break;
                         case "stop":

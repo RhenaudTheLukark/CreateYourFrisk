@@ -1292,7 +1292,7 @@ public class UIController : MonoBehaviour {
             textmgr.setPause(false);
 
         if (state == UIState.DIALOGRESULT)
-            if (textmgr.canAutoSkipThis() && textmgr.lineComplete())
+            if (textmgr.canAutoSkipAll() || (textmgr.canAutoSkipThis() && textmgr.lineComplete()))
                 if (textmgr.hasNext())
                     textmgr.nextLine();
                 else {

@@ -1,4 +1,4 @@
-encountertext = "Your path is blocked by two mannequins! ∞.∞\nYou should look at the scripts!" --Modify as necessary. It will only be read out in the action select screen.
+encountertext = "Your path is blocked by two mannequins! ∞.∞\nYou should look at the scripts![w:30][next]" --Modify as necessary. It will only be read out in the action select screen.
 --encountertext = "[effect:rotate,5][lettereffect:shake,5]Your path is blocked by two mannequins! ∞.∞[lettereffect:none]\nYou should look at the scripts!"
 wavetimer = 4
 arenasize = {155, 130}
@@ -33,7 +33,7 @@ function EncounterStarting()
         bullet.isPersistent = true]]
 	--Types : 0 = Consumable, 1 = Weapon, 2 = Armor, else = Special (you must use 3)
 	Inventory.AddCustomItems({"TEST", "TEST2", "Shotgun", "Shotgun2", "Shotgun3", "Shotgun4", "Bandage", "PsnPotion", "Life Roll", "Nothing", "Pie", "Snails"}, {0, 0, 1, 1, 1, 1, 0, 0, 0, 3, 0, 0})
-	Inventory.SetInventory({"Pie", "Snails", "Butterscotch Pie", "Bandage", "Nothing", "PsnPotion", "Life Roll", "Real Knife"})
+	Inventory.SetInventory({"Shotgun", "Shotgun2", "Butterscotch Pie", "Bandage", "Nothing", "PsnPotion", "Life Roll", "Real Knife"})
 	Player.lv = 999
 	Player.ForceHP((4 * Player.lv + 19) * 1.5)
     SetPPCollision(true)
@@ -114,6 +114,7 @@ function HandleItem(ItemID)
         BattleDialog({"You ate the Snails. Slimy..."}) 
         Player.Heal(15)
     end
+    BattleDialog({"I'm blocking the text path!"})
 end
 	
 function Heal(amount)

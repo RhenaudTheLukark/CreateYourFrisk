@@ -55,7 +55,7 @@ function HandleCustomCommand(command)
             BattleDialog({"You just kind of stand there."})
         elseif this_must_be_the_work_of_an_enemy_stand == 1 then
             currentdialogue = {"Agh..."}
-            BattleDialog({"Your standing intensifies."})
+            BattleDialog({"Your standing intensifies.[w:30][next]", "Posette won't hold on much longer."})
         else
             canspare = true
             table.insert(comments, "There's still a faint rumbling.")
