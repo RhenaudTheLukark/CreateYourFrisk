@@ -7,7 +7,6 @@ using MoonSharp.Interpreter;
 
 public class TransitionOverworld : MonoBehaviour {
     public string FirstLevelToLoad;
-    public string FirstModFolder;
     public Vector2 BeginningPosition;
 
     public void Start() {
@@ -35,9 +34,8 @@ public class TransitionOverworld : MonoBehaviour {
             if (UnitaleUtil.MapCorrespondanceList.ContainsKey(FirstLevelToLoad))  mapName2 = UnitaleUtil.MapCorrespondanceList[FirstLevelToLoad];
             else                                                                  mapName2 = FirstLevelToLoad;
             LuaScriptBinder.Set(null, "PlayerMap", DynValue.NewString(mapName2));
-            LuaScriptBinder.Set(null, "ModFolder", DynValue.NewString(FirstModFolder));
 
-            StaticInits.MODFOLDER = FirstModFolder;
+            StaticInits.MODFOLDER = "";
             /*StaticInits.Initialized = false;
             GameObject.Find("Main Camera OW").GetComponent<StaticInits>().initAll();*/
             GlobalControls.realName = PlayerCharacter.instance.Name;
@@ -67,9 +65,11 @@ public class TransitionOverworld : MonoBehaviour {
         GameObject.DontDestroyOnLoad(GameObject.Find("Main Camera OW"));
         string mapName;
         if (!isStart) {
-            if (UnitaleUtil.MapCorrespondanceList.ContainsValue(LuaScriptBinder.Get(null, "PlayerMap").String))
-                mapName = UnitaleUtil.MapCorrespondanceList.FirstOrDefault(x => x.Value == LuaScriptBinder.Get(null, "PlayerMap").String).Key;
-            else mapName = LuaScriptBinder.Get(null, "PlayerMap").String;
+            try {
+                if (UnitaleUtil.MapCorrespondanceList.ContainsValue(LuaScriptBinder.Get(null, "PlayerMap").String))
+                    mapName = UnitaleUtil.MapCorrespondanceList.FirstOrDefault(x => x.Value == LuaScriptBinder.Get(null, "PlayerMap").String).Key;
+                else mapName = LuaScriptBinder.Get(null, "PlayerMap").String;
+            } catch { mapName = LuaScriptBinder.Get(null, "PlayerMap").String; }
         } else
             mapName = FirstLevelToLoad;
 
@@ -97,6 +97,7 @@ public class TransitionOverworld : MonoBehaviour {
         yield return 0;
         PlayerOverworld.instance.eventmgr.ResetEvents();
         yield return Application.isLoadingLevel;
+        GameObject.Find("Main Camera OW").tag = "MainCamera";
 
         GameObject.Find("utHeart").GetComponent<Image>().color = new Color(GameObject.Find("utHeart").GetComponent<Image>().color.r, 
                                                                            GameObject.Find("utHeart").GetComponent<Image>().color.g,

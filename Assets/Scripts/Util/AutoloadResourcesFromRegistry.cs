@@ -31,8 +31,10 @@ class AutoloadResourcesFromRegistry : MonoBehaviour {
     }*/
 
     void OnEnable() {
-        StaticInits.Loaded += LateStart;
-        Fading.StartFade += LateStart;
+        if (UnitaleUtil.isOverworld())
+            Fading.StartFade += LateStart;
+        else
+            StaticInits.Loaded += LateStart;
         foreach (AutoloadResourcesFromRegistry a in FindObjectsOfType<AutoloadResourcesFromRegistry>())
             if (a.done || a.doneFromLoadedScene) {
                 LateStart();
@@ -41,8 +43,10 @@ class AutoloadResourcesFromRegistry : MonoBehaviour {
     }
 
     void OnDisable() {
-        StaticInits.Loaded -= LateStart;
-        Fading.StartFade -= LateStart;
+        if (UnitaleUtil.isOverworld())
+            StaticInits.Loaded -= LateStart;
+        else
+            Fading.StartFade -= LateStart;
     }
 
     /*void LateStart() {
@@ -104,14 +108,13 @@ class AutoloadResourcesFromRegistry : MonoBehaviour {
     }*/
 
     void LateStart() {
-
-        if ((!done && this.handleDictErrors) || (!doneFromLoadedScene &&!this.handleDictErrors)) {
+        bool hasError = false;
+        if ((!done && this.handleDictErrors) || (!doneFromLoadedScene && !this.handleDictErrors)) {
             if (!done && this.handleDictErrors)
                 done = true;
             else
                 doneFromLoadedScene = true;
             bool handleDictErrors = this.handleDictErrors;
-            this.handleDictErrors = true;
             if (!string.IsNullOrEmpty(SpritePath)) {
                 Image img = GetComponent<Image>();
                 SpriteRenderer img2 = GetComponent<SpriteRenderer>();
@@ -121,12 +124,13 @@ class AutoloadResourcesFromRegistry : MonoBehaviour {
                     if (img.sprite == null && handleDictErrors) {
                         UnitaleUtil.displayLuaError("AutoloadResourcesFromRegistry", "You tried to load the sprite \"" + SpritePath + "\", but it doesn't exist.");
                         return;
-                    }
-                    if (img.sprite != false) {
+                    } else if (img.sprite == null)
+                        hasError = true;
+                    else {
                         //img.sprite.name = SpritePath.ToLower(); TODO: Find a way to store the sprite's path
                         if (SetNativeSize) {
                             img.SetNativeSize();
-                            if (!GameObject.FindObjectOfType<TextManager>().overworld) {
+                            if (!UnitaleUtil.isOverworld()) {
                                 img.rectTransform.sizeDelta = new Vector2(img.sprite.texture.width, img.sprite.texture.height);
                                 img.rectTransform.localScale = new Vector3(1, 1, 1);
                             } else {
@@ -140,11 +144,12 @@ class AutoloadResourcesFromRegistry : MonoBehaviour {
                     if (img2.sprite == null && handleDictErrors) {
                         UnitaleUtil.displayLuaError("AutoloadResourcesFromRegistry", "You tried to load the sprite \"" + SpritePath + "\", but it doesn't exist.");
                         return;
-                    }
-                    if (img2.sprite != false) {
+                    } else if (img2.sprite == null)
+                        hasError = true;
+                    else {
                         //img2.sprite.name = SpritePath.ToLower();
                         if (SetNativeSize) {
-                            if (!GameObject.FindObjectOfType<TextManager>().overworld) {
+                            if (!UnitaleUtil.isOverworld()) {
                                 img2.GetComponent<RectTransform>().sizeDelta = new Vector2(img2.sprite.texture.width, img2.sprite.texture.height);
                                 img2.transform.localScale = new Vector3(1, 1, 1);
                             } else {
@@ -156,10 +161,10 @@ class AutoloadResourcesFromRegistry : MonoBehaviour {
                 } else if (img3 != null)
                     img3.material.mainTexture = SpriteRegistry.Get(SpritePath).texture;
                 else
-                    throw new CYFException("The GameObject " + gameObject.name + " doesn't have an Image or SpriteRenderer component.");
+                    throw new CYFException("The GameObject " + gameObject.name + " doesn't have an Image, Sprite Renderer or Particle System component.");
             }
 
-            if (!string.IsNullOrEmpty(SoundPath)) {
+            if (!string.IsNullOrEmpty(SoundPath) && !hasError) {
                 AudioSource aSrc = GetComponent<AudioSource>();
                 aSrc.clip = AudioClipRegistry.Get(SoundPath);
                 /*if (aSrc.clip == null && handleDictErrors) {
@@ -168,6 +173,7 @@ class AutoloadResourcesFromRegistry : MonoBehaviour {
                 }*/
                 aSrc.loop = Loop;
             }
+            this.handleDictErrors = true;
 
             /* TODO: Make so AnimatorControllers can be loaded from a file
             if (gameObject.GetComponent<Animator>() &&!string.IsNullOrEmpty(AnimatorPath))

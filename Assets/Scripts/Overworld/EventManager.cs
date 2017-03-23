@@ -12,31 +12,52 @@ using System.Reflection;
 public class EventManager : MonoBehaviour {
     private int EventLayer;                 //The id of the Event Layer
     public  ScriptWrapper script;           //The script we have to load
-    private List<GameObject> events = new List<GameObject>(); //This map's events
-    private Hashtable sprCtrls = new Hashtable();
+    public List<GameObject> events = new List<GameObject>(); //This map's events
+    public Hashtable sprCtrls = new Hashtable();
     private TextManager textmgr;            //The current TextManager
-    private int actualEventIndex = -1;      //ID of the actual event we're running
+    public int actualEventIndex = -1;      //ID of the actual event we're running
     public  bool readyToReLaunch = false;   //Used to prevent overworld GameOver errors
-    private bool bgmCoroutine = false;      //Check if the BGM is already fading
+    public bool bgmCoroutine = false;      //Check if the BGM is already fading
     public  bool passPressOnce = false;     //Boolean used because events are boring
     public  bool scriptLaunched = false;
     private bool relaunchReset1 = false, relaunchReset2 = false;
     private bool needReturn = false;
     private Hashtable autoDone = new Hashtable();
 
+    public LuaPlayerOverworld luapo;
+    public LuaEventOW luaevow;
+
+    private Dictionary<Type, string> boundValueName = new Dictionary<Type, string>();
+    /*private Type[] bindTypeList = new Type[] {
+        typeof(EventManager),
+        typeof(LuaPlayerOverworld)
+    };
+
+    private List<object> instancesOfTypeList = new List<object>();*/
+
     //Don't judge me please
-    string[] bindList = new string[] { "SetDialog", "SetAnimOW", "SetChoice", "TeleportEvent", "MoveEventToPoint", "GetReturnPoint",
-                                       "SetReturnPoint", "SupprVarOW", "SetBattle", "DispImg", "SupprImg", "WaitForInput", "SetTone", "RotateEvent",
-                                       "GameOver", "SetAnimSwitch", "PlayBGMOW", "StopBGMOW", "PlaySoundOW", "Rumble", "Flash", "Save", "Heal",
-                                       "Hurt", "AddItem", "RemoveItem", "StopEvent", "RemoveEvent", "AddMoney", "SetEventPage", "GetSpriteOfEvent",
-                                       "CenterEventOnCamera", "ResetCameraPosition", "MoveCamera", "Wait", "GetPosition"};
+    private string[] bindList = new string[] { "SetDialog", "SetAnimOW", "SetChoice", "TeleportEvent", "MoveEventToPoint", "GetReturnPoint",
+                                               "SetReturnPoint", "SupprVarOW", "SetBattle", "DispImg", "SupprImg", "WaitForInput", "SetTone", "RotateEvent",
+                                               "GameOver", "SetAnimSwitch", "PlayBGMOW", "StopBGMOW", "PlaySoundOW", "Rumble", "Flash", "Save", "Heal",
+                                               "Hurt", "AddItem", "RemoveItem", "StopEvent", "RemoveEvent", "AddMoney", "SetEventPage", "GetSpriteOfEvent",
+                                               "CenterEventOnCamera", "ResetCameraPosition", "MoveCamera", "Wait", "GetPosition"};
+    //private List<string> dynamicBindList = new List<string>();
 
     // Use this for initialization
     public void Start() {
+        if (boundValueName.Count == 0) {
+            boundValueName.Add(typeof(LuaEventOW), "Event");
+            boundValueName.Add(typeof(LuaPlayerOverworld), "Player");
+        }
+        /*for (int i = 1; i < bindTypeList.Length; i ++)
+            instancesOfTypeList.Add(Activator.CreateInstance((Type)bindTypeList[i]));*/
         EventLayer = LayerMask.GetMask("EventLayer");                               //Get the layer that'll interact with our object, here EventLayer
         textmgr = GameObject.Find("TextManager OW").GetComponent<TextManager>();
         relaunchReset1 = true;
     }
+
+    void OnEnable() { LuaEventOW.StCoroutine += StCoroutine; }
+    void OnDisable() { LuaEventOW.StCoroutine -= StCoroutine; }
 
     // Update is called once per frame
     void Update() {
@@ -83,6 +104,37 @@ public class EventManager : MonoBehaviour {
             }
         } catch (InvalidOperationException) { }
     }
+
+    /*private object FunctionLauncher<T>(T classType, string name, object[] values = null) {
+        T classInstance = (T)GetObjectOfType(typeof(T));
+        if (classInstance == null) {
+            Debug.LogError("There is no " + typeof(T).Name + " object in the object list.");
+            return null;
+        }
+
+        try { return classType.GetType().GetMethod(name).Invoke(classInstance, values); }
+        catch {
+            Debug.LogError("There was an error when launching the function " + name + " of the class " + typeof(T).Name + ".");
+            return null;
+        }
+    }
+
+    private object GetObjectOfType(Type t) {
+        foreach (object o in instancesOfTypeList)
+            if (o.GetType() == t)
+                return o;
+        return null;
+    }
+
+    private List<MethodInfo> GetCYFEventFunctions(Type t) {
+        List<MethodInfo> methods = new List<MethodInfo>();
+        MethodInfo[] methodInfos = t.GetMethods();
+        const bool includeInherited = false;
+        foreach (MethodInfo mf in methodInfos)
+            if (mf.GetCustomAttributes(typeof(CYFEventFunction), includeInherited).Any())
+                methods.Add(mf);
+        return methods;
+    }*/
 
     public static bool testContainsListVector2(List<Vector2> list, int testValue) {
         foreach (Vector2 v in list)
@@ -177,7 +229,7 @@ public class EventManager : MonoBehaviour {
         foreach (GameObject go in events)
             if (!go)                                              events.Remove(go);
             else if (!go.GetComponent<EventOW>())                 events.Remove(go);
-            else if (go.GetComponent<EventOW>().actualPage == -1) RemoveEvent(go.name);
+            else if (go.GetComponent<EventOW>().actualPage == -1) luaevow.RemoveEvent(go.name);
     }
 
     public int getTrigger(GameObject go, int index) {
@@ -253,13 +305,25 @@ public class EventManager : MonoBehaviour {
         return false;
     }
 
+    private List<string> CreateBindList(Type t) {
+        List<string> result = new List<string>();
+        MethodInfo[] methods = t.GetMethods();
+        foreach (MethodInfo method in methods)
+            result.Add(method.Name);
+        return result;
+    }
+
     /// <summary>
     /// Function that permits to initialize the event script to be used later
     /// </summary>
     /// <param name="name"></param>
     /// <returns>Returns true if no error were encountered.</returns>
     private bool initScript(string name, EventOW ev) {
-        script = new ScriptWrapper(true);
+        if (luapo == null) {
+            luapo = new LuaPlayerOverworld();
+            luaevow = new LuaEventOW(PlayerOverworld.instance.eventmgr, textmgr);
+        }
+        script = new ScriptWrapper(/*true*/);
         script.scriptname = name;
         string scriptText = ScriptRegistry.Get(ScriptRegistry.EVENT_PREFIX + name);
         if (scriptText == null) {
@@ -269,11 +333,19 @@ public class EventManager : MonoBehaviour {
         string lameOverworldFunctionBinding = string.Empty;
         string lameFunctionBinding = string.Empty;
         bool once = false;
-        foreach (string str in bindList) {
-            //script.Bind(str, new Action<DynValue, DynValue, DynValue, DynValue, DynValue, DynValue, DynValue, DynValue, DynValue, DynValue>(FunctionLauncher));
-            scriptText += "\n\nfunction F" + str + "() end\nfunction " + str + "(p1,p2,p3,p4,p5,p6,p7,p8,p9,p10) return CYFEventForwarder(\"" + str + "\",p1,p2,p3,p4,p5,p6,p7,p8,p9,p10) end";
-            lameFunctionBinding += "\n    " + (once ? "elseif" : "if") + " func == '" + str + "' then x = F" + str;
-            once = true;
+        //foreach (string str in bindList) {
+        foreach (Type t in boundValueName.Keys) {
+            List<string> l = CreateBindList(t);
+            scriptText += "\n" + boundValueName[t] + " = { }";
+            foreach (string str in l) {
+                if (str.Contains("StCoroutine"))
+                    continue;
+                //script.Bind(str, new Action<DynValue, DynValue, DynValue, DynValue, DynValue, DynValue, DynValue, DynValue, DynValue, DynValue>(FunctionLauncher));
+                string str2 = boundValueName[t] + "." + str;
+                scriptText += "\n" /*+ "\nfunction F" + str2 + "() end\n"*/ + "function " + str2 + "(p1,p2,p3,p4,p5,p6,p7,p8,p9,p10) return CYFEventForwarder(\"" + str2 + "\",p1,p2,p3,p4,p5,p6,p7,p8,p9,p10) end";
+                lameFunctionBinding += "\n    " + (once ? "elseif" : "if") + " func == '" + str2 + "' then x = F" + str2;
+                once = true;
+            }
         }
         once = false;
         foreach (Vector2 v in ev.eventTriggers) {
@@ -298,7 +370,7 @@ public class EventManager : MonoBehaviour {
                       lameOverworldFunctionBinding +
                       "\n    if x == error then error(\"Don't look at your script, this code block is added at the script's compilation.\\n" + 
                                                        "The overworld function \\\"\" .. func .. \"\\\" doesn't exist. Did you forgot to add this function in the event triggers list?\") end " +
-                      "\n    CYFEventCoroutine = coroutine.create(EventPage1) " +
+                      "\n    CYFEventCoroutine = coroutine.create(x) " +
                       "\n    local ok, errorMsg = coroutine.resume(CYFEventCoroutine) " +
                       "\n    if not ok then error('The line number is wrong, good luck to find the error!\\n\\n' .. errorMsg) end " +
                       "\nend " +
@@ -329,7 +401,7 @@ public class EventManager : MonoBehaviour {
             return false;
         }
 
-        script.Bind("FSetDialog", new Action<DynValue, bool, DynValue>(SetDialog));
+        /*script.Bind("FSetDialog", new Action<DynValue, bool, DynValue>(SetDialog));
         script.Bind("FSetChoice", new Action<DynValue, string>(SetChoice));
         script.Bind("FSetAnimOW", new Action<string, string>(SetAnimOW));
         script.Bind("FSetAnimSwitch", new Action<string, string>(SetAnimSwitch));
@@ -363,7 +435,7 @@ public class EventManager : MonoBehaviour {
         script.Bind("FMoveCamera", new Action<int, int, int, bool>(MoveCamera));
         script.Bind("FResetCameraPosition", new Action<int, bool>(ResetCameraPosition));
         script.Bind("FWait", new Action<int>(Wait));
-        script.Bind("FGetPosition", new Func<string, DynValue>(GetPosition));
+        script.Bind("FGetPosition", new Func<string, DynValue>(GetPosition));*/
 
         return true;
     }
@@ -456,7 +528,7 @@ public class EventManager : MonoBehaviour {
     /// </summary>
     /// <param name="selection"></param>
     /// <param name="question"></param>
-    private void setPlayerOnSelection(int selection, bool question = false, bool threeLines = false) {
+    public void setPlayerOnSelection(int selection, bool question = false, bool threeLines = false) {
         if (question) {
             if (threeLines)  selection += 2;
             else             selection += 4;
@@ -465,7 +537,8 @@ public class EventManager : MonoBehaviour {
         int xMv = selection % 2; // remainder safe again, selection is never negative
         int yMv = selection / 2;
         // HACK: remove hardcoding of this sometime, ever... probably not happening lmao
-        GameObject.Find("tempHeart").GetComponent<RectTransform>().position = new Vector3(upperLeft.x + xMv * 303, upperLeft.y - yMv * textmgr.Charset.LineSpacing, 0);
+        GameObject.Find("tempHeart").GetComponent<RectTransform>().position = new Vector3(upperLeft.x + xMv * 303 + Camera.main.transform.position.x - 320, 
+                                                                                          upperLeft.y - yMv * textmgr.Charset.LineSpacing + Camera.main.transform.position.y - 240, 0);
     }
 
     /// <summary>
@@ -473,7 +546,7 @@ public class EventManager : MonoBehaviour {
     /// </summary>
     /// <param name="dir"></param>
     /// <returns></returns>
-    private int CheckDirection(Vector2 dir) {
+    public int CheckDirection(Vector2 dir) {
         //2 = Down, 4 = Left, 6 = Right, 8 = Up
         float tempDir = dir.y / dir.x;
         if (tempDir > 1)        return 2;
@@ -520,6 +593,13 @@ public class EventManager : MonoBehaviour {
         PlayerOverworld.instance.textmgr.textQueue = new TextMessage[] { };
         PlayerOverworld.instance.textmgr.destroyText();
         PlayerOverworld.inText = false;
+        //StartCoroutine("ISetChoice", "1", "2");
+    }
+
+    public void StCoroutine(string name, object args) {
+        if (args == null)                 StartCoroutine(name);
+        else if (!args.GetType().IsArray) StartCoroutine(name, args);
+        else                              StartCoroutine(name, (object[])args);
     }
 
     //-----------------------------------------------------------------------------------------------------------
@@ -533,72 +613,14 @@ public class EventManager : MonoBehaviour {
     //                             bad person and you'll go to hell. Don't ask why tho.
     //-----------------------------------------------------------------------------------------------------------
 
-    /// <summary>
-    /// Displays a text.
-    /// </summary>
-    /// <param name="texts"></param>
-    /// <param name="formatted"></param>
-    /// <param name="mugshots"></param>
-    public void SetDialog(DynValue texts, bool formatted, DynValue mugshots = null) {
-        TextMessage[] textmsgs = new TextMessage[texts.Table.Length];
-        for (int i = 0; i < texts.GetLength().Number; i++)
-            textmsgs[i] = new TextMessage(texts.Table.Get(i + 1).String, formatted, false, mugshots.ToString() != "void" ? mugshots.Table.Get(i + 1).String : null);
-        textmgr.setTextQueue(textmsgs);
-    }
+    IEnumerator ISetChoice(object[] args) {
+        //Real args
+        bool question, threeLines;
+        try { question = (bool)args[0]; }   catch { throw new CYFException("The argument \"question\" must be a boolean."); }
+        try { threeLines = (bool)args[1]; } catch { throw new CYFException("The argument \"threeLines\" must be a boolean."); }
 
-    private void SetChoice(DynValue choices, string question = null) {
-        bool threeLines = false;
-        TextMessage textMsgChoice = new TextMessage("", false, false, true);
-        textMsgChoice.addToText("[mugshot:null]");
-        string[] finalText = new string[3];
-
-        //Do not put more than 3 lines and 2 choices
-        //If the 3rd parameter is a string, it has to be a question
-        if (question != null) {
-            textMsgChoice.addToText(question);
-
-            int lengthAfter = question.Split('\n').Length;
-            if (question.Split('\n').Length > lengthAfter) lengthAfter = question.Split('\n').Length;
-
-            if (lengthAfter > 2) textMsgChoice.addToText(finalText[0] + "\n");
-            else textMsgChoice.addToText(finalText[0] + "\n\n");
-        }
-
-        for (int i = 0; i < choices.Table.Length; i++) {
-            //If there's no text, just don't print it
-            if (i == 2 && question != null)
-                break;
-            if (choices.Table.Get(i + 1).String == null)
-                continue;
-
-            string[] preText = choices.Table.Get(i + 1).String.Split('\n'), text = new string[3];
-            if (preText.Length == 3)
-                threeLines = true;
-            for (int j = 0; j < 3; j++) {
-                if (j < preText.Length) text[j] = preText[j];
-                else text[j] = "";
-            }
-
-            for (int k = 0; k < 3; k++) {
-                if (text[k] != "")
-                    if (k == 0) text[k] = "* " + text[k];
-                    else text[k] = "  " + text[k];
-
-                finalText[k] += text[k] + '\t';
-                if (k == text.Length - 1)
-                    break;
-            }
-        }
-
-        //Add the text to the text to print then the SetChoice function with its parameters
-        textMsgChoice.addToText(finalText[0] + "\n" + finalText[1] + "\n" + finalText[2]);
-        textmgr.setText(textMsgChoice);
-
-        StartCoroutine(ISetChoice(question != null, threeLines));
-    }
-
-    IEnumerator ISetChoice(bool question, bool threeLines) {
-        //Omg a new GameObject ! One more heart on the screen ! Wooh !
+        yield return 0;
+        //Omg a new GameObject! One more heart on the screen! Wooh!
         GameObject tempHeart = new GameObject("tempHeart", typeof(RectTransform));
         tempHeart.GetComponent<RectTransform>().sizeDelta = new Vector2(16, 16);
         tempHeart.transform.SetParent(GameObject.Find("Canvas OW").transform);
@@ -620,56 +642,22 @@ public class EventManager : MonoBehaviour {
         //Hide the heart, we don't need it anymore
         img.color = new Color(img.color.r, img.color.g, img.color.b, 0);
         //Add a new variable that can be used in lua functions named Temp plus the index we gave earlier (or else a free index)
-        /*if (varIndex == -1) {
-            for (int i = 1; i > -1; i++)
-                if (LuaScriptBinder.Get(null, "Choice" + i) == null) {
-                    LuaScriptBinder.Set(null, "Choice" + i, DynValue.NewNumber(actualChoice));
-                    break;
-                }
-        } else {*/
-        LuaScriptBinder.Set(null, "lastChoice", DynValue.NewNumber(actualChoice));
-        //}
+        script.script.Globals.Set(DynValue.NewString("lastChoice"), DynValue.NewNumber(actualChoice));
         //HEARTBROKEN
-        GameObject.Destroy(tempHeart);
-        //Here we don't need our textmgr.skipNowIfBlocked = true, because we execute the event again, and doing this will display the next page correctly
-        //try {
-        script.Call("CYFEventNextCommand");
-        //} catch { }
-    }
-
-    /// <summary>
-    /// Permits to teleport an event.
-    /// </summary>
-    /// <param name="name"></param>
-    /// <param name="dirX"></param>
-    /// <param name="dirY"></param>
-    private void TeleportEvent(string name, float dirX, float dirY) {
-        for (int i = 0; i < events.Count || name == "Player"; i++) {
-            GameObject go = null;
-            try { go = events[i]; } catch { }
-            if (name == go.name || name == "Player") {
-                if (name == "Player")
-                    go = GameObject.Find("Player");
-                go.transform.position = new Vector3(dirX, dirY, go.transform.position.z);
-                script.Call("CYFEventNextCommand");
-                return;
-            }
-        }
-        UnitaleUtil.writeInLog("The name you entered into the function doesn't exists. Did you forget to add the 'Event' tag ?");
+        Destroy(tempHeart);
         script.Call("CYFEventNextCommand");
     }
 
-    /// <summary>
-    /// Move the event from a point to another directly.
-    /// Stops if the player can't move to that direction.
-    /// The animation process is automatic, if you renamed the triggers that the script needs to animate your event.
-    /// </summary>
-    /// <param name="name"></param>
-    /// <param name="dirX"></param>
-    /// <param name="dirY"></param>
-    private void MoveEventToPoint(string name, float dirX, float dirY, bool wallPass = false) { StartCoroutine(IMoveEventToPoint(name, dirX, dirY, wallPass)); }
-    
-    IEnumerator IMoveEventToPoint(string name, float dirX, float dirY, bool wallPass) {
+    IEnumerator IMoveEventToPoint(object[] args) {
+        //Real args
+        string name;
+        float dirX, dirY;
+        bool wallPass;
+        try { name = (string)args[0]; }   catch { throw new CYFException("The argument \"name\" must be a string."); }
+        try { dirX = (float)args[1]; }    catch { throw new CYFException("The argument \"dirX\" must be a number."); }
+        try { dirY = (float)args[2]; }    catch { throw new CYFException("The argument \"dirY\" must be a number."); }
+        try { wallPass = (bool)args[3]; } catch { throw new CYFException("The argument \"wallPass\" must be a boolean."); }
+
         //This function moves the player : this boolean is used to disable encounter generation during this event
         PlayerOverworld.instance.forcedMove = true;
         GameObject[] colliders = new GameObject[GameObject.Find("Background").transform.childCount];
@@ -737,10 +725,10 @@ public class EventManager : MonoBehaviour {
                     } else {
                         //The animations are here !
                         switch (direction) {
-                            case 2:  go.GetComponent<Animator>().SetTrigger("MovingDown");  break;
-                            case 4:  go.GetComponent<Animator>().SetTrigger("MovingLeft");  break;
-                            case 6:  go.GetComponent<Animator>().SetTrigger("MovingRight"); break;
-                            case 8:  go.GetComponent<Animator>().SetTrigger("MovingUp");    break;
+                            case 2: go.GetComponent<Animator>().SetTrigger("MovingDown"); break;
+                            case 4: go.GetComponent<Animator>().SetTrigger("MovingLeft"); break;
+                            case 6: go.GetComponent<Animator>().SetTrigger("MovingRight"); break;
+                            case 8: go.GetComponent<Animator>().SetTrigger("MovingUp"); break;
                         }
                     }
                     endPointFromNow = new Vector2(dirX - go.transform.position.x, dirY - go.transform.position.y);
@@ -753,131 +741,6 @@ public class EventManager : MonoBehaviour {
         script.Call("CYFEventNextCommand");
     }
 
-    /// <summary>
-    /// Function that permits to put an animation on an event
-    /// </summary>
-    /// <param name="name"></param>
-    /// <param name="anim"></param>
-    private void SetAnimOW(string name, string anim) {
-        for (int i = 0; i < events.Count || name == "Player"; i++) {
-            GameObject go = null;
-            try { go = events[i]; } catch { }
-            if (name == go.name || name == "Player") {
-                if (name == "Player")
-                    go = GameObject.Find("Player");
-                try { go.GetComponent<Animator>().Play(anim); } 
-                catch {
-                    //If the GameObject's Animator component already exists
-                    if (go.GetComponent<Animator>())  UnitaleUtil.writeInLog("The current anim doesn't exist.");
-                    else                              UnitaleUtil.writeInLog("This GameObject doesn't have an Animator component!");
-                }
-                script.Call("CYFEventNextCommand");
-                return;
-            }
-        }
-        UnitaleUtil.writeInLog("The name you entered into the function isn't an event's name. Did you forget to add the 'Event' tag?");
-        script.Call("CYFEventNextCommand");
-    }
-
-    /// <summary>
-    /// Makes a choice, like when you have to choose the blue or the red pill
-    /// </summary>
-    /// <param name="question"></param>
-    /// <param name="varIndex"></param>
-
-
-    /// <summary>
-    /// Set a return point for the program. If you have to use while iterations, use this instead, with GetReturnPoint
-    /// </summary>
-    /// <param name="index"></param>
-    private void SetReturnPoint(int index) {
-        LuaScriptBinder.Set(null, "ReturnPoint" + index, DynValue.NewNumber(textmgr.currentLine));
-        script.Call("CYFEventNextCommand");
-    }
-
-    /// <summary>
-    /// Forces the program to go back to the return point of the chosen index. If you have to use while iterations, use this instead, with SetReturnPoint
-    /// </summary>
-    /// <param name="index"></param>
-    private void GetReturnPoint(int index) {
-        textmgr.currentLine = (int)LuaScriptBinder.Get(null, "ReturnPoint" + index).Number;
-        script.Call("CYFEventNextCommand");
-    }
-
-    /// <summary>
-    /// Sets an encounter of the current mod folder, with a given encounter name
-    /// The boolean is used to tell if the encounter anim will be short
-    /// </summary>
-    /// <param name="encounterName"></param>
-    /// <param name="quickAnim"></param>
-    private void SetBattle(string encounterName, bool quickAnim = false, bool ForceNoFlee = false) { PlayerOverworld.instance.SetEncounterAnim(encounterName, quickAnim, ForceNoFlee); }
-
-    //I know, there's WAY too much parameters in here, but I don't have the choice right now.
-    //If I find a way to get the Table's text from DynValues, I'll gladly reduce the number of
-    //parameters of this, but right now, even if it is very painful to enter directly 6 or 10 parameters,
-    //I don't find a proper way to do this. (Erm...plus, I have to say that if I put arrays into this,
-    //you'll have to write braces in the function, so just think that I give you a favor xP)
-    /// <summary>
-    /// Permits to display an image on the screen at given dimensions, position and color
-    /// </summary>
-    /// <param name="path"></param>
-    /// <param name="id"></param>
-    /// <param name="posX"></param>
-    /// <param name="posY"></param>
-    /// <param name="dimX"></param>
-    /// <param name="dimY"></param>
-    /// <param name="toneR"></param>
-    /// <param name="toneG"></param>
-    /// <param name="toneB"></param>
-    /// <param name="toneA"></param>
-    private void DispImg(string path, int id, float posX, float posY, float dimX, float dimY, int toneR = 255, int toneG = 255, int toneB = 255, int toneA = -1) {
-        if (GameObject.Find("Image" + id) != null) {
-            GameObject image1 = GameObject.Find("Image" + id);
-            image1.GetComponent<Image>().sprite = SpriteRegistry.Get(path);
-            if (toneA >= 0 && toneA <= 255 && toneR % 1 == 0)
-                if (toneR < 0 || toneR > 255 || toneR % 1 != 0 || toneG < 0 || toneG > 255 || toneG % 1 != 0 || toneB < 0 || toneB > 255 || toneB % 1 != 0)
-                    UnitaleUtil.displayLuaError(script.scriptname, "You can't input a value out of [0; 255] for a color value, as it is clamped from 0 to 255.\nThe number have to be an integer.");
-                else
-                    image1.GetComponent<Image>().color = new Color32((byte)toneR, (byte)toneG, (byte)toneB, (byte)toneA);
-            image1.GetComponent<RectTransform>().sizeDelta = new Vector2(dimX, dimY);
-            image1.GetComponent<RectTransform>().position = new Vector2(posX, posY);
-            script.Call("CYFEventNextCommand");
-            return;
-        } else {
-            GameObject image = Instantiate(Resources.Load<GameObject>("Prefabs/Image 1"));
-            image.name = "Image" + id;
-            image.GetComponent<RectTransform>().SetParent(GameObject.Find("Canvas OW").transform);
-            image.GetComponent<Image>().sprite = SpriteRegistry.Get(path);
-            if (toneA >= 0 && toneA <= 255 && toneR % 1 == 0)
-                if (toneR < 0 || toneR > 255 || toneR % 1 != 0 || toneG < 0 || toneG > 255 || toneG % 1 != 0 || toneB < 0 || toneB > 255 || toneB % 1 != 0)
-                    UnitaleUtil.displayLuaError(script.scriptname, "You can't input a value out of [0; 255] for a color value, as it is clamped from 0 to 255.\nThe number have to be an integer.");
-                else
-                    image.GetComponent<Image>().color = new Color32((byte)toneR, (byte)toneG, (byte)toneB, (byte)toneA);
-            image.GetComponent<RectTransform>().sizeDelta = new Vector2(dimX, dimY);
-            image.GetComponent<RectTransform>().position = new Vector2(posX, posY);
-            events.Add(image);
-        }
-        script.Call("CYFEventNextCommand");
-    }
-
-    /// <summary>
-    /// Remove an image from the screen
-    /// </summary>
-    /// <param name="id"></param>
-    private void SupprImg(int id) {
-        if (GameObject.Find("Image" + id))
-            RemoveEvent("Image" + id);
-        else {
-            UnitaleUtil.writeInLog("The given image doesn't exists.");
-            script.Call("CYFEventNextCommand");
-        }
-    }
-
-    /// <summary>
-    /// Function that ends when the player press the button "Confirm"
-    /// </summary>
-    private void WaitForInput() { StartCoroutine(IWaitForInput()); }
-
     IEnumerator IWaitForInput() {
         while (GlobalControls.input.Confirm != UndertaleInput.ButtonState.PRESSED)
             yield return 0;
@@ -885,40 +748,19 @@ public class EventManager : MonoBehaviour {
         script.Call("CYFEventNextCommand");
     }
 
-    /// <summary>
-    /// Sets a tone directly, without transition
-    /// </summary>
-    /// <param name="r"></param>
-    /// <param name="g"></param>
-    /// <param name="b"></param>
-    /// <param name="a"></param>
-    private void SetTone(bool anim, bool waitEnd, int r = 255, int g = 255, int b = 255, int a = 0) {
-        if (r < 0 || r > 255 || r % 1 != 0 || g < 0 || g > 255 || g % 1 != 0 || b < 0 || b > 255 || b % 1 != 0) {
-            UnitaleUtil.displayLuaError(script.scriptname, "You can't input a value out of [0; 255] for a color value, as it is clamped from 0 to 255.\nThe number have to be an integer.");
-            script.Call("CYFEventNextCommand");
-        } else {
-            if (!anim)
-                if (GameObject.Find("Tone") == null) {
-                    GameObject tone = Instantiate(Resources.Load<GameObject>("Prefabs/Image"));
-                    tone.name = "Tone";
-                    tone.GetComponent<RectTransform>().parent = GameObject.Find("Canvas OW").transform;
-                    tone.GetComponent<Image>().color = new Color32((byte)r, (byte)g, (byte)b, (byte)a);
-                    tone.GetComponent<RectTransform>().sizeDelta = new Vector2(640, 480);
-                    tone.GetComponent<RectTransform>().position = new Vector2(320, 240);
-                    events.Add(tone);
-                } else
-                    GameObject.Find("Tone").GetComponent<Image>().color = new Color32((byte)r, (byte)g, (byte)b, (byte)a);
-            else
-                StartCoroutine(ISetTone(waitEnd, r, g, b, a));
-            if (!(anim && waitEnd))
-                script.Call("CYFEventNextCommand");
-        }
-    }
+    IEnumerator ISetTone(object[] args) {
+        //REAL ARGS
+        bool waitEnd;
+        int r, g, b, a;
+        try { waitEnd = (bool)args[0]; } catch { throw new CYFException("The argument \"waitEnd\" must be a boolean."); }
+        try { r = (int)args[1];        } catch { throw new CYFException("The argument \"r\" must be a number."); }
+        try { g = (int)args[2];        } catch { throw new CYFException("The argument \"g\" must be a number."); }
+        try { b = (int)args[3];        } catch { throw new CYFException("The argument \"b\" must be a number."); }
+        try { a = (int)args[4];        } catch { throw new CYFException("The argument \"a\" must be a number."); }
 
-    IEnumerator ISetTone(bool waitEnd, int r, int g, int b, int a) {
         int alpha, lack;
         if (GameObject.Find("Tone") == null) {
-            GameObject image = Instantiate(Resources.Load<GameObject>("Prefabs/Image"));
+            GameObject image = GameObject.Instantiate(Resources.Load<GameObject>("Prefabs/Image"));
             image.GetComponent<Image>().color = new Color(image.GetComponent<Image>().color.r, image.GetComponent<Image>().color.g, image.GetComponent<Image>().color.b, 0);
             alpha = 0; lack = a;
             image.name = "Tone";
@@ -980,36 +822,16 @@ public class EventManager : MonoBehaviour {
         if (waitEnd)
             script.Call("CYFEventNextCommand");
     }
-    
-    /// <summary>
-    /// Rotates the sprite of an event.
-    /// </summary>
-    /// <param name="name"></param>
-    /// <param name="rotateX"></param>
-    /// <param name="rotateY"></param>
-    /// <param name="rotateZ"></param>
-    /// <param name="axisAnim"></param>
-    private void RotateEvent(string name, float rotateX, float rotateY, float rotateZ, bool anim = true) {
-        if (anim) {
-            StartCoroutine(IRotateEvent(name, rotateX, rotateY, rotateZ));
-        } else {
-            for (int i = 0; i < events.Count || name == "Player"; i++) {
-                GameObject go = null;
-                try { go = events[i]; } catch { }
-                if (name == go.name || name == "Player") {
-                    if (name == "Player")
-                        go = GameObject.Find("Player");
-                    go.GetComponent<RectTransform>().rotation = Quaternion.Euler(rotateX, rotateY, rotateZ);
-                    script.Call("CYFEventNextCommand");
-                    return;
-                }
-            }
-            UnitaleUtil.writeInLog("The name you entered into the function isn't an event's name. Did you forget to add the 'Event' tag ?");
-            script.Call("CYFEventNextCommand");
-        }
-    }
 
-    IEnumerator IRotateEvent(string name, float rotateX, float rotateY, float rotateZ) {
+    IEnumerator IRotateEvent(object[] args) {
+        //REAL ARGS
+        string name;
+        float rotateX, rotateY, rotateZ;
+        try { name = (string)args[0];   } catch { throw new CYFException("The argument \"name\" must be a string."); }
+        try { rotateX = (float)args[1]; } catch { throw new CYFException("The argument \"rotateX\" must be a number."); }
+        try { rotateY = (float)args[2]; } catch { throw new CYFException("The argument \"rotateY\" must be a number."); }
+        try { rotateZ = (float)args[3]; } catch { throw new CYFException("The argument \"rotateZ\" must be a number."); }
+
         for (int i = 0; i < events.Count || name == "Player"; i++) {
             GameObject go = null;
             try { go = events[i]; } catch { }
@@ -1022,9 +844,9 @@ public class EventManager : MonoBehaviour {
                 float lackZ = rotateZ - go.transform.rotation.eulerAngles.z;
 
                 float best, basisBest;
-                if (Mathf.Abs(lackX) > Mathf.Abs(lackY))  best = lackX;
-                else                                      best = lackY;
-                if (Mathf.Abs(best) < Mathf.Abs(lackZ))   best = lackZ;
+                if (Mathf.Abs(lackX) > Mathf.Abs(lackY)) best = lackX;
+                else best = lackY;
+                if (Mathf.Abs(best) < Mathf.Abs(lackZ)) best = lackZ;
 
                 bool reverse = false;
                 if (best > 0) reverse = true;
@@ -1033,11 +855,11 @@ public class EventManager : MonoBehaviour {
                 while (best != 0) {
                     if ((best > -4 && best < 4))
                         break;
-                    go.transform.rotation = Quaternion.Euler(rotateX + ((basisBest - Mathf.Abs(best - basisBest)) * lackX / basisBest), 
-                                                             rotateY + ((basisBest - Mathf.Abs(best - basisBest)) * lackY / basisBest), 
+                    go.transform.rotation = Quaternion.Euler(rotateX + ((basisBest - Mathf.Abs(best - basisBest)) * lackX / basisBest),
+                                                             rotateY + ((basisBest - Mathf.Abs(best - basisBest)) * lackY / basisBest),
                                                              rotateZ + ((basisBest - Mathf.Abs(best - basisBest)) * lackZ / basisBest));
                     if (reverse) best -= 4;
-                    else         best += 4;
+                    else best += 4;
                     yield return 0;
                 }
                 go.GetComponent<RectTransform>().rotation = Quaternion.Euler(rotateX, rotateY, rotateZ);
@@ -1046,106 +868,6 @@ public class EventManager : MonoBehaviour {
             }
         }
         UnitaleUtil.writeInLog("The name you entered into the function isn't an event's name. Did you forget to add the 'Event' tag ?");
-        script.Call("CYFEventNextCommand");
-    }
-
-    /// <summary>
-    /// Launch the GameOver screen
-    /// </summary>
-    private void GameOver(string deathText = null, string deathMusic = null) {
-        UnitaleUtil.writeInLogAndDebugger("GameOver time");
-        PlayerCharacter.instance.HP = PlayerCharacter.instance.MaxHP;
-        Transform rt = GameObject.Find("Player").GetComponent<Transform>();
-        rt.position = new Vector3(rt.position.x, rt.position.y, -1000);
-        int index = 0;
-        string[] deathTable2 = null;
-
-        if (deathText != null) {
-            List<string> deathTable = new List<string>();
-            int j = deathText.Length;
-            for (int i = 0; i < j; i ++) {
-                if (deathText[i] == '\r' && deathText[i] != '\n') {
-                    deathTable.Add(deathText.Substring(index, i - index));
-                    index = i+1;
-                }
-            }
-            deathTable.Add(deathText.Substring(index, deathText.Length - index));
-            deathTable2 = new string[deathTable.Count];
-            for (int i = 0; i < deathTable.Count; i++)
-                deathTable2[i] = deathTable[i];
-        }
-
-        GlobalControls.Music = GameObject.Find("Background").GetComponent<MapInfos>().isMusicKeptBetweenBattles ? PlayerOverworld.audioKept.clip : MusicManager.src.clip;
-        PlayerOverworld.instance.enabled = false;
-
-        UnitaleUtil.writeInLogAndDebugger(GameObject.FindObjectOfType<GameOverBehavior>().name);
-        UnitaleUtil.writeInLogAndDebugger("Before launch");
-
-        GameObject.FindObjectOfType<GameOverBehavior>().StartDeath(deathTable2, deathMusic);
-        UnitaleUtil.writeInLogAndDebugger("After launch");
-        script.Call("CYFEventNextCommand");
-    }
-
-    /// <summary>
-    /// Triggers a specific anim switch on a chosen event. (uses Animator)
-    /// </summary>
-    /// <param name="name">The name of the event</param>
-    /// <param name="triggerName">The name of the trigger</param>
-    private void SetAnimSwitch(string name, string triggerName) {
-        for (int i = 0; i < events.Count || name == "Player"; i++) {
-            GameObject go = null;
-            try { go = events[i]; } catch { }
-            if (name == go.name || name == "Player") {
-                if (name == "Player")
-                    go = GameObject.Find("Player");
-                Animator anim = go.GetComponent<Animator>();
-                if (go == null) {
-                    UnitaleUtil.displayLuaError(script.scriptname, "This event doesn't have an Animator component !");
-                    script.Call("CYFEventNextCommand");
-                    return;
-                }
-                PlayerOverworld.instance.forcedAnim = true;
-                anim.SetTrigger(triggerName);
-                script.Call("CYFEventNextCommand");
-                return;
-            }
-        }
-        UnitaleUtil.writeInLog("The name you entered into the function isn't an event's name. Did you forget to add the 'Event' tag ?");
-        script.Call("CYFEventNextCommand");
-    }
-
-    /// <summary>
-    /// Plays and adjust the volume of a chosen bgm.
-    /// </summary>
-    /// <param name="bgm">The name of the chosen BGM to play.</param>
-    /// <param name="volume">The volume of the BGM. Clamped from 0 to 1.</param>
-    private void PlayBGMOW(string bgm, float volume) {
-        if (volume > 1 || volume < 0)
-            UnitaleUtil.displayLuaError(script.scriptname, "You can't input a value out of [0; 1] for the volume, as it is clamped from 0 to 1.");
-        else if (AudioClipRegistry.GetMusic(bgm) == null)
-            UnitaleUtil.displayLuaError(script.scriptname, "The given BGM doesn't exist. Please check if you haven't mispelled it.");
-        else {
-            AudioSource audio = GameObject.Find("Main Camera OW").GetComponent<AudioSource>();
-            audio.clip = AudioClipRegistry.GetMusic(bgm);
-            audio.volume = volume;
-            audio.Play();
-        }
-        script.Call("CYFEventNextCommand");
-    }
-
-    /// <summary>
-    /// Stops the current BGM.
-    /// </summary>
-    /// <param name="fadeTime"></param>
-    private void StopBGMOW(float fadeTime) {
-        if (bgmCoroutine)
-            UnitaleUtil.displayLuaError(script.scriptname, "The music is already fading.");
-        else if (!GameObject.Find("Main Camera OW").GetComponent<AudioSource>().isPlaying)
-            UnitaleUtil.displayLuaError(script.scriptname, "There is no current BGM.");
-        else if (fadeTime < 0)
-            UnitaleUtil.displayLuaError(script.scriptname, "The fade time has to be positive or equal to 0.");
-        else
-            StartCoroutine(fadeBGM(fadeTime));
         script.Call("CYFEventNextCommand");
     }
 
@@ -1163,30 +885,14 @@ public class EventManager : MonoBehaviour {
         bgmCoroutine = false;
     }
 
-    /// <summary>
-    /// Plays a selected sound at a given volume.
-    /// </summary>
-    /// <param name="sound"></param>
-    /// <param name="volume"></param>
-    private void PlaySoundOW(string sound, float volume) {
-        if (volume > 1 || volume < 0)
-            UnitaleUtil.displayLuaError(script.scriptname, "You can't input a value out of [0; 1] for the volume, as it is clamped from 0 to 1.");
-        else if (AudioClipRegistry.GetMusic(sound) == null)
-            UnitaleUtil.displayLuaError(script.scriptname, "The given BGM doesn't exiss. Please check if you haven't mispelled it.");
-        else
-            UnitaleUtil.PlaySound("OverworldSound", AudioClipRegistry.GetSound(sound), volume);
-        GameObject.Find("Player").GetComponent<AudioSource>().PlayOneShot(AudioClipRegistry.GetMusic(sound), volume);
-        script.Call("CYFEventNextCommand");
-    }
+    IEnumerator IRumble(object[] args) {
+        //REAL ARGS
+        float seconds, intensity;
+        bool fade;
+        try { seconds = (float)args[0];   } catch { throw new CYFException("The argument \"seconds\" must be a number."); }
+        try { intensity = (float)args[1]; } catch { throw new CYFException("The argument \"intensity\" must be a number."); }
+        try { fade = (bool)args[2];       } catch { throw new CYFException("The argument \"fade\" must be a boolean."); }
 
-    /// <summary>
-    /// Rumbles the screen.
-    /// </summary>
-    /// <param name="seconds"></param>
-    /// <param name="intensity"></param>
-    private void Rumble(float seconds, float intensity = 3, bool fade = false) { StartCoroutine(IRumble(seconds, intensity, fade)); }
-
-    IEnumerator IRumble(float seconds, float intensity, bool fade) {
         Vector2 shift = new Vector2(0, 0), shiftOld = new Vector2(0, 0); float time = 0, intensityBasis = intensity;
         while (time < seconds) {
             shiftOld = shift;
@@ -1194,7 +900,7 @@ public class EventManager : MonoBehaviour {
             if (fade)
                 intensity = intensityBasis * (1 - (time / seconds));
             shift = new Vector2(((UnityEngine.Random.value - 0.5f) * intensity) - shift.x, ((UnityEngine.Random.value - 0.5f) * intensity) - shift.y);
-            
+
             foreach (GameObject go in GameObject.FindObjectsOfType<GameObject>())
                 go.transform.position = new Vector3(go.transform.position.x + shift.x, go.transform.position.y + shift.y, go.transform.position.z);
             shift += shiftOld;
@@ -1206,16 +912,18 @@ public class EventManager : MonoBehaviour {
         script.Call("CYFEventNextCommand");
     }
 
-    /// <summary>
-    /// Rumbles the screen.
-    /// </summary>
-    /// <param name="secondsOrFrames"></param>
-    /// <param name="intensity"></param>
-    private void Flash(float secondsOrFrames, bool isSeconds = false, int colorR = 255, int colorG = 255, int colorB = 255, int colorA = 255) {
-        StartCoroutine(IFlash(secondsOrFrames, isSeconds, colorR, colorG, colorB, colorA));
-    }
+    IEnumerator IFlash(object[] args) {
+        //REAL ARGS
+        float secondsOrFrames;
+        bool isSeconds;
+        int colorR, colorG, colorB, colorA;
+        try { secondsOrFrames = (float)args[0]; } catch { throw new CYFException("The argument \"secondsOrFrames\" must be a number."); }
+        try { isSeconds = (bool)args[1];        } catch { throw new CYFException("The argument \"isSeconds\" must be a boolean."); }
+        try { colorR = (int)args[2];            } catch { throw new CYFException("The argument \"colorR\" must be a number."); }
+        try { colorG = (int)args[3];            } catch { throw new CYFException("The argument \"colorG\" must be a number."); }
+        try { colorB = (int)args[4];            } catch { throw new CYFException("The argument \"colorB\" must be a number."); }
+        try { colorA = (int)args[5];            } catch { throw new CYFException("The argument \"colorA\" must be a number."); }
 
-    IEnumerator IFlash(float secondsOrFrames, bool isSeconds, int colorR, int colorG, int colorB, int colorA) {
         GameObject flash = new GameObject("flash", new Type[] { typeof(Image) });
         flash.transform.SetParent(GameObject.Find("Canvas OW").transform);
         flash.transform.position = new Vector3(320, 240);
@@ -1231,8 +939,8 @@ public class EventManager : MonoBehaviour {
 
             }
         } else
-            for (int frame = 0; frame < secondsOrFrames; frame ++) {
-                if (frame != 0) 
+            for (int frame = 0; frame < secondsOrFrames; frame++) {
+                if (frame != 0)
                     flash.GetComponent<Image>().color = new Color32((byte)colorR, (byte)colorG, (byte)colorB, (byte)(colorA - colorA * frame / secondsOrFrames));
                 yield return 0;
 
@@ -1240,17 +948,10 @@ public class EventManager : MonoBehaviour {
         script.Call("CYFEventNextCommand");
     }
 
-    /// <summary>
-    /// Saves the game. Pretty obvious, heh.
-    /// </summary>
-    public void Save() {
-        StartCoroutine(ISave());
-    }
-
     IEnumerator ISave() {
         bool save = true;
         Color c = PlayerOverworld.instance.utHeart.color;
-        PlayerOverworld.instance.utHeart.transform.position = new Vector3(151 + Camera.main.transform.position.x - 320, 233 + Camera.main.transform.position.y - 240, 
+        PlayerOverworld.instance.utHeart.transform.position = new Vector3(151 + Camera.main.transform.position.x - 320, 233 + Camera.main.transform.position.y - 240,
                                                                           PlayerOverworld.instance.utHeart.transform.position.z);
         PlayerOverworld.instance.utHeart.color = new Color(c.r, c.g, c.b, 1);
         GameObject.Find("save_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 1);
@@ -1262,7 +963,7 @@ public class EventManager : MonoBehaviour {
         txtName.setHorizontalSpacing(2); txtSave.setHorizontalSpacing(2); txtReturn.setHorizontalSpacing(2);
         foreach (RectTransform t in GameObject.Find("save_interior").transform)
             t.sizeDelta = new Vector2(t.sizeDelta.x, t.sizeDelta.y + 1);
-        GameObject.Find("save_interior").GetComponent<RectTransform>().sizeDelta = new Vector2(GameObject.Find("save_interior").GetComponent<RectTransform>().sizeDelta.x, 
+        GameObject.Find("save_interior").GetComponent<RectTransform>().sizeDelta = new Vector2(GameObject.Find("save_interior").GetComponent<RectTransform>().sizeDelta.x,
                                                                                                GameObject.Find("save_interior").GetComponent<RectTransform>().sizeDelta.y - 1);
 
         string playerName = ""; double playerLevel = 0;//, playerTime = 0;
@@ -1285,17 +986,18 @@ public class EventManager : MonoBehaviour {
         }
         txtSave.setTextQueue(new TextMessage[] { new TextMessage("[noskipatall]Save", false, true) });
         txtReturn.setTextQueue(new TextMessage[] { new TextMessage("[noskipatall]Return", false, true) });
-        
+
+        GameObject.Find("Mugshot").GetComponent<Image>().color = new Color(1, 1, 1, 0);
         GameObject.Find("textframe_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 0);
         GameObject.Find("textframe_interior").GetComponent<Image>().color = new Color(0, 0, 0, 0);
         yield return 0;
         while (true) {
             if (GlobalControls.input.Left == UndertaleInput.ButtonState.PRESSED || GlobalControls.input.Right == UndertaleInput.ButtonState.PRESSED) {
                 if (!save)
-                    PlayerOverworld.instance.utHeart.transform.position = new Vector3(151 + Camera.main.transform.position.x - 320, PlayerOverworld.instance.utHeart.transform.position.y, 
+                    PlayerOverworld.instance.utHeart.transform.position = new Vector3(151 + Camera.main.transform.position.x - 320, PlayerOverworld.instance.utHeart.transform.position.y,
                                                                                       PlayerOverworld.instance.utHeart.transform.position.z);
                 else
-                    PlayerOverworld.instance.utHeart.transform.position = new Vector3(331 + Camera.main.transform.position.x - 320, PlayerOverworld.instance.utHeart.transform.position.y, 
+                    PlayerOverworld.instance.utHeart.transform.position = new Vector3(331 + Camera.main.transform.position.x - 320, PlayerOverworld.instance.utHeart.transform.position.y,
                                                                                       PlayerOverworld.instance.utHeart.transform.position.z);
                 save = !save;
             } else if (GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED) {
@@ -1319,6 +1021,7 @@ public class EventManager : MonoBehaviour {
                         img.color = new Color(1, 1, 0, 1);
                     GameObject.Find("save_interior").GetComponent<Image>().color = new Color(0, 0, 0, 1);
                     GameObject.Find("Player").GetComponent<AudioSource>().PlayOneShot(AudioClipRegistry.GetSound("saved"));
+                    GameObject.Find("Mugshot").GetComponent<Image>().color = new Color(1, 1, 1, 0);
                     GameObject.Find("textframe_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 0);
                     GameObject.Find("textframe_interior").GetComponent<Image>().color = new Color(0, 0, 0, 0);
                     do {
@@ -1337,134 +1040,15 @@ public class EventManager : MonoBehaviour {
         }
     }
 
-    /// <summary>
-    /// Hurts the player with the given amount of damage. Heal()'s opposite.
-    /// </summary>
-    /// <param name="damage">This one seems obvious too</param>
-    public void Hurt(int damage) {
-        if (damage == 0) {
-            script.Call("CYFEventNextCommand");
-            return;
-        } else if (damage > 0) UnitaleUtil.PlaySound("HealthSound", AudioClipRegistry.GetSound("hurtsound"));
-        else                   UnitaleUtil.PlaySound("HealthSound", AudioClipRegistry.GetSound("healsound"));
+    public IEnumerator IMoveCamera(object[] args) {
+        //REAL ARGS
+        int pixX, pixY, speed;
+        bool straightLine;
+        try { pixX = (int)args[0];          } catch { throw new CYFException("The argument \"pixX\" must be a number."); }
+        try { pixY = (int)args[1];          } catch { throw new CYFException("The argument \"pixY\" must be a number."); }
+        try { speed = (int)args[2];         } catch { throw new CYFException("The argument \"speed\" must be a number."); }
+        try { straightLine = (bool)args[3]; } catch { throw new CYFException("The argument \"straightLine\" must be a boolean."); }
 
-        if (-damage + PlayerCharacter.instance.HP > PlayerCharacter.instance.MaxHP)  PlayerCharacter.instance.HP = PlayerCharacter.instance.MaxHP;
-        else if (-damage + PlayerCharacter.instance.HP <= 0)                PlayerCharacter.instance.HP = 1;
-        else                                                       PlayerCharacter.instance.HP -= damage;
-        script.Call("CYFEventNextCommand");
-    }
-
-    /// <summary>
-    /// Heals the player with the given amount of heal. Hurt()'s opposite.
-    /// </summary>
-    /// <param name="heal">This one seems obvious too</param>
-    public void Heal(int heal) { Hurt(-heal); script.Call("CYFEventNextCommand"); }
-
-    public DynValue AddItem(string Name) {
-        try { return DynValue.NewBoolean(Inventory.AddItem(Name)); } 
-        finally {
-            script.script.Globals.Set(DynValue.NewString("CYFEventLameNeedReturn"), DynValue.NewBoolean(true));
-            script.Call("CYFEventNextCommand");
-        }
-    }
-
-    public void RemoveItem(int ID) { Inventory.RemoveItem(ID-1); script.Call("CYFEventNextCommand");
-    }
-
-    public void StopEvent() { endTextEvent(); }
-
-    public void RemoveEvent(string eventName) {
-        GameObject go = GameObject.Find(eventName);
-        if (!go)
-            Debug.LogError("The event " + eventName + " doesn't exist but you tried to remove it.");
-        else {
-            events.Remove(go);
-            Destroy(go);
-        }
-        if (script != null && scriptLaunched)
-            script.Call("CYFEventNextCommand");
-    }
-
-    public void AddMoney(int amount) {
-        if (PlayerCharacter.instance.Gold + amount < 0) PlayerCharacter.instance.Gold = 0;
-        else if (PlayerCharacter.instance.Gold + amount > ControlPanel.instance.GoldLimit) PlayerCharacter.instance.Gold = ControlPanel.instance.GoldLimit;
-        else PlayerCharacter.instance.Gold += amount;
-        script.Call("CYFEventNextCommand");
-    }
-
-    public void SetEventPage(string ev, int page) {
-        if (ev == "wowyoucanttakeitdudeyeahnoyoucant")
-            ev = events[actualEventIndex].name;
-        SetEventPage2(ev, page);
-        script.Call("CYFEventNextCommand");
-    }
-
-    public static void SetEventPage2(string eventName, int page) {
-        if (!GameObject.Find(eventName)) {
-            UnitaleUtil.displayLuaError(PlayerOverworld.instance.eventmgr.events[PlayerOverworld.instance.eventmgr.actualEventIndex].name, "The given event doesn't exist.");
-            return;
-        }
-
-        if (!GameObject.Find(eventName).GetComponent<EventOW>()) {
-            UnitaleUtil.displayLuaError(PlayerOverworld.instance.eventmgr.events[PlayerOverworld.instance.eventmgr.actualEventIndex].name, "The given event doesn't exist.");
-            return;
-        }
-
-        if (!GlobalControls.MapEventPages.ContainsKey(SceneManager.GetActiveScene().buildIndex))
-            GlobalControls.MapEventPages.Add(SceneManager.GetActiveScene().buildIndex, new Dictionary<string, int>());
-
-        if (GlobalControls.MapEventPages[SceneManager.GetActiveScene().buildIndex].ContainsKey(eventName))
-            GlobalControls.MapEventPages[SceneManager.GetActiveScene().buildIndex][eventName] = page;
-        else
-            GlobalControls.MapEventPages[SceneManager.GetActiveScene().buildIndex].Add(eventName, page);
-
-        GameObject.Find(eventName).GetComponent<EventOW>().actualPage = page;
-        PlayerOverworld.instance.eventmgr.script.Call("CYFEventNextCommand");
-    }
-
-    public void TitleScreen() {
-        SceneManager.LoadScene(SceneManager.GetSceneByName("TransitionTitleScreen").buildIndex);
-        script.Call("CYFEventNextCommand");
-    }
-
-    public DynValue GetSpriteOfEvent(string name) {
-        foreach (object key in sprCtrls.Keys) {
-            if (key.ToString() == name) {
-                script.script.Globals.Set("test", UserData.Create((LuaSpriteController)sprCtrls[name], LuaSpriteController.data));
-                try { return UserData.Create((LuaSpriteController)sprCtrls[name], LuaSpriteController.data); }
-                finally {
-                    script.script.Globals.Set(DynValue.NewString("CYFEventLameNeedReturn"), DynValue.NewBoolean(true));
-                    script.Call("CYFEventNextCommand");
-                }
-            }
-        }
-        UnitaleUtil.displayLuaError(PlayerOverworld.instance.eventmgr.events[PlayerOverworld.instance.eventmgr.actualEventIndex].name, "The event " + name + " doesn't have a sprite.");
-        return null;
-    }
-
-    public void CenterEventOnCamera(string name, int speed = 5, bool straightLine = false) {
-        if (!GameObject.Find(name)) {
-            UnitaleUtil.displayLuaError(PlayerOverworld.instance.eventmgr.events[PlayerOverworld.instance.eventmgr.actualEventIndex].name, "The given event doesn't exist.");
-            return;
-        }
-
-        if (!GameObject.Find(name).GetComponent<EventOW>()) {
-            UnitaleUtil.displayLuaError(PlayerOverworld.instance.eventmgr.events[PlayerOverworld.instance.eventmgr.actualEventIndex].name, "The given event doesn't exist.");
-            return;
-        }
-
-        StartCoroutine(IMoveCamera((int)(GameObject.Find(name).transform.position.x - PlayerOverworld.instance.transform.position.x), 
-                                   (int)(GameObject.Find(name).transform.position.y - PlayerOverworld.instance.transform.position.y), 
-                                   speed, straightLine));
-    }
-
-    public void MoveCamera(int pixX, int pixY, int speed = 5, bool straightLine = false) {
-        StartCoroutine(IMoveCamera(pixX, pixY, speed, straightLine)); 
-    }
-
-    public void ResetCameraPosition(int speed = 5, bool straightLine = false) { StartCoroutine(IMoveCamera(0, 0, speed, straightLine)); }
-
-    public IEnumerator IMoveCamera(int pixX, int pixY, int speed, bool straightLine) {
         if (speed <= 0) {
             UnitaleUtil.displayLuaError(PlayerOverworld.instance.eventmgr.events[PlayerOverworld.instance.eventmgr.actualEventIndex].name, "The speed of the camera has to be strictly positive.");
             /*textmgr.skipNowIfBlocked = true;*/
@@ -1494,29 +1078,13 @@ public class EventManager : MonoBehaviour {
         script.Call("CYFEventNextCommand");
     }
 
-    public void Wait(int frames) { StartCoroutine(IWait(frames)); }
-
     public IEnumerator IWait(int frames) {
         int curr = 0;
-        while(curr != frames) {
+        while (curr != frames) {
             curr++;
             yield return 0;
         }
-        
-        script.Call("CYFEventNextCommand");
-    }
 
-    public DynValue GetPosition(string name) {
-        DynValue result = DynValue.NewTable(new Table(null));
-        bool done = false;
-        for (int i = 0; (i < events.Count || name == "Player") && !done; i++) {
-            GameObject go = name == "Player" ? PlayerOverworld.instance.gameObject : events[i];
-            done = true;
-            result.Table.Set(1, DynValue.NewNumber(go.transform.position.x));
-            result.Table.Set(2, DynValue.NewNumber(go.transform.position.y));
-            LuaScriptBinder.SetBattle(null, "GetPosition" + name, UserData.Create((LuaSpriteController)sprCtrls[name], LuaSpriteController.data));
-        }
-        try { return result; } 
-        finally { script.Call("CYFEventNextCommand"); }
+        script.Call("CYFEventNextCommand");
     }
 }

@@ -5,6 +5,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
 
 /// <summary>
 /// Utility class for the Unitale engine.
@@ -58,6 +61,12 @@ public static class UnitaleUtil {
             }
         }
         return new TextMessage(returnValue, false, true);
+    }
+
+    public static bool isOverworld() {
+        if (GlobalControls.nonOWScenes.Contains(SceneManager.GetActiveScene().name) && SceneManager.GetActiveScene().name != "TransitionOverworld")
+            return false;
+        return true;
     }
 
     /// <summary>
@@ -815,6 +824,9 @@ public static class UnitaleUtil {
 
     public static void AddKeysToMapCorrespondanceList() {
         MapCorrespondanceList.Add("test2", "Hotland - The test map");
+        MapCorrespondanceList.Add("test", "Snowdin - The test map");
+        MapCorrespondanceList.Add("test3", "The Core - The test map");
+        MapCorrespondanceList.Add("test4", "The Core - Parallel universe");
         MapCorrespondanceList.Add("test-1", "How did you find this one?");
         MapCorrespondanceList.Add("Void", "The final map...?");
     }
@@ -832,5 +844,32 @@ public static class UnitaleUtil {
             }
         }
         return false;
+    }*/
+
+    // ******************************************************************************
+    // *** Warning: Complex System.Reflexion stuff below! Enter at your own risk! *** 
+    // ******************************************************************************
+
+    /*/// <summary>
+    /// Complex af
+    /// Used like this: MethodInfo method = MethodOf(() => controller.Method3(default(int)));
+    /// </summary>
+    /// <param name="expression"></param>
+    /// <returns></returns>
+    public static MethodInfo MethodOf(Expression<Action> expression) {
+        return ((MethodCallExpression)expression.Body).Method;
+    }
+
+    /// <summary>
+    /// Checks if the expression given has the CYFEventFunction attribute I guess
+    /// </summary>
+    /// <param name="expression"></param>
+    /// <returns></returns>
+    public static bool MethodHasCYFEventFunctionAttribute(MethodInfo mf) {
+        const bool includeInherited = false;
+        return mf.GetCustomAttributes(typeof(CYFEventFunction), includeInherited).Any();
+    }
+    private static bool MethodHasCYFEventFunctionAttribute(Expression<Action> expression) {
+        return MethodHasCYFEventFunctionAttribute(MethodOf(expression));
     }*/
 }

@@ -55,8 +55,8 @@ using System.ComponentModel;
     public void Reset() {
         Name = ControlPanel.instance.BasisName;
         SetLevel(1);
-        EXP = 0;
-        Gold = 0;
+        SetEXP(0);
+        SetGold(0);
         Weapon = "Stick";
         Armor = "Bandage";
         WeaponATK = 0;
@@ -73,18 +73,25 @@ using System.ComponentModel;
         return 0;
     }
 
-    public bool AddBattleResults(int exp, int gold) {
-        EXP = EXP + exp;
+    public void SetEXP(int value) {
+        EXP = EXP + value;
         if (EXP > ControlPanel.instance.EXPLimit)
             EXP = ControlPanel.instance.EXPLimit;
-        Gold = Gold + gold;
-        if (Gold > ControlPanel.instance.GoldLimit)
-            Gold = ControlPanel.instance.GoldLimit;
-        bool levelup = checkLevel();
-        return levelup;
     }
 
-    public bool checkLevel() {
+    public void SetGold(int value) {
+        Gold = Gold + value;
+        if (Gold > ControlPanel.instance.GoldLimit)
+            Gold = ControlPanel.instance.GoldLimit;
+    }
+
+    public bool AddBattleResults(int exp, int gold) {
+        SetEXP(exp);
+        SetGold(gold);
+        return CheckLevel();
+    }
+
+    public bool CheckLevel() {
         if (LV > 20) return false; //In case that you want to go further than LV 20, the level won't be resetted.
 
         for (int i = 0; i < LevelUpTable.Length; i++)
@@ -121,6 +128,7 @@ using System.ComponentModel;
         ATK = 8 + 2 * level;
         DEF = 10 + (int)Mathf.Floor((level - 1) / 4);
         LV = level;
+        EXP = level <= 20 ? LevelUpTable[level - 1] : 99999;
 
         if (LV >= 20)
             BasisMaxHP += 3;

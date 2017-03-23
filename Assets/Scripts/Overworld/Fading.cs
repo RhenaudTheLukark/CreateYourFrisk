@@ -40,7 +40,7 @@ public class Fading : MonoBehaviour {
     public float BeginFade (int direction) {
         fadeDir = direction;
         eventSent = false;
-        if (StartFade != null)
+        if (StartFade != null && StaticInits.MODFOLDER != "Title")
             StartFade();
         return fadeSpeed;     // Return the fadeSpeed variable so it's easy to time the Application.LoadLevel();
     }

@@ -12,8 +12,8 @@ public class ScriptWrapper {
         set { this.SetVar(key, value); }
     }
 
-    public ScriptWrapper(bool overworld = false) {
-        script = LuaScriptBinder.boundScript(overworld);
+    public ScriptWrapper(/*bool overworld = false*/) {
+        script = LuaScriptBinder.boundScript(/*overworld*/);
         this.Bind("_getv", (Func<Script, string, DynValue>)this.GetVar);
         string toDoString = "setmetatable({}, {__index=function(t, name) return _getv(name) end}) ";
         text = toDoString;

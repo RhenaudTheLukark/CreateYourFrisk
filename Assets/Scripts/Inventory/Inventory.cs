@@ -14,7 +14,7 @@ public static class Inventory {
     public static Dictionary<string, string> NametoDesc = new Dictionary<string, string>(), NametoShortName = new Dictionary<string, string>();
     public static Dictionary<string, int> NametoType = new Dictionary<string, int>();
     public static bool usedItemNoDelete = false;
-    public static bool overworld = false;
+    //public static bool overworld = false;
     public static List<UnderItem> container = new List<UnderItem> { new UnderItem("Testing Dog") };
 
     public static void SetItemList(string[] items = null) {
@@ -75,8 +75,8 @@ public static class Inventory {
     }
 
     public static void UseItem(int ID) {
-        if (SceneManager.GetActiveScene().name == "Battle")  overworld = false;
-        else                                                 overworld = true;
+        //if (SceneManager.GetActiveScene().name == "Battle")  overworld = false;
+        //else                                                 overworld = true;
         tempAmount = 0;
         string Name = container[ID].Name, replacement = null;
         bool inverseRemove = false;
@@ -114,7 +114,7 @@ public static class Inventory {
             container.Insert(ID, new UnderItem(replacement));
         } else if ((!inverseRemove && type == 0) || (inverseRemove && type != 0))
             container.RemoveAt(ID);
-        if (!overworld) {
+        if (!UnitaleUtil.isOverworld()) {
             if (!UIController.instance.battleDialogued && mess.Length != 0)
                 UIController.instance.ActionDialogResult(mess, UIController.UIState.ENEMYDIALOGUE);
         } else

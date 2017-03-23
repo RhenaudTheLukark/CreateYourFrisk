@@ -32,10 +32,7 @@ public static class SpriteRegistry {
         if (dict.ContainsKey(key))              return dict[key];
         else if (dictMod.ContainsKey(key))      dict[key] = SpriteUtil.fromFile(dictMod[key].FullName);
         else if (dictDefault.ContainsKey(key))  dict[key] = SpriteUtil.fromFile(dictDefault[key].FullName);
-        else {
-            //UnitaleUtil.writeInLogAndDebugger("[WARN]The sprite file \"" + key + "\" doesn't exist.");
-            return null;
-        }
+        else                                    return null;
         return dict[key];
     }
 

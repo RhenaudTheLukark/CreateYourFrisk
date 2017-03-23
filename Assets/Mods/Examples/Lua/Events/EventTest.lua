@@ -1,62 +1,62 @@
 function EventPage1()
-	SetAnimSwitch("Player", "MovingUp")
-    Wait(60)
-	MoveEventToPoint("Player", 320, 400, true)
+	Event.SetAnimSwitch("Player", "MovingUp")
+    Event.Wait(60)
+	Event.MoveEventToPoint("Player", 320, 400, true)
 	--SetDialog({"Erm[waitall:3]...[waitall:1][w:10] Why did you go here?"}, true, {"papyrus_mugshot_2"})
-    SetDialog({"I hate you![mugshot:rtlukark_surprised]", "[instant]I love you!"}, true, {"rtlukark_angry", "rtlukark_determined"})
+    Event.SetDialog({"I hate you![mugshot:rtlukark_surprised]", "[instant]I love you!"}, true, {"rtlukark_angry", "rtlukark_determined"})
 end
 
 function EventPage2Old()
     SetDialog({"Here's an example of event that you can do!", "Please check the event once it is finished."}, true, {"papyrus_mugshot","papyrus_mugshot"})
 	TeleportEvent("Player", 113, 287)
 	SetDialog({"This is a good idea!", "Yeah, it is.", "Error! Or maybe not?"}, true, {"papyrus_mugshot", "rtl_happy", "papyrus_mugshot_2"})
-	SetChoice("You can\ndo it", "Oh no you\ndon't", 1)
-	if GetRealGlobal("Choice1") == 0 then
+	SetChoice({"You can\ndo it", "Oh no you\ndon't"})
+	if lastChoice == 0 then
 	    SetDialog({"Yes you can!"}, true, {"rtlukark_determined"})
-	elseif GetRealGlobal("Choice1") == 1 then
+	elseif lastChoice == 1 then
 		SetDialog({"Too bad that you can't!"}, true, {"rtlukark_pity"})
 	end
-	if GetRealGlobal("yes") == null then
-	    SetRealGlobal("yes", 0)
-	end
-	SetReturnPoint(1)
-    SetChoice("Heck yeah!", "Heck no!", "Are you DETERMINED ?", 2)
-	if GetRealGlobal("Choice2") == 1 then
-	    SetDialog({"I knew it!"}, true, {"rtlukark_=3"})
-	elseif GetRealGlobal("Choice2") == 0 then
-		SetRealGlobal("yes", GetRealGlobal("yes") + 1)
-		if GetRealGlobal("yes") == 1 then
-			SetDialog({"Are you sure?"}, true, {"rtlukark_perv"})
-			GetReturnPoint(1)
-		elseif GetRealGlobal("yes") == 2 then
-			SetDialog({"Are you [w:10][letters:6]REALLY[w:10] sure?"}, true, {"rtlukark_perv"})
-			GetReturnPoint(1)
-		elseif GetRealGlobal("yes") == 3 then
-			SetDialog({"Oh ok,[w:5] I trust you!","If you're [w:10][letters:2]SO[w:10] determined right now,[w:5] I bet you can kill my friend!", 
-									"Wanna try?"}, true, {"rtlukark_seriously", "rtlukark_determined","rtlukark_=3"})
-			SetBattle("#04 - Animation", true, true)
-		end
-	end
+    yes = 0
+    while (yes < 3) do
+        SetChoice({"Heck yeah!", "Heck no!"}, "Are you DETERMINED ?")
+        if lastChoice == 1 then
+            SetDialog({"I knew it!"}, true, {"rtlukark_=3"})
+        elseif lastChoice == 0 then
+            yes = yes + 1
+            if yes == 1 then
+                SetDialog({"Are you sure?"}, true, {"rtlukark_perv"})
+            elseif yes == 2 then
+                SetDialog({"Are you [w:10][letters:6]REALLY[w:10] sure?"}, true, {"rtlukark_perv"})
+            elseif yes == 3 then
+                SetDialog({"Oh ok,[w:5] I trust you!","If you're [w:10][letters:2]SO[w:10] determined right now,[w:5] I bet you can kill my friend!", 
+                                        "Wanna try?"}, true, {"rtlukark_seriously", "rtlukark_determined","rtlukark_=3"})
+                SetBattle("#04 - Animation", true, true)
+            end
+        end
+    end
 end
 
 function EventPage2()
     SetDialog({"Here's an example of event that you can do!", "Please check the event once it is finished."}, true, {"papyrus_mugshot","papyrus_mugshot"})
 	TeleportEvent("Player", 113, 287)
 	SetDialog({"This is a good idea!", "Yeah, it is.", "Error! Or maybe not?"}, true, {"papyrus_mugshot", "rtl_happy", "papyrus_mugshot_2"})
-	SetChoice("You can\ndo it", "Oh no you\ndon't", 1)
+	SetChoice({"You can\ndo it", "Oh no you\ndon't"})
 	if lastChoice == 0 then
 	    SetDialog({"Yes you can!"}, true, {"rtlukark_determined"})
 	elseif lastChoice == 1 then
 		SetDialog({"Too bad that you can't!"}, true, {"rtlukark_pity"})
 	end
     
-    local yes = 0
     for i = 1, 3 do
-        SetChoice("Heck yeah!", "Heck no!", "Are you DETERMINED ?", 2)
-        if lastChoice("Choice2") == 1 then
+        SetChoice({"Heck yeah!", "Heck no!"}, "Are you DETERMINED ?")
+        if lastChoice == 1 then
+            DEBUG("testYes")
+            DEBUG(lastChoice)
             SetDialog({"I knew it!"}, true, {"rtlukark_=3"})
             break
-        elseif lastChoice("Choice2") == 0 then
+        elseif lastChoice == 0 then
+            DEBUG("testNo")
+            DEBUG(lastChoice)
             if i == 1 then
                 SetDialog({"Are you sure?"}, true, {"rtlukark_perv"})
             elseif i == 2 then

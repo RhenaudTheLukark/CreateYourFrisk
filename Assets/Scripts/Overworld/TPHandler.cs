@@ -6,7 +6,6 @@ using System.Collections.Generic;
 public class TPHandler : MonoBehaviour {
     public string sceneName;            //The name of the scene we'll load
     public Vector2 position;            //The future position of our player
-    public int uduu2 = GlobalControls.uduu;
     public int direction = 0;           //The direction of the player
     public bool activated = false;      //Checks if we're already in a TP
     
@@ -65,7 +64,6 @@ public class TPHandler : MonoBehaviour {
                 GlobalControls.uduu = 0;
                 break;
         }
-        uduu2 = GlobalControls.uduu;
         float fadeTime = blackFont.BeginFade(1);
         yield return new WaitForSeconds(fadeTime);
 

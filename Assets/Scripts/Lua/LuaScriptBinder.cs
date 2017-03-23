@@ -34,13 +34,16 @@ public static class LuaScriptBinder {
         UserData.RegisterType<Misc>();
         UserData.RegisterType<LuaTextManager>();
         //UserData.RegisterType<Windows>();
+        //Overworld
+        UserData.RegisterType<LuaEventOW>();
+        UserData.RegisterType<LuaPlayerOverworld>();
     }
 
     /// <summary>
     /// Generates Script object with globally defined functions and objects bound, and the os/io/file modules taken out.
     /// </summary>
     /// <returns>Script object for use within Unitale</returns>
-    public static Script boundScript(bool overworld = false) {
+    public static Script boundScript(/*bool overworld = false*/) {
         Script script = new Script();
         // library support
         script.Options.ScriptLoader = new FileSystemScriptLoader();
@@ -74,7 +77,7 @@ public static class LuaScriptBinder {
             script.Globals["windows"] = false;
         #endif
         script.Globals["CYFversion"] = "0.5.4";
-        if (!overworld) {
+        if (!UnitaleUtil.isOverworld()) {
             script.Globals["GetCurrentState"] = (Func<string>)GetState;
             script.Globals["EndWave"] = (Action)endWave;
             script.Globals["BattleDialog"] = (Action<DynValue>)LuaEnemyEncounter.BattleDialog;
@@ -84,6 +87,11 @@ public static class LuaScriptBinder {
                 script.Globals["Encounter"] = LuaEnemyEncounter.script_ref;
             DynValue PlayerStatus = UserData.Create(PlayerController.luaStatus);
             script.Globals.Set("Player", PlayerStatus);
+        } else {
+            DynValue PlayerOW = UserData.Create(PlayerOverworld.instance.eventmgr.luapo);
+            script.Globals.Set("FPlayer", PlayerOW);
+            DynValue EventOW = UserData.Create(PlayerOverworld.instance.eventmgr.luaevow);
+            script.Globals.Set("FEvent", EventOW);
         }
         script.Globals["DEBUG"] = (Action<string>)UnitaleUtil.writeInLogAndDebugger;
         // clr bindings
@@ -214,6 +222,9 @@ public static class LuaScriptBinder {
         UserData.RegisterType<Misc>();
         UserData.RegisterType<LuaTextManager>();
         //UserData.RegisterType<Windows>();
+        //Overworld
+        UserData.RegisterType<LuaEventOW>();
+        UserData.RegisterType<LuaPlayerOverworld>();
     }
 
     /// <summary>

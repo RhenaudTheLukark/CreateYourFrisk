@@ -167,9 +167,6 @@ public class Title : MonoBehaviour {
         SceneManager.LoadScene("TransitionOverworld");
         yield return 0;
         yield return Application.isLoadingLevel;
-        StaticInits si = GameObject.Find("Main Camera OW").GetComponent<StaticInits>();
-        StaticInits.Initialized = false;
-        si.initAll();
         GameObject.Destroy(gameObject);
     }
 

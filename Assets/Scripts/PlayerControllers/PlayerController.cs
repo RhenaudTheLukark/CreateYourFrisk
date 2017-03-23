@@ -185,8 +185,8 @@ public class PlayerController : MonoBehaviour {
             }
             HP = 0;
             invulTimer = 0;
+            this.gameObject.transform.SetParent(null);
             GameObject.DontDestroyOnLoad(this.gameObject);
-            //this.gameObject.transform.SetParent(null);
             this.setControlOverride(true);
             RectTransform rt = gameObject.GetComponent<RectTransform>();
             rt.position = new Vector3(rt.position.x, rt.position.y, -1000);

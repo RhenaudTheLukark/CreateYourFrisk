@@ -43,7 +43,7 @@ public class PlayerOverworld : MonoBehaviour {
         utHeart = GameObject.Find("utHeart").GetComponent<Image>();
         utHeart.color = new Color(utHeart.color.r, utHeart.color.g, utHeart.color.b, 0);
         
-        StartCoroutine(LaunchMusic());
+        //StartCoroutine(LaunchMusic());
 
         //Get a component reference to the Player's transform
         PlayerPos = GameObject.Find("Player").GetComponent<Transform>();
@@ -107,16 +107,16 @@ public class PlayerOverworld : MonoBehaviour {
         if (!textmgr.allLinesComplete() && (textmgr.canAutoSkipAll() || textmgr.lineComplete()))
             textmgr.nextLine();
         else if ((textmgr.allLinesComplete() || textmgr.canAutoSkipAll()) && textmgr.lineCount() != 0) {
-            if (eventmgr.scriptLaunched) {
-                textmgr.destroyText();
-                textmgr.setTextQueue(null);
+            textmgr.setTextQueue(null);
+            textmgr.destroyText();
+            GameObject.Find("Mugshot").GetComponent<Image>().color = new Color(1, 1, 1, 0);
+            GameObject.Find("textframe_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 0);
+            GameObject.Find("textframe_interior").GetComponent<Image>().color = new Color(0, 0, 0, 0);
+            if (eventmgr.scriptLaunched)
                 eventmgr.script.Call("CYFEventNextCommand");
-            } else {
-                textmgr.destroyText();
-                GameObject.Find("textframe_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 0);
-                GameObject.Find("textframe_interior").GetComponent<Image>().color = new Color(0, 0, 0, 0);
+            else
                 inText = false;
-            }
+           
         }
     }
 
@@ -228,7 +228,7 @@ public class PlayerOverworld : MonoBehaviour {
             AttemptMove(horizontal, vertical);
 
         //Path to the mod selector if you're on test2 (Hotland)
-        if (SceneManager.GetActiveScene().name == "test2" &&!inText) {
+        if (SceneManager.GetActiveScene().name == "test2" && !inText) {
             if (PlayerPos.position.x < 40) {
                 string mapName;
                 if (UnitaleUtil.MapCorrespondanceList.ContainsKey(SceneManager.GetActiveScene().name))  mapName = UnitaleUtil.MapCorrespondanceList[SceneManager.GetActiveScene().name];
@@ -237,8 +237,10 @@ public class PlayerOverworld : MonoBehaviour {
                 LuaScriptBinder.Set(null, "PlayerPosX", DynValue.NewNumber(320));
                 LuaScriptBinder.Set(null, "PlayerPosY", DynValue.NewNumber(160));
 
-                GameObject.Find("Main Camera OW").tag = "Untagged";
-                GlobalControls.Music = GameObject.Find("Background").GetComponent<MapInfos>().isMusicKeptBetweenBattles ? audioKept.clip : MusicManager.src.clip;
+                //GameObject.Find("Main Camera OW").tag = "Untagged";
+                GlobalControls.Music = GameObject.Find("Background").GetComponent<MapInfos>().isMusicKeptBetweenBattles ? 
+                    audioKept.clip :
+                    Camera.main.GetComponent<AudioSource>().clip;
                 /*GlobalControls.Player = new GameObject();
                 foreach (Component c in GameObject.Find("Player").GetComponents(typeof(Component))) {
                     GlobalControls.Player.AddComponent(c.GetType());
@@ -248,7 +250,7 @@ public class PlayerOverworld : MonoBehaviour {
                 SceneManager.LoadScene("ModSelect");
             }
             
-            if (Input.GetKeyDown("p")) {
+            /*if (Input.GetKeyDown("p")) {
                 SetDialog(new string[] { "[letters:3]DUN[w:4][letters:4] DUN[w:5][letters:6] DUN!",
                                      "Did you see?[w:10][mugshot:rtlukark_determined:skipover] Yeah, it worked!",
                                      "No[w:2].[w:2].[w:2].[w:2]?[w:10][mugshot:rtlukark_determined:skipover] I'll do it again.",
@@ -257,18 +259,18 @@ public class PlayerOverworld : MonoBehaviour {
                                      "(letters:3) DUN (w:4)(letters:4) DUN (w:5)(letters:6) DUN!",
                                      "Hope you liked it!" },
                           true, new string[] { "rtlukark_angry", "rtlukark_normal", "rtlukark_waitwhat", "rtlukark_angry", "rtlukark_determined", "rtlukark_perv", "rtlukark_determined" });
-            } else if (Input.GetKeyDown("m")) {
+            }*/ else if (Input.GetKeyDown("m")) {
                 GameObject.Find("Main Camera OW").GetComponent<AudioSource>().time = 10 - 1;
             } else if (Input.GetKeyDown("h")) {
                 if (GameObject.Find("Event1").GetComponent<EventOW>().actualPage == 4)
                     rolled++;
                 if (GameObject.Find("Event1").GetComponent<EventOW>().actualPage == 666) {
-                    EventManager.SetEventPage2("Event1", 1); 
+                    LuaEventOW.SetEventPage2("Event1", 1); 
                     rolled++;
                 } else
-                    EventManager.SetEventPage2("Event1", (GameObject.Find("Event1").GetComponent<EventOW>().actualPage + 1) % 4); 
-                if (GameObject.Find("Event1").GetComponent<EventOW>().actualPage == 1 && rolled % 4 == 3)  EventManager.SetEventPage2("Event1", 666);
-                else if (GameObject.Find("Event1").GetComponent<EventOW>().actualPage == 0)                EventManager.SetEventPage2("Event1", 4);
+                    LuaEventOW.SetEventPage2("Event1", (GameObject.Find("Event1").GetComponent<EventOW>().actualPage + 1) % 4); 
+                if (GameObject.Find("Event1").GetComponent<EventOW>().actualPage == 1 && rolled % 4 == 3)  LuaEventOW.SetEventPage2("Event1", 666);
+                else if (GameObject.Find("Event1").GetComponent<EventOW>().actualPage == 0) LuaEventOW.SetEventPage2("Event1", 4);
                 if (GameObject.Find("Event1").GetComponent<EventOW>().actualPage == 666)
                     SetDialog(new string[] { "[color:ff0000]Event page = " + GameObject.Find("Event1").GetComponent<EventOW>().actualPage + " :)" }, true, new string[] { "rtlukark_determimed" });
                 else
@@ -447,7 +449,7 @@ public class PlayerOverworld : MonoBehaviour {
         Image blackFont = GameObject.Find("black").GetComponent<Image>();
 
         Vector2 positionCamera, end;
-        GlobalControls.Music = GameObject.Find("Background").GetComponent<MapInfos>().isMusicKeptBetweenBattles ? audioKept.clip : MusicManager.src.clip;
+        GlobalControls.Music = GameObject.Find("Background").GetComponent<MapInfos>().isMusicKeptBetweenBattles ? audioKept.clip : Camera.main.GetComponent<AudioSource>().clip;
         GameObject.Find("PlayerEncounter").GetComponent<Image>().sprite = GameObject.Find("Player").GetComponent<SpriteRenderer>().sprite;
         MusicManager.src.Stop();
 
@@ -646,19 +648,20 @@ public class PlayerOverworld : MonoBehaviour {
         txtmgrs[0].setText(new TextMessage("[noskipatall]" + PlayerCharacter.instance.Name, false, true));
         if (GlobalControls.crate) {
             txtmgrs[1].setText(new TextMessage("[noskipatall][font:menu]LV " + PlayerCharacter.instance.LV, false, true));
-            txtmgrs[2].setText(new TextMessage("[noskipatall][font:menu]PH " + PlayerCharacter.instance.HP + "/" + PlayerCharacter.instance.MaxHP, false, true));
+            txtmgrs[2].setText(new TextMessage("[noskipatall][font:menu]PH " + (int)PlayerCharacter.instance.HP + "/" + PlayerCharacter.instance.MaxHP, false, true));
             txtmgrs[3].setText(new TextMessage("[noskipatall][font:menu]G  " + PlayerCharacter.instance.Gold, false, true));
             txtmgrs[4].setText(new TextMessage("[noskipatall]TEM", false, true));
             txtmgrs[5].setText(new TextMessage("[noskipatall]TAST", false, true));
             txtmgrs[6].setText(new TextMessage("[noskipatall]LECL", false, true));
         } else {
             txtmgrs[1].setText(new TextMessage("[noskipatall][font:menu]LV " + PlayerCharacter.instance.LV, false, true));
-            txtmgrs[2].setText(new TextMessage("[noskipatall][font:menu]HP " + PlayerCharacter.instance.HP + "/" + PlayerCharacter.instance.MaxHP, false, true));
+            txtmgrs[2].setText(new TextMessage("[noskipatall][font:menu]HP " + (int)PlayerCharacter.instance.HP + "/" + PlayerCharacter.instance.MaxHP, false, true));
             txtmgrs[3].setText(new TextMessage("[noskipatall][font:menu]G  " + PlayerCharacter.instance.Gold, false, true));
             txtmgrs[4].setText(new TextMessage("[noskipatall]ITEM", false, true));
             txtmgrs[5].setText(new TextMessage("[noskipatall]STAT", false, true));
             txtmgrs[6].setText(new TextMessage("[noskipatall]CELL", false, true));
         }
+        GameObject.Find("Mugshot").GetComponent<Image>().color = new Color(1, 1, 1, 0);
         GameObject.Find("textframe_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 0);
         GameObject.Find("textframe_interior").GetComponent<Image>().color = new Color(0, 0, 0, 0);
         Color c = GameObject.Find("utHeartMenu").GetComponent<Image>().color;
@@ -694,6 +697,7 @@ public class PlayerOverworld : MonoBehaviour {
                                 txtmgrs[16].setText(new TextMessage("[noskipatall]INFO", false, true));
                                 txtmgrs[17].setText(new TextMessage("[noskipatall]DROP", false, true));
                             }
+                            GameObject.Find("Mugshot").GetComponent<Image>().color = new Color(1, 1, 1, 0);
                             GameObject.Find("textframe_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 0);
                             GameObject.Find("textframe_interior").GetComponent<Image>().color = new Color(0, 0, 0, 0);
                             GameObject.Find("item_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 1);
@@ -713,6 +717,7 @@ public class PlayerOverworld : MonoBehaviour {
                                 } else if (GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED) {
                                     menuRunning[0] = false;
                                     for (int i = 7; i <= 17; i++) txtmgrs[i].destroyText();
+                                    GameObject.Find("Mugshot").GetComponent<Image>().color = new Color(1, 1, 1, 0);
                                     GameObject.Find("textframe_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 0);
                                     GameObject.Find("textframe_interior").GetComponent<Image>().color = new Color(0, 0, 0, 0);
                                     GameObject.Find("item_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 0);
@@ -790,6 +795,7 @@ public class PlayerOverworld : MonoBehaviour {
                             txtmgrs[26].setText(new TextMessage("[noskipatall]ARMOR: " + PlayerCharacter.instance.Armor, false, true));
                             txtmgrs[27].setText(new TextMessage("[noskipatall]GOLD: " + PlayerCharacter.instance.Gold, false, true));
                         }
+                        GameObject.Find("Mugshot").GetComponent<Image>().color = new Color(1, 1, 1, 0);
                         GameObject.Find("textframe_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 0);
                         GameObject.Find("textframe_interior").GetComponent<Image>().color = new Color(0, 0, 0, 0);
                         GameObject.Find("stat_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 1);
@@ -800,6 +806,7 @@ public class PlayerOverworld : MonoBehaviour {
                                 instance.uiAudio.PlayOneShot(AudioClipRegistry.GetSound("menuconfirm"));
                                 menuRunning[0] = false;
                                 for (int i = 18; i <= 27; i++) txtmgrs[i].destroyText();
+                                GameObject.Find("Mugshot").GetComponent<Image>().color = new Color(1, 1, 1, 0);
                                 GameObject.Find("textframe_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 0);
                                 GameObject.Find("textframe_interior").GetComponent<Image>().color = new Color(0, 0, 0, 0);
                                 GameObject.Find("stat_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 0);
@@ -832,6 +839,7 @@ public class PlayerOverworld : MonoBehaviour {
             if (tf.GetComponent<TextManager>()) tf.gameObject.GetComponent<TextManager>().destroyText();
         }
         menuRunning = new bool[] { false, false, false, true };
+        GameObject.Find("Mugshot").GetComponent<Image>().color = new Color(1, 1, 1, 0);
         GameObject.Find("textframe_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 0);
         GameObject.Find("textframe_interior").GetComponent<Image>().color = new Color(0, 0, 0, 0);
         GameObject.Find("TextManager OW").GetComponent<TextManager>().skipNowIfBlocked = true;

@@ -54,7 +54,7 @@ public class TextManager : MonoBehaviour {
     public UnderFont Charset { get; private set; }
     public TextMessage[] textQueue = null;
     //public string[] mugshotsPath;
-    public bool overworld;
+    //public bool overworld;
     public bool blockSkip = false;
     public bool hidden = false;
     public bool skipNowIfBlocked = false;
@@ -95,12 +95,8 @@ public class TextManager : MonoBehaviour {
         letterSound.playOnAwake = false;
         // setFont(SpriteFontRegistry.F_UI_DIALOGFONT);
         timePerLetter = singleFrameTiming;
-        if (GlobalControls.nonOWScenes.Contains(SceneManager.GetActiveScene().name) && SceneManager.GetActiveScene().name != "TransitionOverworld")
-            overworld = false;
-        else
-            overworld = true;
 
-        if (overworld && GameObject.Find("textframe_border_outer"))
+        if (UnitaleUtil.isOverworld() && GameObject.Find("textframe_border_outer"))
             mugshot = GameObject.Find("Mugshot").GetComponent<Image>();
     }
 
@@ -203,7 +199,7 @@ public class TextManager : MonoBehaviour {
         if (textQueue != null)
             if (line < textQueue.Length)
                 if (textQueue[line] != null) {
-                    if (overworld && GameObject.Find("textframe_border_outer")) {
+                    if (UnitaleUtil.isOverworld() && GameObject.Find("textframe_border_outer")) {
                         if (textQueue[line].Mugshot != string.Empty && textQueue[line].Mugshot != null) {
                             mugshot.sprite = SpriteRegistry.GetMugshot(textQueue[line].Mugshot);
                             mugshot.color = new Color(mugshot.color.r, mugshot.color.g, mugshot.color.b, 1);
@@ -253,7 +249,7 @@ public class TextManager : MonoBehaviour {
                     spawnText();
                     //if (!overworld)
                     //    UIController.instance.encounter.CallOnSelfOrChildren("AfterText");
-                    if (overworld && GameObject.Find("textframe_border_outer")) {
+                    if (UnitaleUtil.isOverworld() && GameObject.Find("textframe_border_outer")) {
                         if (textQueue[line].ActualText) {
                             if (GameObject.Find("textframe_border_outer").GetComponent<Image>().color.a == 0)
                                 setTextFrameAlpha(1);
@@ -275,7 +271,7 @@ public class TextManager : MonoBehaviour {
         Image[] imagesChild = null;
         Image[] images = null;
 
-        if (overworld) {
+        if (UnitaleUtil.isOverworld()) {
             imagesChild = GameObject.Find("textframe_border_outer").GetComponentsInChildren<Image>();
             images = new Image[imagesChild.Length + 1];
             images[0] = GameObject.Find("textframe_border_outer").GetComponent<Image>();
@@ -371,7 +367,7 @@ public class TextManager : MonoBehaviour {
         
         int limit = 0;
         if (SceneManager.GetActiveScene().name == "Intro")          limit = 400;
-        else if (overworld && mugshot != null) {
+        else if (UnitaleUtil.isOverworld() && mugshot != null) {
             if (mugshot.sprite != null)                             limit = 417;
             else                                                    limit = 534;
         } else if (SceneManager.GetActiveScene().name == "Battle") {
@@ -399,7 +395,7 @@ public class TextManager : MonoBehaviour {
                         if (finalIndex == testFinal) {
                             currentX = self.position.x + offset.x;
                             currentY = currentY - vSpacing - Charset.LineSpacing;
-                            if (!overworld) {
+                            if (!UnitaleUtil.isOverworld()) {
                                 if (SceneManager.GetActiveScene().name == "Intro")
                                     currentText3 = currentText3.Substring(0, finalIndex - 1) + "\n" + currentText3.Substring(finalIndex, currentText.Length - finalIndex);
                                 else if (name == "DialogBubble(Clone)" || UIController.instance.encounter.gameOverStance || GetType() == typeof(LuaTextManager))
@@ -411,7 +407,7 @@ public class TextManager : MonoBehaviour {
                                 realFinalIndex += 2;
                             }
                         } else {
-                            if (!overworld) {
+                            if (!UnitaleUtil.isOverworld()) {
                                 if (SceneManager.GetActiveScene().name == "Intro") {
                                     currentText3 = currentText3.Substring(0, finalIndex - 1) + "\n" + currentText3.Substring(finalIndex - 1, currentText.Length - finalIndex + 1);
                                     realFinalIndex++;
@@ -435,7 +431,7 @@ public class TextManager : MonoBehaviour {
                 return;
             }
             beginIndex--;
-            if (!overworld) {
+            if (!UnitaleUtil.isOverworld()) {
                 if (SceneManager.GetActiveScene().name == "Intro")
                     currentText2 = currentText.Substring(0, beginIndex) + "\n" + currentText.Substring(beginIndex + 1, currentText.Length - beginIndex - 1);
                 else if (name == "DialogBubble(Clone)" || UIController.instance.encounter.gameOverStance || GetType() == typeof(LuaTextManager))
@@ -491,7 +487,7 @@ public class TextManager : MonoBehaviour {
                     currentY = currentY - vSpacing - Charset.LineSpacing;
                     break;
                 case '\t':
-                    currentX = 356; // HACK: bad tab usage
+                    currentX = 356 + Camera.main.transform.position.x - 320; // HACK: bad tab usage
                     break;
                 case ' ':
                     if (i + 1 == currentText.Length)
@@ -535,7 +531,7 @@ public class TextManager : MonoBehaviour {
 
             currentX += ltrRect.rect.width + hSpacing; // TODO remove hardcoded letter offset
         }
-        if (overworld && SceneManager.GetActiveScene().name != "TitleScreen" && SceneManager.GetActiveScene().name != "EnterName")
+        if (UnitaleUtil.isOverworld() && SceneManager.GetActiveScene().name != "TitleScreen" && SceneManager.GetActiveScene().name != "EnterName")
             if (mugshot.sprite == null)
                 mugshot.color = new Color(mugshot.color.r, mugshot.color.g, mugshot.color.b, 0);
     }
@@ -570,7 +566,7 @@ public class TextManager : MonoBehaviour {
     }
 
     protected virtual void Update() {
-        if (!overworld && nextMonsterDialogueOnce) {
+        if (!UnitaleUtil.isOverworld() && nextMonsterDialogueOnce) {
             bool test = true;
             foreach (TextManager mgr in UIController.instance.monDialogues)
                 if (!mgr.isFinished())
@@ -722,7 +718,6 @@ public class TextManager : MonoBehaviour {
 
             case "instant":
                 if (args.Length == 0)
-                    print("skipFromPlayer = " + skipFromPlayer);
                     if (!skipFromPlayer)
                         displayImmediate = true;
                 break;

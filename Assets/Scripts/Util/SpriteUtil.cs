@@ -18,7 +18,7 @@ public static class SpriteUtil {
                     XmlDocument xmld = new XmlDocument();
                     xmld.Load(fi.FullName);
                     if (xmld["spritesheet"] != null && "single".Equals(xmld["spritesheet"].GetAttribute("type")))
-                        if (!GameObject.FindObjectOfType<TextManager>().overworld)
+                        if (!UnitaleUtil.isOverworld())
                             UIController.instance.encounter.enabledEnemies[bubbleID].bubbleWideness = ParseUtil.getFloat(xmld["spritesheet"].GetElementsByTagName("wideness")[0].InnerText);
                 } else
                     UIController.instance.encounter.enabledEnemies[bubbleID].bubbleWideness = 0;

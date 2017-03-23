@@ -45,7 +45,7 @@ public class GameOverBehavior : MonoBehaviour {
     private Vector2 heartPos;
     private Color heartColor;
 
-    private bool overworld = false;
+    //private bool overworld = false;
     private string deathMusic;
     private string[] deathText;
 
@@ -60,7 +60,7 @@ public class GameOverBehavior : MonoBehaviour {
     public AudioClip music = null;
 
     public void ResetGameOver() {
-        if (!overworld) {
+        if (!UnitaleUtil.isOverworld()) {
             UIController.instance.encounter.gameOverStance = false;
             LuaEnemyEncounter.script.SetVar("autolinebreak", MoonSharp.Interpreter.DynValue.NewBoolean(autolinebreakstate));
         }
@@ -77,7 +77,7 @@ public class GameOverBehavior : MonoBehaviour {
         done = false;
         exiting = false;
         once = false;
-        overworld = false;
+        //overworld = false;
         playerIndex = -1;
         luaEncounterIndex = -1;
         playerZ = -1;
@@ -92,10 +92,10 @@ public class GameOverBehavior : MonoBehaviour {
         if (!GlobalControls.modDev &&!LuaEnemyEncounter.script.GetVar("revive").Boolean)
             SaveLoad.Load();
 
-        if (SceneManager.GetActiveScene().name == "Battle") overworld = false;
-        else                                                overworld = true;
+        //if (SceneManager.GetActiveScene().name == "Battle") overworld = false;
+        //else                                                overworld = true;
 
-        if (!overworld) {
+        if (!UnitaleUtil.isOverworld()) {
             UIController.instance.encounter.endWave(true);
             autolinebreakstate = LuaEnemyEncounter.script.GetVar("autolinebreak").Boolean;
             LuaEnemyEncounter.script.SetVar("autolinebreak", MoonSharp.Interpreter.DynValue.NewBoolean(true));
@@ -105,15 +105,15 @@ public class GameOverBehavior : MonoBehaviour {
         this.deathText = deathText;
         this.deathMusic = deathMusic;
         
-        if (!overworld)  Player = GameObject.Find("player");
-        else             Player = GameObject.Find("Player");
+        if (!UnitaleUtil.isOverworld())  Player = GameObject.Find("player");
+        else                             Player = GameObject.Find("Player");
 
         playerZ = 130;
         playerParent = Player.transform.parent;
         playerIndex = Player.transform.GetSiblingIndex();
         Player.transform.SetParent(null);
 
-        if (overworld) {
+        if (UnitaleUtil.isOverworld()) {
             Player.transform.position = new Vector3(Player.transform.position.x - GameObject.Find("Main Camera OW").transform.position.x - 320,
                                                     Player.transform.position.y - GameObject.Find("Main Camera OW").transform.position.y - 240, Player.transform.position.z);
             GameObject.Destroy(GameObject.Find("Main Camera OW"));
@@ -137,7 +137,7 @@ public class GameOverBehavior : MonoBehaviour {
         Camera.main.GetComponent<AudioSource>().clip = AudioClipRegistry.GetMusic("mus_gameover");
         GameObject.Find("GameOver").GetComponent<Image>().sprite = SpriteRegistry.Get("UI/spr_gameoverbg_0");
 
-        if (overworld) {
+        if (UnitaleUtil.isOverworld()) {
             heartColor = GameObject.Find("utHeart").GetComponent<Image>().color;
             heartColor.a = 1;
         } else {
@@ -183,7 +183,7 @@ public class GameOverBehavior : MonoBehaviour {
         if (!started)
             return;
         if (!revived) {
-            if (!once && overworld) {
+            if (!once && UnitaleUtil.isOverworld()) {
                 once = true;
                 GameObject.Find("utHeart").transform.SetParent(GameObject.Find("Canvas GameOver").transform);
                 GameObject.Find("utHeart").transform.position = heartPos;
@@ -198,14 +198,14 @@ public class GameOverBehavior : MonoBehaviour {
             if (internalTimer > breakHeartAfter) {
                 AudioSource.PlayClipAtPoint(AudioClipRegistry.GetSound("heartbeatbreaker"), Camera.main.transform.position, 0.75f);
                 brokenHeartPrefab = Instantiate(brokenHeartPrefab);
-                if (overworld)
+                if (UnitaleUtil.isOverworld())
                     brokenHeartPrefab.transform.SetParent(GameObject.Find("Canvas GameOver").transform);
                 else
                     brokenHeartPrefab.transform.SetParent(gameObject.transform);
                 brokenHeartPrefab.GetComponent<RectTransform>().position = heartPos;
                 brokenHeartPrefab.GetComponent<Image>().color = heartColor;
                 brokenHeartPrefab.GetComponent<Image>().enabled = true;
-                if (overworld)
+                if (UnitaleUtil.isOverworld())
                     GameObject.Find("utHeart").GetComponent<Image>().enabled = false;
                 else {
                     Color color = gameObject.GetComponent<Image>().color;
@@ -225,7 +225,7 @@ public class GameOverBehavior : MonoBehaviour {
                 for (int i = 0; i < heartShardInstances.Length; i++) {
                     heartShardInstances[i] = Instantiate(heartShardPrefab).GetComponent<RectTransform>();
                     heartShardCtrl[i] = new LuaSpriteController(heartShardInstances[i].GetComponent<Image>());
-                    if (overworld)
+                    if (UnitaleUtil.isOverworld())
                         heartShardInstances[i].transform.SetParent(GameObject.Find("Canvas GameOver").transform);
                     else
                         heartShardInstances[i].transform.SetParent(this.gameObject.transform);
@@ -328,7 +328,7 @@ public class GameOverBehavior : MonoBehaviour {
             } else if (!breakHeartReviveAfter && internalTimerRevive > 2.5f) {
                 breakHeartReviveAfter = true;
                 AudioSource.PlayClipAtPoint(AudioClipRegistry.GetSound("heartbeatbreaker"), Camera.main.transform.position, 0.75f);
-                if (overworld)
+                if (UnitaleUtil.isOverworld())
                     GameObject.Find("utHeart").GetComponent<Image>().enabled = true;
                 else {
                     Color color = gameObject.GetComponent<Image>().color;
@@ -367,7 +367,7 @@ public class GameOverBehavior : MonoBehaviour {
                     reviveFade.color = new Color(1, 1, 1, 0);
                     ResetGameOver();
                     gameOverContainer.SetActive(false);
-                    if (!overworld)
+                    if (!UnitaleUtil.isOverworld())
                         battleCamera.SetActive(true);
                     else {
                         GameObject cam = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("Prefabs/Main Camera OW"));
@@ -409,7 +409,7 @@ public class GameOverBehavior : MonoBehaviour {
                 if (gameOverFadeTimer < -1.0f) {
                     //StaticInits.Reset();
                     Destroy(gameObject);
-                    if (!overworld)  UIController.EndBattle();
+                    if (!UnitaleUtil.isOverworld())  UIController.EndBattle();
                     else {
                         GameObject.Destroy(gameOverContainer);
                         SceneManager.LoadScene("TransitionOverworld");

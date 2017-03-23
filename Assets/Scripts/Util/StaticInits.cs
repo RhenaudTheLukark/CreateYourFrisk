@@ -72,8 +72,7 @@ public class StaticInits : MonoBehaviour {
             Initialized = true;
         LateUpdater.init(); // must be last; lateupdater's initialization is for classes that depend on the above registries
         MusicManager.src = Camera.main.GetComponent<AudioSource>();
-        if (Loaded != null)
-            Loaded();
+        SendLoaded();
         //CurrENCOUNTER = ENCOUNTER;
         //CurrMODFOLDER = MODFOLDER;
     }
