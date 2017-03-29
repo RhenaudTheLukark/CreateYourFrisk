@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using MoonSharp.Interpreter;
@@ -11,7 +13,7 @@ public static class Inventory {
     public static int[] addedItemsTypes = new int[] { };
     public static LuaInventory luaInventory;
     public static int tempAmount = 0;
-    public static Dictionary<string, string> NametoDesc = new Dictionary<string, string>(), NametoShortName = new Dictionary<string, string>();
+    public static Dictionary<string, string> NametoDesc = new Dictionary<string, string>(), NametoShortName = new Dictionary<string, string>(), NameToReplac = new Dictionary<string, string>();
     public static Dictionary<string, int> NametoType = new Dictionary<string, int>();
     public static bool usedItemNoDelete = false;
     //public static bool overworld = false;
@@ -75,8 +77,7 @@ public static class Inventory {
     }
 
     public static void UseItem(int ID) {
-        //if (SceneManager.GetActiveScene().name == "Battle")  overworld = false;
-        //else                                                 overworld = true;
+        usedItemNoDelete = false;
         tempAmount = 0;
         string Name = container[ID].Name, replacement = null;
         bool inverseRemove = false;
@@ -90,24 +91,18 @@ public static class Inventory {
                 if (addedItems[i].ToLower() == Name.ToLower()) {
                     type = addedItemsTypes[i];
                     if (type == 1 || type == 2)
-                        mess = ChangeEquipment(type, Name, mess, out replacement);
-                    if (replacement != null) {
-                        usedItemNoDelete = false;
+                        mess = ChangeEquipment(Name, mess);
+                    if (!usedItemNoDelete && type == 0)
                         container.RemoveAt(ID);
-                        container.Insert(ID, new UnderItem(replacement));
-                    } else if (!usedItemNoDelete && type == 0)
-                        container.RemoveAt(ID);
-                    else
-                        usedItemNoDelete = false;
                     if ((type == 1 || type == 2) && mess.Length != 0 &&!UIController.instance.battleDialogued)
                         UIController.instance.ActionDialogResult(mess, UIController.UIState.ENEMYDIALOGUE);
                     return;
                 }
         }
-        ItemLibrary(Name, type, out mess, out replacement, out amount);
+        ItemLibrary(Name, type, out mess, out amount);
         if (type == 1 || type == 2) {
             tempAmount = (int)amount;
-            mess = ChangeEquipment(type, Name, mess, out replacement);
+            mess = ChangeEquipment(Name, mess);
         }
         if (replacement != null) {
             container.RemoveAt(ID);
@@ -180,15 +175,15 @@ public static class Inventory {
     }
 
     public static void UpdateEquipBonuses() {
-        TextMessage[] mess = new TextMessage[] { }; float amount; string replacement;
-        ItemLibrary(PlayerCharacter.instance.Weapon, 1, out mess, out replacement, out amount);
+        TextMessage[] mess = new TextMessage[] { }; float amount;
+        ItemLibrary(PlayerCharacter.instance.Weapon, 1, out mess, out amount);
         PlayerCharacter.instance.WeaponATK = (int)amount;
-        ItemLibrary(PlayerCharacter.instance.Armor, 2, out mess, out replacement, out amount);
+        ItemLibrary(PlayerCharacter.instance.Armor, 2, out mess, out amount);
         PlayerCharacter.instance.ArmorDEF = (int)amount;
     }
 
-    public static void ItemLibrary(string name, int type, out TextMessage[] mess, out string replacement, out float amount) {
-        replacement = null; mess = new TextMessage[] { }; amount = 0;
+    public static void ItemLibrary(string name, int type, out TextMessage[] mess, out float amount) {
+        mess = new TextMessage[] { }; amount = 0;
         switch (type) {
             case 0:
                 switch (name) {
@@ -238,7 +233,6 @@ public static class Inventory {
                     case "Bisicle":
                         amount = 11;
                         mess = new TextMessage[] { new TextMessage("You ate one half of\rthe Bisicle.[w:10]\nYou recovered 11 HP!", true, false) };
-                        replacement = "Unisicle";
                         break;
                     case "Unisicle":
                         amount = 11;
@@ -403,38 +397,68 @@ public static class Inventory {
         }
     }
 
-    public static TextMessage[] ChangeEquipment(int mode, string Name, TextMessage[] mess, out string replacement) {
-        replacement = "";
-        if (mode == 1) {
+    public static bool isInInventory(string itemName) {
+        foreach (UnderItem item in container)
+            if (item.Name == itemName)
+                return true;
+        return false;
+    }
+
+    public static bool itemExists(string itemName) {
+        return NametoDesc.ContainsKey(itemName);
+    }
+
+    private static void SetEquip(string Name) {
+        int mode = 0;
+        if (NametoType.Keys.Contains(Name))
+            mode = NametoType[Name];
+        else {
+            if (addedItems.Contains(Name))
+                mode = addedItemsTypes[Array.IndexOf(addedItems, Name)];
+            else
+                throw new CYFException("The item \"" + Name + "\" doesn't exist.");
+        }
+
+        if (NametoType[Name] == 1) {
             PlayerCharacter.instance.WeaponATK = tempAmount;
-            replacement = PlayerCharacter.instance.Weapon;
+            AddItem(PlayerCharacter.instance.Weapon);
             PlayerCharacter.instance.Weapon = Name;
-        } else if (mode == 2) {
+        } else if (NametoType[Name] == 2) {
             PlayerCharacter.instance.ArmorDEF = tempAmount;
-            replacement = PlayerCharacter.instance.Armor;
+            AddItem(PlayerCharacter.instance.Armor);
             PlayerCharacter.instance.Armor = Name;
         } else
-            UnitaleUtil.displayLuaError("Equip an item", "The item \"" + Name + "\" can't be equipped.");
-        Debug.Log("tempAmount = " + tempAmount);
+            throw new CYFException("The item \"" + Name + "\" can't be equipped.");
+    }
+
+    public static void ChangeEquipment(string name, bool checkExists = true) {
+        if (checkExists) {
+            if (!itemExists(name))
+                throw new CYFException("The item \"" + name + "\" doesn't exist in the item list.");
+            if (!isInInventory(name))
+                throw new CYFException("You can't equip an item that isn't in the inventory.");
+        }
+        SetEquip(name);
+    }
+
+    public static TextMessage[] ChangeEquipment(string Name, TextMessage[] mess) {
+        SetEquip(Name);
         if (mess.Length == 0) mess = new TextMessage[] { new TextMessage("You equipped " + Name + ".", true, false) };
         else                  mess = new TextMessage[] { };
         return mess;
     }
 
     public static void RemoveAddedItems() {
-        for (int i = 0; i < container.Count; i ++) {
-            foreach (string str in addedItems) {
+        for (int i = 0; i < container.Count; i ++)
+            foreach (string str in addedItems)
                 if (container[i].Name == str) {
-                    //UnitaleUtil.writeInLog("The item \"" + str + "\" has been removed from the Inventory.");
                     container.RemoveAt(i);
                     i --;
                     break;
                 }
-            }
-        }
-        foreach (string str in addedItems) {
 
-            if (str == PlayerCharacter.instance.Weapon && PlayerCharacter.instance.Weapon != "Stick" &&!NametoDesc.ContainsValue(str)) {
+        foreach (string str in addedItems) {
+            if (str == PlayerCharacter.instance.Weapon && PlayerCharacter.instance.Weapon != "Stick" && !NametoDesc.ContainsValue(str)) {
                 for (int i = 0; i < container.Count; i++)
                     if (container[i].Name == "Stick") {
                         container.RemoveAt(i);
@@ -442,12 +466,10 @@ public static class Inventory {
                     }
                 PlayerCharacter.instance.Weapon = "Stick";
                 PlayerCharacter.instance.WeaponATK = 0;
-                //UnitaleUtil.writeInLog("The item \"" + str + "\" has been removed from the weapon Equipment.");
             } else if (str == PlayerCharacter.instance.Weapon && PlayerCharacter.instance.Weapon != "Stick" && NametoDesc.ContainsValue(str)) {
-                TextMessage[] mess; string replacement; float amount;
-                ItemLibrary(str, 1, out mess, out replacement, out amount);
+                TextMessage[] mess; float amount;
+                ItemLibrary(str, 1, out mess, out amount);
                 PlayerCharacter.instance.WeaponATK = (int)amount;
-                //UnitaleUtil.writeInLog("The item \"" + str + "\" has been setted to the right value for Weapon.");
             }
 
             if (str == PlayerCharacter.instance.Armor && PlayerCharacter.instance.Armor != "Bandage" &&!NametoDesc.ContainsValue(str)) {
@@ -457,12 +479,10 @@ public static class Inventory {
                         break;
                     }
                 PlayerCharacter.instance.Armor = "Bandage";
-                //UnitaleUtil.writeInLog("The item \"" + str + "\" has been removed from the armor Equipment.");
             } else if (str == PlayerCharacter.instance.Armor && PlayerCharacter.instance.Armor != "Bandage" && NametoDesc.ContainsValue(str)) {
-                TextMessage[] mess; string replacement; float amount;
-                ItemLibrary(str, 2, out mess, out replacement, out amount);
+                TextMessage[] mess; float amount;
+                ItemLibrary(str, 2, out mess,  out amount);
                 PlayerCharacter.instance.ArmorDEF = (int)amount;
-                //UnitaleUtil.writeInLog("The item \"" + str + "\" has been setted to the right value for Armor.");
             }
         }
         addedItems = new string[] { }; addedItemsTypes = new int[] { };

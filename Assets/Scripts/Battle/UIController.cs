@@ -345,7 +345,6 @@ public class UIController : MonoBehaviour {
                 encounter.CallOnSelfOrChildren("EnemyDialogueStarting");
                 monDialogues = new TextManager[encounter.enabledEnemies.Length];
                 readyToNextLine = new bool[encounter.enabledEnemies.Length];
-                print("Enemydialogue");
                 for (int i = 0; i < encounter.enabledEnemies.Length; i++) {
                     this.msgs.Remove(i);
                     this.msgs.Add(i, encounter.enabledEnemies[i].GetDefenseDialog());

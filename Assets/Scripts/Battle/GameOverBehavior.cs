@@ -89,7 +89,7 @@ public class GameOverBehavior : MonoBehaviour {
     public void Revive() { revived = true; }
 
     public void StartDeath(string[] deathText = null, string deathMusic = null) {
-        if (!GlobalControls.modDev &&!LuaEnemyEncounter.script.GetVar("revive").Boolean)
+        if (!GlobalControls.modDev && UnitaleUtil.isOverworld())
             SaveLoad.Load();
 
         //if (SceneManager.GetActiveScene().name == "Battle") overworld = false;

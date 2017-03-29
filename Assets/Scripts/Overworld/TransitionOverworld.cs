@@ -95,7 +95,7 @@ public class TransitionOverworld : MonoBehaviour {
         GameObject.Find("Main Camera OW").GetComponent<EventManager>().readyToReLaunch = true;
 
         yield return 0;
-        PlayerOverworld.instance.eventmgr.ResetEvents();
+        EventManager.instance.ResetEvents();
         yield return Application.isLoadingLevel;
         GameObject.Find("Main Camera OW").tag = "MainCamera";
 
@@ -118,7 +118,7 @@ public class TransitionOverworld : MonoBehaviour {
             si.initAll();
             LuaScriptBinder.Set(null, "ModFolder", DynValue.NewString(StaticInits.MODFOLDER));
             if (call == "transitionoverworld")
-                PlayerOverworld.instance.eventmgr.scriptLaunched = false;
+                EventManager.instance.scriptLaunched = false;
         }
 
         AudioSource audio;

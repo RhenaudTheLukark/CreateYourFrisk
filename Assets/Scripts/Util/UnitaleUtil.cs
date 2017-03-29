@@ -82,7 +82,6 @@ public static class UnitaleUtil {
             UIController.errorMsg = createLuaError(source, decoratedMessage);
         else
             UIController.instance.ShowError(createLuaError(source, decoratedMessage));*/
-        Debug.Log(decoratedMessage);
         firstErrorShown = true;
         ErrorDisplay.Message = "error in script " + source + "\n\n" + decoratedMessage;
         if (Application.isEditor)
@@ -161,7 +160,6 @@ public static class UnitaleUtil {
             if (i < table.Length)               test += ", ";
         }
         test += " }";
-        Debug.Log(test);
         return array;
     }
 

@@ -108,6 +108,8 @@ class AutoloadResourcesFromRegistry : MonoBehaviour {
     }*/
 
     void LateStart() {
+        if (this == null)
+            return;
         bool hasError = false;
         if ((!done && this.handleDictErrors) || (!doneFromLoadedScene && !this.handleDictErrors)) {
             if (!done && this.handleDictErrors)

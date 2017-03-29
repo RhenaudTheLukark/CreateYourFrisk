@@ -10,6 +10,7 @@ using MoonSharp.Interpreter.Interop;
 using System.Reflection;
 
 public class EventManager : MonoBehaviour {
+    public static EventManager instance;
     private int EventLayer;                 //The id of the Event Layer
     public  ScriptWrapper script;           //The script we have to load
     public List<GameObject> events = new List<GameObject>(); //This map's events
@@ -24,8 +25,11 @@ public class EventManager : MonoBehaviour {
     private bool needReturn = false;
     private Hashtable autoDone = new Hashtable();
 
-    public LuaPlayerOverworld luapo;
+    public LuaPlayerOW luaplow;
     public LuaEventOW luaevow;
+    public LuaGeneralOW luagenow;
+    public LuaInventoryOW luainvow;
+    public LuaScreenOW luascrow;
 
     private Dictionary<Type, string> boundValueName = new Dictionary<Type, string>();
     /*private Type[] bindTypeList = new Type[] {
@@ -36,28 +40,44 @@ public class EventManager : MonoBehaviour {
     private List<object> instancesOfTypeList = new List<object>();*/
 
     //Don't judge me please
-    private string[] bindList = new string[] { "SetDialog", "SetAnimOW", "SetChoice", "TeleportEvent", "MoveEventToPoint", "GetReturnPoint",
+    /*private string[] bindList = new string[] { "SetDialog", "SetAnimOW", "SetChoice", "TeleportEvent", "MoveEventToPoint", "GetReturnPoint",
                                                "SetReturnPoint", "SupprVarOW", "SetBattle", "DispImg", "SupprImg", "WaitForInput", "SetTone", "RotateEvent",
                                                "GameOver", "SetAnimSwitch", "PlayBGMOW", "StopBGMOW", "PlaySoundOW", "Rumble", "Flash", "Save", "Heal",
                                                "Hurt", "AddItem", "RemoveItem", "StopEvent", "RemoveEvent", "AddMoney", "SetEventPage", "GetSpriteOfEvent",
-                                               "CenterEventOnCamera", "ResetCameraPosition", "MoveCamera", "Wait", "GetPosition"};
+                                               "CenterEventOnCamera", "ResetCameraPosition", "MoveCamera", "Wait", "GetPosition"};*/
     //private List<string> dynamicBindList = new List<string>();
 
     // Use this for initialization
     public void Start() {
         if (boundValueName.Count == 0) {
             boundValueName.Add(typeof(LuaEventOW), "Event");
-            boundValueName.Add(typeof(LuaPlayerOverworld), "Player");
+            boundValueName.Add(typeof(LuaPlayerOW), "Player");
+            boundValueName.Add(typeof(LuaGeneralOW), "General");
+            boundValueName.Add(typeof(LuaInventoryOW), "Inventory");
+            boundValueName.Add(typeof(LuaScreenOW), "Screen");
         }
         /*for (int i = 1; i < bindTypeList.Length; i ++)
             instancesOfTypeList.Add(Activator.CreateInstance((Type)bindTypeList[i]));*/
         EventLayer = LayerMask.GetMask("EventLayer");                               //Get the layer that'll interact with our object, here EventLayer
         textmgr = GameObject.Find("TextManager OW").GetComponent<TextManager>();
         relaunchReset1 = true;
+        instance = this;
     }
 
-    void OnEnable() { LuaEventOW.StCoroutine += StCoroutine; }
-    void OnDisable() { LuaEventOW.StCoroutine -= StCoroutine; }
+    void OnEnable() {
+        LuaEventOW.StCoroutine += StCoroutine;
+        LuaPlayerOW.StCoroutine += StCoroutine;
+        LuaGeneralOW.StCoroutine += StCoroutine;
+        LuaInventoryOW.StCoroutine += StCoroutine;
+        LuaScreenOW.StCoroutine += StCoroutine;
+    }
+    void OnDisable() {
+        LuaEventOW.StCoroutine -= StCoroutine;
+        LuaPlayerOW.StCoroutine -= StCoroutine;
+        LuaGeneralOW.StCoroutine -= StCoroutine;
+        LuaInventoryOW.StCoroutine -= StCoroutine;
+        LuaScreenOW.StCoroutine -= StCoroutine;
+    }
 
     // Update is called once per frame
     void Update() {
@@ -87,7 +107,8 @@ public class EventManager : MonoBehaviour {
                 if (events.Count != 0)
                     foreach (GameObject go in events) {
                         EventOW ev = go.GetComponent<EventOW>();
-                        if (ev.actualPage == -1) {
+                        if (ev.actualPage < -1) { }                             
+                        else if (ev.actualPage == -1) {
                             events.Remove(go);
                             Destroy(go);
                         } else if (!testContainsListVector2(ev.eventTriggers, ev.actualPage)) {
@@ -229,7 +250,7 @@ public class EventManager : MonoBehaviour {
         foreach (GameObject go in events)
             if (!go)                                              events.Remove(go);
             else if (!go.GetComponent<EventOW>())                 events.Remove(go);
-            else if (go.GetComponent<EventOW>().actualPage == -1) luaevow.RemoveEvent(go.name);
+            else if (go.GetComponent<EventOW>().actualPage == -1) luaevow.Remove(go.name);
     }
 
     public int getTrigger(GameObject go, int index) {
@@ -253,10 +274,10 @@ public class EventManager : MonoBehaviour {
         events.Clear();
         autoDone.Clear();
         sprCtrls.Clear();
-        foreach (EventOW ev in GameObject.FindObjectsOfType<EventOW>()) {
-            events.Add(ev.gameObject);
-            if (ev.gameObject.GetComponent<SpriteRenderer>())
-                sprCtrls[ev.gameObject.name] = new LuaSpriteController(ev.gameObject.GetComponent<SpriteRenderer>(), "empty"); //TODO: Find a way to get the sprite's name
+        foreach (GameObject go in GameObject.FindGameObjectsWithTag("Event")) {
+            events.Add(go);
+            if (go.GetComponent<SpriteRenderer>())
+                sprCtrls[go.name] = new LuaSpriteController(go.GetComponent<SpriteRenderer>(), "empty"); //TODO: Find a way to get the sprite's name
         }
     }
 
@@ -305,12 +326,23 @@ public class EventManager : MonoBehaviour {
         return false;
     }
 
-    private List<string> CreateBindList(Type t) {
+    private List<string> CreateBindListMember(Type t) {
         List<string> result = new List<string>();
         MethodInfo[] methods = t.GetMethods();
         foreach (MethodInfo method in methods)
-            result.Add(method.Name);
+            if (MethodHasCYFEventFunctionAttribute(method))
+                result.Add(method.Name);
         return result;
+    }
+
+    /// <summary>
+    /// Checks if the expression given has the CYFEventFunction attribute I guess
+    /// </summary>
+    /// <param name="expression"></param>
+    /// <returns></returns>
+    private bool MethodHasCYFEventFunctionAttribute(MemberInfo mb) {
+        const bool includeInherited = false;
+        return mb.GetCustomAttributes(typeof(CYFEventFunction), includeInherited).Any();
     }
 
     /// <summary>
@@ -319,9 +351,12 @@ public class EventManager : MonoBehaviour {
     /// <param name="name"></param>
     /// <returns>Returns true if no error were encountered.</returns>
     private bool initScript(string name, EventOW ev) {
-        if (luapo == null) {
-            luapo = new LuaPlayerOverworld();
-            luaevow = new LuaEventOW(PlayerOverworld.instance.eventmgr, textmgr);
+        if (luaplow == null) {
+            luaplow = new LuaPlayerOW();
+            luaevow = new LuaEventOW(textmgr);
+            luagenow = new LuaGeneralOW(textmgr);
+            luainvow = new LuaInventoryOW();
+            luascrow = new LuaScreenOW();
         }
         script = new ScriptWrapper(/*true*/);
         script.scriptname = name;
@@ -335,15 +370,13 @@ public class EventManager : MonoBehaviour {
         bool once = false;
         //foreach (string str in bindList) {
         foreach (Type t in boundValueName.Keys) {
-            List<string> l = CreateBindList(t);
+            List<string> members = CreateBindListMember(t);
             scriptText += "\n" + boundValueName[t] + " = { }";
-            foreach (string str in l) {
-                if (str.Contains("StCoroutine"))
-                    continue;
-                //script.Bind(str, new Action<DynValue, DynValue, DynValue, DynValue, DynValue, DynValue, DynValue, DynValue, DynValue, DynValue>(FunctionLauncher));
-                string str2 = boundValueName[t] + "." + str;
-                scriptText += "\n" /*+ "\nfunction F" + str2 + "() end\n"*/ + "function " + str2 + "(p1,p2,p3,p4,p5,p6,p7,p8,p9,p10) return CYFEventForwarder(\"" + str2 + "\",p1,p2,p3,p4,p5,p6,p7,p8,p9,p10) end";
-                lameFunctionBinding += "\n    " + (once ? "elseif" : "if") + " func == '" + str2 + "' then x = F" + str2;
+            foreach (string member in members) {
+                //script.Bind(str, new Action<DynValue, DynValue, DynValue, DynValue, DynValue, DynValue, DynValue, DynValue, DynValue, DynValue>(OldFunctionLauncher));
+                string completeMember = boundValueName[t] + "." + member;
+                scriptText += "\n" /*+ "\nfunction F" + str2 + "() end\n"*/ + "function " + completeMember + "(p1,p2,p3,p4,p5,p6,p7,p8,p9,p10) return CYFEventForwarder(\"" + completeMember + "\",p1,p2,p3,p4,p5,p6,p7,p8,p9,p10) end";
+                lameFunctionBinding += "\n    " + (once ? "elseif" : "if") + " func == '" + completeMember + "' then x = F" + completeMember;
                 once = true;
             }
         }
@@ -395,47 +428,13 @@ public class EventManager : MonoBehaviour {
                       "\n    return result" +
                       "\nend";
         script.text = scriptText;
+        Debug.Log(scriptText);
+
         try { script.DoString(scriptText); } 
         catch (InterpreterException ex) {
             UnitaleUtil.displayLuaError(name, ex.DecoratedMessage);
             return false;
         }
-
-        /*script.Bind("FSetDialog", new Action<DynValue, bool, DynValue>(SetDialog));
-        script.Bind("FSetChoice", new Action<DynValue, string>(SetChoice));
-        script.Bind("FSetAnimOW", new Action<string, string>(SetAnimOW));
-        script.Bind("FSetAnimSwitch", new Action<string, string>(SetAnimSwitch));
-        script.Bind("FTeleportEvent", new Action<string, float, float>(TeleportEvent));
-        script.Bind("FMoveEventToPoint", new Action<string, float, float, bool>(MoveEventToPoint));
-        script.Bind("FDispImg", new Action<string, int, float, float, float, float, int, int, int, int>(DispImg));
-        script.Bind("FSupprImg", new Action<int>(SupprImg));
-        script.Bind("FRotateEvent", new Action<string, float, float, float, bool>(RotateEvent));
-        script.Bind("FSetTone", new Action<bool, bool, int, int, int, int>(SetTone));
-        script.Bind("FSetBattle", new Action<string, bool, bool>(SetBattle));
-        script.Bind("FGameOver", new Action<string, string>(GameOver));
-        script.Bind("FGetReturnPoint", new Action<int>(GetReturnPoint));
-        script.Bind("FSetReturnPoint", new Action<int>(SetReturnPoint));
-        script.Bind("FWaitForInput", new Action(WaitForInput));
-        script.Bind("FPlayBGMOW", new Action<string, float>(PlayBGMOW));
-        script.Bind("FStopBGMOW", new Action<float>(StopBGMOW));
-        script.Bind("FPlaySoundOW", new Action<string, float>(PlaySoundOW));
-        script.Bind("FRumble", new Action<float, float, bool>(Rumble));
-        script.Bind("FFlash", new Action<float, bool, int, int, int, int>(Flash));
-        script.Bind("FSave", new Action(Save));
-        script.Bind("FHeal", new Action<int>(Heal));
-        script.Bind("FHurt", new Action<int>(Hurt));
-        script.Bind("FAddItem", new Func<string, DynValue>(AddItem));
-        script.Bind("FRemoveItem", new Action<int>(RemoveItem));
-        script.Bind("FStopEvent", new Action(StopEvent));
-        script.Bind("FRemoveEvent", new Action<string>(RemoveEvent));
-        script.Bind("FAddMoney", new Action<int>(AddMoney));
-        script.Bind("FSetEventPage", new Action<string, int>(SetEventPage));
-        script.Bind("FGetSpriteOfEvent", new Func<string, DynValue>(GetSpriteOfEvent));
-        script.Bind("FCenterEventOnCamera", new Action<string, int, bool>(CenterEventOnCamera));
-        script.Bind("FMoveCamera", new Action<int, int, int, bool>(MoveCamera));
-        script.Bind("FResetCameraPosition", new Action<int, bool>(ResetCameraPosition));
-        script.Bind("FWait", new Action<int>(Wait));
-        script.Bind("FGetPosition", new Func<string, DynValue>(GetPosition));*/
 
         return true;
     }
@@ -446,12 +445,12 @@ public class EventManager : MonoBehaviour {
     public void FunctionLauncher(DynValue parameter1, DynValue parameter2, DynValue parameter3, DynValue parameter4, DynValue parameter5, 
                                  DynValue parameter6, DynValue parameter7, DynValue parameter8, DynValue parameter9, DynValue parameter10) { }
 
-    /// <summary>
+    /*/// <summary>
     /// Used to add an element into the Text Event
     /// </summary>
     /// <param name="function">Name of the function</param>
     /// <param name="parameters">Parameters of the function</param>
-    /*public void FunctionLauncher(string function, DynValue[] parameters = null) {
+    public void OldFunctionLauncher(string function, DynValue[] parameters = null) {
         //Nobody cares about spaces, so let's just remove them from the function's name
         function = function.TrimStart('"').TrimEnd('"').Replace(" ", string.Empty);
 
@@ -559,12 +558,14 @@ public class EventManager : MonoBehaviour {
     public static void SetEventStates() {
         int id = SceneManager.GetActiveScene().buildIndex;
         EventOW[] events = (EventOW[])GameObject.FindObjectsOfType(typeof(EventOW));
-        PlayerOverworld.instance.eventmgr.sprCtrls.Clear();
+        EventManager.instance.sprCtrls.Clear();
 
         if (!GlobalControls.MapEventPages.ContainsKey(id))
             GlobalControls.MapEventPages.Add(id, new Dictionary<string, int>());
 
         foreach (EventOW ev in events) {
+            if (ev.name.Contains("Image") || ev.name.Contains("Tone"))
+                continue;
             if (GlobalControls.MapEventPages[id].ContainsKey(ev.gameObject.name))
                 GlobalControls.MapEventPages[id].Remove(ev.gameObject.name);
             GlobalControls.MapEventPages[id].Add(ev.gameObject.name, ev.actualPage);
@@ -751,74 +752,62 @@ public class EventManager : MonoBehaviour {
     IEnumerator ISetTone(object[] args) {
         //REAL ARGS
         bool waitEnd;
-        int r, g, b, a;
+        int r = 255, g = 255, b = 255, a = 0;
         try { waitEnd = (bool)args[0]; } catch { throw new CYFException("The argument \"waitEnd\" must be a boolean."); }
-        try { r = (int)args[1];        } catch { throw new CYFException("The argument \"r\" must be a number."); }
-        try { g = (int)args[2];        } catch { throw new CYFException("The argument \"g\" must be a number."); }
-        try { b = (int)args[3];        } catch { throw new CYFException("The argument \"b\" must be a number."); }
-        try { a = (int)args[4];        } catch { throw new CYFException("The argument \"a\" must be a number."); }
+        if (args.Length >= 2)
+            try { r = (int)args[1];    } catch { throw new CYFException("The argument \"r\" must be a number."); }
+        if (args.Length >= 3)
+            try { g = (int)args[2];    } catch { throw new CYFException("The argument \"g\" must be a number."); }
+        if (args.Length >= 4)
+            try { b = (int)args[3];    } catch { throw new CYFException("The argument \"b\" must be a number."); }
+        if (args.Length >= 5)
+            try { a = (int)args[4];    } catch { throw new CYFException("The argument \"a\" must be a number."); }
 
         int alpha, lack;
+        float beginHighest = 0, highest = 0;
+        int[] currents, lacks, beginLacks;
+        float[] realLacks;
         if (GameObject.Find("Tone") == null) {
-            GameObject image = GameObject.Instantiate(Resources.Load<GameObject>("Prefabs/Image"));
+            GameObject image = GameObject.Instantiate(Resources.Load<GameObject>("Prefabs/ImageEvent"));
             image.GetComponent<Image>().color = new Color(image.GetComponent<Image>().color.r, image.GetComponent<Image>().color.g, image.GetComponent<Image>().color.b, 0);
             alpha = 0; lack = a;
             image.name = "Tone";
+            image.tag = "Event";
             image.GetComponent<RectTransform>().SetParent(GameObject.Find("Canvas OW").transform);
             image.GetComponent<RectTransform>().sizeDelta = new Vector2(640, 480);
             image.GetComponent<RectTransform>().position = new Vector2(320, 240);
             events.Add(image);
-            bool darker = false;
-            if (lack > 0)
-                darker = true;
-            while (GameObject.Find("Tone").GetComponent<Image>().color != new Color32((byte)r, (byte)g, (byte)b, (byte)a)) {
-                if (darker) {
-                    if (lack <= 4)
-                        GameObject.Find("Tone").GetComponent<Image>().color = new Color32((byte)r, (byte)g, (byte)b, (byte)a);
-                    else {
-                        GameObject.Find("Tone").GetComponent<Image>().color = new Color32((byte)r, (byte)g, (byte)b, (byte)(alpha + 4));
-                        alpha += 4;
-                        lack -= 4;
-                    }
-                } else {
-                    if (lack >= -4)
-                        GameObject.Find("Tone").GetComponent<Image>().color = new Color32((byte)r, (byte)g, (byte)b, (byte)a);
-
-                    else {
-                        GameObject.Find("Tone").GetComponent<Image>().color = new Color32((byte)r, (byte)g, (byte)b, (byte)(alpha - 4));
-                        alpha -= 4;
-                        lack += 4;
-                    }
-                }
-                yield return 0;
-            }
+            currents = new int[] { 0, 0, 0, 0 };
+            lacks = new int[] { r, g, b, a };
+            if (!waitEnd)
+                script.Call("CYFEventNextCommand");
         } else {
-            alpha = (int)(GameObject.Find("Tone").GetComponent<Image>().color.a * 255);
+            Color c = GameObject.Find("Tone").GetComponent<Image>().color;
+            currents = new int[] { (int)(c.r * 255), (int)(c.g * 255), (int)(c.b * 255), (int)(c.a * 255) };
+            lacks = new int[] { r - currents[0], g - currents[1], b - currents[2], a - currents[3] };
+            alpha = (int)(c.a * 255);
             lack = a - alpha;
-            bool darker = false;
-            if (lack > 0)
-                darker = true;
-            while (GameObject.Find("Tone").GetComponent<Image>().color != new Color32((byte)r, (byte)g, (byte)b, (byte)a)) {
-                if (darker) {
-                    if (lack <= 4)
-                        GameObject.Find("Tone").GetComponent<Image>().color = new Color32((byte)r, (byte)g, (byte)b, (byte)a);
-                    else {
-                        GameObject.Find("Tone").GetComponent<Image>().color = new Color32((byte)r, (byte)g, (byte)b, (byte)(alpha + 4));
-                        alpha += 4;
-                        lack -= 4;
-                    }
-                } else {
-                    if (lack >= -4)
-                        GameObject.Find("Tone").GetComponent<Image>().color = new Color32((byte)r, (byte)g, (byte)b, (byte)a);
-                    else {
-                        GameObject.Find("Tone").GetComponent<Image>().color = new Color32((byte)r, (byte)g, (byte)b, (byte)(alpha - 4));
-                        alpha -= 4;
-                        lack += 4;
-                    }
-                }
-                yield return 0;
-            }
         }
+        beginLacks = lacks;
+        realLacks = new float[] { lacks[0], lacks[1], lacks[2], lacks[3] };
+        foreach (int i in lacks)
+            highest = Mathf.Abs(i) > highest ? Mathf.Abs(i) : highest;
+        beginHighest = highest;
+        while (GameObject.Find("Tone").GetComponent<Image>().color != new Color32((byte)r, (byte)g, (byte)b, (byte)a)) {
+            for (int i = 0; i < realLacks.Length; i++)
+                realLacks[i] -= beginLacks[i] * 4 / beginHighest;
+            if (highest <= 4)
+                GameObject.Find("Tone").GetComponent<Image>().color = new Color32((byte)r, (byte)g, (byte)b, (byte)a);
+            else {
+                GameObject.Find("Tone").GetComponent<Image>().color = new Color32((byte)(r - Mathf.RoundToInt(realLacks[0])), (byte)(g - Mathf.RoundToInt(realLacks[1])),
+                                                                                  (byte)(b - Mathf.RoundToInt(realLacks[2])), (byte)(a - Mathf.RoundToInt(realLacks[3])));
+            }
+            highest -= 4;
+            yield return 0;
+        }
+        
+        if (a == 0)
+            EventManager.instance.luaevow.Remove("Tone");
         if (waitEnd)
             script.Call("CYFEventNextCommand");
     }
@@ -833,8 +822,7 @@ public class EventManager : MonoBehaviour {
         try { rotateZ = (float)args[3]; } catch { throw new CYFException("The argument \"rotateZ\" must be a number."); }
 
         for (int i = 0; i < events.Count || name == "Player"; i++) {
-            GameObject go = null;
-            try { go = events[i]; } catch { }
+            GameObject go = events[i];
             if (name == go.name || name == "Player") {
                 if (name == "Player")
                     go = GameObject.Find("Player");
@@ -1050,7 +1038,7 @@ public class EventManager : MonoBehaviour {
         try { straightLine = (bool)args[3]; } catch { throw new CYFException("The argument \"straightLine\" must be a boolean."); }
 
         if (speed <= 0) {
-            UnitaleUtil.displayLuaError(PlayerOverworld.instance.eventmgr.events[PlayerOverworld.instance.eventmgr.actualEventIndex].name, "The speed of the camera has to be strictly positive.");
+            UnitaleUtil.displayLuaError(EventManager.instance.events[EventManager.instance.actualEventIndex].name, "The speed of the camera has to be strictly positive.");
             /*textmgr.skipNowIfBlocked = true;*/
             yield break;
         }

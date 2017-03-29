@@ -38,6 +38,7 @@ public class FightUIController : MonoBehaviour {
         foreach (Transform child in gameObject.transform)
             if (child.name == "FightUILine") {
                 line = new LuaSpriteController(child.GetComponent<Image>(), child.GetComponent<AutoloadResourcesFromRegistry>().SpritePath.ToLower());
+                Start();
                 return;
             }
     }
@@ -48,32 +49,14 @@ public class FightUIController : MonoBehaviour {
     }
 
     public void ChangeTarget(LuaEnemyController target) {
-        bool pass = true;
-        foreach (FightUI fight in boundFightUiInstances) {
-            if (!pass) {
-                GameObject.Destroy(fight.gameObject);
-                boundFightUiInstances.RemoveAt(1);
-            }
-            pass = false;
+        while (boundFightUiInstances.Count > 1) {
+            allFightUiInstances.Remove(boundFightUiInstances[1]);
+            Destroy(boundFightUiInstances[1].lifeBar.gameObject);
+            Destroy(boundFightUiInstances[1].damageText.gameObject);
+            Destroy(boundFightUiInstances[1].gameObject);
+            boundFightUiInstances.RemoveAt(1);
         }
         boundFightUiInstances[0].ChangeTarget(target);
-    }
-
-    public void Init() {
-        finishingFade = false;
-        gameObject.SetActive(true);
-        stopped = false;
-        line.StopAnimation();
-        line.img.gameObject.SetActive(true);
-        line.img.GetComponent<Image>().enabled = true;
-        targetRt.anchoredPosition = new Vector2(GetComponent<RectTransform>().rect.width / 2, 0);
-        for (int i = 0; i < targetNumber; i++) {
-            LaunchInstance(true);
-            boundFightUiInstances[boundFightUiInstances.Count - 1].Init(targetIDs[i]);
-        }
-        borderX = -GetComponent<RectTransform>().rect.width / 2;
-        // damageTextRt.position = target.GetComponent<RectTransform>().position;
-        setAlpha(1.0f);
     }
 
     public void setAlpha(float a) {
@@ -82,41 +65,53 @@ public class FightUIController : MonoBehaviour {
         GetComponent<Image>().color = c;
     }
 
-    public void quickInit(LuaEnemyController target, int damage = -478294) {
+    public void Init() {
+        commonInit();
         finishingFade = false;
+        stopped = false;
+        targetRt.anchoredPosition = new Vector2(GetComponent<RectTransform>().rect.width / 2, 0);
+        for (int i = 0; i < targetNumber; i++) {
+            LaunchInstance(true);
+            boundFightUiInstances[boundFightUiInstances.Count - 1].Init(targetIDs[i]);
+        }
+        // damageTextRt.position = target.GetComponent<RectTransform>().position;
+        setAlpha(1.0f);
+    }
+
+    public void commonInit() {
         gameObject.SetActive(true);
-        gameObject.GetComponent<Image>().enabled = false;
+        gameObject.GetComponent<Image>().enabled = true;
         line.StopAnimation();
         line.img.gameObject.SetActive(true);
         line.img.GetComponent<Image>().enabled = true;
-        targetRt.anchoredPosition = new Vector2(GetComponent<RectTransform>().rect.width / 2, 0);
-        targetRt.gameObject.SetActive(false);
+        borderX = -GetComponent<RectTransform>().rect.width / 2;
+    }
+    public void commonQuickInit() {
+        if (UIController.instance.state != UIController.UIState.ATTACKING) {
+            gameObject.GetComponent<Image>().enabled = false;
+            targetRt.gameObject.SetActive(false);
+        }
+    }
+
+    public void quickInit(LuaEnemyController target, int damage = -478294) {
+        commonInit();
+        commonQuickInit();
         LaunchInstance();
         allFightUiInstances[allFightUiInstances.Count - 1].quickInit(targetIDs[0], target, damage);
         allFightUiInstances[allFightUiInstances.Count - 1].isCoroutine = true;
-        borderX = -GetComponent<RectTransform>().rect.width / 2;
-        stopped = false;
         StopAction(-2, true);
         allFightUiInstances[allFightUiInstances.Count - 1].StopAction(-2);
         // damageTextRt.position = target.GetComponent<RectTransform>().position;
     }
 
     public void quickMultiInit(float atkMult, int[] damage) {
-        finishingFade = false;
-        gameObject.SetActive(true);
-        gameObject.GetComponent<Image>().enabled = false;
-        line.StopAnimation();
-        line.img.gameObject.SetActive(true);
-        line.img.GetComponent<Image>().enabled = true;
+        commonInit();
+        commonQuickInit();
         for (int i = 0; i < targetIDs.Length; i++) {
             LaunchInstance();
             allFightUiInstances[allFightUiInstances.Count - 1].quickInit(targetIDs[i], UIController.instance.encounter.enabledEnemies[targetIDs[i]], damage[i]);
             allFightUiInstances[allFightUiInstances.Count - 1].isCoroutine = true;
         }
-        targetRt.anchoredPosition = new Vector2(GetComponent<RectTransform>().rect.width / 2, 0);
-        targetRt.gameObject.SetActive(false);
-        borderX = -GetComponent<RectTransform>().rect.width / 2;
-        stopped = false;
         StopAction(atkMult, true);
         for (int i = 0; i < targetIDs.Length; i++)
             allFightUiInstances[allFightUiInstances.Count - 1 - (targetIDs.Length - 1 - i)].StopAction(atkMult);
@@ -190,18 +185,35 @@ public class FightUIController : MonoBehaviour {
     // Update is called once per frame
     private void Update() {
         if (!ArenaManager.instance.firstTurn) {
+            for (int i = 0; i < allFightUiInstances.Count; i++)
+                if (!boundFightUiInstances.Contains(allFightUiInstances[i]))
+                    if (allFightUiInstances[i].Finished()) {
+                        allFightUiInstances[i].slice.Remove();
+                        if (allFightUiInstances[i].lifeBar) {
+                            Destroy(allFightUiInstances[i].lifeBar.gameObject);
+                            Destroy(allFightUiInstances[i].damageText.gameObject);
+                            Destroy(allFightUiInstances[i].gameObject);
+                        }
+                        allFightUiInstances.RemoveAt(i);
+                        i--;
+                    }
+
             if (finishingFade) {
                 float resizeProg = 1.0f - ArenaManager.instance.getProgress();
                 setAlpha(resizeProg);
                 if (resizeProg == 0.0f) {
                     while (boundFightUiInstances.Count != 0) {
+                        allFightUiInstances.Remove(boundFightUiInstances[boundFightUiInstances.Count - 1]);
+                        Destroy(boundFightUiInstances[boundFightUiInstances.Count - 1].lifeBar.gameObject);
+                        Destroy(boundFightUiInstances[boundFightUiInstances.Count - 1].damageText.gameObject);
                         GameObject.Destroy(boundFightUiInstances[boundFightUiInstances.Count - 1].gameObject);
                         boundFightUiInstances.RemoveAt(boundFightUiInstances.Count - 1);
                     }
                     targetRt.gameObject.SetActive(true);
                     gameObject.GetComponent<Image>().enabled = true;
                     finishingFade = false;
-                    gameObject.SetActive(false);
+                    if (allFightUiInstances.Count == 0)
+                        gameObject.SetActive(false);
                 }
                 return;
             } else if (boundFightUiInstances.Count != 0) {

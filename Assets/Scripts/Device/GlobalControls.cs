@@ -40,9 +40,7 @@ public class GlobalControls : MonoBehaviour {
             misc = new Misc();
     }*/
 
-    void Awake() {
-        SceneManager.sceneLoaded += LoadScene;
-    }
+    void Awake() { SceneManager.sceneLoaded += LoadScene; }
 
     /// <summary>
     /// Control checking, and way more.

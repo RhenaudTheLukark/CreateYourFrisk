@@ -30,7 +30,6 @@ public class PlayerOverworld : MonoBehaviour {
     private Animator animator;              //Used to store a reference to the Player's animator component
     private Rigidbody2D rb2D;               //The Rigidbody2D component attached to this object
     private AudioSource uiAudio;            //AudioSource used for the pre-Encounter sounds
-    public EventManager eventmgr;           //The scene's event manager
     public TextManager textmgr;             //The map's text manager
     //private bool lockedCamera = false;    //Used to stop the camera's position refresh
     private bool inBattleAnim = false;
@@ -73,7 +72,7 @@ public class PlayerOverworld : MonoBehaviour {
         //Let's set the last movement to Down.
         lastMove = new Vector2(0, 1);
 
-        eventmgr = GameObject.Find("Main Camera OW").GetComponent<EventManager>();
+        EventManager.instance = GameObject.Find("Main Camera OW").GetComponent<EventManager>();
 
         if (!NewMusicManager.Exists("StaticKeptAudio")) {
             audioKept = NewMusicManager.CreateChannelAndGetAudioSource("StaticKeptAudio");
@@ -112,8 +111,8 @@ public class PlayerOverworld : MonoBehaviour {
             GameObject.Find("Mugshot").GetComponent<Image>().color = new Color(1, 1, 1, 0);
             GameObject.Find("textframe_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 0);
             GameObject.Find("textframe_interior").GetComponent<Image>().color = new Color(0, 0, 0, 0);
-            if (eventmgr.scriptLaunched)
-                eventmgr.script.Call("CYFEventNextCommand");
+            if (EventManager.instance.scriptLaunched)
+                EventManager.instance.script.Call("CYFEventNextCommand");
             else
                 inText = false;
            
@@ -140,6 +139,8 @@ public class PlayerOverworld : MonoBehaviour {
     }
 
     private void Update() {
+        if (GameOverBehavior.gameOverContainer.activeSelf)
+            return;
         if (GameObject.Find("textframe_border_outer").GetComponent<Image>().color.a != 0)
             inText = true;
         
@@ -265,12 +266,12 @@ public class PlayerOverworld : MonoBehaviour {
                 if (GameObject.Find("Event1").GetComponent<EventOW>().actualPage == 4)
                     rolled++;
                 if (GameObject.Find("Event1").GetComponent<EventOW>().actualPage == 666) {
-                    LuaEventOW.SetEventPage2("Event1", 1); 
+                    LuaEventOW.SetPage2("Event1", 1); 
                     rolled++;
                 } else
-                    LuaEventOW.SetEventPage2("Event1", (GameObject.Find("Event1").GetComponent<EventOW>().actualPage + 1) % 4); 
-                if (GameObject.Find("Event1").GetComponent<EventOW>().actualPage == 1 && rolled % 4 == 3)  LuaEventOW.SetEventPage2("Event1", 666);
-                else if (GameObject.Find("Event1").GetComponent<EventOW>().actualPage == 0) LuaEventOW.SetEventPage2("Event1", 4);
+                    LuaEventOW.SetPage2("Event1", (GameObject.Find("Event1").GetComponent<EventOW>().actualPage + 1) % 4); 
+                if (GameObject.Find("Event1").GetComponent<EventOW>().actualPage == 1 && rolled % 4 == 3)  LuaEventOW.SetPage2("Event1", 666);
+                else if (GameObject.Find("Event1").GetComponent<EventOW>().actualPage == 0) LuaEventOW.SetPage2("Event1", 4);
                 if (GameObject.Find("Event1").GetComponent<EventOW>().actualPage == 666)
                     SetDialog(new string[] { "[color:ff0000]Event page = " + GameObject.Find("Event1").GetComponent<EventOW>().actualPage + " :)" }, true, new string[] { "rtlukark_determimed" });
                 else
@@ -599,7 +600,7 @@ public class PlayerOverworld : MonoBehaviour {
             for (int i = 0; i < textTable.Length; i++)
                 textmsg[i] = new TextMessage(textTable[i], rearranged, false);
         inText = true;  //UnitaleUtil.writeInLogAndDebugger("SetDialog true");
-        eventmgr.passPressOnce = true;
+        EventManager.instance.passPressOnce = true;
 
         textmgr.setTextFrameAlpha(1);
         textmgr.blockSkip = false;

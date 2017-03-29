@@ -73,17 +73,13 @@ using System.ComponentModel;
         return 0;
     }
 
-    public void SetEXP(int value) {
-        EXP = EXP + value;
-        if (EXP > ControlPanel.instance.EXPLimit)
-            EXP = ControlPanel.instance.EXPLimit;
+    public void SetEXP(int value, bool checkLevel = false) {
+        EXP = value > ControlPanel.instance.EXPLimit ? ControlPanel.instance.EXPLimit : value;
+        if (checkLevel)
+            CheckLevel();
     }
 
-    public void SetGold(int value) {
-        Gold = Gold + value;
-        if (Gold > ControlPanel.instance.GoldLimit)
-            Gold = ControlPanel.instance.GoldLimit;
-    }
+    public void SetGold(int value) { Gold = value > ControlPanel.instance.GoldLimit ? ControlPanel.instance.GoldLimit : value; }
 
     public bool AddBattleResults(int exp, int gold) {
         SetEXP(exp);

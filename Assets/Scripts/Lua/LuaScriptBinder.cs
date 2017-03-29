@@ -36,7 +36,10 @@ public static class LuaScriptBinder {
         //UserData.RegisterType<Windows>();
         //Overworld
         UserData.RegisterType<LuaEventOW>();
-        UserData.RegisterType<LuaPlayerOverworld>();
+        UserData.RegisterType<LuaPlayerOW>();
+        UserData.RegisterType<LuaGeneralOW>();
+        UserData.RegisterType<LuaInventoryOW>();
+        UserData.RegisterType<LuaScreenOW>();
     }
 
     /// <summary>
@@ -88,10 +91,21 @@ public static class LuaScriptBinder {
             DynValue PlayerStatus = UserData.Create(PlayerController.luaStatus);
             script.Globals.Set("Player", PlayerStatus);
         } else {
-            DynValue PlayerOW = UserData.Create(PlayerOverworld.instance.eventmgr.luapo);
+            DynValue PlayerOW = UserData.Create(EventManager.instance.luaplow);
             script.Globals.Set("FPlayer", PlayerOW);
-            DynValue EventOW = UserData.Create(PlayerOverworld.instance.eventmgr.luaevow);
+            //script.Globals.Set("Player", PlayerOW);
+            DynValue EventOW = UserData.Create(EventManager.instance.luaevow);
             script.Globals.Set("FEvent", EventOW);
+            //script.Globals.Set("Event", EventOW);
+            DynValue GeneralOW = UserData.Create(EventManager.instance.luagenow);
+            script.Globals.Set("FGeneral", GeneralOW);
+            //script.Globals.Set("General", GeneralOW);
+            DynValue InventoryOW = UserData.Create(EventManager.instance.luainvow);
+            script.Globals.Set("FInventory", InventoryOW);
+            //script.Globals.Set("Inventory", InventoryOW);
+            DynValue ScreenOW = UserData.Create(EventManager.instance.luascrow);
+            script.Globals.Set("FScreen", ScreenOW);
+            //script.Globals.Set("Screen", ScreenOW);
         }
         script.Globals["DEBUG"] = (Action<string>)UnitaleUtil.writeInLogAndDebugger;
         // clr bindings
@@ -224,7 +238,10 @@ public static class LuaScriptBinder {
         //UserData.RegisterType<Windows>();
         //Overworld
         UserData.RegisterType<LuaEventOW>();
-        UserData.RegisterType<LuaPlayerOverworld>();
+        UserData.RegisterType<LuaPlayerOW>();
+        UserData.RegisterType<LuaGeneralOW>();
+        UserData.RegisterType<LuaInventoryOW>();
+        UserData.RegisterType<LuaScreenOW>();
     }
 
     /// <summary>
