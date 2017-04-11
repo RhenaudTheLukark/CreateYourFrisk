@@ -1,9 +1,11 @@
 function EventPage1()
-    Event.MoveToPoint("Player", 320, 400, true)
+    --Event.MoveToPoint("Player", 320, 400, true)
+    Screen.MoveCamera(500, -300, 4, true)
+    Screen.ResetCameraPosition(4, true)
     hp = Player.GetHP()
     Screen.SetTone(true, true, 0, 0, 0, 80)
     Screen.DispImg("photo", 1, 320, 240, 224, 130, 40, 255)
-    General.SetDialog({"Erm[waitall:3]...[waitall:1][w:10] Why did you go herewith your " ..hp .."HP?"}, true, {"papyrus_mugshot_2"})
+    General.SetDialog({"Erm[waitall:3]...[waitall:1][w:10] Why did you go here with your " ..hp .."HP?"}, true, {"papyrus_mugshot_2"})
     --General.SetDialog({"I hate you![mugshot:rtlukark_surprised]", "[instant]I love you!"}, true, {"rtlukark_angry", "rtlukark_determined"})
     --Player.SetHP(0)
 end
@@ -136,15 +138,4 @@ function EventPage4()
 	SetTone(true, true, 0, 0, 0, 0)]]
 	--General.GameOver("[voice:v_sans]Wazzup bro?\r[voice:v_sans]I love this music, don't you ?", "mus_zz_megalovania")
 	--GameOver("I told you !\rYou should have\nstopped that.", "mus_zz_megalovania")
-end
-
-function EventPage666()
-	Event.SetAnimSwitch("Player", "Chara")
-	if(GetGlobal("Chara") == false or GetGlobal("Chara") == nil) then
-		SetGlobal("Chara", true)
-		General.PlayBGM("mus_zzz_c", 1)
-	else
-		SetGlobal("Chara", false)
-		General.PlayBGM("mus_anothermedium", 1)
-	end
 end

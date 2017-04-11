@@ -24,6 +24,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/test4.unity
   - enabled: 1
+    path: Assets/Scenes/test5.unity
+  - enabled: 1
     path: Assets/Scenes/test-1.unity
   - enabled: 1
     path: Assets/Scenes/ModSelect.unity

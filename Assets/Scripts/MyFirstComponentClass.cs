@@ -743,7 +743,7 @@ public class MyFirstComponentClass : MonoBehaviour {
     }
 
     /*public void Update() {
-        // bool == true and bool are the same, bool == false and!bool are the same
+        // bool == true and bool are the same, bool == false and !bool are the same
         // Now I'll jump around, because I don't remember the syntax exactly for cases.
         if (Input.GetKeyDown(KeyCode.R)) SceneManager.LoadScene("test");
     }*/
@@ -756,4 +756,3 @@ GameObject gl = Instantiate(goodluck);
 gl.name = "MIONNNNNNNNNNNN";
 gl.transform.SetParent(GameObject.Find("Canvas OW").transform);
 */
-

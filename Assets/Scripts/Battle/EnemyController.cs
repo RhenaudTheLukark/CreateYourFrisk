@@ -55,8 +55,6 @@ public class EnemyController : MonoBehaviour {
 
     public virtual void HandleCheck() { ui.ActionDialogResult(new RegularMessage(Name.ToUpper() + " " + Attack + " ATK " + Defense + " DEF\n" + CheckData), UIController.UIState.ENEMYDIALOGUE); }
 
-    public int getMaxHP() { return MaxHP; }
-
     public void doDamage(int damage) {
         int newHP = HP - damage;
         HP = newHP;

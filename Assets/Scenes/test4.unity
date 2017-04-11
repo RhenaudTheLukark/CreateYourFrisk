@@ -330,7 +330,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sceneName: test
   position: {x: 1480, y: 960}
-  uduu2: 0
   direction: 4
   activated: 0
 --- !u!50 &1372627570
@@ -415,7 +414,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sceneName: test2
   position: {x: 320, y: 80}
-  uduu2: 0
   direction: 8
   activated: 0
 --- !u!50 &1523043059
@@ -908,7 +906,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a4ef58bda0647d48b67028c05b00813, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  id: 2
+  id: 8
   music: mus_core
   modToLoad: OverWorld Test
   isMusicKeptBetweenBattles: 1

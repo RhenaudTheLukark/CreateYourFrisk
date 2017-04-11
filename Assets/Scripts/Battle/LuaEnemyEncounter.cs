@@ -285,7 +285,8 @@ internal class LuaEnemyEncounter : EnemyEncounter {
                     UnitaleUtil.displayLuaError(currentScript, ex.DecoratedMessage);
                     return;
                 } catch (Exception ex) {
-                    UnitaleUtil.displayLuaError(currentScript, "This error is a " + ex.GetType().ToString() + " error.\nPlease send this error to the main dev.\n\n" + ex.Message + "\n\n" + ex.StackTrace);
+                    if (!GlobalControls.retroMode)
+                        UnitaleUtil.displayLuaError(currentScript, "This error is a " + ex.GetType().ToString() + " error.\nPlease send this error to the main dev.\n\n" + ex.Message + "\n\n" + ex.StackTrace);
                     return;
                 }
             }

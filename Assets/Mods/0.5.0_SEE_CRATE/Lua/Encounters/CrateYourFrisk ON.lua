@@ -1,3 +1,5 @@
+if not GetRealGlobal("ow") then error("fu :D") end
+
 encountertext = "Poseur strikes a pose!"
 nextwaves = {"thechoice"}
 wavetimer = math.huge

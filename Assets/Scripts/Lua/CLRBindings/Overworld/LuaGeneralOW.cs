@@ -29,7 +29,12 @@ public class LuaGeneralOW {
             textmsgs[i] = new TextMessage(texts.Table.Get(i + 1).String, formatted, false, mugshots.ToString() != "void" ? mugshots.Table.Get(i + 1).String : null);
         textmgr.setTextQueue(textmsgs);
     }
-
+    
+    /// <summary>
+    /// Makes a choice, like when you have to choose the blue or the red pill
+    /// </summary>
+    /// <param name="question"></param>
+    /// <param name="varIndex"></param>
     [CYFEventFunction]
     public void SetChoice(DynValue choices, string question = null) {
         bool threeLines = false;
@@ -173,11 +178,11 @@ public class LuaGeneralOW {
     public void PlaySound(string sound, float volume) {
         if (volume > 1 || volume < 0)
             UnitaleUtil.displayLuaError(EventManager.instance.script.scriptname, "You can't input a value out of [0; 1] for the volume, as it is clamped from 0 to 1.");
-        else if (AudioClipRegistry.GetMusic(sound) == null)
-            UnitaleUtil.displayLuaError(EventManager.instance.script.scriptname, "The given BGM doesn't exiss. Please check if you haven't mispelled it.");
+        else if (AudioClipRegistry.GetSound(sound) == null)
+            UnitaleUtil.displayLuaError(EventManager.instance.script.scriptname, "The given BGM doesn't exist. Please check if you haven't mispelled it.");
         else
             UnitaleUtil.PlaySound("OverworldSound", AudioClipRegistry.GetSound(sound), volume);
-        GameObject.Find("Player").GetComponent<AudioSource>().PlayOneShot(AudioClipRegistry.GetMusic(sound), volume);
+        //GameObject.Find("Player").GetComponent<AudioSource>().PlayOneShot(AudioClipRegistry.GetSound(sound), volume);
         EventManager.instance.script.Call("CYFEventNextCommand");
     }
 

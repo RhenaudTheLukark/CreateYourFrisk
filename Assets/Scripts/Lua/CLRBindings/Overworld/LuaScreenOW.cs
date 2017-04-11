@@ -32,34 +32,32 @@ public class LuaScreenOW {
     /// <param name="toneB"></param>
     /// <param name="toneA"></param>
     [CYFEventFunction]
-    public void DispImg(string path, int id, float posX, float posY, float dimX, float dimY, int toneR = 255, int toneG = 255, int toneB = 255, int toneA = -1) {
-        if (GameObject.Find("Image" + id) != null) {
-            GameObject image1 = GameObject.Find("Image" + id);
-            image1.GetComponent<Image>().sprite = SpriteRegistry.Get(path);
-            if (toneA >= 0 && toneA <= 255 && toneR % 1 == 0)
-                if (toneR < 0 || toneR > 255 || toneR % 1 != 0 || toneG < 0 || toneG > 255 || toneG % 1 != 0 || toneB < 0 || toneB > 255 || toneB % 1 != 0)
-                    UnitaleUtil.displayLuaError(EventManager.instance.script.scriptname, "You can't input a value out of [0; 255] for a color value, as it is clamped from 0 to 255.\nThe number have to be an integer.");
-                else
-                    image1.GetComponent<Image>().color = new Color32((byte)toneR, (byte)toneG, (byte)toneB, (byte)toneA);
-            image1.GetComponent<RectTransform>().sizeDelta = new Vector2(dimX, dimY);
-            image1.GetComponent<RectTransform>().position = new Vector2(posX, posY);
-            EventManager.instance.script.Call("CYFEventNextCommand");
-            return;
-        } else {
-            GameObject image = GameObject.Instantiate(Resources.Load<GameObject>("Prefabs/ImageEvent"));
+    public void DispImg(string path, int id, float posX, float posY, int toneR = 255, int toneG = 255, int toneB = 255, int toneA = -1) {
+        GameObject image;
+        bool newImage = false;
+
+        if (GameObject.Find("Image" + id) != null)
+            image = GameObject.Find("Image" + id);
+        else {
+            newImage = true;
+            image = GameObject.Instantiate(Resources.Load<GameObject>("Prefabs/ImageEvent"));
             image.name = "Image" + id;
             image.tag = "Event";
             image.GetComponent<RectTransform>().SetParent(GameObject.Find("Canvas OW").transform);
-            image.GetComponent<Image>().sprite = SpriteRegistry.Get(path);
-            if (toneA >= 0 && toneA <= 255 && toneR % 1 == 0)
-                if (toneR < 0 || toneR > 255 || toneR % 1 != 0 || toneG < 0 || toneG > 255 || toneG % 1 != 0 || toneB < 0 || toneB > 255 || toneB % 1 != 0)
-                    UnitaleUtil.displayLuaError(EventManager.instance.script.scriptname, "You can't input a value out of [0; 255] for a color value, as it is clamped from 0 to 255.\nThe number have to be an integer.");
-                else
-                    image.GetComponent<Image>().color = new Color32((byte)toneR, (byte)toneG, (byte)toneB, (byte)toneA);
-            image.GetComponent<RectTransform>().sizeDelta = new Vector2(dimX, dimY);
-            image.GetComponent<RectTransform>().position = new Vector2(posX, posY);
-            EventManager.instance.events.Add(image);
         }
+
+        image.GetComponent<Image>().sprite = SpriteRegistry.Get(path);
+        if (toneA >= 0 && toneA <= 255 && toneR % 1 == 0)
+            if (toneR < 0 || toneR > 255 || toneR % 1 != 0 || toneG < 0 || toneG > 255 || toneG % 1 != 0 || toneB < 0 || toneB > 255 || toneB % 1 != 0)
+                UnitaleUtil.displayLuaError(EventManager.instance.script.scriptname, "You can't input a value out of [0; 255] for a color value, as it is clamped from 0 to 255.\nThe number have to be an integer.");
+            else
+                image.GetComponent<Image>().color = new Color32((byte)toneR, (byte)toneG, (byte)toneB, (byte)toneA);
+        image.GetComponent<RectTransform>().sizeDelta = image.GetComponent<Image>().sprite.bounds.size * 100;
+        image.GetComponent<RectTransform>().position = (Vector2)Camera.main.transform.position + new Vector2(posX - 320, posY - 240);
+
+        if (newImage)
+            EventManager.instance.events.Add(image);
+
         EventManager.instance.script.Call("CYFEventNextCommand");
     }
 
@@ -94,10 +92,10 @@ public class LuaScreenOW {
                     GameObject tone = GameObject.Instantiate(Resources.Load<GameObject>("Prefabs/ImageEvent"));
                     tone.name = "Tone";
                     tone.tag = "Event";
-                    tone.GetComponent<RectTransform>().parent = GameObject.Find("Canvas OW").transform;
+                    tone.GetComponent<RectTransform>().parent = Camera.main.transform;
                     tone.GetComponent<Image>().color = new Color32((byte)r, (byte)g, (byte)b, (byte)a);
                     tone.GetComponent<RectTransform>().sizeDelta = new Vector2(640, 480);
-                    tone.GetComponent<RectTransform>().position = new Vector2(320, 240);
+                    tone.GetComponent<RectTransform>().localPosition = new Vector2();
                     EventManager.instance.events.Add(tone);
                 } else
                     GameObject.Find("Tone").GetComponent<Image>().color = new Color32((byte)r, (byte)g, (byte)b, (byte)a);

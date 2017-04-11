@@ -14,7 +14,7 @@ public class LuaInventoryOW {
     public static event LoadedAction StCoroutine;
 
     [MoonSharpHidden]
-    public void setEquip(string itemName)                   { Inventory.ChangeEquipment(itemName); }
+    public void setEquip(string itemName)                   { Inventory.ChangeEquipment(itemName); EventManager.instance.script.Call("CYFEventNextCommand"); }
     [CYFEventFunction] public void SetWeapon(string weapon) { setEquip(weapon); }
     [CYFEventFunction] public void SetArmor(string armor)   { setEquip(armor); }
 
@@ -27,13 +27,12 @@ public class LuaInventoryOW {
     [CYFEventFunction]
     public void RemoveItem(int ID) { Inventory.RemoveItem(ID - 1); EventManager.instance.script.Call("CYFEventNextCommand"); }
 
-    public bool IsItemInTheInventory(string name) { return Inventory.isInInventory(name); }
+    [CYFEventFunction]
+    public bool IsItemInTheInventory(string name) { try { return Inventory.InventoryNumber(name) != -1; } finally { EventManager.instance.script.Call("CYFEventNextCommand"); } }
 
-    public bool ItemExists(string name) { return Inventory.itemExists(name); }
+    [CYFEventFunction]
+    public bool ItemExists(string name) { try { return Inventory.itemExists(name); } finally { EventManager.instance.script.Call("CYFEventNextCommand"); } }
 
-    public int GetItemID(string name) {
-        if (!Inventory.itemExists(name))     return -1;
-        if (!Inventory.isInInventory(name))  return -1;
-        return Inventory.container.IndexOf(new UnderItem(name, Inventory.NametoType[name]));
-    }
+    [CYFEventFunction]
+    public int GetItemID(string name) { try { return Inventory.InventoryNumber(name); } finally { EventManager.instance.script.Call("CYFEventNextCommand"); } }
 }

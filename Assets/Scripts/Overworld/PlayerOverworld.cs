@@ -11,30 +11,28 @@ public class PlayerOverworld : MonoBehaviour {
     public Image utHeart;
     public int blockingLayer;               //Layer on which collision will be checked
     public int EventLayer;                  //Layer of the events, colliding too
-    public string Encounter;                //Encounter will be used to select the encounter file before a battle
-    public string ModFolder;                //ModFolder will be used to select the mod folder before a battle
-    public Transform PlayerPos;             //The Transform component attached to this object
-    public Vector2 lastMove;                //The Player's last input
-    public Vector2 cameraShift = new Vector2();
-    public static bool inText = false;      //Are we in a text ? (So in an event)
-    public static bool[] menuRunning = new bool[] { false, false, false, false };
+    public int currentDirection = 2;
+    public float speed = 3;
     public bool forcedMove = false;         //Is the current movement forced by an event ?
     public bool firstTime = false;          //Boolean used to not launch another event a the end of the previous event
     public bool forcedAnim = false;
-    public float speed = 3;
+    public static bool inText = false;      //Are we in a text ? (So in an event)
+    public static bool[] menuRunning = new bool[] { false, false, false, false };
+    public Transform PlayerPos;             //The Transform component attached to this object
     public static AudioSource audioKept;
-    public int currentDirection = 2;
+    public Vector2 lastMove;                //The Player's last input
+    public Vector2 cameraShift = new Vector2();
 
     private int battleWalkCount;            //Will be used to check the battle appearance
+    public int rolled = 0;
     private float TimeIndicator = 0f;       //A time indicator used for the soul's movement during the pre-Encounter anim
+    private bool inBattleAnim = false;
+    public bool isReady = false;
     private Animator animator;              //Used to store a reference to the Player's animator component
     private Rigidbody2D rb2D;               //The Rigidbody2D component attached to this object
     private AudioSource uiAudio;            //AudioSource used for the pre-Encounter sounds
     public TextManager textmgr;             //The map's text manager
     //private bool lockedCamera = false;    //Used to stop the camera's position refresh
-    private bool inBattleAnim = false;
-    public bool isReady = false;
-    public int rolled = 0;
 
     //Start overrides the Start function of MovingObject
     public void Start() {
@@ -45,7 +43,7 @@ public class PlayerOverworld : MonoBehaviour {
         //StartCoroutine(LaunchMusic());
 
         //Get a component reference to the Player's transform
-        PlayerPos = GameObject.Find("Player").GetComponent<Transform>();
+        PlayerPos = GameObject.Find("Player").transform;
 
         //If the player's position already exists, move the player to it
         if (LuaScriptBinder.Get(null, "PlayerPosX") != null && LuaScriptBinder.Get(null, "PlayerPosY") != null) {
@@ -111,11 +109,11 @@ public class PlayerOverworld : MonoBehaviour {
             GameObject.Find("Mugshot").GetComponent<Image>().color = new Color(1, 1, 1, 0);
             GameObject.Find("textframe_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 0);
             GameObject.Find("textframe_interior").GetComponent<Image>().color = new Color(0, 0, 0, 0);
-            if (EventManager.instance.scriptLaunched)
+            if (EventManager.instance.scriptLaunched) {
                 EventManager.instance.script.Call("CYFEventNextCommand");
-            else
+            } else {
                 inText = false;
-           
+            }
         }
     }
 
@@ -141,8 +139,9 @@ public class PlayerOverworld : MonoBehaviour {
     private void Update() {
         if (GameOverBehavior.gameOverContainer.activeSelf)
             return;
-        if (GameObject.Find("textframe_border_outer").GetComponent<Image>().color.a != 0)
+        if (GameObject.Find("textframe_border_outer").GetComponent<Image>().color.a != 0) {
             inText = true;
+        }
         
         if ((Vector2)PlayerPos.position == new Vector2(0, 0))
             PlayerPos.position = GlobalControls.beginPosition;
@@ -153,7 +152,7 @@ public class PlayerOverworld : MonoBehaviour {
             if (TimeIndicator > 1)
                 TimeIndicator = 1;
 
-            Vector2 positionCamera = GameObject.Find("Main Camera OW").transform.position;
+            Vector2 positionCamera = Camera.main.transform.position;
             Vector2 end = new Vector2(PlayerPos.position.x - (positionCamera.x - 320 + 48), PlayerPos.position.y - (positionCamera.y - 240 + 25));
             Image utHeart = GameObject.Find("utHeart").GetComponent<Image>();
 
@@ -229,7 +228,8 @@ public class PlayerOverworld : MonoBehaviour {
             AttemptMove(horizontal, vertical);
 
         //Path to the mod selector if you're on test2 (Hotland)
-        if (SceneManager.GetActiveScene().name == "test2" && !inText) {
+        if (!inText) {
+            /*
             if (PlayerPos.position.x < 40) {
                 string mapName;
                 if (UnitaleUtil.MapCorrespondanceList.ContainsKey(SceneManager.GetActiveScene().name))  mapName = UnitaleUtil.MapCorrespondanceList[SceneManager.GetActiveScene().name];
@@ -242,14 +242,9 @@ public class PlayerOverworld : MonoBehaviour {
                 GlobalControls.Music = GameObject.Find("Background").GetComponent<MapInfos>().isMusicKeptBetweenBattles ? 
                     audioKept.clip :
                     Camera.main.GetComponent<AudioSource>().clip;
-                /*GlobalControls.Player = new GameObject();
-                foreach (Component c in GameObject.Find("Player").GetComponents(typeof(Component))) {
-                    GlobalControls.Player.AddComponent(c.GetType());
-                    GlobalControls.Player.GetComponent(c.GetType());
-                }*/
                 EventManager.SetEventStates();
                 SceneManager.LoadScene("ModSelect");
-            }
+            }*/
             
             /*if (Input.GetKeyDown("p")) {
                 SetDialog(new string[] { "[letters:3]DUN[w:4][letters:4] DUN[w:5][letters:6] DUN!",
@@ -260,9 +255,9 @@ public class PlayerOverworld : MonoBehaviour {
                                      "(letters:3) DUN (w:4)(letters:4) DUN (w:5)(letters:6) DUN!",
                                      "Hope you liked it!" },
                           true, new string[] { "rtlukark_angry", "rtlukark_normal", "rtlukark_waitwhat", "rtlukark_angry", "rtlukark_determined", "rtlukark_perv", "rtlukark_determined" });
-            }*/ else if (Input.GetKeyDown("m")) {
+            } else*/ if (Input.GetKeyDown("m")) {
                 GameObject.Find("Main Camera OW").GetComponent<AudioSource>().time = 10 - 1;
-            } else if (Input.GetKeyDown("h")) {
+            } else if (Input.GetKeyDown("h") && SceneManager.GetActiveScene().name == "test2") {
                 if (GameObject.Find("Event1").GetComponent<EventOW>().actualPage == 4)
                     rolled++;
                 if (GameObject.Find("Event1").GetComponent<EventOW>().actualPage == 666) {
@@ -332,8 +327,8 @@ public class PlayerOverworld : MonoBehaviour {
         //If the GameObject is the player, check if the camera can follow him or not
         if (go == GameObject.Find("Player") &&!inBattleAnim && GameObject.Find("Background") != null) {
 
-            GameObject.Find("Main Camera OW").transform.position = RectifyCameraPosition(newPosition);
-            GameObject.Find("Canvas OW").transform.position = new Vector3(GameObject.Find("Main Camera OW").transform.position.x, GameObject.Find("Main Camera OW").transform.position.y, -10);
+            RectifyCameraPosition(newPosition);
+            GameObject.Find("Canvas OW").transform.position = new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y, -10);
         }
 
         //Moves the GameObject to the position we created before
@@ -420,7 +415,7 @@ public class PlayerOverworld : MonoBehaviour {
             if (battleWalkCount == 0)
                 if (!GameObject.Find("Background").GetComponent<MapInfos>().noRandomEncounter) {
                     battleWalkCount = -1;
-                    inText = true;  //UnitaleUtil.writeInLogAndDebugger("CountDownRandomEncounter true");
+                    inText = true;
 
                     //...let's set an encounter!
                     SetEncounterAnim();
@@ -447,12 +442,17 @@ public class PlayerOverworld : MonoBehaviour {
         inBattleAnim = true;
         //Here are the player's soul and a black sprite, we'll need to make them go up
         Image utHeart = GameObject.Find("utHeart").GetComponent<Image>();
+        Image playerMask = GameObject.Find("PlayerEncounter").GetComponent<Image>();
         Image blackFont = GameObject.Find("black").GetComponent<Image>();
 
         Vector2 positionCamera, end;
         GlobalControls.Music = GameObject.Find("Background").GetComponent<MapInfos>().isMusicKeptBetweenBattles ? audioKept.clip : Camera.main.GetComponent<AudioSource>().clip;
-        GameObject.Find("PlayerEncounter").GetComponent<Image>().sprite = GameObject.Find("Player").GetComponent<SpriteRenderer>().sprite;
+        playerMask.GetComponent<Image>().sprite = PlayerPos.GetComponent<SpriteRenderer>().sprite;
         MusicManager.src.Stop();
+
+        blackFont.transform.SetAsLastSibling();
+        playerMask.transform.SetAsLastSibling();
+        utHeart.transform.SetAsLastSibling();
 
         //If you want a quick animation, we just keep the end of the anim
         if (!quickAnim) {
@@ -466,17 +466,17 @@ public class PlayerOverworld : MonoBehaviour {
         }
         //Set the heart's position to the player's position
         utHeart.transform.position = new Vector3(PlayerPos.position.x, PlayerPos.position.y, -5100);
-        positionCamera = GameObject.Find("Main Camera OW").transform.position;
+        positionCamera = Camera.main.transform.position;
         end = new Vector2(PlayerPos.position.x - (positionCamera.x - 320 + 48), PlayerPos.position.y - (positionCamera.y - 240 + 25));
-        GameObject.Find("black").transform.position = new Vector3(positionCamera.x, positionCamera.y, GameObject.Find("black").transform.position.z);
+        blackFont.transform.position = new Vector3(positionCamera.x, positionCamera.y, blackFont.transform.position.z);
         blackFont.color = new Color(blackFont.color.r, blackFont.color.g, blackFont.color.b, 1f);
-        GameObject.Find("PlayerEncounter").transform.position = new Vector3(GameObject.Find("Player").transform.position.x, GameObject.Find("Player").transform.position.y, -5040);
-        GameObject.Find("PlayerEncounter").GetComponent<Image>().sprite = GameObject.Find("Player").GetComponent<SpriteRenderer>().sprite;
-        GameObject.Find("PlayerEncounter").GetComponent<RectTransform>().sizeDelta = GameObject.Find("Player").GetComponent<RectTransform>().sizeDelta;
-        GameObject.Find("PlayerEncounter").transform.localScale = GameObject.Find("Player").transform.localScale;
-        Color color = GameObject.Find("Player").GetComponent<SpriteRenderer>().color;
-        GameObject.Find("Player").GetComponent<SpriteRenderer>().color = new Color(color.r, color.g, color.b, 0);
-        GameObject.Find("PlayerEncounter").GetComponent<Image>().color = new Color(color.r, color.g, color.b, 1);
+        playerMask.transform.position = new Vector3(PlayerPos.position.x, PlayerPos.transform.position.y, -5040);
+        playerMask.sprite = PlayerPos.GetComponent<SpriteRenderer>().sprite;
+        playerMask.rectTransform.sizeDelta = PlayerPos.GetComponent<RectTransform>().sizeDelta;
+        playerMask.transform.localScale = new Vector3(PlayerPos.lossyScale.x / playerMask.transform.lossyScale.x, PlayerPos.lossyScale.y / playerMask.transform.lossyScale.y, 1);
+        Color color = PlayerPos.GetComponent<SpriteRenderer>().color;
+        PlayerPos.GetComponent<SpriteRenderer>().color = new Color(color.r, color.g, color.b, 0);
+        playerMask.GetComponent<Image>().color = new Color(color.r, color.g, color.b, 1);
 
         for (int i = 0; i < 2; i++) {
             utHeart.color = new Color(utHeart.color.r, utHeart.color.g, utHeart.color.b, 1f);
@@ -487,7 +487,7 @@ public class PlayerOverworld : MonoBehaviour {
             yield return new WaitForSeconds(0.075f);
         }
 
-        GameObject.Find("PlayerEncounter").GetComponent<Image>().color = new Color(color.r, color.g, color.b, 0);
+        playerMask.color = new Color(color.r, color.g, color.b, 0);
         utHeart.color = new Color(utHeart.color.r, utHeart.color.g, utHeart.color.b, 1f);
         blackFont.color = new Color(blackFont.color.r, blackFont.color.g, blackFont.color.b, 1f);
 
@@ -527,7 +527,7 @@ public class PlayerOverworld : MonoBehaviour {
         LuaScriptBinder.Set(null, "PlayerPosY", DynValue.NewNumber(rb2D.position.y));
 
         //Sets the mod's folder and the encounter file's name to know what file we have to load
-        ModFolder = StaticInits.MODFOLDER;
+        string ModFolder = StaticInits.MODFOLDER, Encounter;
         LuaScriptBinder.Set(null, "ModFolder", DynValue.NewString(ModFolder));
         if (ForceNoFlee)
             LuaScriptBinder.Set(null, "ForceNoFlee", DynValue.NewBoolean(ForceNoFlee));
@@ -542,9 +542,10 @@ public class PlayerOverworld : MonoBehaviour {
                     continue;
                 encounterNames.Add(Path.GetFileNameWithoutExtension(encounterFile.Name));
             }
-            if (encounterNames.Count == 0)
+            if (encounterNames.Count == 0) {
                 UnitaleUtil.displayLuaError("Overworld System", "There's no valid encounter to launch.\nYou need to have at least 1 encounter\nthat doesn't have a '#' for first character!");
-            else {
+                yield break;
+            } else {
                 if (encounterNames.Count == 1)
                     Encounter = Path.GetFileNameWithoutExtension(encounterNames[0].ToString());
                 else
@@ -556,10 +557,6 @@ public class PlayerOverworld : MonoBehaviour {
         //Let's set the folder and file we want to load.
         StaticInits.MODFOLDER = ModFolder;
         StaticInits.ENCOUNTER = Encounter;
-
-        //We must erase Encounter, because  the trigger of this function is to see if Encounter is equal to a void string or not.
-        Encounter = null;
-        ModFolder = null;
 
         //We save the state of the events.
         EventManager.SetEventStates();
@@ -599,7 +596,7 @@ public class PlayerOverworld : MonoBehaviour {
         else
             for (int i = 0; i < textTable.Length; i++)
                 textmsg[i] = new TextMessage(textTable[i], rearranged, false);
-        inText = true;  //UnitaleUtil.writeInLogAndDebugger("SetDialog true");
+        inText = true;
         EventManager.instance.passPressOnce = true;
 
         textmgr.setTextFrameAlpha(1);
@@ -614,24 +611,30 @@ public class PlayerOverworld : MonoBehaviour {
     /// </summary>
     /// <param name="pos"></param>
     /// <returns></returns>
-    public Vector3 RectifyCameraPosition(Vector3 pos) {
+    public void RectifyCameraPosition(Vector3 pos) {
         Vector3 dimBG = new Vector3(640, 480, -10000);
         try { dimBG = GameObject.Find("Background").GetComponent<RectTransform>().sizeDelta * GameObject.Find("Background").GetComponent<RectTransform>().localScale.x; } 
-        catch { UnitaleUtil.writeInLog("The background sprite isn't initialized yet, or it is missing."); }
-
+        catch { UnitaleUtil.writeInLog("The background sprite is missing."); }
         pos += (Vector3)cameraShift;
 
         if (pos.x < 320)                 pos.x = 320;
-        else if (pos.x > dimBG.x - 320)  pos.x = dimBG.x - 320;
+        else if (pos.x > dimBG.x - 320)  pos.x = Mathf.RoundToInt(dimBG.x - 320);
         if (pos.y < 240)                 pos.y = 240;
-        else if (pos.y > dimBG.y - 240)  pos.y = dimBG.y - 240;
+        else if (pos.y > dimBG.y - 240)  pos.y = Mathf.RoundToInt(dimBG.y - 240);
 
         pos.z = -10000;
-        return pos;
+        Camera.main.transform.position = pos;
+
+        foreach (Transform t in UnitaleUtil.GetFirstChildren(null))
+            if (t.gameObject.name.Contains("Parallax")) {
+                Vector3 dimPlx = t.GetComponent<RectTransform>().sizeDelta * t.localScale.x;
+                t.position = new Vector3(Mathf.Round(dimPlx.x) > 640 ? (dimPlx.x / 2 + (dimBG.x - dimPlx.x) * ((pos.x - 320) / (dimBG.x - 640))) : t.position.x,
+                                         Mathf.Round(dimPlx.y) > 480 ? (dimPlx.y / 2 + (dimBG.y - dimPlx.y) * ((pos.y - 240) / (dimBG.y - 480))) : t.position.y, t.position.z);
+            }
     }
 
     public static IEnumerator LaunchMenu() {
-        inText = true; menuRunning[2] = true;  //UnitaleUtil.writeInLogAndDebugger("LaunchMenu true");
+        inText = true; menuRunning[2] = true;
         TextManager[] txtmgrs = GameObject.Find("MenuContainer").GetComponentsInChildren<TextManager>();
         instance.uiAudio.PlayOneShot(AudioClipRegistry.GetSound("menumove"));
         /* 0-6   : Menu

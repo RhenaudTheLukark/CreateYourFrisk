@@ -5,7 +5,8 @@ using System.Linq;
 
 public class Fading : MonoBehaviour {
     public SpriteRenderer fade;        // The texture that will overlay the screen. This can be a black image or a loading graphic
-    public float fadeSpeed = 0.5f;     // The fading speed
+    [HideInInspector]
+    public float fadeSpeed = 3f;       // The fading speed
     public float alpha = 1.0f;         // The texture's alpha between 0 and 1
 
     private int drawDepth = -1000;     // The texture's order in the draw hierarchy: a low number means it renders on top
@@ -24,7 +25,8 @@ public class Fading : MonoBehaviour {
             alpha += fadeDir * fadeSpeed * Time.deltaTime;
 
             // Force (clamp) the number between 0 and 1 because GUI.color uses alpha values between 0 and 1
-            alpha = Mathf.Clamp01(alpha);
+            //alpha = Mathf.Clamp01(alpha);
+            //print(alpha);
             fade.color = new Color(0, 0, 0, alpha);
         } else if (!eventSent) {
             eventSent = true;
@@ -38,11 +40,12 @@ public class Fading : MonoBehaviour {
 
     // Sets fadeDir to the direction parameter making the scene fade in if -1 and out if 1
     public float BeginFade (int direction) {
+        gameObject.transform.SetAsLastSibling();
         fadeDir = direction;
         eventSent = false;
         if (StartFade != null && StaticInits.MODFOLDER != "Title")
             StartFade();
-        return fadeSpeed;     // Return the fadeSpeed variable so it's easy to time the Application.LoadLevel();
+        return 1f/fadeSpeed;     // Return the fadeSpeed variable so it's easy to time the Application.LoadLevel();
     }
 
     // LoadScene is called when a level is loaded. It takes loaded level index (int) as a parameter so you can limit the fade in to certain scenes

@@ -32,13 +32,14 @@ make a tileset of 40x40px tiles to not be worried about a scale value of 2
 
 - Make so Background's RectTransform fits the map. It's very important, as the RectTransform 
   bounds are used for map scrolling
-  Tip: Put every object of your map as a child of your main map object
+  Tip: Put all of Background's children in the root or as the chile of another object so 
+           that their position isn't changed while moving Background.
 	   Then, Background's RectTransform size is equal to bounds of the map / 100: if your
            map is 640x480, the size will be 6.4 and 4.8
 	   Now center the main map object to make it fit Background's RectTransform
 	   Don't forget that Background's RectTransform's bottom-left corner must be at the 
-           same coordinates than Main Camer's RectTransform's bottom-left corner!
-	   Don't forget to put the other layers at their original location!
+           same coordinates than Main Camera OW's RectTransform's bottom-left corner!
+	   And now when everything is right put Background's old children back at their place.
 - For each map component, go to the component "Sorting Layer Exposed" and set the value 
   "Order in Layer" to 0
 - For each map component, you'll need to set the Z value of the map. The Z value go like 
@@ -52,10 +53,12 @@ make a tileset of 40x40px tiles to not be worried about a scale value of 2
   Scene Name = Name of the destination scene of the TP
   Position = Position of the player in the destination map, from the bottom-left corner of 
   the map
-  Uduu 2 = Used for the UDUU secret. Search its references if you want to know what it is
   Direction = Direction of the player after the TP. 2 = Bottom, 4 = Left, 6 = Right, 8 = Up 
   (I used the NumPad for this, yeah ^^)
+  Activated = Boolean used when the TP is launched. don't activate it manually!
 - Change the layer of all the colliders: give them the layer BlockingLayer.
+  Tip: Select the first one, then shift-click on the last one. Then, you can change the 
+      layer off all objects simultaneously!
 - Finally, modify the data in the object Background, component Map Infos
   ID = ID of the map. Used in the database to register event states. Must be unique
   Music = Name of the BGM played on the map. The BGM must be in the folder Audio of the mod 

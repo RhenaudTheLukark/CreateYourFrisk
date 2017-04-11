@@ -75,9 +75,18 @@ public abstract class Projectile : MonoBehaviour {
     /// </summary>
     private void Update() {
         //selfAbs = new Rect(self.anchoredPosition.x - self.rect.width / 2, self.anchoredPosition.y - self.rect.height / 2, self.sizeDelta.x, self.sizeDelta.y);
+        float rot = -(self.eulerAngles.z + 90) * Mathf.Deg2Rad,
+              Px = (0.5f - self.pivot.x) * selfAbs.width,
+              Py = (0.5f - self.pivot.y) * selfAbs.height,
+              Centerx = Px * Mathf.Sin(rot) + Py * Mathf.Cos(rot),
+              Centery = Px * Mathf.Cos(rot) - Py * Mathf.Sin(rot);
+        selfAbs.x = self.position.x + Centerx - selfAbs.width / 2;
+        selfAbs.y = self.position.y + Centery - selfAbs.height / 2;
+
         ctrl.UpdatePosition();
         //OnUpdate();
-        UpdateHitRect();
+        if (!GlobalControls.retroMode)
+            UpdateHitRect();
         if (HitTest())
             if (isPP()) {
                 if (HitTestPP())
@@ -115,13 +124,6 @@ public abstract class Projectile : MonoBehaviour {
             selfAbs.width = self.sizeDelta.x;
             selfAbs.height = self.sizeDelta.y;
         }
-        float rot = -(self.eulerAngles.z + 90) * Mathf.Deg2Rad,
-              Px = (0.5f - self.pivot.x) * selfAbs.width, 
-              Py = (0.5f - self.pivot.y) * selfAbs.height,
-              Centerx = Px * Mathf.Sin(rot) + Py * Mathf.Cos(rot), 
-              Centery = Px * Mathf.Cos(rot) - Py * Mathf.Sin(rot);
-        selfAbs.x = self.position.x + Centerx - selfAbs.width  / 2;
-        selfAbs.y = self.position.y + Centery - selfAbs.height / 2;
         //selfAbs.width = maxDistance.x*2;
         //selfAbs.height = maxDistance.y*2;
     }

@@ -803,19 +803,23 @@ public static class UnitaleUtil {
                 }
             }
         } else {
-            GameObject[] gos = SceneManager.GetActiveScene().GetRootGameObjects();
-            firstChildren = new Transform[gos.Length];
-            foreach (GameObject root in gos)
+            List<GameObject> gos2 = new List<GameObject>();
+            foreach (GameObject go in GameObject.FindObjectsOfType<GameObject>())
+                if (go.transform.parent == null)
+                    gos2.Add(go);
+            firstChildren = new Transform[gos2.Count];
+            foreach (GameObject root in gos2)
                 if (getInactive || root.activeInHierarchy) {
                     firstChildren[index] = root.transform;
                     index++;
                 }
         }
-        realFirstChildren = new Transform[index];
+        return firstChildren;
+        /*realFirstChildren = new Transform[index];
         for (int i = 0; i < index; i++)
             realFirstChildren[i] = firstChildren[i];
 
-        return realFirstChildren;
+        return realFirstChildren;*/
     }
 
     public static Dictionary<string, string> MapCorrespondanceList = new Dictionary<string, string>();

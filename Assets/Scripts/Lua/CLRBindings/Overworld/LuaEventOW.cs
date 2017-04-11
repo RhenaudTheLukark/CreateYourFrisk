@@ -51,7 +51,7 @@ public class LuaEventOW {
     [CYFEventFunction]
     public void MoveToPoint(string name, float dirX, float dirY, bool wallPass = false) { StCoroutine("IMoveEventToPoint", new object[] { name, dirX, dirY, wallPass }); }
 
-    /// <summary>
+    /*/// <summary>
     /// Function that permits to put an animation on an event
     /// </summary>
     /// <param name="name"></param>
@@ -105,13 +105,7 @@ public class LuaEventOW {
         }
         UnitaleUtil.writeInLog("The name you entered into the function isn't an event's name. Did you forget to add the 'Event' tag ?");
         EventManager.instance.script.Call("CYFEventNextCommand");
-    }
-
-    /// <summary>
-    /// Makes a choice, like when you have to choose the blue or the red pill
-    /// </summary>
-    /// <param name="question"></param>
-    /// <param name="varIndex"></param>
+    }*/
 
 
     /*/// <summary>
@@ -164,7 +158,7 @@ public class LuaEventOW {
     }
 
     [CYFEventFunction]
-    public void Stop() { EventManager.instance.endTextEvent(); }
+    public void Stop() { EventManager.instance.endEvent(); }
 
     [CYFEventFunction]
     public void Remove(string eventName) {

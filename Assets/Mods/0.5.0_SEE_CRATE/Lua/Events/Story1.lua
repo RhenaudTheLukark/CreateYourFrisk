@@ -1,4 +1,5 @@
 function EventPage1()
+    SetRealGlobal("ow", true)
 	SetEventPage("Story1", -1)
 	SetBattle("Story1", true, true)
 end

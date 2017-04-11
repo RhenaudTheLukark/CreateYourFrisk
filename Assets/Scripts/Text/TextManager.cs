@@ -761,11 +761,11 @@ public class TextManager : MonoBehaviour {
         string[] cmds = UnitaleUtil.specialSplit(':', command.String);
         string[] args = new string[0];
         if (cmds.Length >= 2) {
-            if (cmds[1] == "skipover" && instantCommand)           return;
-            else if (cmds[1] == "skiponly" &&!instantCommand)     return;
-            else if (cmds.Length == 3)
-                if (cmds[2] == "skipover" && instantCommand)       return;
-                else if (cmds[2] == "skiponly" &&!instantCommand) return;
+            if (cmds.Length == 3) {
+                if (cmds[2] == "skipover" && instantCommand) return;
+                else if (cmds[2] == "skiponly" && !instantCommand) return;
+            } else if (cmds[1] == "skipover" && instantCommand) return;
+            else if (cmds[1] == "skiponly" && !instantCommand) return;
             args = UnitaleUtil.specialSplit(',', cmds[1], true);
             cmds[1] = args[0];
         }
@@ -829,62 +829,12 @@ public class TextManager : MonoBehaviour {
                                     argsbis[i - 1] = DynValue.NewBoolean(true);
                                 else
                                     argsbis[i - 1] = DynValue.NewBoolean(false);
-                                //Number
+                            //Number
                             } else if (type == typeof(float)) {
                                 args[i] = args[i].Replace(" ", "");
                                 float number = CreateNumber(args[i]);
                                 argsbis[i - 1] = DynValue.NewNumber(number);
-                                //Array
-                                /*} else if (type != typeof(string)) {
-                                    int rank = 0;
-                                    Type basisType = type;
-                                    while (basisType.IsArray) {
-                                        rank++;
-                                        basisType = basisType.GetElementType();
-                                    }
-                                    int basisRank = rank;
-                                    int[] lengths = new int[0];
-                                    object arr = UnitaleUtil.stringToArray(args[i], out lengths);
-                                    string[] str = UnitaleUtil.specialSplit(',', args[i].Substring(1, args[i].Length - 2), true);
-                                    object dv = new DynValue[lengths[rank]];
-                                    object dvtemp = dv;
-
-                                    while (rank > 0) {
-                                        if (rank > 1) {
-                                            dvtemp = dv;
-                                            if (rank == lengths.Length) {
-                                                Table temp = new Table(null);
-                                                DynValue dynv = (DynValue)dvtemp;
-                                                temp.Set(1, dynv);
-                                                dvtemp = DynValue.NewTable(temp);
-                                            }
-                                            dv = DynValue.NewTable(UnitaleUtil.DynValueArrayToTable(new DynValue[lengths[rank - 1]]));
-                                        }
-
-                                        for (int j = 0; j < ((DynValue[])dv).Length; j++)
-                                            if (rank == 1 && basisType == typeof(float)) {
-                                                Table array = ((DynValue)arr).Table;
-                                                float f = CreateNumber((string)array[j]);
-                                                ((DynValue[])dv)[j] = DynValue.NewNumber(f);
-                                            } else if (rank == 1 && basisType == typeof(bool)) {
-                                                if (((DynValue[])arr)[j].String.Replace(" ", "") == "true")
-                                                    ((DynValue)dv).Table[j] = DynValue.NewBoolean(true);
-                                                else
-                                                    ((DynValue[])dv)[j] = DynValue.NewBoolean(false);
-                                            } else if (rank > 1) {
-                                                DynValue[] dvs = ((DynValue[][])dvtemp)[j];
-                                                ((DynValue[])dv)[j] = DynValue.NewTable(UnitaleUtil.DynValueArrayToTable(dvs));
-                                            } else {
-                                                string s = ((DynValue[])arr)[j].String;
-                                                ((DynValue[])dv)[j] = DynValue.NewString(s);
-                                            }
-                                        rank--;
-                                    }
-
-                                    dv = DynValue.NewTable(((DynValue)dv).Table);
-                                    Table dv2 = ((DynValue)dv).Table;
-                                    UnitaleUtil.CompleteTableFromArray((Array)arr, ref dv2, basisRank, basisType);*/
-                                //String
+                            //String
                             } else
                                 argsbis[i - 1] = DynValue.NewString(args[i]);
                         }

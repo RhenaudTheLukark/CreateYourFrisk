@@ -1,3 +1,5 @@
+if not GetRealGlobal("ow") then error("fu :D") end
+
 encountertext = "Poseur strikes a pose!" --Modify as necessary. It will only be read out in the action select screen.
 nextwaves = {"bullettest_chaserorb"}
 wavetimer = 4.0

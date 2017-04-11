@@ -313,7 +313,7 @@ public class UIController : MonoBehaviour {
                         lifebarRt.anchoredPosition = new Vector2(maxWidth, initialHealthPos.y - i * textmgr.Charset.LineSpacing);
                         lifebarRt.sizeDelta = new Vector2(90, lifebarRt.sizeDelta.y);
                         lifebar.setFillColor(Color.green);
-                        float hpFrac = (float)Mathf.Abs(encounter.enabledEnemies[i].HP) / (float)encounter.enabledEnemies[i].getMaxHP();
+                        float hpFrac = (float)Mathf.Abs(encounter.enabledEnemies[i].HP) / (float)encounter.enabledEnemies[i].MaxHP;
                         if (encounter.enabledEnemies[i].HP < 0) {
                             lifebar.fill.rectTransform.offsetMin = new Vector2(-90 * hpFrac, 0);
                             lifebar.fill.rectTransform.offsetMax = new Vector2(-90, 0);
@@ -581,9 +581,10 @@ public class UIController : MonoBehaviour {
 
         if (!complete) // break if we're not done with all text
             return;
-
-        encounter.CallOnSelfOrChildren("EnemyDialogueEnding");
-        SwitchState(UIState.DEFENDING);
+        if (encounter.enabledEnemies.Length > 0) {
+            encounter.CallOnSelfOrChildren("EnemyDialogueEnding");
+            SwitchState(UIState.DEFENDING);
+        }
     }
 
     private string[] getInventoryPage(int page) {
@@ -651,7 +652,7 @@ public class UIController : MonoBehaviour {
             lifebarRt.anchoredPosition = new Vector2(maxWidth, initialHealthPos.y - (i - page * 2) * textmgr.Charset.LineSpacing);
             lifebarRt.sizeDelta = new Vector2(90, lifebarRt.sizeDelta.y);
             lifebar.setFillColor(Color.green);
-            float hpFrac = (float)Mathf.Abs(encounter.enabledEnemies[i].HP) / (float)encounter.enabledEnemies[i].getMaxHP();
+            float hpFrac = (float)Mathf.Abs(encounter.enabledEnemies[i].HP) / (float)encounter.enabledEnemies[i].MaxHP;
             if (encounter.enabledEnemies[i].HP < 0) {
                 lifebar.fill.rectTransform.offsetMin = new Vector2(-90 * hpFrac, 0);
                 lifebar.fill.rectTransform.offsetMax = new Vector2(-90, 0);
@@ -797,7 +798,8 @@ public class UIController : MonoBehaviour {
                                 //sparedAny = true;
                             }
                         }
-                        encounter.CallOnSelfOrChildren("HandleSpare");
+                        if (encounter.enabledEnemies.Length > 0)
+                            encounter.CallOnSelfOrChildren("HandleSpare");
                         /*if (encounter.enabledEnemies.Length > 0)
                             encounter.CallOnSelfOrChildren("HandleSpare");*/
 

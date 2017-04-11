@@ -96,7 +96,11 @@ public class LuaEnemyController : EnemyController {
     }
 
     public override int HP {
-        get { return (int)script.GetVar("hp").Number; }
+        get {
+            if (GlobalControls.retroMode && (int)script.GetVar("hp").Number > MaxHP)
+                MaxHP = (int)script.GetVar("hp").Number;
+            return (int)script.GetVar("hp").Number;
+        }
         set { script.SetVar("hp", DynValue.NewNumber(value)); }
     }
 
@@ -307,7 +311,6 @@ public class LuaEnemyController : EnemyController {
     public void DoSpare() {
         if (!inFight)
             return;
-        print("DoSpare()");
         UIController.instance.gold += Gold;
         // We have to code the particles separately because they don't work well in UI screenspace. Great stuff.
         ParticleSystem spareSmoke = Resources.Load<ParticleSystem>("Prefabs/MonsterSpareParticleSys");

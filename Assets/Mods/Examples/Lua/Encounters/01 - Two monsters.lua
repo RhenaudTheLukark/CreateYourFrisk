@@ -27,8 +27,6 @@ possiblestrings = { "I'm outta here.", "I've got shit to do.", "I've got better 
 -- A custom list with attacks to choose from. Actual selection happens in EnemyDialogueEnding(). Put here in case you want to use it.
 possible_attacks = {"bullettest_bouncy" --[[, "bullettest_chaserorb", "bullettest_touhou"]]}
 
-a = true
-
 function EncounterStarting()
     --[[bullet = CreateProjectile("BoneCenter", 0, 100, "Top")
         bullet.sprite.Scale(1, 2)
@@ -144,18 +142,11 @@ function Update()
         NewAudio.CreateChannel("Box")
         NewAudio.PlayMusic("Box","mus_zz_megalovania",true,1)
         Audio.LoadFile("mus_zz_megalovania")
-    elseif Input.GetKey("S") == 1 then
-        a = not a
     end
     
 	
 	--DEBUG(Misc.WindowY)
     timer = timer + 1
-    --if timer % 60 == 0 then
-    if a then
-        Player.ForceAttack(1, 2)
-    end
-    --end
     --[[if windows then
         Misc.WindowY = Misc.WindowY - 1
         if timer % 60 == 0 then

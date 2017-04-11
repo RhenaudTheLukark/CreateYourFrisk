@@ -1,17 +1,17 @@
 function EventPage1()
-    Wait(30)
-    CenterEventOnCamera("TheFinalChoice", 2, true)
-    Wait(30)
-    local sprite = GetSpriteOfEvent("TheFinalChoice")
+    General.Wait(30)
+    Screen.CenterOnCamera("TheFinalChoice", 2, true)
+    General.Wait(30)
+    local sprite = Event.GetSprite("TheFinalChoice")
 	sprite.Set("Punderbolt/PunderLeft1")
-    Wait(30)
-	SetDialog({"[voice:punderbolt]Oh! There you are!"}, true, {"pundermug"})
-	SetEventPage("TheFinalChoice", -1)
-	SetBattle("TheFinalChoice", true, true)
+    General.Wait(30)
+	General.SetDialog({"[voice:punderbolt]Oh! There you are!"}, true, {"pundermug"})
+	Event.SetPage("TheFinalChoice", -1)
+	General.SetBattle("TheFinalChoice", true, true)
 end
 
 function EventPage2()
-    if GetAlMightyGlobal("CrateYourFrisk") then SetEventPage("TheFinalChoice", -1)
-	else                                	    SetEventPage("TheFinalChoice", 1)
+    if GetAlMightyGlobal("CrateYourFrisk") then Event.SetPage("TheFinalChoice", -1)
+	else                                	    Event.SetPage("TheFinalChoice", 1)
 	end
 end

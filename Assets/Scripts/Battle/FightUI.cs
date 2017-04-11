@@ -111,17 +111,7 @@ public class FightUI : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-        if (isCoroutine && !shakeInProgress && showedup) {
-            /*
-            for (int i = 0; i < FightUIController.instance.allFightUiInstances.Count; i ++)
-                if (FightUIController.instance.allFightUiInstances[i] == this)
-                    FightUIController.instance.allFightUiInstances.RemoveAt(i);
-            slice.Remove();
-            print("Remove Instance showedup no shake coroutine");
-            Destroy(lifeBar.gameObject);
-            Destroy(damageText.gameObject);
-            Destroy(gameObject);*/
-        } else if (shakeInProgress) {
+        if (shakeInProgress) {
             int shakeidx = (int)Mathf.Floor(shakeTimer * shakeX.Length / totalShakeTime);
             bool wentIn = false;
             if (Damage > 0 && shakeIndex != shakeidx || wentIn) {
@@ -143,7 +133,7 @@ public class FightUI : MonoBehaviour {
             shakeTimer += Time.deltaTime;
             if (shakeTimer >= totalShakeTime)
                 shakeInProgress = false;
-        } else if (!shakeInProgress && (slice.animcomplete &&!slice.img.GetComponent<KeyframeCollection>().enabled && stopped &&!showedup) || needAgain) {
+        } else if ((slice.animcomplete &&!slice.img.GetComponent<KeyframeCollection>().enabled && stopped &&!showedup) || needAgain) {
             needAgain = true;
             if (!wait1frame) {
                 wait1frame = true;
@@ -175,8 +165,8 @@ public class FightUI : MonoBehaviour {
                         lifeBar.GetComponent<RectTransform>().localPosition = new Vector2(enemy.offsets[2].x, 20 + enemy.offsets[2].y);
                         lifeBar.GetComponent<RectTransform>().sizeDelta = new Vector2(enemy.GetComponent<RectTransform>().rect.width, 13);
                         lifeBar.whenDamageValue = enemy.GetComponent<RectTransform>().rect.width;
-                        lifeBar.setInstant(enemy.HP < 0 ? 0 : (float)enemy.HP / (float)enemy.getMaxHP());
-                        lifeBar.setLerp((float)enemy.HP / (float)enemy.getMaxHP(), (float)newHP / (float)enemy.getMaxHP());
+                        lifeBar.setInstant(enemy.HP < 0 ? 0 : (float)enemy.HP / (float)enemy.MaxHP);
+                        lifeBar.setLerp((float)enemy.HP / (float)enemy.MaxHP, (float)newHP / (float)enemy.MaxHP);
                         lifeBar.setVisible(true);
                         enemy.doDamage(Damage);
                     } catch { return; }

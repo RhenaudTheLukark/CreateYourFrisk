@@ -135,7 +135,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sceneName: newhome1
   position: {x: 240, y: 200}
-  uduu2: 0
   direction: 6
   activated: 0
 --- !u!50 &43529140
@@ -264,6 +263,7 @@ RectTransform:
   - {fileID: 1101070593}
   - {fileID: 1174268684}
   - {fileID: 43529138}
+  - {fileID: 1366681680}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -474,7 +474,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sceneName: test
   position: {x: 60, y: 880}
-  uduu2: 0
   direction: 6
   activated: 0
 --- !u!50 &1101070595
@@ -742,7 +741,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sceneName: test4
   position: {x: 40, y: 240}
-  uduu2: 0
   direction: 6
   activated: 0
 --- !u!50 &1174268686
@@ -771,6 +769,87 @@ EdgeCollider2D:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1174268683}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_Offset: {x: 0, y: 0}
+  m_Points:
+  - {x: -0.5, y: 0}
+  - {x: 0.5, y: 0}
+--- !u!1 &1366681679
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1366681680}
+  - component: {fileID: 1366681683}
+  - component: {fileID: 1366681682}
+  - component: {fileID: 1366681681}
+  m_Layer: 0
+  m_Name: TP Left
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1366681680
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1366681679}
+  m_LocalRotation: {x: -0, y: -0, z: 0.7071068, w: 0.7071067}
+  m_LocalPosition: {x: -3, y: 0, z: 0.125}
+  m_LocalScale: {x: 0.8, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 689712512}
+  m_RootOrder: 10
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
+--- !u!114 &1366681681
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1366681679}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cafce2c3f7e465f478d7b302ab1b8236, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneName: test5
+  position: {x: 2040, y: 200}
+  direction: 4
+  activated: 0
+--- !u!50 &1366681682
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1366681679}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 4
+--- !u!68 &1366681683
+EdgeCollider2D:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1366681679}
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}

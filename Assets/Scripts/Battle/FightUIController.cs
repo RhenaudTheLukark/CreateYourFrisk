@@ -206,7 +206,7 @@ public class FightUIController : MonoBehaviour {
                         allFightUiInstances.Remove(boundFightUiInstances[boundFightUiInstances.Count - 1]);
                         Destroy(boundFightUiInstances[boundFightUiInstances.Count - 1].lifeBar.gameObject);
                         Destroy(boundFightUiInstances[boundFightUiInstances.Count - 1].damageText.gameObject);
-                        GameObject.Destroy(boundFightUiInstances[boundFightUiInstances.Count - 1].gameObject);
+                        Destroy(boundFightUiInstances[boundFightUiInstances.Count - 1].gameObject);
                         boundFightUiInstances.RemoveAt(boundFightUiInstances.Count - 1);
                     }
                     targetRt.gameObject.SetActive(true);

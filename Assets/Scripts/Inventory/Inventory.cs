@@ -397,11 +397,8 @@ public static class Inventory {
         }
     }
 
-    public static bool isInInventory(string itemName) {
-        foreach (UnderItem item in container)
-            if (item.Name == itemName)
-                return true;
-        return false;
+    public static int InventoryNumber(string itemName) {
+        return container.IndexOf(new UnderItem(itemName, NametoType.ContainsKey(itemName) ? NametoType[itemName] : 0));
     }
 
     public static bool itemExists(string itemName) {
@@ -410,7 +407,7 @@ public static class Inventory {
 
     private static void SetEquip(string Name) {
         int mode = 0;
-        if (NametoType.Keys.Contains(Name))
+        if (NametoType.ContainsKey(Name))
             mode = NametoType[Name];
         else {
             if (addedItems.Contains(Name))
@@ -419,12 +416,14 @@ public static class Inventory {
                 throw new CYFException("The item \"" + Name + "\" doesn't exist.");
         }
 
-        if (NametoType[Name] == 1) {
+        if (mode == 1) {
             PlayerCharacter.instance.WeaponATK = tempAmount;
+            RemoveItem(InventoryNumber(Name));
             AddItem(PlayerCharacter.instance.Weapon);
             PlayerCharacter.instance.Weapon = Name;
-        } else if (NametoType[Name] == 2) {
+        } else if (mode == 2) {
             PlayerCharacter.instance.ArmorDEF = tempAmount;
+            RemoveItem(InventoryNumber(Name));
             AddItem(PlayerCharacter.instance.Armor);
             PlayerCharacter.instance.Armor = Name;
         } else
@@ -435,7 +434,7 @@ public static class Inventory {
         if (checkExists) {
             if (!itemExists(name))
                 throw new CYFException("The item \"" + name + "\" doesn't exist in the item list.");
-            if (!isInInventory(name))
+            if (InventoryNumber(name) == -1)
                 throw new CYFException("You can't equip an item that isn't in the inventory.");
         }
         SetEquip(name);

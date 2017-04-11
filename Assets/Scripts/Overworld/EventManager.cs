@@ -17,6 +17,7 @@ public class EventManager : MonoBehaviour {
     public Hashtable sprCtrls = new Hashtable();
     private TextManager textmgr;            //The current TextManager
     public int actualEventIndex = -1;      //ID of the actual event we're running
+    private int page0IndexCount = 0;
     public  bool readyToReLaunch = false;   //Used to prevent overworld GameOver errors
     public bool bgmCoroutine = false;      //Check if the BGM is already fading
     public  bool passPressOnce = false;     //Boolean used because events are boring
@@ -24,6 +25,7 @@ public class EventManager : MonoBehaviour {
     private bool relaunchReset1 = false, relaunchReset2 = false;
     private bool needReturn = false;
     private Hashtable autoDone = new Hashtable();
+
 
     public LuaPlayerOW luaplow;
     public LuaEventOW luaevow;
@@ -49,17 +51,23 @@ public class EventManager : MonoBehaviour {
 
     // Use this for initialization
     public void Start() {
+        page0IndexCount = 0;
+        /*for (int i = 1; i < bindTypeList.Length; i ++)
+            instancesOfTypeList.Add(Activator.CreateInstance((Type)bindTypeList[i]));*/
+        EventLayer = LayerMask.GetMask("EventLayer");                               //Get the layer that'll interact with our object, here EventLayer
+        textmgr = GameObject.Find("TextManager OW").GetComponent<TextManager>();
         if (boundValueName.Count == 0) {
             boundValueName.Add(typeof(LuaEventOW), "Event");
             boundValueName.Add(typeof(LuaPlayerOW), "Player");
             boundValueName.Add(typeof(LuaGeneralOW), "General");
             boundValueName.Add(typeof(LuaInventoryOW), "Inventory");
             boundValueName.Add(typeof(LuaScreenOW), "Screen");
+            luaplow = new LuaPlayerOW();
+            luaevow = new LuaEventOW(textmgr);
+            luagenow = new LuaGeneralOW(textmgr);
+            luainvow = new LuaInventoryOW();
+            luascrow = new LuaScreenOW();
         }
-        /*for (int i = 1; i < bindTypeList.Length; i ++)
-            instancesOfTypeList.Add(Activator.CreateInstance((Type)bindTypeList[i]));*/
-        EventLayer = LayerMask.GetMask("EventLayer");                               //Get the layer that'll interact with our object, here EventLayer
-        textmgr = GameObject.Find("TextManager OW").GetComponent<TextManager>();
         relaunchReset1 = true;
         instance = this;
     }
@@ -86,7 +94,14 @@ public class EventManager : MonoBehaviour {
                 readyToReLaunch = false;
                 Start();
             }
-            if (relaunchReset1) {
+            if (relaunchReset1 && !scriptLaunched) {
+                for (; page0IndexCount < events.Count; page0IndexCount++)
+                    if (events[page0IndexCount] != null)
+                        if (testContainsListVector2(events[page0IndexCount].GetComponent<EventOW>().eventTriggers, 0)) {
+                            executeEvent(events[page0IndexCount], false, 0);
+                            page0IndexCount++;
+                            return;
+                        }
                 relaunchReset1 = false;
                 GameObject.FindObjectOfType<Fading>().BeginFade(-1);
                 relaunchReset2 = true;
@@ -94,7 +109,8 @@ public class EventManager : MonoBehaviour {
                 relaunchReset2 = false;
                 PlayerOverworld.instance.utHeart = GameObject.Find("utHeart").GetComponent<Image>();
                 ResetEvents();
-            }
+            } else if (relaunchReset1 || relaunchReset2)
+                return;
             testEventDestruction();
             if (!PlayerOverworld.inText) {
                 if (testEventAuto()) return;
@@ -120,7 +136,7 @@ public class EventManager : MonoBehaviour {
                 if (script != null && scriptLaunched) {
                     Table t = script.script.Globals;
                     if (t.Get(DynValue.NewString("CYFEventCoroutine")).Coroutine.State == CoroutineState.Dead)
-                        endTextEvent();
+                        endEvent();
                 }
             }
         } catch (InvalidOperationException) { }
@@ -184,7 +200,7 @@ public class EventManager : MonoBehaviour {
     /// <param name="yDir"></param>
     /// <param name="hit"></param>
     public bool testEventPress(float xDir, float yDir, out RaycastHit2D hit) {
-        try {
+        //try {
             BoxCollider2D boxCollider = GameObject.Find("Player").GetComponent<BoxCollider2D>();
             Transform transform = GameObject.Find("Player").transform;
 
@@ -200,9 +216,10 @@ public class EventManager : MonoBehaviour {
 
             //Disable boxCollider so that linecast doesn't hit this object's own collider and disable the non touching events' colliders
             boxCollider.enabled = false;
-            foreach (GameObject go in events)
-                if (getTrigger(go, go.GetComponent<EventOW>().actualPage) != 0)
+            foreach (GameObject go in events) {
+                if (getTrigger(go, go.GetComponent<EventOW>().actualPage) > 0 && go.GetComponent<Collider2D>())
                     go.GetComponent<Collider2D>().enabled = false;
+            }
 
             //Cast a box from start point to end point checking collision on blockingLayer
             //hit = Physics2D.BoxCast(start, size, 0, dir, Mathf.Sqrt(Mathf.Pow(xDir * PlayerOverworld.instance.speed, 2) + 
@@ -213,19 +230,20 @@ public class EventManager : MonoBehaviour {
             //Re-enable the disabled colliders after BoxCast
             boxCollider.enabled = true;
             foreach (GameObject go in events)
-                if (getTrigger(go, go.GetComponent<EventOW>().actualPage) != 0)
+                if (getTrigger(go, go.GetComponent<EventOW>().actualPage) > 0 && go.GetComponent<Collider2D>())
                     go.GetComponent<Collider2D>().enabled = true;
-
+            
             //Executes the event that our cast collided with
             if (hit.collider == null) {
                 UnitaleUtil.writeInLog("No event was hit.");
                 return false;
             } else
                 return executeEvent(hit.collider.gameObject);
-        } catch {
+        /*} catch {
             hit = new RaycastHit2D();
+            print("error press button event");
             return false;
-        }
+        }*/
     }
 
     public bool testEventAuto() {
@@ -234,8 +252,10 @@ public class EventManager : MonoBehaviour {
             foreach (GameObject go in events) {
                 gameobject = go;
                 if (getTrigger(go, go.GetComponent<EventOW>().actualPage) == 2)
-                    if (!autoDone.ContainsKey(new object[] { go, go.GetComponent<EventOW>().actualPage }))
-                        return executeEvent(go, 0, true);
+                    if (!autoDone.ContainsKey(new object[] { go, go.GetComponent<EventOW>().actualPage })) {
+                        print("auto Event");
+                        return executeEvent(go, true);
+                    }
             }
         } catch (InterpreterException e) {
             UnitaleUtil.displayLuaError(gameobject.name + ", page n°" + gameobject.GetComponent<EventOW>().actualPage, e.DecoratedMessage);
@@ -264,12 +284,6 @@ public class EventManager : MonoBehaviour {
     /// Resets the events by counting them all again, stopping the current event and destroying all the current images
     /// </summary>
     public void ResetEvents() {
-        if (events != null)
-            for (int i = 0; i < events.Count; i++)
-                try {
-                    if (events[i].name.Contains("Image") || events[i].name.Contains("Tone"))
-                        GameObject.Destroy(events[i]);
-                } catch { }
         //GameObject[] eventsTemp = GameObject.FindGameObjectsWithTag("Event");
         events.Clear();
         autoDone.Clear();
@@ -285,9 +299,8 @@ public class EventManager : MonoBehaviour {
     /// Function that executes the event "go"
     /// </summary>
     /// <param name="go"></param>
-    //TODO: Find a way to not relaunch the compilation each time a value is returned!
     [HideInInspector]
-    public bool executeEvent(GameObject go, int beginText = 0, bool auto = false) {
+    public bool executeEvent(GameObject go, bool auto = false, int page = -1) {
         if (scriptLaunched)
             return false;
         string scriptToLoad = go.GetComponent<EventOW>().scriptToLoad;
@@ -308,15 +321,14 @@ public class EventManager : MonoBehaviour {
             textmgr.textQueue = new TextMessage[] { };
             try {
                 initScript(scriptToLoad, go.GetComponent<EventOW>());
-                script.Call("CYFEventStartEvent", DynValue.NewString("EventPage" + go.GetComponent<EventOW>().actualPage));
+                script.Call("CYFEventStartEvent", DynValue.NewString("EventPage" + (page == -1 ? go.GetComponent<EventOW>().actualPage : page)));
                 //script.Call("EventPage" + go.GetComponent<EventOW>().actualPage);
             } catch (InterpreterException ex) {
                 UnitaleUtil.displayLuaError(scriptToLoad, ex.DecoratedMessage);
                 return false;
             }
             textmgr.setCaller(script);
-            if (beginText != 0)  textmgr.setTextQueueAfterValue(beginText);
-            else                 textmgr.setTextQueue(textmgr.textQueue);
+            textmgr.setTextQueue(textmgr.textQueue);
             passPressOnce = true;
             if (auto)
                 autoDone.Add(new object[] { go, go.GetComponent<EventOW>().actualPage }, true);
@@ -351,13 +363,6 @@ public class EventManager : MonoBehaviour {
     /// <param name="name"></param>
     /// <returns>Returns true if no error were encountered.</returns>
     private bool initScript(string name, EventOW ev) {
-        if (luaplow == null) {
-            luaplow = new LuaPlayerOW();
-            luaevow = new LuaEventOW(textmgr);
-            luagenow = new LuaGeneralOW(textmgr);
-            luainvow = new LuaInventoryOW();
-            luascrow = new LuaScreenOW();
-        }
         script = new ScriptWrapper(/*true*/);
         script.scriptname = name;
         string scriptText = ScriptRegistry.Get(ScriptRegistry.EVENT_PREFIX + name);
@@ -388,14 +393,26 @@ public class EventManager : MonoBehaviour {
         lameOverworldFunctionBinding += "\n    end";
         lameFunctionBinding += "\n    end";
         scriptText += "\n\nCYFEventCoroutine = coroutine.create(DEBUG) " +
-                      "local CYFEventAlreadyLaunched = false " +
+                      "\nCYFEventLameErrorContainer = nil" + 
+                      "\nlocal CYFEventAlreadyLaunched = false " +
+                      "\nfunction CYFEventFuncToLaunch(x)" +
+                      "\n    err = nil" +
+                      "\n    xpcall(x, " + 
+                      "\n        function()" +
+                      "\n            err = debug.traceback()" +
+                      "\n        end) " + 
+                      "\n    if err != nil then error(err) end" +
+                      "\nend " +
                       "\nfunction CYFEventNextCommand() " +
                       "\n    CYFEventAlreadyLaunched = true " +
                       "\n    if tostring(coroutine.status(CYFEventCoroutine)) == 'suspended' then " +
                       "\n        local ok, errorMsg = coroutine.resume(CYFEventCoroutine) " +
-                      "\n        if not ok then error('The line number is wrong, good luck to find the error!\\n' .. errorMsg) end " +
+                      "\n        if CYFEventLameErrorContainer != nil then error(CYFEventLameErrorContainer) end " +
                       "\n    end " +
                       "\nend " +
+                      "\nfunction err (x)" +
+                      "\n    CYFEventLameEroorContainer = x" +
+                      "\nend" +
                       "\nfunction CYFEventStopCommand() coroutine.yield() end " +
                       "\nfunction CYFEventStartEvent(func) " +
                       "\n    local x = 'error' " +
@@ -403,9 +420,9 @@ public class EventManager : MonoBehaviour {
                       lameOverworldFunctionBinding +
                       "\n    if x == error then error(\"Don't look at your script, this code block is added at the script's compilation.\\n" + 
                                                        "The overworld function \\\"\" .. func .. \"\\\" doesn't exist. Did you forgot to add this function in the event triggers list?\") end " +
-                      "\n    CYFEventCoroutine = coroutine.create(x) " +
+                      "\n    CYFEventCoroutine = coroutine.create(function() return xpcall(x,function(err) CYFEventLameErrorContainer = err end) end)" +
                       "\n    local ok, errorMsg = coroutine.resume(CYFEventCoroutine) " +
-                      "\n    if not ok then error('The line number is wrong, good luck to find the error!\\n\\n' .. errorMsg) end " +
+                      "\n    if CYFEventLameErrorContainer != nil then error(CYFEventLameErrorContainer) end " +
                       "\nend " +
                       "\nfunction CYFEventForwarder(func, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10) " +
                       "\n    CYFEventAlreadyLaunched = false" + 
@@ -532,12 +549,12 @@ public class EventManager : MonoBehaviour {
             if (threeLines)  selection += 2;
             else             selection += 4;
         }
-        Vector2 upperLeft = new Vector2(61, GameObject.Find("letter(Clone)").GetComponent<RectTransform>().position.y + (GameObject.Find("letter(Clone)").GetComponent<RectTransform>().sizeDelta.y / 2) - 1);
+        Vector2 upperLeft = new Vector2(61 + Camera.main.transform.position.x - 320, 
+                                        GameObject.Find("letter(Clone)").GetComponent<RectTransform>().position.y + (GameObject.Find("letter(Clone)").GetComponent<RectTransform>().sizeDelta.y / 2) - 1);
         int xMv = selection % 2; // remainder safe again, selection is never negative
         int yMv = selection / 2;
         // HACK: remove hardcoding of this sometime, ever... probably not happening lmao
-        GameObject.Find("tempHeart").GetComponent<RectTransform>().position = new Vector3(upperLeft.x + xMv * 303 + Camera.main.transform.position.x - 320, 
-                                                                                          upperLeft.y - yMv * textmgr.Charset.LineSpacing + Camera.main.transform.position.y - 240, 0);
+        GameObject.Find("tempHeart").GetComponent<RectTransform>().position = new Vector2(upperLeft.x + xMv * 303, upperLeft.y - yMv * textmgr.Charset.LineSpacing);
     }
 
     /// <summary>
@@ -583,17 +600,17 @@ public class EventManager : MonoBehaviour {
     /// <summary>
     /// Used to end a current event
     /// </summary>
-    public void endTextEvent() {
+    public void endEvent() {
         try {
             foreach (string key in LuaScriptBinder.GetDictionary().Keys)
                 if (key.Contains("Choice") || key.Contains("ReturnPoint") || key.Contains("GetSpriteOfEvent"))
                     LuaScriptBinder.Remove(key);
         } catch { }
-        scriptLaunched = false;
         PlayerOverworld.instance.textmgr.setTextFrameAlpha(0);
         PlayerOverworld.instance.textmgr.textQueue = new TextMessage[] { };
         PlayerOverworld.instance.textmgr.destroyText();
         PlayerOverworld.inText = false;
+        scriptLaunched = false;
         //StartCoroutine("ISetChoice", "1", "2");
     }
 
@@ -913,8 +930,8 @@ public class EventManager : MonoBehaviour {
         try { colorA = (int)args[5];            } catch { throw new CYFException("The argument \"colorA\" must be a number."); }
 
         GameObject flash = new GameObject("flash", new Type[] { typeof(Image) });
-        flash.transform.SetParent(GameObject.Find("Canvas OW").transform);
-        flash.transform.position = new Vector3(320, 240);
+        flash.transform.SetParent(Camera.main.transform);
+        flash.transform.position = Camera.main.transform.position;
         flash.GetComponent<RectTransform>().sizeDelta = new Vector2(640, 480);
         flash.GetComponent<Image>().color = new Color32((byte)colorR, (byte)colorG, (byte)colorB, (byte)colorA);
         if (isSeconds) {
@@ -1042,25 +1059,31 @@ public class EventManager : MonoBehaviour {
             /*textmgr.skipNowIfBlocked = true;*/
             yield break;
         }
-        float xSpeed = speed, ySpeed = speed, currentX = 0, currentY = 0;
+        float currentX = PlayerOverworld.instance.cameraShift.x, currentY = PlayerOverworld.instance.cameraShift.y,
+              xSpeed = currentX > pixX ? -speed : speed, ySpeed = currentY > pixY ? -speed : speed;
         if (straightLine) {
-            Vector2 clamped = Vector2.ClampMagnitude(new Vector2(pixX, pixY), speed);
+            Vector2 clamped = Vector2.ClampMagnitude(new Vector2(pixX - currentX, pixY - currentY), speed);
             xSpeed = clamped.x;
             ySpeed = clamped.y;
         }
         while (currentX != pixX || currentY != pixY) {
-            if (currentX != pixX) {
-                if (xSpeed > pixX - currentX)
-                    xSpeed = pixX - currentX;
-                currentX += xSpeed;
-                PlayerOverworld.instance.cameraShift.x += xSpeed;
-            }
-            if (currentY != pixY) {
-                if (ySpeed > pixY - currentY)
-                    ySpeed = pixY - currentY;
-                currentY += ySpeed;
-                PlayerOverworld.instance.cameraShift.y += ySpeed;
-            }
+            if (currentX != pixX)
+                if (Mathf.Abs(xSpeed) < Mathf.Abs(pixX - currentX)) {
+                    currentX += xSpeed;
+                    PlayerOverworld.instance.cameraShift.x += xSpeed;
+                } else {
+                    currentX = pixX;
+                    PlayerOverworld.instance.cameraShift.x = pixX;
+                }
+                
+            if (currentY != pixY)
+                if (Mathf.Abs(ySpeed) < Mathf.Abs(pixY - currentY)) {
+                    currentY += ySpeed;
+                    PlayerOverworld.instance.cameraShift.y += ySpeed;
+                } else {
+                    currentY = pixY;
+                    PlayerOverworld.instance.cameraShift.y = pixY;
+                }
             yield return 0;
         }
         script.Call("CYFEventNextCommand");

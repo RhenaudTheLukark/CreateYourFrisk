@@ -1,24 +1,49 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 
 /// <summary>
 /// Static utility class to take care of various file loading features in Unitale.
 /// </summary>
 public static class FileLoader {
+    public static void calcDataRoot() {
+        DirectoryInfo rootInfo = new DirectoryInfo(Application.dataPath);
+        string SysDepDataRoot = rootInfo.FullName;
+        while (true) {
+            DirectoryInfo[] dfs = rootInfo.GetDirectories();
+
+            foreach (DirectoryInfo df in dfs)
+                if (df.FullName == Path.Combine(SysDepDataRoot, "Mods")) {
+                    DataRoot = SysDepDataRoot;
+                    return;
+                }
+
+            try { rootInfo = new DirectoryInfo(rootInfo.Parent.FullName); } 
+            catch {
+                UnitaleUtil.displayLuaError("CYF's Startup", "The engine detected no Mods folder in your files: are you sure that it exists?");
+                return;
+            }
+            SysDepDataRoot = rootInfo.FullName;
+            Debug.Log(SysDepDataRoot);
+        }
+
+        //if (Application.platform == RuntimePlatform.OSXPlayer) /*OSX has stuff bundled in .app things*/                      SysDepDataRoot = rootInfo.Parent.Parent.FullName;
+        //else if (Application.platform == RuntimePlatform.WindowsEditor || Application.platform == RuntimePlatform.OSXEditor) { /*everything is fine*/ }
+        //else                                                                                                                 SysDepDataRoot = rootInfo.Parent.FullName;
+    }
+
+    private static string _DataRoot = null;
     /// <summary>
     /// Get the full platform-dependent path to the application root (the folder in which the Unitale executable resides).
     /// </summary>
     public static string DataRoot {
         get {
-            DirectoryInfo rootInfo = new DirectoryInfo(Application.dataPath);
-            string SysDepDataRoot = rootInfo.FullName;
-
-            if (Application.platform == RuntimePlatform.OSXPlayer) /*OSX has stuff bundled in .app things*/                      SysDepDataRoot = rootInfo.Parent.Parent.FullName;
-            else if (Application.platform == RuntimePlatform.WindowsEditor || Application.platform == RuntimePlatform.OSXEditor) { /*everything is fine*/ }
-            else                                                                                                                 SysDepDataRoot = rootInfo.Parent.FullName;
-            return SysDepDataRoot;
+            if (_DataRoot == null)
+                calcDataRoot();
+            return _DataRoot;
         }
+        private set { _DataRoot = value; }
     }
 
     /// <summary>
