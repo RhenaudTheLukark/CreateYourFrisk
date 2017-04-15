@@ -259,8 +259,8 @@ public class TextManager : MonoBehaviour {
                             destroyText();
                         }
                         int lines = textQueue[line].Text.Split('\n').Length;
-                        if (lines > 4)
-                            lines = 4;
+                        if (lines >= 4) lines = 4;
+                        else            lines = 3;
                         Vector3 pos = GameObject.Find("TextManager OW").GetComponent<RectTransform>().localPosition;
                         GameObject.Find("TextManager OW").GetComponent<RectTransform>().localPosition = new Vector3(pos.x, 22 + ((lines - 1) * Charset.LineSpacing / 2), pos.z);
                     }

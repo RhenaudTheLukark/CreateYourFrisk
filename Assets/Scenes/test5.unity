@@ -687,7 +687,7 @@ MonoBehaviour:
   id: 9
   music: mus_snowy
   modToLoad: Examples 2
-  isMusicKeptBetweenBattles: 1
+  isMusicKeptBetweenBattles: 0
   noRandomEncounter: 0
 --- !u!224 &750405499
 RectTransform:

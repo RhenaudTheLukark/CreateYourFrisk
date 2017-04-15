@@ -1,10 +1,10 @@
 function EventPage1()
-	SetEventPage("Story4", -1)
-	SetBattle("Story4", true, true)
+	Event.SetPage("Story4", -1)
+	General.SetBattle("Story4", true, true)
 end
 
 function EventPage2()
-    if GetAlMightyGlobal("CrateYourFrisk") then SetEventPage("Story4", -1)
-	else                                	    SetEventPage("Story4", 1)
+    if GetAlMightyGlobal("CrateYourFrisk") then Event.SetPage("Story4", -1)
+	else                                	    Event.SetPage("Story4", 1)
 	end
 end

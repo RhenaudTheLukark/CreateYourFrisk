@@ -49,7 +49,7 @@ public class LuaScreenOW {
         image.GetComponent<Image>().sprite = SpriteRegistry.Get(path);
         if (toneA >= 0 && toneA <= 255 && toneR % 1 == 0)
             if (toneR < 0 || toneR > 255 || toneR % 1 != 0 || toneG < 0 || toneG > 255 || toneG % 1 != 0 || toneB < 0 || toneB > 255 || toneB % 1 != 0)
-                UnitaleUtil.displayLuaError(EventManager.instance.script.scriptname, "You can't input a value out of [0; 255] for a color value, as it is clamped from 0 to 255.\nThe number have to be an integer.");
+                throw new CYFException("Screen.DispImg: You can't input a value out of [0; 255] for a color value, as it is clamped from 0 to 255.\nThe number have to be an integer.");
             else
                 image.GetComponent<Image>().color = new Color32((byte)toneR, (byte)toneG, (byte)toneB, (byte)toneA);
         image.GetComponent<RectTransform>().sizeDelta = image.GetComponent<Image>().sprite.bounds.size * 100;
@@ -70,7 +70,7 @@ public class LuaScreenOW {
         if (GameObject.Find("Image" + id))
             EventManager.instance.luaevow.Remove("Image" + id);
         else
-            UnitaleUtil.writeInLog("The given image doesn't exists.");
+            Debug.LogError("The given image doesn't exist.");
         EventManager.instance.script.Call("CYFEventNextCommand");
     }
 
@@ -83,10 +83,9 @@ public class LuaScreenOW {
     /// <param name="a"></param>
     [CYFEventFunction]
     public void SetTone(bool anim, bool waitEnd, int r = 255, int g = 255, int b = 255, int a = 0) {
-        if (r < 0 || r > 255 || r % 1 != 0 || g < 0 || g > 255 || g % 1 != 0 || b < 0 || b > 255 || b % 1 != 0) {
-            UnitaleUtil.displayLuaError(EventManager.instance.script.scriptname, "You can't input a value out of [0; 255] for a color value, as it is clamped from 0 to 255.\nThe number have to be an integer.");
-            EventManager.instance.script.Call("CYFEventNextCommand");
-        } else {
+        if (r < 0 || r > 255 || r % 1 != 0 || g < 0 || g > 255 || g % 1 != 0 || b < 0 || b > 255 || b % 1 != 0)
+            throw new CYFException("Screen.SetTone: You can't input a value out of [0; 255] for a color value, as it is clamped from 0 to 255.\nThe number have to be an integer.");
+        else {
             if (!anim) {
                 if (GameObject.Find("Tone") == null) {
                     GameObject tone = GameObject.Instantiate(Resources.Load<GameObject>("Prefabs/ImageEvent"));
@@ -125,15 +124,11 @@ public class LuaScreenOW {
 
     [CYFEventFunction]
     public void CenterEventOnCamera(string name, int speed = 5, bool straightLine = false) {
-        if (!GameObject.Find(name)) {
-            UnitaleUtil.displayLuaError(EventManager.instance.events[EventManager.instance.actualEventIndex].name, "The given event doesn't exist.");
-            return;
-        }
+        if (!GameObject.Find(name))
+            throw new CYFException("Screen.CenterEventOnCamera: The given event doesn't exist.");
 
-        if (!EventManager.instance.events.Contains(GameObject.Find(name))) {
-            UnitaleUtil.displayLuaError(EventManager.instance.events[EventManager.instance.actualEventIndex].name, "The given event doesn't exist.");
-            return;
-        }
+        if (!EventManager.instance.events.Contains(GameObject.Find(name)))
+            throw new CYFException("Screen.CenterEventOnCamera: The given event doesn't exist.");
 
         StCoroutine("IMoveCamera", new object[] { (int)(GameObject.Find(name).transform.position.x - PlayerOverworld.instance.transform.position.x),
                                                   (int)(GameObject.Find(name).transform.position.y - PlayerOverworld.instance.transform.position.y),

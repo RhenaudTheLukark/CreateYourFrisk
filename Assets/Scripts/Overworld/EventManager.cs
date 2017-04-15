@@ -103,7 +103,7 @@ public class EventManager : MonoBehaviour {
                             return;
                         }
                 relaunchReset1 = false;
-                GameObject.FindObjectOfType<Fading>().BeginFade(-1);
+                //GameObject.FindObjectOfType<Fading>().BeginFade(-1);
                 relaunchReset2 = true;
             } else if (relaunchReset2) {
                 relaunchReset2 = false;
@@ -329,6 +329,7 @@ public class EventManager : MonoBehaviour {
             }
             textmgr.setCaller(script);
             textmgr.setTextQueue(textmgr.textQueue);
+            textmgr.transform.parent.parent.SetAsLastSibling();
             passPressOnce = true;
             if (auto)
                 autoDone.Add(new object[] { go, go.GetComponent<EventOW>().actualPage }, true);
@@ -387,21 +388,41 @@ public class EventManager : MonoBehaviour {
         }
         once = false;
         foreach (Vector2 v in ev.eventTriggers) {
-            lameOverworldFunctionBinding += "\n    " + (once ? "elseif" : "if") + " func == 'EventPage" + v.x + "' then x = EventPage" + v.x;
+            lameOverworldFunctionBinding += "\n    " + (once ? "elseif" : "if") + " func == 'EventPage" + v.x + "' then CYFEventCurrentFunction = 'EventPage" + v.x + "' x = EventPage" + v.x;
             once = true;
         }
         lameOverworldFunctionBinding += "\n    end";
         lameFunctionBinding += "\n    end";
-        scriptText += "\n\nCYFEventCoroutine = coroutine.create(DEBUG) " +
-                      "\nCYFEventLameErrorContainer = nil" + 
+        scriptText += "\n\nlocal CYFEventCoroutine = coroutine.create(DEBUG) " +
+                      "\nlocal CYFEventLameErrorContainer = nil" +
+                      "\nlocal CYFEventCurrentFunction = nil" +
                       "\nlocal CYFEventAlreadyLaunched = false " +
+                      "\nfunction CYFEventMySplit(str, sep)" +
+                      "\n    local tab = {} " +
+                      "\n    local i = 1" +
+                      "\n    for word in string.gmatch(str, '([^'..sep..']+)') do" +
+                      "\n        tab[i] = word" +
+                      "\n        i = i + 1" +
+                      "\n    end" +
+                      "\n    return tab" +
+                      "\nend" +
                       "\nfunction CYFEventFuncToLaunch(x)" +
-                      "\n    err = nil" +
-                      "\n    xpcall(x, " + 
-                      "\n        function()" +
-                      "\n            err = debug.traceback()" +
-                      "\n        end) " + 
-                      "\n    if err != nil then error(err) end" +
+                      "\n    local err = nil" +
+                      "\n    local stack = nil" +
+                      "\n    xpcall(x, function(err2) err = err2 stack = debug.traceback() end) " +
+                      "\n    if err != nil then " +
+                      "\n        if string.match(stack, 'CYFEventForwarder') != nil then" +
+                      "\n            local line = ''" +
+                      "\n            local tab = CYFEventMySplit(stack, '\\n')" +
+                      "\n            for i = 1, #tab do if string.match(tab[i], CYFEventCurrentFunction) != nil then line = tab[i] break end end" +
+                      "\n            while string.match(line, 'chunk') do line = string.sub(line, 2) end" +
+                      "\n            for word in string.gmatch('c' .. line, '([^ ]+)') do CYFEventLameErrorContainer = word break end" +
+                      "\n            if string.match(err, '(chunk_2:.+:)') then err = string.sub(err, string.len(string.match(err, '(chunk_2:.+:)')) + 2) end" +
+                      "\n            CYFEventLameErrorContainer = CYFEventLameErrorContainer .. ' ' .. err" +
+                      "\n        else" +
+                      "\n            CYFEventLameErrorContainer = err " +
+                      "\n        end" +
+                      "\n    end" +
                       "\nend " +
                       "\nfunction CYFEventNextCommand() " +
                       "\n    CYFEventAlreadyLaunched = true " +
@@ -410,9 +431,6 @@ public class EventManager : MonoBehaviour {
                       "\n        if CYFEventLameErrorContainer != nil then error(CYFEventLameErrorContainer) end " +
                       "\n    end " +
                       "\nend " +
-                      "\nfunction err (x)" +
-                      "\n    CYFEventLameEroorContainer = x" +
-                      "\nend" +
                       "\nfunction CYFEventStopCommand() coroutine.yield() end " +
                       "\nfunction CYFEventStartEvent(func) " +
                       "\n    local x = 'error' " +
@@ -420,7 +438,7 @@ public class EventManager : MonoBehaviour {
                       lameOverworldFunctionBinding +
                       "\n    if x == error then error(\"Don't look at your script, this code block is added at the script's compilation.\\n" + 
                                                        "The overworld function \\\"\" .. func .. \"\\\" doesn't exist. Did you forgot to add this function in the event triggers list?\") end " +
-                      "\n    CYFEventCoroutine = coroutine.create(function() return xpcall(x,function(err) CYFEventLameErrorContainer = err end) end)" +
+                      "\n    CYFEventCoroutine = coroutine.create(function() CYFEventFuncToLaunch(x) end)" +
                       "\n    local ok, errorMsg = coroutine.resume(CYFEventCoroutine) " +
                       "\n    if CYFEventLameErrorContainer != nil then error(CYFEventLameErrorContainer) end " +
                       "\nend " +
@@ -769,16 +787,12 @@ public class EventManager : MonoBehaviour {
     IEnumerator ISetTone(object[] args) {
         //REAL ARGS
         bool waitEnd;
-        int r = 255, g = 255, b = 255, a = 0;
+        int r, g, b, a;
         try { waitEnd = (bool)args[0]; } catch { throw new CYFException("The argument \"waitEnd\" must be a boolean."); }
-        if (args.Length >= 2)
-            try { r = (int)args[1];    } catch { throw new CYFException("The argument \"r\" must be a number."); }
-        if (args.Length >= 3)
-            try { g = (int)args[2];    } catch { throw new CYFException("The argument \"g\" must be a number."); }
-        if (args.Length >= 4)
-            try { b = (int)args[3];    } catch { throw new CYFException("The argument \"b\" must be a number."); }
-        if (args.Length >= 5)
-            try { a = (int)args[4];    } catch { throw new CYFException("The argument \"a\" must be a number."); }
+        try { r = (int)args[1];        } catch { throw new CYFException("The argument \"r\" must be a number."); }
+        try { g = (int)args[2];        } catch { throw new CYFException("The argument \"g\" must be a number."); }
+        try { b = (int)args[3];        } catch { throw new CYFException("The argument \"b\" must be a number."); }
+        try { a = (int)args[4];        } catch { throw new CYFException("The argument \"a\" must be a number."); }
 
         int alpha, lack;
         float beginHighest = 0, highest = 0;
@@ -792,7 +806,7 @@ public class EventManager : MonoBehaviour {
             image.tag = "Event";
             image.GetComponent<RectTransform>().SetParent(GameObject.Find("Canvas OW").transform);
             image.GetComponent<RectTransform>().sizeDelta = new Vector2(640, 480);
-            image.GetComponent<RectTransform>().position = new Vector2(320, 240);
+            image.GetComponent<RectTransform>().position = (Vector2)Camera.main.transform.position;
             events.Add(image);
             currents = new int[] { 0, 0, 0, 0 };
             lacks = new int[] { r, g, b, a };
@@ -898,22 +912,21 @@ public class EventManager : MonoBehaviour {
         try { intensity = (float)args[1]; } catch { throw new CYFException("The argument \"intensity\" must be a number."); }
         try { fade = (bool)args[2];       } catch { throw new CYFException("The argument \"fade\" must be a boolean."); }
 
-        Vector2 shift = new Vector2(0, 0), shiftOld = new Vector2(0, 0); float time = 0, intensityBasis = intensity;
+        Vector2 shift = new Vector2(0, 0), totalShift = new Vector2(0, 0); float time = 0, intensityBasis = intensity;
         while (time < seconds) {
-            shiftOld = shift;
-
             if (fade)
                 intensity = intensityBasis * (1 - (time / seconds));
-            shift = new Vector2(((UnityEngine.Random.value - 0.5f) * intensity) - shift.x, ((UnityEngine.Random.value - 0.5f) * intensity) - shift.y);
+            shift = new Vector2((UnityEngine.Random.value - 0.5f) * 2 * intensity, (UnityEngine.Random.value - 0.5f) * 2 * intensity);
 
-            foreach (GameObject go in GameObject.FindObjectsOfType<GameObject>())
-                go.transform.position = new Vector3(go.transform.position.x + shift.x, go.transform.position.y + shift.y, go.transform.position.z);
-            shift += shiftOld;
+            foreach (Transform tf in UnitaleUtil.GetFirstChildren(null))
+                tf.position = new Vector3(tf.position.x + shift.x - totalShift.x, tf.position.y + shift.y - totalShift.y, tf.position.z);
+            //print(totalShift + " + " + shift + " = " + (totalShift + shift));
+            totalShift = shift;
             time += Time.deltaTime;
             yield return 0;
         }
-        foreach (GameObject go in GameObject.FindObjectsOfType<GameObject>())
-            go.transform.position = new Vector3(go.transform.position.x - shiftOld.x, go.transform.position.y + shiftOld.y, go.transform.position.z);
+        foreach (Transform tf in UnitaleUtil.GetFirstChildren(null))
+            tf.position = new Vector3(tf.position.x - totalShift.x, tf.position.y - totalShift.y, tf.position.z);
         script.Call("CYFEventNextCommand");
     }
 
@@ -930,9 +943,10 @@ public class EventManager : MonoBehaviour {
         try { colorA = (int)args[5];            } catch { throw new CYFException("The argument \"colorA\" must be a number."); }
 
         GameObject flash = new GameObject("flash", new Type[] { typeof(Image) });
-        flash.transform.SetParent(Camera.main.transform);
-        flash.transform.position = Camera.main.transform.position;
+        flash.transform.SetParent(GameObject.Find("Canvas OW").transform);
+        flash.transform.position = Camera.main.transform.position + new Vector3(0, 0, 1);
         flash.GetComponent<RectTransform>().sizeDelta = new Vector2(640, 480);
+
         flash.GetComponent<Image>().color = new Color32((byte)colorR, (byte)colorG, (byte)colorB, (byte)colorA);
         if (isSeconds) {
             float time = 0;
@@ -948,8 +962,8 @@ public class EventManager : MonoBehaviour {
                 if (frame != 0)
                     flash.GetComponent<Image>().color = new Color32((byte)colorR, (byte)colorG, (byte)colorB, (byte)(colorA - colorA * frame / secondsOrFrames));
                 yield return 0;
-
             }
+        GameObject.Destroy(flash);
         script.Call("CYFEventNextCommand");
     }
 

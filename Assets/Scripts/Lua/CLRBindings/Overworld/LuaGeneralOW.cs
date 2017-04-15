@@ -28,6 +28,7 @@ public class LuaGeneralOW {
         for (int i = 0; i < texts.GetLength().Number; i++)
             textmsgs[i] = new TextMessage(texts.Table.Get(i + 1).String, formatted, false, mugshots.ToString() != "void" ? mugshots.Table.Get(i + 1).String : null);
         textmgr.setTextQueue(textmsgs);
+        textmgr.transform.parent.parent.SetAsLastSibling();
     }
     
     /// <summary>
@@ -83,6 +84,7 @@ public class LuaGeneralOW {
         //Add the text to the text to print then the SetChoice function with its parameters
         textMsgChoice.addToText(finalText[0] + "\n" + finalText[1] + "\n" + finalText[2]);
         textmgr.setText(textMsgChoice);
+        textmgr.transform.parent.parent.SetAsLastSibling();
 
         StCoroutine("ISetChoice", new object[] { question != null, threeLines });
     }
@@ -101,7 +103,6 @@ public class LuaGeneralOW {
     /// </summary>
     [CYFEventFunction]
     public void GameOver(string deathText = null, string deathMusic = null) {
-        UnitaleUtil.writeInLogAndDebugger("GameOver time");
         PlayerCharacter.instance.HP = PlayerCharacter.instance.MaxHP;
         Transform rt = GameObject.Find("Player").GetComponent<Transform>();
         rt.position = new Vector3(rt.position.x, rt.position.y, -1000);
@@ -140,9 +141,9 @@ public class LuaGeneralOW {
     [CYFEventFunction]
     public void PlayBGM(string bgm, float volume) {
         if (volume > 1 || volume < 0)
-            UnitaleUtil.displayLuaError(EventManager.instance.script.scriptname, "You can't input a value out of [0; 1] for the volume, as it is clamped from 0 to 1.");
+            throw new CYFException("General.PlayBGM: You can't input a value out of [0; 1] for the volume, as it is clamped from 0 to 1.");
         else if (AudioClipRegistry.GetMusic(bgm) == null)
-            UnitaleUtil.displayLuaError(EventManager.instance.script.scriptname, "The given BGM doesn't exist. Please check if you haven't mispelled it.");
+            throw new CYFException("General.PlayBGM: The given BGM doesn't exist. Please check if you haven't mispelled it.");
         else {
             AudioSource audio = GameObject.Find("Main Camera OW").GetComponent<AudioSource>();
             audio.clip = AudioClipRegistry.GetMusic(bgm);
@@ -159,11 +160,11 @@ public class LuaGeneralOW {
     [CYFEventFunction]
     public void StopBGM(float fadeTime) {
         if (EventManager.instance.bgmCoroutine)
-            UnitaleUtil.displayLuaError(EventManager.instance.script.scriptname, "The music is already fading.");
+            throw new CYFException("General.StopBGM: The music is already fading.");
         else if (!GameObject.Find("Main Camera OW").GetComponent<AudioSource>().isPlaying)
-            UnitaleUtil.displayLuaError(EventManager.instance.script.scriptname, "There is no current BGM.");
+            throw new CYFException("General.StopBGM: There is no current BGM.");
         else if (fadeTime < 0)
-            UnitaleUtil.displayLuaError(EventManager.instance.script.scriptname, "The fade time has to be positive or equal to 0.");
+            throw new CYFException("General.StopBGM: The fade time has to be positive or equal to 0.");
         else
             StCoroutine("fadeBGM", fadeTime);
         EventManager.instance.script.Call("CYFEventNextCommand");
@@ -177,9 +178,9 @@ public class LuaGeneralOW {
     [CYFEventFunction]
     public void PlaySound(string sound, float volume) {
         if (volume > 1 || volume < 0)
-            UnitaleUtil.displayLuaError(EventManager.instance.script.scriptname, "You can't input a value out of [0; 1] for the volume, as it is clamped from 0 to 1.");
+            throw new CYFException("General.PlaySound: You can't input a value out of [0; 1] for the volume, as it is clamped from 0 to 1.");
         else if (AudioClipRegistry.GetSound(sound) == null)
-            UnitaleUtil.displayLuaError(EventManager.instance.script.scriptname, "The given BGM doesn't exist. Please check if you haven't mispelled it.");
+            throw new CYFException("General.PlaySound: The given BGM doesn't exist. Please check if you haven't mispelled it.");
         else
             UnitaleUtil.PlaySound("OverworldSound", AudioClipRegistry.GetSound(sound), volume);
         //GameObject.Find("Player").GetComponent<AudioSource>().PlayOneShot(AudioClipRegistry.GetSound(sound), volume);
@@ -193,6 +194,7 @@ public class LuaGeneralOW {
     public void Save() { StCoroutine("ISave", null); }
 
     [CYFEventFunction]
+    //NOT WORKING
     public void TitleScreen() {
         SceneManager.LoadScene(SceneManager.GetSceneByName("TransitionTitleScreen").buildIndex);
         EventManager.instance.script.Call("CYFEventNextCommand");

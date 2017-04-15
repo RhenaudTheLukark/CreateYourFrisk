@@ -55,29 +55,29 @@ end
 
 function DefenseEnding() --This built-in function fires after the defense round ends.
     encountertext = RandomEncounterText() --This built-in function gets a random encounter text from a random enemy.
-    --[[maintext = CreateText(
+    maintext = CreateText(
             {"[font:uidialog][novoice][waitall:3]Greetings.",
              "[novoice][waitall:3]I[w:20] am " .. Player.name .. ".",
              "[func:movetext][novoice][waitall:3][color:ff0000]Thank you.",
              "[novoice][waitall:3]Your power awakened me\nfrom death."}, {400, 99}, 320, "Top", 100)
-        maintext.progressmode = "manual"
-        --maintext.SetText(
-        --    {"[font:uidialog][color:ff0000][novoice][waitall:3]Greetings.",
-        --     "[font:uidialog][color:ff0000][novoice][waitall:3]I[w:20] am Chara.",
-        --     "[font:uidialog][color:ff0000][novoice][waitall:3]Greetings.",
-        --     "[novoice][waitall:3]Thank you."})
-        --maintext.SetEffect("none", -1)
-        maintext.HideBubble()
-        State("NONE")
-        if #texts == 0 then
-            local text = CreateText({"Okay, this is a[color:00ffff] test.[color:000000]", "It works!"}, {540, 400}, 150)
-            text.ShowBubble("up", "50%")
-            text.SetEffect("shake", -1)
-            table.insert(texts, text)
-        else 
-            texts[1].SetText({"Omg this is a second test!", "AND OMG IT REALLY WORKS I'M SO HAPPY YAY YAY YAY!"})
-            texts[1].ShowBubble("down", 75)
-        end]]
+    maintext.progressmode = "manual"
+    --maintext.SetText(
+    --    {"[font:uidialog][color:ff0000][novoice][waitall:3]Greetings.",
+    --     "[font:uidialog][color:ff0000][novoice][waitall:3]I[w:20] am Chara.",
+    --     "[font:uidialog][color:ff0000][novoice][waitall:3]Greetings.",
+    --     "[novoice][waitall:3]Thank you."})
+    --maintext.SetEffect("none", -1)
+    maintext.HideBubble()
+    State("NONE")
+    if #texts == 0 then
+        local text = CreateText({"Okay, this is a[color:00ffff] test.[color:000000]", "It works!"}, {540, 400}, 150)
+        text.ShowBubble("up", "50%")
+        text.SetEffect("shake", -1)
+        table.insert(texts, text)
+    else 
+        texts[1].SetText({"Omg this is a second test!", "AND OMG IT REALLY WORKS I'M SO HAPPY YAY YAY YAY!"})
+        texts[1].ShowBubble("down", 75)
+    end
 end
 
 function yay()

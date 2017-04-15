@@ -104,16 +104,16 @@ public class PlayerOverworld : MonoBehaviour {
         if (!textmgr.allLinesComplete() && (textmgr.canAutoSkipAll() || textmgr.lineComplete()))
             textmgr.nextLine();
         else if ((textmgr.allLinesComplete() || textmgr.canAutoSkipAll()) && textmgr.lineCount() != 0) {
+            textmgr.transform.parent.parent.SetAsFirstSibling();
             textmgr.setTextQueue(null);
             textmgr.destroyText();
             GameObject.Find("Mugshot").GetComponent<Image>().color = new Color(1, 1, 1, 0);
             GameObject.Find("textframe_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 0);
             GameObject.Find("textframe_interior").GetComponent<Image>().color = new Color(0, 0, 0, 0);
-            if (EventManager.instance.scriptLaunched) {
+            if (EventManager.instance.scriptLaunched)
                 EventManager.instance.script.Call("CYFEventNextCommand");
-            } else {
+            else
                 inText = false;
-            }
         }
     }
 
@@ -258,18 +258,18 @@ public class PlayerOverworld : MonoBehaviour {
             } else*/ if (Input.GetKeyDown("m")) {
                 GameObject.Find("Main Camera OW").GetComponent<AudioSource>().time = 10 - 1;
             } else if (Input.GetKeyDown("h") && SceneManager.GetActiveScene().name == "test2") {
-                if (GameObject.Find("Event1").GetComponent<EventOW>().actualPage == 4)
+                /*if (GameObject.Find("Event1").GetComponent<EventOW>().actualPage == 4)
                     rolled++;
                 if (GameObject.Find("Event1").GetComponent<EventOW>().actualPage == 666) {
                     LuaEventOW.SetPage2("Event1", 1); 
                     rolled++;
-                } else
+                } else*/
                     LuaEventOW.SetPage2("Event1", (GameObject.Find("Event1").GetComponent<EventOW>().actualPage + 1) % 4); 
-                if (GameObject.Find("Event1").GetComponent<EventOW>().actualPage == 1 && rolled % 4 == 3)  LuaEventOW.SetPage2("Event1", 666);
-                else if (GameObject.Find("Event1").GetComponent<EventOW>().actualPage == 0) LuaEventOW.SetPage2("Event1", 4);
-                if (GameObject.Find("Event1").GetComponent<EventOW>().actualPage == 666)
+                /*if (GameObject.Find("Event1").GetComponent<EventOW>().actualPage == 1 && rolled % 4 == 3)  LuaEventOW.SetPage2("Event1", 666);
+                else*/ if (GameObject.Find("Event1").GetComponent<EventOW>().actualPage == 0) LuaEventOW.SetPage2("Event1", 4);
+                /*if (GameObject.Find("Event1").GetComponent<EventOW>().actualPage == 666)
                     SetDialog(new string[] { "[color:ff0000]Event page = " + GameObject.Find("Event1").GetComponent<EventOW>().actualPage + " :)" }, true, new string[] { "rtlukark_determimed" });
-                else
+                else*/
                     SetDialog(new string[] { "Event page = " + GameObject.Find("Event1").GetComponent<EventOW>().actualPage + "." }, true, new string[] { "rtlukark_determined" });
             } else if (Input.GetKeyDown("t")) {
                 SetDialog(new string[] { "Your game is saved at\n" + Application.persistentDataPath + "/save.gd" }, true, null);
@@ -604,6 +604,7 @@ public class PlayerOverworld : MonoBehaviour {
 
         //textmgr.setTextQueue(textmsg, mugshots);
         textmgr.setTextQueue(textmsg);
+        textmgr.transform.parent.parent.SetAsLastSibling();
     }
 
     /// <summary>
@@ -614,14 +615,14 @@ public class PlayerOverworld : MonoBehaviour {
     public void RectifyCameraPosition(Vector3 pos) {
         Vector3 dimBG = new Vector3(640, 480, -10000);
         try { dimBG = GameObject.Find("Background").GetComponent<RectTransform>().sizeDelta * GameObject.Find("Background").GetComponent<RectTransform>().localScale.x; } 
-        catch { UnitaleUtil.writeInLog("The background sprite is missing."); }
-        pos += (Vector3)cameraShift;
+        catch { UnitaleUtil.writeInLog("The 'Background' GameObject is missing."); }
 
         if (pos.x < 320)                 pos.x = 320;
         else if (pos.x > dimBG.x - 320)  pos.x = Mathf.RoundToInt(dimBG.x - 320);
         if (pos.y < 240)                 pos.y = 240;
         else if (pos.y > dimBG.y - 240)  pos.y = Mathf.RoundToInt(dimBG.y - 240);
 
+        pos += (Vector3)cameraShift;
         pos.z = -10000;
         Camera.main.transform.position = pos;
 
@@ -762,12 +763,14 @@ public class PlayerOverworld : MonoBehaviour {
                                                     string str;
                                                     Inventory.NametoDesc.TryGetValue(Inventory.container[index].Name, out str);
                                                     instance.textmgr.setText(new TextMessage("\"" + Inventory.container[index].Name + "\"\n" + str, true, false));
+                                                    instance.textmgr.transform.parent.parent.SetAsLastSibling();
                                                     break;
                                                 case 2:
                                                     if (GlobalControls.crate)
                                                         instance.textmgr.setText(new TextMessage("U DORPED TEH " + Inventory.container[index].Name + "!!!!!", true, false));
                                                     else
                                                         instance.textmgr.setText(new TextMessage("You dropped the " + Inventory.container[index].Name + ".", true, false));
+                                                    instance.textmgr.transform.parent.parent.SetAsLastSibling();
                                                     Inventory.RemoveItem(index);
                                                     break;
                                             }
@@ -824,6 +827,7 @@ public class PlayerOverworld : MonoBehaviour {
                             instance.textmgr.setText(new TextMessage("NO CELPLHONE ALOLWDE!!!", true, false));
                         else
                             instance.textmgr.setText(new TextMessage("But you don't have a cellphone...[w:10]yet.", true, false));
+                        instance.textmgr.transform.parent.parent.SetAsLastSibling();
                     }
                 } else if (GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED)
                     yield return CloseMenu(true);

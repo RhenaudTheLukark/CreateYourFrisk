@@ -1,5 +1,6 @@
 function EventPage1()
     --Event.MoveToPoint("Player", 320, 400, true)
+	Screen.Flash(300, false, 255, 0, 0, 255);
     Screen.MoveCamera(500, -300, 4, true)
     Screen.ResetCameraPosition(4, true)
     hp = Player.GetHP()

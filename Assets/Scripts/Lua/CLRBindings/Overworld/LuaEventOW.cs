@@ -36,8 +36,7 @@ public class LuaEventOW {
                 return;
             }
         }
-        UnitaleUtil.writeInLog("The name you entered into the function doesn't exists. Did you forget to add the 'Event' tag ?");
-        EventManager.instance.script.Call("CYFEventNextCommand");
+        throw new CYFException("Event.Teleport: The name you entered into the function doesn't exist. Did you forget to add the 'Event' tag?");
     }
 
     /// <summary>
@@ -152,8 +151,7 @@ public class LuaEventOW {
                     return;
                 }
             }
-            UnitaleUtil.writeInLog("The name you entered into the function isn't an event's name. Did you forget to add the 'Event' tag ?");
-            EventManager.instance.script.Call("CYFEventNextCommand");
+            throw new CYFException("Event.Rotate: The name you entered into the function isn't an event's name. Did you forget to add the 'Event' tag?");
         }
     }
 
@@ -183,15 +181,11 @@ public class LuaEventOW {
 
     [MoonSharpHidden]
     public static void SetPage2(string eventName, int page) {
-        if (!GameObject.Find(eventName)) {
-            UnitaleUtil.displayLuaError(EventManager.instance.events[EventManager.instance.actualEventIndex].name, "The given event doesn't exist.");
-            return;
-        }
+        if (!GameObject.Find(eventName))
+            throw new CYFException("Event.SetPage: The given event doesn't exist.");
 
-        if (!EventManager.instance.events.Contains(GameObject.Find(eventName))) {
-            UnitaleUtil.displayLuaError(EventManager.instance.events[EventManager.instance.actualEventIndex].name, "The given event doesn't exist.");
-            return;
-        }
+        if (!EventManager.instance.events.Contains(GameObject.Find(eventName)))
+            throw new CYFException("Event.SetPage: The given event doesn't exist.");
 
         if (!GlobalControls.MapEventPages.ContainsKey(SceneManager.GetActiveScene().buildIndex))
             GlobalControls.MapEventPages.Add(SceneManager.GetActiveScene().buildIndex, new Dictionary<string, int>());
@@ -218,8 +212,7 @@ public class LuaEventOW {
                 }
             }
         }
-        UnitaleUtil.displayLuaError(EventManager.instance.events[EventManager.instance.actualEventIndex].name, "The event " + name + " doesn't have a sprite.");
-        return null;
+        throw new CYFException("Event.GetSprite: The event " + name + " doesn't have a sprite.");
     }
 
     [CYFEventFunction]
@@ -232,13 +225,18 @@ public class LuaEventOW {
         DynValue result = DynValue.NewTable(new Table(null));
         bool done = false;
         for (int i = 0; (i < EventManager.instance.events.Count || name == "Player") && !done; i++) {
-            GameObject go = name == "Player" ? PlayerOverworld.instance.gameObject : EventManager.instance.events[i];
+            if (name != "Player")
+                if (EventManager.instance.events[i].gameObject.name != name)
+                    continue;
             done = true;
+            GameObject go = name == "Player" ? PlayerOverworld.instance.gameObject : EventManager.instance.events[i];
             result.Table.Set(1, DynValue.NewNumber(go.transform.position.x));
             result.Table.Set(2, DynValue.NewNumber(go.transform.position.y));
+            Debug.Log(go.name + ": " + go.transform.position);
             LuaScriptBinder.SetBattle(null, "GetPosition" + name, UserData.Create((LuaSpriteController)EventManager.instance.sprCtrls[name], LuaSpriteController.data));
         }
-        try { return result; } 
-        finally { EventManager.instance.script.Call("CYFEventNextCommand"); }
+        if (result.Table == new Table(null))
+            throw new CYFException("Event.GetPosition: The event \"" + name + "\" doesn't exist.");
+        try { return result; } finally { EventManager.instance.script.Call("CYFEventNextCommand"); }
     }
 }

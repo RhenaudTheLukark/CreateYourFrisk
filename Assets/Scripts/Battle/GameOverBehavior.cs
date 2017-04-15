@@ -89,9 +89,6 @@ public class GameOverBehavior : MonoBehaviour {
     public void Revive() { revived = true; }
 
     public void StartDeath(string[] deathText = null, string deathMusic = null) {
-        if (!GlobalControls.modDev && UnitaleUtil.isOverworld())
-            SaveLoad.Load();
-
         //if (SceneManager.GetActiveScene().name == "Battle") overworld = false;
         //else                                                overworld = true;
 
@@ -409,6 +406,8 @@ public class GameOverBehavior : MonoBehaviour {
                 if (gameOverFadeTimer < -1.0f) {
                     //StaticInits.Reset();
                     Destroy(gameObject);
+                    if (!GlobalControls.modDev)
+                        SaveLoad.Load();
                     if (!UnitaleUtil.isOverworld())  UIController.EndBattle();
                     else {
                         GameObject.Destroy(gameOverContainer);
