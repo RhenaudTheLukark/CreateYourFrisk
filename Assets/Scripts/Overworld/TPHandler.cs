@@ -67,52 +67,7 @@ public class TPHandler : MonoBehaviour {
         float fadeTime = blackFont.BeginFade(1);
         yield return new WaitForSeconds(fadeTime);
 
-        Animator anim = GameObject.Find("Player").GetComponent<Animator>();
-        if (anim) {
-            GameObject.Find("Player").GetComponent<PlayerOverworld>().forcedAnim = true;
-            switch (direction) {
-                case 2:
-                    anim.SetTrigger("MovingDown");
-                    anim.SetTrigger("StopLeft");
-                    anim.SetTrigger("StopRight");
-                    anim.SetTrigger("StopUp");
-                    anim.ResetTrigger("StopDown");
-                    anim.ResetTrigger("MovingLeft");
-                    anim.ResetTrigger("MovingRight");
-                    anim.ResetTrigger("MovingUp");
-                    break;
-                case 4:
-                    anim.SetTrigger("StopDown");
-                    anim.SetTrigger("MovingLeft");
-                    anim.SetTrigger("StopRight");
-                    anim.SetTrigger("StopUp");
-                    anim.ResetTrigger("MovingDown");
-                    anim.ResetTrigger("StopLeft");
-                    anim.ResetTrigger("MovingRight");
-                    anim.ResetTrigger("MovingUp");
-                    break;
-                case 6:
-                    anim.SetTrigger("StopDown");
-                    anim.SetTrigger("StopLeft");
-                    anim.SetTrigger("MovingRight");
-                    anim.SetTrigger("StopUp");
-                    anim.ResetTrigger("MovingDown");
-                    anim.ResetTrigger("MovingLeft");
-                    anim.ResetTrigger("StopRight");
-                    anim.ResetTrigger("MovingUp");
-                    break;
-                case 8:
-                    anim.SetTrigger("StopDown");
-                    anim.SetTrigger("StopLeft");
-                    anim.SetTrigger("StopRight");
-                    anim.SetTrigger("MovingUp");
-                    anim.ResetTrigger("MovingDown");
-                    anim.ResetTrigger("MovingLeft");
-                    anim.ResetTrigger("MovingRight");
-                    anim.ResetTrigger("StopUp");
-                    break;
-            }
-        }
+        PlayerOverworld.instance.forcedMove = direction;
 
         EventManager.SetEventStates();
 

@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 // Upgrade NOTE: replaced 'glstate.matrix.mvp' with 'UNITY_MATRIX_MVP'
 
     Shader "Selfmade/FlagWave"
@@ -46,7 +48,7 @@
                 v.vertex.x += sin(v.vertex.z / 2 + angle);
                 v.vertex.x *= v.vertex.x * 0.1f;
                
-                o.pos = mul( UNITY_MATRIX_MVP, v.vertex );
+                o.pos = UnityObjectToClipPos( v.vertex );
                 o.uv = v.texcoord;
                 return o;
             }

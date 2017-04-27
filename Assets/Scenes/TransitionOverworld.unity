@@ -13,7 +13,7 @@ OcclusionCullingSettings:
 --- !u!104 &2
 RenderSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 7
+  serializedVersion: 8
   m_Fog: 0
   m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   m_FogMode: 3
@@ -25,6 +25,7 @@ RenderSettings:
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
   m_AmbientIntensity: 1
   m_AmbientMode: 3
+  m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
   m_SkyboxMaterial: {fileID: 0}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
@@ -41,7 +42,7 @@ RenderSettings:
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 7
+  serializedVersion: 9
   m_GIWorkflowMode: 1
   m_GISettings:
     serializedVersion: 2
@@ -53,7 +54,7 @@ LightmapSettings:
     m_EnableBakedLightmaps: 0
     m_EnableRealtimeLightmaps: 0
   m_LightmapEditorSettings:
-    serializedVersion: 4
+    serializedVersion: 8
     m_Resolution: 2
     m_BakeResolution: 40
     m_TextureWidth: 1024
@@ -66,13 +67,27 @@ LightmapSettings:
     m_LightmapParameters: {fileID: 0}
     m_LightmapsBakeMode: 1
     m_TextureCompression: 1
-    m_DirectLightInLightProbes: 1
     m_FinalGather: 0
     m_FinalGatherFiltering: 1
     m_FinalGatherRayCount: 1024
     m_ReflectionCompression: 2
+    m_MixedBakeMode: 1
+    m_BakeBackend: 0
+    m_PVRSampling: 1
+    m_PVRDirectSampleCount: 32
+    m_PVRSampleCount: 500
+    m_PVRBounces: 2
+    m_PVRFiltering: 0
+    m_PVRFilteringMode: 1
+    m_PVRCulling: 1
+    m_PVRFilteringGaussRadiusDirect: 1
+    m_PVRFilteringGaussRadiusIndirect: 5
+    m_PVRFilteringGaussRadiusAO: 2
+    m_PVRFilteringAtrousColorSigma: 1
+    m_PVRFilteringAtrousNormalSigma: 1
+    m_PVRFilteringAtrousPositionSigma: 1
   m_LightingDataAsset: {fileID: 0}
-  m_RuntimeCPUUsage: 25
+  m_ShadowMaskMode: 2
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -89,6 +104,8 @@ NavMeshSettings:
     minRegionArea: 2
     manualCellSize: 0
     cellSize: 0.16666667
+    manualTileSize: 0
+    tileSize: 256
     accuratePlacement: 0
   m_NavMeshData: {fileID: 0}
 --- !u!1 &6223977
@@ -2260,6 +2277,10 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 11463766, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
+      propertyPath: anims.Array.size
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 22441604, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -2332,9 +2353,149 @@ Prefab:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 11463766, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
+      propertyPath: anims.Array.data[0].name
+      value: MovingDown
+      objectReference: {fileID: 0}
+    - target: {fileID: 11463766, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
+      propertyPath: anims.Array.data[0].anims
+      value: FriskUT/0, FriskUT/1, FriskUT/2, FriskUT/3
+      objectReference: {fileID: 0}
+    - target: {fileID: 11463766, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
+      propertyPath: anims.Array.data[0].transitionTime
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 11463766, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
+      propertyPath: anims.Array.data[1].name
+      value: MovingLeft
+      objectReference: {fileID: 0}
+    - target: {fileID: 11463766, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
+      propertyPath: anims.Array.data[1].anims
+      value: FriskUT/4, FriskUT/5, FriskUT/6, FriskUT/7
+      objectReference: {fileID: 0}
+    - target: {fileID: 11463766, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
+      propertyPath: anims.Array.data[1].transitionTime
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 11463766, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
+      propertyPath: anims.Array.data[2].name
+      value: MovingRight
+      objectReference: {fileID: 0}
+    - target: {fileID: 11463766, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
+      propertyPath: anims.Array.data[2].anims
+      value: FriskUT/8, FriskUT/9, FriskUT/10, FriskUT/11
+      objectReference: {fileID: 0}
+    - target: {fileID: 11463766, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
+      propertyPath: anims.Array.data[2].transitionTime
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 11463766, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
+      propertyPath: anims.Array.data[3].name
+      value: MovingUp
+      objectReference: {fileID: 0}
+    - target: {fileID: 11463766, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
+      propertyPath: anims.Array.data[3].anims
+      value: FriskUT/12, FriskUT/13, FriskUT/14, FriskUT/15
+      objectReference: {fileID: 0}
+    - target: {fileID: 11463766, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
+      propertyPath: anims.Array.data[3].transitionTime
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 11463766, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
+      propertyPath: anims.Array.data[4].name
+      value: StopDown
+      objectReference: {fileID: 0}
+    - target: {fileID: 11463766, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
+      propertyPath: anims.Array.data[4].anims
+      value: FriskUT/1, FriskUT/3
+      objectReference: {fileID: 0}
+    - target: {fileID: 11463766, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
+      propertyPath: anims.Array.data[4].transitionTime
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11463766, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
+      propertyPath: anims.Array.data[5].name
+      value: StopLeft
+      objectReference: {fileID: 0}
+    - target: {fileID: 11463766, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
+      propertyPath: anims.Array.data[5].anims
+      value: FriskUT/5, FriskUT/7
+      objectReference: {fileID: 0}
+    - target: {fileID: 11463766, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
+      propertyPath: anims.Array.data[5].transitionTime
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11463766, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
+      propertyPath: anims.Array.data[6].name
+      value: StopRight
+      objectReference: {fileID: 0}
+    - target: {fileID: 11463766, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
+      propertyPath: anims.Array.data[7].name
+      value: StopUp
+      objectReference: {fileID: 0}
+    - target: {fileID: 11463766, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
+      propertyPath: anims.Array.data[6].anims
+      value: FriskUT/9, FriskUT/11
+      objectReference: {fileID: 0}
+    - target: {fileID: 11463766, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
+      propertyPath: anims.Array.data[6].transitionTime
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11463766, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
+      propertyPath: anims.Array.data[7].anims
+      value: FriskUT/13, FriskUT/15
+      objectReference: {fileID: 0}
+    - target: {fileID: 11463766, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
+      propertyPath: anims.Array.data[7].transitionTime
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 9559022, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
   m_IsPrefabParent: 0
+--- !u!1 &619600880 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 129266, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
+  m_PrefabInternal: {fileID: 619600879}
+--- !u!114 &619600881
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 619600880}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44f4eb1dd5662834c949b35a8b28394c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  movementDirection: 0
+  beginAnim: StopDown
+  specialHeader: 
+  anims:
+  - name: MovingDown
+    anims: FriskUT/0, FriskUT/1, FriskUT/2, FriskUT/3
+    transitionTime: 0.25
+  - name: MovingLeft
+    anims: FriskUT/4, FriskUT/5, FriskUT/6, FriskUT/7
+    transitionTime: 0.25
+  - name: MovingRight
+    anims: FriskUT/8, FriskUT/9, FriskUT/10, FriskUT/11
+    transitionTime: 0.25
+  - name: MovingUp
+    anims: FriskUT/12, FriskUT/13, FriskUT/14, FriskUT/15
+    transitionTime: 0.25
+  - name: StopDown
+    anims: FriskUT/1, FriskUT/3
+    transitionTime: 1
+  - name: StopLeft
+    anims: FriskUT/5, FriskUT/7
+    transitionTime: 1
+  - name: StopRight
+    anims: FriskUT/9, FriskUT/11
+    transitionTime: 1
+  - name: StopUp
+    anims: FriskUT/13, FriskUT/15
+    transitionTime: 1
 --- !u!1 &629619426
 GameObject:
   m_ObjectHideFlags: 0
@@ -2517,7 +2678,7 @@ Prefab:
     - target: {fileID: 114367706871473644, guid: a606ee4e085f7114e8a4bb167d4e644b,
         type: 2}
       propertyPath: FirstLevelToLoad
-      value: Void
+      value: test2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: a606ee4e085f7114e8a4bb167d4e644b, type: 2}
@@ -2689,7 +2850,7 @@ Canvas:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 715141001}
   m_Enabled: 1
-  serializedVersion: 2
+  serializedVersion: 3
   m_RenderMode: 2
   m_Camera: {fileID: 0}
   m_PlaneDistance: 100
@@ -2698,6 +2859,7 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
+  m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
@@ -4337,7 +4499,7 @@ Canvas:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1024388664}
   m_Enabled: 1
-  serializedVersion: 2
+  serializedVersion: 3
   m_RenderMode: 2
   m_Camera: {fileID: 0}
   m_PlaneDistance: 100
@@ -4346,6 +4508,7 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
+  m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
@@ -6848,6 +7011,8 @@ Camera:
   m_TargetDisplay: 0
   m_TargetEye: 3
   m_HDR: 0
+  m_AllowMSAA: 1
+  m_ForceIntoRT: 0
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022

@@ -10,22 +10,24 @@ using MoonSharp.Interpreter.Interop;
 using System.Reflection;
 
 public class EventManager : MonoBehaviour {
-    public static EventManager instance;
+    public  static EventManager instance;
     private int EventLayer;                 //The id of the Event Layer
+    public  List<string> Page0Done = new List<string>();
     public  ScriptWrapper script;           //The script we have to load
-    public List<GameObject> events = new List<GameObject>(); //This map's events
-    public Hashtable sprCtrls = new Hashtable();
+    public  Dictionary<GameObject, ScriptWrapper> eventScripts = new Dictionary<GameObject, ScriptWrapper>();
+    public  Dictionary<ScriptWrapper, int> coroutines = new Dictionary<ScriptWrapper, int>();
+    public  List<GameObject> events = new List<GameObject>(); //This map's events
+    public  Dictionary<string, LuaSpriteController> sprCtrls = new Dictionary<string, LuaSpriteController>();
     private TextManager textmgr;            //The current TextManager
-    public int actualEventIndex = -1;      //ID of the actual event we're running
-    private int page0IndexCount = 0;
+    public  int actualEventIndex = -1;      //ID of the actual event we're running
     public  bool readyToReLaunch = false;   //Used to prevent overworld GameOver errors
-    public bool bgmCoroutine = false;      //Check if the BGM is already fading
+    public  bool bgmCoroutine = false;      //Check if the BGM is already fading
     public  bool passPressOnce = false;     //Boolean used because events are boring
     public  bool scriptLaunched = false;
-    private bool relaunchReset1 = false, relaunchReset2 = false;
+    public  bool onceReload = false;
+    private bool LoadLaunched = false;
     private bool needReturn = false;
-    private Hashtable autoDone = new Hashtable();
-
+    public  Dictionary<GameObject, bool> autoDone = new Dictionary<GameObject, bool>();
 
     public LuaPlayerOW luaplow;
     public LuaEventOW luaevow;
@@ -50,8 +52,7 @@ public class EventManager : MonoBehaviour {
     //private List<string> dynamicBindList = new List<string>();
 
     // Use this for initialization
-    public void Start() {
-        page0IndexCount = 0;
+    public void LateStart() {
         /*for (int i = 1; i < bindTypeList.Length; i ++)
             instancesOfTypeList.Add(Activator.CreateInstance((Type)bindTypeList[i]));*/
         EventLayer = LayerMask.GetMask("EventLayer");                               //Get the layer that'll interact with our object, here EventLayer
@@ -68,7 +69,7 @@ public class EventManager : MonoBehaviour {
             luainvow = new LuaInventoryOW();
             luascrow = new LuaScreenOW();
         }
-        relaunchReset1 = true;
+        //waitForReload = true;
         instance = this;
     }
 
@@ -78,6 +79,7 @@ public class EventManager : MonoBehaviour {
         LuaGeneralOW.StCoroutine += StCoroutine;
         LuaInventoryOW.StCoroutine += StCoroutine;
         LuaScreenOW.StCoroutine += StCoroutine;
+        StaticInits.Loaded += AfterLoad;
     }
     void OnDisable() {
         LuaEventOW.StCoroutine -= StCoroutine;
@@ -85,6 +87,63 @@ public class EventManager : MonoBehaviour {
         LuaGeneralOW.StCoroutine -= StCoroutine;
         LuaInventoryOW.StCoroutine -= StCoroutine;
         LuaScreenOW.StCoroutine -= StCoroutine;
+        StaticInits.Loaded -= AfterLoad;
+    }
+
+    void AfterLoad() {
+        LoadLaunched = true;
+        if (!scriptLaunched) {
+            if (!onceReload) {
+                onceReload = true;
+                ResetEvents();
+            }
+            PlayerOverworld.instance.utHeart = GameObject.Find("utHeart").GetComponent<Image>();
+            for (int i = 0; i < events.Count; i++) 
+                if (events[i] != null) {
+                    if (testContainsListVector2(events[i].GetComponent<EventOW>().eventTriggers, 0) && !Page0Done.Contains(events[i].name)) {
+                        Page0Done.Add(events[i].name);
+                        executeEvent(events[i], 0);
+                        return;
+                    }
+                }
+
+            GameObject.FindObjectOfType<Fading>().BeginFade(-1);
+            LoadLaunched = false;
+        } else
+            CheckEndEvent();
+    }
+
+    void CheckEndEvent() {
+        if (script != null && scriptLaunched) {
+            Table t = script.script.Globals;
+            if (t.Get(DynValue.NewString("CYFEventCoroutine")).Coroutine.State == CoroutineState.Dead)
+                endEvent();
+        }
+    }
+
+    public void CheckCurrentEvent() {
+        foreach (ScriptWrapper scr in coroutines.Keys) {
+            Table t = scr.script.Globals;
+            if (t.Get(DynValue.NewString("CYFEventCheckRefresh")).Boolean) {
+                SetCurrentScript(scr);
+                t.Set(DynValue.NewString("CYFEventCheckRefresh"), DynValue.NewBoolean(false));
+            }
+        }
+        if (script != null) {
+            Table t2 = script.script.Globals;
+            if (t2.Get(DynValue.NewString("CYFEventCheckRefresh")).Boolean) {
+                SetCurrentScript(script);
+                t2.Set(DynValue.NewString("CYFEventCheckRefresh"), DynValue.NewBoolean(false));
+            }
+        }
+    }
+
+    void SetCurrentScript(ScriptWrapper scr) {
+        luaevow.appliedScript = scr;
+        luagenow.appliedScript = scr;
+        luainvow.appliedScript = scr;
+        luaplow.appliedScript = scr;
+        luascrow.appliedScript = scr;
     }
 
     // Update is called once per frame
@@ -92,26 +151,15 @@ public class EventManager : MonoBehaviour {
         try {
             if (readyToReLaunch && SceneManager.GetActiveScene().name != "TransitionOverworld") {
                 readyToReLaunch = false;
-                Start();
+                LateStart();
             }
-            if (relaunchReset1 && !scriptLaunched) {
-                for (; page0IndexCount < events.Count; page0IndexCount++)
-                    if (events[page0IndexCount] != null)
-                        if (testContainsListVector2(events[page0IndexCount].GetComponent<EventOW>().eventTriggers, 0)) {
-                            executeEvent(events[page0IndexCount], false, 0);
-                            page0IndexCount++;
-                            return;
-                        }
-                relaunchReset1 = false;
-                //GameObject.FindObjectOfType<Fading>().BeginFade(-1);
-                relaunchReset2 = true;
-            } else if (relaunchReset2) {
-                relaunchReset2 = false;
-                PlayerOverworld.instance.utHeart = GameObject.Find("utHeart").GetComponent<Image>();
-                ResetEvents();
-            } else if (relaunchReset1 || relaunchReset2)
+            if (LoadLaunched) {
+                AfterLoad();
                 return;
+            }
+            CheckCurrentEvent();
             testEventDestruction();
+            runCoroutines();
             if (!PlayerOverworld.inText) {
                 if (testEventAuto()) return;
                 if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED && !passPressOnce) {
@@ -132,13 +180,8 @@ public class EventManager : MonoBehaviour {
                             return;
                         }
                     }
-            } else {
-                if (script != null && scriptLaunched) {
-                    Table t = script.script.Globals;
-                    if (t.Get(DynValue.NewString("CYFEventCoroutine")).Coroutine.State == CoroutineState.Dead)
-                        endEvent();
-                }
             }
+            CheckEndEvent();
         } catch (InvalidOperationException) { }
     }
 
@@ -201,44 +244,44 @@ public class EventManager : MonoBehaviour {
     /// <param name="hit"></param>
     public bool testEventPress(float xDir, float yDir, out RaycastHit2D hit) {
         //try {
-            BoxCollider2D boxCollider = GameObject.Find("Player").GetComponent<BoxCollider2D>();
-            Transform transform = GameObject.Find("Player").transform;
+        BoxCollider2D boxCollider = GameObject.Find("Player").GetComponent<BoxCollider2D>();
+        Transform transform = GameObject.Find("Player").transform;
 
-            //Store start position to move from, based on objects current transform position
-            Vector2 start = new Vector2(transform.position.x + transform.localScale.x * boxCollider.offset.x,
-                                        transform.position.y + transform.localScale.x * boxCollider.offset.y);
+        //Store start position to move from, based on objects current transform position
+        Vector2 start = new Vector2(transform.position.x + transform.localScale.x * boxCollider.offset.x,
+                                    transform.position.y + transform.localScale.x * boxCollider.offset.y);
 
-            //Calculate end position based on the direction parameters passed in when calling Move and using our boxCollider
-            Vector2 dir = new Vector2(xDir, yDir);
+        //Calculate end position based on the direction parameters passed in when calling Move and using our boxCollider
+        Vector2 dir = new Vector2(xDir, yDir);
 
-            //Calculate the current size of the object's boxCollider
-            Vector2 size = new Vector2(boxCollider.size.x * PlayerOverworld.instance.PlayerPos.localScale.x, boxCollider.size.y * PlayerOverworld.instance.PlayerPos.localScale.y);
+        //Calculate the current size of the object's boxCollider
+        Vector2 size = new Vector2(boxCollider.size.x * PlayerOverworld.instance.PlayerPos.localScale.x, boxCollider.size.y * PlayerOverworld.instance.PlayerPos.localScale.y);
 
-            //Disable boxCollider so that linecast doesn't hit this object's own collider and disable the non touching events' colliders
-            boxCollider.enabled = false;
-            foreach (GameObject go in events) {
-                if (getTrigger(go, go.GetComponent<EventOW>().actualPage) > 0 && go.GetComponent<Collider2D>())
-                    go.GetComponent<Collider2D>().enabled = false;
-            }
+        //Disable boxCollider so that linecast doesn't hit this object's own collider and disable the non touching events' colliders
+        boxCollider.enabled = false;
+        foreach (GameObject go in events) {
+            if (getTrigger(go, go.GetComponent<EventOW>().actualPage) > 0 && go.GetComponent<Collider2D>())
+                go.GetComponent<Collider2D>().enabled = false;
+        }
 
-            //Cast a box from start point to end point checking collision on blockingLayer
-            //hit = Physics2D.BoxCast(start, size, 0, dir, Mathf.Sqrt(Mathf.Pow(xDir * PlayerOverworld.instance.speed, 2) + 
-            //                                                        Mathf.Pow(yDir * PlayerOverworld.instance.speed, 2)), EventLayer);          
-            hit = Physics2D.BoxCast(start, size, 0, dir, Mathf.Sqrt(Mathf.Pow(boxCollider.size.x * PlayerOverworld.instance.transform.localScale.x * xDir, 2) +
-                                                                    Mathf.Pow(boxCollider.size.y * PlayerOverworld.instance.transform.localScale.x * yDir, 2)), EventLayer);
+        //Cast a box from start point to end point checking collision on blockingLayer
+        //hit = Physics2D.BoxCast(start, size, 0, dir, Mathf.Sqrt(Mathf.Pow(xDir * PlayerOverworld.instance.speed, 2) + 
+        //                                                        Mathf.Pow(yDir * PlayerOverworld.instance.speed, 2)), EventLayer);          
+        hit = Physics2D.BoxCast(start, size, 0, dir, Mathf.Sqrt(Mathf.Pow(boxCollider.size.x * PlayerOverworld.instance.transform.localScale.x * xDir, 2) +
+                                                                Mathf.Pow(boxCollider.size.y * PlayerOverworld.instance.transform.localScale.x * yDir, 2)), EventLayer);
 
-            //Re-enable the disabled colliders after BoxCast
-            boxCollider.enabled = true;
-            foreach (GameObject go in events)
-                if (getTrigger(go, go.GetComponent<EventOW>().actualPage) > 0 && go.GetComponent<Collider2D>())
-                    go.GetComponent<Collider2D>().enabled = true;
-            
-            //Executes the event that our cast collided with
-            if (hit.collider == null) {
-                UnitaleUtil.writeInLog("No event was hit.");
-                return false;
-            } else
-                return executeEvent(hit.collider.gameObject);
+        //Re-enable the disabled colliders after BoxCast
+        boxCollider.enabled = true;
+        foreach (GameObject go in events)
+            if (getTrigger(go, go.GetComponent<EventOW>().actualPage) > 0 && go.GetComponent<Collider2D>())
+                go.GetComponent<Collider2D>().enabled = true;
+
+        //Executes the event that our cast collided with
+        if (hit.collider == null) {
+            UnitaleUtil.writeInLog("No event was hit.");
+            return false;
+        } else
+            return executeEvent(hit.collider.gameObject);
         /*} catch {
             hit = new RaycastHit2D();
             print("error press button event");
@@ -252,9 +295,9 @@ public class EventManager : MonoBehaviour {
             foreach (GameObject go in events) {
                 gameobject = go;
                 if (getTrigger(go, go.GetComponent<EventOW>().actualPage) == 2)
-                    if (!autoDone.ContainsKey(new object[] { go, go.GetComponent<EventOW>().actualPage })) {
-                        print("auto Event");
-                        return executeEvent(go, true);
+                    if (!autoDone.ContainsKey(go)) {
+                        autoDone.Add(go, true);
+                        return executeEvent(go);
                     }
             }
         } catch (InterpreterException e) {
@@ -273,6 +316,28 @@ public class EventManager : MonoBehaviour {
             else if (go.GetComponent<EventOW>().actualPage == -1) luaevow.Remove(go.name);
     }
 
+    private void runCoroutines() {
+        GameObject gameobject = null;
+        try {
+            foreach (ScriptWrapper scr in coroutines.Keys) {
+                if (scr == script)
+                    continue;
+                GameObject go = eventScripts.FirstOrDefault(x => x.Value == scr).Key;
+                gameobject = go;
+                executeEvent(go, coroutines[scr], true);
+            }
+            foreach (GameObject go in events) {
+                if (getTrigger(go, go.GetComponent<EventOW>().actualPage) == 3 && !coroutines.ContainsKey(eventScripts[go]) && eventScripts[go] != script) {
+                    gameobject = go;
+                    executeEvent(go, -1, true);
+                }
+            }
+        } catch (InterpreterException e) { UnitaleUtil.displayLuaError(gameobject.name + ", page n°" + gameobject.GetComponent<EventOW>().actualPage, e.DecoratedMessage); } catch (Exception e) {
+            UnitaleUtil.displayLuaError(gameobject.name + ", page n°" + gameobject.GetComponent<EventOW>().actualPage,
+                                        "Unknown error of type " + e.GetType() + ". Please send this to the main dev.\n\n" + e.Message + "\n\n" + e.StackTrace);
+        }
+    }
+
     public int getTrigger(GameObject go, int index) {
         foreach (Vector2 vec in go.GetComponent<EventOW>().eventTriggers)
             if (vec.x == index)
@@ -288,10 +353,19 @@ public class EventManager : MonoBehaviour {
         events.Clear();
         autoDone.Clear();
         sprCtrls.Clear();
+        eventScripts.Clear();
         foreach (GameObject go in GameObject.FindGameObjectsWithTag("Event")) {
             events.Add(go);
-            if (go.GetComponent<SpriteRenderer>())
-                sprCtrls[go.name] = new LuaSpriteController(go.GetComponent<SpriteRenderer>(), "empty"); //TODO: Find a way to get the sprite's name
+            if (go.GetComponent<SpriteRenderer>()) {
+                if (go.name == "Player")
+                    sprCtrls[go.name] = PlayerOverworld.instance.sprctrl;
+                else
+                    sprCtrls[go.name] = new LuaSpriteController(go.GetComponent<SpriteRenderer>());
+            } else if (go.GetComponent<Image>())
+                sprCtrls[go.name] = new LuaSpriteController(go.GetComponent<Image>());
+
+            string scriptToLoad = go.GetComponent<EventOW>().scriptToLoad;
+            eventScripts.Add(go, initScript(scriptToLoad, go.GetComponent<EventOW>()));
         }
     }
 
@@ -300,11 +374,10 @@ public class EventManager : MonoBehaviour {
     /// </summary>
     /// <param name="go"></param>
     [HideInInspector]
-    public bool executeEvent(GameObject go, bool auto = false, int page = -1) {
-        if (scriptLaunched)
+    public bool executeEvent(GameObject go, int page = -1, bool isCoroutine = false) {
+        if (scriptLaunched && !isCoroutine)
             return false;
-        string scriptToLoad = go.GetComponent<EventOW>().scriptToLoad;
-        actualEventIndex = -1;
+        int actualEventIndex = -1;
         for (int i = 0; i < events.Count; i++)
             if (events[i].Equals(go)) {
                 actualEventIndex = i;
@@ -314,29 +387,35 @@ public class EventManager : MonoBehaviour {
             UnitaleUtil.displayLuaError("Overworld engine", "Whoops! There is an error with event indexing.");
             return false;
         }
+            
         //If the script we have to load exists, let's initialize it and then execute it
-        if (scriptToLoad != null) {
+        if (!isCoroutine) {
+            this.actualEventIndex = actualEventIndex;
             PlayerOverworld.inText = true;  //UnitaleUtil.writeInLogAndDebugger("executeEvent true:" + go.GetComponent<EventOW>().actualPage);
             scriptLaunched = true;
-            textmgr.textQueue = new TextMessage[] { };
-            try {
-                initScript(scriptToLoad, go.GetComponent<EventOW>());
-                script.Call("CYFEventStartEvent", DynValue.NewString("EventPage" + (page == -1 ? go.GetComponent<EventOW>().actualPage : page)));
-                //script.Call("EventPage" + go.GetComponent<EventOW>().actualPage);
-            } catch (InterpreterException ex) {
-                UnitaleUtil.displayLuaError(scriptToLoad, ex.DecoratedMessage);
-                return false;
-            }
+        }
+        try {
+            ScriptWrapper scr = eventScripts[go];
+            if (isCoroutine && !coroutines.ContainsKey(scr))
+                coroutines.Add(scr, go.GetComponent<EventOW>().actualPage);
+            else if (!isCoroutine)
+                script = scr;
+            SetCurrentScript(scr);
+            scr.Call("CYFEventStartEvent", DynValue.NewString("EventPage" + (page == -1 ? go.GetComponent<EventOW>().actualPage : page)));
+            //scr.Call("EventPage" + go.GetComponent<EventOW>().actualPage);
+        } catch (InterpreterException ex) {
+            UnitaleUtil.displayLuaError(go.GetComponent<EventOW>().scriptToLoad, ex.DecoratedMessage);
+            return false;
+        } catch (Exception ex) {
+            UnitaleUtil.displayLuaError(go.GetComponent<EventOW>().scriptToLoad, ex.Message);
+            return false;
+        } 
+        if (!isCoroutine) {
             textmgr.setCaller(script);
-            textmgr.setTextQueue(textmgr.textQueue);
             textmgr.transform.parent.parent.SetAsLastSibling();
             passPressOnce = true;
-            if (auto)
-                autoDone.Add(new object[] { go, go.GetComponent<EventOW>().actualPage }, true);
-            return true;
-        } else
-            UnitaleUtil.writeInLog("There is no script to load!");
-        return false;
+        }
+        return true;
     }
 
     private List<string> CreateBindListMember(Type t) {
@@ -363,25 +442,23 @@ public class EventManager : MonoBehaviour {
     /// </summary>
     /// <param name="name"></param>
     /// <returns>Returns true if no error were encountered.</returns>
-    private bool initScript(string name, EventOW ev) {
-        script = new ScriptWrapper(/*true*/);
-        script.scriptname = name;
+    private ScriptWrapper initScript(string name, EventOW ev) {
+        ScriptWrapper scr = new ScriptWrapper();
+        scr.scriptname = name;
         string scriptText = ScriptRegistry.Get(ScriptRegistry.EVENT_PREFIX + name);
         if (scriptText == null) {
             UnitaleUtil.displayLuaError("Launching an event", "The event " + name + " doesn't exist.");
-            return false;
+            return null;
         }
         string lameOverworldFunctionBinding = string.Empty;
         string lameFunctionBinding = string.Empty;
         bool once = false;
-        //foreach (string str in bindList) {
         foreach (Type t in boundValueName.Keys) {
             List<string> members = CreateBindListMember(t);
             scriptText += "\n" + boundValueName[t] + " = { }";
             foreach (string member in members) {
-                //script.Bind(str, new Action<DynValue, DynValue, DynValue, DynValue, DynValue, DynValue, DynValue, DynValue, DynValue, DynValue>(OldFunctionLauncher));
                 string completeMember = boundValueName[t] + "." + member;
-                scriptText += "\n" /*+ "\nfunction F" + str2 + "() end\n"*/ + "function " + completeMember + "(p1,p2,p3,p4,p5,p6,p7,p8,p9,p10) return CYFEventForwarder(\"" + completeMember + "\",p1,p2,p3,p4,p5,p6,p7,p8,p9,p10) end";
+                scriptText += "\n" + "function " + completeMember + "(p1,p2,p3,p4,p5,p6,p7,p8,p9,p10) return CYFEventForwarder(\"" + completeMember + "\",p1,p2,p3,p4,p5,p6,p7,p8,p9,p10) end";
                 lameFunctionBinding += "\n    " + (once ? "elseif" : "if") + " func == '" + completeMember + "' then x = F" + completeMember;
                 once = true;
             }
@@ -393,7 +470,8 @@ public class EventManager : MonoBehaviour {
         }
         lameOverworldFunctionBinding += "\n    end";
         lameFunctionBinding += "\n    end";
-        scriptText += "\n\nlocal CYFEventCoroutine = coroutine.create(DEBUG) " +
+        scriptText += "\n\nCYFEventCoroutine = coroutine.create(DEBUG) " +
+                      "\nCYFEventCheckRefresh = true" +
                       "\nlocal CYFEventLameErrorContainer = nil" +
                       "\nlocal CYFEventCurrentFunction = nil" +
                       "\nlocal CYFEventAlreadyLaunched = false " +
@@ -409,16 +487,20 @@ public class EventManager : MonoBehaviour {
                       "\nfunction CYFEventFuncToLaunch(x)" +
                       "\n    local err = nil" +
                       "\n    local stack = nil" +
-                      "\n    xpcall(x, function(err2) err = err2 stack = debug.traceback() end) " +
+                      "\n    xpcall(x, function(err2) err = err2 stack = debug.traceback() end)" +
                       "\n    if err != nil then " +
                       "\n        if string.match(stack, 'CYFEventForwarder') != nil then" +
                       "\n            local line = ''" +
                       "\n            local tab = CYFEventMySplit(stack, '\\n')" +
-                      "\n            for i = 1, #tab do if string.match(tab[i], CYFEventCurrentFunction) != nil then line = tab[i] break end end" +
-                      "\n            while string.match(line, 'chunk') do line = string.sub(line, 2) end" +
-                      "\n            for word in string.gmatch('c' .. line, '([^ ]+)') do CYFEventLameErrorContainer = word break end" +
-                      "\n            if string.match(err, '(chunk_2:.+:)') then err = string.sub(err, string.len(string.match(err, '(chunk_2:.+:)')) + 2) end" +
-                      "\n            CYFEventLameErrorContainer = CYFEventLameErrorContainer .. ' ' .. err" +
+                      "\n            for i = 1, #tab do if string.match(tab[i], 'EventPage') != nil then line = tab[i] break end end" +
+                      "\n            if string.match(line, '[clr]') then" +
+                      "\n                CYFEventLameErrorContainer = \"Sorry, but we couldn't get the real line number of the error: \" .. err" +
+                      "\n            else" +
+                      "\n                while string.match(line, 'chunk') do line = string.sub(line, 2) end" +
+                      "\n                for word in string.gmatch('c' .. line, '([^ ]+)') do CYFEventLameErrorContainer = word break end" +
+                      "\n                if string.match(err, '(chunk_2:.+:)') and string.match(CYFEventLameErrorContainer, '(chunk_2:.+:)') then err = string.sub(err, string.len(string.match(err, '(chunk_2:.+:)')) + 2) end" +
+                      "\n                CYFEventLameErrorContainer = CYFEventLameErrorContainer .. ' ' .. err" +
+                      "\n            end" +
                       "\n        else" +
                       "\n            CYFEventLameErrorContainer = err " +
                       "\n        end" +
@@ -433,18 +515,23 @@ public class EventManager : MonoBehaviour {
                       "\nend " +
                       "\nfunction CYFEventStopCommand() coroutine.yield() end " +
                       "\nfunction CYFEventStartEvent(func) " +
-                      "\n    local x = 'error' " +
+                      //"\n    local x = 'error' " +
                       //"\n    DEBUG(assert(loadstring('return '..x..'(...)'))(25)) " +
-                      lameOverworldFunctionBinding +
-                      "\n    if x == error then error(\"Don't look at your script, this code block is added at the script's compilation.\\n" + 
-                                                       "The overworld function \\\"\" .. func .. \"\\\" doesn't exist. Did you forgot to add this function in the event triggers list?\") end " +
-                      "\n    CYFEventCoroutine = coroutine.create(function() CYFEventFuncToLaunch(x) end)" +
+                      //lameOverworldFunctionBinding +
+                      "\n    if _G[func] == nil then error('The function ' .. func .. \" doesn't exist in the Event script.\") end" +
+                      //"\n    if x == 'error' then error('The overworld function ' .. func .. \" doesn't exist in the function list. Did you forgot to add this function in the event's trigger list?\") end " +
+                      "\n    CYFEventCoroutine = coroutine.create(function() CYFEventFuncToLaunch(_G[func]) end)" +
                       "\n    local ok, errorMsg = coroutine.resume(CYFEventCoroutine) " +
                       "\n    if CYFEventLameErrorContainer != nil then error(CYFEventLameErrorContainer) end " +
                       "\nend " +
                       "\nfunction CYFEventForwarder(func, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10) " +
-                      "\n    CYFEventAlreadyLaunched = false" + 
-                      "\n    local x " +
+                      "\n    CYFEventAlreadyLaunched = false" +
+                      "\n    CYFEventCheckRefresh = true" +
+                      "\n    FGeneral.HiddenReloadAppliedScript()" +
+                      //"\n    local tab = CYFEventMySplit(func, '.')" +
+                      //"\n    DEBUG(tostring(_G['F' .. tab[1] .. \"'\"]))" + 
+                      //"\n    DEBUG('_G[\"F' .. tab[1] .. '\"].' .. tab[2])" +
+                      "\n    local x" +
                       lameFunctionBinding +
                       "\n    local result " +
                       "\n    if     arg1 == nil  then  result = x() " +
@@ -461,17 +548,21 @@ public class EventManager : MonoBehaviour {
                       "\n    end " +
                       "\n    if not CYFEventAlreadyLaunched then coroutine.yield() end" +
                       "\n    return result" +
-                      "\nend";
-        script.text = scriptText;
-        Debug.Log(scriptText);
+                      "\nend" +
+                      "\neventName = " + ev.gameObject.name;
+        scr.text = scriptText;
+        //Debug.Log(scriptText);
 
-        try { script.DoString(scriptText); } 
+        try { scr.DoString(scriptText); } 
         catch (InterpreterException ex) {
             UnitaleUtil.displayLuaError(name, ex.DecoratedMessage);
-            return false;
+            return null;
+        } catch (Exception ex) {
+            UnitaleUtil.displayLuaError(name, ex.Message);
+            return null;
         }
 
-        return true;
+        return scr;
     }
 
     /// <summary>
@@ -610,26 +701,22 @@ public class EventManager : MonoBehaviour {
     public static void GetEventStates(int id) {
         if (!GlobalControls.MapEventPages.ContainsKey(id))
             return;
-
-        foreach (string str in GlobalControls.MapEventPages[id].Keys)
-            GameObject.Find(str).GetComponent<EventOW>().actualPage = GlobalControls.MapEventPages[id][str];
+        try {
+            foreach (string str in GlobalControls.MapEventPages[id].Keys)
+                GameObject.Find(str).GetComponent<EventOW>().actualPage = GlobalControls.MapEventPages[id][str];
+        } catch (Exception e) { Debug.LogError(e); }
     }
 
     /// <summary>
     /// Used to end a current event
     /// </summary>
-    public void endEvent() {
-        try {
-            foreach (string key in LuaScriptBinder.GetDictionary().Keys)
-                if (key.Contains("Choice") || key.Contains("ReturnPoint") || key.Contains("GetSpriteOfEvent"))
-                    LuaScriptBinder.Remove(key);
-        } catch { }
+    public void endEvent(bool isCoroutine = false) {
         PlayerOverworld.instance.textmgr.setTextFrameAlpha(0);
         PlayerOverworld.instance.textmgr.textQueue = new TextMessage[] { };
         PlayerOverworld.instance.textmgr.destroyText();
         PlayerOverworld.inText = false;
         scriptLaunched = false;
-        //StartCoroutine("ISetChoice", "1", "2");
+        script = null;
     }
 
     public void StCoroutine(string name, object args) {
@@ -685,6 +772,7 @@ public class EventManager : MonoBehaviour {
     }
 
     IEnumerator IMoveEventToPoint(object[] args) {
+        ScriptWrapper scr = luaevow.appliedScript;
         //Real args
         string name;
         float dirX, dirY;
@@ -695,7 +783,6 @@ public class EventManager : MonoBehaviour {
         try { wallPass = (bool)args[3]; } catch { throw new CYFException("The argument \"wallPass\" must be a boolean."); }
 
         //This function moves the player : this boolean is used to disable encounter generation during this event
-        PlayerOverworld.instance.forcedMove = true;
         GameObject[] colliders = new GameObject[GameObject.Find("Background").transform.childCount];
         for (int i = 0; i < colliders.Length; i++)
             colliders[i] = GameObject.Find("Background").transform.GetChild(i).gameObject;
@@ -705,18 +792,17 @@ public class EventManager : MonoBehaviour {
             if (name == go.name || name == "Player") {
                 if (name == "Player")
                     go = GameObject.Find("Player");
-                int direction = -1;
                 if (wallPass)
                     foreach (GameObject go2 in colliders)
                         if (go2.name != "Background")
                             go2.SetActive(false);
-                go.gameObject.GetComponent<Rigidbody2D>().isKinematic = true;
                 Vector2 endPoint = new Vector2(dirX - go.transform.position.x, dirY - go.transform.position.y), endPointFromNow = endPoint;
                 //The animation process is automatic, if you renamed the Animation's triggers and animations as the Player's
-                if (go.GetComponent<Animator>() != null)
-                    direction = CheckDirection(endPoint);
+                int direction = CheckDirection(endPoint);
                 //While the current position is different from the one we want our player to have
                 while ((Vector2)go.transform.position != endPoint) {
+                    if (name == "Player")
+                        PlayerOverworld.instance.forcedMove = direction;
                     Vector2 clamped = Vector2.ClampMagnitude(endPoint, 1);
                     //Test is used to know if the deplacement is possible or not
                     bool test = false;
@@ -727,13 +813,12 @@ public class EventManager : MonoBehaviour {
                         //If we reached the destination, stop the function
                         else {
                             test = PlayerOverworld.instance.AttemptMove(endPointFromNow.x, endPointFromNow.y, go, wallPass);
-                            PlayerOverworld.instance.forcedMove = false;
+                            PlayerOverworld.instance.forcedMove = 0;
                             if (wallPass)
                                 foreach (GameObject go2 in colliders)
                                     if (go2.name != "Background")
                                         go2.SetActive(true);
-                            go.gameObject.GetComponent<Rigidbody2D>().isKinematic = false;
-                            script.Call("CYFEventNextCommand");
+                            scr.Call("CYFEventNextCommand");
                             yield break;
                         }
                     } else {
@@ -742,49 +827,40 @@ public class EventManager : MonoBehaviour {
                         //If we reached the destination, stop the function
                         else {
                             test = PlayerOverworld.instance.AttemptMove(endPointFromNow.x, endPointFromNow.y, go, wallPass);
-                            PlayerOverworld.instance.forcedMove = false;
+                            PlayerOverworld.instance.forcedMove = 0;
                             if (wallPass)
                                 foreach (GameObject go2 in colliders)
                                     go2.SetActive(true);
-                            go.gameObject.GetComponent<Rigidbody2D>().isKinematic = false;
-                            script.Call("CYFEventNextCommand");
+                            scr.Call("CYFEventNextCommand");
                             yield break;
                         }
                     }
                     yield return 0;
 
                     if (!test && !wallPass) {
-                        PlayerOverworld.instance.forcedMove = false;
-                        go.gameObject.GetComponent<Rigidbody2D>().isKinematic = false;
-                        script.Call("CYFEventNextCommand");
+                        PlayerOverworld.instance.forcedMove = 0;
+                        scr.Call("CYFEventNextCommand");
                         yield break;
-                    } else {
-                        //The animations are here !
-                        switch (direction) {
-                            case 2: go.GetComponent<Animator>().SetTrigger("MovingDown"); break;
-                            case 4: go.GetComponent<Animator>().SetTrigger("MovingLeft"); break;
-                            case 6: go.GetComponent<Animator>().SetTrigger("MovingRight"); break;
-                            case 8: go.GetComponent<Animator>().SetTrigger("MovingUp"); break;
-                        }
-                    }
+                    } 
                     endPointFromNow = new Vector2(dirX - go.transform.position.x, dirY - go.transform.position.y);
                 }
-                go.gameObject.GetComponent<Rigidbody2D>().isKinematic = false;
             }
         }
-        UnitaleUtil.writeInLog("The name you entered into the function doesn't exists. Did you forget to add the 'Event' tag ?");
-        PlayerOverworld.instance.forcedMove = false;
-        script.Call("CYFEventNextCommand");
+        UnitaleUtil.writeInLog("The name you entered into the function doesn't exists. Did you forget to add the 'Event' tag?");
+        PlayerOverworld.instance.forcedMove = 0;
+        scr.Call("CYFEventNextCommand");
     }
 
     IEnumerator IWaitForInput() {
+        ScriptWrapper scr = luaevow.appliedScript;
         while (GlobalControls.input.Confirm != UndertaleInput.ButtonState.PRESSED)
             yield return 0;
 
-        script.Call("CYFEventNextCommand");
+        scr.Call("CYFEventNextCommand");
     }
 
     IEnumerator ISetTone(object[] args) {
+        ScriptWrapper scr = luaevow.appliedScript;
         //REAL ARGS
         bool waitEnd;
         int r, g, b, a;
@@ -811,7 +887,7 @@ public class EventManager : MonoBehaviour {
             currents = new int[] { 0, 0, 0, 0 };
             lacks = new int[] { r, g, b, a };
             if (!waitEnd)
-                script.Call("CYFEventNextCommand");
+                scr.Call("CYFEventNextCommand");
         } else {
             Color c = GameObject.Find("Tone").GetComponent<Image>().color;
             currents = new int[] { (int)(c.r * 255), (int)(c.g * 255), (int)(c.b * 255), (int)(c.a * 255) };
@@ -838,12 +914,13 @@ public class EventManager : MonoBehaviour {
         }
         
         if (a == 0)
-            EventManager.instance.luaevow.Remove("Tone");
+            luaevow.Remove("Tone");
         if (waitEnd)
-            script.Call("CYFEventNextCommand");
+            scr.Call("CYFEventNextCommand");
     }
 
     IEnumerator IRotateEvent(object[] args) {
+        ScriptWrapper scr = luaevow.appliedScript;
         //REAL ARGS
         string name;
         float rotateX, rotateY, rotateZ;
@@ -882,12 +959,12 @@ public class EventManager : MonoBehaviour {
                     yield return 0;
                 }
                 go.GetComponent<RectTransform>().rotation = Quaternion.Euler(rotateX, rotateY, rotateZ);
-                script.Call("CYFEventNextCommand");
+                scr.Call("CYFEventNextCommand");
                 yield break;
             }
         }
         UnitaleUtil.writeInLog("The name you entered into the function isn't an event's name. Did you forget to add the 'Event' tag ?");
-        script.Call("CYFEventNextCommand");
+        scr.Call("CYFEventNextCommand");
     }
 
     IEnumerator fadeBGM(float fadeTime) {
@@ -905,6 +982,7 @@ public class EventManager : MonoBehaviour {
     }
 
     IEnumerator IRumble(object[] args) {
+        ScriptWrapper scr = luaevow.appliedScript;
         //REAL ARGS
         float seconds, intensity;
         bool fade;
@@ -918,19 +996,23 @@ public class EventManager : MonoBehaviour {
                 intensity = intensityBasis * (1 - (time / seconds));
             shift = new Vector2((UnityEngine.Random.value - 0.5f) * 2 * intensity, (UnityEngine.Random.value - 0.5f) * 2 * intensity);
 
-            foreach (Transform tf in UnitaleUtil.GetFirstChildren(null))
-                tf.position = new Vector3(tf.position.x + shift.x - totalShift.x, tf.position.y + shift.y - totalShift.y, tf.position.z);
+            foreach (Transform tf in UnitaleUtil.GetFirstChildren(null)) {
+                if (tf.gameObject.name != "Main Camera OW")
+                    tf.position = new Vector3(tf.position.x + shift.x - totalShift.x, tf.position.y + shift.y - totalShift.y, tf.position.z);
+            }
             //print(totalShift + " + " + shift + " = " + (totalShift + shift));
             totalShift = shift;
             time += Time.deltaTime;
             yield return 0;
         }
         foreach (Transform tf in UnitaleUtil.GetFirstChildren(null))
-            tf.position = new Vector3(tf.position.x - totalShift.x, tf.position.y - totalShift.y, tf.position.z);
-        script.Call("CYFEventNextCommand");
+            if (tf.gameObject.name != "Main Camera OW")
+                tf.position = new Vector3(tf.position.x - totalShift.x, tf.position.y - totalShift.y, tf.position.z);
+        scr.Call("CYFEventNextCommand");
     }
 
     IEnumerator IFlash(object[] args) {
+        ScriptWrapper scr = luaevow.appliedScript;
         //REAL ARGS
         float secondsOrFrames;
         bool isSeconds;
@@ -964,7 +1046,7 @@ public class EventManager : MonoBehaviour {
                 yield return 0;
             }
         GameObject.Destroy(flash);
-        script.Call("CYFEventNextCommand");
+        scr.Call("CYFEventNextCommand");
     }
 
     IEnumerator ISave() {
@@ -1005,7 +1087,7 @@ public class EventManager : MonoBehaviour {
         }
         txtSave.setTextQueue(new TextMessage[] { new TextMessage("[noskipatall]Save", false, true) });
         txtReturn.setTextQueue(new TextMessage[] { new TextMessage("[noskipatall]Return", false, true) });
-
+        
         GameObject.Find("Mugshot").GetComponent<Image>().color = new Color(1, 1, 1, 0);
         GameObject.Find("textframe_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 0);
         GameObject.Find("textframe_interior").GetComponent<Image>().color = new Color(0, 0, 0, 0);
@@ -1060,6 +1142,7 @@ public class EventManager : MonoBehaviour {
     }
 
     public IEnumerator IMoveCamera(object[] args) {
+        ScriptWrapper scr = luaevow.appliedScript;
         //REAL ARGS
         int pixX, pixY, speed;
         bool straightLine;
@@ -1100,16 +1183,17 @@ public class EventManager : MonoBehaviour {
                 }
             yield return 0;
         }
-        script.Call("CYFEventNextCommand");
+        scr.Call("CYFEventNextCommand");
     }
 
     public IEnumerator IWait(int frames) {
+        ScriptWrapper scr = luaevow.appliedScript;
         int curr = 0;
         while (curr != frames) {
             curr++;
             yield return 0;
         }
 
-        script.Call("CYFEventNextCommand");
+        scr.Call("CYFEventNextCommand");
     }
 }

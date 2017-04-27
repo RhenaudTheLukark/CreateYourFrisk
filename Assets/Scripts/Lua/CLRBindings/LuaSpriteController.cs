@@ -10,7 +10,7 @@ public class LuaSpriteController {
         get {
             if (_img == null)
                 throw new CYFException("Attempted to perform action on removed sprite.");
-            if (!_img.activeInHierarchy &&!firstFrame)
+            if (!_img.activeInHierarchy && !firstFrame)
                 throw new CYFException("Attempted to perform action on removed sprite.");
             return _img;
         }
@@ -25,46 +25,37 @@ public class LuaSpriteController {
     private Sprite originalSprite;                    // The original sprite
     public KeyframeCollection keyframes;              // This variable is used to store an animation
     public string tag;                                // The tag of the sprite : "projectile", "enemy", "bubble" or "other"
-    public string spritename = "empty";
+    public string spritename = "";
     private KeyframeCollection.LoopMode loop = KeyframeCollection.LoopMode.LOOP;
     public static MoonSharp.Interpreter.Interop.IUserDataDescriptor data = UserData.GetDescriptorForType<LuaSpriteController>(true);
 
     // The x position of the sprite, relative to the arena position and its anchor.
     public float x {
-        get {
-            return img.GetComponent<RectTransform>().anchoredPosition.x;
-        }
+        get { return img.GetComponent<RectTransform>().anchoredPosition.x; }
         set { img.GetComponent<RectTransform>().anchoredPosition = new Vector2(value, img.GetComponent<RectTransform>().anchoredPosition.y); }
     }
 
     // The y position of the sprite, relative to the arena position and its anchor.
     public float y {
-        get {
-            return img.GetComponent<RectTransform>().anchoredPosition.y;
-        }
+        get { return img.GetComponent<RectTransform>().anchoredPosition.y;}
         set { img.GetComponent<RectTransform>().anchoredPosition = new Vector2(img.GetComponent<RectTransform>().anchoredPosition.x, value); }
     }
 
     // The x position of the sprite, relative to the bottom left corner of the screen.
     public float absx {
-        get {
-            return img.GetComponent<RectTransform>().position.x; }
+        get { return img.GetComponent<RectTransform>().position.x; }
         set { img.GetComponent<RectTransform>().position = new Vector2(value, img.GetComponent<RectTransform>().position.y); }
     }
 
     // The y position of the sprite, relative to the bottom left corner of the screen.
     public float absy {
-        get {
-            return img.GetComponent<RectTransform>().position.y;
-        }
+        get { return img.GetComponent<RectTransform>().position.y; }
         set { img.GetComponent<RectTransform>().position = new Vector2(img.GetComponent<RectTransform>().position.x, value); }
     }
 
     // The x scale of the sprite. This variable is used for the same purpose as img, to be able to do other things when setting the variable
     public float xscale {
-        get {
-            return xScale;
-        }
+        get { return xScale; }
         set {
             xScale = value;
             Scale(xScale, yScale);
@@ -73,9 +64,7 @@ public class LuaSpriteController {
 
     // The y scale of the sprite. 
     public float yscale {
-        get {
-            return yScale;
-        }
+        get { return yScale; }
         set {
             yScale = value;
             Scale(xScale, yScale);
@@ -84,9 +73,7 @@ public class LuaSpriteController {
 
     // Is the sprite active? True if the image of the sprite isn't null, false otherwise
     public bool isactive { 
-        get {
-            return GlobalControls.retroMode ? _img == null : _img != null;
-        } 
+        get { return GlobalControls.retroMode ? _img == null : _img != null; } 
     }
 
     // The original width of the sprite
@@ -121,9 +108,7 @@ public class LuaSpriteController {
 
     // The loop mode of the animation
     public string loopmode {
-        get {
-            return loop.ToString();
-        }
+        get { return loop.ToString(); }
         set {
             try {
                 loop = (KeyframeCollection.LoopMode)Enum.Parse(typeof(KeyframeCollection.LoopMode), value.ToUpper(), true);
@@ -238,9 +223,7 @@ public class LuaSpriteController {
 
     // The rotation of the sprite
     public float rotation {
-        get {
-            return internalRotation.z;
-        }
+        get { return internalRotation.z; }
         set {
             // We mod the value from 0 to 360 because angles are between 0 and 360 normally
             internalRotation.z = Math.mod(value, 360);
@@ -280,25 +263,27 @@ public class LuaSpriteController {
     public LuaSpriteController(Image i, string name = "empty") {
         img = i.gameObject;
         originalSprite = i.sprite;
+        if (name != "empty")       spritename = name.ToLower();
+        else if (i.sprite != null) spritename = i.sprite.name.ToLower();
         nativeSizeDelta = new Vector2(100, 100);
         if (i.gameObject.GetComponent<Projectile>())                   tag = "projectile";
         else if (i.gameObject.GetComponent<LuaEnemyController>())      tag = "enemy";
         else if (i.transform.parent != null)
             if (i.transform.parent.GetComponent<LuaEnemyController>()) tag = "bubble";
         else                                                           tag = "other";
-        spritename = name.ToLower();
     }
     
     public LuaSpriteController(SpriteRenderer i, string name = "empty") {
         img = i.gameObject;
         originalSprite = i.sprite;
+        if (name != "empty")       spritename = name.ToLower();
+        else if (i.sprite != null) spritename = i.sprite.name.ToLower();
         nativeSizeDelta = new Vector2(100, 100);
         if (i.gameObject.GetComponent<Projectile>())                   tag = "projectile";
         else if (i.gameObject.GetComponent<LuaEnemyController>())      tag = "enemy";
         else if (i.transform.parent != null)
             if (i.transform.parent.GetComponent<LuaEnemyController>()) tag = "bubble";
         else                                                           tag = "other";
-        spritename = name.ToLower();
     }
 
     // Changes the sprite of this instance
@@ -327,11 +312,8 @@ public class LuaSpriteController {
     public void SetParent(LuaSpriteController parent) {
         if (tag == "enemy" || tag == "bubble")
             return;
-        try {
-            img.transform.SetParent(parent.img.transform);
-        } catch {
-            throw new CYFException("You tried to set a removed sprite/unexisting sprite as this sprite's parent.");
-        }
+        try { img.transform.SetParent(parent.img.transform); } 
+        catch { throw new CYFException("You tried to set a removed sprite/unexisting sprite as this sprite's parent."); }
     }
     
     // Sets the pivot of a sprite (its rotation point)
@@ -356,15 +338,6 @@ public class LuaSpriteController {
         img.GetComponent<RectTransform>().sizeDelta = new Vector2(nativeSizeDelta.x * Mathf.Abs(xScale), nativeSizeDelta.y * Mathf.Abs(yScale));
         internalRotation = new Vector3(ys < 0 ? 180 : 0, xs < 0 ? 180 : 0, internalRotation.z);
         img.GetComponent<RectTransform>().eulerAngles = internalRotation;
-        /*Transform buffer = img.GetComponent<RectTransform>().parent; int bufferIndex = img.GetComponent<RectTransform>().GetSiblingIndex();
-        img.GetComponent<RectTransform>().SetParent(null);
-        Vector2 oldScale = new Vector3(img.GetComponent<RectTransform>().lossyScale.x, img.GetComponent<RectTransform>().lossyScale.y, 1);
-        img.transform.localScale = new Vector3(xs, ys, 1);
-        foreach (RectTransform rt in img.GetComponentsInChildren<RectTransform>())
-            if (rt.gameObject.name != img.name)
-                rt.localScale = new Vector3(rt.localScale.x / (img.GetComponent<RectTransform>().lossyScale.x / oldScale.x), rt.localScale.y / (img.GetComponent<RectTransform>().lossyScale.y / oldScale.y), 1);
-        img.GetComponent<RectTransform>().SetParent(buffer);
-        img.GetComponent<RectTransform>().SetSiblingIndex(bufferIndex);*/
     }
 
     // Sets an animation for this instance
@@ -388,7 +361,6 @@ public class LuaSpriteController {
     public void StopAnimation() {
         if (keyframes != null) {
             keyframes.enabled = false;
-
             if (img.GetComponent<Image>()) {
                 Image imgtemp = img.GetComponent<Image>();
                 imgtemp.sprite = originalSprite;

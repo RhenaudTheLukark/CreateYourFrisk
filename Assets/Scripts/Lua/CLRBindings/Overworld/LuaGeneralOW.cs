@@ -6,15 +6,16 @@ using MoonSharp.Interpreter;
 
 public class LuaGeneralOW {
     private TextManager textmgr;
-    
+    public ScriptWrapper appliedScript;
+
     public delegate void LoadedAction(string name, object args);
     [MoonSharpHidden]
     public static event LoadedAction StCoroutine;
 
     [MoonSharpHidden]
-    public LuaGeneralOW(TextManager textmgr) {
-        this.textmgr = textmgr;
-    }
+    public LuaGeneralOW(TextManager textmgr) { this.textmgr = textmgr; }
+
+    [CYFEventFunction] public void HiddenReloadAppliedScript() { EventManager.instance.CheckCurrentEvent(); }
 
     /// <summary>
     /// Displays a text.
@@ -23,7 +24,7 @@ public class LuaGeneralOW {
     /// <param name="formatted"></param>
     /// <param name="mugshots"></param>
     [CYFEventFunction]
-    public void SetDialog(DynValue texts, bool formatted, DynValue mugshots = null) {
+    public void SetDialog(DynValue texts, bool formatted = true, DynValue mugshots = null) {
         TextMessage[] textmsgs = new TextMessage[texts.Table.Length];
         for (int i = 0; i < texts.GetLength().Number; i++)
             textmsgs[i] = new TextMessage(texts.Table.Get(i + 1).String, formatted, false, mugshots.ToString() != "void" ? mugshots.Table.Get(i + 1).String : null);
@@ -46,15 +47,14 @@ public class LuaGeneralOW {
         //Do not put more than 3 lines and 2 choices
         //If the 3rd parameter is a string, it has to be a question
         if (question != null) {
-            textMsgChoice.addToText(question);
+            textMsgChoice.addToText(question + "\n");
 
-            int lengthAfter = question.Split('\n').Length;
-            if (question.Split('\n').Length > lengthAfter) lengthAfter = question.Split('\n').Length;
+            //int lengthAfter = question.Split('\n').Length;
+            //if (question.Split('\n').Length > lengthAfter) lengthAfter = question.Split('\n').Length;
 
-            if (lengthAfter > 2) textMsgChoice.addToText(finalText[0] + "\n");
-            else textMsgChoice.addToText(finalText[0] + "\n\n");
+            /*if (lengthAfter > 2)*/ //textMsgChoice.addToText("\n");
+            //else                 textMsgChoice.addToText("\n\n");
         }
-
         for (int i = 0; i < choices.Table.Length; i++) {
             //If there's no text, just don't print it
             if (i == 2 && question != null)
@@ -82,6 +82,8 @@ public class LuaGeneralOW {
         }
 
         //Add the text to the text to print then the SetChoice function with its parameters
+        if (!threeLines && question != null)
+            textMsgChoice.addToText("\n");
         textMsgChoice.addToText(finalText[0] + "\n" + finalText[1] + "\n" + finalText[2]);
         textmgr.setText(textMsgChoice);
         textmgr.transform.parent.parent.SetAsLastSibling();
@@ -130,7 +132,7 @@ public class LuaGeneralOW {
         UnitaleUtil.writeInLogAndDebugger(GameObject.FindObjectOfType<GameOverBehavior>().name);
 
         GameObject.FindObjectOfType<GameOverBehavior>().StartDeath(deathTable2, deathMusic);
-        EventManager.instance.script.Call("CYFEventNextCommand");
+        appliedScript.Call("CYFEventNextCommand");
     }
 
     /// <summary>
@@ -150,7 +152,7 @@ public class LuaGeneralOW {
             audio.volume = volume;
             audio.Play();
         }
-        EventManager.instance.script.Call("CYFEventNextCommand");
+        appliedScript.Call("CYFEventNextCommand");
     }
 
     /// <summary>
@@ -167,7 +169,7 @@ public class LuaGeneralOW {
             throw new CYFException("General.StopBGM: The fade time has to be positive or equal to 0.");
         else
             StCoroutine("fadeBGM", fadeTime);
-        EventManager.instance.script.Call("CYFEventNextCommand");
+        appliedScript.Call("CYFEventNextCommand");
     }
 
     /// <summary>
@@ -184,7 +186,7 @@ public class LuaGeneralOW {
         else
             UnitaleUtil.PlaySound("OverworldSound", AudioClipRegistry.GetSound(sound), volume);
         //GameObject.Find("Player").GetComponent<AudioSource>().PlayOneShot(AudioClipRegistry.GetSound(sound), volume);
-        EventManager.instance.script.Call("CYFEventNextCommand");
+        appliedScript.Call("CYFEventNextCommand");
     }
 
     /// <summary>
@@ -197,7 +199,7 @@ public class LuaGeneralOW {
     //NOT WORKING
     public void TitleScreen() {
         SceneManager.LoadScene(SceneManager.GetSceneByName("TransitionTitleScreen").buildIndex);
-        EventManager.instance.script.Call("CYFEventNextCommand");
+        appliedScript.Call("CYFEventNextCommand");
     }
 
     /// <summary>

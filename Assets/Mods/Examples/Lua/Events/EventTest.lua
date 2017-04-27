@@ -79,8 +79,8 @@ end
 
 --This event page is a big mash-up test page.
 function EventPage4()
-	Screen.Rumble(3, 3, true);
-	Screen.Flash(60, false, 255, 0, 0, 255);
+	Screen.Rumble(3, 3, true)
+	Screen.Flash(60, false, 255, 0, 0, 255)
 	--These following lines were used for Quaternion tests.
 	--You can activate them if you want to ^^
 	--[[SetTone(true, true, 0, 0, 0, 128)

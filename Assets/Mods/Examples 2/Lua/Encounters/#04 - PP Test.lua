@@ -3,7 +3,7 @@
 -- music = "shine_on_you_crazy_diamond" --Always OGG. Extension is added automatically. Remove the first two lines for custom music.
 encountertext = "It's an animation!" --Modify as necessary. It will only be read out in the action select screen.
 nextwaves = {"bullettest_chaserorb"}
-wavetimer = 9999
+wavetimer = math.huge
 arenasize = {155, 130}
 
 enemies = {
@@ -15,7 +15,7 @@ enemypositions = {
 }
 
 -- A custom list with attacks to choose from. Actual selection happens in EnemyDialogueEnding(). Put here in case you want to use it.
-possible_attacks = {"bullettest_collision"}
+possible_attacks = {"bullettest_playerdelay"--[["bullettest_collision"]]}
 
 function EncounterStarting()
 	Inventory.AddCustomItems({"TEST", "TEST2", "Nazi Armor", "Bandage", "PsnPotion", "Life Roll", "Nothing"}, {0, 0, 2, 0, 0, 0, 3})

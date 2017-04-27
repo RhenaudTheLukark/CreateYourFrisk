@@ -37,6 +37,8 @@ public class TextMessage
 
     private string formatText(string text) {
         string newText = "* ", textNew = "";
+        if (text == null)
+            return text;
         string[] lines = text.Split('\n');
         string[] linesCommands = new string[lines.Length];
         int index = 0;
@@ -92,9 +94,11 @@ public class TextMessage
     }
 
     public static string unescape(string str) {
-        str = str.Replace("\\n", "\n");
-        str = str.Replace("\\r", "\r");
-        str = str.Replace("\\t", "\t");
-        return str;
+        try {
+            str = str.Replace("\\n", "\n");
+            str = str.Replace("\\r", "\r");
+            str = str.Replace("\\t", "\t");
+            return str;
+        } catch { return str;  }
     }
 }

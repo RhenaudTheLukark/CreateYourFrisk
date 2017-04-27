@@ -66,10 +66,9 @@ using System.ComponentModel;
     }
 
     public int GetNext() {
-        for (int i = 0; i < 20; i++)
-            if (EXP < LevelUpTable[i]) {
-                return LevelUpTable[i] - EXP;
-            }
+        for (int i = 1; i < 20; i++)
+            if (EXP < LevelUpTable[i - 1])
+                return LevelUpTable[i - 1] - EXP;
         return 0;
     }
 
@@ -82,8 +81,8 @@ using System.ComponentModel;
     public void SetGold(int value) { Gold = value > ControlPanel.instance.GoldLimit ? ControlPanel.instance.GoldLimit : value; }
 
     public bool AddBattleResults(int exp, int gold) {
-        SetEXP(exp);
-        SetGold(gold);
+        SetEXP(exp + EXP);
+        SetGold(gold + Gold);
         return CheckLevel();
     }
 
@@ -96,10 +95,10 @@ using System.ComponentModel;
                     //UnitaleUtil.writeInLog(i);
                     float currentHP = HP;
                     if (i + 1 < 20) {
-                        MaxHP = 16 + 4 * (i + 1);
+                        BasisMaxHP = 16 + 4 * (i + 1);
                         //HP = currentHP + 4 * (i + 1 - LV);
                     } else {
-                        MaxHP = 16 + 4 * (i + 1) + 3;
+                        BasisMaxHP = 16 + 4 * (i + 1) + 3;
                         //HP = currentHP + 4 * (i + 1 - LV) + 3;
                     }
                     if (LV > i + 1)
@@ -109,6 +108,7 @@ using System.ComponentModel;
                             HP = currentHP;
                     ATK = 8 + 2 * (i + 1);
                     LV = (i + 1);
+                    MaxHP = BasisMaxHP + MaxHPShift;
                     return true;
                 }
                 return false;
@@ -124,7 +124,7 @@ using System.ComponentModel;
         ATK = 8 + 2 * level;
         DEF = 10 + (int)Mathf.Floor((level - 1) / 4);
         LV = level;
-        EXP = level <= 20 ? LevelUpTable[level - 1] : 99999;
+        EXP = level <= 1 ? 0 : level <= 20 ? LevelUpTable[level - 2] : 99999;
 
         if (LV >= 20)
             BasisMaxHP += 3;
@@ -133,7 +133,7 @@ using System.ComponentModel;
             MaxHPShift = ControlPanel.instance.HPLimit - BasisMaxHP;
             MaxHP = BasisMaxHP + MaxHPShift;
         }
-        if (HP > Mathf.FloorToInt(MaxHP * 1.5f))
-            HP = Mathf.FloorToInt(MaxHP * 1.5f);
+        if (HP > MaxHP)
+            HP = MaxHP;
     }
 }

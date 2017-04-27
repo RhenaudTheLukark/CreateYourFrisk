@@ -16,4 +16,10 @@ public class LuaInputBinding {
     public int GetKey(string Key) { return (int)this.input.Key(Key); }
     public int MousePosX { get { return (int)Input.mousePosition.x; } }
     public int MousePosY { get { return (int)Input.mousePosition.y; } }
+    public bool isMouseInWindow {
+        get {
+            Rect screenRect = new Rect(0, 0, Screen.width, Screen.height);
+            return screenRect.Contains(Input.mousePosition);
+        }
+    }
 }

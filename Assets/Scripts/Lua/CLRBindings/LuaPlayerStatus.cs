@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+﻿using UnityEngine.UI;
 /// <summary>
 /// Lua binding to set and retrieve information for the on-screen player.
 /// </summary>
@@ -19,7 +19,7 @@ public class LuaPlayerStatus {
     /// <param name="p">PlayerController this controller is intended for</param>
     public LuaPlayerStatus(PlayerController p) {
         player = p;
-        spr = new LuaSpriteController(p.GetComponent<UnityEngine.UI.Image>(), p.GetComponent<AutoloadResourcesFromRegistry>().SpritePath.ToLower());
+        spr = new LuaSpriteController(p.GetComponent<Image>(), p.GetComponent<AutoloadResourcesFromRegistry>().SpritePath.ToLower());
     }
 
     /// <summary>
@@ -64,7 +64,14 @@ public class LuaPlayerStatus {
         get { return player.HP; }
         set { player.setHP(value); }
     }
-    
+
+    /// <summary>
+    /// Player's Max Hp shift.
+    /// </summary>
+    public int maxhp {
+        get { return PlayerCharacter.instance.MaxHP; }
+    }
+
     /// <summary>
     /// Get player's current ATK.
     /// </summary>

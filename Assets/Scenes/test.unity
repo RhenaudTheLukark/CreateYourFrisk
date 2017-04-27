@@ -140,7 +140,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22437642, guid: a0add8308da8d24468328221253c3ec7, type: 2}
       propertyPath: m_AnchoredPosition.y
-      value: 1000
+      value: 920
       objectReference: {fileID: 0}
     - target: {fileID: 22437642, guid: a0add8308da8d24468328221253c3ec7, type: 2}
       propertyPath: m_SizeDelta.x

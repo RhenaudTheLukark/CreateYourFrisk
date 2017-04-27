@@ -6,15 +6,15 @@ using System.Linq;
 using MoonSharp.Interpreter;
 
 public class TransitionOverworld : MonoBehaviour {
+    private TransitionOverworld instance;
     public string FirstLevelToLoad;
     public Vector2 BeginningPosition;
     private string call;
     private object[] neededArgs;
 
-    private void OnEnable()  { StaticInits.Loaded += LaunchFade; }
-    private void OnDisable() { StaticInits.Loaded -= LaunchFade; }
-
     private void Start() {
+        if (instance)
+            return;
         bool isStart = false;
 
         GameOverBehavior.gameOverContainer = GameObject.Find("GameOverContainer");
@@ -48,10 +48,8 @@ public class TransitionOverworld : MonoBehaviour {
         //Check if there is two Main Camera OW objects
         GameObject temp = GameObject.Find("Main Camera OW");
         temp.SetActive(false);
-        if (GameObject.Find("Main Camera OW")) { 
+        if (GameObject.Find("Main Camera OW"))
             GameObject.Destroy(GameObject.Find("Main Camera OW"));
-            temp.GetComponent<EventManager>().readyToReLaunch = true;
-        }        
         temp.SetActive(true);
 
         //MIONNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
@@ -93,6 +91,7 @@ public class TransitionOverworld : MonoBehaviour {
             return;
         }*/
         GameObject.Find("Don't show it again").GetComponent<Image>().color = new Color(0, 0, 0, 0);
+        instance = this;
         StartCoroutine(GetIntoDaMap("transitionoverworld", null));
     }
 
@@ -104,12 +103,13 @@ public class TransitionOverworld : MonoBehaviour {
         GameObject.Find("Main Camera OW").tag = "MainCamera";
 
         yield return 0;
-
+        
+        EventManager.instance.onceReload = false;
         bool neededReload = false;
         //Permits to reload the current data if needed
         MapInfos mi = GameObject.Find("Background").GetComponent<MapInfos>();
+        StaticInits si = GameObject.Find("Main Camera OW").GetComponent<StaticInits>();
         if (StaticInits.MODFOLDER != mi.modToLoad) {
-            StaticInits si = GameObject.Find("Main Camera OW").GetComponent<StaticInits>();
             StaticInits.MODFOLDER = mi.modToLoad;
             StaticInits.Initialized = false;
             si.initAll();
@@ -120,8 +120,15 @@ public class TransitionOverworld : MonoBehaviour {
         }
 
         AudioSource audio;
-        if (mi.isMusicKeptBetweenBattles) audio = PlayerOverworld.audioKept;
-        else audio = Camera.main.GetComponent<AudioSource>();
+        if (mi.isMusicKeptBetweenBattles) {
+            audio = PlayerOverworld.audioKept;
+            MusicManager.src.Stop();
+            MusicManager.src.clip = null;
+        } else {
+            audio = MusicManager.src;
+            PlayerOverworld.audioKept.Stop();
+            PlayerOverworld.audioKept.clip = null;
+        }
 
         //Starts the music if there's no music
         if (audio.clip == null) {
@@ -142,37 +149,17 @@ public class TransitionOverworld : MonoBehaviour {
                     audio.Stop();
             }
         }
-        if (audio == PlayerOverworld.audioKept) {
-            MusicManager.src.Stop();
-            MusicManager.src.clip = null;
-        } else {
-            PlayerOverworld.audioKept.Stop();
-            PlayerOverworld.audioKept.clip = null;
-        }
 
-        EventManager.instance.ResetEvents();
-
-        GameObject.Find("utHeart").GetComponent<Image>().color = new Color(GameObject.Find("utHeart").GetComponent<Image>().color.r, 
-                                                                           GameObject.Find("utHeart").GetComponent<Image>().color.g,
+        GameObject.Find("utHeart").GetComponent<Image>().color = new Color(GameObject.Find("utHeart").GetComponent<Image>().color.r, GameObject.Find("utHeart").GetComponent<Image>().color.g,
                                                                            GameObject.Find("utHeart").GetComponent<Image>().color.b, 0);
         if (call == "tphandler") {
             Transform playerPos = GameObject.Find("Player").GetComponent<Transform>();
             playerPos.position = (Vector2)neededArgs[0];
         }
+        PlayerOverworld.instance.forcedMove = 0;
         //GlobalControls.fadeAuto = false;
         //GameObject.Destroy(gameObject);
-        if (!neededReload)
-            LaunchFade();
-    }
-
-    private void LaunchFade() { StartCoroutine(LaunchFade2()); }
-
-    private IEnumerator LaunchFade2() {
-        float fadeTime2 = GameObject.Find("FadingBlack").GetComponent<Fading>().BeginFade(-1);
-
-        yield return new WaitForSeconds(fadeTime2);
-
-        //yield return new WaitForSeconds(GameObject.Find("FadingBlack").GetComponent<Fading>().fadeSpeed);
+        //if (!neededReload)
         if (call == "tphandler") {
             ((TPHandler)neededArgs[1]).activated = false;
             GameObject.Destroy(((TPHandler)neededArgs[1]).gameObject);
@@ -180,5 +167,6 @@ public class TransitionOverworld : MonoBehaviour {
 
         if (GameObject.Find("Don't show it again"))
             GameObject.Destroy(GameObject.Find("Don't show it again"));
+        si.SendLoaded();
     }
 }

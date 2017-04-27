@@ -91,7 +91,12 @@ public static class SpriteFontRegistry {
         xml.Load(xmlPath);
         Dictionary<char, Sprite> fontMap = loadBuiltinFont(xml["font"]["spritesheet"], fontPath);
 
-        UnderFont underfont = new UnderFont(fontMap);
+        UnderFont underfont = null;
+        try { underfont = new UnderFont(fontMap); }
+        catch {
+            UnitaleUtil.displayLuaError("Instanciating a font", "The fonts need a space character to compute their line height, and '" + "' doesn't have one.");
+            return null;
+        }
 
         if (xml["font"]["voice"] != null)        underfont.Sound = AudioClipRegistry.GetVoice(xml["font"]["voice"].InnerText);
         if (xml["font"]["linespacing"] != null)  underfont.LineSpacing = ParseUtil.getFloat(xml["font"]["linespacing"].InnerText);

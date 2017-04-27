@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using MoonSharp.Interpreter;
 
 public class LuaScreenOW {
+    public ScriptWrapper appliedScript;
 
     [MoonSharpHidden]
     public LuaScreenOW() { }
@@ -58,7 +59,7 @@ public class LuaScreenOW {
         if (newImage)
             EventManager.instance.events.Add(image);
 
-        EventManager.instance.script.Call("CYFEventNextCommand");
+        appliedScript.Call("CYFEventNextCommand");
     }
 
     /// <summary>
@@ -71,7 +72,7 @@ public class LuaScreenOW {
             EventManager.instance.luaevow.Remove("Image" + id);
         else
             Debug.LogError("The given image doesn't exist.");
-        EventManager.instance.script.Call("CYFEventNextCommand");
+        appliedScript.Call("CYFEventNextCommand");
     }
 
     /// <summary>
@@ -98,7 +99,7 @@ public class LuaScreenOW {
                     EventManager.instance.events.Add(tone);
                 } else
                     GameObject.Find("Tone").GetComponent<Image>().color = new Color32((byte)r, (byte)g, (byte)b, (byte)a);
-                EventManager.instance.script.Call("CYFEventNextCommand");
+                appliedScript.Call("CYFEventNextCommand");
             } else 
                 StCoroutine("ISetTone", new object[] { waitEnd, r, g, b, a });
         }

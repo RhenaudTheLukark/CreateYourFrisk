@@ -9,7 +9,7 @@ public class EventOW : MonoBehaviour {
 
     public void OnTriggerEnter2D(Collider2D col) {
         if (!PlayerOverworld.inText)
-            if (col == GameObject.Find("Player").GetComponent<BoxCollider2D>())
+            if (EventManager.instance.getTrigger(gameObject, actualPage) == 1 && col == GameObject.Find("Player").GetComponent<BoxCollider2D>())
                 EventManager.instance.executeEvent(gameObject);
     }
 }

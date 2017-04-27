@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 // Download latest version at http://www.console-dev.de
 #ifndef GRABPASSDISTORTION_GCINC
 #define GRABPASSDISTORTION_GCINC
@@ -54,7 +56,7 @@ inline float2 PingPong(float2 t, float2 length)
 v2f vert (appdata_t v)
 {
 	v2f o = (v2f)0;
-	o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+	o.vertex = UnityObjectToClipPos(v.vertex);
 	o.color  = v.color;
 
 	// texcoord.xy stores the distortion texture coordinates.

@@ -5,41 +5,42 @@ using MoonSharp.Interpreter;
 
 public class LuaPlayerOW {
     private PlayerCharacter player = PlayerCharacter.instance;
-    
+    public ScriptWrapper appliedScript;
+
     public delegate void LoadedAction(string name, object args);
     [MoonSharpHidden]
     public static event LoadedAction StCoroutine;
 
     [MoonSharpHidden] public LuaPlayerOW() { }
 
-    [CYFEventFunction] public int GetLevel() { try { return player.LV; } finally { EventManager.instance.script.Call("CYFEventNextCommand"); } }
-    [CYFEventFunction] public void SetLevel(int value) { player.SetLevel(value); EventManager.instance.script.Call("CYFEventNextCommand"); }
+    [CYFEventFunction] public int GetLevel() { try { return player.LV; } finally { appliedScript.Call("CYFEventNextCommand"); } }
+    [CYFEventFunction] public void SetLevel(int value) { player.SetLevel(value); appliedScript.Call("CYFEventNextCommand"); }
 
-    [CYFEventFunction] public float GetHP() { try { return player.HP; } finally { EventManager.instance.script.Call("CYFEventNextCommand"); } }
-    [CYFEventFunction] public void SetHP(float value) { setHP(value); EventManager.instance.script.Call("CYFEventNextCommand"); }
+    [CYFEventFunction] public float GetHP() { try { return player.HP; } finally { appliedScript.Call("CYFEventNextCommand"); } }
+    [CYFEventFunction] public void SetHP(float value) { setHP(value); appliedScript.Call("CYFEventNextCommand"); }
 
-    [CYFEventFunction] public int GetMaxHP() { try { return player.MaxHP; } finally { EventManager.instance.script.Call("CYFEventNextCommand"); } }
-    [CYFEventFunction] public void SetMaxHP(int value) { setMaxHP(value - player.BasisMaxHP); EventManager.instance.script.Call("CYFEventNextCommand"); }
+    [CYFEventFunction] public int GetMaxHP() { try { return player.MaxHP; } finally { appliedScript.Call("CYFEventNextCommand"); } }
+    [CYFEventFunction] public void SetMaxHP(int value) { setMaxHP(value - player.BasisMaxHP); appliedScript.Call("CYFEventNextCommand"); }
 
-    [CYFEventFunction] public string GetName() { try { return player.Name; } finally { EventManager.instance.script.Call("CYFEventNextCommand"); } }
-    [CYFEventFunction] public void SetName(string value) { player.Name = value; EventManager.instance.script.Call("CYFEventNextCommand"); }
+    [CYFEventFunction] public string GetName() { try { return player.Name; } finally { appliedScript.Call("CYFEventNextCommand"); } }
+    [CYFEventFunction] public void SetName(string value) { player.Name = value; appliedScript.Call("CYFEventNextCommand"); }
 
-    [CYFEventFunction] public int GetWeaponATK() { try { return player.WeaponATK; } finally { EventManager.instance.script.Call("CYFEventNextCommand"); } }
-    [CYFEventFunction] public int GetArmorDEF() { try { return player.ArmorDEF; } finally { EventManager.instance.script.Call("CYFEventNextCommand"); } }
-    [CYFEventFunction] public int GetATK() { try { return player.ATK; } finally { EventManager.instance.script.Call("CYFEventNextCommand"); } }
-    [CYFEventFunction] public int GetDEF() { try { return player.DEF; } finally { EventManager.instance.script.Call("CYFEventNextCommand"); } }
+    [CYFEventFunction] public int GetWeaponATK() { try { return player.WeaponATK; } finally { appliedScript.Call("CYFEventNextCommand"); } }
+    [CYFEventFunction] public int GetArmorDEF() { try { return player.ArmorDEF; } finally { appliedScript.Call("CYFEventNextCommand"); } }
+    [CYFEventFunction] public int GetATK() { try { return player.ATK; } finally { appliedScript.Call("CYFEventNextCommand"); } }
+    [CYFEventFunction] public int GetDEF() { try { return player.DEF; } finally { appliedScript.Call("CYFEventNextCommand"); } }
 
-    [CYFEventFunction] public int GetGold() { try { return player.Gold; } finally { EventManager.instance.script.Call("CYFEventNextCommand"); } }
-    [CYFEventFunction] public void SetGold(int value) { player.SetGold(value); EventManager.instance.script.Call("CYFEventNextCommand"); }
+    [CYFEventFunction] public int GetGold() { try { return player.Gold; } finally { appliedScript.Call("CYFEventNextCommand"); } }
+    [CYFEventFunction] public void SetGold(int value) { player.SetGold(value); appliedScript.Call("CYFEventNextCommand"); }
 
-    [CYFEventFunction] public string GetWeapon() { try { return player.Weapon; } finally { EventManager.instance.script.Call("CYFEventNextCommand"); } }
+    [CYFEventFunction] public string GetWeapon() { try { return player.Weapon; } finally { appliedScript.Call("CYFEventNextCommand"); } }
     [CYFEventFunction] public void SetWeapon(string value) { EventManager.instance.luainvow.setEquip(value);}
 
-    [CYFEventFunction] public string GetArmor() { try { return player.Armor; } finally { EventManager.instance.script.Call("CYFEventNextCommand"); } }
+    [CYFEventFunction] public string GetArmor() { try { return player.Armor; } finally { appliedScript.Call("CYFEventNextCommand"); } }
     [CYFEventFunction] public void SetArmor(string value) { EventManager.instance.luainvow.setEquip(value); }
 
-    [CYFEventFunction] public int GetEXP() { try { return player.EXP; } finally { EventManager.instance.script.Call("CYFEventNextCommand"); } }
-    [CYFEventFunction] public void SetEXP(int value) { player.SetEXP(value, true); EventManager.instance.script.Call("CYFEventNextCommand"); }
+    [CYFEventFunction] public int GetEXP() { try { return player.EXP; } finally { appliedScript.Call("CYFEventNextCommand"); } }
+    [CYFEventFunction] public void SetEXP(int value) { player.SetEXP(value, true); appliedScript.Call("CYFEventNextCommand"); }
 
     /*public int Level {
         get { return player.LV; }
@@ -81,7 +82,7 @@ public class LuaPlayerOW {
         set { player.SetEXP(value, true); }
     }*/
 
-    [CYFEventFunction] public void ForceHP(float newhp) { setHP(newhp, true); EventManager.instance.script.Call("CYFEventNextCommand"); }
+    [CYFEventFunction] public void ForceHP(float newhp) { setHP(newhp, true); appliedScript.Call("CYFEventNextCommand"); }
 
     /// <summary>
     /// Hurts the player with the given amount of damage. Heal()'s opposite.
@@ -95,7 +96,7 @@ public class LuaPlayerOW {
         if (-damage + player.HP > player.MaxHP) player.HP = player.MaxHP;
         else if (-damage + player.HP <= 0) player.HP = 1;
         else player.HP -= damage;
-        EventManager.instance.script.Call("CYFEventNextCommand");
+        appliedScript.Call("CYFEventNextCommand");
     }
 
     /// <summary>
@@ -103,7 +104,7 @@ public class LuaPlayerOW {
     /// </summary>
     /// <param name="heal">This one seems obvious too</param>
     [CYFEventFunction]
-    public void Heal(int heal) { Hurt(-heal); EventManager.instance.script.Call("CYFEventNextCommand"); }
+    public void Heal(int heal) { Hurt(-heal); appliedScript.Call("CYFEventNextCommand"); }
 
     [MoonSharpHidden]
     public void setHP(float newhp, bool forced = false) {
