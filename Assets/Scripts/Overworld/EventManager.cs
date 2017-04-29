@@ -96,6 +96,7 @@ public class EventManager : MonoBehaviour {
             if (!onceReload) {
                 onceReload = true;
                 ResetEvents();
+                testEventDestruction();
             }
             PlayerOverworld.instance.utHeart = GameObject.Find("utHeart").GetComponent<Image>();
             for (int i = 0; i < events.Count; i++) 
@@ -310,26 +311,32 @@ public class EventManager : MonoBehaviour {
     }
 
     public void testEventDestruction() {
-        foreach (GameObject go in events)
+        for (int i = 0; i < events.Count; i++) {
+            GameObject go = events[i];
             if (!go)                                              events.Remove(go);
             else if (!go.GetComponent<EventOW>())                 events.Remove(go);
             else if (go.GetComponent<EventOW>().actualPage == -1) luaevow.Remove(go.name);
+            else                                                  i ++;
+            i --;
+        }
     }
 
     private void runCoroutines() {
         GameObject gameobject = null;
         try {
-            foreach (ScriptWrapper scr in coroutines.Keys) {
-                if (scr == script)
-                    continue;
-                GameObject go = eventScripts.FirstOrDefault(x => x.Value == scr).Key;
-                gameobject = go;
-                executeEvent(go, coroutines[scr], true);
-            }
-            foreach (GameObject go in events) {
-                if (getTrigger(go, go.GetComponent<EventOW>().actualPage) == 3 && !coroutines.ContainsKey(eventScripts[go]) && eventScripts[go] != script) {
+            try {
+                foreach (ScriptWrapper scr in coroutines.Keys) {
+                    if (scr == script)
+                        continue;
+                    GameObject go = eventScripts.FirstOrDefault(x => x.Value == scr).Key;
                     gameobject = go;
-                    executeEvent(go, -1, true);
+                    executeEvent(go, coroutines[scr], true);
+                }
+            } catch (Exception e) { Debug.LogError(e.Message); }
+            for (int i = 0; i < events.Count; i ++) {
+                if (getTrigger(events[i], events[i].GetComponent<EventOW>().actualPage) == 3 && !coroutines.ContainsKey(eventScripts[events[i]]) && eventScripts[events[i]] != script) {
+                    gameobject = events[i];
+                    executeEvent(events[i], -1, true);
                 }
             }
         } catch (InterpreterException e) { UnitaleUtil.displayLuaError(gameobject.name + ", page n°" + gameobject.GetComponent<EventOW>().actualPage, e.DecoratedMessage); } catch (Exception e) {
@@ -350,6 +357,8 @@ public class EventManager : MonoBehaviour {
     /// </summary>
     public void ResetEvents() {
         //GameObject[] eventsTemp = GameObject.FindGameObjectsWithTag("Event");
+        coroutines.Clear();
+        Page0Done.Clear();
         events.Clear();
         autoDone.Clear();
         sprCtrls.Clear();
@@ -384,7 +393,8 @@ public class EventManager : MonoBehaviour {
                 break;
             }
         if (actualEventIndex == -1) {
-            UnitaleUtil.displayLuaError("Overworld engine", "Whoops! There is an error with event indexing.");
+            if (!isCoroutine)
+                UnitaleUtil.displayLuaError("Overworld engine", "Whoops! There is an error with event indexing.");
             return false;
         }
             

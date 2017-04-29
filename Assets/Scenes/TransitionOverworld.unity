@@ -2496,6 +2496,54 @@ MonoBehaviour:
   - name: StopUp
     anims: FriskUT/13, FriskUT/15
     transitionTime: 1
+  - name: CharaMovingDown
+    anims: CharaOW/0, CharaOW/1, CharaOW/2, CharaOW/3
+    transitionTime: 0.25
+  - name: CharaMovingLeft
+    anims: CharaOW/4, CharaOW/5, CharaOW/6, CharaOW/7
+    transitionTime: 0.25
+  - name: CharaMovingRight
+    anims: CharaOW/8, CharaOW/9, CharaOW/10, CharaOW/11
+    transitionTime: 0.25
+  - name: CharaMovingUp
+    anims: CharaOW/12, CharaOW/13, CharaOW/14, CharaOW/15
+    transitionTime: 0.25
+  - name: CharaStopDown
+    anims: CharaOW/1, CharaOW/3
+    transitionTime: 1
+  - name: CharaStopLeft
+    anims: CharaOW/5, CharaOW/7
+    transitionTime: 1
+  - name: CharaStopRight
+    anims: CharaOW/9, CharaOW/11
+    transitionTime: 1
+  - name: CharaStopUp
+    anims: CharaOW/13, CharaOW/15
+    transitionTime: 1
+  - name: MKMovingDown
+    anims: MonsterKidOW/0, MonsterKidOW/1, MonsterKidOW/2, MonsterKidOW/3
+    transitionTime: 0.25
+  - name: MKMovingLeft
+    anims: MonsterKidOW/4, MonsterKidOW/5, MonsterKidOW/6, MonsterKidOW/7
+    transitionTime: 0.25
+  - name: MKMovingRight
+    anims: MonsterKidOW/8, MonsterKidOW/9, MonsterKidOW/10, MonsterKidOW/11
+    transitionTime: 0.25
+  - name: MKMovingUp
+    anims: MonsterKidOW/12, MonsterKidOW/13, MonsterKidOW/14, MonsterKidOW/15
+    transitionTime: 0.25
+  - name: MKStopDown
+    anims: MonsterKidOW/1, MonsterKidOW/3
+    transitionTime: 1
+  - name: MKStopLeft
+    anims: MonsterKidOW/5, MonsterKidOW/7
+    transitionTime: 1
+  - name: MKStopRight
+    anims: MonsterKidOW/9, MonsterKidOW/11
+    transitionTime: 1
+  - name: MKStopUp
+    anims: MonsterKidOW/13, MonsterKidOW/15
+    transitionTime: 1
 --- !u!1 &629619426
 GameObject:
   m_ObjectHideFlags: 0

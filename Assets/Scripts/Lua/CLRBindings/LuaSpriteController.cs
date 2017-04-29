@@ -391,6 +391,22 @@ public class LuaSpriteController {
         img.GetComponent<RectTransform>().SetAsFirstSibling();
     }
 
+    public void MoveBelow(LuaSpriteController sprite) {
+        if (tag == "enemy" || tag == "bubble")
+            return;
+        if (sprite == null) throw new CYFException("The sprite passed as an argument is null.");
+        else if (sprite.img.transform.parent != img.transform.parent) UnitaleUtil.writeInLogAndDebugger("[WARN]You can't move relatively two sprites without the same parent.");
+        else img.transform.SetSiblingIndex(sprite.img.transform.GetSiblingIndex());
+    }
+
+    public void MoveAbove(LuaSpriteController sprite) {
+        if (tag == "enemy" || tag == "bubble")
+            return;
+        if (sprite == null) throw new CYFException("The sprite passed as an argument is null.");
+        else if (sprite.img.transform.parent != img.transform.parent) UnitaleUtil.writeInLogAndDebugger("[WARN]You can't move relatively two sprites without the same parent.");
+        else img.transform.SetSiblingIndex(sprite.img.transform.GetSiblingIndex() + 1);
+    }
+
     public void Remove() {
         if (tag == "enemy" || tag == "bubble")
             return;

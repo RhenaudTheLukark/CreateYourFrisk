@@ -6,7 +6,10 @@ public class CYFAnimator : MonoBehaviour {
     public int movementDirection = 0;
     public string beginAnim = "StopDown";
     public string specialHeader = "";
+    public static string specialPlayerHeader = "";
+    private int threeFramePass = 0;
     private LuaSpriteController sprctrl;
+    private Vector2 lastPos;
 
     [System.Serializable] //Permits to be able to change the data of anims via the Editor
     public struct Anim {
@@ -29,14 +32,20 @@ public class CYFAnimator : MonoBehaviour {
         else                                                              throw new CYFException("A CYFAnimator component must be tied to an event, however the GameObject " + gameObject.name + " doesn't seem to be one.");
         Anim anim = GetAnimPerName(beginAnim);
         sprctrl.SetAnimation(anim.anims.Replace(" ", "").Replace("{", "").Replace("}", "").Split(','), anim.transitionTime);
+        lastPos = gameObject.transform.position;
     }
 	
 	// Update is called once per frame
 	void Update () {
-        string animName = specialHeader;
-        
-        if (movementDirection != 0) animName += "Moving";
-        else                        animName += "Stop";
+        string animName = gameObject.name == "Player" ? specialPlayerHeader : specialHeader;
+
+        if ((Vector2)gameObject.transform.position != lastPos) {
+            animName += "Moving";
+            threeFramePass = 0;
+        } else if (threeFramePass < 3) {
+            animName += "Moving";
+            threeFramePass ++;
+        } else animName += "Stop";
         int currentDirection = movementDirection;
 
         switch (currentDirection) {
@@ -56,5 +65,6 @@ public class CYFAnimator : MonoBehaviour {
             sprctrl.SetAnimation(anim.anims.Replace(" ", "").Replace("{", "").Replace("}", "").Split(','), anim.transitionTime);
             beginAnim = animName;
         }
+        lastPos = gameObject.transform.position;
     }
 }

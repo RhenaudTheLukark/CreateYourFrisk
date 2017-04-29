@@ -3,6 +3,7 @@ local spriteTest
 local lastPosX; local lastPosY
 
 function EventPage0()
+    Event.SetPage(Event.GetName(), 2)
     spriteTest = Event.GetSprite(Event.GetName())
     lastPosX = spriteTest.x
     lastPosY = spriteTest.y

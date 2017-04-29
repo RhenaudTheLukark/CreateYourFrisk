@@ -14,6 +14,7 @@ using MoonSharp.Interpreter;
     public Hashtable soundDictionary;
     public ControlPanel controlpanel;
     public PlayerCharacter player;
+    public string playerHeader;
     public Dictionary<string, string> playerVariablesStr = new Dictionary<string, string>();
     public Dictionary<string, double> playerVariablesNum = new Dictionary<string, double>();
     public Dictionary<string, bool> playerVariablesBool = new Dictionary<string, bool>();
@@ -52,6 +53,7 @@ using MoonSharp.Interpreter;
         soundDictionary = MusicManager.hiddenDictionary;
         player = PlayerCharacter.instance;
         controlpanel = ControlPanel.instance;
+        playerHeader = CYFAnimator.specialPlayerHeader;
 
         Vector3 playerPos = GameObject.Find("Player").transform.position;
         playerPosX = playerPos.x;
@@ -85,8 +87,9 @@ using MoonSharp.Interpreter;
         MusicManager.hiddenDictionary = soundDictionary;
         string mapName;
         if (UnitaleUtil.MapCorrespondanceList.ContainsValue(lastScene)) mapName = UnitaleUtil.MapCorrespondanceList.FirstOrDefault(x => x.Value == lastScene).Key;
-        else mapName = lastScene;
+        else                                                            mapName = lastScene;
         GlobalControls.lastScene = mapName;
         LuaScriptBinder.Set(null, "PlayerMap", DynValue.NewString(mapName));
+        CYFAnimator.specialPlayerHeader = playerHeader;
     }
 }

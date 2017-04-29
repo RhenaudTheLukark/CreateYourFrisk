@@ -196,17 +196,16 @@ public class PlayerOverworld : MonoBehaviour {
                 (animator.beginAnim.Contains("Right") && GlobalControls.input.Right == UndertaleInput.ButtonState.RELEASED) ||
                 (animator.beginAnim.Contains("Left") && GlobalControls.input.Left == UndertaleInput.ButtonState.RELEASED) ||
                 (animator.beginAnim.Contains("Down") && GlobalControls.input.Down == UndertaleInput.ButtonState.RELEASED)) {
-                if (animator.beginAnim.Contains("Moving")) {
-                    if (horizontal < 0) currentDirection = 4;
-                    else if (horizontal > 0) currentDirection = 6;
-                    else if (vertical > 0) currentDirection = 8;
-                    else if (vertical < 0) currentDirection = 2;
-                }
+                if (horizontal < 0) currentDirection = 4;
+                else if (horizontal > 0) currentDirection = 6;
+                else if (vertical > 0) currentDirection = 8;
+                else if (vertical < 0) currentDirection = 2;
             }
         } else
             currentDirection = forcedMove;
+        
 
-        animator.movementDirection = currentDirection;
+        if (currentDirection != 0) animator.movementDirection = currentDirection;
 
         //Check is the movement is possible
         if ((Vector2)PlayerPos.position != new Vector2(0, 0))

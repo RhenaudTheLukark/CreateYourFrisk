@@ -1,5 +1,5 @@
 function EventPage0()
-    spriteTest = Event.GetSprite(Event.GetName())
+    local spriteTest = Event.GetSprite(Event.GetName())
     spriteTest.SetAnimation({"SavePoint/0", "SavePoint/1"}, 0.2)
 end
 

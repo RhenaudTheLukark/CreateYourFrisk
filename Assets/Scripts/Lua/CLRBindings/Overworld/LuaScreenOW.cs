@@ -45,9 +45,12 @@ public class LuaScreenOW {
             image.name = "Image" + id;
             image.tag = "Event";
             image.GetComponent<RectTransform>().SetParent(GameObject.Find("Canvas OW").transform);
+            EventManager.instance.sprCtrls.Add("Image" + id, new LuaSpriteController(image.GetComponent<Image>()));
         }
 
         image.GetComponent<Image>().sprite = SpriteRegistry.Get(path);
+        if (image.GetComponent<Image>().sprite == null)
+            throw new CYFException("Screen.DispImg: The sprite given doesn't exist.");
         if (toneA >= 0 && toneA <= 255 && toneR % 1 == 0)
             if (toneR < 0 || toneR > 255 || toneR % 1 != 0 || toneG < 0 || toneG > 255 || toneG % 1 != 0 || toneB < 0 || toneB > 255 || toneB % 1 != 0)
                 throw new CYFException("Screen.DispImg: You can't input a value out of [0; 255] for a color value, as it is clamped from 0 to 255.\nThe number have to be an integer.");

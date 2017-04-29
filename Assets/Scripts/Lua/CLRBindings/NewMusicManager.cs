@@ -152,8 +152,8 @@ public class NewMusicManager {
     }
 
     public static bool isStopped(string name) {
-        if (!audiolist.ContainsKey(name))  throw new CYFException("The audio channel " + name + " doesn't exist.");
-        return!((AudioSource)audiolist[name]).isPlaying;
+        if (!audiolist.ContainsKey(name)) throw new CYFException("The audio channel " + name + " doesn't exist.");
+        return !((AudioSource)audiolist[name]).isPlaying;
     }
 
     public static void OnLevelWasLoaded() {
