@@ -24,14 +24,6 @@ public static class UnitaleUtil {
             sr = File.CreateText(fileName);
     }
 
-    public static void writeInLog(string mess) {
-        try {
-            sr.WriteLine(mess.Replace("\n", "\\n").Replace("\r", "\\r").Replace("\t", "\\t"));
-            sr.Flush();
-            Debug.Log(mess);
-        } catch (Exception e) { Debug.Log("Couldn't write on the log: " + e.Message + "\rMessage: " + mess); }
-    }
-
     public static void writeInLogAndDebugger(string mess) {
         try {
             sr.WriteLine("By DEBUG: " + mess.Replace("\n", "\\n").Replace("\r", "\\r").Replace("\t", "\\t"));
@@ -88,7 +80,7 @@ public static class UnitaleUtil {
             SceneManager.LoadSceneAsync("Error"); // prevents editor from crashing
         else
             SceneManager.LoadScene("Error");
-        writeInLog("It's a Lua error! : " + ErrorDisplay.Message);
+        Debug.Log("It's a Lua error! : " + ErrorDisplay.Message);
     }
 
     public static bool isTouching(BoxCollider2D a, BoxCollider2D b) {
@@ -170,93 +162,6 @@ public static class UnitaleUtil {
             table.Set(i, array[i - 1]);
 
         return table;
-    }
-
-    public static void CompleteTableFromArray(Array arr, ref Table dv, int basisRank, Type basisType) {
-        int[] currentIndexes = new int[basisRank];
-        for (int i = 0; i < basisRank; i++)
-            currentIndexes[i] = 0;
-
-        for (int i1 = 1; i1 <= currentIndexes[0]; i1 ++) {
-            if (basisRank >= 2)
-                for (int i2 = 1; i2 <= currentIndexes[1]; i2++) {
-                    if (basisRank >= 3)
-                        for (int i3 = 1; i3 <= currentIndexes[2]; i3++) {
-                            if (basisRank >= 4)
-                                for (int i4 = 1; i4 <= currentIndexes[3]; i4++) {
-                                    if (basisRank >= 5)
-                                        for (int i5 = 1; i5 <= currentIndexes[4]; i5++) {
-                                            if (basisRank >= 6)
-                                                for (int i6 = 1; i6 <= currentIndexes[5]; i6++) {
-                                                    if (basisRank >= 7)
-                                                        for (int i7 = 1; i7 <= currentIndexes[6]; i7++) {
-                                                            if (basisType == typeof(float))
-                                                                dv.Get(DynValue.NewNumber(i1)).Table.Get(DynValue.NewNumber(i2)).Table.Get(DynValue.NewNumber(i3)).Table
-                                                                  .Get(DynValue.NewNumber(i4)).Table.Get(DynValue.NewNumber(i5)).Table.Get(DynValue.NewNumber(i6)).Table
-                                                                  .Set(DynValue.NewNumber(i7), DynValue.NewNumber((float)arr.GetValue(i1 + 1, i2 + 1, i3 + 1, i4 + 1, i5 + 1, i6 + 1, i7 + 1)));
-                                                            else if (basisType == typeof(bool))
-                                                                dv.Get(DynValue.NewNumber(i1)).Table.Get(DynValue.NewNumber(i2)).Table.Get(DynValue.NewNumber(i3)).Table
-                                                                  .Get(DynValue.NewNumber(i4)).Table.Get(DynValue.NewNumber(i5)).Table.Get(DynValue.NewNumber(i6)).Table
-                                                                  .Set(DynValue.NewNumber(i7), DynValue.NewBoolean((bool)arr.GetValue(i1 + 1, i2 + 1, i3 + 1, i4 + 1, i5 + 1, i6 + 1, i7 + 1)));
-                                                            else
-                                                                dv.Get(DynValue.NewNumber(i1)).Table.Get(DynValue.NewNumber(i2)).Table.Get(DynValue.NewNumber(i3)).Table
-                                                                  .Get(DynValue.NewNumber(i4)).Table.Get(DynValue.NewNumber(i5)).Table.Get(DynValue.NewNumber(i6)).Table
-                                                                  .Set(DynValue.NewNumber(i7), DynValue.NewString((string)arr.GetValue(i1 + 1, i2 + 1, i3 + 1, i4 + 1, i5 + 1, i6 + 1, i7 + 1)));
-                                                        } 
-                                                    else if (basisType == typeof(float))
-                                                        dv.Get(DynValue.NewNumber(i1)).Table.Get(DynValue.NewNumber(i2)).Table.Get(DynValue.NewNumber(i3)).Table
-                                                          .Get(DynValue.NewNumber(i4)).Table.Get(DynValue.NewNumber(i5)).Table
-                                                          .Set(DynValue.NewNumber(i6), DynValue.NewNumber((float)arr.GetValue(i1 + 1, i2 + 1, i3 + 1, i4 + 1, i5 + 1, i6 + 1)));
-                                                    else if (basisType == typeof(bool))
-                                                        dv.Get(DynValue.NewNumber(i1)).Table.Get(DynValue.NewNumber(i2)).Table.Get(DynValue.NewNumber(i3)).Table
-                                                          .Get(DynValue.NewNumber(i4)).Table.Get(DynValue.NewNumber(i5)).Table
-                                                          .Set(DynValue.NewNumber(i6), DynValue.NewBoolean((bool)arr.GetValue(i1 + 1, i2 + 1, i3 + 1, i4 + 1, i5 + 1, i6 + 1)));
-                                                    else
-                                                        dv.Get(DynValue.NewNumber(i1)).Table.Get(DynValue.NewNumber(i2)).Table.Get(DynValue.NewNumber(i3)).Table
-                                                          .Get(DynValue.NewNumber(i4)).Table.Get(DynValue.NewNumber(i5)).Table
-                                                          .Set(DynValue.NewNumber(i6), DynValue.NewString((string)arr.GetValue(i1 + 1, i2 + 1, i3 + 1, i4 + 1, i5 + 1, i6 + 1)));
-                                                } 
-                                            else if (basisType == typeof(float))
-                                                dv.Get(DynValue.NewNumber(i1)).Table.Get(DynValue.NewNumber(i2)).Table.Get(DynValue.NewNumber(i3)).Table
-                                                  .Get(DynValue.NewNumber(i4)).Table.Set(DynValue.NewNumber(i5), DynValue.NewNumber((float)arr.GetValue(i1 + 1, i2 + 1, i3 + 1, i4 + 1, i5 + 1)));
-                                            else if (basisType == typeof(bool))
-                                                dv.Get(DynValue.NewNumber(i1)).Table.Get(DynValue.NewNumber(i2)).Table.Get(DynValue.NewNumber(i3)).Table
-                                                  .Get(DynValue.NewNumber(i4)).Table.Set(DynValue.NewNumber(i5), DynValue.NewBoolean((bool)arr.GetValue(i1 + 1, i2 + 1, i3 + 1, i4 + 1, i5 + 1)));
-                                            else
-                                                dv.Get(DynValue.NewNumber(i1)).Table.Get(DynValue.NewNumber(i2)).Table.Get(DynValue.NewNumber(i3)).Table
-                                                  .Get(DynValue.NewNumber(i4)).Table.Set(DynValue.NewNumber(i5), DynValue.NewString((string)arr.GetValue(i1 + 1, i2 + 1, i3 + 1, i4 + 1, i5 + 1)));
-                                        } 
-                                    else if (basisType == typeof(float))
-                                        dv.Get(DynValue.NewNumber(i1)).Table.Get(DynValue.NewNumber(i2)).Table.Get(DynValue.NewNumber(i3)).Table
-                                          .Set(DynValue.NewNumber(i4), DynValue.NewNumber((float)arr.GetValue(i1 + 1, i2 + 1, i3 + 1, i4 + 1)));
-                                    else if (basisType == typeof(bool))
-                                        dv.Get(DynValue.NewNumber(i1)).Table.Get(DynValue.NewNumber(i2)).Table.Get(DynValue.NewNumber(i3)).Table
-                                          .Set(DynValue.NewNumber(i4), DynValue.NewBoolean((bool)arr.GetValue(i1 + 1, i2 + 1, i3 + 1, i4 + 1)));
-                                    else
-                                        dv.Get(DynValue.NewNumber(i1)).Table.Get(DynValue.NewNumber(i2)).Table.Get(DynValue.NewNumber(i3)).Table
-                                          .Set(DynValue.NewNumber(i4), DynValue.NewString((string)arr.GetValue(i1 + 1, i2 + 1, i3 + 1, i4 + 1)));
-                                } 
-                            else if (basisType == typeof(float))
-                                dv.Get(DynValue.NewNumber(i1)).Table.Get(DynValue.NewNumber(i2)).Table.Set(DynValue.NewNumber(i3), DynValue.NewNumber((float)arr.GetValue(i1 + 1, i2 + 1, i3 + 1)));
-                            else if (basisType == typeof(bool))
-                                dv.Get(DynValue.NewNumber(i1)).Table.Get(DynValue.NewNumber(i2)).Table.Set(DynValue.NewNumber(i3), DynValue.NewBoolean((bool)arr.GetValue(i1 + 1, i2 + 1, i3 + 1)));
-                            else
-                                dv.Get(DynValue.NewNumber(i1)).Table.Get(DynValue.NewNumber(i2)).Table.Set(DynValue.NewNumber(i3), DynValue.NewString((string)arr.GetValue(i1 + 1, i2 + 1, i3 + 1)));
-                        } 
-                    else if (basisType == typeof(float))
-                        dv.Get(DynValue.NewNumber(i1)).Table.Set(DynValue.NewNumber(i2), DynValue.NewNumber((float)arr.GetValue(i1 + 1, i2 + 1)));
-                    else if (basisType == typeof(bool))
-                        dv.Get(DynValue.NewNumber(i1)).Table.Set(DynValue.NewNumber(i2), DynValue.NewBoolean((bool)arr.GetValue(i1 + 1, i2 + 1)));
-                    else
-                        dv.Get(DynValue.NewNumber(i1)).Table.Set(DynValue.NewNumber(i2), DynValue.NewString((string)arr.GetValue(i1 + 1, i2 + 1)));
-                }
-            else if (basisType == typeof(float))
-                dv.Set(DynValue.NewNumber(i1), DynValue.NewNumber((float)arr.GetValue(i1 + 1)));
-            else if (basisType == typeof(bool))
-                dv.Set(DynValue.NewNumber(i1), DynValue.NewBoolean((bool)arr.GetValue(i1 + 1)));
-            else
-                dv.Set(DynValue.NewNumber(i1), DynValue.NewString((string)arr.GetValue(i1 + 1)));
-        }
     }
 
     public static float calcTotalLength(TextManager txtmgr, int fromLetter = -1, int toLetter = -1) {

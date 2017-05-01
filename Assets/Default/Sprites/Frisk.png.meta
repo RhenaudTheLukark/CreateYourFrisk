@@ -1,0 +1,232 @@
+fileFormatVersion: 2
+guid: 76ede3ae4c347584fa184024c39c6069
+timeCreated: 1461392420
+licenseType: Free
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: Frisk_0
+    21300002: Frisk_1
+    21300004: Frisk_2
+    21300006: Frisk_3
+    21300008: Frisk_4
+    21300010: Frisk_5
+    21300012: Frisk_6
+    21300014: Frisk_7
+    21300016: Frisk_8
+    21300018: Frisk_9
+    21300020: Frisk_10
+    21300022: Frisk_11
+    21300024: Frisk_12
+    21300026: Frisk_13
+    21300028: Frisk_14
+    21300030: Frisk_15
+  serializedVersion: 2
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 1
+    linearTexture: 0
+    correctGamma: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: .25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 0
+  cubemapConvolution: 0
+  cubemapConvolutionSteps: 8
+  cubemapConvolutionExponent: 1.5
+  seamlessCubemap: 0
+  textureFormat: -3
+  maxTextureSize: 2048
+  textureSettings:
+    filterMode: -1
+    aniso: 16
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  rGBM: 0
+  compressionQuality: 50
+  allowsAlphaSplitting: 0
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: .5, y: .5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  textureType: 8
+  buildTargetSettings: []
+  spriteSheet:
+    sprites:
+    - name: Frisk_0
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 138
+        width: 28
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Frisk_1
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 138
+        width: 28
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Frisk_2
+      rect:
+        serializedVersion: 2
+        x: 62
+        y: 138
+        width: 28
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Frisk_3
+      rect:
+        serializedVersion: 2
+        x: 92
+        y: 138
+        width: 28
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Frisk_4
+      rect:
+        serializedVersion: 2
+        x: 4
+        y: 92
+        width: 25
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Frisk_5
+      rect:
+        serializedVersion: 2
+        x: 34
+        y: 92
+        width: 25
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Frisk_6
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 92
+        width: 25
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Frisk_7
+      rect:
+        serializedVersion: 2
+        x: 94
+        y: 92
+        width: 25
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Frisk_8
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 46
+        width: 25
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Frisk_9
+      rect:
+        serializedVersion: 2
+        x: 33
+        y: 46
+        width: 25
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Frisk_10
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 46
+        width: 25
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Frisk_11
+      rect:
+        serializedVersion: 2
+        x: 93
+        y: 46
+        width: 25
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Frisk_12
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 1
+        width: 28
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Frisk_13
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 1
+        width: 28
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Frisk_14
+      rect:
+        serializedVersion: 2
+        x: 62
+        y: 1
+        width: 28
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Frisk_15
+      rect:
+        serializedVersion: 2
+        x: 92
+        y: 1
+        width: 28
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+  spritePackingTag: 
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

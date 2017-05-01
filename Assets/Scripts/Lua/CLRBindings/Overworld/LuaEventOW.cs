@@ -75,7 +75,7 @@ public class LuaEventOW {
                 return;
             }
         }
-        UnitaleUtil.writeInLog("The name you entered into the function isn't an event's name. Did you forget to add the 'Event' tag?");
+        UnitaleUtil.writeInLogAndDebugger("Event.SetAnimHeader: The name you entered in the function isn't an event's name. Did you forget to add the 'Event' tag?");
         appliedScript.Call("CYFEventNextCommand");
     }
 
@@ -84,6 +84,15 @@ public class LuaEventOW {
         if (!GameObject.Find(name))                             throw new CYFException("Event.GetAnimHeader: The event given doesn't exist.");
         if (!GameObject.Find(name).GetComponent<CYFAnimator>()) throw new CYFException("Event.GetAnimHeader: The event given doesn't have a CYFAnimator component.");
         try { return name == "Player" ? CYFAnimator.specialPlayerHeader : GameObject.Find(name).GetComponent<CYFAnimator>().specialHeader; } finally { appliedScript.Call("CYFEventNextCommand"); }
+    }
+
+    [CYFEventFunction]
+    public void SetDirection(string name, int dir) {
+        if (!GameObject.Find(name))                             throw new CYFException("Event.SetDirection: The event given doesn't exist.");
+        if (!GameObject.Find(name).GetComponent<CYFAnimator>()) throw new CYFException("Event.SetDirection: The event given doesn't have a CYFAnimator component.");
+        if (dir != 2 && dir != 4 && dir != 6 && dir != 8)       throw new CYFException("Event.SetDirection: The direction must either be 2 (Down), 4 (Left), 6 (Right) or 8 (Up).");
+        GameObject.Find(name).GetComponent<CYFAnimator>().movementDirection = dir;
+        appliedScript.Call("CYFEventNextCommand");
     }
 
     /*/// <summary>
@@ -116,34 +125,34 @@ public class LuaEventOW {
     }*/
 
 
-        /*/// <summary>
-        /// Set a return point for the program. If you have to use while iterations, use this instead, with GetReturnPoint
-        /// </summary>
-        /// <param name="index"></param>
-        [CYFEventFunction]
-        public void SetReturnPoint(int index) {
-            LuaScriptBinder.Set(null, "ReturnPoint" + index, DynValue.NewNumber(textmgr.currentLine));
-            appliedScript.Call("CYFEventNextCommand");
-        }
+    /*/// <summary>
+    /// Set a return point for the program. If you have to use while iterations, use this instead, with GetReturnPoint
+    /// </summary>
+    /// <param name="index"></param>
+    [CYFEventFunction]
+    public void SetReturnPoint(int index) {
+        LuaScriptBinder.Set(null, "ReturnPoint" + index, DynValue.NewNumber(textmgr.currentLine));
+        appliedScript.Call("CYFEventNextCommand");
+    }
 
-        /// <summary>
-        /// Forces the program to go back to the return point of the chosen index. If you have to use while iterations, use this instead, with SetReturnPoint
-        /// </summary>
-        /// <param name="index"></param>
-        [CYFEventFunction]
-        public void GetReturnPoint(int index) {
-            textmgr.currentLine = (int)LuaScriptBinder.Get(null, "ReturnPoint" + index).Number;
-            appliedScript.Call("CYFEventNextCommand");
-        }*/
+    /// <summary>
+    /// Forces the program to go back to the return point of the chosen index. If you have to use while iterations, use this instead, with SetReturnPoint
+    /// </summary>
+    /// <param name="index"></param>
+    [CYFEventFunction]
+    public void GetReturnPoint(int index) {
+        textmgr.currentLine = (int)LuaScriptBinder.Get(null, "ReturnPoint" + index).Number;
+        appliedScript.Call("CYFEventNextCommand");
+    }*/
 
-        /// <summary>
-        /// Rotates the sprite of an event.
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="rotateX"></param>
-        /// <param name="rotateY"></param>
-        /// <param name="rotateZ"></param>
-        /// <param name="axisAnim"></param>
+    /// <summary>
+    /// Rotates the sprite of an event.
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="rotateX"></param>
+    /// <param name="rotateY"></param>
+    /// <param name="rotateZ"></param>
+    /// <param name="axisAnim"></param>
     [CYFEventFunction]
     public void Rotate(string name, float rotateX, float rotateY, float rotateZ, bool anim = true) {
         if (anim) {

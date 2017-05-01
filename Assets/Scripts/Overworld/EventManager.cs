@@ -107,7 +107,7 @@ public class EventManager : MonoBehaviour {
                         return;
                     }
                 }
-
+            script = null;
             GameObject.FindObjectOfType<Fading>().BeginFade(-1);
             LoadLaunched = false;
         } else
@@ -170,11 +170,13 @@ public class EventManager : MonoBehaviour {
                     passPressOnce = false;
 
                 if (events.Count != 0)
-                    foreach (GameObject go in events) {
+                    for (int i = 0; i < events.Count; i ++) {
+                        GameObject go = events[i];
                         EventOW ev = go.GetComponent<EventOW>();
                         if (ev.actualPage < -1) { }                             
                         else if (ev.actualPage == -1) {
                             events.Remove(go);
+                            i--;
                             Destroy(go);
                         } else if (!testContainsListVector2(ev.eventTriggers, ev.actualPage)) {
                             UnitaleUtil.displayLuaError(ev.name, "The trigger of the page n°" + ev.actualPage + " doesn't exist.\nYou'll need to add it via Unity, on this event's EventOW Component.");
@@ -183,7 +185,7 @@ public class EventManager : MonoBehaviour {
                     }
             }
             CheckEndEvent();
-        } catch (InvalidOperationException) { }
+        } catch (InvalidOperationException e) { Debug.LogError(e.Message); }
     }
 
     /*private object FunctionLauncher<T>(T classType, string name, object[] values = null) {
@@ -278,10 +280,9 @@ public class EventManager : MonoBehaviour {
                 go.GetComponent<Collider2D>().enabled = true;
 
         //Executes the event that our cast collided with
-        if (hit.collider == null) {
-            UnitaleUtil.writeInLog("No event was hit.");
+        if (hit.collider == null)
             return false;
-        } else
+        else
             return executeEvent(hit.collider.gameObject);
         /*} catch {
             hit = new RaycastHit2D();
@@ -333,13 +334,13 @@ public class EventManager : MonoBehaviour {
                     executeEvent(go, coroutines[scr], true);
                 }
             } catch (Exception e) { Debug.LogError(e.Message); }
-            for (int i = 0; i < events.Count; i ++) {
+            for (int i = 0; i < events.Count; i ++)
                 if (getTrigger(events[i], events[i].GetComponent<EventOW>().actualPage) == 3 && !coroutines.ContainsKey(eventScripts[events[i]]) && eventScripts[events[i]] != script) {
                     gameobject = events[i];
                     executeEvent(events[i], -1, true);
                 }
-            }
-        } catch (InterpreterException e) { UnitaleUtil.displayLuaError(gameobject.name + ", page n°" + gameobject.GetComponent<EventOW>().actualPage, e.DecoratedMessage); } catch (Exception e) {
+        } catch (InterpreterException e) { UnitaleUtil.displayLuaError(gameobject.name + ", page n°" + gameobject.GetComponent<EventOW>().actualPage, e.DecoratedMessage); } 
+        catch (Exception e) {
             UnitaleUtil.displayLuaError(gameobject.name + ", page n°" + gameobject.GetComponent<EventOW>().actualPage,
                                         "Unknown error of type " + e.GetType() + ". Please send this to the main dev.\n\n" + e.Message + "\n\n" + e.StackTrace);
         }
@@ -373,8 +374,10 @@ public class EventManager : MonoBehaviour {
             } else if (go.GetComponent<Image>())
                 sprCtrls[go.name] = new LuaSpriteController(go.GetComponent<Image>());
 
-            string scriptToLoad = go.GetComponent<EventOW>().scriptToLoad;
-            eventScripts.Add(go, initScript(scriptToLoad, go.GetComponent<EventOW>()));
+            if (go.GetComponent<EventOW>().scriptToLoad != "none") {
+                string scriptToLoad = go.GetComponent<EventOW>().scriptToLoad;
+                eventScripts.Add(go, initScript(scriptToLoad, go.GetComponent<EventOW>()));
+            }
         }
     }
 
@@ -683,7 +686,14 @@ public class EventManager : MonoBehaviour {
     /// <returns></returns>
     public int CheckDirection(Vector2 dir) {
         //2 = Down, 4 = Left, 6 = Right, 8 = Up
-        float tempDir = dir.y / dir.x;
+        if (dir.x == 0) {
+            if (dir.y > 0) return 8;
+            else           return 2;
+        } else if (dir.y == 0) {
+            if (dir.x > 0) return 6;
+            else           return 4;
+        }
+        float tempDir = dir.y / dir.x; 
         if (tempDir > 1)        return 2;
         else if (tempDir < -1)  return 8;
         else if (dir.x > 0)     return 6;
@@ -796,23 +806,24 @@ public class EventManager : MonoBehaviour {
         GameObject[] colliders = new GameObject[GameObject.Find("Background").transform.childCount];
         for (int i = 0; i < colliders.Length; i++)
             colliders[i] = GameObject.Find("Background").transform.GetChild(i).gameObject;
-        for (int i = 0; i < events.Count || name == "Player"; i++) {
-            GameObject go = null;
-            try { go = events[i]; } catch { }
-            if (name == go.name || name == "Player") {
-                if (name == "Player")
-                    go = GameObject.Find("Player");
+        for (int i = 0; i < events.Count || name == "Player"; i++)
+            if (name == events[i].name || name == "Player") {
+                GameObject go;
+                if (name == "Player") go = GameObject.Find("Player");
+                else                  go = events[i];
                 if (wallPass)
                     foreach (GameObject go2 in colliders)
                         if (go2.name != "Background")
                             go2.SetActive(false);
                 Vector2 endPoint = new Vector2(dirX - go.transform.position.x, dirY - go.transform.position.y), endPointFromNow = endPoint;
                 //The animation process is automatic, if you renamed the Animation's triggers and animations as the Player's
-                int direction = CheckDirection(endPoint);
+                if (go.GetComponent<CYFAnimator>()) {
+                    int direction = CheckDirection(endPoint);
+                    go.GetComponent<CYFAnimator>().movementDirection = direction;
+                }
+
                 //While the current position is different from the one we want our player to have
                 while ((Vector2)go.transform.position != endPoint) {
-                    if (name == "Player")
-                        PlayerOverworld.instance.forcedMove = direction;
                     Vector2 clamped = Vector2.ClampMagnitude(endPoint, 1);
                     //Test is used to know if the deplacement is possible or not
                     bool test = false;
@@ -823,7 +834,6 @@ public class EventManager : MonoBehaviour {
                         //If we reached the destination, stop the function
                         else {
                             test = PlayerOverworld.instance.AttemptMove(endPointFromNow.x, endPointFromNow.y, go, wallPass);
-                            PlayerOverworld.instance.forcedMove = 0;
                             if (wallPass)
                                 foreach (GameObject go2 in colliders)
                                     if (go2.name != "Background")
@@ -837,7 +847,6 @@ public class EventManager : MonoBehaviour {
                         //If we reached the destination, stop the function
                         else {
                             test = PlayerOverworld.instance.AttemptMove(endPointFromNow.x, endPointFromNow.y, go, wallPass);
-                            PlayerOverworld.instance.forcedMove = 0;
                             if (wallPass)
                                 foreach (GameObject go2 in colliders)
                                     go2.SetActive(true);
@@ -848,16 +857,13 @@ public class EventManager : MonoBehaviour {
                     yield return 0;
 
                     if (!test && !wallPass) {
-                        PlayerOverworld.instance.forcedMove = 0;
                         scr.Call("CYFEventNextCommand");
                         yield break;
                     } 
                     endPointFromNow = new Vector2(dirX - go.transform.position.x, dirY - go.transform.position.y);
                 }
             }
-        }
-        UnitaleUtil.writeInLog("The name you entered into the function doesn't exists. Did you forget to add the 'Event' tag?");
-        PlayerOverworld.instance.forcedMove = 0;
+        UnitaleUtil.writeInLogAndDebugger("Event.MoveToPoint: The name you entered into the function doesn't exists. Did you forget to add the 'Event' tag?");
         scr.Call("CYFEventNextCommand");
     }
 
@@ -973,7 +979,7 @@ public class EventManager : MonoBehaviour {
                 yield break;
             }
         }
-        UnitaleUtil.writeInLog("The name you entered into the function isn't an event's name. Did you forget to add the 'Event' tag ?");
+        UnitaleUtil.writeInLogAndDebugger("Event.Rotate: The name you entered into the function isn't an event's name. Did you forget to add the 'Event' tag ?");
         scr.Call("CYFEventNextCommand");
     }
 
@@ -1072,10 +1078,8 @@ public class EventManager : MonoBehaviour {
                     txtSave = GameObject.Find("TextManagerSave").GetComponent<TextManager>(), txtReturn = GameObject.Find("TextManagerReturn").GetComponent<TextManager>();
         txtLevel.setHorizontalSpacing(2); txtTime.setHorizontalSpacing(2); txtMap.setHorizontalSpacing(2);
         txtName.setHorizontalSpacing(2); txtSave.setHorizontalSpacing(2); txtReturn.setHorizontalSpacing(2);
-        foreach (RectTransform t in GameObject.Find("save_interior").transform)
-            t.sizeDelta = new Vector2(t.sizeDelta.x, t.sizeDelta.y + 1);
-        GameObject.Find("save_interior").GetComponent<RectTransform>().sizeDelta = new Vector2(GameObject.Find("save_interior").GetComponent<RectTransform>().sizeDelta.x,
-                                                                                               GameObject.Find("save_interior").GetComponent<RectTransform>().sizeDelta.y - 1);
+        //foreach (RectTransform t in GameObject.Find("save_interior").transform)
+            //t.sizeDelta = new Vector2(t.sizeDelta.x, t.sizeDelta.y + 1);
 
         string playerName = ""; double playerLevel = 0;//, playerTime = 0;
         bool isAlreadySave = false;

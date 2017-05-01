@@ -99,7 +99,7 @@ public class GlobalControls : MonoBehaviour {
         int value = -5924710;
 
         if (!MapEventPages[SceneManager.GetActiveScene().buildIndex].TryGetValue(key1, out value)) {
-            UnitaleUtil.writeInLog("The dictionary doesn't have any data about this map.");
+            UnitaleUtil.writeInLogAndDebugger("[WARN]The dictionary doesn't have any data about this map.");
             return -5924710;
         }
         return value;

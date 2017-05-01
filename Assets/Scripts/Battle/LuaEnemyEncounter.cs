@@ -170,7 +170,7 @@ internal class LuaEnemyEncounter : EnemyEncounter {
                     AudioClip music = AudioClipRegistry.GetMusic(musicFile);
                     musicSource.clip = music;
                     MusicManager.filename = "music:" + musicFile.ToLower();
-                } catch (Exception) { UnitaleUtil.writeInLog("Loading custom music failed."); }
+                } catch (Exception) { UnitaleUtil.writeInLogAndDebugger("[WARN]Loading custom music failed."); }
             } else {
                 musicSource.clip = AudioClipRegistry.GetMusic("mus_battle1");
                 MusicManager.filename = "music:mus_battle1";

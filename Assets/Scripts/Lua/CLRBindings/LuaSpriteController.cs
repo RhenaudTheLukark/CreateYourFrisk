@@ -430,10 +430,9 @@ public class LuaSpriteController {
             UnitaleUtil.PlaySound("DustSound", AudioClipRegistry.GetSound("enemydust"));
         img.GetComponent<ParticleDuplicator>().Activate(this);
         if (img.gameObject.name != "player") {
-            if (removeObject) {
-                if (tag == "projectile") img.GetComponent<Projectile>().ctrl.Remove();
-                else if (tag == "other") Remove();
-            } else img.SetActive(false);
+            img.SetActive(false);
+            if (removeObject)
+                img = null;
         }
     }
 

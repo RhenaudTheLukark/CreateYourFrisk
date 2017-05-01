@@ -1,8 +1,9 @@
 local beforeMovement = math.random(30, 120)
 local spriteTest
-local lastPosX; local lastPosY
+local lastPosX
+local lastPosY
 
-function EventPage0()
+function EventPage0() --First event function launched
     Event.SetPage(Event.GetName(), 2)
     spriteTest = Event.GetSprite(Event.GetName())
     lastPosX = spriteTest.x
@@ -16,8 +17,7 @@ function EventPage1()
     General.Save()
 end
 
-function EventPage2()
-    --DEBUG(tostring(eventName))
+function EventPage2() --Coroutine
     if Event.GetPage(Event.GetName()) == 2 then Event.SetPage(Event.GetName(), 1) end
     if lastPosX == spriteTest.x and lastPosY == spriteTest.y then
         beforeMovement = beforeMovement - 1

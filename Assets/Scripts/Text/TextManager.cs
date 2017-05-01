@@ -770,22 +770,22 @@ public class TextManager : MonoBehaviour {
             cmds[1] = args[0];
         }
         switch (cmds[0].ToLower()) {
+            case "noskip":
+                if (args.Length == 0)      currentSkippable = false;
+                else if (args[0] == "off") currentSkippable = true;
+                break;
+
             case "w":
                 if (!instantCommand)
                     letterTimer = timePerLetter - (singleFrameTiming * ParseUtil.getInt(cmds[1]));
                 break;
 
-            case "noskip":
-                if (args.Length == 0)      currentSkippable = false;
-                else if (args[0] == "off") currentSkippable = true;
-                break;
             case "waitall":      timePerLetter = singleFrameTiming * ParseUtil.getInt(cmds[1]);                  break;
             case "novoice":      letterSound.clip = null;                                                        break;
             case "next":         autoSkipAll = true;                                                             break;
             case "finished":     autoSkipThis = true;                                                            break;
             case "nextthisnow":  autoSkip = true;                                                                break;
             case "noskipatall":  blockSkip = true;                                                               break;
-            case "font":         letterSound.clip = SpriteFontRegistry.Get(cmds[1].ToLower()).Sound;             break;
             case "waitfor":      waitingChar = (KeyCode)Enum.Parse(typeof(KeyCode), cmds[1]);                    break;
             case "speed":        letterSpeed = Int32.Parse(args[0]);                                             break;
 

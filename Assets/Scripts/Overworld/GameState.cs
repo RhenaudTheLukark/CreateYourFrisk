@@ -28,9 +28,14 @@ using MoonSharp.Interpreter;
         playerVariablesStr.Clear();
         playerVariablesNum.Clear();
         playerVariablesBool.Clear();
-        
-        LuaScriptBinder.Set(null, "PlayerPosX", DynValue.NewNumber(GameObject.Find("Player").transform.position.x));
-        LuaScriptBinder.Set(null, "PlayerPosY", DynValue.NewNumber(GameObject.Find("Player").transform.position.y));
+
+        try {
+            LuaScriptBinder.Set(null, "PlayerPosX", DynValue.NewNumber(GameObject.Find("Player").transform.position.x));
+            LuaScriptBinder.Set(null, "PlayerPosY", DynValue.NewNumber(GameObject.Find("Player").transform.position.y));
+        } catch {
+            LuaScriptBinder.Set(null, "PlayerPosX", DynValue.NewNumber(SaveLoad.savedGame.playerPosX));
+            LuaScriptBinder.Set(null, "PlayerPosY", DynValue.NewNumber(SaveLoad.savedGame.playerPosY));
+        }
 
         try {
             foreach (string key in LuaScriptBinder.GetDictionary().Keys) {
@@ -40,7 +45,7 @@ using MoonSharp.Interpreter;
                     case DataType.Number:   playerVariablesNum.Add(key, dv.Number);    break;
                     case DataType.String:   playerVariablesStr.Add(key, dv.String);    break;
                     case DataType.Boolean:  playerVariablesBool.Add(key, dv.Boolean);  break;
-                    default:                UnitaleUtil.writeInLog("This DynValue can't be added to the save because it is unserializable.");  break;
+                    default:                UnitaleUtil.writeInLogAndDebugger("SaveLoad: This DynValue can't be added to the save because it is unserializable.");  break;
                 }
             }
         } catch { }
@@ -55,10 +60,17 @@ using MoonSharp.Interpreter;
         controlpanel = ControlPanel.instance;
         playerHeader = CYFAnimator.specialPlayerHeader;
 
-        Vector3 playerPos = GameObject.Find("Player").transform.position;
-        playerPosX = playerPos.x;
-        playerPosY = playerPos.y;
-        playerPosZ = playerPos.z;
+        try {
+            Vector3 playerPos = GameObject.Find("Player").transform.position;
+            playerPosX = playerPos.x;
+            playerPosY = playerPos.y;
+            playerPosZ = playerPos.z;
+        } catch {
+            playerPosX = SaveLoad.savedGame.playerPosX;
+            playerPosY = SaveLoad.savedGame.playerPosY;
+            playerPosZ = SaveLoad.savedGame.playerPosZ;
+
+        }
     }
 
     public void LoadGameVariables() {

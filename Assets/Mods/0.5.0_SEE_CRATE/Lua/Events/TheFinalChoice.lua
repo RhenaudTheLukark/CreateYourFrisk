@@ -1,6 +1,6 @@
 function EventPage1()
     General.Wait(30)
-    Screen.CenterOnCamera("TheFinalChoice", 2, true)
+    Event.CenterOnCamera("TheFinalChoice", 2, true)
     General.Wait(30)
     local sprite = Event.GetSprite("TheFinalChoice")
 	sprite.Set("Punderbolt/PunderLeft1")

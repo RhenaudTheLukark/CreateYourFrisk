@@ -1,4 +1,4 @@
-if not GetRealGlobal("ow") then error("fu :D") end
+if not GetRealGlobal("ow") then error("You really should try to access these encounters the normal way... Here is a clue: you need to move the dog in the map test2 using an event. Now good luck!") end
 
 encountertext = "Poseur strikes a pose!" --Modify as necessary. It will only be read out in the action select screen.
 nextwaves = {"bullettest_chaserorb"}

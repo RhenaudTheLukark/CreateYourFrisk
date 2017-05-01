@@ -67,7 +67,7 @@ public class TPHandler : MonoBehaviour {
         float fadeTime = blackFont.BeginFade(1);
         yield return new WaitForSeconds(fadeTime);
 
-        PlayerOverworld.instance.forcedMove = direction;
+        PlayerOverworld.instance.gameObject.GetComponent<CYFAnimator>().movementDirection = direction;
 
         EventManager.SetEventStates();
 

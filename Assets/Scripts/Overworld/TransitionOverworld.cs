@@ -156,7 +156,6 @@ public class TransitionOverworld : MonoBehaviour {
             Transform playerPos = GameObject.Find("Player").GetComponent<Transform>();
             playerPos.position = (Vector2)neededArgs[0];
         }
-        PlayerOverworld.instance.forcedMove = 0;
         //GlobalControls.fadeAuto = false;
         //GameObject.Destroy(gameObject);
         //if (!neededReload)

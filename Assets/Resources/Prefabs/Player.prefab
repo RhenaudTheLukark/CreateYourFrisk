@@ -5,16 +5,16 @@ GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Component:
-  - 224: {fileID: 22441604}
-  - 212: {fileID: 21207398}
-  - 95: {fileID: 9559022}
-  - 114: {fileID: 11463766}
-  - 61: {fileID: 6156472}
-  - 82: {fileID: 8202760}
-  - 50: {fileID: 5003194}
-  - 114: {fileID: 11445154}
+  - component: {fileID: 22441604}
+  - component: {fileID: 21207398}
+  - component: {fileID: 11463766}
+  - component: {fileID: 6156472}
+  - component: {fileID: 8202760}
+  - component: {fileID: 5003194}
+  - component: {fileID: 11445154}
+  - component: {fileID: 114937843077718580}
   m_Layer: 21
   m_Name: Player
   m_TagString: Player
@@ -27,10 +27,10 @@ GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Component:
-  - 4: {fileID: 465484}
-  - 212: {fileID: 21279622}
+  - component: {fileID: 465484}
+  - component: {fileID: 21279622}
   m_Layer: 21
   m_Name: EncounterBubble
   m_TagString: Untagged
@@ -47,23 +47,26 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0.41, z: 0}
   m_LocalScale: {x: 1.5, y: 1.5, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 22441604}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!50 &5003194
 Rigidbody2D:
-  serializedVersion: 2
+  serializedVersion: 4
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 129266}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0
   m_GravityScale: 0
-  m_IsKinematic: 0
+  m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 1
@@ -79,9 +82,20 @@ BoxCollider2D:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_UsedByEffector: 0
+  m_UsedByComposite: 0
   m_Offset: {x: 0, y: -0.165}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
   serializedVersion: 2
   m_Size: {x: 0.22, y: 0.25}
+  m_EdgeRadius: 0
 --- !u!82 &8202760
 AudioSource:
   m_ObjectHideFlags: 1
@@ -98,6 +112,7 @@ AudioSource:
   Loop: 0
   Mute: 0
   Spatialize: 0
+  SpatializePostEffects: 0
   Priority: 128
   DopplerLevel: 1
   MinDistance: 1
@@ -110,12 +125,14 @@ AudioSource:
   rolloffCustomCurve:
     serializedVersion: 2
     m_Curve:
-    - time: 0
+    - serializedVersion: 2
+      time: 0
       value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
-    - time: 1
+    - serializedVersion: 2
+      time: 1
       value: 0
       inSlope: 0
       outSlope: 0
@@ -126,7 +143,8 @@ AudioSource:
   panLevelCustomCurve:
     serializedVersion: 2
     m_Curve:
-    - time: 0
+    - serializedVersion: 2
+      time: 0
       value: 0
       inSlope: 0
       outSlope: 0
@@ -137,7 +155,8 @@ AudioSource:
   spreadCustomCurve:
     serializedVersion: 2
     m_Curve:
-    - time: 0
+    - serializedVersion: 2
+      time: 0
       value: 0
       inSlope: 0
       outSlope: 0
@@ -148,7 +167,8 @@ AudioSource:
   reverbZoneMixCustomCurve:
     serializedVersion: 2
     m_Curve:
-    - time: 0
+    - serializedVersion: 2
+      time: 0
       value: 1
       inSlope: 0
       outSlope: 0
@@ -156,23 +176,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
---- !u!95 &9559022
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 129266}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 8a7b75a4b3a50d742afa2db124f6e4e3, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
 --- !u!114 &11445154
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -184,6 +187,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 748e7f2c60fd0194f942eef4ac4f63d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerIndex: -1
+  luaEncounterIndex: -1
+  playerZ: -1
+  autolinebreakstate: 0
+  revived: 0
+  hasRevived: 0
+  reviveTextSet: 0
+  musicBefore: {fileID: 0}
+  music: {fileID: 0}
 --- !u!114 &11463766
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -197,18 +209,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   blockingLayer: 0
   EventLayer: 0
-  Encounter: 
-  ModFolder: 
-  PlayerPos: {fileID: 0}
+  forcedMove: 0
+  speed: 3
+  firstTime: 0
+  isReady: 0
   lastMove: {x: 0, y: 0}
   cameraShift: {x: 0, y: 0}
-  forcedMove: 0
-  firstTime: 0
-  forcedAnim: 0
-  speed: 3
-  eventmgr: {fileID: 0}
+  PlayerPos: {fileID: 0}
+  utHeart: {fileID: 0}
   textmgr: {fileID: 0}
-  rolled: 0
 --- !u!212 &21207398
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -218,27 +227,37 @@ SpriteRenderer:
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 0
+  m_ReflectionProbeUsage: 0
   m_Materials:
   - {fileID: 2100000, guid: 583fff0a4349fe547abec1baeff2d869, type: 2}
-  m_SubsetIndices: 
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
   m_StaticBatchRoot: {fileID: 0}
-  m_UseLightProbes: 0
-  m_ReflectionProbeUsage: 0
   m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_SelectedEditorRenderState: 0
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
+  m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: f4c71df80ebf71e4eac70da1108df32a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 1, y: 1}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
 --- !u!212 &21279622
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -248,27 +267,37 @@ SpriteRenderer:
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
-  m_Materials:
-  - {fileID: 10754, guid: 0000000000000000e000000000000000, type: 0}
-  m_SubsetIndices: 
-  m_StaticBatchRoot: {fileID: 0}
-  m_UseLightProbes: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
+  m_Materials:
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
   m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_SelectedEditorRenderState: 0
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
+  m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 4331a6c4d7daa9c47a6e8065e70741fe, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_FlipX: 0
   m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 1, y: 1}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
 --- !u!224 &22441604
 RectTransform:
   m_ObjectHideFlags: 1
@@ -276,13 +305,13 @@ RectTransform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 129266}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -20}
   m_LocalScale: {x: 100, y: 100, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 465484}
   m_Father: {fileID: 0}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
   m_AnchoredPosition: {x: 320, y: 240}
@@ -299,3 +328,138 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 129266}
   m_IsPrefabParent: 1
+--- !u!114 &114937843077718580
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 129266}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44f4eb1dd5662834c949b35a8b28394c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  movementDirection: 0
+  beginAnim: StopDown
+  specialHeader: 
+  anims:
+  - name: MovingDown
+    anims: FriskUT/0, FriskUT/1, FriskUT/2, FriskUT/3
+    transitionTime: 0.25
+  - name: MovingLeft
+    anims: FriskUT/4, FriskUT/5, FriskUT/6, FriskUT/7
+    transitionTime: 0.25
+  - name: MovingRight
+    anims: FriskUT/8, FriskUT/9, FriskUT/10, FriskUT/11
+    transitionTime: 0.25
+  - name: MovingUp
+    anims: FriskUT/12, FriskUT/13, FriskUT/14, FriskUT/15
+    transitionTime: 0.25
+  - name: StopDown
+    anims: FriskUT/1, FriskUT/3
+    transitionTime: 1
+  - name: StopLeft
+    anims: FriskUT/5, FriskUT/7
+    transitionTime: 1
+  - name: StopRight
+    anims: FriskUT/9, FriskUT/11
+    transitionTime: 1
+  - name: StopUp
+    anims: FriskUT/13, FriskUT/15
+    transitionTime: 1
+  - name: CharaMovingDown
+    anims: CharaOW/0, CharaOW/1, CharaOW/2, CharaOW/3
+    transitionTime: 0.25
+  - name: CharaMovingLeft
+    anims: CharaOW/4, CharaOW/5, CharaOW/6, CharaOW/7
+    transitionTime: 0.25
+  - name: CharaMovingRight
+    anims: CharaOW/8, CharaOW/9, CharaOW/10, CharaOW/11
+    transitionTime: 0.25
+  - name: CharaMovingUp
+    anims: CharaOW/12, CharaOW/13, CharaOW/14, CharaOW/15
+    transitionTime: 0.25
+  - name: CharaStopDown
+    anims: CharaOW/1, CharaOW/3
+    transitionTime: 1
+  - name: CharaStopLeft
+    anims: CharaOW/5, CharaOW/7
+    transitionTime: 1
+  - name: CharaStopRight
+    anims: CharaOW/9, CharaOW/11
+    transitionTime: 1
+  - name: CharaStopUp
+    anims: CharaOW/13, CharaOW/15
+    transitionTime: 1
+  - name: MKMovingDown
+    anims: MonsterKidOW/0, MonsterKidOW/1, MonsterKidOW/2, MonsterKidOW/3
+    transitionTime: 0.25
+  - name: MKMovingLeft
+    anims: MonsterKidOW/4, MonsterKidOW/5, MonsterKidOW/6, MonsterKidOW/7
+    transitionTime: 0.25
+  - name: MKMovingRight
+    anims: MonsterKidOW/8, MonsterKidOW/9, MonsterKidOW/10, MonsterKidOW/11
+    transitionTime: 0.25
+  - name: MKMovingUp
+    anims: MonsterKidOW/12, MonsterKidOW/13, MonsterKidOW/14, MonsterKidOW/15
+    transitionTime: 0.25
+  - name: MKStopDown
+    anims: MonsterKidOW/1, MonsterKidOW/3
+    transitionTime: 1
+  - name: MKStopLeft
+    anims: MonsterKidOW/5, MonsterKidOW/7
+    transitionTime: 1
+  - name: MKStopRight
+    anims: MonsterKidOW/9, MonsterKidOW/11
+    transitionTime: 1
+  - name: MKStopUp
+    anims: MonsterKidOW/13, MonsterKidOW/15
+    transitionTime: 1
+  - name: CharaTadMovingDown
+    anims: CharaTadOW/0, CharaTadOW/1, CharaTadOW/2, CharaTadOW/3
+    transitionTime: 0.25
+  - name: CharaTadMovingLeft
+    anims: CharaTadOW/4, CharaTadOW/5, CharaTadOW/6, CharaTadOW/7
+    transitionTime: 0.25
+  - name: CharaTadMovingRight
+    anims: CharaTadOW/8, CharaTadOW/9, CharaTadOW/10, CharaTadOW/11
+    transitionTime: 0.25
+  - name: CharaTadMovingUp
+    anims: CharaTadOW/12, CharaTadOW/13, CharaTadOW/14, CharaTadOW/15
+    transitionTime: 0.25
+  - name: CharaTadStopDown
+    anims: CharaTadOW/1, CharaTadOW/3
+    transitionTime: 1
+  - name: CharaTadStopLeft
+    anims: CharaTadOW/5, CharaTadOW/7
+    transitionTime: 1
+  - name: CharaTadStopRight
+    anims: CharaTadOW/9, CharaTadOW/11
+    transitionTime: 1
+  - name: CharaTadStopUp
+    anims: CharaTadOW/13, CharaTadOW/15
+    transitionTime: 1
+  - name: AsrielMovingDown
+    anims: AsrielOW/0, AsrielOW/1, AsrielOW/2, AsrielOW/3
+    transitionTime: 0.25
+  - name: AsrielMovingLeft
+    anims: AsrielOW/4, AsrielOW/5, AsrielOW/6, AsrielOW/7
+    transitionTime: 0.25
+  - name: AsrielMovingRight
+    anims: AsrielOW/8, AsrielOW/9, AsrielOW/10, AsrielOW/11
+    transitionTime: 0.25
+  - name: AsrielMovingUp
+    anims: AsrielOW/12, AsrielOW/13, AsrielOW/14, AsrielOW/15
+    transitionTime: 0.25
+  - name: AsrielStopDown
+    anims: AsrielOW/1, AsrielOW/3
+    transitionTime: 1
+  - name: AsrielStopLeft
+    anims: AsrielOW/5, AsrielOW/7
+    transitionTime: 1
+  - name: AsrielStopRight
+    anims: AsrielOW/9, AsrielOW/11
+    transitionTime: 1
+  - name: AsrielStopUp
+    anims: AsrielOW/13, AsrielOW/15
+    transitionTime: 1

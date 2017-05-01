@@ -240,7 +240,7 @@ public class GameOverBehavior : MonoBehaviour {
                 if (deathMusic != null) {
                     gameOverMusic.clip = AudioClipRegistry.GetMusic(deathMusic);
                     if (gameOverMusic.clip == null) {
-                        UnitaleUtil.writeInLog("The specified death music doesn't exists. (" + deathMusic + ")");
+                        UnitaleUtil.writeInLogAndDebugger("[WARN]The specified death music doesn't exist. (" + deathMusic + ")");
 
                         gameOverMusic.clip = originMusic;
                     }

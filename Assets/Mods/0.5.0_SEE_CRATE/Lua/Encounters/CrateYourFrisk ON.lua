@@ -1,4 +1,4 @@
-if not GetRealGlobal("ow") then error("fu :D") end
+error("This encounter is used for testing purposes, I suggest you to not launch it.")
 
 encountertext = "Poseur strikes a pose!"
 nextwaves = {"thechoice"}

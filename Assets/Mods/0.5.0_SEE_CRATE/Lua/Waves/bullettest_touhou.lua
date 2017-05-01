@@ -1,5 +1,7 @@
 local bg = CreateSprite("UI/sq_white", "BelowUI")
 bg.Scale(640/4,480/4)
+bg.x = 320
+bg.y = 240
 bg.color = {0,0,0}
 if enemies[1]["name"] ~= "Punderbolt" then
 	local buttoncover = CreateSprite("UI/sq_white", "BelowArena")

@@ -2277,10 +2277,6 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 11463766, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
-      propertyPath: anims.Array.size
-      value: 8
-      objectReference: {fileID: 0}
     - target: {fileID: 22441604, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -2353,197 +2349,9 @@ Prefab:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
-    - target: {fileID: 11463766, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
-      propertyPath: anims.Array.data[0].name
-      value: MovingDown
-      objectReference: {fileID: 0}
-    - target: {fileID: 11463766, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
-      propertyPath: anims.Array.data[0].anims
-      value: FriskUT/0, FriskUT/1, FriskUT/2, FriskUT/3
-      objectReference: {fileID: 0}
-    - target: {fileID: 11463766, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
-      propertyPath: anims.Array.data[0].transitionTime
-      value: 0.25
-      objectReference: {fileID: 0}
-    - target: {fileID: 11463766, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
-      propertyPath: anims.Array.data[1].name
-      value: MovingLeft
-      objectReference: {fileID: 0}
-    - target: {fileID: 11463766, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
-      propertyPath: anims.Array.data[1].anims
-      value: FriskUT/4, FriskUT/5, FriskUT/6, FriskUT/7
-      objectReference: {fileID: 0}
-    - target: {fileID: 11463766, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
-      propertyPath: anims.Array.data[1].transitionTime
-      value: 0.25
-      objectReference: {fileID: 0}
-    - target: {fileID: 11463766, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
-      propertyPath: anims.Array.data[2].name
-      value: MovingRight
-      objectReference: {fileID: 0}
-    - target: {fileID: 11463766, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
-      propertyPath: anims.Array.data[2].anims
-      value: FriskUT/8, FriskUT/9, FriskUT/10, FriskUT/11
-      objectReference: {fileID: 0}
-    - target: {fileID: 11463766, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
-      propertyPath: anims.Array.data[2].transitionTime
-      value: 0.25
-      objectReference: {fileID: 0}
-    - target: {fileID: 11463766, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
-      propertyPath: anims.Array.data[3].name
-      value: MovingUp
-      objectReference: {fileID: 0}
-    - target: {fileID: 11463766, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
-      propertyPath: anims.Array.data[3].anims
-      value: FriskUT/12, FriskUT/13, FriskUT/14, FriskUT/15
-      objectReference: {fileID: 0}
-    - target: {fileID: 11463766, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
-      propertyPath: anims.Array.data[3].transitionTime
-      value: 0.25
-      objectReference: {fileID: 0}
-    - target: {fileID: 11463766, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
-      propertyPath: anims.Array.data[4].name
-      value: StopDown
-      objectReference: {fileID: 0}
-    - target: {fileID: 11463766, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
-      propertyPath: anims.Array.data[4].anims
-      value: FriskUT/1, FriskUT/3
-      objectReference: {fileID: 0}
-    - target: {fileID: 11463766, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
-      propertyPath: anims.Array.data[4].transitionTime
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 11463766, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
-      propertyPath: anims.Array.data[5].name
-      value: StopLeft
-      objectReference: {fileID: 0}
-    - target: {fileID: 11463766, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
-      propertyPath: anims.Array.data[5].anims
-      value: FriskUT/5, FriskUT/7
-      objectReference: {fileID: 0}
-    - target: {fileID: 11463766, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
-      propertyPath: anims.Array.data[5].transitionTime
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 11463766, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
-      propertyPath: anims.Array.data[6].name
-      value: StopRight
-      objectReference: {fileID: 0}
-    - target: {fileID: 11463766, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
-      propertyPath: anims.Array.data[7].name
-      value: StopUp
-      objectReference: {fileID: 0}
-    - target: {fileID: 11463766, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
-      propertyPath: anims.Array.data[6].anims
-      value: FriskUT/9, FriskUT/11
-      objectReference: {fileID: 0}
-    - target: {fileID: 11463766, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
-      propertyPath: anims.Array.data[6].transitionTime
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 11463766, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
-      propertyPath: anims.Array.data[7].anims
-      value: FriskUT/13, FriskUT/15
-      objectReference: {fileID: 0}
-    - target: {fileID: 11463766, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
-      propertyPath: anims.Array.data[7].transitionTime
-      value: 1
-      objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 9559022, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
+    m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
   m_IsPrefabParent: 0
---- !u!1 &619600880 stripped
-GameObject:
-  m_PrefabParentObject: {fileID: 129266, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
-  m_PrefabInternal: {fileID: 619600879}
---- !u!114 &619600881
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 619600880}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 44f4eb1dd5662834c949b35a8b28394c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  movementDirection: 0
-  beginAnim: StopDown
-  specialHeader: 
-  anims:
-  - name: MovingDown
-    anims: FriskUT/0, FriskUT/1, FriskUT/2, FriskUT/3
-    transitionTime: 0.25
-  - name: MovingLeft
-    anims: FriskUT/4, FriskUT/5, FriskUT/6, FriskUT/7
-    transitionTime: 0.25
-  - name: MovingRight
-    anims: FriskUT/8, FriskUT/9, FriskUT/10, FriskUT/11
-    transitionTime: 0.25
-  - name: MovingUp
-    anims: FriskUT/12, FriskUT/13, FriskUT/14, FriskUT/15
-    transitionTime: 0.25
-  - name: StopDown
-    anims: FriskUT/1, FriskUT/3
-    transitionTime: 1
-  - name: StopLeft
-    anims: FriskUT/5, FriskUT/7
-    transitionTime: 1
-  - name: StopRight
-    anims: FriskUT/9, FriskUT/11
-    transitionTime: 1
-  - name: StopUp
-    anims: FriskUT/13, FriskUT/15
-    transitionTime: 1
-  - name: CharaMovingDown
-    anims: CharaOW/0, CharaOW/1, CharaOW/2, CharaOW/3
-    transitionTime: 0.25
-  - name: CharaMovingLeft
-    anims: CharaOW/4, CharaOW/5, CharaOW/6, CharaOW/7
-    transitionTime: 0.25
-  - name: CharaMovingRight
-    anims: CharaOW/8, CharaOW/9, CharaOW/10, CharaOW/11
-    transitionTime: 0.25
-  - name: CharaMovingUp
-    anims: CharaOW/12, CharaOW/13, CharaOW/14, CharaOW/15
-    transitionTime: 0.25
-  - name: CharaStopDown
-    anims: CharaOW/1, CharaOW/3
-    transitionTime: 1
-  - name: CharaStopLeft
-    anims: CharaOW/5, CharaOW/7
-    transitionTime: 1
-  - name: CharaStopRight
-    anims: CharaOW/9, CharaOW/11
-    transitionTime: 1
-  - name: CharaStopUp
-    anims: CharaOW/13, CharaOW/15
-    transitionTime: 1
-  - name: MKMovingDown
-    anims: MonsterKidOW/0, MonsterKidOW/1, MonsterKidOW/2, MonsterKidOW/3
-    transitionTime: 0.25
-  - name: MKMovingLeft
-    anims: MonsterKidOW/4, MonsterKidOW/5, MonsterKidOW/6, MonsterKidOW/7
-    transitionTime: 0.25
-  - name: MKMovingRight
-    anims: MonsterKidOW/8, MonsterKidOW/9, MonsterKidOW/10, MonsterKidOW/11
-    transitionTime: 0.25
-  - name: MKMovingUp
-    anims: MonsterKidOW/12, MonsterKidOW/13, MonsterKidOW/14, MonsterKidOW/15
-    transitionTime: 0.25
-  - name: MKStopDown
-    anims: MonsterKidOW/1, MonsterKidOW/3
-    transitionTime: 1
-  - name: MKStopLeft
-    anims: MonsterKidOW/5, MonsterKidOW/7
-    transitionTime: 1
-  - name: MKStopRight
-    anims: MonsterKidOW/9, MonsterKidOW/11
-    transitionTime: 1
-  - name: MKStopUp
-    anims: MonsterKidOW/13, MonsterKidOW/15
-    transitionTime: 1
 --- !u!1 &629619426
 GameObject:
   m_ObjectHideFlags: 0
@@ -2727,6 +2535,11 @@ Prefab:
         type: 2}
       propertyPath: FirstLevelToLoad
       value: test2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114367706871473644, guid: a606ee4e085f7114e8a4bb167d4e644b,
+        type: 2}
+      propertyPath: BeginningPosition.x
+      value: 320
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: a606ee4e085f7114e8a4bb167d4e644b, type: 2}

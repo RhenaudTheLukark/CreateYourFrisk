@@ -4,11 +4,13 @@ using System.Collections;
 
 public class Title : MonoBehaviour {
     public int phase = 0;
-    private bool initPhase = false;
     public int indexChoice = 0;
-    private string choiceLetter = "Continue";
     float diff, actualX, actualY;
     TextManager tmName;
+    private bool initPhase = false;
+    private int choiceLetter = 0;
+    private string[] firstPhaseEventNames = new string[] { "Continue", "Reset", "ChangeName" };
+    private string[] secondPhaseEventNames = new string[] { "No", "Yes" };
 
     // Use this for initialization
     void Start () {
@@ -27,12 +29,11 @@ public class Title : MonoBehaviour {
 
     IEnumerator TitlePhase1() {
         GameObject.Find("Main Camera").GetComponent<AudioSource>().PlayOneShot(AudioClipRegistry.GetSound("intro_noise"));
-        Color noColor = new Color(0,0,0,0);
-        while (GameObject.Find("Main Camera").GetComponent<AudioSource>().isPlaying)
+        while (GameObject.Find("Main Camera").GetComponent<AudioSource>().isPlaying) 
             yield return 0;
         while (phase == 0) {
             if (GameObject.Find("PressEnterOrZ").GetComponent<SpriteRenderer>().color.a == 1)
-                GameObject.Find("PressEnterOrZ").GetComponent<SpriteRenderer>().color = noColor;
+                GameObject.Find("PressEnterOrZ").GetComponent<SpriteRenderer>().color = new Color(255, 255, 255, 0);
             else
                 GameObject.Find("PressEnterOrZ").GetComponent<SpriteRenderer>().color = new Color(255, 255, 255, 1);
             yield return new WaitForSeconds(1);
@@ -86,32 +87,35 @@ public class Title : MonoBehaviour {
                                                                          + "PS : Don't try to press ESCAPE, or bad things can happen ;)");
                 }
             } else {
-                if (GlobalControls.input.Right == UndertaleInput.ButtonState.PRESSED || GlobalControls.input.Left == UndertaleInput.ButtonState.PRESSED) {
-                    if (choiceLetter == "Continue") setColor("Reset");
-                    else setColor("Continue");
-                } else if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED) {
-                    if (choiceLetter == "Continue") {
-                        phase = -1;
-                        StartCoroutine(LoadGame());
-                    } else {
-                        phase = 2;
-                        GameObject.Find("CanvasReset").transform.position = new Vector3(320, 240, -500);
-                        setColor("Continue");
-                        choiceLetter = "No";
-                        setColor("No");
+                if (GlobalControls.input.Right == UndertaleInput.ButtonState.PRESSED || GlobalControls.input.Left == UndertaleInput.ButtonState.PRESSED)
+                    setColor(choiceLetter == 2 ? 2 : (choiceLetter + 1) % 2);
+                if (GlobalControls.input.Up == UndertaleInput.ButtonState.PRESSED || GlobalControls.input.Down == UndertaleInput.ButtonState.PRESSED)
+                    setColor(choiceLetter == 2 ? 0 : 2);
+                else if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED)
+                    switch (choiceLetter) {
+                        case 0:
+                            phase = -1;
+                            StartCoroutine(LoadGame());
+                            break;
+                        case 1:
+                            phase = 2;
+                            GameObject.Find("CanvasReset").transform.position = new Vector3(320, 240, -500);
+                            setColor(0, 2);
+                            break;
+                        case 2:
+                            SceneManager.LoadScene("EnterName");
+                            break;
                     }
-                }
             }
         } else if (phase == 2) {
             if (tmName.transform.localScale.x < 3) {
                 tmName.transform.localScale = new Vector3(tmName.transform.localScale.x + 0.01f, tmName.transform.localScale.y + 0.01f, 1);
                 tmName.transform.localPosition = new Vector3(actualX - (((tmName.transform.localScale.x - 1f) * diff) / 2f), actualY - (((tmName.transform.localScale.x - 1f) * diff) / 6), tmName.transform.localPosition.z);
             }
-            if (GlobalControls.input.Right == UndertaleInput.ButtonState.PRESSED || GlobalControls.input.Left == UndertaleInput.ButtonState.PRESSED) {
-                if (choiceLetter == "Yes") setColor("No");
-                else setColor("Yes");
-            } else if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED) {
-                if (choiceLetter == "Yes") {
+            if (GlobalControls.input.Right == UndertaleInput.ButtonState.PRESSED || GlobalControls.input.Left == UndertaleInput.ButtonState.PRESSED)
+                setColor((choiceLetter + 1) % 2, 2);
+            else if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED) {
+                if (choiceLetter == 1) {
                     GameObject.Find("Main Camera").GetComponent<AudioSource>().Stop();
                     GameObject.Find("Main Camera").GetComponent<AudioSource>().PlayOneShot(AudioClipRegistry.GetSound("intro_holdup"));
                     phase = -1;
@@ -121,18 +125,21 @@ public class Title : MonoBehaviour {
                     GameObject.Find("CanvasReset").transform.position = new Vector3(320, 240, 50);
                     tmName.transform.localPosition = new Vector3(actualX, actualY, tmName.transform.localPosition.z);
                     tmName.transform.localScale = new Vector3(1, 1, 1);
-                    setColor("No");
-                    choiceLetter = "Continue";
-                    setColor("Continue");
+                    setColor(0);
                 }
             }
         }
 	}
 
-    void setColor(string str) {
-        GameObject.Find(choiceLetter).GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 1);
-        choiceLetter = str;
-        GameObject.Find(choiceLetter).GetComponent<SpriteRenderer>().color = new Color(1, 1, 0, 1);
+    void setColor(int nbr, int mode = 1) {
+        string obj;
+        if (mode == 1) obj = firstPhaseEventNames[choiceLetter];
+        else           obj = secondPhaseEventNames[choiceLetter];
+        GameObject.Find(obj).GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 1);
+        choiceLetter = nbr;
+        if (mode == 1) obj = firstPhaseEventNames[choiceLetter];
+        else           obj = secondPhaseEventNames[choiceLetter];
+        GameObject.Find(obj).GetComponent<SpriteRenderer>().color = new Color(1, 1, 0, 1);
     }
 
     IEnumerator LoadGame() {
@@ -140,7 +147,7 @@ public class Title : MonoBehaviour {
         SceneManager.LoadScene("TransitionOverworld");
         yield return 0;
         yield return Application.isLoadingLevel;
-        GameObject.Find("Player").transform.position = new Vector3(SaveLoad.currentGame.playerPosX, SaveLoad.currentGame.playerPosY, SaveLoad.currentGame.playerPosZ);
+        GameObject.Find("Player").transform.position = new Vector3(SaveLoad.savedGame.playerPosX, SaveLoad.savedGame.playerPosY, SaveLoad.savedGame.playerPosZ);
         StaticInits si = GameObject.Find("Main Camera OW").GetComponent<StaticInits>();
         StaticInits.MODFOLDER = LuaScriptBinder.Get(null, "ModFolder").String;
         StaticInits.Initialized = false;

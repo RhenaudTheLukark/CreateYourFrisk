@@ -188,6 +188,12 @@ public class PlayerOverworld : MonoBehaviour {
         
         int currentDirection = 0;
         if (!inText) {
+            if (animator.movementDirection == 0) {
+                if (GlobalControls.input.Up == UndertaleInput.ButtonState.HELD) currentDirection = 8;
+                else if (GlobalControls.input.Down == UndertaleInput.ButtonState.HELD) currentDirection = 2;
+                else if (GlobalControls.input.Right == UndertaleInput.ButtonState.HELD) currentDirection = 6;
+                else if (GlobalControls.input.Left == UndertaleInput.ButtonState.HELD) currentDirection = 4;
+            }
             if (GlobalControls.input.Up == UndertaleInput.ButtonState.PRESSED) currentDirection = 8;
             else if (GlobalControls.input.Right == UndertaleInput.ButtonState.PRESSED) currentDirection = 6;
             else if (GlobalControls.input.Left == UndertaleInput.ButtonState.PRESSED) currentDirection = 4;
@@ -196,14 +202,12 @@ public class PlayerOverworld : MonoBehaviour {
                 (animator.beginAnim.Contains("Right") && GlobalControls.input.Right == UndertaleInput.ButtonState.RELEASED) ||
                 (animator.beginAnim.Contains("Left") && GlobalControls.input.Left == UndertaleInput.ButtonState.RELEASED) ||
                 (animator.beginAnim.Contains("Down") && GlobalControls.input.Down == UndertaleInput.ButtonState.RELEASED)) {
-                if (horizontal < 0) currentDirection = 4;
+                if (horizontal < 0)      currentDirection = 4;
                 else if (horizontal > 0) currentDirection = 6;
-                else if (vertical > 0) currentDirection = 8;
-                else if (vertical < 0) currentDirection = 2;
+                else if (vertical > 0)   currentDirection = 8;
+                else if (vertical < 0)   currentDirection = 2;
             }
-        } else
-            currentDirection = forcedMove;
-        
+        }        
 
         if (currentDirection != 0) animator.movementDirection = currentDirection;
 
@@ -566,7 +570,7 @@ public class PlayerOverworld : MonoBehaviour {
     /// <param name="mugshots">The mugshots' name that'll be used in the dialogue</param>
     public void SetDialog(string[] textTable, bool rearranged, string[] mugshots = null) {
         if (textTable[0] == string.Empty) {
-            UnitaleUtil.writeInLog("There is no text to print!");
+            UnitaleUtil.writeInLogAndDebugger("Old SetDialog: There is no text to print!");
             return;
         }
 
@@ -597,7 +601,7 @@ public class PlayerOverworld : MonoBehaviour {
     public void RectifyCameraPosition(Vector3 pos) {
         Vector3 dimBG = new Vector3(640, 480, -10000);
         try { dimBG = GameObject.Find("Background").GetComponent<RectTransform>().sizeDelta * GameObject.Find("Background").GetComponent<RectTransform>().localScale.x; } 
-        catch { UnitaleUtil.writeInLog("The 'Background' GameObject is missing."); }
+        catch { UnitaleUtil.writeInLogAndDebugger("RectifyCameraPosition: The 'Background' GameObject is missing."); }
 
         if (pos.x < 320)                 pos.x = 320;
         else if (pos.x > dimBG.x - 320)  pos.x = Mathf.RoundToInt(dimBG.x - 320);

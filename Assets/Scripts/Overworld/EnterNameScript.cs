@@ -6,8 +6,10 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class EnterNameScript : MonoBehaviour {
-    public bool weirdBackspaceShift = false;
+    private bool weirdBackspaceShift = false;
+    private bool isNewGame = true;
     private bool confirm = false;
+    private bool hackFirstString = false;
     private AudioSource uiAudio;
     private string choiceLetter = "A", playerName = "";
     private TextManager tmInstr, tmName, tmLettersMaj, tmLettersMin;
@@ -18,6 +20,7 @@ public class EnterNameScript : MonoBehaviour {
     // Use this for initialization
     void Start () {
         AddToDict();
+        isNewGame = SaveLoad.savedGame == null;
         uiAudio = GameObject.Find("TextManager Instructions").GetComponent<AudioSource>();
         try { GameObject.Find("textframe_border_outer").SetActive(false); } catch { }
         tmInstr = GameObject.Find("TextManager Instructions").GetComponent<TextManager>();
@@ -28,6 +31,8 @@ public class EnterNameScript : MonoBehaviour {
             tmInstr.setTextQueue(new TextMessage[] { new TextMessage("[noskipatall]Name the fallen human.", false, true) });
         tmName = GameObject.Find("TextManager Name").GetComponent<TextManager>();
         tmName.setHorizontalSpacing(2);
+        if (!isNewGame)
+            playerName = PlayerCharacter.instance.Name;
         tmName.setTextQueue(new TextMessage[] { new TextMessage(playerName, false, true) });
         tmLettersMaj = GameObject.Find("TextManager LettersMaj").GetComponent<TextManager>();
         tmLettersMaj.setHorizontalSpacing(52.2f);
@@ -49,6 +54,11 @@ public class EnterNameScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         if (!confirm) {
+            if (!hackFirstString && tmName.transform.childCount != 0 && !isNewGame) {
+                hackFirstString = true;
+                tmName.setTextQueue(new TextMessage[] { new TextMessage(playerName, false, true) });
+                tmName.transform.localPosition = new Vector3(-calcTotalLength(tmName) / 2, tmName.transform.localPosition.y, tmName.transform.localPosition.z);
+            } 
             if (GlobalControls.input.Down == UndertaleInput.ButtonState.PRESSED) {
                 if (choiceLetter == "Quit")                                                                                                 setColor("A");
                 else if (choiceLetter == "Backspace")                                                                                       setColor("D");
@@ -188,21 +198,26 @@ public class EnterNameScript : MonoBehaviour {
             GameObject.Find("Backspace").GetComponent<SpriteRenderer>().enabled = true;
             setColor("Done");
         } else {
-            GameObject.Find("Main Camera").GetComponent<AudioSource>().Stop();
-            GameObject.Find("Main Camera").GetComponent<AudioSource>().PlayOneShot(AudioClipRegistry.GetSound("intro_holdup"));
-            SpriteRenderer blank = GameObject.Find("Blank").GetComponent<SpriteRenderer>();
-            while (blank.color.a <= 1) {
-                if (tmName.transform.localScale.x < 3) {
-                    tmName.transform.localScale = new Vector3(tmName.transform.localScale.x + 0.01f, tmName.transform.localScale.y + 0.01f, 1);
-                    tmName.transform.localPosition = new Vector3(actualX - (((tmName.transform.localScale.x - 1f) * diff) / 2f), actualY - (((tmName.transform.localScale.x - 1f) * diff) / 6), tmName.transform.localPosition.z);
-                }
-                blank.color = new Color(blank.color.r, blank.color.g, blank.color.b, blank.color.a + 0.003f);
-                yield return 0;
-            }
-            while(GameObject.Find("Main Camera").GetComponent<AudioSource>().isPlaying)
-                yield return 0;
             PlayerCharacter.instance.Name = playerName;
-            SceneManager.LoadScene("TransitionOverworld");
+            if (isNewGame) {
+                GameObject.Find("Main Camera").GetComponent<AudioSource>().Stop();
+                GameObject.Find("Main Camera").GetComponent<AudioSource>().PlayOneShot(AudioClipRegistry.GetSound("intro_holdup"));
+                SpriteRenderer blank = GameObject.Find("Blank").GetComponent<SpriteRenderer>();
+                while (blank.color.a <= 1) {
+                    if (tmName.transform.localScale.x < 3) {
+                        tmName.transform.localScale = new Vector3(tmName.transform.localScale.x + 0.01f, tmName.transform.localScale.y + 0.01f, 1);
+                        tmName.transform.localPosition = new Vector3(actualX - (((tmName.transform.localScale.x - 1f) * diff) / 2f), actualY - (((tmName.transform.localScale.x - 1f) * diff) / 6), tmName.transform.localPosition.z);
+                    }
+                    blank.color = new Color(blank.color.r, blank.color.g, blank.color.b, blank.color.a + 0.003f);
+                    yield return 0;
+                }
+                while (GameObject.Find("Main Camera").GetComponent<AudioSource>().isPlaying)
+                    yield return 0;
+                SceneManager.LoadScene("TransitionOverworld");
+            } else {
+                SaveLoad.Save();
+                SceneManager.LoadScene("TitleScreen");
+            }
         }
     }
 

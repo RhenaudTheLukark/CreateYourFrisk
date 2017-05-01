@@ -355,7 +355,7 @@ public static class Inventory {
                         mess = new TextMessage[] { new TextMessage("[health:17]Through DETERMINATION,\rthe dream became true.[w:10]\nYou recovered 17 HP!", true, false) };
                         break;
                     default:
-                        UnitaleUtil.writeInLog("The item doesn't exists in this pool.");
+                        UnitaleUtil.writeInLogAndDebugger("[WARN]The item doesn't exists in this pool.");
                         break;
                 }
                 if (amount != 0)
@@ -371,7 +371,7 @@ public static class Inventory {
                     case "Empty Gun": amount = 12; break;
                     case "Worn Dagger": amount = 15; break;
                     case "Real Knife": amount = 99; break;
-                    default: UnitaleUtil.writeInLog("The item doesn't exists in this pool."); break;
+                    default: UnitaleUtil.writeInLogAndDebugger("[WARN]The item doesn't exists in this pool."); break;
                 }
                 break;
             case 2:
@@ -384,14 +384,14 @@ public static class Inventory {
                     case "Cowboy Hat": amount = 12; break;
                     case "Heart Locket": amount = 15; break;
                     case "The Locket": amount = 99; break;
-                    default: UnitaleUtil.writeInLog("The item doesn't exists in this pool."); break;
+                    default: UnitaleUtil.writeInLogAndDebugger("[WARN]The item doesn't exists in this pool."); break;
                 }
                 break;
             default:
                 switch (name) {
                     case "Testing Dog": mess = new TextMessage[] { new TextMessage("This dog is testing something.", true, false), new TextMessage("I must leave it alone.", true, false) }; break;
                     case "Stick": mess = new TextMessage[] { new TextMessage("You throw the stick.[w:10]\nNothing happens.", true, false) }; break;
-                    default: UnitaleUtil.writeInLog("The item doesn't exists in this pool."); break;
+                    default: UnitaleUtil.writeInLogAndDebugger("[WARN]The item doesn't exists in this pool."); break;
                 }
                 break;
         }

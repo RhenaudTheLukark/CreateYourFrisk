@@ -48,25 +48,25 @@ public class StaticInits : MonoBehaviour {
             sw.Start();
             ScriptRegistry.init();
             sw.Stop();
-            UnitaleUtil.writeInLog("Script registry loading time: " + sw.ElapsedMilliseconds + "ms");
+            UnityEngine.Debug.Log("Script registry loading time: " + sw.ElapsedMilliseconds + "ms");
             sw.Reset();
 
             sw.Start();
             SpriteRegistry.init();
             sw.Stop();
-            UnitaleUtil.writeInLog("Sprite registry loading time: " + sw.ElapsedMilliseconds + "ms");
+            UnityEngine.Debug.Log("Sprite registry loading time: " + sw.ElapsedMilliseconds + "ms");
             sw.Reset();
 
             sw.Start();
             AudioClipRegistry.init();
             sw.Stop();
-            UnitaleUtil.writeInLog("Audio clip registry loading time: " + sw.ElapsedMilliseconds + "ms");
+            UnityEngine.Debug.Log("Audio clip registry loading time: " + sw.ElapsedMilliseconds + "ms");
             sw.Reset();
 
             sw.Start();
             SpriteFontRegistry.init();
             sw.Stop();
-            UnitaleUtil.writeInLog("Sprite font registry loading time: " + sw.ElapsedMilliseconds + "ms");
+            UnityEngine.Debug.Log("Sprite font registry loading time: " + sw.ElapsedMilliseconds + "ms");
             sw.Reset();
         } else 
             Initialized = true;

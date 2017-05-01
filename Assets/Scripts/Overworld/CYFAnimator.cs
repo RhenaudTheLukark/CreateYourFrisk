@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class CYFAnimator : MonoBehaviour {
     public int movementDirection = 0;
@@ -8,8 +6,12 @@ public class CYFAnimator : MonoBehaviour {
     public string specialHeader = "";
     public static string specialPlayerHeader = "";
     private int threeFramePass = 0;
+    private bool waitForStart = true;
     private LuaSpriteController sprctrl;
     private Vector2 lastPos;
+
+    void OnEnable()  { Fading.StartFade += LateStart; }
+    void OnDisable() { Fading.StartFade -= LateStart; }
 
     [System.Serializable] //Permits to be able to change the data of anims via the Editor
     public struct Anim {
@@ -26,17 +28,20 @@ public class CYFAnimator : MonoBehaviour {
     }
 
     // Use this for initialization
-    void Start() {
+    void LateStart() {
         if (EventManager.instance.sprCtrls.ContainsKey(gameObject.name))  sprctrl = EventManager.instance.sprCtrls[gameObject.name];
         else if (gameObject.name == "Player")                             sprctrl = PlayerOverworld.instance.sprctrl;
         else                                                              throw new CYFException("A CYFAnimator component must be tied to an event, however the GameObject " + gameObject.name + " doesn't seem to be one.");
         Anim anim = GetAnimPerName(beginAnim);
-        sprctrl.SetAnimation(anim.anims.Replace(" ", "").Replace("{", "").Replace("}", "").Split(','), anim.transitionTime);
         lastPos = gameObject.transform.position;
+        waitForStart = false;
+        try { sprctrl.SetAnimation(anim.anims.Replace(" ", "").Replace("{", "").Replace("}", "").Split(','), anim.transitionTime); } catch { }
     }
 	
 	// Update is called once per frame
 	void Update () {
+        if (waitForStart)
+            return;
         string animName = gameObject.name == "Player" ? specialPlayerHeader : specialHeader;
 
         if ((Vector2)gameObject.transform.position != lastPos) {
@@ -62,7 +67,7 @@ public class CYFAnimator : MonoBehaviour {
         }
         if (animName != beginAnim) {
             Anim anim = GetAnimPerName(animName);
-            sprctrl.SetAnimation(anim.anims.Replace(" ", "").Replace("{", "").Replace("}", "").Split(','), anim.transitionTime);
+            try { sprctrl.SetAnimation(anim.anims.Replace(" ", "").Replace("{", "").Replace("}", "").Split(','), anim.transitionTime); } catch { }
             beginAnim = animName;
         }
         lastPos = gameObject.transform.position;

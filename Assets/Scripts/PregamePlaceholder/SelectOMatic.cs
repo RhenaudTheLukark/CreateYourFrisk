@@ -36,7 +36,7 @@ public class SelectOMatic : MonoBehaviour {
         //byte[] bytes = tex.EncodeToPNG();
         //File.WriteAllBytes(Application.dataPath + "/ItsAVeryHackyWayToMakeTransitionsIKnowThanksYouCanDeleteThisFileIfYouWantTo.png", bytes);
         StaticInits.Initialized = false;
-        UnitaleUtil.writeInLog("Loading " + StaticInits.ENCOUNTER);
+        Debug.Log("Loading " + StaticInits.ENCOUNTER);
         SceneManager.LoadScene("Battle");
     }
 
@@ -58,7 +58,7 @@ public class SelectOMatic : MonoBehaviour {
             crt.anchoredPosition = new Vector2(5, 0 - 40 * numButton);
             c.GetComponentInChildren<Text>().text = modDir.Name;
             string mdn = modDir.Name; // create a new object in memory because the reference to moddir in the anonymous function gets fucked
-            c.onClick.AddListener(() => { StaticInits.MODFOLDER = mdn; UnitaleUtil.writeInLog("Selecting directory " + mdn); SceneManager.LoadScene("EncounterSelect"); });
+            c.onClick.AddListener(() => { StaticInits.MODFOLDER = mdn; Debug.Log("Selecting directory " + mdn); SceneManager.LoadScene("EncounterSelect"); });
             numButton++;
         }
 
