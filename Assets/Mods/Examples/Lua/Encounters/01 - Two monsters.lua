@@ -28,6 +28,12 @@ possiblestrings = { "I'm outta here.", "I've got shit to do.", "I've got better 
 possible_attacks = {"bullettest_bouncy" --[[, "bullettest_chaserorb", "bullettest_touhou"]]}
 
 function EncounterStarting()
+    maintext = CreateText(
+        {"[font:uidialog][novoice][waitall:3]Greetings.",
+         "[novoice][waitall:3]I[w:20] am " .. Player.name .. ".",
+         "[novoice][waitall:3][color:ff0000]Thank you.",
+         "[novoice][waitall:3]Your power awakened me\nfrom death."}, {400, 99}, 320, "Top", 100)
+    maintext.progressmode = "manual"
     --[[bullet = CreateProjectile("BoneCenter", 0, 100, "Top")
         bullet.sprite.Scale(1, 2)
         bullet.isPersistent = true]]
@@ -55,10 +61,10 @@ end
 
 function DefenseEnding() --This built-in function fires after the defense round ends.
     encountertext = RandomEncounterText() --This built-in function gets a random encounter text from a random enemy.
-    maintext = CreateText(
+    --[[maintext = CreateText(
             {"[font:uidialog][novoice][waitall:3]Greetings.",
              "[novoice][waitall:3]I[w:20] am " .. Player.name .. ".",
-             "[func:movetext][novoice][waitall:3][color:ff0000]Thank you.",
+             "[novoice][waitall:3][color:ff0000]Thank you.",
              "[novoice][waitall:3]Your power awakened me\nfrom death."}, {400, 99}, 320, "Top", 100)
     maintext.progressmode = "manual"
     --maintext.SetText(
@@ -77,7 +83,7 @@ function DefenseEnding() --This built-in function fires after the defense round 
     else 
         texts[1].SetText({"Omg this is a second test!", "AND OMG IT REALLY WORKS I'M SO HAPPY YAY YAY YAY!"})
         texts[1].ShowBubble("down", 75)
-    end
+    end]]
 end
 
 function yay()
@@ -123,6 +129,7 @@ function Heal(amount)
 end
 
 function Update()
+   -- maintext.SetText({"[instant]yay" .. timer})
     --[[if GetCurrentState() == "DEFENDING" then
             --DEBUG(Wave[1]["wavename"])
             if Wave[1]["wavename"] == "bullettest_touhou" then
@@ -130,7 +137,15 @@ function Update()
             end
         end]]
 	
-    if Input.GetKey("E") == 2 then
+    if Input.GetKey("X") == 1 then
+        Misc.ShakeScreen(30, 3, true)
+    elseif Input.GetKey("N") == 1 then
+        Misc.ShakeScreen(60, 10, false)
+    elseif Input.GetKey("P") == 1 then
+        Misc.ShakeScreen(math.huge, 999, true)
+    elseif Input.GetKey("Y") == 1 then
+        Misc.StopShake()
+    elseif Input.GetKey("E") == 2 then
 	    enemies[1].Call("SetSliceAnimOffset", {math.random(-40, 11), math.random(-60, 61)})
         Player.ForceAttack(1, 2)
         --Player.CheckDeath()

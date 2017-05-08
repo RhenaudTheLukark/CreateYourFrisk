@@ -286,6 +286,13 @@ public class LuaSpriteController {
         else                                                           tag = "other";
     }
 
+    private void updateCollider(Sprite s) {
+        if (img.GetComponent<BoxCollider2D>() && img.name == "Player") {
+            BoxCollider2D collider = img.GetComponent<BoxCollider2D>();
+            collider.offset = new Vector2(collider.offset.x, ((float)s.texture.height / 100 - collider.size.y) / -2);
+        }
+    }
+
     // Changes the sprite of this instance
     public void Set(string name) {
         // Change the sprite
@@ -306,6 +313,7 @@ public class LuaSpriteController {
         if (tag == "projectile")
             img.GetComponent<Projectile>().needUpdateTex = true;
         spritename = name.ToLower();
+        updateCollider(originalSprite);
     }
 
     // Sets the parent of a sprite. Can't be used on an enemy
@@ -368,6 +376,7 @@ public class LuaSpriteController {
                 SpriteRenderer imgtemp = img.GetComponent<SpriteRenderer>();
                 imgtemp.sprite = originalSprite;
             }
+            updateCollider(originalSprite);
         }
     }
 
@@ -456,6 +465,11 @@ public class LuaSpriteController {
                     imgtemp.sprite = s;
                     originalSprite = imgtemp.sprite;
                     nativeSizeDelta = new Vector2(imgtemp.sprite.texture.width, imgtemp.sprite.texture.height);
+                    spritename = k.name.ToLower();
+                    Scale(xScale, yScale);
+                    updateCollider(originalSprite);
+                    if (tag == "projectile")
+                        img.GetComponent<Projectile>().needUpdateTex = true;
                 }
             } else {
                 SpriteRenderer imgtemp = img.GetComponent<SpriteRenderer>();
@@ -463,12 +477,13 @@ public class LuaSpriteController {
                     imgtemp.sprite = s;
                     originalSprite = imgtemp.sprite;
                     nativeSizeDelta = new Vector2(imgtemp.sprite.texture.width, imgtemp.sprite.texture.height);
+                    spritename = k.name.ToLower();
+                    Scale(xScale, yScale);
+                    updateCollider(originalSprite);
+                    if (tag == "projectile")
+                        img.GetComponent<Projectile>().needUpdateTex = true;
                 }
             }
-            spritename = k.name.ToLower();
-            Scale(xScale, yScale);
-            if (tag == "projectile")
-                img.GetComponent<Projectile>().needUpdateTex = true;
         }
     }
 

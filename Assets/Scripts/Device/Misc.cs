@@ -1,8 +1,10 @@
 ﻿using UnityEngine;
+using System;
+using System.Collections;
 using System.Runtime.InteropServices;
 using System.Text;
 
-public class Misc {
+public class Misc : MonoBehaviour {
     #if UNITY_STANDALONE_WIN || UNITY_EDITOR
         #if UNITY_EDITOR
             [DllImport("user32.dll")]
@@ -100,7 +102,7 @@ public class Misc {
             }
             set { SetWindowText(window, value); }
         }
-    #else
+#else
         public static int WindowX { 
             get { 
                 UnitaleUtil.displayLuaError("Windows-only function", "This feature is Windows-only! Sorry, but you can't use it here."); 
@@ -154,6 +156,20 @@ public class Misc {
             set { UnitaleUtil.displayLuaError("Windows-only function", "This feature is Windows-only! Sorry, but you can't use it here."); }
         }
 #endif
+
+    public void ShakeScreen(float duration, float intensity = 3, bool isIntensityDecreasing = true) {
+        if (UnitaleUtil.isOverworld())
+            throw new CYFException("You can't use Misc.ScreenShake in the overworld. Use Screen.Rumble instead.");
+        else
+            Camera.main.GetComponent<GlobalControls>().ShakeScreen(duration, intensity, isIntensityDecreasing);
+    }
+
+    public void StopShake() {
+        if (UnitaleUtil.isOverworld())
+            throw new CYFException("You can't use Misc.StopShake in the overworld.");
+        else
+            GlobalControls.stopScreenShake = true;
+    }
 
     public bool FullScreen {
         get { return Screen.fullScreen; }

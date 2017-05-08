@@ -65,7 +65,7 @@ function EventPage1()
         elseif Input.Left == 1 then
             local temp = (currentChar + 2) % 3
             if currentChar < 4 then ChangeTarget(temp != 0 and temp or 3)
-            else                    ChangeTarget((currentChar - 3) % 2 + 1) 
+            else                    ChangeTarget((currentChar - 3) % 2 + 1 + 3) 
             end
         elseif Input.Down == 1 or Input.Up == 1 then
             local temp = (currentChar + (currentChar > 3 and 2 or 3)) % 5

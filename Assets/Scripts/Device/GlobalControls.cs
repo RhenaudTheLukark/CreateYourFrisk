@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Linq;
-using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 
@@ -26,6 +26,8 @@ public class GlobalControls : MonoBehaviour {
     public static bool allowplayerdef = false;
     public static bool crate = false;
     public static bool retroMode = false;
+    public static bool stopScreenShake = false;
+    private bool screenShaking = false;
     public static Vector2 beginPosition;
     //public static bool samariosNightmare = false;
     public static string[] nonOWScenes = new string[] { "Battle", "Error", "EncounterSelect", "ModSelect", "GameOver", "TitleScreen", "Disclaimer", "EnterName", "TransitionOverworld", "Intro" };
@@ -93,6 +95,7 @@ public class GlobalControls : MonoBehaviour {
             Application.targetFrameRate = 60;
             Screen.SetResolution(640, 480, false, 0);
         }
+        stopScreenShake = false;
     }
 
     public int GetMapEventPage(string key1, int key2) {
@@ -108,6 +111,44 @@ public class GlobalControls : MonoBehaviour {
     void LoadScene(Scene scene, LoadSceneMode mode) {
         if (LuaScriptBinder.GetAlMighty(null, "CrateYourFrisk") != null)  crate = LuaScriptBinder.GetAlMighty(null, "CrateYourFrisk").Boolean;
         else                                                              crate = false;
+    }
+
+    private IEnumerator IShakeScreen(object[] args) {
+        float frames, intensity;
+        bool fade;
+
+        try { frames = (float)args[0]; } catch { throw new CYFException("The argument \"seconds\" must be a number."); }
+        try { intensity = (float)args[1]; } catch { throw new CYFException("The argument \"intensity\" must be a number."); }
+        try { fade = (bool)args[2]; } catch { throw new CYFException("The argument \"fade\" must be a boolean."); }
+
+        Transform tf = Camera.main.transform;
+        Vector2 shift = new Vector2(0, 0), totalShift = new Vector2(0, 0);
+        float frameCount = 0, intensityBasis = intensity;
+        while (frameCount < frames) {
+            if (stopScreenShake) {
+                tf.position = new Vector3(tf.position.x - totalShift.x, tf.position.y - totalShift.y, tf.position.z);
+                screenShaking = false;
+                yield break;
+            }
+            if (fade)
+                intensity = intensityBasis * (1 - (frameCount / frames));
+            shift = new Vector2((Random.value - 0.5f) * 2 * intensity, (Random.value - 0.5f) * 2 * intensity);
+            
+            tf.position = new Vector3(tf.position.x + shift.x - totalShift.x, tf.position.y + shift.y - totalShift.y, tf.position.z);
+            //print(totalShift + " + " + shift + " = " + (totalShift + shift));
+            totalShift = shift;
+            frameCount++;
+            yield return 0;
+        }
+        screenShaking = false;
+        tf.position = new Vector3(tf.position.x - totalShift.x, tf.position.y - totalShift.y, tf.position.z);
+    }
+
+    public void ShakeScreen(float duration, float intensity, bool isIntensityDecreasing) {
+        if (!screenShaking) {
+            screenShaking = true;
+            StartCoroutine("IShakeScreen", new object[] { duration, intensity, isIntensityDecreasing });
+        }
     }
 
     void OnApplicationQuit() { /*UnitaleUtil.closeFile();*/ }

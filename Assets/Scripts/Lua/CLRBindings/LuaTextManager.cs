@@ -10,7 +10,7 @@ public class LuaTextManager : TextManager {
     private DynValue bubbleLastVar = DynValue.NewNil();
     private bool bubble = true;
     private bool isActive = false;
-    private int framesWait = 40;
+    private int framesWait = 60;
     private int countFrames = 0;
     private int _textWidth;
     private int _bubbleHeight = -1;
@@ -250,7 +250,6 @@ public class LuaTextManager : TextManager {
     }
 
     public void SetPivot(float x, float y) {
-        container.GetComponent<RectTransform>().pivot = new Vector2(x, y);
         container.GetComponent<RectTransform>().pivot = new Vector2(x, y);
     }
 }

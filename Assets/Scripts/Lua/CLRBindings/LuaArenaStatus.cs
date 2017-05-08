@@ -30,7 +30,7 @@ public class LuaArenaStatus {
         else                                                                    UnitaleUtil.displayLuaError("NOT THE WAVE SCRIPT", "sorry but pls don't");
     }
 
-    public void Move(float x, float y, bool movePlayer, bool immediate = false) {
+    public void Move(float x, float y, bool movePlayer = true, bool immediate = false) {
         if (UIController.instance.getState() == UIController.UIState.DEFENDING) {
             if (immediate) ArenaManager.instance.MoveImmediate(x, y, movePlayer);
             else           ArenaManager.instance.Move(x, y, movePlayer);
@@ -54,7 +54,7 @@ public class LuaArenaStatus {
             UnitaleUtil.displayLuaError("NOT THE WAVE SCRIPT", "sorry but pls don't");
     }
 
-    public void MoveToAndResize(float x, float y, int width, int height, bool movePlayer, bool immediate = false) {
+    public void MoveToAndResize(float x, float y, int width, int height, bool movePlayer = true, bool immediate = false) {
         if (UIController.instance.getState() == UIController.UIState.DEFENDING) {
             if (immediate) ArenaManager.instance.MoveToAndResizeImmediate(x, y, width, height, movePlayer);
             else           ArenaManager.instance.MoveToAndResize(x, y, width, height, movePlayer);

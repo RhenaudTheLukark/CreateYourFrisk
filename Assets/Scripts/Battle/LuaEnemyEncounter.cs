@@ -104,6 +104,7 @@ internal class LuaEnemyEncounter : EnemyEncounter {
                 waves[i].script = LuaScriptBinder.boundScript();
                 DynValue ArenaStatus = UserData.Create(ArenaManager.luaStatus);
                 waves[i].script.Globals.Set("Arena", ArenaStatus);
+                waves[i].script.Globals["EndWave"] = (Action)endWaveTimer;
                 waves[i].script.Globals["State"] = (Action<string>)UIController.instance.SwitchStateOnString;
                 waves[i].script.Globals["CreateProjectile"] = (Func<Script, string, float, float, string, DynValue>)CreateProjectile;
                 waves[i].script.Globals["CreateProjectileAbs"] = (Func<Script, string, float, float, string, DynValue>)CreateProjectileAbs;
@@ -272,7 +273,7 @@ internal class LuaEnemyEncounter : EnemyEncounter {
     ///</summary>
     ///<param name="item">Item to be checked for custom action</param>
     ///<returns>true if a custom action should be executed for given item, false if the default action should happen</returns>
-    public override bool CustomItemHandler(UnderItem item) { return CallOnSelfOrChildren("HandleItem", new DynValue[] { DynValue.NewString(item.Name) }); }
+    //public override bool CustomItemHandler(UnderItem item) { return CallOnSelfOrChildren("HandleItem", new DynValue[] { DynValue.NewString(item.Name) }); }
 
     public override void updateWave() {
         string currentScript = "";

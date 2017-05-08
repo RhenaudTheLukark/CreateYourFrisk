@@ -486,6 +486,7 @@ public class EventManager : MonoBehaviour {
         scriptText += "\n\nCYFEventCoroutine = coroutine.create(DEBUG) " +
                       "\nCYFEventCheckRefresh = true" +
                       "\nlocal CYFEventLameErrorContainer = nil" +
+                      "\nlocal CYFEventLameErrorContainerSave = nil" +
                       "\nlocal CYFEventCurrentFunction = nil" +
                       "\nlocal CYFEventAlreadyLaunched = false " +
                       "\nfunction CYFEventMySplit(str, sep)" +
@@ -507,13 +508,14 @@ public class EventManager : MonoBehaviour {
                       "\n            local tab = CYFEventMySplit(stack, '\\n')" +
                       "\n            for i = 1, #tab do if string.match(tab[i], 'EventPage') != nil then line = tab[i] break end end" +
                       "\n            if string.match(line, '[clr]') then" +
-                      "\n                CYFEventLameErrorContainer = \"Sorry, but we couldn't get the real line number of the error: \" .. err" +
-                      "\n            else" +
-                      "\n                while string.match(line, 'chunk') do line = string.sub(line, 2) end" +
-                      "\n                for word in string.gmatch('c' .. line, '([^ ]+)') do CYFEventLameErrorContainer = word break end" +
-                      "\n                if string.match(err, '(chunk_2:.+:)') and string.match(CYFEventLameErrorContainer, '(chunk_2:.+:)') then err = string.sub(err, string.len(string.match(err, '(chunk_2:.+:)')) + 2) end" +
-                      "\n                CYFEventLameErrorContainer = CYFEventLameErrorContainer .. ' ' .. err" +
+                      "\n                stack = CYFEventLameErrorContainerSave" +
+                      "\n                tab = CYFEventMySplit(stack, '\\n')" +
+                      "\n                for i = 1, #tab do if string.match(tab[i], 'EventPage') != nil then line = tab[i] break end end" +
                       "\n            end" +
+                      "\n            while string.match(line, 'chunk') do line = string.sub(line, 2) end" +
+                      "\n            for word in string.gmatch('c' .. line, '([^ ]+)') do CYFEventLameErrorContainer = word break end" +
+                      "\n            if string.match(err, '(chunk_2:.+:)') and string.match(CYFEventLameErrorContainer, '(chunk_2:.+:)') then err = string.sub(err, string.len(string.match(err, '(chunk_2:.+:)')) + 2) end" +
+                      "\n            CYFEventLameErrorContainer = CYFEventLameErrorContainer .. ' ' .. err" +
                       "\n        else" +
                       "\n            CYFEventLameErrorContainer = err " +
                       "\n        end" +
@@ -538,6 +540,7 @@ public class EventManager : MonoBehaviour {
                       "\n    if CYFEventLameErrorContainer != nil then error(CYFEventLameErrorContainer) end " +
                       "\nend " +
                       "\nfunction CYFEventForwarder(func, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10) " +
+                      "\n    CYFEventLameErrorContainerSave = debug.traceback()" + 
                       "\n    CYFEventAlreadyLaunched = false" +
                       "\n    CYFEventCheckRefresh = true" +
                       "\n    FGeneral.HiddenReloadAppliedScript()" +

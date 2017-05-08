@@ -24,6 +24,7 @@ public class PlayerOverworld : MonoBehaviour {
     public static AudioSource audioKept;
     public LuaSpriteController sprctrl;
     public TextManager textmgr;             //The map's text manager
+    public Vector2 hackSizeBoxCollider;
 
     private int battleWalkCount;            //Will be used to check the battle appearance
     private float TimeIndicator = 0f;       //A time indicator used for the soul's movement during the pre-Encounter anim

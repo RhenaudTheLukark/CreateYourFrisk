@@ -218,7 +218,7 @@ public class LuaPlayerStatus {
     /// <param name="canHeal"></param>
     public void setMaxHPShift(int shift, float invulSec = 1.7f, bool set = false, bool canHeal = false) { player.setMaxHPShift(shift, invulSec, set, canHeal); }
 
-    public void changeTarget(int index) {
+    public void ChangeTarget(int index) {
         if (UIController.instance.state == UIController.UIState.ATTACKING)
             if (index <= UIController.instance.encounter.enabledEnemies.Length && index > 0)
                 UIController.instance.fightUI.ChangeTarget(UIController.instance.encounter.enabledEnemies[index-1]);

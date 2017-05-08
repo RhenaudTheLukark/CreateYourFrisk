@@ -62,15 +62,6 @@ public static class LuaScriptBinder {
         script.Globals["GetRealGlobal"] = (Func<Script, string, DynValue>)Get;
         script.Globals["SetAlMightyGlobal"] = (Action<Script, string, DynValue>)SetAlMighty;
         script.Globals["GetAlMightyGlobal"] = (Func<Script, string, DynValue>)GetAlMighty;
-        script.Globals["CreateSprite"] = (Func<string, string, int, DynValue>)SpriteUtil.MakeIngameSprite;
-        script.Globals["CreateLayer"] = (Action<string, string, bool>)SpriteUtil.CreateLayer;
-        script.Globals["CreateProjectileLayer"] = (Action<string, string, bool>)SpriteUtil.CreateProjectileLayer;
-        script.Globals["SetFrameBasedMovement"] = (Action<bool>)SetFrameBasedMovement;
-        script.Globals["SetAction"] = (Action<string>)SetAction;
-        script.Globals["SetPPCollision"] = (Action<bool>)SetPPCollision;
-        script.Globals["AllowPlayerDef"] = (Action<bool>)AllowPlayerDef;
-        script.Globals["GetLetters"] = (Func<Letter[]>)GetLetters;
-        script.Globals["CreateText"] = (Func<DynValue, DynValue, int, string, int, LuaTextManager>)CreateText;
 
         script.Globals["isCYF"] = true;
         script.Globals["safe"] = ControlPanel.instance.Safe;
@@ -79,10 +70,18 @@ public static class LuaScriptBinder {
         #else
             script.Globals["windows"] = false;
         #endif
-        script.Globals["CYFversion"] = "0.5.4";
+        script.Globals["CYFversion"] = "1.0";
         if (!UnitaleUtil.isOverworld()) {
+            script.Globals["CreateSprite"] = (Func<string, string, int, DynValue>)SpriteUtil.MakeIngameSprite;
+            script.Globals["CreateLayer"] = (Action<string, string, bool>)SpriteUtil.CreateLayer;
+            script.Globals["CreateProjectileLayer"] = (Action<string, string, bool>)SpriteUtil.CreateProjectileLayer;
+            script.Globals["SetFrameBasedMovement"] = (Action<bool>)SetFrameBasedMovement;
+            script.Globals["SetAction"] = (Action<string>)SetAction;
+            script.Globals["SetPPCollision"] = (Action<bool>)SetPPCollision;
+            script.Globals["AllowPlayerDef"] = (Action<bool>)AllowPlayerDef;
+            script.Globals["GetLetters"] = (Func<Letter[]>)GetLetters;
+            script.Globals["CreateText"] = (Func<DynValue, DynValue, int, string, int, LuaTextManager>)CreateText;
             script.Globals["GetCurrentState"] = (Func<string>)GetState;
-            script.Globals["EndWave"] = (Action)endWave;
             script.Globals["BattleDialog"] = (Action<DynValue>)LuaEnemyEncounter.BattleDialog;
             if (LuaEnemyEncounter.doNotGivePreviousEncounterToSelf)
                 LuaEnemyEncounter.doNotGivePreviousEncounterToSelf = false;
@@ -126,11 +125,6 @@ public static class LuaScriptBinder {
     }
     
     private delegate TResult Func<T1, T2, T3, T4, T5, TResult>(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5);
-
-    public static void endWave() {
-        try { UIController.instance.encounter.endWaveTimer(); } 
-        catch { }
-    }
 
     public static string GetState() {
         try { return UIController.instance.state.ToString(); }

@@ -8,8 +8,11 @@ using System.Collections;
 public class ErrorDisplay : MonoBehaviour {
     public static string Message;
 	void Start () {
-        if (GameObject.Find("Main Camera OW"))
+        if (GameObject.Find("Main Camera OW")) {
             Destroy(GameObject.Find("Main Camera OW"));
+            Destroy(GameObject.Find("Canvas OW"));
+            Destroy(GameObject.Find("Player"));
+        }
         UnitaleUtil.firstErrorShown = false;
         GetComponent<Text>().text = Message + "\n\nPress ESC to reload";
 	}

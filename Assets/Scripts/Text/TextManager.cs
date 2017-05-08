@@ -881,23 +881,25 @@ public class TextManager : MonoBehaviour {
                     if (args[1] == "killable")
                         killable = true;
                 }
-                if ((args[0].Contains("-") && args[0] != "Max-1") || args[0] == "kill")         PlayerController.PlaySound(AudioClipRegistry.GetSound("hurtsound"));
-                else if (args.Length > 1) {
-                    if (args[1] == "set" && ParseUtil.getInt(args[0]) < PlayerCharacter.instance.HP) PlayerController.PlaySound(AudioClipRegistry.GetSound("hurtsound"));
-                    else                                                                        PlayerController.PlaySound(AudioClipRegistry.GetSound("healsound"));
-                } else                                                                          PlayerController.PlaySound(AudioClipRegistry.GetSound("healsound"));
+                float HP = PlayerCharacter.instance.HP, MaxHP = PlayerCharacter.instance.MaxHP, tryHP = 0;
+                if (ParseUtil.testInt(args[0]))
+                    tryHP = ParseUtil.getInt(args[0]);
 
-                if (args[0] == "kill")                                                          setHP(0);
-                else if (args[0] == "Max-1" && PlayerCharacter.instance.HP < PlayerCharacter.instance.MaxHP - 1)  setHP(PlayerCharacter.instance.MaxHP - 1);
-                else if (args[0] == "Max-1")                                                    args[0] = "0"; //Does nothing
-                else if (args[0] == "Max" && PlayerCharacter.instance.HP < PlayerCharacter.instance.MaxHP)        setHP(PlayerCharacter.instance.MaxHP);
-                else if (args[0] == "Max")                                                      args[0] = "0"; //Does nothing
-                else if (args.Length > 1 &&!killable) {
+                if ((args[0].Contains("-") && args[0] != "Max-1") || args[0] == "kill") PlayerController.PlaySound(AudioClipRegistry.GetSound("hurtsound"));
+                else if (args.Length > 1) {
+                    if (args[1] == "set" && tryHP < HP)                                 PlayerController.PlaySound(AudioClipRegistry.GetSound("hurtsound"));
+                    else                                                                PlayerController.PlaySound(AudioClipRegistry.GetSound("healsound"));
+                } else                                                                  PlayerController.PlaySound(AudioClipRegistry.GetSound("healsound"));
+
+                if (args[0] == "kill")                   setHP(0);
+                else if (args[0] == "Max-1")             setHP(MaxHP - 1);
+                else if (args[0] == "Max")               setHP(MaxHP);
+                else if (args.Length > 1 && !killable) {
                     if (args[1] == "set")
-                        if (ParseUtil.getInt(args[0]) < 1)                                      setHP(1);
-                        else                                                                    setHP(ParseUtil.getInt(args[0]));
-                } else if (PlayerCharacter.instance.HP + ParseUtil.getInt(args[0]) <= 0 &&!killable)    setHP(1);
-                else                                                                            setHP(PlayerCharacter.instance.HP + ParseUtil.getInt(args[0]));
+                        if (tryHP < 1 && !killable)      setHP(1);
+                        else                             setHP(tryHP);
+                } else if (HP + tryHP <= 0 && !killable) setHP(1);
+                else                                     setHP(HP + tryHP);
                 break;
 
             case "lettereffect":
@@ -908,10 +910,39 @@ public class TextManager : MonoBehaviour {
         }
     }
 
-    private void setHP(float HP) {
-        if (GameObject.Find("player")) PlayerController.instance.setHP(HP);
-        else if (HP <= 0)              PlayerCharacter.instance.HP = 1;
-        else                           PlayerCharacter.instance.HP = PlayerCharacter.instance.MaxHP;
+    private void setHP(float newhp) {
+        float HP = 0;
+        newhp = Mathf.Round(newhp * Mathf.Pow(10, ControlPanel.instance.MaxDigitsAfterComma)) / Mathf.Pow(10, ControlPanel.instance.MaxDigitsAfterComma);
+        if (newhp <= 0) {
+            GameOverBehavior gob = GameObject.FindObjectOfType<GameOverBehavior>();
+            if (!MusicManager.isStoppedOrNull(PlayerOverworld.audioKept)) {
+                gob.musicBefore = PlayerOverworld.audioKept;
+                gob.music = gob.musicBefore.clip;
+                gob.musicBefore.Stop();
+            } else if (!MusicManager.isStoppedOrNull(Camera.main.GetComponent<AudioSource>())) {
+                gob.musicBefore = Camera.main.GetComponent<AudioSource>();
+                gob.music = gob.musicBefore.clip;
+                gob.musicBefore.Stop();
+            } else {
+                gob.musicBefore = null;
+                gob.music = null;
+            }
+            PlayerCharacter.instance.HP = 0;
+            this.gameObject.transform.SetParent(null);
+            GameObject.DontDestroyOnLoad(this.gameObject);
+            RectTransform rt = gameObject.GetComponent<RectTransform>();
+            rt.position = new Vector3(rt.position.x, rt.position.y, -1000);
+            gob.StartDeath();
+            return;
+        }
+        //HP greater than Max, heal, already more HP than Max
+        else if (newhp > PlayerCharacter.instance.MaxHP && newhp > PlayerCharacter.instance.HP && PlayerCharacter.instance.HP > PlayerCharacter.instance.MaxHP)
+                                                                                                HP = PlayerCharacter.instance.HP;
+        //HP greater than Max, heal
+        else if (newhp > PlayerCharacter.instance.MaxHP && newhp > PlayerCharacter.instance.HP) HP = PlayerCharacter.instance.MaxHP;
+        else                                                                                    HP = newhp;
+        if (HP > ControlPanel.instance.HPLimit)                                                 HP = ControlPanel.instance.HPLimit;
+        PlayerCharacter.instance.HP = HP;
     }
 
     private float CreateNumber(string str) {

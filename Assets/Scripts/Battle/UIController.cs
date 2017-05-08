@@ -116,6 +116,7 @@ public class UIController : MonoBehaviour {
         for (int i = 0; i < LuaScriptBinder.scriptlist.Count; i++)
             LuaScriptBinder.scriptlist[i] = null;
         LuaScriptBinder.ClearBattleVar();
+        GlobalControls.stopScreenShake = true;
         if (GlobalControls.modDev) {
             PlayerCharacter.instance.Reset();
             SceneManager.LoadScene("ModSelect");

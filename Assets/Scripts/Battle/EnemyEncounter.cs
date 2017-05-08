@@ -48,9 +48,9 @@ public class EnemyEncounter : MonoBehaviour {
     // </summary>
     // <param name="item">Item to be checked for custom action</param>
     // <returns>true if a custom action should be executed for given item, false if the default action should happen</returns>
-    public virtual bool CustomItemHandler(UnderItem item) {
+    /*public virtual bool CustomItemHandler(UnderItem item) {
         UIController.instance.encounter.CallOnSelfOrChildren("HandleItem", new MoonSharp.Interpreter.DynValue[] { MoonSharp.Interpreter.DynValue.NewString(item.Name) });
-        return false;
+        return false;*/
         // the following was test code that allowed you to activate dogs in order 2-3-1 to replace all bullets with dogs
         /*if (dogTest[0] && dogTest[1] && dogTest[2])
         {
@@ -97,7 +97,7 @@ public class EnemyEncounter : MonoBehaviour {
         dogTest[1] = false;
         dogTest[2] = false;
         return true;*/
-    }
+    //}
 
     public virtual void updateWave() { }
 

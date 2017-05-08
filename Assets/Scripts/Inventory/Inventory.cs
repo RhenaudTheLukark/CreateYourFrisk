@@ -37,10 +37,6 @@ public static class Inventory {
         else                                container[index] = new UnderItem(Name);
     }
 
-    public static void RemoveItem(int index) {
-        try { container.RemoveAt(index); } 
-        catch { } }
-
     public static bool AddItem(string Name) {
         if (container.Count == 8)
             return false;
@@ -80,7 +76,7 @@ public static class Inventory {
         usedItemNoDelete = false;
         tempAmount = 0;
         string Name = container[ID].Name, replacement = null;
-        bool inverseRemove = false;
+        //bool inverseRemove = false;
         int type = container[ID].Type;
         float amount = 0;
         CallOnSelf("HandleItem", new DynValue[] { DynValue.NewString(Name.ToUpper()) });
@@ -94,7 +90,7 @@ public static class Inventory {
                         mess = ChangeEquipment(Name, mess);
                     if (!usedItemNoDelete && type == 0)
                         container.RemoveAt(ID);
-                    if ((type == 1 || type == 2) && mess.Length != 0 &&!UIController.instance.battleDialogued)
+                    if ((type == 1 || type == 2) && mess.Length != 0 && !UIController.instance.battleDialogued)
                         UIController.instance.ActionDialogResult(mess, UIController.UIState.ENEMYDIALOGUE);
                     return;
                 }
@@ -107,7 +103,8 @@ public static class Inventory {
         if (replacement != null) {
             container.RemoveAt(ID);
             container.Insert(ID, new UnderItem(replacement));
-        } else if ((!inverseRemove && type == 0) || (inverseRemove && type != 0))
+        //} else if ((!inverseRemove && type == 0) || (inverseRemove && type != 0))
+        } else if (type == 0)
             container.RemoveAt(ID);
         if (!UnitaleUtil.isOverworld()) {
             if (!UIController.instance.battleDialogued && mess.Length != 0)
@@ -204,7 +201,7 @@ public static class Inventory {
                         mess = new TextMessage[] { new TextMessage("You drank the Spider Cider.[w:10]\nYou recovered 24 HP!", true, false) };
                         break;
                     case "Butterscotch Pie":
-                        amount = 999;
+                        amount = -20;
                         mess = new TextMessage[] { new TextMessage("You ate the Butterscotch Pie.[w:10]\nYour HP was maxed out.", true, false) };
                         break;
                     case "Snail Pie":
@@ -248,7 +245,7 @@ public static class Inventory {
                         break;
                     case "Crab Apple":
                         amount = 18;
-                        mess = new TextMessage[] { new TextMessage("[health:18]You ate the Crab Apple.[w:10]\nYou recovered 18 HP!", true, false) };
+                        mess = new TextMessage[] { new TextMessage("You ate the Crab Apple.[w:10]\nYou recovered 18 HP!", true, false) };
                         break;
                     case "Sea Tea":
                         amount = 18;
@@ -269,19 +266,19 @@ public static class Inventory {
                         switch (randomSalad) {
                             case 0:
                                 amount = 2;
-                                sentenceSalad = "[health:2]Oh. These are bones...[w:10]\rYou recovered 2 HP!";
+                                sentenceSalad = "Oh. These are bones...[w:10]\rYou recovered 2 HP!";
                                 break;
                             case 1:
                                 amount = 10;
-                                sentenceSalad = "[health:10]Oh. Fries tennis ball...[w:10]\rYou recovered 10 HP!";
+                                sentenceSalad = "Oh. Fried tennis ball...[w:10]\rYou recovered 10 HP!";
                                 break;
                             case 2:
                                 amount = 30;
-                                sentenceSalad = "[health:30]Oh. Tastes yappy...[w:10]\rYou recovered 30 HP!";
+                                sentenceSalad = "Oh. Tastes yappy...[w:10]\rYou recovered 30 HP!";
                                 break;
                             default:
-                                amount = 9999;
-                                sentenceSalad = "[health:Max]It's literally garbage???[w:10]\rYour HP was maxed out.";
+                                amount = 999;
+                                sentenceSalad = "It's literally garbage???[w:10]\rYour HP was maxed out.";
                                 break;
                         }
                         mess = new TextMessage[] { new TextMessage(sentenceSalad, true, false) };
@@ -302,7 +299,7 @@ public static class Inventory {
                                                    new TextMessage("You add the flavor packet.", true, false),
                                                    new TextMessage("That's better.", true, false),
                                                    new TextMessage("Not great,[w:5] but better.", true, false),
-                                                   new TextMessage("[music:unpause][health:4]You ate the Instant Noodles.[w:10]\nYou recovered 4 HP!", true, false)};
+                                                   new TextMessage("[music:unpause]You ate the Instant Noodles.[w:10]\nYou recovered 4 HP!", true, false)};
                         break;
                     case "Hot Dog...?":
                         amount = 20;
@@ -343,23 +340,24 @@ public static class Inventory {
                         break;
                     case "Bad Memory":
                         if (PlayerCharacter.instance.HP <= 3) {
-                            amount = 9999;
+                            amount = 999;
                             mess = new TextMessage[] { new TextMessage("You consume the Bad Memory.[w:10]\nYour HP was maxed out.", true, false) };
                         } else {
                             amount = -1;
-                            mess = new TextMessage[] { new TextMessage("[health:-1]You consume the Bad Memory.[w:10]\nYou lost 1 HP.", true, false) };
+                            mess = new TextMessage[] { new TextMessage("You consume the Bad Memory.[w:10]\nYou lost 1 HP.", true, false) };
                         }
                         break;
                     case "Last Dream":
                         amount = 17;
-                        mess = new TextMessage[] { new TextMessage("[health:17]Through DETERMINATION,\rthe dream became true.[w:10]\nYou recovered 17 HP!", true, false) };
+                        mess = new TextMessage[] { new TextMessage("Through DETERMINATION,\rthe dream became true.[w:10]\nYou recovered 17 HP!", true, false) };
                         break;
                     default:
                         UnitaleUtil.writeInLogAndDebugger("[WARN]The item doesn't exists in this pool.");
                         break;
                 }
                 if (amount != 0)
-                    PlayerController.instance.Hurt(-amount, 0);
+                    if (UnitaleUtil.isOverworld()) mess[0].setText("[health:" + amount + ", killable]" + mess[0].Text);
+                    else                           PlayerController.instance.Hurt(-amount, 0);
                 break;
             case 1:
                 switch (name) {
@@ -398,11 +396,18 @@ public static class Inventory {
     }
 
     public static int InventoryNumber(string itemName) {
-        return container.IndexOf(new UnderItem(itemName, NametoType.ContainsKey(itemName) ? NametoType[itemName] : 0));
+        for (int i = 0; i < container.Count; i++)
+            if (container[i].Name == itemName)
+                return i;
+        return -1;
     }
 
     public static bool itemExists(string itemName) {
         return NametoDesc.ContainsKey(itemName);
+    }
+
+    public static void RemoveItem(int index) {
+        try { container.RemoveAt(index); } catch { }
     }
 
     private static void SetEquip(string Name) {
@@ -415,7 +420,6 @@ public static class Inventory {
             else
                 throw new CYFException("The item \"" + Name + "\" doesn't exist.");
         }
-
         if (mode == 1) {
             PlayerCharacter.instance.WeaponATK = tempAmount;
             RemoveItem(InventoryNumber(Name));
