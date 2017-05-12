@@ -228,9 +228,7 @@ public class PlayerOverworld : MonoBehaviour {
                 LuaScriptBinder.Set(null, "PlayerPosY", DynValue.NewNumber(160));
 
                 //GameObject.Find("Main Camera OW").tag = "Untagged";
-                GlobalControls.Music = GameObject.Find("Background").GetComponent<MapInfos>().isMusicKeptBetweenBattles ? 
-                    audioKept.clip :
-                    Camera.main.GetComponent<AudioSource>().clip;
+                GlobalControls.Music = UnitaleUtil.GetCurrentOverworldAudio().clip;
                 EventManager.SetEventStates();
                 SceneManager.LoadScene("ModSelect");
             }*/
@@ -278,11 +276,9 @@ public class PlayerOverworld : MonoBehaviour {
     private IEnumerator LaunchMusic() {
         yield return 0;
         yield return Application.isLoadingLevel;
-
-        MapInfos mi = GameObject.Find("Background").GetComponent<MapInfos>();
-        AudioSource audio;
-        if (mi.isMusicKeptBetweenBattles)  audio = audioKept;
-        else                               audio = Camera.main.GetComponent<AudioSource>(); ;
+        
+        AudioSource audio = UnitaleUtil.GetCurrentOverworldAudio();
+        MapInfos mi = GameObject.FindObjectOfType<MapInfos>();
 
         try {
             //Starts the music if there's no music
@@ -433,7 +429,7 @@ public class PlayerOverworld : MonoBehaviour {
         Image blackFont = GameObject.Find("black").GetComponent<Image>();
 
         Vector2 positionCamera, end;
-        GlobalControls.Music = GameObject.Find("Background").GetComponent<MapInfos>().isMusicKeptBetweenBattles ? audioKept.clip : Camera.main.GetComponent<AudioSource>().clip;
+        GlobalControls.Music = UnitaleUtil.GetCurrentOverworldAudio().clip;
         playerMask.GetComponent<Image>().sprite = PlayerPos.GetComponent<SpriteRenderer>().sprite;
         MusicManager.src.Stop();
 
@@ -623,6 +619,7 @@ public class PlayerOverworld : MonoBehaviour {
 
     public static IEnumerator LaunchMenu() {
         inText = true; menuRunning[2] = true;
+        GameObject.Find("MenuContainer").transform.SetAsLastSibling();
         TextManager[] txtmgrs = GameObject.Find("MenuContainer").GetComponentsInChildren<TextManager>();
         instance.uiAudio.PlayOneShot(AudioClipRegistry.GetSound("menumove"));
         /* 0-6   : Menu

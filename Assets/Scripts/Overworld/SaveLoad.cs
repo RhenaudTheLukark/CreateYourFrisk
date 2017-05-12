@@ -10,8 +10,10 @@ using System.IO;
 public static class SaveLoad {
     public static GameState savedGame = null;                     //The save
     public static AlMightyGameState almightycurrentGame = null;   //The almighty save
+    public static bool started = false;
     
     public static void Start() {
+        started = true;
         try {
             if (File.Exists(Application.persistentDataPath + "/save.gd")) {
                 Debug.Log("We found a save at this location : " + Application.persistentDataPath + "/save.gd");

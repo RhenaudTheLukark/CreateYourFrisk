@@ -14,7 +14,7 @@ using System.Reflection;
 /// </summary>
 public static class UnitaleUtil {
     internal static bool firstErrorShown = false; //Keeps track of whether an error already appeared, prevents subsequent errors from overriding the source.
-    internal static string fileName = Application.dataPath + "/Logs/log-" + DateTime.Now.ToString().Replace('/', '-').Replace(':', '-') + ".txt";
+    /*internal static string fileName = Application.dataPath + "/Logs/log-" + DateTime.Now.ToString().Replace('/', '-').Replace(':', '-') + ".txt";
     internal static StreamWriter sr;
 
     public static void createFile() {
@@ -22,18 +22,18 @@ public static class UnitaleUtil {
             Directory.CreateDirectory(Application.dataPath + "/Logs");
         if (!File.Exists(fileName))
             sr = File.CreateText(fileName);
-    }
+    }*/
 
     public static void writeInLogAndDebugger(string mess) {
         try {
-            sr.WriteLine("By DEBUG: " + mess.Replace("\n", "\\n").Replace("\r", "\\r").Replace("\t", "\\t"));
-            sr.Flush();
+            /*sr.WriteLine("By DEBUG: " + mess.Replace("\n", "\\n").Replace("\r", "\\r").Replace("\t", "\\t"));
+            sr.Flush();*/
             UserDebugger.instance.userWriteLine(mess);
             Debug.Log("Frame " + GlobalControls.frame + ": " + mess);
         } catch (Exception e) { Debug.Log("Couldn't write on the log:\n" + e.Message + "\nMessage: " + mess); }
     }
 
-    /// <summary>
+    /*/// <summary>
     /// This was previously used to create error messages for display in the UI controller, but is now obsolete as this is displayed in a separate scene.
     /// </summary>
     /// <param name="source">Name of the offending script</param>
@@ -53,7 +53,7 @@ public static class UnitaleUtil {
             }
         }
         return new TextMessage(returnValue, false, true);
-    }
+    }*/
 
     public static bool isOverworld() {
         if (GlobalControls.nonOWScenes.Contains(SceneManager.GetActiveScene().name) && SceneManager.GetActiveScene().name != "TransitionOverworld")
@@ -70,10 +70,6 @@ public static class UnitaleUtil {
         if (firstErrorShown)
             return;
 
-        /*if (UIController.instance == null)
-            UIController.errorMsg = createLuaError(source, decoratedMessage);
-        else
-            UIController.instance.ShowError(createLuaError(source, decoratedMessage));*/
         firstErrorShown = true;
         ErrorDisplay.Message = "error in script " + source + "\n\n" + decoratedMessage;
         if (Application.isEditor)
@@ -83,42 +79,9 @@ public static class UnitaleUtil {
         Debug.Log("It's a Lua error! : " + ErrorDisplay.Message);
     }
 
-    public static bool isTouching(BoxCollider2D a, BoxCollider2D b) {
-        Vector2 SizeA = new Vector2(a.size.x * a.gameObject.GetComponent<RectTransform>().localScale.x, a.size.y * a.gameObject.GetComponent<RectTransform>().localScale.y),
-                centerA = new Vector2(a.offset.x + a.transform.position.x, a.offset.y + a.transform.position.y),
-                SizeB = new Vector2(b.size.x * b.gameObject.GetComponent<RectTransform>().localScale.x, b.size.y * b.gameObject.GetComponent<RectTransform>().localScale.y),
-                centerB = new Vector2(b.offset.x + b.transform.position.x, b.offset.y + b.transform.position.y);
-        Rect AB = Intersect(new Rect(centerA, SizeA), new Rect(centerB, SizeB));
-        if (AB.size.x < 0 || AB.size.y < 0)
-            return false;
-        return true;
-    }
-
-    public static Rect Intersect(Rect r1, Rect r2) {
-        float xDif = r2.center.x - r1.center.x, yDif = r2.center.y - r1.center.y,
-              width = Mathf.Min(r1.xMax, r2.xMax) - Mathf.Max(r1.xMin, r2.xMin),
-              height = Mathf.Min(r1.yMax, r2.yMax) - Mathf.Max(r1.yMin, r2.yMin);
-        return new Rect(xDif + ((Mathf.Sign(xDif) * (8 - width)) / 2) + r1.x, yDif + ((Mathf.Sign(yDif) * (8 - height)) / 2) + r1.y, Mathf.Ceil(width), Mathf.Ceil(height));
-    }
-
-    public static int fontStringWidth(UnderFont font, string s, int hSpacing = 3) {
-        int width = 0;
-        foreach (char c in s)
-            if (font.Letters.ContainsKey(c))
-                width += (int)font.Letters[c].rect.width + hSpacing;
-        return width;
-    }
-
-    public static List<T> TableToList<T>(Table table, Func<DynValue, T> converter) {
-        List<T> lst = new List<T>();
-
-        for (int i = 1, l = table.Length; i <= l; i++) {
-            DynValue v = table.Get(i);
-            T o = converter(v);
-            lst.Add(o);
-        }
-
-        return lst;
+    public static AudioSource GetCurrentOverworldAudio() {
+        if (GameObject.Find("Background").GetComponent<MapInfos>().isMusicKeptBetweenBattles) return PlayerOverworld.audioKept;
+        else                                                                                  return Camera.main.GetComponent<AudioSource>();
     }
 
     public static Array ListToArray<T>(List<T> lst) {
@@ -293,104 +256,13 @@ public static class UnitaleUtil {
         return (string[])ListToArray(tempArray);
     }
 
-    public static object stringToArray(string basisStr, out int[] lengths) {
-        int arrayLevel = 0;
-        while(basisStr[arrayLevel] == '{')
-            arrayLevel++;
-        lengths = new int[0];
-        string[] tests = new string[0];
-        Type arrayType = null;
-        Array array = (Array)GetIndexArrayStackLevel(arrayLevel, basisStr, out lengths, out tests, out arrayType);
-        Type testType = CheckRealType(tests[0], true);
-        foreach (string str in tests) {
-            if (CheckRealType(str, true) != testType)
-                return null;
-        }
-        int[] currentIndexes = new int[lengths.Length];
-        for (int i = 0; i < currentIndexes.Length; i++)
-            currentIndexes[i] = 0;
-        int currentStack = 0;
-        FillBigArray(array, array, tests, 0, currentStack, arrayLevel, ref currentIndexes);
-        return array;
-    }
-
-    public static void FillBigArray(Array array, Array currentArray, string[] items, int currentItem, int currentStack, int arrayLevel, ref int[] currentIndexes, bool tuple = false) {
-        foreach (var obj in currentArray) {
-            if (currentStack + 1 < arrayLevel)
-                FillBigArray(array, (Array)obj, items, currentItem, currentStack + 1, arrayLevel, ref currentIndexes, tuple);
-            else {
-                Type t = CheckRealType(items[currentItem], true);
-                object realItem;
-                if (t == typeof(float)) {
-                    if (tuple)                         realItem = DynValue.NewNumber(ParseUtil.getFloat(items[currentItem]));
-                    else                               realItem = ParseUtil.getFloat(items[currentItem]);
-                } else if (t == typeof(bool)) {
-                    if (items[currentItem] == "true")  realItem = true;
-                    else                               realItem = false;
-                    if (tuple)                         realItem = DynValue.NewBoolean((bool)realItem);
-                } else {
-                    if (tuple)                         realItem = DynValue.NewString(items[currentItem]);
-                    else                               realItem = items[currentItem];
-                }
-                array.SetValue(realItem, currentIndexes);
-            }
-            currentIndexes[currentStack - 1]++;
-        }
-    }
-
-    public static Type GetBasisType(string str) {
-        string strNoTable = str.Replace("{", "").Replace("}", "").Replace(",", "");
-        if (strNoTable.Replace("true", "").Replace("false", "").Length == 0)
-            return typeof(bool);
-        else if (strNoTable.Replace("0", "").Replace("1", "").Replace("2", "").Replace("3", "").Replace("4", "").Replace("5", "")
-                           .Replace("6", "").Replace("7", "").Replace("8", "").Replace("9", "").Replace("-", "").Replace(".", "").Length == 0)
-            return typeof(float);
-        else
-            return typeof(string);
-    }
-
-    public static object GetIndexArrayStackLevel(int stackLevel, string refString, out int[] lengths, out string[] oneDimensionnalData, out Type arrayType) {
-        int currentStackLevel = 0, lastNumber = 1;
-        Type basisType = GetBasisType(refString);
-        object t;
-        if (basisType == typeof(float)) t = 0;
-        else if (basisType == typeof(bool)) t = false;
-        else t = "";
-        List<string> tempArray = new List<string>();
-        List<List<string>> tempSuperArray = new List<List<string>>();
-        lengths = new int[stackLevel];
-        oneDimensionnalData = new string[] { refString };
-        while (currentStackLevel < stackLevel) {
-            if (currentStackLevel == 0)
-                tempArray = ArrayToList(specialSplit(',', refString.Substring(1, refString.Length - 2), true));
-            else {
-                foreach (string str in tempArray)
-                    tempSuperArray.Add(ArrayToList(specialSplit(',', str.Substring(1, str.Length - 2))));
-                tempArray.Clear();
-                foreach (List<string> strArray in tempSuperArray)
-                    foreach (string str in strArray) {
-                        Array.Resize(ref oneDimensionnalData, oneDimensionnalData.Length + 1);
-                        oneDimensionnalData[oneDimensionnalData.Length - 1] = str.Trim('"', ' ');
-                    }
-            }
-            lengths[currentStackLevel] = tempArray.Count / lastNumber;
-            lastNumber = lengths[currentStackLevel];
-            currentStackLevel++;
-            tempSuperArray.Clear();
-        }
-        //for (int i = 0; i < stackLevel; i++)
-        //    t = t[lengths[lengths.Length - i]];
-        arrayType = t.GetType();
-        return t;
-    }
-
     /// <summary>
     /// Check DynValues parameter's value types. DON'T WORK WITH MULTIDIMENSIONNAL ARRAYS!
     /// (For now it doesn't work with arrays at all :c)
     /// </summary>
     /// <param name="parameters"></param>
     /// <returns></returns>
-    public static Type CheckRealType(string parameter, bool ignoreTables = false, int translateEmbeddedLevel = 0) {
+    public static Type CheckRealType(string parameter) {
         string parameterNoSpace = parameter.Replace(" ", "");
 
         //Boolean
@@ -409,71 +281,9 @@ public static class UnitaleUtil {
         if (isNumber)
             return typeof(float);
 
-        //Array
-        /*int tempTestArray = 0;
-        if (ignoreTables) {
-            string parameter2 = parameter;
-            while (parameter2[0] == '{') {
-                int embeddedLevel = 1, charIndex = 1;
-                while (embeddedLevel > 0) {
-                    if (parameter2[charIndex] == '{')
-                        embeddedLevel++;
-                    embeddedLevel++;
-                    if (parameter2[charIndex] == '}')
-                        embeddedLevel--;
-                    if (charIndex == parameter2.Length)
-                        return typeof(string);
-                }
-                parameter2 = parameter2.Substring(1, charIndex - 1);
-            }
-            return CheckRealType(parameter2);
-        } else if (parameter[0] == '{' && parameter[parameter.Length - 1] == '}') {
-            tempTestArray++;
-            while (parameter[tempTestArray] == '{')
-                tempTestArray++;
-            if (translateEmbeddedLevel == 0)
-                translateEmbeddedLevel = tempTestArray;
-            //We put out all arrays identifiers and split the values of the array
-            string[] parameters = specialSplit(',', parameter.Substring(1, parameter.Length - 2), true);
-            List<Type> list = new List<Type>();
-            //We register all types of this array's values...
-            foreach (string str in parameters)
-                list.Add(CheckRealType(str, ignoreTables, translateEmbeddedLevel));
-            Type testType = list[0];
-            int temp = 0;
-            //...and we test if these types are the same as the first type of the array
-            foreach (Type type in list) {
-                writeInLog(type.ToString() + " = " + temp++);
-                //If these types aren't the same, this isn't an array
-                if (testType != type)
-                    return typeof(string);
-            }
-            if (tempTestArray == translateEmbeddedLevel)
-                translateEmbeddedLevel = 0;
-            Type endType = testType;
-            while (endType.IsArray)
-                endType = endType.GetElementType();
-            Array tempArray;
-            //If they are the same, we check what is the type of the first value, and return a unidimensionnal array type
-            if (endType == typeof(bool))        tempArray = Array.CreateInstance(typeof(bool), new int[tempTestArray]);
-            else if (endType == typeof(float))  tempArray = Array.CreateInstance(typeof(float), new int[tempTestArray]);
-            else                                tempArray = Array.CreateInstance(typeof(string), new int[tempTestArray]);
-            return tempArray.GetType();
-        }*/
-
         //String
         //If all our attempts to check other types failed, this is really a string
         return typeof(string);
-    }
-
-    public static string noCommand(string str) {
-        int inCommandStack = 0; string newstr = "";
-        for (int i = 0; i < str.Length; i++) {
-            if (str[i] == '[')                        inCommandStack ++;
-            if (inCommandStack == 0)                  newstr += str[i];
-            if (str[i] == ']' && inCommandStack > 0)  inCommandStack --;
-        }
-        return newstr;
     }
 
     public static float CropDecimal(float number) {
@@ -558,18 +368,15 @@ public static class UnitaleUtil {
         return false;
     }
 
-    //Non updated
+    /*//No updated
     public static bool TestPPEasy(Color32[] playerMatrix, Color32[] basisMatrix, float rotation, int playerHeight, int basisHeight, Vector2 scale, Vector2 fromCenterProjectile) {
         int basisWidth = basisMatrix.Length / basisHeight, playerWidth = playerMatrix.Length / playerHeight;
-        float rotationVal = rotation, iVal = 0, jVal = 0, angleVal = 0, Dval = 0;
+        float rotationVal = rotation, iVal = 0, jVal = 0, angleVal = 0, Dval = 0, totalVal = 0;
         rotation *= Mathf.Deg2Rad;
 
-        //if (rotation >= 135 && rotation <= 315)  shiftX--;
-        //if (rotation >= 45 && rotation <= 235)   shiftY--;
-
-        /*float realX = playerWidth * Mathf.Abs(Mathf.Cos(rotation)) + playerHeight * Mathf.Abs(Mathf.Sin(rotation)),
-                realY = playerHeight * Mathf.Abs(Mathf.Cos(rotation)) + playerWidth * Mathf.Abs(Mathf.Sin(rotation));*/
-        int totalValX = 0, totalValY = 0 /*, x = Mathf.FloorToInt(realX) + 2, y = Mathf.FloorToInt(realY) + 2*/;
+        float realX = playerWidth * Mathf.Abs(Mathf.Cos(rotation)) + playerHeight * Mathf.Abs(Mathf.Sin(rotation)),
+              realY = playerHeight * Mathf.Abs(Mathf.Cos(rotation)) + playerWidth * Mathf.Abs(Mathf.Sin(rotation));
+        int totalValX = 0, totalValY = 0, x = Mathf.FloorToInt(realX) + 2, y = Mathf.FloorToInt(realY) + 2;
 
         Vector2 fromCenterRotated = new Vector2();
         float playerD = Mathf.Sqrt(Mathf.Pow(fromCenterProjectile.x, 2) + Mathf.Pow(fromCenterProjectile.y, 2)),
@@ -587,41 +394,42 @@ public static class UnitaleUtil {
                     if (ControlPanel.instance.MinimumAlpha == 0) {
                         if (playerMatrix[tempCurrentHeight * playerWidth + tempCurrentWidth].a == 0)
                             continue;
-                    } else if (playerMatrix[tempCurrentHeight * playerWidth + tempCurrentWidth].a < ControlPanel.instance.MinimumAlpha)
-                        //Debug.Log("Not Enough Alpha : X = " + tempCurrentWidth + ", Y = " + tempCurrentHeight);
+                    } else if (playerMatrix[tempCurrentHeight * playerWidth + tempCurrentWidth].a < ControlPanel.instance.MinimumAlpha) {
+                        Debug.Log("Not Enough Alpha : X = " + tempCurrentWidth + ", Y = " + tempCurrentHeight);
                         continue;
+                    }
 
                     float DFromCenter = Mathf.Sqrt(Mathf.Pow(tempCurrentHeight + fromCenterProjectile.y - playerHeight / 2, 2) +
-                                                    Mathf.Pow(tempCurrentWidth + fromCenterProjectile.x - playerWidth / 2, 2)),
-                            oldangle = Mathf.Atan2(tempCurrentHeight + fromCenterProjectile.y - playerHeight / 2, tempCurrentWidth + fromCenterProjectile.x - playerWidth / 2),
-                            angle = oldangle - rotation;
+                                                   Mathf.Pow(tempCurrentWidth + fromCenterProjectile.x - playerWidth / 2, 2)),
+                          oldangle = Mathf.Atan2(tempCurrentHeight + fromCenterProjectile.y - playerHeight / 2, tempCurrentWidth + fromCenterProjectile.x - playerWidth / 2),
+                          angle = oldangle - rotation;
                     Dval = DFromCenter;
                     angleVal = angle;
                     totalValX = Mathf.RoundToInt(basisWidth / 2 + Mathf.Cos(angle) * DFromCenter);
                     totalValY = Mathf.RoundToInt(basisHeight / 2 + Mathf.Sin(angle) * DFromCenter);
-                    //int tempY = totalValY - (int)fromCenterRotated.y - basisHeight / 2, tempX = totalValX - (int)fromCenterRotated.x - basisWidth / 2;
-                    //totalVal = tempY * x + tempX;
-                    //Debug.Log("X = " + jVal + " Y = " + iVal + "Total = " + totalVal + " (" + tempY + "x" + x + " + " + tempX + ") / " + ret.Length);
-                    if (totalValY >= 0 && totalValY < basisHeight && totalValX >= 0 && totalValX < basisWidth) /*|| tempY < 0 || tempY >= y || tempX < 0 || tempX >= x)
-                    Debug.LogWarning("Out of bounds: X = " + currentWidth + " Y = " + currentHeight + "\ntotalRet = " + totalVal + " (" + (totalValY - (int)fromCenterRotated.y - basisHeight / 2) + "x" +
-                                        x + " + " + (totalValX - (int)fromCenterRotated.x - basisWidth / 2) + ") / " + ret.Length + "          totalBasis = " +
-                                        (totalValY * basisWidth + totalValX) + " (" + totalValY + "x" + basisWidth + " + " + totalValX + ") / " + basisMatrix.Length);
-                else*/
-                        if (basisMatrix[Mathf.RoundToInt(totalValY * basisWidth + totalValX)].a >= ControlPanel.instance.MinimumAlpha)
-                            return true;
+                    int tempY = totalValY - (int)fromCenterRotated.y - basisHeight / 2, tempX = totalValX - (int)fromCenterRotated.x - basisWidth / 2;
+                    totalVal = tempY * x + tempX;
+
+                    Debug.Log("X = " + jVal + " Y = " + iVal + "Total = " + totalVal + " (" + tempY + "x" + x + " + " + tempX + ")");
+                    if (totalValY >= 0 && totalValY < basisHeight && totalValX >= 0 && totalValX < basisWidth || tempY < 0 || tempY >= y || tempX < 0 || tempX >= x)
+                        Debug.LogWarning("Out of bounds: X = " + currentWidth + " Y = " + currentHeight + "\ntotalRet = " + totalVal + " (" + (totalValY - (int)fromCenterRotated.y - basisHeight / 2) +
+                                         "x" + x + " + " + (totalValX - (int)fromCenterRotated.x - basisWidth / 2) + ")          totalBasis = " +
+                                         (totalValY * basisWidth + totalValX) + " (" + totalValY + "x" + basisWidth + " + " + totalValX + ") / " + basisMatrix.Length);
+                    else if (basisMatrix[Mathf.RoundToInt(totalValY * basisWidth + totalValX)].a >= ControlPanel.instance.MinimumAlpha)
+                        return true;
                 }
         } catch {
             Debug.LogError("rotation = " + rotationVal + " D = " + Dval + " X = " + jVal + " Y = " + iVal +
-                           " angle = " + (((angleVal + 4 * Mathf.PI) % 2 * Mathf.PI) / Mathf.PI) + "π" + /*"\ntotalRet = " + totalVal + " (" + 
+                           " angle = " + (((angleVal + 4 * Mathf.PI) % 2 * Mathf.PI) / Mathf.PI) + "π" + "\ntotalRet = " + totalVal + " (" + 
                            (totalValY - (int)fromCenterRotated.y - basisHeight / 2) + "x" + x + " + " + (totalValX - (int)fromCenterRotated.x - basisWidth / 2) + 
-                           ") / " + (x * y) + "          " + */"totalBasis = " + (totalValY * basisWidth + totalValX) + " (" + totalValY + "x" +
+                           ") / " + (x * y) + "          " + "totalBasis = " + (totalValY * basisWidth + totalValX) + " (" + totalValY + "x" +
                            basisWidth + " + " + totalValX + ") / " + basisMatrix.Length);
         }
         return false;
         //return ret;
-    }
+    }*/
 
-    public static Color32[] RotateMatrixOld(Color32[] matrix, float rotation, int height, Vector2 scale, out Vector2 sizeDelta) {
+    /*public static Color32[] RotateMatrixOld(Color32[] matrix, float rotation, int height, Vector2 scale, out Vector2 sizeDelta) {
         int width = matrix.Length / height, shiftX = 0, shiftY = 0;
         float rotationVal = rotation, iVal = 0, jVal = 0, angleVal = 0, Dval = 0;
         if (rotation >= 135 && rotation <= 315) shiftX--;
@@ -657,9 +465,9 @@ public static class UnitaleUtil {
                 }
         } catch { Debug.LogError("Debug : rotation = " + rotationVal + " D = " + Dval + " currentWidth = " + jVal + " currentHeight = " + iVal + " angle(/Pi) = " + angleVal / Mathf.PI + " total = " + totalVal + " (" + totalValX + " / " + totalValY + ") / " + ret.Length); }
         return ret;
-    }
+    }*/
 
-    public static Rect GetFurthestCoordinates(Color32[] tex, int height, Transform tf) {
+    /*public static Rect GetFurthestCoordinates(Color32[] tex, int height, Transform tf) {
         int width = tex.Length / height;
         Vector4 coords = new Vector4(0, width, 0, height);
         for (int currentHeight = 0; currentHeight < height; currentHeight++)
@@ -682,7 +490,7 @@ public static class UnitaleUtil {
         //Rect maxDist = new Rect (tf.position.x, tf.position.y, coords.y - coords.x, coords.w - coords.z);
         //Debug.Log(maxDist);
         return maxDist;
-    }
+    }*/
 
     public static Transform GetChildPerName(Transform parent, string name, bool isInclusive = false, bool getInactive = false) {
         if (parent == null)
@@ -696,7 +504,7 @@ public static class UnitaleUtil {
     }
 
     public static Transform[] GetFirstChildren(Transform parent, bool getInactive = false) {
-        Transform[] children, firstChildren, realFirstChildren;
+        Transform[] children, firstChildren;
         int index = 0;
         if (parent != null) {
             children = parent.GetComponentsInChildren<Transform>(getInactive);
@@ -720,20 +528,16 @@ public static class UnitaleUtil {
                 }
         }
         return firstChildren;
-        /*realFirstChildren = new Transform[index];
-        for (int i = 0; i < index; i++)
-            realFirstChildren[i] = firstChildren[i];
-
-        return realFirstChildren;*/
     }
 
     public static Dictionary<string, string> MapCorrespondanceList = new Dictionary<string, string>();
 
     public static void AddKeysToMapCorrespondanceList() {
-        MapCorrespondanceList.Add("test2", "Hotland - The test map");
         MapCorrespondanceList.Add("test", "Snowdin - The test map");
+        MapCorrespondanceList.Add("test2", "Hotland - The test map");
         MapCorrespondanceList.Add("test3", "The Core - The test map");
         MapCorrespondanceList.Add("test4", "The Core - Parallel universe");
+        MapCorrespondanceList.Add("test5", "Snowdin - Parallax universe");
         MapCorrespondanceList.Add("test-1", "How did you find this one?");
         MapCorrespondanceList.Add("Void", "The final map...?");
     }

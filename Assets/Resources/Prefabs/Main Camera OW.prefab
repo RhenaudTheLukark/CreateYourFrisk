@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 9235078}
   - component: {fileID: 12443464}
   - component: {fileID: 8124126}
-  - component: {fileID: 11442314}
   - component: {fileID: 8275896}
   - component: {fileID: 11403688}
   - component: {fileID: 11493114}
@@ -70,6 +69,8 @@ Camera:
   m_TargetDisplay: 0
   m_TargetEye: 3
   m_HDR: 0
+  m_AllowMSAA: 1
+  m_ForceIntoRT: 0
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
@@ -179,19 +180,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e994334232641bd4ca342c48fcdb1605, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &11442314
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 132834}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 78442f37a69919a409f51348d2557607, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  EDITOR_MODFOLDER: Title
-  EDITOR_ENCOUNTER: 
 --- !u!114 &11470508
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -203,12 +191,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a642b03daace7a24b85df7b6296af679, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Page0Done: []
   events: []
   actualEventIndex: -1
   readyToReLaunch: 0
   bgmCoroutine: 0
   passPressOnce: 0
   scriptLaunched: 0
+  onceReload: 0
 --- !u!114 &11493114
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -323,11 +313,16 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
+  m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 62f8426a429498442af34752c971234e, type: 3}
   m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 1, y: 1}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
 --- !u!224 &224013658119112078
 RectTransform:
   m_ObjectHideFlags: 1

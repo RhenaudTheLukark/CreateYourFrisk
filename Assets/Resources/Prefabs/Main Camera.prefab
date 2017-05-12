@@ -5,18 +5,17 @@ GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Component:
-  - 4: {fileID: 405216}
-  - 20: {fileID: 2064840}
-  - 92: {fileID: 9243518}
-  - 124: {fileID: 12487400}
-  - 81: {fileID: 8103140}
-  - 114: {fileID: 11437768}
-  - 82: {fileID: 8273166}
-  - 114: {fileID: 11436750}
-  - 114: {fileID: 11402886}
-  - 114: {fileID: 11455504}
+  - component: {fileID: 405216}
+  - component: {fileID: 2064840}
+  - component: {fileID: 9243518}
+  - component: {fileID: 12487400}
+  - component: {fileID: 8103140}
+  - component: {fileID: 8273166}
+  - component: {fileID: 11436750}
+  - component: {fileID: 11402886}
+  - component: {fileID: 11455504}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -33,10 +32,10 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 320, y: 240, z: -10000}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!20 &2064840
 Camera:
   m_ObjectHideFlags: 1
@@ -67,6 +66,8 @@ Camera:
   m_TargetDisplay: 0
   m_TargetEye: 3
   m_HDR: 0
+  m_AllowMSAA: 1
+  m_ForceIntoRT: 0
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
@@ -94,6 +95,7 @@ AudioSource:
   Loop: 1
   Mute: 0
   Spatialize: 0
+  SpatializePostEffects: 0
   Priority: 128
   DopplerLevel: 1
   MinDistance: 200
@@ -106,12 +108,14 @@ AudioSource:
   rolloffCustomCurve:
     serializedVersion: 2
     m_Curve:
-    - time: 0
+    - serializedVersion: 2
+      time: 0
       value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
-    - time: 1
+    - serializedVersion: 2
+      time: 1
       value: 0
       inSlope: 0
       outSlope: 0
@@ -122,7 +126,8 @@ AudioSource:
   panLevelCustomCurve:
     serializedVersion: 2
     m_Curve:
-    - time: 0
+    - serializedVersion: 2
+      time: 0
       value: 0
       inSlope: 0
       outSlope: 0
@@ -133,7 +138,8 @@ AudioSource:
   spreadCustomCurve:
     serializedVersion: 2
     m_Curve:
-    - time: 0
+    - serializedVersion: 2
+      time: 0
       value: 0
       inSlope: 0
       outSlope: 0
@@ -144,7 +150,8 @@ AudioSource:
   reverbZoneMixCustomCurve:
     serializedVersion: 2
     m_Curve:
-    - time: 0
+    - serializedVersion: 2
+      time: 0
       value: 1
       inSlope: 0
       outSlope: 0
@@ -181,19 +188,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4aa500e896f56ea4291706c581edeb86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &11437768
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 116878}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 78442f37a69919a409f51348d2557607, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  EDITOR_MODFOLDER: Examples
-  EDITOR_ENCOUNTER: 04 - Animation
 --- !u!114 &11455504
 MonoBehaviour:
   m_ObjectHideFlags: 1

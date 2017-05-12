@@ -108,24 +108,21 @@ public class TransitionOverworld : MonoBehaviour {
         bool neededReload = false;
         //Permits to reload the current data if needed
         MapInfos mi = GameObject.Find("Background").GetComponent<MapInfos>();
-        StaticInits si = GameObject.Find("Main Camera OW").GetComponent<StaticInits>();
         if (StaticInits.MODFOLDER != mi.modToLoad) {
             StaticInits.MODFOLDER = mi.modToLoad;
             StaticInits.Initialized = false;
-            si.initAll();
+            StaticInits.initAll();
             LuaScriptBinder.Set(null, "ModFolder", DynValue.NewString(StaticInits.MODFOLDER));
             if (call == "transitionoverworld")
                 EventManager.instance.scriptLaunched = false;
             neededReload = true;
         }
 
-        AudioSource audio;
+        AudioSource audio = UnitaleUtil.GetCurrentOverworldAudio();
         if (mi.isMusicKeptBetweenBattles) {
-            audio = PlayerOverworld.audioKept;
             MusicManager.src.Stop();
             MusicManager.src.clip = null;
         } else {
-            audio = MusicManager.src;
             PlayerOverworld.audioKept.Stop();
             PlayerOverworld.audioKept.clip = null;
         }
@@ -166,6 +163,6 @@ public class TransitionOverworld : MonoBehaviour {
 
         if (GameObject.Find("Don't show it again"))
             GameObject.Destroy(GameObject.Find("Don't show it again"));
-        si.SendLoaded();
+        StaticInits.SendLoaded();
     }
 }

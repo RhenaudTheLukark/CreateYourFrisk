@@ -16,6 +16,20 @@ public class IntroManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+        if (!SaveLoad.started) {
+            StaticInits.Start();
+            SaveLoad.Start();
+            new ControlPanel();
+            new PlayerCharacter();
+            GlobalControls.misc = new Misc();
+            #if UNITY_STANDALONE_WIN || UNITY_EDITOR
+                if (GlobalControls.crate) Misc.WindowName = ControlPanel.instance.WinodwBsaisNmae;
+                else Misc.WindowName = ControlPanel.instance.WindowBasisName;
+            #endif
+            SaveLoad.LoadAlMighty();
+            LuaScriptBinder.Set(null, "ModFolder", MoonSharp.Interpreter.DynValue.NewString("Title"));
+            UnitaleUtil.AddKeysToMapCorrespondanceList();
+        }
         Camera.main.GetComponent<AudioSource>().clip = AudioClipRegistry.GetMusic("mus_intro");
         Camera.main.GetComponent<AudioSource>().Play();
         if (imagePaths.Length != textsToDisplay.Length)

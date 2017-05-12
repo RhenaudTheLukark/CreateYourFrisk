@@ -44,32 +44,38 @@ public class CYFAnimator : MonoBehaviour {
             return;
         string animName = gameObject.name == "Player" ? specialPlayerHeader : specialHeader;
 
-        if ((Vector2)gameObject.transform.position != lastPos) {
-            animName += "Moving";
-            threeFramePass = 0;
-        } else if (threeFramePass < 3) {
-            animName += "Moving";
-            threeFramePass ++;
-        } else animName += "Stop";
-        int currentDirection = movementDirection;
+        if (GetAnimPerName(animName).name == null) {
+            if ((Vector2)gameObject.transform.position != lastPos) {
+                animName += "Moving";
+                threeFramePass = 0;
+            } else if (threeFramePass < 3) {
+                animName += "Moving";
+                threeFramePass++;
+            } else animName += "Stop";
+            int currentDirection = movementDirection;
 
-        switch (currentDirection) {
-            case 2: animName += "Down"; break;
-            case 4: animName += "Left"; break;
-            case 6: animName += "Right"; break;
-            case 8: animName += "Up"; break;
-            case 0:
-                if (beginAnim.Contains("Up")) animName += "Up";
-                if (beginAnim.Contains("Right")) animName += "Right";
-                if (beginAnim.Contains("Left")) animName += "Left";
-                if (beginAnim.Contains("Down")) animName += "Down";
-                break;
+            switch (currentDirection) {
+                case 2: animName += "Down"; break;
+                case 4: animName += "Left"; break;
+                case 6: animName += "Right"; break;
+                case 8: animName += "Up"; break;
+                case 0:
+                    if (beginAnim.Contains("Up")) animName += "Up";
+                    if (beginAnim.Contains("Right")) animName += "Right";
+                    if (beginAnim.Contains("Left")) animName += "Left";
+                    if (beginAnim.Contains("Down")) animName += "Down";
+                    break;
+            }
         }
-        if (animName != beginAnim) {
-            Anim anim = GetAnimPerName(animName);
-            try { sprctrl.SetAnimation(anim.anims.Replace(" ", "").Replace("{", "").Replace("}", "").Split(','), anim.transitionTime); } catch { }
-            beginAnim = animName;
-        }
+
+        if (animName != beginAnim)
+            ReplaceAnim(animName);
         lastPos = gameObject.transform.position;
+    }
+
+    void ReplaceAnim(string animName) {
+        Anim anim = GetAnimPerName(animName);
+        try { sprctrl.SetAnimation(anim.anims.Replace(" ", "").Replace("{", "").Replace("}", "").Split(','), anim.transitionTime); } catch { }
+        beginAnim = animName;
     }
 }

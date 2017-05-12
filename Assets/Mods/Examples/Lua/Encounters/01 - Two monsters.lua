@@ -8,7 +8,6 @@ autolinebreak = true
 playerskipdocommand = true
 timer = 0
 index = 0
-DEBUG("Outside of function: Player.x = " .. Player.x)
 --revive = true
 --deathtext = {"You have ascended.", "Now, fulfill your [lettereffect:rotate][color:ffff00]dream[color:ffffff]."}
 deathtext = {"This is a test of death text.", "And it [color:ffff00][lettereffect:shake]succeeded[color:ffffff]!"}
@@ -28,12 +27,12 @@ possiblestrings = { "I'm outta here.", "I've got shit to do.", "I've got better 
 possible_attacks = {"bullettest_bouncy" --[[, "bullettest_chaserorb", "bullettest_touhou"]]}
 
 function EncounterStarting()
-    maintext = CreateText(
+    --[[maintext = CreateText(
         {"[font:uidialog][novoice][waitall:3]Greetings.",
          "[novoice][waitall:3]I[w:20] am " .. Player.name .. ".",
          "[novoice][waitall:3][color:ff0000]Thank you.",
          "[novoice][waitall:3]Your power awakened me\nfrom death."}, {400, 99}, 320, "Top", 100)
-    maintext.progressmode = "manual"
+    maintext.progressmode = "manual"]]
     --[[bullet = CreateProjectile("BoneCenter", 0, 100, "Top")
         bullet.sprite.Scale(1, 2)
         bullet.isPersistent = true]]

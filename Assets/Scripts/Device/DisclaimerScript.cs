@@ -9,6 +9,7 @@ using System;
 /// </summary>
 public class DisclaimerScript : MonoBehaviour {
     private void Start() {
+        StaticInits.Start();
         SaveLoad.Start();
         new ControlPanel();
         new PlayerCharacter();
@@ -43,7 +44,6 @@ public class DisclaimerScript : MonoBehaviour {
     /// </summary>
     private void Update() {
         if (Input.GetKeyDown(KeyCode.O)) {
-            GameObject.DontDestroyOnLoad(GameObject.Find("Main Camera"));
             SceneManager.LoadScene("Intro");
             Destroy(this);
         } else if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)) {

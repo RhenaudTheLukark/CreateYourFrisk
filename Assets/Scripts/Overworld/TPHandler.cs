@@ -91,18 +91,15 @@ public class TPHandler : MonoBehaviour {
         //Permits to reload the current data if needed
         MapInfos mi = GameObject.Find("Background").GetComponent<MapInfos>();
         if (StaticInits.MODFOLDER != mi.modToLoad) {
-            StaticInits si = GameObject.Find("Main Camera OW").GetComponent<StaticInits>();
             StaticInits.MODFOLDER = mi.modToLoad;
             StaticInits.Initialized = false;
-            si.initAll();
+            StaticInits.initAll();
             LuaScriptBinder.Set(null, "ModFolder", MoonSharp.Interpreter.DynValue.NewString(StaticInits.MODFOLDER));
         }
 
         if (!playOnce) {
             playOnce = true;
-            AudioSource audio;
-            if (mi.isMusicKeptBetweenBattles)  audio = PlayerOverworld.audioKept;
-            else                               audio = MusicManager.src;
+            AudioSource audio = UnitaleUtil.GetCurrentOverworldAudio();
            
             //Starts the music if there's no music
             if (audio.clip == null) {

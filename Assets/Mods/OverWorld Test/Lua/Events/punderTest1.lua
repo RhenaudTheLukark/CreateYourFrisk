@@ -1,4 +1,6 @@
 function EventPage1()
+    General.TitleScreen()
+    --[[
     local spriteTest = Event.GetSprite("Punder1")
     local playerpos = Event.GetPosition("Player") 
     local eventpos = Event.GetPosition("Punder1")
@@ -26,7 +28,7 @@ function EventPage1()
     end
     dir, diff = calcDirAndDiff(Event.GetPosition("Punder1"), Event.GetPosition("Player"))
     Event.SetDirection(Event.GetName(), dir)
-    General.SetDialog({"[voice:punderbolt]" .. text}, true, {"pundermug"})
+    General.SetDialog({"[voice:punderbolt]" .. text}, true, {"pundermug"})]]
 end
 
 function calcDirAndDiff(vect1, vect2)

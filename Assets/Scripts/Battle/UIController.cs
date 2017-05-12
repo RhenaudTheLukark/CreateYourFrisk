@@ -117,6 +117,7 @@ public class UIController : MonoBehaviour {
             LuaScriptBinder.scriptlist[i] = null;
         LuaScriptBinder.ClearBattleVar();
         GlobalControls.stopScreenShake = true;
+        MusicManager.hiddenDictionary.Clear();
         if (GlobalControls.modDev) {
             PlayerCharacter.instance.Reset();
             SceneManager.LoadScene("ModSelect");
@@ -291,7 +292,7 @@ public class UIController : MonoBehaviour {
                         count++;
                         //int mNameWidth = (int)UnitaleUtil.calcTotalLength(textmgr, lastCount, count);
                         for (int j = 0; j <= 1 && j < encounter.enabledEnemies.Length; j++) {
-                            int mNameWidth = UnitaleUtil.fontStringWidth(textmgr.Charset, "* " + encounter.enabledEnemies[j].Name) + 50;
+                            int mNameWidth = (int)UnitaleUtil.calcTotalLength(textmgr) + 50;
                             if (mNameWidth > maxWidth)
                                 maxWidth = mNameWidth;
                         }
@@ -634,7 +635,7 @@ public class UIController : MonoBehaviour {
         foreach (LifeBarController lbc in arenaParent.GetComponentsInChildren<LifeBarController>())
             Destroy(lbc.gameObject);
         for (int i = page * 2; i <= page * 2 + 1 && i < encounter.enabledEnemies.Length; i++) {
-            int mNameWidth = UnitaleUtil.fontStringWidth(textmgr.Charset, "* " + encounter.enabledEnemies[i].Name) + 50;
+            int mNameWidth = (int)UnitaleUtil.calcTotalLength(textmgr) + 50;
             if (mNameWidth > maxWidth)
                 maxWidth = mNameWidth;
         }
@@ -814,7 +815,7 @@ public class UIController : MonoBehaviour {
                     } else if (selectedMercy == 1) {
                         PlayerController.instance.GetComponent<Image>().enabled = false;
                         AudioClip yay = AudioClipRegistry.GetSound("runaway");
-                        AudioSource.PlayClipAtPoint(yay, Camera.main.transform.position);
+                        UnitaleUtil.PlaySound("Mercy", yay, 0.65f);
 
                         string[] text = { "I'm outta here.", "I've got shit to do.", "I've got better things to do.", "Don't waste my time.", "Fuck this shit I'm out.",
                                           "Nah, I don't like you.", "I just wanted to walk\ra bit. Leave me alone.", "You're cute, I won't kill you :3",
@@ -1067,7 +1068,7 @@ public class UIController : MonoBehaviour {
         uiAudio.Play();
     }
 
-    public static void playSoundSeparate(AudioClip clip) { AudioSource.PlayClipAtPoint(clip, Camera.main.transform.position, 0.95f); }
+    public static void playSoundSeparate(AudioClip clip) { UnitaleUtil.PlaySound("SeparateSound", clip, 0.95f); }
 
     private void setPlayerOnAction(Actions action) {
         switch (action) {
@@ -1238,7 +1239,8 @@ public class UIController : MonoBehaviour {
 
     IEnumerator ISuperFlee() {
         PlayerController.instance.GetComponent<Image>().enabled = false;
-        AudioSource.PlayClipAtPoint(AudioClipRegistry.GetSound("runaway"), Camera.main.transform.position);
+        AudioClip yay = AudioClipRegistry.GetSound("runaway");
+        UnitaleUtil.PlaySound("Mercy", yay, 0.65f);
 
         string[] text = { "See mom, I can flee!", "LEGZ!", "It looks more like a\nreal flee.", "/me flees", "*flees*", "To infinity and beyond!",
                           "Yeah, that's the secret.\nI hope you liked it!"};

@@ -190,6 +190,7 @@ public class PlayerController : MonoBehaviour {
             this.setControlOverride(true);
             RectTransform rt = gameObject.GetComponent<RectTransform>();
             rt.position = new Vector3(rt.position.x, rt.position.y, -1000);
+            GlobalControls.stopScreenShake = true;
             gameObject.GetComponent<GameOverBehavior>().StartDeath(deathText, deathMusic);
             return;
         } else if (newhp > PlayerCharacter.instance.MaxHP * 1.5 &&!actualDamage)

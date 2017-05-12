@@ -6,7 +6,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using MoonSharp.Interpreter;
-using MoonSharp.Interpreter.Interop;
 using System.Reflection;
 
 public class EventManager : MonoBehaviour {
@@ -98,7 +97,8 @@ public class EventManager : MonoBehaviour {
                 ResetEvents();
                 testEventDestruction();
             }
-            PlayerOverworld.instance.utHeart = GameObject.Find("utHeart").GetComponent<Image>();
+            try { PlayerOverworld.instance.utHeart = GameObject.Find("utHeart").GetComponent<Image>(); }
+            catch { return; }
             for (int i = 0; i < events.Count; i++) 
                 if (events[i] != null) {
                     if (testContainsListVector2(events[i].GetComponent<EventOW>().eventTriggers, 0) && !Page0Done.Contains(events[i].name)) {
@@ -512,10 +512,14 @@ public class EventManager : MonoBehaviour {
                       "\n                tab = CYFEventMySplit(stack, '\\n')" +
                       "\n                for i = 1, #tab do if string.match(tab[i], 'EventPage') != nil then line = tab[i] break end end" +
                       "\n            end" +
-                      "\n            while string.match(line, 'chunk') do line = string.sub(line, 2) end" +
-                      "\n            for word in string.gmatch('c' .. line, '([^ ]+)') do CYFEventLameErrorContainer = word break end" +
-                      "\n            if string.match(err, '(chunk_2:.+:)') and string.match(CYFEventLameErrorContainer, '(chunk_2:.+:)') then err = string.sub(err, string.len(string.match(err, '(chunk_2:.+:)')) + 2) end" +
-                      "\n            CYFEventLameErrorContainer = CYFEventLameErrorContainer .. ' ' .. err" +
+                      "\n            if string.match(line, '[clr]') then" +
+                      "\n                CYFEventLameErrorContainer = \"Couldn't get the number of the line, sorry!\\n\".. err" +
+                      "\n            else" +
+                      "\n                while string.match(line, 'chunk') do line = string.sub(line, 2) end" +
+                      "\n                for word in string.gmatch('c' .. line, '([^ ]+)') do CYFEventLameErrorContainer = word break end" +
+                      "\n                if string.match(err, '(chunk_2:.+:)') and string.match(CYFEventLameErrorContainer, '(chunk_2:.+:)') then err = string.sub(err, string.len(string.match(err, '(chunk_2:.+:)')) + 2) end" +
+                      "\n                CYFEventLameErrorContainer = CYFEventLameErrorContainer .. ' ' .. err" +
+                      "\n            end" +
                       "\n        else" +
                       "\n            CYFEventLameErrorContainer = err " +
                       "\n        end" +
@@ -826,17 +830,19 @@ public class EventManager : MonoBehaviour {
                 }
 
                 //While the current position is different from the one we want our player to have
-                while ((Vector2)go.transform.position != endPoint) {
+                bool test = true;
+                try { test = (Vector2)go.transform.position != endPoint; } catch (MissingReferenceException) { }
+                while (test) {
                     Vector2 clamped = Vector2.ClampMagnitude(endPoint, 1);
                     //Test is used to know if the deplacement is possible or not
-                    bool test = false;
+                    bool test2 = false;
 
                     if (go != GameObject.Find("Player")) {
                         if (go.GetComponent<EventOW>().moveSpeed < endPointFromNow.magnitude)
-                            test = PlayerOverworld.instance.AttemptMove(clamped.x, clamped.y, go, wallPass);
+                            test2 = PlayerOverworld.instance.AttemptMove(clamped.x, clamped.y, go, wallPass);
                         //If we reached the destination, stop the function
                         else {
-                            test = PlayerOverworld.instance.AttemptMove(endPointFromNow.x, endPointFromNow.y, go, wallPass);
+                            test2 = PlayerOverworld.instance.AttemptMove(endPointFromNow.x, endPointFromNow.y, go, wallPass);
                             if (wallPass)
                                 foreach (GameObject go2 in colliders)
                                     if (go2.name != "Background")
@@ -846,10 +852,10 @@ public class EventManager : MonoBehaviour {
                         }
                     } else {
                         if (PlayerOverworld.instance.speed < endPointFromNow.magnitude)
-                            test = PlayerOverworld.instance.AttemptMove(clamped.x, clamped.y, go, wallPass);
+                            test2 = PlayerOverworld.instance.AttemptMove(clamped.x, clamped.y, go, wallPass);
                         //If we reached the destination, stop the function
                         else {
-                            test = PlayerOverworld.instance.AttemptMove(endPointFromNow.x, endPointFromNow.y, go, wallPass);
+                            test2 = PlayerOverworld.instance.AttemptMove(endPointFromNow.x, endPointFromNow.y, go, wallPass);
                             if (wallPass)
                                 foreach (GameObject go2 in colliders)
                                     go2.SetActive(true);
@@ -859,14 +865,17 @@ public class EventManager : MonoBehaviour {
                     }
                     yield return 0;
 
-                    if (!test && !wallPass) {
+                    if (!test2 && !wallPass) {
                         scr.Call("CYFEventNextCommand");
                         yield break;
                     } 
-                    endPointFromNow = new Vector2(dirX - go.transform.position.x, dirY - go.transform.position.y);
+                    try {
+                        endPointFromNow = new Vector2(dirX - go.transform.position.x, dirY - go.transform.position.y);
+                        test = (Vector2)go.transform.position != endPoint;
+                    } catch (MissingReferenceException) { }
                 }
             }
-        UnitaleUtil.writeInLogAndDebugger("Event.MoveToPoint: The name you entered into the function doesn't exists. Did you forget to add the 'Event' tag?");
+        UnitaleUtil.writeInLogAndDebugger("Event.MoveToPoint: The name you entered in the function doesn't exists. Did you forget to add the 'Event' tag?");
         scr.Call("CYFEventNextCommand");
     }
 
@@ -889,36 +898,23 @@ public class EventManager : MonoBehaviour {
         try { b = (int)args[3];        } catch { throw new CYFException("The argument \"b\" must be a number."); }
         try { a = (int)args[4];        } catch { throw new CYFException("The argument \"a\" must be a number."); }
 
-        int alpha, lack;
-        float beginHighest = 0, highest = 0;
-        int[] currents, lacks, beginLacks;
-        float[] realLacks;
-        if (GameObject.Find("Tone") == null) {
-            GameObject image = GameObject.Instantiate(Resources.Load<GameObject>("Prefabs/ImageEvent"));
-            image.GetComponent<Image>().color = new Color(image.GetComponent<Image>().color.r, image.GetComponent<Image>().color.g, image.GetComponent<Image>().color.b, 0);
-            alpha = 0; lack = a;
-            image.name = "Tone";
-            image.tag = "Event";
-            image.GetComponent<RectTransform>().SetParent(GameObject.Find("Canvas OW").transform);
-            image.GetComponent<RectTransform>().sizeDelta = new Vector2(640, 480);
-            image.GetComponent<RectTransform>().position = (Vector2)Camera.main.transform.position;
-            events.Add(image);
-            currents = new int[] { 0, 0, 0, 0 };
-            lacks = new int[] { r, g, b, a };
-            if (!waitEnd)
-                scr.Call("CYFEventNextCommand");
-        } else {
-            Color c = GameObject.Find("Tone").GetComponent<Image>().color;
-            currents = new int[] { (int)(c.r * 255), (int)(c.g * 255), (int)(c.b * 255), (int)(c.a * 255) };
-            lacks = new int[] { r - currents[0], g - currents[1], b - currents[2], a - currents[3] };
-            alpha = (int)(c.a * 255);
-            lack = a - alpha;
-        }
-        beginLacks = lacks;
-        realLacks = new float[] { lacks[0], lacks[1], lacks[2], lacks[3] };
+        Color c = GameObject.Find("Tone").GetComponent<Image>().color;
+
+        int alpha = (int)(c.a * 255);
+        int lack = a - alpha;
+        int[] currents = new int[] { (int)(c.r * 255), (int)(c.g * 255), (int)(c.b * 255), (int)(c.a * 255) };
+        int[] lacks = new int[] { r - currents[0], g - currents[1], b - currents[2], a - currents[3] };
+        int[] beginLacks = lacks;
+        float[] realLacks = new float[] { lacks[0], lacks[1], lacks[2], lacks[3] };
+
+        float highest = 0;
         foreach (int i in lacks)
             highest = Mathf.Abs(i) > highest ? Mathf.Abs(i) : highest;
-        beginHighest = highest;
+        float beginHighest = highest;
+
+        if (!waitEnd)
+            scr.Call("CYFEventNextCommand");
+
         while (GameObject.Find("Tone").GetComponent<Image>().color != new Color32((byte)r, (byte)g, (byte)b, (byte)a)) {
             for (int i = 0; i < realLacks.Length; i++)
                 realLacks[i] -= beginLacks[i] * 4 / beginHighest;
@@ -982,17 +978,17 @@ public class EventManager : MonoBehaviour {
                 yield break;
             }
         }
-        UnitaleUtil.writeInLogAndDebugger("Event.Rotate: The name you entered into the function isn't an event's name. Did you forget to add the 'Event' tag ?");
+        UnitaleUtil.writeInLogAndDebugger("Event.Rotate: The name you entered in the function isn't an event's name. Did you forget to add the 'Event' tag ?");
         scr.Call("CYFEventNextCommand");
     }
 
     IEnumerator fadeBGM(float fadeTime) {
         bgmCoroutine = true;
-        AudioSource audio = GameObject.Find("Main Camera OW").GetComponent<AudioSource>();
+        AudioSource audio = UnitaleUtil.GetCurrentOverworldAudio();
         float time = 0, startVolume = audio.volume;
         while (time < fadeTime) {
             audio.volume = startVolume - (startVolume * time / fadeTime);
-            time += Time.deltaTime;
+            time ++;
             yield return 0;
         }
         audio.Stop();
@@ -1000,19 +996,20 @@ public class EventManager : MonoBehaviour {
         bgmCoroutine = false;
     }
 
-    IEnumerator IRumble(object[] args) {
+    /*IEnumerator IRumble(object[] args) {
         ScriptWrapper scr = luaevow.appliedScript;
         //REAL ARGS
-        float seconds, intensity;
+        float frames, intensity;
         bool fade;
-        try { seconds = (float)args[0];   } catch { throw new CYFException("The argument \"seconds\" must be a number."); }
+        try { frames = (float)args[0];   } catch { throw new CYFException("The argument \"seconds\" must be a number."); }
         try { intensity = (float)args[1]; } catch { throw new CYFException("The argument \"intensity\" must be a number."); }
         try { fade = (bool)args[2];       } catch { throw new CYFException("The argument \"fade\" must be a boolean."); }
 
-        Vector2 shift = new Vector2(0, 0), totalShift = new Vector2(0, 0); float time = 0, intensityBasis = intensity;
-        while (time < seconds) {
+        Vector2 shift = new Vector2(0, 0), totalShift = new Vector2(0, 0);
+        float currentFrames = 0, intensityBasis = intensity;
+        while (currentFrames < frames) {
             if (fade)
-                intensity = intensityBasis * (1 - (time / seconds));
+                intensity = intensityBasis * (1 - (currentFrames / frames));
             shift = new Vector2((UnityEngine.Random.value - 0.5f) * 2 * intensity, (UnityEngine.Random.value - 0.5f) * 2 * intensity);
 
             foreach (Transform tf in UnitaleUtil.GetFirstChildren(null)) {
@@ -1021,49 +1018,36 @@ public class EventManager : MonoBehaviour {
             }
             //print(totalShift + " + " + shift + " = " + (totalShift + shift));
             totalShift = shift;
-            time += Time.deltaTime;
+            currentFrames ++;
             yield return 0;
         }
         foreach (Transform tf in UnitaleUtil.GetFirstChildren(null))
             if (tf.gameObject.name != "Main Camera OW")
                 tf.position = new Vector3(tf.position.x - totalShift.x, tf.position.y - totalShift.y, tf.position.z);
         scr.Call("CYFEventNextCommand");
-    }
+    }*/
 
     IEnumerator IFlash(object[] args) {
         ScriptWrapper scr = luaevow.appliedScript;
         //REAL ARGS
-        float secondsOrFrames;
-        bool isSeconds;
-        int colorR, colorG, colorB, colorA;
-        try { secondsOrFrames = (float)args[0]; } catch { throw new CYFException("The argument \"secondsOrFrames\" must be a number."); }
-        try { isSeconds = (bool)args[1];        } catch { throw new CYFException("The argument \"isSeconds\" must be a boolean."); }
-        try { colorR = (int)args[2];            } catch { throw new CYFException("The argument \"colorR\" must be a number."); }
-        try { colorG = (int)args[3];            } catch { throw new CYFException("The argument \"colorG\" must be a number."); }
-        try { colorB = (int)args[4];            } catch { throw new CYFException("The argument \"colorB\" must be a number."); }
-        try { colorA = (int)args[5];            } catch { throw new CYFException("The argument \"colorA\" must be a number."); }
+        int frames, colorR, colorG, colorB, colorA;
+        try { frames = (int)args[0]; } catch { throw new CYFException("The argument \"secondsOrFrames\" must be a number."); }
+        try { colorR = (int)args[1]; } catch { throw new CYFException("The argument \"colorR\" must be a number."); }
+        try { colorG = (int)args[2]; } catch { throw new CYFException("The argument \"colorG\" must be a number."); }
+        try { colorB = (int)args[3]; } catch { throw new CYFException("The argument \"colorB\" must be a number."); }
+        try { colorA = (int)args[4]; } catch { throw new CYFException("The argument \"colorA\" must be a number."); }
 
         GameObject flash = new GameObject("flash", new Type[] { typeof(Image) });
         flash.transform.SetParent(GameObject.Find("Canvas OW").transform);
         flash.transform.position = Camera.main.transform.position + new Vector3(0, 0, 1);
-        flash.GetComponent<RectTransform>().sizeDelta = new Vector2(640, 480);
+        flash.GetComponent<RectTransform>().sizeDelta = new Vector2(1000, 800);
 
         flash.GetComponent<Image>().color = new Color32((byte)colorR, (byte)colorG, (byte)colorB, (byte)colorA);
-        if (isSeconds) {
-            float time = 0;
-            while (time < secondsOrFrames) {
-                if (time != 0)
-                    flash.GetComponent<Image>().color = new Color32((byte)colorR, (byte)colorG, (byte)colorB, (byte)(colorA - colorA * time / secondsOrFrames));
-                time += Time.deltaTime;
-                yield return 0;
-
-            }
-        } else
-            for (int frame = 0; frame < secondsOrFrames; frame++) {
-                if (frame != 0)
-                    flash.GetComponent<Image>().color = new Color32((byte)colorR, (byte)colorG, (byte)colorB, (byte)(colorA - colorA * frame / secondsOrFrames));
-                yield return 0;
-            }
+        for (int frame = 0; frame < frames; frame++) {
+            if (frame != 0)
+                flash.GetComponent<Image>().color = new Color32((byte)colorR, (byte)colorG, (byte)colorB, (byte)(colorA - colorA * frame / frames));
+            yield return 0;
+        }
         GameObject.Destroy(flash);
         scr.Call("CYFEventNextCommand");
     }
@@ -1076,6 +1060,7 @@ public class EventManager : MonoBehaviour {
         PlayerOverworld.instance.utHeart.color = new Color(c.r, c.g, c.b, 1);
         GameObject.Find("save_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 1);
         GameObject.Find("save_interior").GetComponent<Image>().color = new Color(0, 0, 0, 1);
+        GameObject.Find("save_border_outer").transform.SetAsLastSibling();
         TextManager txtLevel = GameObject.Find("TextManagerLevel").GetComponent<TextManager>(), txtTime = GameObject.Find("TextManagerTime").GetComponent<TextManager>(),
                     txtMap = GameObject.Find("TextManagerMap").GetComponent<TextManager>(), txtName = GameObject.Find("TextManagerName").GetComponent<TextManager>(),
                     txtSave = GameObject.Find("TextManagerSave").GetComponent<TextManager>(), txtReturn = GameObject.Find("TextManagerReturn").GetComponent<TextManager>();

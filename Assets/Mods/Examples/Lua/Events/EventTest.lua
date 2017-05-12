@@ -73,7 +73,7 @@ function EventPage3()
 	elseif (GetRealGlobal("GoAway") == 14) then	General.SetDialog({"JUST. [w:10]STOP. [w:10]This is your final warning."}, true, {"rtlukark_angry"})
 	elseif (GetRealGlobal("GoAway") == 15) then	
 		General.SetDialog({"Ok,[w:5] here you go![w:10][next]"}, true, {"rtlukark_angry"})
-		General.GameOver("I told you!\rYou should have stopped that.", "mus_zz_megalovania")		
+		General.GameOver({ "I told you!", "You should have stopped that." }, "mus_zz_megalovania")		
 	end
 end
 
@@ -104,8 +104,7 @@ function EventPage4()
 	WaitForInput()
 	SupprImg(1)
 	SetTone(true, true, 0, 0, 0, 0)]]
-	--General.GameOver("[voice:v_sans]Wazzup bro?\r[voice:v_sans]I love this music, don't you ?", "mus_zz_megalovania")
-	--GameOver("I told you !\rYou should have\nstopped that.", "mus_zz_megalovania")
+	--General.GameOver({ "[voice:v_sans]Wazzup bro?", "[voice:v_sans]I love this music, don't you?" }, "mus_zz_megalovania")
 end
 
 --[[function EventPage666()

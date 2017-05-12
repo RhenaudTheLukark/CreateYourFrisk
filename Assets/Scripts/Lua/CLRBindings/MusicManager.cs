@@ -32,7 +32,7 @@ public class MusicManager {
     }
 
     public static void PlaySound(string name, float volume = 0.65f) {
-        try { AudioSource.PlayClipAtPoint(AudioClipRegistry.GetSound(name), Camera.main.transform.position, volume); }
+        try { UnitaleUtil.PlaySound("MusicPlaySound", AudioClipRegistry.GetSound(name), volume); }
         catch {  }
     }
 

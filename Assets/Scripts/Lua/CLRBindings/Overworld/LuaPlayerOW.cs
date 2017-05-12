@@ -90,8 +90,8 @@ public class LuaPlayerOW {
     /// <param name="damage">This one seems obvious</param>
     [CYFEventFunction]
     public void Hurt(int damage) {
-        if (damage >= 0) UnitaleUtil.PlaySound("HealthSound", AudioClipRegistry.GetSound("hurtsound"));
-        else             UnitaleUtil.PlaySound("HealthSound", AudioClipRegistry.GetSound("healsound"));
+        if (damage >= 0) UnitaleUtil.PlaySound("HurtSound", AudioClipRegistry.GetSound("hurtsound"), 0.65f);
+        else             UnitaleUtil.PlaySound("HurtSound", AudioClipRegistry.GetSound("healsound"), 0.65f);
 
         if (-damage + player.HP > player.MaxHP) player.HP = player.MaxHP;
         else if (-damage + player.HP <= 0) player.HP = 1;

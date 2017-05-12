@@ -46,7 +46,7 @@ function EventPage3()
             if lastChoice == 0 then
                 General.SetDialog({"[voice:monsterfont][effect:none]Alright.",
                                    "[voice:monsterfont][effect:none]I guess that this will do nothing, then?"}, true)
-		        General.GameOver("Oops, it did! Eat me, the next time.")
+		        General.GameOver({ "Oops, it did!\nEat me, the next time." })
             else
                 General.SetDialog({"[voice:monsterfont]Good. Then eat me.", 
                                    "You ate the pie[waitall:10]... [w:20][waitall:1][health:Max]Your HP has been maxed out."}, true)

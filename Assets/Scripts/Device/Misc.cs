@@ -1,10 +1,8 @@
 ﻿using UnityEngine;
-using System;
-using System.Collections;
 using System.Runtime.InteropServices;
 using System.Text;
 
-public class Misc : MonoBehaviour {
+public class Misc {
     #if UNITY_STANDALONE_WIN || UNITY_EDITOR
         #if UNITY_EDITOR
             [DllImport("user32.dll")]
@@ -158,17 +156,11 @@ public class Misc : MonoBehaviour {
 #endif
 
     public void ShakeScreen(float duration, float intensity = 3, bool isIntensityDecreasing = true) {
-        if (UnitaleUtil.isOverworld())
-            throw new CYFException("You can't use Misc.ScreenShake in the overworld. Use Screen.Rumble instead.");
-        else
-            Camera.main.GetComponent<GlobalControls>().ShakeScreen(duration, intensity, isIntensityDecreasing);
+        Camera.main.GetComponent<GlobalControls>().ShakeScreen(duration, intensity, isIntensityDecreasing);
     }
 
     public void StopShake() {
-        if (UnitaleUtil.isOverworld())
-            throw new CYFException("You can't use Misc.StopShake in the overworld.");
-        else
-            GlobalControls.stopScreenShake = true;
+        GlobalControls.stopScreenShake = true;
     }
 
     public bool FullScreen {

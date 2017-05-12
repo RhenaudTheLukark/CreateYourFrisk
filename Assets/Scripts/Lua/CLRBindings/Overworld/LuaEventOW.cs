@@ -36,7 +36,7 @@ public class LuaEventOW {
                 return;
             }
         }
-        throw new CYFException("Event.Teleport: The name you entered into the function doesn't exist. Did you forget to add the 'Event' tag?");
+        throw new CYFException("Event.Teleport: The name you entered in the function doesn't exist. Did you forget to add the 'Event' tag?");
     }
 
     /// <summary>
@@ -120,7 +120,7 @@ public class LuaEventOW {
                 return;
             }
         }
-        UnitaleUtil.writeInLog("The name you entered into the function isn't an event's name. Did you forget to add the 'Event' tag ?");
+        UnitaleUtil.writeInLog("The name you entered in the function isn't an event's name. Did you forget to add the 'Event' tag ?");
         appliedScript.Call("CYFEventNextCommand");
     }*/
 
@@ -169,7 +169,7 @@ public class LuaEventOW {
                     return;
                 }
             }
-            throw new CYFException("Event.Rotate: The name you entered into the function isn't an event's name. Did you forget to add the 'Event' tag?");
+            throw new CYFException("Event.Rotate: The name you entered in the function isn't an event's name. Did you forget to add the 'Event' tag?");
         }
     }
 
@@ -180,9 +180,20 @@ public class LuaEventOW {
     }
 
     [CYFEventFunction]
-    public void StopCoroutine() {
-        if (EventManager.instance.coroutines.ContainsKey(appliedScript)) EventManager.instance.coroutines.Remove(appliedScript);
-        else                                                             Debug.LogError("You tried to remove the coroutine of an event which hadn't one.");
+    public void StopCoroutine(string eventName = "thisevent") {
+        ScriptWrapper scr;
+        if (eventName == "thisevent")
+            scr = appliedScript;
+        else {
+            if (!GameObject.Find(eventName))
+                throw new CYFException("Event.StopCoroutine: The name you entered in the function isn't an event's name. Did you forget to add the 'Event' tag?");
+            if (!EventManager.instance.eventScripts.ContainsKey(GameObject.Find(eventName)))
+                throw new CYFException("Event.StopCoroutine: The name you entered in the function isn't an event's name. Did you forget to add the 'Event' tag?");
+            scr = EventManager.instance.eventScripts[GameObject.Find(eventName)];
+        }
+
+        if (EventManager.instance.coroutines.ContainsKey(scr)) EventManager.instance.coroutines.Remove(scr);
+        else                                                   Debug.LogError("Event.StopCoroutine: You tried to remove the coroutine of an event which hadn't one.");
         appliedScript.Call("CYFEventNextCommand");
     }
 
@@ -190,7 +201,7 @@ public class LuaEventOW {
     public void Remove(string eventName) {
         GameObject go = GameObject.Find(eventName);
         if (!go)
-            Debug.LogError("The event " + eventName + " doesn't exist but you tried to remove it.");
+            Debug.LogError("Event.Remove: The event " + eventName + " doesn't exist but you tried to remove it.");
         else {
             if (EventManager.instance.eventScripts.ContainsKey(go)) {
                 if (EventManager.instance.coroutines.ContainsKey(EventManager.instance.eventScripts[go]))

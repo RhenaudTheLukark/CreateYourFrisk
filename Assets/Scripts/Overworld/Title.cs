@@ -14,9 +14,23 @@ public class Title : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
+        if (!SaveLoad.started) {
+            StaticInits.Start();
+            SaveLoad.Start();
+            new ControlPanel();
+            new PlayerCharacter();
+            GlobalControls.misc = new Misc();
+            #if UNITY_STANDALONE_WIN || UNITY_EDITOR
+                if (GlobalControls.crate) Misc.WindowName = ControlPanel.instance.WinodwBsaisNmae;
+                else Misc.WindowName = ControlPanel.instance.WindowBasisName;
+            #endif
+            SaveLoad.LoadAlMighty();
+            LuaScriptBinder.Set(null, "ModFolder", MoonSharp.Interpreter.DynValue.NewString("Title"));
+            UnitaleUtil.AddKeysToMapCorrespondanceList();
+        }
         tmName = GameObject.Find("TextManagerResetName").GetComponent<TextManager>();
         tmName.setHorizontalSpacing(2);
-        tmName.setEffect(new ShakeEffect(tmName));
+        tmName.setFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_DEFAULT_NAME));
         diff = calcTotalLength(tmName);
         actualX = tmName.transform.localPosition.x;
         actualY = tmName.transform.localPosition.y;
@@ -28,8 +42,8 @@ public class Title : MonoBehaviour {
 	}
 
     IEnumerator TitlePhase1() {
-        GameObject.Find("Main Camera").GetComponent<AudioSource>().PlayOneShot(AudioClipRegistry.GetSound("intro_noise"));
-        while (GameObject.Find("Main Camera").GetComponent<AudioSource>().isPlaying) 
+        Camera.main.GetComponent<AudioSource>().PlayOneShot(AudioClipRegistry.GetSound("intro_noise"));
+        while (Camera.main.GetComponent<AudioSource>().isPlaying) 
             yield return 0;
         while (phase == 0) {
             if (GameObject.Find("PressEnterOrZ").GetComponent<SpriteRenderer>().color.a == 1)
@@ -45,14 +59,14 @@ public class Title : MonoBehaviour {
         GlobalControls.lastTitle = true;
         if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED && phase == 0) {
             phase++;
-            GameObject.Find("Main Camera").GetComponent<AudioSource>().Stop();
+            Camera.main.GetComponent<AudioSource>().Stop();
             StopCoroutine(TitlePhase1());
         } else if (phase == 1) {
             if (!initPhase) {
                 initPhase = true;
 
-                GameObject.Find("Main Camera").GetComponent<AudioSource>().clip = AudioClipRegistry.GetMusic("mus_menu");
-                GameObject.Find("Main Camera").GetComponent<AudioSource>().Play();
+                Camera.main.GetComponent<AudioSource>().clip = AudioClipRegistry.GetMusic("mus_menu");
+                Camera.main.GetComponent<AudioSource>().Play();
                 try {
                     if (!SaveLoad.Load()) {
                         SceneManager.LoadScene("EnterName");
@@ -71,6 +85,8 @@ public class Title : MonoBehaviour {
                         GameObject.Find("TextManagerTime").GetComponent<TextManager>().setTextQueue(new TextMessage[] { new TextMessage("[noskipatall]0:00", false, true) });
                         GameObject.Find("TextManagerMap").GetComponent<TextManager>().setTextQueue(new TextMessage[] { new TextMessage("[noskipatall]" + SaveLoad.savedGame.lastScene, false, true) });
                         tmName.setTextQueue(new TextMessage[] { new TextMessage(PlayerCharacter.instance.Name, false, true) });
+                        diff = calcTotalLength(tmName);
+                        tmName.setEffect(new ShakeEffect(tmName));
                     }
                 } catch {
                     if (GlobalControls.crate)
@@ -98,7 +114,8 @@ public class Title : MonoBehaviour {
                             StartCoroutine(LoadGame());
                             break;
                         case 1:
-                            phase = 2;
+                            phase = 2; 
+                            GameObject.Find(firstPhaseEventNames[choiceLetter]).GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 1);
                             GameObject.Find("CanvasReset").transform.position = new Vector3(320, 240, -500);
                             setColor(0, 2);
                             break;
@@ -116,12 +133,13 @@ public class Title : MonoBehaviour {
                 setColor((choiceLetter + 1) % 2, 2);
             else if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED) {
                 if (choiceLetter == 1) {
-                    GameObject.Find("Main Camera").GetComponent<AudioSource>().Stop();
-                    GameObject.Find("Main Camera").GetComponent<AudioSource>().PlayOneShot(AudioClipRegistry.GetSound("intro_holdup"));
+                    Camera.main.GetComponent<AudioSource>().Stop();
+                    Camera.main.GetComponent<AudioSource>().PlayOneShot(AudioClipRegistry.GetSound("intro_holdup"));
                     phase = -1;
                     StartCoroutine(NewGame());
                 } else {
                     phase = 1;
+                    GameObject.Find(secondPhaseEventNames[choiceLetter]).GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 1);
                     GameObject.Find("CanvasReset").transform.position = new Vector3(320, 240, 50);
                     tmName.transform.localPosition = new Vector3(actualX, actualY, tmName.transform.localPosition.z);
                     tmName.transform.localScale = new Vector3(1, 1, 1);
@@ -148,10 +166,9 @@ public class Title : MonoBehaviour {
         yield return 0;
         yield return Application.isLoadingLevel;
         GameObject.Find("Player").transform.position = new Vector3(SaveLoad.savedGame.playerPosX, SaveLoad.savedGame.playerPosY, SaveLoad.savedGame.playerPosZ);
-        StaticInits si = GameObject.Find("Main Camera OW").GetComponent<StaticInits>();
         StaticInits.MODFOLDER = LuaScriptBinder.Get(null, "ModFolder").String;
         StaticInits.Initialized = false;
-        si.initAll();
+        StaticInits.initAll();
         GameObject.Destroy(gameObject);
     }
 
@@ -165,7 +182,7 @@ public class Title : MonoBehaviour {
             blank.color = new Color(blank.color.r, blank.color.g, blank.color.b, blank.color.a + 0.003f);
             yield return 0;
         }
-        while (GameObject.Find("Main Camera").GetComponent<AudioSource>().isPlaying)
+        while (Camera.main.GetComponent<AudioSource>().isPlaying)
             yield return 0;
         PlayerCharacter.instance.Reset();
         LuaScriptBinder.ClearVariables();

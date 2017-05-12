@@ -2,13 +2,13 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class StaticInits : MonoBehaviour {
+public static class StaticInits {
     //private static string CurrMODFOLDER;
     //private static string CurrENCOUNTER;
     public static string MODFOLDER;
     public static string ENCOUNTER;
-    public string EDITOR_MODFOLDER;
-    public string EDITOR_ENCOUNTER;
+    public static string EDITOR_MODFOLDER = "Title";
+    public static string EDITOR_ENCOUNTER = "";
     private static bool firstInit = false;
 
     public static bool Initialized { get; set; }
@@ -16,19 +16,15 @@ public class StaticInits : MonoBehaviour {
     public delegate void LoadedAction();
     public static event LoadedAction Loaded;
 
-    void OnEnable() {  UIController.SendToStaticInits += SendLoaded; }
-    void OnDisable() { UIController.SendToStaticInits -= SendLoaded; }
+    static void OnEnable() {  UIController.SendToStaticInits += StaticInits.SendLoaded; }
+    static void OnDisable() { UIController.SendToStaticInits -= StaticInits.SendLoaded; }
 
-    public void Awake() {
+    public static void Start() {
         if (!firstInit) {
             firstInit = true;
             SpriteRegistry.Start();
             AudioClipRegistry.Start();
             SpriteFontRegistry.Start();
-        }
-        if (FindObjectsOfType<StaticInits>().Length != 1) {
-            Initialized = true;
-            return;
         }
         if (MODFOLDER == null || MODFOLDER == "")
             MODFOLDER = EDITOR_MODFOLDER;
@@ -39,9 +35,9 @@ public class StaticInits : MonoBehaviour {
         Initialized = true;
     }
 
-    public void initAll() {
+    public static void initAll() {
         if (!Initialized && (SceneManager.GetActiveScene().name != "Battle" || GlobalControls.lastSceneUnitale)) {
-            UnitaleUtil.createFile();
+            //UnitaleUtil.createFile();
             if (GlobalControls.lastSceneUnitale)
                 GlobalControls.lastSceneUnitale = false;
             Stopwatch sw = new Stopwatch(); //benchmarking terrible loading times
@@ -77,7 +73,7 @@ public class StaticInits : MonoBehaviour {
         //CurrMODFOLDER = MODFOLDER;
     }
 
-    public void SendLoaded() {
+    public static void SendLoaded() {
         if (Loaded != null)
             Loaded();
     }

@@ -398,7 +398,7 @@ public static class Inventory {
     public static int InventoryNumber(string itemName) {
         for (int i = 0; i < container.Count; i++)
             if (container[i].Name == itemName)
-                return i;
+                return i + 1;
         return -1;
     }
 

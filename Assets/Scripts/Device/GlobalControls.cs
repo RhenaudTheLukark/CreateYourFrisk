@@ -133,8 +133,11 @@ public class GlobalControls : MonoBehaviour {
             if (fade)
                 intensity = intensityBasis * (1 - (frameCount / frames));
             shift = new Vector2((Random.value - 0.5f) * 2 * intensity, (Random.value - 0.5f) * 2 * intensity);
-            
-            tf.position = new Vector3(tf.position.x + shift.x - totalShift.x, tf.position.y + shift.y - totalShift.y, tf.position.z);
+
+            if (UnitaleUtil.isOverworld())
+                PlayerOverworld.instance.cameraShift = new Vector2(PlayerOverworld.instance.cameraShift.x + shift.x - totalShift.x, PlayerOverworld.instance.cameraShift.y + shift.y - totalShift.y);
+            else
+                tf.position = new Vector3(tf.position.x + shift.x - totalShift.x, tf.position.y + shift.y - totalShift.y, tf.position.z);
             //print(totalShift + " + " + shift + " = " + (totalShift + shift));
             totalShift = shift;
             frameCount++;

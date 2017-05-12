@@ -33,7 +33,7 @@ public class LuaScreenOW {
     /// <param name="toneB"></param>
     /// <param name="toneA"></param>
     [CYFEventFunction]
-    public void DispImg(string path, int id, float posX, float posY, int toneR = 255, int toneG = 255, int toneB = 255, int toneA = -1) {
+    public void DispImg(string path, int id, float posX, float posY, int toneR = 255, int toneG = 255, int toneB = 255, int toneA = 255) {
         GameObject image;
         bool newImage = false;
 
@@ -51,11 +51,10 @@ public class LuaScreenOW {
         image.GetComponent<Image>().sprite = SpriteRegistry.Get(path);
         if (image.GetComponent<Image>().sprite == null)
             throw new CYFException("Screen.DispImg: The sprite given doesn't exist.");
+        if (toneR < 0 || toneR > 255 || toneR % 1 != 0 || toneG < 0 || toneG > 255 || toneG % 1 != 0 || toneB < 0 || toneB > 255 || toneB % 1 != 0)
+            throw new CYFException("Screen.DispImg: You can't input a value out of [0; 255] for a color value, as it is clamped from 0 to 255.\nThe number have to be an integer.");
         if (toneA >= 0 && toneA <= 255 && toneR % 1 == 0)
-            if (toneR < 0 || toneR > 255 || toneR % 1 != 0 || toneG < 0 || toneG > 255 || toneG % 1 != 0 || toneB < 0 || toneB > 255 || toneB % 1 != 0)
-                throw new CYFException("Screen.DispImg: You can't input a value out of [0; 255] for a color value, as it is clamped from 0 to 255.\nThe number have to be an integer.");
-            else
-                image.GetComponent<Image>().color = new Color32((byte)toneR, (byte)toneG, (byte)toneB, (byte)toneA);
+            image.GetComponent<Image>().color = new Color32((byte)toneR, (byte)toneG, (byte)toneB, (byte)toneA);
         image.GetComponent<RectTransform>().sizeDelta = image.GetComponent<Image>().sprite.bounds.size * 100;
         image.GetComponent<RectTransform>().position = (Vector2)Camera.main.transform.position + new Vector2(posX - 320, posY - 240);
 
@@ -86,35 +85,33 @@ public class LuaScreenOW {
     /// <param name="b"></param>
     /// <param name="a"></param>
     [CYFEventFunction]
-    public void SetTone(bool anim, bool waitEnd, int r = 255, int g = 255, int b = 255, int a = 0) {
+    public void SetTone(bool anim, bool waitEnd, int r = 255, int g = 255, int b = 255, int a = 128) {
         if (r < 0 || r > 255 || r % 1 != 0 || g < 0 || g > 255 || g % 1 != 0 || b < 0 || b > 255 || b % 1 != 0)
             throw new CYFException("Screen.SetTone: You can't input a value out of [0; 255] for a color value, as it is clamped from 0 to 255.\nThe number have to be an integer.");
-        else {
-            if (!anim) {
-                if (GameObject.Find("Tone") == null) {
-                    GameObject tone = GameObject.Instantiate(Resources.Load<GameObject>("Prefabs/ImageEvent"));
-                    tone.name = "Tone";
-                    tone.tag = "Event";
-                    tone.GetComponent<RectTransform>().parent = Camera.main.transform;
-                    tone.GetComponent<Image>().color = new Color32((byte)r, (byte)g, (byte)b, (byte)a);
-                    tone.GetComponent<RectTransform>().sizeDelta = new Vector2(640, 480);
-                    tone.GetComponent<RectTransform>().localPosition = new Vector2();
-                    EventManager.instance.events.Add(tone);
-                } else
-                    GameObject.Find("Tone").GetComponent<Image>().color = new Color32((byte)r, (byte)g, (byte)b, (byte)a);
-                appliedScript.Call("CYFEventNextCommand");
-            } else 
-                StCoroutine("ISetTone", new object[] { waitEnd, r, g, b, a });
+        if (GameObject.Find("Tone") == null) {
+            GameObject image = GameObject.Instantiate(Resources.Load<GameObject>("Prefabs/ImageEvent"));
+            image.GetComponent<Image>().color = new Color(image.GetComponent<Image>().color.r, image.GetComponent<Image>().color.g, image.GetComponent<Image>().color.b, 0);
+            image.name = "Tone";
+            image.tag = "Event";
+            image.GetComponent<RectTransform>().SetParent(GameObject.Find("Canvas OW").transform);
+            image.GetComponent<RectTransform>().sizeDelta = new Vector2(1000, 800);
+            image.GetComponent<RectTransform>().position = (Vector2)Camera.main.transform.position;
+            EventManager.instance.events.Add(image);
         }
+        if (!anim) {
+            GameObject.Find("Tone").GetComponent<Image>().color = new Color32((byte)r, (byte)g, (byte)b, (byte)a);
+            appliedScript.Call("CYFEventNextCommand");
+        } else 
+            StCoroutine("ISetTone", new object[] { waitEnd, r, g, b, a });
     }
 
-    /// <summary>
+    /*/// <summary>
     /// Rumbles the screen.
     /// </summary>
     /// <param name="seconds"></param>
     /// <param name="intensity"></param>
     [CYFEventFunction]
-    public void Rumble(float seconds, float intensity = 3, bool fade = false) { StCoroutine("IRumble", new object[] { seconds, intensity, fade }); }
+    public void Rumble(float frames, float intensity = 3, bool fade = false) { StCoroutine("IRumble", new object[] { frames, intensity, fade }); }*/
 
     /// <summary>
     /// Rumbles the screen.
@@ -122,8 +119,8 @@ public class LuaScreenOW {
     /// <param name="secondsOrFrames"></param>
     /// <param name="intensity"></param>
     [CYFEventFunction]
-    public void Flash(float secondsOrFrames, bool isSeconds = false, int colorR = 255, int colorG = 255, int colorB = 255, int colorA = 255) {
-        StCoroutine("IFlash", new object[] { secondsOrFrames, isSeconds, colorR, colorG, colorB, colorA });
+    public void Flash(float frames, int colorR = 255, int colorG = 255, int colorB = 255, int colorA = 255) {
+        StCoroutine("IFlash", new object[] { frames, colorR, colorG, colorB, colorA });
     }
 
     [CYFEventFunction]

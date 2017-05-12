@@ -67,13 +67,13 @@ public class TextManager : MonoBehaviour {
         if (default_charset == null)
             default_charset = font;
         if (firstTime) {
-            if (letterSound == null)          letterSound.clip = Charset.Sound;
-            if (currentColor == Color.white)  currentColor = Charset.DefaultColor;
-            if (hSpacing == 3)                hSpacing = Charset.CharSpacing;
+            if (letterSound == null)          letterSound.clip = font.Sound;
+            if (currentColor == Color.white)  currentColor = font.DefaultColor;
+            if (hSpacing == 3)                hSpacing = font.CharSpacing;
         } else {
-            letterSound.clip = Charset.Sound;
-            currentColor = Charset.DefaultColor;
-            hSpacing = Charset.CharSpacing;
+            letterSound.clip = font.Sound;
+            currentColor = font.DefaultColor;
+            hSpacing = font.CharSpacing;
         }
     }
 
@@ -101,6 +101,7 @@ public class TextManager : MonoBehaviour {
     }
 
     private void Start() {
+        //resetFont();
         // setText("the quick brown fox jumps over\rthe lazy dog.\nTHE QUICK BROWN FOX JUMPS OVER\rTHE LAZY DOG.\nJerry.", true, true);
         // setText(new TextMessage("Here comes Napstablook.", true, false));
         // setText(new TextMessage(new string[] { "Check", "Compliment", "Ignore", "Steal", "trow temy", "Jerry" }, false));

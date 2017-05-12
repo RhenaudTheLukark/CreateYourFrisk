@@ -104,34 +104,24 @@ public class LuaGeneralOW {
     /// Launch the GameOver screen
     /// </summary>
     [CYFEventFunction]
-    public void GameOver(string deathText = null, string deathMusic = null) {
+    public void GameOver(DynValue deathText = null, string deathMusic = null) {
         PlayerCharacter.instance.HP = PlayerCharacter.instance.MaxHP;
         Transform rt = GameObject.Find("Player").GetComponent<Transform>();
         rt.position = new Vector3(rt.position.x, rt.position.y, -1000);
-        int index = 0;
-        string[] deathTable2 = null;
+        string[] deathTable = null;
 
         if (deathText != null) {
-            List<string> deathTable = new List<string>();
-            int j = deathText.Length;
-            for (int i = 0; i < j; i++) {
-                if (deathText[i] == '\r' && deathText[i] != '\n') {
-                    deathTable.Add(deathText.Substring(index, i - index));
-                    index = i + 1;
-                }
-            }
-            deathTable.Add(deathText.Substring(index, deathText.Length - index));
-            deathTable2 = new string[deathTable.Count];
-            for (int i = 0; i < deathTable.Count; i++)
-                deathTable2[i] = deathTable[i];
+            deathTable = new string[deathText.Table.Length];
+            for (int i = 0; i < deathText.Table.Length; i++)
+                deathTable[i] = deathText.Table[i].ToString();
         }
 
-        GlobalControls.Music = GameObject.Find("Background").GetComponent<MapInfos>().isMusicKeptBetweenBattles ? PlayerOverworld.audioKept.clip : MusicManager.src.clip;
+        GlobalControls.Music = UnitaleUtil.GetCurrentOverworldAudio().clip;
         PlayerOverworld.instance.enabled = false;
 
         UnitaleUtil.writeInLogAndDebugger(GameObject.FindObjectOfType<GameOverBehavior>().name);
 
-        GameObject.FindObjectOfType<GameOverBehavior>().StartDeath(deathTable2, deathMusic);
+        GameObject.FindObjectOfType<GameOverBehavior>().StartDeath(deathTable, deathMusic);
         appliedScript.Call("CYFEventNextCommand");
     }
 
@@ -142,33 +132,29 @@ public class LuaGeneralOW {
     /// <param name="volume">The volume of the BGM. Clamped from 0 to 1.</param>
     [CYFEventFunction]
     public void PlayBGM(string bgm, float volume) {
-        if (volume > 1 || volume < 0)
-            throw new CYFException("General.PlayBGM: You can't input a value out of [0; 1] for the volume, as it is clamped from 0 to 1.");
-        else if (AudioClipRegistry.GetMusic(bgm) == null)
+        volume = Mathf.Clamp01(volume);
+        if (AudioClipRegistry.GetMusic(bgm) == null)
             throw new CYFException("General.PlayBGM: The given BGM doesn't exist. Please check if you haven't mispelled it.");
-        else {
-            AudioSource audio = GameObject.Find("Main Camera OW").GetComponent<AudioSource>();
-            audio.clip = AudioClipRegistry.GetMusic(bgm);
-            audio.volume = volume;
-            audio.Play();
-        }
+        AudioSource audio = UnitaleUtil.GetCurrentOverworldAudio();
+        audio.clip = AudioClipRegistry.GetMusic(bgm);
+        audio.volume = volume;
+        audio.Play();
         appliedScript.Call("CYFEventNextCommand");
     }
 
     /// <summary>
     /// Stops the current BGM.
     /// </summary>
-    /// <param name="fadeTime"></param>
+    /// <param name="fadeFrames"></param>
     [CYFEventFunction]
-    public void StopBGM(float fadeTime) {
+    public void StopBGM(int fadeFrames = 0) {
         if (EventManager.instance.bgmCoroutine)
             throw new CYFException("General.StopBGM: The music is already fading.");
         else if (!GameObject.Find("Main Camera OW").GetComponent<AudioSource>().isPlaying)
             throw new CYFException("General.StopBGM: There is no current BGM.");
-        else if (fadeTime < 0)
+        else if (fadeFrames < 0)
             throw new CYFException("General.StopBGM: The fade time has to be positive or equal to 0.");
-        else
-            StCoroutine("fadeBGM", fadeTime);
+        StCoroutine("fadeBGM", fadeFrames);
         appliedScript.Call("CYFEventNextCommand");
     }
 
@@ -178,13 +164,11 @@ public class LuaGeneralOW {
     /// <param name="sound"></param>
     /// <param name="volume"></param>
     [CYFEventFunction]
-    public void PlaySound(string sound, float volume) {
-        if (volume > 1 || volume < 0)
-            throw new CYFException("General.PlaySound: You can't input a value out of [0; 1] for the volume, as it is clamped from 0 to 1.");
-        else if (AudioClipRegistry.GetSound(sound) == null)
+    public void PlaySound(string sound, float volume = 0.65f) {
+        volume = Mathf.Clamp01(volume);
+        if (AudioClipRegistry.GetSound(sound) == null)
             throw new CYFException("General.PlaySound: The given BGM doesn't exist. Please check if you haven't mispelled it.");
-        else
-            UnitaleUtil.PlaySound("OverworldSound", AudioClipRegistry.GetSound(sound), volume);
+        UnitaleUtil.PlaySound("PlaySound", AudioClipRegistry.GetSound(sound), volume);
         //GameObject.Find("Player").GetComponent<AudioSource>().PlayOneShot(AudioClipRegistry.GetSound(sound), volume);
         appliedScript.Call("CYFEventNextCommand");
     }
@@ -198,8 +182,14 @@ public class LuaGeneralOW {
     [CYFEventFunction]
     //NOT WORKING
     public void TitleScreen() {
-        SceneManager.LoadScene(SceneManager.GetSceneByName("TransitionTitleScreen").buildIndex);
-        appliedScript.Call("CYFEventNextCommand");
+        NewMusicManager.DestroyChannel("StaticKeptAudio");
+        GameObject.Destroy(GameObject.Find("Player"));
+        GameObject.Destroy(GameObject.Find("Canvas OW"));
+        StaticInits.MODFOLDER = "Title";
+        StaticInits.Initialized = false;
+        StaticInits.initAll();
+        GameObject.Destroy(GameObject.Find("Main Camera OW"));
+        SceneManager.LoadScene("TitleScreen");
     }
 
     /// <summary>
