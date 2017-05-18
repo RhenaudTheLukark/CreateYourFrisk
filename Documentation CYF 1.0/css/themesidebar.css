@@ -4,6 +4,26 @@
 }
 
 
+.keys {
+	width: auto;
+	outline: 1px solid #ffffff;
+	color: #ffffff;
+}
+
+.keys td, .keys th {
+	border: 1px solid #dddddd;
+	text-align: left;
+	padding: 5px 5px;
+}
+
+.keys tr:nth-child(even) {
+	background-color: #222222;
+}
+
+.keys tr:nth-child(1) {
+	border-bottom: 1px solid #ffffff;
+}
+
 span.term{
 	outline: 1px solid #333333;
 	background-color: #222222;
@@ -72,12 +92,13 @@ h4 {
 }
 
 .centerbt{
-    display:block;
-    margin:auto;
+    //display:block;
+    //margin:auto;
+	margin-left: 25%;
 }
 
 .backimg {
-    position : absolute;
+    position : fixed;
     width    : 100%;
     top      : 0px;
     z-index  : -1;
@@ -100,6 +121,8 @@ ul.nav li a, ul.nav .li-header {
 	padding-bottom: 3 !important;
 	padding-top: 0 !important;
 	margin-bottom: 5px;
+	left: -10px;
+	width: 180px;
 }
 
 ul.nav li a {

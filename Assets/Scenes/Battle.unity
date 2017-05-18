@@ -2641,7 +2641,6 @@ GameObject:
   - component: {fileID: 1727881047}
   - component: {fileID: 1727881046}
   - component: {fileID: 1727881045}
-  - component: {fileID: 1727881052}
   - component: {fileID: 1727881050}
   - component: {fileID: 1727881051}
   - component: {fileID: 1727881053}
@@ -2816,19 +2815,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4aa500e896f56ea4291706c581edeb86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1727881052
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1727881044}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 78442f37a69919a409f51348d2557607, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  EDITOR_MODFOLDER: Examples
-  EDITOR_ENCOUNTER: '#01 - Two monsters'
 --- !u!114 &1727881053
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -14,7 +14,7 @@ public class EnterNameScript : MonoBehaviour {
     private string choiceLetter = "A", playerName = "";
     private TextManager tmInstr, tmName, tmLettersMaj, tmLettersMin;
     private Dictionary<string, string> specialNameDict = new Dictionary<string, string>();
-    private string[] ForbiddenNames = new string[] { "lukark", "rtl", "rhenao", "rhenaud", "rtlgeno", "rtlukark", "hacker" };
+    private string[] ForbiddenNames = new string[] { "lukark", "rtl", "rhenaud", "rtlgeno", "rtlukark", "hacker" };
     private string confirmText = null;
 
     // Use this for initialization
@@ -171,7 +171,8 @@ public class EnterNameScript : MonoBehaviour {
         while (GlobalControls.input.Confirm != UndertaleInput.ButtonState.PRESSED) {
             if (tmName.transform.localScale.x < 3) {
                 tmName.transform.localScale = new Vector3(tmName.transform.localScale.x + 0.01f, tmName.transform.localScale.y + 0.01f, 1);
-                tmName.transform.localPosition = new Vector3(actualX - (((tmName.transform.localScale.x - 1f) * diff ) / 2 ), actualY - (((tmName.transform.localScale.x - 1f) * diff) / 6), tmName.transform.localPosition.z);
+                tmName.transform.localPosition = new Vector3(actualX - (((tmName.transform.localScale.x - 1) * diff) / 2), 
+                                                             actualY - (((tmName.transform.localScale.x - 1) * diff) / 6), tmName.transform.localPosition.z);
             }
             if ((GlobalControls.input.Left == UndertaleInput.ButtonState.PRESSED || GlobalControls.input.Right == UndertaleInput.ButtonState.PRESSED)
                     && GameObject.Find("Done").GetComponent<SpriteRenderer>().enabled &&!isForbidden) {
@@ -246,9 +247,9 @@ public class EnterNameScript : MonoBehaviour {
     void AddToDict() {
         specialNameDict.Add("lukark",    "Hey, that's my name!\nDon't copy me.");                              
         specialNameDict.Add("rtl",       "Still my name, dude.");
-        specialNameDict.Add("rhenao",    "The basis name, but\nstill mine :P");
+        specialNameDict.Add("rhenao",    "The basis name.");
         specialNameDict.Add("rhenaud",   "My real name.");
-        specialNameDict.Add("uduu",      "The path to victory. Go to\nthe 2nd map. Real name : UDUUL");
+        specialNameDict.Add("uduu",      "The path to victory. Go to\nthe 2nd map. Real name: UDUUL");
         specialNameDict.Add("thefail",   "DO 3 BARREL ROLLS!!!");
         specialNameDict.Add("exception", "It's me.");
         specialNameDict.Add("fugitive",  "*flees*\n/me flees");
@@ -281,9 +282,10 @@ public class EnterNameScript : MonoBehaviour {
         specialNameDict.Add("alphys",    "Chances to see\nher: 0%.");
         specialNameDict.Add("asgore",    "Goatdad can't kill\nyou here.");
         specialNameDict.Add("toriel",    "Goatmom can't help\nyou here.");
-        specialNameDict.Add("papyrus",   "[font:papyrus]Having more than\n6 characters helps.");
+        specialNameDict.Add("papyrus",   "[font:papyrus]Having more than\n6 characters helps!");
         specialNameDict.Add("sans",      "[font:sans]no bad time for\nya.");
         specialNameDict.Add("asriel",    "If that's your\nchoice...");
         specialNameDict.Add("flowey",    "You sadist.");
+        specialNameDict.Add("four",      "4");
     }
 }

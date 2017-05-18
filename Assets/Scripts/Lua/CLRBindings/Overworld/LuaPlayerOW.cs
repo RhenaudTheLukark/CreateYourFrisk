@@ -106,6 +106,17 @@ public class LuaPlayerOW {
     [CYFEventFunction]
     public void Heal(int heal) { Hurt(-heal); appliedScript.Call("CYFEventNextCommand"); }
 
+    /// <summary>
+    /// Enables or disables the player's movement
+    /// </summary>
+    /// <param name="heal">This one seems obvious too</param>
+    [CYFEventFunction]
+    public void CanMove(bool canMove) {
+        PlayerOverworld.playerNoMove = !canMove;
+        EventManager.instance.scriptLaunched = !canMove;
+        appliedScript.Call("CYFEventNextCommand");
+    }
+
     [MoonSharpHidden]
     public void setHP(float newhp, bool forced = false) {
         if (newhp <= 0) {

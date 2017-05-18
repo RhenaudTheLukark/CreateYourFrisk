@@ -708,7 +708,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22437642, guid: a0add8308da8d24468328221253c3ec7, type: 2}
       propertyPath: m_LocalPosition.z
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 22437642, guid: a0add8308da8d24468328221253c3ec7, type: 2}
       propertyPath: m_LocalRotation.x
@@ -736,7 +736,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22437642, guid: a0add8308da8d24468328221253c3ec7, type: 2}
       propertyPath: m_AnchoredPosition.y
-      value: 280
+      value: 240
       objectReference: {fileID: 0}
     - target: {fileID: 22437642, guid: a0add8308da8d24468328221253c3ec7, type: 2}
       propertyPath: m_SizeDelta.x
@@ -810,11 +810,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 6188160, guid: a0add8308da8d24468328221253c3ec7, type: 2}
       propertyPath: m_Size.x
-      value: 0.2
+      value: 0.18
       objectReference: {fileID: 0}
     - target: {fileID: 6188160, guid: a0add8308da8d24468328221253c3ec7, type: 2}
       propertyPath: m_Size.y
-      value: 0.195
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 11460532, guid: a0add8308da8d24468328221253c3ec7, type: 2}
       propertyPath: scriptToLoad
@@ -831,7 +831,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 6188160, guid: a0add8308da8d24468328221253c3ec7, type: 2}
       propertyPath: m_Offset.y
-      value: -0.1025
+      value: 0.1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: a0add8308da8d24468328221253c3ec7, type: 2}
@@ -1050,7 +1050,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22460244, guid: eadfbd6437c330a4e8538c4969ddbb0d, type: 2}
       propertyPath: m_LocalPosition.z
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 22460244, guid: eadfbd6437c330a4e8538c4969ddbb0d, type: 2}
       propertyPath: m_LocalRotation.x
@@ -1110,7 +1110,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22460244, guid: eadfbd6437c330a4e8538c4969ddbb0d, type: 2}
       propertyPath: m_Pivot.y
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: eadfbd6437c330a4e8538c4969ddbb0d, type: 2}

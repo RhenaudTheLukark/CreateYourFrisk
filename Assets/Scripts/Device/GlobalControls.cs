@@ -63,7 +63,7 @@ public class GlobalControls : MonoBehaviour {
                 return;
             UIController.EndBattle();
             //StaticInits.Reset();
-        } else if (input.Menu == UndertaleInput.ButtonState.PRESSED &&!nonOWScenes.Contains(SceneManager.GetActiveScene().name) &&!PlayerOverworld.menuRunning[3] &&!PlayerOverworld.inText)
+        } else if (input.Menu == UndertaleInput.ButtonState.PRESSED && !nonOWScenes.Contains(SceneManager.GetActiveScene().name) && !PlayerOverworld.menuRunning[3] && EventManager.instance.script == null)
             StartCoroutine(PlayerOverworld.LaunchMenu());
         if (Input.GetKeyDown(KeyCode.F4))
             Screen.fullScreen =!Screen.fullScreen;

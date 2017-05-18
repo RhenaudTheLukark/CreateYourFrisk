@@ -103,7 +103,10 @@ public class TransitionOverworld : MonoBehaviour {
         GameObject.Find("Main Camera OW").tag = "MainCamera";
 
         yield return 0;
-        
+
+        Camera.main.transparencySortMode = TransparencySortMode.CustomAxis;
+        Camera.main.transparencySortAxis = new Vector3(0.0f, 1.0f, 1000000.0f);
+
         EventManager.instance.onceReload = false;
         bool neededReload = false;
         //Permits to reload the current data if needed
@@ -113,15 +116,17 @@ public class TransitionOverworld : MonoBehaviour {
             StaticInits.Initialized = false;
             StaticInits.initAll();
             LuaScriptBinder.Set(null, "ModFolder", DynValue.NewString(StaticInits.MODFOLDER));
-            if (call == "transitionoverworld")
+            if (call == "transitionoverworld") {
                 EventManager.instance.scriptLaunched = false;
+                EventManager.instance.script = null;
+            }
             neededReload = true;
         }
 
         AudioSource audio = UnitaleUtil.GetCurrentOverworldAudio();
         if (mi.isMusicKeptBetweenBattles) {
-            MusicManager.src.Stop();
-            MusicManager.src.clip = null;
+            Camera.main.GetComponent<AudioSource>().Stop();
+            Camera.main.GetComponent<AudioSource>().clip = null;
         } else {
             PlayerOverworld.audioKept.Stop();
             PlayerOverworld.audioKept.clip = null;

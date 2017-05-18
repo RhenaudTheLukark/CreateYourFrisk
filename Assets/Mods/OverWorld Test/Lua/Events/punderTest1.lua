@@ -1,6 +1,5 @@
 function EventPage1()
-    General.TitleScreen()
-    --[[
+    --General.TitleScreen()
     local spriteTest = Event.GetSprite("Punder1")
     local playerpos = Event.GetPosition("Player") 
     local eventpos = Event.GetPosition("Punder1")
@@ -8,6 +7,7 @@ function EventPage1()
     local diff
     dir, diff = calcDirAndDiff(eventpos, playerpos)
     local text = ""
+    DEBUG(eventpos[1] .. " " .. eventpos[2])
     if Event.GetAnimHeader("Player") == "MK" then            
         text = "Hello there little buddy!"
     elseif Event.GetAnimHeader("Player") == "Chara" then    
@@ -28,7 +28,7 @@ function EventPage1()
     end
     dir, diff = calcDirAndDiff(Event.GetPosition("Punder1"), Event.GetPosition("Player"))
     Event.SetDirection(Event.GetName(), dir)
-    General.SetDialog({"[voice:punderbolt]" .. text}, true, {"pundermug"})]]
+    General.SetDialog({"[voice:punderbolt]" .. text}, true, {"pundermug"})
 end
 
 function calcDirAndDiff(vect1, vect2)

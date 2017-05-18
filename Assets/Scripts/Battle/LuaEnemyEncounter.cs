@@ -285,11 +285,11 @@ internal class LuaEnemyEncounter : EnemyEncounter {
 				catch (InterpreterException ex) {
                     UnitaleUtil.displayLuaError(currentScript, ex.DecoratedMessage);
                     return;
-                } catch (Exception ex) {
+                } /*catch (Exception ex) {
                     if (!GlobalControls.retroMode)
                         UnitaleUtil.displayLuaError(currentScript, "This error is a " + ex.GetType().ToString() + " error.\nPlease send this error to the main dev.\n\n" + ex.Message + "\n\n" + ex.StackTrace);
                     return;
-                }
+                }*/
             }
         } catch (InterpreterException ex) {
             UnitaleUtil.displayLuaError(currentScript, ex.DecoratedMessage);
@@ -316,13 +316,10 @@ internal class LuaEnemyEncounter : EnemyEncounter {
                 try   { ((ScriptWrapper)t[obj]).Call("EndingWave"); }
                 catch { UnitaleUtil.displayLuaError(StaticInits.ENCOUNTER, "You shouldn't override Wave, now you get an error :P"); }
             }
-        if (!GlobalControls.retroMode) {
+        if (!GlobalControls.retroMode)
             foreach (LuaProjectile p in FindObjectsOfType<LuaProjectile>())
-                if (p.gameObject.activeInHierarchy &&!p.ctrl.isPersistent)
+                if (!p.ctrl.isPersistent)
                     p.ctrl.Remove();
-        } else
-            foreach (LuaProjectile p in FindObjectsOfType<LuaProjectile>())
-                BulletPool.instance.Requeue(p);
         if (!death)
             CallOnSelfOrChildren("DefenseEnding");
         ArenaManager.instance.resetArena();

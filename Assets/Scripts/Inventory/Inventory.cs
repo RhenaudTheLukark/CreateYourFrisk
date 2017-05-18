@@ -201,7 +201,7 @@ public static class Inventory {
                         mess = new TextMessage[] { new TextMessage("You drank the Spider Cider.[w:10]\nYou recovered 24 HP!", true, false) };
                         break;
                     case "Butterscotch Pie":
-                        amount = -20;
+                        amount = 999;
                         mess = new TextMessage[] { new TextMessage("You ate the Butterscotch Pie.[w:10]\nYour HP was maxed out.", true, false) };
                         break;
                     case "Snail Pie":

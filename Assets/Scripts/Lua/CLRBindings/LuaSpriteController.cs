@@ -286,13 +286,6 @@ public class LuaSpriteController {
         else                                                           tag = "other";
     }
 
-    private void updateCollider(Sprite s) {
-        if (img.GetComponent<BoxCollider2D>() && img.name == "Player") {
-            BoxCollider2D collider = img.GetComponent<BoxCollider2D>();
-            collider.offset = new Vector2(collider.offset.x, ((float)s.texture.height / 100 - collider.size.y) / -2);
-        }
-    }
-
     // Changes the sprite of this instance
     public void Set(string name) {
         // Change the sprite
@@ -313,7 +306,6 @@ public class LuaSpriteController {
         if (tag == "projectile")
             img.GetComponent<Projectile>().needUpdateTex = true;
         spritename = name.ToLower();
-        updateCollider(originalSprite);
     }
 
     // Sets the parent of a sprite. Can't be used on an enemy
@@ -339,13 +331,13 @@ public class LuaSpriteController {
     public void Scale(float xs, float ys) {
         xScale = xs;
         yScale = ys;
-        if (img.GetComponent<Image>())
-            nativeSizeDelta = new Vector2(img.GetComponent<Image>().sprite.texture.width, img.GetComponent<Image>().sprite.texture.height);
-        else
-            nativeSizeDelta = new Vector2(img.GetComponent<SpriteRenderer>().sprite.texture.width, img.GetComponent<SpriteRenderer>().sprite.texture.height);
+        if (img.GetComponent<Image>()) nativeSizeDelta = new Vector2(img.GetComponent<Image>().sprite.texture.width, img.GetComponent<Image>().sprite.texture.height);
+        else                           nativeSizeDelta = new Vector2(img.GetComponent<SpriteRenderer>().sprite.texture.width, img.GetComponent<SpriteRenderer>().sprite.texture.height);
+        if (UnitaleUtil.isOverworld()) nativeSizeDelta = new Vector2(nativeSizeDelta.x / img.GetComponent<RectTransform>().localScale.x, nativeSizeDelta.y / img.GetComponent<RectTransform>().localScale.y);
         img.GetComponent<RectTransform>().sizeDelta = new Vector2(nativeSizeDelta.x * Mathf.Abs(xScale), nativeSizeDelta.y * Mathf.Abs(yScale));
         internalRotation = new Vector3(ys < 0 ? 180 : 0, xs < 0 ? 180 : 0, internalRotation.z);
         img.GetComponent<RectTransform>().eulerAngles = internalRotation;
+
     }
 
     // Sets an animation for this instance
@@ -353,6 +345,7 @@ public class LuaSpriteController {
 
     // Sets an animation for this instance with a frame timer
     public void SetAnimation(string[] spriteNames, float frametime) {
+        Vector2 pivot = img.GetComponent<RectTransform>().pivot;
         Keyframe[] kfArray = new Keyframe[spriteNames.Length];
         for (int i = 0; i < spriteNames.Length; i++)
             kfArray[i] = new Keyframe(SpriteRegistry.Get(spriteNames[i]), spriteNames[i].ToLower());
@@ -364,10 +357,12 @@ public class LuaSpriteController {
         keyframes.loop = loop;
         keyframes.Set(kfArray, frametime);
         UpdateAnimation();
+        img.GetComponent<RectTransform>().pivot = pivot;
     }
 
     public void StopAnimation() {
         if (keyframes != null) {
+            Vector2 pivot = img.GetComponent<RectTransform>().pivot;
             keyframes.enabled = false;
             if (img.GetComponent<Image>()) {
                 Image imgtemp = img.GetComponent<Image>();
@@ -376,7 +371,7 @@ public class LuaSpriteController {
                 SpriteRenderer imgtemp = img.GetComponent<SpriteRenderer>();
                 imgtemp.sprite = originalSprite;
             }
-            updateCollider(originalSprite);
+            img.GetComponent<RectTransform>().pivot = pivot;
         }
     }
 
@@ -458,7 +453,9 @@ public class LuaSpriteController {
             StopAnimation();
             return;
         }
+
         if (k.sprite != null) {
+            Vector2 pivot = img.GetComponent<RectTransform>().pivot;
             if (img.GetComponent<Image>()) {
                 Image imgtemp = img.GetComponent<Image>();
                 if (imgtemp.sprite != s) {
@@ -467,7 +464,6 @@ public class LuaSpriteController {
                     nativeSizeDelta = new Vector2(imgtemp.sprite.texture.width, imgtemp.sprite.texture.height);
                     spritename = k.name.ToLower();
                     Scale(xScale, yScale);
-                    updateCollider(originalSprite);
                     if (tag == "projectile")
                         img.GetComponent<Projectile>().needUpdateTex = true;
                 }
@@ -479,11 +475,9 @@ public class LuaSpriteController {
                     nativeSizeDelta = new Vector2(imgtemp.sprite.texture.width, imgtemp.sprite.texture.height);
                     spritename = k.name.ToLower();
                     Scale(xScale, yScale);
-                    updateCollider(originalSprite);
-                    if (tag == "projectile")
-                        img.GetComponent<Projectile>().needUpdateTex = true;
                 }
             }
+            img.GetComponent<RectTransform>().pivot = pivot;
         }
     }
 

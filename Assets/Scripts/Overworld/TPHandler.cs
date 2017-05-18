@@ -29,8 +29,7 @@ public class TPHandler : MonoBehaviour {
     }
     
     void OnTriggerEnter2D(Collider2D col) {
-        if (!activated && col == playerC2D && PlayerOverworld.instance.isReady) {
-            PlayerOverworld.inText = true;
+        if (!activated && col == playerC2D && !PlayerOverworld.playerNoMove && EventManager.instance.script == null) {
             activated = true;
             objectC2D.enabled = false;
             StaticInits.MODFOLDER = GameObject.Find("Background").GetComponent<MapInfos>().modToLoad;
@@ -42,6 +41,7 @@ public class TPHandler : MonoBehaviour {
 
     //launchTP makes our tp, and lots of other nice stuff
     IEnumerator launchTP() {
+        PlayerOverworld.playerNoMove = true; //Launch TP
         switch (GlobalControls.uduu) {
             case 0:
                 if (gameObject.name == "TP Up Right") GlobalControls.uduu++;

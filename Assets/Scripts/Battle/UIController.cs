@@ -1139,6 +1139,7 @@ public class UIController : MonoBehaviour {
             mercyBtn.sprite = SpriteRegistry.Get("UI/Buttons/mecrybt_0");
             mercyBtn.GetComponent<AutoloadResourcesFromRegistry>().SpritePath = "UI/Buttons/mecrybt_0";
         }
+        StaticInits.SendLoaded();
     }
 
     // Use this for initialization
@@ -1221,6 +1222,7 @@ public class UIController : MonoBehaviour {
         Camera.main.GetComponent<AudioSource>().Stop();
         bool levelup = PlayerCharacter.instance.AddBattleResults(exp, gold);
         Inventory.RemoveAddedItems();
+        MusicManager.SetSoundDictionary("RESETDICTIONARY", "");
         if (levelup && exp != 0) {
             UIStats.instance.setPlayerInfo(PlayerCharacter.instance.Name, PlayerCharacter.instance.LV);
             UIStats.instance.setMaxHP();
@@ -1318,6 +1320,9 @@ public class UIController : MonoBehaviour {
 
         if (state == UIState.DEFENDING) {
             if (!encounter.waveInProgress()) {
+                if (GlobalControls.retroMode)
+                foreach (LuaProjectile p in FindObjectsOfType<LuaProjectile>())
+                        BulletPool.instance.Requeue(p);
                 SwitchState(UIState.ACTIONSELECT);
             } else if (!encounter.gameOverStance)
                 encounter.updateWave();

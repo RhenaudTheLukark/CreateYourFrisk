@@ -9,8 +9,6 @@ local animationCount = 0
 local friskWait = 1
 
 local fadeCount = 1
-local posX
-local posY
 
 function EventPage0()
     NewAudio.CreateChannel("CharSelect")
@@ -21,13 +19,10 @@ function EventPage0()
     foreground = Event.GetSprite("Image17")
     foreground.Scale(640, 480)
     player = Event.GetSprite("Player")
-    posX = player.absx
-    posY = player.absy
-    player.absx = 92218
-    player.absy = -34937
 end
 
 function EventPage1()
+    Player.CanMove(false)
     if phase == 0 then
         phase = 1
         Screen.DispImg("window_border", 2, 160, 160, 255, 255, 255, 255)
@@ -118,8 +113,6 @@ function EventPage1()
         fadeCount = 3
         phase = 6
     elseif phase == 6 then
-        player.absx = posX
-        player.absy = posY
         for i = 1, #chars do
             chars[i]["sprite"].alpha = fadeCount - 2
             chars[i]["border"].alpha = fadeCount - 1
@@ -154,4 +147,5 @@ end
 function Exit()
     for i = 1, #animationKeys + 2 do Screen.SupprImg(i) end
     Event.SetPage(Event.GetName(), -1)
+    Player.CanMove(true)
 end

@@ -44,21 +44,21 @@ it's w3c valid, at least
                 <li><a href="#api-functions" data-toggle="tab">Functions &amp; Objects</a></li>
                 <li><a href="#api-projectile" data-toggle="tab">Projectile management</a></li>
                 <li><a href="#api-animation" data-toggle="tab">Sprites &amp; Animation</a></li>
-                <li><a href="#api-keys" data-toggle="tab">Key List</a></li>
+                <li><a href="#api-keys" data-toggle="tab"><span class="CYF"></span> Key List</a></li>
                 <li class="li-header">Create Your Frisk's new features</li>		
-                <li><a href="#cyf-inventory" data-toggle="tab">The Inventory System</a></li>
-                <li><a href="#cyf-ppcollision" data-toggle="tab">The Pixel-Perfect Collision System</a></li>
-                <li><a href="#cyf-text" data-toggle="tab">The Text Object</a></li>
+                <li><a href="#cyf-inventory" data-toggle="tab"><span class="CYF"></span> The Inventory System</a></li>
+                <li><a href="#cyf-ppcollision" data-toggle="tab"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
+                <li><a href="#cyf-text" data-toggle="tab"><span class="CYF"></span> The Text Object</a></li>
                 <li class="li-header">Overworld</li>
-                <li><a href="#overworld" data-toggle="tab">Basics</a></li>
-                <li><a href="#overworld-howto-map" data-toggle="tab">How to create a map</a></li>
-                <li><a href="#overworld-howto-event" data-toggle="tab">How to create an event</a></li>
-                <li><a href="#overworld-howto-animevent" data-toggle="tab">How to animate an event</a></li>
-                <li><a href="#overworld-object-general" data-toggle="tab">The General Object</a></li>
-                <li><a href="#overworld-object-event" data-toggle="tab">The Event Object</a></li>
-                <li><a href="#overworld-object-player" data-toggle="tab">The Player Object</a></li>
-                <li><a href="#overworld-object-screen" data-toggle="tab">The Screen Object</a></li>
-                <li><a href="#overworld-object-inventory" data-toggle="tab">The Inventory Object</a></li>
+                <li><a href="#overworld" data-toggle="tab"><span class="CYF"></span> Basics</a></li>
+                <li><a href="#overworld-howto-map" data-toggle="tab"><span class="CYF"></span> How to create a map</a></li>
+                <li><a href="#overworld-howto-event" data-toggle="tab"><span class="CYF"></span> How to create an event</a></li>
+                <li><a href="#overworld-howto-animevent" data-toggle="tab"><span class="CYF"></span> How to animate an event</a></li>
+                <li><a href="#overworld-object-general" data-toggle="tab"><span class="CYF"></span> The General Object</a></li>
+                <li><a href="#overworld-object-event" data-toggle="tab"><span class="CYF"></span> The Event Object</a></li>
+                <li><a href="#overworld-object-player" data-toggle="tab"><span class="CYF"></span> The Player Object</a></li>
+                <li><a href="#overworld-object-screen" data-toggle="tab"><span class="CYF"></span> The Screen Object</a></li>
+                <li><a href="#overworld-object-inventory" data-toggle="tab"><span class="CYF"></span> The Inventory Object</a></li>
                 <li class="li-header">Resources</li>
                 <li><a href="media/dialogoptions.png">Dialog bubble names</a></li>
             </ul>
@@ -78,8 +78,8 @@ it's w3c valid, at least
                 want to know the specifics of everything. Help is provided on the 
                 <a href="http://www.reddit.com/r/Unitale">/r/Unitale subreddit</a>.
                 <br><br>
-				<span style="color:#aa0000"><u>FOR CYF COMPATIBILITY:</u></span> You have to add these two lines in the <span class="term">EncounterStarting()
-				</span> function:
+				<span style="color:#aa0000"><u>FOR CYF COMPATIBILITY:</u></span> You have to add these two lines in the 
+				<span class="term">EncounterStarting()</span> function:
 				<div class="code-container">
 				<pre class="brush: lua;">
 				Inventory.AddCustomItems({"Dogtest1", "Dogtest2", "Dogtest3", "Dogtest4", "Dogtest5", "Dogtest6", "Dogtest7"}, {3, 3, 3, 3, 3, 3, 3})
@@ -1612,380 +1612,838 @@ end</pre>
 			
         </div>
 
-        <div class="tab-pane text-style" id="api-keys">
-		    <h2><span class="CYF"></span>Key List</h2><br><br>
-			<p>A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z</p>
+        <div class="tab-pane text-style" id="api-keys" style="color:#ffffff">
+		    <h2><span class="CYF"></span> Key List</h2><br><br>
 			
-			<p>Alpha0, Alpha1, Alpha2, Alpha3, Alpha4, Alpha5, Alpha6, Alpha7, Alpha8, Alpha9</p>
+			<p>
+			<h4>Regular Alphabet:</h4>
+			(All regular alphabet characters are exactly the same between their key names and CYF Key IDs.<br>For instance, the <span class="term">A</span> 
+			key will be <span class="term">A</span> in CYF.)
+			</p>
 			
-			<p>F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12, F13, F14, F15</p>
+			<br><p>
+			<h4>F-keys:</h4>
+			(All F-keys are exactly the same between their key names and CYF Key IDs.<br>For instance, the <span class="term">F12</span> 
+			key will be <span class="term">F12</span> in CYF.<br>For reference, the supported F-keys are <span class="term">F1</span> through
+			<span class="term">F15</span>.)
+			</p>
 			
-			<p>Keypad0, Keypad1, Keypad2, Keypad3, Keypad4, Keypad5, Keypad6, Keypad7, Keypad8, Keypad9,
-			   <br>KeypadPeriod, KeypadDivide, KeypadMultiply, KeypadMinus, KeypadPlus, KeypadEnter, KeypadEquals</p>
-			  
-			<p>UpArrow, DownArrow, RightArrow, LeftArrow</p>
+			<br><p>
+			<h4>Keyboard Number Keys:</h4>
+			<table class="keys">
+				<tr>
+					<th>Keyboard Key</th>
+					<th>ID for CYF use</th>
+				</tr>
+				<tr>
+					<td>1</td>
+					<td>Alpha1</td>
+				</tr>
+				<tr>
+					<td>2</td>
+					<td>Alpha2</td>
+				</tr>
+				<tr>
+					<td>3</td>
+					<td>Alpha3</td>
+				</tr>
+				<tr>
+					<td>4</td>
+					<td>Alpha4</td>
+				</tr>
+				<tr>
+					<td>5</td>
+					<td>Alpha5</td>
+				</tr>
+				<tr>
+					<td>6</td>
+					<td>Alpha6</td>
+				</tr>
+				<tr>
+					<td>7</td>
+					<td>Alpha7</td>
+				</tr>
+				<tr>
+					<td>8</td>
+					<td>Alpha8</td>
+				</tr>
+				<tr>
+					<td>9</td>
+					<td>Alpha9</td>
+				</tr>
+				<tr>
+					<td>0</td>
+					<td>Alpha0</td>
+				</tr>
+			</table>
+			</p>
 			
-			<p>Backspace, Tab, Clear, Return, Pause, Escape, Space, Exclaim, DoubleQuote, Hash, Dollar, Ampersand, Quote, LeftParen, RightParen,
-			   <br>Asterisk, Plus, Comma, Minus, Period, Slash, Colon, Semicolon, Less, Equals, Greater, Question, At, LeftBracket, Backslash,
-			   <br>RightBracket, Caret, Underscore, BackQuote, Delete</p>
-			  
-			<p>Insert, Home, End, PageUp, PageDown, Numlock, CapsLock, ScrollLock, RightShift, LeftShift, RightControl, LeftControl,
-			   <br>RightAlt, LeftAlt, RightCommand, RightApple, LeftCommand, LeftApple, LeftWindows, RightWindows, AltGr, Help, Print,
-			   <br>SysReq, Break, Menu</p>
-			  
-			<p>Mouse0, Mouse1, Mouse2, Mouse3, Mouse4, Mouse5, Mouse6</p>
+			<br><p>
+			<h4>Keypad Keys:</h4>
+			<table class="keys">
+				<tr>
+					<th>Keyboard Key</th>
+					<th>ID for CYF use</th>
+				</tr>
+				<tr>
+					<td>1 (End)</td>
+					<td>Keypad1</td>
+				</tr>
+				<tr>
+					<td>2 (Down)</td>
+					<td>Keypad2</td>
+				</tr>
+				<tr>
+					<td>3 (Page Down)</td>
+					<td>Keypad3</td>
+				</tr>
+				<tr>
+					<td>4 (Left)</td>
+					<td>Keypad4</td>
+				</tr>
+				<tr>
+					<td>5</td>
+					<td>Keypad5</td>
+				</tr>
+				<tr>
+					<td>6 (Right)</td>
+					<td>Keypad6</td>
+				</tr>
+				<tr>
+					<td>7 (Home)</td>
+					<td>Keypad7</td>
+				</tr>
+				<tr>
+					<td>8 (Up)</td>
+					<td>Keypad8</td>
+				</tr>
+				<tr>
+					<td>9 (Page Up)</td>
+					<td>Keypad9</td>
+				</tr>
+				<tr>
+					<td>0 (Insert)</td>
+					<td>Keypad0</td>
+				</tr>
+				<tr>
+					<td>. (Del)</td>
+					<td>KeypadPeriod</td>
+				</tr>
+				<tr>
+					<td>/</td>
+					<td>KeypadDivide</td>
+				</tr>
+				<tr>
+					<td>*</td>
+					<td>KeypadMultiply</td>
+				</tr>
+				<tr>
+					<td>-</td>
+					<td>KeypadMinus</td>
+				</tr>
+				<tr>
+					<td>+</td>
+					<td>KeypadPlus</td>
+				</tr>
+				<tr>
+					<td>Enter</td>
+					<td>KeypadEnter</td>
+				</tr>
+				<tr>
+					<td>=</td>
+					<td>KeypadEquals</td>
+				</tr>
+			</table>
+			</p>
+			
+			<br><p>
+			<h4>Keyboard Number Keys:</h4>
+			<table class="keys">
+				<tr>
+					<th>Keyboard Key</th>
+					<th>ID for CYF use</th>
+				</tr>
+				<tr>
+					<td>↑</td>
+					<td>UpArrow</td>
+				</tr>
+				<tr>
+					<td>↓</td>
+					<td>DownArrow</td>
+				</tr>
+				<tr>
+					<td>→</td>
+					<td>RightArrow</td>
+				</tr>
+				<tr>
+					<td>←</td>
+					<td>LeftArrow</td>
+				</tr>
+			</table>
+			</p>
+			
+			<br><p>
+			<h4>Special Keyboard Keys:</h4>
+			<i>Note: the</i> <span class="term">%</span> <i>key cannot be detected as of this moment.</i><br><br>
+			<table class="keys">
+				<tr>
+					<th>Keyboard Key</th>
+					<th>ID for CYF use</th>
+				</tr>
+				<tr>
+					<td>Backspace</td>
+					<td>Backspace</td>
+				</tr>
+				<tr>
+					<td>Tab</td>
+					<td>Tab</td>
+				</tr>
+				<tr>
+					<td>Return/Enter</td>
+					<td>Return</td>
+				</tr>
+				<tr>
+					<td>Pause</td>
+					<td>Pause</td>
+				</tr>
+				<tr>
+					<td>Space Bar</td>
+					<td>Space</td>
+				</tr>
+				<tr>
+					<td>Escape</td>
+					<td>Escape</td>
+				</tr>
+				<tr>
+					<td>!</td>
+					<td>Exclaim</td>
+				</tr>
+				<tr>
+					<td>@</td>
+					<td>At</td>
+				</tr>
+				<tr>
+					<td>#</td>
+					<td>Hash</td>
+				</tr>
+				<tr>
+					<td>$</td>
+					<td>Dollar</td>
+				</tr>
+				<tr>
+					<td>^</td>
+					<td>Caret</td>
+				</tr>
+				<tr>
+					<td>&</td>
+					<td>Ampersand</td>
+				</tr>
+				<tr>
+					<td>*</td>
+					<td>Asterisk</td>
+				</tr>
+				<tr>
+					<td>(</td>
+					<td>LeftParen</td>
+				</tr>
+				<tr>
+					<td>)</td>
+					<td>RightParen</td>
+				</tr>
+				<tr>
+					<td>-</td>
+					<td>Minus</td>
+				</tr>
+				<tr>
+					<td>+</td>
+					<td>Plus</td>
+				</tr>
+				<tr>
+					<td>_</td>
+					<td>Underscore</td>
+				</tr>
+				<tr>
+					<td>=</td>
+					<td>Equals</td>
+				</tr>
+				<tr>
+					<td>:</td>
+					<td>Colon</td>
+				</tr>
+				<tr>
+					<td>;</td>
+					<td>Semicolon</td>
+				</tr>
+				<tr>
+					<td>"</td>
+					<td>DoubleQuote</td>
+				</tr>
+				<tr>
+					<td>'</td>
+					<td>Quote</td>
+				</tr>
+				<tr>
+					<td>,</td>
+					<td>Comma</td>
+				</tr>
+				<tr>
+					<td>.</td>
+					<td>Period</td>
+				</tr>
+				<tr>
+					<td>\</td>
+					<td>Backslash</td>
+				</tr>
+				<tr>
+					<td>/</td>
+					<td>Slash</td>
+				</tr>
+				<tr>
+					<td>?</td>
+					<td>Question</td>
+				</tr>
+				<tr>
+					<td><</td>
+					<td>Less</td>
+				</tr>
+				<tr>
+					<td>></td>
+					<td>Greater</td>
+				</tr>
+				<tr>
+					<td>[</td>
+					<td>LeftBracket</td>
+				</tr>
+				<tr>
+					<td>]</td>
+					<td>RightBracket</td>
+				</tr>
+				<tr>
+					<td>`</td>
+					<td>BackQuote</td>
+				</tr>
+			</table>
+			</p>
+			
+			<br><p>
+			<h4>Misc. Keyboard Keys:</h4>
+			<table class="keys">
+				<tr>
+					<th>Keyboard Key</th>
+					<th>ID for CYF use</th>
+				</tr>
+				<tr>
+					<td>Insert</td>
+					<td>Insert</td>
+				</tr>
+				<tr>
+					<td>Home</td>
+					<td>Home</td>
+				</tr>
+				<tr>
+					<td>Delete</td>
+					<td>Delete</td>
+				</tr>
+				<tr>
+					<td>End</td>
+					<td>End</td>
+				</tr>
+				<tr>
+					<td>Page Up</td>
+					<td>PageUp</td>
+				</tr>
+				<tr>
+					<td>Page Down</td>
+					<td>PageDown</td>
+				</tr>
+				<tr>
+					<td>Num Lock</td>
+					<td>NumLock</td>
+				</tr>
+				<tr>
+					<td>Caps Lock</td>
+					<td>CapsLock</td>
+				</tr>
+				<tr>
+					<td>Scroll Lock</td>
+					<td>ScrollLock</td>
+				</tr>
+				<tr>
+					<td>Right Shift</td>
+					<td>RightShift</td>
+				</tr>
+				<tr>
+					<td>Left Shift</td>
+					<td>LeftShift</td>
+				</tr>
+				<tr>
+					<td>Right Control</td>
+					<td>RightControl</td>
+				</tr>
+				<tr>
+					<td>Left Control</td>
+					<td>LeftControl</td>
+				</tr>
+				<tr>
+					<td>Right Alt</td>
+					<td>RightAlt</td>
+				</tr>
+				<tr>
+					<td>Left Alt</td>
+					<td>LeftAlt</td>
+				</tr>
+				<tr>
+					<td>Right Command</td>
+					<td>RightCommand</td>
+				</tr>
+				<tr>
+					<td>Left Command</td>
+					<td>LeftCommand</td>
+				</tr>
+				<tr>
+					<td>Right Apple Key</td>
+					<td>RightApple</td>
+				</tr>
+				<tr>
+					<td>Left Apple Key</td>
+					<td>LeftApple</td>
+				</tr>
+				<tr>
+					<td>Right Windows Key</td>
+					<td>RightWindows</td>
+				</tr>
+				<tr>
+					<td>Left Windows Key</td>
+					<td>LeftWindows</td>
+				</tr>
+				<tr>
+					<td>Alt Gr</td>
+					<td>AltGr</td>
+				</tr>
+				<tr>
+					<td>Print Screen/Sys Rq</td>
+					<td>SysReq</td>
+				</tr>
+				<tr>
+					<td>Break</td>
+					<td>Break</td>
+				</tr>
+				<tr>
+					<td>Menu</td>
+					<td>Menu</td>
+				</tr>
+			</table>
+			</p>
+			
+			<br><p>
+			<h4>Mouse Inputs:</h4>
+			<table class="keys">
+				<tr>
+					<th>Mouse Input</th>
+					<th>ID for CYF use</th>
+				</tr>
+				<tr>
+					<td>Left Mouse Button</td>
+					<td>Mouse0</td>
+				</tr>
+				<tr>
+					<td>Right Mouse Button</td>
+					<td>Mouse1</td>
+				</tr>
+				<tr>
+					<td>Scroll Wheel Down</td>
+					<td>Mouse2</td>
+				</tr>
+				<tr>
+					<td>Mouse 3</td>
+					<td>Mouse3</td>
+				</tr>
+				<tr>
+					<td>Mouse 4</td>
+					<td>Mouse4</td>
+				</tr>
+				<tr>
+					<td>Mouse 5</td>
+					<td>Mouse5</td>
+				</tr>
+				<tr>
+					<td>Mouse 6</td>
+					<td>Mouse6</td>
+				</tr>
+			</table>
+			</p>
         </div>
 
         <div class="tab-pane text-style" id="overworld">
-            <h2>Create Your Frisk: RhenaudTheLukark's Overworld basics</h2><br><br>
+            <h2><span class="CYF"></span> Create Your Frisk: RhenaudTheLukark's Overworld basics</h2><br><br>
            
-            <h3>Presentation</h3><br><br>
+            <h4>Presentation</h4>
            
-            <p>
-                Create Your Frisk is different from Unitale by its numerous new features, but none other than the overworld
-                is the key feature that everyone was waiting to deal with for a long time.<br>
-                So I'm finally able and proud to give an access to the overworld feature, that includes an efficient event handler
-                with a lot of functions that you'll be able to use to create your own Undertale-like fangame!<br>
-                However, to be able to use the overworld part of CYF, you will need to have a minimum of experience with Unity and
-                know at least GameObjects' mechanisms.
-            </p>
+            <p>Create Your Frisk is different from Unitale because of its numerous new features...but the overworld
+                is the key feature that everyone was waiting to use for a long time.</p>
+            <p>So I'm finally able and proud to give access to the overworld feature, which includes an efficient event handler
+               with a lot of functions that you'll be able to use to create your own Undertale-like fangame!</p>
+            <p>However, to be able to use the overworld part of CYF, you will need to have a minimum of some experience with Unity and
+               you'll need to know at least some of the Game Objects' mechanisms.</p>
+           <br>
+            <h4>Get Started</h4>
            
-            <h3>Get Started</h3><br><br>
+            <p>To get started, you'll need to, first of all, download the current version of Unity that CYF uses (at the moment I
+			    wrote this part of the documentation, the version was 5.6.0f3) and, of course download the project via
+                <a href="https://github.com/RhenaudTheLukark/CreateYourFrisk">Github</a>.</p>
+            <p>Unity may take a lot of time to install and to load the project for the first time, due to a lot of resources being
+               registered by Unity - but you won't have to do it in the future.</p>
+            <p>Once you're in, you'll have to load the scene <span class="term">Assets/Scenes/Disclaimer.unity</span> using the command 
+			    <span class="term">File</span> => <span class="term">Open Scene</span> at the top left corner of Unity's window.</p>
+            <p>You can start CYF from either the <span class="term">Disclaimer</span>, <span class="term">Intro</span>, or 
+				<span class="term">TitleScreen</span> scenes. It's up to you to find how you want to work in CYF!</p>
+            <p>Now you're ready!! You can launch CYF and you'll be ready to start fiddling with the engine! If you followed these
+                instructions and for some reason CYF won't launch, you may want to contact me directly via Discord or Reddit. In this case,
+                please get <a href="https://www.teamviewer.com/fr/">TeamViewer</a>, a software that allows you to share your
+                screen with other users. With this, I'll be able to see what's wrong and help you.</p><br>
            
-            <p>
-                To get started, you'll need first of all to download the current version CYF uses (at the moment I wrote this part
-                of the documentation, the version was 5.6.0f3) and of course download the project via
-                <a href="https://github.com/RhenaudTheLukark/CreateYourFrisk">Github</a>.<br>
-                Unity may take a lot of time to install and to load the project for the first time due to a lot of resources being
-                registered by Unity, but you won't have to do it in the future.<br>
-                Once you're in, you'll have to load the scene Assets/Scenes/Disclaimer.unity using the command File => Open Scene
-                at the top left corner of Unity's window.<br>
-                You can start CYF either from the Disclaimer, from the Intro or from the TitleScreen scenes. It's up to you to find
-                your way to work on CYF!<br>
-                Then you have it! You can launch CYF and you'll be ready to start fiddling with the engine! If you followed these
-                rules and for some reason CYF won't launch, you may want to contactme directly via Discord or Reddit. In this case,
-                please get <a href="https://www.teamviewer.com/fr/">TeamViewer</a>, it's a software that permits you to share your
-                screen with other users online, so that I'll be able to see what's wrong.
-            </p>
-           
-            <h3>How does it work?</h3><br><br>
+            <h4>How does it work?</h4>
 
-            <p>
-                Some softwares will have to be used to be able to create an overworld in CYF. First of all, you can use a software
-                called <a href="http://www.mapeditor.org/">Tiled</a> that permits you to create maps out of tilesets, images that
-                contain tiles used to fill in maps. This tiling system being absent from Unity but easier to use to create a map,
-                I thought that being able to translate a Tiled map to an Unity scene thanks to Tiled2Unity would be a great idea.<br>
-                Well, now we're going deep into the details. If you still haven't learned Unity's basics, you should look up to it
-                beforehand, as some technical language may be used here.<br>
-                There are mostly two things to look at when making a map: the map itself (how the map will be) and the events (how
-                the map will work). Let's go deep further into the details.<br>
-                As I said above, each map is translated into a scene. This scene will have to contain at minimum one element, and
-                it's the map object called Background. To see more about how to create a map, I suggest you to look at the tutorial
-                on how to create a map.<br>
-                Then, the events. These are universal and used the same way, at the exception of one "add-on" that is a CYFAnimator
-                component. The events have different function-launching conditions, such as pressing the confirm button to launch it,
-                colliding with it, it being launched automatically or the function being launched as a parallel process. The
-                functions themselves have to be created in Lua scripts, like battles. To see more about how to use the events, you
-                should look at the tutorial on how to create an event.<br>
-                Of course, there are other things to see, but these are the two main sides of CYF's overworld coding. Now look at the
-                functions to be able to do whatever you want to do!
-            </p>
+            <p>Some softwares will have to be used to be able to create an overworld in CYF. First of all, you can use a software
+               called <a href="http://www.mapeditor.org/">Tiled</a> that allows you to create maps out of tilesets - images that
+               contain tiles used to fill in maps. This tiling system is absent from Unity, though - but it's easier to use to create 
+			   a map, so being able to translate a Tiled map to a Unity scene thanks to 
+			   <a href="http://www.seanba.com/tiled2unity">Tiled2Unity</a> would be a great idea.</p>
+            <p>Well, now we're going to go deep into the details. If you still haven't learned Unity's basics, you should research those
+                beforehand, as some technical language may be used here.</p>
+            <p>There are mostly two things to look at when making a map: the map itself (how the map will be made) and the events (how
+               the map will work). Let's delve into the more complex stuff now.</p>
+            <p>As I said above, each map is converted into a scene with Tiled2Unity. This scene will have to contain at minimum one
+			   element, which is the map object called <span class="term">Background</span>. To see more about how to create a map, 
+			   I suggest you to look at the tutorial on <span class="ref">How to create a map</span>.</p>
+            <p>Now, the events. These are universal and used the same way, at the exception of one "add-on" that is a 
+			   <span class="term">CYFAnimator</span> component. The events have different function-launching conditions, such as pressing 
+			   the confirm button to launch it, colliding with it, it being launched automatically, or the function being launched as a 
+			   parallel process. The functions themselves have to be created in Lua scripts, like battles. To see more about how to use 
+			   the events, you should check out <span class="ref">How to create an event</span>.</p>
+            <p>Of course, there are other things to see, but these are the two main parts of CYF's overworld coding. Now, let's look at the 
+                functions that will let you do whatever you want to with the overworld!</p><br>
            
-            <h3>The event code</h3><br><br>
+            <h4>The event code</h4>
            
-            <p>
-                For a long time, events' code was accessible and could be modified by going in YOURMOD/Lua/Events/. Maybe that you
-                already fiddled with them, maybe not. Now that the system is stable and easier to use, event programming may be as
-                easy as creating a battle: all that you have to do is to follow the documentation and know what you're doing.<br>
-                The overworld has a debugger like battles' (and it's used the same way). Use DEBUG(value) to print your value in the
-                debugger, if it's a string value. <br>
-                Audio, NewAudio, Inventory, Input, Misc and Time objects used in battles are
-                usable in the overworld too, as well as RealGlobals and AlMightyGlobals access. Finally, the variables isCYF, safe,
-                windows and CYFversion are also accessible.
+            <p>For a long time, events' code was accessible and could only be modified by going into 
+			   <span class="term">YOURMOD/Lua/Events/</span>. Maybe you already fiddled with them, maybe not. Now that the system 
+			   is stable and easier to use, event programming may be as easy as creating a battle: all that you have to do is to follow 
+			   the documentation and know what you're doing.</p>
+            <p>The overworld has a debugger like battles' (and it's used the same way). Use <span class="term">DEBUG(value)</span> to 
+			   print your value to the debugger (if it's a string value). </p>
+            <p>The <span class="term">Audio</span>, <span class="term">NewAudio</span>, <span class="term">Inventory</span>, 
+			    <span class="term">Input</span>, <span class="term">Misc</span> and <span class="term">Time</span> objects from  battles 
+				are usable in the overworld too, as well as <span class="term">RealGlobals</span> and <span class="term">AlMightyGlobals</span>. 
+				Finally, the variables <span class="term">isCYF</span>, <span class="term">safe</span>, <span class="term">windows</span> 
+				and <span class="term">CYFversion</span> are also accessible.
             </p>
         </div>
 
         <div class="tab-pane text-style" id="overworld-howto-map">
-            <h2>The Overworld: How to create a map on Unity with Tiled2Unity</h2><br><br>
+            <h2><span class="CYF"></span> The Overworld: How to create a map in Unity with Tiled2Unity</h2><br><br>
             
             <p>
-                Creating a map for CYF is not that difficult. All that you need to do is following the next rules. 
-                There are many of them, but as long as you stick to them, it should be fine.
+                Creating a map for CYF is not that difficult. All that you need to do is follow the rules. 
+                There are a lot of them, but as long as you stick to them, you'll be fine.
             </p>
 
             <p>
                 The very first step is to create the map on Tiled, and save it.<br>
-                <u>Tip:</u> Undertale's tiles are 20x20 pixels, with a scale coefficient of 2: I suggest you to 
-                make a tileset of 40x40px tiles to not be worried about a scale value of 2.
+                <u>Tip:</u> Undertale's tiles are 20x20 pixels, with a scale factor of 2: I suggest you to 
+                make a tileset of 40x40px tiles so you will not have to worry about scaling.
             </p>
             
             <br><img src="img/Tiled2Unity screenshot.png" alt="Tiled2Unity screenshot"><br><br>
             <p>
                 <li>Open Tiled2Unity.exe</li>
-                <li>File --> Choose your .tmx file</li>
-                <li>Export To --> PathToCYF\Assets\Tiled2Unity\Tiled2Unity.export.txt</li>
-                <li>Click the Big Ass Export Button</li>
-                <li>Close Tiled2Unity, go on Unity</li>
+                <li><span class="term">File</span> --> Choose your .tmx file</li>
+                <li><span class="term">Export To</span> --> <span class="term">PathToCYF\Assets\Tiled2Unity\Tiled2Unity.export.txt</span></li>
+                <li>Click the <span class="term">Big Ass Export Button</span></li>
+                <li>Close Tiled2Unity and open Unity</li>
             </p>
             <br>
             <p>
-                <li>Now that you're on Unity, you should create a scene, then delete the Main Camera object, save and name the map 
+                <li>Now that you're in Unity, you should create a scene, then delete the Main Camera object, save and then name the map 
                 (the name will be important!)</li>
-                <li>Open the scene Assets\Scenes\test3.unity, copy all its content and paste it into your newly created scene.</li>
-                <li>On the Project tab, go to Assets\Tiled2Unity\Prefabs, you should see your map. Click and
-                  drag it in the scene's arborescence. (Put it in the root, not in a directory)</li>
-                <li>Go to Assets\Resources\Prefabs and include Main Camera OW like you did with the previous 
-                  line. Now you should be able to see something on the Game tab!</li>
+                <li>Open the scene <span class="term">Assets\Scenes\test3.unity</span>, copy all its content and paste them into your newly 
+				created scene.</li>
+                <li>In the <span class="term">Project</span> tab, go to <span class="term">Assets\Tiled2Unity\Prefabs</span> and you should 
+				see your map. Drag and drop it over the scene. (Put it in the root, not in a directory)</li>
+                <li>Go to <span class="term">Assets\Resources\Prefabs</span> and include <span class="term">Main Camera OW</span> like you 
+				did with the previous  line. Now you should be able to see something in the Game tab!</li>
             </p>
             <br>
             <p>
-                <li>Remove the map in Background, disable the objects Foreground and Bottom by clicking on the object, going to the 
-                  Inspector and unchecking the box right next to the object's name.</li>
-                <li>Move your map to make so the bottom-left corners of the map and the camera are at the same coordinates.</li>
-                <li>Delete everything that is in the GameObject Background excepted the TPs. You'll see that 
+                <li>Remove the map in <span class="term">Background</span>, disable the objects <span class="term">Foreground</span> and 
+				<span class="term">Bottom</span> by clicking on each object, going to the Inspector and unchecking the box right next to the 
+				object's name.</li>
+                <li>Move your map so that the bottom-left corners of the map and the camera are at the same coordinates.</li>
+                <li>Delete everything that is in the GameObject <span class="term">Background</span>, except for the TPs. You'll see that 
                   your map object is composed of every layer that you've added in your map.<br>
-                  Now, you'll have to move into Background the main object component of your map and the 
-                  colliders (in your object layers).<br>
+				  Now, inside of <span class="term">Background</span>, you'll have to insert the main object component of your map and 
+				  its colliders (in your object layers).<br>
                   If Unity asks you if you want to break the prefab, say "Yes".</li>
-                <li>If there are other layers, Just put them in the root.</li>
+                <li>If there are other layers, just put them in the root.</li>
                 <li>Delete the object which contained all the map elements.</li>
             </p>
             <br>
             <p>
-                <li>Make so Background's RectTransform fits the map. It's very important, as the RectTransform 
-                  bounds are used for map scrolling.<br>
+                <li>Adjust so that <span class="term">Background</span>'s RectTransform fits in the map. It's very important, 
+					as the RectTransform bounds are used for map scrolling.<br>
                   <u>Tips:</u> 
                   <ul>
-                      <li>Put all of Background's children in the root or as the chile of another object so 
-                        that their position isn't changed while moving Background.</li>
-                      <li>Then, Background's RectTransform size is equal to bounds of the map / 100: if your
-                        map is 640x480, the size will be 6.4 and 4.8.</li>
-                      <li>Now center the main map object to make it fit Background's RectTransform.</li>
-                      <li>Don't forget that Background's RectTransform's bottom-left corner must be at the 
-                        same coordinates than Main Camera OW's RectTransform's bottom-left corner!</li>
-                      <li>And now when everything is ok put Background's old children back at their original place.</li>
+                      <li>Put all of <span class="term">Background</span>'s children in the root or as the children of another object, so 
+                        that their position isn't changed while the background moves.</li>
+                      <li>Then, <span class="term">Background</span>'s RectTransform size will be equal to (the bounds of the map / 100) - so, 
+						if your map is 640x480, the size will be 6.4 by 4.8.</li>
+                      <li>Now, center the main map object to make it fit inside of <span class="term">Background</span>'s 
+					  <span class="term">RectTransform</span>.</li>
+                      <li>Don't forget that <span class="term">Background</span>'s <span class="term">RectTransform</span>'s bottom-left corner 
+						must be at the same coordinates as the <span class="term">Main Camera OW</span>'s 
+						<span class="term">RectTransform</span>'s bottom-left corner!</li>
+                      <li>Now, when everything is all done, put <span class="term">Background</span>'s old children back to their original places 
+					  as <span class="term">Background</span>'s children.</li>
                   </ul></li>
             </p>
             <br>
             <p>
-                <li>For each map component, go to the component "Sorting Layer Exposed" and set the value 
-                  "Order in Layer" to 0.</li>
-                <li>For each map component, you'll need to set the Z value of the map. The Z value go like 
-                  this: the greater it is, the further it'll be.<br>
-                  Set Background's Z value to 140, then play around this value to set the Z value of other 
-                  background layers (between 139 and 141, you can use decimal numbers, of course).<br>
-                  For foreground layers' Z value, you should take values between -1.5 and -0.5.<br>
-                  Warning: The maps' Z value must be set to 0 after setting the layers' Z value!</li>
+                <li>For each map component, go to the component <span class="term">Sorting Layer Exposed</span> and set the value 
+                  <span class="term">Order in Layer</span> to 0.</li>
+                <li>For each map component, you'll need to set the Z value of the map. The Z value works like 
+                  this: the greater it is, the further into the background a component will be.<br>
+                  Set <span class="term">Background</span>'s Z value to 140, then play around this value to set the Z value of other 
+                  background layers (between 139 and 141; you can use decimal numbers, of course).<br>
+                  For foreground layers' Z values, you should use values between -1.5 and -0.5.<br>
+                  <u>Warning</u>: The maps' Z value must be set to 0 after setting the layers' Z value!</li>
             </p>
             <br>
             <p>
                 <li>Edit, add and/or remove the TP objects. You'll have to set some values for the TP: see the 
                   component TP Handler.
                   <ul>
-                      <li>Scene Name = Name of the destination scene of the TP.</li>
-                      <li>Position = Position of the player in the destination map, from the bottom-left corner of 
+                      <li><span class="term">Scene Name</span> = Name of the destination scene of the TP.</li>
+                      <li><span class="term">Position</span> = Position of the player in the destination map, from the bottom-left corner of 
                       the map.</li>
-                      <li>Direction = Direction of the player after the TP. 2 = Bottom, 4 = Left, 6 = Right, 8 = Up .
+                      <li><span class="term">Direction</span> = Direction of the player after the TP. <span class="term">2</span> = Bottom, 
+					  <span class="term">4</span> = Left, <span class="term">6</span> = Right, <span class="term">8</span> = Up .
                       (I used the NumPad for this, yeah ^^)</li>
-                      <li>Activated = Boolean used when the TP is launched. don't activate it manually!</li>
+                      <li><span class="term">Activated</span> = Boolean used when the TP is launched. Don't activate it manually!</li>
                   </ul></li>
             </p>
             <br>
             <p>
-                <li>Change the layer of all the colliders: give them the layer BlockingLayer.<br>
+                <li>Change the layer of all of the colliders. Give them the layer <span class="term">BlockingLayer</span>.<br>
                   <u>Tip:</u> Select the first one, then shift-click on the last one. Then, you can change the 
-                      layer off all objects simultaneously!</li>
-                <li>Finally, modify the data in the object Background, the Map Infos Component.
+                      layer of all objects simultaneously!</li>
+                <li>Finally, modify the data in the object <span class="term">Background</span>, in the Map Infos Component.
                   <ul>
-                      <li>ID = ID of the map. Used in the database to register event states. Must be unique.</li>
-                      <li>Music = Name of the BGM played on the map. The BGM must be in the folder Audio of the mod 
+                      <li><span class="term">ID</span> = ID of the map. Used in the database to register event states. Must be unique.</li>
+                      <li><span class="term">Music</span> = Name of the BGM played on the map. The BGM must be in the folder Audio of the mod 
                         or the default folder.</li>
-                      <li>Mod To Load = Name of the mod loaded by the map.</li>
-                      <li>Beginning Position = Position of the player in the first map, from the bottom-left corner 
+                      <li><span class="term">Mod To Load</span> = Name of the mod loaded by the map.</li>
+                      <li><span class="term">Beginning Position</span> = Position of the player in the first map, from the bottom-left corner 
                         of the map.</li>
                   </ul></li>
-                <li>When everything is ready, remove the Main Camera OW object and save the map.</li>
+                <li>When everything is ready, remove the <span class="term">Main Camera OW</span> object and save the map.</li>
             </p>
             <br>
             <p>
-                Your map is now ready! But it isn't playable yet... Before testing it, we'll need to add it to the Build.<br>
-                When you're on your newly created map, open File --> Build Settings...<br>
-                Click on the button "Add Open Scenes" while you're on your map: it must now be in the list of Scenes in the
-                Build: it'll be built with the project and it can now be used!
-            </p>
+                Your map is now ready! But it isn't playable yet...Before testing it, we'll need to add it to the Build.<br>
+                When you're on your newly created map, open <span class="term">File</span> --> <span class="term">Build Settings</span>...<br>
+                Click on the button "Add Open Scenes" while you're on your map. It should now be in the list of Scenes in the
+                Build. It'll be built with the project and it can now be used!
+            </p><br>
             <p>
-                <h3>Now is time to test it!</h3><br><br>
-                <li>Open the scene "Assets\Scenes\TransitionOverworld.unity" and search for the GameObject 
-                  "Main Camera OW".<br>
-                  Go to the component Transition Overworld and change the values.
-                  First Level To Load: Name of the first scene to load.
-                  First Mod Folder: Name of the mod folder of the first scene to load.</li>
-              <li>Load the scene Disclaimer.unity and launch the game. Launch a new game if you've already 
-                  saved: you should now be on your map!</li>
-            </p>
-            <br>
-            <p>
-                Make some tests on the map if there are problems. If there are 0 problem, now you can add 
-                some events!<br>
-                If you had some problems with this tutoriel, please tell me what went wrong.<br>
-                If you see some upgrade that can be done on the tutorial, please tell me too.<br>
-                You'll have more chances to contact me on Unitale's Discord server: the response will be way faster and smoother than some messages on reddit.<br>
-                Link to the <a href="https://discord.gg/0c8fN7KCwBh4ZBL9">Discord server</a>.
+                <h4>Now, it's time to test it!</h4><br><br>
+                <li>Open the scene <span class="term">Assets\Scenes\TransitionOverworld.unity</span> and search for the GameObject 
+                  <span class="term">Main Camera OW</span>.<br>
+                  Go to the component <span class="term">Transition Overworld</span> and change the values.
+				  <ul>
+                  <li><span class="term">First Level To Load</span>: Name of the first scene to load.</li>
+                  <li><span class="term">First Mod Folder</span>: Name of the mod folder of the first scene to load.</li>
+				  </ul>
+			  </li>
+              <li>Load the scene <span class="term">Disclaimer.unity</span> and launch the game. Launch a new game if you've already 
+                  saved. You should now be on your map!</li>
             </p>
             <br>
             <p>
-                I hope that you enjoyed the tutorial, and if you're ready to add an event, go to the next tutorial!
+                Make some tests on the map if there are problems. If there are no problems, now you can add 
+                events!<br><br>
+                If you had any problems with this tutorial, please tell me what went wrong.<br>
+                If you see any ways that this tutorial can be improved, please tell me that as well.<br>
+                You'll have more chances to contact me on Unitale's Discord server - the response will be way faster and it will be much 
+				smoother than using messages on reddit.<br>
+                Here is the link to the <a href="https://discord.gg/0c8fN7KCwBh4ZBL9">Discord server</a>.
+            </p>
+            <br>
+            <p>
+                I hope that you enjoyed the tutorial! If you're ready to add an event, go to the next tutorial!
             </p>
         </div>
 
         <div class="tab-pane text-style" id="overworld-howto-event">
-            <h2>The Overworld: How to create an event on Unity</h2><br><br>
+            <h2><span class="CYF"></span>The Overworld: How to create an event on Unity</h2><br><br>
 
             <p>
                 If you want to make a good map, creating events is something that you might want to get used to.<br>
-                Making events is not complicated, you just need to know what you need to tweak to be able to make one.
+                Making events is not complicated, though, you just need to know what to tweak.
             </p>
             <br>
             <p>
-                <li>The first thing that you'll have to do is of course opening the map you want to add the event in.</li>
+                <li>The first thing that you'll have to do is, of course, to open the map you want to add the event in.</li>
                 <li>As you may have seen in the previous tutorial, Unity uses "prefabs". These are generic objects that can 
                 be used in different scenes across the project. Here, you'd want to go to the Project tab and go to 
-                Assets/Resources/prefabs to see those.<br>
-                The one that interests us here is the "Event1" prefab. Click and drag it to the GameObject list to createan itance of this prefab.</li>
+                <span class="term">Assets/Resources/prefabs</span> to see those.<br>
+                The one that interests us here is the <span class="term">Event1>/span> prefab. Click and drag it to the GameObject list 
+				to create an instance of this prefab.</li>
             </p>
             <br>
             <p>
-                Now the event is ready! Simple, isn't it? However, you'd ant to modify it now, keeping the object like this is not recommended.<br>
-                What will follow is a list of things that you can modify.
+                Now the event is ready! Simple, isn't it? However, you'll want to modify it now. Keeping the object like this is not recommended.<br>
+                What follows is a list of things that you can modify.
             </p>
             <br>
             <p>
-                <li>GameObject ~ Name: All events must have a different name, so find one that fits this event!</li>
-                <li>RectTransform ~ PosX/PosY: It's the position of the event.</li>
-                <li>RectTransform ~ Anchors: Anchor of the event. Set them at the same value!</li>
-                <li>RectTransform ~ Pivot: Pivot of the event. It changes the object's position!</li>
-                <li>SpriteRenderer ~ Sprite: It's not what will be used to display the sprite. You can use it to see if the event's sprite looks good 
-                    and to modify the event's hitbox, though.</li>
-                <li>BoxCollider ~ Edit Collider Button: Permits you to modify the event's hitbox.</li>
-                <li>BoxCollider ~ Is Trigger: Must be activated for Touch events.</li>
-                <li>BoxCollider ~ Offset/Size: Same as the Edit Collider Button.</li>
-                <li>EventOW ~ Script To Load: Name of the event script to load when triggering this event. The event must be in the directory MAPMOD/Lua/Events/.</li>
-                <li>EventOW ~ Actual Page: The first page of the event (and in game the current page of the event)</li>
-                <li>EventOW ~ Event Triggers: This part MUST NOT be forgotten. Even if it doesn't seem to be, it's the most important part of the event.<br>
-                                              In your event, you'll need to name all your functions following the pattern "EventPage" + Page number.<br>
-                                              For each X value, you'll input the Page number, and for their matching Y value you'll need to input the trigger type of the event.<br>
-                                              0 = Confirm button, 1 = Touch the hitbox, 2 = Auto, 3 = Parallel event.</li>
-                <li>EventOW ~ Move Speed: The speed of the event in px/frame if you move the event.</li>
-                <li>AutoloadRessourcesFromRegistry ~ Sprite Path: Path of the sprite from MAPMOD/Sprites.</li>
+                <li><span class="term">GameObject</span> ~ Name: All events must have a different name, so find one that fits this event!</li>
+                <li><span class="term">RectTransform</span> ~ PosX/PosY: The position of the event.</li>
+                <li><span class="term">RectTransform</span> ~ Anchors: Anchor of the event. Set them at the same value!</li>
+                <li><span class="term">RectTransform</span> ~ Pivot: Pivot of the event. It changes the object's position!</li>
+                <li><span class="term">SpriteRenderer</span> ~ Sprite: It's not what will be used to display the sprite. 
+				But you can still use this to see if the event's sprite looks good and to modify the event's hitbox.</li>
+                <li><span class="term">BoxCollider</span> ~ Edit Collider Button: Lets you modify the event's hitbox.</li>
+                <li><span class="term">BoxCollider</span> ~ Is Trigger: Must be activated for Touch events.</li>
+                <li><span class="term">BoxCollider</span> ~ Offset/Size: Same as the Edit Collider Button.</li>
+                <li><span class="term">EventOW</span> ~ Script To Load: Name of the event script to load when triggering this event. 
+				The event must be in the directory <span class="term">MAPMOD/Lua/Events/</span>.</li>
+                <li><span class="term">EventOW</span> ~ Actual Page: The first page of the event (and in game the current page of the event)</li>
+                <li><span class="term">EventOW</span> ~ Event Triggers: This part MUST NOT be forgotten. Even if it doesn't seem to 
+				be important, it is still the most important part of the event.<br>
+				In your event, you'll need to name all your functions following the pattern <span class="term">"EventPage" + Page number</span>.<br>
+				For each X value, you'll input the Page number, and for each matching Y value, you'll need to input the trigger type of the event:<br>
+				0 = Confirm button, 1 = Hitbox touched, 2 = Auto, 3 = Parallel event.</li>
+                <li><span class="term">EventOW</span> ~ Move Speed: The speed of the event in px/frame, if you want to move the event.</li>
+                <li><span class="term">AutoloadRessourcesFromRegistry</span> ~ Sprite Path: Path of the sprite from 
+				<span class="term">MAPMOD/Sprites</span>.</li>
             </p>
             <br>
             <p>
-                And then you'll need to create your event's script. It needs to be located at MAPMOD/Lua/Events.
+                Now you'll need to create your event's script. It needs to be located at <span class="term">MAPMOD/Lua/Events</span>.
             </p>
             <br>
             <p>
-                If you want to permanently disable an event in-game, set its event page to -1. It'll be automatically deleted when you'll re-enter the map.
+                If you want to permanently disable an event in-game, set its event page to -1. It'll be automatically deleted when you re-enter the map.
             </p>
             <br>
             <p>
-                All the others must not be changed, unless you know what you're doing (excepted some self-explanatory values like SpriteRenderer ~ FlipX/FlipY)
+                All the other values must not be changed, unless you know what you're doing (except for some self-explanatory 
+				values like <span class="term">SpriteRenderer</span> ~ FlipX/FlipY)
             </p>
             <br>
             <p>
-                If you had some problems with this tutoriel, please tell me what went wrong.<br>
-                If you see some upgrade that can be done on the tutorial, please tell me too.<br>
-                You'll have more chances to contact me on Unitale's Discord server: the response will be way faster and smoother than some messages on reddit.<br>
-                Link to the <a href="https://discord.gg/0c8fN7KCwBh4ZBL9">Discord server</a>.
+                If you had any problems with this tutorial, please tell me what went wrong.<br>
+                If you see any ways that this tutorial can be improved, please tell me that as well.<br>
+                You'll have more chances to contact me on Unitale's Discord server - the response will be way faster and it will be much 
+				smoother than using messages on reddit.<br>
+                Here is the link to the <a href="https://discord.gg/0c8fN7KCwBh4ZBL9">Discord server</a>.
             </p>
             <br>
             <p>
-            I hope that you enjoyed the tutorial, and if you need further explanations, don't hesitate 
-            about asking RhenaudTheLukark on reddit or the Discord server!
+            I hope that you enjoyed this tutorial - and if you need further explanations, don't hesitate 
+            to ask RhenaudTheLukark on reddit or the Discord server!
         </div>
 
         <div class="tab-pane text-style" id="overworld-howto-animevent">
-            <h2>The Overworld: How to add an animation to an event</h2><br><br>
+            <h2><span class="CYF"></span>The Overworld: How to add an animation to an event</h2><br><br>
            
             <p>
-                Tired of all these static events? Do you want them to be animated, to bring more life to your map? You're in the good section!<br>
-                Animating events is (again) something very easy, but it may be long. This animator is used like sprite.SetAnimation(), only the way to fill in the data changes.
+                Tired of all these static events? Do you want them to be animated, to bring more life to your map? You're in the right place!<br>
+                Animating events is (again) something very easy, but it may be time-consuming. This animator is used like 
+				<span class="term">sprite.SetAnimation()</span>, only the ways you fill in data are different.
             </p>
             <br>
             <p>
-                <li>All the animations are driven by a component named "CYFAnimator". Click on the event you want to add this component in, go at the very bottom of the Inspector 
-                  tab and click on the button "Add component".</li>
-                <li>Enter "CYFAnimator" and you should be able to find it. Click and it'll be added in the object.</li>
+                <li>All the animations are driven by a component named <span class="term">CYFAnimator</span>. Click on the event you want to add this  
+				component in, go at the very bottom of the Inspector tab, then click on the button "Add component".</li>
+                <li>Enter "CYFAnimator" and you should be able to find it. Click and it'll be added.</li>
             </p>
             
             <br><img src="img/CYFAnimator screenshot.png" alt="CYFAnimator screenshot"><br><br>
             <p>
-                This is a working example of CYFAnimator object. The 8 anims pictured here are the minimum required to make the component run correctly.                
+                This is a working example of CYFAnimator object. The 8 anims pictured here are the minimum ones required to make the component run correctly.
             </p>
             <br>
             <p>
                 Now you should be able to see some variables. Here is a description of them:
-                <li>Movement Direction: It's the direction the event goes, you normally don't need to modify it as the component will compute it by itself.</li>
-                <li>Begin Anim: It's the name of the anim the event will start on.</li>
-                <li>Special Header: This variable is used to modify the event's animation scheme. Normally the event will launch the anims StopDown, 
-                StopUp, Moving Down, MovingUp and the others, but if you add this header it'll be added at the beginning of this name.<br>
-                That means that if the special header is "Frisk", the CYFAnimator component will launch FriskMovingDown, FriskMovingUp... instead of the others.<br>
-                There is one exception to this scheme. If the special header is equal to an anim's name, this anim will be launched while the special header won't be changed.</li>
-                <li>Anims: Your list of anims. Check the screenshot above to see how you should fill it.</li>
+                <li><span class="term">Movement Direction</span>: The direction that the event goes. Normally, you don't need to modify this, 
+				as the component will calculate this by itself.</li>
+                <li><span class="term">Begin Anim</span>: The name of the animation that the event will start on.</li>
+                <li><span class="term">Special Header</span>: This variable is used to modify the event's animation scheme. Normally, 
+				the event will launch the anims <span class="term">StopDown</span>, <span class="term">StopUp</span>, <span class="term">MovingDown</span>,  
+				<span class="term">MovingUp</span> and the others. But if you add this header, it'll be added at the beginning of the animator's name.<br>
+                So, if the special header is "Frisk", the CYFAnimator component will launch FriskMovingDown, FriskMovingUp, ... instead of the others.<br>
+                <br>There is one exception to this scheme. If the special header is equal to an anim's name, this anim will be launched while the 
+				special header won't be changed.</li>
+                <li><span class="term">Anims</span>: Your list of animations. Check the screenshot above to see how you should fill it.</li>
             </p>
             <br>
+			<br>
             <p>
-                And that's it for animated events! As I said, the biggest part here is to fill in the Anims list, so it's not much of a deal!<br>
-                If you had some problems with this tutoriel, please tell me what went wrong.<br>
-                If you see some upgrade that can be done on the tutorial, please tell me too.<br>
-                You'll have more chances to contact me on Unitale's Discord server: the response will be way faster and smoother than some messages on reddit.<br>
-                Link to the <a href="https://discord.gg/0c8fN7KCwBh4ZBL9">Discord server</a>.
+                And that's it for animated events! As I said, the biggest part here is to fill in the Anims list, so it's not much of a deal!<br><br>
+                If you had any problems with this tutorial, please tell me what went wrong.<br>
+                If you see any ways that this tutorial can be improved, please tell me that as well.<br>
+                You'll have more chances to contact me on Unitale's Discord server - the response will be way faster and it will be much 
+				smoother than using messages on reddit.<br>
+                Here is the link to the <a href="https://discord.gg/0c8fN7KCwBh4ZBL9">Discord server</a>.
             </p>
         </div>
 
         <div class="tab-pane text-style" id="overworld-object-general">
-            <h2>The Overworld: The General Object</h2><br>
+            <h2><span class="CYF"></span>The Overworld: The General Object</h2><br>
            
             <p>
                 <br><span class="function">General.SetDialog(table texts, bool formatted = true, table mugshot = nil)</span>
-                Displays a text.
-                <li>texts = The different lines of text displayed.</li><br>
-                <li>formatted = Do you want to add asterisks to your text? (if yes: \n for asterisks, \r for
+                Displays text.
+                <li><span class="term">texts</span> = The different lines of text displayed.</li><br>
+                <li><span class="term">formatted</span> = Adds asterisks to your text, (if yes: \n for asterisks, \r for
                     no asterisks)
                     <br>True by default.</li><br>
-                <li>mugshot = The name of your mugshots, without the extension. If you want to use some, you have to have
-                    at least one mugshot per text, or else it won't work.
-                    <br>They have to be in the path YourMod/Sprites/Mugshots/!</li><br>
+                <li><span class="term">mugshot</span> = The name of your mugshots (dialogue faces), without the file extension. 
+				If you want to use them, you have to have at least one mugshot per text, or else it won't work.
+                    <br>They have to be in the path <span class="term">YourMod/Sprites/Mugshots/</span>!</li><br>
             </p>
             <p>
                 <br><span class="function">General.SetChoice(table choices, string question = null)</span>
-                Displays a choice, and the response will be returned, being either 0 for the first choice or 1 for the second choice.
-                For now there is a lot of constraints, but I hope that I'll find a better way to do this easily. <br>
-                Each choice must not have more than 3 lines.
-                Plus, the question have to be one line long if you want to add one.<br>
-                <span style="color:#aa5000">Due to the nature of this function, the result won't be returned directly but it'll
-                be stored in a variable named "lastChoice".</span>
+                Displays a choice. The response will be returned as either 0 for the first option or 1 for the second option. 
+                For now, there are a lot of constraints, but I hope that I'll find a better way to do this easily.<br>
+                Each choice must have no more than 3 lines. 
+				If you want there to be a question, it must be no more than one line long.<br>
+                <span style="color:#ff0000">Due to the nature of this function, the result won't be returned, directly but the result 
+                will be stored in a variable named <span class="term">lastChoice</span>.</span>
             </p>
             <p>
                 <br><span class="function">General.Wait(int frames)</span>
-                Waits for the code to continue for a given amount of frames.
+                Pauses code execution for a given amount of frames.
             </p>
             <p>
                 <br><span class="function">General.WaitForInput(int frames)</span>
-                Waits for the player to press the CONFIRM (Enter or Z) button to continue.
+                Waits for the player to press the <span class="term">Confirm</span> input (Enter or Z) to continue.
             </p>
             <p>
                 <br><span class="function">General.GameOver(table deathText = nil, string deathMusic = nil)</span>
-                Launches the Game Over cutscene, putting the player back to his savepoint afterwards.
-                You can choose the text and the music if you want to, otherwise it'd default to he normal text and music.
+                Launches the Game Over cutscene, putting the player back at their savepoint afterwards. <br>
+                You can choose the text and the music if you want to. Otherwise, it'll play the normal music and show a default message.
             </p>
             <p>
                 <br><span class="function">General.PlayBGM(string bgm, number volume)</span>
-                Plays a music on the main music channel with a volume between 0 and 1. Watch out, NewAudio["src"] ISN'T
-                the main music channel when a music is kept between battles!
+                Plays music on the main music channel with a volume between 0 and 1. Watch out, <span class="term">NewAudio["src"]</span> ISN'T
+                the main music channel when music is kept between battles!
             </p>
             <p>
                 <br><span class="function">General.StopBGM(int fadeFrames = 0)</span>
-                Stops the current music being played in the main music channel. Fades the music if fadeFrames is greater than 0.
+                Stops the current music being played in the main music channel. If <span class="term">fadeFrames</span> is greater than 0, 
+				the music will fade out over that many frames.
             </p>
             <p>
                 <br><span class="function">General.PlaySound(string sound, float volume = 0.65)</span>
@@ -1993,7 +2451,7 @@ end</pre>
             </p>
             <p>
                 <br><span class="function">General.Save()</span>
-                Launches the Save UI that permits he player to save their progression.
+                Launches the Save UI that allows the player to save their progression.
             </p>
             <p>
                 <br><span class="function">General.TitleScreen()</span>
@@ -2001,35 +2459,38 @@ end</pre>
             </p>
             <p>
                 <br><span class="function">General.SetBattle(string encounterName, bool quickAnim = false, bool ForceNoFlee = false)</span>
-                Sets a battle with a chosen encounter. If the first encounter character is a '#', don't forget it.
-                If you want the battle's intro to be quick like uUdyne's battle, set quickAnim to true.
-                Finally, ForceNoFlee disables the flee option from the encounter, except if your encounter sets "flee" to true.
+                Initiates a battle with a chosen encounter. If the first encounter character is a <span class="term">#</span>, don't forget it.<br>
+                If you want the battle's intro to be quick like Undyne's battle, set <span class="term">quickAnim</span> to true.<br>
+                Finally, <span class="term">ForceNoFlee</span> removes the flee option from the encounter - unless your encounter sets 
+				<span class="term">flee</span> to true.
             </p>
         </div>
        
         <div class="tab-pane text-style" id="overworld-object-event">
-            <h2>The Overworld: The Event Object</h2><br><br>
+            <h2><span class="CYF"></span>The Overworld: The Event Object</h2><br><br>
            
             <p>
-                In most cases, the event "Player" can also be used, and as surprising as it might be, it references to the Player.
+                In most cases, the event <span class="term">Player</span> can also be used, and as surprising as it might be, it references to the Player.
             </p>
             <p>
                 <br><span class="function">Event.Teleport(string name, number dirX, number dirY)</span>
-                Teleports the given event at a given point in space. The position (dirX and dirY) is computed from the bottom left center of the map.
+                Teleports the given event to a given point in space. The position (dirX and dirY) is computed based off of the bottom left center of the map.
             </p>
             <p>
                 <br><span class="function">Event.MoveToPoint(string name, number dirX, number dirY, bool wallPass = false)</span>
-                Moves an event at a given point in space. The event's speed will be the speed variable of its EventOW component, so choose it wisely.
-                Set wallPass to true to ignore any obstacle that the event may encounter.
+                Moves an event to a given point in space. The event's speed will be the speed variable of its <span class="term">EventOW</span> 
+				component, so choose that wisely.<br>
+				Set <span class="term">wallPass</span> to true to ignore any obstacle that the event may encounter.
             </p>
             <p>
                 <br><span class="function">Event.SetAnimHeader(string name, string anim)</span>
-                If the event given has a CYFAnimator component, it'll set anim as its anim header.<br>
-                Don't forget that if the anim header is an existing animation, the animation will be launched instead of the component's normal behaviour.               
+                If the event given has a CYFAnimator component, it'll set <span class="term">anim</span> as its anim header.<br>
+                Don't forget that if the anim header is an existing animation, that animation will be launched instead of the component's 
+				normal behaviour.               
             </p>
             <p>
                 <br><span class="function">Event.GetAnimHeader(string name)</span>
-                Returns the anim header of the given event, if it has a CYFAnimator event.               
+                Returns the anim header of the given event, if it has a CYFAnimator event.
             </p>
             <p>
                 <br><span class="function">Event.SetDirection(string name, int dir)</span>
@@ -2039,22 +2500,23 @@ end</pre>
             <p>
                 <br><span class="function">Event.Rotate(string name, float rotateX, float rotateY, float rotateZ, bool anim = true)</span>
                 This function rotates the event. The Z rotation is the rotation we normally use, while X and Y rotations are 3D rotations.
-                To see some examples of rotation, remove the comment block of the function EventPage4 of Mods/Examples/Lua/Events/EventTest.lua.
-                Set anim to false to disable the animation of the rotation.
+                <br>To see some examples of rotation, remove the comment block of the function <span class="term">EventPage4</span> of  
+				<span class="term">Mods/Examples/Lua/Events/EventTest.lua</span>.<br>
+                Set <span class="term">anim</span> to false to disable the animation of the rotation.
             </p>
             <p>
                 <br><span class="function">Event.Stop()</span>
                 If this function is launched in a normal event, it stops the event instantly.
-                If it's launched in a coroutine event, it'll launch Event.StopCoroutine() instead. If you want to stop the coroutine 
-                instantly, just add "return" after that function.
+                If it's launched in a coroutine event, it'll launch <span class="term">Event.StopCoroutine()</span> instead. If you want to 
+				stop the coroutine instantly, just add <span class="term">return</span> after this function.
             </p>
             <p>
                 <br><span class="function">Event.StopCoroutine(strin eventName = "thisevent")</span>
-                Stops the coroutine of the given event. Use the string "thisevent" to stop the coroutine of this event.
+                Stops the coroutine of the given event. Use the string <span class="term">thisevent</span> to stop the coroutine of this event.
             </p>
             <p>
                 <br><span class="function">Event.Remove(string name)</span>
-				Remove the given event from the scene. It won't n=be accessible afterwards until the player exits the scene! 
+				Remove the given event from the scene. It won't be accessible afterwards until the player exits the scene! 
                 However, if the player comes back, it'll be here again.<br>
                 To permanently remove an event, set its page to -1.
             </p>
@@ -2072,8 +2534,8 @@ end</pre>
             </p>
             <p>
                 <br><span class="function">Event.CenterOnCamera(string name, int speed = 5, bool straightLine = false)</span>
-				Centers the given event on the camera. The camera's speed will be of speed pixels per second in each direction, 
-                unless you set straightLine to true. In that case, the camera will follow a line to center on the event.
+				Centers the camera on the given event. The camera's speed will be <span class="term">speed</span> pixels per second in each direction, 
+                unless you set <span class="term">straightLine</span> to true. In that case, the camera will follow a line to the center of the event.
             </p>
             <p>
                 <br><span class="function">Event.GetName()</span>
@@ -2081,20 +2543,20 @@ end</pre>
             </p>
             <p>
                 <br><span class="function">Event.GetPosition(string name)</span>
-                Returns a table of two values containing the position of the givven event.
+                Returns a table of two values containing the position of the given event.
             </p>
         </div>
        
         <div class="tab-pane text-style" id="overworld-object-player">
-            <h2>The Overworld: The Player Object</h2><br>
+            <h2><span class="CYF"></span>The Overworld: The Player Object</h2><br>
             
             <p>
                 <br><span class="function">Player.GetLevel()</span>
-                Returns the player's level.
+                Returns the player's level (LVL).
             </p>
             <p>
                 <br><span class="function">Player.SetLevel(int value)</span>
-                Sets the player's level.
+                Sets the player's level (LVL).
             </p>
             <p>
                 <br><span class="function">Player.GetHP()</span>
@@ -2150,7 +2612,7 @@ end</pre>
             </p>
             <p>
                 <br><span class="function">Player.SetWeapon(string value)</span>
-                Equips the weapon given to the player, only if the player has this weapon in his inventory.
+				Makes the player equip the given weapon, but only if it's in their inventory.
             </p>
             <p>
                 <br><span class="function">Player.GetArmor()</span>
@@ -2158,7 +2620,7 @@ end</pre>
             </p>
             <p>
                 <br><span class="function">Player.SetArmor(string value)</span>
-                Equips the armor given to the player, only if the player has this armor in his inventory.
+				Makes the player equip the given armor, but only if it's in their inventory.
             </p>
             <p>
                 <br><span class="function">Player.GetEXP()</span>
@@ -2170,566 +2632,419 @@ end</pre>
             </p>
             <p>
                 <br><span class="function">Player.ForceHP(number value)</span>
-                Sets the player's hp, but the player's HP can go up to 1.5 times his max HP.
+                Sets the player's hp. But this time, the player's HP can go up to 1.5 times their max HP.
             </p>
             <p>
                 <br><span class="function">Player.Hurt(int value)</span>
-                Removes value HP to the player's current HP. The Player can't be killed by using this function.
-            </p>
+                Removes <span class="term">value</span> HP from the player's current HP. The Player can't be killed by using this function.
+            </p>            
             <p>
-                <br><span class="function">Player.Hurt(int value)</span>
-                Adds value HP to the player's current HP. The Player can't be killed by using this function.
+                <br><span class="function">Player.CanMove(bool canMove)</span>
+                This function determines whether the player can move or not.<br>
+                However, if <span class="term">canMove</span> is set to <i>true</i> and the function is 
+                called while a main event is running, then you can't trigger any other main events, 
+                teleport to other maps or open the menu until the main event is stopped.
             </p>
         </div>
        
         <div class="tab-pane text-style" id="overworld-object-screen">
-            <h2>The Overworld: The Screen Object</h2><br>
+            <h2><span class="CYF"></span>The Overworld: The Screen Object</h2><br>
             
             <p>
-                <br><span class="function">Screen.DispImg(string path, int id, float posX, float posY, int toneR = 255, int toneG = 255, int toneB = 255, int toneA = 255)</span>
-                This function displays an image on a given point on the map. This image will take the form of an event, and this event will be named "Image" + ID.<br>
-                Plus, you'll have to give the position of your image  with posX and posY.<br>
-                You can add a color to the image with the 4 last values, if you want to. In that case, these values must be between 0 and 255.
+                <br><span class="function">Screen.DispImg(string path, int id, float posX, float posY, int toneR = 255, int toneG = 255, int toneB = 255, 
+				int toneA = 255)</span>
+                This function displays an image on a given point on the map. This image will take the form of an event, and this event will be 
+				named <span class="term">"Image" + ID</span>.<br>
+                Also, you'll have to give the position of your image using <span class="term">posX</span> and <span class="term">posY</span>.<br>
+                You can add a color to the image with the 4 last values, if you want to. If you do, these values must be between 0 and 255.
             </p>
             
             <p>
                 <br><span class="function">Screen.SupprImg(int id)</span>
-                Deletes an image previously created with a Screen.DispImg() function.<br>
-                In application, it's basically the same as Event.Remove("Image" .. id).
+                Deletes an image previously created with a <span class="term">Screen.DispImg()</span> function.<br>
+                In application, it's basically the same as <span class="term">Event.Remove("Image" .. id)</span>.
             </p>
             
             <p>
                 <br><span class="function">Screen.SetTone(bool anim, bool waitEnd, int r = 255, int g = 255, int b = 255, int a = 128)</span>
-                Adds an image above all previous images that sets a selected tone. Set anim to true to make a transition to the tone. If anim is set to true, you can set waitEnd 
-                to true to wait until the end of the transition to continue the event. For the other values, they must be between 0 and 255.
+                Adds an image above all previous images that sets a selected tone (for instance, you can use this for a sepia tone).<br>
+				Set <span class="term">anim</span> to true to make it transition to the tone.<br>
+				If <span class="term">anim</span> is set to true, you can also set <span class="term">waitEnd</span> to true to make the event's code 
+				pause until the transition is done. For the other values, they must be between 0 and 255.
+				<br><span style="color:#ff0000">NOTE: Make sure that <span class="term">a</span> is less than 255. 128 is recommended. If the 
+				<span class="term">a</span> value is great enough, your vision will be obscured in-game when this function is called!</span>
             </p>
             
             <p>
                 <br><span class="function">Screen.Flash(float frames, int colorR = 255, int colorG = 255, int colorB = 255, int colorA = 255)</span> 
-                Flashes the screen for a given number of frames. A flash is an image that is displayed on the entire screen and fades afterwards.<br>
-                Change the color of the flash by changing the values of the 4 other variables, each one between 0 and 255.
+                Flashes the screen for a given number of frames. A flash is an image that is displayed on top of the entire screen and fades afterwards.<br>
+                Change the color of the flash by changing the values of the 4 other variables. Each one must be between 0 and 255.
             </p>
             
             <p>
                 <br><span class="function">Screen.CenterEventOnCamera(string name, int speed = 5, bool straightLine = false)</span> 
-                This function is an alias of Event.CenterOnScreen().<br>
-				Centers the given event on the camera. The camera's speed will be of speed pixels per second in each direction, 
-                unless you set straightLine to true. In that case, the camera will follow a line to center on the event.
+                This function is an alias of <span class="term">Event.CenterOnScreen()</span>.<br>
+				Centers the camera on the given event. The camera will move at <span class="term">speed</span> pixels per second in each direction, 
+                unless you set <span class="term">straightLine</span> to true. In that case, the camera will follow a line to the center of the event.
             </p>
             
             <p>
                 <br><span class="function">Screen.MoveCamera(int pixX, int pixY, int speed = 5, bool straightLine = false)</span> 
-                Moves the camera to a given position from the bottom left center of th screen. The camera's speed will be of speed pixels per second in 
-                each direction, unless you set straightLine to true. In that case, the camera will follow a line to reach the destination you gave it.
+                Moves the camera to a given position from the bottom left center of the screen.<br>The camera's speed will be 
+				<span class="term">speed</span> pixels per second in each direction, unless you set <span class="term">straightLine</span> to true. 
+				In that case, the camera will follow a line to reach the destination you entered.
             </p>
             
             <p>
                 <br><span class="function">Screen.ResetCameraPosition(int speed = 5, bool straightLine = false)</span> 
-                Centers the player on the camera. The camera's speed will be of speed pixels per second in each direction, 
-                unless you set straightLine to true. In that case, the camera will follow a line to center on the event.
+                Centers the camera on the player.<br>
+				The camera's speed will be <span class="term">speed</span> pixels per second in each direction, 
+                unless you set <span class="term">straightLine</span> to true. In that case, the camera will follow a line to the player's center.
             </p>
         </div>
        
         <div class="tab-pane text-style" id="overworld-object-inventory">
-            <h2>The Overworld: The Inventory Object</h2><br>
+            <h2><span class="CYF"></span>The Overworld: The Inventory Object</h2><br>
             
             <p>
                 <br><span class="function">Inventory.SetWeapon(string value)</span>
-                This function is an alias of Player.SetWeapon().<br>
-                Equips the weapon given to the player, only if the player has this weapon in his inventory.
+                This function is an alias of <span class="term">Player.SetWeapon</span>.<br>
+				Makes the player equip the given weapon, but only if it's in their inventory.
             </p>
             
             <p>
                 <br><span class="function">Inventory.SetArmor(string value)</span>
-                This function is an alias of Player.SetWeapon().<br>
-                Equips the armor given to the player, only if the player has this armor in his inventory.
+                This function is an alias of <span class="term">Player.SetArmor</span>.<br>
+				Makes the player equip the given armor, but only if it's in their inventory.
             </p>
             
             <p>
                 <br><span class="function">Inventory.AddItem(string name)</span>
-                This function is an alias of Player.SetWeapon().<br>
-                Equips the armor given to the player, only if the player has this armor in his inventory.
+				Adds the given item to the player's inventory.
             </p>
             
             <p>
                 <br><span class="function">Inventory.RemoveItem(int id)</span>
-                Removes the item n°id of the inventory.
+                Removes the item number <span class="term">id</span> from the inventory.
             </p>
             
             <p>
                 <br><span class="function">Inventory.IsItemInTheInventory(string name)</span>
-                If the inventory contains this item, return true. Returns false otherwise.
+                If the inventory contains this item, this will be true. It will be false otherwise.
             </p>
             
             <p>
                 <br><span class="function">Inventory.ItemExists(string name)</span>
-                Is this item exists in the engine's item list? Return true if yes, false otherwise.
+				If this item exists in the engine's item list (if you created/defined it already), this will be true. 
+				It will be false otherwise.
             </p>
             
             <p>
                 <br><span class="function">Inventory.GetItemID(string name)</span>
-                Returns the id of the first item matching with the given name. If this item isn't in the inventory, it returns -1 instead.
+				Gets the id of the first item with the same name as <span class="term">name</span><br>
+				If the item couldn't be found, this returns -1 instead.
             </p>
         </div>
 
-        <div class="tab-pane text-style" id="overworld-functions">
-            <h2>Create Your Frisk: Lua functions</h2><br><br>
-            <p>
-                Events have a very particular way to work: they are read then exec, that is to say that the compiler
-                reads the entire function, and then, if there is changed value within the code in a function as
-                SetChoice, the function has to be read again, so if you have set a global variable, it will be set
-                again, if you doesn't do what's necessary.
-                <br>Plus, some iterations will not work, as while iterations. I made something to replace it, you'll see
-                this later.
-            </p>
-            <br>
-            <p>
-                The overworld system creates by itself some local variables. Here's the list of variables that you may
-                need:
-
-                <li>Variables created after a choice: "Temp" + ID. By default, it will be 1, if 1 is already taken,
-                    it'll be 2 etc...</li><br>
-                <li>Variables created after a return point: "ReturnPoint" + ID. It uses the same generation technique
-                    than variables from choices.</li><br>
-
-                These variables' use case will be detailed further in the documentation. Keep reading!</document>
-            </p>
-            <br>
-            <p>
-                <br><span class="function">SetDialog(string[] text, bool formatted, string[] mugshot)</span>
-                Displays a text. There's nothing more to say.
-                <li>text = The different lines of text displayed</li><br>
-                <li>formatted = Do you want to add asterisks et cetera to your text? (if yes: \n for asterisks, \r for
-                    no asterisks, else \n for normal chariot return)
-                    <br>True by default.</li><br>
-                <li>mugshot = The name of your mugshots, without the extension. If you want to use it, you have to have
-                    at least one mugshot per text, or else it will not work.
-                    <br>They have to be at the path YourMod/Sprites/Mugshots/!</li>
-            </p>
-            <br>
-            <p>
-                <br><span class="function">SetChoice(string choice1, string choice2, string question = null, int ID = null)</span>
-                Displays a choice, and the response will be stocked in a temporary variable. For now there is a lot of
-                constraints, but I hope that I'll find a better way to do this easily. You can enter 2 choices for now
-                and with a maximum of 3 lines. Plus, the question have to have no more than one line.
-                <li>choice1, choice2 = The choices to choose. Maximum: 3 lines.</li><br>
-                <li>question = The displayed question. Maximum: 1 line.</li><br>
-                <li>ID = The index of the temporary value. The created variable will be named "Temp" + ID.
-                    <br>Will be automatically generated by default (1, 2, 3...)</li>
-            </p>
-            <br>
-            <p>
-                <br><span class="function">SetAnimOW(string eventName, string animName)</span>
-                Sets manually an animation to the selected event.
-                Deprecated: you better use SetAnimSwitch, use this function for animations that aren't connected to
-                others animations. In the actual player's animation, they are all connected, so for now don't worry
-                about this function.
-                <li>eventName = The name of the event.</li><br>
-                <li>animName = The name of the animation. The player have for now some animations as Up, UpIdle, Left...</li>
-            </p>
-            <br>
-            <p>
-                <br><span class="function">SetAnimSwitch(string eventName, string triggerName)</span>
-                Sets a trigger that will change the current animation of the selected event.
-                Used of the desired animation is connected with the actual player's animation, else you better use
-                SetAnimOW.
-            <br><div><img class="centerbt black" src="img/animswitches.png"></div><br>
-                You can see some arrows that goes from one animation to another: these arrows are the way to change
-                your current animation, if the correct switch is enabled.<br>
-                For example, if I activate the Switch "MovingLeft" while on the anim "DownIdle", I'll go to the anim
-                "Left".
-                And for SetAnimOW, you have to enter "Left" directly.
-                <li>eventName = The name of the event.</li><br>
-                <li>triggerName = The name of the animation trigger. The player have for now some triggers as MovingUp,
-                StopUp, MovingLeft...</li>
-            </p>
-            <br>
-            <p>
-                <br><span class="function">TeleportEvent(string eventName, float dirX, float dirY)</span>
-                Teleports the selected event to given coordinates.
-                <li>eventName = The name of the event.</li><br>
-                <li>dirX, dirY = coordinates.</li>
-            </p>
-            <br>
-            <p>
-                <br><span class="function">MoveEventToPoint(string eventName, float dirX, float dirY, bool wallPass)</span>
-                Forces the player to move to given coordinates. Enables wallPass to be able to pass through walls during
-                the movement.
-                <li>eventName = The name of the event.</li><br>
-                <li>dirX, dirY = coordinates.</li><br>
-                <li>wallPass = Enables this to be able to pass through walls</li>
-            </p>
-            <br>
-            <p>
-                <br><span class="function">DispImg(string path, int ID, float posX, float posY, float dimX, float dimY, int
-                                               toneR = 255, int toneG = 255, int toneB = 255, int toneA = -1)</span>
-                Sorry for this 10 arguments function guys, but I have a DynValue problem that disallow the use of
-                arrays, so for now it'll stay a 10 arguments function.
-                <br>This function displays the image at a given path. It attributes it an ID, so your image's name will
-                be "Image" + ID. Plus, you'll have to give the position of your image and its dimensions. You can add a
-                color to the image, if you really want to.
-                <li>path = The name of the image. Your image must be added in YourMad/Sprites.</li><br>
-                <li>ID = The ID of the image.</li><br>
-                <li>posX, posY = The position of the center of the image.</li><br>
-                <li>dimX, dimY = The dimensions of the image. Have to be positive.</li><br>
-                <li>toneR, toneG, toneB, toneA = The tone of the image. All values must be integers clamped from 0 to
-                    255. To activate the tone, just change the value of toneA.</li>
-            </p>
-            <br>
-            <p>
-                <br><span class="function">SupprImg(int id)</span>
-                Deletes an image displayed previously with a chosen ID.
-                <li>ID = The ID of the image you want to delete.</li>
-            </p>
-            <br>
-            <p>
-                <br><span class="function">RotateEvent(string name, int rotateX, int rotateY, int rotateZ, bool anim = true)</span>
-                This function rotates the transform (the emplacement of the object), making his image rotate as well.
-                To see some examples of rotation, remove the comment block of the function EventPage4 of EventTest.lua,
-                at Examples/Lua/Events.
-                <li>name = The name of the event.</li><br>
-                <li>rotateX, rotateY, rotateZ = The angle of rotation, in degrees. Make it upper than 360 for more than
-                    one turn, and negative to do an inverse rotation.</li><br>
-                <li>anim = Will this be animated? True by default.</li>
-
-            </p>
-            <br>
-            <p>
-                <br><span class="function">SetTone(bool anim, bool waitEnd, int r = 255, int g = 255, int b = 255, int a = 0)</span>
-                Adds an image above all previous images that sets a selected tone.
-                <li>anim = Do you want to use an anim? (true) or do you want the tone to be directly set? (false)</li><br>
-                <li>waitEnd = If there's an anim, do you want to wait until the end of the anim?</li><br>
-                <li>r, g, b, a = The color and alpha of the tone. Do not set an alpha of 255, or you'll not be able to
-                    see the other elements anymore. Clamped from 0 to 255, must be an integer.</li><br>
-            </p>
-            <br>
-            <p>
-                <br><span class="function">SetBattle(string encounterName, bool quickAnim = false, bool forceNoFlee = false)</span>
-                Sets a battle with a chosen encounter.
-                <li>encounterName = The name of the encounter. If the first encounter character is a '#', don't forget
-                    it.</li><br>
-                <li>quickAnim = Do you want the battle intro to be quick? (Do you remember Undyne's battle? It looks
-                    like this.)</li><br>
-                <li>forceNoFlee = If this is set to true, the player will not be able to flee in the next battle, except
-					if your encounter sets "flee" to true.</li><br>
-            </p>
-            <br>
-            <p>
-                <br><span class="function">GameOver(string deathText = null, string deathMusic = null)</span>
-                The title of this function explains all that you have to know about this function.
-                <li>deathText = The death text that replaces the current death text. If you want the text to be on
-                    several pages, use "\r". If you want a simple chariot return, use "\n".
-                    <br>WARNING: DO NOT PUT TEXT COMMANDS AS [voice:sans] IN THE TEXT, OR THE GAME WILL FREEZE!
-                    This problem will be solved soon, don't worry.</li><br>
-                <li>deathMusic = The name of the death music. The music must be in YourMod/Audio!</li><br>
-            </p>
-            <br>
-            <p>
-                <br><span class="function">SetReturnPoint(int index)</span>
-                This function is the replacement of a normal "while" iteration, with GetReturnPoint. It generates a
-                variable named "ReturnPoint" + index. See "GetReturnPoint" for an example.
-                <li>index = The ID of the return point.</li><br>
-            </p>
-            <br>
-            <p>
-                <br><span class="function">GetReturnPoint(int index)</span>
-                This function is the replacement of a normal "while" iteration, with SetReturnPoint. It sets the current
-                text index to the selected return point.
-                <li>index = The ID of the return point.</li><br>
-
-                Example:
-
-                <div class="code-container">
-                   <pre class="brush: lua;">
-                    function someWhileShit()
-                        int i = 0
-                        while(i < 5)
-                            i  = i + 1
-                        end
-                    end
-                    </pre>
-
-                    is the same as<br>
-
-                    <pre class="brush: lua;">
-                    function someReturnPointShit()
-                        int i = GetGlobal("i")
-                        if (i == null)
-                            i = 0
-                        end
-                        SetReturnPoint(1)
-                        if (i < 5)
-                            i = i + 1
-                            SetGlobal("i", i)
-                            GetReturnPoint(1)
-                        end
-                    end
-                    </pre>
-                </div>
-                <br>(Yeah, that's messy af)
-            </p>
-            <br>
-            <p>
-                <br><span class="function">WaitForInput()</span>
-                This function makes wait the program until the player presses the confirm button (Enter or Z).
-            </p>
-            <br>
-            <p>
-                <br><span class="function">SetEventPage(string eventName, int pageID)</span>
-                This function sets the event page ID for a chosen event. Not tested, so it may crash the game.
-                <li>eventName = The name of the event.</li><br>
-                <li>pageID = The ID of the page.</li><br>
-            </p>
-            <br>
-            <p>
-                <br><span class="function">PlayBGMOW(string bgm, float volume)</span>
-                Plays a BGM. I'm afraid that there's actually nothing more to say.
-                <li>bgm = The name of the bgm. The bgm must be in YourMod/Audio!</li><br>
-                <li>volume = The volume of the bgm, clamped from 0 to 1. For now I have a little problem that forces us
-                    to enter the volume of the bgm, but I'll fix it soon, don't worry.</li><br>
-            </p>
-            <br>
-            <p>
-                <br><span class="function">StopBGMOW(float fadeTime)</span>
-                Stops a BGM. You can make it fade, if you want to.
-                <li>fadeTime = The time until the bgm will be totally stopped, in seconds. If you don't want any fade,
-                    just type "0".</li><br>
-            </p>
-            <br>
-            <p>
-                <br><span class="function">PlaySoundOW(string sound, float volume)</span>
-                Plays a BGM. I'm afraid that there's actually nothing more to say in this function too.
-                <li>sound = The name of the sound. The sound must be in YourMod/Sounds!</li><br>
-                <li>volume = The volume of the sound, clamped from 0 to 1. Same problem as the bgm.</li><br>
-            </p>
-            <br>
-            <p>
-                <br><span class="function">Rumble(float seconds, float intensity = 3, bool fade = false)</span>
-                Rumbles the screen for "seconds" seconds, with "intensity" intensity, and set fade to true if you want
-				the rumble to fade in intensity.
-            </p>
-            <br>
-            <p>
-                <br><span class="function">Flash(float secondsOrFrames, bool isSeconds = false, int colorR = 255,
-				                       int colorG = 255, int colorB = 255, int colorA = 255)</span>
-                Flashes the screen for a given time, with a given color.
-                <li>secondsOrFrames = Time of the flash. In frames per default.</li><br>
-                <li>isSeconds = Set it to true to use time in scends instead of in frames.</li><br>
-                <li>colorR, colorG, colorB, colorA = Color of the flash.</li><br>
-            </p>
-            <br>
-            <p>
-                <br><span class="function">Save()</span>
-				Launches the save coroutine.
-            </p>
-            <br>
-            <p>
-                <br><span class="function">Hurt(int damage)</span>
-				Hurts the player with the given amount of damage. This is the reverse of Heal()
-            </p>
-            <br>
-            <p>
-                <br><span class="function">Heal(int heal)</span>
-				Heals the player with the given amount of heal. This is the reverse of Hurt().
-            </p>
-            <br>
-            <p>
-                <br><span class="function">AddItem(string Name)</span>
-				Adds the given database item to the Inventory.
-            </p>
-            <br>
-            <p>
-                <br><span class="function">RemoveItem(int ID)</span>
-				Removes the item n°ID of the Inventory. Does nothing if there is not an item at the given index.
-            </p>
-            <br>
-            <p>
-                <br><span class="function">StopEvent()</span>
-				Stops the event right now.
-            </p>
-            <br>
-            <p>
-                <br><span class="function">RemoveEvent(string Name)</span>
-				Remove the event named "Name" of the scene. It'll not be accessible anymore!
-            </p>
-            <br>
-            <p>
-                <br><span class="function">AddMoney(int amount)</span>
-				Add "amount" money to the Player's money count. You can use a negative number to remove money.
-            </p>
-        </div>
+        <!-- <div class="tab-pane check-style" id="overworld-functions">
+        </div> -->
 
         <div class="tab-pane text-style" id="cyf-inventory">
-            <h2>Create Your Frisk: The Inventory System</h2><br><br>
+            <h2><span class="CYF"></span> Create Your Frisk: The Inventory System</h2><br><br>
             <p>
-                It was hard to customize items and such in Unitale, right? Plus, items won't go if you used them,
-                because they are the only ones that will ever love you. But now, nobody loves you at all, because items
+                It was hard to customize items and such in Unitale, right? Plus, items wouldn't go away when you used them,
+                because they are the only ones that will ever love you. But now, nobody loves you at all, items
                 can be deleted and the Inventory System has been simplified! Here are the functions that are created to
-                help you with this hellish mechanism that are added items.
-                <br>Don't forget to use it like this: Inventory.function!
+                help you with this hellish mechanism that added items.
+				<br><br>Some of these functions can only be used in <span class="term">HandleItem</span>. Examples are 
+				included at the bottom of this page.
+                <br><br>Don't forget to use inventory functions like this: <span class="term">Inventory.function</span>!
             </p>
             <p>
                 <br><span class="function">GetItem(int index)</span>
                 Returns the name of the item of the inventory at the given index.
-                <li>index = Index of the chosen item.</li>
+                <br><span class="term" style="margin-left:20px">index</span> = Index of the chosen item.</li>
             </p>
             <p>
                 <br><span class="function">SetItem(int index, string Name)</span>
-                Sets the item of the inventory with the given name at the given index.
-                <li>index = Index of the chosen item.</li>
-                <li>Name = Name of the to-be-created item.</li>
+				Sets the inventory item at <span class="term">index</span> to the item <span class="term">Name</span>.
+                <br><span class="term" style="margin-left:20px">index</span> = Index to put the item in. The first item is position 1.
+                <br><span class="term" style="margin-left:20px">Name</span> = Name of the item to put in the inventory.
             </p>
             <p>
                 <br><span class="function">SetInventory(string[] names)</span>
-                Sets the inventory of the Player. Must be used after AddCustomItems if you added custom items.
-                <br>You have to use it like this: Inventory.SetInventory({"item1", "item2"});
-                <li>names = The names of the items.</li>
+                Sets the inventory of the Player. Must be used after <span class="term">AddCustomItems</span> if you want custom items.
+                <br>You have to use it like this: <span class="term">Inventory.SetInventory({"item1", "item2"})</span>;
+                <br><span class="term" style="margin-left:20px">names</span> = The names of the items.
             </p>
             <p>
                 <br><span class="function">AddCustomItems(string[] names, int[] types)</span>
-                Have to be used before setting the inventory if you added custom items. Add to the library of items the
-                strings given in the first table, with their type in the second table. If you don't do this, the engine
+                If you want to add custom items, this has to be used before <span class="term">SetInventory</span>.
+				This adds all items in <span class="term">names</span> to the inventory, where each item matches to an 
+				item type in <span class="term">types</span>. If you don't do this, the engine
                 will not recognise your newly created items.
-            <li>names = The names of your exclusive items.</li><br>
-            <li>types = The types of your exclusive items. Must be at the same size of the first array. Types: </li><br>
-			    <ul>
-				    <li>0 = Consumable. Will be deleted upon use.</li><br>
-				    <li>1 = Weapon. You will be able to equip this item as a weapon.</li><br>
-				    <li>2 = Armor. You will be able to equip this item as an armor.</li><br>
-				    <li>3 = Special. This item will not be deleted upon use.</li><br>
-				</ul>
-				You have to use it like this: Inventory.AddCustomItems({"item1", "item2"}, {1, 0});
+				<br><br>Usage: <span class="term">Inventory.AddCustomItems({"item1", "item2"}, {1, 0})</span>
+            <br><br><span class="term" style="margin-left:20px">names</span> = The names of your exclusive items.
+            <br><span class="term" style="margin-left:20px">types</span> = The types of your exclusive items. Must be at the same size of the first array.
+			</li>
+			<br>Types:<br>
+			    <div style="margin-left:20px">
+				    <span class="term">0</span> = Consumable. Will be deleted upon use.
+				    <br><span class="term">1</span> = Weapon. You will be able to equip this item as a weapon.
+				    <br><span class="term">2</span> = Armor. You will be able to equip this item as armor.
+				    <br><span class="term">3</span> = Special. This item will not be deleted upon use.
+				</div>
             </p>
             <p>
                 <br><span class="function">NoDelete</span>
-                Inventory.NoDelete = true --> Tells the engine that the next item will not be deleted if consumable.
+				Set <span class="term">Inventory.NoDelete</span> to true to make the next used consumable item not be used.
             </p>
             <p>
                 <br><span class="function">SetAmount(int amount)</span>
-                Used for Weapon and Armor type custom items. Sets the amount of ATK/DEF added by the equipped item.
-                <li>amount: amount of ATK/DEF added by your equipment if equipped.</li>
+				Used with Weapon and Armor items. If the item is a Weapon, this sets its ATK. If the item is armor,
+				this sets its DEF.
+                <br><span class="term" style="margin-left:20px">amount</span>: the amount of ATK/DEF the item will have.
             </p>
+			<br><br><h4>Examples:</h4>
+			<br>Example of a healing item:
+			<br><div class="code-container"><pre class="brush: lua">
+function EncounterStarting()
+	Inventory.AddCustomItems({"Starfait"}, {0})
+	Inventory.SetInventory({"Starfait"})
+end
+
+function HandleItem(ItemID)
+	if ItemID == "STARFAIT" then
+		Player.Heal(14)
+		BattleDialog({"You eat the Starfait.[w:10]\nYou recovered 14 HP!"})
+	end
+end
+			</pre></div>
+			<br>Example of a weapon:
+			<br><div class="code-container"><pre class="brush: lua">
+function EncounterStarting()
+	Inventory.AddCustomItems({"Shotgun"}, {1})
+	Inventory.SetInventory({"Shotgun"})
+end
+
+function HandleItem(ItemID)
+	if ItemID == "SHOTGUN" then
+		Inventory.SetAmount(16777215)
+		BattleDialog({"You equipped the Shotgun."})
+	end
+end
+			</pre></div>
+			<br>Example of armor:
+			<br><div class="code-container"><pre class="brush: lua">
+function EncounterStarting()
+	Inventory.AddCustomItems({"Shield"}, {2})
+	Inventory.SetInventory({"Shield"})
+end
+
+function HandleItem(ItemID)
+	if ItemID == "Shield" then
+		Inventory.SetAmount(8)
+		BattleDialog({"You equipped the rusty shield."})
+	end
+end
+			</pre></div>
+			<br>Example of a special item:
+			<br><div class="code-container"><pre class="brush: lua">
+function EncounterStarting()
+	Inventory.AddCustomItems({"Music Box"}, {3})
+	Inventory.SetInventory({"Music Box"})
+end
+
+function HandleItem(ItemID)
+	if ItemID == "MUSIC BOX" then
+		BattleDialog({"[noskip]You wind up the music box.[w:10]\nA haunting melody fills the room.", "The enemy's DEF drops!"})
+		enemies[1].SetVar("def", enemies[1].GetVar("def") / 2)
+	end
+end
+			</pre></div>
+			<br>Example of a persistent item:
+			<br><div class="code-container"><pre class="brush: lua">
+function EncounterStarting()
+	Inventory.AddCustomItems({"Test"}, {0})
+	Inventory.SetInventory({"Test"})
+end
+
+function HandleItem(ItemID)
+	if ItemID == "TEST" then
+		Inventory.NoDelete = true
+		BattleDialog({"This item won't be\rdeleted!"})
+	end
+end
+			</pre></div>
+			<br>Many items:
+			<br><div class="code-container"><pre class="brush: lua">
+function EncounterStarting()
+	Inventory.AddCustomItems({"Test", "Test2", "Shotgun", "Shield", "PsnPotion", "Life Roll", "Nothing"}, {0, 0, 1, 2, 0, 0, 3})
+	Inventory.SetInventory({"Test", "Test2", "Shotgun", "Shield", "PsnPotion", "Life Roll", "Nothing"})
+end
+
+function HandleItem(ItemID)
+    if (ItemID == "TEST") then
+        Inventory.NoDelete = true
+        BattleDialog({"This is a persistent item.[w:5]\nThe item will be in the\rinventory in the next turn!"})
+    elseif (ItemID == "TEST2") then
+        BattleDialog({"This is a normal item.[w:10]\nThe item will be gone\rby the next turn!"})
+    elseif (ItemID == "SHOTGUN") then
+        Inventory.SetAmount(16777215)
+		BattleDialog({"You equipped the Shotgun."})
+	elseif (ItemID == "SHIELD") then
+		Inventory.SetAmount(30)
+		AllowPlayerDef(true)
+		BattleDialog({"You equipped the shield."})
+    elseif (ItemID == "PSNPOTION") then
+        BattleDialog({"You drank the Poison Potion.","[noskip][waitall:10]...[waitall:1][w:20]\rThat was a bad idea.[w:20][health:kill]"})
+    elseif (ItemID == "LIFE ROLL") then
+        BattleDialog({"Your HP goes to 1[waitall:10]...[waitall:1][health:1,set]now.[w:20]\nNow, byebye![w:20][health:-1, killable]"})
+    elseif (ItemID == "NOTHING") then
+        BattleDialog({"You use Nothing. [w:10]Did you really\rthink that something would\rhappen?"})
+    end
+end
+			</pre></div>
         </div>
 		
         <div class="tab-pane text-style" id="cyf-ppcollision">
-			<h2>Create Your Frisk: The Pixel-Perfect Collision System</h2><br><br>
-			<p>
-				Do you have enough of all of these rectangular collisions and thousands of lines of special collision
-				condition in OnHit()? Well the Pixel-Perfect Collision System is made for YOU!
-				<br>You can use it for the entire encounter with SetPPCollision(bool) or on a special bullet with
-				bullet.ppcollision. The bullet's ppcollision value will override the encounter's ppcollision value.
-				<br>Wait a minute before rushing on the Pixel-Perfect Collision System like this...or wait, do as you want!
-				Now the Pixel-Perfect Collision System supports bullets with scale!	You can rotate the bullets (this is why
-				it took me one week to make it) and move them like you always did!
-				<br>One more thing: the Pixel-Perfect Collision System is more ressourceful than the Normal Collision
-				System. So, I'll warn you: you better use the Pixel-Perfect Collision System for the bullets that needs
-				it, and not for all bullets.
-				<br>A last tip: Don't use Pixel-Perfect for non-damaging bullets, it'll only add some lag!
-			</p>
+			<h2><span class="CYF"></span> Create Your Frisk: The Pixel-Perfect Collision System</h2><br><br>
+				<p>Have you had enough of Unitale's default rectangular collisions and having to use thousands of lines
+				of <span class="term">if</span> statements in <span class="term">OnHit</span> just to get precise
+				collisions? Then the Pixel-Perfect Collision System is for YOU!</p>
+				<p>You can use this system for your entire encounter with <span class="term">SetPPCollision(bool)</span>,
+				or you can apply it just to a bullet with <span class="term">bullet.ppcollision</span>. 
+				The bullet's <span class="term">ppcollision</span> value will override the encounter's
+				<span class="term">ppcollision</span> value.</p>
+				<p>But wait just a minute before rushing to use the Pixel-Perfect Collision System...or not, do as you want!</p>
+				<p>Now, the Pixel-Perfect Collision System also supports bullets with scale! You can rotate and move bullets
+				like always and collision will still work! (this is why it took me one week to make this feature)</p>
+				<p>Anoter thing: the Pixel-Perfect Collision System is more resource-intensive than the Normal Collision
+				System. So, I'll warn you: only use this for bullets that <i>need</i> Pixel-Perfect Collision; don't use it
+				for <i>all</i> bullets.</p>
+				<p>One last tip: Don't use Pixel-Perfect for bullets that won't damage you, as that will just waste resources!</p>
 			<p>
 				<br><span class="function">Bullet.ppcollision</span>
-				The collision system of the bullet. If true, you'll use the Pixel-Perfect Collision system for this bullet.
+				The collision system of the bullet. If true, this bullet will use Pixel-Perfect Collision.
 			</p>
 			<p>
 				<br><span class="function">SetPPCollision(bool) [E/M/W]</span>
 				Setting this to true will force all bullets that don't have a specified collision type to be Pixel-Perfect bullets.
 				<br>False by default.
 			</p>
+			<br><br><br>
+			<img src="img/PP.png">
         </div>
 		
         <div class="tab-pane text-style" id="cyf-text">
-			<h2>Create Your Frisk: The Text Object</h2><br><br>
-			<p>
-				A lot of people were waiting for this one: I'm proud to present you the Text Object! With it, you can create a text
+			<h2><span class="CYF"></span> Create Your Frisk: The Text Object</h2><br><br>
+			<p>A lot of people were waiting for this: I'm proud to present you the Text Object! With it, you can create text
 				wherever you want, with a bubble or without a bubble, with a speech thing or without a speech thing... It's 100%
-				your choice!<br>
-				Plus, if you choose to make a bubble, the height of the bubble is automatically computed, but you can still choose the
-				bubble's height if you want to.<br>
-                Per default, a Text Object has a bubble with a auto computed height with no speech thing. Plus, they are hidden when you
-				enter and come out of ENEMYDIALOGUE. If you want to change this, you have a lot of functions to do so. Look down to see them!
+				your choice!</p>
+			<p>Plus, if you choose to make a bubble, the height of the bubble is automatically computed, but you can still choose the
+				bubble's height if you want to.</p>
+            <p>By default, a Text Object has a bubble with an automatically-set height, with no speech thing. Plus, the object is hidden when
+				you enter or come out of <span class="term">ENEMYDIALOGUE</span>. If you want to change this, there are a lot of functions
+				to do so. Look down to see them!
 			</p>
 			<p>
 				<br><span class="function">CreateText(Table text, Table position, int textWidth, string layer = "BelowPlayer", int bubbleHeight = -1) returns TextObject [E/M/W]</span>
 				This function creates a Text Object and returns it. However, as you can see, a lot of parameters are needed, here is what you should put:
 				<ul>
-				    <li>text - Your text, like you set them in BattleDialog() or enemy.currentdialogue: {"this is a text n°1", "this is a text n°2}</li><br>
-				    <li>position - The position of the center of the object. Sorry if it may be hard to place it, but you'll be able to use SetPivot()
-					to place it better afterwards. You only need two numbers, if you add more nothing will be done with them: {320, 240}</li><br>
-				    <li>textWidth - You'll always need the text's width! The bubble's width will be 20px larger than the text's width. One last thing,
-					bubbles have a minimum width of 40: 150</li><br>
-				    <li>layer - The sprite layer of the Text Object. If it doesn't exist, it returns an error. This argument is optional, the Text Object
-					will be in the layer BelowPlayer if you don't set this value: "BelowArena"</li><br>
-				    <li>bubbleHeight - You can enter a static bubble height here if you want to. Per default, it'll be -1, the value used to auto compute
-					the height of the bubble. However, bubbles have a minimum height of 40: 150</li><br>
+				    <li><span class="term">text</span> - The text to display. Used the same way as in <span class="term">BattleDialog</span>: 
+					<span class="term">{"Text 1", "Text 2"}</span></li><br>
+				    <li><span class="term">position</span> - The position of the center of the object. Sorry if it may be hard to place it, but you'll be 
+					able to use <span class="term">SetPivot</span> to place it better afterwards. You only need two numbers, like this: 
+					<span class="term">{320, 240}</span></li><br>
+				    <li><span class="term">textWidth</span> - You'll always need the text's width! The bubble's width will be 20px larger than the text's 
+					width. Also, bubbles have a minimum width of 40.<br>Example: <span class="term">150</span></li><br>
+				    <li><span class="term">layer</span> - The sprite layer of the Text Object. If it doesn't exist, it returns an error. This argument is 
+					optional. If it's not provided, the Text Object will be in the layer <span class="term">BelowPlayer</span> if you don't set this value. 
+					<br>Example: <span class="term">"BelowPlayer"</span></li><br>
+				    <li><span class="term">bubbleHeight</span> - You can enter a static bubble height here if you want to. By default, this will
+					be -1, which will auto compute the height of the bubble. However, bubbles have a minimum height of 40.
+					<br>Example: <span class="term">150</span></li><br>
 				</ul>
 			</p>
 			<p>
 				<br><span class="function">Text.progressmode</span>
-				This value is used to set the progression mode of the text: "auto" will launch the next line after a given number of frames set in
-				Text.SetAutoWaitTimeBetweenFrames(), "manual" will need the player to press the Confirm button to launch the next line and "none"
-				means that you'll need to manually display the next line in your code with Text.NextLine().
+				This value is used to set the progression mode of the text: Setting it to <span class="term">"auto"</span> will make the text start a new 
+				line after a  given number of frames set in <span class="term">Text.SetAutoWaitTimeBetweenFrames()</span>. Setting it to
+				<span class="term">"manual"</span> will need the player to press the Confirm button at the end of each dialogue. Setting it to 
+				<span class="term">"none"</span> means that you'll need to manually display the next line in-code using 
+				<span class="term">Text.NextLine()</span>.
 			</p>
 			<p>
 				<br><span class="function">Text.x</span>
-				The absolute x position of the bubble, from the bottom left corner of the screen. This value depends from the object's pivot.
+				The absolute x position of the object, measured from the bottom left corner of the screen. This value depends on the object's pivot.
 			</p>
 			<p>
 				<br><span class="function">Text.y</span>
-				The absolute y position of the bubble, from the bottom left corner of the screen. This value depends from the object's pivot.
+				The absolute y position of the object, measured from the bottom left corner of the screen. This value depends on the object's pivot.
 			</p>
 			<p>
 				<br><span class="function">Text.textWidth</span>
-				Width of the text.  If the value is lower than 16, it'll be 16.
+				Width of the text. If the value is lower than 16, it'll be set back to 16.
 			</p>
 			<p>
 				<br><span class="function">Text.bubbleHeight</span>
-				Height of the bubble. If the value is lower than 40, it'll be 40.
+				Height of the bubble. If the value is lower than 40, it'll be set back to 40.
 			</p>
 			<p>
 				<br><span class="function">Text.layer</span>
-				The sprite layer of the Text Object. If it doesn't exist, it returns an error. "BelowPlayer" per default.
+				The sprite layer of the Text Object. If it doesn't exist, it returns an error. This is <span class="term">"BelowPlayer"</span> by default.
 			</p>
 			<p>
 				<br><span class="function">Text.SetText(Table text)</span>
-				Sets the text of the Text Object. If it became inactive, it'll reactive itself right away.
+				Sets the text in the Text Object. If the text object is inactive when this is called, the object will reactive itself.
 			</p>
 			<p>
 				<br><span class="function">Text.AddText(Table text)</span>
-				Adds the given text to the current text. Acts like Text.SetText() if the text is already finished.
+				Adds the given text to the object's text table. Acts like <span class="term">Text.SetText()</span> if all the text is already done.
 			</p>
 			<p>
 				<br><span class="function">Text.SetFont(string fontName)</span>
-				Sets the font of the text. Can be easily replaced by the text command [font], but whatever.<br>
+				Sets the font of the text. Can be easily replaced by the text command <span class="term">[font]</span>, but whatever.<br>
 				Returns an error if the font doesn't exist.
 			</p>
 			<p>
 				<br><span class="function">Text.SetEffect(string effect, float intensity)</span>
-				Sets the effect of the text. Can be easily replaced be the text command [effect], but whatever.<br>
-				Can only take "none", "twitch", "shake" or "twitch" as effect. If you want to use the basic intensity value, enter -1.
+				Sets the effect of the text. Can be easily replaced be the text command <span class="term">[effect]</span>, but whatever.<br>
+				Can only take <span class="term">none</span>, <span class="term">twitch</span>, <span class="term">shake</span> or
+				<span class="term">twitch</span> as the effect. If you want to use the basic intensity value, enter <span class="term">-1</span>.
 			</p>
 			<p>
-				<br><span class="function">Text.IsTheLineFinished() returns bool</span>
-				If the current line is finished, this function will return true. Else, it'll return false.
+				<br><span class="function">Text.IsTheLineFinished()</span>
+				If the current dialogue is finished, this function will return true. Otherwise, it'll return false.
 			</p>
 			<p>
-				<br><span class="function">Text.IsTheTextFinished() returns bool</span>
-				If the entire text is finished, this function will return true. Else, it'll return false.
+				<br><span class="function">Text.IsTheTextFinished()</span>
+				If the entire text table is finished, this function will return true. Otherwise, it'll return false.
 			</p>
 			<p>
 				<br><span class="function">Text.ShowBubble(string side = null, int/string position = null)</span>
-				Use this function to add a bubble to the text. You can also set the side and the position of the speech thing if you
-				want to, look at Text.SetSpeechThingSideAndPosition() to see how to use it.
+				Use this function to add a bubble to the text. You can also set the side and the position of the tail (a.k.a. speech thing) if you
+				want to. Look at <span class="term">Text.SetSpeechThingSideAndPosition</span> to see how to use it.
 			</p>
 			<p>
 				<br><span class="function">Text.SetSpeechThingPositionAndSide(string side, int/string position = center)</span>
-				Sets the size and position of the speech thing. The side can only take "left", "right", "up", "down" or "none" as value.<br>
-				"none" is used to hide the speech thing, the other directions are the side where the speech thing is.<br>
-				You have two ways to set the speech thing's position:
+				Sets the size and position of the dialogue bubble's tail (a.k.a speech thing). The <span class="term">side</span> can only take 
+				<span class="term">"left"</span>, <span class="term">"right"</span>, <span class="term">"up"</span>, <span class="term">"down"</span> or 
+				<span class="term">"none"</span>.<br>
+				<span class="term">"none"</span> is used to hide the speech thing, while the other directions control the side of the bubble where the 
+				speech thing is.<br>
+				You have two ways to set the speech thing's position (the <span class="term">center</span> argument):
 				<ul>
-				    <li>An int for static position from the bottom of the bubble for "left" and "right" and from the left for "up" and "down".
-					These are clamped from 0 to the bubble's height for "left"/"right" and to the bubble's width for "up"/"down".</li><br>
-				    <li>A string for a percentage value. 0% is the bottom for "left"/"right" and the left for "up"/"right", 50% is the middle
-					of the side and 100% is the top for "left"/"right" and the right for "up"/"down". The values are clamped from 0% to 100%</li><br>
+				    <li>An int. If the <span class="term">side</span> is <span class="term">"left"</span> or <span class="term">"right"</span>, this will 
+					determine its distance from the bottom of the bubble. If the <span class="term">side</span> is <span class="term">"up"</span> 
+					or <span class="term">"down"</span>, then this will determine its distance from the left side of the bubble.
+					<br>If on the bottom or top of the bubble, this value can only be between 0 and the bubble's width. If on the left or right sides 
+					of the bubble, this value can only be between 0 and the bubble's height.</li><br>
+					<li>A string. It must be formatted like <span class="term">"0%"</span>, where you can replace the "0" with any percentage. 
+					If on the top or bottom of the bubble, <span class="term">"0%"</span> will be the left side of the bubble and 
+					<span class="term">"100%"</span> will be the right side of the bubble. If on the left or right side, <span class="term">"0%"</span> 
+					will be the bottom of the bubble and <span class="term">"100%"</span> will be the top of the bubble. The value can only be between 
+					"0%" and "100%".</li><br>
 				</ul>
 			</p>
 			<p>
@@ -2738,29 +3053,27 @@ end</pre>
 			</p>
 			<p>
 				<br><span class="function">Text.NextLine()</span>
-				Shows the next line of the text istantly, not regarding if the current line is finished nor the current progress mode.
+				Shows the next line (dialogue) of the text instantly, regardless of if the current one is finished or what progress mode the object has.
 			</p>
 			<p>
 				<br><span class="function">Text.MoveTo(int x, int y)</span>
-				Moves the text to the given coordinates. These values depends from the object's pivot.
+				Moves the text to the given coordinates. These values depends on the object's pivot.
 			</p>
 			<p>
-				<br><span class="function">Text.SetPivot(float x, float y)</span>
-				Sets the pivot of the object. The pivot is the value where the text's position is set: the basis value is {0.5, 0.5},
-				but if you set it to {0, 0}, each time you modify the object's position, you'll set the position of the bottom left corner of the
-				object instead of its center. {1, 1} is the top right corner, {0, 1} the top left corner and {1, 0} the bottom right corner.
+				<br><span class="function">Text.SetPivot(float/int x, float/int y)</span>
+				Sets the pivot of the object. The pivot is the value where the text's position is set. The default value is 
+				<span class="term">{0.5, 0.5}</span>. If you set it to <span class="term">{0, 0}</span>, then each time you modify 
+				the object's position, the position will be based off of the bottom left corner of the object instead of its center. 
+				<span class="term">{1, 1}</span> is the top right corner, <span class="term">{0, 1}</span> the top left corner and 
+				<span class="term">{1, 0}</span> is the bottom right corner.
 			</p>
 			<p>
 				<br><span class="function">Text.SetAutoWaitTimeBetweenTexts(int time)</span>
-				Sets the time to wait after each line to launch the next line in the "auto" progress mode. The value time is given in frames.
+				Sets the number of frames to wait before automatically advancing the text. Only applies to the "auto" progress mode.
 			</p>
 			<p>
 				<br><span class="function">Text.MoveTo(int x, int y)</span>
-				Moves the text at the position x, y from the bottom left corner of the window.
-			</p>
-			<p>
-				<br><span class="function">Text.SetPivot(int x, int y)</span>
-				Sets the pivot of the text object.
+				Moves the text to the position (x by y), relative to the bottom left corner of the window.
 			</p>
 		</div>		
 
@@ -3160,7 +3473,6 @@ end
             <h2 style="text-decoration: none; line-height:50px;">* YOU WON!<br>
                 * You earned 0 EXP and 0 gold.<br>
                 * also the nav menu is broken now</h2><br>
-				<font style="color:#000000;font-size:10px;">WD was here</font>
         </div>
 
 
@@ -3175,9 +3487,10 @@ end
     <div class="col-xs-3"><img class="centerbt black" alt="Undertale fake button" src="img/itembt_0.png" height="42">
     </div>
     <div class="col-xs-3"><a href="#mercy" data-toggle="tab"><img class="centerbt black" alt="Undertale fake button"
-                                                                  src="img/mercybt_0.png" width="110" height="42"></a>
+                                                                  src="img/mercybt_0.png" height="42"></a>
     </div>
 </div>
+<br>
 <!-- Bootstrap core JavaScript
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->

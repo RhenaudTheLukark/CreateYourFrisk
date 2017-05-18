@@ -18,6 +18,7 @@ enemypositions = {
 possible_attacks = {"bullettest_bouncy", "bullettest_chaserorb", "bullettest_touhou"}
 
 function EncounterStarting()
+    wow()
     -- If you want to change the game state immediately, this is the place.
 end
 

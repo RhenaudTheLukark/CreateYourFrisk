@@ -127,7 +127,8 @@ public class Title : MonoBehaviour {
         } else if (phase == 2) {
             if (tmName.transform.localScale.x < 3) {
                 tmName.transform.localScale = new Vector3(tmName.transform.localScale.x + 0.01f, tmName.transform.localScale.y + 0.01f, 1);
-                tmName.transform.localPosition = new Vector3(actualX - (((tmName.transform.localScale.x - 1f) * diff) / 2f), actualY - (((tmName.transform.localScale.x - 1f) * diff) / 6), tmName.transform.localPosition.z);
+                tmName.transform.localPosition = new Vector3(actualX - (((tmName.transform.localScale.x - 1) * diff) / 2), 
+                                                             actualY - (((tmName.transform.localScale.x - 1) * diff) / 6), tmName.transform.localPosition.z);
             }
             if (GlobalControls.input.Right == UndertaleInput.ButtonState.PRESSED || GlobalControls.input.Left == UndertaleInput.ButtonState.PRESSED)
                 setColor((choiceLetter + 1) % 2, 2);
@@ -177,14 +178,15 @@ public class Title : MonoBehaviour {
         while (blank.color.a <= 1) {
             if (tmName.transform.localScale.x < 3) {
                 tmName.transform.localScale = new Vector3(tmName.transform.localScale.x + 0.01f, tmName.transform.localScale.y + 0.01f, 1);
-                tmName.transform.localPosition = new Vector3(actualX - (((tmName.transform.localScale.x - 1f) * diff) / 2f), actualY - (((tmName.transform.localScale.x - 1f) * diff) / 6), tmName.transform.localPosition.z);
+                tmName.transform.localPosition = new Vector3(actualX - (((tmName.transform.localScale.x - 1) * diff) / 2), 
+                                                             actualY - (((tmName.transform.localScale.x - 1) * diff) / 6), tmName.transform.localPosition.z);
             }
             blank.color = new Color(blank.color.r, blank.color.g, blank.color.b, blank.color.a + 0.003f);
             yield return 0;
         }
         while (Camera.main.GetComponent<AudioSource>().isPlaying)
             yield return 0;
-        PlayerCharacter.instance.Reset();
+        PlayerCharacter.instance.Reset(false);
         LuaScriptBinder.ClearVariables();
         GlobalControls.MapEventPages.Clear();
         GameObject.DontDestroyOnLoad(gameObject);

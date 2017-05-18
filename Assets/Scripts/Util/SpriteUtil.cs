@@ -26,7 +26,6 @@ public static class SpriteUtil {
         } catch (Exception) {
             UIController.instance.encounter.enabledEnemies[bubbleID].bubbleWideness = 0;
         }
-
         Sprite newSprite = SpriteRegistry.Get(filename);
         if (newSprite == null) {
             if (filename.Length == 0) {
@@ -40,13 +39,18 @@ public static class SpriteUtil {
         Image img = target.GetComponent<Image>();
         if (!img) {
             SpriteRenderer img2 = target.GetComponent<SpriteRenderer>();
+            Vector2 pivot = img2.GetComponent<RectTransform>().pivot;
             img2.sprite = newSprite;
             img2.GetComponent<RectTransform>().sizeDelta = new Vector2(newSprite.texture.width, newSprite.texture.height);
+            img2.GetComponent<RectTransform>().pivot = pivot;
         } else {
+            Vector2 pivot = img.rectTransform.pivot;
             img.sprite = newSprite;
             //enemyImg.SetNativeSize();
             img.rectTransform.sizeDelta = new Vector2(newSprite.texture.width, newSprite.texture.height);
+            img.rectTransform.pivot = pivot;
         }
+        
     }
 
     public static Sprite spriteWithXml(XmlNode spriteNode, Sprite source) {
@@ -89,7 +93,7 @@ public static class SpriteUtil {
         SpriteTexture.LoadImage(FileLoader.getBytesFrom(filename));
         SpriteTexture.filterMode = FilterMode.Point;
         SpriteTexture.wrapMode = TextureWrapMode.Clamp;
-        newSprite = Sprite.Create(SpriteTexture, new Rect(0, 0, SpriteTexture.width, SpriteTexture.height), new Vector2(0.5f, 0.5f), PIXELS_PER_UNIT);
+        newSprite = Sprite.Create(SpriteTexture, new Rect(0, 0, SpriteTexture.width, SpriteTexture.height), new Vector2(0.5f, UnitaleUtil.isOverworld() ? 0 : 0.5f), PIXELS_PER_UNIT);
         //optional XML loading
         FileInfo fi = new FileInfo(Path.ChangeExtension(filename, "xml"));
         if (fi.Exists) {

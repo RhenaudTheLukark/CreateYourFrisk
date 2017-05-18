@@ -36,6 +36,7 @@ public class SelectOMatic : MonoBehaviour {
         //byte[] bytes = tex.EncodeToPNG();
         //File.WriteAllBytes(Application.dataPath + "/ItsAVeryHackyWayToMakeTransitionsIKnowThanksYouCanDeleteThisFileIfYouWantTo.png", bytes);
         StaticInits.Initialized = false;
+        StaticInits.initAll();
         Debug.Log("Loading " + StaticInits.ENCOUNTER);
         SceneManager.LoadScene("Battle");
     }

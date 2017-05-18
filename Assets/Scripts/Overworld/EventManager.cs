@@ -91,7 +91,7 @@ public class EventManager : MonoBehaviour {
 
     void AfterLoad() {
         LoadLaunched = true;
-        if (!scriptLaunched) {
+        if (script == null) {
             if (!onceReload) {
                 onceReload = true;
                 ResetEvents();
@@ -107,7 +107,6 @@ public class EventManager : MonoBehaviour {
                         return;
                     }
                 }
-            script = null;
             GameObject.FindObjectOfType<Fading>().BeginFade(-1);
             LoadLaunched = false;
         } else
@@ -115,7 +114,7 @@ public class EventManager : MonoBehaviour {
     }
 
     void CheckEndEvent() {
-        if (script != null && scriptLaunched) {
+        if (script != null) {
             Table t = script.script.Globals;
             if (t.Get(DynValue.NewString("CYFEventCoroutine")).Coroutine.State == CoroutineState.Dead)
                 endEvent();
@@ -161,7 +160,7 @@ public class EventManager : MonoBehaviour {
             CheckCurrentEvent();
             testEventDestruction();
             runCoroutines();
-            if (!PlayerOverworld.inText) {
+            if (script == null && !scriptLaunched) {
                 if (testEventAuto()) return;
                 if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED && !passPressOnce) {
                     RaycastHit2D hit;
@@ -366,6 +365,13 @@ public class EventManager : MonoBehaviour {
         eventScripts.Clear();
         foreach (GameObject go in GameObject.FindGameObjectsWithTag("Event")) {
             events.Add(go);
+            if (go.GetComponent<BoxCollider2D>()) {
+                if (go.GetComponent<BoxCollider2D>().size == new Vector2(0, 0))
+                    go.GetComponent<BoxCollider2D>().size = new Vector2(go.GetComponent<RectTransform>().sizeDelta.x / go.GetComponent<RectTransform>().localScale.x * 100,
+                                                                        go.GetComponent<RectTransform>().sizeDelta.y / go.GetComponent<RectTransform>().localScale.y * 100);
+                if (go.GetComponent<BoxCollider2D>().offset == new Vector2(-1, -1))
+                    go.GetComponent<BoxCollider2D>().offset = new Vector2(0, go.GetComponent<BoxCollider2D>().size.y / 2);
+            }
             if (go.GetComponent<SpriteRenderer>()) {
                 if (go.name == "Player")
                     sprCtrls[go.name] = PlayerOverworld.instance.sprctrl;
@@ -387,7 +393,7 @@ public class EventManager : MonoBehaviour {
     /// <param name="go"></param>
     [HideInInspector]
     public bool executeEvent(GameObject go, int page = -1, bool isCoroutine = false) {
-        if (scriptLaunched && !isCoroutine)
+        if (script != null && !isCoroutine)
             return false;
         int actualEventIndex = -1;
         for (int i = 0; i < events.Count; i++)
@@ -404,7 +410,7 @@ public class EventManager : MonoBehaviour {
         //If the script we have to load exists, let's initialize it and then execute it
         if (!isCoroutine) {
             this.actualEventIndex = actualEventIndex;
-            PlayerOverworld.inText = true;  //UnitaleUtil.writeInLogAndDebugger("executeEvent true:" + go.GetComponent<EventOW>().actualPage);
+            PlayerOverworld.playerNoMove = true; //Event launched
             scriptLaunched = true;
         }
         try {
@@ -728,20 +734,20 @@ public class EventManager : MonoBehaviour {
     public static void GetEventStates(int id) {
         if (!GlobalControls.MapEventPages.ContainsKey(id))
             return;
-        try {
             foreach (string str in GlobalControls.MapEventPages[id].Keys)
-                GameObject.Find(str).GetComponent<EventOW>().actualPage = GlobalControls.MapEventPages[id][str];
-        } catch (Exception e) { Debug.LogError(e); }
+                try {
+                     GameObject.Find(str).GetComponent<EventOW>().actualPage = GlobalControls.MapEventPages[id][str];
+                } catch (Exception e) { Debug.LogError(e); }
     }
 
     /// <summary>
     /// Used to end a current event
     /// </summary>
-    public void endEvent(bool isCoroutine = false) {
+    public void endEvent() {
         PlayerOverworld.instance.textmgr.setTextFrameAlpha(0);
         PlayerOverworld.instance.textmgr.textQueue = new TextMessage[] { };
         PlayerOverworld.instance.textmgr.destroyText();
-        PlayerOverworld.inText = false;
+        PlayerOverworld.playerNoMove = false; //Event finished
         scriptLaunched = false;
         script = null;
     }
@@ -838,18 +844,20 @@ public class EventManager : MonoBehaviour {
                     bool test2 = false;
 
                     if (go != GameObject.Find("Player")) {
-                        if (go.GetComponent<EventOW>().moveSpeed < endPointFromNow.magnitude)
-                            test2 = PlayerOverworld.instance.AttemptMove(clamped.x, clamped.y, go, wallPass);
-                        //If we reached the destination, stop the function
-                        else {
-                            test2 = PlayerOverworld.instance.AttemptMove(endPointFromNow.x, endPointFromNow.y, go, wallPass);
-                            if (wallPass)
-                                foreach (GameObject go2 in colliders)
-                                    if (go2.name != "Background")
-                                        go2.SetActive(true);
-                            scr.Call("CYFEventNextCommand");
-                            yield break;
-                        }
+                        try {
+                            if (go.GetComponent<EventOW>().moveSpeed < endPointFromNow.magnitude)
+                                test2 = PlayerOverworld.instance.AttemptMove(clamped.x, clamped.y, go, wallPass);
+                            //If we reached the destination, stop the function
+                            else {
+                                test2 = PlayerOverworld.instance.AttemptMove(endPointFromNow.x, endPointFromNow.y, go, wallPass);
+                                if (wallPass)
+                                    foreach (GameObject go2 in colliders)
+                                        if (go2.name != "Background")
+                                            go2.SetActive(true);
+                                scr.Call("CYFEventNextCommand");
+                                yield break;
+                            }
+                        } catch (MissingReferenceException) { }
                     } else {
                         if (PlayerOverworld.instance.speed < endPointFromNow.magnitude)
                             test2 = PlayerOverworld.instance.AttemptMove(clamped.x, clamped.y, go, wallPass);
@@ -1061,6 +1069,7 @@ public class EventManager : MonoBehaviour {
         GameObject.Find("save_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 1);
         GameObject.Find("save_interior").GetComponent<Image>().color = new Color(0, 0, 0, 1);
         GameObject.Find("save_border_outer").transform.SetAsLastSibling();
+        PlayerOverworld.instance.utHeart.transform.SetAsLastSibling();
         TextManager txtLevel = GameObject.Find("TextManagerLevel").GetComponent<TextManager>(), txtTime = GameObject.Find("TextManagerTime").GetComponent<TextManager>(),
                     txtMap = GameObject.Find("TextManagerMap").GetComponent<TextManager>(), txtName = GameObject.Find("TextManagerName").GetComponent<TextManager>(),
                     txtSave = GameObject.Find("TextManagerSave").GetComponent<TextManager>(), txtReturn = GameObject.Find("TextManagerReturn").GetComponent<TextManager>();
