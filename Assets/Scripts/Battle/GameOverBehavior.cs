@@ -17,6 +17,7 @@ public class GameOverBehavior : MonoBehaviour {
     public static GameObject battleCamera;
     public static GameObject battleContainer;
     public static GameObject gameOverContainer;
+    public static GameObject gameOverContainerOw;
     private string[] heartShardAnim = new string[] { "UI/Battle/heartshard_0", "UI/Battle/heartshard_1", "UI/Battle/heartshard_2", "UI/Battle/heartshard_3" };
     private TextManager gameOverTxt;
     private TextManager reviveText;
@@ -89,9 +90,6 @@ public class GameOverBehavior : MonoBehaviour {
     public void Revive() { revived = true; }
 
     public void StartDeath(string[] deathText = null, string deathMusic = null) {
-        //if (SceneManager.GetActiveScene().name == "Battle") overworld = false;
-        //else                                                overworld = true;
-
         if (!UnitaleUtil.isOverworld()) {
             UIController.instance.encounter.endWave(true);
             autolinebreakstate = LuaEnemyEncounter.script.GetVar("autolinebreak").Boolean;
@@ -129,7 +127,10 @@ public class GameOverBehavior : MonoBehaviour {
                 go.SetParent(battleContainer.transform);
         battleContainer.SetActive(false);*/
 
-        gameOverContainer.SetActive(true);
+        if (UnitaleUtil.isOverworld())
+            gameOverContainerOw.SetActive(true);
+        else
+            gameOverContainer.SetActive(true);
 
         Camera.main.GetComponent<AudioSource>().clip = AudioClipRegistry.GetMusic("mus_gameover");
         GameObject.Find("GameOver").GetComponent<Image>().sprite = SpriteRegistry.Get("UI/spr_gameoverbg_0");

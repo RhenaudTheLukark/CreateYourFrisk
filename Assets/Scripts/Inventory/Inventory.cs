@@ -14,33 +14,33 @@ public static class Inventory {
     public static LuaInventory luaInventory;
     public static int tempAmount = 0;
     public static Dictionary<string, string> NametoDesc = new Dictionary<string, string>(), NametoShortName = new Dictionary<string, string>(), NameToReplac = new Dictionary<string, string>();
-    public static Dictionary<string, int> NametoType = new Dictionary<string, int>();
+    public static Dictionary<string, int> NametoType = new Dictionary<string, int>(), NametoPrice = new Dictionary<string, int>();
     public static bool usedItemNoDelete = false;
     //public static bool overworld = false;
-    public static List<UnderItem> container = new List<UnderItem> { new UnderItem("Testing Dog") };
+    public static List<UnderItem> inventory = new List<UnderItem> { new UnderItem("Testing Dog") };
 
     public static void SetItemList(string[] items = null) {
-        container = new List<UnderItem>(new UnderItem[] { });
+        inventory = new List<UnderItem>(new UnderItem[] { });
         if (items != null)
             for (int i = 0; i < items.Length; i++) {
                 if (i == 8) {
                     UnitaleUtil.displayLuaError("Setting the inventory", "You added too much items. The inventory can only contain 8 items.");
                     break;
                 }
-                container.Add(new UnderItem(items[i]));
+                inventory.Add(new UnderItem(items[i]));
             }
     }
 
     public static void SetItem(int index, string Name) {
         if (index > 7)                      UnitaleUtil.displayLuaError("Setting an item", "The inventory can only contain 8 items.");
-        else if (index >= container.Count)  AddItem(Name);
-        else                                container[index] = new UnderItem(Name);
+        else if (index >= inventory.Count)  AddItem(Name);
+        else                                inventory[index] = new UnderItem(Name);
     }
 
     public static bool AddItem(string Name) {
-        if (container.Count == 8)
+        if (inventory.Count == 8)
             return false;
-        container.Add(new UnderItem(Name));
+        inventory.Add(new UnderItem(Name));
         return true;
     }
 
@@ -75,11 +75,11 @@ public static class Inventory {
     public static void UseItem(int ID) {
         usedItemNoDelete = false;
         tempAmount = 0;
-        string Name = container[ID].Name, replacement = null;
+        string Name = inventory[ID].Name, replacement = null;
         //bool inverseRemove = false;
-        int type = container[ID].Type;
+        int type = inventory[ID].Type;
         float amount = 0;
-        CallOnSelf("HandleItem", new DynValue[] { DynValue.NewString(Name.ToUpper()) });
+        CallOnSelf("HandleItem", new DynValue[] { DynValue.NewString(Name.ToUpper()), DynValue.NewNumber(ID + 1) });
 
         TextMessage[] mess = new TextMessage[] { };
         if (addedItems.Length != 0) {
@@ -89,7 +89,7 @@ public static class Inventory {
                     if (type == 1 || type == 2)
                         mess = ChangeEquipment(Name, mess);
                     if (!usedItemNoDelete && type == 0)
-                        container.RemoveAt(ID);
+                        inventory.RemoveAt(ID);
                     if ((type == 1 || type == 2) && mess.Length != 0 && !UIController.instance.battleDialogued)
                         UIController.instance.ActionDialogResult(mess, UIController.UIState.ENEMYDIALOGUE);
                     return;
@@ -101,11 +101,11 @@ public static class Inventory {
             mess = ChangeEquipment(Name, mess);
         }
         if (replacement != null) {
-            container.RemoveAt(ID);
-            container.Insert(ID, new UnderItem(replacement));
+            inventory.RemoveAt(ID);
+            inventory.Insert(ID, new UnderItem(replacement));
         //} else if ((!inverseRemove && type == 0) || (inverseRemove && type != 0))
         } else if (type == 0)
-            container.RemoveAt(ID);
+            inventory.RemoveAt(ID);
         if (!UnitaleUtil.isOverworld()) {
             if (!UIController.instance.battleDialogued && mess.Length != 0)
                 UIController.instance.ActionDialogResult(mess, UIController.UIState.ENEMYDIALOGUE);
@@ -116,59 +116,151 @@ public static class Inventory {
     }
     
     public static void AddItemsToDictionaries() {
-        NametoDesc.Add("Testing Dog", "A dog that tests something.\rDon't ask me what, I don't know.");        NametoShortName.Add("Testing Dog", "TestDog");          NametoType.Add("Testing Dog", 3);            
-        NametoDesc.Add("Bandage", "It has already been used\rseveral times.");                                  
+        NametoDesc.Add("Testing Dog", "A dog that tests something.\rDon't ask me what, I don't know.");        NametoShortName.Add("Testing Dog", "TestDog");
+        NametoType.Add("Testing Dog", 3);                                                                      NametoPrice.Add("Testing Dog", 1);       
+
+        NametoDesc.Add("Bandage", "It has already been used\rseveral times.");
+        NametoPrice.Add("Bandage", 5);
+
         NametoDesc.Add("Monster Candy", "Has a distinct, non-licorice\rflavor.");                              NametoShortName.Add("Monster Candy", "MnstrCndy");
+        NametoPrice.Add("Monster Candy", 5);
+
         NametoDesc.Add("Spider Donut", "A donut made with Spider Cider\rin the batter.");                      NametoShortName.Add("Spider Donut", "SpidrDont");
+        NametoPrice.Add("Spider Donut", 7);
+
         NametoDesc.Add("Spider Cider", "Made with whole spiders, not just\rthe juice.");                       NametoShortName.Add("Spider Cider", "SpidrCidr");
+        NametoPrice.Add("Spider Cider", 18);
+
         NametoDesc.Add("Butterscotch Pie", "Butterscotch-cinnamon pie,\rone slice.");                          NametoShortName.Add("Butterscotch Pie", "ButtsPie");
-        NametoDesc.Add("Snail Pie", "Heals Some HP. An acquired taste.");                                     
+        NametoPrice.Add("Butterscotch Pie", 900);
+
+        NametoDesc.Add("Snail Pie", "Heals Some HP. An acquired taste.");
+        NametoPrice.Add("Snail Pie", 899);
+
         NametoDesc.Add("Snowman Piece", "Please take this to the ends\rof the earth.");                        NametoShortName.Add("Snowman Piece", "SnowPiece");
+        NametoPrice.Add("Snowman Piece", 300);
+
         NametoDesc.Add("Nice Cream", "Instead of a joke, the wrapper\rsays something nice.");                  NametoShortName.Add("Nice Cream", "NiceCream");
-        NametoDesc.Add("Bisicle", "It's a two-pronged popsicle,\rso you can eat it twice.");                    
-        NametoDesc.Add("Unisicle", "It's a SINGLE-pronged popsicle.\rWait, that's just normal...");             
+        NametoPrice.Add("Nice Cream", 15);
+
+        NametoDesc.Add("Bisicle", "It's a two-pronged popsicle,\rso you can eat it twice.");
+        NametoPrice.Add("Bisicle", 15);
+
+        NametoDesc.Add("Unisicle", "It's a SINGLE-pronged popsicle.\rWait, that's just normal...");
+        NametoPrice.Add("Unisicle", 8);
+
         NametoDesc.Add("Cinnamon Bunny", "A cinnamon roll in the shape\rof a bunny.");                         NametoShortName.Add("Cinnamon Bunny", "CinnaBun");
+        NametoPrice.Add("Cinnamon Bunny", 25);
+
         NametoDesc.Add("Astronaut Food", "For feeding a pet astronaut.");                                      NametoShortName.Add("Astronaut Food", "AstroFood");
+        NametoPrice.Add("Astronaut Food", 25);
+
         NametoDesc.Add("Crab Apple", "An aquatic fruit that resembles\ra crustacean.");                        NametoShortName.Add("Crab Apple", "CrabApple");
-        NametoDesc.Add("Sea Tea", "Made from glowing marsh water.\rIncreases SPEED for one battle.");           
+        NametoPrice.Add("Crab Apple", 25);
+
+        NametoDesc.Add("Sea Tea", "Made from glowing marsh water.\rIncreases SPEED for one battle.");
+        NametoPrice.Add("Sea Tea", 18);
+
         NametoDesc.Add("Abandoned Quiche", "A psychologically damaged\rspinach egg pie.");                     NametoShortName.Add("Abandoned Quiche", "Ab Quiche");
+        NametoPrice.Add("Abandoned Quiche", 200);
+
         NametoDesc.Add("Temmie Flakes", "It's just torn up pieces of\rconstruction paper.");                   NametoShortName.Add("Temmie Flakes", "TemFlakes");
-        NametoDesc.Add("Dog Salad", "Recovers HP (Hit Poodles)");                                              
+        NametoPrice.Add("Temmie Flakes", 6);
+
+        NametoDesc.Add("Dog Salad", "Recovers HP (Hit Poodles)");
+        NametoPrice.Add("Dog Salad", 10);
+
         NametoDesc.Add("Instant Noodles", "Comes with everything you need\rfor a quick meal!");                NametoShortName.Add("Instant Noodles", "InstaNood");
+        NametoPrice.Add("Instant Noodles", 30);
+
         NametoDesc.Add("Hot Dog...?", "The \"meat\" is made of something\rcalled a \"water sausage.\"");       NametoShortName.Add("Hot Dog...?", "Hot Dog");
-        NametoDesc.Add("Hot Cat", "Like a hot dog, but with\rlittle cat ears on the end.");                     
-        NametoDesc.Add("Junk Food", "Food that was probably once\rthrown away.");                               
+        NametoPrice.Add("Hot Dog...?", 30);
+
+        NametoDesc.Add("Hot Cat", "Like a hot dog, but with\rlittle cat ears on the end.");
+        NametoPrice.Add("Hot Cat", 30);
+
+        NametoDesc.Add("Junk Food", "Food that was probably once\rthrown away.");
+        NametoPrice.Add("Junk Food", 25);
+
         NametoDesc.Add("Hush Puppy", "This wonderful spell will stop\ra dog from casting magic.");             NametoShortName.Add("Hush Puppy", "HushPupe");
-        NametoDesc.Add("Starfait", "A sweet treat made of sparkling stars.");                                  
+        NametoPrice.Add("Hush Puppy", 600);
+
+        NametoDesc.Add("Starfait", "A sweet treat made of sparkling stars.");
+        NametoPrice.Add("Starfait", 60);
+
         NametoDesc.Add("Glamburger", "A hamburger made of edible\rglitter and sequins.");                      NametoShortName.Add("Glamburger", "GlamBurg");
+        NametoPrice.Add("Glamburger", 120);
+
         NametoDesc.Add("Legendary Hero", "Sandwich shaped like a sword.\rIncreases ATTACK when eaten.");       NametoShortName.Add("Legendary Hero", "Leg.Hero");
+        NametoPrice.Add("Legendary Hero", 300);
+
         NametoDesc.Add("Steak in the Shape of Mettaton's Face", "Huge steak in the shape of\rMettaton's face.You don't feel\rlike it's made of real meat...");
-                                                                                                               NametoShortName.Add("Steak in the Shape of Mettaton's Face", "FaceSteak");
+        NametoShortName.Add("Steak in the Shape of Mettaton's Face", "FaceSteak");                             NametoPrice.Add("Steak in the Shape of Mettaton's Face", 500);
+
         NametoDesc.Add("Popato Chisps", "Regular old popato chisps.");                                         NametoShortName.Add("Popato Chisps", "PT Chisps");
+        NametoPrice.Add("Popato Chisps", 25);
+
         NametoDesc.Add("Bad Memory", "?????");                                                                 NametoShortName.Add("Bad Memory", "BadMemory");
+        NametoPrice.Add("Bad Memory", 10);
+
         NametoDesc.Add("Last Dream", "The goal of \"Determination\".");                                        NametoShortName.Add("Last Dream", "LastDream");
+        NametoPrice.Add("Last Dream", 25);
 
-        NametoDesc.Add("Stick", "Its bark is worse than\rits bite. ");                                                                                                 NametoType.Add("Stick", 3);
-        NametoDesc.Add("Toy Knife", "Made of plastic. A rarity\rnowadays.");                                                                                           NametoType.Add("Toy Knife", 1);
-        NametoDesc.Add("Tough Glove", "A worn pink leather glove.\rFor five-fingered folk.");                  NametoShortName.Add("Tough Glove", "TuffGlove");        NametoType.Add("Tough Glove", 1);
-        NametoDesc.Add("Ballet Shoes", "These used shoes make you\rfeel incredibly dangerous.");               NametoShortName.Add("Ballet Shoes", "BallShoes");       NametoType.Add("Ballet Shoes", 1);
-        NametoDesc.Add("Torn Notebook", "Contains illegible scrawls.\rIncreases INV by 6.");                   NametoShortName.Add("Torn Notebook", "TornNotbo");      NametoType.Add("Torn Notebook", 1);
-        NametoDesc.Add("Burnt Pan", "Damage is rather consistent.\rConsumable items heal four more HP.");                                                              NametoType.Add("Burnt Pan", 1);
-        NametoDesc.Add("Empty Gun", "An antique revolver. It has no\rammo. Must be used precisely,\ror damage will be low.");                                          NametoType.Add("Empty Gun", 1);
-        NametoDesc.Add("Worn Dagger", "Perfect for cutting plants\rand vines.");                               NametoShortName.Add("Worn Dagger", "WornDG");           NametoType.Add("Worn Dagger", 1);
-        NametoDesc.Add("Real Knife", "Here we are!");                                                          NametoShortName.Add("Real Knife", "RealKnife");         NametoType.Add("Real Knife", 1);
 
-        NametoDesc.Add("Faded Ribbon", "If you're cuter, monsters\rwon't hit you as hard.");                   NametoShortName.Add("Faded Ribbon", "Ribbon");          NametoType.Add("Faded Ribbon", 2);
-        NametoDesc.Add("Manly Bandanna", "It has seen some wear.\rIt has abs drawn on it.");                   NametoShortName.Add("Manly Bandanna", "Bandanna");      NametoType.Add("Manly Bandanna", 2);
-        NametoDesc.Add("Old Tutu", "Finally, a protective piece\rof armor.");                                                                                          NametoType.Add("Old Tutu", 2);
-        NametoDesc.Add("Cloudy Glasses", "Glasses marred with wear.\rIncreases INV by 9.");                    NametoShortName.Add("Cloudy Glasses", "ClodGlass");     NametoType.Add("Cloudy Glasses", 2);
+        NametoDesc.Add("Stick", "Its bark is worse than\rits bite. ");
+        NametoType.Add("Stick", 3);                                                                            NametoPrice.Add("Stick", 50);
+
+        NametoDesc.Add("Toy Knife", "Made of plastic. A rarity\rnowadays.");
+        NametoType.Add("Toy Knife", 1);                                                                        NametoPrice.Add("Toy Knife", 30);
+
+        NametoDesc.Add("Tough Glove", "A worn pink leather glove.\rFor five-fingered folk.");                  NametoShortName.Add("Tough Glove", "TuffGlove");
+        NametoType.Add("Tough Glove", 1);                                                                      NametoPrice.Add("Tough Glove", 50);
+
+        NametoDesc.Add("Ballet Shoes", "These used shoes make you\rfeel incredibly dangerous.");               NametoShortName.Add("Ballet Shoes", "BallShoes");
+        NametoType.Add("Ballet Shoes", 1);                                                                     NametoPrice.Add("Ballet Shoes", 100);
+
+        NametoDesc.Add("Torn Notebook", "Contains illegible scrawls.\rIncreases INV by 6.");                   NametoShortName.Add("Torn Notebook", "TornNotbo");
+        NametoType.Add("Torn Notebook", 1);                                                                    NametoPrice.Add("Torn Notebook", 55);
+
+        NametoDesc.Add("Burnt Pan", "Damage is rather consistent.\rConsumable items heal four more HP.");
+        NametoType.Add("Burnt Pan", 1);                                                                        NametoPrice.Add("Burnt Pan", 200);
+
+        NametoDesc.Add("Empty Gun", "An antique revolver. It has no\rammo. Must be used precisely,\ror damage will be low.");
+        NametoType.Add("Empty Gun", 1);                                                                        NametoPrice.Add("Empty Gun", 350);
+
+        NametoDesc.Add("Worn Dagger", "Perfect for cutting plants\rand vines.");                               NametoShortName.Add("Worn Dagger", "WornDG");
+        NametoType.Add("Worn Dagger", 1);                                                                      NametoPrice.Add("Worn Dagger", 500);
+
+        NametoDesc.Add("Real Knife", "Here we are!");                                                          NametoShortName.Add("Real Knife", "RealKnife");
+        NametoType.Add("Real Knife", 1);                                                                       NametoPrice.Add("Real Knife", 99999);
+
+
+        NametoDesc.Add("Faded Ribbon", "If you're cuter, monsters\rwon't hit you as hard.");                   NametoShortName.Add("Faded Ribbon", "Ribbon");
+        NametoType.Add("Faded Ribbon", 2);                                                                     NametoPrice.Add("Faded Ribbon", 30);
+
+        NametoDesc.Add("Manly Bandanna", "It has seen some wear.\rIt has abs drawn on it.");                   NametoShortName.Add("Manly Bandanna", "Bandanna");
+        NametoType.Add("Manly Bandanna", 2);                                                                   NametoPrice.Add("Manly Bandanna", 50);
+
+        NametoDesc.Add("Old Tutu", "Finally, a protective piece\rof armor.");
+        NametoType.Add("Old Tutu", 2);                                                                         NametoPrice.Add("Old Tutu", 100);
+
+        NametoDesc.Add("Cloudy Glasses", "Glasses marred with wear.\rIncreases INV by 9.");                    NametoShortName.Add("Cloudy Glasses", "ClodGlass");
+        NametoType.Add("Cloudy Glasses", 2);                                                                   NametoPrice.Add("Cloudy Glasses", 35);
+
         NametoDesc.Add("Temmie Armor", "The things you can do with a\rcollege education! Raises ATTACK when\rworn. Recovers HP every other\rturn. INV up slightly."); 
-                                                                                                               NametoShortName.Add("Temmie Armor", "Temmie AR");       NametoType.Add("Temmie Armor", 2);
-        NametoDesc.Add("Stained Apron", "Heals 1 HP every other turn.");                                       NametoShortName.Add("Stained Apron", "StainApro");      NametoType.Add("Stained Apron", 2);
+        NametoShortName.Add("Temmie Armor", "Temmie AR");       NametoType.Add("Temmie Armor", 2);             NametoPrice.Add("Temmie Armor", 9999);
+
+        NametoDesc.Add("Stained Apron", "Heals 1 HP every other turn.");                                       NametoShortName.Add("Stained Apron", "StainApro");
+        NametoType.Add("Stained Apron", 2);                                                                    NametoPrice.Add("Stained Apron", 200);
+
         NametoDesc.Add("Cowboy Hat", "This battle-worn hat makes you\rwant to grow a beard. It also\rraises ATTACK by 5.");
-                                                                                                               NametoShortName.Add("Cowboy Hat", "CowboyHat");         NametoType.Add("Cowboy Hat", 2);
-        NametoDesc.Add("Heart Locket", "It says \"Best Friends Forever.\"");                                   NametoShortName.Add("Heart Locket", "<--Locket");       NametoType.Add("Heart Locket", 2);
-        NametoDesc.Add("The Locket", "You can feel it beating.");                                              NametoShortName.Add("The Locket", "TheLocket");         NametoType.Add("The Locket", 2);
+        NametoShortName.Add("Cowboy Hat", "CowboyHat");          NametoType.Add("Cowboy Hat", 2);              NametoPrice.Add("Cowboy Hat", 350);
+
+        NametoDesc.Add("Heart Locket", "It says \"Best Friends Forever.\"");                                   NametoShortName.Add("Heart Locket", "<--Locket");
+        NametoType.Add("Heart Locket", 2);                                                                     NametoPrice.Add("Heart Locket", 500);
+
+        NametoDesc.Add("The Locket", "You can feel it beating.");                                              NametoShortName.Add("The Locket", "TheLocket");         
+        NametoType.Add("The Locket", 2);                                                                       NametoPrice.Add("The Locket", 99999);
     }
 
     public static void UpdateEquipBonuses() {
@@ -396,8 +488,8 @@ public static class Inventory {
     }
 
     public static int InventoryNumber(string itemName) {
-        for (int i = 0; i < container.Count; i++)
-            if (container[i].Name == itemName)
+        for (int i = 0; i < inventory.Count; i++)
+            if (inventory[i].Name == itemName)
                 return i + 1;
         return -1;
     }
@@ -407,7 +499,7 @@ public static class Inventory {
     }
 
     public static void RemoveItem(int index) {
-        try { container.RemoveAt(index); } catch { }
+        try { inventory.RemoveAt(index); } catch { }
     }
 
     private static void SetEquip(string Name) {
@@ -452,19 +544,19 @@ public static class Inventory {
     }
 
     public static void RemoveAddedItems() {
-        for (int i = 0; i < container.Count; i ++)
+        for (int i = 0; i < inventory.Count; i ++)
             foreach (string str in addedItems)
-                if (container[i].Name == str) {
-                    container.RemoveAt(i);
+                if (inventory[i].Name == str) {
+                    inventory.RemoveAt(i);
                     i --;
                     break;
                 }
 
         foreach (string str in addedItems) {
             if (str == PlayerCharacter.instance.Weapon && PlayerCharacter.instance.Weapon != "Stick" && !NametoDesc.ContainsValue(str)) {
-                for (int i = 0; i < container.Count; i++)
-                    if (container[i].Name == "Stick") {
-                        container.RemoveAt(i);
+                for (int i = 0; i < inventory.Count; i++)
+                    if (inventory[i].Name == "Stick") {
+                        inventory.RemoveAt(i);
                         break;
                     }
                 PlayerCharacter.instance.Weapon = "Stick";
@@ -476,9 +568,9 @@ public static class Inventory {
             }
 
             if (str == PlayerCharacter.instance.Armor && PlayerCharacter.instance.Armor != "Bandage" &&!NametoDesc.ContainsValue(str)) {
-                for (int i = 0; i < container.Count; i++)
-                    if (container[i].Name == "Bandage") {
-                        container.RemoveAt(i);
+                for (int i = 0; i < inventory.Count; i++)
+                    if (inventory[i].Name == "Bandage") {
+                        inventory.RemoveAt(i);
                         break;
                     }
                 PlayerCharacter.instance.Armor = "Bandage";

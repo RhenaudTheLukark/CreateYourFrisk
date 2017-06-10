@@ -7,15 +7,15 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class LuaEventOW {
-    private TextManager textmgr;
+    //private TextManager textmgr;
     public ScriptWrapper appliedScript;
     
     public delegate void LoadedAction(string name, object args);
     [MoonSharpHidden]
     public static event LoadedAction StCoroutine;
 
-    [MoonSharpHidden]
-    public LuaEventOW(TextManager textmgr) { this.textmgr = textmgr; }
+    /*[MoonSharpHidden]
+    public LuaEventOW(TextManager textmgr) { this.textmgr = textmgr; }*/
 
     /// <summary>
     /// Permits to teleport an event.

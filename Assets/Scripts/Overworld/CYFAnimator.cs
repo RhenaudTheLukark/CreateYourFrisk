@@ -10,8 +10,8 @@ public class CYFAnimator : MonoBehaviour {
     private LuaSpriteController sprctrl;
     private Vector2 lastPos;
 
-    void OnEnable()  { Fading.StartFade += LateStart; }
-    void OnDisable() { Fading.StartFade -= LateStart; }
+    void OnEnable()  { StaticInits.Loaded += LateStart; }
+    void OnDisable() { StaticInits.Loaded -= LateStart; }
 
     [System.Serializable] //Permits to be able to change the data of anims via the Editor
     public struct Anim {
@@ -29,9 +29,13 @@ public class CYFAnimator : MonoBehaviour {
 
     // Use this for initialization
     void LateStart() {
-        if (EventManager.instance.sprCtrls.ContainsKey(gameObject.name))  sprctrl = EventManager.instance.sprCtrls[gameObject.name];
-        else if (gameObject.name == "Player")                             sprctrl = PlayerOverworld.instance.sprctrl;
-        else                                                              throw new CYFException("A CYFAnimator component must be tied to an event, however the GameObject " + gameObject.name + " doesn't seem to be one.");
+        if (EventManager.instance.sprCtrls.ContainsKey(gameObject.name)) sprctrl = EventManager.instance.sprCtrls[gameObject.name];
+        else if (gameObject.name == "Player") sprctrl = PlayerOverworld.instance.sprctrl;
+        else {
+            EventManager.instance.ResetEvents();
+            if (!EventManager.instance.sprCtrls.ContainsKey(gameObject.name))
+                throw new CYFException("A CYFAnimator component must be tied to an event, however the GameObject " + gameObject.name + " doesn't seem to be one.");
+        }
         Anim anim = GetAnimPerName(beginAnim);
         lastPos = gameObject.transform.position;
         waitForStart = false;

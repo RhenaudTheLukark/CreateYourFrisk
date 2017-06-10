@@ -5,7 +5,7 @@ arenasize = {155, 130}
 nextwaves = {"bullettest_touhou"}
 flee = false
 autolinebreak = true
-playerskipdocommand = true
+--playerskipdocommand = true
 timer = 0
 index = 0
 --revive = true
@@ -37,6 +37,10 @@ function EncounterStarting()
         bullet.sprite.Scale(1, 2)
         bullet.isPersistent = true]]
 	--Types : 0 = Consumable, 1 = Weapon, 2 = Armor, else = Special (you must use 3)
+    maintext = CreateText({"Hi"}, {400, 99}, 320, "Top", 100)
+    maintext.progressmode = "none"
+    maintext.HideBubble()
+    maintext.SetEffect("none", -1)
 	Inventory.AddCustomItems({"TEST", "TEST2", "Shotgun", "Shotgun2", "Shotgun3", "Shotgun4", "Bandage", "PsnPotion", "Life Roll", "Nothing", "Pie", "Snails"}, {0, 0, 1, 1, 1, 1, 0, 0, 0, 3, 0, 0})
 	Inventory.SetInventory({"Shotgun", "Shotgun2", "Butterscotch Pie", "Bandage", "Nothing", "PsnPotion", "Life Roll", "Real Knife"})
 	Player.lv = 999
@@ -60,20 +64,12 @@ end
 
 function DefenseEnding() --This built-in function fires after the defense round ends.
     encountertext = RandomEncounterText() --This built-in function gets a random encounter text from a random enemy.
-    --[[maintext = CreateText(
-            {"[font:uidialog][novoice][waitall:3]Greetings.",
-             "[novoice][waitall:3]I[w:20] am " .. Player.name .. ".",
-             "[novoice][waitall:3][color:ff0000]Thank you.",
-             "[novoice][waitall:3]Your power awakened me\nfrom death."}, {400, 99}, 320, "Top", 100)
-    maintext.progressmode = "manual"
     --maintext.SetText(
     --    {"[font:uidialog][color:ff0000][novoice][waitall:3]Greetings.",
     --     "[font:uidialog][color:ff0000][novoice][waitall:3]I[w:20] am Chara.",
     --     "[font:uidialog][color:ff0000][novoice][waitall:3]Greetings.",
     --     "[novoice][waitall:3]Thank you."})
-    --maintext.SetEffect("none", -1)
-    maintext.HideBubble()
-    State("NONE")
+    --State("NONE")
     if #texts == 0 then
         local text = CreateText({"Okay, this is a[color:00ffff] test.[color:000000]", "It works!"}, {540, 400}, 150)
         text.ShowBubble("up", "50%")
@@ -82,7 +78,7 @@ function DefenseEnding() --This built-in function fires after the defense round 
     else 
         texts[1].SetText({"Omg this is a second test!", "AND OMG IT REALLY WORKS I'M SO HAPPY YAY YAY YAY!"})
         texts[1].ShowBubble("down", 75)
-    end]]
+    end
 end
 
 function yay()
@@ -93,17 +89,30 @@ function HandleSpare()
     State("ENEMYDIALOGUE")
 end
 
+page = 0
+itemCount = 8
+selection = 0
+
+function EnteringState(new, old)
+    if old == "ITEMMENU" then
+        selection = 0
+    end
+end
+
 function HandleItem(ItemID)
     if ItemID == "TEST" then
 		Inventory.NoDelete = true
 		BattleDialog({"This is a test of a persistent\ritem. If it succeeded, the item\rmust be in the inventory in\rthe next turn!"})
+        return
 	elseif ItemID == "TEST2" then
 		BattleDialog({"This is a test of a normal item.\rAnd it succeeded!!!"})
 	elseif ItemID == "SHOTGUN" then
 		Inventory.SetAmount(16777215)
+        return
 	elseif ItemID == "SHOTGUN2" then
 		Inventory.SetAmount(16777215)
 		BattleDialog({"This is an example of equipment!"})
+        return
 	elseif ItemID == "BANDAGE" then
 		BattleDialog({"This is an example of a replaced\robject. If you see this text, that\rmeans that this works!"})
 	elseif ItemID == "PSNPOTION" then
@@ -112,6 +121,7 @@ function HandleItem(ItemID)
 		BattleDialog({"Your HP goes to 1[waitall:10]...[waitall:1][health:1, set]now.[w:20]\rNow, byebye![w:20][health:-1, killable]"})
 	elseif ItemID == "NOTHING" then
 		BattleDialog({"You use Nothing.[w:10]Did you really thought\rthat something would happen?"})
+        return
 	elseif ItemID == "PIE" then
         BattleDialog({"You ate the Pie. \nIt reminds you of Frisk."}) 
         Player.Heal(99)
@@ -120,6 +130,7 @@ function HandleItem(ItemID)
         Player.Heal(15)
     end
     BattleDialog({"I'm blocking the text path!"})
+    itemCount = itemCount - 1
 end
 	
 function Heal(amount)
@@ -127,7 +138,34 @@ function Heal(amount)
 	Player.hp = Player.hp + amount
 end
 
+--0 1
+--2 3
+function UpdateInput()
+    itemCount = itemCount - 1
+    if Input.Left == 1 and not (selection < 2) then
+        selection = selection - 1 - selection % 2 == 0 and 2 or 0
+    elseif Input.Right == 1 and selection < itemCount - 1 then
+        selection = selection + 1 + selection % 2 == 1 and 2 or 0
+    elseif Input.Right == 1 and selection % 2 == 1 and math.floor(selection / 4) == math.floor(itemCount / 4) and not ((itemCount % 4) < (2 * selection - 1)) then
+        selection = (selection + 3) % 4
+    end
+    if Input.Up == 1 or Input.Down == 1 and not (selection == itemCount and itemCount % 2 == 0) then
+        selection = math.floor(selection / 2) * 2 + ((selection + 1) % 2)
+    end
+    page = math.floor(selection / 4)
+    itemCount = itemCount + 1
+end
+
+function GetInventoryId()
+    return selection + 1
+end
+
+doIt = 0
 function Update()
+    if GetCurrentState() == "ITEMMENU" then
+        UpdateInput()
+        DEBUG(GetInventoryId() .. " / " .. itemCount)
+    end
    -- maintext.SetText({"[instant]yay" .. timer})
     --[[if GetCurrentState() == "DEFENDING" then
             --DEBUG(Wave[1]["wavename"])
@@ -157,6 +195,11 @@ function Update()
         NewAudio.PlayMusic("Box","mus_zz_megalovania",true,1)
         Audio.LoadFile("mus_zz_megalovania")
     end
+    
+    if doIt == 2 then
+        maintext.SetText({"[instant][font:uidialog][color:ff0000][novoice]" .. tostring(timer)})
+    end
+    doIt = doIt % 2 + 1
     
 	
 	--DEBUG(Misc.WindowY)

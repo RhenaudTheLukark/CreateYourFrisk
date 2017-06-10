@@ -28,6 +28,12 @@ public class Title : MonoBehaviour {
             LuaScriptBinder.Set(null, "ModFolder", MoonSharp.Interpreter.DynValue.NewString("Title"));
             UnitaleUtil.AddKeysToMapCorrespondanceList();
         }
+        GameObject firstCamera = GameObject.Find("Main Camera");
+        firstCamera.SetActive(false);
+        if (GameObject.Find("Main Camera"))
+            GameObject.Destroy(firstCamera);
+        else
+            firstCamera.SetActive(true);
         tmName = GameObject.Find("TextManagerResetName").GetComponent<TextManager>();
         tmName.setHorizontalSpacing(2);
         tmName.setFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_DEFAULT_NAME));
@@ -38,6 +44,7 @@ public class Title : MonoBehaviour {
             GameObject.Find("Title").GetComponent<SpriteRenderer>().enabled = false;
             GameObject.Find("Title (1)").GetComponent<SpriteRenderer>().enabled = true;
         }
+        GameObject.DontDestroyOnLoad(Camera.main.gameObject);
         StartCoroutine(TitlePhase1());
 	}
 
@@ -80,8 +87,8 @@ public class Title : MonoBehaviour {
                         GameObject.Find("TextManagerTime").GetComponent<TextManager>().setHorizontalSpacing(2);
                         GameObject.Find("TextManagerMap").GetComponent<TextManager>().setHorizontalSpacing(2);
                         GameObject.Find("TextManagerName").GetComponent<TextManager>().setTextQueue(new TextMessage[] { new TextMessage("[noskipatall]" + PlayerCharacter.instance.Name, false, true) });
-                        if (GlobalControls.crate)  GameObject.Find("TextManagerLevel").GetComponent<TextManager>().setTextQueue(new TextMessage[] { new TextMessage("[noskipatall]VL" + PlayerCharacter.instance.LV, false, true) });
-                        else                       GameObject.Find("TextManagerLevel").GetComponent<TextManager>().setTextQueue(new TextMessage[] { new TextMessage("[noskipatall]LV" + PlayerCharacter.instance.LV, false, true) });
+                        GameObject.Find("TextManagerLevel").GetComponent<TextManager>().setTextQueue(new TextMessage[] { new TextMessage("[noskipatall]" + (GlobalControls.crate ? "VL" : "LV") +
+                                                                                                                                         PlayerCharacter.instance.LV, false, true) });
                         GameObject.Find("TextManagerTime").GetComponent<TextManager>().setTextQueue(new TextMessage[] { new TextMessage("[noskipatall]0:00", false, true) });
                         GameObject.Find("TextManagerMap").GetComponent<TextManager>().setTextQueue(new TextMessage[] { new TextMessage("[noskipatall]" + SaveLoad.savedGame.lastScene, false, true) });
                         tmName.setTextQueue(new TextMessage[] { new TextMessage(PlayerCharacter.instance.Name, false, true) });
@@ -165,11 +172,12 @@ public class Title : MonoBehaviour {
         GameObject.DontDestroyOnLoad(gameObject);
         SceneManager.LoadScene("TransitionOverworld");
         yield return 0;
-        yield return Application.isLoadingLevel;
+        //yield return Application.isLoadingLevel;
         GameObject.Find("Player").transform.position = new Vector3(SaveLoad.savedGame.playerPosX, SaveLoad.savedGame.playerPosY, SaveLoad.savedGame.playerPosZ);
         StaticInits.MODFOLDER = LuaScriptBinder.Get(null, "ModFolder").String;
         StaticInits.Initialized = false;
         StaticInits.initAll();
+        GameObject.Destroy(GameObject.Find("Main Camera"));
         GameObject.Destroy(gameObject);
     }
 
@@ -192,7 +200,8 @@ public class Title : MonoBehaviour {
         GameObject.DontDestroyOnLoad(gameObject);
         SceneManager.LoadScene("TransitionOverworld");
         yield return 0;
-        yield return Application.isLoadingLevel;
+        //yield return Application.isLoadingLevel;
+        GameObject.Destroy(GameObject.Find("Main Camera"));
         GameObject.Destroy(gameObject);
     }
 

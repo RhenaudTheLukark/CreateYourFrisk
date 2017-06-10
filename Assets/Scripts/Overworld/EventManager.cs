@@ -25,7 +25,6 @@ public class EventManager : MonoBehaviour {
     public  bool scriptLaunched = false;
     public  bool onceReload = false;
     private bool LoadLaunched = false;
-    private bool needReturn = false;
     public  Dictionary<GameObject, bool> autoDone = new Dictionary<GameObject, bool>();
 
     public LuaPlayerOW luaplow;
@@ -63,7 +62,7 @@ public class EventManager : MonoBehaviour {
             boundValueName.Add(typeof(LuaInventoryOW), "Inventory");
             boundValueName.Add(typeof(LuaScreenOW), "Screen");
             luaplow = new LuaPlayerOW();
-            luaevow = new LuaEventOW(textmgr);
+            luaevow = new LuaEventOW(/*textmgr*/);
             luagenow = new LuaGeneralOW(textmgr);
             luainvow = new LuaInventoryOW();
             luascrow = new LuaScreenOW();
@@ -363,6 +362,7 @@ public class EventManager : MonoBehaviour {
         autoDone.Clear();
         sprCtrls.Clear();
         eventScripts.Clear();
+        PlayerOverworld.instance.parallaxes.Clear();
         foreach (GameObject go in GameObject.FindGameObjectsWithTag("Event")) {
             events.Add(go);
             if (go.GetComponent<BoxCollider2D>()) {
@@ -384,6 +384,14 @@ public class EventManager : MonoBehaviour {
                 string scriptToLoad = go.GetComponent<EventOW>().scriptToLoad;
                 eventScripts.Add(go, initScript(scriptToLoad, go.GetComponent<EventOW>()));
             }
+        }
+        foreach (Transform t in UnitaleUtil.GetFirstChildren(null)) {
+            if (!t)
+                continue;
+            if (!t.gameObject)
+                continue;
+            if (t.gameObject.name.Contains("Parallax"))
+                PlayerOverworld.instance.parallaxes.Add(t);
         }
     }
 
@@ -410,7 +418,7 @@ public class EventManager : MonoBehaviour {
         //If the script we have to load exists, let's initialize it and then execute it
         if (!isCoroutine) {
             this.actualEventIndex = actualEventIndex;
-            PlayerOverworld.playerNoMove = true; //Event launched
+            PlayerOverworld.instance.playerNoMove = true; //Event launched
             scriptLaunched = true;
         }
         try {
@@ -747,7 +755,7 @@ public class EventManager : MonoBehaviour {
         PlayerOverworld.instance.textmgr.setTextFrameAlpha(0);
         PlayerOverworld.instance.textmgr.textQueue = new TextMessage[] { };
         PlayerOverworld.instance.textmgr.destroyText();
-        PlayerOverworld.playerNoMove = false; //Event finished
+        PlayerOverworld.instance.playerNoMove = false; //Event finished
         scriptLaunched = false;
         script = null;
     }
@@ -907,9 +915,7 @@ public class EventManager : MonoBehaviour {
         try { a = (int)args[4];        } catch { throw new CYFException("The argument \"a\" must be a number."); }
 
         Color c = GameObject.Find("Tone").GetComponent<Image>().color;
-
-        int alpha = (int)(c.a * 255);
-        int lack = a - alpha;
+        
         int[] currents = new int[] { (int)(c.r * 255), (int)(c.g * 255), (int)(c.b * 255), (int)(c.a * 255) };
         int[] lacks = new int[] { r - currents[0], g - currents[1], b - currents[2], a - currents[3] };
         int[] beginLacks = lacks;
@@ -1206,5 +1212,16 @@ public class EventManager : MonoBehaviour {
         }
 
         scr.Call("CYFEventNextCommand");
+    }
+
+    public IEnumerator IEnterShop() {
+        Fading fade = FindObjectOfType<Fading>();
+        float fadeTime = fade.BeginFade(1);
+        yield return new WaitForSeconds(fadeTime);
+        endEvent();
+
+        PlayerOverworld.HideOverworld("Shop");
+        GlobalControls.isInShop = true;
+        SceneManager.LoadScene("Shop", LoadSceneMode.Additive);
     }
 }

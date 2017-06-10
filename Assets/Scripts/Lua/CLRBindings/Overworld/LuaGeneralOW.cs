@@ -33,7 +33,7 @@ public class LuaGeneralOW {
     }
     
     /// <summary>
-    /// Makes a choice, like when you have to choose the blue or the red pill
+    /// Makes a choice, like when you have to choose between cinnamon and butterscotch
     /// </summary>
     /// <param name="question"></param>
     /// <param name="varIndex"></param>
@@ -113,7 +113,7 @@ public class LuaGeneralOW {
         if (deathText != null) {
             deathTable = new string[deathText.Table.Length];
             for (int i = 0; i < deathText.Table.Length; i++)
-                deathTable[i] = deathText.Table[i].ToString();
+                deathTable[i] = deathText.Table[i+1].ToString();
         }
 
         GlobalControls.Music = UnitaleUtil.GetCurrentOverworldAudio().clip;
@@ -179,8 +179,10 @@ public class LuaGeneralOW {
     [CYFEventFunction]
     public void Save() { StCoroutine("ISave", null); }
 
+    /// <summary>
+    /// Sends the player back to the title screen, making him lose his progression
+    /// </summary>
     [CYFEventFunction]
-    //NOT WORKING
     public void TitleScreen() {
         NewMusicManager.DestroyChannel("StaticKeptAudio");
         GameObject.Destroy(GameObject.Find("Player"));
@@ -200,4 +202,11 @@ public class LuaGeneralOW {
     /// <param name="quickAnim"></param>
     [CYFEventFunction]
     public void SetBattle(string encounterName, bool quickAnim = false, bool ForceNoFlee = false) { PlayerOverworld.instance.SetEncounterAnim(encounterName, quickAnim, ForceNoFlee); }
+
+
+    [CYFEventFunction]
+    public void EnterShop(string scriptName) {
+        ShopScript.scriptName = scriptName;
+        StCoroutine("IEnterShop", null);
+    }
 }

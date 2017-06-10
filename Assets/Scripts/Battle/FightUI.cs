@@ -126,7 +126,6 @@ public class FightUI : MonoBehaviour {
                     if (StaticInits.ENCOUNTER == "01 - Two monsters" && StaticInits.MODFOLDER == "Examples")
                         Misc.MoveWindow(shakeX[shakeIndex] * 2, 0);
                 #endif*/
-
             }
             if (shakeTimer < 1.5f)
                 damageTextRt.localPosition = new Vector2(damageTextRt.localPosition.x, enemy.offsets[2].y + 40 * (2 + Mathf.Sin(shakeTimer * Mathf.PI * 0.75f)));

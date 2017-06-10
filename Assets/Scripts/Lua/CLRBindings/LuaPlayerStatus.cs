@@ -80,12 +80,19 @@ public class LuaPlayerStatus {
     }
 
     /// <summary>
-    /// Get player's current ArmorATK.
+    /// Get player's current weapon.
+    /// </summary>
+    public string weapon {
+        get { return PlayerCharacter.instance.Weapon; }
+    }
+
+    /// <summary>
+    /// Get player's current weapon's atk.
     /// </summary>
     public int weaponatk {
         get { return PlayerCharacter.instance.WeaponATK; }
     }
-    
+
     /// <summary>
     /// Get player's current DEF.
     /// </summary>
@@ -94,7 +101,14 @@ public class LuaPlayerStatus {
     }
 
     /// <summary>
-    /// Get player's current ArmorDEF.
+    /// Get player's current weapon.
+    /// </summary>
+    public string armor {
+        get { return PlayerCharacter.instance.Armor; }
+    }
+
+    /// <summary>
+    /// Get player's current armor's def.
     /// </summary>
     public int armordef {
         get { return PlayerCharacter.instance.ArmorDEF; }

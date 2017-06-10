@@ -46,7 +46,7 @@ public class LuaTextManager : TextManager {
                     } else
                         countFrames++;
             }
-            if (canSkip() &&!lineComplete() && GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED)
+            if (canSkip() && !lineComplete() && GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED)
                 skipLine();
         }
     }
@@ -110,11 +110,11 @@ public class LuaTextManager : TextManager {
 
         msgs = new TextMessage[text.Table.Length];
         for (int i = 0; i < text.Table.Length; i++)
-            msgs[i] = new MonsterMessage(text.Table.Get(i + 1).String);
+            msgs[i] = new TextMessage(text.Table.Get(i + 1).String, false, false);
         isActive = true;
         if (bubble)
             containerBubble.SetActive(true);
-        base.setTextQueue(msgs);
+        try { setTextQueue(msgs); } catch { }
         if (text.Table.Length != 0 && bubble)
             ResizeBubble();
     }

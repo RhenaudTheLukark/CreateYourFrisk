@@ -1173,6 +1173,10 @@ end
                 </li><br>
                 <li><span class="CYF"></span> <span class="term">Player.def</span> (readonly) - base defense of the player. Depends on the player's level.
                 </li><br>
+                <li><span class="CYF"></span> <span class="term">Player.weapon</span> (readonly) - name of the player's current weapon.
+                </li><br>
+                <li><span class="CYF"></span> <span class="term">Player.armor</span> (readonly) - name of the player's current armor.
+                </li><br>
                 <li><span class="CYF"></span> <span class="term">Player.weaponatk</span> (readonly) - attack value of the player's current weapon.
                 </li><br>
                 <li><span class="CYF"></span> <span class="term">Player.armordef</span> (readonly) - defense value of the player's current armor.
@@ -1406,7 +1410,7 @@ end</pre>
                 <li><span class="term">Input.Down</span> - Down arrow or <span class="CYF"></span> S</li><br>
                 <li><span class="term">Input.Left</span> - Left arrow or <span class="CYF"></span> A</li><br>
                 <li><span class="term">Input.Right</span> - Right arrow or <span class="CYF"></span> D</li><br>
-                <li><span class="CYF"></span> <span class="term">Input.GetKey(keyname)</span> - Get the state of the given key.
+                <li><span class="CYF"></span> <span class="term">Input.GetKey(string keyname)</span> - Get the state of the given key.
 				<br>Check the <span class="ref">Key List</span> to see the available keys.</li><br>
                 <li><span class="CYF"></span> <span class="term">Input.MousePosX</span> (readonly) - Returns the X position of the mouse relative to the 
 				bottom left corner of the screen. (from 0 to 640)</li><br>
@@ -2724,6 +2728,11 @@ end</pre>
             </p>
             
             <p>
+                <br><span class="function">Inventory.GetItemCount()</span>
+                Returns the number of items the player has in his inventory.
+            </p>
+            
+            <p>
                 <br><span class="function">Inventory.RemoveItem(int id)</span>
                 Removes the item number <span class="term">id</span> from the inventory.
             </p>
@@ -2778,6 +2787,12 @@ end</pre>
                 <br><span class="term" style="margin-left:20px">names</span> = The names of the items.
             </p>
             <p>
+                <br><span class="function">SetInventory(string[] names)</span>
+                Sets the inventory of the Player. Must be used after <span class="term">AddCustomItems</span> if you want custom items.
+                <br>You have to use it like this: <span class="term">Inventory.SetInventory({"item1", "item2"})</span>;
+                <br><span class="term" style="margin-left:20px">names</span> = The names of the items.
+            </p>
+            <p>
                 <br><span class="function">AddCustomItems(string[] names, int[] types)</span>
                 If you want to add custom items, this has to be used before <span class="term">SetInventory</span>.
 				This adds all items in <span class="term">names</span> to the inventory, where each item matches to an 
@@ -2798,6 +2813,10 @@ end</pre>
             <p>
                 <br><span class="function">NoDelete</span>
 				Set <span class="term">Inventory.NoDelete</span> to true to make the next used consumable item not be used.
+            </p>
+            <p>
+                <br><span class="function">ItemCount</span>
+                Returns the number of items the player has in his inventory. Read-only.
             </p>
             <p>
                 <br><span class="function">SetAmount(int amount)</span>
@@ -3069,7 +3088,7 @@ end
 			</p>
 			<p>
 				<br><span class="function">Text.SetAutoWaitTimeBetweenTexts(int time)</span>
-				Sets the number of frames to wait before automatically advancing the text. Only applies to the "auto" progress mode.
+				Sets the number of frames to wait before automatically going to the next line. Only applies to the "auto" progress mode.
 			</p>
 			<p>
 				<br><span class="function">Text.MoveTo(int x, int y)</span>

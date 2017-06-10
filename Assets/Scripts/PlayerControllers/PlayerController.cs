@@ -165,7 +165,7 @@ public class PlayerController : MonoBehaviour {
                 GetComponent<GameOverBehavior>().music = null;
             }
             deathEscape = false;
-            if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "Battle") {
+            if (GlobalControls.isInFight) {
                 UIController.instance.encounter.TryCall("BeforeDeath");
                 if (deathEscape)
                     return;

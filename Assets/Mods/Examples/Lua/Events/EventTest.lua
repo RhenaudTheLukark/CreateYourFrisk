@@ -1,4 +1,7 @@
 function EventPage1()
+    tables = { "waa" }
+    tables[1] = nil
+    DEBUG(tostring(#tables))
     Event.MoveToPoint("Player", 320, 400, true)
     hp = Player.GetHP()
     Screen.SetTone(true, true, 0, 0, 0, 80)
@@ -8,8 +11,6 @@ function EventPage1()
 end
 
 function EventPage2()
-    Screen.SupprImg(1)
-    Screen.SetTone(true, true, 0, 0, 0, 0)
     General.SetDialog({"Here's an example of event that you can do!", "Please check the event once it is finished."}, true, {"papyrus_mugshot","papyrus_mugshot"})
 	Event.Teleport("Player", 113, 287)
 	General.SetDialog({"This is a good idea!", "Yeah, it is.", "Error! Or maybe not?"}, true, {"papyrus_mugshot", "rtl_happy", "papyrus_mugshot_2"})
@@ -17,7 +18,8 @@ function EventPage2()
 	if lastChoice == 0 then
 	    General.SetDialog({"Yes you can!"}, true, {"rtlukark_determined"})
 	elseif lastChoice == 1 then
-		General.SetDialog({"Too bad that you can't!"}, true, {"rtlukark_pity"})
+		General.SetDialog({"Too bad that you can't!", "Here, I'll open a shop to help you!"}, true, {"rtlukark_pity", "rtlukark_determined"})
+        General.EnterShop("Dummy")
 	end
     
     for i = 1, 3 do

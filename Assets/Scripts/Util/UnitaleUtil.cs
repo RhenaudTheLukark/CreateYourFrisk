@@ -56,9 +56,11 @@ public static class UnitaleUtil {
     }*/
 
     public static bool isOverworld() {
-        if (GlobalControls.nonOWScenes.Contains(SceneManager.GetActiveScene().name) && SceneManager.GetActiveScene().name != "TransitionOverworld")
+        if (SceneManager.GetActiveScene().name == "TransitionOverworld")
+            return true;
+        if (GlobalControls.nonOWScenes.Contains(SceneManager.GetActiveScene().name))
             return false;
-        return true;
+        return !GlobalControls.isInFight;
     }
 
     /// <summary>
@@ -80,8 +82,9 @@ public static class UnitaleUtil {
     }
 
     public static AudioSource GetCurrentOverworldAudio() {
-        if (GameObject.Find("Background").GetComponent<MapInfos>().isMusicKeptBetweenBattles) return PlayerOverworld.audioKept;
-        else                                                                                  return Camera.main.GetComponent<AudioSource>();
+        //if (GameObject.Find("Main Camera OW") && Camera.main != GameObject.Find("Main Camera OW")) return GameObject.Find("Main Camera OW").GetComponent<AudioSource>();
+        if (GameObject.Find("Background").GetComponent<MapInfos>().isMusicKeptBetweenBattles)      return PlayerOverworld.audioKept;
+        else                                                                                       return Camera.main.GetComponent<AudioSource>();
     }
 
     public static Array ListToArray<T>(List<T> lst) {
@@ -516,14 +519,14 @@ public static class UnitaleUtil {
                 }
             }
         } else {
-            List<GameObject> gos2 = new List<GameObject>();
-            foreach (GameObject go in GameObject.FindObjectsOfType<GameObject>())
-                if (go.transform.parent == null)
-                    gos2.Add(go);
-            firstChildren = new Transform[gos2.Count];
-            foreach (GameObject root in gos2)
-                if (getInactive || root.activeInHierarchy) {
-                    firstChildren[index] = root.transform;
+            List<Transform> tfs = new List<Transform>();
+            foreach (Transform tf in Resources.FindObjectsOfTypeAll<Transform>().Where(o => o.hideFlags == HideFlags.None).ToList())
+                if (tf.parent == null)
+                    tfs.Add(tf);
+            firstChildren = new Transform[tfs.Count];
+            foreach (Transform root in tfs)
+                if (getInactive || root.gameObject.activeInHierarchy) {
+                    firstChildren[index] = root;
                     index++;
                 }
         }

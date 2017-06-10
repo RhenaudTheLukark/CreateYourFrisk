@@ -3,12 +3,9 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public static class StaticInits {
-    //private static string CurrMODFOLDER;
-    //private static string CurrENCOUNTER;
     public static string MODFOLDER;
-    public static string ENCOUNTER;
+    public static string ENCOUNTER = "";
     public static string EDITOR_MODFOLDER = "Title";
-    public static string EDITOR_ENCOUNTER = "";
     private static bool firstInit = false;
 
     public static bool Initialized { get; set; }
@@ -28,15 +25,13 @@ public static class StaticInits {
         }
         if (MODFOLDER == null || MODFOLDER == "")
             MODFOLDER = EDITOR_MODFOLDER;
-        if (ENCOUNTER == null || ENCOUNTER == "")
-            ENCOUNTER = EDITOR_ENCOUNTER;
         //if (CurrMODFOLDER != MODFOLDER || CurrENCOUNTER != ENCOUNTER)
         initAll();
         Initialized = true;
     }
 
     public static void initAll() {
-        if (!Initialized && (SceneManager.GetActiveScene().name != "Battle" || GlobalControls.lastSceneUnitale)) {
+        if (!Initialized && (!GlobalControls.isInFight || GlobalControls.lastSceneUnitale)) {
             //UnitaleUtil.createFile();
             if (GlobalControls.lastSceneUnitale)
                 GlobalControls.lastSceneUnitale = false;

@@ -8,7 +8,7 @@
     public int LevelLimit = 99;
     public int HPLimit = 999;
     public int EXPLimit = 99999;
-    public int GoldLimit = 999999999;
+    public int GoldLimit = 99999;
     public float MaxDigitsAfterComma = 5;
     public float PlayerMovementPerSec = 120.0f;
     public float PlayerMovementHalvedPerSec = 60.0f;

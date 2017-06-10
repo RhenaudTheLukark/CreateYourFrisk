@@ -80,7 +80,7 @@ public static class LuaScriptBinder {
             script.Globals["SetPPCollision"] = (Action<bool>)SetPPCollision;
             script.Globals["AllowPlayerDef"] = (Action<bool>)AllowPlayerDef;
             script.Globals["GetLetters"] = (Func<Letter[]>)GetLetters;
-            script.Globals["CreateText"] = (Func<DynValue, DynValue, int, string, int, LuaTextManager>)CreateText;
+            script.Globals["CreateText"] = (Func<Script, DynValue, DynValue, int, string, int, LuaTextManager>)CreateText;
             script.Globals["GetCurrentState"] = (Func<string>)GetState;
             script.Globals["BattleDialog"] = (Action<DynValue>)LuaEnemyEncounter.BattleDialog;
             if (LuaEnemyEncounter.doNotGivePreviousEncounterToSelf)
@@ -90,21 +90,23 @@ public static class LuaScriptBinder {
             DynValue PlayerStatus = UserData.Create(PlayerController.luaStatus);
             script.Globals.Set("Player", PlayerStatus);
         } else {
-            DynValue PlayerOW = UserData.Create(EventManager.instance.luaplow);
-            script.Globals.Set("FPlayer", PlayerOW);
-            //script.Globals.Set("Player", PlayerOW);
-            DynValue EventOW = UserData.Create(EventManager.instance.luaevow);
-            script.Globals.Set("FEvent", EventOW);
-            //script.Globals.Set("Event", EventOW);
-            DynValue GeneralOW = UserData.Create(EventManager.instance.luagenow);
-            script.Globals.Set("FGeneral", GeneralOW);
-            //script.Globals.Set("General", GeneralOW);
-            DynValue InventoryOW = UserData.Create(EventManager.instance.luainvow);
-            script.Globals.Set("FInventory", InventoryOW);
-            //script.Globals.Set("Inventory", InventoryOW);
-            DynValue ScreenOW = UserData.Create(EventManager.instance.luascrow);
-            script.Globals.Set("FScreen", ScreenOW);
-            //script.Globals.Set("Screen", ScreenOW);
+            try {
+                DynValue PlayerOW = UserData.Create(EventManager.instance.luaplow);
+                script.Globals.Set("FPlayer", PlayerOW);
+                //script.Globals.Set("Player", PlayerOW);
+                DynValue EventOW = UserData.Create(EventManager.instance.luaevow);
+                script.Globals.Set("FEvent", EventOW);
+                //script.Globals.Set("Event", EventOW);
+                DynValue GeneralOW = UserData.Create(EventManager.instance.luagenow);
+                script.Globals.Set("FGeneral", GeneralOW);
+                //script.Globals.Set("General", GeneralOW);
+                DynValue InventoryOW = UserData.Create(EventManager.instance.luainvow);
+                script.Globals.Set("FInventory", InventoryOW);
+                //script.Globals.Set("Inventory", InventoryOW);
+                DynValue ScreenOW = UserData.Create(EventManager.instance.luascrow);
+                script.Globals.Set("FScreen", ScreenOW);
+                //script.Globals.Set("Screen", ScreenOW);
+            } catch { }
         }
         script.Globals["DEBUG"] = (Action<string>)UnitaleUtil.writeInLogAndDebugger;
         // clr bindings
@@ -125,6 +127,7 @@ public static class LuaScriptBinder {
     }
     
     private delegate TResult Func<T1, T2, T3, T4, T5, TResult>(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5);
+    private delegate TResult Func<T1, T2, T3, T4, T5, T6, TResult>(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg, T6 arg6);
 
     public static string GetState() {
         try { return UIController.instance.state.ToString(); }
@@ -314,7 +317,7 @@ public static class LuaScriptBinder {
         else                                                                   return GameObject.Find("TextManager").GetComponentsInChildren<Letter>();
     }
 
-    public static LuaTextManager CreateText(DynValue text, DynValue position, int textWidth, string layer = "BelowPlayer", int bubbleHeight = -1) {
+    public static LuaTextManager CreateText(Script scr, DynValue text, DynValue position, int textWidth, string layer = "BelowPlayer", int bubbleHeight = -1) {
         GameObject go = UnityEngine.Object.Instantiate(Resources.Load<GameObject>("Prefabs/CstmTxtContainer"));
         LuaTextManager luatm = go.GetComponentInChildren<LuaTextManager>();
         go.GetComponent<RectTransform>().position = new Vector2((float)position.Table.Get(1).Number, (float)position.Table.Get(2).Number);
@@ -325,7 +328,13 @@ public static class LuaScriptBinder {
         UnitaleUtil.GetChildPerName(go.transform, "CenterHorz").GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth + 16, 96 - 16 * 2);  //CenterHorz
         UnitaleUtil.GetChildPerName(go.transform, "CenterVert").GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth - 16, 96);           //CenterVert
         luatm.setFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_MONSTERTEXT_NAME));
-        luatm.setCaller(LuaEnemyEncounter.script_ref);
+        foreach (ScriptWrapper scrWrap in ScriptWrapper.instances) {
+            if (scrWrap.script == scr) {
+                luatm.setCaller(scrWrap);
+                break;
+            }
+        }
+        
         luatm.layer = layer;
         luatm.textWidth = textWidth;
         luatm.bubbleHeight = bubbleHeight;

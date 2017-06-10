@@ -112,7 +112,7 @@ public class LuaPlayerOW {
     /// <param name="heal">This one seems obvious too</param>
     [CYFEventFunction]
     public void CanMove(bool canMove) {
-        PlayerOverworld.playerNoMove = !canMove;
+        PlayerOverworld.instance.playerNoMove = !canMove;
         EventManager.instance.scriptLaunched = !canMove;
         appliedScript.Call("CYFEventNextCommand");
     }

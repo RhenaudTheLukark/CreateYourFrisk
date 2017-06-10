@@ -33,4 +33,6 @@ public class LuaInventoryOW {
     [CYFEventFunction] public bool ItemExists(string name) { try { return Inventory.itemExists(name); } finally { appliedScript.Call("CYFEventNextCommand"); } }
 
     [CYFEventFunction] public int GetItemID(string name) { try { return Inventory.InventoryNumber(name); } finally { appliedScript.Call("CYFEventNextCommand"); } }
+
+    [CYFEventFunction] public int GetItemCount() { try { return Inventory.inventory.Count; } finally { appliedScript.Call("CYFEventNextCommand"); } }
 }

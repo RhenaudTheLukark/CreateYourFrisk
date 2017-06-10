@@ -119,10 +119,19 @@ public class UIController : MonoBehaviour {
         GlobalControls.stopScreenShake = true;
         MusicManager.hiddenDictionary.Clear();
         if (GlobalControls.modDev) {
+            foreach (string str in NewMusicManager.audioname.Keys)
+                if (str != "src")
+                    NewMusicManager.DestroyChannel(str);
             PlayerCharacter.instance.Reset();
             SceneManager.LoadScene("ModSelect");
-        } else
-            SceneManager.LoadScene("TransitionOverworld");
+        } else {
+            foreach (string str in NewMusicManager.audioname.Keys)
+                if (str != "StaticKeptAudio")
+                    NewMusicManager.Stop(str);
+            SceneManager.UnloadSceneAsync("Battle");
+            GlobalControls.isInFight = false;
+            PlayerOverworld.ShowOverworld("Battle");
+        }
     }
 
     public void ShowError(TextMessage msg) { ActionDialogResult(msg, UIState.ACTIONSELECT);  }
@@ -592,7 +601,7 @@ public class UIController : MonoBehaviour {
     private string[] getInventoryPage(int page) {
         int invCount = 0;
         for (int i = page * 4; i < page * 4 + 4; i++) {
-            if (Inventory.container.Count <= i)
+            if (Inventory.inventory.Count <= i)
                 break;
 
             invCount++;
@@ -603,7 +612,7 @@ public class UIController : MonoBehaviour {
 
         string[] items = new string[6];
         for (int i = 0; i < invCount; i++) {
-            items[i] = Inventory.container[i + page * 4].ShortName;
+            items[i] = Inventory.inventory[i + page * 4].ShortName;
         }
         items[5] = "PAGE " + (page + 1);
         return items;
@@ -706,7 +715,7 @@ public class UIController : MonoBehaviour {
                                 ActionDialogResult(new TextMessage(strModif, true, false), UIState.ENEMYDIALOGUE);
 
                             } else {
-                                if (Inventory.container.Count == 0) {
+                                if (Inventory.inventory.Count == 0) {
                                     //ActionDialogResult(new TextMessage("Your Inventory is empty.", true, false), UIState.ACTIONSELECT);
                                     return;
                                 }
@@ -996,10 +1005,10 @@ public class UIController : MonoBehaviour {
 
                 // UnitaleUtil.writeInLog("Unchecked desired item " + desiredItem);
 
-                if (desiredItem < 0)                              desiredItem = Math.mod(desiredItem, 4) + (Inventory.container.Count / 4) * 4;
-                else if (desiredItem > Inventory.container.Count) desiredItem = Math.mod(desiredItem, 4);
+                if (desiredItem < 0)                              desiredItem = Math.mod(desiredItem, 4) + (Inventory.inventory.Count / 4) * 4;
+                else if (desiredItem > Inventory.inventory.Count) desiredItem = Math.mod(desiredItem, 4);
 
-                if (desiredItem != selectedItem && desiredItem < Inventory.container.Count) { // 0 check not needed, done before
+                if (desiredItem != selectedItem && desiredItem < Inventory.inventory.Count) { // 0 check not needed, done before
                     selectedItem = desiredItem;
                     setPlayerOnSelection(Math.mod(selectedItem, 4));
                     int page = selectedItem / 4;
@@ -1109,15 +1118,22 @@ public class UIController : MonoBehaviour {
         GameObject.Find("HideEncounter").GetComponent<Image>().sprite = Sprite.Create(GlobalControls.texBeforeEncounter, 
                                                                                       new Rect(0, 0, GlobalControls.texBeforeEncounter.width, GlobalControls.texBeforeEncounter.height), 
                                                                                       new Vector2(0.5f, 0.5f));
-        if (GameOverBehavior.gameOverContainer)
-            GameObject.Destroy(GameOverBehavior.gameOverContainer);
+        //if (GameOverBehavior.gameOverContainer)
+        //    GameObject.Destroy(GameOverBehavior.gameOverContainer);
         GameOverBehavior.gameOverContainer = GameObject.Find("GameOverContainer");
         GameOverBehavior.gameOverContainer.SetActive(false);
         MusicManager.src = Camera.main.GetComponent<AudioSource>();
-        NewMusicManager.OnLevelWasLoaded();
-        GameObject.Destroy(GameObject.Find("Canvas OW"));
-        GameObject.Destroy(GameObject.Find("Player"));
-        GameObject.Destroy(GameObject.Find("Main Camera OW"));
+        //NewMusicManager.OnLevelWasLoaded();
+
+        if (NewMusicManager.audiolist.ContainsKey("src"))
+            NewMusicManager.audiolist.Remove("src");
+        if (NewMusicManager.audiolist.ContainsKey("StaticKeptAudio"))
+            NewMusicManager.audiolist.Remove("StaticKeptAudio");
+
+        MusicManager.src = Camera.main.GetComponent<AudioSource>();
+        NewMusicManager.audiolist.Add("src", MusicManager.src);
+        if (PlayerOverworld.audioKept)
+            NewMusicManager.audiolist.Add("StaticKeptAudio", PlayerOverworld.audioKept);
 
         GlobalControls.ppcollision = false;
         ControlPanel.instance.FrameBasedMovement = false;
@@ -1151,10 +1167,6 @@ public class UIController : MonoBehaviour {
         //Play that funky music
         if (MusicManager.isStoppedOrNull(PlayerOverworld.audioKept))
             GameObject.Find("Main Camera").GetComponent<AudioSource>().Play();
-
-        //if (StaticInits.MODFOLDER == "Examples 2" && StaticInits.ENCOUNTER == "04 - Animation")
-        //    GlobalControls.ppcollision = true;
-        //else
 
         ArenaManager.instance.ResizeImmediate(ArenaManager.UIWidth, ArenaManager.UIHeight);
         //ArenaManager.instance.MoveToImmediate(0, -160, false);

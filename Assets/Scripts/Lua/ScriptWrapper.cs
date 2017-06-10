@@ -1,8 +1,10 @@
 ﻿using UnityEngine;
 using MoonSharp.Interpreter;
 using System;
+using System.Collections.Generic;
 
 public class ScriptWrapper {
+    public static List<ScriptWrapper> instances = new List<ScriptWrapper>();
     public Script script;
     public string scriptname = "???";
     public string text = "";
@@ -18,6 +20,11 @@ public class ScriptWrapper {
         string toDoString = "setmetatable({}, {__index=function(t, name) return _getv(name) end}) ";
         text = toDoString;
         script.DoString(toDoString);
+        instances.Add(this);
+    }
+
+    ~ScriptWrapper() {
+        instances.Remove(this);
     }
 
     internal DynValue DoString(string source) { return script.DoString(source); }

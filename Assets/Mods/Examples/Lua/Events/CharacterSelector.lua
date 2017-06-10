@@ -103,11 +103,11 @@ function EventPage1()
     elseif phase == 4 then
         if currentChar == 1 then
             friskWait = friskWait - Time.dt
-            if friskWait <= 0 then                                            phase = 5 end
+            if friskWait <= 0 then                             phase = 5 end
         elseif currentChar == 2 then
-            if NewAudio.isStopped("CharSelect")  then                         phase = 5 end
+            if NewAudio.isStopped("CharSelect")  then          phase = 5 end
         elseif currentChar >= 3 and currentChar <= 5 then
-            if chars[currentChar]["sprite"].animcomplete then                 phase = 5 end
+            if chars[currentChar]["sprite"].animcomplete then  phase = 5 end
         end
     elseif phase == 5 then
         fadeCount = 3
@@ -145,7 +145,8 @@ function ChangeTarget(number, sound)
 end
 
 function Exit()
-    for i = 1, #animationKeys + 2 do Screen.SupprImg(i) end
+    for i = 1, #animationKeys * 3 + 2 do Screen.SupprImg(i) end
     Event.SetPage(Event.GetName(), -1)
+    NewAudio.DestroyChannel("CharSelect")
     Player.CanMove(true)
 end

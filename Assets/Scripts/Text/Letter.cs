@@ -14,7 +14,7 @@ public class Letter : MonoBehaviour {
 
     private void Start() {
         img = GetComponent<Image>();
-        if (SceneManager.GetActiveScene().name == "Battle")
+        if (GlobalControls.isInFight)
             if (ArenaManager.instance.firstTurn)
                 LateUpdater.lateActions.Add(LateStart);
             else

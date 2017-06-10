@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 
-public class TextMessage
-{
+public class TextMessage {
     public TextMessage(string text, bool formatted, bool showImmediate, bool actualText = true, string mugshot = null) {
         setup(text, formatted, showImmediate, actualText, mugshot);
     }
@@ -46,32 +45,30 @@ public class TextMessage
             for (int i = 0; i < lines.Length; i++) {
                 bool needExit = false;
                 index = 0;
-                while (lines[i][index] == '[') {
-                    if (!(lines[i].Length >= 10 + index && (lines[i].Substring(index, 10) == "[starcolor" || lines[i].Substring(index, 8) == "[letters"))) {
-                        if (lines[i][index] == '[') {
-                            bool command = false;
-                            for (int j = index; j < lines[i].Length; j++) {
-                                if (lines[i][j] == ']') {
-                                    command = true;
-                                    linesCommands[i] += lines[i].Substring(index, j + 1);
-                                    lines[i] = lines[i].Substring(index + j + 1, lines[i].Length - index - j - 1);
+                if (lines[i].Length != 0)
+                    while (lines[i][index] == '[') {
+                        if (!(lines[i].Length >= 10 + index && (lines[i].Substring(index, 10) == "[starcolor" || lines[i].Substring(index, 8) == "[letters"))) {
+                            if (lines[i][index] == '[') {
+                                bool command = false;
+                                for (int j = index; j < lines[i].Length; j++)
+                                    if (lines[i][j] == ']') {
+                                        command = true;
+                                        linesCommands[i] += lines[i].Substring(index, j + 1);
+                                        lines[i] = lines[i].Substring(index + j + 1, lines[i].Length - index - j - 1);
+                                        break;
+                                    }
+                                if (!command || lines[i].Length == 0) break;
+                            }
+                        } else
+                            while (lines[i][index] != ']')
+                                index++;
+                                if (index == lines[i].Length) {
+                                    needExit = true;
                                     break;
                                 }
-                            }
-                            if (!command || lines[i].Length == 0) break;
-                        }
-                    } else {
-                        while (lines[i][index] != ']') {
-                            index++;
-                            if (index == lines[i].Length) {
-                                needExit = true;
-                                break;
-                            }
-                        }
+                        if (needExit)
+                            break;
                     }
-                    if (needExit)
-                        break;
-                }
 
                 if (lines[i].Length != 0)
                     if (lines[i][0] == ' ')
@@ -83,12 +80,9 @@ public class TextMessage
         int nCount = 0;
         newText = linesCommands[nCount++] + "* ";
         foreach (char c in textNew) {
-            if (c == '\n')
-                newText += "\n" + linesCommands[nCount ++] + "* ";
-            else if (c == '\r')
-                newText += "\n  ";
-            else
-                newText += c;
+            if (c == '\n')      newText += "\n" + linesCommands[nCount ++] + "* ";
+            else if (c == '\r') newText += "\n  ";
+            else                newText += c;
         }
         return newText;
     }
@@ -99,6 +93,6 @@ public class TextMessage
             str = str.Replace("\\r", "\r");
             str = str.Replace("\\t", "\t");
             return str;
-        } catch { return str;  }
+        } catch { return str; }
     }
 }

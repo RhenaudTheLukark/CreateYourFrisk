@@ -9,22 +9,20 @@ public class TransitionOverworld : MonoBehaviour {
     private TransitionOverworld instance;
     public string FirstLevelToLoad;
     public Vector2 BeginningPosition;
-    private string call;
-    private object[] neededArgs;
 
     private void Start() {
         if (instance)
             return;
         bool isStart = false;
 
-        GameOverBehavior.gameOverContainer = GameObject.Find("GameOverContainer");
-        GameOverBehavior.gameOverContainer.SetActive(false);
+        GameOverBehavior.gameOverContainerOw = GameObject.Find("GameOverContainer");
+        GameOverBehavior.gameOverContainerOw.SetActive(false);
         if (GameObject.Find("GameOverContainer")) {
-            GameObject.Destroy(GameOverBehavior.gameOverContainer);
-            GameOverBehavior.gameOverContainer = GameObject.Find("GameOverContainer");
-            GameOverBehavior.gameOverContainer.SetActive(false);
+            GameObject.Destroy(GameOverBehavior.gameOverContainerOw);
+            GameOverBehavior.gameOverContainerOw = GameObject.Find("GameOverContainer");
+            GameOverBehavior.gameOverContainerOw.SetActive(false);
         }
-        GameObject.DontDestroyOnLoad(GameOverBehavior.gameOverContainer);
+        GameObject.DontDestroyOnLoad(GameOverBehavior.gameOverContainerOw);
 
         GlobalControls.beginPosition = BeginningPosition;
         if (GameObject.Find("Main Camera"))
@@ -52,11 +50,6 @@ public class TransitionOverworld : MonoBehaviour {
             GameObject.Destroy(GameObject.Find("Main Camera OW"));
         temp.SetActive(true);
 
-        //MIONNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
-        /*GameObject goodluck = Resources.Load<GameObject>("Prefabs/MIONNNNNNNNNNNN");
-        GameObject gl = Instantiate(goodluck);
-        gl.name = "MIONNNNNNNNNNNN";
-        gl.transform.SetParent(GameObject.Find("Canvas OW").transform);*/
         // After battle tweaks
         ControlPanel.instance.FrameBasedMovement = false;
         if (GlobalControls.realName != null)
@@ -96,8 +89,6 @@ public class TransitionOverworld : MonoBehaviour {
     }
 
     public IEnumerator GetIntoDaMap(string call, object[] neededArgs) {
-        this.call = call;
-        this.neededArgs = neededArgs;
         //GlobalControls.fadeAuto = true;
         GameObject.Find("Main Camera OW").GetComponent<EventManager>().readyToReLaunch = true;
         GameObject.Find("Main Camera OW").tag = "MainCamera";
@@ -108,7 +99,6 @@ public class TransitionOverworld : MonoBehaviour {
         Camera.main.transparencySortAxis = new Vector3(0.0f, 1.0f, 1000000.0f);
 
         EventManager.instance.onceReload = false;
-        bool neededReload = false;
         //Permits to reload the current data if needed
         MapInfos mi = GameObject.Find("Background").GetComponent<MapInfos>();
         if (StaticInits.MODFOLDER != mi.modToLoad) {
@@ -120,7 +110,6 @@ public class TransitionOverworld : MonoBehaviour {
                 EventManager.instance.scriptLaunched = false;
                 EventManager.instance.script = null;
             }
-            neededReload = true;
         }
 
         AudioSource audio = UnitaleUtil.GetCurrentOverworldAudio();
@@ -157,11 +146,7 @@ public class TransitionOverworld : MonoBehaviour {
         if (call == "tphandler") {
             Transform playerPos = GameObject.Find("Player").GetComponent<Transform>();
             playerPos.position = (Vector2)neededArgs[0];
-        }
-        //GlobalControls.fadeAuto = false;
-        //GameObject.Destroy(gameObject);
-        //if (!neededReload)
-        if (call == "tphandler") {
+            PlayerOverworld.instance.gameObject.GetComponent<CYFAnimator>().movementDirection = ((TPHandler)neededArgs[1]).direction;
             ((TPHandler)neededArgs[1]).activated = false;
             GameObject.Destroy(((TPHandler)neededArgs[1]).gameObject);
         }

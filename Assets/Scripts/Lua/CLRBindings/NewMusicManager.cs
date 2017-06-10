@@ -8,15 +8,22 @@ public class NewMusicManager {
     public static Dictionary<string, string> audioname = new Dictionary<string, string>();
    
     public static void CreateChannel(string name) {
-        if (audiolist.ContainsKey(name)) throw new CYFException("The current audio channel already exists.");
+        if (audiolist.ContainsKey(name)) {
+            UnitaleUtil.writeInLogAndDebugger("The audio channel " + name + " already exists.");
+            return;
+        }
         GameObject go = new GameObject("AudioChannel" + audiolist.Count + ": " + name, typeof(AudioSource));
+        GameObject.DontDestroyOnLoad(go);
         audiolist.Add(name, go.GetComponent<AudioSource>());
         if (!audioname.ContainsKey(name))
             audioname.Add(name, "empty");
     }
 
     public static AudioSource CreateChannelAndGetAudioSource(string name) {
-        if (audiolist.ContainsKey(name)) throw new CYFException("The current audio channel already exists.");
+        if (audiolist.ContainsKey(name)) {
+            UnitaleUtil.writeInLogAndDebugger("The audio channel " + name + " already exists.");
+            return GameObject.Find("AudioChannel" + audiolist.Count + ": " + name).GetComponent<AudioSource>();
+        }
         GameObject go = new GameObject("AudioChannel" + audiolist.Count + ": " + name, typeof(AudioSource));
         audiolist.Add(name, go.GetComponent<AudioSource>());
         if (!audioname.ContainsKey(name))
@@ -27,10 +34,11 @@ public class NewMusicManager {
     public static void DestroyChannel(string name) {
         if (name == "src")                throw new CYFException("You can't delete the audio channel \"src\".");
         if (!audiolist.ContainsKey(name)) throw new CYFException("The audio channel " + name + " doesn't exist.");
-        GameObject go = ((AudioSource)audiolist[name]).gameObject;
+        try {
+            GameObject.Destroy(((AudioSource)audiolist[name]).gameObject);
+        } catch { }        
         audiolist.Remove(name);
-        audioname.Remove(name);
-        GameObject.Destroy(go);
+        audioname.Remove(name);        
     }
 
     public static bool Exists(string name) { return audiolist.ContainsKey(name); }

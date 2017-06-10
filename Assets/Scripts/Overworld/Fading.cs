@@ -8,8 +8,7 @@ public class Fading : MonoBehaviour {
     [HideInInspector]
     public float fadeSpeed = 3f;       // The fading speed
     public float alpha = 1.0f;         // The texture's alpha between 0 and 1
-
-    private int drawDepth = -1000;     // The texture's order in the draw hierarchy: a low number means it renders on top
+    
     private int fadeDir = -1;          // The direction to fade : in = -1 or out = 1
     private bool eventSent = false;
 
@@ -43,6 +42,8 @@ public class Fading : MonoBehaviour {
         gameObject.transform.SetAsLastSibling();
         fadeDir = direction;
         eventSent = false;
+        alpha = direction == 1 ? 0 : 1;
+        fade.color = new Color(0, 0, 0, alpha);
         if (StartFade != null && StaticInits.MODFOLDER != "Title")
             StartFade();
         return 1f/fadeSpeed;     // Return the fadeSpeed variable so it's easy to time the Application.LoadLevel();

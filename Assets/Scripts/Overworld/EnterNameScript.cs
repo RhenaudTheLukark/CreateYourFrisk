@@ -31,8 +31,17 @@ public class EnterNameScript : MonoBehaviour {
             tmInstr.setTextQueue(new TextMessage[] { new TextMessage("[noskipatall]Name the fallen human.", false, true) });
         tmName = GameObject.Find("TextManager Name").GetComponent<TextManager>();
         tmName.setHorizontalSpacing(2);
-        if (!isNewGame)
+        GameObject firstCamera = GameObject.Find("Main Camera");
+        firstCamera.name = "temp";
+        if (GameObject.Find("Main Camera"))
+            GameObject.Destroy(GameObject.Find("Main Camera"));
+        firstCamera.name = "Main Camera";
+        if (!isNewGame) {
             playerName = PlayerCharacter.instance.Name;
+        } else {
+            Camera.main.GetComponent<AudioSource>().clip = AudioClipRegistry.GetMusic("mus_menu");
+            Camera.main.GetComponent<AudioSource>().Play();
+        }
         tmName.setTextQueue(new TextMessage[] { new TextMessage(playerName, false, true) });
         tmLettersMaj = GameObject.Find("TextManager LettersMaj").GetComponent<TextManager>();
         tmLettersMaj.setHorizontalSpacing(52.2f);

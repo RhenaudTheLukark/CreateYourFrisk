@@ -27,6 +27,8 @@ public class GlobalControls : MonoBehaviour {
     public static bool crate = false;
     public static bool retroMode = false;
     public static bool stopScreenShake = false;
+    public static bool isInFight = false;
+    public static bool isInShop = false;
     private bool screenShaking = false;
     public static Vector2 beginPosition;
     //public static bool samariosNightmare = false;
@@ -56,20 +58,20 @@ public class GlobalControls : MonoBehaviour {
                 GameObject.Find("Text").transform.SetParent(UserDebugger.instance.gameObject.transform);
             UserDebugger.instance.gameObject.SetActive(!UserDebugger.instance.gameObject.activeSelf);
             Camera.main.GetComponent<FPSDisplay>().enabled = !Camera.main.GetComponent<FPSDisplay>().enabled;
-        } else if (SceneManager.GetActiveScene().name == "Battle" && Input.GetKeyDown(KeyCode.H))
+        } else if (isInFight && Input.GetKeyDown(KeyCode.H))
             GameObject.Find("Main Camera").GetComponent<ProjectileHitboxRenderer>().enabled =!GameObject.Find("Main Camera").GetComponent<ProjectileHitboxRenderer>().enabled;
-        else if (Input.GetKeyDown(KeyCode.Escape) && canTransOW.Contains(SceneManager.GetActiveScene().name)) {
-            if (SceneManager.GetActiveScene().name == "Battle" && LuaEnemyEncounter.script.GetVar("unescape").Boolean)
+        else if (Input.GetKeyDown(KeyCode.Escape) && (canTransOW.Contains(SceneManager.GetActiveScene().name) || isInFight)) {
+            if (isInFight && LuaEnemyEncounter.script.GetVar("unescape").Boolean)
                 return;
             UIController.EndBattle();
             //StaticInits.Reset();
-        } else if (input.Menu == UndertaleInput.ButtonState.PRESSED && !nonOWScenes.Contains(SceneManager.GetActiveScene().name) && !PlayerOverworld.menuRunning[3] && EventManager.instance.script == null)
+        } else if (input.Menu == UndertaleInput.ButtonState.PRESSED && (!nonOWScenes.Contains(SceneManager.GetActiveScene().name) || isInFight) && !PlayerOverworld.menuRunning[3] && EventManager.instance.script == null)
             StartCoroutine(PlayerOverworld.LaunchMenu());
         if (Input.GetKeyDown(KeyCode.F4))
             Screen.fullScreen =!Screen.fullScreen;
         //else if (Input.GetKeyDown(KeyCode.L))
         //    MyFirstComponentClass.SpriteAnalyser();
-        if (SceneManager.GetActiveScene().name == "Battle")
+        if (isInFight)
             switch (fleeIndex) {
                 case 0:
                     if (Input.GetKeyDown(KeyCode.F)) fleeIndex++; break;

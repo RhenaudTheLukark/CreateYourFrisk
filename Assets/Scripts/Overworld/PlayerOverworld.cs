@@ -14,7 +14,7 @@ public class PlayerOverworld : MonoBehaviour {
     //public int rolled = 0;
     public float speed = 3;
     public bool firstTime = false;          //Boolean used to not launch another event a the end of the previous event
-    public static bool playerNoMove = false;      //Is the player not able to move?
+    public bool playerNoMove = false;      //Is the player not able to move?
     public static bool[] menuRunning = new bool[] { false, false, false, false };
     public Vector2 lastMove;                //The Player's last input
     public Vector2 cameraShift = new Vector2();
@@ -23,7 +23,7 @@ public class PlayerOverworld : MonoBehaviour {
     public static AudioSource audioKept;
     public LuaSpriteController sprctrl;
     public TextManager textmgr;             //The map's text manager
-    public Vector2 hackSizeBoxCollider;
+    public List<Transform> parallaxes = new List<Transform>();
 
     private int battleWalkCount;            //Will be used to check the battle appearance
     private float TimeIndicator = 0f;       //A time indicator used for the soul's movement during the pre-Encounter anim
@@ -83,13 +83,86 @@ public class PlayerOverworld : MonoBehaviour {
         }
 
         instance = this;
+    }
+
+    IEnumerator OnEnable2() {
+        yield return 0;
+
+        if (NewMusicManager.audiolist.ContainsKey("src"))
+            NewMusicManager.audiolist.Remove("src");
+        if (NewMusicManager.audiolist.ContainsKey("StaticKeptAudio"))
+            NewMusicManager.audiolist.Remove("StaticKeptAudio");
+
+        MusicManager.src = Camera.main.GetComponent<AudioSource>();
+        NewMusicManager.audiolist.Add("src", MusicManager.src);
+        //NewMusicManager.audioname.Add("src", MusicManager.filename);
+        if (PlayerOverworld.audioKept)
+            NewMusicManager.audiolist.Add("StaticKeptAudio", PlayerOverworld.audioKept);
+        //NewMusicManager.audioname.Add("StaticKeptAudio", "Sorry, nyi");
+
+        PlayerPos = GameObject.Find("Player").transform;
+        Color color = PlayerPos.GetComponent<SpriteRenderer>().color;
+        GameObject.Find("PlayerEncounter").GetComponent<Image>().color = new Color(color.r, color.g, color.b, 0);
+        GameObject.Find("EncounterBubble").GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 0);
+        PlayerPos.GetComponent<SpriteRenderer>().color = new Color(color.r, color.g, color.b, 1);
+
+        GameObject.Find("black").GetComponent<Image>().color = new Color(0, 0, 0, 0);
+        GameObject.Find("utHeart").GetComponent<Image>().color = new Color(GameObject.Find("utHeart").GetComponent<Image>().color.r, GameObject.Find("utHeart").GetComponent<Image>().color.g,
+                                                                           GameObject.Find("utHeart").GetComponent<Image>().color.b, 0);
+        GameObject.FindObjectOfType<Fading>().BeginFade(-1);
 
         StartCoroutine(textCoroutine());
+    }
+
+    void RestartMusic() {
+        MapInfos mi = GameObject.Find("Background").GetComponent<MapInfos>();
+        AudioSource audio = UnitaleUtil.GetCurrentOverworldAudio();
+
+        if (audio == audioKept) {
+            Camera.main.GetComponent<AudioSource>().Stop();
+            Camera.main.GetComponent<AudioSource>().clip = null;
+        } else {
+            audioKept.Stop();
+            audioKept.clip = null;
+        }
+
+        if (audio.clip == null) {
+            if (mi.music != "none") {
+                audio.clip = AudioClipRegistry.GetMusic(mi.music);
+                audio.Play();
+            } else
+                audio.Stop();
+        } else {
+            //Get the file's name with this...thing?
+            string test = audio.clip.name.Replace('\\', '/').Split(new string[] { "/Audio/" }, System.StringSplitOptions.RemoveEmptyEntries)[1].Split('.')[0];
+            if (test != mi.music) {
+                if (mi.music != "none") {
+                    audio.clip = AudioClipRegistry.GetMusic(mi.music);
+                    audio.Play();
+                } else
+                    audio.Stop();
+            } else if (!audio.isPlaying && audio != audioKept)
+                audio.Play();
+        }
     }
 
     void OnEnable() {
         SceneManager.sceneLoaded += LoadScene;
         Fading.FinishFade += FinishFade;
+
+        ControlPanel.instance.FrameBasedMovement = false;
+        try {
+            EventManager.instance.scriptLaunched = false;
+            EventManager.instance.script = null;
+        } catch { }
+
+        if (GlobalControls.realName != null)
+            PlayerCharacter.instance.Name = GlobalControls.realName;
+
+        TimeIndicator = 0;
+        inBattleAnim = false;
+
+        StartCoroutine(OnEnable2());
     }
 
 
@@ -119,24 +192,25 @@ public class PlayerOverworld : MonoBehaviour {
     IEnumerator textCoroutine() {
         while (true) {
             //UnitaleUtil.writeInLogAndDebugger("inText = " + inText + ", textmgr.lineCount = " + textmgr.lineCount());
-            if (GameObject.Find("textframe_border_outer").GetComponent<Image>().color.a != 0) {
-                //UnitaleUtil.writeInLogAndDebugger("blockskip = " + textmgr.blockSkip + ", skipNowIfBlocked = " + textmgr.skipNowIfBlocked);
-                yield return 0;
-                try {
-                    if (textmgr.canAutoSkipAll())
-                        NextText();
-                    if (GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED && !textmgr.blockSkip && !textmgr.lineComplete() && textmgr.canSkip())
-                        textmgr.skipLine();
-                    else if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED && !textmgr.blockSkip)
-                        NextText();
-                } catch { }
-            } else
-                yield return 0;
+            if (GameObject.Find("textframe_border_outer"))
+                if (GameObject.Find("textframe_border_outer").GetComponent<Image>().color.a != 0) {
+                    //UnitaleUtil.writeInLogAndDebugger("blockskip = " + textmgr.blockSkip + ", skipNowIfBlocked = " + textmgr.skipNowIfBlocked);
+                    yield return 0;
+                    try {
+                        if (textmgr.canAutoSkipAll())
+                            NextText();
+                        if (GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED && !textmgr.blockSkip && !textmgr.lineComplete() && textmgr.canSkip())
+                            textmgr.skipLine();
+                        else if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED && !textmgr.blockSkip)
+                            NextText();
+                    } catch { }
+                } else
+                    yield return 0;
         }
     }
 
     private void Update() {
-        if (GameOverBehavior.gameOverContainer.activeSelf)
+        if (GameOverBehavior.gameOverContainerOw.activeSelf)
             return;
         
         if ((Vector2)PlayerPos.position == new Vector2(0, 0))
@@ -149,12 +223,12 @@ public class PlayerOverworld : MonoBehaviour {
                 TimeIndicator = 1;
 
             Vector2 positionCamera = Camera.main.transform.position;
-            Vector2 end = new Vector2(PlayerPos.position.x - (positionCamera.x - 320 + 48), PlayerPos.position.y - (positionCamera.y - 240 + 25));
+            Vector2 end = new Vector2(PlayerPos.position.x - (positionCamera.x - 320 + 48), PlayerPos.position.y + PlayerPos.GetComponent<RectTransform>().sizeDelta.y * 50 - (positionCamera.y - 240 + 25));
             Image utHeart = GameObject.Find("utHeart").GetComponent<Image>();
 
             //Here we move the heart to the place it'll be on the beginning of the battle
             if (utHeart.transform.position != new Vector3(positionCamera.x - 320 + 48, positionCamera.y - 240 + 25, -1f)) {
-                Vector3 positionTemp = new Vector3(PlayerPos.position.x - (end.x * TimeIndicator), PlayerPos.position.y - (end.y * TimeIndicator), -11);
+                Vector3 positionTemp = new Vector3(PlayerPos.position.x - (end.x * TimeIndicator), PlayerPos.position.y + PlayerPos.GetComponent<RectTransform>().sizeDelta.y * 50 - (end.y * TimeIndicator), 0);
                 utHeart.transform.position = positionTemp;
             }
         }
@@ -250,7 +324,7 @@ public class PlayerOverworld : MonoBehaviour {
 
     private IEnumerator LaunchMusic() {
         yield return 0;
-        yield return Application.isLoadingLevel;
+        //yield return Application.isLoadingLevel;
         
         AudioSource audio = UnitaleUtil.GetCurrentOverworldAudio();
         MapInfos mi = GameObject.FindObjectOfType<MapInfos>();
@@ -424,9 +498,9 @@ public class PlayerOverworld : MonoBehaviour {
             yield return new WaitForSeconds(0.5f);
         }
         //Set the heart's position to the player's position
-        utHeart.transform.position = new Vector3(PlayerPos.position.x, PlayerPos.position.y, -5100);
+        utHeart.transform.position = new Vector3(PlayerPos.position.x, PlayerPos.position.y + PlayerPos.GetComponent<RectTransform>().sizeDelta.y * 50, -5100);
         positionCamera = Camera.main.transform.position;
-        end = new Vector2(PlayerPos.position.x - (positionCamera.x - 320 + 48), PlayerPos.position.y - (positionCamera.y - 240 + 25));
+        end = new Vector2(PlayerPos.position.x - (positionCamera.x - 320 + 48), PlayerPos.position.y + PlayerPos.GetComponent<RectTransform>().sizeDelta.y * 50 - (positionCamera.y - 240 + 25));
         blackFont.transform.position = new Vector3(positionCamera.x, positionCamera.y, blackFont.transform.position.z);
         blackFont.color = new Color(blackFont.color.r, blackFont.color.g, blackFont.color.b, 1f);
         playerMask.transform.position = new Vector3(PlayerPos.position.x, PlayerPos.transform.position.y, -5040);
@@ -461,7 +535,7 @@ public class PlayerOverworld : MonoBehaviour {
 
         //Here we move the heart to the place it'll be on the beginning of the battle
         if (utHeart.transform.position != new Vector3(positionCamera.x - 320 + 48, positionCamera.y - 240 + 25, -5100)) {
-            Vector3 positionTemp = new Vector3(PlayerPos.position.x - (end.x * TimeIndicator), PlayerPos.position.y - (end.y * TimeIndicator), -5100);
+            Vector3 positionTemp = new Vector3(PlayerPos.position.x - (end.x * TimeIndicator), PlayerPos.position.y + PlayerPos.GetComponent<RectTransform>().sizeDelta.y * 50 - (end.y * TimeIndicator), 0);
             utHeart.transform.position = positionTemp;
         }
 
@@ -530,9 +604,12 @@ public class PlayerOverworld : MonoBehaviour {
         tex.Apply();
         GlobalControls.texBeforeEncounter = tex;
 
+        //GameObject.Find("Main Camera OW").tag = "Untagged";
+        HideOverworld("Battle");
+
         //Now, we load our battle.
-        GameObject.Find("Main Camera OW").tag = "Untagged";
-        SceneManager.LoadScene("Battle");
+        GlobalControls.isInFight = true;
+        SceneManager.LoadScene("Battle", LoadSceneMode.Additive);
     }
 
     /// <summary>
@@ -584,17 +661,16 @@ public class PlayerOverworld : MonoBehaviour {
         pos += (Vector3)cameraShift;
         pos.z = -10000;
         Camera.main.transform.position = pos;
-
-        foreach (Transform t in UnitaleUtil.GetFirstChildren(null))
-            if (t.gameObject.name.Contains("Parallax")) {
-                Vector3 dimPlx = t.GetComponent<RectTransform>().sizeDelta * t.localScale.x;
-                t.position = new Vector3(Mathf.Round(dimPlx.x) > 640 ? (dimPlx.x / 2 + (dimBG.x - dimPlx.x) * ((pos.x - 320) / (dimBG.x - 640))) : t.position.x,
-                                         Mathf.Round(dimPlx.y) > 480 ? (dimPlx.y / 2 + (dimBG.y - dimPlx.y) * ((pos.y - 240) / (dimBG.y - 480))) : t.position.y, t.position.z);
-            }
+        
+        foreach (Transform t in parallaxes) {
+            Vector3 dimPlx = t.GetComponent<RectTransform>().sizeDelta * t.localScale.x;
+            t.position = new Vector3(Mathf.Round(dimPlx.x) > 640 ? (dimPlx.x / 2 + (dimBG.x - dimPlx.x) * ((pos.x - 320) / (dimBG.x - 640))) : t.position.x,
+                                     Mathf.Round(dimPlx.y) > 480 ? (dimPlx.y / 2 + (dimBG.y - dimPlx.y) * ((pos.y - 240) / (dimBG.y - 480))) : t.position.y, t.position.z);
+        }
     }
 
     public static IEnumerator LaunchMenu() {
-        playerNoMove = true; menuRunning[2] = true; //Launch menu
+        instance.playerNoMove = true; menuRunning[2] = true; //Launch menu
         GameObject.Find("MenuContainer").transform.SetAsLastSibling();
         TextManager[] txtmgrs = GameObject.Find("MenuContainer").GetComponentsInChildren<TextManager>();
         instance.uiAudio.PlayOneShot(AudioClipRegistry.GetSound("menumove"));
@@ -646,13 +722,13 @@ public class PlayerOverworld : MonoBehaviour {
                     instance.uiAudio.PlayOneShot(AudioClipRegistry.GetSound("menuconfirm"));
                     menuRunning[0] = true;
                     if (choice == 2) { //ITEM
-                        int invCount = Inventory.container.Count;
+                        int invCount = Inventory.inventory.Count;
                         if (invCount == 0) {
                             menuRunning[0] = false;
                             //yield break;
                         } else {
                             for (int i = 0; i != invCount; i++)
-                                txtmgrs[i + 7].setText(new TextMessage("[noskipatall]" + Inventory.container[i].Name, false, true));
+                                txtmgrs[i + 7].setText(new TextMessage("[noskipatall]" + Inventory.inventory[i].Name, false, true));
                             if (GlobalControls.crate) {
                                 txtmgrs[15].setText(new TextMessage("[noskipatall]SUE", false, true));
                                 txtmgrs[16].setText(new TextMessage("[noskipatall]FINO", false, true));
@@ -721,15 +797,15 @@ public class PlayerOverworld : MonoBehaviour {
                                                 case 0: Inventory.UseItem(index); break;
                                                 case 1:
                                                     string str;
-                                                    Inventory.NametoDesc.TryGetValue(Inventory.container[index].Name, out str);
-                                                    instance.textmgr.setText(new TextMessage("\"" + Inventory.container[index].Name + "\"\n" + str, true, false));
+                                                    Inventory.NametoDesc.TryGetValue(Inventory.inventory[index].Name, out str);
+                                                    instance.textmgr.setText(new TextMessage("\"" + Inventory.inventory[index].Name + "\"\n" + str, true, false));
                                                     instance.textmgr.transform.parent.parent.SetAsLastSibling();
                                                     break;
                                                 case 2:
                                                     if (GlobalControls.crate)
-                                                        instance.textmgr.setText(new TextMessage("U DORPED TEH " + Inventory.container[index].Name + "!!!!!", true, false));
+                                                        instance.textmgr.setText(new TextMessage("U DORPED TEH " + Inventory.inventory[index].Name + "!!!!!", true, false));
                                                     else
-                                                        instance.textmgr.setText(new TextMessage("You dropped the " + Inventory.container[index].Name + ".", true, false));
+                                                        instance.textmgr.setText(new TextMessage("You dropped the " + Inventory.inventory[index].Name + ".", true, false));
                                                     instance.textmgr.transform.parent.parent.SetAsLastSibling();
                                                     Inventory.RemoveItem(index);
                                                     break;
@@ -794,12 +870,12 @@ public class PlayerOverworld : MonoBehaviour {
             }
             yield return 0;
         }
-        while (playerNoMove) 
+        while (PlayerOverworld.instance.playerNoMove) 
             yield return 0;
         menuRunning[3] = false;
     }
 
-    private static bool CloseMenu(bool endOfinText = false) {
+    private static bool CloseMenu(bool endOfInText = false) {
         foreach (Transform tf in GameObject.Find("MenuContainer").GetComponentsInChildren<Transform>()) {
             if (tf.GetComponent<Image>())       tf.gameObject.GetComponent<Image>().color = new Color(tf.gameObject.GetComponent<Image>().color.a,
                                                                                                       tf.gameObject.GetComponent<Image>().color.b,
@@ -811,9 +887,81 @@ public class PlayerOverworld : MonoBehaviour {
         GameObject.Find("textframe_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 0);
         GameObject.Find("textframe_interior").GetComponent<Image>().color = new Color(0, 0, 0, 0);
         GameObject.Find("TextManager OW").GetComponent<TextManager>().skipNowIfBlocked = true;
-        if (endOfinText)
-            playerNoMove = false; //Close menu
+        if (endOfInText)
+            instance.playerNoMove = false; //Close menu
         return true;
+    }
+
+    private static Dictionary<string, string> overworldMusics = new Dictionary<string, string>();
+
+    public static void HideOverworld(string callFrom = "Unknown") {
+        overworldMusics.Clear();
+        List<string> toDelete = new List<string>();
+        foreach (string str in NewMusicManager.audioname.Keys) {
+            AudioSource audio = (AudioSource)NewMusicManager.audiolist[str];
+            if (!audio) {
+                toDelete.Add(str);
+                continue;
+            }
+            if (!audio.name.Contains("StaticKeptAudio"))
+                if (audio.isPlaying) {
+                    overworldMusics.Add(audio.gameObject.name, NewMusicManager.audioname[str]);
+                    NewMusicManager.Stop(str);
+                }
+        }
+        foreach (string str in toDelete)
+            if (str != "src")
+                NewMusicManager.DestroyChannel(str);
+        MusicManager.src.Stop();
+        GameObject go = Instantiate(new GameObject());
+        go.name = "GameObject";
+        Transform[] root = UnitaleUtil.GetFirstChildren(null, true);
+        for (int i = 0; i < root.Length; i++)
+            if (root[i] != go && !root[i].name.Contains("AudioChannel"))
+                if (callFrom == "Shop" && root[i].name == "Main Camera OW") {
+                    root[i].GetComponent<EventManager>().enabled = false;
+                    root[i].GetComponent<TransitionOverworld>().enabled = false;
+                    root[i].transform.position = new Vector3(320, 240, root[i].transform.position.z);
+                } else
+                    root[i].SetParent(go.transform);
+        go.SetActive(false);
+    }
+
+    public static void ShowOverworld(string callFrom = "Unknown") {
+        Transform[] root = UnitaleUtil.GetFirstChildren(null, true);
+        GameObject go = null;
+        foreach (Transform tf in root)
+            if (tf.gameObject.name == "GameObject") {
+                go = tf.gameObject;
+                break;
+            } else if (!tf.gameObject.name.Contains("AudioChannel"))
+                Destroy(go);
+        go.SetActive(true);
+        Transform[] children = UnitaleUtil.GetFirstChildren(go.transform, true);
+        foreach (Transform tf in children) {
+            tf.SetParent(null);
+            if (tf.name == "Canvas OW" || tf.name == "Player" || tf.name == "Main Camera OW" || tf.name == "GameOverContainer")
+                GameObject.DontDestroyOnLoad(tf.gameObject);
+        }
+        instance.StartCoroutine(instance.ShowOverworld2(callFrom));
+    }
+
+    IEnumerator ShowOverworld2(string callFrom) {
+        yield return 0;
+        foreach (string str in overworldMusics.Keys) {
+            if (!NewMusicManager.Exists(str))
+                NewMusicManager.CreateChannel(str);
+            NewMusicManager.PlayMusic(str, overworldMusics[str]);
+        }
+        overworldMusics.Clear();
+        instance.OnDisable();
+        instance.OnEnable();
+        //EventManager.instance.ResetEvents();
+        if (callFrom == "Shop") {
+            GameObject.Find("Main Camera OW").GetComponent<EventManager>().enabled = true;
+            GameObject.Find("Main Camera OW").GetComponent<TransitionOverworld>().enabled = true;
+        } else
+            instance.RestartMusic();
     }
 }
 

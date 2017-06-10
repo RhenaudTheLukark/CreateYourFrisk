@@ -80,7 +80,9 @@ using System.ComponentModel;
             CheckLevel();
     }
 
-    public void SetGold(int value) { Gold = value > ControlPanel.instance.GoldLimit ? ControlPanel.instance.GoldLimit : value; }
+    public void SetGold(int value) {
+        Gold = value > ControlPanel.instance.GoldLimit ? ControlPanel.instance.GoldLimit : value;
+    }
 
     public bool AddBattleResults(int exp, int gold) {
         SetEXP(exp + EXP);

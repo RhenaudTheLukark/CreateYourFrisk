@@ -15,6 +15,14 @@ if enemies[1]["name"] ~= "Punderbolt" then
 	namecover.color = {0,0,0}
 	nextwaves = {"bullettest_chaserorb"}
 	State("DEFENDING")
+	update = Update
+	function Update()
+		local x = (Input.Right > 0 and Input.Right or 0) - (Input.Left > 0 and Input.Left or 0)
+		local y = (Input.Up > 0 and Input.Up or 0) - (Input.Down > 0 and Input.Down or 0)
+		local speed = Input.Cancel < 1 and 2 or 1
+		Player.Move(x*speed, y*speed, false)
+		update()
+	end
 else
 	cover = CreateSprite("UI/sq_white", "Top")
 	cover.Scale(640/4, 459/4)

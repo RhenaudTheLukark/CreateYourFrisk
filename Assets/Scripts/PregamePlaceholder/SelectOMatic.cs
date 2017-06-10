@@ -38,6 +38,7 @@ public class SelectOMatic : MonoBehaviour {
         StaticInits.Initialized = false;
         StaticInits.initAll();
         Debug.Log("Loading " + StaticInits.ENCOUNTER);
+        GlobalControls.isInFight = true;
         SceneManager.LoadScene("Battle");
     }
 
