@@ -12,7 +12,7 @@ public class TwitchEffect : TextEffect {
 
     public TwitchEffect(TextManager textMan, float intensity = 2.0f) : base(textMan) { this.intensity = intensity; }
 
-    protected override void updateInternal() {
+    protected override void UpdateInternal() {
         Image[] letters = textMan.letterReferences;
         if (letters.Length == 0)
             return;

@@ -112,8 +112,7 @@ public class LuaPlayerOW {
     /// <param name="heal">This one seems obvious too</param>
     [CYFEventFunction]
     public void CanMove(bool canMove) {
-        PlayerOverworld.instance.playerNoMove = !canMove;
-        EventManager.instance.scriptLaunched = !canMove;
+        PlayerOverworld.instance.forceNoAction = !canMove;
         appliedScript.Call("CYFEventNextCommand");
     }
 
@@ -171,5 +170,17 @@ public class LuaPlayerOW {
         else
             UnitaleUtil.PlaySound("CollisionSoundChannel", AudioClipRegistry.GetSound("healsound").name);
         player.MaxHPShift = value - player.BasisMaxHP;
+    }
+
+    [CYFEventFunction]
+    public void Teleport(string mapName, float posX, float posY, int direction = 0, bool NoFadeIn = false, bool NoFadeOut = false) {
+        TPHandler tp = GameObject.Instantiate(Resources.Load<TPHandler>("Prefabs/TP On-the-fly"));
+        tp.sceneName = mapName;
+        tp.position = new Vector2(posX, posY);
+        tp.direction = direction;
+        tp.noFadeIn = NoFadeIn;
+        tp.noFadeOut = NoFadeOut;
+        tp.transform.position = PlayerOverworld.instance.gameObject.transform.position;
+        EventManager.instance.EndEvent();
     }
 }

@@ -24,13 +24,13 @@ public class EnterNameScript : MonoBehaviour {
         uiAudio = GameObject.Find("TextManager Instructions").GetComponent<AudioSource>();
         try { GameObject.Find("textframe_border_outer").SetActive(false); } catch { }
         tmInstr = GameObject.Find("TextManager Instructions").GetComponent<TextManager>();
-        tmInstr.setHorizontalSpacing(2);
+        tmInstr.SetHorizontalSpacing(2);
         if (GlobalControls.crate)
-            tmInstr.setTextQueue(new TextMessage[] { new TextMessage("[noskipatall]GIV HMI A NAME!!!", false, true) });
+            tmInstr.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]GIV HMI A NAME!!!", false, true) });
         else 
-            tmInstr.setTextQueue(new TextMessage[] { new TextMessage("[noskipatall]Name the fallen human.", false, true) });
+            tmInstr.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]Name the fallen human.", false, true) });
         tmName = GameObject.Find("TextManager Name").GetComponent<TextManager>();
-        tmName.setHorizontalSpacing(2);
+        tmName.SetHorizontalSpacing(2);
         GameObject firstCamera = GameObject.Find("Main Camera");
         firstCamera.name = "temp";
         if (GameObject.Find("Main Camera"))
@@ -42,17 +42,17 @@ public class EnterNameScript : MonoBehaviour {
             Camera.main.GetComponent<AudioSource>().clip = AudioClipRegistry.GetMusic("mus_menu");
             Camera.main.GetComponent<AudioSource>().Play();
         }
-        tmName.setTextQueue(new TextMessage[] { new TextMessage(playerName, false, true) });
+        tmName.SetTextQueue(new TextMessage[] { new TextMessage(playerName, false, true) });
         tmLettersMaj = GameObject.Find("TextManager LettersMaj").GetComponent<TextManager>();
-        tmLettersMaj.setHorizontalSpacing(52.2f);
-        tmLettersMaj.setVerticalSpacing(-1);
-        tmLettersMaj.setTextQueue(new TextMessage[] { new TextMessage("[noskipatall]ABCDEFG\nHIJKLMN\nOPQRSTU\nVWXYZ", false, true) });
-        tmLettersMaj.setEffect(new ShakeEffect(tmLettersMaj));
+        tmLettersMaj.SetHorizontalSpacing(52.2f);
+        tmLettersMaj.SetVerticalSpacing(-1);
+        tmLettersMaj.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]ABCDEFG\nHIJKLMN\nOPQRSTU\nVWXYZ", false, true) });
+        tmLettersMaj.SetEffect(new ShakeEffect(tmLettersMaj));
         tmLettersMin = GameObject.Find("TextManager LettersMin").GetComponent<TextManager>();
-        tmLettersMin.setHorizontalSpacing(52.2f);
-        tmLettersMin.setVerticalSpacing(-1);
-        tmLettersMin.setTextQueue(new TextMessage[] { new TextMessage("[noskipatall]abcdefg\nhijklmn\nopqrstu\nvwxyz", false, true) });
-        tmLettersMin.setEffect(new ShakeEffect(tmLettersMin));
+        tmLettersMin.SetHorizontalSpacing(52.2f);
+        tmLettersMin.SetVerticalSpacing(-1);
+        tmLettersMin.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]abcdefg\nhijklmn\nopqrstu\nvwxyz", false, true) });
+        tmLettersMin.SetEffect(new ShakeEffect(tmLettersMin));
         for (int i = 0; i < GameObject.Find("TextManager LettersMaj").GetComponentsInChildren<Image>().Length; i ++)
             GameObject.Find("TextManager LettersMaj").GetComponentsInChildren<Image>()[i].name = GameObject.Find("TextManager LettersMaj").GetComponentsInChildren<Image>()[i].sprite.name;
         for (int i = 0; i < GameObject.Find("TextManager LettersMin").GetComponentsInChildren<Image>().Length; i ++)
@@ -65,7 +65,7 @@ public class EnterNameScript : MonoBehaviour {
         if (!confirm) {
             if (!hackFirstString && tmName.transform.childCount != 0 && !isNewGame) {
                 hackFirstString = true;
-                tmName.setTextQueue(new TextMessage[] { new TextMessage(playerName, false, true) });
+                tmName.SetTextQueue(new TextMessage[] { new TextMessage(playerName, false, true) });
                 tmName.transform.localPosition = new Vector3(-calcTotalLength(tmName) / 2, tmName.transform.localPosition.y, tmName.transform.localPosition.z);
             } 
             if (GlobalControls.input.Down == UndertaleInput.ButtonState.PRESSED) {
@@ -108,7 +108,7 @@ public class EnterNameScript : MonoBehaviour {
                     playerName = playerName.Substring(0, playerName.Length - 1);
                 else
                     weirdBackspaceShift = false;
-                tmName.setTextQueue(new TextMessage[] { new TextMessage(playerName, false, true) });
+                tmName.SetTextQueue(new TextMessage[] { new TextMessage(playerName, false, true) });
                 tmName.transform.localPosition = new Vector3(-calcTotalLength(tmName) / 2, tmName.transform.localPosition.y, tmName.transform.localPosition.z);
             } else if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED) {
                 if (choiceLetter == "Quit") {
@@ -134,7 +134,7 @@ public class EnterNameScript : MonoBehaviour {
                         playerName = playerName.Substring(0, 8) + choiceLetter;
                     weirdBackspaceShift = false;
                 }
-                tmName.setTextQueue(new TextMessage[] { new TextMessage(playerName, false, true) });
+                tmName.SetTextQueue(new TextMessage[] { new TextMessage(playerName, false, true) });
                 tmName.transform.localPosition = new Vector3(-calcTotalLength(tmName) / 2, tmName.transform.localPosition.y, tmName.transform.localPosition.z);
                 uiAudio.PlayOneShot(AudioClipRegistry.GetSound("menuconfirm"));
                 return;
@@ -161,12 +161,12 @@ public class EnterNameScript : MonoBehaviour {
     IEnumerator waitConfirm(bool isForbidden = false) {
         yield return 0;
         if (confirmText != null)
-            tmInstr.setTextQueue(new TextMessage[] { new TextMessage("[noskipatall]" + confirmText, false, true) });
+            tmInstr.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]" + confirmText, false, true) });
         else if (GlobalControls.crate)
-            tmInstr.setTextQueue(new TextMessage[] { new TextMessage("[noskipatall]LAL GUD???", false, true) });
+            tmInstr.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]LAL GUD???", false, true) });
         else
-            tmInstr.setTextQueue(new TextMessage[] { new TextMessage("[noskipatall]Is this name correct?", false, true) });
-        tmName.setEffect(new ShakeEffect(tmName));
+            tmInstr.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]Is this name correct?", false, true) });
+        tmName.SetEffect(new ShakeEffect(tmName));
         GameObject.Find("Backspace").GetComponent<SpriteRenderer>().enabled = false;
         tmLettersMaj.transform.position = new Vector3(tmLettersMaj.transform.position.x, tmLettersMaj.transform.position.y, 10000);
         tmLettersMin.transform.position = new Vector3(tmLettersMin.transform.position.x, tmLettersMin.transform.position.y, 10000);
@@ -196,13 +196,13 @@ public class EnterNameScript : MonoBehaviour {
             confirmText = null;
             confirm = false;
             tmName.transform.localScale = new Vector3(1, 1, 1);
-            tmName.setEffect(null);
-            tmName.setTextQueue(new TextMessage[] { new TextMessage(playerName, false, true) });
+            tmName.SetEffect(null);
+            tmName.SetTextQueue(new TextMessage[] { new TextMessage(playerName, false, true) });
             tmName.transform.localPosition = new Vector3(-calcTotalLength(tmName)/2, 145, tmName.transform.localPosition.z);
             if (GlobalControls.crate)
-                tmInstr.setTextQueue(new TextMessage[] { new TextMessage("[noskipatall]QWIK QWIK QWIK!!!", false, true) });
+                tmInstr.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]QWIK QWIK QWIK!!!", false, true) });
             else
-                tmInstr.setTextQueue(new TextMessage[] { new TextMessage("[noskipatall]Name the fallen human.", false, true) });
+                tmInstr.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]Name the fallen human.", false, true) });
             tmLettersMaj.transform.position = new Vector3(tmLettersMaj.transform.position.x, tmLettersMaj.transform.position.y, 0);
             tmLettersMin.transform.position = new Vector3(tmLettersMin.transform.position.x, tmLettersMin.transform.position.y, 0);
             GameObject.Find("Backspace").GetComponent<SpriteRenderer>().enabled = true;

@@ -18,7 +18,7 @@ wat = 0
 again = 0
 
 posecount = 0
-
+--dac97760 bee6bcfc 8ba3f2c2 caf144b2 68302eae
 function HandleAttack(attackstatus)
     dialogbubble = "right"
     if attackstatus == -1 then

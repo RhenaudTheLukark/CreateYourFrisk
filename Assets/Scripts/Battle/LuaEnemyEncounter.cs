@@ -17,16 +17,16 @@ internal class LuaEnemyEncounter : EnemyEncounter {
     public override Vector2 ArenaSize {
         get {
             /*
-            if (script.GetVar("arenasize") != null) {
-                //Table size = new Table(155, 130); //script.GetVar("arenasize").Table;
-                Vector2 size = new Vector2(155, 130);
-                //if (size == null)
-                //    return base.ArenaSize;
-                if (size.x < 16 || size.y < 16) // TODO remove hardcoding (but player never changes size so nobody cares
-                    return new Vector2(size.x > 16 ? (int)size.x : 16,  size.y > 16 ? (int)size.y : 16);
-                return new Vector2((int)size.x, (int)size.y);
-            }
-            return base.ArenaSize;*/
+    if (script.GetVar("arenasize") != null) {
+    //Table size = new Table(155, 130); //script.GetVar("arenasize").Table;
+    Vector2 size = new Vector2(155, 130);
+    //if (size == null)
+    //    return base.ArenaSize;
+    if (size.x < 16 || size.y < 16) // TODO remove hardcoding (but player never changes size so nobody cares
+    return new Vector2(size.x > 16 ? (int)size.x : 16,  size.y > 16 ? (int)size.y : 16);
+    return new Vector2((int)size.x, (int)size.y);
+    }
+    return base.ArenaSize;*/
             if (script.GetVar("arenasize") != null) {
                 Table size = script.GetVar("arenasize").Table;
                 if (size == null)
@@ -45,24 +45,26 @@ internal class LuaEnemyEncounter : EnemyEncounter {
     /// Attempts to initialize the encounter's script file and bind encounter-specific functions to it.
     /// </summary>
     /// <returns>True if initialization succeeded, false if there was an error.</returns>
-    private bool initScript() {
-        doNotGivePreviousEncounterToSelf = true;
-        script = new ScriptWrapper();
-        script.scriptname = StaticInits.ENCOUNTER;
-        string scriptText = ScriptRegistry.Get(ScriptRegistry.ENCOUNTER_PREFIX + StaticInits.ENCOUNTER);
-        try { script.DoString(scriptText); } 
-        catch (InterpreterException ex) {
-            UnitaleUtil.displayLuaError(StaticInits.ENCOUNTER, ex.DecoratedMessage);
-            return false;
+    private bool InitScript {
+        get {
+            doNotGivePreviousEncounterToSelf = true;
+            script = new ScriptWrapper() { scriptname = StaticInits.ENCOUNTER };
+            string scriptText = ScriptRegistry.Get(ScriptRegistry.ENCOUNTER_PREFIX + StaticInits.ENCOUNTER);
+            try { script.DoString(scriptText); } 
+            catch (InterpreterException ex) {
+                UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, ex.DecoratedMessage);
+                return false;
+            }
+            script.Bind("RandomEncounterText", (Func<string>)RandomEncounterText);
+            script.Bind("CreateProjectile", (Func<Script, string, float, float, string, DynValue>)CreateProjectile);
+            script.Bind("CreateProjectileAbs", (Func<Script, string, float, float, string, DynValue>)CreateProjectileAbs);
+            script.Bind("SetButtonLayer", (Action<string>)LuaScriptBinder.SetButtonLayer);
+            script_ref = script;
+            return true;
         }
-        script.Bind("RandomEncounterText", (Func<string>)RandomEncounterText);
-        script.Bind("CreateProjectile", (Func<Script, string, float, float, string, DynValue>)CreateProjectile);
-        script.Bind("CreateProjectileAbs", (Func<Script, string, float, float, string, DynValue>)CreateProjectileAbs);
-        script_ref = script;
-        return true;
     }
 
-    [HideInInspector]public DynValue CreateProjectileAbs(Script s, string sprite, float xpos, float ypos, string layerName = "") {
+    [HideInInspector] public DynValue CreateProjectileAbs(Script s, string sprite, float xpos, float ypos, string layerName = "") {
         LuaProjectile projectile = (LuaProjectile)BulletPool.instance.Retrieve();
         if (sprite == null)
             throw new CYFException("You can't create a projectile with a nil sprite!");
@@ -91,7 +93,7 @@ internal class LuaEnemyEncounter : EnemyEncounter {
         return CreateProjectileAbs(s, sprite, ArenaManager.arenaCenter.x + xpos, ArenaManager.arenaCenter.y + ypos, layerName);
     }
 
-    private void prepareWave() {
+    private void PrepareWave() {
         DynValue nextWaves = script.GetVar("nextwaves");
         waves = new ScriptWrapper[nextWaves.Table.Length];
         waveNames = new string[waves.Length];
@@ -100,16 +102,15 @@ internal class LuaEnemyEncounter : EnemyEncounter {
             List<int> indexes = new List<int>();
             for (int i = 0; i < waves.Length; i++) {
                 currentWaveScript = i;
-                waves[i] = new ScriptWrapper();
-                waves[i].script = LuaScriptBinder.boundScript();
                 DynValue ArenaStatus = UserData.Create(ArenaManager.luaStatus);
+                waves[i] = new ScriptWrapper() { script = LuaScriptBinder.BoundScript() };
                 waves[i].script.Globals.Set("Arena", ArenaStatus);
-                waves[i].script.Globals["EndWave"] = (Action)endWaveTimer;
-                waves[i].script.Globals["State"] = (Action<string>)UIController.instance.SwitchStateOnString;
+                waves[i].script.Globals["EndWave"] = (Action)EndWaveTimer;
+                waves[i].script.Globals["State"] = (Action<Script, string>)UIController.instance.SwitchStateOnString;
                 waves[i].script.Globals["CreateProjectile"] = (Func<Script, string, float, float, string, DynValue>)CreateProjectile;
                 waves[i].script.Globals["CreateProjectileAbs"] = (Func<Script, string, float, float, string, DynValue>)CreateProjectileAbs;
                 if (nextWaves.Table.Get(i + 1).Type != DataType.String){
-                    UnitaleUtil.displayLuaError(StaticInits.ENCOUNTER, "Non-string value encountered in nextwaves table");
+                    UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, "Non-string value encountered in nextwaves table");
                     return;
                 } else
                     waveNames[i] = nextWaves.Table.Get(i + 1).String;
@@ -117,28 +118,28 @@ internal class LuaEnemyEncounter : EnemyEncounter {
                 try {
                     waves[i].DoString(ScriptRegistry.Get(ScriptRegistry.WAVE_PREFIX + nextWaves.Table.Get(i + 1).String));
                     indexes.Add(i);
-                } catch (InterpreterException ex) { UnitaleUtil.displayLuaError(nextWaves.Table.Get(i + 1).String + ".lua", ex.DecoratedMessage);
+                } catch (InterpreterException ex) { UnitaleUtil.DisplayLuaError(nextWaves.Table.Get(i + 1).String + ".lua", ex.DecoratedMessage);
                 } catch (Exception ex) {
                     if (!GlobalControls.retroMode &&!ScriptRegistry.dict.ContainsKey(ScriptRegistry.WAVE_PREFIX + nextWaves.Table.Get(i + 1).String))
-                        UnitaleUtil.displayLuaError(StaticInits.ENCOUNTER, "The wave " + nextWaves.Table.Get(i + 1).String + " doesn't exist.");
+                        UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, "The wave " + nextWaves.Table.Get(i + 1).String + " doesn't exist.");
                     else
-                        UnitaleUtil.displayLuaError("<UNKNOWN LOCATION>", ex.Message + "\n\n" + ex.StackTrace);
+                        UnitaleUtil.DisplayLuaError("<UNKNOWN LOCATION>", ex.Message + "\n\n" + ex.StackTrace);
                 }
             }
             Table luaWaveTable = new Table(null);
             for (int i = 0; i < indexes.Count; i++)
                 luaWaveTable.Set(i + 1, UserData.Create(waves[indexes[i]]));
             script.SetVar("Wave", DynValue.NewTable(luaWaveTable));
-        } catch (InterpreterException ex) { UnitaleUtil.displayLuaError(nextWaves.Table.Get(currentWaveScript + 1).String + ".lua", ex.DecoratedMessage); }
+        } catch (InterpreterException ex) { UnitaleUtil.DisplayLuaError(nextWaves.Table.Get(currentWaveScript + 1).String + ".lua", ex.DecoratedMessage); }
     }
 
     public void Awake() {
-        if (initScript())
-            loadEnemiesAndPositions();
+        if (InitScript)
+            LoadEnemiesAndPositions();
         CanRun = true;
     }
 
-    protected override void loadEnemiesAndPositions() {
+    protected override void LoadEnemiesAndPositions() {
         AudioSource musicSource = GameObject.Find("Main Camera").GetComponent<AudioSource>();
         EncounterText = script.GetVar("encountertext").String;
         DynValue enemyScriptsLua = script.GetVar("enemies");
@@ -147,7 +148,7 @@ internal class LuaEnemyEncounter : EnemyEncounter {
 
         try { enemies = new LuaEnemyController[enemyScriptsLua.Table.Length]; /*dangerously assumes enemies is defined*/ } 
             catch (Exception) {
-            UnitaleUtil.displayLuaError(StaticInits.ENCOUNTER, "There's no enemies table in your encounter. Is this a pre-0.1.2 encounter? It's easy to fix!\n\n"
+            UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, "There's no enemies table in your encounter. Is this a pre-0.1.2 encounter? It's easy to fix!\n\n"
                 + "1. Create a Monsters folder in the mod's Lua folder\n"
                 + "2. Add the monster script (custom.lua) to this new folder\n"
                 + "3. Add the following line to the beginning of this encounter script, located in the mod folder/Lua/Encounters:\nenemies = {\"custom\"}\n"
@@ -171,7 +172,7 @@ internal class LuaEnemyEncounter : EnemyEncounter {
                     AudioClip music = AudioClipRegistry.GetMusic(musicFile);
                     musicSource.clip = music;
                     MusicManager.filename = "music:" + musicFile.ToLower();
-                } catch (Exception) { UnitaleUtil.writeInLogAndDebugger("[WARN]Loading custom music failed."); }
+                } catch (Exception) { UnitaleUtil.WriteInLogAndDebugger("[WARN]Loading custom music failed."); }
             } else {
                 musicSource.clip = AudioClipRegistry.GetMusic("mus_battle1");
                 MusicManager.filename = "music:mus_battle1";
@@ -180,7 +181,7 @@ internal class LuaEnemyEncounter : EnemyEncounter {
         }
         // Instantiate all the enemy objects
         if (enemies.Length > enemyPositions.Length) {
-            UnitaleUtil.displayLuaError(StaticInits.ENCOUNTER, "All enemies in an encounter must have a screen position defined. Either your enemypositions table is missing, "
+            UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, "All enemies in an encounter must have a screen position defined. Either your enemypositions table is missing, "
                 + "or there are more enemies than available positions. Refer to the documentation's Basic Setup section on how to do this.");
         }
         enemyInstances = new GameObject[enemies.Length];
@@ -252,7 +253,7 @@ internal class LuaEnemyEncounter : EnemyEncounter {
             else                             script.Call(func);
             return true;
         } catch (InterpreterException ex) {
-            UnitaleUtil.displayLuaError(StaticInits.ENCOUNTER, ex.DecoratedMessage);
+            UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, ex.DecoratedMessage);
             return true;
         }
     }
@@ -275,15 +276,15 @@ internal class LuaEnemyEncounter : EnemyEncounter {
     ///<returns>true if a custom action should be executed for given item, false if the default action should happen</returns>
     //public override bool CustomItemHandler(UnderItem item) { return CallOnSelfOrChildren("HandleItem", new DynValue[] { DynValue.NewString(item.Name) }); }
 
-    public override void updateWave() {
+    public override void UpdateWave() {
         string currentScript = "";
         try {
-            for (int i=0;i<waves.Length;i++) {
+            for (int i = 0; i<waves.Length; i++) {
                 currentScript = waveNames[i];
                 try { waves[i].script.Call(waves[i].script.Globals["Update"]); }
                 catch (ArgumentException) { }
 				catch (InterpreterException ex) {
-                    UnitaleUtil.displayLuaError(currentScript, ex.DecoratedMessage);
+                    UnitaleUtil.DisplayLuaError(currentScript, ex.DecoratedMessage);
                     return;
                 } /*catch (Exception ex) {
                     if (!GlobalControls.retroMode)
@@ -292,29 +293,29 @@ internal class LuaEnemyEncounter : EnemyEncounter {
                 }*/
             }
         } catch (InterpreterException ex) {
-            UnitaleUtil.displayLuaError(currentScript, ex.DecoratedMessage);
+            UnitaleUtil.DisplayLuaError(currentScript, ex.DecoratedMessage);
             return;
         }
     }
 
-    public override void nextWave() {
+    public override void NextWave() {
         waveBeginTime = Time.time;
         turnCount++;
-        prepareWave();
+        PrepareWave();
         if (script.GetVar("wavetimer") != null)
             waveTimer = Time.time + (float)script.GetVar("wavetimer").Number;
         else
             waveTimer = Time.time + 4.0f;
     }
 
-    public void endWaveTimer() { waveTimer = Time.time; }
+    public void EndWaveTimer() { waveTimer = Time.time; }
 
-    public override void endWave(bool death = false) {
+    public override void EndWave(bool death = false) {
         Table t = script["Wave"].Table;
         if (!death)
             foreach (object obj in t.Keys) {
                 try   { ((ScriptWrapper)t[obj]).Call("EndingWave"); }
-                catch { UnitaleUtil.displayLuaError(StaticInits.ENCOUNTER, "You shouldn't override Wave, now you get an error :P"); }
+                catch { UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, "You shouldn't override Wave, now you get an error :P"); }
             }
         if (!GlobalControls.retroMode)
             foreach (LuaProjectile p in FindObjectsOfType<LuaProjectile>())
@@ -336,11 +337,7 @@ internal class LuaEnemyEncounter : EnemyEncounter {
                 Destroy(ps.gameObject);
     }
 
-    public new bool waveInProgress() {
-        if (Time.time < waveTimer)
-            return true;
-        return false;
-    }
+    public new bool WaveInProgress() { return Time.time < waveTimer; }
 
     public static void BattleDialog(DynValue arg) {
         UIController.instance.battleDialogued = true;
@@ -352,7 +349,7 @@ internal class LuaEnemyEncounter : EnemyEncounter {
             for (int i = 0; i < arg.Table.Length; i++)
                 msgs[i] = new RegularMessage(arg.Table.Get(i + 1).String);
         } else
-            UnitaleUtil.displayLuaError("BattleDialog", "You need to input a non-empty array or a string here." + 
+            UnitaleUtil.DisplayLuaError("BattleDialog", "You need to input a non-empty array or a string here." + 
                                                         "\n\nIf you're sure that you've entered what's needed, you may contact the dev.");
         UIController.instance.ActionDialogResult(msgs, UIController.UIState.ENEMYDIALOGUE);
     }

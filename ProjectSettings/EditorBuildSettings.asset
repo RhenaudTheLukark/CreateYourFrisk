@@ -80,3 +80,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Shop.unity
     guid: f4bbae101a4c667429ad4c726c7bf820
+  - enabled: 1
+    path: Assets/Scenes/SpecialAnnouncement.unity
+    guid: f9d2349a99292a24c91eaee50a95a87e

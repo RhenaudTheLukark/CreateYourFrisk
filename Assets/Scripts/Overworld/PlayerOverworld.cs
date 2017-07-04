@@ -8,16 +8,22 @@ using MoonSharp.Interpreter;
 
 public class PlayerOverworld : MonoBehaviour {
     public static PlayerOverworld instance;
-    public int blockingLayer;               //Layer on which collision will be checked
+    public int BlockingLayer;               //Layer on which collision will be checked
     public int EventLayer;                  //Layer of the events, colliding too
     public int forcedMove = 0;              //Direction of a forced move
     //public int rolled = 0;
     public float speed = 3;
     public bool firstTime = false;          //Boolean used to not launch another event a the end of the previous event
-    public bool playerNoMove = false;      //Is the player not able to move?
-    public static bool[] menuRunning = new bool[] { false, false, false, false };
+    public bool inBattleAnim = false;
+    public bool PlayerNoMove {              //Is the player not able to move?
+        get { return _playerNoMove || forceNoAction; }
+        set { _playerNoMove = value; }
+    }
+    public bool forceNoAction = false;
+    public bool[] menuRunning = new bool[] { false, false, false, false, false };
     public Vector2 lastMove;                //The Player's last input
     public Vector2 cameraShift = new Vector2();
+    public Vector2 backgroundSize = new Vector3(640, 480);
     public Transform PlayerPos;             //The Transform component attached to this object
     public Image utHeart;
     public static AudioSource audioKept;
@@ -25,9 +31,9 @@ public class PlayerOverworld : MonoBehaviour {
     public TextManager textmgr;             //The map's text manager
     public List<Transform> parallaxes = new List<Transform>();
 
+    private bool _playerNoMove = false;
     private int battleWalkCount;            //Will be used to check the battle appearance
     private float TimeIndicator = 0f;       //A time indicator used for the soul's movement during the pre-Encounter anim
-    private bool inBattleAnim = false;
     private Rigidbody2D rb2D;               //The Rigidbody2D component attached to this object
     private AudioSource uiAudio;            //AudioSource used for the pre-Encounter sounds
     private CYFAnimator animator;
@@ -36,40 +42,43 @@ public class PlayerOverworld : MonoBehaviour {
 
     //Start overrides the Start function of MovingObject
     public void Start() {
+        instance = this;
+
         GameObject Player = GameObject.Find("Player");
         uiAudio = Player.GetComponent<AudioSource>();
         utHeart = GameObject.Find("utHeart").GetComponent<Image>();
         utHeart.color = new Color(utHeart.color.r, utHeart.color.g, utHeart.color.b, 0);
-        
+
         //StartCoroutine(LaunchMusic());
 
         //Get a component reference to the Player's transform
         PlayerPos = Player.transform;
 
         //If the player's position already exists, move the player to it
-        if (LuaScriptBinder.Get(null, "PlayerPosX") != null && LuaScriptBinder.Get(null, "PlayerPosY") != null) {
-            Vector2 temp = new Vector3((float)LuaScriptBinder.Get(null, "PlayerPosX").Number, (float)LuaScriptBinder.Get(null, "PlayerPosY").Number);
+        if (LuaScriptBinder.Get(null, "PlayerPosX") != null && LuaScriptBinder.Get(null, "PlayerPosY") != null && LuaScriptBinder.Get(null, "PlayerPosZ") != null) {
+            Vector2 temp = new Vector3((float)LuaScriptBinder.Get(null, "PlayerPosX").Number, (float)LuaScriptBinder.Get(null, "PlayerPosY").Number, (float)LuaScriptBinder.Get(null, "PlayerPosZ").Number);
             PlayerPos.position = temp;
         } else
             PlayerPos.position = GlobalControls.beginPosition;
 
         //Get a component reference to the Player's animator component
         //animator = Player.GetComponent<Animator>();
-        sprctrl = new LuaSpriteController(Player.GetComponent<SpriteRenderer>());
-        sprctrl.loopmode = "LOOP";
+        sprctrl = new LuaSpriteController(Player.GetComponent<SpriteRenderer>()) {
+            loopmode = "LOOP"
+        };
         animator = Player.GetComponent<CYFAnimator>();
 
         //Get a component reference to this object's Rigidbody2D
         rb2D = Player.GetComponent<Rigidbody2D>();
 
         //Get the layer that blocks our object, here BlockingLayer and EventLayer
-        blockingLayer = LayerMask.GetMask("BlockingLayer");
+        BlockingLayer = LayerMask.GetMask("BlockingLayer");
         EventLayer = LayerMask.GetMask("EventLayer");
 
         textmgr = GameObject.Find("TextManager OW").GetComponent<TextManager>();
 
         //How many times the player has to move before encounter an enemy
-        battleWalkCount = Math.randomRange(300, 1000);
+        battleWalkCount = Math.RandomRange(300, 1000);
 
         //Let's set the last movement to Down.
         lastMove = new Vector2(0, 1);
@@ -81,8 +90,6 @@ public class PlayerOverworld : MonoBehaviour {
             audioKept.loop = true;
             GameObject.DontDestroyOnLoad(audioKept);
         }
-
-        instance = this;
     }
 
     IEnumerator OnEnable2() {
@@ -96,8 +103,8 @@ public class PlayerOverworld : MonoBehaviour {
         MusicManager.src = Camera.main.GetComponent<AudioSource>();
         NewMusicManager.audiolist.Add("src", MusicManager.src);
         //NewMusicManager.audioname.Add("src", MusicManager.filename);
-        if (PlayerOverworld.audioKept)
-            NewMusicManager.audiolist.Add("StaticKeptAudio", PlayerOverworld.audioKept);
+        if (audioKept)
+            NewMusicManager.audiolist.Add("StaticKeptAudio", audioKept);
         //NewMusicManager.audioname.Add("StaticKeptAudio", "Sorry, nyi");
 
         PlayerPos = GameObject.Find("Player").transform;
@@ -109,9 +116,8 @@ public class PlayerOverworld : MonoBehaviour {
         GameObject.Find("black").GetComponent<Image>().color = new Color(0, 0, 0, 0);
         GameObject.Find("utHeart").GetComponent<Image>().color = new Color(GameObject.Find("utHeart").GetComponent<Image>().color.r, GameObject.Find("utHeart").GetComponent<Image>().color.g,
                                                                            GameObject.Find("utHeart").GetComponent<Image>().color.b, 0);
-        GameObject.FindObjectOfType<Fading>().BeginFade(-1);
 
-        StartCoroutine(textCoroutine());
+        StartCoroutine(TextCoroutine());
     }
 
     void RestartMusic() {
@@ -152,7 +158,7 @@ public class PlayerOverworld : MonoBehaviour {
 
         ControlPanel.instance.FrameBasedMovement = false;
         try {
-            EventManager.instance.scriptLaunched = false;
+            EventManager.instance.ScriptLaunched = false;
             EventManager.instance.script = null;
         } catch { }
 
@@ -171,25 +177,25 @@ public class PlayerOverworld : MonoBehaviour {
         Fading.FinishFade -= FinishFade;
     }
 
-    private void LoadScene(Scene scene, LoadSceneMode mode) { playerNoMove = true; } //Scene loaded
-    private void FinishFade() { playerNoMove = false; }
+    private void LoadScene(Scene scene, LoadSceneMode mode) { PlayerNoMove = true; } //Scene loaded
+    private void FinishFade() { PlayerNoMove = false; }
 
     private void NextText() {
-        if (!textmgr.allLinesComplete() && (textmgr.canAutoSkipAll() || textmgr.lineComplete()))
-            textmgr.nextLine();
-        else if ((textmgr.allLinesComplete() || textmgr.canAutoSkipAll()) && textmgr.lineCount() != 0) {
+        if (!textmgr.AllLinesComplete() && (textmgr.CanAutoSkipAll() || textmgr.LineComplete()))
+            textmgr.NextLineText();
+        else if ((textmgr.AllLinesComplete() || textmgr.CanAutoSkipAll()) && textmgr.LineCount() != 0) {
             textmgr.transform.parent.parent.SetAsFirstSibling();
-            textmgr.setTextQueue(null);
-            textmgr.destroyText();
-            textmgr.setTextFrameAlpha(0);
+            textmgr.SetTextQueue(null);
+            textmgr.DestroyText();
+            textmgr.SetTextFrameAlpha(0);
             if (EventManager.instance.script != null)
                 EventManager.instance.script.Call("CYFEventNextCommand");
             else
-                playerNoMove = false; //End text no event
+                PlayerNoMove = false; //End text no event
         }
     }
 
-    IEnumerator textCoroutine() {
+    IEnumerator TextCoroutine() {
         while (true) {
             //UnitaleUtil.writeInLogAndDebugger("inText = " + inText + ", textmgr.lineCount = " + textmgr.lineCount());
             if (GameObject.Find("textframe_border_outer"))
@@ -197,10 +203,10 @@ public class PlayerOverworld : MonoBehaviour {
                     //UnitaleUtil.writeInLogAndDebugger("blockskip = " + textmgr.blockSkip + ", skipNowIfBlocked = " + textmgr.skipNowIfBlocked);
                     yield return 0;
                     try {
-                        if (textmgr.canAutoSkipAll())
+                        if (textmgr.CanAutoSkipAll())
                             NextText();
-                        if (GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED && !textmgr.blockSkip && !textmgr.lineComplete() && textmgr.canSkip())
-                            textmgr.skipLine();
+                        if (GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED && !textmgr.blockSkip && !textmgr.LineComplete() && textmgr.CanSkip())
+                            textmgr.SkipLine();
                         else if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED && !textmgr.blockSkip)
                             NextText();
                     } catch { }
@@ -212,7 +218,7 @@ public class PlayerOverworld : MonoBehaviour {
     private void Update() {
         if (GameOverBehavior.gameOverContainerOw.activeSelf)
             return;
-        
+
         if ((Vector2)PlayerPos.position == new Vector2(0, 0))
             PlayerPos.position = GlobalControls.beginPosition;
         //Used to increment TimeIndicator for our pre-Encounter anim
@@ -237,28 +243,28 @@ public class PlayerOverworld : MonoBehaviour {
         int vertical = 0;       //Used to store the vertical move direction        
         int currentDirection = 0;
         //If you locked the player, do nothing
-        if (!playerNoMove) {
+        if (!PlayerNoMove) {
             horizontal = (int)(Input.GetAxisRaw("Horizontal"));
             vertical = (int)(Input.GetAxisRaw("Vertical"));
             //Just some animations switches ;)
             if (animator.movementDirection == 0) {
-                if (GlobalControls.input.Up == UndertaleInput.ButtonState.HELD) currentDirection = 8;
-                else if (GlobalControls.input.Down == UndertaleInput.ButtonState.HELD) currentDirection = 2;
-                else if (GlobalControls.input.Right == UndertaleInput.ButtonState.HELD) currentDirection = 6;
-                else if (GlobalControls.input.Left == UndertaleInput.ButtonState.HELD) currentDirection = 4;
+                if (GlobalControls.input.Up > 0) currentDirection = 8;
+                else if (GlobalControls.input.Down > 0) currentDirection = 2;
+                else if (GlobalControls.input.Right > 0) currentDirection = 6;
+                else if (GlobalControls.input.Left > 0) currentDirection = 4;
             }
             if (GlobalControls.input.Up == UndertaleInput.ButtonState.PRESSED) currentDirection = 8;
             else if (GlobalControls.input.Right == UndertaleInput.ButtonState.PRESSED) currentDirection = 6;
             else if (GlobalControls.input.Left == UndertaleInput.ButtonState.PRESSED) currentDirection = 4;
             else if (GlobalControls.input.Down == UndertaleInput.ButtonState.PRESSED) currentDirection = 2;
-            if ((animator.beginAnim.Contains("Up") && GlobalControls.input.Up == UndertaleInput.ButtonState.RELEASED) || 
-                (animator.beginAnim.Contains("Right") && GlobalControls.input.Right == UndertaleInput.ButtonState.RELEASED) ||
-                (animator.beginAnim.Contains("Left") && GlobalControls.input.Left == UndertaleInput.ButtonState.RELEASED) ||
-                (animator.beginAnim.Contains("Down") && GlobalControls.input.Down == UndertaleInput.ButtonState.RELEASED)) {
-                if (horizontal < 0)      currentDirection = 4;
+            if ((animator.beginAnim.Contains("Up") && GlobalControls.input.Up <= 0) ||
+                (animator.beginAnim.Contains("Right") && GlobalControls.input.Right <= 0) ||
+                (animator.beginAnim.Contains("Left") && GlobalControls.input.Left <= 0) ||
+                (animator.beginAnim.Contains("Down") && GlobalControls.input.Down <= 0)) {
+                if (horizontal < 0) currentDirection = 4;
                 else if (horizontal > 0) currentDirection = 6;
-                else if (vertical > 0)   currentDirection = 8;
-                else if (vertical < 0)   currentDirection = 2;
+                else if (vertical > 0) currentDirection = 8;
+                else if (vertical < 0) currentDirection = 2;
             }
 
             //Special keys
@@ -304,28 +310,30 @@ public class PlayerOverworld : MonoBehaviour {
                 /*if (GameObject.Find("Event1").GetComponent<EventOW>().actualPage == 666)
                     SetDialog(new string[] { "[color:ff0000]Event page = " + GameObject.Find("Event1").GetComponent<EventOW>().actualPage + " :)" }, true, new string[] { "rtlukark_determimed" });
                 else*/
-                SetDialog(new string[] { "Event page = " + GameObject.Find("Event1").GetComponent<EventOW>().actualPage + "." }, true, new string[] { "rtlukark_determined" });
+                SetDialog(new string[] { "Event page = " + GameObject.Find("Event1").GetComponent<EventOW>().actualPage + "." }, true, DynValue.NewString("rtlukark_determined"));
             } else if (Input.GetKeyDown("t") && GameObject.Find("textframe_border_outer").GetComponent<Image>().color.a == 0)
                 SetDialog(new string[] { "Your game is saved at\n" + Application.persistentDataPath + "/save.gd" }, true, null);
             else if (Input.GetKeyDown("b"))
                 SetEncounterAnim();
-        }        
+        }
 
         if (currentDirection != 0) animator.movementDirection = currentDirection;
 
         //Check is the movement is possible
         if ((Vector2)PlayerPos.position != new Vector2(0, 0))
             AttemptMove(horizontal, vertical);
-        
-        if (menuRunning[2])
-            if (GlobalControls.input.Menu == UndertaleInput.ButtonState.PRESSED)
+
+        if (GlobalControls.input.Menu == UndertaleInput.ButtonState.PRESSED)
+            if (menuRunning[2] && !menuRunning[4])
                 CloseMenu(true);
+        if (menuRunning[4])
+            menuRunning[4] = false;
     }
 
     private IEnumerator LaunchMusic() {
         yield return 0;
         //yield return Application.isLoadingLevel;
-        
+
         AudioSource audio = UnitaleUtil.GetCurrentOverworldAudio();
         MapInfos mi = GameObject.FindObjectOfType<MapInfos>();
 
@@ -343,41 +351,49 @@ public class PlayerOverworld : MonoBehaviour {
                 //Starts the music if the music we added is different of the one that is playing right now
             } else if (!FileLoader.getRelativePathWithoutExtension(audio.clip.name).Replace("Audio\\", string.Empty).Equals(mi.music))
                 audio.Play();
-        } catch { UnitaleUtil.displayLuaError("Overworld System", "Start of PlayerOverworld: music error!\nThis bug may have happened because the current mod folder doesn't exist, or because the map's music doesn't exist."); }
+        } catch { UnitaleUtil.DisplayLuaError("Overworld System", "Start of PlayerOverworld: music error!\nThis bug may have happened because the current mod folder doesn't exist, or because the map's music doesn't exist."); }
     }
 
-    //Moves the player
+    //Moves the object
     public void Move(float xDir, float yDir, GameObject go) {
         Transform transform = go.transform;
-        Rigidbody2D rb2Dgo = go.GetComponent<Rigidbody2D>();
+        //Rigidbody2D rb2Dgo = go.GetComponent<Rigidbody2D>();
 
         //Creates the movement of our object
-        Vector2 end;
-        if (go == rb2D.gameObject)  end = (Vector2)transform.position + new Vector2(xDir * speed, yDir * speed);
-        else                        end = (Vector2)transform.position + new Vector2(xDir * go.GetComponent<EventOW>().moveSpeed, yDir * go.GetComponent<EventOW>().moveSpeed);
+        Vector2 end = new Vector2(xDir, yDir);
+        if (go == rb2D.gameObject) end *= speed;
+        else end *= go.GetComponent<EventOW>().moveSpeed;
+        //end = new Vector2(Mathf.Round(end.x * 1000) / 1000, Mathf.Round(end.y * 1000) / 1000);
+        //end += (Vector2)transform.position;
+
+        transform.position += (Vector3)end;
 
         //Creates the new position of our object, depending on our current position
-        Vector2 newPosition = Vector2.MoveTowards(rb2Dgo.position, end, Mathf.Infinity);
+        //Vector2 newPosition = Vector2.MoveTowards(rb2Dgo.position, end, Mathf.Infinity);
 
         //If the GameObject is the player, check if the camera can follow him or not
         if (go == gameObject && !inBattleAnim && GameObject.Find("Background") != null) {
-            RectifyCameraPosition(new Vector2(newPosition.x, newPosition.y + PlayerPos.GetComponent<SpriteRenderer>().sprite.texture.height / 2f));
+            RectifyCameraPosition(new Vector2(transform.position.x, transform.position.y + PlayerPos.GetComponent<SpriteRenderer>().sprite.texture.height / 2f));
             GameObject.Find("Canvas OW").transform.position = new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y, -10);
         }
 
         //Moves the GameObject to the position we created before
-        rb2Dgo.MovePosition(newPosition);
+        //rb2Dgo.MovePosition(newPosition);
 
         //Decrease battleWalkCount if the player is moving freely
-        if ((xDir != 0 || yDir != 0) && !playerNoMove && EventManager.instance.script == null && go == gameObject)
+        if ((xDir != 0 || yDir != 0) && !PlayerNoMove && EventManager.instance.script == null && go == gameObject)
             battleWalkCount--;
     }
 
     //testMove returns true if it is able to move and false if not.
     //testMove takes parameters for x direction, y direction and a RaycastHit2D to check collision
-    public bool testMove(float xDir, float yDir, out RaycastHit2D hit, GameObject go) {
+    public bool TestMove(float xDir, float yDir, out RaycastHit2D hit, GameObject go) {
         Transform transform = go.transform;
         BoxCollider2D boxCollider = go.GetComponent<BoxCollider2D>();
+        if (!boxCollider) {
+            hit = new RaycastHit2D();
+            return true;
+        }
 
         //Store start position to move from, based on objects current transform position
         Vector2 start = new Vector2(transform.position.x + transform.localScale.x * boxCollider.offset.x,
@@ -392,16 +408,11 @@ public class PlayerOverworld : MonoBehaviour {
         //Disable the boxCollider so that linecast doesn't hit this object's own collider
         boxCollider.enabled = false;
 
+        float speed = go == rb2D.gameObject ? this.speed : go.GetComponent<EventOW>().moveSpeed;
         //Cast a line from start point to end point checking collision on blockingLayer and then EventLayer
-        if (go == rb2D.gameObject) {
-            hit = Physics2D.BoxCast(start, size, 0, dir, Mathf.Sqrt(Mathf.Pow(xDir * speed, 2) + Mathf.Pow(yDir * speed, 2)), blockingLayer);
-            if (hit.transform == null)
-                hit = Physics2D.BoxCast(start, size, 0, dir, Mathf.Sqrt(Mathf.Pow(xDir * speed, 2) + Mathf.Pow(yDir * speed, 2)), EventLayer);
-        } else {
-            hit = Physics2D.BoxCast(start, size, 0, dir, Mathf.Sqrt(Mathf.Pow(xDir * go.GetComponent<EventOW>().moveSpeed, 2) + Mathf.Pow(yDir * go.GetComponent<EventOW>().moveSpeed, 2)), blockingLayer);
-            if (hit.transform == null)
-                hit = Physics2D.BoxCast(start, size, 0, dir, Mathf.Sqrt(Mathf.Pow(xDir * go.GetComponent<EventOW>().moveSpeed, 2) + Mathf.Pow(yDir * go.GetComponent<EventOW>().moveSpeed, 2)), EventLayer);
-        }
+        hit = Physics2D.BoxCast(start, size, 0, dir, Mathf.Sqrt(Mathf.Pow(xDir * speed, 2) + Mathf.Pow(yDir * speed, 2)), BlockingLayer);
+        if (hit.transform == null)
+            hit = Physics2D.BoxCast(start, size, 0, dir, Mathf.Sqrt(Mathf.Pow(xDir * speed, 2) + Mathf.Pow(yDir * speed, 2)), EventLayer);
 
         //Re-enable boxCollider after BoxCast
         boxCollider.enabled = true;
@@ -422,25 +433,26 @@ public class PlayerOverworld : MonoBehaviour {
         if (!(xDir == 0 && yDir == 0) && go == gameObject)
             lastMove = new Vector2(xDir, yDir);
 
-        //Hit will store whatever our linecast hits when Move is called
-        RaycastHit2D hit;
-
-        //Set canMove to true if Move was successful, false if failed
-        bool canMove = testMove(xDir, yDir, out hit, go);
+        bool canMove2 = false;
 
         //Check if nothing was hit by BoxCast
         //If nothing was hit, move normally
-        if (hit.transform == null || wallPass)
+        if (wallPass || go.layer == 0)
             Move(xDir, yDir, go);
         else {
+            //Hit will store whatever our linecast hits when Move is called
+            RaycastHit2D hit;
+
+            //Set canMove to true if Move was successful, false if failed
+            bool canMove = TestMove(xDir, yDir, out hit, go);
+            canMove2 = canMove;
+
+            if (hit.transform == null) Move(xDir, yDir, go);
             //If we can go on sides
-            if (testMove(xDir, 0, out hit, go))
-                Move(xDir, 0, go);
+            else if (TestMove(xDir, 0, out hit, go)) Move(xDir, 0, go);
             //if we can go up or down
-            else if (testMove(0, yDir, out hit, go))
-                Move(0, yDir, go);
-            else
-                Move(0, 0, go);
+            else if (TestMove(0, yDir, out hit, go)) Move(0, yDir, go);
+            else Move(0, 0, go);
         }
 
         //If we moved enough to set battleWalkCount to 0...
@@ -451,15 +463,9 @@ public class PlayerOverworld : MonoBehaviour {
                 //...let's set an encounter!
                 SetEncounterAnim();
             } else
-                battleWalkCount = Math.randomRange(300, 1000);
+                battleWalkCount = Math.RandomRange(300, 1000);
 
-        return canMove;
-    }
-
-    //Restart reloads the scene when called
-    private void Restart() {
-        EventManager.SetEventStates();
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        return canMove2;
     }
 
     /// <summary>
@@ -470,7 +476,7 @@ public class PlayerOverworld : MonoBehaviour {
 
     //The function that creates the animation before the encounter
     IEnumerator AnimationBeforeBattle(string encounterName = null, bool quickAnim = false, bool ForceNoFlee = false) {
-        playerNoMove = true; //Begin encounter
+        PlayerNoMove = true; //Begin encounter
         inBattleAnim = true;
         //Here are the player's soul and a black sprite, we'll need to make them go up
         Image utHeart = GameObject.Find("utHeart").GetComponent<Image>();
@@ -553,11 +559,13 @@ public class PlayerOverworld : MonoBehaviour {
     private IEnumerator SetEncounter(string encounterName = null, bool ForceNoFlee = false) {
         //Saves our last map and the position of our player, before the battle
         string mapName;
-        if (UnitaleUtil.MapCorrespondanceList.ContainsKey(SceneManager.GetActiveScene().name))  mapName = UnitaleUtil.MapCorrespondanceList[SceneManager.GetActiveScene().name];
-        else                                                                                    mapName = SceneManager.GetActiveScene().name;
+        if (UnitaleUtil.MapCorrespondanceList.ContainsKey(SceneManager.GetActiveScene().name)) mapName = UnitaleUtil.MapCorrespondanceList[SceneManager.GetActiveScene().name];
+        else mapName = SceneManager.GetActiveScene().name;
         LuaScriptBinder.Set(null, "PlayerMap", DynValue.NewString(mapName));
-        LuaScriptBinder.Set(null, "PlayerPosX", DynValue.NewNumber(rb2D.position.x));
-        LuaScriptBinder.Set(null, "PlayerPosY", DynValue.NewNumber(rb2D.position.y));
+        Transform tf = rb2D.transform;
+        LuaScriptBinder.Set(null, "PlayerPosX", DynValue.NewNumber(tf.position.x));
+        LuaScriptBinder.Set(null, "PlayerPosY", DynValue.NewNumber(tf.position.y));
+        LuaScriptBinder.Set(null, "PlayerPosZ", DynValue.NewNumber(tf.position.z));
 
         //Sets the mod's folder and the encounter file's name to know what file we have to load
         string ModFolder = StaticInits.MODFOLDER, Encounter;
@@ -576,13 +584,13 @@ public class PlayerOverworld : MonoBehaviour {
                 encounterNames.Add(Path.GetFileNameWithoutExtension(encounterFile.Name));
             }
             if (encounterNames.Count == 0) {
-                UnitaleUtil.displayLuaError("Overworld System", "There's no valid encounter to launch.\nYou need to have at least 1 encounter\nthat doesn't have a '#' for first character!");
+                UnitaleUtil.DisplayLuaError("Overworld System", "There's no valid encounter to launch.\nYou need to have at least 1 encounter\nthat doesn't have a '#' for first character!");
                 yield break;
             } else {
                 if (encounterNames.Count == 1)
                     Encounter = Path.GetFileNameWithoutExtension(encounterNames[0].ToString());
                 else
-                    Encounter = Path.GetFileNameWithoutExtension(encounterNames[Math.randomRange(0, encounterNames.Count)].ToString());
+                    Encounter = Path.GetFileNameWithoutExtension(encounterNames[Math.RandomRange(0, encounterNames.Count)].ToString());
             }
         } else
             Encounter = Path.GetFileNameWithoutExtension(encounterName);
@@ -595,7 +603,7 @@ public class PlayerOverworld : MonoBehaviour {
         EventManager.SetEventStates();
 
         LuaScriptBinder.ClearBattleVar();
-        
+
         yield return new WaitForEndOfFrame();
         int width = Screen.width;
         int height = Screen.height;
@@ -603,6 +611,10 @@ public class PlayerOverworld : MonoBehaviour {
         tex.ReadPixels(new Rect(0, 0, width, height), 0, 0);
         tex.Apply();
         GlobalControls.texBeforeEncounter = tex;
+        GameObject.FindObjectOfType<Fading>().FadeInstant(1);
+
+        //Reset how many times the player has to move before encounter an enemy
+        battleWalkCount = Math.RandomRange(300, 1000);
 
         //GameObject.Find("Main Camera OW").tag = "Untagged";
         HideOverworld("Battle");
@@ -618,9 +630,9 @@ public class PlayerOverworld : MonoBehaviour {
     /// <param name="textTable">The text that'll be printed</param>
     /// <param name="rearranged">Will the text be rearranged ? (\r replacements etc)</param>
     /// <param name="mugshots">The mugshots' name that'll be used in the dialogue</param>
-    public void SetDialog(string[] textTable, bool rearranged, string[] mugshots = null) {
+    public void SetDialog(string[] textTable, bool rearranged, DynValue mugshots = null) {
         if (textTable[0] == string.Empty) {
-            UnitaleUtil.writeInLogAndDebugger("Old SetDialog: There is no text to print!");
+            UnitaleUtil.WriteInLogAndDebugger("Old SetDialog: There is no text to print!");
             return;
         }
 
@@ -628,18 +640,18 @@ public class PlayerOverworld : MonoBehaviour {
 
         if (mugshots != null)
             for (int i = 0; i < textTable.Length; i++)
-                textmsg[i] = new TextMessage(textTable[i], rearranged, false, mugshots[i]);
+                textmsg[i] = new TextMessage(textTable[i], rearranged, false, mugshots);
         else
             for (int i = 0; i < textTable.Length; i++)
                 textmsg[i] = new TextMessage(textTable[i], rearranged, false);
-        playerNoMove = true; //Old SetDialog
+        PlayerNoMove = true; //Old SetDialog
         EventManager.instance.passPressOnce = true;
 
-        textmgr.setTextFrameAlpha(1);
+        textmgr.SetTextFrameAlpha(1);
         textmgr.blockSkip = false;
 
         //textmgr.setTextQueue(textmsg, mugshots);
-        textmgr.setTextQueue(textmsg);
+        textmgr.SetTextQueue(textmsg);
         textmgr.transform.parent.parent.SetAsLastSibling();
     }
 
@@ -649,28 +661,26 @@ public class PlayerOverworld : MonoBehaviour {
     /// <param name="pos"></param>
     /// <returns></returns>
     public void RectifyCameraPosition(Vector3 pos) {
-        Vector3 dimBG = new Vector3(640, 480, -10000);
-        try { dimBG = GameObject.Find("Background").GetComponent<RectTransform>().sizeDelta * GameObject.Find("Background").GetComponent<RectTransform>().localScale.x; } 
-        catch { UnitaleUtil.writeInLogAndDebugger("RectifyCameraPosition: The 'Background' GameObject is missing."); }
-
-        if (pos.x < 320)                 pos.x = 320;
-        else if (pos.x > dimBG.x - 320)  pos.x = Mathf.RoundToInt(dimBG.x - 320);
-        if (pos.y < 240)                 pos.y = 240;
-        else if (pos.y > dimBG.y - 240)  pos.y = Mathf.RoundToInt(dimBG.y - 240);
+        if (pos.x < 320) pos.x = 320;
+        else if (pos.x > backgroundSize.x - 320) pos.x = Mathf.RoundToInt(backgroundSize.x - 320);
+        if (pos.y < 240) pos.y = 240;
+        else if (pos.y > backgroundSize.y - 240) pos.y = Mathf.RoundToInt(backgroundSize.y - 240);
 
         pos += (Vector3)cameraShift;
         pos.z = -10000;
         Camera.main.transform.position = pos;
-        
+
         foreach (Transform t in parallaxes) {
+            if (!t)
+                continue;
             Vector3 dimPlx = t.GetComponent<RectTransform>().sizeDelta * t.localScale.x;
-            t.position = new Vector3(Mathf.Round(dimPlx.x) > 640 ? (dimPlx.x / 2 + (dimBG.x - dimPlx.x) * ((pos.x - 320) / (dimBG.x - 640))) : t.position.x,
-                                     Mathf.Round(dimPlx.y) > 480 ? (dimPlx.y / 2 + (dimBG.y - dimPlx.y) * ((pos.y - 240) / (dimBG.y - 480))) : t.position.y, t.position.z);
+            t.position = new Vector3(Mathf.Round(dimPlx.x) > 640 ? (dimPlx.x / 2 + (backgroundSize.x - dimPlx.x) * ((pos.x - 320) / (backgroundSize.x - 640))) : t.position.x,
+                                     Mathf.Round(dimPlx.y) > 480 ? (dimPlx.y / 2 + (backgroundSize.y - dimPlx.y) * ((pos.y - 240) / (backgroundSize.y - 480))) : t.position.y, t.position.z);
         }
     }
 
     public static IEnumerator LaunchMenu() {
-        instance.playerNoMove = true; menuRunning[2] = true; //Launch menu
+        instance.PlayerNoMove = true; instance.menuRunning[2] = true; instance.menuRunning[4] = true; //Launch menu
         GameObject.Find("MenuContainer").transform.SetAsLastSibling();
         TextManager[] txtmgrs = GameObject.Find("MenuContainer").GetComponentsInChildren<TextManager>();
         instance.uiAudio.PlayOneShot(AudioClipRegistry.GetSound("menumove"));
@@ -678,29 +688,29 @@ public class PlayerOverworld : MonoBehaviour {
            7-17  : Item
            18-27 : Stat */
         foreach (TextManager txt in txtmgrs)
-            txt.setHorizontalSpacing(2);
+            txt.SetHorizontalSpacing(2);
 
-        GameObject.Find("TextManager OW").GetComponent<TextManager>().setText(new TextMessage("[noskipatall]", false, false));
+        GameObject.Find("TextManager OW").GetComponent<TextManager>().SetText(new TextMessage("[noskipatall]", false, false));
         GameObject.Find("menustat_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 1);
         GameObject.Find("menuchoice_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 1);
         GameObject.Find("menustat_interior").GetComponent<Image>().color = new Color(0, 0, 0, 1);
         GameObject.Find("menuchoice_interior").GetComponent<Image>().color = new Color(0, 0, 0, 1);
 
-        txtmgrs[0].setText(new TextMessage("[noskipatall]" + PlayerCharacter.instance.Name, false, true));
+        txtmgrs[0].SetText(new TextMessage("[noskipatall]" + PlayerCharacter.instance.Name, false, true));
         if (GlobalControls.crate) {
-            txtmgrs[1].setText(new TextMessage("[noskipatall][font:menu]LV " + PlayerCharacter.instance.LV, false, true));
-            txtmgrs[2].setText(new TextMessage("[noskipatall][font:menu]PH " + (int)PlayerCharacter.instance.HP + "/" + PlayerCharacter.instance.MaxHP, false, true));
-            txtmgrs[3].setText(new TextMessage("[noskipatall][font:menu]G  " + PlayerCharacter.instance.Gold, false, true));
-            txtmgrs[4].setText(new TextMessage("[noskipatall]TEM", false, true));
-            txtmgrs[5].setText(new TextMessage("[noskipatall]TAST", false, true));
-            txtmgrs[6].setText(new TextMessage("[noskipatall]LECL", false, true));
+            txtmgrs[1].SetText(new TextMessage("[noskipatall][font:menu]LV " + PlayerCharacter.instance.LV, false, true));
+            txtmgrs[2].SetText(new TextMessage("[noskipatall][font:menu]PH " + (int)PlayerCharacter.instance.HP + "/" + PlayerCharacter.instance.MaxHP, false, true));
+            txtmgrs[3].SetText(new TextMessage("[noskipatall][font:menu]G  " + PlayerCharacter.instance.Gold, false, true));
+            txtmgrs[4].SetText(new TextMessage("[noskipatall]TEM", false, true));
+            txtmgrs[5].SetText(new TextMessage("[noskipatall]TAST", false, true));
+            txtmgrs[6].SetText(new TextMessage("[noskipatall]LECL", false, true));
         } else {
-            txtmgrs[1].setText(new TextMessage("[noskipatall][font:menu]LV " + PlayerCharacter.instance.LV, false, true));
-            txtmgrs[2].setText(new TextMessage("[noskipatall][font:menu]HP " + (int)PlayerCharacter.instance.HP + "/" + PlayerCharacter.instance.MaxHP, false, true));
-            txtmgrs[3].setText(new TextMessage("[noskipatall][font:menu]G  " + PlayerCharacter.instance.Gold, false, true));
-            txtmgrs[4].setText(new TextMessage("[noskipatall]ITEM", false, true));
-            txtmgrs[5].setText(new TextMessage("[noskipatall]STAT", false, true));
-            txtmgrs[6].setText(new TextMessage("[noskipatall]CELL", false, true));
+            txtmgrs[1].SetText(new TextMessage("[noskipatall][font:menu]LV " + PlayerCharacter.instance.LV, false, true));
+            txtmgrs[2].SetText(new TextMessage("[noskipatall][font:menu]HP " + (int)PlayerCharacter.instance.HP + "/" + PlayerCharacter.instance.MaxHP, false, true));
+            txtmgrs[3].SetText(new TextMessage("[noskipatall][font:menu]G  " + PlayerCharacter.instance.Gold, false, true));
+            txtmgrs[4].SetText(new TextMessage("[noskipatall]ITEM", false, true));
+            txtmgrs[5].SetText(new TextMessage("[noskipatall]STAT", false, true));
+            txtmgrs[6].SetText(new TextMessage("[noskipatall]CELL", false, true));
         }
         GameObject.Find("Mugshot").GetComponent<Image>().color = new Color(1, 1, 1, 0);
         GameObject.Find("textframe_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 0);
@@ -710,8 +720,8 @@ public class PlayerOverworld : MonoBehaviour {
         GameObject.Find("utHeartMenu").transform.localPosition = new Vector3(-255, 35, GameObject.Find("utHeartMenu").transform.position.z);
         int choice = 2;
         yield return 0;
-        while (!menuRunning[3]) {
-            if (!menuRunning[0]) {
+        while (!instance.menuRunning[3]) {
+            if (!instance.menuRunning[0]) {
                 if (GlobalControls.input.Up == UndertaleInput.ButtonState.PRESSED) {
                     choice = (choice + 1) % 3;
                     GameObject.Find("utHeartMenu").transform.localPosition = new Vector3(-255, 35 - ((2 - choice % 3) * 36), GameObject.Find("utHeartMenu").transform.position.z);
@@ -720,23 +730,23 @@ public class PlayerOverworld : MonoBehaviour {
                     GameObject.Find("utHeartMenu").transform.localPosition = new Vector3(-255, 35 - ((2 - choice % 3) * 36), GameObject.Find("utHeartMenu").transform.position.z);
                 } else if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED) {
                     instance.uiAudio.PlayOneShot(AudioClipRegistry.GetSound("menuconfirm"));
-                    menuRunning[0] = true;
+                    instance.menuRunning[0] = true;
                     if (choice == 2) { //ITEM
                         int invCount = Inventory.inventory.Count;
                         if (invCount == 0) {
-                            menuRunning[0] = false;
+                            instance.menuRunning[0] = false;
                             //yield break;
                         } else {
                             for (int i = 0; i != invCount; i++)
-                                txtmgrs[i + 7].setText(new TextMessage("[noskipatall]" + Inventory.inventory[i].Name, false, true));
+                                txtmgrs[i + 7].SetText(new TextMessage("[noskipatall]" + Inventory.inventory[i].Name, false, true));
                             if (GlobalControls.crate) {
-                                txtmgrs[15].setText(new TextMessage("[noskipatall]SUE", false, true));
-                                txtmgrs[16].setText(new TextMessage("[noskipatall]FINO", false, true));
-                                txtmgrs[17].setText(new TextMessage("[noskipatall]DORP", false, true));
+                                txtmgrs[15].SetText(new TextMessage("[noskipatall]SUE", false, true));
+                                txtmgrs[16].SetText(new TextMessage("[noskipatall]FINO", false, true));
+                                txtmgrs[17].SetText(new TextMessage("[noskipatall]DORP", false, true));
                             } else {
-                                txtmgrs[15].setText(new TextMessage("[noskipatall]USE", false, true));
-                                txtmgrs[16].setText(new TextMessage("[noskipatall]INFO", false, true));
-                                txtmgrs[17].setText(new TextMessage("[noskipatall]DROP", false, true));
+                                txtmgrs[15].SetText(new TextMessage("[noskipatall]USE", false, true));
+                                txtmgrs[16].SetText(new TextMessage("[noskipatall]INFO", false, true));
+                                txtmgrs[17].SetText(new TextMessage("[noskipatall]DROP", false, true));
                             }
                             GameObject.Find("Mugshot").GetComponent<Image>().color = new Color(1, 1, 1, 0);
                             GameObject.Find("textframe_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 0);
@@ -746,7 +756,7 @@ public class PlayerOverworld : MonoBehaviour {
                             GameObject.Find("utHeartMenu").transform.localPosition = new Vector3(-48, 143, GameObject.Find("utHeartMenu").transform.position.z);
                             int index = 0;
                             yield return 0;
-                            while (menuRunning[0] &&!menuRunning[1] &&!menuRunning[3]) {
+                            while (instance.menuRunning[0] && !instance.menuRunning[1] && !instance.menuRunning[3]) {
                                 if (GlobalControls.input.Down == UndertaleInput.ButtonState.PRESSED) {
                                     index = (index + 1) % invCount;
                                     instance.uiAudio.PlayOneShot(AudioClipRegistry.GetSound("menumove"));
@@ -756,8 +766,8 @@ public class PlayerOverworld : MonoBehaviour {
                                     instance.uiAudio.PlayOneShot(AudioClipRegistry.GetSound("menumove"));
                                     GameObject.Find("utHeartMenu").transform.localPosition = new Vector3(-48, 143 - 32 * index, GameObject.Find("utHeartMenu").transform.position.z);
                                 } else if (GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED) {
-                                    menuRunning[0] = false;
-                                    for (int i = 7; i <= 17; i++) txtmgrs[i].destroyText();
+                                    instance.menuRunning[0] = false;
+                                    for (int i = 7; i <= 17; i++) txtmgrs[i].DestroyText();
                                     GameObject.Find("Mugshot").GetComponent<Image>().color = new Color(1, 1, 1, 0);
                                     GameObject.Find("textframe_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 0);
                                     GameObject.Find("textframe_interior").GetComponent<Image>().color = new Color(0, 0, 0, 0);
@@ -765,12 +775,12 @@ public class PlayerOverworld : MonoBehaviour {
                                     GameObject.Find("item_interior").GetComponent<Image>().color = new Color(0, 0, 0, 0);
                                     GameObject.Find("utHeartMenu").transform.localPosition = new Vector3(-255, 35 - ((2 - choice % 3) * 36), GameObject.Find("utHeartMenu").transform.position.z);
                                 } else if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED) {
-                                    menuRunning[1] = true;
+                                    instance.menuRunning[1] = true;
                                     instance.uiAudio.PlayOneShot(AudioClipRegistry.GetSound("menuconfirm"));
                                     int index2 = 0;
                                     GameObject.Find("utHeartMenu").transform.localPosition = new Vector3(-48, -137, GameObject.Find("utHeartMenu").transform.position.z); // -53,42,156
                                     yield return 0;
-                                    while (menuRunning[1] &&!menuRunning[3]) {
+                                    while (instance.menuRunning[1] && !instance.menuRunning[3]) {
                                         if (GlobalControls.input.Left == UndertaleInput.ButtonState.PRESSED) {
                                             instance.uiAudio.PlayOneShot(AudioClipRegistry.GetSound("menumove"));
                                             index2 = (index2 + 2) % 3;
@@ -789,7 +799,7 @@ public class PlayerOverworld : MonoBehaviour {
                                             }
                                         } else if (GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED) {
                                             GameObject.Find("utHeartMenu").transform.localPosition = new Vector3(-48, 143 - 32 * index, GameObject.Find("utHeartMenu").transform.position.z);
-                                            menuRunning[1] = false;
+                                            instance.menuRunning[1] = false;
                                         } else if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED) {
                                             instance.uiAudio.PlayOneShot(AudioClipRegistry.GetSound("menuconfirm"));
                                             yield return CloseMenu();
@@ -798,14 +808,14 @@ public class PlayerOverworld : MonoBehaviour {
                                                 case 1:
                                                     string str;
                                                     Inventory.NametoDesc.TryGetValue(Inventory.inventory[index].Name, out str);
-                                                    instance.textmgr.setText(new TextMessage("\"" + Inventory.inventory[index].Name + "\"\n" + str, true, false));
+                                                    instance.textmgr.SetText(new TextMessage("\"" + Inventory.inventory[index].Name + "\"\n" + str, true, false));
                                                     instance.textmgr.transform.parent.parent.SetAsLastSibling();
                                                     break;
                                                 case 2:
                                                     if (GlobalControls.crate)
-                                                        instance.textmgr.setText(new TextMessage("U DORPED TEH " + Inventory.inventory[index].Name + "!!!!!", true, false));
+                                                        instance.textmgr.SetText(new TextMessage("U DORPED TEH " + Inventory.inventory[index].Name + "!!!!!", true, false));
                                                     else
-                                                        instance.textmgr.setText(new TextMessage("You dropped the " + Inventory.inventory[index].Name + ".", true, false));
+                                                        instance.textmgr.SetText(new TextMessage("You dropped the " + Inventory.inventory[index].Name + ".", true, false));
                                                     instance.textmgr.transform.parent.parent.SetAsLastSibling();
                                                     Inventory.RemoveItem(index);
                                                     break;
@@ -818,25 +828,25 @@ public class PlayerOverworld : MonoBehaviour {
                             }
                         }
                     } else if (choice == 1) { // STAT
-                        txtmgrs[18].setText(new TextMessage("[noskipatall]\"" + PlayerCharacter.instance.Name + "\"", false, true));
-                        txtmgrs[19].setText(new TextMessage("[noskipatall]LV " + PlayerCharacter.instance.LV, false, true));
-                        txtmgrs[20].setText(new TextMessage("[noskipatall]HP " + PlayerCharacter.instance.HP + "/" + PlayerCharacter.instance.MaxHP, false, true));
+                        txtmgrs[18].SetText(new TextMessage("[noskipatall]\"" + PlayerCharacter.instance.Name + "\"", false, true));
+                        txtmgrs[19].SetText(new TextMessage("[noskipatall]LV " + PlayerCharacter.instance.LV, false, true));
+                        txtmgrs[20].SetText(new TextMessage("[noskipatall]HP " + PlayerCharacter.instance.HP + "/" + PlayerCharacter.instance.MaxHP, false, true));
                         if (GlobalControls.crate) {
-                            txtmgrs[21].setText(new TextMessage("[noskipatall]TA " + (PlayerCharacter.instance.ATK + PlayerCharacter.instance.WeaponATK) + " (" + PlayerCharacter.instance.WeaponATK + ")", false, true));
-                            txtmgrs[22].setText(new TextMessage("[noskipatall]DF " + (PlayerCharacter.instance.DEF + PlayerCharacter.instance.ArmorDEF) + " (" + PlayerCharacter.instance.ArmorDEF + ")", false, true));
-                            txtmgrs[23].setText(new TextMessage("[noskipatall]EPX: " + PlayerCharacter.instance.EXP, false, true));
-                            txtmgrs[24].setText(new TextMessage("[noskipatall]NETX: " + PlayerCharacter.instance.GetNext(), false, true));
-                            txtmgrs[25].setText(new TextMessage("[noskipatall]WAEPON: " + PlayerCharacter.instance.Weapon, false, true));
-                            txtmgrs[26].setText(new TextMessage("[noskipatall]AROMR: " + PlayerCharacter.instance.Armor, false, true));
-                            txtmgrs[27].setText(new TextMessage("[noskipatall]GLOD: " + PlayerCharacter.instance.Gold, false, true));
+                            txtmgrs[21].SetText(new TextMessage("[noskipatall]TA " + (PlayerCharacter.instance.ATK + PlayerCharacter.instance.WeaponATK) + " (" + PlayerCharacter.instance.WeaponATK + ")", false, true));
+                            txtmgrs[22].SetText(new TextMessage("[noskipatall]DF " + (PlayerCharacter.instance.DEF + PlayerCharacter.instance.ArmorDEF) + " (" + PlayerCharacter.instance.ArmorDEF + ")", false, true));
+                            txtmgrs[23].SetText(new TextMessage("[noskipatall]EPX: " + PlayerCharacter.instance.EXP, false, true));
+                            txtmgrs[24].SetText(new TextMessage("[noskipatall]NETX: " + PlayerCharacter.instance.GetNext(), false, true));
+                            txtmgrs[25].SetText(new TextMessage("[noskipatall]WAEPON: " + PlayerCharacter.instance.Weapon, false, true));
+                            txtmgrs[26].SetText(new TextMessage("[noskipatall]AROMR: " + PlayerCharacter.instance.Armor, false, true));
+                            txtmgrs[27].SetText(new TextMessage("[noskipatall]GLOD: " + PlayerCharacter.instance.Gold, false, true));
                         } else {
-                            txtmgrs[21].setText(new TextMessage("[noskipatall]AT " + (PlayerCharacter.instance.ATK + PlayerCharacter.instance.WeaponATK) + " (" + PlayerCharacter.instance.WeaponATK + ")", false, true));
-                            txtmgrs[22].setText(new TextMessage("[noskipatall]DF " + (PlayerCharacter.instance.DEF + PlayerCharacter.instance.ArmorDEF) + " (" + PlayerCharacter.instance.ArmorDEF + ")", false, true));
-                            txtmgrs[23].setText(new TextMessage("[noskipatall]EXP: " + PlayerCharacter.instance.EXP, false, true));
-                            txtmgrs[24].setText(new TextMessage("[noskipatall]NEXT: " + PlayerCharacter.instance.GetNext(), false, true));
-                            txtmgrs[25].setText(new TextMessage("[noskipatall]WEAPON: " + PlayerCharacter.instance.Weapon, false, true));
-                            txtmgrs[26].setText(new TextMessage("[noskipatall]ARMOR: " + PlayerCharacter.instance.Armor, false, true));
-                            txtmgrs[27].setText(new TextMessage("[noskipatall]GOLD: " + PlayerCharacter.instance.Gold, false, true));
+                            txtmgrs[21].SetText(new TextMessage("[noskipatall]AT " + (PlayerCharacter.instance.ATK + PlayerCharacter.instance.WeaponATK) + " (" + PlayerCharacter.instance.WeaponATK + ")", false, true));
+                            txtmgrs[22].SetText(new TextMessage("[noskipatall]DF " + (PlayerCharacter.instance.DEF + PlayerCharacter.instance.ArmorDEF) + " (" + PlayerCharacter.instance.ArmorDEF + ")", false, true));
+                            txtmgrs[23].SetText(new TextMessage("[noskipatall]EXP: " + PlayerCharacter.instance.EXP, false, true));
+                            txtmgrs[24].SetText(new TextMessage("[noskipatall]NEXT: " + PlayerCharacter.instance.GetNext(), false, true));
+                            txtmgrs[25].SetText(new TextMessage("[noskipatall]WEAPON: " + PlayerCharacter.instance.Weapon, false, true));
+                            txtmgrs[26].SetText(new TextMessage("[noskipatall]ARMOR: " + PlayerCharacter.instance.Armor, false, true));
+                            txtmgrs[27].SetText(new TextMessage("[noskipatall]GOLD: " + PlayerCharacter.instance.Gold, false, true));
                         }
                         GameObject.Find("Mugshot").GetComponent<Image>().color = new Color(1, 1, 1, 0);
                         GameObject.Find("textframe_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 0);
@@ -844,11 +854,11 @@ public class PlayerOverworld : MonoBehaviour {
                         GameObject.Find("stat_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 1);
                         GameObject.Find("stat_interior").GetComponent<Image>().color = new Color(0, 0, 0, 1);
                         yield return 0;
-                        while (menuRunning[0] &&!menuRunning[3]) {
+                        while (instance.menuRunning[0] && !instance.menuRunning[3]) {
                             if (GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED || GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED) {
                                 instance.uiAudio.PlayOneShot(AudioClipRegistry.GetSound("menuconfirm"));
-                                menuRunning[0] = false;
-                                for (int i = 18; i <= 27; i++) txtmgrs[i].destroyText();
+                                instance.menuRunning[0] = false;
+                                for (int i = 18; i <= 27; i++) txtmgrs[i].DestroyText();
                                 GameObject.Find("Mugshot").GetComponent<Image>().color = new Color(1, 1, 1, 0);
                                 GameObject.Find("textframe_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 0);
                                 GameObject.Find("textframe_interior").GetComponent<Image>().color = new Color(0, 0, 0, 0);
@@ -860,9 +870,9 @@ public class PlayerOverworld : MonoBehaviour {
                     } else { //CELL
                         yield return CloseMenu();
                         if (GlobalControls.crate)
-                            instance.textmgr.setText(new TextMessage("NO CELPLHONE ALOLWDE!!!", true, false));
+                            instance.textmgr.SetText(new TextMessage("NO CELPLHONE ALOLWDE!!!", true, false));
                         else
-                            instance.textmgr.setText(new TextMessage("But you don't have a cellphone...[w:10]yet.", true, false));
+                            instance.textmgr.SetText(new TextMessage("But you don't have a cellphone...[w:10]yet.", true, false));
                         instance.textmgr.transform.parent.parent.SetAsLastSibling();
                     }
                 } else if (GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED)
@@ -870,25 +880,25 @@ public class PlayerOverworld : MonoBehaviour {
             }
             yield return 0;
         }
-        while (PlayerOverworld.instance.playerNoMove) 
+        while (instance.PlayerNoMove)
             yield return 0;
-        menuRunning[3] = false;
+        instance.menuRunning[3] = false;
     }
 
     private static bool CloseMenu(bool endOfInText = false) {
         foreach (Transform tf in GameObject.Find("MenuContainer").GetComponentsInChildren<Transform>()) {
-            if (tf.GetComponent<Image>())       tf.gameObject.GetComponent<Image>().color = new Color(tf.gameObject.GetComponent<Image>().color.a,
-                                                                                                      tf.gameObject.GetComponent<Image>().color.b,
-                                                                                                      tf.gameObject.GetComponent<Image>().color.g, 0);
-            if (tf.GetComponent<TextManager>()) tf.gameObject.GetComponent<TextManager>().destroyText();
+            if (tf.GetComponent<Image>()) tf.gameObject.GetComponent<Image>().color = new Color(tf.gameObject.GetComponent<Image>().color.a,
+                                                                                                tf.gameObject.GetComponent<Image>().color.b,
+                                                                                                tf.gameObject.GetComponent<Image>().color.g, 0);
+            if (tf.GetComponent<TextManager>()) tf.gameObject.GetComponent<TextManager>().DestroyText();
         }
-        menuRunning = new bool[] { false, false, false, true };
+        instance.menuRunning = new bool[] { false, false, false, true, true };
         GameObject.Find("Mugshot").GetComponent<Image>().color = new Color(1, 1, 1, 0);
         GameObject.Find("textframe_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 0);
         GameObject.Find("textframe_interior").GetComponent<Image>().color = new Color(0, 0, 0, 0);
         GameObject.Find("TextManager OW").GetComponent<TextManager>().skipNowIfBlocked = true;
         if (endOfInText)
-            instance.playerNoMove = false; //Close menu
+            instance.PlayerNoMove = false; //Close menu
         return true;
     }
 
@@ -913,7 +923,9 @@ public class PlayerOverworld : MonoBehaviour {
             if (str != "src")
                 NewMusicManager.DestroyChannel(str);
         MusicManager.src.Stop();
-        GameObject go = Instantiate(new GameObject());
+        GameObject go2 = new GameObject();
+        GameObject go = Instantiate(go2);
+        Destroy(go2);
         go.name = "GameObject";
         Transform[] root = UnitaleUtil.GetFirstChildren(null, true);
         for (int i = 0; i < root.Length; i++)
@@ -937,31 +949,47 @@ public class PlayerOverworld : MonoBehaviour {
             } else if (!tf.gameObject.name.Contains("AudioChannel"))
                 Destroy(go);
         go.SetActive(true);
+        if (GameObject.Find("Main Camera"))
+            GameObject.Destroy(GameObject.Find("Main Camera"));
         Transform[] children = UnitaleUtil.GetFirstChildren(go.transform, true);
         foreach (Transform tf in children) {
-            tf.SetParent(null);
-            if (tf.name == "Canvas OW" || tf.name == "Player" || tf.name == "Main Camera OW" || tf.name == "GameOverContainer")
-                GameObject.DontDestroyOnLoad(tf.gameObject);
+            try {
+                tf.SetParent(null);
+                if (tf.name == "Canvas OW" || tf.name == "Player" || tf.name == "Main Camera OW" || tf.name == "GameOverContainer")
+                    GameObject.DontDestroyOnLoad(tf.gameObject);
+            } catch { }
         }
         instance.StartCoroutine(instance.ShowOverworld2(callFrom));
     }
 
     IEnumerator ShowOverworld2(string callFrom) {
         yield return 0;
-        foreach (string str in overworldMusics.Keys) {
-            if (!NewMusicManager.Exists(str))
-                NewMusicManager.CreateChannel(str);
-            NewMusicManager.PlayMusic(str, overworldMusics[str]);
+        if (callFrom == "Battle") {
+            GameObject.Destroy(GameObject.Find("psContainer"));
+            GameObject.Destroy(GameObject.Find("GameObject"));
         }
+
+        GameObject.FindObjectOfType<Fading>().fade.color = new Color(0, 0, 0, 1);
+        foreach (string str in overworldMusics.Keys)
+            try {
+                if (!NewMusicManager.Exists(str))
+                    NewMusicManager.CreateChannel(str);
+                NewMusicManager.PlayMusic(str, overworldMusics[str]);
+            } catch { }
         overworldMusics.Clear();
         instance.OnDisable();
         instance.OnEnable();
-        //EventManager.instance.ResetEvents();
         if (callFrom == "Shop") {
             GameObject.Find("Main Camera OW").GetComponent<EventManager>().enabled = true;
             GameObject.Find("Main Camera OW").GetComponent<TransitionOverworld>().enabled = true;
         } else
             instance.RestartMusic();
+        yield return 0;
+        foreach (Transform tf in UnitaleUtil.GetFirstChildren(GameObject.Find("Canvas OW").transform, true))
+            if (tf.gameObject.GetComponent<UserDebugger>()) {
+                tf.gameObject.GetComponent<UserDebugger>().Start();
+                break;
+            }
+        StaticInits.SendLoaded();
     }
 }
-

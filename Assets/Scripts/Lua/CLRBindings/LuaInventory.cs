@@ -4,7 +4,7 @@ using System.Collections;
 public class LuaInventory {
     public string GetItem(int index) {
         if (index > Inventory.inventory.Count) {
-            UnitaleUtil.displayLuaError("Getting an item", "Out of bounds. You tried to access the item n°" + index + 1 + " of your inventory, but you only have " + Inventory.inventory.Count + " items.");
+            UnitaleUtil.DisplayLuaError("Getting an item", "Out of bounds. You tried to access the item n°" + index + 1 + " of your inventory, but you only have " + Inventory.inventory.Count + " items.");
             return "";
         }
         return Inventory.inventory[index-1].Name;

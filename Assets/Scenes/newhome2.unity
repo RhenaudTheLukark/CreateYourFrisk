@@ -120,6 +120,7 @@ GameObject:
   - component: {fileID: 354093673}
   - component: {fileID: 354093672}
   - component: {fileID: 354093671}
+  - component: {fileID: 354093676}
   m_Layer: 0
   m_Name: Story3
   m_TagString: Event
@@ -159,10 +160,10 @@ BoxCollider2D:
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0, y: 0}
-    newSize: {x: 0, y: 0}
-    adaptiveTilingThreshold: 0
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 0.01, y: 0.01}
+    newSize: {x: 0.01, y: 0.01}
+    adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
@@ -221,14 +222,15 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 876f2cc47fea2394b98c7950cde30cd9, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.01, y: 0.01}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
 --- !u!224 &354093675
 RectTransform:
   m_ObjectHideFlags: 0
@@ -247,6 +249,22 @@ RectTransform:
   m_AnchoredPosition: {x: 320, y: 400}
   m_SizeDelta: {x: 1, y: 1}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &354093676
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 354093670}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b6761159c8f6224a8a895abea10dd25, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SetNativeSize: 0
+  SpritePath: empty
+  Loop: 0
+  SoundPath: 
+  done: 0
 --- !u!1 &405518739
 GameObject:
   m_ObjectHideFlags: 0
@@ -458,6 +476,7 @@ SpriteRenderer:
   m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 0
 --- !u!114 &840304677
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -604,6 +623,8 @@ MonoBehaviour:
   position: {x: 40, y: 160}
   direction: 6
   activated: 0
+  noFadeIn: 0
+  noFadeOut: 0
 --- !u!50 &1458263261
 Rigidbody2D:
   serializedVersion: 4
@@ -744,6 +765,8 @@ MonoBehaviour:
   position: {x: 1960, y: 200}
   direction: 4
   activated: 0
+  noFadeIn: 0
+  noFadeOut: 0
 --- !u!50 &1775264169
 Rigidbody2D:
   serializedVersion: 4

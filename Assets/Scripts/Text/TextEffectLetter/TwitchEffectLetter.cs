@@ -12,7 +12,7 @@ public class TwitchEffectLetter : TextEffectLetter {
         nextWigInFrames += (int)(wigFrameVariety * UnityEngine.Random.value);
     }
 
-    protected override void updateInternal() {
+    protected override void UpdateInternal() {
         if (updateCount == 0)
             letter.GetComponent<RectTransform>().position = letter.basisPos;
         // don't make it happen too often

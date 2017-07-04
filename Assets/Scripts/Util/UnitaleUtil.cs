@@ -24,11 +24,11 @@ public static class UnitaleUtil {
             sr = File.CreateText(fileName);
     }*/
 
-    public static void writeInLogAndDebugger(string mess) {
+    public static void WriteInLogAndDebugger(string mess) {
         try {
             /*sr.WriteLine("By DEBUG: " + mess.Replace("\n", "\\n").Replace("\r", "\\r").Replace("\t", "\\t"));
             sr.Flush();*/
-            UserDebugger.instance.userWriteLine(mess);
+            UserDebugger.instance.UserWriteLine(mess);
             Debug.Log("Frame " + GlobalControls.frame + ": " + mess);
         } catch (Exception e) { Debug.Log("Couldn't write on the log:\n" + e.Message + "\nMessage: " + mess); }
     }
@@ -55,12 +55,14 @@ public static class UnitaleUtil {
         return new TextMessage(returnValue, false, true);
     }*/
 
-    public static bool isOverworld() {
-        if (SceneManager.GetActiveScene().name == "TransitionOverworld")
-            return true;
-        if (GlobalControls.nonOWScenes.Contains(SceneManager.GetActiveScene().name))
-            return false;
-        return !GlobalControls.isInFight;
+    public static bool IsOverworld {
+        get {
+            if (SceneManager.GetActiveScene().name == "TransitionOverworld")
+                return true;
+            if (GlobalControls.nonOWScenes.Contains(SceneManager.GetActiveScene().name))
+                return false;
+            return !GlobalControls.isInFight;
+        }
     }
 
     /// <summary>
@@ -68,10 +70,9 @@ public static class UnitaleUtil {
     /// </summary>
     /// <param name="source">Name of the script that caused the error.</param>
     /// <param name="decoratedMessage">Error that was thrown. In MoonSharp's case, this is the DecoratedMessage property from its InterpreterExceptions.</param>
-    public static void displayLuaError(string source, string decoratedMessage) {
+    public static void DisplayLuaError(string source, string decoratedMessage) {
         if (firstErrorShown)
             return;
-
         firstErrorShown = true;
         ErrorDisplay.Message = "error in script " + source + "\n\n" + decoratedMessage;
         if (Application.isEditor)
@@ -87,22 +88,20 @@ public static class UnitaleUtil {
         else                                                                                       return Camera.main.GetComponent<AudioSource>();
     }
 
+    public static Vector3 VectToVector(GameState.Vect v)    { return new Vector3(v.x, v.y, v.z); }
+    public static GameState.Vect VectorToVect(Vector3 vect) { return new GameState.Vect() { x = vect.x, y = vect.y, z = vect.z }; }
+
     public static Array ListToArray<T>(List<T> lst) {
         T[] arr = new T[lst.Count];
-
         for (int i = 0; i < lst.Count; i++)
             arr[i] = lst[i];
-
         return arr;
     }
 
     public static List<T> ArrayToList<T>(T[] arr) {
-
         List<T> lst = new List<T>(arr.Length);
-
         for (int i = 0; i < arr.Length; i++)
             lst[i] = arr[i];
-
         return lst;
     }
 
@@ -123,28 +122,19 @@ public static class UnitaleUtil {
 
     public static Table DynValueArrayToTable(DynValue[] array) {
         Table table = new Table(null);
-
         for (int i = 1, l = array.Length; i <= l; i++)
             table.Set(i, array[i - 1]);
-
         return table;
     }
 
-    public static float calcTotalLength(TextManager txtmgr, int fromLetter = -1, int toLetter = -1) {
+    public static float CalcTotalLength(TextManager txtmgr, int fromLetter = -1, int toLetter = -1) {
         float totalWidth = 0, totalMaxWidth = 0, hSpacing = txtmgr.Charset.CharSpacing;
-        if (fromLetter == -1)
-            fromLetter = 0;
-        if (toLetter == -1)
-            toLetter = txtmgr.textQueue[txtmgr.currentLine].Text.Length;
-        //Debug.Log("From the letter " + fromLetter + " to the letter " + toLetter + ". The max is " + txtmgr.textQueue[txtmgr.currentLine].Text.Length);
-        if (fromLetter > toLetter || fromLetter < 0 || toLetter > txtmgr.textQueue[txtmgr.currentLine].Text.Length) {
-            //Debug.LogError("BAAAAAAAAAAAAAD : fromLetter = " + fromLetter + " and toLetter = " + toLetter);
-            return -1;
-        }
-        if (fromLetter == toLetter)
-            return 0;
+        if (fromLetter == -1) fromLetter = 0;
+        if (toLetter == -1)   toLetter = txtmgr.textQueue[txtmgr.currentLine].Text.Length;
+        if (fromLetter > toLetter || fromLetter < 0 || toLetter > txtmgr.textQueue[txtmgr.currentLine].Text.Length) return -1;
+        if (fromLetter == toLetter)                                                                                 return 0;
+
         for (int i = fromLetter; i < toLetter; i++) {
-            //Debug.Log(txtmgr.textQueue[txtmgr.currentLine].Text[i]);
             switch (txtmgr.textQueue[txtmgr.currentLine].Text[i]) {
                 case '[':
                     string str = "";
@@ -157,7 +147,7 @@ public static class UnitaleUtil {
                     }
                     i--;
                     if (str.Split(':')[0] == "charspacing")
-                        hSpacing = ParseUtil.getFloat(str.Split(':')[1]);
+                        hSpacing = ParseUtil.GetFloat(str.Split(':')[1]);
                     break;
                 case '\r':
                 case '\n':
@@ -170,43 +160,19 @@ public static class UnitaleUtil {
                         totalWidth += txtmgr.Charset.Letters[txtmgr.textQueue[txtmgr.currentLine].Text[i]].textureRect.size.x + hSpacing;
                     break;
             }
-            //Debug.Log(totalWidth + " ///// " + totalMaxWidth);
         }
         if (totalMaxWidth < totalWidth - hSpacing)
             totalMaxWidth = totalWidth - hSpacing;
-        //Debug.Log(totalWidth);
         return totalMaxWidth;
-
-        /*float lastY = 0, count = 0;
-
-        for (int i = fromLetter; i < toLetter; i++) {
-            if (rts[i].position.y != lastY) {
-                totalWidth += txtmgr.hSpacing * (count - 1);
-                if (totalWidth > totalMaxWidth)
-                    totalMaxWidth = totalWidth;
-                totalWidth = 0; count = 0;
-                lastY = rts[i].position.y;
-            }
-            totalWidth += rts[i].sizeDelta.x;
-            count++;
-        }
-        totalWidth += addNextValue;
-        if (addNextValue != 0) count++;
-        if (totalWidth != 0) totalWidth += txtmgr.hSpacing * (count - 1);
-        if (totalWidth > totalMaxWidth) totalMaxWidth = totalWidth;
-        return totalWidth;*/
     }
 
-    public static float calcTotalHeight(TextManager txtmgr, int fromLetter = -1, int toLetter = -1) {
+    public static float CalcTotalHeight(TextManager txtmgr, int fromLetter = -1, int toLetter = -1) {
         float maxHeight = -999, minHeight = 999;
-        if (fromLetter == -1)
-            fromLetter = 0;
-        if (toLetter == -1)
-            toLetter = txtmgr.textQueue[txtmgr.currentLine].Text.Length;
-        //Debug.Log("From the letter " + fromLetter + " to the letter " + toLetter + ". The max is " + txtmgr.textQueue[txtmgr.currentLine].Text.Length);
+        if (fromLetter == -1) fromLetter = 0;
+        if (toLetter == -1)   toLetter = txtmgr.textQueue[txtmgr.currentLine].Text.Length;
         if (fromLetter > toLetter || fromLetter < 0 || toLetter > txtmgr.textQueue[txtmgr.currentLine].Text.Length) return -1;
-        if (fromLetter == toLetter)
-            return 0;
+        if (fromLetter == toLetter)                                                                                 return 0;
+
         for (int i = fromLetter; i < toLetter; i++)
             if (txtmgr.Charset.Letters.ContainsKey(txtmgr.textQueue[txtmgr.currentLine].Text[i])) {
                 if (txtmgr.letterPositions[i].y < minHeight)
@@ -215,28 +181,76 @@ public static class UnitaleUtil {
                     maxHeight = txtmgr.letterPositions[i].y + txtmgr.Charset.Letters[txtmgr.textQueue[txtmgr.currentLine].Text[i]].textureRect.size.y;
             }
         return maxHeight - minHeight;
-
-        /*float lastY = 0, count = 0;
-
-        for (int i = fromLetter; i < toLetter; i++) {
-            if (rts[i].position.y != lastY) {
-                totalWidth += txtmgr.hSpacing * (count - 1);
-                if (totalWidth > totalMaxWidth)
-                    totalMaxWidth = totalWidth;
-                totalWidth = 0; count = 0;
-                lastY = rts[i].position.y;
-            }
-            totalWidth += rts[i].sizeDelta.x;
-            count++;
-        }
-        totalWidth += addNextValue;
-        if (addNextValue != 0) count++;
-        if (totalWidth != 0) totalWidth += txtmgr.hSpacing * (count - 1);
-        if (totalWidth > totalMaxWidth) totalMaxWidth = totalWidth;
-        return totalWidth;*/
     }
 
-    public static string[] specialSplit(char c, string str, bool countTables = false) {
+    public static DynValue RebuildTableFromString(string text) {
+        text.Trim();
+        if (text[0] != '{' || text[text.Length-1] != '}') {
+            Debug.LogError("RebuildTableFromString: The value given is not a reconstructible table!");
+            return DynValue.Nil;
+        }
+        Table t = ConstructTable(text.TrimStart('{').TrimEnd('}'));
+        return DynValue.NewTable(t);
+    }
+
+    private static Table ConstructTable(string text) {
+        Table t = new Table(null);
+        int inOtherTable = 0;
+        string currentValue = "";
+        DynValue valueName = null;
+
+        bool inString = false, inSlashEffect1 = false, inSlashEffect2 = false;
+        for (int i = 0; i < text.Length; i ++) {
+            if (inSlashEffect1)      inSlashEffect1 = false;
+            else if (inSlashEffect2) inSlashEffect2 = false;
+
+            if (!inSlashEffect2) {
+                if (text[i] == '{' && !inString) {
+                    if (inOtherTable != 1)
+                        currentValue += text[i];
+                    inOtherTable++;
+                } else if (text[i] == '}' && !inString) {
+                    inOtherTable--;
+                    if (inOtherTable == 0) {
+                        if (valueName == null) t.Append(DynValue.NewTable(ConstructTable(currentValue)));
+                        else                   t.Set(valueName, DynValue.NewTable(ConstructTable(currentValue)));
+                        currentValue = "";
+                        valueName = null;
+                    } else
+                        currentValue += text[i];
+                } else if (text[i] == '"' && inOtherTable != 0)
+                    inString = !inString;
+                else if (text[i] == '\\') {
+                    inSlashEffect1 = true;
+                    inSlashEffect2 = true;
+                } else if (text[i] == ',' && (!inString || inOtherTable != 0)) {
+                    currentValue = currentValue.Trim();
+                    Type type = CheckRealType(currentValue);
+                    DynValue dv;
+                    if (type == typeof(bool))       dv = DynValue.NewBoolean(currentValue == "true");
+                    else if (type == typeof(float)) dv = DynValue.NewNumber(ParseUtil.GetFloat(currentValue));
+                    else                            dv = DynValue.NewString(currentValue.Trim('"'));
+                    if (valueName == null) t.Append(dv);
+                    else                   t.Set(valueName, dv);
+                    valueName = null;
+                    currentValue = "";
+                } else if (text[i] == '=' && (!inString || inOtherTable != 0)) {
+                    currentValue = currentValue.Trim();
+                    valueName = DynValue.NewString(currentValue);
+                    Type type = CheckRealType(currentValue);
+                    if (type == typeof(bool))       valueName = DynValue.NewBoolean(currentValue == "true");
+                    else if (type == typeof(float)) valueName = DynValue.NewNumber(ParseUtil.GetFloat(currentValue));
+                    else                            valueName = DynValue.NewString(currentValue.Trim('"'));
+                } else
+                    currentValue += text[i];
+            } else
+                currentValue += text[i];
+        }
+
+        return t;
+    }
+
+    public static string[] SpecialSplit(char c, string str, bool countTables = false) {
         bool inString = false; int lastIndex = 0, tableStack = 0;
         List<string> tempArray = new List<string>();
         for (int i = 0; i < str.Length; i++) {
@@ -512,12 +526,11 @@ public static class UnitaleUtil {
         if (parent != null) {
             children = parent.GetComponentsInChildren<Transform>(getInactive);
             firstChildren = new Transform[parent.childCount];
-            foreach (Transform child in children) {
+            foreach (Transform child in children)
                 if (child.parent == parent) {
                     firstChildren[index] = child;
                     index++;
                 }
-            }
         } else {
             List<Transform> tfs = new List<Transform>();
             foreach (Transform tf in Resources.FindObjectsOfTypeAll<Transform>().Where(o => o.hideFlags == HideFlags.None).ToList())

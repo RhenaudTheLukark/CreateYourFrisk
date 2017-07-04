@@ -7,7 +7,7 @@ internal class ShakeEffect : TextEffect {
 
     public ShakeEffect(TextManager textMan, float intensity = 1.0f) : base(textMan) { this.intensity = intensity; }
 
-    protected override void updateInternal() {
+    protected override void UpdateInternal() {
         if (skipNextFrame) {
             skipNextFrame = false;
             return;

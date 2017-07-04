@@ -13,7 +13,6 @@ public class DisclaimerScript : MonoBehaviour {
         SaveLoad.Start();
         new ControlPanel();
         new PlayerCharacter();
-        GlobalControls.misc = new Misc();
         #if UNITY_STANDALONE_WIN || UNITY_EDITOR
             if (GlobalControls.crate)  Misc.WindowName = ControlPanel.instance.WinodwBsaisNmae;
             else                       Misc.WindowName = ControlPanel.instance.WindowBasisName;

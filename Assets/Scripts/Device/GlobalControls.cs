@@ -10,7 +10,6 @@ using UnityEngine.SceneManagement;
 public class GlobalControls : MonoBehaviour {
     public static int frame = -1;
     public static PlayerOverworld po;
-    public static Misc misc;
     public static UndertaleInput input = new KeyboardInput();
     public static LuaInputBinding luaInput = new LuaInputBinding(input);
     public static AudioClip Music;
@@ -35,7 +34,8 @@ public class GlobalControls : MonoBehaviour {
     public static string[] nonOWScenes = new string[] { "Battle", "Error", "EncounterSelect", "ModSelect", "GameOver", "TitleScreen", "Disclaimer", "EnterName", "TransitionOverworld", "Intro" };
     public static string[] canTransOW = new string[] { "Battle", "Error", "GameOver" };
     //Wow what's this
-    public static Dictionary<int, Dictionary<string, int>> MapEventPages = new Dictionary<int, Dictionary<string, int>>();
+    public static Dictionary<int, GameState.MapInfos> MapData = new Dictionary<int, GameState.MapInfos>();
+    public static Dictionary<string, GameState.EventInfos> EventData = new Dictionary<string, GameState.EventInfos>();
 
     /*void Start() {
         if ((Application.platform == RuntimePlatform.WindowsEditor || Application.platform == RuntimePlatform.WindowsPlayer) && windows == null)
@@ -59,14 +59,28 @@ public class GlobalControls : MonoBehaviour {
             UserDebugger.instance.gameObject.SetActive(!UserDebugger.instance.gameObject.activeSelf);
             Camera.main.GetComponent<FPSDisplay>().enabled = !Camera.main.GetComponent<FPSDisplay>().enabled;
         } else if (isInFight && Input.GetKeyDown(KeyCode.H))
-            GameObject.Find("Main Camera").GetComponent<ProjectileHitboxRenderer>().enabled =!GameObject.Find("Main Camera").GetComponent<ProjectileHitboxRenderer>().enabled;
+            GameObject.Find("Main Camera").GetComponent<ProjectileHitboxRenderer>().enabled = !GameObject.Find("Main Camera").GetComponent<ProjectileHitboxRenderer>().enabled;
         else if (Input.GetKeyDown(KeyCode.Escape) && (canTransOW.Contains(SceneManager.GetActiveScene().name) || isInFight)) {
             if (isInFight && LuaEnemyEncounter.script.GetVar("unescape").Boolean)
                 return;
-            UIController.EndBattle();
+            if (SceneManager.GetActiveScene().name == "Error" && !modDev)
+                return;
+            UIController.EndBattle(GameOverBehavior.gameOverContainer ? !GameOverBehavior.gameOverContainer.gameObject.activeInHierarchy : true);
+            if (GameOverBehavior.gameOverContainer)
+                if (GameOverBehavior.gameOverContainer.gameObject.activeInHierarchy) {
+                    Destroy(GameObject.FindObjectOfType<GameOverBehavior>().gameObject);
+                    if (UnitaleUtil.IsOverworld)
+                        GameObject.Destroy(GameOverBehavior.gameOverContainer);
+                    if (!modDev) {
+                        SaveLoad.Load();
+                        SceneManager.LoadScene("TransitionOverworld");
+                    } else
+                        SceneManager.LoadScene("ModSelect");
+                }
             //StaticInits.Reset();
-        } else if (input.Menu == UndertaleInput.ButtonState.PRESSED && (!nonOWScenes.Contains(SceneManager.GetActiveScene().name) || isInFight) && !PlayerOverworld.menuRunning[3] && EventManager.instance.script == null)
-            StartCoroutine(PlayerOverworld.LaunchMenu());
+        } else if (input.Menu == UndertaleInput.ButtonState.PRESSED && !nonOWScenes.Contains(SceneManager.GetActiveScene().name) && !isInFight)
+            if (!PlayerOverworld.instance.PlayerNoMove && EventManager.instance.script == null && !PlayerOverworld.instance.menuRunning[2] && !PlayerOverworld.instance.menuRunning[4] && EventManager.instance.script == null)
+                StartCoroutine(PlayerOverworld.LaunchMenu());
         if (Input.GetKeyDown(KeyCode.F4))
             Screen.fullScreen =!Screen.fullScreen;
         //else if (Input.GetKeyDown(KeyCode.L))
@@ -99,16 +113,6 @@ public class GlobalControls : MonoBehaviour {
         }
         stopScreenShake = false;
     }
-
-    public int GetMapEventPage(string key1, int key2) {
-        int value = -5924710;
-
-        if (!MapEventPages[SceneManager.GetActiveScene().buildIndex].TryGetValue(key1, out value)) {
-            UnitaleUtil.writeInLogAndDebugger("[WARN]The dictionary doesn't have any data about this map.");
-            return -5924710;
-        }
-        return value;
-    }
     
     void LoadScene(Scene scene, LoadSceneMode mode) {
         if (LuaScriptBinder.GetAlMighty(null, "CrateYourFrisk") != null)  crate = LuaScriptBinder.GetAlMighty(null, "CrateYourFrisk").Boolean;
@@ -136,7 +140,7 @@ public class GlobalControls : MonoBehaviour {
                 intensity = intensityBasis * (1 - (frameCount / frames));
             shift = new Vector2((Random.value - 0.5f) * 2 * intensity, (Random.value - 0.5f) * 2 * intensity);
 
-            if (UnitaleUtil.isOverworld())
+            if (UnitaleUtil.IsOverworld)
                 PlayerOverworld.instance.cameraShift = new Vector2(PlayerOverworld.instance.cameraShift.x + shift.x - totalShift.x, PlayerOverworld.instance.cameraShift.y + shift.y - totalShift.y);
             else
                 tf.position = new Vector3(tf.position.x + shift.x - totalShift.x, tf.position.y + shift.y - totalShift.y, tf.position.z);

@@ -12,7 +12,7 @@ function EventPage0() --First event function launched
 end
 
 function EventPage1()
-	General.SetDialog({"[health:Max]Testing such a magnificent project fills you with [color:ff0000]determination.", 
+	General.SetDialog({"[health:Max]Testing such a magnificent engine fills you with [color:ff0000]determination.", 
                        "HP restored."}, true)
     General.Save()
 end
@@ -26,10 +26,10 @@ function EventPage2() --Coroutine
     lastPosX = spriteTest.x 
     lastPosY = spriteTest.y
     if beforeMovement == 0 then
-        beforeMovement = math.random(30, 120)
+        beforeMovement = math.random(60, 150)
         x = math.random(-1, 1)
         y = math.random(-1, 1)
         local pos = Event.GetPosition(Event.GetName())
-        Event.MoveToPoint(Event.GetName(), pos[1] + 20 * x, pos[2] + 20 * y)
+        Event.MoveToPoint(Event.GetName(), pos[1] + 20 * x, pos[2] + 20 * y, false, false)
     end
 end

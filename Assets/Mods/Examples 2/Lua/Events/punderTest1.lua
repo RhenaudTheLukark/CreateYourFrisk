@@ -1,33 +1,43 @@
+function EventPage0() 
+    if GetAlMightyGlobal("CYFInternalCross2") then
+        Event.Remove(Event.GetName())
+    end
+end
+
 function EventPage1()
     --General.TitleScreen()
-    local spriteTest = Event.GetSprite("Punder1")
+    local spriteTest = Event.GetSprite(Event.GetName())
     local playerpos = Event.GetPosition("Player") 
-    local eventpos = Event.GetPosition("Punder1")
+    local eventpos = Event.GetPosition(Event.GetName())
     local dir
     local diff
     dir, diff = calcDirAndDiff(eventpos, playerpos)
     local text = ""
+    local mugshot = "punderNormal"
     if Event.GetAnimHeader("Player") == "MK" then            
         text = "Hello there little buddy!"
+        mugshot = "punderVeryHappy"
     elseif Event.GetAnimHeader("Player") == "Chara" then    
-        local tempPunderX = Event.GetPosition("Punder1")[1]
+        local tempPunderX = Event.GetPosition(Event.GetName())[1]
         Event.MoveToPoint(Event.GetName(), diff[1] > 0 and eventpos[1] + 60 or eventpos[1] - 60, eventpos[2])
-        eventpos = Event.GetPosition("Punder1")
+        eventpos = Event.GetPosition(Event.GetName())
         if tempPunderX == eventpos[1] then 
-            text = "What are you doing? [w:20]\nBack off!" 
+            text = "What are you doing? [w:25]\nBack off!" 
         else 
-            text = "Hey[waitall:5]...[waitall:1]you look kinda menacing[waitall:5]...[waitall:1][w:30]\nBe good, [w:20]alright?"
+            text = "Hey...[w:25]you look kinda menacing...[w:25]\nBe good, [w:15]alright?"
         end
+        mugshot = "punderIntimidated"
     elseif Event.GetAnimHeader("Player") == "CharaTad" then  
-        text = "Are you alright? [w:20]\nYou seem lost[waitall:5]..."
+        text = "Are you alright? [w:25]\nYou seem lost..."
     elseif Event.GetAnimHeader("Player") == "Asriel" then    
-        text = "Oh hi kid! [w:20]You're cute, [w:20]you know that?"
+        text = "Oh hi kid! [w:25]You're cute, [w:15]you know that?"
+        mugshot = "punderVeryHappy"
     else                                                     
-        text = "Hey, [w:20]how's going?"
+        text = "Hey, [w:15]how's going?"
     end
-    dir, diff = calcDirAndDiff(Event.GetPosition("Punder1"), Event.GetPosition("Player"))
+    dir, diff = calcDirAndDiff(Event.GetPosition(Event.GetName()), Event.GetPosition("Player"))
     Event.SetDirection(Event.GetName(), dir)
-    General.SetDialog({"[voice:punderbolt]" .. text}, true, {"pundermug"})
+    General.SetDialog({"[voice:punderbolt]" .. text}, true, {mugshot})
 end
 
 function calcDirAndDiff(vect1, vect2)

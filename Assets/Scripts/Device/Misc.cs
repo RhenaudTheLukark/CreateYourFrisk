@@ -103,59 +103,59 @@ public class Misc {
 #else
         public static int WindowX { 
             get { 
-                UnitaleUtil.displayLuaError("Windows-only function", "This feature is Windows-only! Sorry, but you can't use it here."); 
+                UnitaleUtil.DisplayLuaError("Windows-only function", "This feature is Windows-only! Sorry, but you can't use it here."); 
                 return 0;
             }
-            set { UnitaleUtil.displayLuaError("Windows-only function", "This feature is Windows-only! Sorry, but you can't use it here."); }
+            set { UnitaleUtil.DisplayLuaError("Windows-only function", "This feature is Windows-only! Sorry, but you can't use it here."); }
         }
 
         public static int WindowY {
             get { 
-                UnitaleUtil.displayLuaError("Windows-only function", "This feature is Windows-only! Sorry, but you can't use it here."); 
+                UnitaleUtil.DisplayLuaError("Windows-only function", "This feature is Windows-only! Sorry, but you can't use it here."); 
                 return 0;
             }
-            set { UnitaleUtil.displayLuaError("Windows-only function", "This feature is Windows-only! Sorry, but you can't use it here."); }
+            set { UnitaleUtil.DisplayLuaError("Windows-only function", "This feature is Windows-only! Sorry, but you can't use it here."); }
         }
     
         public static int WindowWidth {
             get { 
-                UnitaleUtil.displayLuaError("Windows-only function", "This feature is Windows-only! Sorry, but you can't use it here."); 
+                UnitaleUtil.DisplayLuaError("Windows-only function", "This feature is Windows-only! Sorry, but you can't use it here."); 
                 return 0;
             }
         }
 
         public static int WindowHeight {
             get { 
-                UnitaleUtil.displayLuaError("Windows-only function", "This feature is Windows-only! Sorry, but you can't use it here."); 
+                UnitaleUtil.DisplayLuaError("Windows-only function", "This feature is Windows-only! Sorry, but you can't use it here."); 
                 return 0;
             }
         }
 
         public static void MoveWindowTo(int X, int Y) {
-            UnitaleUtil.displayLuaError("Windows-only function", "This feature is Windows-only! Sorry, but you can't use it here."); 
+            UnitaleUtil.DisplayLuaError("Windows-only function", "This feature is Windows-only! Sorry, but you can't use it here."); 
             return;
         }
 
         public static void MoveWindow(int X, int Y) {
-            UnitaleUtil.displayLuaError("Windows-only function", "This feature is Windows-only! Sorry, but you can't use it here."); 
+            UnitaleUtil.DisplayLuaError("Windows-only function", "This feature is Windows-only! Sorry, but you can't use it here."); 
             return;
         }
 
         public static Rect GetWindowRect() {
-            UnitaleUtil.displayLuaError("Windows-only function", "This feature is Windows-only! Sorry, but you can't use it here."); 
+            UnitaleUtil.DisplayLuaError("Windows-only function", "This feature is Windows-only! Sorry, but you can't use it here."); 
             return new Rect();
         }
 
         public static string WindowName {
             get { 
-                UnitaleUtil.displayLuaError("Windows-only function", "This feature is Windows-only! Sorry, but you can't use it here."); 
+                UnitaleUtil.DisplayLuaError("Windows-only function", "This feature is Windows-only! Sorry, but you can't use it here."); 
                 return "";
             }
-            set { UnitaleUtil.displayLuaError("Windows-only function", "This feature is Windows-only! Sorry, but you can't use it here."); }
+            set { UnitaleUtil.DisplayLuaError("Windows-only function", "This feature is Windows-only! Sorry, but you can't use it here."); }
         }
 #endif
 
-    public void ShakeScreen(float duration, float intensity = 3, bool isIntensityDecreasing = true) {
+    public void ShakeScreen(float duration, float intensity = 3, bool isIntensityDecreasing = true) { 
         Camera.main.GetComponent<GlobalControls>().ShakeScreen(duration, intensity, isIntensityDecreasing);
     }
 

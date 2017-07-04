@@ -51,6 +51,8 @@ end
 function EnterMenu() 
 end
 function EnterExit() 
+end
+function OnInterrupt(nextState)
 endfunction SuccessBuy(item)    acted = true    sold = true    buytalk = "Thanks for\nthe purchase!\nI'm just a\nshopkeeper."endfunction FailBuy(buyerror)    acted = true    if buyerror == "full" then        buytalk = "You can't\ncarry any\nmore items..."    elseif buyerror == "gold" then        buytalk = "You don't\nhave enough\nmoney to\nbuy this!"    endend
 function ReturnBuy() 
     if sold then
@@ -66,12 +68,17 @@ end
 function SuccessTalk(action) 
     if action == "Job" then
         talklist[1][1] = "Shopkeeper"
-        talklist[2][1] = {"What is a shopkeeper?[w:20] It's my job,[w:10] the best job in the world!",
-                          "It's all about charisma,[w:10] it's very complicated.",
-                          "Only a few people can become a shopkeeper,[w:10] you know?[w:20] I was lucky enough to be one of them!",
-                          "I think that you too can make it,[w:10] if you want to!",
-                          "I'll teach you the basics on how to become a shopkeeper!",
-                          "First of all,[w:10] you need to know about our currency,[w:10] G.",
+        --[[Lol that thing will never be used
+        talklist["death"] = {"[noskip]What are you doing?",
+                             "[noskip]Don't go near me! I won't let y-[next]",
+                             "[noskip][func:KillAnim][w:60][next]",
+                             "[noskip][waitall:5]...No...[w:60][func:Kill]"}]]
+        talklist[2][1] = {"[noskip]What is a shopkeeper?[w:20] It's my job,[w:10] the best job in the world![w:60][next]",
+                          "[noskip]It's all about charisma,[w:10] it's very complicated.[w:60][next]",
+                          "[noskip]Only a few people can become a shopkeeper,[w:10] you know?[w:20] I was lucky enough to be one of them![w:60][next]",
+                          "[noskip]I think that you too can make it,[w:10] if you want to![w:60][next]",
+                          "[noskip]I'll teach you the basics on how to become a shopkeeper![w:60][next]",
+                          "[noskip]First of all,[w:10] you need to know about our currency,[w:10] G.[w:60][next]",
                           "[noskip]Gold is the Und[func:Drowsy]erground's main currency![w:20] It's made of 89% of Gold,[w:10] 5% of aluminium,[w:10] 5% of zinc and 1% of tin.[w:60][next]",
                           "[noskip]It can't be made of 100% of Gold,[w:10] otherwise it couldn't take the shape[novoice] of a coin...[w:120][next]",
                           "[noskip][func:Undrowsy]And so I sold this mop to that kid, and now everyone calls[novoice] him \"Mop Kid\"! He was pretty happy about it...[w:120][next]",
@@ -81,6 +88,8 @@ function SuccessTalk(action)
         talklist[2][1] = "[novoice](NEVER AGAIN)"
     end
 end
+
+
 
 function Drowsy() 
     eyeLidTop = CreateSprite("px", "Top")
@@ -113,15 +122,29 @@ end
 
 function Update()
     if maintext and maintext.IsTheTextFinished() then
-        if frame < 160                                                    then  eyeLidEffect.alpha = math.abs(.5 * math.sin(frame * math.pi / 80))
-        elseif frame < 240                                                then  eyeLidBottom.absy = eyeLidBottom.absy + 1.75
-        elseif frame < 320                                                then  eyeLidBottom.absy = eyeLidBottom.absy + 1.75 * math.cos((frame - 240) * math.pi / 80)
-        elseif frame < 400                                                then  eyeLidBottom.absy = eyeLidBottom.absy - 1.75 * math.cos((frame - 320) * math.pi / 80)
-        elseif frame >= 520 and frame < 760                               then  eyeLidBottom.absy = eyeLidBottom.absy + (120 - eyeLidBottom.absy) * 0.02
-        elseif frame == 760                                               then  eyeLidBottom.absy = 120
-        elseif frame >= 2000 and frame < 2010                             then  eyeLidBottom.absy = eyeLidBottom.absy - 15
-        elseif frame >= 2120 and frame < 4000 and eyeLidBottom.absy < 120 then  eyeLidBottom.absy = eyeLidBottom.absy + 2
-        elseif frame >= 4000 and eyeLidBottom.absy > -120                 then  eyeLidBottom.absy = eyeLidBottom.absy - 15
+        if frame < 160 then  
+            eyeLidEffect.alpha = math.abs(.5 * math.sin(frame * math.pi / 80))
+        elseif frame < 240 then  
+            eyeLidBottom.absy = eyeLidBottom.absy + 1.75
+        elseif frame < 320 then  
+            eyeLidBottom.absy = eyeLidBottom.absy + 1.75 * math.cos((frame - 240) * math.pi / 80)
+        elseif frame < 400 then  
+            eyeLidBottom.absy = eyeLidBottom.absy - 1.75 * math.cos((frame - 320) * math.pi / 80)
+        elseif frame >= 520 and frame < 760 then  
+            eyeLidBottom.absy = eyeLidBottom.absy + (120 - eyeLidBottom.absy) * 0.02
+        elseif frame == 760 then  
+            eyeLidBottom.absy = 120
+            Audio.Pause()
+        elseif frame >= 2000 and frame < 2010 then  
+            eyeLidBottom.absy = eyeLidBottom.absy - 15
+            Audio.Play()
+        elseif frame >= 2120 and frame < 4000 and eyeLidBottom.absy < 120 then  
+            eyeLidBottom.absy = eyeLidBottom.absy + 2
+        elseif frame >= 2120 and frame < 4000 and Audio.IsPlaying() then  
+            Audio.Pause()
+        elseif frame >= 4000 and eyeLidBottom.absy > -120 then  
+            eyeLidBottom.absy = eyeLidBottom.absy - 15
+            Audio.Play()
         end
         if frame >= 160 then
             eyeLidTop.absy = 480 - eyeLidBottom.absy 

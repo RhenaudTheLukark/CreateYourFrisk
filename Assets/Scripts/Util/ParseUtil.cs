@@ -3,25 +3,25 @@ using System.Globalization;
 using UnityEngine;
 
 public static class ParseUtil {
-    public static bool testInt(string s) {
+    public static bool TestInt(string s) {
         int i;
         if (int.TryParse(s, NumberStyles.Any, CultureInfo.InvariantCulture, out i))  return true;
         else                                                                         return false;
     }
 
-    public static int getInt(string s) {
+    public static int GetInt(string s) {
         int i;
         if (int.TryParse(s, NumberStyles.Any, CultureInfo.InvariantCulture, out i))  return i;
         else                                                                         throw new CYFException("Int parse failed : \"" + s + "\"");
     }
 
-    public static float getFloat(string s) {
+    public static float GetFloat(string s) {
         float f;
         if (float.TryParse(s, NumberStyles.Any, CultureInfo.InvariantCulture, out f))  return f;
         else                                                                           throw new CYFException("Float parse failed : \"" + s + "\"");
     }
 
-    public static Color getColor(string s) {
+    public static Color GetColor(string s) {
         uint intColor;
         if (uint.TryParse(s, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out intColor)) {
             float r = ((intColor >> 16) & 255) / 255.0f;

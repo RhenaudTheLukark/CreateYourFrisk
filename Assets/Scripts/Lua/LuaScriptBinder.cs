@@ -40,13 +40,14 @@ public static class LuaScriptBinder {
         UserData.RegisterType<LuaGeneralOW>();
         UserData.RegisterType<LuaInventoryOW>();
         UserData.RegisterType<LuaScreenOW>();
+        UserData.RegisterType<LuaMapOW>();
     }
 
     /// <summary>
     /// Generates Script object with globally defined functions and objects bound, and the os/io/file modules taken out.
     /// </summary>
     /// <returns>Script object for use within Unitale</returns>
-    public static Script boundScript(/*bool overworld = false*/) {
+    public static Script BoundScript(/*bool overworld = false*/) {
         Script script = new Script(CoreModules.Preset_Complete ^ CoreModules.OS_System ^ CoreModules.IO);
         // library support
         script.Options.ScriptLoader = new FileSystemScriptLoader();
@@ -71,7 +72,7 @@ public static class LuaScriptBinder {
             script.Globals["windows"] = false;
         #endif
         script.Globals["CYFversion"] = "1.0";
-        if (!UnitaleUtil.isOverworld()) {
+        if (!UnitaleUtil.IsOverworld) {
             script.Globals["CreateSprite"] = (Func<string, string, int, DynValue>)SpriteUtil.MakeIngameSprite;
             script.Globals["CreateLayer"] = (Action<string, string, bool>)SpriteUtil.CreateLayer;
             script.Globals["CreateProjectileLayer"] = (Action<string, string, bool>)SpriteUtil.CreateProjectileLayer;
@@ -106,9 +107,12 @@ public static class LuaScriptBinder {
                 DynValue ScreenOW = UserData.Create(EventManager.instance.luascrow);
                 script.Globals.Set("FScreen", ScreenOW);
                 //script.Globals.Set("Screen", ScreenOW);
+                DynValue MapOW = UserData.Create(EventManager.instance.luamapow);
+                script.Globals.Set("FMap", MapOW);
+                //script.Globals.Set("Map", MapOW);
             } catch { }
         }
-        script.Globals["DEBUG"] = (Action<string>)UnitaleUtil.writeInLogAndDebugger;
+        script.Globals["DEBUG"] = (Action<string>)UnitaleUtil.WriteInLogAndDebugger;
         // clr bindings
         DynValue MusicMgr = UserData.Create(mgr);
         script.Globals.Set("Audio", MusicMgr);
@@ -118,7 +122,7 @@ public static class LuaScriptBinder {
         script.Globals.Set("Inventory", inv);
         DynValue InputMgr = UserData.Create(GlobalControls.luaInput);
         script.Globals.Set("Input", InputMgr);
-        DynValue Win = UserData.Create(GlobalControls.misc);
+        DynValue Win = UserData.Create(new Misc());
         script.Globals.Set("Misc", Win);
         DynValue TimeInfo = UserData.Create(new LuaUnityTime());
         script.Globals.Set("Time", TimeInfo);
@@ -239,13 +243,14 @@ public static class LuaScriptBinder {
         UserData.RegisterType<LuaGeneralOW>();
         UserData.RegisterType<LuaInventoryOW>();
         UserData.RegisterType<LuaScreenOW>();
+        UserData.RegisterType<LuaMapOW>();
     }
 
     /// <summary>
     /// Returns this script's dictionaries
     /// </summary>
     /// <returns></returns>
-    public static Dictionary<string, DynValue> GetDictionary()          { return dict; }
+    public static Dictionary<string, DynValue> GetSavedDictionary()     { return dict; }
     public static Dictionary<string, DynValue> GetBattleDictionary()    { return battleDict; }
     public static Dictionary<string, DynValue> GetAlMightyDictionary()  { return alMightyDict; }
 
@@ -254,7 +259,7 @@ public static class LuaScriptBinder {
     /// /!\ THIS ERASES THE CURRENT DICTIONARY /!\
     /// </summary>
     /// <param name="newDict"></param>
-    public static void SetDictionary(Dictionary<string, DynValue> newDict)          { dict = newDict; }
+    public static void SetSavedDictionary(Dictionary<string, DynValue> newDict)          { dict = newDict; }
     public static void SetBattleDictionary(Dictionary<string, DynValue> newDict)    { battleDict = newDict; }
     public static void SetAlMightyDictionary(Dictionary<string, DynValue> newDict)  { alMightyDict = newDict; }
 
@@ -308,7 +313,7 @@ public static class LuaScriptBinder {
     public static void AllowPlayerDef(bool b) { GlobalControls.allowplayerdef = b; }
 
     public static void SetPPAlphaLimit(float f) {
-        if (f < 0 || f > 1)  UnitaleUtil.displayLuaError("Pixel-Perfect alpha limit", "The alpha limit should be between 0 and 1.");
+        if (f < 0 || f > 1)  UnitaleUtil.DisplayLuaError("Pixel-Perfect alpha limit", "The alpha limit should be between 0 and 1.");
         else                 ControlPanel.instance.MinimumAlpha = f;
     }
 
@@ -327,14 +332,13 @@ public static class LuaScriptBinder {
         UnitaleUtil.GetChildPerName(go.transform, "BackVert").GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth - 20, 100);            //BackVert
         UnitaleUtil.GetChildPerName(go.transform, "CenterHorz").GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth + 16, 96 - 16 * 2);  //CenterHorz
         UnitaleUtil.GetChildPerName(go.transform, "CenterVert").GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth - 16, 96);           //CenterVert
-        luatm.setFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_MONSTERTEXT_NAME));
+        luatm.SetFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_MONSTERTEXT_NAME));
         foreach (ScriptWrapper scrWrap in ScriptWrapper.instances) {
             if (scrWrap.script == scr) {
-                luatm.setCaller(scrWrap);
+                luatm.SetCaller(scrWrap);
                 break;
             }
         }
-        
         luatm.layer = layer;
         luatm.textWidth = textWidth;
         luatm.bubbleHeight = bubbleHeight;
@@ -343,5 +347,18 @@ public static class LuaScriptBinder {
             text = null;
         luatm.SetText(text);
         return luatm;
+    }
+
+    public static void SetButtonLayer(string layer) {
+        GameObject obj = GameObject.Find("Stats");
+        Transform parent = obj.transform.parent;
+        try {
+            if (layer == "default") {
+                obj.transform.SetParent(GameObject.Find("Canvas").transform);
+                obj.transform.SetSiblingIndex(obj.transform.parent.GetComponentInChildren<UIController>().transform.GetSiblingIndex() + 1);
+            } else
+                obj.transform.SetParent(GameObject.Find(layer + "Layer").transform);
+        } 
+        catch { obj.transform.SetParent(parent); }
     }
 }

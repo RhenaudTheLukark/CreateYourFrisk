@@ -2277,6 +2277,11 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
+        type: 2}
+      propertyPath: anims.Array.size
+      value: 49
+      objectReference: {fileID: 0}
     - target: {fileID: 22441604, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -2414,6 +2419,145 @@ Prefab:
       propertyPath: m_Offset.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
+        type: 2}
+      propertyPath: anims.Array.data[40].name
+      value: BoosterMovingDown
+      objectReference: {fileID: 0}
+    - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
+        type: 2}
+      propertyPath: anims.Array.data[40].anims
+      value: BoosterOW/0, BoosterOW/1, BoosterOW/2, BoosterOW/3
+      objectReference: {fileID: 0}
+    - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
+        type: 2}
+      propertyPath: anims.Array.data[40].transitionTime
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
+        type: 2}
+      propertyPath: anims.Array.data[41].name
+      value: BoosterMovingLeft
+      objectReference: {fileID: 0}
+    - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
+        type: 2}
+      propertyPath: anims.Array.data[41].anims
+      value: BoosterOW/4, BoosterOW/5, BoosterOW/6, BoosterOW/7
+      objectReference: {fileID: 0}
+    - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
+        type: 2}
+      propertyPath: anims.Array.data[41].transitionTime
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
+        type: 2}
+      propertyPath: anims.Array.data[42].name
+      value: BoosterMovingRight
+      objectReference: {fileID: 0}
+    - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
+        type: 2}
+      propertyPath: anims.Array.data[42].anims
+      value: BoosterOW/8, BoosterOW/9, BoosterOW/10, BoosterOW/11
+      objectReference: {fileID: 0}
+    - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
+        type: 2}
+      propertyPath: anims.Array.data[42].transitionTime
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
+        type: 2}
+      propertyPath: anims.Array.data[43].name
+      value: BoosterMovingUp
+      objectReference: {fileID: 0}
+    - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
+        type: 2}
+      propertyPath: anims.Array.data[43].anims
+      value: BoosterOW/12, BoosterOW/13, BoosterOW/14, BoosterOW/15
+      objectReference: {fileID: 0}
+    - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
+        type: 2}
+      propertyPath: anims.Array.data[43].transitionTime
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
+        type: 2}
+      propertyPath: anims.Array.data[44].name
+      value: BoosterStopDown
+      objectReference: {fileID: 0}
+    - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
+        type: 2}
+      propertyPath: anims.Array.data[44].anims
+      value: BoosterOW/1, BoosterOW/3
+      objectReference: {fileID: 0}
+    - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
+        type: 2}
+      propertyPath: anims.Array.data[44].transitionTime
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
+        type: 2}
+      propertyPath: anims.Array.data[45].name
+      value: BoosterStopLeft
+      objectReference: {fileID: 0}
+    - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
+        type: 2}
+      propertyPath: anims.Array.data[45].anims
+      value: BoosterOW/5, BoosterOW/7
+      objectReference: {fileID: 0}
+    - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
+        type: 2}
+      propertyPath: anims.Array.data[45].transitionTime
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
+        type: 2}
+      propertyPath: anims.Array.data[46].name
+      value: BoosterStopRight
+      objectReference: {fileID: 0}
+    - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
+        type: 2}
+      propertyPath: anims.Array.data[46].anims
+      value: BoosterOW/9, BoosterOW/11
+      objectReference: {fileID: 0}
+    - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
+        type: 2}
+      propertyPath: anims.Array.data[46].transitionTime
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
+        type: 2}
+      propertyPath: anims.Array.data[47].name
+      value: BoosterStopUp
+      objectReference: {fileID: 0}
+    - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
+        type: 2}
+      propertyPath: anims.Array.data[47].anims
+      value: BoosterOW/13, BoosterOW/15
+      objectReference: {fileID: 0}
+    - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
+        type: 2}
+      propertyPath: anims.Array.data[47].transitionTime
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
+        type: 2}
+      propertyPath: anims.Array.data[48].name
+      value: NoAnim
+      objectReference: {fileID: 0}
+    - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
+        type: 2}
+      propertyPath: anims.Array.data[48].anims
+      value: empty2, empty2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
+        type: 2}
+      propertyPath: anims.Array.data[48].transitionTime
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 5003194, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
+      propertyPath: m_BodyType
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
   m_IsPrefabParent: 0
@@ -2450,7 +2594,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -86, y: 25}
+  m_AnchoredPosition: {x: -86, y: 15}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0, y: 1}
 --- !u!82 &629619428
@@ -2665,6 +2809,7 @@ SpriteRenderer:
   m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
 --- !u!114 &648814239
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3215,7 +3360,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -86, y: 7}
+  m_AnchoredPosition: {x: -86, y: -3}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0, y: 1}
 --- !u!82 &749788068
@@ -3923,7 +4068,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -86, y: -11}
+  m_AnchoredPosition: {x: -86, y: -21}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0, y: 1}
 --- !u!82 &891869948
@@ -5717,8 +5862,9 @@ MonoBehaviour:
   readyToReLaunch: 0
   bgmCoroutine: 0
   passPressOnce: 0
-  scriptLaunched: 0
+  _scriptLaunched: 0
   onceReload: 0
+  nextFadeTransition: 1
 --- !u!114 &1760228102
 MonoBehaviour:
   m_ObjectHideFlags: 0

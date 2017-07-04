@@ -628,7 +628,7 @@ We'll make a "sprite analyser" :)
 So, the goal will be to have a given double array of ints, and you'll need to print every value :D
 You forgot the part about explaining 'for' syntax :P
 Oh, well...
-for(initialization; condition; actionEachTurn) { }
+for (initialization; condition; actionEachTurn) { }
 so a quick try; I will want to go from 0 to 4 in steps of 1:
 Are you sure ?
 I am not, but this is what I think of what you wrote
@@ -665,7 +665,7 @@ So condition is checked before i++ and the contents?
 Ofc
 not necessarily trivial ;)
 If the condition isn't respected, it won't come in the loop. Plus, as I said earlier...
-for(initialization; condition; actionEachTurnEnd) { }
+for (initialization; condition; actionEachTurnEnd) { }
 It is possible to imagine a loop that would go "start, run, check, add"
 ???
 oh, yeah

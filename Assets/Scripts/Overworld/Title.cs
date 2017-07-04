@@ -19,7 +19,6 @@ public class Title : MonoBehaviour {
             SaveLoad.Start();
             new ControlPanel();
             new PlayerCharacter();
-            GlobalControls.misc = new Misc();
             #if UNITY_STANDALONE_WIN || UNITY_EDITOR
                 if (GlobalControls.crate) Misc.WindowName = ControlPanel.instance.WinodwBsaisNmae;
                 else Misc.WindowName = ControlPanel.instance.WindowBasisName;
@@ -35,8 +34,8 @@ public class Title : MonoBehaviour {
         else
             firstCamera.SetActive(true);
         tmName = GameObject.Find("TextManagerResetName").GetComponent<TextManager>();
-        tmName.setHorizontalSpacing(2);
-        tmName.setFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_DEFAULT_NAME));
+        tmName.SetHorizontalSpacing(2);
+        tmName.SetFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_DEFAULT_NAME));
         diff = calcTotalLength(tmName);
         actualX = tmName.transform.localPosition.x;
         actualY = tmName.transform.localPosition.y;
@@ -82,28 +81,28 @@ public class Title : MonoBehaviour {
                         GameObject.Find("Title").SetActive(false);
                         GameObject.Find("Title (1)").SetActive(false);
                         GameObject.Find("Back1").SetActive(false);
-                        GameObject.Find("TextManagerName").GetComponent<TextManager>().setHorizontalSpacing(2);
-                        GameObject.Find("TextManagerLevel").GetComponent<TextManager>().setHorizontalSpacing(2);
-                        GameObject.Find("TextManagerTime").GetComponent<TextManager>().setHorizontalSpacing(2);
-                        GameObject.Find("TextManagerMap").GetComponent<TextManager>().setHorizontalSpacing(2);
-                        GameObject.Find("TextManagerName").GetComponent<TextManager>().setTextQueue(new TextMessage[] { new TextMessage("[noskipatall]" + PlayerCharacter.instance.Name, false, true) });
-                        GameObject.Find("TextManagerLevel").GetComponent<TextManager>().setTextQueue(new TextMessage[] { new TextMessage("[noskipatall]" + (GlobalControls.crate ? "VL" : "LV") +
+                        GameObject.Find("TextManagerName").GetComponent<TextManager>().SetHorizontalSpacing(2);
+                        GameObject.Find("TextManagerLevel").GetComponent<TextManager>().SetHorizontalSpacing(2);
+                        GameObject.Find("TextManagerTime").GetComponent<TextManager>().SetHorizontalSpacing(2);
+                        GameObject.Find("TextManagerMap").GetComponent<TextManager>().SetHorizontalSpacing(2);
+                        GameObject.Find("TextManagerName").GetComponent<TextManager>().SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]" + PlayerCharacter.instance.Name, false, true) });
+                        GameObject.Find("TextManagerLevel").GetComponent<TextManager>().SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]" + (GlobalControls.crate ? "VL" : "LV") +
                                                                                                                                          PlayerCharacter.instance.LV, false, true) });
-                        GameObject.Find("TextManagerTime").GetComponent<TextManager>().setTextQueue(new TextMessage[] { new TextMessage("[noskipatall]0:00", false, true) });
-                        GameObject.Find("TextManagerMap").GetComponent<TextManager>().setTextQueue(new TextMessage[] { new TextMessage("[noskipatall]" + SaveLoad.savedGame.lastScene, false, true) });
-                        tmName.setTextQueue(new TextMessage[] { new TextMessage(PlayerCharacter.instance.Name, false, true) });
+                        GameObject.Find("TextManagerTime").GetComponent<TextManager>().SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]0:00", false, true) });
+                        GameObject.Find("TextManagerMap").GetComponent<TextManager>().SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]" + SaveLoad.savedGame.lastScene, false, true) });
+                        tmName.SetTextQueue(new TextMessage[] { new TextMessage(PlayerCharacter.instance.Name, false, true) });
                         diff = calcTotalLength(tmName);
-                        tmName.setEffect(new ShakeEffect(tmName));
+                        tmName.SetEffect(new ShakeEffect(tmName));
                     }
                 } catch {
                     if (GlobalControls.crate)
-                        UnitaleUtil.displayLuaError(StaticInits.ENCOUNTER, "U USED AN ODL VERSOIN OF CFY? IT ISN'T RERTOCOMAPTIBEL.\n\n"
+                        UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, "U USED AN ODL VERSOIN OF CFY? IT ISN'T RERTOCOMAPTIBEL.\n\n"
                                                                              + "DELEET UR SAVE OT NOT HVAE DA ERRRO AGAIN. HREE: \n"
                                                                              + Application.persistentDataPath + "/save.gd\n"
                                                                              + "IF MOAR PORBLMES, TELL EM! :D\n\n"
                                                                              + "SP : NO ESPACE HERE!!!!!!");
                     else
-                        UnitaleUtil.displayLuaError(StaticInits.ENCOUNTER, "Have you saved on one of a previous CYF version ? The save isn't retrocompatible.\n\n"
+                        UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, "Have you saved on one of a previous CYF version ? The save isn't retrocompatible.\n\n"
                                                                          + "To not have this error anymore, you'll have to delete the save file. Here it is : \n"
                                                                          + Application.persistentDataPath + "/save.gd\n"
                                                                          + "Tell me if you have some more problems, and thanks for following my fork! ^^\n\n"
@@ -173,11 +172,12 @@ public class Title : MonoBehaviour {
         SceneManager.LoadScene("TransitionOverworld");
         yield return 0;
         //yield return Application.isLoadingLevel;
-        GameObject.Find("Player").transform.position = new Vector3(SaveLoad.savedGame.playerPosX, SaveLoad.savedGame.playerPosY, SaveLoad.savedGame.playerPosZ);
+        //GameObject.Find("Player").transform.position = new Vector3(;
         StaticInits.MODFOLDER = LuaScriptBinder.Get(null, "ModFolder").String;
         StaticInits.Initialized = false;
-        StaticInits.initAll();
-        GameObject.Destroy(GameObject.Find("Main Camera"));
+        StaticInits.InitAll();
+        if (GameObject.Find("Main Camera"))
+            GameObject.Destroy(GameObject.Find("Main Camera"));
         GameObject.Destroy(gameObject);
     }
 
@@ -196,12 +196,13 @@ public class Title : MonoBehaviour {
             yield return 0;
         PlayerCharacter.instance.Reset(false);
         LuaScriptBinder.ClearVariables();
-        GlobalControls.MapEventPages.Clear();
+        GlobalControls.MapData.Clear();
         GameObject.DontDestroyOnLoad(gameObject);
         SceneManager.LoadScene("TransitionOverworld");
         yield return 0;
         //yield return Application.isLoadingLevel;
-        GameObject.Destroy(GameObject.Find("Main Camera"));
+        if (GameObject.Find("Main Camera"))
+            GameObject.Destroy(GameObject.Find("Main Camera"));
         GameObject.Destroy(gameObject);
     }
 

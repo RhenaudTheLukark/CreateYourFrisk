@@ -15,7 +15,14 @@ public class LuaInventoryOW {
     public static event LoadedAction StCoroutine;
 
     [MoonSharpHidden]
-    public void setEquip(string itemName)                   { Inventory.ChangeEquipment(itemName); appliedScript.Call("CYFEventNextCommand"); }
+    public void setEquip(string itemName) {
+        if (!Inventory.ItemExists(itemName)) 
+            throw new CYFException("The item \"" + itemName + "\" doesn't exist in the item list.");
+        if (Inventory.InventoryNumber(itemName) == -1)
+            throw new CYFException("You can't equip an item that isn't in the inventory.");
+        Inventory.ChangeEquipment(Inventory.InventoryNumber(itemName));
+        appliedScript.Call("CYFEventNextCommand");
+    }
 
     [CYFEventFunction] public void SetWeapon(string weapon) { setEquip(weapon); }
     [CYFEventFunction] public void SetArmor(string armor)   { setEquip(armor); }
@@ -30,7 +37,7 @@ public class LuaInventoryOW {
 
     [CYFEventFunction] public bool IsItemInTheInventory(string name) { try { return Inventory.InventoryNumber(name) != -1; } finally { appliedScript.Call("CYFEventNextCommand"); } }
 
-    [CYFEventFunction] public bool ItemExists(string name) { try { return Inventory.itemExists(name); } finally { appliedScript.Call("CYFEventNextCommand"); } }
+    [CYFEventFunction] public bool ItemExists(string name) { try { return Inventory.ItemExists(name); } finally { appliedScript.Call("CYFEventNextCommand"); } }
 
     [CYFEventFunction] public int GetItemID(string name) { try { return Inventory.InventoryNumber(name); } finally { appliedScript.Call("CYFEventNextCommand"); } }
 

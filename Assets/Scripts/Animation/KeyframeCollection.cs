@@ -33,8 +33,8 @@ public class KeyframeCollection : MonoBehaviour {
     }
 
     public bool animationComplete() {
-        if (loop == LoopMode.ONESHOT)
-            return ((Time.time - registrationTime) / timePerFrame) >= keyframes.Length;
+        if (loop == LoopMode.ONESHOT)           return ((Time.time - registrationTime) / timePerFrame) >= keyframes.Length;
+        else if (loop == LoopMode.ONESHOTEMPTY) return getCurrent() == EMPTY_KEYFRAME;
         return false;
     }
 

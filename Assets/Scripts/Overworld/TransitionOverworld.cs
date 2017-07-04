@@ -6,13 +6,10 @@ using System.Linq;
 using MoonSharp.Interpreter;
 
 public class TransitionOverworld : MonoBehaviour {
-    private TransitionOverworld instance;
     public string FirstLevelToLoad;
     public Vector2 BeginningPosition;
-
+    
     private void Start() {
-        if (instance)
-            return;
         bool isStart = false;
 
         GameOverBehavior.gameOverContainerOw = GameObject.Find("GameOverContainer");
@@ -61,30 +58,25 @@ public class TransitionOverworld : MonoBehaviour {
         GameObject.DontDestroyOnLoad(GameObject.Find("Player"));
         GameObject.DontDestroyOnLoad(GameObject.Find("Main Camera OW"));
         string mapName;
-        if (!isStart) {
+        if (!isStart)
             try {
                 if (UnitaleUtil.MapCorrespondanceList.ContainsValue(LuaScriptBinder.Get(null, "PlayerMap").String))
                     mapName = UnitaleUtil.MapCorrespondanceList.FirstOrDefault(x => x.Value == LuaScriptBinder.Get(null, "PlayerMap").String).Key;
                 else mapName = LuaScriptBinder.Get(null, "PlayerMap").String;
             } catch { mapName = LuaScriptBinder.Get(null, "PlayerMap").String; }
-        } else
+        else
             mapName = FirstLevelToLoad;
-
-        //THERE IS NO WAY TO KNOW IF A SCENE EXISTS WTF
-        /*bool loaded = false;
-        for (int i = 0; i < SceneManager.sceneCountInBuildSettings; i++) {
-            if (SceneManager.GetSceneAt(i).name == mapName) {
-                loaded = true;*/
-                SceneManager.LoadScene(mapName);
-        /*break;
-            }
-        }
-        if (!loaded) {
-            UnitaleUtil.displayLuaError("TransitionOverworld", "The map named \"" + mapName + "\" doesn't exist.");
+        
+        if (!FileLoader.SceneExists(mapName)) {
+            UnitaleUtil.DisplayLuaError("TransitionOverworld", "The map named \"" + mapName + "\" doesn't exist.");
             return;
-        }*/
+        }
+        if (GlobalControls.nonOWScenes.Contains(mapName)) {
+            UnitaleUtil.DisplayLuaError("TransitionOverworld", "Sorry, but \"" + mapName + "\" is not the name of an overworld scene.");
+            return;
+        }
+        SceneManager.LoadScene(mapName);
         GameObject.Find("Don't show it again").GetComponent<Image>().color = new Color(0, 0, 0, 0);
-        instance = this;
         StartCoroutine(GetIntoDaMap("transitionoverworld", null));
     }
 
@@ -98,16 +90,19 @@ public class TransitionOverworld : MonoBehaviour {
         Camera.main.transparencySortMode = TransparencySortMode.CustomAxis;
         Camera.main.transparencySortAxis = new Vector3(0.0f, 1.0f, 1000000.0f);
 
+        try { PlayerOverworld.instance.backgroundSize = GameObject.Find("Background").GetComponent<RectTransform>().sizeDelta * GameObject.Find("Background").GetComponent<RectTransform>().localScale.x; } 
+        catch { UnitaleUtil.WriteInLogAndDebugger("RectifyCameraPosition: The 'Background' GameObject is missing."); }
+
         EventManager.instance.onceReload = false;
         //Permits to reload the current data if needed
         MapInfos mi = GameObject.Find("Background").GetComponent<MapInfos>();
         if (StaticInits.MODFOLDER != mi.modToLoad) {
             StaticInits.MODFOLDER = mi.modToLoad;
             StaticInits.Initialized = false;
-            StaticInits.initAll();
+            StaticInits.InitAll();
             LuaScriptBinder.Set(null, "ModFolder", DynValue.NewString(StaticInits.MODFOLDER));
             if (call == "transitionoverworld") {
-                EventManager.instance.scriptLaunched = false;
+                EventManager.instance.ScriptLaunched = false;
                 EventManager.instance.script = null;
             }
         }

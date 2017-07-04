@@ -1,36 +1,38 @@
 ﻿using UnityEngine;
+using MoonSharp.Interpreter;
 
 public class TextMessage {
-    public TextMessage(string text, bool formatted, bool showImmediate, bool actualText = true, string mugshot = null) {
-        setup(text, formatted, showImmediate, actualText, mugshot);
+    public TextMessage(string text, bool formatted, bool showImmediate, bool actualText = true, DynValue mugshot = null) {
+        Setup(text, formatted, showImmediate, actualText, mugshot);
     }
 
-    public TextMessage(string text, bool formatted, bool showImmediate, string mugshot, bool actualText = true) {
-        setup(text, formatted, showImmediate, actualText, mugshot);
+    public TextMessage(string text, bool formatted, bool showImmediate, DynValue mugshot, bool actualText = true) {
+        Setup(text, formatted, showImmediate, actualText, mugshot);
     }
     
     public string Text { get; set; }
     public bool Formatted { get; private set; }
     public bool ShowImmediate { get; private set; }
     public bool ActualText { get; private set; }
-    public string Mugshot { get; private set; }
+    public DynValue Mugshot { get; private set; }
 
-    public void addToText(string textToAdd) { Text += textToAdd; }
+    public void AddToText(string textToAdd) { Text += textToAdd; }
 
-    protected void setup(string text, bool formatted, bool showImmediate, bool actualText, string mugshot = null) {
+    protected void Setup(string text, bool formatted, bool showImmediate, bool actualText, DynValue mugshot) {
         if (text != "")
             text = unescape(text); // compensate for unity inspector autoescaping control characters
         if (formatted)
-            this.Text = formatText(text);
+            Text = formatText(text);
         else
-            this.Text = text;
-        this.Formatted = formatted;
-        this.ShowImmediate = showImmediate;
-        this.ActualText = actualText;
-        this.Mugshot = mugshot;
+            Text = text;
+        Formatted = formatted;
+        ShowImmediate = showImmediate;
+        ActualText = actualText;
+        //Debug.Log(mugshot);
+        Mugshot = mugshot;
     }
 
-    protected void setup(string text, bool formatted, bool showImmediate) { setup(text, formatted, showImmediate, true, null); }
+    protected void Setup(string text, bool formatted, bool showImmediate) { Setup(text, formatted, showImmediate, true, null); }
 
     public void setText(string text) { this.Text = text; }
 

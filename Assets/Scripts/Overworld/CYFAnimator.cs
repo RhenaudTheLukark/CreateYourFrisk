@@ -9,6 +9,7 @@ public class CYFAnimator : MonoBehaviour {
     private bool waitForStart = true;
     private LuaSpriteController sprctrl;
     private Vector2 lastPos;
+    private bool firstCall = true;
 
     void OnEnable()  { StaticInits.Loaded += LateStart; }
     void OnDisable() { StaticInits.Loaded -= LateStart; }
@@ -28,18 +29,21 @@ public class CYFAnimator : MonoBehaviour {
     }
 
     // Use this for initialization
-    void LateStart() {
+    public void LateStart() {
         if (EventManager.instance.sprCtrls.ContainsKey(gameObject.name)) sprctrl = EventManager.instance.sprCtrls[gameObject.name];
-        else if (gameObject.name == "Player") sprctrl = PlayerOverworld.instance.sprctrl;
+        else if (gameObject.name == "Player")                            sprctrl = PlayerOverworld.instance.sprctrl;
         else {
-            EventManager.instance.ResetEvents();
+            EventManager.instance.ResetEvents(false);
             if (!EventManager.instance.sprCtrls.ContainsKey(gameObject.name))
                 throw new CYFException("A CYFAnimator component must be tied to an event, however the GameObject " + gameObject.name + " doesn't seem to be one.");
         }
-        Anim anim = GetAnimPerName(beginAnim);
         lastPos = gameObject.transform.position;
         waitForStart = false;
-        try { sprctrl.SetAnimation(anim.anims.Replace(" ", "").Replace("{", "").Replace("}", "").Split(','), anim.transitionTime); } catch { }
+        if (firstCall) {
+            Anim anim = GetAnimPerName(beginAnim);
+            try { sprctrl.SetAnimation(anim.anims.Replace(" ", "").Replace("{", "").Replace("}", "").Split(','), anim.transitionTime); } catch { }
+            firstCall = false;
+        }
     }
 	
 	// Update is called once per frame
@@ -55,7 +59,8 @@ public class CYFAnimator : MonoBehaviour {
             } else if (threeFramePass < 3) {
                 animName += "Moving";
                 threeFramePass++;
-            } else animName += "Stop";
+            } else
+                animName += "Stop";
             int currentDirection = movementDirection;
 
             switch (currentDirection) {

@@ -47,8 +47,8 @@ public class FightUI : MonoBehaviour {
         sliceAnim = UIController.instance.fightUI.sliceAnim;
         sliceAnimFrequency = UIController.instance.fightUI.sliceAnimFrequency;
         shakeX = UIController.instance.fightUI.shakeX;
-        damageText.setFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_DAMAGETEXT_NAME));
-        damageText.setMute(true);
+        damageText.SetFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_DAMAGETEXT_NAME));
+        damageText.SetMute(true);
     }
     
     public void Init(int enemyIndex) {
@@ -56,7 +56,7 @@ public class FightUI : MonoBehaviour {
         Damage = -478294;
         lifeBar.setVisible(false);
         lifeBar.whenDamage = true;
-        enemy = UIController.instance.encounter.enabledEnemies[enemyIndex];
+        enemy = UIController.instance.encounter.EnabledEnemies[enemyIndex];
         lifeBar.transform.SetParent(enemy.transform);
         damageText.transform.SetParent(enemy.transform);
         slice.img.transform.SetParent(enemy.transform);
@@ -88,6 +88,8 @@ public class FightUI : MonoBehaviour {
         Damage = FightUIController.instance.getDamage(enemy, PlayerController.instance.lastHitMult);
         enePos = enemy.GetComponent<RectTransform>().position;
         eneSize = enemy.GetComponent<RectTransform>().sizeDelta;
+        lifeBar.transform.SetParent(enemy.transform);
+        damageText.transform.SetParent(enemy.transform);
         slice.img.transform.SetParent(enemy.transform);
         /*Vector3 slicePos = new Vector3(enemy.GetComponent<RectTransform>().position.x + enemy.offsets[0].x,
                                        enemy.GetComponent<RectTransform>().position.y + eneSize.y / 2 + enemy.offsets[0].y - 55, enemy.GetComponent<RectTransform>().position.z);*/
@@ -155,7 +157,7 @@ public class FightUI : MonoBehaviour {
                     if (c == '1')
                         damageTextWidth -= 12; // lol hardcoded offsets
                 damageTextRt.localPosition = new Vector2(- 0.5f * damageTextWidth + enemy.offsets[2].x, 40 + enemy.offsets[2].y);
-                damageText.setText(new TextMessage(damageTextStr, false, true));
+                damageText.SetText(new TextMessage(damageTextStr, false, true));
 
                 // initiate lifebar and set lerp to its new health value
                 if (Damage != 0) {

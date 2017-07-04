@@ -1,13 +1,9 @@
-﻿using System;
-using MoonSharp.Interpreter;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 
 public class Letter : MonoBehaviour {
     public Vector2 basisPos = new Vector2();
     public Image img;
-    //public Color currentColor = Color.white;
     public TextEffectLetter effect = null;
     public bool started = false;
     private bool goodInit = false;
@@ -15,12 +11,9 @@ public class Letter : MonoBehaviour {
     private void Start() {
         img = GetComponent<Image>();
         if (GlobalControls.isInFight)
-            if (ArenaManager.instance.firstTurn)
-                LateUpdater.lateActions.Add(LateStart);
-            else
-                LateStart();
-        else
-            LateStart();
+            if (ArenaManager.instance.firstTurn) LateUpdater.lateActions.Add(LateStart);
+            else                                 LateStart();
+        else                                     LateStart();
     }
 
     private void LateStart() {
@@ -37,7 +30,7 @@ public class Letter : MonoBehaviour {
                 basisPos = transform.position;
                 goodInit = true;
             }
-            effect.updateEffects();
+            effect.UpdateEffects();
         }
     }
 }

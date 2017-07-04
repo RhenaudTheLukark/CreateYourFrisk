@@ -3,15 +3,21 @@ encountertext = "Your path is blocked by two mannequins! ∞.∞\nYou should loo
 wavetimer = 4
 arenasize = {155, 130}
 nextwaves = {"bullettest_touhou"}
-flee = false
+--flee = false
 autolinebreak = true
---playerskipdocommand = true
+playerskipdocommand = true
 timer = 0
 index = 0
 --revive = true
 --deathtext = {"You have ascended.", "Now, fulfill your [lettereffect:rotate][color:ffff00]dream[color:ffffff]."}
 deathtext = {"This is a test of death text.", "And it [color:ffff00][lettereffect:shake]succeeded[color:ffffff]!"}
 deathmusic = "mus_zz_megalovania"
+fleetexts = {"Woop Woop Woop [color:ff0000]Woop [color:ffffff]Woop!", 
+             "Argh my legs are running by themselves [effect:rotate]wtf", 
+             "[starcolor:00ffff]They never stop coming and they never stop coming and they never stop coming...",
+             "You're ugly, I'll just [color:ff0000]go", 
+             "Whoa another mons-let's just [effect:shake]choose the flee option.", 
+             "See ya, [color:ffff00]punk[color:ffffff]!"}
 
 enemies = { "poseur", "posette" }
 enemypositions = { {-180, 0}, {120, 0} }
@@ -27,6 +33,7 @@ possiblestrings = { "I'm outta here.", "I've got shit to do.", "I've got better 
 possible_attacks = {"bullettest_bouncy" --[[, "bullettest_chaserorb", "bullettest_touhou"]]}
 
 function EncounterStarting()
+    SetButtonLayer("Top")
     --[[maintext = CreateText(
         {"[font:uidialog][novoice][waitall:3]Greetings.",
          "[novoice][waitall:3]I[w:20] am " .. Player.name .. ".",
@@ -79,6 +86,7 @@ function DefenseEnding() --This built-in function fires after the defense round 
         texts[1].SetText({"Omg this is a second test!", "AND OMG IT REALLY WORKS I'M SO HAPPY YAY YAY YAY!"})
         texts[1].ShowBubble("down", 75)
     end
+    SetButtonLayer("default")
 end
 
 function yay()

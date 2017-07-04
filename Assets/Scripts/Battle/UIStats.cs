@@ -27,7 +27,7 @@ public class UIStats : MonoBehaviour {
         nameLevelTextMan = nameLevelTextManParent.AddComponent<TextManager>();
         hpTextMan = hpTextManParent.AddComponent<TextManager>();
 
-        hpTextMan.setFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_SMALLTEXT_NAME));
+        hpTextMan.SetFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_SMALLTEXT_NAME));
         initialized = true;
         setMaxHP();
         setPlayerInfo(PlayerCharacter.instance.Name, PlayerCharacter.instance.LV);
@@ -36,8 +36,8 @@ public class UIStats : MonoBehaviour {
     public void setPlayerInfo(string name, int lv) {
         if (initialized) {
             nameLevelTextMan.enabled = true;
-            nameLevelTextMan.setFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_SMALLTEXT_NAME));
-            nameLevelTextMan.setText(new TextMessage(name.ToUpper() + "  LV " + lv, false, true));
+            nameLevelTextMan.SetFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_SMALLTEXT_NAME));
+            nameLevelTextMan.SetText(new TextMessage(name.ToUpper() + "  LV " + lv, false, true));
             if (PlayerCharacter.instance.Name.Length > 6)
                 GameObject.Find("HPRect").transform.position = new Vector3(GameObject.Find("HPRect").transform.parent.position.x + 286.1f, 
                                                                            GameObject.Find("HPRect").transform.position.y, GameObject.Find("HPRect").transform.position.z);
@@ -57,7 +57,7 @@ public class UIStats : MonoBehaviour {
             int count = UnitaleUtil.DecimalCount(hpCurrent);
             string sHpCurrent = hpCurrent < 10 ? "0" + hpCurrent.ToString("F" + count) : hpCurrent.ToString("F" + count);
             string sHpMax = hpMax < 10 ? "0" + hpMax : "" + hpMax;
-            hpTextMan.setText(new TextMessage(sHpCurrent + " / " + sHpMax, false, true));
+            hpTextMan.SetText(new TextMessage(sHpCurrent + " / " + sHpMax, false, true));
         }
     }
 

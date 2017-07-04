@@ -13,7 +13,7 @@ public class BackgroundLoader : MonoBehaviour {
     private void Start() {
         bgImage = GetComponent<Image>();
         try {
-            Sprite bg = SpriteUtil.fromFile(FileLoader.pathToModFile("Sprites/bg.png"));
+            Sprite bg = SpriteUtil.FromFile(FileLoader.pathToModFile("Sprites/bg.png"));
             if (bg != null) {
                 bg.texture.filterMode = FilterMode.Point;
                 bgImage.sprite = bg;
@@ -21,7 +21,7 @@ public class BackgroundLoader : MonoBehaviour {
             }
         } catch {
             // background failed loading, no need to do anything
-            UnitaleUtil.writeInLogAndDebugger("[WARN]No background file found. Using empty background.");
+            UnitaleUtil.WriteInLogAndDebugger("[WARN]No background file found. Using empty background.");
         }
     }
 }

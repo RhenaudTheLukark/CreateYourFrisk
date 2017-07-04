@@ -29,9 +29,8 @@ public static class SpriteRegistry {
     }
 
     public static Sprite tryLoad(string key) {
-        if (dict.ContainsKey(key))              return dict[key];
-        else if (dictMod.ContainsKey(key))      dict[key] = SpriteUtil.fromFile(dictMod[key].FullName);
-        else if (dictDefault.ContainsKey(key))  dict[key] = SpriteUtil.fromFile(dictDefault[key].FullName);
+        if      (dictMod.ContainsKey(key))      dict[key] = SpriteUtil.FromFile(dictMod[key].FullName);
+        else if (dictDefault.ContainsKey(key))  dict[key] = SpriteUtil.FromFile(dictDefault[key].FullName);
         else                                    return null;
         return dict[key];
     }

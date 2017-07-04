@@ -36,23 +36,23 @@ public class LuaTextManager : TextManager {
         //Next line/EOF check
         if (isActive) {
             if (progress == ProgressMode.MANUAL) {
-                if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED && lineComplete())
+                if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED && LineComplete())
                     NextLine();
             } else if (progress == ProgressMode.AUTO) {
-                if (lineComplete())
+                if (LineComplete())
                     if (countFrames == framesWait) {
                         NextLine();
                         countFrames = 0;
                     } else
                         countFrames++;
             }
-            if (canSkip() && !lineComplete() && GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED)
-                skipLine();
+            if (CanSkip() && !LineComplete() && GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED)
+                SkipLine();
         }
     }
 
     private void ResizeBubble() {
-        float effectiveBubbleHeight = bubbleHeight != -1 ? bubbleHeight < 16 ? 40 : bubbleHeight + 24 : UnitaleUtil.calcTotalHeight(this) < 16 ? 40 : UnitaleUtil.calcTotalHeight(this) + 24;
+        float effectiveBubbleHeight = bubbleHeight != -1 ? bubbleHeight < 16 ? 40 : bubbleHeight + 24 : UnitaleUtil.CalcTotalHeight(this) < 16 ? 40 : UnitaleUtil.CalcTotalHeight(this) + 24;
         containerBubble.transform.GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth + 20, effectiveBubbleHeight);                                                      //To set the borders
         UnitaleUtil.GetChildPerName(containerBubble.transform, "BackHorz").GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth + 20, effectiveBubbleHeight - 20 * 2);    //BackHorz
         UnitaleUtil.GetChildPerName(containerBubble.transform, "BackVert").GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth - 20, effectiveBubbleHeight);             //BackVert
@@ -114,27 +114,27 @@ public class LuaTextManager : TextManager {
         isActive = true;
         if (bubble)
             containerBubble.SetActive(true);
-        try { setTextQueue(msgs); } catch { }
+        try { SetTextQueue(msgs); } catch { }
         if (text.Table.Length != 0 && bubble)
             ResizeBubble();
     }
 
     public void AddText(DynValue text) {
-        if (allLinesComplete()) {
+        if (AllLinesComplete()) {
             SetText(text);
             return;
         }
         TextMessage[] msgs = new TextMessage[text.Table.Length];
         for (int i = 0; i < text.Table.Length; i++)
             msgs[i] = new MonsterMessage(text.Table.Get(i + 1).String);
-        base.addToTextQueue(msgs);
+        base.AddToTextQueue(msgs);
     }
 
     public void SetFont(string fontName) {
         UnderFont uf = SpriteFontRegistry.Get(fontName);
         if (uf == null)
             throw new CYFException("The font \"" + fontName + "\" doesn't exist.\nYou should check if you haven't made a typo or if the font really is in your mod.");
-        setFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_DAMAGETEXT_NAME));
+        SetFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_DAMAGETEXT_NAME));
     }
 
     public void SetEffect(string effect, float intensity) {
@@ -163,8 +163,8 @@ public class LuaTextManager : TextManager {
         }
     }
 
-    public bool IsTheLineFinished() { return lineComplete(); }
-    public bool IsTheTextFinished() { return allLinesComplete(); }
+    public bool IsTheLineFinished() { return LineComplete(); }
+    public bool IsTheTextFinished() { return AllLinesComplete(); }
 
     public void ShowBubble(string side = null, DynValue position = null) {
         bubble = true;
@@ -203,7 +203,7 @@ public class LuaTextManager : TextManager {
                     if (str.Contains("%")) {
                         size -= 20;
                         try {
-                            float percentage = Mathf.Clamp01(ParseUtil.getFloat(str.Replace("%", "")) / 100);
+                            float percentage = Mathf.Clamp01(ParseUtil.GetFloat(str.Replace("%", "")) / 100);
                             speechThing.localPosition = speechThingShadow.localPosition = new Vector2(isSide ? otherShift : 10 + Mathf.Round(percentage * size) - shift,
                                                                                                       isSide ? 10 + Mathf.Round(percentage * size) - shift : otherShift);
                         } catch { throw new CYFException("If you use a '%' in your string, you should only have a number with it."); }
@@ -231,13 +231,13 @@ public class LuaTextManager : TextManager {
     }
 
     public void NextLine() {
-        if (allLinesComplete()) {
+        if (AllLinesComplete()) {
             isActive = false;
             if (bubble)
                 containerBubble.SetActive(false);
-            destroyText();
+            DestroyText();
         } else {
-            showLine(++currentLine); 
+            ShowLine(++currentLine); 
             if (bubble)
                 ResizeBubble();
         }

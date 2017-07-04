@@ -21,7 +21,6 @@ public class IntroManager : MonoBehaviour {
             SaveLoad.Start();
             new ControlPanel();
             new PlayerCharacter();
-            GlobalControls.misc = new Misc();
             #if UNITY_STANDALONE_WIN || UNITY_EDITOR
                 if (GlobalControls.crate) Misc.WindowName = ControlPanel.instance.WinodwBsaisNmae;
                 else Misc.WindowName = ControlPanel.instance.WindowBasisName;
@@ -36,8 +35,8 @@ public class IntroManager : MonoBehaviour {
             throw new Exception("You need to have the same number of images and text.");
         text = GameObject.FindObjectOfType<TextManager>();
         img = GameObject.Find("CutsceneImages").GetComponent<Image>();
-        text.setVerticalSpacing(6);
-        text.setHorizontalSpacing(6);
+        text.SetVerticalSpacing(6);
+        text.SetHorizontalSpacing(6);
         if (SpriteRegistry.Get("Intro/mask") != null) {
             mask = true;
             GameObject.Find("Mask").GetComponent<Image>().sprite = SpriteRegistry.Get("Intro/mask");
@@ -47,12 +46,12 @@ public class IntroManager : MonoBehaviour {
         TextMessage[] mess = new TextMessage[textsToDisplay.Length];
         for (int i = 0; i < mess.Length; i ++)
             mess[i] = new TextMessage("[waitall:2]" + textsToDisplay[i], false, false);
-        text.setTextQueue(mess);
+        text.SetTextQueue(mess);
         img.sprite = SpriteRegistry.Get("Intro/" + imagePaths[0]);
         img.SetNativeSize();
         if (specialEffects[0] != string.Empty)
             try { ApplyEffect((Effect)Enum.Parse(typeof(Effect), specialEffects[currentIndex].ToUpper())); } 
-            catch { UnitaleUtil.displayLuaError("IntroManager", "The effect " + specialEffects[currentIndex] + " doesn't exist."); }
+            catch { UnitaleUtil.DisplayLuaError("IntroManager", "The effect " + specialEffects[currentIndex] + " doesn't exist."); }
         if (goToNextDirect[0] == "Y")
             timer = 0.5f;
     }
@@ -82,9 +81,9 @@ public class IntroManager : MonoBehaviour {
                 finish = false;
                 img.color = new Color(img.color.r, img.color.g, img.color.b, 0);
                 //Check end of intro
-                if (text.allLinesComplete()) {
+                if (text.AllLinesComplete()) {
                     fadeMusic = true;
-                    text.destroyText();
+                    text.DestroyText();
                 } else {
                     img.sprite = SpriteRegistry.Get("Intro/" + imagePaths[++currentIndex]);
                     img.SetNativeSize();
@@ -93,8 +92,8 @@ public class IntroManager : MonoBehaviour {
                     timerEffect = 0.0f;
                     if (specialEffects[currentIndex] != string.Empty)
                         try { ApplyEffect((Effect)Enum.Parse(typeof(Effect), specialEffects[currentIndex])); } 
-                        catch { UnitaleUtil.displayLuaError("IntroManager", "The effect " + specialEffects[currentIndex] + " doesn't exist."); }
-                    text.nextLine();
+                        catch { UnitaleUtil.DisplayLuaError("IntroManager", "The effect " + specialEffects[currentIndex] + " doesn't exist."); }
+                    text.NextLineText();
                     start = true;
                 }
             }
@@ -123,7 +122,7 @@ public class IntroManager : MonoBehaviour {
                 SceneManager.LoadScene("TitleScreen");
             }
         //End of current page
-        } else if (text.lineComplete() &&!start &&!CheckEffect()) {
+        } else if (text.LineComplete() &&!start &&!CheckEffect()) {
             finish = true;
             timer = 0;
         }
@@ -134,25 +133,25 @@ public class IntroManager : MonoBehaviour {
         switch(e) {
             case Effect.SCROLLUP:
                 if (img.rectTransform.sizeDelta.y < (mask ? 220 : 480))
-                    UnitaleUtil.displayLuaError("IntroManager", "You can't apply a scroll down effect on an image which has a lowest y boundary than the screen's y boundary.");
+                    UnitaleUtil.DisplayLuaError("IntroManager", "You can't apply a scroll down effect on an image which has a lowest y boundary than the screen's y boundary.");
                 img.rectTransform.pivot = new Vector2(0.5f, 1);
                 img.rectTransform.position = new Vector2(img.rectTransform.position.x, mask ? img.rectTransform.sizeDelta.y + 204 : img.rectTransform.sizeDelta.y);
                 break;
             case Effect.SCROLLDOWN:
                 if (img.rectTransform.sizeDelta.y < (mask ? 220 : 480))
-                    UnitaleUtil.displayLuaError("IntroManager", "You can't apply a scroll down effect on an image which has a lowest y boundary than the screen's y boundary.");
+                    UnitaleUtil.DisplayLuaError("IntroManager", "You can't apply a scroll down effect on an image which has a lowest y boundary than the screen's y boundary.");
                 img.rectTransform.pivot = new Vector2(0.5f, 0);
                 img.rectTransform.position = new Vector2(img.rectTransform.position.x, mask ? 424 - img.rectTransform.sizeDelta.y : 480 - img.rectTransform.sizeDelta.y);
                 break;
             case Effect.SCROLLLEFT:
                 if (img.rectTransform.sizeDelta.x < (mask ? 400 : 640))
-                    UnitaleUtil.displayLuaError("IntroManager", "You can't apply a scroll down effect on an image which has a lowest x boundary than the screen's x boundary.");
+                    UnitaleUtil.DisplayLuaError("IntroManager", "You can't apply a scroll down effect on an image which has a lowest x boundary than the screen's x boundary.");
                 img.rectTransform.pivot = new Vector2(0, 0.5f);
                 img.rectTransform.position = new Vector2(mask ? 520 - img.rectTransform.sizeDelta.x : 640 - img.rectTransform.sizeDelta.y, img.rectTransform.position.y);
                 break;
             case Effect.SCROLLRIGHT:
                 if (img.rectTransform.sizeDelta.x < (mask ? 400 : 640))
-                    UnitaleUtil.displayLuaError("IntroManager", "You can't apply a scroll down effect on an image which has a lowest x boundary than the screen's x boundary.");
+                    UnitaleUtil.DisplayLuaError("IntroManager", "You can't apply a scroll down effect on an image which has a lowest x boundary than the screen's x boundary.");
                 img.rectTransform.pivot = new Vector2(1, 0.5f);
                 img.rectTransform.position = new Vector2(mask ? img.rectTransform.sizeDelta.x + 120 : img.rectTransform.sizeDelta.x, img.rectTransform.position.y);
                 break;

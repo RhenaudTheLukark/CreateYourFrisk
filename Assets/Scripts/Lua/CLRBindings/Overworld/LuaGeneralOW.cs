@@ -25,10 +25,17 @@ public class LuaGeneralOW {
     /// <param name="mugshots"></param>
     [CYFEventFunction]
     public void SetDialog(DynValue texts, bool formatted = true, DynValue mugshots = null) {
+        if (EventManager.instance.coroutines.ContainsKey(appliedScript) && EventManager.instance.script != appliedScript) {
+            UnitaleUtil.DisplayLuaError(EventManager.instance.events[EventManager.instance.actualEventIndex].name, "General.SetDialog: You can't use that function in a coroutine.");
+            return;
+        } else if (EventManager.instance.LoadLaunched) {
+            UnitaleUtil.DisplayLuaError(EventManager.instance.events[EventManager.instance.actualEventIndex].name, "General.SetDialog: You can't use that function in a page 0 function.");
+            return;
+        }
         TextMessage[] textmsgs = new TextMessage[texts.Table.Length];
-        for (int i = 0; i < texts.GetLength().Number; i++)
-            textmsgs[i] = new TextMessage(texts.Table.Get(i + 1).String, formatted, false, mugshots.ToString() != "void" ? mugshots.Table.Get(i + 1).String : null);
-        textmgr.setTextQueue(textmsgs);
+        for (int i = 0; i < texts.Table.Length; i++)
+            textmsgs[i] = new TextMessage(texts.Table.Get(i + 1).String, formatted, false, mugshots != null ? mugshots.Type == DataType.Table ? mugshots.Table.Get(i+1) : mugshots : null);
+        textmgr.SetTextQueue(textmsgs);
         textmgr.transform.parent.parent.SetAsLastSibling();
     }
     
@@ -41,13 +48,13 @@ public class LuaGeneralOW {
     public void SetChoice(DynValue choices, string question = null) {
         bool threeLines = false;
         TextMessage textMsgChoice = new TextMessage("", false, false, true);
-        textMsgChoice.addToText("[mugshot:null]");
+        textMsgChoice.AddToText("[mugshot:null]");
         string[] finalText = new string[3];
 
         //Do not put more than 3 lines and 2 choices
         //If the 3rd parameter is a string, it has to be a question
         if (question != null) {
-            textMsgChoice.addToText(question + "\n");
+            textMsgChoice.AddToText(question + "\n");
 
             //int lengthAfter = question.Split('\n').Length;
             //if (question.Split('\n').Length > lengthAfter) lengthAfter = question.Split('\n').Length;
@@ -83,9 +90,9 @@ public class LuaGeneralOW {
 
         //Add the text to the text to print then the SetChoice function with its parameters
         if (!threeLines && question != null)
-            textMsgChoice.addToText("\n");
-        textMsgChoice.addToText(finalText[0] + "\n" + finalText[1] + "\n" + finalText[2]);
-        textmgr.setText(textMsgChoice);
+            textMsgChoice.AddToText("\n");
+        textMsgChoice.AddToText(finalText[0] + "\n" + finalText[1] + "\n" + finalText[2]);
+        textmgr.SetText(textMsgChoice);
         textmgr.transform.parent.parent.SetAsLastSibling();
 
         StCoroutine("ISetChoice", new object[] { question != null, threeLines });
@@ -119,7 +126,7 @@ public class LuaGeneralOW {
         GlobalControls.Music = UnitaleUtil.GetCurrentOverworldAudio().clip;
         PlayerOverworld.instance.enabled = false;
 
-        UnitaleUtil.writeInLogAndDebugger(GameObject.FindObjectOfType<GameOverBehavior>().name);
+        UnitaleUtil.WriteInLogAndDebugger(GameObject.FindObjectOfType<GameOverBehavior>().name);
 
         GameObject.FindObjectOfType<GameOverBehavior>().StartDeath(deathTable, deathMusic);
         appliedScript.Call("CYFEventNextCommand");
@@ -147,15 +154,16 @@ public class LuaGeneralOW {
     /// </summary>
     /// <param name="fadeFrames"></param>
     [CYFEventFunction]
-    public void StopBGM(int fadeFrames = 0) {
+    public void StopBGM(int fadeFrames = 0, bool waitEnd = false) {
         if (EventManager.instance.bgmCoroutine)
             throw new CYFException("General.StopBGM: The music is already fading.");
         else if (!GameObject.Find("Main Camera OW").GetComponent<AudioSource>().isPlaying)
             throw new CYFException("General.StopBGM: There is no current BGM.");
         else if (fadeFrames < 0)
             throw new CYFException("General.StopBGM: The fade time has to be positive or equal to 0.");
-        StCoroutine("fadeBGM", fadeFrames);
-        appliedScript.Call("CYFEventNextCommand");
+        StCoroutine("IFadeBGM", new object[] { fadeFrames, waitEnd });
+        if (!waitEnd)
+            appliedScript.Call("CYFEventNextCommand");
     }
 
     /// <summary>
@@ -189,7 +197,7 @@ public class LuaGeneralOW {
         GameObject.Destroy(GameObject.Find("Canvas OW"));
         StaticInits.MODFOLDER = "Title";
         StaticInits.Initialized = false;
-        StaticInits.initAll();
+        StaticInits.InitAll();
         GameObject.Destroy(GameObject.Find("Main Camera OW"));
         SceneManager.LoadScene("TitleScreen");
     }

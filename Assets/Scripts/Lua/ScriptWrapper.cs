@@ -15,7 +15,7 @@ public class ScriptWrapper {
     }
 
     public ScriptWrapper(/*bool overworld = false*/) {
-        script = LuaScriptBinder.boundScript(/*overworld*/);
+        script = LuaScriptBinder.BoundScript(/*overworld*/);
         this.Bind("_getv", (Func<Script, string, DynValue>)this.GetVar);
         string toDoString = "setmetatable({}, {__index=function(t, name) return _getv(name) end}) ";
         text = toDoString;
@@ -48,7 +48,7 @@ public class ScriptWrapper {
     public DynValue Call(Script caller, string function, DynValue[] args = null, bool checkExist = false) {
         if (script.Globals[function] == null || script.Globals.Get(function) == null) {
             if (checkExist &&!GlobalControls.retroMode)
-                UnitaleUtil.displayLuaError(scriptname, "Attempted to call the function " + function + " but it didn't exist.");
+                UnitaleUtil.DisplayLuaError(scriptname, "Attempted to call the function " + function + " but it didn't exist.");
             //Debug.LogWarning("Attempted to call the function " + function + " but it didn't exist.");
             return DynValue.Nil;
         }
@@ -59,37 +59,37 @@ public class ScriptWrapper {
                 if (args[0].Type == DataType.Table && args.Length == 1) {
                     DynValue[] argsNew = UnitaleUtil.TableToDynValueArray(args[0].Table);
                     try { d = script.Call(script.Globals[function], argsNew); } 
-                    catch (InterpreterException ex) { UnitaleUtil.displayLuaError(scriptname, ex.DecoratedMessage == null ? 
+                    catch (InterpreterException ex) { UnitaleUtil.DisplayLuaError(scriptname, ex.DecoratedMessage == null ? 
                                                                                                   ex.Message : 
                                                                                                   ex.DecoratedMessage.Substring(5).Contains("chunk_") ? 
                                                                                                       ex.Message : 
                                                                                                       ex.DecoratedMessage); } 
                     catch (Exception ex) {
                         if (!GlobalControls.retroMode)
-                            UnitaleUtil.displayLuaError(scriptname + ", calling the function " + function, "This is a " + ex.GetType() + " error. Contact the dev and show him this screen, this must be an engine-side error.\n\n" + ex.Message + "\n\n" + ex.StackTrace + "\n");
+                            UnitaleUtil.DisplayLuaError(scriptname + ", calling the function " + function, "This is a " + ex.GetType() + " error. Contact the dev and show him this screen, this must be an engine-side error.\n\n" + ex.Message + "\n\n" + ex.StackTrace + "\n");
                     }
                 } else if (e.GetType() == typeof(InterpreterException) || e.GetType().BaseType == typeof(InterpreterException) || e.GetType().BaseType.BaseType == typeof(InterpreterException))
-                    UnitaleUtil.displayLuaError(scriptname, ((InterpreterException)e).DecoratedMessage == null ? 
+                    UnitaleUtil.DisplayLuaError(scriptname, ((InterpreterException)e).DecoratedMessage == null ? 
                                                                 ((InterpreterException)e).Message : 
                                                                 ((InterpreterException)e).DecoratedMessage.Substring(5).Contains("chunk_") ? 
                                                                     ((InterpreterException)e).Message : 
                                                                     ((InterpreterException)e).DecoratedMessage);
                 else if (!GlobalControls.retroMode)
-                    UnitaleUtil.displayLuaError(scriptname + ", calling the function " + function, "This is a " + e.GetType() + " error. Contact the dev and show him this screen, this must be an engine-side error.\n\n" + e.Message + "\n\n" + e.StackTrace + "\n");
+                    UnitaleUtil.DisplayLuaError(scriptname + ", calling the function " + function, "This is a " + e.GetType() + " error. Contact the dev and show him this screen, this must be an engine-side error.\n\n" + e.Message + "\n\n" + e.StackTrace + "\n");
             }
             return d;
         } else {
             DynValue d = DynValue.Nil;
             try { d = script.Call(script.Globals[function]); } 
             catch (InterpreterException ex) {
-                UnitaleUtil.displayLuaError(scriptname, ex.DecoratedMessage == null ? 
+                UnitaleUtil.DisplayLuaError(scriptname, ex.DecoratedMessage == null ? 
                                                             ex.Message : 
                                                             ex.DecoratedMessage.Substring(5).Contains("chunk_") ? 
                                                                 ex.Message : 
                                                                 ex.DecoratedMessage);
             } catch (Exception ex) {
                 if (!GlobalControls.retroMode)
-                    UnitaleUtil.displayLuaError(scriptname + ", calling the function " + function, "This is a " + ex.GetType() + " error. Contact the dev and show him this screen, this must be an engine-side error.\n\n" + ex.Message + "\n\n" + ex.StackTrace + "\n");
+                    UnitaleUtil.DisplayLuaError(scriptname + ", calling the function " + function, "This is a " + ex.GetType() + " error. Contact the dev and show him this screen, this must be an engine-side error.\n\n" + ex.Message + "\n\n" + ex.StackTrace + "\n");
             }
             return d;
         }

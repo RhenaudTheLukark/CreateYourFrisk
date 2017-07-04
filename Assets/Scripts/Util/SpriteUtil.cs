@@ -8,6 +8,7 @@ using MoonSharp.Interpreter;
 
 public static class SpriteUtil {
     public const float PIXELS_PER_UNIT = 100.0f;
+
     public static void SwapSpriteFromFile(Component target, string filename, int bubbleID = -1) {
         try {
             if (bubbleID != -1) {
@@ -18,13 +19,13 @@ public static class SpriteUtil {
                     XmlDocument xmld = new XmlDocument();
                     xmld.Load(fi.FullName);
                     if (xmld["spritesheet"] != null && "single".Equals(xmld["spritesheet"].GetAttribute("type")))
-                        if (!UnitaleUtil.isOverworld())
-                            UIController.instance.encounter.enabledEnemies[bubbleID].bubbleWideness = ParseUtil.getFloat(xmld["spritesheet"].GetElementsByTagName("wideness")[0].InnerText);
+                        if (!UnitaleUtil.IsOverworld)
+                            UIController.instance.encounter.EnabledEnemies[bubbleID].bubbleWideness = ParseUtil.GetFloat(xmld["spritesheet"].GetElementsByTagName("wideness")[0].InnerText);
                 } else
-                    UIController.instance.encounter.enabledEnemies[bubbleID].bubbleWideness = 0;
+                    UIController.instance.encounter.EnabledEnemies[bubbleID].bubbleWideness = 0;
             }
         } catch (Exception) {
-            UIController.instance.encounter.enabledEnemies[bubbleID].bubbleWideness = 0;
+            UIController.instance.encounter.EnabledEnemies[bubbleID].bubbleWideness = 0;
         }
         Sprite newSprite = SpriteRegistry.Get(filename);
         if (newSprite == null) {
@@ -32,7 +33,7 @@ public static class SpriteUtil {
                 Debug.LogError("SwapSprite: Filename is empty!");
                 return;
             }
-            newSprite = fromFile(FileLoader.pathToModFile("Sprites/" + filename + ".png"));
+            newSprite = FromFile(FileLoader.pathToModFile("Sprites/" + filename + ".png"));
             SpriteRegistry.Set(filename, newSprite);
         }
 
@@ -53,7 +54,7 @@ public static class SpriteUtil {
         
     }
 
-    public static Sprite spriteWithXml(XmlNode spriteNode, Sprite source) {
+    public static Sprite SpriteWithXml(XmlNode spriteNode, Sprite source) {
         XmlNode xmlRect = spriteNode.SelectSingleNode("rect");
         Rect spriteRect = new Rect(0, 0, source.texture.width, source.texture.height);
         if (xmlRect != null)
@@ -71,44 +72,46 @@ public static class SpriteUtil {
         return s;
     }
 
-    public static Sprite[] atlasFromXml(XmlNode sheetNode, Sprite source) {
+    public static Sprite[] AtlasFromXml(XmlNode sheetNode, Sprite source) {
         try {
             List<Sprite> tempSprites = new List<Sprite>();
             foreach (XmlNode child in sheetNode.ChildNodes)
                 if (child.Name.Equals("sprite")) {
                     //Sprite s = Sprite.Create(source.texture, 
-                    Sprite s = spriteWithXml(child, source);
+                    Sprite s = SpriteWithXml(child, source);
                     tempSprites.Add(s);
                 }
             return tempSprites.ToArray();
         } catch (Exception ex) {
-            UnitaleUtil.displayLuaError("[XML document]", "One of the sprites' XML documents was invalid. This could be a corrupt or edited file.\n\n" + ex.Message);
+            UnitaleUtil.DisplayLuaError("[XML document]", "One of the sprites' XML documents was invalid. This could be a corrupt or edited file.\n\n" + ex.Message);
             return null;
         }
     }
 
-    public static Sprite fromFile(string filename) {
+    public static Sprite FromFile(string filename) {
         Sprite newSprite = new Sprite();
         Texture2D SpriteTexture = new Texture2D(1, 1);
         SpriteTexture.LoadImage(FileLoader.getBytesFrom(filename));
         SpriteTexture.filterMode = FilterMode.Point;
         SpriteTexture.wrapMode = TextureWrapMode.Clamp;
-        newSprite = Sprite.Create(SpriteTexture, new Rect(0, 0, SpriteTexture.width, SpriteTexture.height), new Vector2(0.5f, UnitaleUtil.isOverworld() ? 0 : 0.5f), PIXELS_PER_UNIT);
+        newSprite = Sprite.Create(SpriteTexture, new Rect(0, 0, SpriteTexture.width, SpriteTexture.height), new Vector2(0.5f, UnitaleUtil.IsOverworld? 0 : 0.5f), PIXELS_PER_UNIT);
+        filename = filename.Contains("File at ") ? filename.Substring(8) : filename;
+        newSprite.name = FileLoader.getRelativePathWithoutExtension(filename);
         //optional XML loading
         FileInfo fi = new FileInfo(Path.ChangeExtension(filename, "xml"));
         if (fi.Exists) {
             XmlDocument xmld = new XmlDocument();
             xmld.Load(fi.FullName);
             if (xmld["spritesheet"] != null && "single".Equals(xmld["spritesheet"].GetAttribute("type")))
-                return spriteWithXml(xmld["spritesheet"].GetElementsByTagName("sprite")[0], newSprite);
+                return SpriteWithXml(xmld["spritesheet"].GetElementsByTagName("sprite")[0], newSprite);
         }
         return newSprite;
     }
     public static DynValue MakeIngameSprite(string filename, int childNumber = -1) { return MakeIngameSprite(filename, "BelowArena", childNumber); }
 
     public static DynValue MakeIngameSprite(string filename, string tag = "BelowArena", int childNumber = -1) {
-        if (ParseUtil.testInt(tag) && childNumber == -1) {
-            childNumber = ParseUtil.getInt(tag);
+        if (ParseUtil.TestInt(tag) && childNumber == -1) {
+            childNumber = ParseUtil.GetInt(tag);
             tag = "BelowArena";
         }
         Image i = GameObject.Instantiate<Image>(SpriteRegistry.GENERIC_SPRITE_PREFAB);
@@ -116,11 +119,14 @@ public static class SpriteUtil {
             SwapSpriteFromFile(i, filename);
         else
             throw new CYFException("You can't create a sprite object with a nil sprite!");
-        if (!GameObject.Find(tag + "Layer"))
-            UnitaleUtil.displayLuaError("Creating a sprite", "The sprite layer " + tag + " doesn't exists.");
+        if (!GameObject.Find(tag + "Layer") && tag != "none")
+            UnitaleUtil.DisplayLuaError("Creating a sprite", "The sprite layer " + tag + " doesn't exist.");
         else {
             if (childNumber == -1)
-                i.transform.SetParent(GameObject.Find(tag + "Layer").transform, true);
+                if (tag == "none")
+                    i.transform.SetParent(GameObject.Find("Canvas").transform, true);
+                else
+                    i.transform.SetParent(GameObject.Find(tag + "Layer").transform, true);
             else {
                 RectTransform[] rts = GameObject.Find(tag + "Layer").GetComponentsInChildren<RectTransform>();
                 for (int j = 0; j < rts.Length; j++)
@@ -132,7 +138,7 @@ public static class SpriteUtil {
                         rts[j].SetParent(GameObject.Find(tag + "Layer").transform, true);
             }
         }
-        return UserData.Create(new LuaSpriteController(i, filename), LuaSpriteController.data);
+        return UserData.Create(new LuaSpriteController(i), LuaSpriteController.data);
     }
 
     public static void CreateLayer(string name, string relatedTag = "BasisNewest", bool before = false) {

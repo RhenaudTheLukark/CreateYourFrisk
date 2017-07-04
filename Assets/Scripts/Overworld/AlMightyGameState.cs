@@ -26,7 +26,7 @@ using MoonSharp.Interpreter;
                     case DataType.Number:   AlMightyVariablesNum.Add(key, dv.Number);    break;
                     case DataType.String:   AlMightyVariablesStr.Add(key, dv.String);    break;
                     case DataType.Boolean:  AlMightyVariablesBool.Add(key, dv.Boolean);  break;
-                    default:                UnitaleUtil.writeInLogAndDebugger("SaveLoad: This DynValue can't be added to the save because it is unserializable.");  break;
+                    default:                UnitaleUtil.WriteInLogAndDebugger("SaveLoad: This DynValue can't be added to the save because it is unserializable.");  break;
                 }
             }
         } catch { }

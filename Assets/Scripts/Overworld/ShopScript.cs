@@ -22,7 +22,7 @@ public class ShopScript : MonoBehaviour {
     int currentItemIndex = 0;
     int sellItem = -1;
     State[] canSelect = new State[] { State.MENU, State.BUY, State.BUYCONFIRM, State.SELL, State.SELLCONFIRM, State.TALK };
-    State[] bigTexts = new State[] { State.SELL, State.SELLCONFIRM, State.TALKINPROGRESS, State.INTERRUPT };
+    State[] bigTexts = new State[] { State.SELL, State.SELLCONFIRM, State.TALKINPROGRESS, State.INTERRUPT, State.EXIT };
 
     enum State { MENU, BUY, BUYCONFIRM, SELL, SELLCONFIRM, TALK, TALKINPROGRESS, EXIT, INTERRUPT };
     State currentState = State.MENU;
@@ -43,21 +43,22 @@ public class ShopScript : MonoBehaviour {
         tmGold = GameObject.Find("TextManager Gold").GetComponent<TextManager>();
         tmItem = GameObject.Find("TextManager Item").GetComponent<TextManager>();
         tmInfoParent = tmInfo.transform.parent.parent.gameObject;
-        tmBigTalk.setTextQueue(new TextMessage[] { new TextMessage("[noskipatall][novoice]", false, true) });
+        tmBigTalk.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][novoice]", false, true) });
         utHeart = GameObject.Find("utHeart");
         EnableBigText(false);
 
         if (scriptName == null) {
-            UnitaleUtil.displayLuaError("Creating the shop menu", "You must give a valid script name to the function General.EnterShop()");
+            UnitaleUtil.DisplayLuaError("Creating the shop menu", "You must give a valid script name to the function General.EnterShop()");
             return;
         }
 
-        script = new ScriptWrapper();
-        script.scriptname = scriptName;
+        script = new ScriptWrapper() {
+            scriptname = scriptName
+        };
         string scriptText = ScriptRegistry.Get(ScriptRegistry.SHOP_PREFIX + scriptName);
 
         if (scriptText == null) {
-            UnitaleUtil.displayLuaError("Creating the shop menu", "You must give a valid script name to the function General.EnterShop()");
+            UnitaleUtil.DisplayLuaError("Creating the shop menu", "You must give a valid script name to the function General.EnterShop()");
             return;
         }
 
@@ -70,16 +71,16 @@ public class ShopScript : MonoBehaviour {
         script.script.Globals["CreateText"] = (Func<Script, DynValue, DynValue, int, string, int, LuaTextManager>)LuaScriptBinder.CreateText;
         script.Call("Start");
 
-        tmMain.setCaller(script);
-        tmChoice.setCaller(script);
-        tmInfo.setCaller(script);
-        tmBigTalk.setCaller(script);
+        tmMain.SetCaller(script);
+        tmChoice.SetCaller(script);
+        tmInfo.SetCaller(script);
+        tmBigTalk.SetCaller(script);
 
-        tmMain.setTextQueue(new TextMessage[] { new TextMessage("[noskipatall][linespacing:11]" + script.GetVar("maintalk").String, true, false) });
-        tmChoice.setTextQueue(new TextMessage[] { new TextMessage("[noskipatall][novoice][font:uidialoglilspace][linespacing:9]    Buy\n    Sell\n    Talk\n    Exit", false, true) });
-        tmGold.setTextQueue(new TextMessage[] { new TextMessage("[noskipatall][novoice]" + PlayerCharacter.instance.Gold + "G", false, true) });
-        tmItem.setTextQueue(new TextMessage[] { new TextMessage("[noskipatall][novoice]" + Inventory.inventory.Count + "/8", false, true) });
-        tmInfo.setTextQueue(new TextMessage[] { new TextMessage("[noskipatall][novoice]", false, true) });
+        tmMain.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][linespacing:11]" + script.GetVar("maintalk").String, true, false) });
+        tmChoice.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][novoice][font:uidialoglilspace][linespacing:9]    Buy\n    Sell\n    Talk\n    Exit", false, true) });
+        tmGold.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][novoice]" + PlayerCharacter.instance.Gold + "G", false, true) });
+        tmItem.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][novoice]" + Inventory.inventory.Count + "/8", false, true) });
+        tmInfo.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][novoice]", false, true) });
 
         Camera.main.GetComponent<AudioSource>().clip = AudioClipRegistry.GetMusic(script.GetVar("music").String);
         Camera.main.GetComponent<AudioSource>().Play();
@@ -99,29 +100,26 @@ public class ShopScript : MonoBehaviour {
     }
 
     void Interrupt(DynValue text, string nextState = "MENU") {
-        try { interruptState = (State)Enum.Parse(typeof(State), nextState, true); } 
-        catch {
-            UnitaleUtil.displayLuaError("Interrupting the shop menu", "\"" + nextState + "\" is not a valid shop state.");
-            return;
+        if (currentState != State.INTERRUPT) {
+            script.Call("OnInterrupt", DynValue.NewString(nextState));
+            try { interruptState = (State)Enum.Parse(typeof(State), nextState, true); } catch {
+                UnitaleUtil.DisplayLuaError("Interrupting the shop menu", "\"" + nextState + "\" is not a valid shop state.");
+                return;
+            }
+            ChangeState(State.INTERRUPT, 0, text);
         }
-        tmBigTalk.setTextQueue(BuildTextFromTable(text, "[linespacing:11]"));
-        EnableBigText(true);
-        utHeart.GetComponent<Image>().enabled = false;
-        interrupted = true;
-        currentState = State.INTERRUPT;
     }
 
     void EnableBigText(bool enable) {
         if (enable) {
-            if (!tmMain.isFinished())   tmMain.skipLine();
-            if (!tmChoice.isFinished()) tmChoice.skipLine();
+            if (!tmMain.IsFinished())   tmMain.SkipLine();
+            if (!tmChoice.IsFinished()) tmChoice.SkipLine();
         }
         tmBigTalk.transform.parent.parent.gameObject.SetActive(enable);
     }
 
-    void ChangeState(State state, int select = 0, object[] args = null) {
-        if (currentState == State.SELL || currentState == State.TALKINPROGRESS)
-            EnableBigText(false);
+    void ChangeState(State state, int select = 0, object arg = null) {
+        EnableBigText(bigTexts.Contains(state));
         if (currentState == State.INTERRUPT)
             interrupted = false;
         currentState = state;
@@ -134,24 +132,25 @@ public class ShopScript : MonoBehaviour {
                     sellItem = -1;
                     selection = select;
                     numberOfChoices = 4;
-                    tmChoice.setTextQueue(new TextMessage[] { new TextMessage("[noskipatall][novoice][font:uidialoglilspace][linespacing:9]    Buy\n    Sell\n    Talk\n    Exit", false, true) });
-                    tmMain.setTextQueue(new TextMessage[] { new TextMessage("[noskipatall][linespacing:11]" + script.GetVar("maintalk").String, true, false) });
-                    tmGold.setTextQueue(new TextMessage[] { new TextMessage("[noskipatall][novoice]" + PlayerCharacter.instance.Gold + "G", false, true) });
-                    tmItem.setTextQueue(new TextMessage[] { new TextMessage("[noskipatall][novoice]" + Inventory.inventory.Count + "/8", false, true) });
+                    tmChoice.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][novoice][font:uidialoglilspace][linespacing:9]    Buy\n    Sell\n    Talk\n    Exit", false, true) });
+                    tmMain.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][linespacing:11]" + script.GetVar("maintalk").String, true, false) });
+                    tmGold.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][novoice]" + PlayerCharacter.instance.Gold + "G", false, true) });
+                    tmItem.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][novoice]" + Inventory.inventory.Count + "/8", false, true) });
                     infoActive = false;
                     tmInfoParent.transform.position = new Vector3(tmInfoParent.transform.position.x, 70, tmInfoParent.transform.position.z);
                 }
                 break;
             case State.BUYCONFIRM:
                 currentItemIndex = selection;
+                selection = 1;
                 numberOfChoices = 2;
-                tmChoice.setTextQueue(new TextMessage[] { new TextMessage("[noskipatall][font:uidialoglilspace][linespacing:0][novoice]Buy for\n" + mainPrice[selection] + "G?\n \n    Yes\n    No", false, true) });
+                tmChoice.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][font:uidialoglilspace][linespacing:0][novoice]Buy for\n" + mainPrice[selection] + "G?\n \n    Yes\n    No", false, true) });
                 break;
             case State.SELLCONFIRM:
                 currentItemIndex = selection;
+                selection = 1;
                 numberOfChoices = 2;
-                EnableBigText(true);
-                tmBigTalk.setTextQueue(new TextMessage[] { new TextMessage("[linespacing:11][noskipatall][font:uidialoglilspace][novoice]          Sell for " + Inventory.NametoPrice[Inventory.inventory[currentItemIndex].Name] / 5 + "G?\n    Yes\tNo", false, true) });
+                tmBigTalk.SetTextQueue(new TextMessage[] { new TextMessage("[linespacing:11][noskipatall][font:uidialoglilspace][novoice]          Sell for " + Inventory.NametoPrice[Inventory.inventory[currentItemIndex].Name] / 5 + "G?\n    Yes\tNo", false, true) });
                 break;
             case State.BUY:
                 script.Call("EnterBuy");
@@ -159,10 +158,10 @@ public class ShopScript : MonoBehaviour {
                     selection = select;
                     text = BuildBuyString().Replace("\n", " \n").Replace("\r", " \r").Replace("\t", " \t");
                     numberOfChoices = text.Split(new char[] { '\n', '\r', '\t' }).Length;
-                    tmChoice.setTextQueue(new TextMessage[] { new TextMessage("[noskipatall][linespacing:9][font:uidialoglilspace]" + script.GetVar("buytalk").String, false, false) });
-                    tmMain.setTextQueue(new TextMessage[] { new TextMessage("[noskipatall][novoice][linespacing:11][font:uidialoglilspace]" + text, false, true) });
-                    tmGold.setTextQueue(new TextMessage[] { new TextMessage("[noskipatall][novoice]" + PlayerCharacter.instance.Gold + "G", false, true) });
-                    tmItem.setTextQueue(new TextMessage[] { new TextMessage("[noskipatall][novoice]" + Inventory.inventory.Count + "/8", false, true) });
+                    tmChoice.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][linespacing:9][font:uidialoglilspace]" + script.GetVar("buytalk").String, false, false) });
+                    tmMain.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][novoice][linespacing:11][font:uidialoglilspace]" + text, false, true) });
+                    tmGold.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][novoice]" + PlayerCharacter.instance.Gold + "G", false, true) });
+                    tmItem.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][novoice]" + Inventory.inventory.Count + "/8", false, true) });
                 }
                 break;
             case State.SELL:
@@ -173,8 +172,7 @@ public class ShopScript : MonoBehaviour {
                         sellItem = Inventory.inventory.Count;
                     text = BuildSellString();
                     numberOfChoices = Inventory.inventory.Count + 1;
-                    EnableBigText(true);
-                    tmBigTalk.setTextQueue(new TextMessage[] { new TextMessage("[noskipatall][novoice][font:uidialoglilspace][linespacing:11]" + text, false, true) });
+                    tmBigTalk.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][novoice][font:uidialoglilspace][linespacing:11]" + text, false, true) });
                     if (Inventory.inventory.Count == 0) {
                         script.Call("FailSell");
                         if (!interrupted)
@@ -187,8 +185,8 @@ public class ShopScript : MonoBehaviour {
                 if (!interrupted) {
                     selection = select;
                     text = BuildTalkString();
-                    tmMain.setTextQueue(new TextMessage[] { new TextMessage("[noskipatall][linespacing:11]" + text, false, true) });
-                    tmChoice.setTextQueue(new TextMessage[] { new TextMessage("[noskipatall][font:uidialoglilspace][linespacing:9]" + script.GetVar("talktalk").String, false, false) });
+                    tmMain.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][linespacing:11]" + text, false, true) });
+                    tmChoice.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][font:uidialoglilspace][linespacing:9]" + script.GetVar("talktalk").String, false, false) });
                 }
                 break;
             case State.TALKINPROGRESS:
@@ -196,8 +194,7 @@ public class ShopScript : MonoBehaviour {
                 if (!interrupted) {
                     selection = 1;
                     TextMessage[] texts = BuildTalkResultStrings();
-                    EnableBigText(true);
-                    tmBigTalk.setTextQueue(texts);
+                    tmBigTalk.SetTextQueue(texts);
                     utHeart.GetComponent<Image>().enabled = false;
                 }
                 break;
@@ -205,10 +202,14 @@ public class ShopScript : MonoBehaviour {
                 script.Call("EnterExit");
                 if (!interrupted) {
                     TextMessage[] texts2 = BuildTextFromTable(script.GetVar("exittalk"), "[linespacing:11]");
-                    EnableBigText(true);
-                    tmBigTalk.setTextQueue(texts2);
+                    tmBigTalk.SetTextQueue(texts2);
                     utHeart.GetComponent<Image>().enabled = false;
                 }
+                break;
+            case State.INTERRUPT:
+                tmBigTalk.SetTextQueue(BuildTextFromTable((DynValue)arg, "[linespacing:11]"));
+                utHeart.GetComponent<Image>().enabled = false;
+                interrupted = true;
                 break;
         }
         if (canSelect.Contains(state))
@@ -248,7 +249,7 @@ public class ShopScript : MonoBehaviour {
                 infoActive = false;
             else {
                 infoActive = true;
-                tmInfo.setTextQueue(new TextMessage[] { new TextMessage("[noskipatall][novoice][font:uidialoglilspace]" + mainInfo[selection].String, false, true) });
+                tmInfo.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][novoice][font:uidialoglilspace]" + mainInfo[selection].String, false, true) });
             }
         }
     }
@@ -289,15 +290,15 @@ public class ShopScript : MonoBehaviour {
             itemInfo = UnitaleUtil.TableToDynValueArray(script.GetVar("buylist").Table.Get(2).Table);
             itemPrice = UnitaleUtil.TableToDynValueArray(script.GetVar("buylist").Table.Get(3).Table);
         } catch {
-            UnitaleUtil.displayLuaError("Creating the Buy menu", "The variable \"buylist\" must contain a table!");
+            UnitaleUtil.DisplayLuaError("Creating the Buy menu", "The variable \"buylist\" must contain a table!");
             return "";
         }
         if (itemPrice.Length == 0) {
-            UnitaleUtil.displayLuaError("Creating the Buy menu", "The variable \"buylist\" must contain a table that contains two tables!");
+            UnitaleUtil.DisplayLuaError("Creating the Buy menu", "The variable \"buylist\" must contain a table that contains two tables!");
             return "";
         }
         if (itemName.Length != itemPrice.Length) {
-            UnitaleUtil.displayLuaError("Creating the Buy menu", "The two tables contained in the variable \"buylist\" must have the same size!");
+            UnitaleUtil.DisplayLuaError("Creating the Buy menu", "The two tables contained in the variable \"buylist\" must have the same size!");
             return "";
         }
         mainName = new string[itemName.Length];
@@ -320,11 +321,11 @@ public class ShopScript : MonoBehaviour {
 
         for (int i = 0; i < itemName.Length; i ++) {
             if (itemPrice[i].Type != DataType.Number && itemPrice[i].Number % 1 != 0) {
-                UnitaleUtil.displayLuaError("Creating the Buy menu", "The second table must contain integers.");
+                UnitaleUtil.DisplayLuaError("Creating the Buy menu", "The second table must contain integers.");
                 return "";
             }
             if (!Inventory.NametoDesc.Keys.Contains(itemName[i].String)) {
-                UnitaleUtil.displayLuaError("Creating the Buy menu", "The item \"" + itemName[i].String + "\" doesn't exist in the inventory database.");
+                UnitaleUtil.DisplayLuaError("Creating the Buy menu", "The item \"" + itemName[i].String + "\" doesn't exist in the inventory database.");
                 return "";
             }
             //Permits to align the hyphens 2nd part
@@ -338,7 +339,7 @@ public class ShopScript : MonoBehaviour {
                     mainPrice[i] = Inventory.NametoPrice[mainName[i]];
                 result += "      " + mainPrice[i] + "G - " + mainName[i] + "\n";
             } catch {
-                UnitaleUtil.displayLuaError("Creating the Buy menu", "The item \"" + mainName[i] + "\" doesn't have a price in the database.");
+                UnitaleUtil.DisplayLuaError("Creating the Buy menu", "The item \"" + mainName[i] + "\" doesn't have a price in the database.");
                 return "";
             }
 
@@ -352,7 +353,7 @@ public class ShopScript : MonoBehaviour {
             talks = script.GetVar("talklist").Table.Get(1);
             talkResults = script.GetVar("talklist").Table.Get(2);
         } catch {
-            UnitaleUtil.displayLuaError("Creating the Talk menu", "The variable talklist must be an array which contains two other arrays.");
+            UnitaleUtil.DisplayLuaError("Creating the Talk menu", "The variable talklist must be an array which contains two other arrays.");
             return "";
         }
 
@@ -366,7 +367,7 @@ public class ShopScript : MonoBehaviour {
                 mainInfo[i] = talkResults.Table.Get(i + 1);
             }
         } else {
-            UnitaleUtil.displayLuaError("Creating the Talk menu", "The variable talklist must be an array which contains two other arrays.");
+            UnitaleUtil.DisplayLuaError("Creating the Talk menu", "The variable talklist must be an array which contains two other arrays.");
             return "";
         }
         return result + "      Exit";
@@ -423,8 +424,8 @@ public class ShopScript : MonoBehaviour {
                         script.Call("SuccessBuy", DynValue.NewString(mainName[currentItemIndex]));
                         PlayerCharacter.instance.SetGold(PlayerCharacter.instance.Gold - mainPrice[currentItemIndex]);
                         Inventory.AddItem(mainName[currentItemIndex]);
-                        tmGold.setTextQueue(new TextMessage[] { new TextMessage("[noskipatall][novoice]" + PlayerCharacter.instance.Gold + "G", false, true) });
-                        tmItem.setTextQueue(new TextMessage[] { new TextMessage("[noskipatall][novoice]" + Inventory.inventory.Count + "/8", false, true) });
+                        tmGold.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][novoice]" + PlayerCharacter.instance.Gold + "G", false, true) });
+                        tmItem.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][novoice]" + Inventory.inventory.Count + "/8", false, true) });
                     }
                 }
                 if (!interrupted) {
@@ -496,11 +497,11 @@ public class ShopScript : MonoBehaviour {
     }
 
     void TextInputManager() {
-        if (GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED && !tmBigTalk.blockSkip && !tmBigTalk.lineComplete() && tmBigTalk.canSkip())
-            tmBigTalk.skipLine();
-        else if ((GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED || tmBigTalk.canAutoSkipAll()) && tmBigTalk.lineComplete() && !tmBigTalk.allLinesComplete())
-            tmBigTalk.nextLine();
-        else if ((GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED || tmBigTalk.canAutoSkipAll()) && tmBigTalk.allLinesComplete()) {
+        if (GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED && !tmBigTalk.blockSkip && !tmBigTalk.LineComplete() && tmBigTalk.CanSkip())
+            tmBigTalk.SkipLine();
+        else if ((GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED || tmBigTalk.CanAutoSkipAll()) && tmBigTalk.LineComplete() && !tmBigTalk.AllLinesComplete())
+            tmBigTalk.NextLineText();
+        else if ((GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED || tmBigTalk.CanAutoSkipAll()) && tmBigTalk.AllLinesComplete()) {
             switch (currentState) {
                 case State.TALKINPROGRESS:
                     ChangeState(State.TALK);
@@ -509,37 +510,37 @@ public class ShopScript : MonoBehaviour {
                     break;
                 case State.EXIT:
                     if (script.GetVar("returnscene").Type != DataType.String) {
-                        UnitaleUtil.displayLuaError("Exitting the Shop", "The variable \"returnscene\" must be a string.");
+                        UnitaleUtil.DisplayLuaError("Exitting the Shop", "The variable \"returnscene\" must be a string.");
                         return;
                     }
 
                     if (script.GetVar("returnpos").Type != DataType.Table) {
-                        UnitaleUtil.displayLuaError("Creating the Buy menu", "The variable \"returnpos\" must be a table.");
+                        UnitaleUtil.DisplayLuaError("Creating the Buy menu", "The variable \"returnpos\" must be a table.");
                         return;
                     } else if (script.GetVar("returnpos").Table.Length < 2) {
-                        UnitaleUtil.displayLuaError("Creating the Buy menu", "The variable \"returnpos\" must be a table with two numbers.");
+                        UnitaleUtil.DisplayLuaError("Creating the Buy menu", "The variable \"returnpos\" must be a table with two numbers.");
                         return;
                     } else if (script.GetVar("returnpos").Table.Get(1).Type != DataType.Number || script.GetVar("returnpos").Table.Get(2).Type != DataType.Number) {
-                        UnitaleUtil.displayLuaError("Creating the Buy menu", "The variable \"returnpos\" must be a table with two numbers.");
+                        UnitaleUtil.DisplayLuaError("Creating the Buy menu", "The variable \"returnpos\" must be a table with two numbers.");
                         return;
                     }
 
                     if (script.GetVar("returndir").Type != DataType.Number) {
-                        UnitaleUtil.displayLuaError("Creating the Buy menu", "The variable \"returndir\" must be a number.");
+                        UnitaleUtil.DisplayLuaError("Creating the Buy menu", "The variable \"returndir\" must be a number.");
                         return;
                     } else if (script.GetVar("returndir").Number > 8 || script.GetVar("returndir").Number < 2 || script.GetVar("returndir").Number % 2 == 1) {
-                        UnitaleUtil.displayLuaError("Creating the Buy menu", "The variable \"returndir\" must be either 2 (Down), 4 (Left), 6 (Right) or 8 (Up).");
+                        UnitaleUtil.DisplayLuaError("Creating the Buy menu", "The variable \"returndir\" must be either 2 (Down), 4 (Left), 6 (Right) or 8 (Up).");
                         return;
                     }
 
-                    tmBigTalk.destroyText();
+                    tmBigTalk.DestroyText();
                     
                     tp = Instantiate(Resources.Load<TPHandler>("Prefabs/TP On-the-fly"));
                     tp.sceneName = script.GetVar("returnscene").String;
                     tp.position = new Vector2((float)script.GetVar("returnpos").Table.Get(1).Number, (float)script.GetVar("returnpos").Table.Get(2).Number);
                     tp.direction = (int)script.GetVar("returndir").Number;
                     GameObject.DontDestroyOnLoad(tp);
-                    StartCoroutine(tp.launchTP());
+                    StartCoroutine(tp.LaunchTP());
                     break;
                 case State.INTERRUPT:
                     utHeart.GetComponent<Image>().enabled = true;

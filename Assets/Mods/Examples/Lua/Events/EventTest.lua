@@ -1,13 +1,7 @@
 function EventPage1()
-    tables = { "waa" }
-    tables[1] = nil
-    DEBUG(tostring(#tables))
-    Event.MoveToPoint("Player", 320, 400, true)
+    Event.MoveToPoint("Player", 320, 540, true)
     hp = Player.GetHP()
-    Screen.SetTone(true, true, 0, 0, 0, 80)
     General.SetDialog({"Erm[waitall:3]...[waitall:1][w:10] Why did you go here with your " ..hp .." HP?"}, true, {"papyrus_mugshot_2"})
-    --General.SetDialog({"I hate you![mugshot:rtlukark_surprised]", "[instant]I love you!"}, true, {"rtlukark_angry", "rtlukark_determined"})
-    --Player.SetHP(0)
 end
 
 function EventPage2()
@@ -33,8 +27,6 @@ function EventPage2()
             elseif i == 2 then
                 General.SetDialog({"Are you [w:10][letters:6]REALLY[w:10] sure?"}, true, {"rtlukark_perv"})
             elseif i == 3 then
-                General.SetDialog({"Oh ok,[w:5] I trust you!","If you're [w:10][letters:2]SO[w:10] determined right now,[w:5] I bet you can kill my friend!", 
-                           "Wanna try?"}, true, {"rtlukark_seriously", "rtlukark_determined","rtlukark_=3"})
                 General.SetBattle("#04 - Animation", true, true)
             end
         end
@@ -80,10 +72,73 @@ end
 
 --This event page is a big mash-up test page.
 function EventPage4()
-	Screen.Rumble(3, 3, true)
-	Screen.Flash(60, false, 255, 0, 0, 255)
+	Misc.ShakeScreen(3, 3, true)
+    General.Wait(180)
+	Screen.Flash(60, 255, 0, 0, 255)
 	--These following lines were used for Quaternion tests.
-	--You can activate them if you want to ^^
+	--You can activate them if you want to
+    --/!\ Not usable anymore /!\
+	--[[SetTone(true, true, 0, 0, 0, 128)
+	DispImg("photo", 1, 320, 240, 436, 256, 224, 130, 40, 255)
+	WaitForInput()
+	RotateEvent("Image1", 360, 0, 0)
+	WaitForInput()
+	RotateEvent("Image1", 0, 360, 0)
+	WaitForInput()
+	RotateEvent("Image1", 0, 0, 360)
+	WaitForInput()
+	RotateEvent("Image1", 360, 360, 360)
+	WaitForInput()
+	RotateEvent("Image1", 180, 360, 0)
+	WaitForInput()
+	RotateEvent("Image1", 0, 180, 360)
+	WaitForInput()
+	RotateEvent("Image1", 360, 0, 180)
+	WaitForInput()
+	RotateEvent("Image1", 360, 360, 360)
+	WaitForInput()
+	SupprImg(1)
+	SetTone(true, true, 0, 0, 0, 0)]]
+	--General.GameOver({ "[voice:v_sans]Wazzup bro?", "[voice:v_sans]I love this music, don't you?" }, "mus_zz_megalovania")
+end
+
+--Reset CYF 0.6's secret
+function EventPage5()
+    SetAlMightyGlobal("CYFInternalCharacterSelected", false)
+    SetAlMightyGlobal("CYFInternalCross1", false)
+    SetAlMightyGlobal("CYFInternalCross2", false)
+    SetAlMightyGlobal("CYFInternalCross3", false)
+    SetAlMightyGlobal("CYFInternalCross4", false)
+    SetAlMightyGlobal("CYFInternalCross5", false)
+    Player.Teleport("test2", 320, 200, 2, true)
+end
+
+--Test MoveToPoint
+function EventPage6()
+    Event.MoveToPoint("Player", 320, 100, true)
+    local playerPos = Event.GetPosition("Player")
+    DEBUG(tostring(playerPos[1]) .. " " .. tostring(playerPos[2]))
+    Event.MoveToPoint("Player", 200, 240, true)
+    local playerPos = Event.GetPosition("Player")
+    DEBUG(tostring(playerPos[1]) .. " " .. tostring(playerPos[2]))
+    Event.MoveToPoint("Player", 320, 380, true)
+    local playerPos = Event.GetPosition("Player")
+    DEBUG(tostring(playerPos[1]) .. " " .. tostring(playerPos[2]))
+    Event.MoveToPoint("Player", 440, 240, true)
+    local playerPos = Event.GetPosition("Player")
+    DEBUG(tostring(playerPos[1]) .. " " .. tostring(playerPos[2]))
+    Event.MoveToPoint("Player", 320, 100, true)
+    local playerPos = Event.GetPosition("Player")
+    DEBUG(tostring(playerPos[1]) .. " " .. tostring(playerPos[2]))
+    Event.MoveToPoint("Player", 320, 380, true)
+    local playerPos = Event.GetPosition("Player")
+    DEBUG(tostring(playerPos[1]) .. " " .. tostring(playerPos[2]))
+    Event.MoveToPoint("Player", 320, 100, true)
+    local playerPos = Event.GetPosition("Player")
+    DEBUG(tostring(playerPos[1]) .. " " .. tostring(playerPos[2]))
+	--These following lines were used for Quaternion tests.
+	--You can activate them if you want to
+    --/!\ Not usable anymore /!\
 	--[[SetTone(true, true, 0, 0, 0, 128)
 	DispImg("photo", 1, 320, 240, 436, 256, 224, 130, 40, 255)
 	WaitForInput()

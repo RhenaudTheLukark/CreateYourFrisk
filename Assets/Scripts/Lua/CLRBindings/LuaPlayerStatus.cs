@@ -19,7 +19,7 @@ public class LuaPlayerStatus {
     /// <param name="p">PlayerController this controller is intended for</param>
     public LuaPlayerStatus(PlayerController p) {
         player = p;
-        spr = new LuaSpriteController(p.GetComponent<Image>(), p.GetComponent<AutoloadResourcesFromRegistry>().SpritePath.ToLower());
+        spr = new LuaSpriteController(p.GetComponent<Image>());
     }
 
     /// <summary>
@@ -192,7 +192,7 @@ public class LuaPlayerStatus {
     /// </summary>
     /// <param name="overrideControl"></param>
     public void SetControlOverride(bool overrideControl) {
-        if (UIController.instance.getState() == UIController.UIState.DEFENDING) player.setControlOverride(overrideControl);
+        if (UIController.instance.GetState() == UIController.UIState.DEFENDING) player.setControlOverride(overrideControl);
     }
 
     /// <summary>
@@ -234,20 +234,20 @@ public class LuaPlayerStatus {
 
     public void ChangeTarget(int index) {
         if (UIController.instance.state == UIController.UIState.ATTACKING)
-            if (index <= UIController.instance.encounter.enabledEnemies.Length && index > 0)
-                UIController.instance.fightUI.ChangeTarget(UIController.instance.encounter.enabledEnemies[index-1]);
+            if (index <= UIController.instance.encounter.EnabledEnemies.Length && index > 0)
+                UIController.instance.fightUI.ChangeTarget(UIController.instance.encounter.EnabledEnemies[index-1]);
             else
-                UnitaleUtil.displayLuaError("Changing the target", "The enemy number " + index + " doesn't exists.");
+                UnitaleUtil.DisplayLuaError("Changing the target", "The enemy number " + index + " doesn't exists.");
     }
 
     public void ForceAttack(int enemyNumber, int damage = -478294) {
-        if (enemyNumber <= UIController.instance.encounter.enabledEnemies.Length && enemyNumber > 0) {
+        if (enemyNumber <= UIController.instance.encounter.EnabledEnemies.Length && enemyNumber > 0) {
             //UIController.instance.SwitchState(UIController.UIState.ATTACKING);
             UIController.instance.fightUI.targetNumber = 1;
             UIController.instance.fightUI.targetIDs = new int[] { enemyNumber - 1 };
-            UIController.instance.fightUI.quickInit(UIController.instance.encounter.enabledEnemies[enemyNumber - 1], damage);
+            UIController.instance.fightUI.quickInit(UIController.instance.encounter.EnabledEnemies[enemyNumber - 1], damage);
         } else
-            UnitaleUtil.displayLuaError("Force Attack", "The enemy number " + enemyNumber + " doesn't exists.");
+            UnitaleUtil.DisplayLuaError("Force Attack", "The enemy number " + enemyNumber + " doesn't exists.");
     }
 
     public int[] MultiTarget(int damage) { return MultiTarget(null, new int[] { damage }); }
@@ -255,26 +255,26 @@ public class LuaPlayerStatus {
     public int[] MultiTarget(int[] targets = null, int[] damage = null) {
         if (targets != null) {
             if (targets.Length < 2) {
-                UnitaleUtil.displayLuaError("Multi Target", "You must have at least 2 enemies to trigger a multi attack.");
+                UnitaleUtil.DisplayLuaError("Multi Target", "You must have at least 2 enemies to trigger a multi attack.");
                 return null;
             }
             for (int i = 0; i < targets.Length; i++) {
                 targets[i]--;
-                if (targets[i] >= UIController.instance.encounter.enabledEnemies.Length || targets[i] < 0) {
-                    UnitaleUtil.displayLuaError("Multi Target", "The enemy number " + targets[i] + " doesn't exists.");
+                if (targets[i] >= UIController.instance.encounter.EnabledEnemies.Length || targets[i] < 0) {
+                    UnitaleUtil.DisplayLuaError("Multi Target", "The enemy number " + targets[i] + " doesn't exists.");
                     return null;
                 }
             }
         }
         UIController.instance.fightUI.multiHit = true;
         if (targets == null) {
-            targets = new int[UIController.instance.encounter.enabledEnemies.Length];
+            targets = new int[UIController.instance.encounter.EnabledEnemies.Length];
             for (int i = 0; i < targets.Length; i++)
                 targets[i] = i;
         }
         if (damage != null)
             if (damage.Length != 1 && damage.Length != targets.Length)
-                UnitaleUtil.displayLuaError("Multi Target", "You may have as many numbers of damage values as the number of enemies if you're using forced damage," 
+                UnitaleUtil.DisplayLuaError("Multi Target", "You may have as many numbers of damage values as the number of enemies if you're using forced damage," 
                                                           + " or 1 for all enemies at the same time.");
 
         UIController.instance.fightUI.targetIDs = targets;
@@ -287,7 +287,7 @@ public class LuaPlayerStatus {
                     damage[i] = tempDamage;
             }
             for (int i = 0; i < damage.Length; i++)
-                UIController.instance.encounter.enabledEnemies[targets[i]].presetDmg = damage[i];
+                UIController.instance.encounter.EnabledEnemies[targets[i]].presetDmg = damage[i];
             /*for (int i = 0; i < targets.Length; i++) {
                 Debug.Log((UIController.instance.fightUI.allFightUiInstances.Count - 1 - (targets.Length - 1 - i)) + " / " + (UIController.instance.fightUI.allFightUiInstances.Count - 1));
                 UIController.instance.fightUI.allFightUiInstances[UIController.instance.fightUI.allFightUiInstances.Count - 1 - (targets.Length - 1 - i)].Damage = damage[i];
@@ -301,7 +301,7 @@ public class LuaPlayerStatus {
     public void ForceMultiAttack(int[] targets = null, int[] damage = null) {
         int[] damage2 = MultiTarget(targets, damage);
         if (targets == null) {
-            targets = new int[UIController.instance.encounter.enabledEnemies.Length];
+            targets = new int[UIController.instance.encounter.EnabledEnemies.Length];
             for (int i = 0; i < targets.Length; i++)
                 targets[i] = i;
         }

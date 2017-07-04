@@ -12,19 +12,23 @@ public class UserDebugger : MonoBehaviour{
     public int maxLines;
     public Queue<string> dbgContent = new Queue<string>();
     private bool firstActive = false;
-    private string originalText;
+    private string originalText = null;
 
-    void Start(){
+    public void Start(){
         instance = this;
-        originalText = text.text;
+        if (originalText == null)
+            originalText = text.text;
+        text.text = originalText;
+        dbgContent.Clear();
         gameObject.SetActive(false);
+        firstActive = false;
     }
 
-    public static void warn(string line){
-        instance.writeLine("[Warn] " + line);
+    public static void Warn(string line){
+        instance.WriteLine("[Warn] " + line);
     }
 
-    public void userWriteLine(string line) {
+    public void UserWriteLine(string line) {
         // activation of the debug window if you're printing to it for the first time
         if (!firstActive) {
             gameObject.SetActive(true);
@@ -34,11 +38,11 @@ public class UserDebugger : MonoBehaviour{
             firstActive = true;
         }
 
-        writeLine(line);
+        WriteLine(line);
         transform.SetAsLastSibling();
     }
 
-    private void writeLine(string line) {
+    private void WriteLine(string line) {
         // enqueue the new line and keep queue at capacity
         dbgContent.Enqueue(line);
         if (dbgContent.Count > maxLines)

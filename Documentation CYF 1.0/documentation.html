@@ -54,11 +54,13 @@ it's w3c valid, at least
                 <li><a href="#overworld-howto-map" data-toggle="tab"><span class="CYF"></span> How to create a map</a></li>
                 <li><a href="#overworld-howto-event" data-toggle="tab"><span class="CYF"></span> How to create an event</a></li>
                 <li><a href="#overworld-howto-animevent" data-toggle="tab"><span class="CYF"></span> How to animate an event</a></li>
+                <li><a href="#overworld-howto-shop" data-toggle="tab"><span class="CYF"></span> How to create a shop</a></li>
                 <li><a href="#overworld-object-general" data-toggle="tab"><span class="CYF"></span> The General Object</a></li>
                 <li><a href="#overworld-object-event" data-toggle="tab"><span class="CYF"></span> The Event Object</a></li>
                 <li><a href="#overworld-object-player" data-toggle="tab"><span class="CYF"></span> The Player Object</a></li>
                 <li><a href="#overworld-object-screen" data-toggle="tab"><span class="CYF"></span> The Screen Object</a></li>
                 <li><a href="#overworld-object-inventory" data-toggle="tab"><span class="CYF"></span> The Inventory Object</a></li>
+                <li><a href="#overworld-object-map" data-toggle="tab"><span class="CYF"></span> The Map Object</a></li>
                 <li class="li-header">Resources</li>
                 <li><a href="media/dialogoptions.png">Dialog bubble names</a></li>
             </ul>
@@ -365,11 +367,11 @@ check = "Serving Size: 1 Monster\nNot monitored by the USDA"</pre>
             <br>
             <p><span class="term">sprite</span> - Name of the sprite in your Sprites folder, without the .PNG extension. This is the initial
                 sprite for your monster. It can be changed using <span class="term">SetSprite(name)</span>; see <span class="ref">API - Functions &amp; Objects</span> for details.</p>
-            <p><span class="CYF"></span> <span class="term">monstersprite</span> - Sprite handler of the monster.
+            <p><span class="CYF"></span> <span class="term">monstersprite</span> - Sprite handler of the monster.</p>
             <p><span class="term">dialogbubble</span> - What dialogue bubble will be used for the monster's dialogue. You can change this at any
                 time, but this <i>must</i> be initially set to something. For a list of all possible options, check the
-                <a href="media/dialogoptions.png">dialog bubble names</a> chart; it's also in the sidebar.</p>
-                Positioning of the bubbles is done automatically.
+                <a href="media/dialogoptions.png">dialog bubble names</a> chart; it's also in the sidebar.
+                Positioning of the bubbles is done automatically.</p>
             <p><span class="term">name</span> - Monster name. Fairly self-explanatory; shows up in the FIGHT/ACT menus. Can also be changed at any
                 time.</p>
             <p><span class="term">hp</span> - Your monster's max HP, initially. After the fight has started this value will always accurately
@@ -979,7 +981,7 @@ end
                 <br><span class="function">SetGlobal(your_variable_name, value) [E/M/W]</span>
 				DEPRECATED. Instead, set variables in the Encounter script, as it is accessible from everywhere.
                 <br>You can retrieve these variables with <span class="term">Encounter.GetVar("yourvar")</span> or <span class="term">Encounter["yourvar"]
-				</span> and set them with </span>Encounter.SetVar("yourvar", value)</span> or <span class="term">Encounter["yourvar"] = value.</span> 
+				</span> and set them with <span class="term">Encounter.SetVar("yourvar", value)</span> or <span class="term">Encounter["yourvar"] = value.</span> 
 				(For more info, scroll down and look for <span class="term">The Script object (and the Encounter object)</span>)<br>
                 Sets a global variable. After setting, you can retrieve it from all your scripts at any time with
                 <span class="term">GetGlobal(variable_name)</span>.
@@ -1093,7 +1095,7 @@ end
 			</ul>
 			<p>
 			There are some other states available, but entering some might have nasty side effects. It's possible that
-			they might lock up your battle if you enter them with <span class="term">State</span>. So, use at your own risk:
+			they might lock up your battle if you enter them with <span class="term">State</span>. So, use at your own risk:</p>
 			<ul>
 				<li><span class="term">ATTACKING</span> - Starting this state will put you in the screen where you either deal damage to an enemy by pressing
 				"Z" at the right time, or you wait and miss entirely. The enemy this affects is the same as the last enemy selected in the states <span class=
@@ -1133,7 +1135,7 @@ end
 				<li><span style="color:#ffffff;border-bottom:1px solid #ffffff;"><0.2.1a></span> <span class="term">RESETTING</span> - This state
 				is 100% deprecated. It's something lvkuln left behind in Unitale v0.2.1a, but removed in the open-source (github) release. 
 				Previous testing shows that this state will only "exist" for a single frame when entered, before the player is returned to their
-				previous state, just before the encounter freezes up. However, if it's called on every single frame during the state
+				previous state, just before the encounter freezes up. However, if it's called on every single frame during the state.</li><br>
 				<span class="term">DEFENDING</span>, the wave's <span class="term">Update</span> function is never called. This state was likely only used 
 				for testing - and it has been removed in CYF.</li>
 			</ul>
@@ -1447,27 +1449,27 @@ end</pre>
                 The Misc object has some window-related and computer-related functions. Most of them are functions:
 				don't forget to check if the user is playing with a Windows OS by using the variable <span class="term">windows</span>!
             </p>
-			    <ul>
-					<li><span class="term">Misc.MachineName</span> (read-only) - Returns the name of the player's session.</li><br>
-					<li><span class="term">Misc.DestroyWindow()</span> - Closes the window instantly.</li><br>
-                    <li><span class="term">Misc.ShakeScreen(int durationInFrames, int intensity = 3, bool isIntensityDecreasing = false)</span> - Shakes the 
-					screen for <span class="term">durationInFrames</span> frames, with a maximum of <span class="term">intensity</span> pixels out of the 
-					normal position. Set <span class="term">isIntensityDecreasing</span> as true to reduce the intensity over time.</li><br>
-                    <li><span class="term">Misc.StopShake()</span> - Stops a previously launched <span class="term">Misc.ShakeScreen</span>, does nothing 
-					otherwise.</li><br>
-					<li><span class="term">Misc.FullScreen</span> - Fullscreen mode.</li><br>
-					<li><span class="term">Misc.ScreenWidth</span> - Returns the width of the user's screen.</li><br>
-					<li><span class="term">Misc.ScreenHeight</span> - Returns the height of the user's screen.</li><br>
-					<span style="color:#aa0000;font-size:18px;">THE FOLLOWING VARIABLES AND FUNCTIONS ARE <u>WINDOWS ONLY</u>.</span><br><br>
-					<li><span class="term">Misc.MoveWindow(int X, int Y)</span> - Move the window by X pixels horizontally and Y pixels vertically.</li><br>
-					<li><span class="term">Misc.MoveWindowTo(int X, int Y)</span> - Moves the bottom left corner of the window to the given coordinates.
-					</li><br>
-					<li><span class="term">Misc.WindowX</span> - Gets or sets the X position of the bottom left corner of the window.</li><br>
-					<li><span class="term">Misc.WindowY</span> - Gets or sets the Y position of the bottom left corner of the window.</li><br>
-					<li><span class="term">Misc.WindowWidth</span> (readonly) - The width of the window.</li><br>
-					<li><span class="term">Misc.WindowHeight</span> (readonly) - The height of the window.</li><br>
-					<li><span class="term">Misc.WindowName</span> - Gets or sets the name of the window.</li>
-			    </ul>
+            <ul>
+                <li><span class="term">Misc.MachineName</span> (read-only) - Returns the name of the player's session.</li><br>
+                <li><span class="term">Misc.DestroyWindow()</span> - Closes the window instantly.</li><br>
+                <li><span class="term">Misc.ShakeScreen(int durationInFrames, int intensity = 3, bool isIntensityDecreasing = false)</span> - Shakes the 
+                screen for <span class="term">durationInFrames</span> frames, with a maximum of <span class="term">intensity</span> pixels out of the 
+                normal position. Set <span class="term">isIntensityDecreasing</span> as true to reduce the intensity over time.</li><br>
+                <li><span class="term">Misc.StopShake()</span> - Stops a previously launched <span class="term">Misc.ShakeScreen</span>, does nothing 
+                otherwise.</li><br>
+                <li><span class="term">Misc.FullScreen</span> - Fullscreen mode.</li><br>
+                <li><span class="term">Misc.ScreenWidth</span> - Returns the width of the user's screen.</li><br>
+                <li><span class="term">Misc.ScreenHeight</span> - Returns the height of the user's screen.</li><br>
+                <span style="color:#aa0000;font-size:18px;">THE FOLLOWING VARIABLES AND FUNCTIONS ARE <u>WINDOWS ONLY</u>.</span><br><br>
+                <li><span class="term">Misc.MoveWindow(int X, int Y)</span> - Move the window by X pixels horizontally and Y pixels vertically.</li><br>
+                <li><span class="term">Misc.MoveWindowTo(int X, int Y)</span> - Moves the bottom left corner of the window to the given coordinates.
+                </li><br>
+                <li><span class="term">Misc.WindowX</span> - Gets or sets the X position of the bottom left corner of the window.</li><br>
+                <li><span class="term">Misc.WindowY</span> - Gets or sets the Y position of the bottom left corner of the window.</li><br>
+                <li><span class="term">Misc.WindowWidth</span> (readonly) - The width of the window.</li><br>
+                <li><span class="term">Misc.WindowHeight</span> (readonly) - The height of the window.</li><br>
+                <li><span class="term">Misc.WindowName</span> - Gets or sets the name of the window.</li>
+            </ul>
             <p>
                 <br><span class="function">SetSprite(filename) [M]</span>
                 Sets the monster's sprite from the Sprites folder to <span class="term">filename.png</span>. Can be used with <span class="term">[func]
@@ -1538,6 +1540,21 @@ end</pre>
                 You'll want to use this to replicate default encounter behaviour. See code below (or one of the example
                 encounters).
             </p>
+
+            <p>
+                <br><span class="function">/!\NEW/!\ SetButtonLayer(string layer) [E]</span>
+                Changes the <span class="term">layer</span> of the FIGHT, ACT, ITEM and MERCY buttons.
+                The usable layers are created sprite layers and those base layers:
+				<ul>
+				    <li><span class="term">"Bottom"</span>: Under everything, even the background.</li><br>
+				    <li><span class="term">"BelowUI"</span>: Above the background.</li><br>
+				    <li><span class="term">"BelowArena"</span>: Above the background and the UI.</li><br>
+				    <li><span class="term">"BelowPlayer"</span>: Above the background, the UI and the Arena.</li><br>
+				    <li><span class="term">"BelowBullet"</span>: Above the background, the UI, the Arena and the Player.</li><br>
+				    <li><span class="term">"Top"</span>: Above everything.</li><br>
+				    <li><span class="term">"default"</span>: Will put the buttons where they usually are in the sprite hierarchy.</li><br>
+				</ul>
+            </p>
             <div class="code-container">
    <pre class="brush: lua;">function DefenseEnding() --This built-in function fires after the defense round ends.
 	encountertext = RandomEncounterText()
@@ -1570,10 +1587,9 @@ end</pre>
 					<span class="term">width</span> in that it will accurately reflect the arena size in the middle of resizing, too.
                 </li><br>
                 <li><span class="term">Arena.currentheight</span> (readonly) - the <i>current</i> height of the arena in pixels. Differs from
-					<span class="term">height</span> in that it will accurately reflect the arena size in the middle of resizing, too.
+					<span class="term">height</span> in that it will accurately reflect the arena size in the middle of resizing, too.</li><br>
                 <li><span class="CYF"></span> <span class="term">Arena.currentx</span> (readonly) - the <i>current</i> x of the arena in pixels. Differs 
-					from <span class="term">x</span> in that it will accurately reflect the arena position in the middle of moving, too.
-                </li><br>
+					from <span class="term">x</span> in that it will accurately reflect the arena position in the middle of moving, too.</li><br>
                 <li><span class="CYF"></span> <span class="term">Arena.currenty</span> (readonly) - the <i>current</i> y of the arena in pixels. Differs 
 					from <span class="term">y</span> in that it will accurately reflect the arena position in the middle of moving, too.</li><br>
                 <li><span class="term">Arena.Resize(width, height)</span> - Resizes the arena to the new size. Currently, monsters stay on top of
@@ -1596,7 +1612,7 @@ end</pre>
 				    Set <span class="term">movePlayer</span> to true if you want the Player to move with the Arena and set <span class="term">immediate
 					</span> to true if you want to move the Arena immediately.</li><br>
                 <li><span class="CYF"></span> <span class="term">Arena.isResizing</span> (readonly) - Tells you if the Arena is currently being resized.
-				<br><span style="color:#ffffff;text-decoration:underline;text-decoration-color:#ffffff"><0.2.1a></span>: There's an equivalent of this in 
+				<br><span style="color:#ffffff;text-decoration:underline;text-decoration-color:#ffffff">&lt;0.2.1a&gt;</span>: There's an equivalent of this in 
 				0.2.1a - just use <span class="term">Arena.currentwidth != Arena.width and Arena.currentheight != Arena.height</span>.</li><br>
                 <li><span class="CYF"></span> <span class="term">Arena.isMoving</span> (readonly) - Tells you if the Arena is currently being moved.</li><br>
                 <li><span class="CYF"></span> <span class="term">Arena.isModifying</span> (readonly) - Tells you if the Arena is being moved <i>or</i> 
@@ -1839,7 +1855,7 @@ end</pre>
 					<td>Caret</td>
 				</tr>
 				<tr>
-					<td>&</td>
+					<td>&amp;</td>
 					<td>Ampersand</td>
 				</tr>
 				<tr>
@@ -1907,11 +1923,11 @@ end</pre>
 					<td>Question</td>
 				</tr>
 				<tr>
-					<td><</td>
+					<td>&lt;</td>
 					<td>Less</td>
 				</tr>
 				<tr>
-					<td>></td>
+					<td>&gt;</td>
 					<td>Greater</td>
 				</tr>
 				<tr>
@@ -2300,7 +2316,7 @@ end</pre>
                 <li>As you may have seen in the previous tutorial, Unity uses "prefabs". These are generic objects that can 
                 be used in different scenes across the project. Here, you'd want to go to the Project tab and go to 
                 <span class="term">Assets/Resources/prefabs</span> to see those.<br>
-                The one that interests us here is the <span class="term">Event1>/span> prefab. Click and drag it to the GameObject list 
+                The one that interests us here is the <span class="term">Event1</span> prefab. Click and drag it to the GameObject list 
 				to create an instance of this prefab.</li>
             </p>
             <br>
@@ -2355,7 +2371,7 @@ end</pre>
             <br>
             <p>
             I hope that you enjoyed this tutorial - and if you need further explanations, don't hesitate 
-            to ask RhenaudTheLukark on reddit or the Discord server!
+            to ask RhenaudTheLukark on reddit or the Discord server!</p>
         </div>
 
         <div class="tab-pane text-style" id="overworld-howto-animevent">
@@ -2754,6 +2770,49 @@ end</pre>
 				If the item couldn't be found, this returns -1 instead.
             </p>
         </div>
+        
+        <div class="tab-pane text-style" id="overworld-object-map">
+            <h2><span class="CYF"></span>/!\NEW/!\ The Overworld: The Map Object</h2><br>
+            
+            Each map has their own settings, them being the mod it loads, the music it plays, and a bunch of other stuff.
+            What's following mainly are functions used to access those variables.
+            
+            <p>
+                <br><span class="function">Map.GetMusic()</span>
+                Returns the name of the music the map launches when the player teleports to this map.
+            </p>
+            <p>
+                <br><span class="function">Map.SetMusic(string value)</span>
+                Sets the name of the music the map launches when the player teleports to this map.
+            </p>
+            <p>
+                <br><span class="function">Map.GetModToLoad()</span>
+                Returns the name of the mod the map uses.
+            </p>
+            <p>
+                <br><span class="function">Map.SetModToLoad(string value)</span>
+                Sets the name of the mod the map uses. The player needs to enter the map again for this new mod to be loaded.
+            </p>
+            <p>
+                <br><span class="function">Map.GetNoRandomEncounter()</span>
+                Returns the value of the boolean NoRandomEncounter. The boolean NoRandomEncounter prevents encounter to be launched if set to true.
+            </p>
+            <p>
+                <br><span class="function">Map.SetNoRandomEncounter(bool value)</span>
+                Sets the value of the boolean NoRandomEncounter.
+            </p>
+            <p>
+                <br><span class="function">Map.GetMusicKept()</span>
+                Returns the value of the boolean isMusicKeptBetweenBattles. This one is pretty straightforward, if set to true, 
+                the map's music won't be stopped during battles, like in The Core.
+            </p>
+            <p>
+                <br><span class="function">Map.SetMusicKept(bool value)</span>
+                Sets the value of the boolean isMusicKeptBetweenBattles. If you change the value of this boolean, the main Audio channel used for 
+                the map's bgm will be changed (and all of Audio's functions will be used on this new channel), being "scr" when this boolean's value 
+                is true, "StaticKeptAudio" otherwise.
+            </p>
+        </div>
 
         <!-- <div class="tab-pane check-style" id="overworld-functions">
         </div> -->
@@ -2772,7 +2831,7 @@ end</pre>
             <p>
                 <br><span class="function">GetItem(int index)</span>
                 Returns the name of the item of the inventory at the given index.
-                <br><span class="term" style="margin-left:20px">index</span> = Index of the chosen item.</li>
+                <br><span class="term" style="margin-left:20px">index</span> = Index of the chosen item.
             </p>
             <p>
                 <br><span class="function">SetItem(int index, string Name)</span>
@@ -2801,7 +2860,7 @@ end</pre>
 				<br><br>Usage: <span class="term">Inventory.AddCustomItems({"item1", "item2"}, {1, 0})</span>
             <br><br><span class="term" style="margin-left:20px">names</span> = The names of your exclusive items.
             <br><span class="term" style="margin-left:20px">types</span> = The types of your exclusive items. Must be at the same size of the first array.
-			</li>
+
 			<br>Types:<br>
 			    <div style="margin-left:20px">
 				    <span class="term">0</span> = Consumable. Will be deleted upon use.
@@ -3125,7 +3184,7 @@ end
             <p>
                 <br><span class="function">The Bullet object</span>
                 This is what you use to move around the bullet and store values in it. You can store a bunch of bullets in a table
-                and modify them. The functions and variables you can use on a Bullet are as follows.
+                and modify them. The functions and variables you can use on a Bullet are as follows.</p>
             <ul>
                 <li><span class="term">Bullet.sprite</span> - the Bullet's sprite component. See the
 					<span class="ref">Sprites &amp; Animation</span> section for usage details.
@@ -3251,8 +3310,8 @@ function Update()
 		local vely = bullet.GetVar('vely')
 		local newposx = bullet.x + velx -- New position will be old position + velocity
 		local newposy = bullet.y + vely
-		if(bullet.x > -Arena.width/2 and bullet.x < Arena.width/2) then -- Are we inside the arena (horizontally)?
-			if(bullet.y < -Arena.height/2 + 8) then -- And did we go past the bottom edge?
+		if(bullet.x &gt; -Arena.width/2 and bullet.x &lt; Arena.width/2) then -- Are we inside the arena (horizontally)?
+			if(bullet.y &lt; -Arena.height/2 + 8) then -- And did we go past the bottom edge?
 				bullet.MoveTo(bullet.x, -Arena.height/2 + 8) -- Don't move it past the edge!
 				-- Note the +8; I know the bullet sprite I'm using is 16x16.
 				-- Without adding 8 it'll be inside the edge.
@@ -3263,7 +3322,7 @@ function Update()
 		bullet.MoveTo(newposx, newposy) -- and finally, move our bullet
 		bullet.SetVar('vely', vely) -- and store our new fall speed into the bullet again.
 	end
-end</pre>
+end </pre>
             </div>
 
             <p>
@@ -3334,7 +3393,7 @@ end
             <p>
                 <br><span class="function">The Sprite object</span>
                 The Sprite object has many controls intended for animation. There is a working intermediate example
-                included in the Examples folder.
+                included in the Examples folder.</p>
             <ul>
                 <li><span class="CYF"></span> <span class="term">sprite.isactive</span> (readonly) - In retromode, this is <i>true</i> if a sprite has been 
 				removed and <i>false</i> otherwise. If <i>not</i> in retromode, this is <i>false</i> if a sprite has been removed and <i>true</i>
@@ -3381,7 +3440,7 @@ end
                     change it to 365 it becomes 5.
                 </li><br>
                 <li><span class="CYF"></span> <span class="term">sprite.layer</span> - the current layer of the sprite. You can set it, but if the layer 
-				doesn't exists, it does nothing.<br>Default: <span class="term">"BelowArena"</span>
+				doesn't exists, it does nothing.<br>Default: <span class="term">"BelowArena"</span></li><br>
                 <li><span class="CYF"></span> <span class="term">sprite.loopmode</span> - sets the loop mode of <span class="term">SetAnimation</span> 
 					functions launched after this command. Can be:
 				    <ul>
@@ -3390,11 +3449,11 @@ end
 					    <li><span class="term">ONESHOT</span> - Plays the animation once, and keeps the last frame of the animation.</li><br>
 					    <li><span class="term">ONESHOTEMPTY</span> - Same as <span class="term">ONESHOT</span>, except that the last frame will be an empty 
 							sprite.</li><br>
-					</ul>
+					</ul></li><br>
                 <li><span class="CYF"></span> <span class="term">sprite.animcomplete</span> - when an animation is played, that variable tells you if the 	
 					animation is complete.<br>
 					If no new animation has started yet, if the loop mode is <span class="term">LOOP</span> or if the animation isn't finished, this will be 
-					false. Otherwise, it will be true.
+					false. Otherwise, it will be true.</li><br>
                 <li><span class="term">sprite.Set("new_sprite")</span> - change the sprite's image. It retains its scaling and rotation. If you
                     have an animation running with <span class="term">SetAnimation</span>, the animation will override your sprite change.
                 </li><br>
@@ -3402,16 +3461,13 @@ end
 				other_sprite_object</span>. This will make the original sprite move along with the object it's parented to.
                 </li><br>
                 <li><span class="term">sprite.SetPivot(x, y)</span> - changes the point the sprite rotates/scales around; (0,0) is bottom left of
-                    sprite, (1,1) is top right. You can have values outside of the 0-1 range, too.
-                </li><br>
+                    sprite, (1,1) is top right. You can have values outside of the 0-1 range, too.</li><br>
                 <li><span class="term">sprite.SetAnchor(x, y)</span> - change the point your sprite anchors to when moving. Mainly noticeable when
                     rescaling the parent sprite, and you want to have this sprite stick to a certain edge of it. x/y
-                    should be in 0-1 range.
-                </li><br>
+                    should be in 0-1 range.</li><br>
                 <li><span class="term">sprite.MoveTo(x, y)</span> - same as setting x and y simultaneously.</li><br>
                 <li><span class="term">sprite.MoveToAbs(x, y)</span> - used to move a sprite to an absolute screen position, regardless of parent
-                    settings. The sprite itself will remain parented.
-                </li><br>
+                    settings. The sprite itself will remain parented.</li><br>
                 <li><span class="term">sprite.Scale(xscale, yscale)</span> - same as setting xscale and yscale simultaneously</li><br>
                 <li><span class="term">sprite.SetAnimation(sprite_table)</span> to do frame-by-frame animation at 30FPS. Example:
                     <span class="term">sprite.SetAnimation({"sans_head1", "sans_head2", "sans_head3"})</span>
@@ -3493,7 +3549,6 @@ end
                 * You earned 0 EXP and 0 gold.<br>
                 * also the nav menu is broken now</h2><br>
         </div>
-
 
     </div>
 </div>

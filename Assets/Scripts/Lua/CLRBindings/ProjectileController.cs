@@ -7,7 +7,15 @@ using UnityEngine.UI;
 /// Lua binding to set and retrieve information for bullets in the game.
 /// </summary>
 public class ProjectileController {
-    private Projectile p;
+    private Projectile _p;
+    private Projectile p {
+        set { _p = value; }
+        get {
+            if (_p == null)
+                throw new CYFException("You can't access a removed projectile.");
+            return _p;
+        }
+    }
     private LuaSpriteController spr;
     private Dictionary<string, DynValue> vars = new Dictionary<string, DynValue>();
 

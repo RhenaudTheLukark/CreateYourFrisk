@@ -177,6 +177,7 @@ SpriteRenderer:
   m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
 --- !u!1 &283179575
 GameObject:
   m_ObjectHideFlags: 0
@@ -212,7 +213,6 @@ MonoBehaviour:
   SpritePath: Punderbolt/PunderRight1
   Loop: 0
   SoundPath: 
-  AnimatorPath: 
   done: 0
 --- !u!114 &283179577
 MonoBehaviour:
@@ -247,7 +247,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.28, y: 0.38}
+    oldSize: {x: 0.01, y: 0.01}
     newSize: {x: 0.28, y: 0.38}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -308,7 +308,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 230b48f60a712574b9c63ddc86fb2e35, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 876f2cc47fea2394b98c7950cde30cd9, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -316,6 +316,7 @@ SpriteRenderer:
   m_Size: {x: 0.28, y: 0.38}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
 --- !u!224 &283179581
 RectTransform:
   m_ObjectHideFlags: 0
@@ -557,6 +558,7 @@ SpriteRenderer:
   m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 0
 --- !u!114 &956959287
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -701,6 +703,8 @@ MonoBehaviour:
   position: {x: 320, y: 200}
   direction: 2
   activated: 0
+  noFadeIn: 0
+  noFadeOut: 0
 --- !u!50 &2039418734
 Rigidbody2D:
   serializedVersion: 4

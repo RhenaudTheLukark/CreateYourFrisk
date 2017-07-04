@@ -9,7 +9,7 @@ public class NewMusicManager {
    
     public static void CreateChannel(string name) {
         if (audiolist.ContainsKey(name)) {
-            UnitaleUtil.writeInLogAndDebugger("The audio channel " + name + " already exists.");
+            Debug.LogWarning("The audio channel " + name + " already exists.");
             return;
         }
         GameObject go = new GameObject("AudioChannel" + audiolist.Count + ": " + name, typeof(AudioSource));
@@ -21,7 +21,7 @@ public class NewMusicManager {
 
     public static AudioSource CreateChannelAndGetAudioSource(string name) {
         if (audiolist.ContainsKey(name)) {
-            UnitaleUtil.writeInLogAndDebugger("The audio channel " + name + " already exists.");
+            Debug.LogWarning("The audio channel " + name + " already exists.");
             return GameObject.Find("AudioChannel" + audiolist.Count + ": " + name).GetComponent<AudioSource>();
         }
         GameObject go = new GameObject("AudioChannel" + audiolist.Count + ": " + name, typeof(AudioSource));

@@ -9,8 +9,5 @@ public static class RTUtil {
     /// </summary>
     /// <param name="rt">RectTransform you want the center of</param>
     /// <returns>Screen coordinates of the RectTransform's center</returns>
-    public static Vector2 AbsCenterOf(RectTransform rt)
-    {
-        return new Vector2(rt.position.x + rt.rect.width * (0.5f - rt.pivot.x), rt.position.y + rt.rect.height * (0.5f - rt.pivot.y));
-    }
+    public static Vector2 AbsCenterOf(RectTransform rt) { return new Vector2(rt.position.x + rt.rect.width * (0.5f - rt.pivot.x), rt.position.y + rt.rect.height * (0.5f - rt.pivot.y)); }
 }

@@ -11,25 +11,19 @@ public class LateUpdater : MonoBehaviour {
     public static List<Action> lateActions = new List<Action>();
     int frametimer = 0;
 
-    public static void init()
-    {
-        invokeList(lateInit);
-    }
+    public static void Init() { InvokeList(lateInit); }
 	
 	void Update () {
-        if (frametimer > 0)
-        {
-            invokeList(lateActions);
+        if (frametimer > 0) {
+            InvokeList(lateActions);
             Destroy(this);
         }
-
         frametimer++;
 	}
 
-    private static void invokeList(List<Action> l){
-        foreach(Action a in l){
+    private static void InvokeList(List<Action> l){
+        foreach (Action a in l)
             a.Invoke();
-        }
         l.Clear();
     }
 }

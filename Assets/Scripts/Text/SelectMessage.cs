@@ -1,5 +1,4 @@
 ﻿using System;
-using UnityEngine;
 
 /// <summary>
 /// This class creates a text used in selection phases. It takes a string array and transforms it into a selection text.
@@ -70,6 +69,6 @@ public class SelectMessage : TextMessage {
         }
 
         // This function sends finalMessage to the real text handler function
-        setup(finalMessage, false, true);
+        Setup(finalMessage, false, true);
     }
 }

@@ -55,7 +55,7 @@ public class ArenaManager : MonoBehaviour {
     private void LateStart() {
         try {
             if (inner == null || outer == null) {
-                UnitaleUtil.writeInLogAndDebugger(outer == null && inner == null ? "outer & inner = null" : (outer == null ? "outer == null" : "inner == null"));
+                UnitaleUtil.WriteInLogAndDebugger(outer == null && inner == null ? "outer & inner = null" : (outer == null ? "outer == null" : "inner == null"));
                 inner = GameObject.Find("arena").GetComponent<RectTransform>();
                 outer = inner.parent.GetComponent<RectTransform>();
             }
@@ -68,7 +68,7 @@ public class ArenaManager : MonoBehaviour {
             basisCoordinates = arenaCenter;
         } catch {
             LateUpdater.lateActions.Add(LateStart);
-            UnitaleUtil.writeInLogAndDebugger("Error during the Arena's initialization! (#" + errCount++ + ")");
+            UnitaleUtil.WriteInLogAndDebugger("Error during the Arena's initialization! (#" + errCount++ + ")");
         }
         //outer.localPosition = new Vector3(0, -50, 0);
         //outer.position = new Vector3(320, 90, outer.position.z);

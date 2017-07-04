@@ -13,8 +13,8 @@ public class StationaryMissScript : MonoBehaviour {
 
 	void Start () {
         TextManager mgr = GetComponent<TextManager>();
-        mgr.setFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_DAMAGETEXT_NAME));
-        mgr.setText(new TextMessage("[color:c0c0c0]MISS", false, true));
+        mgr.SetFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_DAMAGETEXT_NAME));
+        mgr.SetText(new TextMessage("[color:c0c0c0]MISS", false, true));
 	}
 
     void Update(){

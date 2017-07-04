@@ -9,7 +9,7 @@ public class Fading : MonoBehaviour {
     public float fadeSpeed = 3f;       // The fading speed
     public float alpha = 1.0f;         // The texture's alpha between 0 and 1
     
-    private int fadeDir = -1;          // The direction to fade : in = -1 or out = 1
+    private int fadeDir = 1;          // The direction to fade : in = -1 or out = 1
     private bool eventSent = false;
 
     public delegate void LoadedAction();
@@ -18,7 +18,7 @@ public class Fading : MonoBehaviour {
 
     void Update () {
         if (fade == null)
-            fade = this.GetComponent<SpriteRenderer>();
+            fade = GetComponent<SpriteRenderer>();
         if ((fade.color.a > 0 && fadeDir == -1) || (fade.color.a < 1 && fadeDir == 1)) {
             // Fade in/out the alpha value using a direction, a speed and Time.deltatime to convert the operations to seconds
             alpha += fadeDir * fadeSpeed * Time.deltaTime;
@@ -47,6 +47,17 @@ public class Fading : MonoBehaviour {
         if (StartFade != null && StaticInits.MODFOLDER != "Title")
             StartFade();
         return 1f/fadeSpeed;     // Return the fadeSpeed variable so it's easy to time the Application.LoadLevel();
+    }
+
+    public void FadeInstant(int direction, bool needSig = false) {
+        gameObject.transform.SetAsLastSibling();
+        fadeDir = direction;
+        alpha = direction == 1 ? 1 : 0;
+        fade.color = new Color(0, 0, 0, alpha);
+        if (needSig && FinishFade != null) {
+            StartFade();
+            FinishFade();
+        }
     }
 
     // LoadScene is called when a level is loaded. It takes loaded level index (int) as a parameter so you can limit the fade in to certain scenes

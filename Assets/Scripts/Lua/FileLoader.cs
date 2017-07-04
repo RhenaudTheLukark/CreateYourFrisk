@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Static utility class to take care of various file loading features in Unitale.
@@ -21,11 +22,11 @@ public static class FileLoader {
 
             try { rootInfo = new DirectoryInfo(rootInfo.Parent.FullName); } 
             catch {
-                UnitaleUtil.displayLuaError("CYF's Startup", "The engine detected no Mods folder in your files: are you sure that it exists?");
+                UnitaleUtil.DisplayLuaError("CYF's Startup", "The engine detected no Mods folder in your files: are you sure that it exists?");
                 return;
             }
             SysDepDataRoot = rootInfo.FullName;
-            Debug.Log(SysDepDataRoot);
+            //Debug.Log(SysDepDataRoot);
         }
 
         //if (Application.platform == RuntimePlatform.OSXPlayer) /*OSX has stuff bundled in .app things*/                      SysDepDataRoot = rootInfo.Parent.Parent.FullName;
@@ -102,12 +103,21 @@ public static class FileLoader {
         if (!fi.Exists) {
             if (errorOnFailure)
                 if (filename.Length != 0)
-                    UnitaleUtil.displayLuaError("???", "Attempted to load " + filename + " from either a mod or default directory, but it was missing in both.");
+                    UnitaleUtil.DisplayLuaError("???", "Attempted to load " + filename + " from either a mod or default directory, but it was missing in both.");
             return null;
         }
 
         return fi.FullName;
     }
+
+    public static bool SceneExists(string name) {
+        for (int i = 0; i < SceneManager.sceneCountInBuildSettings; i++)
+            if (Path.GetFileNameWithoutExtension(SceneUtility.GetScenePathByBuildIndex(i)) == name)
+                return true;
+        return false;
+    }
+
+
 
     public static AudioClip getAudioClipFromMod(string relPath, string clipName) 
         { return getAudioClip(pathToModFile(relPath), pathToModFile(relPath + Path.DirectorySeparatorChar + clipName)); }
@@ -142,10 +152,10 @@ public static class FileLoader {
     }
 
     public static string getRelativePathWithoutExtension(string fullPath) {
-        fullPath = fullPath.Replace('/', '\\');
-        if (fullPath.Contains(ModDataPath.Replace('/', '\\')))
+        fullPath = fullPath.Replace('\\', '/');
+        if (fullPath.Contains(ModDataPath.Replace('\\', '/')))
             fullPath = fullPath.Substring(ModDataPath.Length + 9, fullPath.Length - ModDataPath.Length - 13);
-        if (fullPath.Contains(DefaultDataPath.Replace('/', '\\')))
+        if (fullPath.Contains(DefaultDataPath.Replace('\\', '/')))
             fullPath = fullPath.Substring(DefaultDataPath.Length + 9, fullPath.Length - DefaultDataPath.Length - 13);
         return fullPath;
     }

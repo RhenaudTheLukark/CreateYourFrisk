@@ -13,21 +13,20 @@ public class EnemyEncounter : MonoBehaviour {
     public string EncounterText { get; set; }
     public bool CanRun { get; set; }
 
-    public LuaEnemyController[] enabledEnemies {
+    public LuaEnemyController[] EnabledEnemies {
         get { return enemies.Where(x => x.inFight).ToArray<LuaEnemyController>(); }
     }
 
     public virtual Vector2 ArenaSize {
         get { return new Vector2(155, 130); }
-        private set { return; }
     }
 
-    protected virtual void loadEnemiesAndPositions() { }
+    protected virtual void LoadEnemiesAndPositions() { }
 
     protected string RandomEncounterText() {
-        int randomEnemy = UnityEngine.Random.Range(0, enabledEnemies.Length);
-        int randomComment = UnityEngine.Random.Range(0, enabledEnemies[randomEnemy].Comments.Length);
-        return enabledEnemies[randomEnemy].Comments[randomComment];
+        int randomEnemy = UnityEngine.Random.Range(0, EnabledEnemies.Length);
+        int randomComment = UnityEngine.Random.Range(0, EnabledEnemies[randomEnemy].Comments.Length);
+        return EnabledEnemies[randomEnemy].Comments[randomComment];
     }
 
     public virtual void HandleItem(UnderItem item) {
@@ -99,19 +98,17 @@ public class EnemyEncounter : MonoBehaviour {
         return true;*/
     //}
 
-    public virtual void updateWave() { }
+    public virtual void UpdateWave() { }
 
-    public virtual void nextWave() {
+    public virtual void NextWave() {
         turnCount++;
         waveTimer = Time.time + 4.0f;
         EncounterText = RandomEncounterText();
     }
 
-    public virtual void endWave(bool death = false) { }
+    public virtual void EndWave(bool death = false) { }
 
-    public bool waveInProgress() {
-        if (Time.time < waveTimer)
-            return true;
-        return false;
+    public bool WaveInProgress {
+        get { return Time.time < waveTimer; }
     }
 }

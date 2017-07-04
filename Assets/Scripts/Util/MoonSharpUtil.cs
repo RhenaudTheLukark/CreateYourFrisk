@@ -2,13 +2,9 @@
 
 public static class MoonSharpUtil {
     public static DynValue CloneIfRequired(Script newOwner, DynValue value) {
-        if (value == null)
-            return null;
-
-        if (value.Type == DataType.Table)
-            return RecursiveTableOwnership(newOwner, value);
-        else
-            return value;
+        if (value == null)                return null;
+        if (value.Type == DataType.Table) return RecursiveTableOwnership(newOwner, value);
+        return value;
     }
 
     private static DynValue RecursiveTableOwnership(Script newOwner, DynValue tableSource) {

@@ -7,13 +7,17 @@ using System.Collections;
 /// </summary>
 public class ErrorDisplay : MonoBehaviour {
     public static string Message;
-	void Start () {
+	void Start() {
         if (GameObject.Find("Main Camera OW")) {
             Destroy(GameObject.Find("Main Camera OW"));
             Destroy(GameObject.Find("Canvas OW"));
             Destroy(GameObject.Find("Player"));
         }
+        bool ow = !GlobalControls.modDev;
         UnitaleUtil.firstErrorShown = false;
-        GetComponent<Text>().text = Message + "\n\nPress ESC to reload";
+        string mess;
+        if (ow) mess = "\n\nPressing ESC to go back to the overworld after an error is now forbidden. Restart CYF and use the modDev mode if you want to debug this error.";
+        else    mess = "\n\nPress ESC to reload";
+        GetComponent<Text>().text = Message + mess;
 	}
 }

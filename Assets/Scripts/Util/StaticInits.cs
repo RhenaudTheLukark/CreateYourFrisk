@@ -26,11 +26,11 @@ public static class StaticInits {
         if (MODFOLDER == null || MODFOLDER == "")
             MODFOLDER = EDITOR_MODFOLDER;
         //if (CurrMODFOLDER != MODFOLDER || CurrENCOUNTER != ENCOUNTER)
-        initAll();
+        InitAll();
         Initialized = true;
     }
 
-    public static void initAll() {
+    public static void InitAll() {
         if (!Initialized && (!GlobalControls.isInFight || GlobalControls.lastSceneUnitale)) {
             //UnitaleUtil.createFile();
             if (GlobalControls.lastSceneUnitale)
@@ -55,13 +55,13 @@ public static class StaticInits {
             sw.Reset();
 
             sw.Start();
-            SpriteFontRegistry.init();
+            SpriteFontRegistry.Init();
             sw.Stop();
             UnityEngine.Debug.Log("Sprite font registry loading time: " + sw.ElapsedMilliseconds + "ms");
             sw.Reset();
         } else 
             Initialized = true;
-        LateUpdater.init(); // must be last; lateupdater's initialization is for classes that depend on the above registries
+        LateUpdater.Init(); // must be last; lateupdater's initialization is for classes that depend on the above registries
         MusicManager.src = Camera.main.GetComponent<AudioSource>();
         SendLoaded();
         //CurrENCOUNTER = ENCOUNTER;

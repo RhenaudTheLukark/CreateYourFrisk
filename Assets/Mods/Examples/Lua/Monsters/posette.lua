@@ -1,5 +1,5 @@
 comments = {"Smells like stars and platinum.", "Posette is standing there quietly.", "Posette is flexing."}
-commands = {"Pose", "Stand", "Insult"}
+commands = {"Pose 1", "Stand", "Insult"}
 --commands = {"", "Weehee", "WOT", "Ok then", "Last one"}
 randomdialogue = {"Gimme a break.", "...", "Ora Ora Ora Ora"}
 
@@ -34,8 +34,24 @@ function BeforeDamageValues()
 end
  
 -- This handles the commands; all-caps versions of the commands list you have above.
+    
+commands = {"Pose 1", "Listen to me", "Insult"}
+
 function HandleCustomCommand(command)
-    if command == "POSE" then
+    error("error")
+    local battleDialogText = {"error shit"}
+    if command == "POSE 1" then
+        battleDialogText = {"I made a pose yay"}
+        --quack
+    elseif command == "LISTEN TO ME" then
+        battleDialogText = {"Please :c", "I have cookies :c"}
+        --quackquack
+    end
+    BattleDialog(battleDialogText)
+end
+--[[
+function HandleCustomCommand(command)
+    if command == "POSE 1" then
         currentdialogue = {"[noskip][waitall:5].....[nextthisnow]", 
                            "[noskip]Shaddap Poseur[w:20][next]", 
                            "[noskip]I don't like you.[w:20][finished]", 
@@ -51,7 +67,7 @@ function HandleCustomCommand(command)
         BattleDialog({"You struck your best pose,[w:7] but Posette remained unimpressed.[w:20][next]"})
     elseif command == "STAND" then
         if this_must_be_the_work_of_an_enemy_stand == 0 then
-            currentdialogue = {"[effect:none][font:wingdings]Stand- [charspacing:6][linespacing:10]off? [charspacing:3]Alright."}
+            currentdialogue = {"[effect:none]Stand- [charspacing:6][linespacing:10]off? [charspacing:3]Alright."}
             BattleDialog({"You just kind of stand there."})
         elseif this_must_be_the_work_of_an_enemy_stand == 1 then
             currentdialogue = {"Agh..."}
@@ -64,10 +80,10 @@ function HandleCustomCommand(command)
         end
         this_must_be_the_work_of_an_enemy_stand = this_must_be_the_work_of_an_enemy_stand + 1
     elseif command == "INSULT" then
-        currentdialogue = {"\n\n[charspacing:30] A[linespacing:-30]\n[charspacing:15] w[linespacing:22]\n[charspacing:50] f[linespacing:-30]\n[charspacing:2] u[linespacing:-30]\nl."}
+        currentdialogue = {"\n[charspacing:30]\n A[linespacing:-30]\n[charspacing:15] w[linespacing:22]\n[charspacing:50] f[linespacing:-30]\n[charspacing:2] u[linespacing:-30]\nl."}
         BattleDialog({"You make a scathing remark about Posette's pose."})
     end
-end
+end]]
 
 function SetBubble(bubble)
     dialogbubble = bubble

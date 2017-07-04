@@ -194,11 +194,11 @@ public class LuaEnemyController : EnemyController {
         set { script.SetVar("voice", DynValue.NewString(value)); }
     }
 
-    public float posX {
+    public float PosX {
         get { return GetComponent<RectTransform>().position.x; }
     }
 
-    public float posY {
+    public float PosY {
         get { return GetComponent<RectTransform>().position.y; }
     }
 
@@ -208,7 +208,7 @@ public class LuaEnemyController : EnemyController {
         try {
             string scriptText = ScriptRegistry.Get(ScriptRegistry.MONSTER_PREFIX + scriptName);
             if (scriptText == null) {
-                UnitaleUtil.displayLuaError(StaticInits.ENCOUNTER, "Tried to load monster script " + scriptName + ".lua but it didn't exist. Is it misspelled?");
+                UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, "Tried to load monster script " + scriptName + ".lua but it didn't exist. Is it misspelled?");
                 return;
             }
             script.scriptname = scriptName;
@@ -235,7 +235,6 @@ public class LuaEnemyController : EnemyController {
                 SetSprite(spriteFile);
             else
                 throw new CYFException("missing sprite");
-            sprite.spritename = spriteFile.ToLower();
 
             ui = FindObjectOfType<UIController>();
             if (MaxHP == 0)
@@ -246,8 +245,8 @@ public class LuaEnemyController : EnemyController {
             /*if (script.GetVar("canspare") == null) CanSpare = false;
             if (script.GetVar("cancheck") == null) CanCheck = true;*/
         }
-        catch (InterpreterException ex) { UnitaleUtil.displayLuaError(scriptName, ex.DecoratedMessage); }
-        catch (Exception ex)            { UnitaleUtil.displayLuaError(scriptName, "Unknown error. Usually means you're missing a sprite.\nSee documentation for details.\nStacktrace below in case you wanna notify a dev.\n\nError: " + ex.Message + "\n\n" + ex.StackTrace); }
+        catch (InterpreterException ex) { UnitaleUtil.DisplayLuaError(scriptName, ex.DecoratedMessage); }
+        catch (Exception ex)            { UnitaleUtil.DisplayLuaError(scriptName, "Unknown error. Usually means you're missing a sprite.\nSee documentation for details.\nStacktrace below in case you wanna notify a dev.\n\nError: " + ex.Message + "\n\n" + ex.StackTrace); }
     }
 
     public override void HandleAttack(int hitStatus) { TryCall("HandleAttack", new DynValue[] { DynValue.NewNumber(hitStatus) }); }
@@ -290,7 +289,7 @@ public class LuaEnemyController : EnemyController {
             else                                           script.Call(func);
             return true;
         }
-        catch (InterpreterException ex) { UnitaleUtil.displayLuaError(scriptName, ex.DecoratedMessage); }
+        catch (InterpreterException ex) { UnitaleUtil.DisplayLuaError(scriptName, ex.DecoratedMessage); }
         return true;
     }
 
@@ -302,7 +301,6 @@ public class LuaEnemyController : EnemyController {
         if (filename == null)
             throw new CYFException("The enemy's sprite can't be nil!");
         SpriteUtil.SwapSpriteFromFile(this, filename);
-        sprite.spritename = filename.ToLower();
     }
 
     /// <summary>
@@ -326,11 +324,11 @@ public class LuaEnemyController : EnemyController {
 
         // The actually relevant part of sparing code.
         GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.4f);
-        UIController.playSoundSeparate(AudioClipRegistry.GetSound("enemydust"));
+        UIController.PlaySoundSeparate(AudioClipRegistry.GetSound("enemydust"));
         SetActive(false);
         spared = true;
 
-        UIController.instance.checkAndTriggerVictory();
+        UIController.instance.CheckAndTriggerVictory();
     }
 
     /// <summary>
@@ -346,9 +344,9 @@ public class LuaEnemyController : EnemyController {
         GetComponent<ParticleDuplicator>().Activate(sprite);
         SetActive(false);
         killed = true;
-        UIController.playSoundSeparate(AudioClipRegistry.GetSound("enemydust"));
+        UIController.PlaySoundSeparate(AudioClipRegistry.GetSound("enemydust"));
 
-        UIController.instance.checkAndTriggerVictory();
+        UIController.instance.CheckAndTriggerVictory();
     }
 
     /// <summary>

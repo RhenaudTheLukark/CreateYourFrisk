@@ -24,71 +24,35 @@ public class ProgrammaticFontTest : MonoBehaviour
     // string teststr = "* ";
 
     // Use this for initialization
-    private void Start()
-    {
+    private void Start() {
         letterSound = GetComponent<AudioSource>();
         canvas = GameObject.Find("Canvas");
         letterSprites = Resources.LoadAll<Sprite>("Fonts/" + fontName);
-        foreach (Sprite s in letterSprites)
-        {
+        foreach (Sprite s in letterSprites) {
             string name = s.name;
-            if (name.Length == 1)
-            {
+            if (name.Length == 1) {
                 letters.Add(name[0], s);
                 continue;
-            }
-            else
-            {
-                switch (name)
-                {
-                    case "slash":
-                        letters.Add('/', s);
-                        break;
-
-                    case "dot":
-                        letters.Add('.', s);
-                        break;
-
-                    case "pipe":
-                        letters.Add('|', s);
-                        break;
-
-                    case "backslash":
-                        letters.Add('\\', s);
-                        break;
-
-                    case "colon":
-                        letters.Add(':', s);
-                        break;
-
-                    case "questionmark":
-                        letters.Add('?', s);
-                        break;
-
-                    case "doublequote":
-                        letters.Add('"', s);
-                        break;
-
-                    case "asterisk":
-                        letters.Add('*', s);
-                        break;
-
-                    case "space":
-                        letters.Add(' ', s);
-                        break;
+            } else 
+                switch (name) {
+                    case "slash":        letters.Add('/', s);  break;
+                    case "dot":          letters.Add('.', s);  break;
+                    case "pipe":         letters.Add('|', s);  break;
+                    case "backslash":    letters.Add('\\', s); break;
+                    case "colon":        letters.Add(':', s);  break;
+                    case "questionmark": letters.Add('?', s);  break;
+                    case "doublequote":  letters.Add('"', s);  break;
+                    case "asterisk":     letters.Add('*', s);  break;
+                    case "space":        letters.Add(' ', s);  break;
                 }
-            }
         }
-        newCopy();
+        NewCopy();
     }
 
-    private void newCopy()
-    {
+    private void NewCopy() {
         letterReferences = new Image[teststr.Length];
-        for (int i = 0; i < teststr.Length; i++)
-        {
-            if (teststr[i] == '\n')
-            {
+        for (int i = 0; i < teststr.Length; i++) {
+            if (teststr[i] == '\n') {
                 currentX = 15;
                 currentY -= 28;
                 continue;
@@ -100,19 +64,13 @@ public class ProgrammaticFontTest : MonoBehaviour
 
             ltrRect.SetParent(canvas.transform);
 
-            if (letters.ContainsKey(teststr[i]))
-                ltrImg.sprite = letters[teststr[i]];
-            else
-                ltrImg.sprite = letters['?'];
+            if (letters.ContainsKey(teststr[i])) ltrImg.sprite = letters[teststr[i]];
+            else                                 ltrImg.sprite = letters['?'];
 
             letterReferences[i] = ltrImg;
 
-            if (letters.ContainsKey(teststr[i]))
-            {
-                ltrRect.position = new Vector2(currentX, currentY + letters[teststr[i]].border.w - letters[teststr[i]].border.y);
-            }
-            else
-                ltrRect.position = new Vector2(currentX, currentY);
+            if (letters.ContainsKey(teststr[i])) ltrRect.position = new Vector2(currentX, currentY + letters[teststr[i]].border.w - letters[teststr[i]].border.y);
+            else                                 ltrRect.position = new Vector2(currentX, currentY);
             ltrImg.SetNativeSize();
             ltrImg.enabled = false;
 
@@ -121,8 +79,7 @@ public class ProgrammaticFontTest : MonoBehaviour
     }
 
     // Update is called once per frame
-    private void Update()
-    {
+    private void Update() {
         /*if (Input.GetKeyDown(KeyCode.Space))
         {
             currentX = 15;
@@ -132,33 +89,23 @@ public class ProgrammaticFontTest : MonoBehaviour
         }*/
         letterTimer += Time.deltaTime;
         if (letterTimer > timePerLetter)
-        {
-            if (currentLetter < letterReferences.Length)
-            {
+            if (currentLetter < letterReferences.Length) {
                 if (teststr[currentLetter] == '\n')
-                {
                     letterTimer = -1.0f;
-                }
-                else
-                {
+                else {
                     letterTimer = 0.0f;
                     letterReferences[currentLetter].enabled = true;
                     letterSound.Play();
                 }
                 currentLetter++;
             }
-        }
     }
 
-    public void OnGUI()
-    {
-        if (Event.current.type == EventType.KeyDown)
-        {
+    public void OnGUI() {
+        if (Event.current.type == EventType.KeyDown) {
             char c = Event.current.character;
-            if (c != '\0')
-            {
-                if (c == '\n')
-                {
+            if (c != '\0') {
+                if (c == '\n') {
                     currentX = 15;
                     currentY -= 28;
                     return;
@@ -170,17 +117,11 @@ public class ProgrammaticFontTest : MonoBehaviour
 
                 ltrRect.SetParent(canvas.transform);
 
-                if (letters.ContainsKey(c))
-                    ltrImg.sprite = letters[c];
-                else
-                    ltrImg.sprite = letters['?'];
+                if (letters.ContainsKey(c)) ltrImg.sprite = letters[c];
+                else                        ltrImg.sprite = letters['?'];
 
-                if (letters.ContainsKey(c))
-                {
-                    ltrRect.position = new Vector2(currentX, currentY + letters[c].border.w - letters[c].border.y);
-                }
-                else
-                    ltrRect.position = new Vector2(currentX, currentY);
+                if (letters.ContainsKey(c)) ltrRect.position = new Vector2(currentX, currentY + letters[c].border.w - letters[c].border.y);
+                else                        ltrRect.position = new Vector2(currentX, currentY);
                 ltrImg.SetNativeSize();
                 ltrImg.enabled = true;
 

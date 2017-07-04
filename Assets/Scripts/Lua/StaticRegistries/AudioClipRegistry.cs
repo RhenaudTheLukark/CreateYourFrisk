@@ -29,7 +29,7 @@ public class AudioClipRegistry {
         else if (dictDefault.ContainsKey(key))
             dict[key] = FileLoader.getAudioClip(currentPath, dictDefault[key].FullName);
         else {
-            UnitaleUtil.writeInLogAndDebugger("[WARN]The music file " + k + " doesn't exist.");
+            UnitaleUtil.WriteInLogAndDebugger("[WARN]The music file " + k + " doesn't exist.");
             return null;
         }
         return dict[key];

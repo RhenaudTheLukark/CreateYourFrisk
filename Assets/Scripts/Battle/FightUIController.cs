@@ -37,7 +37,7 @@ public class FightUIController : MonoBehaviour {
     private void Awake() {
         foreach (Transform child in gameObject.transform)
             if (child.name == "FightUILine") {
-                line = new LuaSpriteController(child.GetComponent<Image>(), child.GetComponent<AutoloadResourcesFromRegistry>().SpritePath.ToLower());
+                line = new LuaSpriteController(child.GetComponent<Image>());
                 Start();
                 return;
             }
@@ -109,7 +109,7 @@ public class FightUIController : MonoBehaviour {
         commonQuickInit();
         for (int i = 0; i < targetIDs.Length; i++) {
             LaunchInstance();
-            allFightUiInstances[allFightUiInstances.Count - 1].quickInit(targetIDs[i], UIController.instance.encounter.enabledEnemies[targetIDs[i]], damage[i]);
+            allFightUiInstances[allFightUiInstances.Count - 1].quickInit(targetIDs[i], UIController.instance.encounter.EnabledEnemies[targetIDs[i]], damage[i]);
             allFightUiInstances[allFightUiInstances.Count - 1].isCoroutine = true;
         }
         StopAction(atkMult, true);
@@ -126,7 +126,7 @@ public class FightUIController : MonoBehaviour {
                 fight.StopAction(atkMult);
         }
         line.SetAnimation(lineAnim, 1 / 12f);
-        UIController.playSoundSeparate(AudioClipRegistry.GetSound("slice"));
+        UIController.PlaySoundSeparate(AudioClipRegistry.GetSound("slice"));
     }
 
     public int getDamage(LuaEnemyController enemy, float atkMult) {

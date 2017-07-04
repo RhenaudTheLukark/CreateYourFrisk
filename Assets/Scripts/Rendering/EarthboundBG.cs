@@ -111,12 +111,12 @@ public class EarthboundBG : MonoBehaviour
                     break;
 
                 case BGMode.VERTICAL_COMPRESSION:
-                    new_y = Math.mod((int)(y * C + offset), layer1.texture.height);
+                    new_y = Math.Mod((int)(y * C + offset), layer1.texture.height);
                     break;
             }
             for (int x = 0; x < layer1.texture.width; x++)
             {
-                new_x = Math.mod(new_x, layer1.texture.width);
+                new_x = Math.Mod(new_x, layer1.texture.width);
                 // Color32 newColor = l1Src[new_y * layer1.texture.width + new_x];
                 // int index = Math.mod(colorTable[newColor.GetHashCode()], colorTable.Count);
                 // im1Mod[y * layer1.texture.width + x] = colorTable[newColor.GetHashCode()];

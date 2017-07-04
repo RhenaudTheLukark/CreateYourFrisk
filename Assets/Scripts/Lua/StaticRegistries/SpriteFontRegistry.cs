@@ -18,7 +18,7 @@ public static class SpriteFontRegistry {
     //private static bool initialized;
 
     public static void Start() {
-        loadAllFrom(FileLoader.pathToDefaultFile("Sprites/UI/Fonts"));
+        LoadAllFrom(FileLoader.pathToDefaultFile("Sprites/UI/Fonts"));
     }
 
     public static UnderFont Get(string key) {
@@ -27,11 +27,11 @@ public static class SpriteFontRegistry {
         if (dict.ContainsKey(key))
             return dict[key];
         else
-            return tryLoad(k);
+            return TryLoad(k);
         //return null;
     }
 
-    public static void init() {
+    public static void Init() {
         dict.Clear();
         /*if (initialized)
             return;*/
@@ -41,12 +41,12 @@ public static class SpriteFontRegistry {
         //string modPath = FileLoader.pathToModFile("Sprites/UI/Fonts");
         //string defaultPath = FileLoader.pathToDefaultFile("Sprites/UI/Fonts");
         //loadAllFrom(defaultPath);
-        loadAllFrom(FileLoader.pathToModFile("Sprites/UI/Fonts"), true);
+        LoadAllFrom(FileLoader.pathToModFile("Sprites/UI/Fonts"), true);
 
         //initialized = true;
     }
 
-    private static void loadAllFrom(string directoryPath, bool mod = false) {
+    private static void LoadAllFrom(string directoryPath, bool mod = false) {
         DirectoryInfo dInfo = new DirectoryInfo(directoryPath);
         if (!dInfo.Exists)
             return;
@@ -70,11 +70,11 @@ public static class SpriteFontRegistry {
         }*/
     }
 
-    public static UnderFont tryLoad(string key) {
+    public static UnderFont TryLoad(string key) {
         string k = key;
         key = key.ToLower();
         if (dictMod.ContainsKey(key) || dictDefault.ContainsKey(key)) {
-            UnderFont underfont = getUnderFont(k);
+            UnderFont underfont = GetUnderFont(k);
             //if (underfont != null)
             dict[key] = underfont;
         } else
@@ -82,32 +82,32 @@ public static class SpriteFontRegistry {
         return dict[key];
     }
 
-    private static UnderFont getUnderFont(string fontName) {
+    private static UnderFont GetUnderFont(string fontName) {
         XmlDocument xml = new XmlDocument();
         string fontPath = FileLoader.requireFile("Sprites/UI/Fonts/" + fontName + ".png");
         string xmlPath = FileLoader.requireFile("Sprites/UI/Fonts/" + fontName + ".xml", false);
         if (xmlPath == null)
             return null;
         xml.Load(xmlPath);
-        Dictionary<char, Sprite> fontMap = loadBuiltinFont(xml["font"]["spritesheet"], fontPath);
+        Dictionary<char, Sprite> fontMap = LoadBuiltInFont(xml["font"]["spritesheet"], fontPath);
 
         UnderFont underfont = null;
-        try { underfont = new UnderFont(fontMap); }
+        try { underfont = new UnderFont(fontMap, fontName); }
         catch {
-            UnitaleUtil.displayLuaError("Instanciating a font", "The fonts need a space character to compute their line height, and '" + "' doesn't have one.");
+            UnitaleUtil.DisplayLuaError("Instanciating a font", "The fonts need a space character to compute their line height, and '" + "' doesn't have one.");
             return null;
         }
 
         if (xml["font"]["voice"] != null)        underfont.Sound = AudioClipRegistry.GetVoice(xml["font"]["voice"].InnerText);
-        if (xml["font"]["linespacing"] != null)  underfont.LineSpacing = ParseUtil.getFloat(xml["font"]["linespacing"].InnerText);
-        if (xml["font"]["charspacing"] != null)  underfont.CharSpacing = ParseUtil.getFloat(xml["font"]["charspacing"].InnerText);
-        if (xml["font"]["color"] != null)        underfont.DefaultColor = ParseUtil.getColor(xml["font"]["color"].InnerText);
+        if (xml["font"]["linespacing"] != null)  underfont.LineSpacing = ParseUtil.GetFloat(xml["font"]["linespacing"].InnerText);
+        if (xml["font"]["charspacing"] != null)  underfont.CharSpacing = ParseUtil.GetFloat(xml["font"]["charspacing"].InnerText);
+        if (xml["font"]["color"] != null)        underfont.DefaultColor = ParseUtil.GetColor(xml["font"]["color"].InnerText);
 
         return underfont;
     }
 
-    private static Dictionary<char, Sprite> loadBuiltinFont(XmlNode sheetNode, string fontPath) {
-        Sprite[] letterSprites = SpriteUtil.atlasFromXml(sheetNode, SpriteUtil.fromFile(fontPath));
+    private static Dictionary<char, Sprite> LoadBuiltInFont(XmlNode sheetNode, string fontPath) {
+        Sprite[] letterSprites = SpriteUtil.AtlasFromXml(sheetNode, SpriteUtil.FromFile(fontPath));
         Dictionary<char, Sprite> letters = new Dictionary<char, Sprite>();
         foreach (Sprite s in letterSprites) {
             string name = s.name;

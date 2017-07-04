@@ -73,7 +73,7 @@ public class LuaScreenOW {
         if (GameObject.Find("Image" + id))
             EventManager.instance.luaevow.Remove("Image" + id);
         else
-            Debug.LogError("The given image doesn't exist.");
+            Debug.LogWarning("The image n°" + id + " doesn't exist.");
         appliedScript.Call("CYFEventNextCommand");
     }
 
@@ -119,12 +119,12 @@ public class LuaScreenOW {
     /// <param name="secondsOrFrames"></param>
     /// <param name="intensity"></param>
     [CYFEventFunction]
-    public void Flash(float frames, int colorR = 255, int colorG = 255, int colorB = 255, int colorA = 255) {
-        StCoroutine("IFlash", new object[] { frames, colorR, colorG, colorB, colorA });
+    public void Flash(int frames, int colorR = 255, int colorG = 255, int colorB = 255, int colorA = 255, bool waitEnd = true) {
+        StCoroutine("IFlash", new object[] { frames, colorR, colorG, colorB, colorA, waitEnd });
     }
 
     [CYFEventFunction]
-    public void CenterEventOnCamera(string name, int speed = 5, bool straightLine = false) {
+    public void CenterEventOnCamera(string name, int speed = 5, bool straightLine = false, bool waitEnd = true, string info = "Screen.CenterEventOnCamera") {
         if (!GameObject.Find(name))
             throw new CYFException("Screen.CenterEventOnCamera: The given event doesn't exist.");
 
@@ -133,14 +133,16 @@ public class LuaScreenOW {
 
         StCoroutine("IMoveCamera", new object[] { (int)(GameObject.Find(name).transform.position.x - PlayerOverworld.instance.transform.position.x),
                                                   (int)(GameObject.Find(name).transform.position.y - PlayerOverworld.instance.transform.position.y),
-                                                  speed, straightLine });
+                                                  speed, straightLine, waitEnd, info });
     }
 
     [CYFEventFunction]
-    public void MoveCamera(int pixX, int pixY, int speed = 5, bool straightLine = false) {
-        StCoroutine("IMoveCamera", new object[] { pixX, pixY, speed, straightLine });
+    public void MoveCamera(int pixX, int pixY, int speed = 5, bool straightLine = false, bool waitEnd = true) {
+        StCoroutine("IMoveCamera", new object[] { pixX, pixY, speed, straightLine, waitEnd, "Screen.MoveCamera" });
     }
 
     [CYFEventFunction]
-    public void ResetCameraPosition(int speed = 5, bool straightLine = false) { StCoroutine("IMoveCamera", new object[] { 0, 0, speed, straightLine }); }
+    public void ResetCameraPosition(int speed = 5, bool straightLine = false, bool waitEnd = true) {
+        StCoroutine("IMoveCamera", new object[] { 0, 0, speed, straightLine, waitEnd, "Screen.ResetCameraPosition" });
+    }
 }

@@ -100,12 +100,12 @@ public class UIController : MonoBehaviour {
     public void ActionDialogResult(TextMessage[] msg, UIState afterDialogState, ScriptWrapper caller = null) {
         stateAfterDialogs = afterDialogState;
         if (caller != null)
-            textmgr.setCaller(caller);
-        textmgr.setTextQueue(msg);
+            textmgr.SetCaller(caller);
+        textmgr.SetTextQueue(msg);
         SwitchState(UIState.DIALOGRESULT);
     }
 
-    public static void EndBattle() {
+    public static void EndBattle(bool tp = true) {
         Inventory.RemoveAddedItems();
         GlobalControls.lastTitle = false;
         PlayerCharacter.instance.MaxHPShift = 0;
@@ -119,18 +119,24 @@ public class UIController : MonoBehaviour {
         GlobalControls.stopScreenShake = true;
         MusicManager.hiddenDictionary.Clear();
         if (GlobalControls.modDev) {
+            List<string> toDelete = new List<string>();
             foreach (string str in NewMusicManager.audioname.Keys)
                 if (str != "src")
-                    NewMusicManager.DestroyChannel(str);
+                    toDelete.Add(str);
+            foreach (string str in toDelete)
+                NewMusicManager.DestroyChannel(str);
             PlayerCharacter.instance.Reset();
-            SceneManager.LoadScene("ModSelect");
+            if (tp)
+                SceneManager.LoadScene("ModSelect");
         } else {
             foreach (string str in NewMusicManager.audioname.Keys)
                 if (str != "StaticKeptAudio")
                     NewMusicManager.Stop(str);
-            SceneManager.UnloadSceneAsync("Battle");
+            if (tp)
+                SceneManager.UnloadSceneAsync("Battle");
             GlobalControls.isInFight = false;
-            PlayerOverworld.ShowOverworld("Battle");
+            if (tp)
+                PlayerOverworld.ShowOverworld("Battle");
         }
     }
 
@@ -153,7 +159,7 @@ public class UIController : MonoBehaviour {
             try {
                 LuaEnemyEncounter.script.Call("EnteringState", new DynValue[] { DynValue.NewString(state.ToString()), DynValue.NewString(this.state.ToString()) });
             } catch (InterpreterException ex) {
-                UnitaleUtil.displayLuaError(LuaEnemyEncounter.script.scriptname, ex.DecoratedMessage);
+                UnitaleUtil.DisplayLuaError(LuaEnemyEncounter.script.scriptname, ex.DecoratedMessage);
             }
             parentStateCall = true;
 
@@ -175,14 +181,14 @@ public class UIController : MonoBehaviour {
 
         if (state == UIState.DEFENDING || state == UIState.ENEMYDIALOGUE) {
             PlayerController.instance.setControlOverride(state != UIState.DEFENDING);
-            textmgr.destroyText();
+            textmgr.DestroyText();
             PlayerController.instance.SetPositionQueue(320, 160, true);
             PlayerController.instance.GetComponent<Image>().enabled = true;
             fightBtn.overrideSprite = null;
             actBtn.overrideSprite = null;
             itemBtn.overrideSprite = null;
             mercyBtn.overrideSprite = null;
-            textmgr.setPause(true);
+            textmgr.SetPause(true);
         } else {
             if (!first &&!ArenaManager.instance.firstTurn)
                 ArenaManager.instance.resetArena();
@@ -205,10 +211,10 @@ public class UIController : MonoBehaviour {
         //encounter.CallOnSelfOrChildren("Entered" + Enum.GetName(typeof(UIState), state).Substring(0, 1)
         //                                         + Enum.GetName(typeof(UIState), state).Substring(1, Enum.GetName(typeof(UIState), state).Length - 1).ToLower());
         if (oldstate == UIState.DEFENDING && this.state != UIState.DEFENDING)
-            encounter.endWave();
+            encounter.EndWave();
         switch (this.state) {
             case UIState.ATTACKING:
-                textmgr.destroyText();
+                textmgr.DestroyText();
                 PlayerController.instance.GetComponent<Image>().enabled = false;
                 if (!fightUI.multiHit) {
                     fightUI.targetIDs = new int[] { selectedEnemy };
@@ -222,28 +228,28 @@ public class UIController : MonoBehaviour {
                 forcedaction = Actions.NONE;
                 PlayerController.instance.setControlOverride(true);
                 PlayerController.instance.GetComponent<Image>().enabled = true;
-                setPlayerOnAction(action);
-                textmgr.setPause(ArenaManager.instance.isResizeInProgress());
-                textmgr.setCaller(LuaEnemyEncounter.script); // probably not necessary due to ActionDialogResult changes
-                textmgr.setText(new RegularMessage(encounter.EncounterText));
+                SetPlayerOnAction(action);
+                textmgr.SetPause(ArenaManager.instance.isResizeInProgress());
+                textmgr.SetCaller(LuaEnemyEncounter.script); // probably not necessary due to ActionDialogResult changes
+                textmgr.SetText(new RegularMessage(encounter.EncounterText));
                 break;
 
             case UIState.ACTMENU:
-                string[] actions = new string[encounter.enabledEnemies[selectedEnemy].ActCommands.Length];
+                string[] actions = new string[encounter.EnabledEnemies[selectedEnemy].ActCommands.Length];
                 for (int i = 0; i < actions.Length; i++)
-                    actions[i] = encounter.enabledEnemies[selectedEnemy].ActCommands[i];
+                    actions[i] = encounter.EnabledEnemies[selectedEnemy].ActCommands[i];
 
                 selectedAction = 0;
-                setPlayerOnSelection(selectedAction);
-                textmgr.setText(new SelectMessage(actions, false));
+                SetPlayerOnSelection(selectedAction);
+                textmgr.SetText(new SelectMessage(actions, false));
                 break;
 
             case UIState.ITEMMENU:
                 battleDialogued = false;
-                string[] items = getInventoryPage(0);
+                string[] items = GetInventoryPage(0);
                 selectedItem = 0;
-                setPlayerOnSelection(0);
-                textmgr.setText(new SelectMessage(items, false));
+                SetPlayerOnSelection(0);
+                textmgr.SetText(new SelectMessage(items, false));
                 /*ActionDialogResult(new TextMessage[] {
                     new TextMessage("Can't open inventory.\nClogged with pasta residue.", true, false),
                     new TextMessage("Might also be a dog.\nIt's ambiguous.",true,false)
@@ -254,26 +260,26 @@ public class UIController : MonoBehaviour {
                 selectedMercy = 0;
                 string[] mercyopts = new string[1 + (encounter.CanRun ? 1 : 0)];
                 mercyopts[0] = "Spare";
-                foreach (EnemyController enemy in encounter.enabledEnemies)
+                foreach (EnemyController enemy in encounter.EnabledEnemies)
                     if (enemy.CanSpare) {
                         mercyopts[0] = "[starcolor:ffff00][color:ffff00]" + mercyopts[0] + "[color:ffffff]";
                         break;
                     }
                 if (encounter.CanRun)
                     mercyopts[1] = "Flee";
-                setPlayerOnSelection(0);
-                textmgr.setText(new SelectMessage(mercyopts, true));
+                SetPlayerOnSelection(0);
+                textmgr.SetText(new SelectMessage(mercyopts, true));
                 break;
 
             case UIState.ENEMYSELECT:
-                string[] names = new string[encounter.enabledEnemies.Length];
+                string[] names = new string[encounter.EnabledEnemies.Length];
                 string[] colorPrefixes = new string[names.Length];
-                for (int i = 0; i < encounter.enabledEnemies.Length; i++) {
-                    names[i] = encounter.enabledEnemies[i].Name;
-                    if (encounter.enabledEnemies[i].CanSpare)
+                for (int i = 0; i < encounter.EnabledEnemies.Length; i++) {
+                    names[i] = encounter.EnabledEnemies[i].Name;
+                    if (encounter.EnabledEnemies[i].CanSpare)
                         colorPrefixes[i] = "[color:ffff00]";
                 }
-                if (encounter.enabledEnemies.Length > 3) {
+                if (encounter.EnabledEnemies.Length > 3) {
                     selectedEnemy = 0;
                     string[] newnames = new string[3];
                     newnames[0] = names[0];
@@ -284,14 +290,14 @@ public class UIController : MonoBehaviour {
                 }
                 for (int i = 0; i < names.Length; i++)
                     names[i] += "[color:ffffff]";                    
-                textmgr.setText(new SelectMessage(names, true, colorPrefixes));
+                textmgr.SetText(new SelectMessage(names, true, colorPrefixes));
                 if (forcedaction != Actions.FIGHT && forcedaction != Actions.ACT)
                     forcedaction = action;
                 if (forcedaction == Actions.FIGHT) {
                     int maxWidth = (int)initialHealthPos.x, count = 0;
                     
-                    for (int i = 0; i < encounter.enabledEnemies.Length; i++) {
-                        if (encounter.enabledEnemies.Length > 3)
+                    for (int i = 0; i < encounter.EnabledEnemies.Length; i++) {
+                        if (encounter.EnabledEnemies.Length > 3)
                             if (i > 1)
                                 break;
                         //int mNameWidth = UnitaleUtil.fontStringWidth(textmgr.Charset, "* " + encounter.enabledEnemies[i].Name) + 50;
@@ -300,14 +306,14 @@ public class UIController : MonoBehaviour {
                                 break;
                         count++;
                         //int mNameWidth = (int)UnitaleUtil.calcTotalLength(textmgr, lastCount, count);
-                        for (int j = 0; j <= 1 && j < encounter.enabledEnemies.Length; j++) {
-                            int mNameWidth = (int)UnitaleUtil.calcTotalLength(textmgr) + 50;
+                        for (int j = 0; j <= 1 && j < encounter.EnabledEnemies.Length; j++) {
+                            int mNameWidth = (int)UnitaleUtil.CalcTotalLength(textmgr) + 50;
                             if (mNameWidth > maxWidth)
                                 maxWidth = mNameWidth;
                         }
                     }
-                    for (int i = 0; i < encounter.enabledEnemies.Length; i++) {
-                        if (encounter.enabledEnemies.Length > 3)
+                    for (int i = 0; i < encounter.EnabledEnemies.Length; i++) {
+                        if (encounter.EnabledEnemies.Length > 3)
                             if (i > 1)
                                 break;
                         LifeBarController lifebar = Instantiate(Resources.Load<LifeBarController>("Prefabs/HPBar"));
@@ -324,8 +330,8 @@ public class UIController : MonoBehaviour {
                         lifebarRt.anchoredPosition = new Vector2(maxWidth, initialHealthPos.y - i * textmgr.Charset.LineSpacing);
                         lifebarRt.sizeDelta = new Vector2(90, lifebarRt.sizeDelta.y);
                         lifebar.setFillColor(Color.green);
-                        float hpFrac = (float)Mathf.Abs(encounter.enabledEnemies[i].HP) / (float)encounter.enabledEnemies[i].MaxHP;
-                        if (encounter.enabledEnemies[i].HP < 0) {
+                        float hpFrac = (float)Mathf.Abs(encounter.EnabledEnemies[i].HP) / (float)encounter.EnabledEnemies[i].MaxHP;
+                        if (encounter.EnabledEnemies[i].HP < 0) {
                             lifebar.fill.rectTransform.offsetMin = new Vector2(-90 * hpFrac, 0);
                             lifebar.fill.rectTransform.offsetMax = new Vector2(-90, 0);
                         } else
@@ -333,15 +339,15 @@ public class UIController : MonoBehaviour {
                     }
                 }
 
-                if (selectedEnemy >= encounter.enabledEnemies.Length)
+                if (selectedEnemy >= encounter.EnabledEnemies.Length)
                     selectedEnemy = 0;
-                setPlayerOnSelection(selectedEnemy * 2); // single list so skip right row by multiplying x2
+                SetPlayerOnSelection(selectedEnemy * 2); // single list so skip right row by multiplying x2
                 break;
 
             case UIState.DEFENDING:
                 ArenaManager.instance.Resize((int)encounter.ArenaSize.x, (int)encounter.ArenaSize.y);
                 PlayerController.instance.setControlOverride(false);
-                encounter.nextWave();
+                encounter.NextWave();
                 // ActionDialogResult(new TextMessage("This is where you'd\rdefend yourself.\nBut the code was spaghetti.", true, false), UIState.ACTIONSELECT);
                 break;
 
@@ -354,14 +360,14 @@ public class UIController : MonoBehaviour {
                 //ArenaManager.instance.Resize((int)encounter.ArenaSize.x, (int)encounter.ArenaSize.y);
                 ArenaManager.instance.Resize(155, 130);
                 encounter.CallOnSelfOrChildren("EnemyDialogueStarting");
-                monDialogues = new TextManager[encounter.enabledEnemies.Length];
-                readyToNextLine = new bool[encounter.enabledEnemies.Length];
-                for (int i = 0; i < encounter.enabledEnemies.Length; i++) {
+                monDialogues = new TextManager[encounter.EnabledEnemies.Length];
+                readyToNextLine = new bool[encounter.EnabledEnemies.Length];
+                for (int i = 0; i < encounter.EnabledEnemies.Length; i++) {
                     this.msgs.Remove(i);
-                    this.msgs.Add(i, encounter.enabledEnemies[i].GetDefenseDialog());
+                    this.msgs.Add(i, encounter.EnabledEnemies[i].GetDefenseDialog());
                     string[] msgs = this.msgs[i];
                     if (msgs == null) {
-                        UserDebugger.warn("Entered ENEMYDIALOGUE, but no current/random dialogue was set for " + encounter.enabledEnemies[i].Name);
+                        UserDebugger.Warn("Entered ENEMYDIALOGUE, but no current/random dialogue was set for " + encounter.EnabledEnemies[i].Name);
                         SwitchState(UIState.DEFENDING);
                         break;
                     }
@@ -369,30 +375,30 @@ public class UIController : MonoBehaviour {
                     //RectTransform enemyRt = encounter.enabledEnemies[i].GetComponent<RectTransform>();
                     TextManager sbTextMan = speechBub.GetComponent<TextManager>();
                     monDialogues[i] = sbTextMan;
-                    sbTextMan.setCaller(encounter.enabledEnemies[i].script);
+                    sbTextMan.SetCaller(encounter.EnabledEnemies[i].script);
                     Image speechBubImg = speechBub.GetComponent<Image>();
                     if (sbTextMan.CharacterCount(msgs[0]) == 0) speechBubImg.color = new Color(speechBubImg.color.r, speechBubImg.color.g, speechBubImg.color.b, 0);
                     else                                        speechBubImg.color = new Color(speechBubImg.color.r, speechBubImg.color.g, speechBubImg.color.b, 1);
-                    SpriteUtil.SwapSpriteFromFile(speechBubImg, encounter.enabledEnemies[i].DialogBubble, i);
+                    SpriteUtil.SwapSpriteFromFile(speechBubImg, encounter.EnabledEnemies[i].DialogBubble, i);
                     Sprite speechBubSpr = speechBubImg.sprite;
                     // TODO improve position setting/remove hardcoding of position setting
-                    speechBub.transform.SetParent(encounter.enabledEnemies[i].transform);
-                    speechBub.GetComponent<RectTransform>().anchoredPosition = encounter.enabledEnemies[i].DialogBubblePosition;
-                    speechBub.transform.position = new Vector3(speechBub.transform.position.x + encounter.enabledEnemies[i].offsets[1].x,
-                                                               speechBub.transform.position.y + encounter.enabledEnemies[i].offsets[1].y, speechBub.transform.position.z);
-                    sbTextMan.setOffset(speechBubSpr.border.x, -speechBubSpr.border.w);
+                    speechBub.transform.SetParent(encounter.EnabledEnemies[i].transform);
+                    speechBub.GetComponent<RectTransform>().anchoredPosition = encounter.EnabledEnemies[i].DialogBubblePosition;
+                    speechBub.transform.position = new Vector3(speechBub.transform.position.x + encounter.EnabledEnemies[i].offsets[1].x,
+                                                               speechBub.transform.position.y + encounter.EnabledEnemies[i].offsets[1].y, speechBub.transform.position.z);
+                    sbTextMan.SetOffset(speechBubSpr.border.x, -speechBubSpr.border.w);
                     //sbTextMan.setFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_MONSTERTEXT_NAME));
-                    sbTextMan.setFont(SpriteFontRegistry.Get(encounter.enabledEnemies[i].Font));
-                    sbTextMan.setEffect(new RotatingEffect(sbTextMan));
+                    sbTextMan.SetFont(SpriteFontRegistry.Get(encounter.EnabledEnemies[i].Font));
+                    sbTextMan.SetEffect(new RotatingEffect(sbTextMan));
 
                     MonsterMessage[] monMsgs = new MonsterMessage[msgs.Length];
                     for (int j = 0; j < monMsgs.Length; j++)
                         monMsgs[j] = new MonsterMessage(msgs[j]);
 
-                    sbTextMan.setTextQueue(monMsgs);
+                    sbTextMan.SetTextQueue(monMsgs);
                     speechBub.GetComponent<Image>().enabled = true;
-                    if (encounter.enabledEnemies[i].Voice != "")
-                        sbTextMan.letterSound.clip = AudioClipRegistry.GetVoice(encounter.enabledEnemies[i].Voice);
+                    if (encounter.EnabledEnemies[i].Voice != "")
+                        sbTextMan.letterSound.clip = AudioClipRegistry.GetVoice(encounter.EnabledEnemies[i].Voice);
                 }
                 break;
 
@@ -404,10 +410,12 @@ public class UIController : MonoBehaviour {
         }
     }
 
-    public void SwitchStateOnString(string state) {
+    public void SwitchStateOnString(Script scr, string state) {
         if (!encounter.gameOverStance) {
-            UIState newState = (UIState)Enum.Parse(typeof(UIState), state, true);
-            SwitchState(newState);
+            try {
+                UIState newState = (UIState)Enum.Parse(typeof(UIState), state, true);
+                SwitchState(newState);
+            } catch { throw new CYFException("The state " + state + " isn't a valid state."); }
         }
     }
 
@@ -432,42 +440,42 @@ public class UIController : MonoBehaviour {
         instance = this;
     }
 
-    private void bindEncounterScriptInteraction() {
-        LuaEnemyEncounter.script.Bind("State", (Action<string>)SwitchStateOnString);
+    private void BindEncounterScriptInteraction() {
+        LuaEnemyEncounter.script.Bind("State", (Action<Script, string>)SwitchStateOnString);
         foreach (LuaEnemyController enemy in encounter.enemies)
-            enemy.script.Bind("State", (Action<string>)SwitchStateOnString);
+            enemy.script.Bind("State", (Action<Script, string>)SwitchStateOnString);
         if (LuaEnemyEncounter.script.GetVar("Update") != null)
             encounterHasUpdate = true;
     }
     
-    public void updateBubble() {
-        for (int i = 0; i < encounter.enabledEnemies.Length; i++) {
+    public void UpdateBubble() {
+        for (int i = 0; i < encounter.EnabledEnemies.Length; i++) {
             try {
                 if (monDialogues[i] == null) {
                     readyToNextLine[i] = true;
                     continue;
                 }
                 string[] msgs = this.msgs[i];
-                if (monDialogues[i].currentLine >= monDialogues[i].lineCount()) {
+                if (monDialogues[i].currentLine >= monDialogues[i].LineCount()) {
                     readyToNextLine[i] = true;
                     continue;
                 }
-                GameObject speechBub = encounter.enabledEnemies[i].transform.FindChild("DialogBubble(Clone)").gameObject;
+                GameObject speechBub = encounter.EnabledEnemies[i].transform.Find("DialogBubble(Clone)").gameObject;
                 TextManager sbTextMan = speechBub.GetComponent<TextManager>();
                 readyToNextLine[i] = false;
                 Image speechBubImg = speechBub.GetComponent<Image>();
                 if (monDialogues[i].CharacterCount(msgs[monDialogues[i].currentLine]) == 0) speechBubImg.color = new Color(speechBubImg.color.r, speechBubImg.color.g, speechBubImg.color.b, 0);
                 else                                                                        speechBubImg.color = new Color(speechBubImg.color.r, speechBubImg.color.g, speechBubImg.color.b, 1);
 
-                SpriteUtil.SwapSpriteFromFile(speechBubImg, encounter.enabledEnemies[i].DialogBubble, i);
+                SpriteUtil.SwapSpriteFromFile(speechBubImg, encounter.EnabledEnemies[i].DialogBubble, i);
                 Sprite speechBubSpr = speechBubImg.sprite;
-                sbTextMan.setOffset(speechBubSpr.border.x, -speechBubSpr.border.w);
-                speechBub.GetComponent<RectTransform>().anchoredPosition = encounter.enabledEnemies[i].DialogBubblePosition;
-                speechBub.transform.position = new Vector3(speechBub.transform.position.x + encounter.enabledEnemies[i].offsets[1].x,
-                                                           speechBub.transform.position.y + encounter.enabledEnemies[i].offsets[1].y, speechBub.transform.position.z);
-                sbTextMan.setFont(SpriteFontRegistry.Get(encounter.enabledEnemies[i].Font));
-                if (encounter.enabledEnemies[i].Voice != "")
-                    sbTextMan.letterSound.clip = AudioClipRegistry.GetVoice(encounter.enabledEnemies[i].Voice);
+                sbTextMan.SetOffset(speechBubSpr.border.x, -speechBubSpr.border.w);
+                speechBub.GetComponent<RectTransform>().anchoredPosition = encounter.EnabledEnemies[i].DialogBubblePosition;
+                speechBub.transform.position = new Vector3(speechBub.transform.position.x + encounter.EnabledEnemies[i].offsets[1].x,
+                                                           speechBub.transform.position.y + encounter.EnabledEnemies[i].offsets[1].y, speechBub.transform.position.z);
+                sbTextMan.SetFont(SpriteFontRegistry.Get(encounter.EnabledEnemies[i].Font));
+                if (encounter.EnabledEnemies[i].Voice != "")
+                    sbTextMan.letterSound.clip = AudioClipRegistry.GetVoice(encounter.EnabledEnemies[i].Voice);
             } catch {
                 new CYFException("Error while updating the monster n°" + i);
             }
@@ -481,43 +489,43 @@ public class UIController : MonoBehaviour {
                 readyToNextLine[i] = true;
                 continue;
             }
-            if (monDialogues[i].canAutoSkip()) {
+            if (monDialogues[i].CanAutoSkip()) {
                 readyToNextLine[i] = true;
-                doNextMonsterDialogue(false, i);
+                DoNextMonsterDialogue(false, i);
             }
-            if (monDialogues[i].canAutoSkipAll()) {
+            if (monDialogues[i].CanAutoSkipAll()) {
                 for (int j = 0; j < monDialogues.Length; j++)
                     readyToNextLine[j] = true;
-                doNextMonsterDialogue();
+                DoNextMonsterDialogue();
                 return;
             }
-            if ((monDialogues[i].allLinesComplete() && monDialogues[i].lineCount() != 0) || monDialogues[i].canAutoSkipThis() || (!monDialogues[i].allLinesComplete() && monDialogues[i].lineComplete())) {
+            if ((monDialogues[i].AllLinesComplete() && monDialogues[i].LineCount() != 0) || monDialogues[i].CanAutoSkipThis() || (!monDialogues[i].AllLinesComplete() && monDialogues[i].LineComplete())) {
                 readyToNextLine[i] = true;
                 continue;
             }
         }
     }
 
-    public void doNextMonsterDialogue(bool singleLineAll = false, int index = -1) {
+    public void DoNextMonsterDialogue(bool singleLineAll = false, int index = -1) {
         bool complete = true, foiled = false;
         if (index != -1) {
             if (monDialogues[index] == null)
                 return;
 
-            if (monDialogues[index].hasNext()) {
-                FileInfo fi = new FileInfo(FileLoader.pathToDefaultFile("Sprites/" + encounter.enabledEnemies[index].DialogBubble + ".png"));
+            if (monDialogues[index].HasNext()) {
+                FileInfo fi = new FileInfo(FileLoader.pathToDefaultFile("Sprites/" + encounter.EnabledEnemies[index].DialogBubble + ".png"));
                 if (!fi.Exists)
-                    fi = new FileInfo(FileLoader.pathToModFile("Sprites/" + encounter.enabledEnemies[index].DialogBubble + ".png"));
+                    fi = new FileInfo(FileLoader.pathToModFile("Sprites/" + encounter.EnabledEnemies[index].DialogBubble + ".png"));
                 if (!fi.Exists) {
-                    Debug.LogError("The bubble " + encounter.enabledEnemies[index].DialogBubble + ".png doesn't exist.");
+                    Debug.LogError("The bubble " + encounter.EnabledEnemies[index].DialogBubble + ".png doesn't exist.");
                 } else {
-                    Sprite speechBubSpr = SpriteUtil.fromFile(fi.FullName);
-                    monDialogues[index].setOffset(speechBubSpr.border.x, -speechBubSpr.border.w);
+                    Sprite speechBubSpr = SpriteUtil.FromFile(fi.FullName);
+                    monDialogues[index].SetOffset(speechBubSpr.border.x, -speechBubSpr.border.w);
                 }
-                monDialogues[index].nextLine();
+                monDialogues[index].NextLineText();
                 complete = false;
             } else {
-                monDialogues[index].destroyText();
+                monDialogues[index].DestroyText();
                 GameObject.Destroy(monDialogues[index].gameObject);
             }
             if (complete)
@@ -529,50 +537,50 @@ public class UIController : MonoBehaviour {
                 if (monDialogues[i] == null)
                     continue;
 
-                if ((monDialogues[i].allLinesComplete() && monDialogues[i].lineCount() != 0) || (!monDialogues[i].hasNext() && readyToNextLine[i])) {
-                    monDialogues[i].destroyText();
+                if ((monDialogues[i].AllLinesComplete() && monDialogues[i].LineCount() != 0) || (!monDialogues[i].HasNext() && readyToNextLine[i])) {
+                    monDialogues[i].DestroyText();
                     GameObject.Destroy(monDialogues[i].gameObject); // this text manager's game object is a dialog bubble and should be destroyed at this point
                     continue;
                 } else
                     complete = false;
 
                 // part that autoskips text if [nextthisnow] or [finished] is introduced
-                if (monDialogues[i].canAutoSkipThis() || monDialogues[i].canAutoSkip()) {
-                    if (monDialogues[i].hasNext()) {
-                        FileInfo fi = new FileInfo(FileLoader.pathToDefaultFile("Sprites/" + encounter.enabledEnemies[i].DialogBubble + ".png"));
+                if (monDialogues[i].CanAutoSkipThis() || monDialogues[i].CanAutoSkip()) {
+                    if (monDialogues[i].HasNext()) {
+                        FileInfo fi = new FileInfo(FileLoader.pathToDefaultFile("Sprites/" + encounter.EnabledEnemies[i].DialogBubble + ".png"));
                         if (!fi.Exists)
-                            fi = new FileInfo(FileLoader.pathToModFile("Sprites/" + encounter.enabledEnemies[i].DialogBubble + ".png"));
+                            fi = new FileInfo(FileLoader.pathToModFile("Sprites/" + encounter.EnabledEnemies[i].DialogBubble + ".png"));
                         if (!fi.Exists) {
-                            Debug.LogError("The bubble " + encounter.enabledEnemies[i].DialogBubble + ".png doesn't exist.");
+                            Debug.LogError("The bubble " + encounter.EnabledEnemies[i].DialogBubble + ".png doesn't exist.");
                         } else {
-                            Sprite speechBubSpr = SpriteUtil.fromFile(fi.FullName);
-                            monDialogues[i].setOffset(speechBubSpr.border.x, -speechBubSpr.border.w);
+                            Sprite speechBubSpr = SpriteUtil.FromFile(fi.FullName);
+                            monDialogues[i].SetOffset(speechBubSpr.border.x, -speechBubSpr.border.w);
                         }
-                        monDialogues[i].nextLine();
+                        monDialogues[i].NextLineText();
                     } else {
-                        monDialogues[i].destroyText();
+                        monDialogues[i].DestroyText();
                         GameObject.Destroy(monDialogues[i].gameObject); // code duplication? in my source? it's more likely than you think
                         if (!foiled)
                             complete = true;
                         continue;
                     }
                 } else if (readyToNextLine[i]) {
-                    FileInfo fi = new FileInfo(FileLoader.pathToDefaultFile("Sprites/" + encounter.enabledEnemies[i].DialogBubble + ".png"));
+                    FileInfo fi = new FileInfo(FileLoader.pathToDefaultFile("Sprites/" + encounter.EnabledEnemies[i].DialogBubble + ".png"));
                     if (!fi.Exists)
-                        fi = new FileInfo(FileLoader.pathToModFile("Sprites/" + encounter.enabledEnemies[i].DialogBubble + ".png"));
+                        fi = new FileInfo(FileLoader.pathToModFile("Sprites/" + encounter.EnabledEnemies[i].DialogBubble + ".png"));
                     if (!fi.Exists) {
-                        Debug.LogError("The bubble " + encounter.enabledEnemies[i].DialogBubble + ".png doesn't exist.");
+                        Debug.LogError("The bubble " + encounter.EnabledEnemies[i].DialogBubble + ".png doesn't exist.");
                     } else {
-                        Sprite speechBubSpr = SpriteUtil.fromFile(fi.FullName);
-                        monDialogues[i].setOffset(speechBubSpr.border.x, -speechBubSpr.border.w);
+                        Sprite speechBubSpr = SpriteUtil.FromFile(fi.FullName);
+                        monDialogues[i].SetOffset(speechBubSpr.border.x, -speechBubSpr.border.w);
                     }
-                    monDialogues[i].nextLine();
+                    monDialogues[i].NextLineText();
                 }
                 if (!complete)
                     foiled = true;
             }
         if (!complete || foiled)
-            updateBubble();
+            UpdateBubble();
         // looping through the same list three times? there's a reason this class is the most in need of redoing
         // either way, after doing everything required, check which text manager has the longest text now and mute all others
         int longestTextLen = 0;
@@ -580,25 +588,25 @@ public class UIController : MonoBehaviour {
         for (int i = 0; i < monDialogues.Length; i++) {
             if (monDialogues[i] == null)
                 continue;
-            monDialogues[i].setMute(true);
-            if (!monDialogues[i].allLinesComplete() && monDialogues[i].letterReferences.Length > longestTextLen) {
+            monDialogues[i].SetMute(true);
+            if (!monDialogues[i].AllLinesComplete() && monDialogues[i].letterReferences.Length > longestTextLen) {
                 longestTextLen = monDialogues[i].letterReferences.Length - monDialogues[i].currentReferenceCharacter;
                 longestTextMgrIndex = i;
             }
         }
 
         if (longestTextMgrIndex > -1)
-            monDialogues[longestTextMgrIndex].setMute(false);
+            monDialogues[longestTextMgrIndex].SetMute(false);
 
         if (!complete) // break if we're not done with all text
             return;
-        if (encounter.enabledEnemies.Length > 0) {
+        if (encounter.EnabledEnemies.Length > 0) {
             encounter.CallOnSelfOrChildren("EnemyDialogueEnding");
             SwitchState(UIState.DEFENDING);
         }
     }
 
-    private string[] getInventoryPage(int page) {
+    private string[] GetInventoryPage(int page) {
         int invCount = 0;
         for (int i = page * 4; i < page * 4 + 4; i++) {
             if (Inventory.inventory.Count <= i)
@@ -618,20 +626,20 @@ public class UIController : MonoBehaviour {
         return items;
     }
 
-    private string[] getEnemyPage(int page, out string[] colors) {
+    private string[] GetEnemyPage(int page, out string[] colors) {
         int enemyCount = 0;
         for (int i = page * 2; i < page * 2 + 2; i++) {
-            if (encounter.enabledEnemies.Length <= i)
+            if (encounter.EnabledEnemies.Length <= i)
                 break;
             enemyCount++;
         }
         colors = new string[6];
         string[] enemies = new string[6];
-        enemies[0] = encounter.enabledEnemies[page * 2].Name;
+        enemies[0] = encounter.EnabledEnemies[page * 2].Name;
         if (enemyCount == 2)
-            enemies[2] = "* " + encounter.enabledEnemies[page * 2 + 1].Name;
-        for (int i = page * 2; i < encounter.enabledEnemies.Length && enemyCount > 0; i++) {
-            if (encounter.enabledEnemies[i].CanSpare)
+            enemies[2] = "* " + encounter.EnabledEnemies[page * 2 + 1].Name;
+        for (int i = page * 2; i < encounter.EnabledEnemies.Length && enemyCount > 0; i++) {
+            if (encounter.EnabledEnemies[i].CanSpare)
                 colors[(i - page * 2) * 2] = "[color:ffff00]";
             enemyCount--;
         }
@@ -639,16 +647,16 @@ public class UIController : MonoBehaviour {
         return enemies;
     }
 
-    private void renewLifebars(int page) {
+    private void RenewLifebars(int page) {
         int maxWidth = (int)initialHealthPos.x;
         foreach (LifeBarController lbc in arenaParent.GetComponentsInChildren<LifeBarController>())
             Destroy(lbc.gameObject);
-        for (int i = page * 2; i <= page * 2 + 1 && i < encounter.enabledEnemies.Length; i++) {
-            int mNameWidth = (int)UnitaleUtil.calcTotalLength(textmgr) + 50;
+        for (int i = page * 2; i <= page * 2 + 1 && i < encounter.EnabledEnemies.Length; i++) {
+            int mNameWidth = (int)UnitaleUtil.CalcTotalLength(textmgr) + 50;
             if (mNameWidth > maxWidth)
                 maxWidth = mNameWidth;
         }
-        for (int i = page * 2; i <= page * 2 + 1 && i < encounter.enabledEnemies.Length; i++) {
+        for (int i = page * 2; i <= page * 2 + 1 && i < encounter.EnabledEnemies.Length; i++) {
             LifeBarController lifebar = Instantiate(Resources.Load<LifeBarController>("Prefabs/HPBar"));
             lifebar.player = true;
             Transform[] childs = new Transform[GameObject.Find("TextManager").transform.childCount];
@@ -663,8 +671,8 @@ public class UIController : MonoBehaviour {
             lifebarRt.anchoredPosition = new Vector2(maxWidth, initialHealthPos.y - (i - page * 2) * textmgr.Charset.LineSpacing);
             lifebarRt.sizeDelta = new Vector2(90, lifebarRt.sizeDelta.y);
             lifebar.setFillColor(Color.green);
-            float hpFrac = (float)Mathf.Abs(encounter.enabledEnemies[i].HP) / (float)encounter.enabledEnemies[i].MaxHP;
-            if (encounter.enabledEnemies[i].HP < 0) {
+            float hpFrac = (float)Mathf.Abs(encounter.EnabledEnemies[i].HP) / (float)encounter.EnabledEnemies[i].MaxHP;
+            if (encounter.EnabledEnemies[i].HP < 0) {
                 lifebar.fill.rectTransform.offsetMin = new Vector2(-90 * hpFrac, 0);
                 lifebar.fill.rectTransform.offsetMax = new Vector2(-90, 0);
             } else
@@ -672,7 +680,7 @@ public class UIController : MonoBehaviour {
         }
     }
 
-    public UIState getState() { return state; }
+    public UIState GetState() { return state; }
 
     private void HandleAction() {
         if (!stated || state == UIState.ATTACKING)
@@ -682,14 +690,14 @@ public class UIController : MonoBehaviour {
                     break;
 
                 case UIState.DIALOGRESULT:
-                    if (!textmgr.lineComplete())
+                    if (!textmgr.LineComplete())
                         break;
 
-                    if (!textmgr.allLinesComplete() && textmgr.lineComplete()) {
-                        textmgr.nextLine();
+                    if (!textmgr.AllLinesComplete() && textmgr.LineComplete()) {
+                        textmgr.NextLineText();
                         break;
-                    } else if (textmgr.allLinesComplete() && textmgr.lineCount() != 0) {
-                        textmgr.destroyText();
+                    } else if (textmgr.AllLinesComplete() && textmgr.LineCount() != 0) {
+                        textmgr.DestroyText();
                         SwitchState(stateAfterDialogs);
                     }
                     break;
@@ -702,8 +710,8 @@ public class UIController : MonoBehaviour {
 
                         case Actions.ACT:
                             if (GlobalControls.crate)
-                                if (ControlPanel.instance.Safe)  UnitaleUtil.PlaySound("MEOW", "sounds/meow" + Math.randomRange(1, 8));
-                                else                             UnitaleUtil.PlaySound("MEOW", "sounds/meow" + Math.randomRange(1, 9));
+                                if (ControlPanel.instance.Safe)  UnitaleUtil.PlaySound("MEOW", "sounds/meow" + Math.RandomRange(1, 8));
+                                else                             UnitaleUtil.PlaySound("MEOW", "sounds/meow" + Math.RandomRange(1, 9));
                             else                                 SwitchState(UIState.ENEMYSELECT);
                             break;
 
@@ -711,7 +719,7 @@ public class UIController : MonoBehaviour {
                             if (GlobalControls.crate) {
                                 string strBasis = "TEM WANT FLAKES!!!1!1", strModif = strBasis;
                                 for (int i = strBasis.Length-2; i >= 0; i --)
-                                    strModif = strModif.Substring(0, i) + "[voice:tem" + Math.randomRange(1, 7) + "]" + strModif.Substring(i, strModif.Length - i);
+                                    strModif = strModif.Substring(0, i) + "[voice:tem" + Math.RandomRange(1, 7) + "]" + strModif.Substring(i, strModif.Length - i);
                                 ActionDialogResult(new TextMessage(strModif, true, false), UIState.ENEMYDIALOGUE);
 
                             } else {
@@ -759,7 +767,7 @@ public class UIController : MonoBehaviour {
                                 SwitchState(UIState.MERCYMENU);
                             break;
                     }
-                    playSound(AudioClipRegistry.GetSound("menuconfirm"));
+                    PlaySound(AudioClipRegistry.GetSound("menuconfirm"));
                     break;
 
                 case UIState.ENEMYSELECT:
@@ -774,20 +782,20 @@ public class UIController : MonoBehaviour {
                             SwitchState(UIState.ACTMENU);
                             break;
                     }
-                    playSound(AudioClipRegistry.GetSound("menuconfirm"));
+                    PlaySound(AudioClipRegistry.GetSound("menuconfirm"));
                     break;
 
                 case UIState.ACTMENU:
                     PlayerController.instance.lastEnemyChosen = selectedEnemy + 1;
-                    textmgr.setCaller(encounter.enabledEnemies[selectedEnemy].script); // probably not necessary due to ActionDialogResult changes
-                    encounter.enabledEnemies[selectedEnemy].Handle(encounter.enabledEnemies[selectedEnemy].ActCommands[selectedAction]);
-                    playSound(AudioClipRegistry.GetSound("menuconfirm"));
+                    textmgr.SetCaller(encounter.EnabledEnemies[selectedEnemy].script); // probably not necessary due to ActionDialogResult changes
+                    encounter.EnabledEnemies[selectedEnemy].Handle(encounter.EnabledEnemies[selectedEnemy].ActCommands[selectedAction]);
+                    PlaySound(AudioClipRegistry.GetSound("menuconfirm"));
                     break;
 
                 case UIState.ITEMMENU:
                     //encounter.HandleItem(Inventory.container[selectedItem]);
                     encounter.HandleItem(selectedItem);
-                    playSound(AudioClipRegistry.GetSound("menuconfirm"));
+                    PlaySound(AudioClipRegistry.GetSound("menuconfirm"));
                     break;
 
                 case UIState.MERCYMENU:
@@ -796,7 +804,7 @@ public class UIController : MonoBehaviour {
                         int count = encounter.enemies.Length;
                         for (int i = 0; i < count; i++)
                             canspare[i] = encounter.enemies[i].CanSpare;
-                        LuaEnemyController[] enabledEnTemp = encounter.enabledEnemies;
+                        LuaEnemyController[] enabledEnTemp = encounter.EnabledEnemies;
                         //bool sparedAny = false;
                         for (int i = 0; i < count; i++) {
                             if (!enabledEnTemp.Contains(encounter.enemies[i]))
@@ -809,7 +817,7 @@ public class UIController : MonoBehaviour {
                                 //sparedAny = true;
                             }
                         }
-                        if (encounter.enabledEnemies.Length > 0)
+                        if (encounter.EnabledEnemies.Length > 0)
                             encounter.CallOnSelfOrChildren("HandleSpare");
                         /*if (encounter.enabledEnemies.Length > 0)
                             encounter.CallOnSelfOrChildren("HandleSpare");*/
@@ -821,31 +829,9 @@ public class UIController : MonoBehaviour {
                             }
                         }*/
 
-                    } else if (selectedMercy == 1) {
-                        PlayerController.instance.GetComponent<Image>().enabled = false;
-                        AudioClip yay = AudioClipRegistry.GetSound("runaway");
-                        UnitaleUtil.PlaySound("Mercy", yay, 0.65f);
-
-                        string[] text = { "I'm outta here.", "I've got shit to do.", "I've got better things to do.", "Don't waste my time.", "Fuck this shit I'm out.",
-                                          "Nah, I don't like you.", "I just wanted to walk\ra bit. Leave me alone.", "You're cute, I won't kill you :3",
-                                          "Better safe than sorry.", "Do as if you've never saw\rthem and walk away.", "I'll kill you last.",
-                                          "Nope. [w:5]Nope. Nope. Nope. Nope.", "Wait for me, Rhenaud!", "Flee like sissy!" };
-
-                        string[] textSFW = { "I'm outta here.",  "I've got better things to do.", "Don't waste my time.",
-                                             "Nah, I don't like you.", "I just wanted to walk\ra bit. Leave me alone.", "You're cute, I won't kill you :3",
-                                             "Better safe than sorry.", "Do as if you've never saw\rthem and walk away.", "I'll kill you last.",
-                                             "Nope. [w:5]Nope. Nope. Nope. Nope.", "Wait for me, Rhenaud!", "Flee like sissy!" };
-
-                        if (ControlPanel.instance.Safe)
-                            ActionDialogResult(new TextMessage[] { new RegularMessage(textSFW[Math.randomRange(0, textSFW.Length)]) }, UIState.ENEMYDIALOGUE);
-                        else
-                            ActionDialogResult(new TextMessage[] { new RegularMessage(text[Math.randomRange(0, text.Length)]) }, UIState.ENEMYDIALOGUE);
-
-                        Camera.main.GetComponent<AudioSource>().Pause();
-                        musicPausedFromRunning = true;
-                        fleeSwitch = true;
-                    }
-                    playSound(AudioClipRegistry.GetSound("menuconfirm"));
+                    } else if (selectedMercy == 1)
+                        StartCoroutine(ISuperFlee());
+                    PlaySound(AudioClipRegistry.GetSound("menuconfirm"));
                     break;
 
                 case UIState.ENEMYDIALOGUE:
@@ -853,14 +839,14 @@ public class UIController : MonoBehaviour {
                     foreach (TextManager mgr in monDialogues) {
                         if (mgr == null)
                             continue;
-                        if (mgr.lineCount() > 1 ||!mgr.canSkip()) {
+                        if (mgr.LineCount() > 1 ||!mgr.CanSkip()) {
                             singleLineAll = false;
                             break;
                         }
                     }
                     if (singleLineAll) {
                         foreach (TextManager mgr in monDialogues)
-                            mgr.doSkipFromPlayer();
+                            mgr.DoSkipFromPlayer();
                         textmgr.nextMonsterDialogueOnce = true;
                     } else if (!ArenaManager.instance.isResizeInProgress()) {
                         bool readyToSkip = true;
@@ -871,12 +857,12 @@ public class UIController : MonoBehaviour {
                             }
                         }
                         if (readyToSkip)
-                            doNextMonsterDialogue();
+                            DoNextMonsterDialogue();
                     }
                     break;
             }
         else
-            playSound(AudioClipRegistry.GetSound("menuconfirm"));
+            PlaySound(AudioClipRegistry.GetSound("menuconfirm"));
     }
 
     private void HandleArrows() {
@@ -899,48 +885,48 @@ public class UIController : MonoBehaviour {
 
                 if (left)  actionIndex--;
                 if (right) actionIndex++;
-                actionIndex = Math.mod(actionIndex, 4);
+                actionIndex = Math.Mod(actionIndex, 4);
                 action = (Actions)actionIndex;
-                setPlayerOnAction(action);
-                playSound(AudioClipRegistry.GetSound("menumove"));
+                SetPlayerOnAction(action);
+                PlaySound(AudioClipRegistry.GetSound("menumove"));
                 break;
 
             case UIState.ENEMYSELECT:
                 bool unpair = false;
-                if (encounter.enabledEnemies.Length > 3) {
+                if (encounter.EnabledEnemies.Length > 3) {
                     if (!up &&!down &&!right &&!left) break;
                     if (right) {
                         if (selectedEnemy % 2 == 1)
                             unpair = true;
-                        selectedEnemy = (selectedEnemy + 2) % encounter.enabledEnemies.Length;
-                        if (encounter.enabledEnemies.Length % 2 == 1 && selectedEnemy < 2)
+                        selectedEnemy = (selectedEnemy + 2) % encounter.EnabledEnemies.Length;
+                        if (encounter.EnabledEnemies.Length % 2 == 1 && selectedEnemy < 2)
                             if (unpair) selectedEnemy = 1;
                             else selectedEnemy = 0;
                     } else if (left) {
                         if (selectedEnemy % 2 == 1)
                             unpair = true;
-                        selectedEnemy = (selectedEnemy - 2 + encounter.enabledEnemies.Length) % encounter.enabledEnemies.Length; 
-                        if (encounter.enabledEnemies.Length % 2 == 1 && selectedEnemy > encounter.enabledEnemies.Length - 3)
-                            if (unpair && encounter.enabledEnemies.Length % 2 == 0)      selectedEnemy = encounter.enabledEnemies.Length - 1;
-                            else if (unpair && encounter.enabledEnemies.Length % 2 == 1) selectedEnemy = encounter.enabledEnemies.Length - 2;
-                            else if (!unpair && encounter.enabledEnemies.Length % 2 == 0) selectedEnemy = encounter.enabledEnemies.Length - 2;
-                            else if (!unpair && encounter.enabledEnemies.Length % 2 == 1) selectedEnemy = encounter.enabledEnemies.Length - 1;
-                    } else if ((up || down) && selectedEnemy / 2 * 2 + (selectedEnemy % 2 + 1) % 2 < encounter.enabledEnemies.Length)
+                        selectedEnemy = (selectedEnemy - 2 + encounter.EnabledEnemies.Length) % encounter.EnabledEnemies.Length; 
+                        if (encounter.EnabledEnemies.Length % 2 == 1 && selectedEnemy > encounter.EnabledEnemies.Length - 3)
+                            if (unpair && encounter.EnabledEnemies.Length % 2 == 0)      selectedEnemy = encounter.EnabledEnemies.Length - 1;
+                            else if (unpair && encounter.EnabledEnemies.Length % 2 == 1) selectedEnemy = encounter.EnabledEnemies.Length - 2;
+                            else if (!unpair && encounter.EnabledEnemies.Length % 2 == 0) selectedEnemy = encounter.EnabledEnemies.Length - 2;
+                            else if (!unpair && encounter.EnabledEnemies.Length % 2 == 1) selectedEnemy = encounter.EnabledEnemies.Length - 1;
+                    } else if ((up || down) && selectedEnemy / 2 * 2 + (selectedEnemy % 2 + 1) % 2 < encounter.EnabledEnemies.Length)
                         selectedEnemy = selectedEnemy / 2 * 2 + (selectedEnemy % 2 + 1) % 2;
                     if (right || left) {
                         string[] colors = new string[6];
-                        string[] textTemp = getEnemyPage(selectedEnemy / 2, out colors);
-                        textmgr.setText(new SelectMessage(textTemp, false, colors));
+                        string[] textTemp = GetEnemyPage(selectedEnemy / 2, out colors);
+                        textmgr.SetText(new SelectMessage(textTemp, false, colors));
                         if (forcedaction == Actions.FIGHT)
-                            renewLifebars(selectedEnemy / 2);
+                            RenewLifebars(selectedEnemy / 2);
                     }
-                    setPlayerOnSelection(selectedEnemy % 2 * 2);
+                    SetPlayerOnSelection(selectedEnemy % 2 * 2);
                 } else {
                     if (!up &&!down) break;
                     else if (up) selectedEnemy--;
                     else if (down) selectedEnemy++;
-                    selectedEnemy = (selectedEnemy + encounter.enabledEnemies.Length) % encounter.enabledEnemies.Length;
-                    setPlayerOnSelection(selectedEnemy * 2);
+                    selectedEnemy = (selectedEnemy + encounter.EnabledEnemies.Length) % encounter.EnabledEnemies.Length;
+                    SetPlayerOnSelection(selectedEnemy * 2);
                 }
                 break;
 
@@ -956,16 +942,16 @@ public class UIController : MonoBehaviour {
                 else if (up)    yCol--;
                 else if (down)  yCol++;
 
-                int actionCount = encounter.enabledEnemies[selectedEnemy].ActCommands.Length;
+                int actionCount = encounter.EnabledEnemies[selectedEnemy].ActCommands.Length;
                 int leftColSize = (actionCount + 1) / 2;
                 int rightColSize = actionCount / 2;
 
-                if (left || right) xCol = Math.mod(xCol, 2);
-                if (up || down)    yCol = xCol == 0 ? Math.mod(yCol, leftColSize) : Math.mod(yCol, rightColSize);
+                if (left || right) xCol = Math.Mod(xCol, 2);
+                if (up || down)    yCol = xCol == 0 ? Math.Mod(yCol, leftColSize) : Math.Mod(yCol, rightColSize);
                 int desiredAction = yCol * 2 + xCol;
                 if (desiredAction >= 0 && desiredAction < actionCount) {
                     selectedAction = desiredAction;
-                    setPlayerOnSelection(selectedAction);
+                    SetPlayerOnSelection(selectedAction);
                 }
                 break;
 
@@ -973,8 +959,8 @@ public class UIController : MonoBehaviour {
                 if (!up &&!down &&!left &&!right)
                     return;
 
-                int xColI = Math.mod(selectedItem, 2);
-                int yColI = Math.mod(selectedItem, 4) / 2;
+                int xColI = Math.Mod(selectedItem, 2);
+                int yColI = Math.Mod(selectedItem, 4) / 2;
 
                 if (left)       xColI--;
                 else if (right) xColI++;
@@ -997,7 +983,7 @@ public class UIController : MonoBehaviour {
                 }
 
                 if (up || down)
-                    yColI = xColI == 0 ? Math.mod(yColI, leftColSizeI) : Math.mod(yColI, rightColSizeI);
+                    yColI = xColI == 0 ? Math.Mod(yColI, leftColSizeI) : Math.Mod(yColI, rightColSizeI);
                 desiredItem += (yColI * 2 + xColI);
 
                 // UnitaleUtil.writeInLog("xCol after evaluation " + xColI);
@@ -1005,14 +991,14 @@ public class UIController : MonoBehaviour {
 
                 // UnitaleUtil.writeInLog("Unchecked desired item " + desiredItem);
 
-                if (desiredItem < 0)                              desiredItem = Math.mod(desiredItem, 4) + (Inventory.inventory.Count / 4) * 4;
-                else if (desiredItem > Inventory.inventory.Count) desiredItem = Math.mod(desiredItem, 4);
+                if (desiredItem < 0)                              desiredItem = Math.Mod(desiredItem, 4) + (Inventory.inventory.Count / 4) * 4;
+                else if (desiredItem > Inventory.inventory.Count) desiredItem = Math.Mod(desiredItem, 4);
 
                 if (desiredItem != selectedItem && desiredItem < Inventory.inventory.Count) { // 0 check not needed, done before
                     selectedItem = desiredItem;
-                    setPlayerOnSelection(Math.mod(selectedItem, 4));
+                    SetPlayerOnSelection(Math.Mod(selectedItem, 4));
                     int page = selectedItem / 4;
-                    textmgr.setText(new SelectMessage(getInventoryPage(page), false));
+                    textmgr.SetText(new SelectMessage(GetInventoryPage(page), false));
                 }
 
                 // UnitaleUtil.writeInLog("Desired item index after evaluation " + desiredItem);
@@ -1022,10 +1008,10 @@ public class UIController : MonoBehaviour {
                 if (!up &&!down)     break;
                 if (up)               selectedMercy--;
                 if (down)             selectedMercy++;
-                if (encounter.CanRun) selectedMercy = Math.mod(selectedMercy, 2);
+                if (encounter.CanRun) selectedMercy = Math.Mod(selectedMercy, 2);
                 else                   selectedMercy = 0;
 
-                setPlayerOnSelection(selectedMercy * 2);
+                SetPlayerOnSelection(selectedMercy * 2);
                 break;
         }
     }
@@ -1034,8 +1020,8 @@ public class UIController : MonoBehaviour {
         switch (state) {
             case UIState.ACTIONSELECT:
             case UIState.DIALOGRESULT:
-                if (textmgr.canSkip() &&!textmgr.lineComplete())
-                    textmgr.doSkipFromPlayer();
+                if (textmgr.CanSkip() &&!textmgr.LineComplete())
+                    textmgr.DoSkipFromPlayer();
                     //textmgr.skipText();
                 break;
 
@@ -1044,10 +1030,10 @@ public class UIController : MonoBehaviour {
                 bool cannotSkip = false;
                 // why two booleans for the same result? 'cause they're different conditions
                 foreach (TextManager mgr in monDialogues) {
-                    if (!mgr.canSkip())
+                    if (!mgr.CanSkip())
                         cannotSkip = true;
 
-                    if (mgr.lineCount() > 1)
+                    if (mgr.LineCount() > 1)
                         singleLineAll = false;
                 }
 
@@ -1055,7 +1041,7 @@ public class UIController : MonoBehaviour {
                     break;
 
                 foreach (TextManager mgr in monDialogues)
-                    mgr.doSkipFromPlayer();
+                    mgr.DoSkipFromPlayer();
                     //mgr.skipText();
                 break;
 
@@ -1071,15 +1057,15 @@ public class UIController : MonoBehaviour {
         }
     }
 
-    private void playSound(AudioClip clip) {
+    private void PlaySound(AudioClip clip) {
         if (!uiAudio.clip.Equals(clip))
             uiAudio.clip = clip;
         uiAudio.Play();
     }
 
-    public static void playSoundSeparate(AudioClip clip) { UnitaleUtil.PlaySound("SeparateSound", clip, 0.95f); }
+    public static void PlaySoundSeparate(AudioClip clip) { UnitaleUtil.PlaySound("SeparateSound", clip, 0.95f); }
 
-    private void setPlayerOnAction(Actions action) {
+    private void SetPlayerOnAction(Actions action) {
         switch (action) {
             case Actions.FIGHT:
                 fightBtn.overrideSprite = fightB1;
@@ -1107,7 +1093,7 @@ public class UIController : MonoBehaviour {
     // 0    1
     // 2    3
     // 4    5
-    private void setPlayerOnSelection(int selection) {
+    private void SetPlayerOnSelection(int selection) {
         int xMv = selection % 2; // remainder safe again, selection is never negative
         int yMv = selection / 2;
         // HACK: remove hardcoding of this sometime, ever... probably not happening lmao
@@ -1138,7 +1124,7 @@ public class UIController : MonoBehaviour {
         GlobalControls.ppcollision = false;
         ControlPanel.instance.FrameBasedMovement = false;
         textmgr = GameObject.Find("TextManager").GetComponent<TextManager>();
-        textmgr.setEffect(new TwitchEffect(textmgr));
+        textmgr.SetEffect(new TwitchEffect(textmgr));
         encounter = FindObjectOfType<LuaEnemyEncounter>();
 
         fightBtn = GameObject.Find("FightBt").GetComponent<Image>();
@@ -1184,7 +1170,7 @@ public class UIController : MonoBehaviour {
         spareList = new bool[encounter.enemies.Length];
         for (int i = 0; i < spareList.Length; i ++)
             spareList[i] = false;
-        bindEncounterScriptInteraction();
+        BindEncounterScriptInteraction();
         GameObject.Find("Main Camera").GetComponent<ProjectileHitboxRenderer>().enabled =!GameObject.Find("Main Camera").GetComponent<ProjectileHitboxRenderer>().enabled;
         //There are scene init bugs, let's fix them!
         /*if (GameObject.Find("TopLayer").transform.parent != GameObject.Find("Canvas").transform) {
@@ -1228,8 +1214,8 @@ public class UIController : MonoBehaviour {
             SwitchState(UIState.ACTIONSELECT, true);
     }
 
-    public void checkAndTriggerVictory() {
-        if (encounter.enabledEnemies.Length > 0)
+    public void CheckAndTriggerVictory() {
+        if (encounter.EnabledEnemies.Length > 0)
             return;
         Camera.main.GetComponent<AudioSource>().Stop();
         bool levelup = PlayerCharacter.instance.AddBattleResults(exp, gold);
@@ -1255,10 +1241,28 @@ public class UIController : MonoBehaviour {
         PlayerController.instance.GetComponent<Image>().enabled = false;
         AudioClip yay = AudioClipRegistry.GetSound("runaway");
         UnitaleUtil.PlaySound("Mercy", yay, 0.65f);
+        
+        string[] fleeTexts;
+        DynValue tempFleeTexts = LuaEnemyEncounter.script.GetVar("fleetexts");
+        if (tempFleeTexts.Type == DataType.Table) {
+            fleeTexts = new string[tempFleeTexts.Table.Length];
+            for (int i = 0; i < tempFleeTexts.Table.Length; i++)
+                fleeTexts[i] = tempFleeTexts.Table.Get(i + 1).String;
+        } else if (ControlPanel.instance.Safe)
+            fleeTexts = new string[] { "I'm outta here.",  "I've got better things to do.", "Don't waste my time.",
+                                       "Nah, I don't like you.", "I just wanted to walk\ra bit. Leave me alone.", "You're cute, I won't kill you :3",
+                                       "Better safe than sorry.", "Do as if you've never saw\rthem and walk away.", "I'll kill you last.",
+                                       "Nope. [w:5]Nope. Nope. Nope. Nope.", "Wait for me, Rhenaud!", "Flee like sissy!" };
+        else
+            fleeTexts = new string[] { "I'm outta here.", "I've got shit to do.", "I've got better things to do.", "Don't waste my time.", "Fuck this shit I'm out.",
+                                       "Nah, I don't like you.", "I just wanted to walk\ra bit. Leave me alone.", "You're cute, I won't kill you :3",
+                                       "Better safe than sorry.", "Do as if you've never saw\rthem and walk away.", "I'll kill you last.",
+                                       "Nope. [w:5]Nope. Nope. Nope. Nope.", "Wait for me, Rhenaud!", "Flee like sissy!" };
 
-        string[] text = { "See mom, I can flee!", "LEGZ!", "It looks more like a\nreal flee.", "/me flees", "*flees*", "To infinity and beyond!",
-                          "Yeah, that's the secret.\nI hope you liked it!"};
-        ActionDialogResult(new TextMessage[] { new RegularMessage(text[Math.randomRange(0, text.Length)]) }, UIState.ENEMYDIALOGUE);
+        /*string[] text = { "See mom, I can flee!", "LEGZ!", "It looks more like a\nreal flee.", "/me flees", "*flees*", "To infinity and beyond!",
+                            "Yeah, that's the secret.\nI hope you liked it!"};*/
+
+        ActionDialogResult(new TextMessage[] { new RegularMessage(fleeTexts[Math.RandomRange(0, fleeTexts.Length)]) }, UIState.ENEMYDIALOGUE);
 
         Camera.main.GetComponent<AudioSource>().Pause();
         LuaSpriteController spr = (LuaSpriteController)SpriteUtil.MakeIngameSprite("spr_heartgtfo_0", "Top").UserData.Object;
@@ -1306,38 +1310,38 @@ public class UIController : MonoBehaviour {
             }
         }
 
-        if (textmgr.isPaused() &&!ArenaManager.instance.isResizeInProgress())
-            textmgr.setPause(false);
+        if (textmgr.IsPaused() &&!ArenaManager.instance.isResizeInProgress())
+            textmgr.SetPause(false);
 
         if (state == UIState.DIALOGRESULT)
-            if (textmgr.canAutoSkipAll() || (textmgr.canAutoSkipThis() && textmgr.lineComplete()))
-                if (textmgr.hasNext())
-                    textmgr.nextLine();
+            if (textmgr.CanAutoSkipAll() || (textmgr.CanAutoSkipThis() && textmgr.LineComplete()))
+                if (textmgr.HasNext())
+                    textmgr.NextLineText();
                 else {
-                    textmgr.destroyText();
+                    textmgr.DestroyText();
                     SwitchState(stateAfterDialogs);
                 }
 
         if (state == UIState.ENEMYDIALOGUE) {
             bool allSkip = true;
             foreach (TextManager mgr in monDialogues)
-                if (!mgr.canAutoSkipThis()) {
+                if (!mgr.CanAutoSkipThis()) {
                     allSkip = false;
                     break;
                 }
-            if (allSkip)  doNextMonsterDialogue();
+            if (allSkip)  DoNextMonsterDialogue();
             else          UpdateMonsterDialogue();
 
         }
 
         if (state == UIState.DEFENDING) {
-            if (!encounter.waveInProgress()) {
+            if (!encounter.WaveInProgress()) {
                 if (GlobalControls.retroMode)
                 foreach (LuaProjectile p in FindObjectsOfType<LuaProjectile>())
                         BulletPool.instance.Requeue(p);
                 SwitchState(UIState.ACTIONSELECT);
             } else if (!encounter.gameOverStance)
-                encounter.updateWave();
+                encounter.UpdateWave();
             return;
         }
 
@@ -1355,7 +1359,7 @@ public class UIController : MonoBehaviour {
             bool noOnDeath = true;
             onDeathSwitch = true;
             int tempIndex = 0;
-            foreach (LuaEnemyController enemycontroller in encounter.enabledEnemies) {
+            foreach (LuaEnemyController enemycontroller in encounter.EnabledEnemies) {
                 int hp = enemycontroller.HP;
                 if (hp <= 0 &&!enemycontroller.Unkillable) {
                     // fightUI.disableImmediate();
@@ -1363,7 +1367,7 @@ public class UIController : MonoBehaviour {
                         noOnDeath = false;
                         enemycontroller.DoKill();
 
-                        if (encounter.enabledEnemies.Length > 0)
+                        if (encounter.EnabledEnemies.Length > 0)
                             SwitchState(UIState.ENEMYDIALOGUE);
                         //else
                         //    checkAndTriggerVictory();

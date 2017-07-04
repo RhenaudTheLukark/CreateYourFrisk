@@ -79,7 +79,7 @@ public class MusicManager {
 
     public static string GetSoundDictionary(string key) {
         if (hiddenDictionary.ContainsKey(key.ToLower()))  return (string)hiddenDictionary[key.ToLower()];
-        else                                              return key;     
+        else                                              return key;
     }
 
     public static void SetSoundDictionary(string key, string value) {
@@ -91,6 +91,10 @@ public class MusicManager {
                 hiddenDictionary.Remove(key);
             hiddenDictionary.Add(key, value);
         }
+    }
+
+    public static bool IsPlaying {
+        get { return src.isPlaying; }
     }
 
     //[System.Runtime.CompilerServices.IndexerName("SoundDictionary")]
