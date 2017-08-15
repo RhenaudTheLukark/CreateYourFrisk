@@ -46,14 +46,17 @@ function EnterSell()
     --    Interrupt(selltalk2, "MENU")
     --end        
 end
-function EnterTalk() 
-end
-function EnterMenu() 
-end
-function EnterExit() 
-end
-function OnInterrupt(nextState)
-endfunction SuccessBuy(item)    acted = true    sold = true    buytalk = "Thanks for\nthe purchase!\nI'm just a\nshopkeeper."endfunction FailBuy(buyerror)    acted = true    if buyerror == "full" then        buytalk = "You can't\ncarry any\nmore items..."    elseif buyerror == "gold" then        buytalk = "You don't\nhave enough\nmoney to\nbuy this!"    endend
+
+function EnterTalk() end
+
+function EnterMenu() end
+
+function EnterExit() end
+
+function OnInterrupt(nextState) end
+function SuccessBuy(item)    acted = true    sold = true    buytalk = "Thanks for\nthe purchase!\nI'm just a\nshopkeeper."end
+function FailBuy(buyerror)    acted = true    if buyerror == "full" then        buytalk = "You can't\ncarry any\nmore items..."    elseif buyerror == "gold" then        buytalk = "You don't\nhave enough\nmoney to\nbuy this!"    endend
+
 function ReturnBuy() 
     if sold then
         maintalk = "Thanks again for\rthe purchase! I'm\rjust a shopkeeper."
@@ -61,10 +64,11 @@ function ReturnBuy()
         maintalk = "What else? I'm\rjust a shopkeeper."
     end
 end
-function SuccessSell(item) 
-end
-function ReturnSell() 
-end
+
+function SuccessSell(item) end
+
+function ReturnSell() end
+
 function SuccessTalk(action) 
     if action == "Job" then
         talklist[1][1] = "Shopkeeper"
@@ -88,7 +92,6 @@ function SuccessTalk(action)
         talklist[2][1] = "[novoice](NEVER AGAIN)"
     end
 end
-
 
 
 function Drowsy() 

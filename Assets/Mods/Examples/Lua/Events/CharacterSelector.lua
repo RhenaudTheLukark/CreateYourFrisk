@@ -4,7 +4,7 @@ local background = nil
 local player = nil
 local chars = {}
 
-local animationKeys = { "FriskUT", "CharaOW", "MonsterKidOW", "CharaTadOW", "AsrielOW" }
+local animationKeys = { "FriskUT", "CharaOW", "MonsterKidOW", "BoosterOW", "AsrielOW" }
 local animationCount = 0
 local friskWait = 1
 
@@ -87,9 +87,44 @@ function EventPage1()
                                                        "MonsterKidOW/f5", "MonsterKidOW/f5", "MonsterKidOW/f5",  "MonsterKidOW/f6",  "MonsterKidOW/f7",
                                                        "MonsterKidOW/f8", "MonsterKidOW/f9", "MonsterKidOW/f10", "MonsterKidOW/f11"                     }, 0.1)
         elseif currentChar == 4 then
-            Event.SetAnimHeader("Player", "CharaTad")
-            chars[currentChar]["sprite"].SetAnimation({"CharaTadOW/a1", "CharaTadOW/a1", "CharaTadOW/a1", "CharaTadOW/1", "CharaTadOW/a2", "CharaTadOW/a2", "CharaTadOW/a2",
-                                                       "CharaTadOW/1", "CharaTadOW/1", "CharaTadOW/a3", "CharaTadOW/a3", "CharaTadOW/a3", "CharaTadOW/a4"}, 0.2)
+            if count == nil then
+				count = 0
+                inProgress = true
+                Event.SetAnimHeader("Player", "Booster")
+                chars[currentChar]["sprite"].StopAnimation()
+                chars[currentChar]["sprite"].Set(animationKeys[currentChar] .. "/1")
+                chars[currentChar]["cross"].Set("ut-heart")
+                chars[currentChar]["cross"].y = chars[currentChar]["cross"].y - 8
+                chars[currentChar]["cross"].x = chars[currentChar]["cross"].x + 31
+                chars[currentChar]["cross"].color32 = {0, 60, 255}
+            elseif (count - 30) % 12 == 0 and count < 60 and count >= 30 then
+                if show then
+                    chars[currentChar]["cross"].alpha = 0
+                else
+                    chars[currentChar]["cross"].alpha = 1
+                    NewAudio.PlaySound("CharSelect", "BeginBattle2")
+                end
+                show = not show
+            elseif count >= 90 and count <= 150 then
+                if count == 90 then
+                    chars[currentChar]["sprite"].Set(animationKeys[currentChar] .. "/j1")
+                    chars[currentChar]["sprite"].x = chars[currentChar]["sprite"].x + .5
+                    --chars[currentChar]["cross"].x = chars[currentChar]["cross"].x + .5
+                end
+                if count == 120 then
+                    chars[currentChar]["sprite"].Set(animationKeys[currentChar] .. "/j0")
+                end
+                chars[currentChar]["sprite"].y = chars[currentChar]["sprite"].y + vely
+                --chars[currentChar]["cross"].y = chars[currentChar]["cross"].y + vely
+                vely = vely - 1/15
+                if count == 150 then
+                    chars[currentChar]["sprite"].Set(animationKeys[currentChar] .. "/1")
+                end
+            elseif count == 165 then
+                phase = 5
+            end
+            count = count + 1
+            return
         elseif currentChar == 5 then
             Event.SetAnimHeader("Player", "Asriel")
             chars[currentChar]["sprite"].SetPivot(.5, 0)

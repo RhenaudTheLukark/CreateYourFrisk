@@ -69,11 +69,11 @@ class AutoloadResourcesFromRegistry : MonoBehaviour {
                         if (SetNativeSize) {
                             img.SetNativeSize();
                             if (!UnitaleUtil.IsOverworld) {
-                                img.rectTransform.sizeDelta = new Vector2(img.sprite.texture.width, img.sprite.texture.height);
                                 img.rectTransform.localScale = new Vector3(1, 1, 1);
+                                img.rectTransform.sizeDelta = new Vector2(img.sprite.texture.width, img.sprite.texture.height);
                             } else {
-                                img.rectTransform.sizeDelta = new Vector2(img.sprite.texture.width / 100f, img.sprite.texture.height / 100f);
                                 img.rectTransform.localScale = new Vector3(100, 100, 1);
+                                img.rectTransform.sizeDelta = new Vector2(img.sprite.texture.width / 100f, img.sprite.texture.height / 100f);
                             }
                         }
                     }
@@ -88,11 +88,11 @@ class AutoloadResourcesFromRegistry : MonoBehaviour {
                         //img2.sprite.name = SpritePath.ToLower();
                         if (SetNativeSize) {
                             if (!UnitaleUtil.IsOverworld) {
-                                img2.GetComponent<RectTransform>().sizeDelta = new Vector2(img2.sprite.texture.width, img2.sprite.texture.height);
                                 img2.transform.localScale = new Vector3(1, 1, 1);
+                                img2.GetComponent<RectTransform>().sizeDelta = new Vector2(img2.sprite.texture.width, img2.sprite.texture.height);
                             } else {
-                                img2.GetComponent<RectTransform>().sizeDelta = new Vector2(img2.sprite.texture.width / 100f, img2.sprite.texture.height / 100f);
                                 img2.transform.localScale = new Vector3(100, 100, 1);
+                                img2.GetComponent<RectTransform>().sizeDelta = new Vector2(img2.sprite.texture.width / 100f, img2.sprite.texture.height / 100f);
                             }
                         }
                     }

@@ -1,5 +1,5 @@
 function EventPage1()
-    Event.MoveToPoint("Player", 320, 540, true)
+    Event.MoveToPoint("Player", 320, 400, false)
     hp = Player.GetHP()
     General.SetDialog({"Erm[waitall:3]...[waitall:1][w:10] Why did you go here with your " ..hp .." HP?"}, true, {"papyrus_mugshot_2"})
 end
@@ -59,10 +59,10 @@ function EventPage3()
 		General.WaitForInput()
 		Screen.SupprImg(1)
 		Screen.SetTone(true, true, 0, 0, 0, 0)
-	elseif (GetRealGlobal("GoAway") < 8) then	General.SetDialog({"There's no more to see here,[w:5] kiddo. You can go."}, true, {"rtlukark_normal"})
-	elseif (GetRealGlobal("GoAway") < 13) then	General.SetDialog({"You're so patient,[w:5] I love this !"}, true, {"rtlukark_=3"})
+	elseif (GetRealGlobal("GoAway") < 8)   then	General.SetDialog({"There's no more to see here,[w:5] kiddo. You can go."}, true, {"rtlukark_normal"})
+	elseif (GetRealGlobal("GoAway") < 13)  then	General.SetDialog({"You're so patient,[w:5] I love this !"}, true, {"rtlukark_=3"})
 	elseif (GetRealGlobal("GoAway") == 13) then	General.SetDialog({"You're boring me right\nnow.[w:10] If you don't stop this,[w:5] I'll be forced to use my special attack."}, true, 
-													  {"rtlukark_normal","rtlukark_normal"})
+													              {"rtlukark_normal","rtlukark_normal"})
 	elseif (GetRealGlobal("GoAway") == 14) then	General.SetDialog({"JUST. [w:10]STOP. [w:10]This is your final warning."}, true, {"rtlukark_angry"})
 	elseif (GetRealGlobal("GoAway") == 15) then	
 		General.SetDialog({"Ok,[w:5] here you go![w:10][next]"}, true, {"rtlukark_angry"})
@@ -75,67 +75,6 @@ function EventPage4()
 	Misc.ShakeScreen(3, 3, true)
     General.Wait(180)
 	Screen.Flash(60, 255, 0, 0, 255)
-	--These following lines were used for Quaternion tests.
-	--You can activate them if you want to
-    --/!\ Not usable anymore /!\
-	--[[SetTone(true, true, 0, 0, 0, 128)
-	DispImg("photo", 1, 320, 240, 436, 256, 224, 130, 40, 255)
-	WaitForInput()
-	RotateEvent("Image1", 360, 0, 0)
-	WaitForInput()
-	RotateEvent("Image1", 0, 360, 0)
-	WaitForInput()
-	RotateEvent("Image1", 0, 0, 360)
-	WaitForInput()
-	RotateEvent("Image1", 360, 360, 360)
-	WaitForInput()
-	RotateEvent("Image1", 180, 360, 0)
-	WaitForInput()
-	RotateEvent("Image1", 0, 180, 360)
-	WaitForInput()
-	RotateEvent("Image1", 360, 0, 180)
-	WaitForInput()
-	RotateEvent("Image1", 360, 360, 360)
-	WaitForInput()
-	SupprImg(1)
-	SetTone(true, true, 0, 0, 0, 0)]]
-	--General.GameOver({ "[voice:v_sans]Wazzup bro?", "[voice:v_sans]I love this music, don't you?" }, "mus_zz_megalovania")
-end
-
---Reset CYF 0.6's secret
-function EventPage5()
-    SetAlMightyGlobal("CYFInternalCharacterSelected", false)
-    SetAlMightyGlobal("CYFInternalCross1", false)
-    SetAlMightyGlobal("CYFInternalCross2", false)
-    SetAlMightyGlobal("CYFInternalCross3", false)
-    SetAlMightyGlobal("CYFInternalCross4", false)
-    SetAlMightyGlobal("CYFInternalCross5", false)
-    Player.Teleport("test2", 320, 200, 2, true)
-end
-
---Test MoveToPoint
-function EventPage6()
-    Event.MoveToPoint("Player", 320, 100, true)
-    local playerPos = Event.GetPosition("Player")
-    DEBUG(tostring(playerPos[1]) .. " " .. tostring(playerPos[2]))
-    Event.MoveToPoint("Player", 200, 240, true)
-    local playerPos = Event.GetPosition("Player")
-    DEBUG(tostring(playerPos[1]) .. " " .. tostring(playerPos[2]))
-    Event.MoveToPoint("Player", 320, 380, true)
-    local playerPos = Event.GetPosition("Player")
-    DEBUG(tostring(playerPos[1]) .. " " .. tostring(playerPos[2]))
-    Event.MoveToPoint("Player", 440, 240, true)
-    local playerPos = Event.GetPosition("Player")
-    DEBUG(tostring(playerPos[1]) .. " " .. tostring(playerPos[2]))
-    Event.MoveToPoint("Player", 320, 100, true)
-    local playerPos = Event.GetPosition("Player")
-    DEBUG(tostring(playerPos[1]) .. " " .. tostring(playerPos[2]))
-    Event.MoveToPoint("Player", 320, 380, true)
-    local playerPos = Event.GetPosition("Player")
-    DEBUG(tostring(playerPos[1]) .. " " .. tostring(playerPos[2]))
-    Event.MoveToPoint("Player", 320, 100, true)
-    local playerPos = Event.GetPosition("Player")
-    DEBUG(tostring(playerPos[1]) .. " " .. tostring(playerPos[2]))
 	--These following lines were used for Quaternion tests.
 	--You can activate them if you want to
     --/!\ Not usable anymore /!\

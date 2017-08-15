@@ -90,7 +90,7 @@ public static class LuaScriptBinder {
                 script.Globals["Encounter"] = LuaEnemyEncounter.script_ref;
             DynValue PlayerStatus = UserData.Create(PlayerController.luaStatus);
             script.Globals.Set("Player", PlayerStatus);
-        } else {
+        } else if (!GlobalControls.isInShop) {
             try {
                 DynValue PlayerOW = UserData.Create(EventManager.instance.luaplow);
                 script.Globals.Set("FPlayer", PlayerOW);
@@ -326,13 +326,15 @@ public static class LuaScriptBinder {
         GameObject go = UnityEngine.Object.Instantiate(Resources.Load<GameObject>("Prefabs/CstmTxtContainer"));
         LuaTextManager luatm = go.GetComponentInChildren<LuaTextManager>();
         go.GetComponent<RectTransform>().position = new Vector2((float)position.Table.Get(1).Number, (float)position.Table.Get(2).Number);
-        go.GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth + 24, 100);
+
+        UnitaleUtil.GetChildPerName(go.transform, "BubbleContainer").GetComponent<RectTransform>().pivot = new Vector2(0, 1);
+        UnitaleUtil.GetChildPerName(go.transform, "BubbleContainer").GetComponent<RectTransform>().localPosition = new Vector2(-12, 8);
         UnitaleUtil.GetChildPerName(go.transform, "BubbleContainer").GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth + 20, 100);     //Used to set the borders
         UnitaleUtil.GetChildPerName(go.transform, "BackHorz").GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth + 20, 100 - 20 * 2);   //BackHorz
         UnitaleUtil.GetChildPerName(go.transform, "BackVert").GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth - 20, 100);            //BackVert
         UnitaleUtil.GetChildPerName(go.transform, "CenterHorz").GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth + 16, 96 - 16 * 2);  //CenterHorz
         UnitaleUtil.GetChildPerName(go.transform, "CenterVert").GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth - 16, 96);           //CenterVert
-        luatm.SetFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_MONSTERTEXT_NAME));
+        luatm.SetFont(SpriteFontRegistry.UI_MONSTERTEXT_NAME, true);
         foreach (ScriptWrapper scrWrap in ScriptWrapper.instances) {
             if (scrWrap.script == scr) {
                 luatm.SetCaller(scrWrap);

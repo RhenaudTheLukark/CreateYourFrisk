@@ -5,6 +5,8 @@
 
 --Camera: 1060, 707
 function EventPage0() 
+    local punderSprite = Event.GetSprite(Event.GetName())
+	punderSprite.Scale(2, 2)
     if GetAlMightyGlobal("CYFInternalCross2") then 
         Event.Remove(Event.GetName() .. " (1)")
         Event.Remove(Event.GetName())
@@ -22,11 +24,11 @@ function EventPage2()
     local maskSprite = Event.GetSprite(Event.GetName() .. " (1)")
     maskSprite.loopmode = "ONESHOT"
     NewAudio.CreateChannel("temp")
-    Event.MoveToPoint("Player", 1020, 680, true)
     Event.IgnoreCollision(Event.GetName(), true)
     Event.IgnoreCollision(Event.GetName() .. " (1)", true)
+    Event.MoveToPoint("Player", 1020, 680, true)
     Event.SetDirection("Player", 6)
-    punderSprite.xscale = -200
+    punderSprite.xscale = -2
     Event.SetDirection(Event.GetName(), 6)
     General.Wait(30)
     General.SetDialog({"[noskip][voice:punderbolt]Hello th[mugshot:Punder/intimidated][waitall:2]ere... [w:25][waitall:1]May I help you?"}, true, {"punderNormal"})
@@ -46,7 +48,7 @@ function EventPage2()
     Event.MoveToPoint("Player", 1120, 680, true, false)
     General.Wait(5)
     NewAudio.PlaySound("temp", "Secret/punch")
-    punderSprite.xscale = 200
+    punderSprite.xscale = 2
     punderSprite.rotation = 90
     Event.Teleport(Event.GetName(), 1176, 723)
     Event.SetAnimHeader(Event.GetName(), "Knockout")

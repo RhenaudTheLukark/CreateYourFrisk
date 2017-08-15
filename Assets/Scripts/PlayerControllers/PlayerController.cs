@@ -152,11 +152,11 @@ public class PlayerController : MonoBehaviour {
     public void setHP(float newhp, bool actualDamage = true) {
         newhp = Mathf.Round(newhp * Mathf.Pow(10, ControlPanel.instance.MaxDigitsAfterComma)) / Mathf.Pow(10, ControlPanel.instance.MaxDigitsAfterComma);
         if (newhp <= 0) {
-            if (!MusicManager.isStoppedOrNull(PlayerOverworld.audioKept)) {
+            if (!MusicManager.IsStoppedOrNull(PlayerOverworld.audioKept)) {
                 GetComponent<GameOverBehavior>().musicBefore = PlayerOverworld.audioKept;
                 GetComponent<GameOverBehavior>().music = GetComponent<GameOverBehavior>().musicBefore.clip;
                 GetComponent<GameOverBehavior>().musicBefore.Stop();
-            } else if (!MusicManager.isStoppedOrNull(Camera.main.GetComponent<AudioSource>())) {
+            } else if (!MusicManager.IsStoppedOrNull(Camera.main.GetComponent<AudioSource>())) {
                 GetComponent<GameOverBehavior>().musicBefore = Camera.main.GetComponent<AudioSource>();
                 GetComponent<GameOverBehavior>().music = GetComponent<GameOverBehavior>().musicBefore.clip;
                 GetComponent<GameOverBehavior>().musicBefore.Stop();

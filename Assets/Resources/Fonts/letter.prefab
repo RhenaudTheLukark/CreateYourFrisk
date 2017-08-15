@@ -5,12 +5,12 @@ GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Component:
-  - 224: {fileID: 22467174}
-  - 222: {fileID: 22262094}
-  - 114: {fileID: 11412656}
-  - 114: {fileID: 11425434}
+  - component: {fileID: 22467174}
+  - component: {fileID: 22262094}
+  - component: {fileID: 11412656}
+  - component: {fileID: 11425434}
   m_Layer: 5
   m_Name: letter
   m_TagString: Untagged
@@ -56,9 +56,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c02a8861b73065c499595b074b0943f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  self: {fileID: 0}
   basisPos: {x: 0, y: 0}
   img: {fileID: 0}
+  started: 0
 --- !u!222 &22262094
 CanvasRenderer:
   m_ObjectHideFlags: 1
@@ -74,12 +74,12 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 235.5, y: 9}
   m_SizeDelta: {x: 7, y: 12}
   m_Pivot: {x: 0, y: 0}

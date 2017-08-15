@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using MoonSharp.Interpreter;
 
 /// <summary>
@@ -117,7 +116,9 @@ public static class Inventory {
     
     public static void AddItemsToDictionaries() {
         NametoDesc.Add("Testing Dog", "A dog that tests something.\rDon't ask me what, I don't know.");        NametoShortName.Add("Testing Dog", "TestDog");
-        NametoType.Add("Testing Dog", 3);                                                                      NametoPrice.Add("Testing Dog", 1);       
+        NametoType.Add("Testing Dog", 3);                                                                      NametoPrice.Add("Testing Dog", 1);
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------------
 
         NametoDesc.Add("Bandage", "It has already been used\rseveral times.");
         NametoPrice.Add("Bandage", 5);
@@ -206,6 +207,7 @@ public static class Inventory {
         NametoDesc.Add("Last Dream", "The goal of \"Determination\".");                                        NametoShortName.Add("Last Dream", "LastDream");
         NametoPrice.Add("Last Dream", 25);
 
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------------
 
         NametoDesc.Add("Stick", "Its bark is worse than\rits bite. ");
         NametoType.Add("Stick", 3);                                                                            NametoPrice.Add("Stick", 50);
@@ -234,6 +236,7 @@ public static class Inventory {
         NametoDesc.Add("Real Knife", "Here we are!");                                                          NametoShortName.Add("Real Knife", "RealKnife");
         NametoType.Add("Real Knife", 1);                                                                       NametoPrice.Add("Real Knife", 99999);
 
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------------
 
         NametoDesc.Add("Faded Ribbon", "If you're cuter, monsters\rwon't hit you as hard.");                   NametoShortName.Add("Faded Ribbon", "Ribbon");
         NametoType.Add("Faded Ribbon", 2);                                                                     NametoPrice.Add("Faded Ribbon", 30);

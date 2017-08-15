@@ -7,15 +7,7 @@ using UnityEngine.UI;
 /// Lua binding to set and retrieve information for bullets in the game.
 /// </summary>
 public class ProjectileController {
-    private Projectile _p;
-    private Projectile p {
-        set { _p = value; }
-        get {
-            if (_p == null)
-                throw new CYFException("You can't access a removed projectile.");
-            return _p;
-        }
-    }
+    private Projectile p;
     private LuaSpriteController spr;
     private Dictionary<string, DynValue> vars = new Dictionary<string, DynValue>();
 
@@ -24,10 +16,29 @@ public class ProjectileController {
         spr = new LuaSpriteController(p.GetComponent<Image>());
     }
 
-    public float x { get; internal set; }
-    public float y { get; internal set; }
-    public float absx { get; internal set; }
-    public float absy { get; internal set; }
+    // The x position of the sprite, relative to the arena position and its anchor.
+    public float x {
+        get { return p.GetComponent<RectTransform>().anchoredPosition.x - ArenaManager.arenaCenter.x; }
+        set { p.GetComponent<RectTransform>().anchoredPosition = new Vector2(value + ArenaManager.arenaCenter.x, p.GetComponent<RectTransform>().localPosition.y); }
+    }
+
+    // The y position of the sprite, relative to the arena position and its anchor.
+    public float y {
+        get { return p.GetComponent<RectTransform>().anchoredPosition.y - ArenaManager.arenaCenter.y; }
+        set { p.GetComponent<RectTransform>().anchoredPosition = new Vector2(p.GetComponent<RectTransform>().anchoredPosition.x, value + ArenaManager.arenaCenter.y); }
+    }
+
+    // The x position of the sprite, relative to the bottom left corner of the screen.
+    public float absx {
+        get { return p.GetComponent<RectTransform>().position.x; }
+        set { p.GetComponent<RectTransform>().anchoredPosition = new Vector2(value, p.GetComponent<RectTransform>().anchoredPosition.y); }
+    }
+
+    // The y position of the sprite, relative to the bottom left corner of the screen.
+    public float absy {
+        get { return p.GetComponent<RectTransform>().position.y; }
+        set { p.GetComponent<RectTransform>().anchoredPosition = new Vector2(p.GetComponent<RectTransform>().anchoredPosition.x, value); }
+    }
 
     //Bullet.Duplicate() has been suspended because of some bugs. Maybe that I'll get on it later.
     /*private DynValue Duplicate(Transform parent, Transform current) {
@@ -116,12 +127,12 @@ public class ProjectileController {
         get { return spr; }
     }
 
-    public void UpdatePosition() {
+    /*public void UpdatePosition() {
         x = p.self.anchoredPosition.x - ArenaManager.arenaCenter.x;
         y = p.self.anchoredPosition.y - ArenaManager.arenaCenter.y;
         absx = p.self.anchoredPosition.x;
         absy = p.self.anchoredPosition.y;
-    }
+    }*/
 
     public void ResetCollisionSystem() {
         if (p == null)
@@ -142,7 +153,7 @@ public class ProjectileController {
         }
     }
 
-    public void Move(float x, float y) { MoveToAbs(p.self.position.x + x, p.self.position.y + y); }
+    public void Move(float x, float y) { MoveToAbs(this.absx + x, this.absy + y); }
 
     public void MoveTo(float x, float y) { MoveToAbs(ArenaManager.arenaCenter.x + x, ArenaManager.arenaCenter.y + y); }
 

@@ -1,18 +1,14 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using MoonSharp.Interpreter;
 
 public class LuaScreenOW {
     public ScriptWrapper appliedScript;
 
-    [MoonSharpHidden]
-    public LuaScreenOW() { }
+    [MoonSharpHidden] public LuaScreenOW() { }
 
     public delegate void LoadedAction(string name, object args);
-    [MoonSharpHidden]
-    public static event LoadedAction StCoroutine;
+    [MoonSharpHidden] public static event LoadedAction StCoroutine;
     
     //I know, there's WAY too much parameters in here, but I don't have the choice right now.
     //If I find a way to get the Table's text from DynValues, I'll gladly reduce the number of
@@ -32,8 +28,7 @@ public class LuaScreenOW {
     /// <param name="toneG"></param>
     /// <param name="toneB"></param>
     /// <param name="toneA"></param>
-    [CYFEventFunction]
-    public void DispImg(string path, int id, float posX, float posY, int toneR = 255, int toneG = 255, int toneB = 255, int toneA = 255) {
+    [CYFEventFunction] public void DispImg(string path, int id, float posX, float posY, int toneR = 255, int toneG = 255, int toneB = 255, int toneA = 255) {
         GameObject image;
         bool newImage = false;
 
@@ -68,8 +63,7 @@ public class LuaScreenOW {
     /// Remove an image from the screen
     /// </summary>
     /// <param name="id"></param>
-    [CYFEventFunction]
-    public void SupprImg(int id) {
+    [CYFEventFunction] public void SupprImg(int id) {
         if (GameObject.Find("Image" + id))
             EventManager.instance.luaevow.Remove("Image" + id);
         else
@@ -84,8 +78,7 @@ public class LuaScreenOW {
     /// <param name="g"></param>
     /// <param name="b"></param>
     /// <param name="a"></param>
-    [CYFEventFunction]
-    public void SetTone(bool anim, bool waitEnd, int r = 255, int g = 255, int b = 255, int a = 128) {
+    [CYFEventFunction] public void SetTone(bool anim, bool waitEnd, int r = 255, int g = 255, int b = 255, int a = 128) {
         if (r < 0 || r > 255 || r % 1 != 0 || g < 0 || g > 255 || g % 1 != 0 || b < 0 || b > 255 || b % 1 != 0)
             throw new CYFException("Screen.SetTone: You can't input a value out of [0; 255] for a color value, as it is clamped from 0 to 255.\nThe number have to be an integer.");
         if (GameObject.Find("Tone") == null) {
@@ -118,13 +111,11 @@ public class LuaScreenOW {
     /// </summary>
     /// <param name="secondsOrFrames"></param>
     /// <param name="intensity"></param>
-    [CYFEventFunction]
-    public void Flash(int frames, int colorR = 255, int colorG = 255, int colorB = 255, int colorA = 255, bool waitEnd = true) {
+    [CYFEventFunction] public void Flash(int frames, int colorR = 255, int colorG = 255, int colorB = 255, int colorA = 255, bool waitEnd = true) {
         StCoroutine("IFlash", new object[] { frames, colorR, colorG, colorB, colorA, waitEnd });
     }
 
-    [CYFEventFunction]
-    public void CenterEventOnCamera(string name, int speed = 5, bool straightLine = false, bool waitEnd = true, string info = "Screen.CenterEventOnCamera") {
+    [CYFEventFunction] public void CenterEventOnCamera(string name, int speed = 5, bool straightLine = false, bool waitEnd = true, string info = "Screen.CenterEventOnCamera") {
         if (!GameObject.Find(name))
             throw new CYFException("Screen.CenterEventOnCamera: The given event doesn't exist.");
 
@@ -136,13 +127,11 @@ public class LuaScreenOW {
                                                   speed, straightLine, waitEnd, info });
     }
 
-    [CYFEventFunction]
-    public void MoveCamera(int pixX, int pixY, int speed = 5, bool straightLine = false, bool waitEnd = true) {
+    [CYFEventFunction] public void MoveCamera(int pixX, int pixY, int speed = 5, bool straightLine = false, bool waitEnd = true) {
         StCoroutine("IMoveCamera", new object[] { pixX, pixY, speed, straightLine, waitEnd, "Screen.MoveCamera" });
     }
 
-    [CYFEventFunction]
-    public void ResetCameraPosition(int speed = 5, bool straightLine = false, bool waitEnd = true) {
+    [CYFEventFunction] public void ResetCameraPosition(int speed = 5, bool straightLine = false, bool waitEnd = true) {
         StCoroutine("IMoveCamera", new object[] { 0, 0, speed, straightLine, waitEnd, "Screen.ResetCameraPosition" });
     }
 }

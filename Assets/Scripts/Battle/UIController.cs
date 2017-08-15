@@ -257,6 +257,13 @@ public class UIController : MonoBehaviour {
                 break;
 
             case UIState.MERCYMENU:
+                if (LuaScriptBinder.Get(null, "ForceNoFlee") != null) {
+                    LuaEnemyEncounter.script.SetVar("flee", DynValue.NewBoolean(false));
+                    LuaScriptBinder.Remove("ForceNoFlee");
+                } else if (!LuaEnemyEncounter.script.GetVar("flee").Boolean && LuaEnemyEncounter.script.GetVar("flee").Type != DataType.Nil)
+                    encounter.CanRun = false;
+                else
+                    encounter.CanRun = true;
                 selectedMercy = 0;
                 string[] mercyopts = new string[1 + (encounter.CanRun ? 1 : 0)];
                 mercyopts[0] = "Spare";
@@ -1017,6 +1024,9 @@ public class UIController : MonoBehaviour {
     }
 
     private void HandleCancel() {
+        if (fleeSwitch)
+            return;
+
         switch (state) {
             case UIState.ACTIONSELECT:
             case UIState.DIALOGRESULT:
@@ -1151,7 +1161,7 @@ public class UIController : MonoBehaviour {
         psContainer.transform.SetAsFirstSibling();
 
         //Play that funky music
-        if (MusicManager.isStoppedOrNull(PlayerOverworld.audioKept))
+        if (MusicManager.IsStoppedOrNull(PlayerOverworld.audioKept))
             GameObject.Find("Main Camera").GetComponent<AudioSource>().Play();
 
         ArenaManager.instance.ResizeImmediate(ArenaManager.UIWidth, ArenaManager.UIHeight);
@@ -1210,7 +1220,7 @@ public class UIController : MonoBehaviour {
             UserDebugger.instance.transform.SetAsLastSibling();
         }
 
-        if (state == UIState.NONE)
+        if (!stated)
             SwitchState(UIState.ACTIONSELECT, true);
     }
 

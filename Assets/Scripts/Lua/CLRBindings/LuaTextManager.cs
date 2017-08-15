@@ -58,7 +58,6 @@ public class LuaTextManager : TextManager {
         UnitaleUtil.GetChildPerName(containerBubble.transform, "BackVert").GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth - 20, effectiveBubbleHeight);             //BackVert
         UnitaleUtil.GetChildPerName(containerBubble.transform, "CenterHorz").GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth + 16, effectiveBubbleHeight - 16 * 2);  //CenterHorz
         UnitaleUtil.GetChildPerName(containerBubble.transform, "CenterVert").GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth - 16, effectiveBubbleHeight - 4);       //CenterVert
-        container.GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth + 24, effectiveBubbleHeight);
         SetSpeechThingPositionAndSide(bubbleSide.ToString(), bubbleLastVar);
     }
     
@@ -70,16 +69,24 @@ public class LuaTextManager : TextManager {
         }
     }
 
-    public bool persistent = false;
-
     public int x {
-        get { return Mathf.RoundToInt(container.transform.position.x); }
+        get { return Mathf.RoundToInt(container.transform.localPosition.x); }
         set { MoveTo(value, y); }
     }
 
     public int y {
-        get { return Mathf.RoundToInt(container.transform.position.y); }
+        get { return Mathf.RoundToInt(container.transform.localPosition.y); }
         set { MoveTo(x, value); }
+    }
+
+    public int absx {
+        get { return Mathf.RoundToInt(container.transform.position.x); }
+        set { MoveToAbs(value, absy); }
+    }
+
+    public int absy {
+        get { return Mathf.RoundToInt(container.transform.position.y); }
+        set { MoveTo(absx, value); }
     }
 
     public int textWidth {
@@ -93,12 +100,94 @@ public class LuaTextManager : TextManager {
     }
 
     public string layer {
-        get { return container.transform.parent.name.Substring(0, transform.parent.name.Length - 5); }
+        get {
+            if (!container.transform.parent.name.Contains("Layer"))
+                return "spriteObject";
+            return container.transform.parent.name.Substring(0, transform.parent.name.Length - 5);
+        }
         set {
             Transform parent = container.transform.parent;
             try { container.transform.SetParent(GameObject.Find(value + "Layer").transform); } 
             catch { throw new CYFException("The layer \"" + value + "\" doesn't exist."); }
         }
+    }
+
+    public Color _color = Color.white;
+    // The color of the text. It uses an array of three floats between 0 and 1
+    public float[] color {
+        get { return new float[] { _color.r, _color.g, _color.b }; }
+        set {
+            // If we don't have three floats, we throw an error
+            if (value.Length == 3)      _color = new Color(value[0], value[1], value[2], alpha);
+            else if (value.Length == 4) _color = new Color(value[0], value[1], value[2], value[3]);
+            else                        throw new CYFException("You need 3 or 4 numeric values when setting a text's color.");
+            //print(((_color.r + 1) / 2) + ", " + ((_color.g + 1) / 2) + ", " + ((_color.b + 1) / 2) + ", " + (_color.a * 1));
+            foreach (Letter l in letters) {
+                try { l.GetComponent<UnityEngine.UI.Image>().color = new Color((_color.r + l.colorFromText.r) / 2, (_color.g + l.colorFromText.g) / 2, 
+                                                                               (_color.b + l.colorFromText.b) / 2, _color.a * l.colorFromText.a);
+                } catch { }
+            }
+        }
+    }
+
+    // The color of the text on a 32 bits format. It uses an array of three or four floats between 0 and 255
+    public float[] color32 {
+        // We need first to convert the Color into a Color32, and then get the values.
+        get { return new float[] { ((Color32)_color).r, ((Color32)_color).g, ((Color32)_color).b }; }
+        set {
+            for (int i = 0; i < value.Length; i++)
+                if (value[i] < 0) value[i] = 0;
+                else if (value[i] > 255) value[i] = 255;
+            // If we don't have three floats, we throw an error
+            if (value.Length == 3)      _color = new Color32((byte)value[0], (byte)value[1], (byte)value[2], (byte)alpha32);
+            else if (value.Length == 4) _color = new Color32((byte)value[0], (byte)value[1], (byte)value[2], (byte)value[3]);
+            else                        throw new CYFException("You need 3 or 4 numeric values when setting a text's color.");
+            foreach (Letter l in letters)
+                try {
+                    l.GetComponent<UnityEngine.UI.Image>().color = new Color((_color.r + l.colorFromText.r) / 2, (_color.g + l.colorFromText.g) / 2,
+                                                                            (_color.b + l.colorFromText.b) / 2, _color.a * l.colorFromText.a);
+                } catch { }
+        }
+    }
+
+    // The alpha of the text. It is clamped between 0 and 1
+    public float alpha {
+        get { return _color.a; }
+        set {
+            _color = new Color(_color.r, _color.g, _color.b, Mathf.Clamp01(value));
+            foreach (Letter l in letters)
+                try {
+                    l.GetComponent<UnityEngine.UI.Image>().color = new Color((_color.r + l.colorFromText.r) / 2, (_color.g + l.colorFromText.g) / 2,
+                                                                            (_color.b + l.colorFromText.b) / 2, _color.a * l.colorFromText.a);
+                } catch { }
+        }
+    }
+
+    // The alpha of the text in a 32 bits format. It is clamped between 0 and 255
+    public float alpha32 {
+        get { return ((Color32)_color).a; }
+        // We need first to convert the Color into a Color32, and then get the values.
+        set {
+            _color = new Color32(((Color32)_color).r, ((Color32)_color).g, ((Color32)_color).b, (byte)(value > 255 ? 255 : value < 0 ? 0 : value));
+            foreach (Letter l in letters)
+                try {
+                    l.GetComponent<UnityEngine.UI.Image>().color = new Color((_color.r + l.colorFromText.r) / 2, (_color.g + l.colorFromText.g) / 2,
+                                                                            (_color.b + l.colorFromText.b) / 2, _color.a * l.colorFromText.a);
+                } catch { }
+        }
+    }
+
+    public bool lineComplete {
+        get { return LineComplete(); }
+    }
+
+    public bool allLinesComplete {
+        get { return AllLinesComplete(); }
+    }
+
+    public void SetParent(LuaSpriteController parent) {
+        try { container.transform.SetParent(parent.img.transform); } 
+        catch { throw new CYFException("You tried to set a removed sprite/unexisting sprite as this text's parent."); }
     }
 
     public void SetText(DynValue text) {
@@ -130,11 +219,22 @@ public class LuaTextManager : TextManager {
         base.AddToTextQueue(msgs);
     }
 
-    public void SetFont(string fontName) {
+    public void SetVoice(string voiceName) {
+        if (voiceName == "none")
+            default_voice = null;
+        else
+            default_voice = AudioClipRegistry.GetVoice(voiceName);
+    }
+
+    public void SetFont(string fontName, bool firstTime = false) {
         UnderFont uf = SpriteFontRegistry.Get(fontName);
         if (uf == null)
             throw new CYFException("The font \"" + fontName + "\" doesn't exist.\nYou should check if you haven't made a typo or if the font really is in your mod.");
-        SetFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_DAMAGETEXT_NAME));
+        SetFont(uf, firstTime);
+        //if (forced)
+        //    default_charset = uf;
+        containerBubble.GetComponent<RectTransform>().localPosition = new Vector2(-12, 24);
+        GetComponent<RectTransform>().localPosition = new Vector2(0, 16);
     }
 
     public void SetEffect(string effect, float intensity) {
@@ -163,8 +263,8 @@ public class LuaTextManager : TextManager {
         }
     }
 
-    public bool IsTheLineFinished() { return LineComplete(); }
-    public bool IsTheTextFinished() { return AllLinesComplete(); }
+    public bool IsTheLineFinished() { return lineComplete; }
+    public bool IsTheTextFinished() { return allLinesComplete; }
 
     public void ShowBubble(string side = null, DynValue position = null) {
         bubble = true;
@@ -180,43 +280,32 @@ public class LuaTextManager : TextManager {
         if (bubbleSide != BubbleSide.NONE) {
             speechThing.gameObject.SetActive(true);
             speechThingShadow.gameObject.SetActive(true);
-            speechThing.anchorMin = speechThing.anchorMax = new Vector2(bubbleSide == BubbleSide.LEFT ? 0 : bubbleSide == BubbleSide.RIGHT ? 1 : 0.5f,
-                                                                        bubbleSide == BubbleSide.DOWN ? 0 : bubbleSide == BubbleSide.UP ? 1 : 0.5f);
-            speechThingShadow.anchorMin = speechThingShadow.anchorMax = new Vector2(bubbleSide == BubbleSide.LEFT ? 0 : bubbleSide == BubbleSide.RIGHT ? 1 : 0.5f,
-                                                                                    bubbleSide == BubbleSide.DOWN ? 0 : bubbleSide == BubbleSide.UP ? 1 : 0.5f);
+            speechThing.anchorMin = speechThing.anchorMax = speechThingShadow.anchorMin = speechThingShadow.anchorMax = 
+                new Vector2(bubbleSide == BubbleSide.LEFT ? 0 : bubbleSide == BubbleSide.RIGHT ? 1 : 0.5f,
+                            bubbleSide == BubbleSide.DOWN ? 0 : bubbleSide == BubbleSide.UP ? 1 : 0.5f);
             speechThing.rotation = speechThingShadow.rotation = Quaternion.Euler(0, 0, (int)bubbleSide);
-            speechThing.localPosition = new Vector2(0, 0);
             bool isSide = bubbleSide == BubbleSide.LEFT || bubbleSide == BubbleSide.RIGHT;
             int size = isSide ? (int)containerBubble.GetComponent<RectTransform>().sizeDelta.y - 20 : (int)containerBubble.GetComponent<RectTransform>().sizeDelta.x - 20;
-            int otherSize = isSide ? (int)containerBubble.GetComponent<RectTransform>().sizeDelta.x : (int)containerBubble.GetComponent<RectTransform>().sizeDelta.y;
-            float shift = bubbleSide == BubbleSide.LEFT || bubbleSide == BubbleSide.DOWN ? -size / 2 : size / 2;
-            float otherShift = bubbleSide == BubbleSide.LEFT || bubbleSide == BubbleSide.DOWN ? -otherSize / 2 : otherSize / 2;
             if (position == null)
-                speechThing.localPosition = speechThingShadow.localPosition = new Vector2(0, 0);
+                speechThing.anchoredPosition = speechThingShadow.anchoredPosition = new Vector3(0, 0);
             else {
                 if (position.Type == DataType.Number) {
-                    float number = (float)position.Number + shift;
-                    speechThing.localPosition = speechThingShadow.localPosition = new Vector2(isSide ? otherShift : Mathf.Clamp(number, -size / 2 + 10, size / 2 - 10),
-                                                                                              isSide ? Mathf.Clamp(number, -size / 2 + 10, size / 2 - 10) : otherShift);
+                    float number = (float)position.Number < 0 ? (float)position.Number : (size - (float)position.Number) - size / 2;
+                    speechThing.anchoredPosition = speechThingShadow.anchoredPosition = new Vector3(isSide ? 0 : Mathf.Clamp(number, -size / 2, size / 2),
+                                                                                                    isSide ? Mathf.Clamp(number, -size / 2, size / 2) : 0);
                 } else if (position.Type == DataType.String) {
                     string str = position.String.Replace(" ", "");
                     if (str.Contains("%")) {
                         size -= 20;
                         try {
                             float percentage = Mathf.Clamp01(ParseUtil.GetFloat(str.Replace("%", "")) / 100);
-                            speechThing.localPosition = speechThingShadow.localPosition = new Vector2(isSide ? otherShift : 10 + Mathf.Round(percentage * size) - shift,
-                                                                                                      isSide ? 10 + Mathf.Round(percentage * size) - shift : otherShift);
+                            float x = isSide ? 0 : 10 + Mathf.Round(percentage * size) - size / 2;
+                            float y = isSide ? 10 + Mathf.Round(percentage * size) - size / 2 : 0;
+                            Debug.Log(new Vector3(x, y));
+                            speechThing.anchoredPosition = speechThingShadow.anchoredPosition = new Vector3(x, y);
                         } catch { throw new CYFException("If you use a '%' in your string, you should only have a number with it."); }
                     } else
                         throw new CYFException("You need to use a '%' in order to exploit the string.");
-                    /*else {
-                        str = str.Replace("middle", "0").Replace("top", (size / 2).ToString());
-                        try {
-                            float f = ParseUtil.getFloat(str);
-                            speechThing.localPosition = speechThingShadow.localPosition = new Vector2(isSide ? otherShift : Mathf.Clamp(f + shift, -size / 2 + 10, size / 2 - 10),
-                                                                                                      isSide ? Mathf.Clamp(f + shift, -size / 2 + 10, size / 2 - 10) : otherShift);
-                        } catch { throw new CYFException("The only keywords are \"middle\" and \"top\", but you entered \"" + position.String + "\"."); }
-                    }*/
                 }
             }
         } else {
@@ -246,6 +335,10 @@ public class LuaTextManager : TextManager {
     public void SetAutoWaitTimeBetweenTexts(int time) { framesWait = time; }
 
     public void MoveTo(int x, int y) {
+        container.transform.localPosition = new Vector3(x, y, container.transform.localPosition.z);
+    }
+
+    public void MoveToAbs(int x, int y) {
         container.transform.position = new Vector3(x, y, container.transform.position.z);
     }
 

@@ -48,7 +48,7 @@ end
 function DefenseEnding() --This built-in function fires after the defense round ends.
     encountertext = RandomEncounterText() --This built-in function gets a random encounter text from a random enemy.
 	if isCYF then
-		if enemies[1].GetVar("hp") != 30 then
+		if enemies[1].GetVar("hp") ~= 30 then
 			enemies[1].Call("SetDamage", -29)
 		end
 		SetFrameBasedMovement(false)

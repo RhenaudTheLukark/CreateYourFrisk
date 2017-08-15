@@ -34,10 +34,10 @@ public class LuaPlayerOW {
     [CYFEventFunction] public void SetGold(int value) { player.SetGold(value); appliedScript.Call("CYFEventNextCommand"); }
 
     [CYFEventFunction] public string GetWeapon() { try { return player.Weapon; } finally { appliedScript.Call("CYFEventNextCommand"); } }
-    [CYFEventFunction] public void SetWeapon(string value) { EventManager.instance.luainvow.setEquip(value);}
+    [CYFEventFunction] public void SetWeapon(string value) { EventManager.instance.luainvow.SetEquip(value);}
 
     [CYFEventFunction] public string GetArmor() { try { return player.Armor; } finally { appliedScript.Call("CYFEventNextCommand"); } }
-    [CYFEventFunction] public void SetArmor(string value) { EventManager.instance.luainvow.setEquip(value); }
+    [CYFEventFunction] public void SetArmor(string value) { EventManager.instance.luainvow.SetEquip(value); }
 
     [CYFEventFunction] public int GetEXP() { try { return player.EXP; } finally { appliedScript.Call("CYFEventNextCommand"); } }
     [CYFEventFunction] public void SetEXP(int value) { player.SetEXP(value, true); appliedScript.Call("CYFEventNextCommand"); }
@@ -94,8 +94,8 @@ public class LuaPlayerOW {
         else             UnitaleUtil.PlaySound("HurtSound", AudioClipRegistry.GetSound("healsound"), 0.65f);
 
         if (-damage + player.HP > player.MaxHP) player.HP = player.MaxHP;
-        else if (-damage + player.HP <= 0) player.HP = 1;
-        else player.HP -= damage;
+        else if (-damage + player.HP <= 0)      player.HP = 1;
+        else                                    player.HP -= damage;
         appliedScript.Call("CYFEventNextCommand");
     }
 
@@ -109,7 +109,7 @@ public class LuaPlayerOW {
     /// <summary>
     /// Enables or disables the player's movement
     /// </summary>
-    /// <param name="heal">This one seems obvious too</param>
+    /// <param name="canMove">Can the player move?</param>
     [CYFEventFunction]
     public void CanMove(bool canMove) {
         PlayerOverworld.instance.forceNoAction = !canMove;
@@ -120,11 +120,11 @@ public class LuaPlayerOW {
     public void setHP(float newhp, bool forced = false) {
         if (newhp <= 0) {
             GameOverBehavior gob = GameObject.FindObjectOfType<GameOverBehavior>();
-            if (!MusicManager.isStoppedOrNull(PlayerOverworld.audioKept)) {
+            if (!MusicManager.IsStoppedOrNull(PlayerOverworld.audioKept)) {
                 gob.musicBefore = PlayerOverworld.audioKept;
                 gob.music = gob.musicBefore.clip;
                 gob.musicBefore.Stop();
-            } else if (!MusicManager.isStoppedOrNull(Camera.main.GetComponent<AudioSource>())) {
+            } else if (!MusicManager.IsStoppedOrNull(Camera.main.GetComponent<AudioSource>())) {
                 gob.musicBefore = Camera.main.GetComponent<AudioSource>();
                 gob.music = gob.musicBefore.clip;
                 gob.musicBefore.Stop();

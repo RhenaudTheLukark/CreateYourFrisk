@@ -295,6 +295,7 @@ public class EnterNameScript : MonoBehaviour {
         specialNameDict.Add("sans",      "[font:sans]no bad time for\nya.");
         specialNameDict.Add("asriel",    "If that's your\nchoice...");
         specialNameDict.Add("flowey",    "You sadist.");
-        specialNameDict.Add("four",      "4");
+        specialNameDict.Add("four", "4");
+        specialNameDict.Add("sendnudes", "(.)(.)");
     }
 }

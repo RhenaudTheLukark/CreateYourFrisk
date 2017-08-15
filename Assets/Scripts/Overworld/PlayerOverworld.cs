@@ -16,7 +16,7 @@ public class PlayerOverworld : MonoBehaviour {
     public bool firstTime = false;          //Boolean used to not launch another event a the end of the previous event
     public bool inBattleAnim = false;
     public bool PlayerNoMove {              //Is the player not able to move?
-        get { return _playerNoMove || forceNoAction; }
+        get { return _playerNoMove || forceNoAction || inBattleAnim; }
         set { _playerNoMove = value; }
     }
     public bool forceNoAction = false;
@@ -52,7 +52,7 @@ public class PlayerOverworld : MonoBehaviour {
         //StartCoroutine(LaunchMusic());
 
         //Get a component reference to the Player's transform
-        PlayerPos = Player.transform;
+        PlayerPos = Player.transform.parent;
 
         //If the player's position already exists, move the player to it
         if (LuaScriptBinder.Get(null, "PlayerPosX") != null && LuaScriptBinder.Get(null, "PlayerPosY") != null && LuaScriptBinder.Get(null, "PlayerPosZ") != null) {
@@ -229,12 +229,12 @@ public class PlayerOverworld : MonoBehaviour {
                 TimeIndicator = 1;
 
             Vector2 positionCamera = Camera.main.transform.position;
-            Vector2 end = new Vector2(PlayerPos.position.x - (positionCamera.x - 320 + 48), PlayerPos.position.y + PlayerPos.GetComponent<RectTransform>().sizeDelta.y * 50 - (positionCamera.y - 240 + 25));
+            Vector2 end = new Vector2(PlayerPos.position.x - (positionCamera.x - 320 + 48), PlayerPos.position.y + PlayerPos.GetComponent<RectTransform>().sizeDelta.y / 2 - (positionCamera.y - 240 + 25));
             Image utHeart = GameObject.Find("utHeart").GetComponent<Image>();
 
             //Here we move the heart to the place it'll be on the beginning of the battle
             if (utHeart.transform.position != new Vector3(positionCamera.x - 320 + 48, positionCamera.y - 240 + 25, -1f)) {
-                Vector3 positionTemp = new Vector3(PlayerPos.position.x - (end.x * TimeIndicator), PlayerPos.position.y + PlayerPos.GetComponent<RectTransform>().sizeDelta.y * 50 - (end.y * TimeIndicator), 0);
+                Vector3 positionTemp = new Vector3(PlayerPos.position.x - (end.x * TimeIndicator), PlayerPos.position.y + PlayerPos.GetComponent<RectTransform>().sizeDelta.y / 2 - (end.y * TimeIndicator), 0);
                 utHeart.transform.position = positionTemp;
             }
         }
@@ -357,6 +357,9 @@ public class PlayerOverworld : MonoBehaviour {
     //Moves the object
     public void Move(float xDir, float yDir, GameObject go) {
         Transform transform = go.transform;
+        if (transform.parent != null)
+            if (transform.parent.name == "SpritePivot")
+                transform = transform.parent;
         //Rigidbody2D rb2Dgo = go.GetComponent<Rigidbody2D>();
 
         //Creates the movement of our object
@@ -373,7 +376,7 @@ public class PlayerOverworld : MonoBehaviour {
 
         //If the GameObject is the player, check if the camera can follow him or not
         if (go == gameObject && !inBattleAnim && GameObject.Find("Background") != null) {
-            RectifyCameraPosition(new Vector2(transform.position.x, transform.position.y + PlayerPos.GetComponent<SpriteRenderer>().sprite.texture.height / 2f));
+            RectifyCameraPosition(new Vector2(transform.GetChild(0).position.x, transform.GetChild(0).position.y + PlayerPos.GetChild(0).GetComponent<SpriteRenderer>().sprite.texture.height / 2f));
             GameObject.Find("Canvas OW").transform.position = new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y, -10);
         }
 
@@ -504,14 +507,14 @@ public class PlayerOverworld : MonoBehaviour {
             yield return new WaitForSeconds(0.5f);
         }
         //Set the heart's position to the player's position
-        utHeart.transform.position = new Vector3(PlayerPos.position.x, PlayerPos.position.y + PlayerPos.GetComponent<RectTransform>().sizeDelta.y * 50, -5100);
+        utHeart.transform.position = new Vector3(PlayerPos.position.x, PlayerPos.position.y + PlayerPos.GetComponent<RectTransform>().sizeDelta.y / 2, -5100);
         positionCamera = Camera.main.transform.position;
-        end = new Vector2(PlayerPos.position.x - (positionCamera.x - 320 + 48), PlayerPos.position.y + PlayerPos.GetComponent<RectTransform>().sizeDelta.y * 50 - (positionCamera.y - 240 + 25));
+        end = new Vector2(PlayerPos.position.x - (positionCamera.x - 320 + 48), PlayerPos.position.y + PlayerPos.GetComponent<RectTransform>().sizeDelta.y / 2 - (positionCamera.y - 240 + 25));
         blackFont.transform.position = new Vector3(positionCamera.x, positionCamera.y, blackFont.transform.position.z);
         blackFont.color = new Color(blackFont.color.r, blackFont.color.g, blackFont.color.b, 1f);
-        playerMask.transform.position = new Vector3(PlayerPos.position.x, PlayerPos.transform.position.y, -5040);
+        playerMask.transform.position = new Vector3(PlayerPos.position.x, PlayerPos.position.y, -5040);
         playerMask.sprite = PlayerPos.GetComponent<SpriteRenderer>().sprite;
-        playerMask.rectTransform.sizeDelta = PlayerPos.GetComponent<RectTransform>().sizeDelta;
+        playerMask.rectTransform.sizeDelta = PlayerPos.GetComponent<RectTransform>().sizeDelta / 100;
         //playerMask.transform.localScale = new Vector3(PlayerPos.lossyScale.x / playerMask.transform.lossyScale.x, PlayerPos.lossyScale.y / playerMask.transform.lossyScale.y, 1);
         Color color = PlayerPos.GetComponent<SpriteRenderer>().color;
         PlayerPos.GetComponent<SpriteRenderer>().color = new Color(color.r, color.g, color.b, 0);
@@ -541,7 +544,7 @@ public class PlayerOverworld : MonoBehaviour {
 
         //Here we move the heart to the place it'll be on the beginning of the battle
         if (utHeart.transform.position != new Vector3(positionCamera.x - 320 + 48, positionCamera.y - 240 + 25, -5100)) {
-            Vector3 positionTemp = new Vector3(PlayerPos.position.x - (end.x * TimeIndicator), PlayerPos.position.y + PlayerPos.GetComponent<RectTransform>().sizeDelta.y * 50 - (end.y * TimeIndicator), 0);
+            Vector3 positionTemp = new Vector3(PlayerPos.position.x - (end.x * TimeIndicator), PlayerPos.position.y + PlayerPos.GetComponent<RectTransform>().sizeDelta.y / 2 - (end.y * TimeIndicator), 0);
             utHeart.transform.position = positionTemp;
         }
 
@@ -955,8 +958,11 @@ public class PlayerOverworld : MonoBehaviour {
         foreach (Transform tf in children) {
             try {
                 tf.SetParent(null);
-                if (tf.name == "Canvas OW" || tf.name == "Player" || tf.name == "Main Camera OW" || tf.name == "GameOverContainer")
+                if (tf.name == "Canvas OW" || tf.name == "Main Camera OW" || tf.name == "GameOverContainer")
                     GameObject.DontDestroyOnLoad(tf.gameObject);
+                else if (tf.childCount > 0)
+                    if (tf.GetChild(0).name == "Player")
+                        GameObject.DontDestroyOnLoad(tf.gameObject);
             } catch { }
         }
         instance.StartCoroutine(instance.ShowOverworld2(callFrom));

@@ -3,7 +3,7 @@ encountertext = "Your path is blocked by two mannequins! ∞.∞\nYou should loo
 wavetimer = 4
 arenasize = {155, 130}
 nextwaves = {"bullettest_touhou"}
---flee = false
+flee = false
 autolinebreak = true
 playerskipdocommand = true
 timer = 0
@@ -44,7 +44,7 @@ function EncounterStarting()
         bullet.sprite.Scale(1, 2)
         bullet.isPersistent = true]]
 	--Types : 0 = Consumable, 1 = Weapon, 2 = Armor, else = Special (you must use 3)
-    maintext = CreateText({"Hi"}, {400, 99}, 320, "Top", 100)
+    maintext = CreateText({"[novoice]Hi"}, {400, 99}, 320, "Top", 100)
     maintext.progressmode = "none"
     maintext.HideBubble()
     maintext.SetEffect("none", -1)
@@ -62,6 +62,9 @@ function EncounterStarting()
     NewAudio.Stop("testvoice")
     NewAudio.PlaySound("testsound", "slice")
     NewAudio.Stop("testsound")
+    local text = CreateText({"Okay, this is a[color:00ffff] test.[color:000000]", "It works!"}, {540, 400}, 150)
+    text.ShowBubble("left", -20)
+    text.SetEffect("shake", -1)
 end
 
 function EnemyDialogueStarting()
@@ -83,7 +86,7 @@ function DefenseEnding() --This built-in function fires after the defense round 
         text.SetEffect("shake", -1)
         table.insert(texts, text)
     else 
-        texts[1].SetText({"Omg this is a second test!", "AND OMG IT REALLY WORKS I'M SO HAPPY YAY YAY YAY!"})
+        texts[1].SetText({"Omg this is a second test!", "AND OMG IT REALLY WORKS!"})
         texts[1].ShowBubble("down", 75)
     end
     SetButtonLayer("default")
@@ -204,10 +207,10 @@ function Update()
         Audio.LoadFile("mus_zz_megalovania")
     end
     
-    if doIt == 2 then
+    --if doIt == 2 then
         maintext.SetText({"[instant][font:uidialog][color:ff0000][novoice]" .. tostring(timer)})
-    end
-    doIt = doIt % 2 + 1
+    --end
+    --doIt = doIt % 2 + 1
     
 	
 	--DEBUG(Misc.WindowY)

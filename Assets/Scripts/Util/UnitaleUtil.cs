@@ -14,6 +14,7 @@ using System.Reflection;
 /// </summary>
 public static class UnitaleUtil {
     internal static bool firstErrorShown = false; //Keeps track of whether an error already appeared, prevents subsequent errors from overriding the source.
+    public static string printDebuggerBeforeInit = "";
     /*internal static string fileName = Application.dataPath + "/Logs/log-" + DateTime.Now.ToString().Replace('/', '-').Replace(':', '-') + ".txt";
     internal static StreamWriter sr;
 
@@ -29,8 +30,10 @@ public static class UnitaleUtil {
             /*sr.WriteLine("By DEBUG: " + mess.Replace("\n", "\\n").Replace("\r", "\\r").Replace("\t", "\\t"));
             sr.Flush();*/
             UserDebugger.instance.UserWriteLine(mess);
-            Debug.Log("Frame " + GlobalControls.frame + ": " + mess);
-        } catch (Exception e) { Debug.Log("Couldn't write on the log:\n" + e.Message + "\nMessage: " + mess); }
+        } catch (Exception e) {
+            Debug.Log("Couldn't write on the log:\n" + e.Message + "\nMessage: " + mess);
+            printDebuggerBeforeInit += (printDebuggerBeforeInit == "" ? "" : "\n") + mess;
+        }
     }
 
     /*/// <summary>

@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using UnityEngine;
-using MoonSharp.Interpreter;
 
 public class ScriptRegistry {
     internal static string WAVE_PREFIX = "wave_";

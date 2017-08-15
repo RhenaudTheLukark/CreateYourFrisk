@@ -5,6 +5,7 @@ encountertext = "Select ACT commands to see\rdifferent bullets in action." --Mod
 nextwaves = {"bullettest_chaserorb"}
 wavetimer = 4.0
 arenasize = {155, 130}
+autolinebreak = true
 
 enemies = {
 "bullet_testing_poseur2"
@@ -19,7 +20,7 @@ possible_attacks = {"bullettest_bouncy", "bullettest_chaserorb", "bullettest_tou
 
 function EncounterStarting()
     Audio.Pause()
-    enemies[1]["currentdialogue"] = {"Hoo boy!", "Time for you to die!", "[noskip][func:LaunchMusic][next]"}
+    enemies[1]["currentdialogue"] = {"Hoo boy!", "Time for you to die!", "[noskip][func:LaunchMusic][func:State, ACTIONSELECT][next]"}
 	State("ENEMYDIALOGUE")
     -- If you want to change the game state immediately, this is the place.
 end

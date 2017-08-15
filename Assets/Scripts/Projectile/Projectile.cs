@@ -83,7 +83,7 @@ public abstract class Projectile : MonoBehaviour {
         selfAbs.x = self.position.x + Centerx - selfAbs.width / 2;
         selfAbs.y = self.position.y + Centery - selfAbs.height / 2;
 
-        ctrl.UpdatePosition();
+        //ctrl.UpdatePosition();
         //OnUpdate();
         if (!GlobalControls.retroMode)
             UpdateHitRect();

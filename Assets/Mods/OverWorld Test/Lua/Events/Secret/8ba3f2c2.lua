@@ -16,6 +16,7 @@ function EventPage1()
                        "[noskip]I told my parents I went exploring the world, [w:25][mugshot:MK/sad2]but man, this place is scary...",
                        "[noskip]I better move on."}, true, {"MK/stars", "MK/normal", "MK/determined"})
     Event.MoveToPoint("Player", 400, 200, true)
+	Event.Teleport("8ba3f2c2 (1)", 40, 200)
     local playerPos = Event.GetPosition("Player")
     Event.Teleport("8ba3f2c2 (2)", playerPos[1] + 14, playerPos[2])
     maskSprite.loopmode = "ONESHOT"
@@ -26,6 +27,7 @@ function EventPage1()
     while not maskSprite.animcomplete do
         General.Wait(1)
     end
+	maskSprite.z = -1
     Event.Teleport("8ba3f2c2 (2)", playerPos[1], playerPos[2])
     Event.SetAnimHeader("8ba3f2c2 (2)", "Fallen")
     Event.MoveToPoint("8ba3f2c2 (2)", 420, 146, true)
@@ -51,7 +53,7 @@ function EventPage1()
     until maskPos[2] == 0
     NewAudio.Stop("StaticKeptAudio")
     NewAudio.SetVolume("StaticKeptAudio", 1)
-        
+    
     General.Wait(60)
     NewAudio.CreateChannel("temp")
     NewAudio.PlaySound("temp", "Secret/noise")

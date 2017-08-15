@@ -11,7 +11,8 @@ public class TextManager : MonoBehaviour {
     internal Image[] letterReferences;
     internal Vector2[] letterPositions;
 
-    private UnderFont default_charset = null;
+    protected UnderFont default_charset = null;
+    protected AudioClip default_voice = null;
     public AudioSource letterSound = null;
     protected TextEffect textEffect;
     public List<Letter> letters = new List<Letter>();
@@ -30,7 +31,15 @@ public class TextManager : MonoBehaviour {
     public Vector2 offset;
     private bool offsetSet = false;
     private float currentX;
-    private float currentY;
+    //private float _currentY;
+    private float currentY; /* {
+        get { return _currentY; }
+        set {
+            if (GetType() == typeof(LuaTextManager))
+                print("Change currentY value: " + _currentY + " => " + value);
+            _currentY = value;
+        }
+    }*/
     private bool paused = false;
     private bool muted = false;
     private bool autoSkipThis = false;
@@ -90,28 +99,33 @@ public class TextManager : MonoBehaviour {
 
     public void ResetFont() {
         if (Charset == null || default_charset == null)
-            SetFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_DEFAULT_NAME), true);
-
+            if (GetType() == typeof(LuaTextManager))
+                ((LuaTextManager)this).SetFont(SpriteFontRegistry.UI_DEFAULT_NAME);
+            else
+                SetFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_DEFAULT_NAME), true);
         Charset = default_charset;
-        letterSound.clip = default_charset.Sound;
+        if (default_voice != null)
+            letterSound.clip = default_voice;
+        else
+            letterSound.clip = default_charset.Sound;
     }
 
     protected virtual void Awake() {
         self = gameObject.GetComponent<RectTransform>();
         letterSound = gameObject.AddComponent<AudioSource>();
         letterSound.playOnAwake = false;
-        // setFont(SpriteFontRegistry.F_UI_DIALOGFONT);
+        // SetFont(SpriteFontRegistry.F_UI_DIALOGFONT);
         timePerLetter = singleFrameTiming;
 
-        if (UnitaleUtil.IsOverworld&& GameObject.Find("textframe_border_outer"))
+        if (UnitaleUtil.IsOverworld && GameObject.Find("textframe_border_outer"))
             mugshot = new LuaSpriteController(GameObject.Find("Mugshot").GetComponent<Image>());
     }
 
     private void Start() {
-        //resetFont();
-        // setText("the quick brown fox jumps over\rthe lazy dog.\nTHE QUICK BROWN FOX JUMPS OVER\rTHE LAZY DOG.\nJerry.", true, true);
-        // setText(new TextMessage("Here comes Napstablook.", true, false));
-        // setText(new TextMessage(new string[] { "Check", "Compliment", "Ignore", "Steal", "trow temy", "Jerry" }, false));
+        // ResetFont();
+        // SetText("the quick brown fox jumps over\rthe lazy dog.\nTHE QUICK BROWN FOX JUMPS OVER\rTHE LAZY DOG.\nJerry.", true, true);
+        // SetText(new TextMessage("Here comes Napstablook.", true, false));
+        // SetText(new TextMessage(new string[] { "Check", "Compliment", "Ignore", "Steal", "trow temy", "Jerry" }, false));
     }
 
     public void SetPause(bool pause) { this.paused = pause; }
@@ -282,6 +296,8 @@ public class TextManager : MonoBehaviour {
                     currentLine = line;
                     currentX = self.position.x + offset.x;
                     currentY = self.position.y + offset.y - Charset.LineSpacing;
+                    /*if (GetType() == typeof(LuaTextManager))
+                        print("currentY from ShowLine (" + textQueue[currentLine].Text + ") = " + self.position.y + " + " + offset.y + " - " + Charset.LineSpacing + " = " + currentY);*/
                     currentCharacter = 0;
                     currentReferenceCharacter = 0;
                     letterEffect = "none";
@@ -368,6 +384,8 @@ public class TextManager : MonoBehaviour {
                         currentX = indice * 320 + 356;
                     } else if (textQueue[currentLine].Text[currentCharacter] == '\n') {
                         currentX = self.position.x + offset.x;
+                        /*if (GetType() == typeof(LuaTextManager))
+                            print("currentY from \\n (" + textQueue[currentLine].Text + ") = " + currentY + " - " + vSpacing + " - " + Charset.LineSpacing + " = " + (currentY - vSpacing - Charset.LineSpacing));*/
                         currentY = currentY - vSpacing - Charset.LineSpacing;
                         currentCharacter++;
                         return;
@@ -465,6 +483,8 @@ public class TextManager : MonoBehaviour {
                     if (UnitaleUtil.CalcTotalLength(this, beginIndex, finalIndex) > limit) {
                         if (finalIndex == testFinal) {
                             currentX = self.position.x + offset.x;
+                            /*if (GetType() == typeof(LuaTextManager))
+                                print("currentY from \\n (" + textQueue[currentLine].Text + ") = " + currentY + " - " + vSpacing + " - " + Charset.LineSpacing + " = " + (currentY - vSpacing - Charset.LineSpacing));*/
                             currentY = currentY - vSpacing - Charset.LineSpacing;
                             if (!UnitaleUtil.IsOverworld) {
                                 if (SceneManager.GetActiveScene().name == "Intro")
@@ -518,6 +538,8 @@ public class TextManager : MonoBehaviour {
                 Array.Resize(ref letterPositions, currentText2.Length);
             }
             currentX = self.position.x + offset.x;
+            /*if (GetType() == typeof(LuaTextManager))
+                print("currentY from \\n (" + textQueue[currentLine].Text + ") = " + currentY + " - " + vSpacing + " - " + Charset.LineSpacing + " = " + (currentY - vSpacing - Charset.LineSpacing));*/
             currentY = currentY - vSpacing - Charset.LineSpacing;
         } else
             currentText2 = currentText;
@@ -558,6 +580,8 @@ public class TextManager : MonoBehaviour {
                     break;
                 case '\n':
                     currentX = self.position.x + offset.x;
+                    /*if (GetType() == typeof(LuaTextManager))
+                        print("currentY from \\n = (" + textQueue[currentLine].Text + ") " + currentY + " - " + vSpacing + " - " + Charset.LineSpacing + " = " + (currentY - vSpacing - Charset.LineSpacing));*/
                     currentY = currentY - vSpacing - Charset.LineSpacing;
                     break;
                 case '\t':
@@ -596,10 +620,17 @@ public class TextManager : MonoBehaviour {
             letterReferences[i] = ltrImg;
             
             ltrRect.position = new Vector3(currentX + .1f, (currentY + Charset.Letters[currentText[i]].border.w - Charset.Letters[currentText[i]].border.y + 2) + .1f, 0);
+            /*if (GetType() == typeof(LuaTextManager))
+                print("currentY from SpawnText (" + textQueue[currentLine].Text + ") = " + currentY + " + " + Charset.Letters[currentText[i]].border.w + " - " + Charset.Letters[currentText[i]].border.y + " + 2 = " + (currentY + Charset.Letters[currentText[i]].border.w - Charset.Letters[currentText[i]].border.y + 2)); */
 
             letterPositions[i] = ltrRect.anchoredPosition;
             ltrImg.SetNativeSize();
-            ltrImg.color = currentColor;
+            if (GetType() == typeof(LuaTextManager)) {
+                Color c = ((LuaTextManager)this)._color;
+                if (currentColor == Color.white) ltrImg.color = c;
+                else                             ltrImg.color = currentColor;
+            } else                               ltrImg.color = currentColor;
+            ltrImg.GetComponent<Letter>().colorFromText = currentColor;
             ltrImg.enabled = displayImmediate;
             letters.Add(singleLtr.GetComponent<Letter>());
 
@@ -808,11 +839,15 @@ public class TextManager : MonoBehaviour {
             case "font":
                 AudioClip oldClip = letterSound.clip;
                 float oldLineThing = Charset.LineSpacing;
-                SetFont(SpriteFontRegistry.Get(cmds[1]));
+                if (GetType() == typeof(LuaTextManager))
+                    ((LuaTextManager)this).SetFont(cmds[1]);
+                else
+                    SetFont(SpriteFontRegistry.Get(cmds[1]));
                 letterSound.clip = oldClip;
-                foreach (Letter l in letters)
-                    l.transform.position = new Vector2(l.transform.position.x, l.transform.position.y + (oldLineThing - Charset.LineSpacing));
-                currentY += (oldLineThing - Charset.LineSpacing);
+                //foreach (Letter l in letters)
+                //    l.transform.position = new Vector2(l.transform.position.x, l.transform.position.y + (oldLineThing - Charset.LineSpacing));
+                //print("currentY from font change (" + textQueue[currentLine].Text + ") = " + currentY + " + " + oldLineThing + " - " + Charset.LineSpacing + " = " + (currentY + (oldLineThing - Charset.LineSpacing)));
+                //currentY += (oldLineThing - Charset.LineSpacing);
                 break;
 
             case "effect":
@@ -1001,11 +1036,11 @@ public class TextManager : MonoBehaviour {
         newhp = Mathf.Round(newhp * Mathf.Pow(10, ControlPanel.instance.MaxDigitsAfterComma)) / Mathf.Pow(10, ControlPanel.instance.MaxDigitsAfterComma);
         if (newhp <= 0) {
             GameOverBehavior gob = GameObject.FindObjectOfType<GameOverBehavior>();
-            if (!MusicManager.isStoppedOrNull(PlayerOverworld.audioKept)) {
+            if (!MusicManager.IsStoppedOrNull(PlayerOverworld.audioKept)) {
                 gob.musicBefore = PlayerOverworld.audioKept;
                 gob.music = gob.musicBefore.clip;
                 gob.musicBefore.Stop();
-            } else if (!MusicManager.isStoppedOrNull(Camera.main.GetComponent<AudioSource>())) {
+            } else if (!MusicManager.IsStoppedOrNull(Camera.main.GetComponent<AudioSource>())) {
                 gob.musicBefore = Camera.main.GetComponent<AudioSource>();
                 gob.music = gob.musicBefore.clip;
                 gob.musicBefore.Stop();

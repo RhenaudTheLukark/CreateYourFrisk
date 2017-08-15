@@ -4,16 +4,24 @@
 public class LuaArenaStatus {
     public float width         { get { return ArenaManager.instance.newWidth;                            } }
     public float height        { get { return ArenaManager.instance.newHeight;                           } }
+
     public float x             { get { return ArenaManager.instance.newX;                                } }
     public float y             { get { return ArenaManager.instance.newY;                                } }
+
     public float currentwidth  { get { return ArenaManager.arenaAbs.width;                               } }
     public float currentheight { get { return ArenaManager.arenaAbs.height;                              } }
+
     public float currentx      { get { return ArenaManager.arenaAbs.x + ArenaManager.arenaAbs.width / 2; } } //this being a rect value, it's centered on the bottom left corner of the object.
     public float currenty      { get { return ArenaManager.arenaAbs.y;                                   } }
 
     public bool isResizing  { get { return ArenaManager.instance.isResizeInProgress(); } }
+    public bool isresizing  { get { return isResizing;  } }
+
     public bool isMoving    { get { return ArenaManager.instance.isMoveInProgress();   } }
+    public bool ismoving    { get { return isMoving;    } }
+
     public bool isModifying { get { return isMoving || isResizing;                     } }
+    public bool ismodifying { get { return isModifying; } }
 
     /// <summary>
     /// Resize the arena to the new width/height. Throws a hilarious (read: not hilarious) error message if user was sneaky, bound it globally and tried using it outside of a wave script.

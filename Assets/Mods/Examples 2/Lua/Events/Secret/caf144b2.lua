@@ -54,6 +54,6 @@ function EventPage1()
         Player.Teleport("test2", 320, 200, 2, false)
     end
     Event.Remove(Event.GetName())
-    Event.Remove("caf144b2 (1)")
-    Event.Remove("caf144b2 (2)")
+    Event.Remove(Event.GetName() .. " (1)")
+    Event.Remove(Event.GetName() .. " (2)")
 end

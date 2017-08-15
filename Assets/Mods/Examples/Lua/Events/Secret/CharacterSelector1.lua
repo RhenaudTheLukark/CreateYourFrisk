@@ -1,3 +1,4 @@
+--Oh hi! Welcome to CYF's 0.6's secret, part 1 and 2! It's a good thing you can't discover the 3rd part like that, though.
 local currentChar = 1
 local phase = 0
 local background = nil
@@ -20,15 +21,21 @@ local count = 0
 local vely = 2
 local show = false
 
+local limit = 10
+
 function EventPage0()
-    if GetAlMightyGlobal("CYFInternalCharacterSelected") then
-        Event.Remove(Event.GetName())
-    else 
+    --if GetAlMightyGlobal("CYFInternalCharacterSelected") then
+    --    Event.Remove(Event.GetName())
+    --else 
         SetAlMightyGlobal("CYFInternalCharacterSelected", true)
         Event.Remove("Tone")
         Event.SetSpeed("Player", 3)
-        disabled = { GetAlMightyGlobal("CYFInternalCross1"), GetAlMightyGlobal("CYFInternalCross2"), GetAlMightyGlobal("CYFInternalCross3"), 
-                     GetAlMightyGlobal("CYFInternalCross4"), GetAlMightyGlobal("CYFInternalCross5") }
+		SetAlMightyGlobal("CYFInternalCross1", false)
+		SetAlMightyGlobal("CYFInternalCross2", true)
+		SetAlMightyGlobal("CYFInternalCross3", false)
+		SetAlMightyGlobal("CYFInternalCross4", true)
+		SetAlMightyGlobal("CYFInternalCross5", true)
+        disabled = { GetAlMightyGlobal("CYFInternalCross1"), GetAlMightyGlobal("CYFInternalCross2"), GetAlMightyGlobal("CYFInternalCross3"), GetAlMightyGlobal("CYFInternalCross4"), GetAlMightyGlobal("CYFInternalCross5") }
         disabled[6] = not (disabled[1] and disabled[2] and disabled[3] and disabled[4] and disabled[5])
         if not disabled[6] then
             Audio.Stop()
@@ -48,7 +55,7 @@ function EventPage0()
         foreground.Scale(640, 480)
         local playerSprite = Event.GetSprite("Player")
         playerSprite.alpha = 1
-    end
+    --end
 end
 
 function EventPage1()
@@ -75,14 +82,19 @@ function EventPage1()
         if fadeCount <= 0 then phase = 2 end
     elseif phase == 2 then
         local beginCurrentChar = currentChar
-        HandleInput() -- Triggers the formulae
+        HandleInput() -- Triggers the formula
+		limit = 10
         while disabled[currentChar] and beginCurrentChar ~= currentChar do
+			if limit == 0 then
+				break
+			end
             if lastInput == "Left" or lastInput == "Right" then
-                HandleInput(lastInput) -- Triggers the formulae with the same direction as before
+                HandleInput(lastInput) -- Triggers the formula with the same direction as before
             else
                 HandleUpDownFail()
                 break
             end
+			limit = limit - 1
         end
     elseif phase == 3 then
         if currentChar == 1 then
@@ -223,38 +235,38 @@ function HandleUpDownFail()
     local index = 1
     local curr = currentChar
     local y = positions[curr][2]
-    --DEBUG("currentChar: " .. tostring(curr))
+    DEBUG("currentChar: " .. tostring(curr))
     repeat
         if not (rightBound and not left) and not (leftBound and left) then
             curr = left and currentChar - index or currentChar + index
-            --DEBUG("currentIndex: " .. tostring(curr))
+            DEBUG("currentIndex: " .. tostring(curr))
             if curr > #positions then
                 rightBound = true
-                --DEBUG("rightBound out bounds")
+                DEBUG("rightBound out bounds")
             elseif curr < 1 then
                 leftBound = true
-                --DEBUG("leftBound out bounds")
+                DEBUG("leftBound out bounds")
             elseif positions[curr][2] ~= y then
                 if curr < currentChar then
                     leftBound = true
-                    --DEBUG("leftBound diff line")
+                    DEBUG("leftBound diff line")
                 else
                     rightBound = true
-                    --DEBUG("rightBound diff line")
+                    DEBUG("rightBound diff line")
                 end
             end
         end
         if leftBound and rightBound then
             ChangeTarget(lastEnabled)
-            --DEBUG("Two bounds")
+            DEBUG("Two bounds")
             return
         end
         if left then
             index = index + 1
-            --DEBUG("index +: " .. tostring(index))
+            DEBUG("index +: " .. tostring(index))
         end
         left = not left
-    until not (rightBound and left) and not (leftBound and not left) and not disabled[curr] 
+    until not disabled[curr] 
     ChangeTarget(curr)
 end
 
@@ -272,7 +284,7 @@ function HandleInput(forcedInput)
             else                    ChangeTarget((currentChar - 3) % 2 + 1 + 3) 
             end
         elseif Input.Down == 1 or Input.Up == 1 or forcedInput == "Down" or forcedInput == "Up" then
-            lastInput = Input.Down == 1 or forcedInput == "Down" and "Down" or "Left"
+            lastInput = Input.Down == 1 or forcedInput == "Down" and "Down" or "Up"
             local temp = (currentChar + (currentChar > 3 and 2 or 3)) % 5
             ChangeTarget(currentChar != 3 and (temp != 0 and temp or 5) or 5)
         end
@@ -285,7 +297,7 @@ function HandleInput(forcedInput)
 end
 
 function ChangeTarget(number, sound, forced)
-    --DEBUG(lastEnabled .. " == " .. number)
+    DEBUG(lastEnabled .. " ~= " .. number .. " or " .. lastEnabled .. " ~= " .. currentChar .." or " .. tostring(forced))
     if lastEnabled ~= number or lastEnabled ~= currentChar or forced then
         if not disabled[number] and lastEnabled ~= number or forced then
             chars[lastEnabled]["sprite"].StopAnimation()

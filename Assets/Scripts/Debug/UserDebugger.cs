@@ -9,12 +9,12 @@ using UnityEngine.UI;
 public class UserDebugger : MonoBehaviour{
     public static UserDebugger instance;
     public Text text;
-    public int maxLines;
+    public int maxLines = 7;
     public Queue<string> dbgContent = new Queue<string>();
     private bool firstActive = false;
     private string originalText = null;
 
-    public void Start(){
+    public void Start() {
         instance = this;
         if (originalText == null)
             originalText = text.text;
@@ -22,6 +22,10 @@ public class UserDebugger : MonoBehaviour{
         dbgContent.Clear();
         gameObject.SetActive(false);
         firstActive = false;
+        if (UnitaleUtil.printDebuggerBeforeInit != "") {
+            UserWriteLine(UnitaleUtil.printDebuggerBeforeInit);
+            UnitaleUtil.printDebuggerBeforeInit = "";
+        }
     }
 
     public static void Warn(string line){
@@ -37,8 +41,10 @@ public class UserDebugger : MonoBehaviour{
             GameObject.Find("Text").transform.SetParent(transform);
             firstActive = true;
         }
-
-        WriteLine(line);
+        line = line ?? "nil";
+        Debug.Log("Frame " + GlobalControls.frame + ": " + line);
+        foreach (string str in line.Split('\n'))
+            WriteLine(str);
         transform.SetAsLastSibling();
     }
 

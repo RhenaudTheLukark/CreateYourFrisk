@@ -141,14 +141,7 @@ it's w3c valid, at least
                 <br>
                 <i><u><span class="CYF"></span> The Pixel-Perfect Collision System</u></i><br>
                 This section shows you how CYF's Pixel-Perfect Collision System works. Why would you use square hitboxes when
-				you have a system like this?<br>
-				<br>
-                <i><u><span class="CYF"></span> Overworld - Basics</u></i><br>
-                Explains how CYF's Overworld broadly works.<br>
-                <br>
-                <i><u><span class="CYF"></span> Overworld - Functions</u></i><br>
-                Shows the complete list of Overworld functions that can be used in events.<br>
-                <br>
+				you have a system like this?
             </p>
         </div>
        
@@ -1151,39 +1144,7 @@ end
                 the player's hitbox, if you need that for anything.
             </p>
             <ul>
-                <li><span class="term">Player.sprite</span> - the Player's soul sprite component. See the <span class="ref">Sprites &amp; Animation</span> 
-					section for usage details.
-                </li><br>
-                <li><span class="term">Player.hp</span> - get or set the player's current HP. Can't exceed max HP. If set to 0, game over
-                    triggers.<br>
-					<span class="CYF"></span> * The hp value is now a float, but there can be some problems about accuracy of float values.
-                </li><br>
-                <li><span class="CYF"></span> <span class="term">Player.maxhp</span> (readonly) - returns the player's MaxHP value. <br> 
-					* The hp value is now a float, but there can be some problems about accuracy of float values.
-                </li><br>
-                <li><span class="CYF"></span> <span class="term">Player.MaxHPShift</span> (readonly) - returns the difference between the player's current Max HP and their normal, 
-				unmodified Max HP.
-				<br>* The hp value is now a float, but there can be some problems about accuracy of float values.
-                </li><br>
-                <li><span class="term">Player.name</span> - get or set the player's current name. <br>
-				    <span class="CYF"></span> 9 letters max. "Rhenao" by default.</li><br>
-                <li><span class="term">Player.lv</span> - use this to get or set the player's current level. It can be between 1 and 20. It's 1 by default. 
-				<span class="CYF"></span> 99 max - Player starts with 20HP / 10 ATK and gets 4 HP / 2 ATK per level. Leveling up the player through code 
-				doesn't automatically heal them; you'll have to do this manually.
-                </li><br>
-                <li><span class="CYF"></span> <span class="term">Player.atk</span> (readonly) - base attack of the player. Depends on the player's level.
-                </li><br>
-                <li><span class="CYF"></span> <span class="term">Player.def</span> (readonly) - base defense of the player. Depends on the player's level.
-                </li><br>
-                <li><span class="CYF"></span> <span class="term">Player.weapon</span> (readonly) - name of the player's current weapon.
-                </li><br>
-                <li><span class="CYF"></span> <span class="term">Player.armor</span> (readonly) - name of the player's current armor.
-                </li><br>
-                <li><span class="CYF"></span> <span class="term">Player.weaponatk</span> (readonly) - attack value of the player's current weapon.
-                </li><br>
-                <li><span class="CYF"></span> <span class="term">Player.armordef</span> (readonly) - defense value of the player's current armor.
-                </li><br>
-                <li><span class="term">Player.x</span> (readonly) - gets the X position of the <i>player's center</i> relative to the arena's
+				<li><span class="term">Player.x</span> (readonly) - gets the X position of the <i>player's center</i> relative to the arena's
                     center.
                 </li><br>
                 <li><span class="term">Player.y</span> (readonly) - get the Y position of the <i>player's center</i> relative to the arena's
@@ -1195,18 +1156,50 @@ end
                 <li><span class="term">Player.absy</span> (readonly) - get the Y position of the <i>player's center</i> relative to the bottom
                     left corner of the screen.
                 </li><br>
-                <li><span class="term">Player.isHurting</span> (readonly) - true if the player's currently blinking due to being hurt, false
-                    otherwise.
+                <li><span class="term">Player.sprite</span> - the Player's soul sprite component. See the <span class="ref">Sprites &amp; Animation</span> 
+					section for usage details.
                 </li><br>
-                <li><span class="term">Player.isMoving</span> (readonly) - true if the player is currently moving in battle, false otherwise. Will
-                    always be false while not in a wave script. NOTE: This only will change with the default control scheme (see below).
+                <li><span class="term">Player.hp</span> - get or set the player's current HP. Can't exceed max HP. If set to 0, game over
+                    triggers.<br>
+					<span class="CYF"></span> * The hp value is now a float, but there can be some problems about accuracy of float values.
                 </li><br>
-                <li><span class="CYF"></span> <span class="term">Player.lastenemychosen</span> (readonly) - gets the id of the last chosen enemy in the 
+                <li><span class="CYF"></span> <span class="term">Player.maxhp</span> (readonly) - returns the player's MaxHP value. <br> 
+					* The hp value is now a float, but there can be some problems about accuracy of float values.
+                </li><br>
+                <li><span class="CYF"></span> <span class="term">Player.maxhpshift</span> (readonly) - returns the difference between the player's current Max HP and their normal, 
+				unmodified Max HP.
+				<br>* The hp value is now a float, but there can be some problems about accuracy of float values.
+                </li><br>
+                <li><span class="CYF"></span> <span class="term">Player.atk</span> (readonly) - base attack of the player. Depends on the player's level.
+                </li><br>
+                <li><span class="CYF"></span> <span class="term">Player.weapon</span> (readonly) - name of the player's current weapon.
+                </li><br>
+				<li><span class="CYF"></span> <span class="term">Player.weaponatk</span> (readonly) - attack value of the player's current weapon.
+                </li><br>
+                <li><span class="CYF"></span> <span class="term">Player.def</span> (readonly) - base defense of the player. Depends on the player's level.
+                </li><br>
+                <li><span class="CYF"></span> <span class="term">Player.armor</span> (readonly) - name of the player's current armor.
+                </li><br>
+                <li><span class="CYF"></span> <span class="term">Player.armordef</span> (readonly) - defense value of the player's current armor.
+                </li><br>
+				<li><span class="term">Player.name</span> - get or set the player's current name. <br>
+				    <span class="CYF"></span> 9 letters max. "Rhenao" by default.</li><br>
+                <li><span class="term">Player.lv</span> - use this to get or set the player's current level. It can be between 1 and 20. It's 1 by default. 
+				<span class="CYF"></span> 99 max - Player starts with 20HP / 10 ATK and gets 4 HP / 2 ATK per level. Leveling up the player through code 
+				doesn't automatically heal them; you'll have to do this manually.
+                </li><br>
+				<li><span class="CYF"></span> <span class="term">Player.lastenemychosen</span> (readonly) - gets the id of the last chosen enemy in the 
 				ACT/FIGHT menus. -1 at the beginning of a fight.
                 </li><br>
                 <li><span class="CYF"></span> <span class="term">Player.lasthitmultiplier</span> (readonly) - gets the accuracy value from the last time the
 				player was in <span class="term">ATTACKING</span>. Normally, it will be between 0 and 2. It will be -1 if the player missed the attack (and 
 				at the beginning of the battle) and 2.2 if the attack was perfectly precise.
+                </li><br>
+                <li><span class="term">Player.ishurting</span> (readonly) - true if the player's currently blinking due to being hurt, false
+                    otherwise.
+                </li><br>
+                <li><span class="term">Player.ismoving</span> (readonly) - true if the player is currently moving in battle, false otherwise. Will
+                    always be false while not in a wave script. NOTE: This only will change with the default control scheme (see below).
                 </li><br>
                 <li><span class="term">Player.Hurt(damage)</span> - deals damage to the player, and makes them invincible for the default time.
                 </li><br>
@@ -1220,14 +1213,14 @@ end
                     prevent the player soul from doing its regular movement/keyboard control for the rest of the wave.
                     Use this if you want to implement your own controls in a wave.
                 </li><br>
-                <li><span class="term">Player.MoveTo(x, y, ignoreWalls)</span> - Moves the player soul to this position relative to the arena's
-                    center. If <span class="term">ignoreWalls</span> is false, it will make sure the player doesn't go outside of the arena;
-                    otherwise, it ignores the arena's boundaries. If you want to move the player out of bounds in a wave, you'll
-                    have to call <span class="term">Player.SetControlOverride(true)</span> as the player's default movement keeps the soul inside
-                    the arena.
-                </li><br>
                 <li><span class="CYF"></span> <span class="term">Player.Move(x, y, ignoreWalls)</span> - Moves the player soul based on its last position.
 					If <span class="term">ignoreWalls</span> is false, it will make sure the player doesn't go outside of the arena;
+                    otherwise, it ignores the arena's boundaries. If you want to move the player out of bounds in a wave, you'll
+                    have to call <span class="term">Player.SetControlOverride(true)</span>, as the player's default movement keeps the soul inside
+                    the arena otherwise.
+                </li><br>
+				<li><span class="term">Player.MoveTo(x, y, ignoreWalls)</span> - Moves the player soul to this position relative to the arena's
+                    center. If <span class="term">ignoreWalls</span> is false, it will make sure the player doesn't go outside of the arena;
                     otherwise, it ignores the arena's boundaries. If you want to move the player out of bounds in a wave, you'll
                     have to call <span class="term">Player.SetControlOverride(true)</span> as the player's default movement keeps the soul inside
                     the arena.
@@ -1241,7 +1234,7 @@ end
                 <li><span class="CYF"></span> <span class="term">Player.ForceHP(int amount)</span> - Lets you set the player's HP to a number above the 
 				player's Max HP. The REAL maximum is 1.5 times the player's MaxHP.
                 </li><br>
-                <li><span class="CYF"></span> <span class="term">Player.setMaxHPShift(int shift, float invulnerabilitySeconds = 1.7f, bool set = false,
+                <li><span class="CYF"></span> <span class="term">Player.SetMaxHPShift(int shift, float invulnerabilitySeconds = 1.7f, bool set = false,
 				bool canHeal = false)</span> - Lets you set the Player's MaxHP, relative to their normal MaxHP. If the total MaxHP is negative or nil, it
 					causes a GameOver.<br>
 					Formula: Player's MaxHP = Basis MaxHP + MaxHP Shift
@@ -1254,7 +1247,7 @@ end
 						<li><span class="term">canHeal</span> = true if the player will be able to heal up to this new Max HP value.</li><br>
 					</ul>
                 </li><br>
-	            <li><span class="CYF"></span> <span class="term">Player.SetAttackAnim(string[] anim, float frequency)</span> - Sets the animation used
+	            <li><span class="CYF"></span> <span class="term">Player.SetAttackAnim(table anim, float frequency)</span> - Sets the animation used
 				when attacking an enemy. Use it like <span class="term">sprite.SetAnimation()</span></li><br>
 				<li><span class="CYF"></span> <span class="term">Player.ResetAttackAnim()</span> - Resets the animation of the player's 
 				attack to the default slashing animation.</li><br>
@@ -1266,13 +1259,13 @@ end
 					otherwise, damage will be calculated normally.
 					<br><span style="color:#aa0000">After using this function, you have to check with <span class="term">Player.CheckDeath</span> to really 
 					kill enemies that lost all their health this way.</span></li><br>
-				<li><span class="CYF"></span> <span class="term">Player.MultiTarget(int[] targetIDs = all, int[] damage = normal_damage_values)</span> - The 
+				<li><span class="CYF"></span> <span class="term">Player.MultiTarget(table targetIDs = all, table damage = normal_damage_values)</span> - The 
 					next attack the player executes will attack the enemies contained in <span class="term">targetIDs</span> and deal <span class="term">
 					damage</span> damage. If you want to, you can choose the attack's damage, too - but otherwise, damage will be calculated normally.
 					If you put nothing as a parameter, this will attack all enemies with the normal damage calculations.</li><br>
 				<li><span class="CYF"></span> <span class="term">Player.MultiTarget(int damage)</span> - The next attack the player executes will attack all 
 				enemies and deals <span class="term">damage</span> damage.</li><br>
-				<li><span class="CYF"></span> <span class="term">Player.ForceMultiAttack(int[] targetIDs = all, int[] damage = normal_damage_values)</span> 
+				<li><span class="CYF"></span> <span class="term">Player.ForceMultiAttack(table targetIDs = all, table damage = normal_damage_values)</span> 
 					- Forces an attack towards the enemies contained in <span class="term">targetIDs</span> and deals <span class="term">damage
 					</span> damage. If you want to, you can choose the attack's damage, too - but otherwise, damage will be calculated normally.
 					If you put nothing as a parameter, this will attack all enemies with the normal damage calculations.
@@ -1311,6 +1304,10 @@ end
                 can use it.
             </p>
             <ul>
+                <li><span class="term">Audio.playtime</span> - Get the current play position of the current music in seconds.</li><br>
+                <li><span class="term">Audio.totaltime</span> - Get the total length of the current music in seconds.</li><br>
+                <li><span class="term">Audio.isplaying</span> - Returns true if the music is playing, or false if the music is stopped or paused.</li><br>
+				
                 <li><span class="term">Audio.Play()</span> - Play the currently loaded music. Done automatically at the beginning of a fight.</li><br>
                 <li><span class="term">Audio.Stop()</span> - Stops the music. If you want a battle not to have music, call this in 
 				<span class="term">EncounterStarting()</span>.
@@ -1330,8 +1327,6 @@ end
                 <li><span class="term">Audio.PlaySound(filename)</span> - Play the sound from the Sounds folder titled
 				<span class="term">filename.ogg</span> or <span class="term">filename.wav</span>.
                 </li><br>
-                <li><span class="term">Audio.playtime</span> - Get the current play position of the current music in seconds.</li><br>
-                <li><span class="term">Audio.totaltime</span> - Get the total length of the current music in seconds.</li><br>
                 <li><span class="CYF"></span> <span class="term">Audio.StopAll()</span> - Stops all playing audio.</li><br>
                 <li><span class="CYF"></span> <span class="term">Audio.PauseAll()</span> - Pauses all the audio sources.</li><br>
                 <li><span class="CYF"></span> <span class="term">Audio.UnpauseAll()</span> - Unpauses all the audio sources.</li><br>
@@ -1366,6 +1361,8 @@ end</pre>
 			    <li><span class="term">NewAudio.GetAudioName(name)</span> - Gets the name of the audio channel <span class="term">name</span>.</li><br>
                 <li><span class="term">NewAudio.GetTotalTime(name)</span> - Get the total time of the last clip played on the channel 
 				<span class="term">name</span>.</li><br>
+				<li><span class="term">NewAudio.GetCurrentTime(name)</span> - Get the current play position of the current audio of this channel
+				in seconds.</li><br>
 			    <li><span class="term">NewAudio.PlayMusic(name, music, loop = false, volume = 1)</span> - Plays the music <span class="term">music</span> on 
 				the channel <span class="term">name</span>. <span class="term">loop</span> tells the engine if it has to loop the music or not; 
 				<span class="term">volume</span> is the volume of the music.</li><br>
@@ -1390,7 +1387,7 @@ end</pre>
 				<li><span class="term">NewAudio.StopAll()</span> - Stops all the audio channels.</li><br>
 				<li><span class="term">NewAudio.PauseAll()</span> - Pauses all the audio channels.</li><br>
 				<li><span class="term">NewAudio.UnpauseAll()</span> - Unpauses all the audio channels.</li><br>
-				<li><span class="term">NewAudio.isStopped(name)</span> - Checks if the audio channel <span class="term">name</span> is stopped.</li><br>
+				<li><span class="term">NewAudio.IsStopped(name)</span> - Checks if the audio channel <span class="term">name</span> is stopped.</li><br>
             </ul>
 
             <p>
@@ -1418,7 +1415,7 @@ end</pre>
 				bottom left corner of the screen. (from 0 to 640)</li><br>
                 <li><span class="CYF"></span> <span class="term">Input.MousePosY</span> (readonly) - Returns the Y position of the mouse relative to the 
 				bottom left corner of the screen. (from 0 to 480)</li><br>
-                <li><span class="CYF"></span> <span class="term">Input.isMouseInWindow</span> (readonly) - Returns true if the mouse is in the window, false 
+                <li><span class="CYF"></span> <span class="term">Input.IsMouseInWindow</span> (readonly) - Returns true if the mouse is in the window, false 
 				otherwise.</li><br>
             </ul>
 
@@ -1451,7 +1448,6 @@ end</pre>
             </p>
             <ul>
                 <li><span class="term">Misc.MachineName</span> (read-only) - Returns the name of the player's session.</li><br>
-                <li><span class="term">Misc.DestroyWindow()</span> - Closes the window instantly.</li><br>
                 <li><span class="term">Misc.ShakeScreen(int durationInFrames, int intensity = 3, bool isIntensityDecreasing = false)</span> - Shakes the 
                 screen for <span class="term">durationInFrames</span> frames, with a maximum of <span class="term">intensity</span> pixels out of the 
                 normal position. Set <span class="term">isIntensityDecreasing</span> as true to reduce the intensity over time.</li><br>
@@ -1460,15 +1456,16 @@ end</pre>
                 <li><span class="term">Misc.FullScreen</span> - Fullscreen mode.</li><br>
                 <li><span class="term">Misc.ScreenWidth</span> - Returns the width of the user's screen.</li><br>
                 <li><span class="term">Misc.ScreenHeight</span> - Returns the height of the user's screen.</li><br>
+                <li><span class="term">Misc.DestroyWindow()</span> - Closes the window instantly.</li><br>
                 <span style="color:#aa0000;font-size:18px;">THE FOLLOWING VARIABLES AND FUNCTIONS ARE <u>WINDOWS ONLY</u>.</span><br><br>
+                <li><span class="term">Misc.WindowName</span> - Gets or sets the name of the window.</li><br>
+                <li><span class="term">Misc.WindowX</span> - Gets or sets the X position of the bottom left corner of the window.</li><br>
+                <li><span class="term">Misc.WindowY</span> - Gets or sets the Y position of the bottom left corner of the window.</li><br>
                 <li><span class="term">Misc.MoveWindow(int X, int Y)</span> - Move the window by X pixels horizontally and Y pixels vertically.</li><br>
                 <li><span class="term">Misc.MoveWindowTo(int X, int Y)</span> - Moves the bottom left corner of the window to the given coordinates.
                 </li><br>
-                <li><span class="term">Misc.WindowX</span> - Gets or sets the X position of the bottom left corner of the window.</li><br>
-                <li><span class="term">Misc.WindowY</span> - Gets or sets the Y position of the bottom left corner of the window.</li><br>
                 <li><span class="term">Misc.WindowWidth</span> (readonly) - The width of the window.</li><br>
-                <li><span class="term">Misc.WindowHeight</span> (readonly) - The height of the window.</li><br>
-                <li><span class="term">Misc.WindowName</span> - Gets or sets the name of the window.</li>
+                <li><span class="term">Misc.WindowHeight</span> (readonly) - The height of the window.</li>
             </ul>
             <p>
                 <br><span class="function">SetSprite(filename) [M]</span>
@@ -1592,7 +1589,13 @@ end</pre>
 					from <span class="term">x</span> in that it will accurately reflect the arena position in the middle of moving, too.</li><br>
                 <li><span class="CYF"></span> <span class="term">Arena.currenty</span> (readonly) - the <i>current</i> y of the arena in pixels. Differs 
 					from <span class="term">y</span> in that it will accurately reflect the arena position in the middle of moving, too.</li><br>
-                <li><span class="term">Arena.Resize(width, height)</span> - Resizes the arena to the new size. Currently, monsters stay on top of
+                <li><span class="CYF"></span> <span class="term">Arena.isresizing</span> (readonly) - Tells you if the Arena is currently being resized.
+				<br><span style="color:#ffffff;text-decoration:underline;text-decoration-color:#ffffff">&lt;0.2.1a&gt;</span>: There's an equivalent of this in 
+				0.2.1a - just use <span class="term">Arena.currentwidth != Arena.width and Arena.currentheight != Arena.height</span>.</li><br>
+                <li><span class="CYF"></span> <span class="term">Arena.ismoving</span> (readonly) - Tells you if the Arena is currently being moved.</li><br>
+                <li><span class="CYF"></span> <span class="term">Arena.ismodifying</span> (readonly) - Returns true if the Arena is being moved <i>or</i> 
+				resized, false otherwise.</li><br>
+				<li><span class="term">Arena.Resize(width, height)</span> - Resizes the arena to the new size. Currently, monsters stay on top of
                     the arena. This was going to be changed around the animation update.<br><span class="CYF"></span> But, in CYF, you can use
 					<span class="term">BindToArena</span> to control that!
                 </li><br>
@@ -1611,12 +1614,6 @@ end</pre>
 				</span> - Move the Arena based on the bottom-left corner of the window and resizes it at the same time.<br>
 				    Set <span class="term">movePlayer</span> to true if you want the Player to move with the Arena and set <span class="term">immediate
 					</span> to true if you want to move the Arena immediately.</li><br>
-                <li><span class="CYF"></span> <span class="term">Arena.isResizing</span> (readonly) - Tells you if the Arena is currently being resized.
-				<br><span style="color:#ffffff;text-decoration:underline;text-decoration-color:#ffffff">&lt;0.2.1a&gt;</span>: There's an equivalent of this in 
-				0.2.1a - just use <span class="term">Arena.currentwidth != Arena.width and Arena.currentheight != Arena.height</span>.</li><br>
-                <li><span class="CYF"></span> <span class="term">Arena.isMoving</span> (readonly) - Tells you if the Arena is currently being moved.</li><br>
-                <li><span class="CYF"></span> <span class="term">Arena.isModifying</span> (readonly) - Tells you if the Arena is being moved <i>or</i> 
-				resized.</li><br>
 			</ul>
 
             <p>
@@ -2119,7 +2116,7 @@ end</pre>
 				<span class="term">TitleScreen</span> scenes. It's up to you to find how you want to work in CYF!</p>
             <p>Now you're ready!! You can launch CYF and you'll be ready to start fiddling with the engine! If you followed these
                 instructions and for some reason CYF won't launch, you may want to contact me directly via Discord or Reddit. In this case,
-                please get <a href="https://www.teamviewer.com/fr/">TeamViewer</a>, a software that allows you to share your
+                please get <a href="https://www.teamviewer.com/en/">TeamViewer</a>, a software that allows you to share your
                 screen with other users. With this, I'll be able to see what's wrong and help you.</p><br>
            
             <h4>How does it work?</h4>
@@ -2320,6 +2317,15 @@ end</pre>
 				to create an instance of this prefab.</li>
             </p>
             <br>
+			<p>
+				Now, as you can see there are two different objects, both named "Event1".<br>
+				You absolutely need to rename the paren't GameObject "SpritePivot" in order for the event to be correctly layered.<br>
+				This is a workaround I did to correctly layer the sprites. The position of that event must be set on that parent GameObject
+				in order for its layer to be correctly set. You can modify the position of the child GameObjct if you want to, it'll 
+				shift the layer point accordingly.<br>
+				<a href="https://forum.unity3d.com/threads/official-2d-sorting-feedback.376707/#post-3167142">For more infomation about that workaround and how it works, go here.</a>
+			</p>
+			<br>
             <p>
                 Now the event is ready! Simple, isn't it? However, you'll want to modify it now. Keeping the object like this is not recommended.<br>
                 What follows is a list of things that you can modify.
@@ -2377,6 +2383,7 @@ end</pre>
         <div class="tab-pane text-style" id="overworld-howto-animevent">
             <h2><span class="CYF"></span>The Overworld: How to add an animation to an event</h2><br><br>
            
+		   
             <p>
                 Tired of all these static events? Do you want them to be animated, to bring more life to your map? You're in the right place!<br>
                 Animating events is (again) something very easy, but it may be time-consuming. This animator is used like 
@@ -2419,6 +2426,204 @@ end</pre>
             </p>
         </div>
 
+        <div class="tab-pane text-style" id="overworld-howto-shop">
+            <h2><span class="CYF"></span>The Overworld: How to create a shop</h2><br><br>
+			
+			<p><h3><span style="color:#aa0000;line-height:30px;"><u>CAUTION! You will need to code in C# for some aspects of this feature! 
+			</u></span></h3><br><u>In the future, all CYF projects will have to be compiled into singular .exe files before being distributed. It's r
+			recommended to wait until then before you try to make a custom shop in your mod's overworld!</u></p><br><br>
+			<p>
+				You may know what a shop is in Undertale. Well, here you'll learn how to make one in Create Your Frisk!
+			</p>
+			<p>
+				Shop scripts contain some of the same functions and objects that are in all scripts, such as the <span class="term">Audio</span> object, 
+				the <span class="term">NewAudio</span> object, the <span class="term">Inventory</span> object, the <span class="term">Input</span> object, 
+				the <span class="term">Misc</span> object, and the <span class="term">Time</span> object, as well as <span class="term">RealGlobals</span> 
+				and <span class="term">AlMightyGlobals</span>. 
+				<br>Finally, the variables <span class="term">isCYF</span>, <span class="term">safe</span>, <span class="term">windows</span> 
+				and <span class="term">CYFversion</span> are also accessible.
+			</p>
+			<p>
+				Shop scripts have their own State system. You can't directly access them, but here is a list of the shop's states:
+				<ul>
+					<li><span class="term">MENU</span> - The main menu of the Shop script.</li>
+					<li><span class="term">BUY</span> - The Buy menu of the Shop script.</li>
+					<li><span class="term">BUYCONFIRM</span> - State for confirming a purcahse when buying an item.</li>
+					<li><span class="term">SELL</span> -The Sell menu of the Shop script.</li>
+					<li><span class="term">SELLCONFIRM</span> - State for confirming a sale when selling an item.</li>
+					<li><span class="term">TALK</span> - The Talk menu of the Shop script.</li>
+					<li><span class="term">TALKINPROGRESS</span> - Entered when a Talk option is chosen and its assigned text is displayed.</li>
+					<li><span class="term">EXIT</span> - Entered while showing the exit text of the shop, just before leaving.</li>
+					<li><span class="term">INTERRUPT</span> - Entered when interrupting the action of any other state. See the function
+					<span class="term">Interrupt()</span> for more details.</li>
+				</ul>
+			</p>
+			<p>
+				If you don't know what to do or where to start, I suggest you look at the file <span class="term">Examples/Lua/Shops/Dummy.lua</span> to 
+				visualize how it's done.
+			</p>
+			<p>
+				Other than that, other functions and variables are available, to personalize your shop. Here follows the detailed list of thoose.<br>
+			</p>
+			<h3>Setting up your shop for the overworld</h3>
+			<p>
+				CYF's shops are different from what you've seen so far. The new shop scripts are to be put in the <span class="term">YOURMOD/Lua/Shops/</span> directory.
+				<br><br>A shop can be loaded with the function <span class="term">General.EnterShop(scriptName)</span>, with <span class="term">scriptName
+				</span> being the name of your shop's lua file, without the extension.
+				<br>So, if you have want to load <span class="term">YOURMOD/Lua/Shops/shop.lua</span>, you would use 
+				<span class="term">General.EnterShop("shop")</span>.
+			</p>
+			
+	
+			<h3>Shop variables</h3><br>
+			
+			<p>
+				<ul>
+					<li><span class="term">background</span> - A sprite object used as the background of the shop. Optimally, this sprite should be 640x240 
+					pixels.</li><br>
+					<li><span class="term">returnscene</span> - The name of the scene the Player will go back to when exiting the shop.</li>
+					<li><span class="term">returnpos</span> - A table containing the position the Player will appear at in the map when leaving the shop.</li>
+					<li><span class="term">returndir</span> - Direction the Player will face when exiting the shop. 2 = Down, 4 = Left, 6 = Right, 8 = Up.
+					</li><br>
+					<li><span class="term">music</span> - Name of the music file the shop will use. The music file must be .ogg or .wav and mus be in
+					<span class="term">YOURMOD/Audio</span>.</li>
+					<br>
+					<li><span class="term">buylist</span> - A table defining which items the shop will have in store. This table is composed of 3 other tables:
+						<ul>
+							<li>The first table contains the names of the items to be sold. The items must be in the item database (<span class="term">
+							CYF/Scripts/Inventory/Inventory.cs</span>).</li>
+							<li>The second table contains the descriptions for each item.</li>
+							<li>The third table contains the prices of each item. Use -1 to use the price set in the database (<span class="term">
+							CYF/Scripts/Inventory/Inventory.cs</span>).</li>
+						</ul>
+					</li>
+					<li><span class="term">talklist</span> - A table containing the list of all the talk options in the shop. This table is composed of 2 other tables:
+						<ul>
+							<li>The first table contains the name of each TALK option the Player can pick.</li>
+							<li>The second table contains the text associated with these TALK actions. These can each be a single string or a table of 
+							strings.</li>
+						</ul>
+					</li>
+					<br>
+					<li><span class="term">maintalk</span> - The text displayed in the main Shop menu.</li>
+					<li><span class="term">buytalk</span> - The text displayed when entering the Buy menu.</li>
+					<li><span class="term">talktalk</span> - The text displayed when entering the Talk menu.</li>
+					<li><span class="term">exittalk</span> - The text displayed when entering the Exit menu.</li>
+				</ul>
+			</p>
+			
+			<h3>Shop functions</h3><br>
+			
+            <p>
+                <br><span class="function">Start()</span>
+				This function is launched when entering the shop. 
+				<br>It is advised to set the background's image here.
+            </p>
+			
+            <p>
+                <br><span class="function">Update()</span>
+				Every well-functioning script needs an Update() function.<br>
+				This function is launched once per frame.
+            </p>
+			
+            <p>
+                <br><span class="function">EnterMenu()</span>
+				Launched when entering the main Shop menu.
+            </p>
+			
+            <p>
+                <br><span class="function">EnterBuy()</span>
+				Launched when entering the Buy menu.
+            </p>
+			
+            <p>
+                <br><span class="function">SuccessBuy(string itemName)</span>
+				Launched when an item is successfully purchased.
+				<br><span class="term">itemName</span> is the name of the item bought.
+            </p>
+			
+            <p>
+                <br><span class="function">FailBuy(string error)</span>
+				Launched when the Player tries to buy an item, but can't. 
+				<br><span class="term">error</span> has two possible values:
+				<ul>
+					<li><span class="term">"gold"</span> - Used if the Player doesn't have enough Gold.</li>
+					<li><span class="term">"full"</span> - Used if the Player's inventory is full.</li>
+				</ul>
+            </p>
+			
+            <p>
+                <br><span class="function">ReturnBuy()</span>
+				Launched when the player selects an item to buy, then chooses "No" or presses the Cancel button.
+            </p>
+			
+            <p>
+                <br><span class="function">EnterSell()</span>
+				Launched when entering the Sell menu.
+				<br>To prevent the player from selling, use the function <span class="term">Interrupt()</span> here (see below).
+            </p>
+			
+            <p>
+                <br><span class="function">SuccessSell(string itemName)</span>
+				Launched when an item is successfully sold. 
+				<br><span class="term">itemName</span> is the name of the item sold.
+            </p>
+			
+            <p>
+                <br><span class="function">FailSell()</span>
+				Launched if the player's inventory is empty and they try to enter the Sell menu.
+            </p>
+			
+            <p>
+                <br><span class="function">ReturnSell()</span>
+				Launched when the player selects an item to sell, then chooses "No" or presses the Cancel button.
+            </p>
+			
+            <p>
+                <br><span class="function">EnterTalk()</span>
+				Launched when entering the Talk menu.
+            </p>
+			
+            <p>
+                <br><span class="function">SuccessTalk(strig talkOption)</span>
+				Launched when a Talk option is successfully selected.
+				<br><span class="term">talkOption</span> is the name of the option selected.
+            </p>
+			
+            <p>
+                <br><span class="function">EnterExit()</span>
+				Launched when choosing the Exit option.
+            </p>
+			
+			<p>
+                <br><span class="function">Interrupt(table text, string newState = "MENU")</span>
+                Interrupts any current state (except the INTERRUPT state) to display the message given in <span class="term">text</span>.<br>
+				At the end of the message, the state <span class="term">newState</span> will be entered.<br>
+				<i>I advise you to not use this to enter the states</i> <span class="term">BUYCONFIRM</span>, 
+				<span class="term">SELLCONFIRM</span> <i>or</i> <span class="term">TALKINPROGRESS</span>.
+            </p>
+			
+			<p>
+                <br><span class="function">OnInterrupt(string newState)</span>
+				This function is launched when entering the Interrupt state.
+				<br><span class="term">newState</span> is the name of the state the Player will enter when the 
+				Interrupt state finishes its text.<br>
+            </p>
+			
+			<h3>Additional info</h3><br><br>
+			
+			<p>
+				The layers in the Shop scene aren't the same as everywhere else. This is the Shop script's 
+				layering system: 
+				<ul>
+				    <li><span class="term">"Bottom"</span>: Under everything, even the background.</li><br>
+				    <li><span class="term">"BelowUI"</span>: Above the background.</li><br>
+				    <li><span class="term">"BelowPlayer"</span>: Above the background and the UI.</li><br>
+				    <li><span class="term">"Top"</span>: Above everything.</li><br>
+				</ul>
+			</p>
+		</div>
+		
         <div class="tab-pane text-style" id="overworld-object-general">
             <h2><span class="CYF"></span>The Overworld: The General Object</h2><br>
            
@@ -2439,7 +2644,7 @@ end</pre>
                 For now, there are a lot of constraints, but I hope that I'll find a better way to do this easily.<br>
                 Each choice must have no more than 3 lines. 
 				If you want there to be a question, it must be no more than one line long.<br>
-                <span style="color:#ff0000">Due to the nature of this function, the result won't be returned, directly but the result 
+                <span style="color:#ff0000">Due to the nature of this function, the result won't be returned directly, but the result 
                 will be stored in a variable named <span class="term">lastChoice</span>.</span>
             </p>
             <p>
@@ -2461,9 +2666,10 @@ end</pre>
                 the main music channel when music is kept between battles!
             </p>
             <p>
-                <br><span class="function">General.StopBGM(int fadeFrames = 0)</span>
+                <br><span class="function">General.StopBGM(int fadeFrames = 0, bool waitEnd = false)</span>
                 Stops the current music being played in the main music channel. If <span class="term">fadeFrames</span> is greater than 0, 
-				the music will fade out over that many frames.
+				the music will fade out over that many frames. If <span class="term">waitEnd</span> is set to true, the script will wait 
+				until the BGM has stopped before continuing.
             </p>
             <p>
                 <br><span class="function">General.PlaySound(string sound, float volume = 0.65)</span>
@@ -2484,23 +2690,27 @@ end</pre>
                 Finally, <span class="term">ForceNoFlee</span> removes the flee option from the encounter - unless your encounter sets 
 				<span class="term">flee</span> to true.
             </p>
+			
+			<p>
+				<br><span class="function">General.EnterShop(string scriptName)</span>
+				Initializes the Shop menu, using the script given in <span class="term">scriptName</span>. The Shop script must be in <span class="term">YOURMOD/Lua/Shops/</span>.<br>
+				Check the <span class="ref">How to create a shop</span> section for more informations.
+			</p>
         </div>
        
         <div class="tab-pane text-style" id="overworld-object-event">
             <h2><span class="CYF"></span>The Overworld: The Event Object</h2><br><br>
-           
-            <p>
-                In most cases, the event <span class="term">Player</span> can also be used, and as surprising as it might be, it references to the Player.
-            </p>
             <p>
                 <br><span class="function">Event.Teleport(string name, number dirX, number dirY)</span>
                 Teleports the given event to a given point in space. The position (dirX and dirY) is computed based off of the bottom left center of the map.
             </p>
             <p>
-                <br><span class="function">Event.MoveToPoint(string name, number dirX, number dirY, bool wallPass = false)</span>
+                <br><span class="function">Event.MoveToPoint(string name, number dirX, number dirY, bool wallPass = false, bool waitEnd = true)</span>
                 Moves an event to a given point in space. The event's speed will be the speed variable of its <span class="term">EventOW</span> 
 				component, so choose that wisely.<br>
-				Set <span class="term">wallPass</span> to true to ignore any obstacle that the event may encounter.
+				Set <span class="term">wallPass</span> to true to ignore any obstacle that the event may encounter while moving.
+				<br>By default, the script will pause until the event has stopped moving. Set <span class="term">waitEnd</span> to false
+				to bypass this and directly continue the script instead.
             </p>
             <p>
                 <br><span class="function">Event.SetAnimHeader(string name, string anim)</span>
@@ -2518,11 +2728,13 @@ end</pre>
                 2 for Down, 4 for Left, 6 for Right and 8 for Up.
             </p>
             <p>
-                <br><span class="function">Event.Rotate(string name, float rotateX, float rotateY, float rotateZ, bool anim = true)</span>
+                <br><span class="function">Event.Rotate(string name, float rotateX, float rotateY, float rotateZ, bool anim = true, bool waitEnd = true)</span>
                 This function rotates the event. The Z rotation is the rotation we normally use, while X and Y rotations are 3D rotations.
                 <br>To see some examples of rotation, remove the comment block of the function <span class="term">EventPage4</span> of  
 				<span class="term">Mods/Examples/Lua/Events/EventTest.lua</span>.<br>
-                Set <span class="term">anim</span> to false to disable the animation of the rotation.
+                Set <span class="term">anim</span> to false to disable the animation of the rotation. 
+				<br>By default, the script will pause until the event has stopped rotating. Set <span class="term">waitEnd</span> to false
+				to bypass this and directly continue the script instead.
             </p>
             <p>
                 <br><span class="function">Event.Stop()</span>
@@ -2531,7 +2743,7 @@ end</pre>
 				stop the coroutine instantly, just add <span class="term">return</span> after this function.
             </p>
             <p>
-                <br><span class="function">Event.StopCoroutine(strin eventName = "thisevent")</span>
+                <br><span class="function">Event.StopCoroutine(string eventName = "thisevent")</span>
                 Stops the coroutine of the given event. Use the string <span class="term">thisevent</span> to stop the coroutine of this event.
             </p>
             <p>
@@ -2553,9 +2765,11 @@ end</pre>
 				Returns the sprite object of the given event.
             </p>
             <p>
-                <br><span class="function">Event.CenterOnCamera(string name, int speed = 5, bool straightLine = false)</span>
+                <br><span class="function">Event.CenterOnCamera(string name, int speed = 5, bool straightLine = false, bool waitEnd = true)</span>
 				Centers the camera on the given event. The camera's speed will be <span class="term">speed</span> pixels per second in each direction, 
                 unless you set <span class="term">straightLine</span> to true. In that case, the camera will follow a line to the center of the event.
+				<br>By default, the script will halt execution until the camera has stopped moving. Set <span class="term">waitEnd</span> to false
+				to bypass this and directly continue the script instead. 
             </p>
             <p>
                 <br><span class="function">Event.GetName()</span>
@@ -2565,10 +2779,23 @@ end</pre>
                 <br><span class="function">Event.GetPosition(string name)</span>
                 Returns a table of two values containing the position of the given event.
             </p>
+            <p>
+                <br><span class="function">Event.IgnoreCollision(string name, bool ignore)</span>
+                Sets the collision mode of the event. If <span class="term">ignore</span> is set to true, 
+				all other events may pass through it normally.<br>
+				Events launched when the player touches them need their collision to be ignored in order to function properly.
+            </p>
+            <p>
+                <br><span class="function">Event.SetSpeed(string name, float speed)</span>
+                Sets the speed of an event.
+            </p>
         </div>
        
         <div class="tab-pane text-style" id="overworld-object-player">
             <h2><span class="CYF"></span>The Overworld: The Player Object</h2><br>
+			
+			<p><span style="color:#aa0000"><u>This Player class is not the same as the one used in battle! 
+			This one is specific to the overworld!</u></span></p><br>
             
             <p>
                 <br><span class="function">Player.GetLevel()</span>
@@ -2632,7 +2859,7 @@ end</pre>
             </p>
             <p>
                 <br><span class="function">Player.SetWeapon(string value)</span>
-				Makes the player equip the given weapon, but only if it's in their inventory.
+				Makes the player equip the weapon given in <span class="term">value</span>, but only if a weapon with that name is in their inventory.
             </p>
             <p>
                 <br><span class="function">Player.GetArmor()</span>
@@ -2640,7 +2867,7 @@ end</pre>
             </p>
             <p>
                 <br><span class="function">Player.SetArmor(string value)</span>
-				Makes the player equip the given armor, but only if it's in their inventory.
+				Makes the player equip the armor given in <span class="term">value</span>, but only if any armor with that name is in their inventory.
             </p>
             <p>
                 <br><span class="function">Player.GetEXP()</span>
@@ -2648,7 +2875,7 @@ end</pre>
             </p>
             <p>
                 <br><span class="function">Player.SetEXP(int value)</span>
-                Sets the player's EXP.
+                Sets the player's EXP to <span class="term">value</span>.
             </p>
             <p>
                 <br><span class="function">Player.ForceHP(number value)</span>
@@ -2656,14 +2883,24 @@ end</pre>
             </p>
             <p>
                 <br><span class="function">Player.Hurt(int value)</span>
-                Removes <span class="term">value</span> HP from the player's current HP. The Player can't be killed by using this function.
-            </p>            
+                Removes <span class="term">value</span> HP from the player's current HP. The Player can't be killed by use of this function.
+            </p>
+			<p>
+                <br><span class="function">Player.Heal(int value)</span>
+                Adds <span class="term">value</span> HP to the player's current HP, but can not exceed the player's maximum HP.
+			</p>
             <p>
                 <br><span class="function">Player.CanMove(bool canMove)</span>
                 This function determines whether the player can move or not.<br>
                 However, if <span class="term">canMove</span> is set to <i>true</i> and the function is 
                 called while a main event is running, then you can't trigger any other main events, 
                 teleport to other maps or open the menu until the main event is stopped.
+            </p>
+			<p>
+                <br><span class="function">Player.Teleport(string mapName, float posX, float posY, int direction = 0, bool noFadeIn = false, bool noFadeOut = false)</span>
+                Teleports the player to the map named <span class="term">mapName</span>.
+				<br>You can set the player's direction using <span class="term">direction</span>.
+				<br><span class="term">noFadeIn</span> and <span class="term">noFadeOut</span> determine whether there will be fades before or after the teleport, respectively.
             </p>
         </div>
        
@@ -2696,44 +2933,55 @@ end</pre>
             </p>
             
             <p>
-                <br><span class="function">Screen.Flash(float frames, int colorR = 255, int colorG = 255, int colorB = 255, int colorA = 255)</span> 
+                <br><span class="function">Screen.Flash(float frames, int colorR = 255, int colorG = 255, int colorB = 255, int colorA = 255, bool waitEnd = true)</span> 
                 Flashes the screen for a given number of frames. A flash is an image that is displayed on top of the entire screen and fades afterwards.<br>
                 Change the color of the flash by changing the values of the 4 other variables. Each one must be between 0 and 255.
-            </p>
+				<br>By default, the script will halt execution until the flash has stopped. Set <span class="term">waitEnd</span> to false to bypass this and 
+				directly continue the script instead.
+			</p>
             
             <p>
-                <br><span class="function">Screen.CenterEventOnCamera(string name, int speed = 5, bool straightLine = false)</span> 
+                <br><span class="function">Screen.CenterEventOnCamera(string name, int speed = 5, bool straightLine = false, bool waitEnd = true)</span> 
                 This function is an alias of <span class="term">Event.CenterOnScreen()</span>.<br>
 				Centers the camera on the given event. The camera will move at <span class="term">speed</span> pixels per second in each direction, 
                 unless you set <span class="term">straightLine</span> to true. In that case, the camera will follow a line to the center of the event.
-            </p>
+				<br>By default, the script will halt execution until the camera has stopped moving. Set <span class="term">waitEnd</span> to false to bypass this and 
+				directly continue the script instead.
+			</p>
             
             <p>
-                <br><span class="function">Screen.MoveCamera(int pixX, int pixY, int speed = 5, bool straightLine = false)</span> 
+                <br><span class="function">Screen.MoveCamera(int pixX, int pixY, int speed = 5, bool straightLine = falsee, bool waitEnd = true)</span> 
                 Moves the camera to a given position from the bottom left center of the screen.<br>The camera's speed will be 
 				<span class="term">speed</span> pixels per second in each direction, unless you set <span class="term">straightLine</span> to true. 
 				In that case, the camera will follow a line to reach the destination you entered.
+				<br>By default, the script will halt execution until the camera has stopped moving. Set <span class="term">waitEnd</span> to false to bypass this and  
+				directly continue the script instead.
             </p>
             
             <p>
-                <br><span class="function">Screen.ResetCameraPosition(int speed = 5, bool straightLine = false)</span> 
+                <br><span class="function">Screen.ResetCameraPosition(int speed = 5, bool straightLine = falsee, bool waitEnd = true)</span> 
                 Centers the camera on the player.<br>
 				The camera's speed will be <span class="term">speed</span> pixels per second in each direction, 
                 unless you set <span class="term">straightLine</span> to true. In that case, the camera will follow a line to the player's center.
+				<br>By default, the script will halt execution until the camera has stopped moving. Set <span class="term">waitEnd</span> to false to bypass this and 
+				directly continue the script instead.
             </p>
         </div>
        
         <div class="tab-pane text-style" id="overworld-object-inventory">
             <h2><span class="CYF"></span>The Overworld: The Inventory Object</h2><br>
+			
+			<p><span style="color:#aa0000"><u>This Inventory class is not the same as the one used in battle! 
+			This one is specific to the overworld!</u></span></p><br>
             
             <p>
-                <br><span class="function">Inventory.SetWeapon(string value)</span>
+                <br><span class="function">Inventory.SetWeapon(string weapon)</span>
                 This function is an alias of <span class="term">Player.SetWeapon</span>.<br>
 				Makes the player equip the given weapon, but only if it's in their inventory.
             </p>
             
             <p>
-                <br><span class="function">Inventory.SetArmor(string value)</span>
+                <br><span class="function">Inventory.SetArmor(string armor)</span>
                 This function is an alias of <span class="term">Player.SetArmor</span>.<br>
 				Makes the player equip the given armor, but only if it's in their inventory.
             </p>
@@ -2741,11 +2989,6 @@ end</pre>
             <p>
                 <br><span class="function">Inventory.AddItem(string name)</span>
 				Adds the given item to the player's inventory.
-            </p>
-            
-            <p>
-                <br><span class="function">Inventory.GetItemCount()</span>
-                Returns the number of items the player has in his inventory.
             </p>
             
             <p>
@@ -2769,13 +3012,20 @@ end</pre>
 				Gets the id of the first item with the same name as <span class="term">name</span><br>
 				If the item couldn't be found, this returns -1 instead.
             </p>
+            
+            <p>
+                <br><span class="function">Inventory.GetItemCount()</span>
+                Returns the number of items the player has in their inventory.
+            </p>
         </div>
         
         <div class="tab-pane text-style" id="overworld-object-map">
             <h2><span class="CYF"></span>/!\NEW/!\ The Overworld: The Map Object</h2><br>
             
-            Each map has their own settings, them being the mod it loads, the music it plays, and a bunch of other stuff.
-            What's following mainly are functions used to access those variables.
+            <p>
+				Each map has their own settings, which are determined by mod it loads, the music it plays, and a bunch of other stuff.
+				<br>Listed below are functions mainly used to access these variables.
+			</p>
             
             <p>
                 <br><span class="function">Map.GetMusic()</span>
@@ -2827,41 +3077,30 @@ end</pre>
 				<br><br>Some of these functions can only be used in <span class="term">HandleItem</span>. Examples are 
 				included at the bottom of this page.
                 <br><br>Don't forget to use inventory functions like this: <span class="term">Inventory.function</span>!
-            </p>
+            </p><br>
+			
             <p>
-                <br><span class="function">GetItem(int index)</span>
+                <br><span class="function">Inventory.GetItem(int index)</span>
                 Returns the name of the item of the inventory at the given index.
                 <br><span class="term" style="margin-left:20px">index</span> = Index of the chosen item.
             </p>
             <p>
-                <br><span class="function">SetItem(int index, string Name)</span>
+                <br><span class="function">Inventory.SetItem(int index, string Name)</span>
 				Sets the inventory item at <span class="term">index</span> to the item <span class="term">Name</span>.
                 <br><span class="term" style="margin-left:20px">index</span> = Index to put the item in. The first item is position 1.
                 <br><span class="term" style="margin-left:20px">Name</span> = Name of the item to put in the inventory.
             </p>
             <p>
-                <br><span class="function">SetInventory(string[] names)</span>
-                Sets the inventory of the Player. Must be used after <span class="term">AddCustomItems</span> if you want custom items.
-                <br>You have to use it like this: <span class="term">Inventory.SetInventory({"item1", "item2"})</span>;
-                <br><span class="term" style="margin-left:20px">names</span> = The names of the items.
-            </p>
-            <p>
-                <br><span class="function">SetInventory(string[] names)</span>
-                Sets the inventory of the Player. Must be used after <span class="term">AddCustomItems</span> if you want custom items.
-                <br>You have to use it like this: <span class="term">Inventory.SetInventory({"item1", "item2"})</span>;
-                <br><span class="term" style="margin-left:20px">names</span> = The names of the items.
-            </p>
-            <p>
-                <br><span class="function">AddCustomItems(string[] names, int[] types)</span>
+                <br><span class="function">Inventory.AddCustomItems(table names, table types)</span>
                 If you want to add custom items, this has to be used before <span class="term">SetInventory</span>.
 				This adds all items in <span class="term">names</span> to the inventory, where each item matches to an 
 				item type in <span class="term">types</span>. If you don't do this, the engine
                 will not recognise your newly created items.
 				<br><br>Usage: <span class="term">Inventory.AddCustomItems({"item1", "item2"}, {1, 0})</span>
-            <br><br><span class="term" style="margin-left:20px">names</span> = The names of your exclusive items.
-            <br><span class="term" style="margin-left:20px">types</span> = The types of your exclusive items. Must be at the same size of the first array.
+				<br><br><span class="term" style="margin-left:20px">names</span> = The names of your custom items.
+				<br><span class="term" style="margin-left:20px">types</span> = The item types of your custom items. This array must be same size as <span class="term">names</span>.
 
-			<br>Types:<br>
+				<br>Types:<br>
 			    <div style="margin-left:20px">
 				    <span class="term">0</span> = Consumable. Will be deleted upon use.
 				    <br><span class="term">1</span> = Weapon. You will be able to equip this item as a weapon.
@@ -2870,15 +3109,21 @@ end</pre>
 				</div>
             </p>
             <p>
-                <br><span class="function">NoDelete</span>
-				Set <span class="term">Inventory.NoDelete</span> to true to make the next used consumable item not be used.
+                <br><span class="function">Inventory.SetInventory(table names)</span>
+                Sets the player's inventory. To use custom items, this must be used after <span class="term">AddCustomItems</span>.
+                <br>This function is used like this: <span class="term">Inventory.SetInventory({"item1", "item2"})</span>;
+                <br><span class="term" style="margin-left:20px">names</span> = The names of the items.
             </p>
             <p>
-                <br><span class="function">ItemCount</span>
-                Returns the number of items the player has in his inventory. Read-only.
+                <br><span class="function">Inventory.ItemCount</span>
+                Returns the number of items the player has in their inventory. Read-only.
             </p>
             <p>
-                <br><span class="function">SetAmount(int amount)</span>
+                <br><span class="function">Inventory.NoDelete</span>
+				<i>In the encounter function</i> <span class="term">HandleItem</span>, using this with <span class="term">Inventory.NoDelete</span> as true will make the item the player is using stay in the inventory.
+            </p>
+            <p>
+                <br><span class="function">Inventory.SetAmount(int amount)</span>
 				Used with Weapon and Armor items. If the item is a Weapon, this sets its ATK. If the item is armor,
 				this sets its DEF.
                 <br><span class="term" style="margin-left:20px">amount</span>: the amount of ATK/DEF the item will have.
@@ -3054,10 +3299,18 @@ end
 			</p>
 			<p>
 				<br><span class="function">Text.x</span>
+				The local x position of the object, measured from the position of the text object's parent. This value depends on the object's pivot.
+			</p>
+			<p>
+				<br><span class="function">Text.y</span
+				The local y position of the object, measured from the position of the text object's parent. This value depends on the object's pivot.
+			</p>
+			<p>
+				<br><span class="function">Text.absx</span>
 				The absolute x position of the object, measured from the bottom left corner of the screen. This value depends on the object's pivot.
 			</p>
 			<p>
-				<br><span class="function">Text.y</span>
+				<br><span class="function">Text.absy</span>
 				The absolute y position of the object, measured from the bottom left corner of the screen. This value depends on the object's pivot.
 			</p>
 			<p>
@@ -3073,16 +3326,50 @@ end
 				The sprite layer of the Text Object. If it doesn't exist, it returns an error. This is <span class="term">"BelowPlayer"</span> by default.
 			</p>
 			<p>
-				<br><span class="function">Text.SetText(Table text)</span>
-				Sets the text in the Text Object. If the text object is inactive when this is called, the object will reactive itself.
+				<br><span class="function">Text.color</span>
+				Get or set the color of the text, as a table of 3 or 4 values from 0 to 1.<br>For example, <span class="term">
+				sprite.color = {1.0, 0.0, 0.0}</span> makes the text red.<br>Black areas are not affected by coloration. The 4th value is the alpha (transparency) value of the text.
 			</p>
 			<p>
-				<br><span class="function">Text.AddText(Table text)</span>
+				<br><span class="function">Text.color32</span>
+				Get or set the color of the text, as a table of 3 or 4 integer values from 0 to 255.<br>For example, <span class="term">
+				sprite.color = {250, 0, 0}</span> makes it red.<br>Black areas are not affected by coloration. The 4th value is the alpha (transparency) value of the text.
+			</p>
+			<p>
+				<br><span class="function">Text.alpha</span>
+				Get or set the text's transparency, as a value between 0 and 1.
+			</p>
+			<p>
+				<br><span class="function">Text.alpha32</span>
+				Get or set the text's transparency, as an integer between 0 and 255.
+			</p>
+			<p>
+				<br><span class="function">Text.lineComplete</span>
+				Returns true if the current line of text is fully displayed, false otherwise.
+			</p>
+			<p>
+				<br><span class="function">Text.allLinesComplete</span>
+				Returns true if the current line of text is fully displayed <i>and</i> if this is the last line the test object will show, false otherwise.
+			</p>
+			<p>
+				<br><span class="function">Text.SetParent(sprite parent)</span>
+				Sets the text object's parent.<br>The text object will follow around the parent object as it moves.
+			</p>
+			<p>
+				<br><span class="function">Text.SetText(table text)</span>
+				Sets the text in the Text Object.<br>If the text object is inactive when this is called, the object will reactive itself.
+			</p>
+			<p>
+				<br><span class="function">Text.AddText(table text)</span>
 				Adds the given text to the object's text table. Acts like <span class="term">Text.SetText()</span> if all the text is already done.
 			</p>
 			<p>
+				<br><span class="function">Text.SetVoice(string fontName)</span>
+				Sets the voice of the text object. It's the same as the text command <span class="term">[voice]</span>, but whatever.<br>
+			</p>
+			<p>
 				<br><span class="function">Text.SetFont(string fontName)</span>
-				Sets the font of the text. Can be easily replaced by the text command <span class="term">[font]</span>, but whatever.<br>
+				Sets the font of the text. It's the same as the text command <span class="term">[font]</span>, but whatever.<br>
 				Returns an error if the font doesn't exist.
 			</p>
 			<p>
@@ -3090,14 +3377,6 @@ end
 				Sets the effect of the text. Can be easily replaced be the text command <span class="term">[effect]</span>, but whatever.<br>
 				Can only take <span class="term">none</span>, <span class="term">twitch</span>, <span class="term">shake</span> or
 				<span class="term">twitch</span> as the effect. If you want to use the basic intensity value, enter <span class="term">-1</span>.
-			</p>
-			<p>
-				<br><span class="function">Text.IsTheLineFinished()</span>
-				If the current dialogue is finished, this function will return true. Otherwise, it'll return false.
-			</p>
-			<p>
-				<br><span class="function">Text.IsTheTextFinished()</span>
-				If the entire text table is finished, this function will return true. Otherwise, it'll return false.
 			</p>
 			<p>
 				<br><span class="function">Text.ShowBubble(string side = null, int/string position = null)</span>
@@ -3134,24 +3413,24 @@ end
 				Shows the next line (dialogue) of the text instantly, regardless of if the current one is finished or what progress mode the object has.
 			</p>
 			<p>
-				<br><span class="function">Text.MoveTo(int x, int y)</span>
-				Moves the text to the given coordinates. These values depends on the object's pivot.
+				<br><span class="function">Text.SetAutoWaitTimeBetweenTexts(int time)</span>
+				Sets the number of frames to wait before automatically going to the next line of text.<br><i>Only applies to the "auto" progress mode.</i>
 			</p>
 			<p>
-				<br><span class="function">Text.SetPivot(float/int x, float/int y)</span>
+				<br><span class="function">Text.MoveTo(int x, int y)</span>
+				Moves the text to a new position, relative to the text object's parent's position.
+			</p>
+			<p>
+				<br><span class="function">Text.MoveToAbs(int x, int y)</span>
+				Moves the text to a new position, relative to the bottom left corner of the window.
+			</p>
+			<p>
+				<br><span class="function">Text.SetPivot(float x, float y)</span>
 				Sets the pivot of the object. The pivot is the value where the text's position is set. The default value is 
 				<span class="term">{0.5, 0.5}</span>. If you set it to <span class="term">{0, 0}</span>, then each time you modify 
 				the object's position, the position will be based off of the bottom left corner of the object instead of its center. 
 				<span class="term">{1, 1}</span> is the top right corner, <span class="term">{0, 1}</span> the top left corner and 
 				<span class="term">{1, 0}</span> is the bottom right corner.
-			</p>
-			<p>
-				<br><span class="function">Text.SetAutoWaitTimeBetweenTexts(int time)</span>
-				Sets the number of frames to wait before automatically going to the next line. Only applies to the "auto" progress mode.
-			</p>
-			<p>
-				<br><span class="function">Text.MoveTo(int x, int y)</span>
-				Moves the text to the position (x by y), relative to the bottom left corner of the window.
 			</p>
 		</div>		
 
@@ -3395,10 +3674,7 @@ end
                 The Sprite object has many controls intended for animation. There is a working intermediate example
                 included in the Examples folder.</p>
             <ul>
-                <li><span class="CYF"></span> <span class="term">sprite.isactive</span> (readonly) - In retromode, this is <i>true</i> if a sprite has been 
-				removed and <i>false</i> otherwise. If <i>not</i> in retromode, this is <i>false</i> if a sprite has been removed and <i>true</i>
-				otherwise.<br></li><br>
-                <li><span class="CYF"></span> <span class="term">sprite.spritename</span> (readonly) - Returns the name of the sprite used by this 
+                <li><span class="CYF"></span><span class="term">sprite.spritename</span> (readonly) - Returns the name of the sprite used by this 
 				sprite from the <span class="term">Sprites/</span> folder.</li><br>
                 <li><span class="term">sprite.x</span> - horizontal position of sprite relative to bottom left of screen, measured from its
                     pivot/anchor point (center by default). If parented, x position is relative to the parent.
@@ -3406,11 +3682,17 @@ end
                 <li><span class="term">sprite.y</span> - vertical position of sprite relative to bottom left of screen, measured from its
                     pivot/anchor point (center by default). If parented, y position is relative to the parent.
                 </li><br>
+                <li><span class="CYF"></span><span class="term">sprite.z</span> - layering position of sprite relative to bottom left of screen, measured from its
+                    pivot/anchor point (center by default). If parented, z position is relative to the parent.<br><i>Only applies to the overworld.</i> 
+                </li><br>
                 <li><span class="term">sprite.absx</span> - horizontal position of sprite relative to bottom left of screen, ignoring its
                     pivot/anchor point and all parents.
                 </li><br>
                 <li><span class="term">sprite.absy</span> - vertical position of sprite relative to bottom left of screen, ignoring its
                     pivot/anchor point and all parents.
+                </li><br>
+                <li><span class="CYF"></span><span class="term">sprite.absz</span> - layering position of sprite relative to bottom left of screen, ignoring its
+                    pivot/anchor point and all parents.<br><i>Only applies to the overworld.</i> 
                 </li><br>
                 <li><span class="term">sprite.xscale</span> - horizontal scaling of sprite (1.0 by default). 2.0 is twice as large, 0.5 half as
                     large.
@@ -3418,29 +3700,19 @@ end
                 <li><span class="term">sprite.yscale</span> - vertical scaling of sprite (1.0 by default). 2.0 is twice as large, 0.5 half as
                     large.
                 </li><br>
+                <li><span class="CYF"></span><span class="term">sprite.isactive</span> (readonly) - In retromode, this is <i>true</i> if a sprite has been 
+				removed and <i>false</i> otherwise. If <i>not</i> in retromode, this is <i>false</i> if a sprite has been removed and <i>true</i>
+				otherwise.<br></li><br>
                 <li><span class="term">sprite.width</span> (readonly) - width of this sprite's image in pixels. This never changes until the
                     sprite itself is swapped.
                 </li><br>
                 <li><span class="term">sprite.height</span> (readonly) - height of this sprite's image in pixels. This never changes until the
                     sprite itself is swapped.
                 </li><br>
-                <li><span class="term">sprite.color</span> - get or set the color, as a table of 3 values from 0 to 1. For example, <span class="term">
-					sprite.color = {1.0, 0.0, 0.0}</span> makes it red. This actually overlays the sprite's original color, so if you want
-                    full control over the color, make sure your sprite is white. Black areas are not affected by
-                    coloration.
-                </li><br>
-                <li><span class="CYF"></span> <span class="term">sprite.color32</span> - get or set the color, as a table of 3 values from 0 to 255. For 
-					example, <span class="term">sprite.color32 = {255, 0, 0}</span> makes it red. This actually overlays the sprite's original color, so if 
-					you want full control over the color make sure your sprite is white. Black areas are not affected by
-                    coloration.
-                </li><br>
-                <li><span class="term">sprite.alpha</span> - get or set sprite transparency, from 0 to 1.</li><br>
-                <li><span class="CYF"></span> <span class="term">sprite.alpha32</span> - get or set sprite transparency, from 0 to 255.</li><br>
-                <li><span class="term">sprite.rotation</span> - get or set sprite rotation, in degrees. It's clamped between 0 and 360, so if you
-                    change it to 365 it becomes 5.
-                </li><br>
-                <li><span class="CYF"></span> <span class="term">sprite.layer</span> - the current layer of the sprite. You can set it, but if the layer 
-				doesn't exists, it does nothing.<br>Default: <span class="term">"BelowArena"</span></li><br>
+                <li><span class="CYF"></span> <span class="term">sprite.animcomplete</span> - if the sprite has started an animation, this tells you if 
+					the animation is complete.<br>
+					If no new animation has started yet, if the loop mode is <span class="term">LOOP</span> or if the animation isn't finished, this will be 
+					false. Otherwise, it will be true.</li><br>
                 <li><span class="CYF"></span> <span class="term">sprite.loopmode</span> - sets the loop mode of <span class="term">SetAnimation</span> 
 					functions launched after this command. Can be:
 				    <ul>
@@ -3450,10 +3722,25 @@ end
 					    <li><span class="term">ONESHOTEMPTY</span> - Same as <span class="term">ONESHOT</span>, except that the last frame will be an empty 
 							sprite.</li><br>
 					</ul></li><br>
-                <li><span class="CYF"></span> <span class="term">sprite.animcomplete</span> - when an animation is played, that variable tells you if the 	
-					animation is complete.<br>
-					If no new animation has started yet, if the loop mode is <span class="term">LOOP</span> or if the animation isn't finished, this will be 
-					false. Otherwise, it will be true.</li><br>
+                <li><span class="term">sprite.color</span> - get or set the coloration of the sprite, as a table of 3 or 4 values from 0 to 1.<br>
+					For example, <span class="term">sprite.color = {1.0, 0.0, 0.0}</span> colors the sprite red. This actually overlays the sprite's 
+					original color, so if you want full control over the color, make sure your sprite is white. <i>Black areas are not affected by 
+					coloration.</i><br><span class="CYF"></span>: The 4th value is the alpha (transparency) of the sprite.
+                </li><br>
+                <li><span class="CYF"></span> <span class="term">sprite.color32</span> - get or set the coloration of the sprite, as a table of 3 or 4 
+					values from 0 to 255.
+					<br>For example, <span class="term">sprite.color32 = {255, 0, 0}</span> colors the sprite red. This actually overlays the sprite's 
+					original color, so if you want full control over the color, make sure your sprite is white. <i>Black areas are not affected by
+					coloration.</i><br>The 4th value is the alpha (transparency) of the sprite.
+                </li><br>
+                <li><span class="term">sprite.alpha</span> - gets or sets the sprite's transparency, as a value from 0 to 1.</li><br>
+                <li><span class="CYF"></span> <span class="term">sprite.alpha32</span> - gets or sets the sprite's transparency, as a vlue from 0 to 255.
+				</li><br>
+                <li><span class="term">sprite.rotation</span> - get or set sprite rotation, in degrees. It's clamped between 0 and 360, so if you
+                    change it to 365 it becomes 5.
+                </li><br>
+                <li><span class="CYF"></span> <span class="term">sprite.layer</span> - the current layer of the sprite. You can set it, but if the layer 
+				doesn't exists, it does nothing.<br>Default: <span class="term">"BelowArena"</span></li><br>
                 <li><span class="term">sprite.Set("new_sprite")</span> - change the sprite's image. It retains its scaling and rotation. If you
                     have an animation running with <span class="term">SetAnimation</span>, the animation will override your sprite change.
                 </li><br>
@@ -3493,12 +3780,12 @@ end
                 <li><span class="CYF"></span> <span class="term"> sprite.MoveAbove(other_sprite_object)</span> - if the two sprites have the same parent, 
 					it'll move this sprite just above the other sprite.
                 </li><br>
+                <li><span class="term">sprite.Remove()</span> - removes the sprite. Calling anything other than <span class="term">isactive</span> after 
+					this will give you an error.
+                </li><br>
                 <li><span class="CYF"></span> <span class="term">sprite.Dust(playDust = true, removeObject = false)</span> - Turns a sprite into dust, just
 					like what happens in Undertale when an enemy is killed. Will remove a bullet or sprite if <span class="term">removeObject</span> is set 
 					to true. Set <span class="term">playSound</span> to false to deactivate the dust sound.
-                </li><br>
-                <li><span class="term">sprite.Remove()</span> - remove this sprite. Calling anything other than <span class="term">isactive</span> after 
-					this will give you an error.
                 </li><br>
 
             </ul>

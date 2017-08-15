@@ -55,7 +55,7 @@ public class TransitionOverworld : MonoBehaviour {
         //GameObject.Destroy(gameObject);
 
         GameObject.DontDestroyOnLoad(GameObject.Find("Canvas OW"));
-        GameObject.DontDestroyOnLoad(GameObject.Find("Player"));
+        GameObject.DontDestroyOnLoad(GameObject.Find("Player").transform.parent.gameObject);
         GameObject.DontDestroyOnLoad(GameObject.Find("Main Camera OW"));
         string mapName;
         if (!isStart)
@@ -139,8 +139,7 @@ public class TransitionOverworld : MonoBehaviour {
         GameObject.Find("utHeart").GetComponent<Image>().color = new Color(GameObject.Find("utHeart").GetComponent<Image>().color.r, GameObject.Find("utHeart").GetComponent<Image>().color.g,
                                                                            GameObject.Find("utHeart").GetComponent<Image>().color.b, 0);
         if (call == "tphandler") {
-            Transform playerPos = GameObject.Find("Player").GetComponent<Transform>();
-            playerPos.position = (Vector2)neededArgs[0];
+            GameObject.Find("Player").transform.parent.position = (Vector2)neededArgs[0];
             PlayerOverworld.instance.gameObject.GetComponent<CYFAnimator>().movementDirection = ((TPHandler)neededArgs[1]).direction;
             ((TPHandler)neededArgs[1]).activated = false;
             GameObject.Destroy(((TPHandler)neededArgs[1]).gameObject);

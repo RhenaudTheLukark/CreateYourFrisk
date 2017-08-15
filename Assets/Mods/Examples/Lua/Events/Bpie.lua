@@ -3,16 +3,6 @@ function EventPage0()
 end
 
 function EventPage1()
-	General.SetDialog({"Go to the right and you'll get a pie!"}, true)
-    Player.CanMove(true)
-    while 1 do
-        local playerpos = Event.GetPosition("Player")
-        if playerpos[1] > 320 then
-            break
-        end
-        General.Wait(1)
-    end
-    Player.CanMove(false)
 	Inventory.AddItem("Butterscotch Pie")
 	General.SetDialog({"You pickup the Butterscotch Pie."}, true)
 	Event.SetPage(Event.GetName(), -1)

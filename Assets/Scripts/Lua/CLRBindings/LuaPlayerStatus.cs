@@ -73,6 +73,16 @@ public class LuaPlayerStatus {
     }
 
     /// <summary>
+    /// Player's Max Hp shift.
+    /// </summary>
+    public int MaxHPShift {
+        get { return PlayerCharacter.instance.MaxHPShift; }
+    }
+    public int maxhpshift {
+        get { return MaxHPShift; }
+    }
+
+    /// <summary>
     /// Get player's current ATK.
     /// </summary>
     public int atk {
@@ -158,6 +168,9 @@ public class LuaPlayerStatus {
     public bool isHurting {
         get { return player.isHurting(); }
     }
+    public bool ishurting {
+        get { return isHurting; }
+    }
 
     /// <summary>
     /// True if player is currently moving, false otherwise. Being pushed by the edges of the arena counts as moving.
@@ -165,12 +178,8 @@ public class LuaPlayerStatus {
     public bool isMoving {
         get { return player.isMoving(); }
     }
-
-    /// <summary>
-    /// Player's Max Hp shift.
-    /// </summary>
-    public int MaxHPShift {
-        get { return PlayerCharacter.instance.MaxHPShift; }
+    public bool ismoving {
+        get { return isMoving; }
     }
 
     /// <summary>
@@ -196,20 +205,20 @@ public class LuaPlayerStatus {
     }
 
     /// <summary>
-    /// Move the player relative to the arena center.
-    /// </summary>
-    /// <param name="x">X position of player relative to arena center.</param>
-    /// <param name="y">Y position of player relative to arena center.</param>
-    /// <param name="ignoreWalls">If false, it will place you at the edge of the arena instead of over it.</param>
-    public void MoveTo(float x, float y, bool ignoreWalls) { MoveToAbs(ArenaManager.arenaCenter.x + x, ArenaManager.arenaCenter.y + y, ignoreWalls); }
-
-    /// <summary>
     /// Move the player relative to his current position
     /// </summary>
     /// <param name="x"></param>
     /// <param name="y"></param>
     /// <param name="ignoreWalls"></param>
     public void Move(float x, float y, bool ignoreWalls) { player.SetPosition(this.x + x, this.y + y, ignoreWalls); }
+
+    /// <summary>
+    /// Move the player relative to the arena center.
+    /// </summary>
+    /// <param name="x">X position of player relative to arena center.</param>
+    /// <param name="y">Y position of player relative to arena center.</param>
+    /// <param name="ignoreWalls">If false, it will place you at the edge of the arena instead of over it.</param>
+    public void MoveTo(float x, float y, bool ignoreWalls) { MoveToAbs(ArenaManager.arenaCenter.x + x, ArenaManager.arenaCenter.y + y, ignoreWalls); }
 
     /// <summary>
     /// Move the player relative to the lower left corner of the screen.
@@ -230,7 +239,30 @@ public class LuaPlayerStatus {
     /// <param name="shift"></param>
     /// <param name="set"></param>
     /// <param name="canHeal"></param>
-    public void setMaxHPShift(int shift, float invulSec = 1.7f, bool set = false, bool canHeal = false) { player.setMaxHPShift(shift, invulSec, set, canHeal); }
+    public void SetMaxHPShift(int shift, float invulSec = 1.7f, bool set = false, bool canHeal = false) { player.setMaxHPShift(shift, invulSec, set, canHeal); }
+    public void setMaxHPShift(int shift, float invulSec = 1.7f, bool set = false, bool canHeal = false) { SetMaxHPShift(shift, invulSec, set, canHeal); }
+
+    public void SetAttackAnim(string[] anim, float frequency = 1 / 6f) {
+        if (anim.Length == 0) {
+            UIController.instance.fightUI.sliceAnim = new string[] { "empty" };
+            UIController.instance.fightUI.sliceAnimFrequency = 1 / 30f;
+        } else {
+            UIController.instance.fightUI.sliceAnim = anim;
+            UIController.instance.fightUI.sliceAnimFrequency = frequency;
+        }
+    }
+
+    public void ResetAttackAnim() {
+        UIController.instance.fightUI.sliceAnimFrequency = 1 / 6f;
+        UIController.instance.fightUI.sliceAnim = new string[] {
+            "UI/Battle/spr_slice_o_0",
+            "UI/Battle/spr_slice_o_1",
+            "UI/Battle/spr_slice_o_2",
+            "UI/Battle/spr_slice_o_3",
+            "UI/Battle/spr_slice_o_4",
+            "UI/Battle/spr_slice_o_5"
+        };
+    }
 
     public void ChangeTarget(int index) {
         if (UIController.instance.state == UIController.UIState.ATTACKING)
@@ -318,27 +350,5 @@ public class LuaPlayerStatus {
 
     public void CheckDeath() {
         UIController.instance.needOnDeath = true;
-    }
-
-    public void SetAttackAnim(string[] anim, float frequency = 1 / 6f) {
-        if (anim.Length == 0) {
-            UIController.instance.fightUI.sliceAnim = new string[] { "empty" };
-            UIController.instance.fightUI.sliceAnimFrequency = 1 / 30f;
-        } else {
-            UIController.instance.fightUI.sliceAnim = anim;
-            UIController.instance.fightUI.sliceAnimFrequency = frequency;
-        }
-    }
-
-    public void ResetAttackAnim() {
-        UIController.instance.fightUI.sliceAnimFrequency = 1 / 6f;
-        UIController.instance.fightUI.sliceAnim = new string[] {
-            "UI/Battle/spr_slice_o_0",
-            "UI/Battle/spr_slice_o_1",
-            "UI/Battle/spr_slice_o_2",
-            "UI/Battle/spr_slice_o_3",
-            "UI/Battle/spr_slice_o_4",
-            "UI/Battle/spr_slice_o_5"
-        };
     }
 }

@@ -18,10 +18,10 @@ function EventPage1()
     NewAudio.CreateChannel("temp")
     General.Wait(60)
     
-    playerSprite.alpha = 0
     Event.SetAnimHeader("dac97760 (1)", "Fall")
     
     General.Wait(1)
+    playerSprite.alpha = 0
     while not maskSprite.animcomplete do
         General.Wait(1)
     end
@@ -41,7 +41,7 @@ function EventPage1()
     Event.Teleport("dac97760 (1)", maskPos[1], maskPos[2])
     General.Wait(120)
     
-    maskSprite.SetAnimation({"FriskUT/Fall/f3", "FriskUT/Fall/f4"}, 1/6)
+    Event.SetAnimHeader("dac97760 (1)", "Reveal")
     Event.Teleport("Image1", maskPos[1] - 17 * coeff, maskPos[2] + 11)
     General.Wait(10)
     

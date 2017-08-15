@@ -10,17 +10,28 @@ public class MusicManager {
     public static Hashtable hiddenDictionary = new Hashtable();
     public static string filename = "empty";
 
-    public static float totaltime {
-        get { return src.clip.length; }
+    public static bool IsPlaying {
+        get { return src.isPlaying; }
+    }
+    public static bool isplaying {
+        get { return IsPlaying; }
     }
 
-    public static bool isStoppedOrNull(AudioSource audio) {
-        if (audio != null) {
-            if (audio.ToString().ToLower() == "null")  return true;
-            if (!audio.isPlaying)                      return true;
-            else                                       return false;
-        }
-        return true;
+    public static void Play() { src.Play(); }
+    public static void Stop() { src.Stop(); }
+    public static void Pause() { src.Pause(); }
+    public static void Unpause() { src.UnPause(); }
+
+    public static void Volume(float value) {
+        if (value < 0) value = 0;
+        if (value > 1) value = 1;
+        src.volume = value;
+    }
+
+    public static void Pitch(float value) {
+        if (value < -3) value = -3;
+        if (value > 3)  value = 3;
+        src.pitch = value;
     }
 
     public static void LoadFile(string name) {
@@ -36,30 +47,22 @@ public class MusicManager {
         catch {  }
     }
 
-    public static void Pitch(float value) {
-        if (value < -3)
-            value = -3;
-        if (value > 3)
-            value = 3;
-        src.pitch = value;
-    }
-
-    public static void Volume(float value) {
-        if (value < 0)
-            value = 0;
-        if (value > 1)
-            value = 1;
-        src.volume = value;
-    }
-
-    public static void Play() { src.Play(); }
-    public static void Stop() { src.Stop(); }
-    public static void Pause() { src.Pause(); }
-    public static void Unpause() { src.UnPause(); }
-
     public static float playtime {
         get { return src.time; }
         set { src.time = value; }
+    }
+
+    public static float totaltime {
+        get { return src.clip.length; }
+    }
+    
+    public static bool IsStoppedOrNull(AudioSource audio) {
+        if (audio != null) {
+            if (audio.ToString().ToLower() == "null")  return true;
+            if (!audio.isPlaying)                      return true;
+            else                                       return false;
+        }
+        return true;
     }
 
     public static void StopAll() {
@@ -91,10 +94,6 @@ public class MusicManager {
                 hiddenDictionary.Remove(key);
             hiddenDictionary.Add(key, value);
         }
-    }
-
-    public static bool IsPlaying {
-        get { return src.isPlaying; }
     }
 
     //[System.Runtime.CompilerServices.IndexerName("SoundDictionary")]

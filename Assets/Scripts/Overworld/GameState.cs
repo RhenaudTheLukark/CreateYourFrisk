@@ -27,7 +27,6 @@ public class GameState {
         public int CurrPage;
         public bool NoCollision;
         public string CurrSpriteNameOrCYFAnim;
-        public Vect Position;
         public Vect Anchor;
         public Vect Pivot;
     }

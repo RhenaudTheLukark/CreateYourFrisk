@@ -8,7 +8,7 @@ using MoonSharp.Interpreter;
 
 public static class SpriteUtil {
     public const float PIXELS_PER_UNIT = 100.0f;
-
+    
     public static void SwapSpriteFromFile(Component target, string filename, int bubbleID = -1) {
         try {
             if (bubbleID != -1) {
@@ -77,7 +77,6 @@ public static class SpriteUtil {
             List<Sprite> tempSprites = new List<Sprite>();
             foreach (XmlNode child in sheetNode.ChildNodes)
                 if (child.Name.Equals("sprite")) {
-                    //Sprite s = Sprite.Create(source.texture, 
                     Sprite s = SpriteWithXml(child, source);
                     tempSprites.Add(s);
                 }
@@ -89,12 +88,12 @@ public static class SpriteUtil {
     }
 
     public static Sprite FromFile(string filename) {
-        Sprite newSprite = new Sprite();
         Texture2D SpriteTexture = new Texture2D(1, 1);
         SpriteTexture.LoadImage(FileLoader.getBytesFrom(filename));
         SpriteTexture.filterMode = FilterMode.Point;
         SpriteTexture.wrapMode = TextureWrapMode.Clamp;
-        newSprite = Sprite.Create(SpriteTexture, new Rect(0, 0, SpriteTexture.width, SpriteTexture.height), new Vector2(0.5f, UnitaleUtil.IsOverworld? 0 : 0.5f), PIXELS_PER_UNIT);
+
+        Sprite newSprite = Sprite.Create(SpriteTexture, new Rect(0, 0, SpriteTexture.width, SpriteTexture.height), new Vector2(0.5f, UnitaleUtil.IsOverworld ? 0 : 0.5f), PIXELS_PER_UNIT);
         filename = filename.Contains("File at ") ? filename.Substring(8) : filename;
         newSprite.name = FileLoader.getRelativePathWithoutExtension(filename);
         //optional XML loading
@@ -148,16 +147,18 @@ public static class SpriteUtil {
         if (relatedTag == "BasisNewest") testName = "BelowArenaLayer";
         if (relatedTag != "VeryHighest" && relatedTag != "VeryLowest")
             for (int j = 0; j < rts.Length; j++) {
-                if (rts[j].name == testName || wentIn) {
-                    wentIn = true;
-                    if (relatedTag == "BasisNewest" && rts[j].name.Contains("Layer") &&!rts[j].name.Contains("Audio"))
-                        continue;
-                    wentIn = false;
-                    index = j;
-                    if (before)
+                try {
+                    if (rts[j].name == testName || wentIn) {
+                        wentIn = true;
+                        if (relatedTag == "BasisNewest" && rts[j].name.Contains("Layer") && !rts[j].name.Contains("Audio"))
+                            continue;
+                        wentIn = false;
+                        index = j;
+                        if (before)
+                            rts[j].SetParent(null, true);
+                    } else if (index != -1)
                         rts[j].SetParent(null, true);
-                } else if (index != -1)
-                    rts[j].SetParent(null, true);
+                } catch { }
             }
 
         go.transform.SetParent(GameObject.Find("Canvas").transform, true);
@@ -165,11 +166,13 @@ public static class SpriteUtil {
         if (index != -1) {
             if (before) index--;
             for (int j = index; j < rts.Length; j++) {
-                if (rts[j].gameObject.name == "Text") {
-                    rts[j].SetParent(GameObject.Find("Debugger").transform);
-                    continue;
-                }
-                rts[j].SetParent(GameObject.Find("Canvas").transform, true);
+                try {
+                    if (rts[j].gameObject.name == "Text") {
+                        rts[j].SetParent(GameObject.Find("Debugger").transform);
+                        continue;
+                    }
+                    rts[j].SetParent(GameObject.Find("Canvas").transform, true);
+                } catch { }
             }
         }
         if (relatedTag == "VeryHighest")     go.transform.SetAsLastSibling();

@@ -425,7 +425,6 @@ public class EventManager : MonoBehaviour {
                 UnitaleUtil.DisplayLuaError("Overworld engine", "Whoops! There is an error with event indexing.");
             return false;
         }
-        print((go.name == "4eab1af3ab6a932c23b3cdb8ef618b1af9c02088") + " && " + (page != 0) + " (page = " + page + ")");
         if (go.name == "4eab1af3ab6a932c23b3cdb8ef618b1af9c02088" && page != 0) {
             StartCoroutine(SpecialAnnouncementEvent());
             return true;
@@ -783,20 +782,20 @@ public class EventManager : MonoBehaviour {
                 continue;
             if (eis.ContainsKey(ev.name))
                 eis.Remove(ev.name);
-            
-            GameState.EventInfos ei = new GameState.EventInfos() {
-                CurrPage = ev.actualPage,
-                CurrSpriteNameOrCYFAnim = ev.GetComponent<CYFAnimator>()
-                    ? ev.GetComponent<CYFAnimator>().specialHeader
-                    : instance.sprCtrls[ev.name].img.GetComponent<SpriteRenderer>()
-                        ? instance.sprCtrls[ev.name].img.GetComponent<SpriteRenderer>().sprite.name
-                        : instance.sprCtrls[ev.name].img.GetComponent<Image>().sprite.name,
-                NoCollision = ev.gameObject.layer == 0,
-                Position = UnitaleUtil.VectorToVect(ev.transform.position),
-                Anchor = UnitaleUtil.VectorToVect(ev.GetComponent<RectTransform>().anchorMax),
-                Pivot = UnitaleUtil.VectorToVect(ev.GetComponent<RectTransform>().pivot)
-            };
-            eis.Add(ev.name, ei);
+            try {
+                GameState.EventInfos ei = new GameState.EventInfos() {
+                    CurrPage = ev.actualPage,
+                    CurrSpriteNameOrCYFAnim = ev.GetComponent<CYFAnimator>()
+                        ? ev.GetComponent<CYFAnimator>().specialHeader
+                        : instance.sprCtrls[ev.name].img.GetComponent<SpriteRenderer>()
+                            ? instance.sprCtrls[ev.name].img.GetComponent<SpriteRenderer>().sprite.name
+                            : instance.sprCtrls[ev.name].img.GetComponent<Image>().sprite.name,
+                    NoCollision = ev.gameObject.layer == 0,
+                    Anchor = UnitaleUtil.VectorToVect(ev.GetComponent<RectTransform>().anchorMax),
+                    Pivot = UnitaleUtil.VectorToVect(ev.GetComponent<RectTransform>().pivot)
+                };
+                eis.Add(ev.name, ei);
+            } catch { }
         }
         mapInfos.EventInfo = eis;
         GlobalControls.MapData.Add(id, mapInfos);
@@ -825,7 +824,6 @@ public class EventManager : MonoBehaviour {
                 str += "        CurrPage = " + ei.CurrPage + "\n";
                 str += "        CurrSpriteNameOrCYFAnim = \"" + ei.CurrSpriteNameOrCYFAnim + "\"\n";
                 str += "        NoCollision = " + ei.NoCollision + "\n";
-                str += "        Position = " + UnitaleUtil.VectToVector(ei.Position) + "\n";
                 str += "        Anchor = " + UnitaleUtil.VectToVector(ei.Anchor) + "\n";
                 str += "        Pivot = " + UnitaleUtil.VectToVector(ei.Pivot) + "";
             }
@@ -868,7 +866,6 @@ public class EventManager : MonoBehaviour {
                 ev.GetComponent<RectTransform>().anchorMax = UnitaleUtil.VectToVector(ei.Anchor);
                 ev.GetComponent<RectTransform>().anchorMin = UnitaleUtil.VectToVector(ei.Anchor);
                 ev.GetComponent<RectTransform>().pivot = UnitaleUtil.VectToVector(ei.Pivot);
-                ev.transform.position = UnitaleUtil.VectToVector(ei.Position);
             } catch (Exception e) { Debug.LogError(e); }
         }
     }
@@ -904,6 +901,7 @@ public class EventManager : MonoBehaviour {
         foreach (AudioClip adc in adcs)
             Audios.Add(adc.name, adc);
         go.GetComponent<SpriteRenderer>().sprite = Sprites["mm2"];
+        go.transform.position = new Vector3(go.transform.position.x, go.transform.position.y, -1);
         AudioSource audio = ((AudioSource)NewMusicManager.audiolist["src"]);
         audio.loop = false;
         audio.clip = Audios["sound"];
@@ -949,7 +947,9 @@ public class EventManager : MonoBehaviour {
             yield break;
         }
 
-        yield return 0;
+        while (!textmgr.LineComplete())
+            yield return 0;
+
         //Omg a new GameObject! One more heart on the screen! Wooh!
         GameObject tempHeart = new GameObject("tempHeart", typeof(RectTransform));
         tempHeart.GetComponent<RectTransform>().sizeDelta = new Vector2(16, 16);
@@ -981,7 +981,7 @@ public class EventManager : MonoBehaviour {
         script.Call("CYFEventNextCommand");
     }
 
-    IEnumerator IMoveEventToPoint(object[] args) {
+    IEnumerator IMoveEventToPoint(object[] args) { //NEED PARENTAL REMOVE
         ScriptWrapper scr = luaevow.appliedScript;
         
         string name;
@@ -1007,9 +1007,14 @@ public class EventManager : MonoBehaviour {
                 GameObject go;
                 if (name == "Player") go = GameObject.Find("Player");
                 else                  go = events[i];
+                Transform target = null;
+                if (go.transform.parent != null)
+                    if (go.transform.parent.name == "SpritePivot")
+                        target = go.transform.parent;
+                target = target ?? go.transform; //oof
                 if (!waitEnd)
                     scr.Call("CYFEventNextCommand");
-                Vector2 endPoint = new Vector2(dirX - go.transform.position.x, dirY - go.transform.position.y), endPointFromNow = endPoint;
+                Vector2 endPoint = new Vector2(dirX - target.position.x, dirY - target.position.y), endPointFromNow = endPoint;
                 //The animation process is automatic, if you renamed the Animation's triggers and animations as the Player's
                 if (go.GetComponent<CYFAnimator>()) {
                     int direction = CheckDirection(endPoint);
@@ -1018,15 +1023,15 @@ public class EventManager : MonoBehaviour {
 
                 //While the current position is different from the one we want our player to have
                 bool test = true;
-                try { test = (Vector2)go.transform.position != endPoint; } catch (MissingReferenceException) { }
+                try { test = (Vector2)target.position != endPoint; } catch (MissingReferenceException) { }
+                float speed;
+                try {
+                    speed = go != GameObject.Find("Player").transform.gameObject ? go.GetComponent<EventOW>().moveSpeed : PlayerOverworld.instance.speed;
+                } catch { yield break; }
                 while (test) {
                     Vector2 clamped = Vector2.ClampMagnitude(endPoint, 1);
                     //Test is used to know if the deplacement is possible or not
                     bool test2 = false;
-                    float speed;
-                    try {
-                        speed = go != GameObject.Find("Player") ? go.GetComponent<EventOW>().moveSpeed : PlayerOverworld.instance.speed;
-                    } catch { yield break; }
                     if (speed < endPointFromNow.magnitude)
                         test2 = PlayerOverworld.instance.AttemptMove(clamped.x, clamped.y, go, wallPass);
                     //If we reached the destination, stop the function
@@ -1034,7 +1039,7 @@ public class EventManager : MonoBehaviour {
                         endPointFromNow /= speed;
                         test2 = PlayerOverworld.instance.AttemptMove(endPointFromNow.x, endPointFromNow.y, go, wallPass);
                         if (test2)
-                            go.transform.position = new Vector3(dirX, dirY, go.transform.position.z);
+                            target.position = new Vector3(dirX, dirY, target.position.z);
                         yield return 0;
 
                         if (waitEnd)
@@ -1049,8 +1054,8 @@ public class EventManager : MonoBehaviour {
                         yield break;
                     }
                     try {
-                        endPointFromNow = new Vector2(dirX - go.transform.position.x, dirY - go.transform.position.y);
-                        test = (Vector2)go.transform.position != endPoint;
+                        endPointFromNow = new Vector2(dirX - target.position.x, dirY - target.position.y);
+                        test = (Vector2)target.position != endPoint;
                     } catch (MissingReferenceException) { }
                 }
             }

@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -49,8 +48,14 @@ public class NewMusicManager {
     }
 
     public static float GetTotalTime(string name) {
-        if (!audiolist.ContainsKey(name))                 throw new CYFException("The audio channel " + name + " doesn't exist.");
-        if (((AudioSource)audiolist[name]).clip != null)  return ((AudioSource)audiolist[name]).clip.length;
+        if (!audiolist.ContainsKey(name)) throw new CYFException("The audio channel " + name + " doesn't exist.");
+        if (((AudioSource)audiolist[name]).clip != null) return ((AudioSource)audiolist[name]).clip.length;
+        return 0;
+    }
+
+    public static float GetCurrentTime(string name) {
+        if (!audiolist.ContainsKey(name))                throw new CYFException("The audio channel " + name + " doesn't exist.");
+        if (((AudioSource)audiolist[name]).clip != null) return ((AudioSource)audiolist[name]).time;
         return 0;
     }
 
@@ -163,6 +168,7 @@ public class NewMusicManager {
         if (!audiolist.ContainsKey(name)) throw new CYFException("The audio channel " + name + " doesn't exist.");
         return !((AudioSource)audiolist[name]).isPlaying;
     }
+    public static bool IsStopped(string name) { return isStopped(name); }
 
     public static void OnLevelWasLoaded() {
         audiolist.Clear();

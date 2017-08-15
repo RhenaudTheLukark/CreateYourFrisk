@@ -9,11 +9,9 @@ public class LuaGeneralOW {
     public ScriptWrapper appliedScript;
 
     public delegate void LoadedAction(string name, object args);
-    [MoonSharpHidden]
-    public static event LoadedAction StCoroutine;
+    [MoonSharpHidden] public static event LoadedAction StCoroutine;
 
-    [MoonSharpHidden]
-    public LuaGeneralOW(TextManager textmgr) { this.textmgr = textmgr; }
+    [MoonSharpHidden] public LuaGeneralOW(TextManager textmgr) { this.textmgr = textmgr; }
 
     [CYFEventFunction] public void HiddenReloadAppliedScript() { EventManager.instance.CheckCurrentEvent(); }
 
@@ -23,8 +21,7 @@ public class LuaGeneralOW {
     /// <param name="texts"></param>
     /// <param name="formatted"></param>
     /// <param name="mugshots"></param>
-    [CYFEventFunction]
-    public void SetDialog(DynValue texts, bool formatted = true, DynValue mugshots = null) {
+    [CYFEventFunction] public void SetDialog(DynValue texts, bool formatted = true, DynValue mugshots = null) {
         if (EventManager.instance.coroutines.ContainsKey(appliedScript) && EventManager.instance.script != appliedScript) {
             UnitaleUtil.DisplayLuaError(EventManager.instance.events[EventManager.instance.actualEventIndex].name, "General.SetDialog: You can't use that function in a coroutine.");
             return;
@@ -44,8 +41,7 @@ public class LuaGeneralOW {
     /// </summary>
     /// <param name="question"></param>
     /// <param name="varIndex"></param>
-    [CYFEventFunction]
-    public void SetChoice(DynValue choices, string question = null) {
+    [CYFEventFunction] public void SetChoice(DynValue choices, string question = null) {
         bool threeLines = false;
         TextMessage textMsgChoice = new TextMessage("", false, false, true);
         textMsgChoice.AddToText("[mugshot:null]");
@@ -98,20 +94,17 @@ public class LuaGeneralOW {
         StCoroutine("ISetChoice", new object[] { question != null, threeLines });
     }
 
-    [CYFEventFunction]
-    public void Wait(int frames) { StCoroutine("IWait", frames); }
+    [CYFEventFunction] public void Wait(int frames) { StCoroutine("IWait", frames); }
 
     /// <summary>
     /// Function that ends when the player press the button "Confirm"
     /// </summary>
-    [CYFEventFunction]
-    public void WaitForInput() { StCoroutine("IWaitForInput", null); }
+    [CYFEventFunction] public void WaitForInput() { StCoroutine("IWaitForInput", null); }
 
     /// <summary>
     /// Launch the GameOver screen
     /// </summary>
-    [CYFEventFunction]
-    public void GameOver(DynValue deathText = null, string deathMusic = null) {
+    [CYFEventFunction] public void GameOver(DynValue deathText = null, string deathMusic = null) {
         PlayerCharacter.instance.HP = PlayerCharacter.instance.MaxHP;
         Transform rt = GameObject.Find("Player").GetComponent<Transform>();
         rt.position = new Vector3(rt.position.x, rt.position.y, -1000);
@@ -137,8 +130,7 @@ public class LuaGeneralOW {
     /// </summary>
     /// <param name="bgm">The name of the chosen BGM to play.</param>
     /// <param name="volume">The volume of the BGM. Clamped from 0 to 1.</param>
-    [CYFEventFunction]
-    public void PlayBGM(string bgm, float volume) {
+    [CYFEventFunction] public void PlayBGM(string bgm, float volume) {
         volume = Mathf.Clamp01(volume);
         if (AudioClipRegistry.GetMusic(bgm) == null)
             throw new CYFException("General.PlayBGM: The given BGM doesn't exist. Please check if you haven't mispelled it.");
@@ -153,8 +145,7 @@ public class LuaGeneralOW {
     /// Stops the current BGM.
     /// </summary>
     /// <param name="fadeFrames"></param>
-    [CYFEventFunction]
-    public void StopBGM(int fadeFrames = 0, bool waitEnd = false) {
+    [CYFEventFunction] public void StopBGM(int fadeFrames = 0, bool waitEnd = false) {
         if (EventManager.instance.bgmCoroutine)
             throw new CYFException("General.StopBGM: The music is already fading.");
         else if (!GameObject.Find("Main Camera OW").GetComponent<AudioSource>().isPlaying)
@@ -171,8 +162,7 @@ public class LuaGeneralOW {
     /// </summary>
     /// <param name="sound"></param>
     /// <param name="volume"></param>
-    [CYFEventFunction]
-    public void PlaySound(string sound, float volume = 0.65f) {
+    [CYFEventFunction] public void PlaySound(string sound, float volume = 0.65f) {
         volume = Mathf.Clamp01(volume);
         if (AudioClipRegistry.GetSound(sound) == null)
             throw new CYFException("General.PlaySound: The given BGM doesn't exist. Please check if you haven't mispelled it.");
@@ -184,14 +174,12 @@ public class LuaGeneralOW {
     /// <summary>
     /// Saves the game. Pretty obvious, heh.
     /// </summary>
-    [CYFEventFunction]
-    public void Save() { StCoroutine("ISave", null); }
+    [CYFEventFunction] public void Save() { StCoroutine("ISave", null); }
 
     /// <summary>
     /// Sends the player back to the title screen, making him lose his progression
     /// </summary>
-    [CYFEventFunction]
-    public void TitleScreen() {
+    [CYFEventFunction] public void TitleScreen() {
         NewMusicManager.DestroyChannel("StaticKeptAudio");
         GameObject.Destroy(GameObject.Find("Player"));
         GameObject.Destroy(GameObject.Find("Canvas OW"));
@@ -208,12 +196,10 @@ public class LuaGeneralOW {
     /// </summary>
     /// <param name="encounterName"></param>
     /// <param name="quickAnim"></param>
-    [CYFEventFunction]
-    public void SetBattle(string encounterName, bool quickAnim = false, bool ForceNoFlee = false) { PlayerOverworld.instance.SetEncounterAnim(encounterName, quickAnim, ForceNoFlee); }
+    [CYFEventFunction] public void SetBattle(string encounterName, bool quickAnim = false, bool ForceNoFlee = false) { PlayerOverworld.instance.SetEncounterAnim(encounterName, quickAnim, ForceNoFlee); }
 
 
-    [CYFEventFunction]
-    public void EnterShop(string scriptName) {
+    [CYFEventFunction] public void EnterShop(string scriptName) {
         ShopScript.scriptName = scriptName;
         StCoroutine("IEnterShop", null);
     }

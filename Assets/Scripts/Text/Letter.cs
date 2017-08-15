@@ -6,7 +6,9 @@ public class Letter : MonoBehaviour {
     public Image img;
     public TextEffectLetter effect = null;
     public bool started = false;
+    public Color colorFromText;
     private bool goodInit = false;
+
 
     private void Start() {
         img = GetComponent<Image>();

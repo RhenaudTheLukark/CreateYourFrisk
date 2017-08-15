@@ -17,16 +17,16 @@ internal class LuaEnemyEncounter : EnemyEncounter {
     public override Vector2 ArenaSize {
         get {
             /*
-    if (script.GetVar("arenasize") != null) {
-    //Table size = new Table(155, 130); //script.GetVar("arenasize").Table;
-    Vector2 size = new Vector2(155, 130);
-    //if (size == null)
-    //    return base.ArenaSize;
-    if (size.x < 16 || size.y < 16) // TODO remove hardcoding (but player never changes size so nobody cares
-    return new Vector2(size.x > 16 ? (int)size.x : 16,  size.y > 16 ? (int)size.y : 16);
-    return new Vector2((int)size.x, (int)size.y);
-    }
-    return base.ArenaSize;*/
+            if (script.GetVar("arenasize") != null) {
+                //Table size = new Table(155, 130); //script.GetVar("arenasize").Table;
+                Vector2 size = new Vector2(155, 130);
+                //if (size == null)
+                //    return base.ArenaSize;
+                if (size.x < 16 || size.y < 16) // TODO remove hardcoding (but player never changes size so nobody cares
+                    return new Vector2(size.x > 16 ? (int)size.x : 16,  size.y > 16 ? (int)size.y : 16);
+                return new Vector2((int)size.x, (int)size.y);
+            }
+            return base.ArenaSize;*/
             if (script.GetVar("arenasize") != null) {
                 Table size = script.GetVar("arenasize").Table;
                 if (size == null)
@@ -74,7 +74,7 @@ internal class LuaEnemyEncounter : EnemyEncounter {
         projectile.ctrl.MoveToAbs(xpos, ypos);
         //projectile.ctrl.z = Projectile.Z_INDEX_NEXT; //doesn't work yet, thanks unity UI
         projectile.transform.SetAsLastSibling();
-        projectile.ctrl.UpdatePosition();
+        //projectile.ctrl.UpdatePosition();
         projectile.ctrl.sprite.Set(sprite);
         if (layerName != "")
             try { projectile.transform.SetParent(GameObject.Find(layerName + "Bullet").transform); } 
@@ -166,7 +166,7 @@ internal class LuaEnemyEncounter : EnemyEncounter {
             }
         }
 
-        if (MusicManager.isStoppedOrNull(PlayerOverworld.audioKept)) {
+        if (MusicManager.IsStoppedOrNull(PlayerOverworld.audioKept)) {
             if (musicFile != null) {
                 try {
                     AudioClip music = AudioClipRegistry.GetMusic(musicFile);
@@ -175,6 +175,7 @@ internal class LuaEnemyEncounter : EnemyEncounter {
                 } catch (Exception) { UnitaleUtil.WriteInLogAndDebugger("[WARN]Loading custom music failed."); }
             } else {
                 musicSource.clip = AudioClipRegistry.GetMusic("mus_battle1");
+                musicSource.volume = .6f;
                 MusicManager.filename = "music:mus_battle1";
             }
             NewMusicManager.audioname["src"] = MusicManager.filename;
@@ -360,14 +361,4 @@ internal class LuaEnemyEncounter : EnemyEncounter {
             msgs[i] = new RegularMessage(lines[i]);
         UIController.instance.ActionDialogResult(msgs, UIController.UIState.ENEMYDIALOGUE);
     }*/
-
-    private void Update() {
-        if (LuaScriptBinder.Get(null, "ForceNoFlee") != null) {
-            script.SetVar("flee", DynValue.NewBoolean(false));
-            LuaScriptBinder.Remove("ForceNoFlee");
-        } else if (!script.GetVar("flee").Boolean && script.GetVar("flee").Type != DataType.Nil)
-            CanRun = false;
-        else
-            CanRun = true;
-    }
 }
