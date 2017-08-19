@@ -44,7 +44,16 @@ public class GlobalControls : MonoBehaviour {
             misc = new Misc();
     }*/
 
-    void Awake() { SceneManager.sceneLoaded += LoadScene; }
+    void Awake() {
+        SceneManager.sceneLoaded += LoadScene;
+        LoadGraphicsSettings();
+    }
+
+    void LoadGraphicsSettings() {
+        QualitySettings.vSyncCount = 0;
+        Application.targetFrameRate = 60;
+        Screen.SetResolution(640, 480, false, 0);
+    }
 
     /// <summary>
     /// Control checking, and way more.
@@ -107,8 +116,6 @@ public class GlobalControls : MonoBehaviour {
                     break;
             }
         if (Screen.currentResolution.height != 480 || Screen.currentResolution.width != 640) {
-            QualitySettings.vSyncCount = 0;
-            Application.targetFrameRate = 60;
             Screen.SetResolution(640, 480, false, 0);
         }
         stopScreenShake = false;

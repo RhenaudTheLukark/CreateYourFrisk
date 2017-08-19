@@ -21,6 +21,7 @@ public class GameState {
     public Dictionary<string, bool> playerVariablesBool = new Dictionary<string, bool>();
     public string lastScene = null;
     public Dictionary<int, MapInfos> mapInfos = new Dictionary<int, MapInfos>();
+    public List<string> inventory = new List<string>();
 
     [System.Serializable]
     public struct EventInfos {
@@ -61,14 +62,18 @@ public class GameState {
         playerHeader = CYFAnimator.specialPlayerHeader;
 
         string mapName;
-        if (UnitaleUtil.MapCorrespondanceList.ContainsKey(SceneManager.GetActiveScene().name)) mapName = UnitaleUtil.MapCorrespondanceList[SceneManager.GetActiveScene().name];
+        if (UnitaleUtil.MapCorrespondanceList.ContainsKey(SceneManager.GetActiveScene().name))                        mapName = UnitaleUtil.MapCorrespondanceList[SceneManager.GetActiveScene().name];
         else if (GlobalControls.nonOWScenes.Contains(SceneManager.GetActiveScene().name) || GlobalControls.isInFight) mapName = SaveLoad.savedGame.lastScene;
-        else mapName = SceneManager.GetActiveScene().name;
-
+        else                                                                                                          mapName = SceneManager.GetActiveScene().name;
         lastScene = mapName;
+
         soundDictionary = MusicManager.hiddenDictionary;
         controlpanel = ControlPanel.instance;
         player = PlayerCharacter.instance;
+
+        inventory.Clear();
+        foreach (UnderItem item in Inventory.inventory)
+            inventory.Add(item.Name);
         
         try {
             foreach (string key in LuaScriptBinder.GetSavedDictionary().Keys) {
@@ -107,13 +112,17 @@ public class GameState {
             LuaScriptBinder.Set(null, key, DynValue.NewBoolean(a));
         }
 
+        Inventory.inventory.Clear();
+        foreach (string str in inventory)
+            Inventory.inventory.Add(new UnderItem(str));
+
         PlayerCharacter.instance = player;
         ControlPanel.instance = controlpanel;
         MusicManager.hiddenDictionary = soundDictionary;
 
         string mapName;
         if (UnitaleUtil.MapCorrespondanceList.ContainsValue(lastScene)) mapName = UnitaleUtil.MapCorrespondanceList.FirstOrDefault(x => x.Value == lastScene).Key;
-        else mapName = lastScene;
+        else                                                            mapName = lastScene;
         GlobalControls.lastScene = mapName;
 
         LuaScriptBinder.Set(null, "PlayerMap", DynValue.NewString(mapName));

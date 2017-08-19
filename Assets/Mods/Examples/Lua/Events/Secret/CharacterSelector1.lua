@@ -24,18 +24,13 @@ local show = false
 local limit = 10
 
 function EventPage0()
-    --if GetAlMightyGlobal("CYFInternalCharacterSelected") then
-    --    Event.Remove(Event.GetName())
-    --else 
-        SetAlMightyGlobal("CYFInternalCharacterSelected", true)
+    if GetRealGlobal("CYFInternalCharacterSelected") then
+        Event.Remove(Event.GetName())
+    else 
+        SetRealGlobal("CYFInternalCharacterSelected", true)
         Event.Remove("Tone")
-        Event.SetSpeed("Player", 3)
-		SetAlMightyGlobal("CYFInternalCross1", false)
-		SetAlMightyGlobal("CYFInternalCross2", true)
-		SetAlMightyGlobal("CYFInternalCross3", false)
-		SetAlMightyGlobal("CYFInternalCross4", true)
-		SetAlMightyGlobal("CYFInternalCross5", true)
-        disabled = { GetAlMightyGlobal("CYFInternalCross1"), GetAlMightyGlobal("CYFInternalCross2"), GetAlMightyGlobal("CYFInternalCross3"), GetAlMightyGlobal("CYFInternalCross4"), GetAlMightyGlobal("CYFInternalCross5") }
+        Event.SetSpeed("Player", 2)
+        disabled = { GetRealGlobal("CYFInternalCross1"), GetRealGlobal("CYFInternalCross2"), GetRealGlobal("CYFInternalCross3"), GetRealGlobal("CYFInternalCross4"), GetRealGlobal("CYFInternalCross5") }
         disabled[6] = not (disabled[1] and disabled[2] and disabled[3] and disabled[4] and disabled[5])
         if not disabled[6] then
             Audio.Stop()
@@ -55,7 +50,7 @@ function EventPage0()
         foreground.Scale(640, 480)
         local playerSprite = Event.GetSprite("Player")
         playerSprite.alpha = 1
-    --end
+    end
 end
 
 function EventPage1()
@@ -70,12 +65,15 @@ function EventPage1()
             chars[i] = {}
             chars[i]["border"] = Event.GetSprite("Image" .. (i * 2))
             chars[i]["back"] = Event.GetSprite("Image" .. (i * 2 + 1))
+            chars[i]["back"].SetParent(chars[i]["border"])
             chars[i]["sprite"] = Event.GetSprite("Image" .. (#animationKeys * 2 + i + 1))
+            chars[i]["sprite"].SetParent(chars[i]["back"])
+            chars[i]["sprite"].loopmode = "ONESHOT"
             chars[i]["cross"] = Event.GetSprite("Image" .. (#animationKeys * 3 + i + 1))
             chars[i]["cross"].alpha = disabled[i] and 1 or 0
-            chars[i]["sprite"].loopmode = "ONESHOT"
+            chars[i]["cross"].SetParent(chars[i]["back"])
         end
-        foreground.MoveAbove(chars[#chars]["cross"])
+        foreground.MoveAbove(chars[#chars]["border"])
         ChangeTarget(currentChar, false, true)
     elseif phase == 1 then
         foreground.alpha = fadeCount
@@ -83,18 +81,20 @@ function EventPage1()
     elseif phase == 2 then
         local beginCurrentChar = currentChar
         HandleInput() -- Triggers the formula
-		limit = 10
-        while disabled[currentChar] and beginCurrentChar ~= currentChar do
-			if limit == 0 then
-				break
-			end
-            if lastInput == "Left" or lastInput == "Right" then
-                HandleInput(lastInput) -- Triggers the formula with the same direction as before
-            else
-                HandleUpDownFail()
-                break
+        if beginCurrentChar ~= currentChar then
+            limit = 10
+            while disabled[currentChar] do
+                if limit == 0 then
+                    break
+                end
+                if lastInput == "Left" or lastInput == "Right" then
+                    HandleInput(lastInput) -- Triggers the formula with the same direction as before
+                else
+                    HandleUpDownFail()
+                    break
+                end
+                limit = limit - 1
             end
-			limit = limit - 1
         end
     elseif phase == 3 then
         if currentChar == 1 then
@@ -108,6 +108,7 @@ function EventPage1()
             NewAudio.PlaySound("CharSelect", "Laugh")
         elseif currentChar == 3 then
             Event.SetAnimHeader("Player", "MK")
+            chars[currentChar]["sprite"].x = -10
             chars[currentChar]["sprite"].SetAnimation({"MonsterKidOW/f0", "MonsterKidOW/f1", "MonsterKidOW/f2",  "MonsterKidOW/f2",  "MonsterKidOW/f2",
                                                        "MonsterKidOW/f3", "MonsterKidOW/f4", "MonsterKidOW/f5",  "MonsterKidOW/f5",  "MonsterKidOW/f5",
                                                        "MonsterKidOW/f5", "MonsterKidOW/f5", "MonsterKidOW/f5",  "MonsterKidOW/f6",  "MonsterKidOW/f7",
@@ -174,12 +175,12 @@ function EventPage1()
             if chars[currentChar]["sprite"].animcomplete then  phase = 5 end
         else
             if not b0015P3C141 then
-                SetAlMightyGlobal("CYFInternalCharacterSelected", false)
-                SetAlMightyGlobal("CYFInternalCross1", false)
-                SetAlMightyGlobal("CYFInternalCross2", false)
-                SetAlMightyGlobal("CYFInternalCross3", false)
-                SetAlMightyGlobal("CYFInternalCross4", false)
-                SetAlMightyGlobal("CYFInternalCross5", false)
+                SetRealGlobal("CYFInternalCharacterSelected", false)
+                SetRealGlobal("CYFInternalCross1", false)
+                SetRealGlobal("CYFInternalCross2", false)
+                SetRealGlobal("CYFInternalCross3", false)
+                SetRealGlobal("CYFInternalCross4", false)
+                SetRealGlobal("CYFInternalCross5", false)
                 lastAlpha = 0
                 b0015P3C141 = true
                 for i = 4, #animationKeys * 4 + 2 do 
@@ -193,7 +194,8 @@ function EventPage1()
                 mysSpr.Scale(2, 2)
                 mysTextSpr.alpha = 0
                 fadeCount = 8
-                SetAlMightyGlobal("1a6377e26b5119334e651552be9f17f8d92e83c9", true)
+                SetRealGlobal("1a6377e26b5119334e651552be9f17f8d92e83c9", true)
+                General.Save(true)
             end
             if lastAlpha <= 0 and (-fadeCount + 4) / 4 > 0 then
                 NewAudio.PlaySound("CharSelect", "Secret/sound")
@@ -235,38 +237,30 @@ function HandleUpDownFail()
     local index = 1
     local curr = currentChar
     local y = positions[curr][2]
-    DEBUG("currentChar: " .. tostring(curr))
     repeat
         if not (rightBound and not left) and not (leftBound and left) then
             curr = left and currentChar - index or currentChar + index
-            DEBUG("currentIndex: " .. tostring(curr))
             if curr > #positions then
                 rightBound = true
-                DEBUG("rightBound out bounds")
             elseif curr < 1 then
                 leftBound = true
-                DEBUG("leftBound out bounds")
             elseif positions[curr][2] ~= y then
                 if curr < currentChar then
                     leftBound = true
-                    DEBUG("leftBound diff line")
                 else
                     rightBound = true
-                    DEBUG("rightBound diff line")
                 end
             end
         end
         if leftBound and rightBound then
             ChangeTarget(lastEnabled)
-            DEBUG("Two bounds")
             return
         end
         if left then
             index = index + 1
-            DEBUG("index +: " .. tostring(index))
         end
         left = not left
-    until not disabled[curr] 
+    until not disabled[curr] and not (rightBound and left) and not (leftBound and not left)
     ChangeTarget(curr)
 end
 
@@ -297,25 +291,20 @@ function HandleInput(forcedInput)
 end
 
 function ChangeTarget(number, sound, forced)
-    DEBUG(lastEnabled .. " ~= " .. number .. " or " .. lastEnabled .. " ~= " .. currentChar .." or " .. tostring(forced))
-    if lastEnabled ~= number or lastEnabled ~= currentChar or forced then
-        if not disabled[number] and lastEnabled ~= number or forced then
-            chars[lastEnabled]["sprite"].StopAnimation()
-            chars[lastEnabled]["sprite"].Set(animationKeys[lastEnabled] .. "/1")
-            chars[lastEnabled]["border"].color = {1, 1, 1}
-            animationCount = 0
-            if sound then Audio.PlaySound("menumove") end
+    currentChar = number
+    if not disabled[number] and currentChar ~= lastEnabled or forced then
+        chars[lastEnabled]["sprite"].StopAnimation()
+        chars[lastEnabled]["sprite"].Set(animationKeys[lastEnabled] .. "/1")
+        chars[lastEnabled]["border"].color = {1, 1, 1}
+        animationCount = 0
+        if sound then Audio.PlaySound("menumove") end
+        
+        lastEnabled = currentChar
+        if currentChar ~= 6 then
+            chars[currentChar]["sprite"].SetAnimation({ animationKeys[currentChar].."/"..math.floor(animationCount/2)*4,   animationKeys[currentChar].."/"..math.floor(animationCount/2)*4+1, 
+                                                        animationKeys[currentChar].."/"..math.floor(animationCount/2)*4+2, animationKeys[currentChar].."/"..math.floor(animationCount/2)*4+3 }, 0.25)
         end
-        currentChar = number
-        if not disabled[number] and lastEnabled ~= number or forced then
-            lastEnabled = currentChar
-            --DEBUG(currentChar)
-            if number ~= 6 then
-                chars[currentChar]["sprite"].SetAnimation({ animationKeys[currentChar].."/"..math.floor(animationCount/2)*4,   animationKeys[currentChar].."/"..math.floor(animationCount/2)*4+1, 
-                                                            animationKeys[currentChar].."/"..math.floor(animationCount/2)*4+2, animationKeys[currentChar].."/"..math.floor(animationCount/2)*4+3 }, 0.25)
-            end
-            chars[currentChar]["border"].color = {1, 0, 0}
-        end
+        chars[currentChar]["border"].color = {1, 0, 0}
     end
 end
 

@@ -1024,9 +1024,6 @@ public class UIController : MonoBehaviour {
     }
 
     private void HandleCancel() {
-        if (fleeSwitch)
-            return;
-
         switch (state) {
             case UIState.ACTIONSELECT:
             case UIState.DIALOGRESULT:
@@ -1207,8 +1204,6 @@ public class UIController : MonoBehaviour {
         if (toAdd)
             rts[indexText].SetParent(rts[indexDeb]);*/
         //}
-        QualitySettings.vSyncCount = 0;
-        Application.targetFrameRate = 60;
         if (GlobalControls.crate) {
             UserDebugger.instance.gameObject.transform.GetChild(0).gameObject.GetComponent<Text>().text = "DEGUBBER (F9 OT TOGLGE, DEBUG(STIRNG) TO PRNIT)";
             GameObject.Find("HPLabelCrate").GetComponent<Image>().enabled = true;
@@ -1273,6 +1268,7 @@ public class UIController : MonoBehaviour {
                             "Yeah, that's the secret.\nI hope you liked it!"};*/
 
         ActionDialogResult(new TextMessage[] { new RegularMessage(fleeTexts[Math.RandomRange(0, fleeTexts.Length)]) }, UIState.ENEMYDIALOGUE);
+        fleeSwitch = true;
 
         Camera.main.GetComponent<AudioSource>().Pause();
         LuaSpriteController spr = (LuaSpriteController)SpriteUtil.MakeIngameSprite("spr_heartgtfo_0", "Top").UserData.Object;
@@ -1285,7 +1281,6 @@ public class UIController : MonoBehaviour {
             spr.x--;
             yield return 0;
         }
-        fleeSwitch = true;
         GlobalControls.fleeIndex = 0;
     }
 
@@ -1355,11 +1350,14 @@ public class UIController : MonoBehaviour {
             return;
         }
 
-        if (InputUtil.Pressed(GlobalControls.input.Confirm)) {
-            if (state == UIState.ACTIONSELECT &&!ArenaManager.instance.isMoveInProgress() &&!ArenaManager.instance.isResizeInProgress() || state != UIState.ACTIONSELECT)
-                HandleAction();
-        } else if (InputUtil.Pressed(GlobalControls.input.Cancel)) HandleCancel();
-        else HandleArrows();
+        if (!fleeSwitch)
+            if (InputUtil.Pressed(GlobalControls.input.Confirm)) {
+                if (state == UIState.ACTIONSELECT && !ArenaManager.instance.isMoveInProgress() && !ArenaManager.instance.isResizeInProgress() || state != UIState.ACTIONSELECT)
+                    HandleAction();
+            } else if (InputUtil.Pressed(GlobalControls.input.Cancel)) HandleCancel();
+            else HandleArrows();
+        else if (InputUtil.Pressed(GlobalControls.input.Confirm))
+            SwitchStateOnString(null, "DONE");
 
         if (state == UIState.ATTACKING || needOnDeath) {
             if (!fightUI.Finished())

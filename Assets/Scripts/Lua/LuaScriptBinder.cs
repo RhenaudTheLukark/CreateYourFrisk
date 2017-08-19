@@ -118,8 +118,16 @@ public static class LuaScriptBinder {
         script.Globals.Set("Audio", MusicMgr);
         DynValue NewMusicMgr = UserData.Create(newmgr);
         script.Globals.Set("NewAudio", NewMusicMgr);
+        // What? Why?
+        bool emptyInventory = false;
+        if (Inventory.inventory.Count == 0) {
+            Inventory.inventory.Add(new UnderItem("Testing Dog"));
+            emptyInventory = true;
+        }
         DynValue inv = UserData.Create(Inventory.luaInventory);
         script.Globals.Set("Inventory", inv);
+        if (emptyInventory)
+            Inventory.inventory.Clear();
         DynValue InputMgr = UserData.Create(GlobalControls.luaInput);
         script.Globals.Set("Input", InputMgr);
         DynValue Win = UserData.Create(new Misc());

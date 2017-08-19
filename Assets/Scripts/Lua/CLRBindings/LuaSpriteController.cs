@@ -382,13 +382,15 @@ public class LuaSpriteController {
         img.GetComponent<RectTransform>().anchorMax = new Vector2(x, y);
     }
 
-    public void MoveTo(float x, float y, float z = -123456) {
-        GetTarget().localPosition = new Vector3(x, y, z == -123456 ? GetTarget().localPosition.z : z);
+    public void MoveTo(float x, float y) {
+        if (img.transform.parent.name == "SpritePivot")
+            img.transform.parent.localPosition = new Vector3(x, y, img.transform.parent.localPosition.z) - (Vector3)img.GetComponent<RectTransform>().anchoredPosition;
+        else
+            img.GetComponent<RectTransform>().anchoredPosition = new Vector2(x, y);
     }
 
-    public void MoveToAbs(float x, float y, float z = -123456) {
-        GetTarget().position = new Vector3(x, y, z == -123456 ? GetTarget().position.z : z);
-        img.GetComponent<RectTransform>().position = new Vector2(x, y);
+    public void MoveToAbs(float x, float y) {
+        GetTarget().position = new Vector3(x, y, GetTarget().position.z);
     }
 
     // Sets both xScale and yScale of a sprite 

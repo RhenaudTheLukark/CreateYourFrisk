@@ -9,7 +9,7 @@ function EventPage1()
     --Event.SetPage(Event.GetName(), 2) --You shouldn't make "removing" pages directly. Instead, set -1 as the page of the event!
 end
 
---You shouldn't.
+--You shouldn't if you want the event to never come back. Use Event.SetPage(Event.GetName(), -1) to make so the event disappears once and for all!
 function EventPage2()
 	Event.Remove(Event.GetName())
 end

@@ -12,7 +12,7 @@ public class PlayerOverworld : MonoBehaviour {
     public int EventLayer;                  //Layer of the events, colliding too
     public int forcedMove = 0;              //Direction of a forced move
     //public int rolled = 0;
-    public float speed = 3;
+    public float speed;
     public bool firstTime = false;          //Boolean used to not launch another event a the end of the previous event
     public bool inBattleAnim = false;
     public bool PlayerNoMove {              //Is the player not able to move?
@@ -219,8 +219,6 @@ public class PlayerOverworld : MonoBehaviour {
         if (GameOverBehavior.gameOverContainerOw.activeSelf)
             return;
 
-        if ((Vector2)PlayerPos.position == new Vector2(0, 0))
-            PlayerPos.position = GlobalControls.beginPosition;
         //Used to increment TimeIndicator for our pre-Encounter anim
         if (TimeIndicator > 0 && TimeIndicator < 1) {
             TimeIndicator += Time.deltaTime;
@@ -246,25 +244,23 @@ public class PlayerOverworld : MonoBehaviour {
         if (!PlayerNoMove) {
             horizontal = (int)(Input.GetAxisRaw("Horizontal"));
             vertical = (int)(Input.GetAxisRaw("Vertical"));
-            //Just some animations switches ;)
+            //Just some animations switches
             if (animator.movementDirection == 0) {
-                if (GlobalControls.input.Up > 0) currentDirection = 8;
-                else if (GlobalControls.input.Down > 0) currentDirection = 2;
+                if (GlobalControls.input.Up > 0)         currentDirection = 8;
+                else if (GlobalControls.input.Down > 0)  currentDirection = 2;
                 else if (GlobalControls.input.Right > 0) currentDirection = 6;
-                else if (GlobalControls.input.Left > 0) currentDirection = 4;
+                else if (GlobalControls.input.Left > 0)  currentDirection = 4;
             }
-            if (GlobalControls.input.Up == UndertaleInput.ButtonState.PRESSED) currentDirection = 8;
+            if (GlobalControls.input.Up == UndertaleInput.ButtonState.PRESSED)         currentDirection = 8;
             else if (GlobalControls.input.Right == UndertaleInput.ButtonState.PRESSED) currentDirection = 6;
-            else if (GlobalControls.input.Left == UndertaleInput.ButtonState.PRESSED) currentDirection = 4;
-            else if (GlobalControls.input.Down == UndertaleInput.ButtonState.PRESSED) currentDirection = 2;
-            if ((animator.beginAnim.Contains("Up") && GlobalControls.input.Up <= 0) ||
-                (animator.beginAnim.Contains("Right") && GlobalControls.input.Right <= 0) ||
-                (animator.beginAnim.Contains("Left") && GlobalControls.input.Left <= 0) ||
-                (animator.beginAnim.Contains("Down") && GlobalControls.input.Down <= 0)) {
-                if (horizontal < 0) currentDirection = 4;
+            else if (GlobalControls.input.Left == UndertaleInput.ButtonState.PRESSED)  currentDirection = 4;
+            else if (GlobalControls.input.Down == UndertaleInput.ButtonState.PRESSED)  currentDirection = 2;
+            if ((animator.beginAnim.Contains("Up") && GlobalControls.input.Up <= 0) ||  (animator.beginAnim.Contains("Right") && GlobalControls.input.Right <= 0) ||
+                (animator.beginAnim.Contains("Left") && GlobalControls.input.Left <= 0) ||  (animator.beginAnim.Contains("Down") && GlobalControls.input.Down <= 0)) {
+                if (horizontal < 0)      currentDirection = 4;
                 else if (horizontal > 0) currentDirection = 6;
-                else if (vertical > 0) currentDirection = 8;
-                else if (vertical < 0) currentDirection = 2;
+                else if (vertical > 0)   currentDirection = 8;
+                else if (vertical < 0)   currentDirection = 2;
             }
 
             //Special keys
@@ -320,8 +316,7 @@ public class PlayerOverworld : MonoBehaviour {
         if (currentDirection != 0) animator.movementDirection = currentDirection;
 
         //Check is the movement is possible
-        if ((Vector2)PlayerPos.position != new Vector2(0, 0))
-            AttemptMove(horizontal, vertical);
+        AttemptMove(horizontal, vertical);
 
         if (GlobalControls.input.Menu == UndertaleInput.ButtonState.PRESSED)
             if (menuRunning[2] && !menuRunning[4])

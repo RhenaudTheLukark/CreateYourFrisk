@@ -221,6 +221,7 @@ public class LuaEventOW {
     }
 
     [MoonSharpHidden] public static void SetPage2(string eventName, int page) {
+        Debug.Log(eventName);
         if (!GameObject.Find(eventName))
             throw new CYFException("Event.SetPage: The given event doesn't exist.");
 
@@ -255,7 +256,7 @@ public class LuaEventOW {
     }
 
     [CYFEventFunction] public string GetName() {
-        try { return EventManager.instance.eventScripts.FirstOrDefault(x => x.Value == appliedScript).Key.name; }
+        try { return appliedScript.GetVar("_internalScriptName").String; }
         catch { return "4eab1af3ab6a932c23b3cdb8ef618b1af9c02088"; }
         finally { appliedScript.Call("CYFEventNextCommand"); }
     }

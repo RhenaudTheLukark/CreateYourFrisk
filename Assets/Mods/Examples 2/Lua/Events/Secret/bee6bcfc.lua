@@ -6,8 +6,7 @@
 --Camera: 1060, 707
 function EventPage0() 
     local punderSprite = Event.GetSprite(Event.GetName())
-	punderSprite.Scale(2, 2)
-    if GetAlMightyGlobal("CYFInternalCross2") then 
+    if GetRealGlobal("CYFInternalCross2") then 
         Event.Remove(Event.GetName() .. " (1)")
         Event.Remove(Event.GetName())
     elseif Event.GetAnimHeader("Player") ~= "Chara" then
@@ -28,7 +27,7 @@ function EventPage2()
     Event.IgnoreCollision(Event.GetName() .. " (1)", true)
     Event.MoveToPoint("Player", 1020, 680, true)
     Event.SetDirection("Player", 6)
-    punderSprite.xscale = -2
+    punderSprite.xscale = -1
     Event.SetDirection(Event.GetName(), 6)
     General.Wait(30)
     General.SetDialog({"[noskip][voice:punderbolt]Hello th[mugshot:Punder/intimidated][waitall:2]ere... [w:25][waitall:1]May I help you?"}, true, {"punderNormal"})
@@ -48,7 +47,7 @@ function EventPage2()
     Event.MoveToPoint("Player", 1120, 680, true, false)
     General.Wait(5)
     NewAudio.PlaySound("temp", "Secret/punch")
-    punderSprite.xscale = 2
+    punderSprite.xscale = 1
     punderSprite.rotation = 90
     Event.Teleport(Event.GetName(), 1176, 723)
     Event.SetAnimHeader(Event.GetName(), "Knockout")
@@ -66,7 +65,6 @@ function EventPage2()
     Event.Teleport("Image1", 1230.5, 664)
     Event.SetAnimHeader(Event.GetName(), "NoAnim")
     Event.MoveToPoint("Image1", 1238.5, 616, true, false)
-    imgSprite.Scale(2, 2)
     
     General.Wait(1)
     for i = 1, 15 do
@@ -116,8 +114,8 @@ function EventPage2()
     General.Wait(30)
     
     Event.Remove(Event.GetName())
-    SetAlMightyGlobal("CYFInternalCross2", true)
-    SetAlMightyGlobal("CYFInternalCharacterSelected", false)
+    SetRealGlobal("CYFInternalCross2", true)
+    SetRealGlobal("CYFInternalCharacterSelected", false)
     Player.Teleport("test2", 320, 200, 2, false)
 end
 

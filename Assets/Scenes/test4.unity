@@ -1042,12 +1042,12 @@ Prefab:
     - target: {fileID: 224528923083268334, guid: a0add8308da8d24468328221253c3ec7,
         type: 2}
       propertyPath: m_LocalScale.x
-      value: 200
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 224528923083268334, guid: a0add8308da8d24468328221253c3ec7,
         type: 2}
       propertyPath: m_LocalScale.y
-      value: 200
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 4671881132980978, guid: a0add8308da8d24468328221253c3ec7, type: 2}
       propertyPath: m_LocalPosition.x
@@ -1060,27 +1060,27 @@ Prefab:
     - target: {fileID: 61614148327684554, guid: a0add8308da8d24468328221253c3ec7,
         type: 2}
       propertyPath: m_SpriteTilingProperty.oldSize.x
-      value: 0.28
+      value: 0.56
       objectReference: {fileID: 0}
     - target: {fileID: 61614148327684554, guid: a0add8308da8d24468328221253c3ec7,
         type: 2}
       propertyPath: m_SpriteTilingProperty.oldSize.y
-      value: 0.38
+      value: 0.76
       objectReference: {fileID: 0}
     - target: {fileID: 61614148327684554, guid: a0add8308da8d24468328221253c3ec7,
         type: 2}
       propertyPath: m_Size.x
-      value: 0.2
+      value: 0.38
       objectReference: {fileID: 0}
     - target: {fileID: 61614148327684554, guid: a0add8308da8d24468328221253c3ec7,
         type: 2}
       propertyPath: m_Size.y
-      value: 0.2
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 61614148327684554, guid: a0add8308da8d24468328221253c3ec7,
         type: 2}
       propertyPath: m_Offset.y
-      value: 0.1
+      value: 0.15
       objectReference: {fileID: 0}
     - target: {fileID: 114226206946908324, guid: a0add8308da8d24468328221253c3ec7,
         type: 2}
@@ -2061,7 +2061,7 @@ MonoBehaviour:
     transitionTime: 60
   - name: Fallen2
     anims: 'MonsterKidOW/12, MonsterKidOW/13, MonsterKidOW/14, MonsterKidOW/15, '
-    transitionTime: 0.2
+    transitionTime: 0.1
   - name: NoAnim
     anims: empty, empty
     transitionTime: 60

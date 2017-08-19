@@ -174,7 +174,7 @@ public class LuaGeneralOW {
     /// <summary>
     /// Saves the game. Pretty obvious, heh.
     /// </summary>
-    [CYFEventFunction] public void Save() { StCoroutine("ISave", null); }
+    [CYFEventFunction] public void Save(bool forced = false) { StCoroutine("ISave", new object[] { forced }); }
 
     /// <summary>
     /// Sends the player back to the title screen, making him lose his progression

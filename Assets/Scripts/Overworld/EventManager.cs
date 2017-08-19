@@ -532,6 +532,9 @@ public class EventManager : MonoBehaviour {
                       "\n    return tab" +
                       "\nend" +
                       "\nfunction CYFEventFuncToLaunch(x)" +
+                      "\n    if _internalScriptName == nil then" +
+                      "\n        _internalScriptName = \"" + ev.gameObject.name + "\"" +
+                      "\n    end" +
                       "\n    local err = nil" +
                       "\n    local stack = nil" +
                       "\n    xpcall(x, function(err2) err = err2 stack = debug.traceback() end)" +
@@ -890,7 +893,7 @@ public class EventManager : MonoBehaviour {
 
     private IEnumerator SpecialAnnouncementEvent() {
         luaplow.CanMove(false);
-        LuaScriptBinder.SetAlMighty(null, "1a6377e26b5119334e651552be9f17f8d92e83c9", DynValue.NewBoolean(false));
+        LuaScriptBinder.Set(null, "1a6377e26b5119334e651552be9f17f8d92e83c9", DynValue.NewBoolean(false));
         Dictionary<string, Sprite> Sprites = new Dictionary<string, Sprite>();
         Sprite[] sprs = Resources.LoadAll<Sprite>("Sprites");
         foreach (Sprite spr in sprs)
@@ -915,7 +918,7 @@ public class EventManager : MonoBehaviour {
     }
 
     private string CYFReleaseScript = "function EventPage0()\n" +
-                                      "    if not GetAlMightyGlobal(\"1a6377e26b5119334e651552be9f17f8d92e83c9\") then\n" +
+                                      "    if not GetRealGlobal(\"1a6377e26b5119334e651552be9f17f8d92e83c9\") then\n" +
                                       "        Event.Remove(Event.GetName())\n" +
                                       "    end\n" +
                                       "end\n" +
@@ -1258,9 +1261,16 @@ public class EventManager : MonoBehaviour {
             scr.Call("CYFEventNextCommand");
     }
 
-    IEnumerator ISave() {
+    IEnumerator ISave(object[] args) {
         ScriptWrapper scr = luagenow.appliedScript;
-        if (coroutines.ContainsKey(scr) && script != scr) {
+        //REAL ARGS
+        bool forced;
+        try { forced = (bool)args[0]; } catch { throw new CYFException("The argument \"forced\" must be a boolean."); }
+
+        if (forced) {
+            SaveLoad.Save();
+            yield break;
+        } else if (coroutines.ContainsKey(scr) && script != scr) {
             UnitaleUtil.DisplayLuaError(scr.scriptname, "General.Save: You can't use that function in a coroutine.");
             yield break;
         } else if (LoadLaunched) {
@@ -1362,13 +1372,14 @@ public class EventManager : MonoBehaviour {
         ScriptWrapper scr = luascrow.appliedScript;
         //REAL ARGS
         int pixX, pixY, speed;
-        bool straightLine;
+        bool straightLine, waitEnd;
         string info;
         try { pixX = (int)args[0];          } catch { throw new CYFException("The argument \"pixX\" must be a number."); }
         try { pixY = (int)args[1];          } catch { throw new CYFException("The argument \"pixY\" must be a number."); }
         try { speed = (int)args[2];         } catch { throw new CYFException("The argument \"speed\" must be a number."); }
         try { straightLine = (bool)args[3]; } catch { throw new CYFException("The argument \"straightLine\" must be a boolean."); }
-        try { info = (string)args[4];       } catch { throw new CYFException("The argument \"info\" must be a string."); }
+        try { waitEnd = (bool)args[4];      } catch { throw new CYFException("The argument \"waitEnd\" must be a boolean."); }
+        try { info = (string)args[5];       } catch { throw new CYFException("The argument \"info\" must be a string."); }
 
         if (coroutines.ContainsKey(scr) && script != scr) {
             UnitaleUtil.DisplayLuaError(instance.events[instance.actualEventIndex].name, info + ": You can't use that function in a coroutine with waitEnd set to true.");
@@ -1389,6 +1400,8 @@ public class EventManager : MonoBehaviour {
             xSpeed = clamped.x;
             ySpeed = clamped.y;
         }
+        if (!waitEnd)
+            scr.Call("CYFEventNextCommand");
         while (currentX != pixX || currentY != pixY) {
             if (currentX != pixX)
                 if (Mathf.Abs(xSpeed) < Mathf.Abs(pixX - currentX)) {
@@ -1409,7 +1422,8 @@ public class EventManager : MonoBehaviour {
                 }
             yield return 0;
         }
-        scr.Call("CYFEventNextCommand");
+        if (waitEnd)
+            scr.Call("CYFEventNextCommand");
     }
 
     public IEnumerator IWait(int frames) {

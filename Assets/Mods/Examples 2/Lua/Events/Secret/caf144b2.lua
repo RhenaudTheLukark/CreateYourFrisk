@@ -49,8 +49,8 @@ function EventPage1()
         end
         General.Wait(30)
         Event.Remove(Event.GetName())
-        SetAlMightyGlobal("CYFInternalCross4", true)
-        SetAlMightyGlobal("CYFInternalCharacterSelected", false)
+        SetRealGlobal("CYFInternalCross4", true)
+        SetRealGlobal("CYFInternalCharacterSelected", false)
         Player.Teleport("test2", 320, 200, 2, false)
     end
     Event.Remove(Event.GetName())

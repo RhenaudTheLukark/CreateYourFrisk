@@ -1,5 +1,5 @@
 function EventPage0() 
-    if GetAlMightyGlobal("CYFInternalCross2") then
+    if GetRealGlobal("CYFInternalCross2") then
         Event.Remove(Event.GetName())
     end
 end
