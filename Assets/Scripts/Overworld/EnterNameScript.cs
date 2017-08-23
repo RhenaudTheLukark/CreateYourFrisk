@@ -263,6 +263,7 @@ public class EnterNameScript : MonoBehaviour {
         specialNameDict.Add("exception", "It's me.");
         specialNameDict.Add("fugitive",  "*flees*\n/me flees");
         specialNameDict.Add("outbounds", "Go behind that dog!");
+        specialNameDict.Add("soulless",  "They shall fall, the one\nafter the other.");
         specialNameDict.Add("notfound",  "404");
         specialNameDict.Add("frisk",     "That'll do nothing here.");
         specialNameDict.Add("cyka",      "CYKA BLYAT RUSH B");
@@ -295,7 +296,7 @@ public class EnterNameScript : MonoBehaviour {
         specialNameDict.Add("sans",      "[font:sans]no bad time for\nya.");
         specialNameDict.Add("asriel",    "If that's your\nchoice...");
         specialNameDict.Add("flowey",    "You sadist.");
-        specialNameDict.Add("four", "4");
+        specialNameDict.Add("four",      "4");
         specialNameDict.Add("sendnudes", "(.)(.)");
     }
 }

@@ -46,16 +46,23 @@ public static class SaveLoad {
         file.Close();
     }
 
-    public static bool Load() {
+    public static bool Load(bool loadGlobals = true) {
         if (File.Exists(Application.persistentDataPath + "/save.gd")) {
             Debug.Log("We found a save at this location : " + Application.persistentDataPath + "/save.gd");
             BinaryFormatter bf = new BinaryFormatter();
             FileStream file = File.Open(Application.persistentDataPath + "/save.gd", FileMode.Open);
             GameState currentGame = (GameState)bf.Deserialize(file);
-            currentGame.LoadGameVariables();
+            currentGame.LoadGameVariables(loadGlobals);
             file.Close();
             return true;
         } else {
+
+            LuaScriptBinder.Set(null, "PlayerPosX", MoonSharp.Interpreter.DynValue.NewNumber(GlobalControls.beginPosition.x));
+            LuaScriptBinder.Set(null, "PlayerPosY", MoonSharp.Interpreter.DynValue.NewNumber(GlobalControls.beginPosition.y));
+            string mapName2;
+            if (UnitaleUtil.MapCorrespondanceList.ContainsKey("test2")) mapName2 = UnitaleUtil.MapCorrespondanceList["test2"];
+            else                                                        mapName2 = "test2";
+            LuaScriptBinder.Set(null, "PlayerMap", MoonSharp.Interpreter.DynValue.NewString(mapName2));
             Debug.Log("There's no save to load.");
             return false;
         }

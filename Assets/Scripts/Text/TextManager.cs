@@ -225,7 +225,7 @@ public class TextManager : MonoBehaviour {
                 mugshots.Add("mugshots/");
         } else
             mugshots.Add("mugshots/");
-        if (mugshot != null)
+        if (mugshot != null && mugshot._img != null)
             if ((mugshots.Count > 1 || (mugshots[0] != "mugshots/" && mugshots[0] != "mugshots/null")) && text != null) {
                 if (mugshots.Count > 1) {
                     mugshot.SetAnimation((string[])UnitaleUtil.ListToArray(mugshots), time);
@@ -267,7 +267,7 @@ public class TextManager : MonoBehaviour {
                 if (textQueue[line] != null) {
                     //print("Mugshot just before condition: " + textQueue[line].Mugshot.ToString());
                     SetMugshot(textQueue[line].Mugshot);
-                    if (UnitaleUtil.IsOverworld&& GameObject.Find("textframe_border_outer")) {
+                    if (UnitaleUtil.IsOverworld && GameObject.Find("textframe_border_outer")) {
                         if (textQueue[line].ActualText) {
                             if (GameObject.Find("textframe_border_outer").GetComponent<Image>().color.a == 0)
                                 SetTextFrameAlpha(1);
@@ -456,8 +456,10 @@ public class TextManager : MonoBehaviour {
         
         int limit = 0;
         if (SceneManager.GetActiveScene().name == "Intro")          limit = 400;
-        else if (UnitaleUtil.IsOverworld&& mugshot != null) {
-            if (mugshot.alpha != 0)                                 limit = 417;
+        else if (UnitaleUtil.IsOverworld && mugshot != null) {
+            if (mugshot._img != null)
+                if (mugshot.alpha != 0)                             limit = 417;
+                else                                                limit = 534;
             else                                                    limit = 534;
         } else if (GlobalControls.isInFight) {
             if (UIController.instance.inited) {
@@ -608,7 +610,7 @@ public class TextManager : MonoBehaviour {
 
             if (!Charset.Letters.ContainsKey(currentText[i]))
                 continue;
-
+            
             GameObject singleLtr = Instantiate(SpriteFontRegistry.LETTER_OBJECT);
             RectTransform ltrRect = singleLtr.GetComponent<RectTransform>();
             ltrRect.localScale = new Vector3(1.001f, 1.001f, ltrRect.localScale.z);
@@ -636,9 +638,11 @@ public class TextManager : MonoBehaviour {
 
             currentX += ltrRect.rect.width + hSpacing; // TODO remove hardcoded letter offset
         }
-        if (UnitaleUtil.IsOverworld&& SceneManager.GetActiveScene().name != "TitleScreen" && SceneManager.GetActiveScene().name != "EnterName" && !GlobalControls.isInShop)
-            if (mugshot.alpha == 0)
-                mugshot.color = new float[] { 1, 1, 1, 0 };
+        if (UnitaleUtil.IsOverworld && SceneManager.GetActiveScene().name != "TitleScreen" && SceneManager.GetActiveScene().name != "EnterName" && !GlobalControls.isInShop)
+            try {
+                if (mugshot.alpha == 0)
+                    mugshot.color = new float[] { 1, 1, 1 };
+            } catch { }
         Update();
     }
 
@@ -654,6 +658,9 @@ public class TextManager : MonoBehaviour {
 
                     //float lastLetterTimer = letterTimer; // kind of a dirty hack so we can at least release 0.2.0 sigh
                     //float lastTimePerLetter = timePerLetter; // i am so sorry
+                    
+                    wasStated = false;
+
                     DynValue commandDV = DynValue.NewString(command);
                     if (commandList.Contains(commandDV.String.Split(':')[0]))
                         InUpdateControlCommand(commandDV);
@@ -665,10 +672,6 @@ public class TextManager : MonoBehaviour {
                     //if (currentCharacter >= textQueue[currentLine].Text.Length)
                     //    return true;
 
-                    if (GlobalControls.isInFight && !wasStated)
-                        if (UIController.instance.stated)
-                            wasStated = true;
-
                     return true;
                 }
                 currentCharacter = currentChar;
@@ -678,14 +681,16 @@ public class TextManager : MonoBehaviour {
     }
 
     protected virtual void Update() {
-        if (!UnitaleUtil.IsOverworld&& nextMonsterDialogueOnce) {
+        if (!UnitaleUtil.IsOverworld && nextMonsterDialogueOnce) {
             bool test = true;
-            foreach (TextManager mgr in UIController.instance.monDialogues)
+            foreach (TextManager mgr in UIController.instance.monDialogues) {
                 if (!mgr.IsFinished())
                     test = false;
+            }
             if (test) {
                 if (!wasStated)
                     UIController.instance.DoNextMonsterDialogue(true);
+                wasStated = false;
                 nextMonsterDialogueOnce = false;
             }
         } else if (mugshot != null && mugshotList != null)
@@ -961,6 +966,8 @@ public class TextManager : MonoBehaviour {
                                                              //caller.Call(args[0], DynValue.NewString(args[1]));
                     } else
                         caller.Call(cmds[1], null, true);
+                    if (cmds[1] == "State")
+                        wasStated = true;
                 } catch (InterpreterException ex) { UnitaleUtil.DisplayLuaError(caller.scriptname, ex.DecoratedMessage); }
                 break;
 

@@ -91,25 +91,28 @@ public class GameState {
         mapInfos = GlobalControls.MapData;
     }
 
-    public void LoadGameVariables() {
+    public void LoadGameVariables(bool loadGlobals = true) {
         GlobalControls.MapData = mapInfos;
-
+        
         foreach (string key in playerVariablesNum.Keys) {
-            double a;
-            playerVariablesNum.TryGetValue(key, out a);
-            LuaScriptBinder.Set(null, key, DynValue.NewNumber(a));
+            if (loadGlobals || key.Contains("PlayerPos")) {
+                double a;
+                playerVariablesNum.TryGetValue(key, out a);
+                LuaScriptBinder.Set(null, key, DynValue.NewNumber(a));
+            }
         }
+        if (loadGlobals) {
+            foreach (string key in playerVariablesStr.Keys) {
+                string a;
+                playerVariablesStr.TryGetValue(key, out a);
+                LuaScriptBinder.Set(null, key, DynValue.NewString(a));
+            }
 
-        foreach (string key in playerVariablesStr.Keys) {
-            string a;
-            playerVariablesStr.TryGetValue(key, out a);
-            LuaScriptBinder.Set(null, key, DynValue.NewString(a));
-        }
-
-        foreach (string key in playerVariablesBool.Keys) {
-            bool a;
-            playerVariablesBool.TryGetValue(key, out a);
-            LuaScriptBinder.Set(null, key, DynValue.NewBoolean(a));
+            foreach (string key in playerVariablesBool.Keys) {
+                bool a;
+                playerVariablesBool.TryGetValue(key, out a);
+                LuaScriptBinder.Set(null, key, DynValue.NewBoolean(a));
+            }
         }
 
         Inventory.inventory.Clear();

@@ -5,7 +5,7 @@ using MoonSharp.Interpreter;
 using UnityEngine.UI;
 
 public class LuaSpriteController {
-    private GameObject _img;  // The real image
+    public GameObject _img;  // The real image
     internal GameObject img { // A image that returns the real image. We use this to be able to detect if the real image is null, and if it is, throw an exception
         get {
             if (_img == null)

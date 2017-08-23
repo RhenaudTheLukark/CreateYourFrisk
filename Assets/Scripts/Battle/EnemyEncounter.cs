@@ -24,7 +24,11 @@ public class EnemyEncounter : MonoBehaviour {
     protected virtual void LoadEnemiesAndPositions() { }
 
     protected string RandomEncounterText() {
+        if (EnabledEnemies.Length <= 0)
+            return "";
         int randomEnemy = UnityEngine.Random.Range(0, EnabledEnemies.Length);
+        if (EnabledEnemies[randomEnemy].Comments.Length <= 0)
+            return "";
         int randomComment = UnityEngine.Random.Range(0, EnabledEnemies[randomEnemy].Comments.Length);
         return EnabledEnemies[randomEnemy].Comments[randomComment];
     }

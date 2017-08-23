@@ -163,3 +163,8 @@ body {
     color:#bbb;
     font-size:14px;
 }
+
+.li-indent, .li-indent a {
+	left: 5px !important;
+	width: 160px !important;
+}

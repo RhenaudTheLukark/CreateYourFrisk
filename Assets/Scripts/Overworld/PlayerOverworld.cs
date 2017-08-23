@@ -13,6 +13,7 @@ public class PlayerOverworld : MonoBehaviour {
     public int forcedMove = 0;              //Direction of a forced move
     //public int rolled = 0;
     public float speed;
+    public static float audioCurrTime = 0;
     public bool firstTime = false;          //Boolean used to not launch another event a the end of the previous event
     public bool inBattleAnim = false;
     public bool PlayerNoMove {              //Is the player not able to move?
@@ -120,17 +121,21 @@ public class PlayerOverworld : MonoBehaviour {
         StartCoroutine(TextCoroutine());
     }
 
-    void RestartMusic() {
+    public void RestartMusic() {
         MapInfos mi = GameObject.Find("Background").GetComponent<MapInfos>();
         AudioSource audio = UnitaleUtil.GetCurrentOverworldAudio();
 
         if (audio == audioKept) {
-            Camera.main.GetComponent<AudioSource>().Stop();
-            Camera.main.GetComponent<AudioSource>().clip = null;
+            GameObject.Find("Main Camera OW").GetComponent<AudioSource>().Stop();
+            GameObject.Find("Main Camera OW").GetComponent<AudioSource>().clip = null;
+            GameObject.Find("Main Camera OW").GetComponent<AudioSource>().time = 0;
         } else {
             audioKept.Stop();
             audioKept.clip = null;
+            audioKept.time = 0;
         }
+        if (audio.name.Contains("Camera"))
+            audio = GameObject.Find("Main Camera OW").GetComponent<AudioSource>();
 
         if (audio.clip == null) {
             if (mi.music != "none") {
@@ -143,12 +148,19 @@ public class PlayerOverworld : MonoBehaviour {
             string test = audio.clip.name.Replace('\\', '/').Split(new string[] { "/Audio/" }, System.StringSplitOptions.RemoveEmptyEntries)[1].Split('.')[0];
             if (test != mi.music) {
                 if (mi.music != "none") {
+                    audio.Stop();
                     audio.clip = AudioClipRegistry.GetMusic(mi.music);
                     audio.Play();
                 } else
                     audio.Stop();
-            } else if (!audio.isPlaying && audio != audioKept)
-                audio.Play();
+            } else if (!audio.isPlaying && audio != audioKept) {
+                audio.time = audioCurrTime;
+                audioCurrTime = 0;
+                if (audio.time == 0)
+                    audio.Play();
+                else
+                    audio.UnPause();
+            }
         }
     }
 
@@ -197,11 +209,11 @@ public class PlayerOverworld : MonoBehaviour {
 
     IEnumerator TextCoroutine() {
         while (true) {
+            yield return 0;
             //UnitaleUtil.writeInLogAndDebugger("inText = " + inText + ", textmgr.lineCount = " + textmgr.lineCount());
             if (GameObject.Find("textframe_border_outer"))
                 if (GameObject.Find("textframe_border_outer").GetComponent<Image>().color.a != 0) {
                     //UnitaleUtil.writeInLogAndDebugger("blockskip = " + textmgr.blockSkip + ", skipNowIfBlocked = " + textmgr.skipNowIfBlocked);
-                    yield return 0;
                     try {
                         if (textmgr.CanAutoSkipAll())
                             NextText();
@@ -210,8 +222,7 @@ public class PlayerOverworld : MonoBehaviour {
                         else if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED && !textmgr.blockSkip)
                             NextText();
                     } catch { }
-                } else
-                    yield return 0;
+                }
         }
     }
 
@@ -323,30 +334,6 @@ public class PlayerOverworld : MonoBehaviour {
                 CloseMenu(true);
         if (menuRunning[4])
             menuRunning[4] = false;
-    }
-
-    private IEnumerator LaunchMusic() {
-        yield return 0;
-        //yield return Application.isLoadingLevel;
-
-        AudioSource audio = UnitaleUtil.GetCurrentOverworldAudio();
-        MapInfos mi = GameObject.FindObjectOfType<MapInfos>();
-
-        try {
-            //Starts the music if there's no music
-            if (audio.clip == null) {
-                if (GlobalControls.Music != null) {
-                    audio.clip = GlobalControls.Music;
-                    audio.Play();
-                } else if (mi.music != "none") {
-                    audio.clip = AudioClipRegistry.GetMusic(mi.music);
-                    audio.Play();
-                } else
-                    audio.Stop();
-                //Starts the music if the music we added is different of the one that is playing right now
-            } else if (!FileLoader.getRelativePathWithoutExtension(audio.clip.name).Replace("Audio\\", string.Empty).Equals(mi.music))
-                audio.Play();
-        } catch { UnitaleUtil.DisplayLuaError("Overworld System", "Start of PlayerOverworld: music error!\nThis bug may have happened because the current mod folder doesn't exist, or because the map's music doesn't exist."); }
     }
 
     //Moves the object
@@ -484,6 +471,7 @@ public class PlayerOverworld : MonoBehaviour {
         Vector2 positionCamera, end;
         GlobalControls.Music = UnitaleUtil.GetCurrentOverworldAudio().clip;
         playerMask.GetComponent<Image>().sprite = PlayerPos.GetComponent<SpriteRenderer>().sprite;
+        audioCurrTime = MusicManager.src.time;
         Camera.main.GetComponent<AudioSource>().Stop();
 
         blackFont.transform.SetAsLastSibling();
@@ -569,7 +557,7 @@ public class PlayerOverworld : MonoBehaviour {
         string ModFolder = StaticInits.MODFOLDER, Encounter;
         LuaScriptBinder.Set(null, "ModFolder", DynValue.NewString(ModFolder));
         if (ForceNoFlee)
-            LuaScriptBinder.Set(null, "ForceNoFlee", DynValue.NewBoolean(ForceNoFlee));
+            LuaScriptBinder.Set(null, "ForceNoFlee", DynValue.NewBoolean(true));
 
         DirectoryInfo di = new DirectoryInfo(Path.Combine(FileLoader.DataRoot, "Mods/" + StaticInits.MODFOLDER + "/Lua/Encounters"));
         FileInfo[] encounterFiles = di.GetFiles();
@@ -983,8 +971,14 @@ public class PlayerOverworld : MonoBehaviour {
         if (callFrom == "Shop") {
             GameObject.Find("Main Camera OW").GetComponent<EventManager>().enabled = true;
             GameObject.Find("Main Camera OW").GetComponent<TransitionOverworld>().enabled = true;
-        } else
-            instance.RestartMusic();
+        } else {
+            bool restart = true;
+            foreach (TPHandler tp in FindObjectsOfType<TPHandler>())
+                if (tp.gameObject.name.Contains("TP On-the-fly"))
+                    restart = StaticInits.MODFOLDER == FindObjectOfType<MapInfos>().modToLoad;
+            if (restart)
+                instance.RestartMusic();
+        }
         yield return 0;
         foreach (Transform tf in UnitaleUtil.GetFirstChildren(GameObject.Find("Canvas OW").transform, true))
             if (tf.gameObject.GetComponent<UserDebugger>()) {

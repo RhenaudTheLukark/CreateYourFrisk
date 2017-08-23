@@ -111,15 +111,18 @@ public class LuaGeneralOW {
         string[] deathTable = null;
 
         if (deathText != null) {
-            deathTable = new string[deathText.Table.Length];
-            for (int i = 0; i < deathText.Table.Length; i++)
-                deathTable[i] = deathText.Table[i+1].ToString();
+            if (deathText.Type == DataType.Table) {
+                deathTable = new string[deathText.Table.Length];
+                for (int i = 0; i < deathText.Table.Length; i++)
+                    deathTable[i] = deathText.Table[i + 1].ToString();
+            } else if (deathText.Type == DataType.String)
+                deathTable = new string[] { deathText.String };
+            else
+                throw new CYFException("General.GameOver: deathText needs to be a table or a string.");
         }
 
         GlobalControls.Music = UnitaleUtil.GetCurrentOverworldAudio().clip;
         PlayerOverworld.instance.enabled = false;
-
-        UnitaleUtil.WriteInLogAndDebugger(GameObject.FindObjectOfType<GameOverBehavior>().name);
 
         GameObject.FindObjectOfType<GameOverBehavior>().StartDeath(deathTable, deathMusic);
         appliedScript.Call("CYFEventNextCommand");

@@ -83,7 +83,7 @@ public class EventManager : MonoBehaviour {
         StaticInits.Loaded -= AfterLoad;
     }
 
-    void AfterLoad() {
+    public void AfterLoad() {
         LoadLaunched = true;
         if (script == null) {
             if (!onceReload) {

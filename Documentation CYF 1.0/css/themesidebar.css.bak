@@ -1,0 +1,165 @@
+@font-face{
+    font-family:'8bitoperator';
+    src: url('../fonts/8bitOperatorPlus-Bold.ttf') format('truetype');
+}
+
+
+.keys {
+	width: auto;
+	outline: 1px solid #ffffff;
+	color: #ffffff;
+}
+
+.keys td, .keys th {
+	border: 1px solid #dddddd;
+	text-align: left;
+	padding: 5px 5px;
+}
+
+.keys tr:nth-child(even) {
+	background-color: #222222;
+}
+
+.keys tr:nth-child(1) {
+	border-bottom: 1px solid #ffffff;
+}
+
+span.term{
+	outline: 1px solid #333333;
+	background-color: #222222;
+}
+
+span.ref {
+	outline: 2px solid #555555;
+	background-color: #333328;
+	border-bottom: 1px solid #888855;
+}
+
+span.CYF{
+	color: #ffff00;
+}
+span.CYF::before{
+	content: " <CYF>";
+}
+
+h4::before {
+	content: "* ";
+}
+h4 {
+	//font-family: segoe ui;
+	//text-decoration: underline;
+	color: #ffffff;
+}
+
+.hidden {
+    opacity: 0.0 !important;
+}
+
+.exblock{
+    display:block;
+    /*maybe style these separately sometime, idk*/
+}
+
+.function{
+    text-decoration:underline;
+    color:#ccf;
+    //font-weight:bold;
+    font-size:18px;
+    display:block;
+	margin-bottom: 5px;
+}
+
+.code-container{
+    margin-bottom:15px;
+}
+
+.code-example {
+    white-space:pre-wrap;
+    font-family:monospace;
+}
+
+.container {
+    margin-top: 35px;
+}
+
+.black {
+    background-color:#000;
+}
+
+.arena {
+    border:#fff 5px solid;
+    padding:5px;
+}
+
+.centerbt{
+    //display:block;
+    //margin:auto;
+	margin-left: 25%;
+}
+
+.backimg {
+    position : fixed;
+    width    : 100%;
+    top      : 0px;
+    z-index  : -1;
+}
+
+.li-header{
+color:#fff;
+}
+
+.linklike {
+    color: #8ad;
+    text-decoration:underline;
+    cursor:pointer;
+}
+
+ul.nav li a, ul.nav .li-header {
+	font-size: 13px;
+	line-height:13px;
+	height: auto !important;
+	padding-bottom: 3 !important;
+	padding-top: 0 !important;
+	margin-bottom: 5px;
+	left: -10px;
+	width: 180px;
+}
+
+ul.nav li a {
+	border-top: 8px solid rgba(0,0,0,0);
+}
+
+ul.nav li a, ul.nav li a:visited {
+    color: #8ad !important;
+}
+
+ul.nav li a:hover, ul.nav li a:active {
+    background-color: #222 !important;
+    color: #8ad !important;
+}
+
+ul.nav li.active a {
+    background-color:#222 !important;
+    color: #8ad !important;
+}
+
+h2 {
+    color:#ddd;
+	text-decoration: underline;
+	display: inline-block;
+}
+
+h3 {
+    color:#ddd;
+	text-decoration: underline;
+	display: inline-block;
+    font-size: 24px;
+}
+
+body {
+    font-weight:none, color:#ccc !important;
+    font-family:"8bitoperator", sans-serif !important;
+    background-color:#000;
+    color:#bbb;
+    font-size:14px;
+}

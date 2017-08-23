@@ -7,9 +7,11 @@ using MoonSharp.Interpreter;
 
 public class TransitionOverworld : MonoBehaviour {
     public string FirstLevelToLoad;
+    public static string _FirstLevelToLoad;
     public Vector2 BeginningPosition;
     
     private void Start() {
+        _FirstLevelToLoad = FirstLevelToLoad;
         bool isStart = false;
 
         GameOverBehavior.gameOverContainerOw = GameObject.Find("GameOverContainer");
@@ -80,10 +82,12 @@ public class TransitionOverworld : MonoBehaviour {
         StartCoroutine(GetIntoDaMap("transitionoverworld", null));
     }
 
-    public IEnumerator GetIntoDaMap(string call, object[] neededArgs) {
+    public static IEnumerator GetIntoDaMap(string call, object[] neededArgs) {
         //GlobalControls.fadeAuto = true;
-        GameObject.Find("Main Camera OW").GetComponent<EventManager>().readyToReLaunch = true;
-        GameObject.Find("Main Camera OW").tag = "MainCamera";
+        if (GameObject.Find("Main Camera OW")) {
+            GameObject.Find("Main Camera OW").GetComponent<EventManager>().readyToReLaunch = true;
+            GameObject.Find("Main Camera OW").tag = "MainCamera";
+        }
 
         yield return 0;
 
@@ -120,16 +124,17 @@ public class TransitionOverworld : MonoBehaviour {
         if (audio.clip == null) {
             if (mi.music != "none") {
                 audio.clip = AudioClipRegistry.GetMusic(mi.music);
+                audio.time = 0;
                 audio.Play();
             } else
                 audio.Stop();
         } else {
             //Get the file's name with this...thing?
             string test = audio.clip.name.Replace('\\', '/').Split(new string[] { "/Audio/" }, System.StringSplitOptions.RemoveEmptyEntries)[1].Split('.')[0];
-
             if (test != mi.music) {
                 if (mi.music != "none") {
                     audio.clip = AudioClipRegistry.GetMusic(mi.music);
+                    audio.time = 0;
                     audio.Play();
                 } else
                     audio.Stop();

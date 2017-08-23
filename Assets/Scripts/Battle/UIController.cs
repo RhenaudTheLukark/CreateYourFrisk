@@ -105,7 +105,9 @@ public class UIController : MonoBehaviour {
         SwitchState(UIState.DIALOGRESULT);
     }
 
-    public static void EndBattle(bool tp = true) {
+    public static void EndBattle(bool fromGameOver = false) {
+        LuaSpriteController spr = (LuaSpriteController)SpriteUtil.MakeIngameSprite("black", "Top").UserData.Object;
+        spr.Scale(640, 480);
         Inventory.RemoveAddedItems();
         GlobalControls.lastTitle = false;
         PlayerCharacter.instance.MaxHPShift = 0;
@@ -126,17 +128,14 @@ public class UIController : MonoBehaviour {
             foreach (string str in toDelete)
                 NewMusicManager.DestroyChannel(str);
             PlayerCharacter.instance.Reset();
-            if (tp)
-                SceneManager.LoadScene("ModSelect");
+            SceneManager.LoadScene("ModSelect");
         } else {
             foreach (string str in NewMusicManager.audioname.Keys)
                 if (str != "StaticKeptAudio")
                     NewMusicManager.Stop(str);
-            if (tp)
-                SceneManager.UnloadSceneAsync("Battle");
+            SceneManager.UnloadSceneAsync("Battle");
             GlobalControls.isInFight = false;
-            if (tp)
-                PlayerOverworld.ShowOverworld("Battle");
+            PlayerOverworld.ShowOverworld("Battle");
         }
     }
 
@@ -231,6 +230,10 @@ public class UIController : MonoBehaviour {
                 SetPlayerOnAction(action);
                 textmgr.SetPause(ArenaManager.instance.isResizeInProgress());
                 textmgr.SetCaller(LuaEnemyEncounter.script); // probably not necessary due to ActionDialogResult changes
+                if (encounter.EncounterText == null) {
+                    encounter.EncounterText = "";
+                    UnitaleUtil.WriteInLogAndDebugger("[WARN]There is no encounter text!");
+                }
                 textmgr.SetText(new RegularMessage(encounter.EncounterText));
                 break;
 
@@ -690,7 +693,7 @@ public class UIController : MonoBehaviour {
     public UIState GetState() { return state; }
 
     private void HandleAction() {
-        if (!stated || state == UIState.ATTACKING)
+        if (!stated || state == UIState.ATTACKING) 
             switch (state) {
                 case UIState.ATTACKING:
                     fightUI.StopAction();
@@ -717,15 +720,15 @@ public class UIController : MonoBehaviour {
 
                         case Actions.ACT:
                             if (GlobalControls.crate)
-                                if (ControlPanel.instance.Safe)  UnitaleUtil.PlaySound("MEOW", "sounds/meow" + Math.RandomRange(1, 8));
-                                else                             UnitaleUtil.PlaySound("MEOW", "sounds/meow" + Math.RandomRange(1, 9));
-                            else                                 SwitchState(UIState.ENEMYSELECT);
+                                if (ControlPanel.instance.Safe) UnitaleUtil.PlaySound("MEOW", "sounds/meow" + Math.RandomRange(1, 8));
+                                else UnitaleUtil.PlaySound("MEOW", "sounds/meow" + Math.RandomRange(1, 9));
+                            else SwitchState(UIState.ENEMYSELECT);
                             break;
 
                         case Actions.ITEM:
                             if (GlobalControls.crate) {
                                 string strBasis = "TEM WANT FLAKES!!!1!1", strModif = strBasis;
-                                for (int i = strBasis.Length-2; i >= 0; i --)
+                                for (int i = strBasis.Length - 2; i >= 0; i--)
                                     strModif = strModif.Substring(0, i) + "[voice:tem" + Math.RandomRange(1, 7) + "]" + strModif.Substring(i, strModif.Length - i);
                                 ActionDialogResult(new TextMessage(strModif, true, false), UIState.ENEMYDIALOGUE);
 
@@ -741,20 +744,20 @@ public class UIController : MonoBehaviour {
                         case Actions.MERCY:
                             if (GlobalControls.crate) {
                                 switch (mecry) {
-                                    case 0:   ActionDialogResult(new TextMessage("You know... Seeing the engine like\rthis... It makes me want to cry.", true, false), UIState.ENEMYDIALOGUE);       break;
-                                    case 1:   ActionDialogResult(new TextMessage("All these typos...\rCrate Your Frisk is bad.\rWe must destroy it.", true, false), UIState.ENEMYDIALOGUE);          break;
-                                    case 2:   ActionDialogResult(new TextMessage("We have two solutions here:\rdownload the engine again.", true, false), UIState.ENEMYDIALOGUE);                    break;
-                                    case 3:   ActionDialogResult(new TextMessage("And another way. Though, I'll\rneed some time to find\rhow to do that...", true, false), UIState.ENEMYDIALOGUE);   break;
-                                    case 4:   ActionDialogResult(new TextMessage("*sniffles* I can barely stand\rthe view... That's so\rdisgusting...", true, false), UIState.ENEMYDIALOGUE);        break;
-                                    case 5:   ActionDialogResult(new TextMessage("I feel that I'm on the way,\rkeep the good work!", true, false), UIState.ENEMYDIALOGUE);                           break;
-                                    case 6:   ActionDialogResult(new TextMessage("Here, just a bit more...", true, false), UIState.ENEMYDIALOGUE);                                                   break;
-                                    case 7:   ActionDialogResult(new TextMessage("...No, I don't have it.\rStupid dog!\rPlease leave me more time!", true, false), UIState.ENEMYDIALOGUE);           break;
-                                    case 8:   ActionDialogResult(new TextMessage("I want to puke...\rEven the engine is a\rplace of shitposts and memes.", true, false), UIState.ENEMYDIALOGUE);     break;
-                                    case 9:   ActionDialogResult(new TextMessage("Will there be one day a place\rwhere shitposts and memes\rwill not appear?", true, false), UIState.ENEMYDIALOGUE); break;
-                                    case 10:  ActionDialogResult(new TextMessage("I hope so... My eyes are bleeding.", true, false), UIState.ENEMYDIALOGUE);                                         break;
-                                    case 11:  ActionDialogResult(new TextMessage("Hm? Oh! Look! I have it!", true, false), UIState.ENEMYDIALOGUE);                                                   break;
-                                    case 12:  ActionDialogResult(new TextMessage("Let me read:", true, false), UIState.ENEMYDIALOGUE);                                                               break;
-                                    case 13:  ActionDialogResult(new TextMessage("\"To remove the big engine\rtypo bug...\"", true, false), UIState.ENEMYDIALOGUE);                                  break;
+                                    case 0: ActionDialogResult(new TextMessage("You know... Seeing the engine like\rthis... It makes me want to cry.", true, false), UIState.ENEMYDIALOGUE); break;
+                                    case 1: ActionDialogResult(new TextMessage("All these typos...\rCrate Your Frisk is bad.\rWe must destroy it.", true, false), UIState.ENEMYDIALOGUE); break;
+                                    case 2: ActionDialogResult(new TextMessage("We have two solutions here:\rdownload the engine again.", true, false), UIState.ENEMYDIALOGUE); break;
+                                    case 3: ActionDialogResult(new TextMessage("And another way. Though, I'll\rneed some time to find\rhow to do that...", true, false), UIState.ENEMYDIALOGUE); break;
+                                    case 4: ActionDialogResult(new TextMessage("*sniffles* I can barely stand\rthe view... That's so\rdisgusting...", true, false), UIState.ENEMYDIALOGUE); break;
+                                    case 5: ActionDialogResult(new TextMessage("I feel that I'm on the way,\rkeep the good work!", true, false), UIState.ENEMYDIALOGUE); break;
+                                    case 6: ActionDialogResult(new TextMessage("Here, just a bit more...", true, false), UIState.ENEMYDIALOGUE); break;
+                                    case 7: ActionDialogResult(new TextMessage("...No, I don't have it.\rStupid dog!\rPlease leave me more time!", true, false), UIState.ENEMYDIALOGUE); break;
+                                    case 8: ActionDialogResult(new TextMessage("I want to puke...\rEven the engine is a\rplace of shitposts and memes.", true, false), UIState.ENEMYDIALOGUE); break;
+                                    case 9: ActionDialogResult(new TextMessage("Will there be one day a place\rwhere shitposts and memes\rwill not appear?", true, false), UIState.ENEMYDIALOGUE); break;
+                                    case 10: ActionDialogResult(new TextMessage("I hope so... My eyes are bleeding.", true, false), UIState.ENEMYDIALOGUE); break;
+                                    case 11: ActionDialogResult(new TextMessage("Hm? Oh! Look! I have it!", true, false), UIState.ENEMYDIALOGUE); break;
+                                    case 12: ActionDialogResult(new TextMessage("Let me read:", true, false), UIState.ENEMYDIALOGUE); break;
+                                    case 13: ActionDialogResult(new TextMessage("\"To remove the big engine\rtypo bug...\"", true, false), UIState.ENEMYDIALOGUE); break;
                                     case 14:
                                         ActionDialogResult(new RegularMessage[]{
                                             new RegularMessage("\"...erase the AlMighties.\""),
@@ -767,9 +770,9 @@ public class UIController : MonoBehaviour {
                                             new RegularMessage("Cya!")
                                         }, UIState.ENEMYDIALOGUE);
                                         break;
-                                    default:  ActionDialogResult(new TextMessage("But the dev is long gone\r(and blind).", true, false), UIState.ENEMYDIALOGUE);                                     break;
+                                    default: ActionDialogResult(new TextMessage("But the dev is long gone\r(and blind).", true, false), UIState.ENEMYDIALOGUE); break;
                                 }
-                                mecry ++;
+                                mecry++;
                             } else
                                 SwitchState(UIState.MERCYMENU);
                             break;
@@ -846,7 +849,7 @@ public class UIController : MonoBehaviour {
                     foreach (TextManager mgr in monDialogues) {
                         if (mgr == null)
                             continue;
-                        if (mgr.LineCount() > 1 ||!mgr.CanSkip()) {
+                        if (mgr.LineCount() > 1 || !mgr.CanSkip()) {
                             singleLineAll = false;
                             break;
                         }
@@ -857,12 +860,11 @@ public class UIController : MonoBehaviour {
                         textmgr.nextMonsterDialogueOnce = true;
                     } else if (!ArenaManager.instance.isResizeInProgress()) {
                         bool readyToSkip = true;
-                        foreach (bool b in readyToNextLine) {
+                        foreach (bool b in readyToNextLine)
                             if (!b) {
                                 readyToSkip = false;
                                 break;
                             }
-                        }
                         if (readyToSkip)
                             DoNextMonsterDialogue();
                     }

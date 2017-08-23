@@ -35,8 +35,8 @@ public static class SpriteFontRegistry {
         dict.Clear();
         /*if (initialized)
             return;*/
-        LETTER_OBJECT = Resources.Load("Fonts/letter") as GameObject;
-        BUBBLE_OBJECT = Resources.Load("Prefabs/DialogBubble") as GameObject;
+        LETTER_OBJECT = Resources.Load<GameObject>("Prefabs/letter");
+        BUBBLE_OBJECT = Resources.Load<GameObject>("Prefabs/DialogBubble");
 
         //string modPath = FileLoader.pathToModFile("Sprites/UI/Fonts");
         //string defaultPath = FileLoader.pathToDefaultFile("Sprites/UI/Fonts");

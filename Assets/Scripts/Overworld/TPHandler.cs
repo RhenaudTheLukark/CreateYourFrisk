@@ -63,11 +63,12 @@ public class TPHandler : MonoBehaviour {
                 GlobalControls.uduu = 0;
                 break;
         }
-        if (!noFadeIn) {
-            float fadeTime = GameObject.Find("FadingBlack").GetComponent<Fading>().BeginFade(1);
-            yield return new WaitForSeconds(fadeTime);
-        } else
-            GameObject.Find("FadingBlack").GetComponent<Fading>().FadeInstant(1);
+        if (GameObject.Find("FadingBlack"))
+            if (!noFadeIn) {
+                float fadeTime = GameObject.Find("FadingBlack").GetComponent<Fading>().BeginFade(1);
+                yield return new WaitForSeconds(fadeTime);
+            } else
+                GameObject.Find("FadingBlack").GetComponent<Fading>().FadeInstant(1);
         EventManager.instance.nextFadeTransition = !noFadeOut;
 
         if (GlobalControls.isInShop) {
@@ -90,6 +91,10 @@ public class TPHandler : MonoBehaviour {
             yield break;
         }
         SceneManager.LoadScene(sceneName);
-        StartCoroutine(Object.FindObjectOfType<TransitionOverworld>().GetIntoDaMap("tphandler", new object[] { position, this }));
+        StartCoroutine(TransitionOverworld.GetIntoDaMap("tphandler", new object[] { position, this }));
+    }
+
+    public void LaunchTPInternal() {
+        StartCoroutine(LaunchTP());
     }
 }

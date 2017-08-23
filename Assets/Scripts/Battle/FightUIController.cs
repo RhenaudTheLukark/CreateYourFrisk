@@ -25,8 +25,7 @@ public class FightUIController : MonoBehaviour {
     private bool finishingFade = false;
 
     private void LaunchInstance(bool bind = false) {
-        GameObject goInstance = Resources.Load<GameObject>("Prefabs/FightInstance");
-        GameObject go = GameObject.Instantiate<GameObject>(goInstance);
+        GameObject go = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("Prefabs/FightInstance"));
         go.GetComponent<FightUI>().transform.SetParent(transform);
         go.GetComponent<FightUI>().transform.SetAsLastSibling();
         if (bind)

@@ -74,18 +74,11 @@ public class GlobalControls : MonoBehaviour {
                 return;
             if (SceneManager.GetActiveScene().name == "Error" && !modDev)
                 return;
-            UIController.EndBattle(GameOverBehavior.gameOverContainer ? !GameOverBehavior.gameOverContainer.gameObject.activeInHierarchy : true);
-            if (GameOverBehavior.gameOverContainer)
-                if (GameOverBehavior.gameOverContainer.gameObject.activeInHierarchy) {
-                    Destroy(GameObject.FindObjectOfType<GameOverBehavior>().gameObject);
-                    if (UnitaleUtil.IsOverworld)
-                        GameObject.Destroy(GameOverBehavior.gameOverContainer);
-                    if (!modDev) {
-                        SaveLoad.Load();
-                        SceneManager.LoadScene("TransitionOverworld");
-                    } else
-                        SceneManager.LoadScene("ModSelect");
-                }
+
+            if (GameOverBehavior.gameOverContainer.activeInHierarchy)
+                GameObject.FindObjectOfType<GameOverBehavior>().EndGameOver();
+            else
+                UIController.EndBattle();
             //StaticInits.Reset();
         } else if (input.Menu == UndertaleInput.ButtonState.PRESSED && !nonOWScenes.Contains(SceneManager.GetActiveScene().name) && !isInFight)
             if (!PlayerOverworld.instance.PlayerNoMove && EventManager.instance.script == null && !PlayerOverworld.instance.menuRunning[2] && !PlayerOverworld.instance.menuRunning[4] && EventManager.instance.script == null)
