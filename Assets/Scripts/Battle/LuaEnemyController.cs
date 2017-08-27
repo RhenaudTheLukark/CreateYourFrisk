@@ -225,6 +225,7 @@ public class LuaEnemyController : EnemyController {
             script.Bind("SetDamageUIOffset", (Action<int, int>)SetDamageUIOffset);
             script.Bind("SetSliceAnimOffset", (Action<int, int>)SetSliceAnimOffset);
             script.Bind("GetLetters", (Func<Letter[]>)GetLetters);
+            script.Bind("State", (Action<Script, string>)UIController.SwitchStateOnString);
             script.SetVar("canmove", DynValue.NewBoolean(false));
             sprite = new LuaSpriteController(GetComponent<Image>());
             script.SetVar("monstersprite", UserData.Create(sprite, LuaSpriteController.data));

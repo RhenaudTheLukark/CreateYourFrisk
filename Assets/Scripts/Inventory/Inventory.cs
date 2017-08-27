@@ -22,16 +22,14 @@ public static class Inventory {
         inventory = new List<UnderItem>(new UnderItem[] { });
         if (items != null)
             for (int i = 0; i < items.Length; i++) {
-                if (i == 8) {
-                    UnitaleUtil.DisplayLuaError("Setting the inventory", "You added too much items. The inventory can only contain 8 items.");
-                    break;
-                }
+                if (i == 8)
+                    throw new CYFException("You added too many items. The inventory can only contain 8 items.");
                 inventory.Add(new UnderItem(items[i]));
             }
     }
 
     public static void SetItem(int index, string Name) {
-        if (index > 7)                      UnitaleUtil.DisplayLuaError("Setting an item", "The inventory can only contain 8 items.");
+        if (index > 7)                      throw new CYFException("The inventory can only contain 8 items.");
         else if (index >= inventory.Count)  AddItem(Name);
         else                                inventory[index] = new UnderItem(Name);
     }

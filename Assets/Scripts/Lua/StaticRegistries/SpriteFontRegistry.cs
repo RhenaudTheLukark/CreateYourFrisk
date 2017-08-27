@@ -94,7 +94,7 @@ public static class SpriteFontRegistry {
         UnderFont underfont = null;
         try { underfont = new UnderFont(fontMap, fontName); }
         catch {
-            UnitaleUtil.DisplayLuaError("Instanciating a font", "The fonts need a space character to compute their line height, and '" + "' doesn't have one.");
+            UnitaleUtil.DisplayLuaError("Instanciating a font", "The fonts need a space character to compute their line height, and the font '" + fontName + "' doesn't have one.");
             return null;
         }
 

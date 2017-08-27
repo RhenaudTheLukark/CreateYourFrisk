@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
@@ -434,14 +433,16 @@ public class GameOverBehavior : MonoBehaviour {
                 SceneManager.LoadScene("ModSelect");
         } else
             EndGameOverRevive();
-        TPHandler tp = Instantiate(Resources.Load<TPHandler>("Prefabs/TP On-the-fly"));
-        tp.sceneName = LuaScriptBinder.Get(null, "PlayerMap").String;
-        tp.position = new Vector3((float)LuaScriptBinder.Get(null, "PlayerPosX").Number, (float)LuaScriptBinder.Get(null, "PlayerPosY").Number, LuaScriptBinder.Get(null, "PlayerPosZ") == null ? 0 : (float)LuaScriptBinder.Get(null, "PlayerPosZ").Number);
-        tp.direction = 2;
-        tp.noFadeIn = true;
-        tp.noFadeOut = false;
-        GameObject.DontDestroyOnLoad(tp);
-        tp.LaunchTPInternal();
+        if (!GlobalControls.modDev) {
+            TPHandler tp = Instantiate(Resources.Load<TPHandler>("Prefabs/TP On-the-fly"));
+            tp.sceneName = LuaScriptBinder.Get(null, "PlayerMap").String;
+            tp.position = new Vector3((float)LuaScriptBinder.Get(null, "PlayerPosX").Number, (float)LuaScriptBinder.Get(null, "PlayerPosY").Number, LuaScriptBinder.Get(null, "PlayerPosZ") == null ? 0 : (float)LuaScriptBinder.Get(null, "PlayerPosZ").Number);
+            tp.direction = 2;
+            tp.noFadeIn = true;
+            tp.noFadeOut = false;
+            GameObject.DontDestroyOnLoad(tp);
+            tp.LaunchTPInternal();
+        }
     }
 
     public void EndGameOverRevive() {

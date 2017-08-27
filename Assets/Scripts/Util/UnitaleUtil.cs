@@ -362,16 +362,16 @@ public static class UnitaleUtil {
 
     public static void PlaySound(string basis, AudioClip sound, float volume = 0.65f) { PlaySound(basis, sound.name, volume); }
 
-    public static bool TestPP(Color32[] playerMatrix, Color32[] bulletMatrix, float rotation, int playerHeight, int bulletHeight, Vector2 scale, Vector2 fromCenterProjectile) {
+    public static bool TestPP(Color32[] playerMatrix, Color32[] bulletMatrix, float rotation, int playerHeight, int bulletHeight, Vector2 scale, Vector2 fromCenterProjectile, float spriteAlpha) {
         int bulletWidth = bulletMatrix.Length / bulletHeight, playerWidth = playerMatrix.Length / playerHeight;
         rotation *= Mathf.Deg2Rad;
 
         for (int currentHeight = 0; currentHeight < playerHeight && currentHeight >= 0; currentHeight ++)
             for (int currentWidth = 0; currentWidth < playerWidth && currentWidth >= 0; currentWidth ++) {
                 if (ControlPanel.instance.MinimumAlpha == 0) {
-                    if (playerMatrix[currentHeight * playerWidth + currentWidth].a == 0)
+                    if (playerMatrix[currentHeight * playerWidth + currentWidth].a * spriteAlpha == 0)
                         continue;
-                } else if (playerMatrix[currentHeight * playerWidth + currentWidth].a < ControlPanel.instance.MinimumAlpha)
+                } else if (playerMatrix[currentHeight * playerWidth + currentWidth].a * spriteAlpha < ControlPanel.instance.MinimumAlpha)
                     continue;
                 float dx = currentWidth + fromCenterProjectile.x,
                       dy = currentHeight + fromCenterProjectile.y;

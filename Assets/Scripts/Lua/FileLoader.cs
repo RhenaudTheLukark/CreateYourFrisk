@@ -22,7 +22,7 @@ public static class FileLoader {
 
             try { rootInfo = new DirectoryInfo(rootInfo.Parent.FullName); } 
             catch {
-                UnitaleUtil.DisplayLuaError("CYF's Startup", "The engine detected no Mods folder in your files: are you sure that it exists?");
+                UnitaleUtil.DisplayLuaError("CYF's Startup", "The engine detected no Mods folder in your files: are you sure it exists?");
                 return;
             }
             SysDepDataRoot = rootInfo.FullName;
@@ -103,7 +103,8 @@ public static class FileLoader {
         if (!fi.Exists) {
             if (errorOnFailure)
                 if (filename.Length != 0)
-                    UnitaleUtil.DisplayLuaError("???", "Attempted to load " + filename + " from either a mod or default directory, but it was missing in both.");
+                    throw new CYFException("Attempted to load " + filename + " from either a mod or default directory, but it was missing in both.");
+                    //UnitaleUtil.DisplayLuaError("???", "Attempted to load " + filename + " from either a mod or default directory, but it was missing in both.");
             return null;
         }
 

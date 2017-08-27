@@ -97,10 +97,10 @@ public class Title : MonoBehaviour {
                 } catch {
                     if (GlobalControls.crate)
                         UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, "U USED AN ODL VERSOIN OF CFY? IT ISN'T RERTOCOMAPTIBEL.\n\n"
-                                                                             + "DELEET UR SAVE OT NOT HVAE DA ERRRO AGAIN. HREE: \n"
-                                                                             + Application.persistentDataPath + "/save.gd\n"
-                                                                             + "IF MOAR PORBLMES, TELL EM! :D\n\n"
-                                                                             + "SP : NO ESPACE HERE!!!!!!");
+                                                                         + "DELEET UR SAVE OT NOT HVAE DA ERRRO AGAIN. HREE: \n"
+                                                                         + Application.persistentDataPath + "/save.gd\n"
+                                                                         + "IF MOAR PORBLMES, TELL EM! :D\n\n"
+                                                                         + "SP : NO ESPACE HERE!!!!!!");
                     else
                         UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, "Have you saved on one of a previous CYF version ? The save isn't retrocompatible.\n\n"
                                                                          + "To not have this error anymore, you'll have to delete the save file. Here it is : \n"

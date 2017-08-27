@@ -127,14 +127,8 @@ public static class SpriteUtil {
                 else
                     i.transform.SetParent(GameObject.Find(tag + "Layer").transform, true);
             else {
-                RectTransform[] rts = GameObject.Find(tag + "Layer").GetComponentsInChildren<RectTransform>();
-                for (int j = 0; j < rts.Length; j++)
-                    if (j >= childNumber)
-                        rts[j].SetParent(null, true);
                 i.transform.SetParent(GameObject.Find(tag + "Layer").transform, true);
-                for (int j = 0; j < rts.Length; j++)
-                    if (j >= childNumber)
-                        rts[j].SetParent(GameObject.Find(tag + "Layer").transform, true);
+                i.transform.SetSiblingIndex(childNumber - 1);
             }
         }
         return UserData.Create(new LuaSpriteController(i), LuaSpriteController.data);
@@ -142,41 +136,26 @@ public static class SpriteUtil {
 
     public static void CreateLayer(string name, string relatedTag = "BasisNewest", bool before = false) {
         GameObject go = new GameObject(name + "Layer", typeof(RectTransform));
-        int index = -1;  bool wentIn = false; string testName = relatedTag + "Layer";
+        string testName = relatedTag + "Layer";
         Transform[] rts = UnitaleUtil.GetFirstChildren(GameObject.Find("Canvas").transform);
-        if (relatedTag == "BasisNewest") testName = "BelowArenaLayer";
-        if (relatedTag != "VeryHighest" && relatedTag != "VeryLowest")
+        if (relatedTag != "VeryHighest" && relatedTag != "VeryLowest") {
+            if (relatedTag == "BasisNewest")
+                testName = "BelowArenaLayer";
             for (int j = 0; j < rts.Length; j++) {
-                try {
-                    if (rts[j].name == testName || wentIn) {
-                        wentIn = true;
-                        if (relatedTag == "BasisNewest" && rts[j].name.Contains("Layer") && !rts[j].name.Contains("Audio"))
-                            continue;
-                        wentIn = false;
-                        index = j;
-                        if (before)
-                            rts[j].SetParent(null, true);
-                    } else if (index != -1)
-                        rts[j].SetParent(null, true);
-                } catch { }
+                if (rts[j].name == testName) {
+                    go.transform.SetParent(GameObject.Find("Canvas").transform, true);
+                    go.transform.SetSiblingIndex(j + (before ? 0 : 1));
+                    break;
+                }
             }
-
-        go.transform.SetParent(GameObject.Find("Canvas").transform, true);
-
-        if (index != -1) {
-            if (before) index--;
-            for (int j = index; j < rts.Length; j++) {
-                try {
-                    if (rts[j].gameObject.name == "Text") {
-                        rts[j].SetParent(GameObject.Find("Debugger").transform);
-                        continue;
-                    }
-                    rts[j].SetParent(GameObject.Find("Canvas").transform, true);
-                } catch { }
-            }
+        } else {
+            go.transform.SetParent(GameObject.Find("Canvas").transform, true);
+            if (relatedTag == "VeryHighest")
+                go.transform.SetAsLastSibling();
+            else if (relatedTag == "VeryLowest")
+                go.transform.SetAsFirstSibling();
         }
-        if (relatedTag == "VeryHighest")     go.transform.SetAsLastSibling();
-        else if (relatedTag == "VeryLowest") go.transform.SetAsFirstSibling();
+        
         go.GetComponent<RectTransform>().anchorMax = new Vector2(0, 0);
         go.GetComponent<RectTransform>().anchorMin = new Vector2(0, 0);
         go.GetComponent<RectTransform>().sizeDelta = new Vector2(1, 1);
@@ -185,7 +164,6 @@ public static class SpriteUtil {
 
     public static void CreateProjectileLayer(string name, string relatedTag = "", bool before = false) {
         GameObject go = new GameObject(name + "Bullet", typeof(RectTransform));
-        int index = -1;
         RectTransform[] rts = GameObject.Find("Canvas").GetComponentsInChildren<RectTransform>();
         for (int j = 0; j < rts.Length; j++) {
             string testName;
@@ -193,17 +171,10 @@ public static class SpriteUtil {
             else                  testName = relatedTag + "Bullet";
 
             if (rts[j].name == testName) {
-                index = j;
-                if (before)
-                    rts[j].SetParent(null, true);
-            } else if (index != -1)
-                rts[j].SetParent(null, true);
-        }
-        go.transform.SetParent(GameObject.Find("Canvas").transform, true);
-        if (index != -1) {
-            if (before) index--;
-            for (int j = index; j < rts.Length; j++)
-                rts[j].SetParent(GameObject.Find("Canvas").transform, true);
+                go.transform.SetParent(GameObject.Find("Canvas").transform, true);
+                go.transform.SetSiblingIndex(j + (before ? 0 : 1));
+                break;
+            }
         }
         go.GetComponent<RectTransform>().anchorMax = new Vector2(0, 0);
         go.GetComponent<RectTransform>().anchorMin = new Vector2(0, 0);

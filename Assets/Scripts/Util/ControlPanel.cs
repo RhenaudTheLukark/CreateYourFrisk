@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-/// <summary>
+﻿/// <summary>
 /// This class will be used to store all customizable game variables, such as the Max HP Limit, the Max Level limit and such.
 /// </summary>
 [System.Serializable]public class ControlPanel {

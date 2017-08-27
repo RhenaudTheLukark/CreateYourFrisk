@@ -27,10 +27,15 @@ public class LuaSpriteController {
     public string tag;                                // The tag of the sprite : "projectile", "enemy", "bubble" or "other"
     private KeyframeCollection.LoopMode loop = KeyframeCollection.LoopMode.LOOP;
     public static MoonSharp.Interpreter.Interop.IUserDataDescriptor data = UserData.GetDescriptorForType<LuaSpriteController>(true);
-
+    
     //The name of the sprite
     public string spritename {
-        get { return img.gameObject.name; }
+        get {
+            if (img.GetComponent<Image>())
+                return img.GetComponent<Image>().sprite.name;
+            else
+                return img.GetComponent<SpriteRenderer>().sprite.name;
+        }
     }
 
     // The x position of the sprite, relative to the arena position and its anchor.
@@ -298,8 +303,10 @@ public class LuaSpriteController {
             if (tag == "enemy" && !target.parent.name.Contains("Layer"))      return "specialEnemyLayer";
             return target.parent.name.Substring(0, target.parent.name.Length - 5);
         } set {
-            if (tag == "enemy" || tag == "bubble")
+            if (tag == "bubble") {
+                UnitaleUtil.WriteInLogAndDebugger("sprite.layer: bubbles' layer can't be changed.");
                 return;
+            }
             Transform target = GetTarget();
             Transform parent = target.parent;
             try { target.SetParent(GameObject.Find(value + "Layer").transform); } catch { target.SetParent(parent); }
@@ -362,8 +369,10 @@ public class LuaSpriteController {
 
     // Sets the parent of a sprite. Can't be used on an enemy
     public void SetParent(LuaSpriteController parent) {
-        if (tag == "bubble")
+        if (tag == "bubble") {
+            UnitaleUtil.WriteInLogAndDebugger("sprite.SetParent(): bubbles' parent can't be changed.");
             return;
+        }
         try {
             GetTarget().SetParent(parent.img.transform);
         } catch { throw new CYFException("You tried to set a removed sprite/unexisting sprite as this sprite's parent."); }
@@ -380,6 +389,13 @@ public class LuaSpriteController {
     public void SetAnchor(float x, float y) {
         img.GetComponent<RectTransform>().anchorMin = new Vector2(x, y);
         img.GetComponent<RectTransform>().anchorMax = new Vector2(x, y);
+    }
+
+    public void Move(float x, float y) {
+        if (img.transform.parent.name == "SpritePivot")
+            img.transform.parent.localPosition = new Vector3(x + this.x, y + this.y, img.transform.parent.localPosition.z) - (Vector3)img.GetComponent<RectTransform>().anchoredPosition;
+        else
+            img.GetComponent<RectTransform>().anchoredPosition = new Vector2(x + this.x, y + this.y);
     }
 
     public void MoveTo(float x, float y) {
@@ -446,36 +462,30 @@ public class LuaSpriteController {
     }
 
     public void SendToTop() {
-        if (tag == "bubble")
-            return;
         GetTarget().SetAsLastSibling();
     }
 
     public void SendToBottom() {
-        if (tag == "bubble")
-            return;
         GetTarget().SetAsFirstSibling();
     }
 
     public void MoveBelow(LuaSpriteController sprite) {
-        if (tag == "bubble")
-            return;
         if (sprite == null)                                       throw new CYFException("The sprite passed as an argument is null.");
         else if (sprite.GetTarget().parent != GetTarget().parent) UnitaleUtil.WriteInLogAndDebugger("[WARN]You can't move relatively two sprites without the same parent.");
         else                                                      GetTarget().SetSiblingIndex(sprite.GetTarget().GetSiblingIndex());
     }
 
     public void MoveAbove(LuaSpriteController sprite) {
-        if (tag == "bubble")
-            return;
-        if (sprite == null) throw new CYFException("The sprite passed as an argument is null.");
+        if (sprite == null)                                       throw new CYFException("The sprite passed as an argument is null.");
         else if (sprite.GetTarget().parent != GetTarget().parent) UnitaleUtil.WriteInLogAndDebugger("[WARN]You can't move relatively two sprites without the same parent.");
-        else GetTarget().SetSiblingIndex(sprite.GetTarget().GetSiblingIndex() + 1);
+        else                                                      GetTarget().SetSiblingIndex(sprite.GetTarget().GetSiblingIndex() + 1);
     }
 
     public void Remove() {
-        if (tag == "enemy" || tag == "bubble")
+        if (tag == "enemy" || tag == "bubble") {
+            UnitaleUtil.WriteInLogAndDebugger("sprite.Remove(): You can't remove a " + tag + "'s sprite!");
             return;
+        }
 
         if (tag == "projectile") {
             Projectile[] pcs = img.GetComponentsInChildren<Projectile>();
@@ -488,8 +498,10 @@ public class LuaSpriteController {
     }
 
     public void Dust(bool playDust = true, bool removeObject = false) {
-        if (tag == "enemy" || tag == "bubble")
+        if (tag == "enemy" || tag == "bubble") {
+            UnitaleUtil.WriteInLogAndDebugger("sprite.Dust(): You can't dust a " + tag + "'s sprite that way!");
             return;
+        }
         GameObject go = GameObject.Instantiate(Resources.Load<GameObject>("Prefabs/MonsterDuster"));
         go.transform.SetParent(UIController.instance.psContainer.transform);
         if (playDust)

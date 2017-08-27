@@ -328,14 +328,8 @@ public class UIController : MonoBehaviour {
                                 break;
                         LifeBarController lifebar = Instantiate(Resources.Load<LifeBarController>("Prefabs/HPBar"));
                         lifebar.player = true;
-                        Transform[] childs = new Transform[GameObject.Find("TextManager").transform.childCount];
-                        for (int j = 0; j < GameObject.Find("TextManager").transform.childCount; j++)
-                            childs[j] = GameObject.Find("TextManager").transform.GetChild(j);
-                        foreach (Transform child in childs)
-                            child.SetParent(null);
                         lifebar.transform.SetParent(textmgr.transform);
-                        foreach (Transform child in childs)
-                            child.SetParent(textmgr.transform);
+                        lifebar.transform.SetAsFirstSibling();
                         RectTransform lifebarRt = lifebar.GetComponent<RectTransform>();
                         lifebarRt.anchoredPosition = new Vector2(maxWidth, initialHealthPos.y - i * textmgr.Charset.LineSpacing);
                         lifebarRt.sizeDelta = new Vector2(90, lifebarRt.sizeDelta.y);
@@ -420,11 +414,11 @@ public class UIController : MonoBehaviour {
         }
     }
 
-    public void SwitchStateOnString(Script scr, string state) {
-        if (!encounter.gameOverStance) {
+    public static void SwitchStateOnString(Script scr, string state) {
+        if (!instance.encounter.gameOverStance) {
             try {
                 UIState newState = (UIState)Enum.Parse(typeof(UIState), state, true);
-                SwitchState(newState);
+                instance.SwitchState(newState);
             } catch { throw new CYFException("The state " + state + " isn't a valid state."); }
         }
     }
@@ -448,14 +442,6 @@ public class UIController : MonoBehaviour {
         uiAudio.clip = AudioClipRegistry.GetSound("menumove");
 
         instance = this;
-    }
-
-    private void BindEncounterScriptInteraction() {
-        LuaEnemyEncounter.script.Bind("State", (Action<Script, string>)SwitchStateOnString);
-        foreach (LuaEnemyController enemy in encounter.enemies)
-            enemy.script.Bind("State", (Action<Script, string>)SwitchStateOnString);
-        if (LuaEnemyEncounter.script.GetVar("Update") != null)
-            encounterHasUpdate = true;
     }
     
     public void UpdateBubble() {
@@ -669,14 +655,8 @@ public class UIController : MonoBehaviour {
         for (int i = page * 2; i <= page * 2 + 1 && i < encounter.EnabledEnemies.Length; i++) {
             LifeBarController lifebar = Instantiate(Resources.Load<LifeBarController>("Prefabs/HPBar"));
             lifebar.player = true;
-            Transform[] childs = new Transform[GameObject.Find("TextManager").transform.childCount];
-            for (int j = 0; j < GameObject.Find("TextManager").transform.childCount; j++)
-                childs[j] = GameObject.Find("TextManager").transform.GetChild(j);
-            foreach (Transform child in childs)
-                child.SetParent(null);
             lifebar.transform.SetParent(textmgr.transform);
-            foreach (Transform child in childs)
-                child.SetParent(textmgr.transform);
+            lifebar.transform.SetAsFirstSibling();
             RectTransform lifebarRt = lifebar.GetComponent<RectTransform>();
             lifebarRt.anchoredPosition = new Vector2(maxWidth, initialHealthPos.y - (i - page * 2) * textmgr.Charset.LineSpacing);
             lifebarRt.sizeDelta = new Vector2(90, lifebarRt.sizeDelta.y);
@@ -1179,8 +1159,9 @@ public class UIController : MonoBehaviour {
         spareList = new bool[encounter.enemies.Length];
         for (int i = 0; i < spareList.Length; i ++)
             spareList[i] = false;
-        BindEncounterScriptInteraction();
-        GameObject.Find("Main Camera").GetComponent<ProjectileHitboxRenderer>().enabled =!GameObject.Find("Main Camera").GetComponent<ProjectileHitboxRenderer>().enabled;
+        if (LuaEnemyEncounter.script.GetVar("Update") != null)
+            encounterHasUpdate = true;
+        GameObject.Find("Main Camera").GetComponent<ProjectileHitboxRenderer>().enabled = !GameObject.Find("Main Camera").GetComponent<ProjectileHitboxRenderer>().enabled;
         //There are scene init bugs, let's fix them!
         /*if (GameObject.Find("TopLayer").transform.parent != GameObject.Find("Canvas").transform) {
             RectTransform[] rts = GameObject.Find("Canvas").GetComponentsInChildren<RectTransform>(true);

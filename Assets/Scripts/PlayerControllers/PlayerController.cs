@@ -185,9 +185,9 @@ public class PlayerController : MonoBehaviour {
             }
             HP = 0;
             invulTimer = 0;
-            this.gameObject.transform.SetParent(null);
+            gameObject.transform.SetParent(null);
             GameObject.DontDestroyOnLoad(this.gameObject);
-            this.setControlOverride(true);
+            setControlOverride(true);
             RectTransform rt = gameObject.GetComponent<RectTransform>();
             rt.position = new Vector3(rt.position.x, rt.position.y, -1000);
             GlobalControls.stopScreenShake = true;

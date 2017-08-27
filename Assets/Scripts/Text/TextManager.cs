@@ -1056,7 +1056,7 @@ public class TextManager : MonoBehaviour {
                 gob.music = null;
             }
             PlayerCharacter.instance.HP = 0;
-            this.gameObject.transform.SetParent(null);
+            gameObject.transform.SetParent(null);
             GameObject.DontDestroyOnLoad(this.gameObject);
             RectTransform rt = gameObject.GetComponent<RectTransform>();
             rt.position = new Vector3(rt.position.x, rt.position.y, -1000);

@@ -37,7 +37,9 @@ public class UserDebugger : MonoBehaviour{
         if (!firstActive) {
             gameObject.SetActive(true);
             transform.SetAsLastSibling();
-            Camera.main.GetComponent<FPSDisplay>().enabled = true;
+            try {
+                Camera.main.GetComponent<FPSDisplay>().enabled = true;
+            } catch { }
             GameObject.Find("Text").transform.SetParent(transform);
             firstActive = true;
         }

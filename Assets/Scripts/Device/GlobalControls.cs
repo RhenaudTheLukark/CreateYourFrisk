@@ -75,8 +75,11 @@ public class GlobalControls : MonoBehaviour {
             if (SceneManager.GetActiveScene().name == "Error" && !modDev)
                 return;
 
-            if (GameOverBehavior.gameOverContainer.activeInHierarchy)
-                GameObject.FindObjectOfType<GameOverBehavior>().EndGameOver();
+            if (GameOverBehavior.gameOverContainer)
+                if (GameOverBehavior.gameOverContainer.activeInHierarchy)
+                    GameObject.FindObjectOfType<GameOverBehavior>().EndGameOver();
+                else
+                    UIController.EndBattle();
             else
                 UIController.EndBattle();
             //StaticInits.Reset();

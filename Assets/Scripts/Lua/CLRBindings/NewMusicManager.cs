@@ -53,12 +53,6 @@ public class NewMusicManager {
         return 0;
     }
 
-    public static float GetCurrentTime(string name) {
-        if (!audiolist.ContainsKey(name))                throw new CYFException("The audio channel " + name + " doesn't exist.");
-        if (((AudioSource)audiolist[name]).clip != null) return ((AudioSource)audiolist[name]).time;
-        return 0;
-    }
-
     public static void PlayMusic(string name, string music, bool loop = false, float volume = 1) {
         if (!audiolist.ContainsKey(name))  throw new CYFException("The audio channel " + name + " doesn't exist.");
         ((AudioSource)audiolist[name]).Stop();
@@ -145,7 +139,12 @@ public class NewMusicManager {
     }
 
     public static float GetPlayTime(string name) {
-        if (!audiolist.ContainsKey(name))  throw new CYFException("The audio channel " + name + " doesn't exist.");
+        if (!audiolist.ContainsKey(name)) throw new CYFException("The audio channel " + name + " doesn't exist.");
+        return ((AudioSource)audiolist[name]).time;
+    }
+
+    public static float GetCurrentTime(string name) {
+        if (!audiolist.ContainsKey(name)) throw new CYFException("The audio channel " + name + " doesn't exist.");
         return ((AudioSource)audiolist[name]).time;
     }
 

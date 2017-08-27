@@ -113,7 +113,10 @@ function EventPage2()
     Event.Remove("Image1")
     General.Wait(30)
     
-    Event.Remove(Event.GetName())
+    Event.IgnoreCollision(Event.GetName(), false)
+    Event.IgnoreCollision(Event.GetName() .. " (1)", false)
+    Event.SetAnimHeader(Event.GetName(), "")
+    Event.SetAnimHeader(Event.GetName() .. " (1)", "NoAnim")
     SetRealGlobal("CYFInternalCross2", true)
     SetRealGlobal("CYFInternalCharacterSelected", false)
     Player.Teleport("test2", 320, 200, 2, false)
@@ -132,7 +135,7 @@ function EventPage1()
     if Event.GetAnimHeader("Player") == "MK" then            
         text = "Hello there little buddy!"
         mugshot = "punderVeryHappy"
-    elseif Event.GetAnimHeader("Player") == "Chara" then    
+    elseif Event.GetAnimHeader("Player") == "Chara" then   --Impossible to reach  
         local tempPunderX = Event.GetPosition(Event.GetName())[1]
         Event.MoveToPoint(Event.GetName(), diff[1] > 0 and eventpos[1] + 60 or eventpos[1] - 60, eventpos[2])
         eventpos = Event.GetPosition(Event.GetName())

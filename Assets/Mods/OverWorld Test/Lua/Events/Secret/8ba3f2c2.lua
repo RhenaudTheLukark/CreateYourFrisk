@@ -48,7 +48,6 @@ function EventPage1()
     repeat
         maskPos = Event.GetPosition("8ba3f2c2 (2)")
         local c = maskPos[2] / 150
-        --DEBUG(maskPos[2] .. " " .. c)
         NewAudio.SetVolume("StaticKeptAudio", c)
         maskSprite.color = {c, c, c}
         General.Wait(1)
@@ -72,5 +71,7 @@ function EventPage1()
     NewAudio.DestroyChannel("temp")
     SetRealGlobal("CYFInternalCross3", true)
     SetRealGlobal("CYFInternalCharacterSelected", false)
+    Event.SetAnimHeader("8ba3f2c2 (1)", "NoAnim")
+    Event.SetAnimHeader("8ba3f2c2 (2)", "NoAnim")
     Player.Teleport("test2", 320, 200, 2, false)
 end

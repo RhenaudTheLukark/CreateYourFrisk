@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Collections.Generic;
 using MoonSharp.Interpreter;
 using UnityEngine;
-using UnityEngine.UI;
 
 internal class LuaEnemyEncounter : EnemyEncounter {
     public static ScriptWrapper script;
@@ -55,6 +53,7 @@ internal class LuaEnemyEncounter : EnemyEncounter {
                 UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, ex.DecoratedMessage);
                 return false;
             }
+            script.Bind("State", (Action<Script, string>)UIController.SwitchStateOnString);
             script.Bind("RandomEncounterText", (Func<string>)RandomEncounterText);
             script.Bind("CreateProjectile", (Func<Script, string, float, float, string, DynValue>)CreateProjectile);
             script.Bind("CreateProjectileAbs", (Func<Script, string, float, float, string, DynValue>)CreateProjectileAbs);
@@ -69,6 +68,7 @@ internal class LuaEnemyEncounter : EnemyEncounter {
         if (sprite == null)
             throw new CYFException("You can't create a projectile with a nil sprite!");
         SpriteUtil.SwapSpriteFromFile(projectile, sprite);
+        projectile.name = sprite;
         projectile.owner = s;
         projectile.gameObject.SetActive(true); 
         projectile.ctrl.MoveToAbs(xpos, ypos);
@@ -106,7 +106,7 @@ internal class LuaEnemyEncounter : EnemyEncounter {
                 waves[i] = new ScriptWrapper() { script = LuaScriptBinder.BoundScript() };
                 waves[i].script.Globals.Set("Arena", ArenaStatus);
                 waves[i].script.Globals["EndWave"] = (Action)EndWaveTimer;
-                waves[i].script.Globals["State"] = (Action<Script, string>)UIController.instance.SwitchStateOnString;
+                waves[i].script.Globals["State"] = (Action<Script, string>)UIController.SwitchStateOnString;
                 waves[i].script.Globals["CreateProjectile"] = (Func<Script, string, float, float, string, DynValue>)CreateProjectile;
                 waves[i].script.Globals["CreateProjectileAbs"] = (Func<Script, string, float, float, string, DynValue>)CreateProjectileAbs;
                 if (nextWaves.Table.Get(i + 1).Type != DataType.String){

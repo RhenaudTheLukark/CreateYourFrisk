@@ -1200,8 +1200,9 @@ end
 			</p>
 			
 			<p>
-			    <br><span class="function"><span class="CYF"></span> BindToArena(bool bind) [M]</span>
+			    <br><span class="function"><span class="CYF"></span> BindToArena(bool bind, bool isUnderArena = false) [M]</span>
 				Controls whether the enemy's sprite will follow the Arena's movements.
+                <span class="term">isUnderArena</span>: will the enemy's sprite be under the arena?
 			</p>
 			
 			<p>
@@ -3482,7 +3483,7 @@ end
             <p>
                 <br><span class="function"><span class="CYF"></span>CreateProjectileLayer(name, relatedTag = "", before = false) [E/W]</span>
 				Create a projectile layer where you'll be able to put projectiles in. In order to create it, though,
-				you must mention <i>another</i> projectile layer (in <span class="term">name</span>) - and your new layer will be created
+				you must mention <i>another</i> projectile layer in <span class="term">relatedTag</span> - and your new layer will be created
 				below that layer.<br>If <span class="term">before</span> is true, it'll be created before (above) that layer.<br>
 				There is one basis layer: <span class="term">""</span> = The normal bullet layer.
             </p>

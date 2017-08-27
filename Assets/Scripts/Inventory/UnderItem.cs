@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
-
-/// <summary>
+﻿/// <summary>
 /// Class for ingame items. Used to create TestDog# items. But now...
 /// </summary>
 public class UnderItem { 

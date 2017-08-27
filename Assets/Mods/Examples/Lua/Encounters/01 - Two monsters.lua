@@ -34,6 +34,7 @@ possible_attacks = {"bullettest_bouncy" --[[, "bullettest_chaserorb", "bullettes
 
 function EncounterStarting()
     SetButtonLayer("Top")
+        enemies[1].Call("BindToArena", {false, false})
     --[[maintext = CreateText(
         {"[font:uidialog][novoice][waitall:3]Greetings.",
          "[novoice][waitall:3]I[w:20] am " .. Player.name .. ".",
@@ -193,14 +194,14 @@ function Update()
         Misc.ShakeScreen(math.huge, 999, true)
     elseif Input.GetKey("Y") == 1 then
         Misc.StopShake()
-    elseif Input.GetKey("E") == 2 then
+    elseif Input.GetKey("E") > 0 then
 	    enemies[1].Call("SetSliceAnimOffset", {math.random(-40, 11), math.random(-60, 61)})
         Player.ForceAttack(1, 2)
         --Player.CheckDeath()
     elseif Input.GetKey("O") == 1 then
-        Player.hp = Player.hp + 1
+        enemies[1].Call("BindToArena", {false, true})
     elseif Input.GetKey("L") == 1 then
-        Player.hp = Player.hp - 1
+        enemies[1].Call("BindToArena", {false, false})
     elseif Input.GetKey("M") == 1 then
         NewAudio.CreateChannel("Box")
         NewAudio.PlayMusic("Box","mus_zz_megalovania",true,1)

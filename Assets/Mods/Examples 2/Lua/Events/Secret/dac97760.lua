@@ -63,6 +63,6 @@ function EventPage1()
     General.Wait(30)
     SetRealGlobal("CYFInternalCross1", true)
     SetRealGlobal("CYFInternalCharacterSelected", false)
+    Event.SetAnimHeader("dac97760 (1)", "NoAnim")
     Player.Teleport("test2", 320, 200, 2, false)
-    Event.Remove(Event.GetName())
 end

@@ -24,6 +24,7 @@ public abstract class Projectile : MonoBehaviour {
     protected internal RectTransform self; // RectTransform of this projectile
     protected internal ProjectileController ctrl;
     protected internal Color32[] texture;
+    private static Color32[] playerHitbox = null;
     private Image img;
     public bool needUpdateTex = true;
     public Rect selfAbs; // Rectangle containing position and size of this projectile
@@ -38,6 +39,11 @@ public abstract class Projectile : MonoBehaviour {
     /// Built-in Unity function run for initialization
     /// </summary>
     private void Awake() {
+        if (playerHitbox == null) { 
+            playerHitbox = new Color32[Mathf.RoundToInt(PlayerController.instance.playerAbs.width) * Mathf.RoundToInt(PlayerController.instance.playerAbs.height)];
+            for (int i = 0; i < playerHitbox.Length; i++)
+                playerHitbox[i].a = 255;
+        }
         self = GetComponent<RectTransform>();
         ctrl = new ProjectileController(this);
     }
@@ -142,9 +148,8 @@ public abstract class Projectile : MonoBehaviour {
         // dont cycle through children if they arent changing state anyway
         if (currentlyVisible == active)
             return;
-        Image selfImg = GetComponent<Image>();
-        if (selfImg != null)
-            selfImg.enabled = active;
+        if (img != null)
+            img.enabled = active;
         Image[] images = GetComponentsInChildren<Image>();
         foreach (Image image in images)
             image.enabled = active;
@@ -163,29 +168,21 @@ public abstract class Projectile : MonoBehaviour {
     /// Function that replaces the old Sprite Collision system by a Pixel-Perfect Collision system.
     /// </summary>
     /// <returns>true if there's a collision, otherwise false</returns>
-    public virtual bool HitTestPP() {
+    public bool HitTestPP() {
         if (selfAbs.Overlaps(PlayerController.instance.playerAbs)) {
             if (needUpdateTex) {
-                texture = ((Texture2D)GetComponent<Image>().mainTexture).GetPixels32();
+                texture = ((Texture2D)img.mainTexture).GetPixels32();
                 needUpdateTex = false;
             }
 
-            /*Rect rectProjectile = new Rect(new Vector2(selfAbs.x + selfAbs.width * (self.anchorMax.x - 0.5f), selfAbs.y + selfAbs.height * (self.anchorMax.y - 0.5f)),
-                                             new Vector2(selfAbs.width, selfAbs.height));*/
-
-            Color32[] tempPlayerHitbox = new Color32[Mathf.RoundToInt(PlayerController.instance.playerAbs.width) * Mathf.RoundToInt(PlayerController.instance.playerAbs.height)];
-            for (int i = 0; i < tempPlayerHitbox.Length; i++)
-                tempPlayerHitbox[i].a = 255;
-
+            if (ControlPanel.instance.MinimumAlpha == 0) {
+                if (img.color.a == 0)
+                    return false;
+            } else if (img.color.a < ControlPanel.instance.MinimumAlpha)
+                return false;
             Vector2 positionPlayerFromProjectile = (Vector2)PlayerController.instance.self.position - selfAbs.position - (selfAbs.size + PlayerController.instance.playerAbs.size) / 2;
-            return UnitaleUtil.TestPP(tempPlayerHitbox, texture, ctrl.sprite.rotation, Mathf.RoundToInt(PlayerController.instance.playerAbs.height), 
-                                      GetComponent<Image>().mainTexture.height, new Vector2(ctrl.sprite.xscale, ctrl.sprite.yscale), positionPlayerFromProjectile);
-            //Color32[] colors = UnitaleUtil.RotateMatrixOld(texture, ctrl.sprite.rotation, (int)GetComponent<Image>().sprite.rect.height, self.localScale, out sizeDelta);
-            /*Texture2D tex = new Texture2D((int)sizeDelta.x, (int)sizeDelta.y);
-            tex.SetPixels32(colors);
-            tex.Apply(false);
-            byte[] bytes = tex.EncodeToPNG();
-            File.WriteAllBytes(Application.dataPath + "/SavedScreen" + count++ +".png", bytes);*/
+            return UnitaleUtil.TestPP(playerHitbox, texture, ctrl.sprite.rotation, Mathf.RoundToInt(PlayerController.instance.playerAbs.height),
+                                      img.mainTexture.height, new Vector2(ctrl.sprite.xscale, ctrl.sprite.yscale), positionPlayerFromProjectile, img.color.a);
         }
         return false;
     }
