@@ -106,7 +106,9 @@ public class UIController : MonoBehaviour {
     }
 
     public static void EndBattle(bool fromGameOver = false) {
-        LuaSpriteController spr = (LuaSpriteController)SpriteUtil.MakeIngameSprite("black", "Top").UserData.Object;
+        LuaSpriteController spr = (LuaSpriteController)SpriteUtil.MakeIngameSprite("black", -1).UserData.Object;
+        if (GameObject.Find("TopLayer"))
+            spr.layer = "Top";
         spr.Scale(640, 480);
         Inventory.RemoveAddedItems();
         GlobalControls.lastTitle = false;

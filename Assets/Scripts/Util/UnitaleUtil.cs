@@ -365,7 +365,6 @@ public static class UnitaleUtil {
     public static bool TestPP(Color32[] playerMatrix, Color32[] bulletMatrix, float rotation, int playerHeight, int bulletHeight, Vector2 scale, Vector2 fromCenterProjectile, float spriteAlpha) {
         int bulletWidth = bulletMatrix.Length / bulletHeight, playerWidth = playerMatrix.Length / playerHeight;
         rotation *= Mathf.Deg2Rad;
-
         for (int currentHeight = 0; currentHeight < playerHeight && currentHeight >= 0; currentHeight ++)
             for (int currentWidth = 0; currentWidth < playerWidth && currentWidth >= 0; currentWidth ++) {
                 if (ControlPanel.instance.MinimumAlpha == 0) {
@@ -382,8 +381,12 @@ public static class UnitaleUtil {
                       totalValX = Mathf.RoundToInt(bulletWidth  / 2 + (Mathf.Cos(angle) * DFromCenter) / Mathf.Abs(scale.x)),
                       totalValY = Mathf.RoundToInt(bulletHeight / 2 + (Mathf.Sin(angle) * DFromCenter) / Mathf.Abs(scale.y));
                 if (totalValY >= 0 && totalValY < bulletHeight && totalValX >= 0 && totalValX < bulletWidth)
-                    if (bulletMatrix[Mathf.RoundToInt(totalValY * bulletWidth + totalValX)].a != 0)
+                    if (bulletMatrix[Mathf.RoundToInt(totalValY * bulletWidth + totalValX)].a != 0) {
+                        //Debug.Log("pixel at (" + "(" + bulletWidth  / 2 + " + (" + Mathf.Cos(angle) + " * " + DFromCenter + ") / " + Mathf.Abs(scale.x) + ") = " + totalValX + ", " + 
+                        //                         "(" + bulletHeight / 2 + " + (" + Mathf.Sin(angle) + " * " + DFromCenter + ") / " + Mathf.Abs(scale.y) + ") = " + totalValY + ") " +
+                        //                         "is full pixel: PP detected for player pixel = (" + currentWidth + ", " + currentHeight + ")!");
                         return true;
+                    }
             }
         return false;
     }

@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System;
 
 public class LuaInputBinding {
     private UndertaleInput input;
@@ -13,7 +13,11 @@ public class LuaInputBinding {
     public int Left    { get { return (int)input.Left; } }
     public int Right   { get { return (int)input.Right; } }
 
-    public int GetKey(string Key) { return (int)input.Key(Key); }
+    public int GetKey(string Key) {
+        try {
+            return (int)input.Key(Key);
+        } catch (Exception) { throw new CYFException("Input.GetKey(): The key \"" + Key + "\" doesn't exist."); }
+    }
 
     public int MousePosX { get { return (int)Input.mousePosition.x; } }
 

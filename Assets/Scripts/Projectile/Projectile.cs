@@ -40,8 +40,8 @@ public abstract class Projectile : MonoBehaviour {
     /// </summary>
     private void Awake() {
         if (playerHitbox == null) { 
-            playerHitbox = new Color32[Mathf.RoundToInt(PlayerController.instance.playerAbs.width) * Mathf.RoundToInt(PlayerController.instance.playerAbs.height)];
-            for (int i = 0; i < playerHitbox.Length; i++)
+            playerHitbox = new Color32[64];
+            for (int i = 0; i < 64; i++)
                 playerHitbox[i].a = 255;
         }
         self = GetComponent<RectTransform>();
@@ -181,8 +181,7 @@ public abstract class Projectile : MonoBehaviour {
             } else if (img.color.a < ControlPanel.instance.MinimumAlpha)
                 return false;
             Vector2 positionPlayerFromProjectile = (Vector2)PlayerController.instance.self.position - selfAbs.position - (selfAbs.size + PlayerController.instance.playerAbs.size) / 2;
-            return UnitaleUtil.TestPP(playerHitbox, texture, ctrl.sprite.rotation, Mathf.RoundToInt(PlayerController.instance.playerAbs.height),
-                                      img.mainTexture.height, new Vector2(ctrl.sprite.xscale, ctrl.sprite.yscale), positionPlayerFromProjectile, img.color.a);
+            return UnitaleUtil.TestPP(playerHitbox, texture, ctrl.sprite.rotation, 8, img.mainTexture.height, new Vector2(ctrl.sprite.xscale, ctrl.sprite.yscale), positionPlayerFromProjectile, img.color.a);
         }
         return false;
     }

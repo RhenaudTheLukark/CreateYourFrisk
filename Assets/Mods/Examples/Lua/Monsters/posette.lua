@@ -21,7 +21,7 @@ function HandleAttack(attackstatus)
         currentdialogue = {"Weak."}
     else
         if hp > 30 then
-            currentdialogue = {"I felt that.", "Maybe"}
+            currentdialogue = {"I felt that.", "[letters:99]Maaaaaaaaaaaaaaaaaaaaaybe"}
         else
             currentdialogue = {"Now I'm angry."}
         end
@@ -30,7 +30,7 @@ end
 
 function BeforeDamageValues()
 	DEBUG(Player.lasthitmultiplier)
-	Player.changeTarget(1)
+	--Player.changeTarget(1)
 end
  
 -- This handles the commands; all-caps versions of the commands list you have above.

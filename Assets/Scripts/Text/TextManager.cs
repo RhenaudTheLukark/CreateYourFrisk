@@ -399,37 +399,41 @@ public class TextManager : MonoBehaviour {
         int count = 0;
         int bracketCount = 0;
         int currentChar = -1;
-        string commandTest = "";
-        bool resetted = false;
-        do {
-            for (int i = 0; i < str.Length; i++) {
-                if (resetted) {
-                    i = currentChar + 1;
-                    count ++;
-                    resetted = false;
-                    bracketCount --;
-                }
-                if (str[i] == '[' && currentChar != i) {
-                    if (bracketCount == 0)
-                        currentChar = i;
-                    bracketCount++;
-                } else if (str[i] == '[' && bracketCount == 0 && currentChar == i)
-                    currentChar = -1;
+        //string commandTest = "";
+        //bool resetted = false;
+        //do {
+        for (int i = 0; i < str.Length; i++) {
+            /*if (resetted) {
+                i = currentChar + 1;
+                count ++;
+                resetted = false;
+                bracketCount --;
+            }*/
+            if (str[i] == '[' && currentChar != i) {
                 if (bracketCount == 0)
-                    count++;
-                else if (bracketCount == 1 && (str[i] != '[' && str[i] != ']'))
-                    commandTest += str[i];
-                if (str[i] == ']') {
-                    bracketCount = bracketCount == 0 ? 0 : bracketCount - 1;
-                    if (bracketCount == 0 && currentChar != -1)
-                        if (!commandList.Contains(commandTest.Split(':')[0])) {
-                            i = currentChar - 1;
-                            commandTest = "";
-                        }
-                }
+                    currentChar = i;
+                bracketCount ++;
+            } /*else if (str[i] == '[' && bracketCount == 0 && currentChar == i)
+                currentChar = -1;*/
+            if (bracketCount == 0)
+                count++;
+            //else if (bracketCount == 1 && (str[i] != '[' && str[i] != ']'))
+            //    commandTest += str[i];
+            if (str[i] == ']') {
+                bracketCount = bracketCount == 0 ? 0 : bracketCount - 1;
+                if (bracketCount == 0)
+                    currentChar = -1;
+                /*if (bracketCount == 0 && currentChar != -1)
+                    if (!commandList.Contains(commandTest.Split(':')[0])) {
+                        i = currentChar - 1;
+                        commandTest = "";
+                    }*/
             }
-            resetted = true;
-        } while (bracketCount > 0);
+        }
+        if (bracketCount > 0)
+            count += str.Length - currentChar;
+        //resetted = true;
+        //} while (bracketCount > 0);
         
         return count;
     }
@@ -733,11 +737,13 @@ public class TextManager : MonoBehaviour {
             letterTimer = 0.0f;
             bool soundPlayed = false;
             int lastLetter = -1;
-            if (letterOnceValue != 0 && !instantCommand) {
-                if (!HandleShowLetter(ref soundPlayed, ref lastLetter))
-                    return;
-                letterOnceValue--;
-            } else
+            if (letterOnceValue != 0 && !instantCommand)
+                while (letterOnceValue != 0 && !instantCommand) {
+                    if (!HandleShowLetter(ref soundPlayed, ref lastLetter))
+                        return;
+                    letterOnceValue--;
+                }
+            else
                 for (int i = 0; (instantCommand || i < letterSpeed) && currentCharacter < letterReferences.Length; i++)
                     if (!HandleShowLetter(ref soundPlayed, ref lastLetter))
                         return;
@@ -899,19 +905,23 @@ public class TextManager : MonoBehaviour {
                 else if (args[0] == "off") currentSkippable = true;
                 break;
 
+            case "waitfor":
+                try { waitingChar = (KeyCode)Enum.Parse(typeof(KeyCode), cmds[1]); }
+                catch { throw new CYFException("The key \"" + cmds[1] + "\" isn't a valid key."); }
+                break;
+
             case "w":
                 if (!instantCommand)
                     letterTimer = timePerLetter - (singleFrameTiming * ParseUtil.GetInt(cmds[1]));
                 break;
 
-            case "waitall":      timePerLetter = singleFrameTiming * ParseUtil.GetInt(cmds[1]);                  break;
-            case "novoice":      letterSound.clip = null;                                                        break;
-            case "next":         autoSkipAll = true;                                                             break;
-            case "finished":     autoSkipThis = true;                                                            break;
-            case "nextthisnow":  autoSkip = true;                                                                break;
-            case "noskipatall":  blockSkip = true;                                                               break;
-            case "waitfor":      waitingChar = (KeyCode)Enum.Parse(typeof(KeyCode), cmds[1]);                    break;
-            case "speed":        letterSpeed = Int32.Parse(args[0]);                                             break;
+            case "waitall":     timePerLetter = singleFrameTiming * ParseUtil.GetInt(cmds[1]); break;
+            case "novoice":     letterSound.clip = null;                                       break;
+            case "next":        autoSkipAll = true;                                            break;
+            case "finished":    autoSkipThis = true;                                           break;
+            case "nextthisnow": autoSkip = true;                                               break;
+            case "noskipatall": blockSkip = true;                                              break;
+            case "speed":       letterSpeed = Int32.Parse(args[0]);                            break;
 
             case "letters":
                 if (!instantCommand)

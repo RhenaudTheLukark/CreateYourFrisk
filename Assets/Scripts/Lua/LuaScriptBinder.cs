@@ -309,7 +309,11 @@ public static class LuaScriptBinder {
 
     public static void SetFrameBasedMovement(bool b) { ControlPanel.instance.FrameBasedMovement = b; }
 
-    public static void SetAction(string action) { UIController.instance.forcedaction = (UIController.Actions)Enum.Parse(typeof(UIController.Actions), action, true); }
+    public static void SetAction(string action) {
+        try {
+            UIController.instance.forcedaction = (UIController.Actions)Enum.Parse(typeof(UIController.Actions), action, true);
+        } catch { throw new CYFException("SetAction() can only take FIGHT or ACT, but you entered \"" + action + "\"."); }
+    }
 
     public static void SetPPCollision(bool b) {
         GlobalControls.ppcollision = b;

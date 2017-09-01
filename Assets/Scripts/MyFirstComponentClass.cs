@@ -710,11 +710,9 @@ public class MyFirstComponentClass : MonoBehaviour {
 
     public static void SpriteAnalyser() {
         int[,] ints = new int[,] { { 1, 5, 3, 8, 2 }, { 3, 78, -3, 0, 10 }, { 3, 7, 9, 3456, -314 } };
-        for (int i = 0; i < ints.GetLength(0); i++) {
-            for (int j = 0; j < ints.GetLength(1); j++) {
+        for (int i = 0; i < ints.GetLength(0); i++)
+            for (int j = 0; j < ints.GetLength(1); j++)
                 Debug.Log(ints[i, j]);
-            }
-        }
     }
 
     public void Start() {

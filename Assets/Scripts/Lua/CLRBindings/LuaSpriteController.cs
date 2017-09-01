@@ -482,6 +482,8 @@ public class LuaSpriteController {
     }
 
     public void Remove() {
+        if (_img == null)
+            return;
         if (tag == "enemy" || tag == "bubble") {
             UnitaleUtil.WriteInLogAndDebugger("sprite.Remove(): You can't remove a " + tag + "'s sprite!");
             return;
@@ -494,7 +496,7 @@ public class LuaSpriteController {
         }
         StopAnimation();
         GameObject.Destroy(GetTarget().gameObject);
-        img = null;
+        _img = null;
     }
 
     public void Dust(bool playDust = true, bool removeObject = false) {

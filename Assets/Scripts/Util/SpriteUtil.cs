@@ -34,6 +34,8 @@ public static class SpriteUtil {
                 return;
             }
             newSprite = FromFile(FileLoader.pathToModFile("Sprites/" + filename + ".png"));
+            if (newSprite == null)
+                throw new CYFException("The sprite Sprites/" + filename + ".png doesn't exist.");
             SpriteRegistry.Set(filename, newSprite);
         }
 
@@ -119,7 +121,10 @@ public static class SpriteUtil {
         else
             throw new CYFException("You can't create a sprite object with a nil sprite!");
         if (!GameObject.Find(tag + "Layer") && tag != "none")
-            UnitaleUtil.DisplayLuaError("Creating a sprite", "The sprite layer " + tag + " doesn't exist.");
+            if (tag == "BelowArena")
+                i.transform.SetParent(GameObject.Find("Canvas").transform);
+            else
+                UnitaleUtil.DisplayLuaError("Creating a sprite", "The sprite layer " + tag + " doesn't exist.");
         else {
             if (childNumber == -1)
                 if (tag == "none")

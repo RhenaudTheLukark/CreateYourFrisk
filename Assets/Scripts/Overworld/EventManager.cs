@@ -860,7 +860,7 @@ public class EventManager : MonoBehaviour {
                 if (ev.GetComponent<CYFAnimator>())                       ev.GetComponent<CYFAnimator>().specialHeader = ei.CurrSpriteNameOrCYFAnim;
                 else {
                     if (ev.GetComponent<AutoloadResourcesFromRegistry>()) ev.GetComponent<AutoloadResourcesFromRegistry>().SpritePath = ei.CurrSpriteNameOrCYFAnim;
-                    else {
+                    else if (ev.name != "4eab1af3ab6a932c23b3cdb8ef618b1af9c02088") {
                         if (ev.GetComponent<Image>())                     ev.GetComponent<Image>().sprite = SpriteRegistry.Get(ei.CurrSpriteNameOrCYFAnim);
                         else                                              ev.GetComponent<SpriteRenderer>().sprite = SpriteRegistry.Get(ei.CurrSpriteNameOrCYFAnim);
                     }

@@ -102,7 +102,8 @@ public class ShopScript : MonoBehaviour {
     void Interrupt(DynValue text, string nextState = "MENU") {
         if (currentState != State.INTERRUPT) {
             script.Call("OnInterrupt", DynValue.NewString(nextState));
-            try { interruptState = (State)Enum.Parse(typeof(State), nextState, true); } catch {
+            try { interruptState = (State)Enum.Parse(typeof(State), nextState, true); } 
+            catch {
                 UnitaleUtil.DisplayLuaError("Interrupting the shop menu", "\"" + nextState + "\" is not a valid shop state.");
                 return;
             }

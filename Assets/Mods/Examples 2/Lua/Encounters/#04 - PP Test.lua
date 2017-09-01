@@ -15,7 +15,7 @@ enemypositions = {
 }
 
 -- A custom list with attacks to choose from. Actual selection happens in EnemyDialogueEnding(). Put here in case you want to use it.
-possible_attacks = {"bullettest_collision"}
+possible_attacks = {"bullettest_bugPP2"}
 
 function EncounterStarting()
 	Inventory.AddCustomItems({"TEST", "TEST2", "Nazi Armor", "Bandage", "PsnPotion", "Life Roll", "Nothing"}, {0, 0, 2, 0, 0, 0, 3})

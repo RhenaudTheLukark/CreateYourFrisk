@@ -55,7 +55,7 @@ public class ArenaManager : MonoBehaviour {
     private void LateStart() {
         try {
             if (inner == null || outer == null) {
-                UnitaleUtil.WriteInLogAndDebugger(outer == null && inner == null ? "outer & inner = null" : (outer == null ? "outer == null" : "inner == null"));
+                //UnitaleUtil.WriteInLogAndDebugger(outer == null && inner == null ? "outer & inner = null" : (outer == null ? "outer == null" : "inner == null"));
                 inner = GameObject.Find("arena").GetComponent<RectTransform>();
                 outer = inner.parent.GetComponent<RectTransform>();
             }

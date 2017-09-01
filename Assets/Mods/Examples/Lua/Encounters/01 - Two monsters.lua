@@ -3,7 +3,7 @@ encountertext = "Your path is blocked by two mannequins! ∞.∞\nYou should loo
 wavetimer = 4
 arenasize = {155, 130}
 nextwaves = {"bullettest_touhou"}
-flee = false
+--flee = false
 autolinebreak = true
 playerskipdocommand = true
 timer = 0
@@ -34,7 +34,7 @@ possible_attacks = {"bullettest_bouncy" --[[, "bullettest_chaserorb", "bullettes
 
 function EncounterStarting()
     SetButtonLayer("Top")
-        enemies[1].Call("BindToArena", {false, false})
+   enemies[1].Call("BindToArena", {false, false})
     --[[maintext = CreateText(
         {"[font:uidialog][novoice][waitall:3]Greetings.",
          "[novoice][waitall:3]I[w:20] am " .. Player.name .. ".",
@@ -82,7 +82,7 @@ function DefenseEnding() --This built-in function fires after the defense round 
     --     "[novoice][waitall:3]Thank you."})
     --State("NONE")
     if #texts == 0 then
-        local text = CreateText({"Okay, this is a[color:00ffff] test.[color:000000]", "It works!"}, {540, 400}, 150)
+        local text = CreateText({"Okay, this is a[color:00ffff] test.[color:000000]", "It works!"}, {440, 400}, 150)
         text.ShowBubble("up", "50%")
         text.SetEffect("shake", -1)
         table.insert(texts, text)
@@ -128,7 +128,7 @@ function HandleItem(ItemID)
 	elseif ItemID == "BANDAGE" then
 		BattleDialog({"This is an example of a replaced\robject. If you see this text, that\rmeans that this works!"})
 	elseif ItemID == "PSNPOTION" then
-		BattleDialog({"You drank the Poison Potion.","[noskip][waitall:10]...[waitall:1][w:20]\rThat was a bad idea.[w:20][health:kill]"})
+		BattleDialog({"[effect:rotate]You drank the Poison Potion.","[noskip][waitall:10]...[waitall:1][w:20]\rThat was a bad idea.[w:20][health:kill]"})
 	elseif ItemID == "LIFE ROLL" then
 		BattleDialog({"Your HP goes to 1[waitall:10]...[waitall:1][health:1, set]now.[w:20]\rNow, byebye![w:20][health:-1, killable]"})
 	elseif ItemID == "NOTHING" then
@@ -141,7 +141,7 @@ function HandleItem(ItemID)
         BattleDialog({"You ate the Snails. Slimy..."}) 
         Player.Heal(15)
     end
-    BattleDialog({"I'm blocking the text path!"})
+    --BattleDialog({"I'm blocking the text path!"})
     itemCount = itemCount - 1
 end
 	
@@ -150,8 +150,8 @@ function Heal(amount)
 	Player.hp = Player.hp + amount
 end
 
---0 1
---2 3
+--1 2   5 6
+--3 4   7 8
 function UpdateInput()
     itemCount = itemCount - 1
     if Input.Left == 1 and not (selection < 2) then

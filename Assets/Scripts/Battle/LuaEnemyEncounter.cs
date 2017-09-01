@@ -280,18 +280,21 @@ internal class LuaEnemyEncounter : EnemyEncounter {
     public override void UpdateWave() {
         string currentScript = "";
         try {
-            for (int i = 0; i<waves.Length; i++) {
+            for (int i = 0; i < waves.Length; i++) {
                 currentScript = waveNames[i];
-                try { waves[i].script.Call(waves[i].script.Globals["Update"]); }
-                catch (ArgumentException) { }
-				catch (InterpreterException ex) {
+                try { waves[i].script.Call(waves[i].script.Globals["Update"]); } 
+                catch (InterpreterException ex) {
                     UnitaleUtil.DisplayLuaError(currentScript, ex.DecoratedMessage);
                     return;
-                } /*catch (Exception ex) {
-                    if (!GlobalControls.retroMode)
-                        UnitaleUtil.displayLuaError(currentScript, "This error is a " + ex.GetType().ToString() + " error.\nPlease send this error to the main dev.\n\n" + ex.Message + "\n\n" + ex.StackTrace);
+                } catch (Exception ex) {
+                    if (!GlobalControls.retroMode) {
+                        if (waves[i].script.Globals["Update"] == null)
+                            UnitaleUtil.DisplayLuaError(currentScript, "All the wave scripts need an Update() function!");
+                        else
+                            UnitaleUtil.DisplayLuaError(currentScript, "This error is a " + ex.GetType().ToString() + " error.\nPlease send this error to the main dev.\n\n" + ex.Message + "\n\n" + ex.StackTrace);
+                    }
                     return;
-                }*/
+                }
             }
         } catch (InterpreterException ex) {
             UnitaleUtil.DisplayLuaError(currentScript, ex.DecoratedMessage);
