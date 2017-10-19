@@ -59,6 +59,7 @@ public class GlobalControls : MonoBehaviour {
     /// Control checking, and way more.
     /// </summary>
 	void Update () {
+		stopScreenShake = false;
         frame ++;
         if (SceneManager.GetActiveScene().name == "EncounterSelect") lastSceneUnitale = true;
         else                                                         lastSceneUnitale = false;
@@ -114,7 +115,6 @@ public class GlobalControls : MonoBehaviour {
         if (Screen.currentResolution.height != 480 || Screen.currentResolution.width != 640) {
             Screen.SetResolution(640, 480, false, 0);
         }
-        stopScreenShake = false;
     }
     
     void LoadScene(Scene scene, LoadSceneMode mode) {
