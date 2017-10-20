@@ -87,8 +87,6 @@ public class GlobalControls : MonoBehaviour {
         } else if (input.Menu == UndertaleInput.ButtonState.PRESSED && !nonOWScenes.Contains(SceneManager.GetActiveScene().name) && !isInFight)
             if (!PlayerOverworld.instance.PlayerNoMove && EventManager.instance.script == null && !PlayerOverworld.instance.menuRunning[2] && !PlayerOverworld.instance.menuRunning[4] && EventManager.instance.script == null)
                 StartCoroutine(PlayerOverworld.LaunchMenu());
-        if (Input.GetKeyDown(KeyCode.F4))
-            Screen.fullScreen =!Screen.fullScreen;
         //else if (Input.GetKeyDown(KeyCode.L))
         //    MyFirstComponentClass.SpriteAnalyser();
         if (isInFight)
@@ -112,9 +110,12 @@ public class GlobalControls : MonoBehaviour {
                     else if (Input.anyKeyDown)       fleeIndex = 0;
                     break;
             }
-        if (Screen.currentResolution.height != 480 || Screen.currentResolution.width != 640) {
+		if (!Screen.fullScreen && (Screen.currentResolution.height != 480 || Screen.currentResolution.width != 640)) {
             Screen.SetResolution(640, 480, false, 0);
         }
+		  if (Input.GetKeyDown(KeyCode.F4))
+  			Screen.fullScreen =!Screen.fullScreen;
+      stopScreenShake = false;
     }
     
     void LoadScene(Scene scene, LoadSceneMode mode) {
