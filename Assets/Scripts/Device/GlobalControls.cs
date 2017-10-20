@@ -30,7 +30,7 @@ public static int frame = -1;
     public static bool isInShop = false;
     private bool screenShaking = false;
     public static Vector2 beginPosition;
-    public static bool samariosNightmare = false;
+    //public static bool samariosNightmare = false;
     public static string[] nonOWScenes = new string[] { "Battle", "Error", "EncounterSelect", "ModSelect", "GameOver", "TitleScreen", "Disclaimer", "EnterName", "TransitionOverworld", "Intro" };
     public static string[] canTransOW = new string[] { "Battle", "Error", "GameOver" };
     //Wow what's this
@@ -77,39 +77,39 @@ public static int frame = -1;
                 return;
 
             if (GameOverBehavior.gameOverContainer)
-            if (GameOverBehavior.gameOverContainer.activeInHierarchy)
-                GameObject.FindObjectOfType<GameOverBehavior>().EndGameOver();
-            else
-                UIController.EndBattle();
+                if (GameOverBehavior.gameOverContainer.activeInHierarchy)
+                    GameObject.FindObjectOfType<GameOverBehavior>().EndGameOver();
+                else
+                    UIController.EndBattle();
             else
                 UIController.EndBattle();
             //StaticInits.Reset();
         } else if (input.Menu == UndertaleInput.ButtonState.PRESSED && !nonOWScenes.Contains(SceneManager.GetActiveScene().name) && !isInFight)
-        if (!PlayerOverworld.instance.PlayerNoMove && EventManager.instance.script == null && !PlayerOverworld.instance.menuRunning[2] && !PlayerOverworld.instance.menuRunning[4] && EventManager.instance.script == null)
-            StartCoroutine(PlayerOverworld.LaunchMenu());
+            if (!PlayerOverworld.instance.PlayerNoMove && EventManager.instance.script == null && !PlayerOverworld.instance.menuRunning[2] && !PlayerOverworld.instance.menuRunning[4] && EventManager.instance.script == null)
+                StartCoroutine(PlayerOverworld.LaunchMenu());
         //else if (Input.GetKeyDown(KeyCode.L))
         //    MyFirstComponentClass.SpriteAnalyser();
         if (isInFight)
             switch (fleeIndex) {
-        case 0:
-            if (Input.GetKeyDown(KeyCode.F)) fleeIndex++; break;
-        case 1:
-            if (Input.GetKeyDown(KeyCode.L)) fleeIndex++;
-            else if (Input.anyKeyDown)       fleeIndex = 0;
-            break;
-        case 2:
-            if (Input.GetKeyDown(KeyCode.E)) fleeIndex++;
-            else if (Input.anyKeyDown)       fleeIndex = 0;
-            break;
-        case 3:
-            if (Input.GetKeyDown(KeyCode.E)) fleeIndex++;
-            else if (Input.anyKeyDown)       fleeIndex = 0;
-            break;
-        case 4:
-            if (Input.GetKeyDown(KeyCode.S)) { fleeIndex = -1; UIController.instance.SuperFlee(); }
-            else if (Input.anyKeyDown)       fleeIndex = 0;
-            break;
-        }
+                case 0:
+                    if (Input.GetKeyDown(KeyCode.F)) fleeIndex++; break;
+                case 1:
+                    if (Input.GetKeyDown(KeyCode.L)) fleeIndex++;
+                    else if (Input.anyKeyDown)       fleeIndex = 0;
+                    break;
+                case 2:
+                    if (Input.GetKeyDown(KeyCode.E)) fleeIndex++;
+                    else if (Input.anyKeyDown)       fleeIndex = 0;
+                    break;
+                case 3:
+                    if (Input.GetKeyDown(KeyCode.E)) fleeIndex++;
+                    else if (Input.anyKeyDown)       fleeIndex = 0;
+                    break;
+                case 4:
+                    if (Input.GetKeyDown(KeyCode.S)) { fleeIndex = -1; UIController.instance.SuperFlee(); }
+                    else if (Input.anyKeyDown)       fleeIndex = 0;
+                    break;
+            }
         if (!Screen.fullScreen && (Screen.currentResolution.height != 480 || Screen.currentResolution.width != 640)) {
             Screen.SetResolution(640, 480, false, 0);
         }
@@ -164,4 +164,4 @@ public static int frame = -1;
     }
 
     void OnApplicationQuit() { /*UnitaleUtil.closeFile();*/ }
-    }
+}
