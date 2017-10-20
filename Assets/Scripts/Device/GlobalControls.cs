@@ -115,7 +115,6 @@ public class GlobalControls : MonoBehaviour {
         }
 		  if (Input.GetKeyDown(KeyCode.F4))
   			Screen.fullScreen =!Screen.fullScreen;
-      stopScreenShake = false;
     }
     
     void LoadScene(Scene scene, LoadSceneMode mode) {
