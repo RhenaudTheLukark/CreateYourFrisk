@@ -115,9 +115,6 @@ public class GlobalControls : MonoBehaviour {
         }
 		if (Input.GetKeyDown (KeyCode.F4)) {
 			Screen.fullScreen = !Screen.fullScreen;
-			if (!Screen.fullScreen) {
-				GUI.Window (0, new Rect (new Vector2 (100f, 100f), new Vector2 (640f, 480f)), null, "test");
-			}
 		}
     }
     
