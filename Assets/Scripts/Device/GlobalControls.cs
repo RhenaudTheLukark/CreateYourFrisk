@@ -110,9 +110,8 @@ public static int frame = -1;
                     else if (Input.anyKeyDown)       fleeIndex = 0;
                     break;
             }
-        if (!Screen.fullScreen && (Screen.currentResolution.height != 480 || Screen.currentResolution.width != 640)) {
+        if (!Screen.fullScreen && (Screen.currentResolution.height != 480 || Screen.currentResolution.width != 640))
             Screen.SetResolution(640, 480, false, 0);
-        }
         if (Input.GetKeyDown(KeyCode.F4))
             Screen.fullScreen =!Screen.fullScreen;
     }
