@@ -63,7 +63,7 @@ public class IntroManager : MonoBehaviour {
         if (CheckEffect() &&!start &&!finish &&!fadeMusic)
             UpdateEffect();
         //Stop the intro
-        if (Input.anyKeyDown) {
+        if (Input.anyKeyDown && !Input.GetKeyDown(KeyCode.F4)) {
             Camera.main.GetComponent<AudioSource>().Stop();
             Camera.main.GetComponent<AudioSource>().volume = 1;
             SceneManager.LoadScene("TitleScreen");

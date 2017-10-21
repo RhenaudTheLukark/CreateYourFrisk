@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
@@ -58,8 +58,8 @@ public class GlobalControls : MonoBehaviour {
     /// <summary>
     /// Control checking, and way more.
     /// </summary>
-	void Update () {
-		stopScreenShake = false;
+    void Update () {
+        stopScreenShake = false;
         frame ++;
         if (SceneManager.GetActiveScene().name == "EncounterSelect") lastSceneUnitale = true;
         else                                                         lastSceneUnitale = false;
@@ -110,14 +110,12 @@ public class GlobalControls : MonoBehaviour {
                     else if (Input.anyKeyDown)       fleeIndex = 0;
                     break;
             }
-		if (!Screen.fullScreen && (Screen.currentResolution.height != 480 || Screen.currentResolution.width != 640)) {
+        if (!Screen.fullScreen && (Screen.currentResolution.height != 480 || Screen.currentResolution.width != 640))
             Screen.SetResolution(640, 480, false, 0);
-        }
-		  if (Input.GetKeyDown(KeyCode.F4))
-  			Screen.fullScreen =!Screen.fullScreen;
-      stopScreenShake = false;
+        if (Input.GetKeyDown(KeyCode.F4))
+            Screen.fullScreen =!Screen.fullScreen;
     }
-    
+
     void LoadScene(Scene scene, LoadSceneMode mode) {
         if (LuaScriptBinder.GetAlMighty(null, "CrateYourFrisk") != null)  crate = LuaScriptBinder.GetAlMighty(null, "CrateYourFrisk").Boolean;
         else                                                              crate = false;
