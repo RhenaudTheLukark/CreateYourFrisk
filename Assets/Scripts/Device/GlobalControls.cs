@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 /// Controls that should be active on all screens. Pretty much a hack to allow people to reset. Now it's more useful.
 /// </summary>
 public class GlobalControls : MonoBehaviour {
-public static int frame = -1;
+    public static int frame = -1;
     public static PlayerOverworld po;
     public static UndertaleInput input = new KeyboardInput();
     public static LuaInputBinding luaInput = new LuaInputBinding(input);
