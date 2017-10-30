@@ -354,7 +354,7 @@ public static class LuaScriptBinder {
             }
         }
         luatm.layer = layer;
-        luatm.textWidth = textWidth;
+        luatm.textMaxWidth = textWidth;
         luatm.bubbleHeight = bubbleHeight;
         luatm.ShowBubble();
         if (text == DynValue.Nil || text.Table.Length == 0)

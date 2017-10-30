@@ -469,24 +469,24 @@ public class TextManager : MonoBehaviour {
             if (UIController.instance.inited) {
                 if (UIController.instance.encounter.gameOverStance) limit = 320;
                 else if (name == "DialogBubble(Clone)")             limit = (int)transform.parent.GetComponent<LuaEnemyController>().bubbleWideness;
-                else if (GetType() == typeof(LuaTextManager))       limit = gameObject.GetComponent<LuaTextManager>().textWidth;
+                else if (GetType() == typeof(LuaTextManager))       limit = gameObject.GetComponent<LuaTextManager>().textMaxWidth;
                 else                                                limit = 534;
             } else                                                  limit = 534;
         } else                                                      limit = 534;
-        if (UnitaleUtil.CalcTotalLength(this, beginIndex, finalIndex) > limit && limit > 0) {
+        if (UnitaleUtil.CalcTextWidth(this, beginIndex, finalIndex) > limit && limit > 0) {
             int realBeginIndex = beginIndex, realFinalIndex = finalIndex;
             beginIndex = finalIndex - 1;
             while (textQueue[currentLine].Text[beginIndex] != ' ' && textQueue[currentLine].Text[beginIndex] != '\n' && textQueue[currentLine].Text[beginIndex] != '\r' && beginIndex > 0)
                 beginIndex--;
             if (textQueue[currentLine].Text[beginIndex] == ' ' || textQueue[currentLine].Text[beginIndex] == '\n' || textQueue[currentLine].Text[beginIndex] == '\r' || beginIndex < 0)
                 beginIndex++;
-            if (UnitaleUtil.CalcTotalLength(this, beginIndex, finalIndex) > limit) {
+            if (UnitaleUtil.CalcTextWidth(this, beginIndex, finalIndex) > limit) {
                 finalIndex = beginIndex;
                 int testFinal = finalIndex;
                 beginIndex = realBeginIndex;
                 string currentText3 = currentText;
                 for (; finalIndex <= realFinalIndex && finalIndex < currentText3.Length; finalIndex++)
-                    if (UnitaleUtil.CalcTotalLength(this, beginIndex, finalIndex) > limit) {
+                    if (UnitaleUtil.CalcTextWidth(this, beginIndex, finalIndex) > limit) {
                         if (finalIndex == testFinal) {
                             currentX = self.position.x + offset.x;
                             /*if (GetType() == typeof(LuaTextManager))
@@ -951,27 +951,20 @@ public class TextManager : MonoBehaviour {
                     if (caller == null)
                         UnitaleUtil.DisplayLuaError("???", "Func called but no script to reference. This is the engine's fault, not yours.");
                     if (args.Length > 1) {
-                        DynValue[] argsbis = new DynValue[args.Length - 1];
-
-                        for (int i = 1; i < args.Length; i++) {
-                            //The character " is forbidden at the beginning and at the end of the string, as it is the sign of a String.
-                            args[i] = args[i].TrimStart('"').TrimEnd('"');
-                            Type type = UnitaleUtil.CheckRealType(args[i]);
-                            //Boolean
-                            if (type == typeof(bool)) {
-                                if (args[i].Replace(" ", "") == "true")
-                                    argsbis[i - 1] = DynValue.NewBoolean(true);
-                                else
-                                    argsbis[i - 1] = DynValue.NewBoolean(false);
-                            //Number
-                            } else if (type == typeof(float)) {
-                                args[i] = args[i].Replace(" ", "");
-                                float number = CreateNumber(args[i]);
-                                argsbis[i - 1] = DynValue.NewNumber(number);
-                            //String
-                            } else
-                                argsbis[i - 1] = DynValue.NewString(args[i]);
+                        //Check array as argument
+                        if (args.Length == 2) {
+                            args[1] = args[1].Trim();
+                            if (args[1][0] == '{' && args[1][args[1].Length - 1] == '}') {
+                                args[1] = args[1].Substring(1, args[1].Length - 2);
+                                string[] newArgs = UnitaleUtil.SpecialSplit(',', args[1], true);
+                                Array.Resize(ref args, 1 + newArgs.Length);
+                                Array.Copy(newArgs, 0, args, 1, newArgs.Length);
+                            }
                         }
+
+                        DynValue[] argsbis = new DynValue[args.Length - 1];
+                        for (int i = 1; i < args.Length; i++)
+                            argsbis[i - 1] = ComputeArgument(args[i]);
                         caller.Call(args[0], argsbis, true); //ADD TRY
                                                              //caller.Call(args[0], DynValue.NewString(args[1]));
                     } else
@@ -1046,6 +1039,27 @@ public class TextManager : MonoBehaviour {
                     letterIntensity = ParseUtil.GetFloat(args[1]);
                 break;
         }
+    }
+
+    private DynValue ComputeArgument(string arg) {
+        arg = arg.Trim();
+        Type type = UnitaleUtil.CheckRealType(arg);
+        DynValue dyn;
+        //Boolean
+        if (type == typeof(bool)) {
+            if (arg.Replace(" ", "") == "true")
+                dyn = DynValue.NewBoolean(true);
+            else
+                dyn = DynValue.NewBoolean(false);
+        //Number
+        } else if (type == typeof(float)) {
+            arg = arg.Replace(" ", "");
+            float number = CreateNumber(arg);
+            dyn = DynValue.NewNumber(number);
+        //String
+        } else
+            dyn = DynValue.NewString(arg);
+        return dyn;
     }
 
     private void SetHP(float newhp) {

@@ -23,7 +23,7 @@ public class UserDebugger : MonoBehaviour{
         gameObject.SetActive(false);
         firstActive = false;
         if (UnitaleUtil.printDebuggerBeforeInit != "") {
-            UserWriteLine(UnitaleUtil.printDebuggerBeforeInit);
+            UserWriteLine(UnitaleUtil.printDebuggerBeforeInit, false);
             UnitaleUtil.printDebuggerBeforeInit = "";
         }
     }
@@ -32,7 +32,7 @@ public class UserDebugger : MonoBehaviour{
         instance.WriteLine("[Warn] " + line);
     }
 
-    public void UserWriteLine(string line) {
+    public void UserWriteLine(string line, bool debug = true) {
         // activation of the debug window if you're printing to it for the first time
         if (!firstActive) {
             gameObject.SetActive(true);

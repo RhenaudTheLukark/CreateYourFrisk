@@ -113,7 +113,7 @@ public class NewMusicManager {
 
     public static float GetVolume(string name) {
         if (!audiolist.ContainsKey(name))  throw new CYFException("The audio channel " + name + " doesn't exist.");
-        return ((AudioSource)audiolist[name]).pitch;
+        return ((AudioSource)audiolist[name]).volume;
     }
 
     public static void Play(string name) {

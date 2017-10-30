@@ -52,12 +52,12 @@ public class LuaTextManager : TextManager {
     }
 
     private void ResizeBubble() {
-        float effectiveBubbleHeight = bubbleHeight != -1 ? bubbleHeight < 16 ? 40 : bubbleHeight + 24 : UnitaleUtil.CalcTotalHeight(this) < 16 ? 40 : UnitaleUtil.CalcTotalHeight(this) + 24;
-        containerBubble.transform.GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth + 20, effectiveBubbleHeight);                                                      //To set the borders
-        UnitaleUtil.GetChildPerName(containerBubble.transform, "BackHorz").GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth + 20, effectiveBubbleHeight - 20 * 2);    //BackHorz
-        UnitaleUtil.GetChildPerName(containerBubble.transform, "BackVert").GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth - 20, effectiveBubbleHeight);             //BackVert
-        UnitaleUtil.GetChildPerName(containerBubble.transform, "CenterHorz").GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth + 16, effectiveBubbleHeight - 16 * 2);  //CenterHorz
-        UnitaleUtil.GetChildPerName(containerBubble.transform, "CenterVert").GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth - 16, effectiveBubbleHeight - 4);       //CenterVert
+        float effectiveBubbleHeight = bubbleHeight != -1 ? bubbleHeight < 16 ? 40 : bubbleHeight + 24 : UnitaleUtil.CalcTextHeight(this) < 16 ? 40 : UnitaleUtil.CalcTextHeight(this) + 24;
+        containerBubble.transform.GetComponent<RectTransform>().sizeDelta = new Vector2(textMaxWidth + 20, effectiveBubbleHeight);                                                      //To set the borders
+        UnitaleUtil.GetChildPerName(containerBubble.transform, "BackHorz").GetComponent<RectTransform>().sizeDelta = new Vector2(textMaxWidth + 20, effectiveBubbleHeight - 20 * 2);    //BackHorz
+        UnitaleUtil.GetChildPerName(containerBubble.transform, "BackVert").GetComponent<RectTransform>().sizeDelta = new Vector2(textMaxWidth - 20, effectiveBubbleHeight);             //BackVert
+        UnitaleUtil.GetChildPerName(containerBubble.transform, "CenterHorz").GetComponent<RectTransform>().sizeDelta = new Vector2(textMaxWidth + 16, effectiveBubbleHeight - 16 * 2);  //CenterHorz
+        UnitaleUtil.GetChildPerName(containerBubble.transform, "CenterVert").GetComponent<RectTransform>().sizeDelta = new Vector2(textMaxWidth - 16, effectiveBubbleHeight - 4);       //CenterVert
         SetSpeechThingPositionAndSide(bubbleSide.ToString(), bubbleLastVar);
     }
     
@@ -89,7 +89,7 @@ public class LuaTextManager : TextManager {
         set { MoveTo(absx, value); }
     }
 
-    public int textWidth {
+    public int textMaxWidth {
         get { return _textWidth; }
         set { _textWidth = value < 16 ? 16 : value; }
     }
@@ -112,7 +112,7 @@ public class LuaTextManager : TextManager {
         }
     }
 
-    public Color _color = Color.white;
+    public Color _color = new Color(1, 0, 0);
     // The color of the text. It uses an array of three floats between 0 and 1
     public float[] color {
         get { return new float[] { _color.r, _color.g, _color.b }; }
@@ -343,5 +343,13 @@ public class LuaTextManager : TextManager {
 
     public void SetPivot(float x, float y) {
         container.GetComponent<RectTransform>().pivot = new Vector2(x, y);
+    }
+
+    public int GetTextWidth() {
+        return (int)UnitaleUtil.CalcTextWidth(this);
+    }
+
+    public int GetTextHeight() {
+        return (int)UnitaleUtil.CalcTextHeight(this);
     }
 }
