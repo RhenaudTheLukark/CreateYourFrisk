@@ -35,6 +35,51 @@ span.ref {
 	border-bottom: 1px solid #888855;
 }
 
+span.string::before {
+	content: "\"string\"";
+	font-family: segoe ui;
+	font-size: 12px;
+	color: #de7356;
+}
+
+span.luatable::before {
+	content: "{table of ";
+	color: #158BD2;
+	font-family: segoe ui;
+	font-size: 12px;
+}
+span.luatable::after {
+	content: "}";
+	color: #158BD2;
+	font-family: segoe ui;
+	font-size: 12px;
+}
+
+span.number::before {
+	color: #2AA172;
+	content: "number";
+	font-family: segoe ui;
+	font-size: 12px;
+}
+
+span.boolean::before {
+	color: #DC322F;
+	content: "boolean";
+	font-family: segoe ui;
+	font-size: 12px;
+}
+span.unitalesprite::before {
+	color: #2FEEDC;
+	content: "sprite";
+	font-family: segoe ui;
+	font-size: 12px;
+	border: 1px solid #2d2d2d;
+	background-color: #111111;
+	border-radius: 12%;
+	padding-left: 2.5px;
+	padding-right: 2.5px;
+}
+
 span.CYF{
 	color: #ffff00;
 }
