@@ -3122,7 +3122,7 @@ end</pre>
             </p>
             <p>
                 <br><span class="function">Map.GetNoRandomEncounter()</span>
-                Returns the value of the boolean NoRandomEncounter. The boolean NoRandomEncounter prevents encounter to be launched if set to true.
+                Returns the value of the boolean NoRandomEncounter. The boolean NoRandomEncounter prevents encounters to be launched if set to true.
             </p>
             <p>
                 <br><span class="function">Map.SetNoRandomEncounter(bool value)</span>
@@ -3138,6 +3138,61 @@ end</pre>
                 Sets the value of the boolean isMusicKeptBetweenBattles. If you change the value of this boolean, the main Audio channel used for 
                 the map's bgm will be changed (and all of Audio's functions will be used on this new channel), being "scr" when this boolean's value 
                 is true, "StaticKeptAudio" otherwise.
+            </p>
+            <p>
+                <br><span class="function">Map.GetMusicMap(string mapName)</span>
+                Returns the name of the music the map given launches when the player teleports to this map. If you choose to access the current map's
+                MusicKept value, it'll launch Map.GetMusic() instead.<br>
+                <span style="color:#aa0000"><u>ONLY WORKS WHEN THE PLAYER HAS ALREADY ENTERED THE MAP BEFORE!</u></span> Use Map.HasPlayerBeenInMap() 
+                to check if he did.
+            </p>
+            <p>
+                <br><span class="function">Map.SetMusicMap(string mapName, string value)</span>
+                Sets the name of the music the map given launches when the player teleports to this map. Also works on maps the player haven't been
+                in yet. If you choose to modify the current map's Music value, it'll launch Map.SetMusic() instead.
+            </p>
+            <p>
+                <br><span class="function">Map.GetModToLoadMap(string mapName)</span>
+                Returns the name of the mod the map given uses. If you choose to access the current map's ModToLoad value, it'll launch 
+                Map.GetModToLoad() instead.<br>
+                <span style="color:#aa0000"><u>ONLY WORKS WHEN THE PLAYER HAS ALREADY ENTERED THE MAP BEFORE!</u></span> Use Map.HasPlayerBeenInMap() 
+                to check if he did.
+            </p>
+            <p>
+                <br><span class="function">Map.SetModToLoadMap(string mapName, string value)</span>
+                Sets the name of the mod the map uses. Also works on maps the player haven't been in yet. If you choose to modify the current 
+                map's ModToLoad value, it'll launch Map.SetModToLoad() instead.
+            </p>
+            <p>
+                <br><span class="function">Map.GetNoRandomEncounterMap(string mapName)</span>
+                Returns the value of the boolean NoRandomEncounter of the given map. The boolean NoRandomEncounter prevents encounters to be 
+                launched if set to true. If you choose to access the current map's NoRandomEncounter value, it'll launch 
+                Map.GetNoRandomEncounter() instead.<br>
+                <span style="color:#aa0000"><u>ONLY WORKS WHEN THE PLAYER HAS ALREADY ENTERED THE MAP BEFORE!</u></span> Use Map.HasPlayerBeenInMap() 
+                to check if he did.
+            </p>
+            <p>
+                <br><span class="function">Map.SetNoRandomEncounterMap(string mapName, bool value)</span>
+                Sets the value of the boolean NoRandomEncounter in the given map's data. Also works on maps the player haven't been in yet. 
+                If you choose to modify the current map's NoRandomEncounter value, it'll launch Map.SetNoRandomEncounter() instead.
+            </p>
+            <p>
+                <br><span class="function">Map.GetMusicKeptMap(string mapName)</span>
+                Returns the value of the boolean isMusicKeptBetweenBattles in the given map's data. This one is pretty straightforward, if set to 
+                true, the map's music won't be stopped during battles, like in The Core. If you choose to access the current map's MusicKept 
+                value, it'll launch Map.GetMusicKept() instead.<br>
+                <span style="color:#aa0000"><u>ONLY WORKS WHEN THE PLAYER HAS ALREADY ENTERED THE MAP BEFORE!</u></span> Use Map.HasPlayerBeenInMap() 
+                to check if he did.
+            </p>
+            <p>
+                <br><span class="function">Map.SetMusicKeptMap(string mapName, bool value)</span>
+                Sets the value of the boolean isMusicKeptBetweenBattles in the given map's data. Also works on maps the player haven't been in yet. 
+                If you choose to modify the current map's MusicKept value, it'll launch Map.SetMusicKept() instead.
+            </p>
+            <p>
+                <br><span class="function">Map.HasPlayerBeenInMap(string map)</span>
+                Returns a boolean giving information about the player having been in that map before.
+                If he did, the function will return true, false otherwise.
             </p>
         </div>
 

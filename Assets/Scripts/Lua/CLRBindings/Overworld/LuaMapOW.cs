@@ -82,4 +82,14 @@ public class LuaMapOW {
         else                                               EventManager.TrySetMapValue(mapName, "MusicKept", value);
         appliedScript.Call("CYFEventNextCommand");
     }
+    [CYFEventFunction] public bool HasPlayerBeenInMap(string mapName) {
+        try {
+            if (SceneManager.GetActiveScene().name == mapName)
+                return true;
+            foreach (GameState.MapData md in GlobalControls.GameMapData.Values)
+                if (md.Name == mapName)
+                    return true;
+            return false;
+        } finally { appliedScript.Call("CYFEventNextCommand"); }
+    }
 }
