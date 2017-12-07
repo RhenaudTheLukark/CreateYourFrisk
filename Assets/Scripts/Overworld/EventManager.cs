@@ -765,12 +765,13 @@ public class EventManager : MonoBehaviour {
         EventOW[] events = (EventOW[])GameObject.FindObjectsOfType(typeof(EventOW));
         //MapDataAnalyser();
 
-        GameState.MapInfos mapInfos = GlobalControls.MapData.ContainsKey(id) ? GlobalControls.MapData[id] : new GameState.MapInfos();
+        GameState.MapData mapInfos = GlobalControls.GameMapData.ContainsKey(id) ? GlobalControls.GameMapData[id] : new GameState.MapData();
 
-        if (GlobalControls.MapData.ContainsKey(id))
-            GlobalControls.MapData.Remove(id);
+        if (GlobalControls.GameMapData.ContainsKey(id))
+            GlobalControls.GameMapData.Remove(id);
 
         MapInfos mi = GameObject.FindObjectOfType<MapInfos>();
+        mapInfos.Name = SceneManager.GetActiveScene().name;
         mapInfos.Music = mi.music;
         mapInfos.ModToLoad = mi.modToLoad;
         mapInfos.MusicKept = mi.isMusicKeptBetweenBattles;
@@ -801,19 +802,128 @@ public class EventManager : MonoBehaviour {
             } catch { }
         }
         mapInfos.EventInfo = eis;
-        GlobalControls.MapData.Add(id, mapInfos);
+        GlobalControls.GameMapData.Add(id, mapInfos);
         //MapDataAnalyser();
         instance.sprCtrls.Clear();
+    }
+
+    public static void TrySetMapValue(string mapName, string var, object val) {
+        var = var.ToLower();
+        if (var != "music" && var != "modtoload" && var != "musickept" && var != "norandomencounter")
+            throw new CYFException("You tried to change a map's \"" + var + "\" value but it doesn't exist.\nYou can only choose between \"Music\", \"ModToLoad\", \"MusicKept\" and \"NoRandomEncounter\".");
+        if (var == "musickept" || var == "norandomencounter") {                
+            if (val.ToString().ToLower() == "true")       val = true;
+            else if (val.ToString().ToLower() == "false") val = false;
+            else                                          throw new CYFException("\"MusicKept\" and \"NoRandomEncounter\" are boolean values. You can only enter \"true\" or \"false\".");
+        }
+
+        foreach (KeyValuePair<int, GameState.MapData> kvp in GlobalControls.GameMapData) {
+            if (kvp.Value.Name == mapName) {
+                GameState.MapData mi = kvp.Value;
+                GlobalControls.GameMapData.Remove(kvp.Key);
+
+                if (var == "music")          mi.Music = val.ToString();
+                else if (var == "modtoload") mi.ModToLoad = val.ToString();
+                else if (var == "musickept") mi.MusicKept = (bool)val;
+                else                         mi.NoRandomEncounter = (bool)val;
+                GlobalControls.GameMapData.Add(kvp.Key, mi);
+                return;
+            }
+        }
+
+        foreach (KeyValuePair<string, GameState.TempMapData> kvp in GlobalControls.TempGameMapData) {
+            Debug.Log(kvp.Key + " == " + mapName);
+            if (kvp.Key == mapName) {
+                GameState.TempMapData tmi = kvp.Value;
+                GlobalControls.TempGameMapData.Remove(kvp.Key);
+
+                if (var == "music") {
+                    tmi.Music = val.ToString();
+                    tmi.MusicChanged = true;
+                } else if (var == "modtoload") {
+                    tmi.ModToLoad = val.ToString();
+                    tmi.ModToLoadChanged = true;
+                } else if (var == "musickept") {
+                    tmi.MusicKept = (bool)val;
+                    tmi.MusicKeptChanged = true;
+                } else {
+                    tmi.NoRandomEncounter = (bool)val;
+                    tmi.NoRandomEncounterChanged = true;
+                }
+                GlobalControls.TempGameMapData.Add(kvp.Key, tmi);
+                return;
+            }
+        }
+
+        GameState.TempMapData tmi2 = new GameState.TempMapData {
+            MusicChanged = false,
+            ModToLoadChanged = false,
+            MusicKeptChanged = false,
+            NoRandomEncounterChanged = false
+        };
+
+        if (var == "music") {
+            tmi2.Music = val.ToString();
+            tmi2.MusicChanged = true;
+        } else if (var == "modtoload") {
+            tmi2.ModToLoad = val.ToString();
+            tmi2.ModToLoadChanged = true;
+        } else if (var == "musickept") {
+            tmi2.MusicKept = (bool)val;
+            tmi2.MusicKeptChanged = true;
+        } else {
+            tmi2.NoRandomEncounter = (bool)val;
+            tmi2.NoRandomEncounterChanged = true;
+        }
+        GlobalControls.TempGameMapData.Add(mapName, tmi2);
+    }
+
+    public static object TryGetMapValue(string mapName, string var) {
+        var = var.ToLower();
+        foreach (GameState.MapData md in GlobalControls.GameMapData.Values)
+            if (md.Name == mapName)
+                if (var == "music")          return md.Music;
+                else if (var == "modtoload") return md.ModToLoad;
+                else if (var == "musickept") return md.MusicKept;
+                else                         return md.NoRandomEncounter;
+
+        foreach (GameState.TempMapData tmd in GlobalControls.TempGameMapData.Values)
+            if (tmd.Name == mapName)
+                if (var == "music")          return tmd.Music;
+                else if (var == "modtoload") return tmd.ModToLoad;
+                else if (var == "musickept") return tmd.MusicKept;
+                else                         return tmd.NoRandomEncounter;
+
+        int buildIndex = -1;
+        //Start map tester
+        for (int i = 0; i < SceneManager.sceneCountInBuildSettings; i++) {
+            if (mapName == System.IO.Path.GetFileNameWithoutExtension(SceneUtility.GetScenePathByBuildIndex(i))) {
+                buildIndex = i;
+                break;
+            }
+            if (i == SceneManager.sceneCountInBuildSettings - 1)
+                throw new CYFException("The scene \"" + mapName + "\" doesn't exist.\nYou must enter the scene's file name, not its alias.");
+        }
+        //End map tester
+        foreach (GameObject go in SceneManager.GetSceneByBuildIndex(buildIndex).GetRootGameObjects()) {
+            if (go.GetComponent<MapInfos>())
+                if (var == "music")          return go.GetComponent<MapInfos>().music;
+                else if (var == "modtoload") return go.GetComponent<MapInfos>().modToLoad;
+                else if (var == "musickept") return go.GetComponent<MapInfos>().isMusicKeptBetweenBattles;
+                else                         return go.GetComponent<MapInfos>().noRandomEncounter;
+        }
+        return null;
     }
 
     public static void MapDataAnalyser() {
         string str = "MapData = {\n";
         bool once = false, once2 = false;
-        foreach (int id in GlobalControls.MapData.Keys) {
+        foreach (int id in GlobalControls.GameMapData.Keys) {
             str += once ? ",\n" : "";
             if (!once) once = true;
             str += "  id = " + id + " (scene " + System.IO.Path.GetFileNameWithoutExtension(SceneUtility.GetScenePathByBuildIndex(id)) + ") for\n";
-            GameState.MapInfos mi = GlobalControls.MapData[id];
+            GameState.MapData mi = GlobalControls.GameMapData[id];
+            str += "    Name = \"" + mi.Name + "\"\n";
             str += "    Music = \"" + mi.Music + "\"\n";
             str += "    ModToLoad = \"" + mi.ModToLoad + "\"\n";
             str += "    MusicKept = " + mi.MusicKept + "\n";
@@ -838,10 +948,19 @@ public class EventManager : MonoBehaviour {
     }
 
     public static void GetMapState(MapInfos mi, int id) {
-        if (!GlobalControls.MapData.Keys.Contains(id))
+        if (!GlobalControls.GameMapData.ContainsKey(id)) {
+            if (GlobalControls.TempGameMapData.ContainsKey(SceneManager.GetActiveScene().name)) {
+                GameState.TempMapData tmd = GlobalControls.TempGameMapData[SceneManager.GetActiveScene().name];
+                GlobalControls.TempGameMapData.Remove(SceneManager.GetActiveScene().name);
+                if (tmd.MusicChanged)             mi.music = tmd.Music;
+                if (tmd.ModToLoadChanged)         mi.modToLoad = tmd.ModToLoad;
+                if (tmd.MusicKeptChanged)         mi.isMusicKeptBetweenBattles = tmd.MusicKept;
+                if (tmd.NoRandomEncounterChanged) mi.noRandomEncounter = tmd.NoRandomEncounter;
+            }
             return;
+        }
 
-        GameState.MapInfos misave = GlobalControls.MapData[id];
+        GameState.MapData misave = GlobalControls.GameMapData[id];
         mi.music = misave.Music;
         mi.modToLoad = misave.ModToLoad;
         mi.isMusicKeptBetweenBattles = misave.MusicKept;

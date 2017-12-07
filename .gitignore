@@ -1,4 +1,4 @@
-#Unitale ignored directories
+# Unitale ignored directories
 /Assets/Logs/*
 /Assets/Sprites/ScreenReference/
 /Assets/Scripts/Unused/
@@ -11,7 +11,7 @@
 /TestResults/
 !MoonSharp.Interpreter.dll
 
-#Github default gitignore settings for Unity projects
+# Github default gitignore settings for Unity projects
 /[Ll]ibrary/
 /[Tt]emp/
 /[Oo]bj/
@@ -32,7 +32,6 @@ ExportedObj/
 *.booproj
 *.svd
 
-
 # Unity3D generated meta files
 *.pidb.meta
 
@@ -42,3 +41,26 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+
+# External mods
+/Assets/Mods/*
+
+# Include basic mods
+!/Assets/Mods/0.5.0_SEE_CREATE/*
+!/Assets/Mods/0.5.0_SEE_CREATE.meta
+!/Assets/Mods/Donald Trump/*
+!/Assets/Mods/Donald Trump.meta
+!/Assets/Mods/Encounter Skeleton/*
+!/Assets/Mods/Encounter Skeleton.meta
+!/Assets/Mods/Examples/*
+!/Assets/Mods/Examples.meta
+!/Assets/Mods/Examples 2/*
+!/Assets/Mods/Examples 2.meta
+!/Assets/Mods/Mionn 2.1/*
+!/Assets/Mods/Mionn 2.1.meta
+!/Assets/Mods/OverWorld Test/*
+!/Assets/Mods/OverWorld Test.meta
+!/Assets/Mods/RTLGeno/*
+!/Assets/Mods/RTLGeno.meta
+!/Assets/Mods/Title/*
+!/Assets/Mods/Title.meta

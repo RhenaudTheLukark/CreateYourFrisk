@@ -1,4 +1,4 @@
-﻿#if!UNITY_WEBPLAYER
+﻿#if !UNITY_WEBPLAYER
 // Note: This behaviour cannot be used in WebPlayer
 using System;
 
@@ -26,6 +26,19 @@ namespace Tiled2Unity
 
 #if UNITY_EDITOR
 
+        public readonly string ImportExtension = ".tiled2unity.xml";
+
+        public string MapName
+        {
+            get
+            {
+                // tiled2unity.xml is two extensions
+                string name = Path.GetFileNameWithoutExtension(this.Tiled2UnityXmlPath);
+                name = Path.GetFileNameWithoutExtension(name);
+                return name;
+            }
+        }
+
         // List of asset names we are waiting on to be imported. This helps us keep import process in order, especially if user re-imports their whole project.
         public List<string> ImportWait_Textures = new List<string>();
         public List<string> ImportWait_Materials = new List<string>();
@@ -52,7 +65,7 @@ namespace Tiled2Unity
         {
             foreach (var component in GameObject.FindObjectsOfType<Tiled2Unity.ImportBehaviour>())
             {
-                if (component.ImportWait_Textures.Contains(assetName))
+                if (component.ImportWait_Textures.Contains(assetName, StringComparer.OrdinalIgnoreCase))
                 {
                     yield return component;
                 }
@@ -64,7 +77,7 @@ namespace Tiled2Unity
         {
             foreach (var component in GameObject.FindObjectsOfType<Tiled2Unity.ImportBehaviour>())
             {
-                if (component.ImportWait_Materials.Contains(assetName))
+                if (component.ImportWait_Materials.Contains(assetName, StringComparer.OrdinalIgnoreCase))
                 {
                     yield return component;
                 }
@@ -76,7 +89,7 @@ namespace Tiled2Unity
         {
             foreach (var component in GameObject.FindObjectsOfType<Tiled2Unity.ImportBehaviour>())
             {
-                if (component.ImportWait_Meshes.Contains(assetName))
+                if (component.ImportWait_Meshes.Contains(assetName, StringComparer.OrdinalIgnoreCase))
                 {
                     return component;
                 }
@@ -90,7 +103,7 @@ namespace Tiled2Unity
         {
             foreach (var component in GameObject.FindObjectsOfType<Tiled2Unity.ImportBehaviour>())
             {
-                if (component.ImportWait_Prefabs.Contains(assetName))
+                if (component.ImportWait_Prefabs.Contains(assetName, StringComparer.OrdinalIgnoreCase))
                 {
                     return component;
                 }
@@ -103,7 +116,7 @@ namespace Tiled2Unity
         {
             foreach (var component in GameObject.FindObjectsOfType<Tiled2Unity.ImportBehaviour>())
             {
-                if (component.ImportingAssets.Contains(assetPath, StringComparer.InvariantCultureIgnoreCase))
+                if (component.ImportingAssets.Contains(assetPath, StringComparer.OrdinalIgnoreCase))
                 {
                     return true;
                 }
@@ -134,7 +147,7 @@ namespace Tiled2Unity
 
         public void ImportTiled2UnityAsset(string assetPath)
         {
-            if (!this.ImportingAssets.Contains(assetPath))
+            if (!this.ImportingAssets.Contains(assetPath, StringComparer.OrdinalIgnoreCase))
             {
                 this.ImportingAssets.Add(assetPath);
                 AssetDatabase.ImportAsset(assetPath, ImportAssetOptions.ForceSynchronousImport);
