@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<!--
+since you're here anyway: there's a small easter egg on the text commands page but it's probably not worth finding, sorry
+you may notice this page's code is garbage: i'm not a web designer! ;-;
+it's w3c valid, at least
+-->
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="favicon.ico">
+
+    <title>CYF Documentation - Projectile management</title>
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="../css/themesidebar.css" rel="stylesheet">
+    <link href="../css/shThemeRDark.css" rel="stylesheet">
+
+    <!-- Syntax highlighting -->
+    <script type="text/javascript" src="../js/shCore.js"></script>
+    <script type="text/javascript" src="../js/shBrushLua.js"></script>
+    <script type="text/javascript">SyntaxHighlighter.all();</script>
+</head>
+<body>
+<img src="../img/bg2.png" alt="Undertale background" class="backimg">
+<div class="container arena black">
+    <div class="col-md-2">
+        <!--navigation-->
+        <nav class="nav-sidebar">
+            <ul class="nav tabs">
+                <li class="li-header">Basics</li>
+                    <li><a href="../documentation.html">Welcome</a></li>
+                    <li><a href="howtoread.html">How to read this documentation</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li><a href="controls.html">Controls</a></li>
+                    <li><a href="basic.html">Basic setup</a></li>
+                    <li><a href="variables.html">Special Variables</a></li>
+                    <li><a href="terms.html">Terminology</a></li>
+                <li class="li-header">API</li>
+                    <li><a href="api-text.html">Text commands</a></li>
+                    <li><a href="api-events.html">Game events</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li class="li-indent">Functions &amp; Objects:</li>
+                        <li class="li-indent"><a href="api-functions-main.html">Misc. Functions</a></li>
+                        <li class="li-indent"><a href="api-functions-player.html">The Player Object</a></li>
+                        <li class="li-indent"><a href="api-functions-script.html">The Script Object</a></li>
+                        <li class="li-indent"><a href="api-functions-audio.html">The Audio Object</a></li>
+                        <li class="li-indent"><a href="api-functions-newaudio.html"><span class="CYF"></span> The NewAudio Object</a></li>
+                        <li class="li-indent"><a href="api-functions-input.html">The Input Object</a></li>
+						<li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
+                        <li class="li-indent"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
+                        <li class="li-indent"><a href="api-functions-waves.html">Wave Scripts</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li style="margin-left:5px;">> Projectile management <</li>
+                    <li><a href="api-animation.html">Sprites &amp; Animation</a></li>
+                    <li><a href="api-keys.html"><span class="CYF"></span> Key List</a></li>
+                <li class="li-header">Create Your Frisk's new features</li>     
+                    <li><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory System</a></li>
+                    <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
+                    <li><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
+				<li class="li-header">Overworld</li>
+                    <li><a href="overworld.html"><span class="CYF"></span> Basics</a></li>
+                    <li><a href="overworld-howto-map.html"><span class="CYF"></span> How to create a map</a></li>
+                    <li><a href="overworld-howto-event.html"><span class="CYF"></span> How to create an event</a></li>
+                    <li><a href="overworld-howto-animevent.html"><span class="CYF"></span> How to animate an event</a></li>
+                    <li><a href="overworld-howto-shop.html"><span class="CYF"></span> How to create a shop</a></li>
+                    <li><a href="overworld-object-general.html"><span class="CYF"></span> The General Object</a></li>
+                    <li><a href="overworld-object-event.html"><span class="CYF"></span> The Event Object</a></li>
+                    <li><a href="overworld-object-player.html"><span class="CYF"></span> The Player Object</a></li>
+                    <li><a href="overworld-object-screen.html"><span class="CYF"></span> The Screen Object</a></li>
+                    <li><a href="overworld-object-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
+                    <li><a href="overworld-object-map.html"><span class="CYF"></span> The Map Object</a></li>
+                <li class="li-header">Resources</li>
+                    <li><a href="../media/dialogoptions.png">Dialog bubble names</a></li>
+            </ul>
+        </nav>
+    </div>
+    <!--tabs'n'shit-->
+    <div class="tab-content col-md-10">
+        <div class="tab-pane active text-style" id="api-projectile">
+            <h2>Projectile management</h2><br><br>
+            <p>Projectile management is, starting from 0.2.0, available from both the encounter and the wave scripts. As
+                a result it is now in its own section.</p>
+            <p>
+                <br><span class="function"><span class="CYF"></span>CreateProjectileLayer(name, relatedTag = "", before = false) [E/W]</span>
+                Create a projectile layer where you'll be able to put projectiles in. In order to create it, though,
+                you must mention <i>another</i> projectile layer in <span class="term">relatedTag</span> - and your new layer will be created
+                below that layer.<br>If <span class="term">before</span> is true, it'll be created before (above) that layer.<br>
+                There is one basis layer: <span class="term">""</span> = The normal bullet layer.
+            </p>
+
+            <p>
+                <br><span class="function">CreateProjectile(spritename, initial_x, initial_y,<span class="CYF"></span> layer = "") returns Bullet [E/W]</span>
+                Creates a bullet that you can store and modify, with its spawn position relative to the center of the
+                arena. The hitbox of the bullet is a rectangle around the sprite, unless you use CYF's PP mode.<br>
+                <span class="CYF"></span> You can specify a layer if you want - otherwise, the bullet will be in the normal bullet layer.
+            </p>
+
+            <p>
+                <br><span class="function">CreateProjectileAbs(spritename, initial_x, initial_y, layer = "") returns Bullet [E/W]</span>
+                Same as <span class="term">CreateProjectile</span>, but the bullet's spawn position is relative to the bottom left of the screen instead of 
+                the arena's center. The hitbox of the bullet is a rectangle around the sprite, unless you use CYF's PP mode.<br>
+                <span class="CYF"></span> You can specify a layer if you want - otherwise, the bullet will be in the normal bullet layer.
+            </p>
+
+            <p>
+                <br><span class="function">The Bullet object</span>
+                This is what you use to move around the bullet and store values in it. You can store a bunch of bullets in a table
+                and modify them. The functions and variables you can use on a Bullet are as follows.</p>
+            <ul>
+                <li><span class="term">Bullet.sprite</span> - the Bullet's sprite component. See the
+                    <span class="ref">Sprites &amp; Animation</span> section for usage details.
+                    <br>NOTE: In 0.2.1a, modifying the sprite does not change the bullet's hitbox yet; it's always
+                    the original square of the bullet when it was created.
+                    <br><span class="CYF"></span> But, in CYF, changing the bullet's sprite <i>does</i> modify the bullet's hitbox!
+                </li><br>
+                <li><span class="term">Bullet.x</span> (readonly) - The X position of this bullet, relative to the arena's center. A bullet at
+                    <span class="term">x=0</span> and <span class="term">y=0</span> will be at the center of the arena.
+                </li><br>
+                <li><span class="term">Bullet.y</span> (readonly) - The Y position of this bullet, relative to the arena's center.</li><br>
+                <li><span class="term">Bullet.absx</span> (readonly) - The X position of this bullet, relative to the bottom left corner of the
+                    screen.
+                </li><br>
+                <li><span class="term">Bullet.absy</span> (readonly) - The Y position of this bullet, relative to the bottom left corner of the
+                    screen.
+                </li><br>
+                <li><span class="CYF"></span> <span class="term">Bullet.ppcollision</span> - Whether the bullet uses Pixel-Perfect collision.
+                    If this is true, the bullet will use the Pixel-Perfect Collision system. I highly recommend for you to see
+                    the <span class="ref">Pixel-Perfect Collision System</span> section if you want to use this.
+                </li><br>
+                <li><span class="CYF"></span> <span class="term">Bullet.ppchanged</span> - Determines if the collision
+                    system of the bullet has been set. True if it was, false otherwise.
+                </li><br>
+                <li><span class="CYF"></span> <span class="term">Bullet.layer</span> - The bullet layer that the bullet is on.
+                </li><br>
+                <li><span class="term">Bullet.isactive</span> (readonly) - Checks if the bullet is still active. If the bullet has been
+                    removed, this will be false; otherwise, it will be true.
+                </li><br>
+                <li><span class="term">Bullet.Move(x, y)</span> - Move this bullet <span class="term">x</span> pixels to the right and
+                    <span class="term">y</span> pixels up. A negative <span class="term">x </span>will move it to the left, and a negative
+                    <span class="term">y</span> will move it downwards.
+<br><span class="CYF"></span> <span style="color:#ff0000;">DEPRECATED IN CYF - USE <span class="term">Bullet.sprite.Move</span> INSTEAD</span>
+                </li><br>
+                <li><span class="term">Bullet.MoveTo(x, y)</span> - Move this bullet to this position immediately, relative to the arena's
+                    center.
+<br><span class="CYF"></span> <span style="color:#ff0000;">DEPRECATED IN CYF - USE <span class="term">Bullet.sprite.MoveTo</span> INSTEAD</span>
+                </li><br>
+                <li><span class="term">Bullet.MoveToAbs(x, y)</span> - Move this bullet to this position immediately, relative to the bottom left
+                    corner of the screen.
+<br><span class="CYF"></span> <span style="color:#ff0000;">DEPRECATED IN CYF - USE <span class="term">Bullet.sprite.MoveToAbs</span> INSTEAD</span>
+                </li><br>
+                <li><span class="term">Bullet.Remove()</span> - destroys this bullet. You can continue retrieving its <span class="term">x</span>, 
+                    <span class="term">y</span>, <span class="term">absx</span> and <span class="term">absy</span>
+                    properties. Trying to move a removed bullet will give you a Lua error. If you're not sure if your
+                    bullet still exists, check <span class="term">Bullet.isactive</span> first.
+                </li><br>
+                <li><span class="term">Bullet.SetVar(your_variable_name, value)</span> - Set a variable on this bullet that you can retrieve with
+                    <span class="term">Bullet.GetVar(your_variable_name)</span>. Similar in use to <span class="term">SetGlobal()</span> - but
+                    you can use this to store specific variables on a per-bullet basis.
+                </li><br>
+                <li><span class="term">Bullet.GetVar(your_variable_name)</span> - Get a variable that you previously set using
+                    <span class="term">Bullet.SetVar()</span>.
+                </li><br>
+                <li><span class="term">Bullet.SendToTop()</span> - Moves this bullet on top of all currently existing projectiles. Note that newly
+                    spawned projectiles are always on top by default; this function is mostly to move existing bullets
+                    to the top.
+                </li><br>
+                <li><span class="term">Bullet.SendToBottom()</span> - Moves this bullet below all currently existing projectiles.</li><br>
+                <li><span class="CYF"></span> <span class="term">Bullet.ResetCollisionSystem()</span> - Resets the collision system of the bullet to the 
+                    default one.</li><br>
+                <li><span class="CYF"></span> <span class="term">Bullet.isColliding()</span> - Returns true if the player is colliding with the bullet. Will 
+                    use PP (pixel-perfect collisions) if the bullet has PP enabled.</li><br>
+                <li><span class="CYF"></span> <span class="term">Bullet.isPersistent</span> - If you're not on retrocompatibility mode, then this
+                    will prevent a bullet from being automatically removed when a wave ends.</li><br>
+            </ul>
+            <p>Here is an example of a bullet that chases you pretty fast, but slows down as it gets closer. You have to
+                keep moving to dodge it. This is a fairly basic example that makes use of the Player object.</p>
+            <div class="code-container">
+<pre class="brush: lua;">oursprite = "hOI!!!!"
+--Create a new bullet, starting in the upper right corner.
+chasingbullet = CreateProjectile(oursprite, Arena.width/2, Arena.height/2)
+--Set initial speed of 0 in both directions.
+chasingbullet.SetVar('xspeed', 0)
+chasingbullet.SetVar('yspeed', 0)
+
+function Update()
+    -- Get the x/y difference between the player and bullet
+    local xdifference = Player.x - chasingbullet.x
+    local ydifference = Player.y - chasingbullet.y
+    -- We create a new speed by first halving the original speed
+    -- Then we add a small fraction of the position difference between the player and bullet.
+    -- The result is a bullet that moves faster as it's further away, and slower when it's closer.
+    -- The value we're dividing by is experimental. Experimenting with numbers is essential!
+    local xspeed = chasingbullet.GetVar('xspeed') / 2 + xdifference / 100
+    local yspeed = chasingbullet.GetVar('yspeed') / 2 + ydifference / 100
+    -- Now move the bullet...
+    chasingbullet.Move(xspeed, yspeed)
+    -- ...and store our new speeds.
+    chasingbullet.SetVar('xspeed', xspeed)
+    chasingbullet.SetVar('yspeed', yspeed)
+end
+</pre>
+            </div>
+            <p>Below is an example of a fully scripted Wave using most of these functions. It will spawn a projectile
+                above the arena (assuming a width/height of 155/130), give it a random speed in the X direction, and
+                drop it downwards. If it hits the bottom border of the arena, it'll bounce back up. Otherwise it'll
+                continue falling off the screen.</p>
+            <div class="code-container">
+<pre class="brush: lua;">spawntimer = 0
+bullets = {}
+
+-- This happens every frame while you're defending. --
+function Update()
+    spawntimer = spawntimer + 1 --Add 1 to the counter every frame
+
+    -- This part takes care of bullet spawning. --
+    if spawntimer%30 == 0 then  --This happens every 30 frames.
+        local posx = 30 - math.random(60) --Set a random X position between -30 and 30
+        local posy = 65 --and set the Y position to 65, on the top edge of the arena.
+        local bullet = CreateProjectile('hOI!!!!', posx, posy) -- Create projectile with sprite hOI!!!!.png
+        bullet.SetVar('velx', 1 - 2*math.random()) -- We'll use this for horizontal speed. Random between -1/1
+        bullet.SetVar('vely', 0) -- We'll use this for fall speed. We're starting without downward movement.
+        table.insert(bullets, bullet) -- Add this new Bullet object to the bullets table up there.
+    end
+
+    -- This part updates every bullet in the bullets table. --
+    for i=1,#bullets do -- #bullets in Lua means 'length of bullets table'.
+        local bullet = bullets[i] -- For convenience, so we don't have to use bullets[i]
+        local velx = bullet.GetVar('velx') -- Get the X/Y velocity we just set
+        local vely = bullet.GetVar('vely')
+        local newposx = bullet.x + velx -- New position will be old position + velocity
+        local newposy = bullet.y + vely
+        if(bullet.x &gt; -Arena.width/2 and bullet.x &lt; Arena.width/2) then -- Are we inside the arena (horizontally)?
+            if(bullet.y &lt; -Arena.height/2 + 8) then -- And did we go past the bottom edge?
+                bullet.MoveTo(bullet.x, -Arena.height/2 + 8) -- Don't move it past the edge!
+                -- Note the +8; I know the bullet sprite I'm using is 16x16.
+                -- Without adding 8 it'll be inside the edge.
+                vely = 4 --reverse bounce direction
+            end
+        end
+        vely = vely - 0.04 -- Apply gravity
+        bullet.MoveTo(newposx, newposy) -- and finally, move our bullet
+        bullet.SetVar('vely', vely) -- and store our new fall speed into the bullet again.
+    end
+end </pre>
+            </div>
+
+            <p>
+                <br><span class="function">OnHit(bullet)</span>
+                Every time a bullet collides with a player, this function gets called on the script that created the
+                projectile. The bullet object in this function can be modified if you feel like it. For more information
+                on the bullet object, see the documentation above.<br>
+                <br>
+                If you implement this function in your script, you have to define manually what should happen after
+                bullet collision. This is what allows you to create orange, cyan and green projectiles, and much much
+                more. If you don't implement this function in your wave script, it'll stick to the default of dealing 3
+                damage on hit. Below are multiple examples of how to use this function.</p>
+            <div class="code-container">
+  <pre class="brush:lua;">--Defining your own damage for this wave
+function OnHit(bullet)
+    Player.Hurt(10)
+end
+ 
+--Replicating cyan bullet functionality
+function OnHit(bullet)
+    if Player.isMoving then
+        Player.Hurt(5)
+    end
+end
+
+--Replicating orange bullet functionality; opposite condition of cyan
+function OnHit(bullet)
+    if not Player.isMoving then
+        Player.Hurt(5)
+    end
+end
+
+--Replicating green bullet functionality
+function OnHit(bullet)
+    Player.Heal(1)
+    bullet.Remove()
+end
+</pre>
+            </div>
+        </div>
+		
+		<div class="tab-pane text-style" id="mercy">
+            <h2 style="text-decoration: none; line-height:50px;">
+                * YOU WON!<br>
+                * You earned 0 EXP and 0 gold.<br>
+                * also the nav menu is broken now
+            </h2><br>
+        </div>
+	</div>
+</div>
+
+<div class="container">
+    <div class="col-xs-3"><img class="centerbt black" alt="Undertale fake button" src="../img/fightbt_0.png" height="42">
+    </div>
+    <div class="col-xs-3"><img class="centerbt black" alt="Undertale fake button" src="../img/actbt_0.png" height="42">
+    </div>
+    <div class="col-xs-3"><img class="centerbt black" alt="Undertale fake button" src="../img/itembt_0.png" height="42">
+    </div>
+    <div class="col-xs-3"><a href="#mercy" data-toggle="tab"><img class="centerbt black" alt="Undertale fake button"
+                                                                  src="../img/mercybt_0.png" height="42"></a>
+    </div>
+</div>
+<br>
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="../js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../js/show_hide_comments.js"></script>
+</body>
+</html>

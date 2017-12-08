@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<!--
+since you're here anyway: there's a small easter egg on the text commands page but it's probably not worth finding, sorry
+you may notice this page's code is garbage: i'm not a web designer! ;-;
+it's w3c valid, at least
+-->
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="favicon.ico">
+
+    <title>CYF Documentation - Sprites &amp; Animation</title>
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="../css/themesidebar.css" rel="stylesheet">
+    <link href="../css/shThemeRDark.css" rel="stylesheet">
+
+    <!-- Syntax highlighting -->
+    <script type="text/javascript" src="../js/shCore.js"></script>
+    <script type="text/javascript" src="../js/shBrushLua.js"></script>
+    <script type="text/javascript">SyntaxHighlighter.all();</script>
+</head>
+<body>
+<img src="../img/bg2.png" alt="Undertale background" class="backimg">
+<div class="container arena black">
+    <div class="col-md-2">
+        <!--navigation-->
+        <nav class="nav-sidebar">
+            <ul class="nav tabs">
+                <li class="li-header">Basics</li>
+                    <li><a href="../documentation.html">Welcome</a></li>
+                    <li><a href="howtoread.html">How to read this documentation</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li><a href="controls.html">Controls</a></li>
+                    <li><a href="basic.html">Basic setup</a></li>
+                    <li><a href="variables.html">Special Variables</a></li>
+                    <li><a href="terms.html">Terminology</a></li>
+                <li class="li-header">API</li>
+                    <li><a href="api-text.html">Text commands</a></li>
+                    <li><a href="api-events.html">Game events</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li class="li-indent">Functions &amp; Objects:</li>
+                        <li class="li-indent"><a href="api-functions-main.html">Misc. Functions</a></li>
+                        <li class="li-indent"><a href="api-functions-player.html">The Player Object</a></li>
+                        <li class="li-indent"><a href="api-functions-script.html">The Script Object</a></li>
+                        <li class="li-indent"><a href="api-functions-audio.html">The Audio Object</a></li>
+                        <li class="li-indent"><a href="api-functions-newaudio.html"><span class="CYF"></span> The NewAudio Object</a></li>
+                        <li class="li-indent"><a href="api-functions-input.html">The Input Object</a></li>
+						<li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
+                        <li class="li-indent"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
+                        <li class="li-indent"><a href="api-functions-waves.html">Wave Scripts</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li><a href="api-projectile.html">Projectile management</a></li>
+                    <li style="margin-left:5px;">> Sprites &amp; Animation <</li>
+                    <li><a href="api-keys.html"><span class="CYF"></span> Key List</a></li>
+                <li class="li-header">Create Your Frisk's new features</li>     
+                    <li><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory System</a></li>
+                    <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
+                    <li><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
+				<li class="li-header">Overworld</li>
+                    <li><a href="overworld.html"><span class="CYF"></span> Basics</a></li>
+                    <li><a href="overworld-howto-map.html"><span class="CYF"></span> How to create a map</a></li>
+                    <li><a href="overworld-howto-event.html"><span class="CYF"></span> How to create an event</a></li>
+                    <li><a href="overworld-howto-animevent.html"><span class="CYF"></span> How to animate an event</a></li>
+                    <li><a href="overworld-howto-shop.html"><span class="CYF"></span> How to create a shop</a></li>
+                    <li><a href="overworld-object-general.html"><span class="CYF"></span> The General Object</a></li>
+                    <li><a href="overworld-object-event.html"><span class="CYF"></span> The Event Object</a></li>
+                    <li><a href="overworld-object-player.html"><span class="CYF"></span> The Player Object</a></li>
+                    <li><a href="overworld-object-screen.html"><span class="CYF"></span> The Screen Object</a></li>
+                    <li><a href="overworld-object-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
+                    <li><a href="overworld-object-map.html"><span class="CYF"></span> The Map Object</a></li>
+                <li class="li-header">Resources</li>
+                    <li><a href="../media/dialogoptions.png">Dialog bubble names</a></li>
+            </ul>
+        </nav>
+    </div>
+    <!--tabs'n'shit-->
+    <div class="tab-content col-md-10">
+        <div class="tab-pane active text-style" id="api-animation">
+            <h2>Sprites &amp; Animation</h2><br><br>
+            <p>Projectile management is, starting from 0.2.0, available from both the encounter and the wave scripts. As
+                a result it is now in its own section.</p>
+            <p>
+                <br><span class="function"><span class="CYF"></span> CreateLayer(name, relatedTag = "BasisNewest", before = false) [E/W]</span>
+                Create a layer where you'll be able to put sprites. You'll choose another layer to create it, and it'll be
+                created after the selected layer. If <span class="term">before</span> is true, it'll be created before this layer.<br>
+                Base layers:
+                <ul>
+                    <li><span class="term">"Bottom"</span>: Under everything, even the background.</li><br>
+                    <li><span class="term">"BelowUI"</span>: Above the background.</li><br>
+                    <li><span class="term">"BelowArena"</span>: Above the background and the UI.</li><br>
+                    <li><span class="term">"BelowPlayer"</span>: Above the background, the UI and the Arena.</li><br>
+                    <li><span class="term">"BelowBullet"</span>: Above the background, the UI, the Arena and the Player.</li><br>
+                    <li><span class="term">"Top"</span>: Above everything.</li><br>
+                </ul>
+            </p>
+            
+            <p>
+                <br><span class="function">CreateSprite(spritename, <span class="CYF"></span> layer = "BelowArena") returns Sprite [E/W]</span>
+                Creates a sprite in the far bottom left of the screen (at 0, 0) that you can modify in many ways.<br>
+                <span class="CYF"></span> You can add a layer if you want - otherwise, the sprite will be below the arena.
+            </p>
+
+            <p>
+                <br><span class="function">The Sprite object</span>
+                The Sprite object has many controls intended for animation. There is a working intermediate example
+                included in the Examples folder.</p>
+            <ul>
+                <li><span class="CYF"></span><span class="term">sprite.spritename</span> (readonly) - Returns the name of the sprite used by this 
+                sprite from the <span class="term">Sprites/</span> folder.</li><br>
+                <li><span class="term">sprite.x</span> - horizontal position of sprite relative to bottom left of screen, measured from its
+                    pivot/anchor point (center by default). If parented, x position is relative to the parent.
+                </li><br>
+                <li><span class="term">sprite.y</span> - vertical position of sprite relative to bottom left of screen, measured from its
+                    pivot/anchor point (center by default). If parented, y position is relative to the parent.
+                </li><br>
+                <li><span class="CYF"></span><span class="term">sprite.z</span> - layering position of sprite relative to bottom left of screen, measured from its
+                    pivot/anchor point (center by default). If parented, z position is relative to the parent.<br><i>Only applies to the overworld.</i> 
+                </li><br>
+                <li><span class="term">sprite.absx</span> - horizontal position of sprite relative to bottom left of screen, ignoring its
+                    pivot/anchor point and all parents.
+                </li><br>
+                <li><span class="term">sprite.absy</span> - vertical position of sprite relative to bottom left of screen, ignoring its
+                    pivot/anchor point and all parents.
+                </li><br>
+                <li><span class="CYF"></span><span class="term">sprite.absz</span> - layering position of sprite relative to bottom left of screen, ignoring its
+                    pivot/anchor point and all parents.<br><i>Only applies to the overworld.</i> 
+                </li><br>
+                <li><span class="term">sprite.xscale</span> - horizontal scaling of sprite (1.0 by default). 2.0 is twice as large, 0.5 half as
+                    large.
+                </li><br>
+                <li><span class="term">sprite.yscale</span> - vertical scaling of sprite (1.0 by default). 2.0 is twice as large, 0.5 half as
+                    large.
+                </li><br>
+                <li><span class="CYF"></span><span class="term">sprite.isactive</span> (readonly) - In retromode, this is <i>true</i> if a sprite has been 
+                removed and <i>false</i> otherwise. If <i>not</i> in retromode, this is <i>false</i> if a sprite has been removed and <i>true</i>
+                otherwise.<br></li><br>
+                <li><span class="term">sprite.width</span> (readonly) - width of this sprite's image in pixels. This never changes until the
+                    sprite itself is swapped.
+                </li><br>
+                <li><span class="term">sprite.height</span> (readonly) - height of this sprite's image in pixels. This never changes until the
+                    sprite itself is swapped.
+                </li><br>
+                <li><span class="CYF"></span> <span class="term">sprite.animcomplete</span> - if the sprite has started an animation, this tells you if 
+                    the animation is complete.<br>
+                    If no new animation has started yet, if the loop mode is <span class="term">LOOP</span> or if the animation isn't finished, this will be 
+                    false. Otherwise, it will be true.</li><br>
+                <li><span class="CYF"></span> <span class="term">sprite.loopmode</span> - sets the loop mode of <span class="term">SetAnimation</span> 
+                    functions launched after this command. Can be:
+                    <ul>
+                        <li><span class="term">LOOP</span> - The default mode: when the animation is finished, it plays again. <span class="term">animcomplete
+                            </span> is always true with this mode.</li><br>
+                        <li><span class="term">ONESHOT</span> - Plays the animation once, and keeps the last frame of the animation.</li><br>
+                        <li><span class="term">ONESHOTEMPTY</span> - Same as <span class="term">ONESHOT</span>, except that the last frame will be an empty 
+                            sprite.</li><br>
+                    </ul></li><br>
+                <li><span class="term">sprite.color</span> - get or set the coloration of the sprite, as a table of 3 or 4 values from 0 to 1.<br>
+                    For example, <span class="term">sprite.color = {1.0, 0.0, 0.0}</span> colors the sprite red. This actually overlays the sprite's 
+                    original color, so if you want full control over the color, make sure your sprite is white. <i>Black areas are not affected by 
+                    coloration.</i><br><span class="CYF"></span>: The 4th value is the alpha (transparency) of the sprite.
+                </li><br>
+                <li><span class="CYF"></span> <span class="term">sprite.color32</span> - get or set the coloration of the sprite, as a table of 3 or 4 
+                    values from 0 to 255.
+                    <br>For example, <span class="term">sprite.color32 = {255, 0, 0}</span> colors the sprite red. This actually overlays the sprite's 
+                    original color, so if you want full control over the color, make sure your sprite is white. <i>Black areas are not affected by
+                    coloration.</i><br>The 4th value is the alpha (transparency) of the sprite.
+                </li><br>
+                <li><span class="term">sprite.alpha</span> - gets or sets the sprite's transparency, as a value from 0 to 1.</li><br>
+                <li><span class="CYF"></span> <span class="term">sprite.alpha32</span> - gets or sets the sprite's transparency, as a vlue from 0 to 255.
+                </li><br>
+                <li><span class="term">sprite.rotation</span> - get or set sprite rotation, in degrees. It's clamped between 0 and 360, so if you
+                    change it to 365 it becomes 5.
+                </li><br>
+                <li><span class="CYF"></span> <span class="term">sprite.layer</span> - the current layer of the sprite. You can set it, but if the layer 
+                doesn't exists, it does nothing.<br>Default: <span class="term">"BelowArena"</span></li><br>
+                <li><span class="term">sprite.Set("new_sprite")</span> - change the sprite's image. It retains its scaling and rotation. If you
+                    have an animation running with <span class="term">SetAnimation</span>, the animation will override your sprite change.
+                </li><br>
+                <li><span class="term">sprite.SetParent(other_sprite_object)</span> - parents <span class="term">sprite</span> to <span class="term">
+                other_sprite_object</span>. This will make the original sprite move along with the object it's parented to.
+                </li><br>
+                <li><span class="term">sprite.SetPivot(x, y)</span> - changes the point the sprite rotates/scales around; (0,0) is bottom left of
+                    sprite, (1,1) is top right. You can have values outside of the 0-1 range, too.</li><br>
+                <li><span class="term">sprite.SetAnchor(x, y)</span> - change the point your sprite anchors to when moving. Mainly noticeable when
+                    rescaling the parent sprite, and you want to have this sprite stick to a certain edge of it. x/y
+                    should be in 0-1 range.</li><br>
+                <li><span class="term">sprite.MoveTo(x, y)</span> - same as setting x and y simultaneously.</li><br>
+                <li><span class="term">sprite.MoveToAbs(x, y)</span> - used to move a sprite to an absolute screen position, regardless of parent
+                    settings. The sprite itself will remain parented.</li><br>
+                <li><span class="term">sprite.Scale(xscale, yscale)</span> - same as setting xscale and yscale simultaneously</li><br>
+                <li><span class="term">sprite.SetAnimation(sprite_table)</span> to do frame-by-frame animation at 30FPS. Example:
+                    <span class="term">sprite.SetAnimation({"sans_head1", "sans_head2", "sans_head3"})</span>
+                    <br><span class="CYF"></span> In CYF, it can use sprites with different sizes!
+                </li><br>
+                <li><span class="term">sprite.SetAnimation(sprite_table, time_per_frame)</span> Performs frame-by-frame animation with your own time
+                    between frames, in seconds. If <span class="term">time_per_frame</span> is 1, it takes 1 second to move to the next sprite.
+                    <br><span class="CYF"></span> Now it can use sprites with different sizes!
+                </li><br>
+                <li><span class="term">sprite.StopAnimation()</span> - stop the frame-by-frame animation if it was running. Also changes back to
+                    the sprite it had before the animation, or whenever you last called <span class="term">sprite.Set()</span>.
+                </li><br>
+                <li><span class="term">sprite.SendToTop()</span> - sends this sprite to the top of its layer's hierarchy. If a sprite has 5
+                    children, for instance, you can use this to rearrange them internally. However, child sprites will
+                    always appear on top of their parents, regardless of this function being called.
+                </li><br>
+                <li><span class="term">sprite.SendToBottom()</span> sends this sprite to the bottom of its layer's hierarchy. Similar rules apply
+                    as with <span class="term">SendToTop()</span>.
+                </li><br>
+                <li><span class="CYF"></span> <span class="term"> sprite.MoveBelow(other_sprite_object)</span> - if the two sprites have the same parent, 
+                    it'll move this sprite just below the other sprite.
+                </li><br>
+                <li><span class="CYF"></span> <span class="term"> sprite.MoveAbove(other_sprite_object)</span> - if the two sprites have the same parent, 
+                    it'll move this sprite just above the other sprite.
+                </li><br>
+                <li><span class="term">sprite.Remove()</span> - removes the sprite. Calling anything other than <span class="term">isactive</span> after 
+                    this will give you an error.
+                </li><br>
+                <li><span class="CYF"></span> <span class="term">sprite.Dust(playDust = true, removeObject = false)</span> - Turns a sprite into dust, just
+                    like what happens in Undertale when an enemy is killed. Will remove a bullet or sprite if <span class="term">removeObject</span> is set 
+                    to true. Set <span class="term">playSound</span> to false to deactivate the dust sound.
+                </li><br>
+
+            </ul>
+            <p>The animation script used in the example is shown below for reference.</p>
+            <div class="code-container">
+<pre class="brush: lua;">-- First, we can create the torso, legs and head.
+sanstorso = CreateSprite("sans/sanstorso")
+sanslegs = CreateSprite("sans/sanslegs")
+sanshead = CreateSprite("sans/sanshead1")
+
+--We parent the torso to the legs, so when you move the legs, the torso moves too.
+--We do the same for attaching the head to the torso.
+sanstorso.SetParent(sanslegs)
+sanshead.SetParent(sanstorso)
+
+--Now we adjust the height for the individual parts so they look more like a skeleton and less like a pile of bones.
+sanslegs.y = 240
+sanstorso.y = -5 --The torso's height is relative to the legs they're parented to.
+sanshead.y = 40 --The head's height is relative to the torso it's parented to.
+
+--We set the torso's pivot point to halfway horizontally, and on the bottom vertically,
+--so we can rotate it around the bottom instead of the center.
+sanstorso.SetPivot(0.5, 0)
+
+--We set the torso's anchor point to the top center. Because the legs are pivoted on the bottom (so rescaling them only makes them move up),
+--we want the torso to move along upwards with them.
+sanstorso.SetAnchor(0.5, 1)
+sanslegs.SetPivot(0.5, 0)
+
+--Finally, we do some frame-by-frame animation just to show off the feature. You put in a list of sprites,
+--and the time you want a sprite change to take. In this case, it's 1/2 of a second.
+sanshead.SetAnimation({"sans/sanshead1", "sans/sanshead2", "sans/sanshead3"}, 1/2)
+
+function AnimateSans()
+    sanslegs.Scale(1, 1+0.1*math.sin(Time.time*2))
+    sanshead.MoveTo(2*math.sin(Time.time), 40 + 2*math.cos(Time.time))
+    sanshead.rotation = 10*math.sin(Time.time + 1)
+    sanstorso.rotation = 10*math.sin(Time.time + 2)
+end
+</pre>
+            </div>
+
+        </div>
+		
+		<div class="tab-pane text-style" id="mercy">
+            <h2 style="text-decoration: none; line-height:50px;">
+                * YOU WON!<br>
+                * You earned 0 EXP and 0 gold.<br>
+                * also the nav menu is broken now
+            </h2><br>
+        </div>
+	</div>
+</div>
+
+<div class="container">
+    <div class="col-xs-3"><img class="centerbt black" alt="Undertale fake button" src="../img/fightbt_0.png" height="42">
+    </div>
+    <div class="col-xs-3"><img class="centerbt black" alt="Undertale fake button" src="../img/actbt_0.png" height="42">
+    </div>
+    <div class="col-xs-3"><img class="centerbt black" alt="Undertale fake button" src="../img/itembt_0.png" height="42">
+    </div>
+    <div class="col-xs-3"><a href="#mercy" data-toggle="tab"><img class="centerbt black" alt="Undertale fake button"
+                                                                  src="../img/mercybt_0.png" height="42"></a>
+    </div>
+</div>
+<br>
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="../js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../js/show_hide_comments.js"></script>
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<!--
+since you're here anyway: there's a small easter egg on the text commands page but it's probably not worth finding, sorry
+you may notice this page's code is garbage: i'm not a web designer! ;-;
+it's w3c valid, at least
+-->
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="favicon.ico">
+
+    <title>CYF Documentation - The Event Object</title>
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="../css/themesidebar.css" rel="stylesheet">
+    <link href="../css/shThemeRDark.css" rel="stylesheet">
+
+    <!-- Syntax highlighting -->
+    <script type="text/javascript" src="../js/shCore.js"></script>
+    <script type="text/javascript" src="../js/shBrushLua.js"></script>
+    <script type="text/javascript">SyntaxHighlighter.all();</script>
+</head>
+<body>
+<img src="../img/bg2.png" alt="Undertale background" class="backimg">
+<div class="container arena black">
+    <div class="col-md-2">
+        <!--navigation-->
+        <nav class="nav-sidebar">
+            <ul class="nav tabs">
+                <li class="li-header">Basics</li>
+                    <li><a href="../documentation.html">Welcome</a></li>
+                    <li><a href="howtoread.html">How to read this documentation</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li><a href="controls.html">Controls</a></li>
+                    <li><a href="basic.html">Basic setup</a></li>
+                    <li><a href="variables.html">Special Variables</a></li>
+                    <li><a href="terms.html">Terminology</a></li>
+                <li class="li-header">API</li>
+                    <li><a href="api-text.html">Text commands</a></li>
+                    <li><a href="api-events.html">Game events</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li class="li-indent">Functions &amp; Objects:</li>
+                        <li class="li-indent"><a href="api-functions-main.html">Misc. Functions</a></li>
+                        <li class="li-indent"><a href="api-functions-player.html">The Player Object</a></li>
+                        <li class="li-indent"><a href="api-functions-script.html">The Script Object</a></li>
+                        <li class="li-indent"><a href="api-functions-audio.html">The Audio Object</a></li>
+                        <li class="li-indent"><a href="api-functions-newaudio.html"><span class="CYF"></span> The NewAudio Object</a></li>
+                        <li class="li-indent"><a href="api-functions-input.html">The Input Object</a></li>
+						<li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
+                        <li class="li-indent"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
+                        <li class="li-indent"><a href="api-functions-waves.html">Wave Scripts</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li><a href="api-projectile.html">Projectile management</a></li>
+                    <li><a href="api-animation.html">Sprites &amp; Animation</a></li>
+                    <li><a href="api-keys.html"><span class="CYF"></span> Key List</a></li>
+                <li class="li-header">Create Your Frisk's new features</li>
+                    <li><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory System</a></li>
+                    <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
+                    <li><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
+				<li class="li-header">Overworld</li>
+                    <li><a href="overworld.html"><span class="CYF"></span> Basics</a></li>
+                    <li><a href="overworld-howto-map.html"><span class="CYF"></span> How to create a map</a></li>
+                    <li><a href="overworld-howto-event.html"><span class="CYF"></span> How to create an event</a></li>
+                    <li><a href="overworld-howto-animevent.html"><span class="CYF"></span> How to animate an event</a></li>
+                    <li><a href="overworld-howto-shop.html"><span class="CYF"></span> How to create a shop</a></li>
+                    <li><a href="overworld-object-general.html"><span class="CYF"></span> The General Object</a></li>
+                    <li style="margin-left:5px;">> <span class="CYF"></span> The Event Object <</li>
+                    <li><a href="overworld-object-player.html"><span class="CYF"></span> The Player Object</a></li>
+                    <li><a href="overworld-object-screen.html"><span class="CYF"></span> The Screen Object</a></li>
+                    <li><a href="overworld-object-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
+                    <li><a href="overworld-object-map.html"><span class="CYF"></span> The Map Object</a></li>
+                <li class="li-header">Resources</li>
+                    <li><a href="../media/dialogoptions.png">Dialog bubble names</a></li>
+            </ul>
+        </nav>
+    </div>
+    <!--tabs'n'shit-->
+    <div class="tab-content col-md-10">
+		<div class="tab-pane active text-style" id="overworld-object-event">
+            <h2><span class="CYF"></span>The Overworld: The Event Object</h2><br><br>
+            <p>
+                <br><span class="function">Event.Teleport(string name, number dirX, number dirY)</span>
+                Teleports the given event to a given point in space. The position (dirX and dirY) is computed based off of the bottom left corner of the map.
+            </p>
+            <p>
+                <br><span class="function">Event.MoveToPoint(string name, number dirX, number dirY, bool wallPass = false, bool waitEnd = true)</span>
+                Moves an event to a given point in space. The event's speed will be the speed variable of its <span class="term">EventOW</span> 
+				component, so choose that wisely.<br>
+				Set <span class="term">wallPass</span> to true to ignore any obstacle that the event may encounter while moving.
+				<br>By default, the script will pause until the event has stopped moving. Set <span class="term">waitEnd</span> to false
+				to bypass this and directly continue the script instead.
+            </p>
+            <p>
+                <br><span class="function">Event.SetAnimHeader(string name, string anim)</span>
+                If the event given has a CYFAnimator component, it'll set <span class="term">anim</span> as its anim header.<br>
+                Don't forget that if the anim header is an existing animation, that animation will be launched instead of the component's 
+				normal behaviour.               
+            </p>
+            <p>
+                <br><span class="function">Event.GetAnimHeader(string name)</span>
+                Returns the anim header of the given event, if it has a CYFAnimator event.
+            </p>
+            <p>
+                <br><span class="function">Event.SetDirection(string name, int dir)</span>
+                If the event has a CYFAnimator component, it sets the direction of the event.<br>
+                2 for Down, 4 for Left, 6 for Right and 8 for Up.
+            </p>
+            <p>
+                <br><span class="function">Event.Rotate(string name, float rotateX, float rotateY, float rotateZ, bool anim = true, bool waitEnd = true)</span>
+                This function rotates the event. The Z rotation is the rotation we normally use, while X and Y rotations are 3D rotations.
+                <br>To see some examples of rotation, remove the comment block of the function <span class="term">EventPage4</span> of  
+				<span class="term">Mods/Examples/Lua/Events/EventTest.lua</span>.<br>
+                Set <span class="term">anim</span> to false to disable the animation of the rotation. 
+				<br>By default, the script will pause until the event has stopped rotating. Set <span class="term">waitEnd</span> to false
+				to bypass this and directly continue the script instead.
+            </p>
+            <p>
+                <br><span class="function">Event.Stop()</span>
+                If this function is launched in a normal event, it stops the event instantly.
+                If it's launched in a coroutine event, it'll launch <span class="term">Event.StopCoroutine()</span> instead. If you want to 
+				stop the coroutine instantly, just add <span class="term">return</span> after this function.
+            </p>
+            <p>
+                <br><span class="function">Event.StopCoroutine(string eventName = "thisevent")</span>
+                Stops the coroutine of the given event. Use the string <span class="term">thisevent</span> to stop the coroutine of this event.
+            </p>
+            <p>
+                <br><span class="function">Event.Remove(string name)</span>
+				Remove the given event from the scene. It won't be accessible afterwards until the player exits the scene! 
+                However, if the player comes back, it'll be here again.<br>
+                To permanently remove an event, set its page to -1.
+            </p>
+            <p>
+                <br><span class="function">Event.SetPage(string name, int page)</span>
+				Sets the page of the given event. Set it to -1 to totally remove an event.
+            </p>
+            <p>
+                <br><span class="function">Event.GetPage(string name)</span>
+				Returns the current page of the given event.
+            </p>
+            <p>
+                <br><span class="function">Event.GetSprite(string name)</span>
+				Returns the sprite object of the given event.
+            </p>
+            <p>
+                <br><span class="function">Event.CenterOnCamera(string name, int speed = 5, bool straightLine = false, bool waitEnd = true)</span>
+				Centers the camera on the given event. The camera's speed will be <span class="term">speed</span> pixels per second in each direction, 
+                unless you set <span class="term">straightLine</span> to true. In that case, the camera will follow a line to the center of the event.
+				<br>By default, the script will halt execution until the camera has stopped moving. Set <span class="term">waitEnd</span> to false
+				to bypass this and directly continue the script instead. 
+            </p>
+            <p>
+                <br><span class="function">Event.GetName()</span>
+                Returns the name of the event which is launching this function.
+            </p>
+            <p>
+                <br><span class="function">Event.GetPosition(string name)</span>
+                Returns a table of two values containing the position of the given event.
+            </p>
+            <p>
+                <br><span class="function">Event.IgnoreCollision(string name, bool ignore)</span>
+                Sets the collision mode of the event. If <span class="term">ignore</span> is set to true, 
+				all other events may pass through it normally.<br>
+				Events launched when the player touches them need their collision to be ignored in order to function properly.
+            </p>
+            <p>
+                <br><span class="function">Event.SetSpeed(string name, float speed)</span>
+                Sets the speed of an event.
+            </p>
+        </div>
+		
+		<div class="tab-pane text-style" id="mercy">
+            <h2 style="text-decoration: none; line-height:50px;">
+                * YOU WON!<br>
+                * You earned 0 EXP and 0 gold.<br>
+                * also the nav menu is broken now
+            </h2><br>
+        </div>
+	</div>
+</div>
+
+<div class="container">
+    <div class="col-xs-3"><img class="centerbt black" alt="Undertale fake button" src="../img/fightbt_0.png" height="42">
+    </div>
+    <div class="col-xs-3"><img class="centerbt black" alt="Undertale fake button" src="../img/actbt_0.png" height="42">
+    </div>
+    <div class="col-xs-3"><img class="centerbt black" alt="Undertale fake button" src="../img/itembt_0.png" height="42">
+    </div>
+    <div class="col-xs-3"><a href="#mercy" data-toggle="tab"><img class="centerbt black" alt="Undertale fake button"
+                                                                  src="../img/mercybt_0.png" height="42"></a>
+    </div>
+</div>
+<br>
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="../js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../js/show_hide_comments.js"></script>
+</body>
+</html>

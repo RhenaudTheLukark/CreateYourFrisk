@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<!--
+since you're here anyway: there's a small easter egg on the text commands page but it's probably not worth finding, sorry
+you may notice this page's code is garbage: i'm not a web designer! ;-;
+it's w3c valid, at least
+-->
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="favicon.ico">
+
+    <title>CYF Documentation - Wave Scripts</title>
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="../css/themesidebar.css" rel="stylesheet">
+    <link href="../css/shThemeRDark.css" rel="stylesheet">
+
+    <!-- Syntax highlighting -->
+    <script type="text/javascript" src="../js/shCore.js"></script>
+    <script type="text/javascript" src="../js/shBrushLua.js"></script>
+    <script type="text/javascript">SyntaxHighlighter.all();</script>
+</head>
+<body>
+<img src="../img/bg2.png" alt="Undertale background" class="backimg">
+<div class="container arena black">
+    <div class="col-md-2">
+        <!--navigation-->
+        <nav class="nav-sidebar">
+            <ul class="nav tabs">
+                <li class="li-header">Basics</li>
+                    <li><a href="../documentation.html">Welcome</a></li>
+                    <li><a href="howtoread.html">How to read this documentation</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li><a href="controls.html">Controls</a></li>
+                    <li><a href="basic.html">Basic setup</a></li>
+                    <li><a href="variables.html">Special Variables</a></li>
+                    <li><a href="terms.html">Terminology</a></li>
+                <li class="li-header">API</li>
+                    <li><a href="api-text.html">Text commands</a></li>
+                    <li><a href="api-events.html">Game events</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li class="li-indent">Functions &amp; Objects:</li>
+                        <li class="li-indent"><a href="api-functions-main.html">Misc. Functions</a></li>
+                        <li class="li-indent"><a href="api-functions-player.html">The Player Object</a></li>
+                        <li class="li-indent"><a href="api-functions-script.html">The Script Object</a></li>
+                        <li class="li-indent"><a href="api-functions-audio.html">The Audio Object</a></li>
+                        <li class="li-indent"><a href="api-functions-newaudio.html"><span class="CYF"></span> The NewAudio Object</a></li>
+                        <li class="li-indent"><a href="api-functions-input.html">The Input Object</a></li>
+						<li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
+                        <li class="li-indent"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
+                        <li class="li-indent active" style="margin-left:5px;">> Wave Scripts <</li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li><a href="api-projectile.html">Projectile management</a></li>
+                    <li><a href="api-animation.html">Sprites &amp; Animation</a></li>
+                    <li><a href="api-keys.html"><span class="CYF"></span> Key List</a></li>
+                <li class="li-header">Create Your Frisk's new features</li>     
+                    <li><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory System</a></li>
+                    <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
+                    <li><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
+				<li class="li-header">Overworld</li>
+                    <li><a href="overworld.html"><span class="CYF"></span> Basics</a></li>
+                    <li><a href="overworld-howto-map.html"><span class="CYF"></span> How to create a map</a></li>
+                    <li><a href="overworld-howto-event.html"><span class="CYF"></span> How to create an event</a></li>
+                    <li><a href="overworld-howto-animevent.html"><span class="CYF"></span> How to animate an event</a></li>
+                    <li><a href="overworld-howto-shop.html"><span class="CYF"></span> How to create a shop</a></li>
+                    <li><a href="overworld-object-general.html"><span class="CYF"></span> The General Object</a></li>
+                    <li><a href="overworld-object-event.html"><span class="CYF"></span> The Event Object</a></li>
+                    <li><a href="overworld-object-player.html"><span class="CYF"></span> The Player Object</a></li>
+                    <li><a href="overworld-object-screen.html"><span class="CYF"></span> The Screen Object</a></li>
+                    <li><a href="overworld-object-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
+                    <li><a href="overworld-object-map.html"><span class="CYF"></span> The Map Object</a></li>
+                <li class="li-header">Resources</li>
+                    <li><a href="../media/dialogoptions.png">Dialog bubble names</a></li>
+            </ul>
+        </nav>
+    </div>
+    <!--tabs'n'shit-->
+    <div class="tab-content col-md-10">
+        <div class="tab-pane active text-style" id="api-functions-waves">
+            <h3>Wave scripts</h3><br><br>
+            
+            <p>The following section is dedicated exclusively to wave scripts. We'll go over special functions and the
+                arena object. As you can now create projectiles from the encounter as well, information about
+                projectiles and their examples have been moved to the <span class="ref">API - Projectile management</span> section.
+             </p>
+             
+            <p>
+                <br><span class="function">The Arena object [W]</span>
+                You can use this object to obtain information about the arena, resize it or move it.<br>
+                Don't forget that the Arena's position is reset at the end of the wave!
+            </p>
+            
+            <ul>
+                <li><span class="term">Arena.width</span> (readonly) - the width of the arena in pixels, after resizing. Since the reference for
+                    the player and bullets is the arena's center, you can get the left/right side of the arena with
+                    <span class="term">-Arena.width/2</span> and <span class="term">Arena.width/2</span> respectively.
+                </li><br>
+                <li><span class="term">Arena.height</span> (readonly) - the height of the arena in pixels, after resizing. Like with width, you
+                    can get the bottom/top with <span class="term">-Arena.height/2</span> and <span class="term">Arena.height/2</span> respectively.
+                </li><br>
+                <li><span class="CYF"></span> <span class="term">Arena.x</span> (readonly) - the x position of the center of the Arena, after resizing.
+                </li><br>
+                <li><span class="CYF"></span> <span class="term">Arena.y</span> (readonly) - the position of the bottom of the Arena, after resizing. To get 
+                that of the center, just do <span class="term">Arena.y + Arena.height/2</span>.
+                </li><br>
+                <li><span class="term">Arena.currentwidth</span> (readonly) - the <i>current</i> width of the arena in pixels. Differs from
+                    <span class="term">width</span> in that it will accurately reflect the arena size in the middle of resizing, too.
+                </li><br>
+                <li><span class="term">Arena.currentheight</span> (readonly) - the <i>current</i> height of the arena in pixels. Differs from
+                    <span class="term">height</span> in that it will accurately reflect the arena size in the middle of resizing, too.</li><br>
+                <li><span class="CYF"></span> <span class="term">Arena.currentx</span> (readonly) - the <i>current</i> x of the arena in pixels. Differs 
+                    from <span class="term">x</span> in that it will accurately reflect the arena position in the middle of moving, too.</li><br>
+                <li><span class="CYF"></span> <span class="term">Arena.currenty</span> (readonly) - the <i>current</i> y of the arena in pixels. Differs 
+                    from <span class="term">y</span> in that it will accurately reflect the arena position in the middle of moving, too.</li><br>
+                <li><span class="CYF"></span> <span class="term">Arena.isresizing</span> (readonly) - Tells you if the Arena is currently being resized.
+                <br><span style="color:#ffffff;text-decoration:underline;text-decoration-color:#ffffff">&lt;0.2.1a&gt;</span>: There's an equivalent of this in 
+                0.2.1a - just use <span class="term">Arena.currentwidth != Arena.width and Arena.currentheight != Arena.height</span>.</li><br>
+                <li><span class="CYF"></span> <span class="term">Arena.ismoving</span> (readonly) - Tells you if the Arena is currently being moved.</li><br>
+                <li><span class="CYF"></span> <span class="term">Arena.ismodifying</span> (readonly) - Returns true if the Arena is being moved <i>or</i> 
+                resized, false otherwise.</li><br>
+                <li><span class="term">Arena.Resize(width, height)</span> - Resizes the arena to the new size. Currently, monsters stay on top of
+                    the arena. This was going to be changed around the animation update.<br><span class="CYF"></span> But, in CYF, you can use
+                    <span class="term">BindToArena</span> to control that!
+                </li><br>
+                <li><span class="term">Arena.ResizeImmediate(width, height)</span> - Resizes the arena instantly, without the animation.</li><br>
+                <li><span class="CYF"></span> <span class="term">Arena.Move(x, y, bool movePlayer = true, bool immediate = false)</span> - Moves the Arena 
+                    based on its current position. Set <span class="term">movePlayer</span> to true if you want the Player to move with the Arena and set
+                    <span class="term">immediate</span> to true if you want to move the Arena immediately.</li><br>
+                <li><span class="CYF"></span> <span class="term">Arena.MoveTo(x, y, bool movePlayer = true, bool immediate = false)</span> - Moves the Arena 
+                    based on the bottom-left corner of the window. Set <span class="term">movePlayer</span> to true if you want the Player to move with the 
+                    Arena and set <span class="term">immediate</span> to true if you want to move the Arena immediately.</li><br>
+                <li><span class="CYF"></span> <span class="term">Arena.MoveAndResize(x, y, width, height, bool movePlayer = true, bool immediate = false)
+                </span> - Moves the Arena based on its current position and resizes it at the same time.<br>
+                    Set <span class="term">movePlayer</span> to true if you want the Player to move with the Arena and set <span class="term">immediate
+                    </span> to true if you want to move the Arena immediately.</li><br>
+                <li><span class="CYF"></span> <span class="term">Arena.MoveToAndResize(x, y, width, height, bool movePlayer = true, bool immediate = false)
+                </span> - Move the Arena based on the bottom-left corner of the window and resizes it at the same time.<br>
+                    Set <span class="term">movePlayer</span> to true if you want the Player to move with the Arena and set <span class="term">immediate
+                    </span> to true if you want to move the Arena immediately.</li><br>
+            </ul>
+
+            <p>
+                <br><span class="function">EndWave() [W]</span>
+                Ends this wave immediately. You can only call this function from the Update function.
+            </p>
+
+            <p>
+                <br><span class="function"><span class="CYF"></span> wavename [W]</span>
+                Returns the name of the wave file, without extension, from the Waves folder.
+            </p>
+        </div>
+		
+		<div class="tab-pane text-style" id="mercy">
+            <h2 style="text-decoration: none; line-height:50px;">
+                * YOU WON!<br>
+                * You earned 0 EXP and 0 gold.<br>
+                * also the nav menu is broken now
+            </h2><br>
+        </div>
+	</div>
+</div>
+
+<div class="container">
+    <div class="col-xs-3"><img class="centerbt black" alt="Undertale fake button" src="../img/fightbt_0.png" height="42">
+    </div>
+    <div class="col-xs-3"><img class="centerbt black" alt="Undertale fake button" src="../img/actbt_0.png" height="42">
+    </div>
+    <div class="col-xs-3"><img class="centerbt black" alt="Undertale fake button" src="../img/itembt_0.png" height="42">
+    </div>
+    <div class="col-xs-3"><a href="#mercy" data-toggle="tab"><img class="centerbt black" alt="Undertale fake button"
+                                                                  src="../img/mercybt_0.png" height="42"></a>
+    </div>
+</div>
+<br>
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="../js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../js/show_hide_comments.js"></script>
+</body>
+</html>

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<!--
+since you're here anyway: there's a small easter egg on the text commands page but it's probably not worth finding, sorry
+you may notice this page's code is garbage: i'm not a web designer! ;-;
+it's w3c valid, at least
+-->
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="favicon.ico">
+
+    <title>CYF Documentation - The Player Object</title>
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="../css/themesidebar.css" rel="stylesheet">
+    <link href="../css/shThemeRDark.css" rel="stylesheet">
+
+    <!-- Syntax highlighting -->
+    <script type="text/javascript" src="../js/shCore.js"></script>
+    <script type="text/javascript" src="../js/shBrushLua.js"></script>
+    <script type="text/javascript">SyntaxHighlighter.all();</script>
+</head>
+<body>
+<img src="../img/bg2.png" alt="Undertale background" class="backimg">
+<div class="container arena black">
+    <div class="col-md-2">
+        <!--navigation-->
+        <nav class="nav-sidebar">
+            <ul class="nav tabs">
+                <li class="li-header">Basics</li>
+                    <li><a href="../documentation.html">Welcome</a></li>
+                    <li><a href="howtoread.html">How to read this documentation</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li><a href="controls.html">Controls</a></li>
+                    <li><a href="basic.html">Basic setup</a></li>
+                    <li><a href="variables.html">Special Variables</a></li>
+                    <li><a href="terms.html">Terminology</a></li>
+                <li class="li-header">API</li>
+                    <li><a href="api-text.html">Text commands</a></li>
+                    <li><a href="api-events.html">Game events</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li class="li-indent">Functions &amp; Objects:</li>
+                        <li class="li-indent"><a href="api-functions-main.html">Misc. Functions</a></li>
+                        <li class="li-indent active" style="margin-left:5px;">> The Player Object <</li>
+                        <li class="li-indent"><a href="api-functions-script.html">The Script Object</a></li>
+                        <li class="li-indent"><a href="api-functions-audio.html">The Audio Object</a></li>
+                        <li class="li-indent"><a href="api-functions-newaudio.html"><span class="CYF"></span> The NewAudio Object</a></li>
+                        <li class="li-indent"><a href="api-functions-input.html">The Input Object</a></li>
+                        <li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
+                        <li class="li-indent"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
+                        <li class="li-indent"><a href="api-functions-waves.html">Wave Scripts</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li><a href="api-projectile.html">Projectile management</a></li>
+                    <li><a href="api-animation.html">Sprites &amp; Animation</a></li>
+                    <li><a href="api-keys.html"><span class="CYF"></span> Key List</a></li>
+                <li class="li-header">Create Your Frisk's new features</li>     
+                    <li><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory System</a></li>
+                    <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
+                    <li><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
+				<li class="li-header">Overworld</li>
+                    <li><a href="overworld.html"><span class="CYF"></span> Basics</a></li>
+                    <li><a href="overworld-howto-map.html"><span class="CYF"></span> How to create a map</a></li>
+                    <li><a href="overworld-howto-event.html"><span class="CYF"></span> How to create an event</a></li>
+                    <li><a href="overworld-howto-animevent.html"><span class="CYF"></span> How to animate an event</a></li>
+                    <li><a href="overworld-howto-shop.html"><span class="CYF"></span> How to create a shop</a></li>
+                    <li><a href="overworld-object-general.html"><span class="CYF"></span> The General Object</a></li>
+                    <li><a href="overworld-object-event.html"><span class="CYF"></span> The Event Object</a></li>
+                    <li><a href="overworld-object-player.html"><span class="CYF"></span> The Player Object</a></li>
+                    <li><a href="overworld-object-screen.html"><span class="CYF"></span> The Screen Object</a></li>
+                    <li><a href="overworld-object-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
+                    <li><a href="overworld-object-map.html"><span class="CYF"></span> The Map Object</a></li>
+                <li class="li-header">Resources</li>
+                    <li><a href="../media/dialogoptions.png">Dialog bubble names</a></li>
+            </ul>
+        </nav>
+    </div>
+    <!--tabs'n'shit-->
+    <div class="tab-content col-md-10">
+        <div class="tab-pane active text-style" id="api-functions-player">
+            <p>
+                <br><span class="function">The Player object [E/M/W]</span>
+                You can use this object to obtain information about the player. Since the player is always 16x16 pixels
+                in Undertale, you can add/subtract 8 from the player's horizontal/vertical position to get the edges of
+                the player's hitbox, if you need that for anything.
+            </p>
+            <ul>
+                <li><span class="term">Player.x</span> (readonly) - gets the X position of the <i>player's center</i> relative to the arena's
+                    center.
+                </li><br>
+                <li><span class="term">Player.y</span> (readonly) - get the Y position of the <i>player's center</i> relative to the arena's
+                    center.
+                </li><br>
+                <li><span class="term">Player.absx</span> (readonly) - get the X position of the <i>player's center</i> relative to the bottom
+                    left corner of the screen.
+                </li><br>
+                <li><span class="term">Player.absy</span> (readonly) - get the Y position of the <i>player's center</i> relative to the bottom
+                    left corner of the screen.
+                </li><br>
+                <li><span class="term">Player.sprite</span> - the Player's soul sprite component. See the <span class="ref">Sprites &amp; Animation</span> 
+                    section for usage details.
+                </li><br>
+                <li><span class="term">Player.hp</span> - get or set the player's current HP. Can't exceed max HP. If set to 0, game over
+                    triggers.<br>
+                    <span class="CYF"></span> * The hp value is now a float, but there can be some problems about accuracy of float values.
+                </li><br>
+                <li><span class="CYF"></span> <span class="term">Player.maxhp</span> (readonly) - returns the player's MaxHP value. <br> 
+                    * The hp value is now a float, but there can be some problems about accuracy of float values.
+                </li><br>
+                <li><span class="CYF"></span> <span class="term">Player.maxhpshift</span> (readonly) - returns the difference between the player's current Max HP and their normal, 
+                unmodified Max HP.
+                <br>* The hp value is now a float, but there can be some problems about accuracy of float values.
+                </li><br>
+                <li><span class="CYF"></span> <span class="term">Player.atk</span> (readonly) - base attack of the player. Depends on the player's level.
+                </li><br>
+                <li><span class="CYF"></span> <span class="term">Player.weapon</span> (readonly) - name of the player's current weapon.
+                </li><br>
+                <li><span class="CYF"></span> <span class="term">Player.weaponatk</span> (readonly) - attack value of the player's current weapon.
+                </li><br>
+                <li><span class="CYF"></span> <span class="term">Player.def</span> (readonly) - base defense of the player. Depends on the player's level.
+                </li><br>
+                <li><span class="CYF"></span> <span class="term">Player.armor</span> (readonly) - name of the player's current armor.
+                </li><br>
+                <li><span class="CYF"></span> <span class="term">Player.armordef</span> (readonly) - defense value of the player's current armor.
+                </li><br>
+                <li><span class="term">Player.name</span> - get or set the player's current name. <br>
+                    <span class="CYF"></span> 9 letters max. "Rhenao" by default.</li><br>
+                <li><span class="term">Player.lv</span> - use this to get or set the player's current level. It can be between 1 and 20. It's 1 by default. 
+                <span class="CYF"></span> 99 max - Player starts with 20HP / 10 ATK and gets 4 HP / 2 ATK per level. Leveling up the player through code 
+                doesn't automatically heal them; you'll have to do this manually.
+                </li><br>
+                <li><span class="CYF"></span> <span class="term">Player.lastenemychosen</span> (readonly) - gets the id of the last chosen enemy in the 
+                ACT/FIGHT menus. -1 at the beginning of a fight.
+                </li><br>
+                <li><span class="CYF"></span> <span class="term">Player.lasthitmultiplier</span> (readonly) - gets the accuracy value from the last time the
+                player was in <span class="term">ATTACKING</span>. Normally, it will be between 0 and 2. It will be -1 if the player missed the attack (and 
+                at the beginning of the battle) and 2.2 if the attack was perfectly precise.
+                </li><br>
+                <li><span class="term">Player.ishurting</span> (readonly) - true if the player's currently blinking due to being hurt, false
+                    otherwise.
+                </li><br>
+                <li><span class="term">Player.ismoving</span> (readonly) - true if the player is currently moving in battle, false otherwise. Will
+                    always be false while not in a wave script. NOTE: This only will change with the default control scheme (see below).
+                </li><br>
+                <li><span class="term">Player.Hurt(damage)</span> - deals damage to the player, and makes them invincible for the default time.
+                </li><br>
+                <li><span class="term">Player.Hurt(damage, invul_time)</span> - deals damage to the player, and makes them invincible for <span class="term">
+                invul_time</span> seconds.
+                </li><br>
+                <li><span class="term">Player.Heal(value)</span> - heals the player for this amount. This is exactly the same as
+                    Player.Hurt(-value, 0). It also plays the healing sound.
+                </li><br>
+                <li><span class="term">Player.SetControlOverride(boolean)</span> - either true or false. Only useable in waves. If true, this will
+                    prevent the player soul from doing its regular movement/keyboard control for the rest of the wave.
+                    Use this if you want to implement your own controls in a wave.
+                </li><br>
+                <li><span class="CYF"></span> <span class="term">Player.Move(x, y, ignoreWalls)</span> - Moves the player soul based on its last position.
+                    If <span class="term">ignoreWalls</span> is false, it will make sure the player doesn't go outside of the arena;
+                    otherwise, it ignores the arena's boundaries. If you want to move the player out of bounds in a wave, you'll
+                    have to call <span class="term">Player.SetControlOverride(true)</span>, as the player's default movement keeps the soul inside
+                    the arena otherwise.
+                </li><br>
+                <li><span class="term">Player.MoveTo(x, y, ignoreWalls)</span> - Moves the player soul to this position relative to the arena's
+                    center. If <span class="term">ignoreWalls</span> is false, it will make sure the player doesn't go outside of the arena;
+                    otherwise, it ignores the arena's boundaries. If you want to move the player out of bounds in a wave, you'll
+                    have to call <span class="term">Player.SetControlOverride(true)</span> as the player's default movement keeps the soul inside
+                    the arena.
+                </li><br>
+                <li><span class="term">Player.MoveToAbs(x, y, ignoreWalls)</span> - Moves the player soul to this position relative to the bottom left
+                    of the screen. If <span class="term">ignoreWalls</span> is false, it will make sure the player doesn't go outside of the arena;
+                    otherwise, it ignores the arena's boundaries. If you want to move the player out of bounds in a wave, you'll
+                    have to call <span class="term">Player.SetControlOverride(true)</span> as the player's default movement keeps the soul inside
+                    the arena.
+                </li><br>
+                <li><span class="CYF"></span> <span class="term">Player.ForceHP(int amount)</span> - Lets you set the player's HP to a number above the 
+                player's Max HP. The REAL maximum is 1.5 times the player's MaxHP.
+                </li><br>
+                <li><span class="CYF"></span> <span class="term">Player.SetMaxHPShift(int shift, float invulnerabilitySeconds = 1.7f, bool set = false,
+                bool canHeal = false)</span> - Lets you set the Player's MaxHP, relative to their normal MaxHP. If the total MaxHP is negative or nil, it
+                    causes a GameOver.<br>
+                    Formula: Player's MaxHP = Basis MaxHP + MaxHP Shift
+                    <ul>
+                        <li><span class="term">shift</span> = The value that will be added to the Max HP. If <span class="term">set</span> is true,
+                        this will be the player's <i>new</i> Max HP.</li><br>
+                        <li><span class="term">invulnerabilitySeconds</span> = The time for which the player will be invulnerable after this operation.
+                        </li><br>
+                        <li><span class="term">set</span> = true if you want to set the Player's MaxHP directly.</li><br>
+                        <li><span class="term">canHeal</span> = true if the player will be able to heal up to this new Max HP value.</li><br>
+                    </ul>
+                </li><br>
+                <li><span class="CYF"></span> <span class="term">Player.SetAttackAnim(table anim, float frequency)</span> - Sets the animation used
+                when attacking an enemy. Use it like <span class="term">sprite.SetAnimation()</span></li><br>
+                <li><span class="CYF"></span> <span class="term">Player.ResetAttackAnim()</span> - Resets the animation of the player's 
+                attack to the default slashing animation.</li><br>
+                <li><span class="CYF"></span> <span class="term">Player.ChangeTarget(int targetNumber)</span> - Changes the target of the Player's attack
+                while in <span class="term">ATTACKING</span>. Does nothing outside of the state <span class="term">ATTACKING</span>.
+                    It should be used in <span class="term">BeforeDamageCalculation()</span> or <span class="term">BeforeDamageValues()</span>.</li><br>
+                <li><span class="CYF"></span> <span class="term">Player.ForceAttack(int enemyID, int damage = normal_damage_values)</span> - Forces an 
+                    attack towards the enemy number <span class="term">enemyID</span>. If you want to, you can choose the attack's damage, too - but 
+                    otherwise, damage will be calculated normally.
+                    <br><span style="color:#aa0000">After using this function, you have to check with <span class="term">Player.CheckDeath</span> to really 
+                    kill enemies that lost all their health this way.</span></li><br>
+                <li><span class="CYF"></span> <span class="term">Player.MultiTarget(table targetIDs = all, table damage = normal_damage_values)</span> - The 
+                    next attack the player executes will attack the enemies contained in <span class="term">targetIDs</span> and deal <span class="term">
+                    damage</span> damage. If you want to, you can choose the attack's damage, too - but otherwise, damage will be calculated normally.
+                    If you put nothing as a parameter, this will attack all enemies with the normal damage calculations.</li><br>
+                <li><span class="CYF"></span> <span class="term">Player.MultiTarget(int damage)</span> - The next attack the player executes will attack all 
+                enemies and deals <span class="term">damage</span> damage.</li><br>
+                <li><span class="CYF"></span> <span class="term">Player.ForceMultiAttack(table targetIDs = all, table damage = normal_damage_values)</span> 
+                    - Forces an attack towards the enemies contained in <span class="term">targetIDs</span> and deals <span class="term">damage
+                    </span> damage. If you want to, you can choose the attack's damage, too - but otherwise, damage will be calculated normally.
+                    If you put nothing as a parameter, this will attack all enemies with the normal damage calculations.
+                    <br><span style="color:#aa0000">After using this function, you have to check with <span class="term">Player.CheckDeath</span> to really 
+                    kill enemies that lost all their health this way.</span></li><br>
+                <li><span class="CYF"></span> <span class="term">Player.ForceMultiAttack(int damage)</span> - Forces an attack that deals 
+                <span class="term">damage</span> damage to all enemies.
+                    <br><span style="color:#aa0000">After using this function, you have to check with <span class="term">Player.CheckDeath</span> to really 
+                    kill enemies that lost all their health this way.</span></li><br>
+                <li><span class="CYF"></span> <span class="term">Player.CheckDeath()</span> - Checks if the enemies are dead after a forced attack.
+                    I don't kill the enemies from forced attacks because death texts will be easier to implement if you use
+                    <span class="term">ForceAttack</span> or <span class="term">ForceMultiAttack</span> in the middle of text.</li><br>
+            </ul>
+        </div>
+		
+		<div class="tab-pane text-style" id="mercy">
+            <h2 style="text-decoration: none; line-height:50px;">
+                * YOU WON!<br>
+                * You earned 0 EXP and 0 gold.<br>
+                * also the nav menu is broken now
+            </h2><br>
+        </div>
+	</div>
+</div>
+
+<div class="container">
+    <div class="col-xs-3"><img class="centerbt black" alt="Undertale fake button" src="../img/fightbt_0.png" height="42">
+    </div>
+    <div class="col-xs-3"><img class="centerbt black" alt="Undertale fake button" src="../img/actbt_0.png" height="42">
+    </div>
+    <div class="col-xs-3"><img class="centerbt black" alt="Undertale fake button" src="../img/itembt_0.png" height="42">
+    </div>
+    <div class="col-xs-3"><a href="#mercy" data-toggle="tab"><img class="centerbt black" alt="Undertale fake button"
+                                                                  src="../img/mercybt_0.png" height="42"></a>
+    </div>
+</div>
+<br>
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="../js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../js/show_hide_comments.js"></script>
+</body>
+</html>
