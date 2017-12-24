@@ -146,7 +146,7 @@ public class PlayerOverworld : MonoBehaviour {
         } else {
             //Get the file's name with this...thing?
             string test = audio.clip.name.Replace('\\', '/').Split(new string[] { "/Audio/" }, System.StringSplitOptions.RemoveEmptyEntries)[1].Split('.')[0];
-            if (test != mi.music) {
+            if (mi != null && test != mi.music) {
                 if (mi.music != "none") {
                     audio.Stop();
                     audio.clip = AudioClipRegistry.GetMusic(mi.music);
