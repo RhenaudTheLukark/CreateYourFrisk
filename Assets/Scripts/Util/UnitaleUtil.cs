@@ -87,8 +87,7 @@ public static class UnitaleUtil {
 
     public static AudioSource GetCurrentOverworldAudio() {
         //if (GameObject.Find("Main Camera OW") && Camera.main != GameObject.Find("Main Camera OW")) return GameObject.Find("Main Camera OW").GetComponent<AudioSource>();
-        if (GameObject.Find("Background").GetComponent<MapInfos>().isMusicKeptBetweenBattles)      return PlayerOverworld.audioKept;
-        else                                                                                       return Camera.main.GetComponent<AudioSource>();
+        return Camera.main.GetComponent<AudioSource>();
     }
 
     public static Vector3 VectToVector(GameState.Vect v)    { return new Vector3(v.x, v.y, v.z); }
