@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Unpassible
   - Event
+  - Background
   layers:
   - Default
   - TransparentFX
