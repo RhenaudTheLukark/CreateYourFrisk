@@ -3,7 +3,7 @@
 public class KeyframeCollection : MonoBehaviour {
     public float timePerFrame = 1 / 30f;
     public Keyframe[] keyframes;
-    internal float registrationTime;
+    internal float currTime = 0;
     internal LuaSpriteController spr;
     internal LoopMode loop = LoopMode.LOOP;
     private float totalTime;
@@ -11,20 +11,26 @@ public class KeyframeCollection : MonoBehaviour {
 
     public enum LoopMode { ONESHOT, ONESHOTEMPTY, LOOP }
 
+    public void SetLoop(LoopMode l) {
+        loop = l;
+        currTime %= totalTime;
+    }
+
     public void Set(Keyframe[] keyframes, float timePerFrame = 1/30f) {
         this.keyframes = keyframes;
 
         this.timePerFrame = timePerFrame;
         totalTime = timePerFrame * keyframes.Length;
-        registrationTime = Time.time;
+        currTime = -Time.deltaTime;
     }
 
     public Keyframe getCurrent() {
+        currTime += Time.deltaTime;
         if (loop == LoopMode.LOOP) {
-            int index = (int)(((Time.time - registrationTime) % totalTime) / timePerFrame);
+            int index = (int)((currTime % totalTime) / timePerFrame);
             return keyframes[index];
         } else {
-            int index = (int)((Time.time - registrationTime) / timePerFrame);
+            int index = (int)(currTime / timePerFrame);
             if (index >= keyframes.Length)
                 if (loop == LoopMode.ONESHOT) return null;
                 else                          return EMPTY_KEYFRAME;
@@ -33,7 +39,7 @@ public class KeyframeCollection : MonoBehaviour {
     }
 
     public bool animationComplete() {
-        if (loop == LoopMode.ONESHOT)           return ((Time.time - registrationTime) / timePerFrame) >= keyframes.Length;
+        if (loop == LoopMode.ONESHOT)           return (currTime / timePerFrame) >= keyframes.Length;
         else if (loop == LoopMode.ONESHOTEMPTY) return getCurrent() == EMPTY_KEYFRAME;
         return false;
     }

@@ -1,4 +1,3 @@
 Player.SetControlOverride(true)
-Player.MoveTo(0,0,false)
-Arena.ResizeImmediate(155,130)
-Player.SetControlOverride(false)
+Player.MoveToAbs(320, 155 + 90, true)
+Arena.ResizeImmediate(155, 130)

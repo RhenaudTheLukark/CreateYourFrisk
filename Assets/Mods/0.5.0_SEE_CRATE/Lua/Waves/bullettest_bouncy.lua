@@ -1,32 +1,13 @@
--- The bouncing bullets attack from the documentation example.
-spawntimer = 0
-bullets = {}
-
+local update = Update
 function Update()
-    spawntimer = spawntimer + 1
-    if spawntimer%30 == 0 then
-        local posx = 30 - math.random(60)
-        local posy = Arena.height/2
-        local bullet = CreateProjectile('bullet', posx, posy)
-        bullet.SetVar('velx', 1 - 2*math.random())
-        bullet.SetVar('vely', 0)
-        table.insert(bullets, bullet)
-    end
+    update()
+    local speed = 2
+    if Input.Cancel > 0 then speed = 1 end
     
-    for i=1,#bullets do
-        local bullet = bullets[i]
-        local velx = bullet.GetVar('velx')
-        local vely = bullet.GetVar('vely')
-        local newposx = bullet.x + velx
-        local newposy = bullet.y + vely
-        if(bullet.x > -Arena.width/2 and bullet.x < Arena.width/2) then
-            if(bullet.y < -Arena.height/2 + 8) then 
-                newposy = -Arena.height/2 + 8
-                vely = 4
-            end
-        end
-        vely = vely - 0.04
-        bullet.MoveTo(newposx, newposy)
-        bullet.SetVar('vely', vely)
+    if ppos == nil then ppos = {320, 90 + 75} end
+    Player.MoveToAbs(ppos[1] + ((Input.Right > 0 and speed or 0) - (Input.Left > 0 and speed or 0)), ppos[2] + ((Input.Up > 0 and speed or 0) - (Input.Down > 0 and speed or 0)), false)
+    
+    if Input.Up > 0 or Input.Down > 0 or Input.Left > 0 or Input.Right > 0 then
+        ppos = {Player.absx, Player.absy}
     end
 end

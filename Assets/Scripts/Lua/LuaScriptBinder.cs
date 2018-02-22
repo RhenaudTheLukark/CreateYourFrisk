@@ -48,14 +48,10 @@ public static class LuaScriptBinder {
     /// </summary>
     /// <returns>Script object for use within Unitale</returns>
     public static Script BoundScript(/*bool overworld = false*/) {
-        Script script = new Script(CoreModules.Preset_Complete ^ CoreModules.OS_System ^ CoreModules.IO);
+        Script script = new Script(CoreModules.Preset_Complete ^ CoreModules.IO ^ CoreModules.OS_System);
         // library support
         script.Options.ScriptLoader = new FileSystemScriptLoader();
         ((ScriptLoaderBase)script.Options.ScriptLoader).ModulePaths = new string[] { FileLoader.pathToModFile("Lua/?.lua"), FileLoader.pathToDefaultFile("Lua/?.lua"), FileLoader.pathToModFile("Lua/Libraries/?.lua"), FileLoader.pathToDefaultFile("Lua/Libraries/?.lua") };
-        // cheap sandboxing
-        /*script.Globals["os"] = null;
-        script.Globals["io"] = null;
-        script.Globals["file"] = null;*/
         // separate function bindings
         script.Globals["SetGlobal"] = (Action<Script, string, DynValue>)SetBattle;
         script.Globals["GetGlobal"] = (Func<Script, string, DynValue>)GetBattle;
