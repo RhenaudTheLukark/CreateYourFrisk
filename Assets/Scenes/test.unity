@@ -2065,6 +2065,10 @@ Prefab:
       propertyPath: direction
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 134422, guid: d781acdb7c86dff4081250e8c5edd546, type: 2}
+      propertyPath: m_TagString
+      value: Background
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: d781acdb7c86dff4081250e8c5edd546, type: 2}
   m_IsPrefabParent: 0
