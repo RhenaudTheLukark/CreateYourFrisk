@@ -16,6 +16,7 @@ public class LuaTextManager : TextManager {
     private int _bubbleHeight = -1;
     private BubbleSide bubbleSide = BubbleSide.NONE;
     private ProgressMode progress = ProgressMode.AUTO;
+    private Color textColor;
 
     enum BubbleSide { LEFT = 0, DOWN = 90, RIGHT = 180, UP = 270, NONE = -1 }
     enum ProgressMode { AUTO, MANUAL, NONE }
@@ -112,7 +113,7 @@ public class LuaTextManager : TextManager {
         }
     }
 
-    public Color _color = new Color(1, 0, 0);
+    public Color _color = Color.white;
     // The color of the text. It uses an array of three floats between 0 and 1
     public float[] color {
         get { return new float[] { _color.r, _color.g, _color.b }; }
@@ -122,9 +123,12 @@ public class LuaTextManager : TextManager {
             else if (value.Length == 4) _color = new Color(value[0], value[1], value[2], value[3]);
             else                        throw new CYFException("You need 3 or 4 numeric values when setting a text's color.");
             //print(((_color.r + 1) / 2) + ", " + ((_color.g + 1) / 2) + ", " + ((_color.b + 1) / 2) + ", " + (_color.a * 1));
+
             foreach (Letter l in letters) {
-                try { l.GetComponent<UnityEngine.UI.Image>().color = new Color((_color.r + l.colorFromText.r) / 2, (_color.g + l.colorFromText.g) / 2, 
-                                                                               (_color.b + l.colorFromText.b) / 2, _color.a * l.colorFromText.a);
+                try {
+                    if (l.GetComponent<UnityEngine.UI.Image>().color == Charset.DefaultColor) {
+                        l.GetComponent<UnityEngine.UI.Image>().color = _color;
+                    }
                 } catch { }
             }
         }
@@ -134,20 +138,7 @@ public class LuaTextManager : TextManager {
     public float[] color32 {
         // We need first to convert the Color into a Color32, and then get the values.
         get { return new float[] { ((Color32)_color).r, ((Color32)_color).g, ((Color32)_color).b }; }
-        set {
-            for (int i = 0; i < value.Length; i++)
-                if (value[i] < 0) value[i] = 0;
-                else if (value[i] > 255) value[i] = 255;
-            // If we don't have three floats, we throw an error
-            if (value.Length == 3)      _color = new Color32((byte)value[0], (byte)value[1], (byte)value[2], (byte)alpha32);
-            else if (value.Length == 4) _color = new Color32((byte)value[0], (byte)value[1], (byte)value[2], (byte)value[3]);
-            else                        throw new CYFException("You need 3 or 4 numeric values when setting a text's color.");
-            foreach (Letter l in letters)
-                try {
-                    l.GetComponent<UnityEngine.UI.Image>().color = new Color((_color.r + l.colorFromText.r) / 2, (_color.g + l.colorFromText.g) / 2,
-                                                                            (_color.b + l.colorFromText.b) / 2, _color.a * l.colorFromText.a);
-                } catch { }
-        }
+        set { color = new float[] { value[0] / 255, value[1] / 255, value[2] / 255, value.Length == 3 ? alpha : value[3] / 255 }; }
     }
 
     // The alpha of the text. It is clamped between 0 and 1
@@ -166,15 +157,7 @@ public class LuaTextManager : TextManager {
     // The alpha of the text in a 32 bits format. It is clamped between 0 and 255
     public float alpha32 {
         get { return ((Color32)_color).a; }
-        // We need first to convert the Color into a Color32, and then get the values.
-        set {
-            _color = new Color32(((Color32)_color).r, ((Color32)_color).g, ((Color32)_color).b, (byte)(value > 255 ? 255 : value < 0 ? 0 : value));
-            foreach (Letter l in letters)
-                try {
-                    l.GetComponent<UnityEngine.UI.Image>().color = new Color((_color.r + l.colorFromText.r) / 2, (_color.g + l.colorFromText.g) / 2,
-                                                                            (_color.b + l.colorFromText.b) / 2, _color.a * l.colorFromText.a);
-                } catch { }
-        }
+        set { alpha = value / 255; }
     }
 
     public bool lineComplete {
