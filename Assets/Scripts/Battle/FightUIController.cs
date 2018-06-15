@@ -198,7 +198,7 @@ public class FightUIController : MonoBehaviour {
                     }
 
             if (finishingFade) {
-                float resizeProg = 1.0f - ArenaManager.instance.getProgress();
+                float resizeProg = 1.0f - ArenaManager.instance.GetProgress();
                 setAlpha(resizeProg);
                 if (resizeProg == 0.0f) {
                     while (boundFightUiInstances.Count != 0) {
