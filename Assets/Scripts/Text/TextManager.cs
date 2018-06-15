@@ -84,11 +84,19 @@ public class TextManager : MonoBehaviour {
             default_charset = font;
         if (firstTime) {
             if (letterSound == null)          letterSound.clip = font.Sound;
-            if (currentColor == Color.white)  currentColor = font.DefaultColor;
+            if (currentColor == Color.white) {
+                currentColor = font.DefaultColor;
+                if (GetType() == typeof(LuaTextManager)) {
+                    ((LuaTextManager)this)._color = font.DefaultColor;
+                }
+            }
             if (hSpacing == 3)                hSpacing = font.CharSpacing;
         } else {
             letterSound.clip = font.Sound;
             currentColor = font.DefaultColor;
+            if (GetType() == typeof(LuaTextManager)) {
+                ((LuaTextManager)this)._color = font.DefaultColor;
+            }
             hSpacing = font.CharSpacing;
         }
     }
@@ -632,10 +640,10 @@ public class TextManager : MonoBehaviour {
             letterPositions[i] = ltrRect.anchoredPosition;
             ltrImg.SetNativeSize();
             if (GetType() == typeof(LuaTextManager)) {
-                Color c = ((LuaTextManager)this)._color;
-                if (currentColor == Color.white) ltrImg.color = c;
-                else                             ltrImg.color = currentColor;
-            } else                               ltrImg.color = currentColor;
+                Color luaColor = ((LuaTextManager)this)._color;
+                if (currentColor == Charset.DefaultColor) ltrImg.color = luaColor;
+                else ltrImg.color = currentColor;
+            } else                                        ltrImg.color = currentColor;
             ltrImg.GetComponent<Letter>().colorFromText = currentColor;
             ltrImg.enabled = displayImmediate;
             letters.Add(singleLtr.GetComponent<Letter>());
