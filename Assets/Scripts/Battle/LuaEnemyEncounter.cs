@@ -327,7 +327,7 @@ internal class LuaEnemyEncounter : EnemyEncounter {
                     p.ctrl.Remove();
         if (!death)
             CallOnSelfOrChildren("DefenseEnding");
-        ArenaManager.instance.resetArena();
+        ArenaManager.instance.ResetArena();
         EncounterText = script.GetVar("encountertext").String;
         EraseDust();
         script.SetVar("Wave", DynValue.NewTable(new Table(null)));
