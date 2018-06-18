@@ -1,21 +1,24 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using System;
 using System.Collections.Generic;
 
+/// <summary>
+/// Controls all instances of attack objects.
+/// </summary>
 public class FightUIController : MonoBehaviour {
-    public static FightUIController instance;
-    public List<FightUI> boundFightUiInstances = new List<FightUI> { };
-    public List<FightUI> allFightUiInstances = new List<FightUI> { };
+    public static FightUIController instance; // Instance of this object. Indicates that the class is a Singleton: 
+                                              // one and only one object of this class must be created.
+    public List<FightUI> boundFightUiInstances = new List<FightUI> { };  // Liste d'instances d'attaque associées à l'appui du bouton par le joueur.
+    public List<FightUI> allFightUiInstances = new List<FightUI> { };    // Liste de toutes les instances, y compris les coroutines.
 
     public RectTransform targetRt;
     public int presetDmg = 0;
     private LuaSpriteController line;
     private float borderX;
-    private float xSpeed = -450.0f;
+    private readonly float xSpeed = -450.0f;
     public int[] shakeX; //Modify it in the Editor if needed
     //private int[] shakeX = new int[] { 24, 0, 0, 0, 0, -48, 0, 0, 0, 0, 38, 0, 0, 0, 0, -28, 0, 0, 0, 0, 20, 0, 0, 0, 0, -12, 0, 0, 0, 0, 8, 0, 0, 0, 0, -2, 0, 0, 0, 0};
-    private string[] lineAnim = new string[] { "UI/Battle/spr_targetchoice_0", "UI/Battle/spr_targetchoice_1" };
+    private readonly string[] lineAnim = new string[] { "UI/Battle/spr_targetchoice_0", "UI/Battle/spr_targetchoice_1" };
     public string[] sliceAnim; //Modify it in the Editor if needed
     public float sliceAnimFrequency = 1 / 6f;
     public int targetNumber = 1;
@@ -96,8 +99,7 @@ public class FightUIController : MonoBehaviour {
         commonInit();
         commonQuickInit();
         LaunchInstance();
-        allFightUiInstances[allFightUiInstances.Count - 1].quickInit(targetIDs[0], target, damage);
-        allFightUiInstances[allFightUiInstances.Count - 1].isCoroutine = true;
+        allFightUiInstances[allFightUiInstances.Count - 1].ForcedDamageInit(targetIDs[0], damage);
         StopAction(-2, true);
         allFightUiInstances[allFightUiInstances.Count - 1].StopAction(-2);
         // damageTextRt.position = target.GetComponent<RectTransform>().position;
@@ -108,8 +110,7 @@ public class FightUIController : MonoBehaviour {
         commonQuickInit();
         for (int i = 0; i < targetIDs.Length; i++) {
             LaunchInstance();
-            allFightUiInstances[allFightUiInstances.Count - 1].quickInit(targetIDs[i], UIController.instance.encounter.EnabledEnemies[targetIDs[i]], damage[i]);
-            allFightUiInstances[allFightUiInstances.Count - 1].isCoroutine = true;
+            allFightUiInstances[allFightUiInstances.Count - 1].ForcedDamageInit(targetIDs[i], damage[i]);
         }
         StopAction(atkMult, true);
         for (int i = 0; i < targetIDs.Length; i++)
@@ -218,7 +219,7 @@ public class FightUIController : MonoBehaviour {
             } else if (boundFightUiInstances.Count != 0) {
                 bool pass = true;
                 for (int i = 0; i < boundFightUiInstances.Count; i++)
-                    if (!(boundFightUiInstances[i].slice.animcomplete &&!boundFightUiInstances[i].slice.keyframes.enabled && stopped && boundFightUiInstances[i].waitingToFade)) {
+                    if (!(boundFightUiInstances[i].slice.animcomplete &&!boundFightUiInstances[i].slice.keyframes.enabled && stopped && boundFightUiInstances[i].attackHandlerLaunched)) {
                         pass = false;
                         break;
                     }

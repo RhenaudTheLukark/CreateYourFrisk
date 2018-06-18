@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
@@ -8,11 +7,13 @@ using UnityEngine.UI;
 /// Attached to the Background object in the Battle scene.
 /// </summary>
 public class BackgroundLoader : MonoBehaviour {
-    Image bgImage;
+    Image bgImage; // Background image.
+
     // Use this for initialization
     private void Start() {
         bgImage = GetComponent<Image>();
         try {
+            // Tries to set the background up.
             Sprite bg = SpriteUtil.FromFile(FileLoader.pathToModFile("Sprites/bg.png"));
             if (bg != null) {
                 bg.texture.filterMode = FilterMode.Point;
@@ -20,7 +21,7 @@ public class BackgroundLoader : MonoBehaviour {
                 bgImage.color = Color.white;
             }
         } catch {
-            // background failed loading, no need to do anything
+            // Background failed loading, no need to do anything.
             UnitaleUtil.WriteInLogAndDebugger("[WARN]No background file found. Using empty background.");
         }
     }

@@ -5,14 +5,8 @@
 /// A Keyframe instance must include a sprite and a name, which is the path associated to it
 /// </summary>
 public class Keyframe {
-    /// <summary>
-    /// Sprite used for the Keyframe.
-    /// </summary>
-    public Sprite sprite;
-    /// <summary>
-    /// Path to the sprite. Can be "empty" if unknown.
-    /// </summary>
-    public string name;
+    public Sprite sprite; // Sprite used for the Keyframe.
+    public string name; // Path to the sprite. Can be "empty" if unknown.
 
     /// <summary>
     /// Constructor of the class.

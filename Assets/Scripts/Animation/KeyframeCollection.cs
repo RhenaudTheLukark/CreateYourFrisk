@@ -4,37 +4,14 @@
 /// Animator used for sprite animations.
 /// </summary>
 public class KeyframeCollection : MonoBehaviour {
-    /// <summary>
-    /// Time that must pass in order for the next frame to appear.
-    /// </summary>
-    public float timePerFrame = 1 / 30f;
-    /// <summary>
-    /// Array of Keyframes.
-    /// </summary>
-    public Keyframe[] keyframes;
-
-    /// <summary>
-    /// Timer used to determinewhat frame should be displayed.
-    /// </summary>
-    internal float currTime = 0;
-    /// <summary>
-    /// Sprite controller affected by the animation.
-    /// </summary>
-    internal LuaSpriteController spr;
-    /// <summary>
-    /// Loop mode of the animation.
-    /// See the LoopMode enumeration for more details on the possible values.
-    /// </summary>
-    internal LoopMode loop = LoopMode.LOOP;
-    /// <summary>
-    /// Total time of the animation.
-    /// </summary>
-    private float totalTime;
-
-    /// <summary>
-    /// Empty sprite.
-    /// </summary>
-    public Keyframe EMPTY_KEYFRAME = new Keyframe(SpriteRegistry.EMPTY_SPRITE);
+    public float timePerFrame = 1 / 30f;     // Time that must pass in order for the next frame to appear.
+    public Keyframe[] keyframes;             // Array of Keyframes.
+    internal float currTime = 0;             // Timer used to determine what sprite should be displayed.
+    internal LuaSpriteController spr;        // Sprite controller affected by the animation.
+    internal LoopMode loop = LoopMode.LOOP;  // Loop mode of the animation.
+                                             // See the LoopMode enumeration for more details on the possible values.
+    private float totalTime;                 // Total time of the animation.
+    public Keyframe EMPTY_KEYFRAME = new Keyframe(SpriteRegistry.EMPTY_SPRITE); // Empty sprite.
 
     /// <summary>
     /// Determines if the animation repeats or not.
