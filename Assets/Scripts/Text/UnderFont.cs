@@ -18,4 +18,14 @@ public class UnderFont {
     public Color DefaultColor { get; set; }
     public float LineSpacing { get; set; }
     public float CharSpacing { get; set; }
+
+    public UnderFont Copy() {
+        UnderFont uf = new UnderFont(Letters, Name) {
+            Sound = Sound,
+            DefaultColor = DefaultColor,
+            LineSpacing = LineSpacing,
+            CharSpacing = CharSpacing
+        };
+        return uf;
+    }
 }

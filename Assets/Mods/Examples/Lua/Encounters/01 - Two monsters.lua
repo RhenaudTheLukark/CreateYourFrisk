@@ -34,7 +34,7 @@ possible_attacks = {"bullettest_bouncy" --[[, "bullettest_chaserorb", "bullettes
 
 function EncounterStarting()
     SetButtonLayer("Top")
-   enemies[1].Call("BindToArena", {false, false})
+    enemies[1].Call("BindToArena", {false, false})
     --[[maintext = CreateText(
         {"[font:uidialog][novoice][waitall:3]Greetings.",
          "[novoice][waitall:3]I[w:20] am " .. Player.name .. ".",
@@ -50,16 +50,14 @@ function EncounterStarting()
     maintext.HideBubble()
     maintext.SetEffect("none", -1)
     maintext.color = {1, 0, 0}
-    local str = "{ "
-    for i = 1, #maintext.color do
-        str = str .. maintext.color[i] .. (i == #maintext.color and " " or ", ")
-    end
-    DEBUG(str .. "}")
+
 	Inventory.AddCustomItems({"TEST", "TEST2", "Shotgun", "Shotgun2", "Shotgun3", "Shotgun4", "Bandage", "PsnPotion", "Life Roll", "Nothing", "Pie", "Snails"}, {0, 0, 1, 1, 1, 1, 0, 0, 0, 3, 0, 0})
 	Inventory.SetInventory({"Shotgun", "Shotgun2", "Butterscotch Pie", "Bandage", "Nothing", "PsnPotion", "Life Roll", "Real Knife"})
-	Player.lv = 999
+	
+    Player.lv = 999
 	Player.ForceHP((4 * Player.lv + 19) * 1.5)
     SetPPCollision(true)
+
     NewAudio.CreateChannel("testmusic")
     NewAudio.CreateChannel("testvoice")
     NewAudio.CreateChannel("testsound")
@@ -69,13 +67,11 @@ function EncounterStarting()
     NewAudio.Stop("testvoice")
     NewAudio.PlaySound("testsound", "slice")
     NewAudio.Stop("testsound")
-    local text = CreateText({"Okay, this is a[color:00ffff] test.[func:TestMultiArg, { arg1, arg2, arg3 }][color:000000]", "It works!"}, {540, 400}, 150)
+
+    local text = CreateText({"Okay, this [color:00ffff]is a[color:000000] test.", "It works!"}, {540, 400}, 150)
     text.ShowBubble("left", -20)
     text.SetEffect("shake", -1)
-end
-
-function TestMultiArg(arg1, arg2, arg3)
-    DEBUG("arg1 = " .. arg1 .. "\narg2 = " .. arg2 .. "\narg3 = " .. arg3)
+    text.color = { 1, 0, 0 }
 end
 
 function EnemyDialogueStarting()

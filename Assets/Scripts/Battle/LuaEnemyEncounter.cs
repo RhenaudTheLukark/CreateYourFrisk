@@ -147,7 +147,7 @@ internal class LuaEnemyEncounter : EnemyEncounter {
         string musicFile = script.GetVar("music").String;
 
         try { enemies = new LuaEnemyController[enemyScriptsLua.Table.Length]; /*dangerously assumes enemies is defined*/ } 
-            catch (Exception) {
+        catch (Exception) {
             UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, "There's no enemies table in your encounter. Is this a pre-0.1.2 encounter? It's easy to fix!\n\n"
                 + "1. Create a Monsters folder in the mod's Lua folder\n"
                 + "2. Add the monster script (custom.lua) to this new folder\n"

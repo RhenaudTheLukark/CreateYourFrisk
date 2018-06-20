@@ -58,7 +58,7 @@ public class TextManager : MonoBehaviour {
     private int letterOnceValue = 0;
     private KeyCode waitingChar = KeyCode.None;
 
-    private Color currentColor = Color.white;
+    protected Color currentColor = Color.white;
     //private Color defaultColor = Color.white;
 
     private float letterTimer = 0.0f;
@@ -67,7 +67,7 @@ public class TextManager : MonoBehaviour {
 
     private ScriptWrapper caller;
 
-    public UnderFont Charset { get; private set; }
+    public UnderFont Charset { get; protected set; }
     public TextMessage[] textQueue = null;
     //public string[] mugshotsPath;
     //public bool overworld;
@@ -83,20 +83,31 @@ public class TextManager : MonoBehaviour {
         if (default_charset == null)
             default_charset = font;
         if (firstTime) {
-            if (letterSound == null)          letterSound.clip = font.Sound;
+            if (letterSound == null)
+                letterSound.clip = font.Sound;
             if (currentColor == Color.white) {
-                currentColor = font.DefaultColor;
+                // TODO: DO NOT OVERRIDE font.XXX!!!
                 if (GetType() == typeof(LuaTextManager)) {
-                    ((LuaTextManager)this)._color = font.DefaultColor;
+                    if (((LuaTextManager)this).hasColorBeenSet) {
+                        font.DefaultColor = ((LuaTextManager)this)._color;
+                    } else if (((LuaTextManager)this).hasAlphaBeenSet) {
+                        font.DefaultColor = new Color(font.DefaultColor.r, font.DefaultColor.g, font.DefaultColor.b, ((LuaTextManager)this).alpha);
+                    }
                 }
+                currentColor = font.DefaultColor;
             }
-            if (hSpacing == 3)                hSpacing = font.CharSpacing;
+            if (hSpacing == 3)
+                hSpacing = font.CharSpacing;
         } else {
             letterSound.clip = font.Sound;
-            currentColor = font.DefaultColor;
             if (GetType() == typeof(LuaTextManager)) {
-                ((LuaTextManager)this)._color = font.DefaultColor;
+                if (((LuaTextManager)this).hasColorBeenSet) {
+                    font.DefaultColor = ((LuaTextManager)this)._color;
+                } else if (((LuaTextManager)this).hasAlphaBeenSet) {
+                    font.DefaultColor = new Color(font.DefaultColor.r, font.DefaultColor.g, font.DefaultColor.b, ((LuaTextManager)this).alpha);
+                }
             }
+            currentColor = font.DefaultColor;
             hSpacing = font.CharSpacing;
         }
     }
@@ -642,7 +653,7 @@ public class TextManager : MonoBehaviour {
             if (GetType() == typeof(LuaTextManager)) {
                 Color luaColor = ((LuaTextManager)this)._color;
                 if (currentColor == Charset.DefaultColor) ltrImg.color = luaColor;
-                else ltrImg.color = currentColor;
+                else                                      ltrImg.color = currentColor;
             } else                                        ltrImg.color = currentColor;
             ltrImg.GetComponent<Letter>().colorFromText = currentColor;
             ltrImg.enabled = displayImmediate;

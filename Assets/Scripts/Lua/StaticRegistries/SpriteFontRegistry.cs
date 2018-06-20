@@ -24,6 +24,7 @@ public static class SpriteFontRegistry {
     public static UnderFont Get(string key) {
         string k = key;
         key = key.ToLower();
+        UnderFont uf;
         if (dict.ContainsKey(key))
             return dict[key];
         else

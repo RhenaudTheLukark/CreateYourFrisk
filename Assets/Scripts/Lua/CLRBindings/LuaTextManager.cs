@@ -114,6 +114,8 @@ public class LuaTextManager : TextManager {
     }
 
     public Color _color = Color.white;
+    public bool hasColorBeenSet = false;
+    public bool hasAlphaBeenSet = false;
     // The color of the text. It uses an array of three floats between 0 and 1
     public float[] color {
         get { return new float[] { _color.r, _color.g, _color.b }; }
@@ -122,7 +124,9 @@ public class LuaTextManager : TextManager {
             if (value.Length == 3)      _color = new Color(value[0], value[1], value[2], alpha);
             else if (value.Length == 4) _color = new Color(value[0], value[1], value[2], value[3]);
             else                        throw new CYFException("You need 3 or 4 numeric values when setting a text's color.");
-            //print(((_color.r + 1) / 2) + ", " + ((_color.g + 1) / 2) + ", " + ((_color.b + 1) / 2) + ", " + (_color.a * 1));
+
+            hasColorBeenSet = true;
+            hasAlphaBeenSet = false;
 
             foreach (Letter l in letters) {
                 try {
@@ -131,6 +135,13 @@ public class LuaTextManager : TextManager {
                     }
                 } catch { }
             }
+
+            Debug.Log("currentColor = " + currentColor);
+            Debug.Log("Charset.DefaultColor = " + Charset.DefaultColor);
+            if (currentColor == Charset.DefaultColor) {
+                currentColor = _color;
+            }
+            Charset.DefaultColor = _color;
         }
     }
 
@@ -145,12 +156,9 @@ public class LuaTextManager : TextManager {
     public float alpha {
         get { return _color.a; }
         set {
-            _color = new Color(_color.r, _color.g, _color.b, Mathf.Clamp01(value));
-            foreach (Letter l in letters)
-                try {
-                    l.GetComponent<UnityEngine.UI.Image>().color = new Color((_color.r + l.colorFromText.r) / 2, (_color.g + l.colorFromText.g) / 2,
-                                                                            (_color.b + l.colorFromText.b) / 2, _color.a * l.colorFromText.a);
-                } catch { }
+            color = new float[] { _color.r, _color.g, _color.b, Mathf.Clamp01(value) };
+            hasAlphaBeenSet = true;
+            hasColorBeenSet = false;
         }
     }
 

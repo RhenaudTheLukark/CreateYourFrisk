@@ -159,11 +159,13 @@ public class GameOverBehavior : MonoBehaviour {
         //if (overworld)
         //    gameObject.transform.SetParent(GameObject.Find("Canvas OW").transform);
         //else
+        PlayerCharacter.instance.HP = PlayerCharacter.instance.MaxHP;
         if (UnitaleUtil.IsOverworld)
             gameObject.transform.parent.SetParent(GameObject.Find("Canvas GameOver").transform);
-        else
+        else {
             gameObject.transform.SetParent(GameObject.Find("Canvas GameOver").transform);
-        PlayerCharacter.instance.HP = PlayerCharacter.instance.MaxHP;
+            UIStats.instance.setHP(PlayerCharacter.instance.MaxHP);
+        }
         brokenHeartPrefab = Resources.Load<GameObject>("Prefabs/heart_broken");
         if (SpriteRegistry.GENERIC_SPRITE_PREFAB == null)
             SpriteRegistry.GENERIC_SPRITE_PREFAB = Resources.Load<Image>("Prefabs/generic_sprite");
@@ -321,16 +323,13 @@ public class GameOverBehavior : MonoBehaviour {
                 if (InputUtil.Pressed(GlobalControls.input.Confirm) && gameOverTxt.LineComplete())
                     gameOverTxt.NextLineText();
         } else {
-            /*if (internalTimer <= breakHeartAfter) {
-
-            } else {*/
-            if (reviveTextSet &&!reviveText.AllLinesComplete()) {
+            if (reviveTextSet && !reviveText.AllLinesComplete()) {
                 // Note: [noskip] only affects the UI controller's ability to skip, so we have to redo that here.
                 if (InputUtil.Pressed(GlobalControls.input.Confirm) && reviveText.LineComplete())
                     reviveText.NextLineText();
-            } else if (reviveTextSet &&!exiting) {
+            } else if (reviveTextSet && !exiting) {
                 exiting = true;
-            } else if (internalTimerRevive >= 5.0f &&!reviveTextSet && breakHeartReviveAfter) {
+            } else if (internalTimerRevive >= 5.0f && !reviveTextSet && breakHeartReviveAfter) {
                 if (deathText != null) {
                     reviveText.SetHorizontalSpacing(7);
                     List<TextMessage> text = new List<TextMessage>();
@@ -356,16 +355,6 @@ public class GameOverBehavior : MonoBehaviour {
                 }
                 GameObject.Destroy(brokenHeartPrefab);
             }
-            //}
-
-            if (internalTimer > explodeHeartAfter) { }
-
-            if (internalTimer > gameOverAfter) { }
-
-            if (internalTimer > fluffybunsAfter) { }
-
-            if (!done) { } 
-            else if (!exiting &&!reviveText.AllLinesComplete()) { }
 
             if (!reviveTextSet) internalTimerRevive += Time.deltaTime;
 
@@ -450,6 +439,7 @@ public class GameOverBehavior : MonoBehaviour {
             transform.SetParent(playerParent);
             transform.SetSiblingIndex(playerIndex);
             transform.position = new Vector3(transform.position.x, transform.position.y, playerZ);
+            UIController.instance.SwitchState(UIController.UIState.ACTIONSELECT);
         } else {
             transform.parent.SetParent(playerParent);
             transform.parent.SetSiblingIndex(playerIndex);

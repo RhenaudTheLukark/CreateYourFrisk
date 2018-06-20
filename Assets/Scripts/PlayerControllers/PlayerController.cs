@@ -184,11 +184,11 @@ public class PlayerController : MonoBehaviour {
             }
             HP = 0;
             invulTimer = 0;
-            gameObject.transform.SetParent(null);
-            GameObject.DontDestroyOnLoad(this.gameObject);
             setControlOverride(true);
             RectTransform rt = gameObject.GetComponent<RectTransform>();
-            rt.position = new Vector3(rt.position.x, rt.position.y, -1000);
+            Vector2 pos = rt.position;
+            UIController.instance.SwitchState(UIController.UIState.ACTIONSELECT);
+            rt.position = new Vector3(pos.x, pos.y, -1000);
             GlobalControls.stopScreenShake = true;
             gameObject.GetComponent<GameOverBehavior>().StartDeath(deathText, deathMusic);
             return;
