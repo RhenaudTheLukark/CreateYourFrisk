@@ -187,7 +187,6 @@ public class PlayerController : MonoBehaviour {
             setControlOverride(true);
             RectTransform rt = gameObject.GetComponent<RectTransform>();
             Vector2 pos = rt.position;
-            UIController.instance.SwitchState(UIController.UIState.ACTIONSELECT);
             rt.position = new Vector3(pos.x, pos.y, -1000);
             GlobalControls.stopScreenShake = true;
             gameObject.GetComponent<GameOverBehavior>().StartDeath(deathText, deathMusic);

@@ -60,7 +60,7 @@ public class GameOverBehavior : MonoBehaviour {
     public AudioSource musicBefore = null;
     public AudioClip music = null;
 
-    public void ResetGameOver(bool deactivate = false) {
+    public void ResetGameOver() {
         if (!UnitaleUtil.IsOverworld) {
             UIController.instance.encounter.gameOverStance = false;
             LuaEnemyEncounter.script.SetVar("autolinebreak", MoonSharp.Interpreter.DynValue.NewBoolean(autolinebreakstate));
@@ -87,11 +87,6 @@ public class GameOverBehavior : MonoBehaviour {
         autolinebreakstate = false;
         revived = false;
         reviveTextSet = false;
-        if (deactivate)
-            if (UnitaleUtil.IsOverworld)
-                gameOverContainerOw.SetActive(false);
-            else
-                gameOverContainer.SetActive(false);
     }
 
     public void Revive() { revived = true; }
@@ -439,19 +434,22 @@ public class GameOverBehavior : MonoBehaviour {
             transform.SetParent(playerParent);
             transform.SetSiblingIndex(playerIndex);
             transform.position = new Vector3(transform.position.x, transform.position.y, playerZ);
-            UIController.instance.SwitchState(UIController.UIState.ACTIONSELECT);
         } else {
             transform.parent.SetParent(playerParent);
             transform.parent.SetSiblingIndex(playerIndex);
         }
         battleCamera.SetActive(true);
-        if (!UnitaleUtil.IsOverworld)
-            ResetGameOver();
-        else {
+        if (UnitaleUtil.IsOverworld) {
             canvasOW.SetActive(true);
             PlayerOverworld.instance.enabled = true;
             PlayerOverworld.instance.RestartMusic();
         }
-        ResetGameOver(true);
+        ResetGameOver();
+        if (!UnitaleUtil.IsOverworld) {
+            ArenaManager.instance.ResizeImmediate(ArenaManager.UIWidth, ArenaManager.UIHeight);
+            UIController.instance.SwitchState(UIController.UIState.ACTIONSELECT);
+            gameOverContainer.SetActive(false);
+        } else
+            gameOverContainerOw.SetActive(false);
     }
 }

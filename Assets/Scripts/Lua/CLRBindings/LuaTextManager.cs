@@ -129,19 +129,20 @@ public class LuaTextManager : TextManager {
             hasAlphaBeenSet = false;
 
             foreach (Letter l in letters) {
-                try {
-                    if (l.GetComponent<UnityEngine.UI.Image>().color == Charset.DefaultColor) {
-                        l.GetComponent<UnityEngine.UI.Image>().color = _color;
-                    }
-                } catch { }
+                Debug.Log(l.GetComponent<UnityEngine.UI.Image>().color + " == " + defaultColor);
+                if (l.GetComponent<UnityEngine.UI.Image>().color == defaultColor) {
+                    l.GetComponent<UnityEngine.UI.Image>().color = _color;
+                } else {
+                    break;
+                }
             }
 
             Debug.Log("currentColor = " + currentColor);
-            Debug.Log("Charset.DefaultColor = " + Charset.DefaultColor);
-            if (currentColor == Charset.DefaultColor) {
+            Debug.Log("defaultColor = " + defaultColor);
+            if (currentColor == defaultColor) {
                 currentColor = _color;
             }
-            Charset.DefaultColor = _color;
+            defaultColor = _color;
         }
     }
 

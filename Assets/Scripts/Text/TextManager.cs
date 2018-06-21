@@ -59,6 +59,8 @@ public class TextManager : MonoBehaviour {
     private KeyCode waitingChar = KeyCode.None;
 
     protected Color currentColor = Color.white;
+    private bool colorSet = false;
+    protected Color defaultColor = Color.white;
     //private Color defaultColor = Color.white;
 
     private float letterTimer = 0.0f;
@@ -87,27 +89,29 @@ public class TextManager : MonoBehaviour {
                 letterSound.clip = font.Sound;
             if (currentColor == Color.white) {
                 // TODO: DO NOT OVERRIDE font.XXX!!!
+                defaultColor = Charset.DefaultColor;
                 if (GetType() == typeof(LuaTextManager)) {
                     if (((LuaTextManager)this).hasColorBeenSet) {
-                        font.DefaultColor = ((LuaTextManager)this)._color;
+                        defaultColor = ((LuaTextManager)this)._color;
                     } else if (((LuaTextManager)this).hasAlphaBeenSet) {
-                        font.DefaultColor = new Color(font.DefaultColor.r, font.DefaultColor.g, font.DefaultColor.b, ((LuaTextManager)this).alpha);
+                        defaultColor = new Color(font.DefaultColor.r, font.DefaultColor.g, font.DefaultColor.b, ((LuaTextManager)this).alpha);
                     }
                 }
-                currentColor = font.DefaultColor;
+                currentColor = defaultColor;
             }
             if (hSpacing == 3)
                 hSpacing = font.CharSpacing;
         } else {
             letterSound.clip = font.Sound;
+            defaultColor = Charset.DefaultColor;
             if (GetType() == typeof(LuaTextManager)) {
                 if (((LuaTextManager)this).hasColorBeenSet) {
-                    font.DefaultColor = ((LuaTextManager)this)._color;
+                    defaultColor = ((LuaTextManager)this)._color;
                 } else if (((LuaTextManager)this).hasAlphaBeenSet) {
-                    font.DefaultColor = new Color(font.DefaultColor.r, font.DefaultColor.g, font.DefaultColor.b, ((LuaTextManager)this).alpha);
+                    defaultColor = new Color(font.DefaultColor.r, font.DefaultColor.g, font.DefaultColor.b, ((LuaTextManager)this).alpha);
                 }
             }
-            currentColor = font.DefaultColor;
+            currentColor = defaultColor;
             hSpacing = font.CharSpacing;
         }
     }
@@ -300,7 +304,8 @@ public class TextManager : MonoBehaviour {
 
                     if (!offsetSet)
                         SetOffset(0, 0);
-                    currentColor = Charset.DefaultColor;
+                    currentColor = defaultColor;
+                    colorSet = false;
                     currentSkippable = true;
                     autoSkipThis = false;
                     autoSkip = false;
@@ -652,9 +657,12 @@ public class TextManager : MonoBehaviour {
             ltrImg.SetNativeSize();
             if (GetType() == typeof(LuaTextManager)) {
                 Color luaColor = ((LuaTextManager)this)._color;
-                if (currentColor == Charset.DefaultColor) ltrImg.color = luaColor;
-                else                                      ltrImg.color = currentColor;
-            } else                                        ltrImg.color = currentColor;
+                if (!colorSet) {
+                    if (((LuaTextManager)this).hasColorBeenSet) ltrImg.color = luaColor;
+                    else                                        ltrImg.color = currentColor;
+                    if (((LuaTextManager)this).hasAlphaBeenSet) ltrImg.color = new Color(ltrImg.color.r, ltrImg.color.g, ltrImg.color.b, luaColor.a);
+                } else                                          ltrImg.color = currentColor;
+            } else                                              ltrImg.color = currentColor;
             ltrImg.GetComponent<Letter>().colorFromText = currentColor;
             ltrImg.enabled = displayImmediate;
             letters.Add(singleLtr.GetComponent<Letter>());
@@ -849,7 +857,10 @@ public class TextManager : MonoBehaviour {
             cmds[1] = args[0];
         }
         switch (cmds[0].ToLower()) {
-            case "color":       currentColor = ParseUtil.GetColor(cmds[1]);        break;
+            case "color":
+                currentColor = ParseUtil.GetColor(cmds[1]);
+                colorSet = true;
+                break;
             case "charspacing": SetHorizontalSpacing(ParseUtil.GetFloat(cmds[1])); break;
             case "linespacing": SetVerticalSpacing(ParseUtil.GetFloat(cmds[1]));   break;
 
