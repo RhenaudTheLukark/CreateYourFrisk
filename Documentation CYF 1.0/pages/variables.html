@@ -88,6 +88,30 @@ it's w3c valid, at least
                 over existing examples' code, or writing your own. This section serves to explain the variables you
                 see.</p>
             <hr>
+            <h4>All-script variables</h4>
+            
+            <p>
+                <br><span class="function"><span class="CYF"></span> isCYF [E/M/W]</span>
+                A value - true by default - that indicates that if you're on CYF. nil if not on CYF. Test it with
+                <span class="term">if not isCYF then</span> or <span class="term">if isCYF then</span>.
+            </p>
+            
+            <p>
+                <br><span class="function"><span class="CYF"></span> safe [E/M/W]</span>
+                True if CYF's safe mode is enabled, false otherwise.
+            </p>
+            
+            <p>
+                <br><span class="function"><span class="CYF"></span> windows [E/M/W]</span>
+                Returns true if the user is on Windows, false otherwise.
+            </p>
+            
+            <p>
+                <br><span class="function"><span class="CYF"></span> CYFversion [E/M/W]</span>
+                Returns the current version of CYF. For example: for CYF 0.4.5, it'll return "0.4.5".
+            </p>
+            
+            <hr>
             <h4>Encounter script variables</h4>
             <div class="code-container">
 <pre class="brush: lua;">music = "yourmusicname_without_extension"
@@ -159,6 +183,8 @@ enemypositions = {
             if <span class="term">revive</span> is not set.</p>
             <br><p><span class="CYF"></span> <span class="luatable"><span class="string"></span></span> <span class="term">Wave</span> - A table returning the 
             current wave scripts used. Returns a table with a length of 0 if not in the state DEFENDING.</p>
+            <br><p><span class="CYF"></span> <span class="luatable"><span class="string"></span></span> <span class="term">fleetexts</span> - If you set this
+            to a table filled with strings, a random one of your strings will be displayed whenever the player flees the battle (if that's enabled).</p>
             
             <hr>
             <h4>Monster script variables</h4>
@@ -277,5 +303,7 @@ check = "Serving Size: 1 Monster\nNot monitored by the USDA"</pre>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 <script src="../js/bootstrap.min.js"></script>
 <script type="text/javascript" src="../js/show_hide_comments.js"></script>
+
+<script type="text/javascript" src="../js/FontToggleButton.js"></script>
 </body>
 </html>

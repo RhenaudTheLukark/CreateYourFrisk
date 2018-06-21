@@ -90,27 +90,9 @@ it's w3c valid, at least
                 used in all scripts, it will be written as <i>functionName() [E/M/W]</i>.
             </p>
             
-            <p>
-                <br><span class="function"><span class="CYF"></span> isCYF [E/M/W]</span>
-                A value - true by default - that indicates that if you're on CYF. nil if not on CYF. Test it with
-                <span class="term">if not isCYF then</span> or <span class="term">if isCYF then</span>.
-            </p>
+            <hr>
+            <h4>All-script functions</h4>
             
-            <p>
-                <br><span class="function"><span class="CYF"></span> safe [E/M/W]</span>
-                True if CYF's safe mode is enabled, false otherwise.
-            </p>
-            
-            <p>
-                <br><span class="function"><span class="CYF"></span> windows [E/M/W]</span>
-                Returns true if the user is on Windows, false otherwise.
-            </p>
-            
-            <p>
-                <br><span class="function"><span class="CYF"></span> CYFversion [E/M/W]</span>
-                Returns the current version of CYF. For example: for CYF 0.4.5, it'll return "0.4.5".
-            </p>
-
             <p>
                 <br><span class="function">DEBUG(text) [E/M/W]</span>
                 Write text to the debug console (toggleable with <span class="term">F9</span>). It will appear automatically the first time you
@@ -123,7 +105,8 @@ it's w3c valid, at least
                 DEPRECATED. Instead, set variables in the Encounter script, as it is accessible from everywhere.
                 <br>You can retrieve these variables with <span class="term">Encounter.GetVar("yourvar")</span> or <span class="term">Encounter["yourvar"]
                 </span> and set them with <span class="term">Encounter.SetVar("yourvar", value)</span> or <span class="term">Encounter["yourvar"] = value.</span> 
-                (For more info, scroll down and look for <span class="term">The Script object (and the Encounter object)</span>)<br>
+                (For more info, scroll down and look for <span class="ref">The Script object (and the Encounter object)</span>)
+                <br><br>
                 Sets a global variable. After setting, you can retrieve it from all your scripts at any time with
                 <span class="term">GetGlobal(variable_name)</span>.
             </p>
@@ -131,7 +114,7 @@ it's w3c valid, at least
             <p>
                 <br><span class="function">GetGlobal(your_variable_name) returns variable [E/M/W]</span>
                 DEPRECATED. Instead, set variables in the Encounter script, as it is accessible from everywhere.
-                <br>Gets a Global Variable that you previously set using <span class="term">SetGlobal()</span>.
+                <br><br>Gets a Global Variable that you previously set using <span class="term">SetGlobal()</span>.
             </p>
 
             <p>
@@ -139,38 +122,38 @@ it's w3c valid, at least
                 Sets a Global variable that is accessible even in the overworld. After setting it, you can retrieve it from all of
                 your scripts at any time with <span class="term">GetRealGlobal(variable_name)</span>.
                 Persists through battles, but not between sessions. These variables can be saved using the overworld save system.<br>
-                Can be used on the overworld.
+                Can be used in the overworld.
             </p>
 
             <p>
                 <br><span class="function"><span class="CYF"></span> GetRealGlobal(your_variable_name) returns variable [E/M/W]</span>
                 Gets a Global that you previously set using <span class="term">SetRealGlobal()</span>.<br>
-                Can be used on the overworld.
+                Can be used in the overworld.
             </p>
 
             <p>
                 <br><span class="function"><span class="CYF"></span> SetAlMightyGlobal(your_variable_name, value) [E/M/W]</span>
-                <i>AlMighty Globals</i> are globals that are instantly saved into a file when set: these globals persists
+                <i>AlMighty Globals</i> are globals that are instantly saved into a file when set: these globals persist
                 through sessions, even in devMod mode, and can't be removed.
-                However, you can still access the "Remove AlMighty Globals" button in devMod to remove them.<br>
-                Can be used on the overworld.
+                However, you can still access the <span class="term">Remove AlMighty Globals</span> button in devMod to remove them.<br>
+                Can be used in the overworld.
             </p>
 
             <p>
                 <br><span class="function"><span class="CYF"></span> GetAlMightyGlobal(your_variable_name) returns variable [E/M/W]</span>
                 Gets an AlMighty Global that you previously set using <span class="term">SetAlMightyGlobal()</span>.<br>
-                Can be used on the overworld.
+                Can be used in the overworld.
             </p>
             
             <p>
                 <br><span class="function"><span class="CYF"></span> SetFrameBasedMovement(bool) [E/M/W]</span>
-                Set to "true" if you want a frame-based player movement (2px/frame) instead of a time based player movement (120px/s).
-                Set it to "false" if you already are in a frame-based movement and you want to go back to a time based movement.
+                Set to <span class="term">true</span> if you want frame-based player movement (2px/frame) instead of time based player movement (120px/s).
+                <br>Set it to <span class="term">false</span> if you already are in frame-based movement and you want to go back to the time based movement.
             </p>
 
             <p>
                 <br><span class="function"><span class="CYF"></span> SetAction("FIGHT" or "ACT") [E/M/W]</span>
-                Used alongside <span class="term">EnteringState</span> to force the player to go on FIGHT or ACT. Does nothing outside of this function.
+                Used alongside <span class="term">EnteringState</span> to force the player to choose FIGHT or ACT. Does nothing outside of this function.
             </p>
            
             <p>         
@@ -263,29 +246,21 @@ end
                 <li><span class="term">MERCYMENU</span> - This state lets you choose from either "Spare" or "Flee". If at least one active enemy
                 has <span class="term">canspare</span> set to <i>true</i>, then "Spare" will be yellow - and selecting it will spare that enemy.
                 Otherwise, if the option is not yellow, then choosing "Spare" will activate the encounter function <span class="term">HandleSpare</span>.
-                Also, choosing "Flee" prompts some (not necessarily) hilarious messages.<br><span class="CYF"></span> If the encounter was entered from the
+                Also, choosing "Flee" prompts some silly messages :P<br><span class="CYF"></span> If the encounter was entered from the
                 overworld, choosing "Flee" allows the player to flee the battle and return to the overworld.</li><br>
                 <li><span class="term">DIALOGRESULT</span> - This is the state that is entered whenever <span class="term">BattleDialog</span> is called,
                 when the victory message displays, when the player fails to flee, or when an item is used. When all text is done and the player presses 
-                "Z", the state <span class="term">ENEMYDIALOGUE</span> is entered next. Also, note that the soul is invisible during this
-                state, so anything you could do to change its sprite won't be visible until afterwards.</li><br>
+                "Z", the state <span class="term">ENEMYDIALOGUE</span> is entered next. The soul is forcibly invisible during this state.</li><br>
             </ul>
             
             <p>
-                Finally, there are three states that are <i>never</i> entered during regular gameplay. These include:
+                Finally, there are three states that are not encountered during regular gameplay. These include:
             </p>
             
             <ul>
-                <li><span class="term">DONE</span> - The most functional of the three non-regular states. Currently, this immediately returns you to the mod 
-                selection screen.</li><br>
-                <li><span class="term">NONE</span> - A mostly-deprecated state. Technically, this <i>is</i> entered in regular gameplay - but only once:
-                in the very first frame of the encounter. When entered manually, it freezes the entire battle. If called in
-                <span class="term">EncounterStarting</span>, the soul will appear at the bottom-left corner of the screen. During this state,
-                absolutely nothing occurs. No regular inputs do anything, enemies' dialogues don't advance, bullets don't move - nothing.</li><br>
-                <li><span style="color:#ffffff;border-bottom:1px solid #ffffff;"><0.2.1a></span> <span class="term">RESETTING</span> - This state
-                is 100% deprecated. It's something lvkuln left behind in Unitale v0.2.1a, but removed in the open-source (github) release. 
-                Previous testing shows that this state will only "exist" for a single frame when entered, before the player is returned to their
-                previous state, just before the encounter freezes up. However, if it's called on every single frame during the state.</li><br>
+                <li><span class="term">DONE</span> - Changing state to <span class="term">DONE</span> will instantly force the player to the mod selection screen.</li><br>
+                <li><span class="term">NONE</span> - This state does nothing. It is entered for the first frame of the encounter, but entering it manually will completely freeze your encounter. It might be useful if you want to disable all of Unitale/CYF's basic functionality.</li><br>
+                <li><span style="color:#ffffff;border-bottom:1px solid #ffffff;"><0.2.1a></span> <span class="term">RESETTING</span> - DEPRECATED, DO NOT USE. Only listed for completion purposes. It only exists in Unitale 0.2.1a, so trying to use it in CYF won't work. It doesn't really do much, anyway, so it probably isn't worth messing with.</li><br>
             </ul>
             
             <p>
@@ -293,12 +268,45 @@ end
                 Returns the name of the current state (see above for all states).
             </p>
             
+            <hr>
+            <h4>Encounter script functions</h4>
+            
+            <p>
+                <br><span class="function">RandomEncounterText() returns string [E]</span>
+                Select a random monster from the encounter, then get a random entry from the <span class="term">comments</span> table there.
+                You'll want to use this to replicate default encounter behaviour. See code below (or one of the example
+                encounters).
+            </p>
+            <div class="code-container">
+   <pre class="brush: lua;">function DefenseEnding() --This built-in function fires after the defense round ends.
+    encountertext = RandomEncounterText()
+end</pre>
+            </div>
+
+            <p>
+                <br><span class="function"><span class="CYF"></span> SetButtonLayer(string layer) [E]</span>
+                Changes the <span class="term">layer</span> of the FIGHT, ACT, ITEM and MERCY buttons.
+                The usable layers are created sprite layers and those base layers:
+                <ul>
+                    <li><span class="term">"Bottom"</span>: Under everything, even the background.</li><br>
+                    <li><span class="term">"BelowUI"</span>: Above the background.</li><br>
+                    <li><span class="term">"BelowArena"</span>: Above the background and the UI.</li><br>
+                    <li><span class="term">"BelowPlayer"</span>: Above the background, the UI and the Arena.</li><br>
+                    <li><span class="term">"BelowBullet"</span>: Above the background, the UI, the Arena and the Player.</li><br>
+                    <li><span class="term">"Top"</span>: Above everything.</li><br>
+                    <li><span class="term">"default"</span>: Will put the buttons where they usually are in the sprite hierarchy.</li><br>
+                </ul>
+            </p>
+            
             <p>
                 <br><span class="function">SetSprite(filename) [M]</span>
                 Sets the monster's sprite from the Sprites folder to <span class="term">filename.png</span>. Can be used with <span class="term">[func]
                 </span> to change sprites mid-dialogue.
             </p>
-
+            
+            <hr>
+            <h4>Monster script functions</h4>
+            
             <p>
                 <br><span class="function">SetActive(active) [M]</span>
                 Either true or false. If false, this monster will stay on screen but will not show up in menus, do its
@@ -309,8 +317,8 @@ end
 
             <p>
                 <br><span class="function"><span class="CYF"></span> SetDamage(amount) [M]</span>
-                Set the next attack's amount of damage. Can be negative.<br>
-                <b>YOU HAVE TO USE IT IN A FUNCTION!</b> You also don't want to use it beside <span class="term">SetActive(false)</span>.
+                Set the amount of damage the monster will take nex time it is attacked. Can be negative.<br>
+                <b>THIS MUST ONLY BE USED IN A FUNCTION!</b> You also don't want to use it beside <span class="term">SetActive(false)</span>.
             </p>
 
             <p>
@@ -331,20 +339,20 @@ end
             
             <p>
                 <br><span class="function"><span class="CYF"></span> MoveTo(float x, float y, bool bindToArena = false) [M]</span>
-                Moves the enemy's sprite relative to the bottom left corner.
+                Moves the enemy's sprite relative to the bottom left corner.<br>
                 <span class="term">bindToArena</span>: if the enemy's sprite will follow the Arena. Same as <span class="term">BindToArena()</span>.
             </p>
             
             <p>
                 <br><span class="function"><span class="CYF"></span> BindToArena(bool bind, bool isUnderArena = false) [M]</span>
-                Controls whether the enemy's sprite will follow the Arena's movements.
+                Controls whether the enemy's sprite will follow the Arena's movements.<br>
                 <span class="term">isUnderArena</span>: will the enemy's sprite be under the arena?
             </p>
             
             <p>
                 <br><span class="function"><span class="CYF"></span> SetBubbleOffset(int x, int y) [M]</span>
-                Makes the enemy's dialogue bubble appear, relative to its original position: <span class="term">x</span> pixels horizontally and
-                <span class="term">y</span> pixels vertically.
+                Makes the enemy's dialogue bubble appear <span class="term">x</span> pixels horizontally and
+                <span class="term">y</span> pixels vertically relative to its original position.
             </p>
             
             <p>
@@ -357,33 +365,6 @@ end
                 <br><span class="function"><span class="CYF"></span> SetSliceAnimOffset(int x, int y)[M]</span>
                 Changes the offset of the attack animation (the red slice by default) for when the player attacks this monster.
             </p>
-
-            <p>
-                <br><span class="function">RandomEncounterText() returns string [E]</span>
-                Select a random monster from the encounter, then get a random entry from the <span class="term">comments</span> table there.
-                You'll want to use this to replicate default encounter behaviour. See code below (or one of the example
-                encounters).
-            </p>
-
-            <p>
-                <br><span class="function"><span class="CYF"></span> SetButtonLayer(string layer) [E]</span>
-                Changes the <span class="term">layer</span> of the FIGHT, ACT, ITEM and MERCY buttons.
-                The usable layers are created sprite layers and those base layers:
-                <ul>
-                    <li><span class="term">"Bottom"</span>: Under everything, even the background.</li><br>
-                    <li><span class="term">"BelowUI"</span>: Above the background.</li><br>
-                    <li><span class="term">"BelowArena"</span>: Above the background and the UI.</li><br>
-                    <li><span class="term">"BelowPlayer"</span>: Above the background, the UI and the Arena.</li><br>
-                    <li><span class="term">"BelowBullet"</span>: Above the background, the UI, the Arena and the Player.</li><br>
-                    <li><span class="term">"Top"</span>: Above everything.</li><br>
-                    <li><span class="term">"default"</span>: Will put the buttons where they usually are in the sprite hierarchy.</li><br>
-                </ul>
-            </p>
-            <div class="code-container">
-   <pre class="brush: lua;">function DefenseEnding() --This built-in function fires after the defense round ends.
-    encountertext = RandomEncounterText()
-end</pre>
-            </div>
         </div>
 
         <div class="tab-pane text-style" id="mercy">
@@ -415,5 +396,7 @@ end</pre>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 <script src="../js/bootstrap.min.js"></script>
 <script type="text/javascript" src="../js/show_hide_comments.js"></script>
+
+<script type="text/javascript" src="../js/FontToggleButton.js"></script>
 </body>
 </html>

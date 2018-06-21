@@ -85,40 +85,48 @@ it's w3c valid, at least
             <p>
                 <br><span class="function"><span class="CYF"></span> The NewAudio object [E/M/W]</span>
                 The NewAudio object allows you to create sound channels and has an overall better music management than the Audio object.
+                <br><br>
+                <b>Audio Channels</b> can play up to one sound at a time, and will stop their previously playing sound if you add a new sound to the channel.
             </p>
             <ul>
                 <li><span class="term">NewAudio.CreateChannel(name)</span> - Creates the audio channel <span class="term">name</span>.</li><br>
                 <li><span class="term">NewAudio.DestroyChannel(name)</span> - Destroys the audio channel <span class="term">name</span>.</li><br>
                 <li><span class="term">NewAudio.Exists(name)</span> - Checks if the audio channel <span class="term">name</span> exists.</li><br>
-                <li><span class="term">NewAudio.GetAudioName(name)</span> - Gets the name of the audio channel <span class="term">name</span>.</li><br>
-                <li><span class="term">NewAudio.GetTotalTime(name)</span> - Get the total time of the last clip played on the channel 
-                <span class="term">name</span>.</li><br>
+                <li><span class="term">NewAudio.GetAudioName(name)</span> - Gets the name and type of the audio clip currently playing in the channel 
+                <span class="term">name</span> as a string.<br>For example, playing the sound <span class="term">dogsecret</span> in an audio channel 
+                and using this function on that channel would return the string <span class="term">"sound:dogsecret"</span>.</li><br>
+                <li><span class="term">NewAudio.GetTotalTime(name)</span> - Gets the length of time in seconds that an audio channel <span class="term">name</span>'s most recently played audio lasts for.</li><br>
                 <li><span class="term">NewAudio.GetCurrentTime(name)</span> - Get the current play position of the current audio of this channel
                 in seconds.</li><br>
                 <li><span class="term">NewAudio.PlayMusic(name, music, loop = false, volume = 1)</span> - Plays the music <span class="term">music</span> on 
                 the channel <span class="term">name</span>. <span class="term">loop</span> tells the engine if it has to loop the music or not; 
-                <span class="term">volume</span> is the volume of the music.</li><br>
-                <li><span class="term">NewAudio.PlaySound(name, music, loop = false, volume = 0.65)</span> - Plays the sound <span class="term">sound</span> 
+                <span class="term">volume</span> is the volume of the music.
+                <br><br>Songs played are loaded from your mod's <span class="term">Audio</span> folder, as ogg or wav files.</li><br>
+                <li><span class="term">NewAudio.PlaySound(name, sound, loop = false, volume = 0.65)</span> - Plays the sound <span class="term">sound</span> 
                 on the channel <span class="term">name</span>. <span class="term">loop</span> tells the engine if it has to loop the sound or not; 
-                <span class="term">volume</span> is the volume of the sound. The base volume of sounds and voices are both 0.65.</li><br>
-                <li><span class="term">NewAudio.PlayVoice(name, music, loop = false, volume = 0.65)</span> - Plays the voice <span class="term">voice</span> 
+                <span class="term">volume</span> is the volume of the sound. The default volume of sounds and voices are 0.65.
+                <br><br>Sounds played are loaded from your mod's <span class="term">Sounds</span> folder, as ogg or wav files.</li><br>
+                <li><span class="term">NewAudio.PlayVoice(name, voice, loop = false, volume = 0.65)</span> - Plays the voice <span class="term">voice</span> 
                 on the channel <span class="term">name</span>. <span class="term">loop</span> tells the engine if it has to loop the voice or not; 
-                <span class="term">volume</span> is the volume of the voice. The base volume of sounds and voices are both 0.65.</li><br>
-                <li><span class="term">NewAudio.SetPitch(name, value)</span> - Sets the pitch of the audio channel <span class="term">name</span>.</li><br>
-                <li><span class="term">NewAudio.GetPitch(name)</span> - Gets the pitch of the audio channel <span class="term">name</span></li><br>
-                <li><span class="term">NewAudio.SetVolume(name, value)</span> - Sets the volume of the audio channel <span class="term">name</span></li><br>
-                <li><span class="term">NewAudio.GetVolume(name)</span> - Gets the volume of the audio channel <span class="term">name</span></li><br>
-                <li><span class="term">NewAudio.Play(name)</span> - Plays the last sound played in the audio channel <span class="term">name</span></li><br>
-                <li><span class="term">NewAudio.Stop(name)</span> - Stops the audio channel <span class="term">name</span>.</li><br>
-                <li><span class="term">NewAudio.Pause(name)</span> - Pauses the audio channel <span class="term">name</span>.</li><br>
-                <li><span class="term">NewAudio.Unpause(name)</span> - Unpauses the audio channel <span class="term">name</span>.</li><br>
-                <li><span class="term">NewAudio.SetPlayTime(name, value)</span> - Sets the track position of the music in the audio channel
-                <span class="term">name</span>, in seconds.</li><br>
-                <li><span class="term">NewAudio.GetPlayTime(name)</span> - Gets the track position of the audio channel <span class="term">name</span>, 
-                in seconds.</li><br>
-                <li><span class="term">NewAudio.StopAll()</span> - Stops all the audio channels.</li><br>
-                <li><span class="term">NewAudio.PauseAll()</span> - Pauses all the audio channels.</li><br>
-                <li><span class="term">NewAudio.UnpauseAll()</span> - Unpauses all the audio channels.</li><br>
+                <span class="term">volume</span> is the volume of the voice. The default volume of sounds and voices is 0.65.
+                <br><br>Voices played are loaded from your mod's <span class="term">Sounds/Voices</span> folder, as ogg or wav files.</li><br>
+                <li><span class="term">NewAudio.SetPitch(name, value)</span> - Sets the pitch (and speed) of the audio channel <span class="term">name</span>.
+                <br>1.0 is normal pitch/speed.</li><br>
+                <li><span class="term">NewAudio.GetPitch(name)</span> - Gets the pitch of the audio channel <span class="term">name</span>.</li><br>
+                <li><span class="term">NewAudio.SetVolume(name, value)</span> - Sets the volume of the audio channel <span class="term">name</span>.
+                <br>0.75 is the default value.</li><br>
+                <li><span class="term">NewAudio.GetVolume(name)</span> - Gets the volume of the audio channel <span class="term">name</span>.</li><br>
+                <li><span class="term">NewAudio.Play(name)</span> - Plays the last sound played in the audio channel <span class="term">name</span>.</li><br>
+                <li><span class="term">NewAudio.Stop(name)</span> - Stops the audio in the channel <span class="term">name</span>.</li><br>
+                <li><span class="term">NewAudio.Pause(name)</span> - Pauses the audio in the channel <span class="term">name</span>.</li><br>
+                <li><span class="term">NewAudio.Unpause(name)</span> - Unpauses the audio in the channel <span class="term">name</span>.</li><br>
+                <li><span class="term">NewAudio.SetPlayTime(name, value)</span> - Sets the track position of the audio channel
+                <span class="term">name</span>'s audio, in seconds.</li><br>
+                <li><span class="term">NewAudio.GetPlayTime(name)</span> - Gets the track position of the audio channel <span class="term">name</span>'s 
+                audio, in seconds.</li><br>
+                <li><span class="term">NewAudio.StopAll()</span> - Stops all audio channels' audio.</li><br>
+                <li><span class="term">NewAudio.PauseAll()</span> - Pauses all the audio channels' audio.</li><br>
+                <li><span class="term">NewAudio.UnpauseAll()</span> - Unpauses all the audio channels' audio.</li><br>
                 <li><span class="term">NewAudio.IsStopped(name)</span> - Checks if the audio channel <span class="term">name</span> is stopped.</li><br>
             </ul>
         </div>
@@ -151,5 +159,7 @@ it's w3c valid, at least
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 <script src="../js/bootstrap.min.js"></script>
 <script type="text/javascript" src="../js/show_hide_comments.js"></script>
+
+<script type="text/javascript" src="../js/FontToggleButton.js"></script>
 </body>
 </html>

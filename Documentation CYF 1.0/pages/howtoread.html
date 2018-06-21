@@ -84,7 +84,7 @@ it's w3c valid, at least
         <div class="tab-pane active text-style" id="howtoreadthisdocumentation">
             <h2>How to read this documentation</h2><br><br>
             <p>After people had some problems reading the documentation correctly, I decided to create this little tutorial.</p>
-            <p>Let's say you saw something in the documentation that looks like this:</p>
+            <p>Let's say you see something in the documentation that looks like this:</p>
             <p><span class="term">
             <!-- <div class="code-container"> -->
             <!-- <pre class="brush: lua"> -->
@@ -95,13 +95,13 @@ it's w3c valid, at least
             <p>There are several things to know here. First of all, the arguments have a type and a name. The name really is here just to help you to know 
             what the variable is,
                you don't really have to care about it. However, the type is important, it determines what kind of variable you'll need to send.<br>
-               <br>In this example, "string" is a character chain (i.e. "hello"), "int" is an integer (i.e. 4) and "float" is a number (i.e. 3.6 or -2.) </p>
+               <br>In this example, "string" is a character chain (i.e. "hello"), "int" is an integer (i.e. 4) and "float" is a number (i.e. 3.6 or -2). </p>
             <p>One last thing with functions: some of these arguments have a value after them - this is the variable's default value. So, you can
-               use the function without including that argument.<br>
-               In our example, that means that you can call just <span class="term">Screen.DispImg("poseur", 1, 320, 240)</span> - but you can add the 
+               use the function without including that argument.</p>
+            <p>In our example, that means that you can just call <span class="term">Screen.DispImg("poseur", 1, 320, 240)</span> - but you can add the 
                other values if you want to add them.<br>
                However, if you need to set <span class="term">toneB</span> in our example, you need to set <span class="term">toneR</span> and <span class=
-               "term">toneG</span> before it, as well. If you want to keep the default values, just enter these :P<br>
+               "term">toneG</span> before it, as well. If you want to keep the default values, just enter the ones the documentation says :P<br>
                <br>So if we want to fully call this function and set <span class="term">toneA</span> to 255, we have to call it like this: <br><div class=
                "code-container"><pre class="brush: lua">Screen.DispImg("poseur", 1, 320, 240, 255, 255, 255, 255)</pre></div></p>
             <p>Finally, if you're a fan of Unitale and want to use it instead of CYF, but still want to use this documentation, note this: all the variables 
@@ -138,5 +138,7 @@ it's w3c valid, at least
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 <script src="../js/bootstrap.min.js"></script>
 <script type="text/javascript" src="../js/show_hide_comments.js"></script>
+
+<script type="text/javascript" src="../js/FontToggleButton.js"></script>
 </body>
 </html>
