@@ -764,26 +764,37 @@ public class TextManager : MonoBehaviour {
             letterTimer = 0.0f;
             bool soundPlayed = false;
             int lastLetter = -1;
-            if (letterOnceValue != 0 && !instantCommand)
-                while (letterOnceValue != 0 && !instantCommand) {
-                    if (!HandleShowLetter(ref soundPlayed, ref lastLetter))
-                        return;
-                    letterOnceValue--;
-                }
+            if (HandleShowLettersOnce(ref soundPlayed, ref lastLetter))
+                return;
             else
                 for (int i = 0; (instantCommand || i < letterSpeed) && currentCharacter < letterReferences.Length; i++)
-                    if (!HandleShowLetter(ref soundPlayed, ref lastLetter))
+                    if (!HandleShowLetter(ref soundPlayed, ref lastLetter)) {
+                        HandleShowLettersOnce(ref soundPlayed, ref lastLetter);
                         return;
+                    }
         }
         noSkip1stFrame = false;
+    }
+
+    private bool HandleShowLettersOnce(ref bool soundPlayed, ref int lastLetter) {
+        bool wentIn = false;
+        while (letterOnceValue != 0 && !instantCommand) {
+            wentIn = true;
+            if (!HandleShowLetter(ref soundPlayed, ref lastLetter)) {
+                return false;
+            }
+            letterOnceValue--;
+        }
+        return wentIn;
     }
 
     private bool HandleShowLetter(ref bool soundPlayed, ref int lastLetter) {
         if (lastLetter != currentCharacter) {
             float oldLetterTimer = letterTimer;
+            int oldLetterOnceValue = letterOnceValue;
             lastLetter = currentCharacter;
             while (CheckCommand()) {
-                if (displayImmediate || letterTimer != oldLetterTimer)
+                if (displayImmediate || letterTimer != oldLetterTimer || waitingChar != KeyCode.None || letterOnceValue != oldLetterOnceValue)
                     return false;
             }
             if (currentCharacter >= letterReferences.Length)
