@@ -12,7 +12,3 @@ function Update()
     chasingbullet.SetVar('xspeed', xspeed)
     chasingbullet.SetVar('yspeed', yspeed)
 end
-
-function OnHit(bullet)
-    Player.Hurt(300)
-end

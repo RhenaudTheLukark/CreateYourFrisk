@@ -5,9 +5,10 @@ encountertext = "Select ACT commands to see\rdifferent bullets in action." --Mod
 nextwaves = {"bullettest_chaserorb"}
 wavetimer = 4.0
 arenasize = {155, 130}
+autolinebreak = true
 
 enemies = {
-"bullet_testing_poseur"
+"bulletTestingPoseur"
 }
 
 enemypositions = {

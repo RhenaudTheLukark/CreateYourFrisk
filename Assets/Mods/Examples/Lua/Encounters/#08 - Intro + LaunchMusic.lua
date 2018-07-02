@@ -8,7 +8,7 @@ arenasize = {155, 130}
 autolinebreak = true
 
 enemies = {
-"bullet_testing_poseur2"
+"poseurIntroAndLaunchMusic"
 }
 
 enemypositions = {
@@ -19,10 +19,13 @@ enemypositions = {
 possible_attacks = {"bullettest_bouncy", "bullettest_chaserorb", "bullettest_touhou"}
 
 function EncounterStarting()
-    Audio.Pause()
-    enemies[1]["currentdialogue"] = {"Hoo boy!", "Time for you to die!", "[noskip][func:LaunchMusic][func:State, ACTIONSELECT][next]"}
-	State("ENEMYDIALOGUE")
     -- If you want to change the game state immediately, this is the place.
+    -- Pause the music to start it when you need to start it.
+    Audio.Pause()
+    -- Intro text!
+    enemies[1]["currentdialogue"] = {"Hoo boy!", "Time for you to die!", "[noskip][func:LaunchMusic][func:State, ACTIONSELECT][next]"}
+	-- Starts the battle with a text
+    State("ENEMYDIALOGUE")
 end
 
 function EnemyDialogueStarting()

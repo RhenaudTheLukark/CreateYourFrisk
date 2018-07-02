@@ -1,11 +1,12 @@
 -- A basic encounter script skeleton you can copy and modify for your own creations.
 
 -- music = "shine_on_you_crazy_diamond" --Either OGG or WAV. Extension is added automatically. Uncomment for custom music.
-encountertext = "Be killed and revive!" --Modify as necessary. It will only be read out in the action select screen.
+encountertext = "Kill yourself and revive!" --Modify as necessary. It will only be read out in the action select screen.
 nextwaves = {"bullettest_chaserorb"}
 wavetimer = math.huge
 arenasize = {155, 130}
 autolinebreak = true
+-- Variable enabling the revive system
 revive = true
 
 enemies = {

@@ -1,4 +1,6 @@
-﻿Shader "Tiled2Unity/Default (Instanced)"
+﻿// Upgrade NOTE: upgraded instancing buffer 'MyProperties' to new syntax.
+
+Shader "Tiled2Unity/Default (Instanced)"
 {
     Properties
     {
@@ -48,9 +50,10 @@
             };
 
 
-            UNITY_INSTANCING_CBUFFER_START(MyProperties)
+            UNITY_INSTANCING_BUFFER_START(MyProperties)
                 UNITY_DEFINE_INSTANCED_PROP(float4, _Color)
-            UNITY_INSTANCING_CBUFFER_END
+#define _Color_arr MyProperties
+            UNITY_INSTANCING_BUFFER_END(MyProperties)
 
             v2f vert(appdata_t In)
             {
@@ -59,7 +62,7 @@
                 v2f Out;
                 Out.vertex = UnityObjectToClipPos(In.vertex);
                 Out.texcoord = In.texcoord;
-                Out.color = In.color * UNITY_ACCESS_INSTANCED_PROP(_Color);
+                Out.color = In.color * UNITY_ACCESS_INSTANCED_PROP(_Color_arr, _Color);
 
                 #ifdef PIXELSNAP_ON
                 Out.vertex = UnityPixelSnap (Out.vertex);

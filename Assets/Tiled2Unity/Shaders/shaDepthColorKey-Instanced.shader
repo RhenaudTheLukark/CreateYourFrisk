@@ -1,4 +1,6 @@
-﻿Shader "Tiled2Unity/Depth Color Key (Instanced)"
+﻿// Upgrade NOTE: upgraded instancing buffer 'MyProperties' to new syntax.
+
+Shader "Tiled2Unity/Depth Color Key (Instanced)"
 {
 	Properties
 	{
@@ -50,9 +52,10 @@
 			};
 
 
-			UNITY_INSTANCING_CBUFFER_START(MyProperties)
+			UNITY_INSTANCING_BUFFER_START(MyProperties)
 				UNITY_DEFINE_INSTANCED_PROP(float4, _Color)
-			UNITY_INSTANCING_CBUFFER_END
+#define _Color_arr MyProperties
+			UNITY_INSTANCING_BUFFER_END(MyProperties)
 
 			v2f vert(appdata_t IN)
 			{
@@ -60,7 +63,7 @@
 				v2f OUT;
 				OUT.vertex = UnityObjectToClipPos(IN.vertex);
 				OUT.texcoord = IN.texcoord;
-				OUT.color = IN.color * UNITY_ACCESS_INSTANCED_PROP(_Color);
+				OUT.color = IN.color * UNITY_ACCESS_INSTANCED_PROP(_Color_arr, _Color);
 #ifdef PIXELSNAP_ON
 				OUT.vertex = UnityPixelSnap(OUT.vertex);
 #endif
