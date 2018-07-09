@@ -95,12 +95,16 @@ public class UIController : MonoBehaviour {
     public delegate void Message();
     public static event Message SendToStaticInits;
 
-    public void ActionDialogResult(TextMessage msg, UIState afterDialogState, ScriptWrapper caller = null) { ActionDialogResult(new TextMessage[] { msg }, afterDialogState, caller); }
+    // TODO: Check the usefulness of the third argument
+    public void ActionDialogResult(TextMessage msg, UIState afterDialogState, ScriptWrapper caller = null) {
+        ActionDialogResult(new TextMessage[] { msg }, afterDialogState, caller);
+    }
 
     public void ActionDialogResult(TextMessage[] msg, UIState afterDialogState, ScriptWrapper caller = null) {
         stateAfterDialogs = afterDialogState;
-        if (caller != null)
+        if (caller != null) {
             textmgr.SetCaller(caller);
+        }
         textmgr.SetTextQueue(msg);
         SwitchState(UIState.DIALOGRESULT);
     }
@@ -1116,6 +1120,7 @@ public class UIController : MonoBehaviour {
         ControlPanel.instance.FrameBasedMovement = false;
         textmgr = GameObject.Find("TextManager").GetComponent<TextManager>();
         textmgr.SetEffect(new TwitchEffect(textmgr));
+        textmgr.SetCaller(LuaEnemyEncounter.script);
         encounter = FindObjectOfType<LuaEnemyEncounter>();
 
         fightBtn = GameObject.Find("FightBt").GetComponent<Image>();
