@@ -35,10 +35,8 @@ public class ScriptRegistry {
         DirectoryInfo dInfo = new DirectoryInfo(directoryPath);
         FileInfo[] fInfo;
 
-        if (!dInfo.Exists && StaticInits.MODFOLDER != "Title") {
+        if (!dInfo.Exists) {
             UnitaleUtil.DisplayLuaError("mod loading", "You tried to load the mod \"" + StaticInits.MODFOLDER + "\" but it can't be found, or at least its \"Lua\" folder can't be found.\nAre you sure it exists?");
-        } else if (StaticInits.MODFOLDER == "Title") {
-            return;
         }
 
         fInfo = dInfo.GetFiles("*.lua", SearchOption.AllDirectories);
