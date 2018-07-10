@@ -50,12 +50,17 @@ public static class SpriteRegistry {
 
     private static void prepareMod(string directoryPath) {
         dict.Clear();
+
         loadAllFrom(directoryPath, true);
     }
 
     private static void loadAllFrom(string directoryPath, bool mod = false) {
         DirectoryInfo dInfo = new DirectoryInfo(directoryPath);
         FileInfo[] fInfoTest;
+
+        if (!dInfo.Exists) {
+            UnitaleUtil.DisplayLuaError("mod loading", "You tried to load the mod \"" + StaticInits.MODFOLDER + "\" but it can't be found, or at least its \"Sprites\" folder can't be found.\nAre you sure it exists?");
+        }
 
         fInfoTest = dInfo.GetFiles("*.png", SearchOption.AllDirectories);
 

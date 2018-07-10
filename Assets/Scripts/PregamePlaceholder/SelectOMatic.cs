@@ -132,10 +132,8 @@ public class SelectOMatic : MonoBehaviour {
         if (GlobalControls.crate)
             GameObject.Find("Text").GetComponent<Text>().text = "ENCNOUTRE SELECTRO (CILCK + DARG TO SEE OTRHE NECOUNETRS)";
 
-        DirectoryInfo di = new DirectoryInfo(System.IO.Path.Combine(FileLoader.DataRoot, "Mods/" + StaticInits.MODFOLDER + "/Lua/Encounters"));
-        FileInfo[] encounterFiles = di.GetFiles();
-        int numButton = 0;
-
+        DirectoryInfo di = new DirectoryInfo(Path.Combine(FileLoader.DataRoot, "Mods/" + StaticInits.MODFOLDER + "/Lua/Encounters"));
+        
         Button back = Instantiate(b);
         back.transform.SetParent(GameObject.Find("Canvas").transform);
         back.GetComponent<RectTransform>().anchoredPosition = new Vector2(325, -40);
@@ -145,21 +143,26 @@ public class SelectOMatic : MonoBehaviour {
             back.GetComponentInChildren<Text>().text = "Back";
         back.onClick.AddListener(() => { SceneManager.LoadScene("ModSelect"); });
 
-        foreach (FileInfo encounterFile in encounterFiles) {
-            if (!encounterFile.Name.EndsWith(".lua"))
-                continue;
+        if (di.Exists) {
+            FileInfo[] encounterFiles = di.GetFiles();
+            int numButton = 0;
 
-            Button c = Instantiate(b);
-            c.transform.SetParent(GameObject.Find("Content").transform);
-            RectTransform crt = c.GetComponent<RectTransform>();
-            crt.anchoredPosition = new Vector2(5, 0 - 40 * numButton);
-            c.GetComponentInChildren<Text>().text = encounterFile.Name;
-            string efn = Path.GetFileNameWithoutExtension(encounterFile.Name); // create a new object in memory because the reference to moddir in the anonymous function gets fucked
-            c.onClick.AddListener(() => {
-                StaticInits.ENCOUNTER = efn;
-                StartCoroutine(LaunchMod());
-            });
-            numButton++;
+            foreach (FileInfo encounterFile in encounterFiles) {
+                if (!encounterFile.Name.EndsWith(".lua"))
+                    continue;
+
+                Button c = Instantiate(b);
+                c.transform.SetParent(GameObject.Find("Content").transform);
+                RectTransform crt = c.GetComponent<RectTransform>();
+                crt.anchoredPosition = new Vector2(5, 0 - 40 * numButton);
+                c.GetComponentInChildren<Text>().text = encounterFile.Name;
+                string efn = Path.GetFileNameWithoutExtension(encounterFile.Name); // create a new object in memory because the reference to moddir in the anonymous function gets fucked
+                c.onClick.AddListener(() => {
+                    StaticInits.ENCOUNTER = efn;
+                    StartCoroutine(LaunchMod());
+                });
+                numButton++;
+            }
         }
     }
 }
