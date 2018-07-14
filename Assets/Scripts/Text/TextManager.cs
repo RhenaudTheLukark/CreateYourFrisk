@@ -890,7 +890,6 @@ public class TextManager : MonoBehaviour {
             
             case "noskip":
                 if (args.Length == 0)      currentSkippable = false;
-                else if (args[0] == "off") currentSkippable = true;
                 break;
 
             case "font":
