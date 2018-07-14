@@ -32,23 +32,28 @@ public class ScriptRegistry {
     }
 
     private static void loadAllFrom(string directoryPath, string script_prefix) {
-        try {
-            DirectoryInfo dInfo = new DirectoryInfo(directoryPath);
-            FileInfo[] fInfo = dInfo.GetFiles("*.lua", SearchOption.AllDirectories);
-            foreach (FileInfo file in fInfo) {
-                //UnitaleUtil.writeInLog(file.Name);
-                string scriptName = FileLoader.getRelativePathWithoutExtension(directoryPath, file.FullName).ToLower();
-                string temp = "";
-                dict.TryGetValue(script_prefix + scriptName, out temp);
+        DirectoryInfo dInfo = new DirectoryInfo(directoryPath);
+        FileInfo[] fInfo;
 
-                if (dict.ContainsKey(script_prefix + scriptName) && temp == FileLoader.getTextFrom(file.FullName))
-                    continue;
+        if (!dInfo.Exists) {
+            UnitaleUtil.DisplayLuaError("mod loading", "You tried to load the mod \"" + StaticInits.MODFOLDER + "\" but it can't be found, or at least its \"Lua\" folder can't be found.\nAre you sure it exists?");
+        }
 
-                else if (dict.ContainsKey(script_prefix + scriptName))
-                    dict.Remove(script_prefix + scriptName);
+        fInfo = dInfo.GetFiles("*.lua", SearchOption.AllDirectories);
 
-                Set(script_prefix + scriptName, FileLoader.getTextFrom(file.FullName));
-            }
-        } catch { }
+        foreach (FileInfo file in fInfo) {
+            //UnitaleUtil.writeInLog(file.Name);
+            string scriptName = FileLoader.getRelativePathWithoutExtension(directoryPath, file.FullName).ToLower();
+            string temp = "";
+            dict.TryGetValue(script_prefix + scriptName, out temp);
+
+            if (dict.ContainsKey(script_prefix + scriptName) && temp == FileLoader.getTextFrom(file.FullName))
+                continue;
+
+            else if (dict.ContainsKey(script_prefix + scriptName))
+                dict.Remove(script_prefix + scriptName);
+
+            Set(script_prefix + scriptName, FileLoader.getTextFrom(file.FullName));
+        }
     }
 }

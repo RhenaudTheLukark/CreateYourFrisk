@@ -67,7 +67,7 @@ public class TextManager : MonoBehaviour {
     private float timePerLetter;
     private float singleFrameTiming = 1.0f / 30;
 
-    private ScriptWrapper caller;
+    public ScriptWrapper caller;
 
     public UnderFont Charset { get; protected set; }
     public TextMessage[] textQueue = null;
