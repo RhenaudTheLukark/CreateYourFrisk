@@ -156,7 +156,7 @@ public class LuaSpriteController {
             if (keyframes != null)
                 if (keyframes.enabled == false)                    return true;
                 else if (loop == KeyframeCollection.LoopMode.LOOP) return false;
-                else                                               return keyframes.enabled && keyframes.animationComplete();
+                else                                               return keyframes.enabled && keyframes.AnimationComplete();
             return false;
         }
     }
@@ -521,7 +521,7 @@ public class LuaSpriteController {
             return;
         if (keyframes == null)
             return;
-        Keyframe k = keyframes.getCurrent();
+        Keyframe k = keyframes.GetCurrent();
         Sprite s = SpriteRegistry.GENERIC_SPRITE_PREFAB.sprite;
         if (k != null)
             s = k.sprite;
