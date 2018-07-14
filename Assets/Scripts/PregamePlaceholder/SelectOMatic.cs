@@ -46,6 +46,7 @@ public class SelectOMatic : MonoBehaviour {
     /// Makes the buttons for the mod selection screen.
     /// </summary>
     private void modFolderSelection() {
+        UnitaleUtil.printDebuggerBeforeInit = "";
         if (GlobalControls.crate)
             GameObject.Find("Text").GetComponent<Text>().text = "MDO SELECTRO (CILCK + DARG TO SEE OTRHE MODS)";
         DirectoryInfo di = new DirectoryInfo(System.IO.Path.Combine(FileLoader.DataRoot, "Mods"));

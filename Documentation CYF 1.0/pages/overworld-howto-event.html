@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<!--
+since you're here anyway: there's a small easter egg on the text commands page but it's probably not worth finding, sorry
+you may notice this page's code is garbage: i'm not a web designer! ;-;
+it's w3c valid, at least
+-->
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="favicon.ico">
+
+    <title>CYF Documentation - How to create an event in Unity</title>
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="../css/themesidebar.css" rel="stylesheet">
+    <link href="../css/shThemeRDark.css" rel="stylesheet">
+
+    <!-- Syntax highlighting -->
+    <script type="text/javascript" src="../js/shCore.js"></script>
+    <script type="text/javascript" src="../js/shBrushLua.js"></script>
+    <script type="text/javascript">SyntaxHighlighter.all();</script>
+</head>
+<body>
+<img src="../img/bg2.png" alt="Undertale background" class="backimg">
+<div class="container arena black">
+    <div class="col-md-2">
+        <!--navigation-->
+        <nav class="nav-sidebar">
+            <ul class="nav tabs">
+                <li class="li-header">Basics</li>
+                    <li><a href="../documentation.html">Welcome</a></li>
+                    <li><a href="howtoread.html">How to read this documentation</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li><a href="controls.html">Controls</a></li>
+                    <li><a href="basic.html">Basic setup</a></li>
+                    <li><a href="variables.html">Special Variables</a></li>
+                    <li><a href="terms.html">Terminology</a></li>
+                <li class="li-header">API</li>
+                    <li><a href="api-text.html">Text commands</a></li>
+                    <li><a href="api-events.html">Game events</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li class="li-indent">Functions &amp; Objects:</li>
+                        <li class="li-indent"><a href="api-functions-main.html">Misc. Functions</a></li>
+                        <li class="li-indent"><a href="api-functions-player.html">The Player Object</a></li>
+                        <li class="li-indent"><a href="api-functions-script.html">The Script Object</a></li>
+                        <li class="li-indent"><a href="api-functions-audio.html">The Audio Object</a></li>
+                        <li class="li-indent"><a href="api-functions-newaudio.html"><span class="CYF"></span> The NewAudio Object</a></li>
+                        <li class="li-indent"><a href="api-functions-input.html">The Input Object</a></li>
+						<li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
+                        <li class="li-indent"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
+                        <li class="li-indent"><a href="api-functions-waves.html">Wave Scripts</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li><a href="api-projectile.html">Projectile management</a></li>
+                    <li><a href="api-animation.html">Sprites &amp; Animation</a></li>
+                    <li><a href="api-keys.html"><span class="CYF"></span> Key List</a></li>
+                <li class="li-header">Create Your Frisk's new features</li>
+                    <li><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory System</a></li>
+                    <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
+                    <li><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
+				<li class="li-header">Overworld</li>
+                    <li><a href="overworld.html"><span class="CYF"></span> Basics</a></li>
+                    <li><a href="overworld-howto-map.html"><span class="CYF"></span> How to create a map</a></li>
+                    <li style="margin-left:5px;">> <span class="CYF"></span> How to create an event <</li>
+                    <li><a href="overworld-howto-animevent.html"><span class="CYF"></span> How to animate an event</a></li>
+                    <li><a href="overworld-howto-shop.html"><span class="CYF"></span> How to create a shop</a></li>
+                    <li><a href="overworld-object-general.html"><span class="CYF"></span> The General Object</a></li>
+                    <li><a href="overworld-object-event.html"><span class="CYF"></span> The Event Object</a></li>
+                    <li><a href="overworld-object-player.html"><span class="CYF"></span> The Player Object</a></li>
+                    <li><a href="overworld-object-screen.html"><span class="CYF"></span> The Screen Object</a></li>
+                    <li><a href="overworld-object-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
+                    <li><a href="overworld-object-map.html"><span class="CYF"></span> The Map Object</a></li>
+                <li class="li-header">Resources</li>
+                    <li><a href="../media/dialogoptions.png">Dialog bubble names</a></li>
+            </ul>
+        </nav>
+    </div>
+    <!--tabs'n'shit-->
+    <div class="tab-content col-md-10">
+		<div class="tab-pane active text-style" id="overworld-howto-event">
+            <h2><span class="CYF"></span>The Overworld: How to create an event in Unity</h2><br><br>
+
+            <p>
+                If you want to make a good map, creating events is something that you might want to get used to.<br>
+                Making events is not complicated, though, you just need to know what to tweak.
+            </p>
+            <br>
+            <p>
+                <li>The first thing that you'll have to do is, of course, to open the map you want to add the event in.</li>
+                <li>As you may have seen in the previous tutorial, Unity uses "prefabs". These are generic objects that can 
+                be used in different scenes across the project. Here, you'd want to go to the Project tab and go to 
+                <span class="term">Assets/Resources/prefabs</span> to see those.<br>
+                The one that interests us here is the <span class="term">Event1</span> prefab. Click and drag it to the GameObject list 
+				to create an instance of this prefab.</li>
+            </p>
+            <br>
+			<p>
+				Now, as you can see there are two different objects, both named "Event1".<br>
+				You absolutely need to rename the paren't GameObject "SpritePivot" in order for the event to be correctly layered.<br>
+				This is a workaround I did to correctly layer the sprites. The position of that event must be set on that parent GameObject
+				in order for its layer to be correctly set. You can modify the position of the child GameObjct if you want to, it'll 
+				shift the layer point accordingly.<br>
+				<a href="https://forum.unity3d.com/threads/official-2d-sorting-feedback.376707/#post-3167142">For more infomation about that workaround and how it works, go here.</a>
+			</p>
+			<br>
+            <p>
+                Now the event is ready! Simple, isn't it? However, you'll want to modify it now. Keeping the object like this is not recommended.<br>
+                What follows is a list of things that you can modify.
+            </p>
+            <br>
+            <p>
+                <li><span class="term">GameObject</span> ~ Name: All events must have a different name, so find one that fits this event!</li>
+                <li><span class="term">RectTransform</span> ~ PosX/PosY: The position of the event.</li>
+                <li><span class="term">RectTransform</span> ~ Anchors: Anchor of the event. Set them at the same value!</li>
+                <li><span class="term">RectTransform</span> ~ Pivot: Pivot of the event. It changes the object's position!</li>
+                <li><span class="term">SpriteRenderer</span> ~ Sprite: It's not what will be used to display the sprite. 
+				But you can still use this to see if the event's sprite looks good and to modify the event's hitbox.</li>
+                <li><span class="term">BoxCollider</span> ~ Edit Collider Button: Lets you modify the event's hitbox.</li>
+                <li><span class="term">BoxCollider</span> ~ Is Trigger: Must be activated for Touch events.</li>
+                <li><span class="term">BoxCollider</span> ~ Offset/Size: Same as the Edit Collider Button.</li>
+                <li><span class="term">EventOW</span> ~ Script To Load: Name of the event script to load when triggering this event. 
+				The event must be in the directory <span class="term">MAPMOD/Lua/Events/</span>.</li>
+                <li><span class="term">EventOW</span> ~ Actual Page: The first page of the event (and in game the current page of the event)</li>
+                <li><span class="term">EventOW</span> ~ Event Triggers: This part MUST NOT be forgotten. Even if it doesn't seem to 
+				be important, it is still the most important part of the event.<br>
+				In your event, you'll need to name all your functions following the pattern <span class="term">"EventPage" + Page number</span>.<br>
+				For each X value, you'll input the Page number, and for each matching Y value, you'll need to input the trigger type of the event:<br>
+				0 = Confirm button, 1 = Hitbox touched, 2 = Auto, 3 = Parallel event.</li>
+                <li><span class="term">EventOW</span> ~ Move Speed: The speed of the event in px/frame, if you want to move the event.</li>
+                <li><span class="term">AutoloadRessourcesFromRegistry</span> ~ Sprite Path: Path of the sprite from 
+				<span class="term">MAPMOD/Sprites</span>.</li>
+            </p>
+            <br>
+            <p>
+                Now you'll need to create your event's script. It needs to be located at <span class="term">MAPMOD/Lua/Events</span>.
+            </p>
+            <br>
+            <p>
+                If you want to permanently disable an event in-game, set its event page to -1. It'll be automatically deleted when you re-enter the map.
+            </p>
+            <br>
+            <p>
+                All the other values must not be changed, unless you know what you're doing (except for some self-explanatory 
+				values like <span class="term">SpriteRenderer</span> ~ FlipX/FlipY)
+            </p>
+            <br>
+            <p>
+                If you had any problems with this tutorial, please tell me what went wrong.<br>
+                If you see any ways that this tutorial can be improved, please tell me that as well.<br>
+                You'll have more chances to contact me on Unitale's Discord server - the response will be way faster and it will be much 
+				smoother than using messages on reddit.<br>
+                Here is the link to the <a href="https://discord.gg/0c8fN7KCwBh4ZBL9">Discord server</a>.
+            </p>
+            <br>
+            <p>
+            I hope that you enjoyed this tutorial - and if you need further explanations, don't hesitate 
+            to ask RhenaudTheLukark on reddit or the Discord server!</p>
+        </div>
+		
+		<div class="tab-pane text-style" id="mercy">
+            <h2 style="text-decoration: none; line-height:50px;">
+                * YOU WON!<br>
+                * You earned 0 EXP and 0 gold.<br>
+                * also the nav menu is broken now
+            </h2><br>
+        </div>
+	</div>
+</div>
+
+<div class="container">
+    <div class="col-xs-3"><img class="centerbt black" alt="Undertale fake button" src="../img/fightbt_0.png" height="42">
+    </div>
+    <div class="col-xs-3"><img class="centerbt black" alt="Undertale fake button" src="../img/actbt_0.png" height="42">
+    </div>
+    <div class="col-xs-3"><img class="centerbt black" alt="Undertale fake button" src="../img/itembt_0.png" height="42">
+    </div>
+    <div class="col-xs-3"><a href="#mercy" data-toggle="tab"><img class="centerbt black" alt="Undertale fake button"
+                                                                  src="../img/mercybt_0.png" height="42"></a>
+    </div>
+</div>
+<br>
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="../js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../js/show_hide_comments.js"></script>
+
+<script type="text/javascript" src="../js/FontToggleButton.js"></script>
+</body>
+</html>

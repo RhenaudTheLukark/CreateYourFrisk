@@ -15,7 +15,7 @@ canspare = false
 xp = 30
 gold = 40
 
--- Happens after the slash animation but before 
+-- Happens after the slash animation but before the animation.
 function HandleAttack(attackstatus)
     if attackstatus == -1 then
         -- player pressed fight but didn't press Z afterwards
@@ -35,5 +35,4 @@ function HandleCustomCommand(command)
     end
     currentdialogue = {"[font:sans]" .. currentdialogue[1]}
     BattleDialog({"You selected " .. command .. "."})
-    
 end

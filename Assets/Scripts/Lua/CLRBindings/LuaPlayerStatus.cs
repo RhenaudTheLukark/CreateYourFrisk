@@ -210,7 +210,7 @@ public class LuaPlayerStatus {
     /// <param name="x"></param>
     /// <param name="y"></param>
     /// <param name="ignoreWalls"></param>
-    public void Move(float x, float y, bool ignoreWalls = false) { player.SetPosition(this.x + x, this.y + y, ignoreWalls); }
+    public void Move(float x, float y, bool ignoreWalls = false) { player.SetPosition(absx + x, absy + y, ignoreWalls); }
 
     /// <summary>
     /// Move the player relative to the arena center.

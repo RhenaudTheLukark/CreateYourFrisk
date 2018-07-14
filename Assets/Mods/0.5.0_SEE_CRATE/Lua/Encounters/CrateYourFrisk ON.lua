@@ -1,4 +1,4 @@
-error("This encounter is used for testing purposes, I suggest you to not launch it.")
+error("This encounter is used for testing purposes, I suggest for you to not launch it.")
 
 encountertext = "Poseur strikes a pose!"
 nextwaves = {"thechoice"}

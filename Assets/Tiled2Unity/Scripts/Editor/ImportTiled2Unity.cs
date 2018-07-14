@@ -49,7 +49,7 @@ namespace Tiled2Unity
         {
             bool startsWith = this.fullPathToFile.Contains("/Tiled2Unity/Textures/");
             bool endsWithTxt = this.fullPathToFile.EndsWith(".txt");
-            return startsWith &&!endsWithTxt;
+            return startsWith && !endsWithTxt;
         }
 
         public bool IsTiled2UnityMaterial()
@@ -73,10 +73,9 @@ namespace Tiled2Unity
             return startsWith && endsWith;
         }
 
-        public string GetMeshAssetPath(string file)
+        public string GetMeshAssetPath(string mapName, string meshName)
         {
-            string name = System.IO.Path.GetFileNameWithoutExtension(file);
-            string meshAsset = String.Format("{0}/Meshes/{1}.obj", this.assetPathToTiled2UnityRoot, name);
+            string meshAsset = String.Format("{0}/Meshes/{1}/{2}.obj", this.assetPathToTiled2UnityRoot, mapName, meshName);
             return meshAsset;
         }
 

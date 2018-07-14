@@ -196,7 +196,7 @@ public class Title : MonoBehaviour {
             yield return 0;
         PlayerCharacter.instance.Reset(false);
         LuaScriptBinder.ClearVariables();
-        GlobalControls.MapData.Clear();
+        GlobalControls.GameMapData.Clear();
         Inventory.inventory.Clear();
         GameObject.DontDestroyOnLoad(gameObject);
         SceneManager.LoadScene("TransitionOverworld");

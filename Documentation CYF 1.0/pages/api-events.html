@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<!--
+since you're here anyway: there's a small easter egg on the text commands page but it's probably not worth finding, sorry
+you may notice this page's code is garbage: i'm not a web designer! ;-;
+it's w3c valid, at least
+-->
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="favicon.ico">
+
+    <title>CYF Documentation - Game Events</title>
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="../css/themesidebar.css" rel="stylesheet">
+    <link href="../css/shThemeRDark.css" rel="stylesheet">
+
+    <!-- Syntax highlighting -->
+    <script type="text/javascript" src="../js/shCore.js"></script>
+    <script type="text/javascript" src="../js/shBrushLua.js"></script>
+    <script type="text/javascript">SyntaxHighlighter.all();</script>
+</head>
+<body>
+<img src="../img/bg2.png" alt="Undertale background" class="backimg">
+<div class="container arena black">
+    <div class="col-md-2">
+        <!--navigation-->
+        <nav class="nav-sidebar">
+            <ul class="nav tabs">
+                <li class="li-header">Basics</li>
+                    <li><a href="../documentation.html">Welcome</a></li>
+                    <li><a href="howtoread.html">How to read this documentation</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li><a href="controls.html">Controls</a></li>
+                    <li><a href="basic.html">Basic setup</a></li>
+                    <li><a href="variables.html">Special Variables</a></li>
+                    <li><a href="terms.html">Terminology</a></li>
+                <li class="li-header">API</li>
+                    <li><a href="api-text.html">Text commands</a></li>
+                    <li class="active" style="margin-left:5px;">> Game events <</li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li class="li-indent">Functions &amp; Objects:</li>
+                        <li class="li-indent"><a href="api-functions-main.html">Misc. Functions</a></li>
+                        <li class="li-indent"><a href="api-functions-player.html">The Player Object</a></li>
+                        <li class="li-indent"><a href="api-functions-script.html">The Script Object</a></li>
+                        <li class="li-indent"><a href="api-functions-audio.html">The Audio Object</a></li>
+                        <li class="li-indent"><a href="api-functions-newaudio.html"><span class="CYF"></span> The NewAudio Object</a></li>
+                        <li class="li-indent"><a href="api-functions-input.html">The Input Object</a></li>
+                        <li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
+                        <li class="li-indent"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
+                        <li class="li-indent"><a href="api-functions-waves.html">Wave Scripts</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li><a href="api-projectile.html">Projectile management</a></li>
+                    <li><a href="api-animation.html">Sprites &amp; Animation</a></li>
+                    <li><a href="api-keys.html"><span class="CYF"></span> Key List</a></li>
+                <li class="li-header">Create Your Frisk's new features</li>     
+                    <li><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory System</a></li>
+                    <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
+                    <li><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
+				<li class="li-header">Overworld</li>
+                    <li><a href="overworld.html"><span class="CYF"></span> Basics</a></li>
+                    <li><a href="overworld-howto-map.html"><span class="CYF"></span> How to create a map</a></li>
+                    <li><a href="overworld-howto-event.html"><span class="CYF"></span> How to create an event</a></li>
+                    <li><a href="overworld-howto-animevent.html"><span class="CYF"></span> How to animate an event</a></li>
+                    <li><a href="overworld-howto-shop.html"><span class="CYF"></span> How to create a shop</a></li>
+                    <li><a href="overworld-object-general.html"><span class="CYF"></span> The General Object</a></li>
+                    <li><a href="overworld-object-event.html"><span class="CYF"></span> The Event Object</a></li>
+                    <li><a href="overworld-object-player.html"><span class="CYF"></span> The Player Object</a></li>
+                    <li><a href="overworld-object-screen.html"><span class="CYF"></span> The Screen Object</a></li>
+                    <li><a href="overworld-object-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
+                    <li><a href="overworld-object-map.html"><span class="CYF"></span> The Map Object</a></li>
+                <li class="li-header">Resources</li>
+                    <li><a href="../media/dialogoptions.png">Dialog bubble names</a></li>
+            </ul>
+        </nav>
+    </div>
+    <!--tabs'n'shit-->
+    <div class="tab-content col-md-10">
+        <div class="tab-pane active text-style" id="api-events">
+            <h2>Game events</h2><br><br>
+            <p>This section is all about game events. Game events are functions in your scripts that the Unitale engine
+                runs at various points in the game. By changing up your behaviour depending on the actions the player
+                takes, you can go beyond a basic encounter and make it great.</p>
+            <p>There are two kinds of events. We'll refer to them as <i>inherited events</i> and <i>script-specific
+                events</i>. An <i>inherited event</i> is a function that gets run first on your Encounter script. If the
+                function is not found in the Encounter script, it will try to run the same function on all monsters. If
+                it's not found there either, it will resort to a default, built-in handler. <i>Script-specific
+                    events</i> are, as the name implies, functions that only happen for this specific script type. We'll
+                start with the first type.</p>
+            <hr>
+            <h3>Inherited events (Encounter -> Monster)</h3><br><br>
+            <p>
+                <br><span class="function">EncounterStarting()</span>
+                Happens once when everything's done initializing but before any encounter actions start. You should do
+                things like stopping the music here, or using <span class="term">State()</span> if you want to start the fight off with some
+                dialogue.
+            </p>
+            <p>
+                <br><span class="function">EnemyDialogueStarting()</span>
+                Happens when you go to the monster dialogue state. You're still free to modify monster dialogue here.
+            </p>
+            <p>
+                <br><span class="function">EnemyDialogueEnding()</span>
+                Happens when you go from the monster dialogue state to the defending state.
+            </p>
+            <p>
+                <br><span class="function">DefenseEnding()</span>
+                Happens when you go from the defending state of the game to any other state. If you read up on the
+                <span class="term">RandomEncounterText()</span> function, you'll want to use it here.
+            </p>
+            <div class="code-container">
+  <pre class="brush:lua;">function HandleItem(ItemID)
+    if ItemID == "DOGTEST2" then
+        BattleDialog({"You selected The Second Dog.", "You are truly great."})
+    else
+        BattleDialog({"You didn't select The Second Dog.", "You could've picked better."})
+    end
+end
+</pre>
+            </div>
+            <p>
+                <br><span class="function">HandleSpare()</span>
+                Happens when you select the Spare option from the Mercy menu, regardless of whether a monster is
+                spareable or not. This event fires <i>after</i> the sparing of monsters is completed. If you spare the
+                last enemy in the encounter, this function will not happen - the encounter is over at that point.
+            </p>
+            <br>
+            <h3>Script-specific events</h3><br><br>
+            <hr>
+            <h4>Encounter script events</h4>
+            <p>
+                <br><span class="function">HandleItem(item_ID)</span>
+                Happens when you select an item from the item menu. <br>
+                <br><span class="CYF"></span> In CYF, you can use the Inventory object to edit the player's inventory.
+                The items' names will be in caps, like with <span class="term">HandleCustomCommand()</span>.
+            </p>
+            <p>
+                <br><span class="function">EnteringState(newstate, oldstate)</span>
+                A new, more flexible way of handling state changes. When you enter a new state, this function will fire
+                with <i>newstate</i> containing the new state's name, and <i>oldstate</i> containing the previous
+                state's name. Both are in all caps. One of the most powerful things about it is that you can use <span class="term">State()</span>
+                here to interrupt state changes initiated by the engine itself.
+                <br>
+                <br>Possible states and when they execute are below:
+            </p>
+            <ul>
+                <li><span class="term">ACTIONSELECT</span> - Returning to the main part of the battle, where you can select
+                    FIGHT/ACT/ITEM/MERCY.
+                </li><br>
+                <li><span class="term">ATTACKING</span> - When you've selected a target with the FIGHT option.</li><br>
+                <li><span class="term">DEFENDING</span> - When the enemy/enemies finish dialogue, and one or more waves start.</li><br>
+                <li><span class="term">ENEMYSELECT</span> - When you've selected either FIGHT or ACT, and need to select an enemy.</li><br>
+                <li><span class="term">ACTMENU</span> - When you've selected an ACT target, and must now select an ACT command.</li><br>
+                <li><span class="term">ITEMMENU</span> - When you've selected ITEM.</li><br>
+                <li><span class="term">MERCYMENU</span> - When you've selected MERCY.</li><br>
+                <li><span class="term">ENEMYDIALOGUE</span> - When your enemy/enemies start their dialogue.</li><br>
+                <li><span class="term">DIALOGRESULT</span> - When you call <span class="term">BattleDialog()</span>, or when the UI shows text on its own 
+                (e.g. when using an item).
+                </li><br>
+            </ul>
+            Note: There are three states not mentioned here - because they never occur naturally. You can find them in <span class="ref">Functions &amp; 
+            objects</span>.
+            <br><br>For a clearer example, here's a code snippet replicating the older events above.
+            <div class="code-container">
+<pre class="brush:lua;">function EnteringState(newstate, oldstate)
+    if newstate == "ENEMYDIALOGUE" then
+        --same as EnemyDialogueStarting()
+    elseif newstate!= "ENEMYDIALOGUE" and oldstate == "ENEMYDIALOGUE" then
+        --same as EnemyDialogueEnding(). Alternatively, check for newstate == "DEFENDING"
+    elseif newstate!= "DEFENDING" and oldstate == "DEFENDING" then
+        --same as DefenseEnding()
+    end
+end
+</pre>
+            </div>
+            <p>
+                <br><span class="function">Update()</span>
+                This function runs for every frame for all of the encounter, even during waves. For advanced users: the
+                Update function is required to exist at the beginning of the encounter. If you define it at a later
+                point in time, it will not get executed.
+            </p>
+            <br><br>
+            <hr>
+            <h4>Monster script events</h4>
+            <p>
+                <br><span class="function">HandleAttack(damage)</span>
+                Happens the moment the player's attack has applied damage - this is when you hear the hitting sound
+                after the slash animation. <span class="term">damage</span> will be -1 if the player pressed Fight, but didn't press any
+                buttons and let it end by itself. The monster's <span class="term">hp</span> variable will have updated at this time, too.
+                Don't call <span class="term">BattleDialog()</span> here, it's a bit buggy right now.
+            </p>
+            <p>
+                <br><span class="function">OnDeath()</span>
+                Happens after your attack's shaking animation has completed and the monster's HP is 0. If you implement
+                <span class="term">OnDeath()</span>, your monster will not die automatically, and you will have to do it manually with the Kill()
+                function. OnDeath() will only happen through monster kills that happened with the FIGHT command;
+                scripted <span class="term">Kill()</span> calls will not trigger it. Calling <span class="term">BattleDialog()</span> here will probably 
+                screw up the battle UI.
+            </p>
+            <p>
+                <br><span class="function"><span class="CYF"></span>OnSpare()</span>
+                Happens after you successfully spared a monster. If you implement <span class="term">OnSpare()</span>, your monster will not be
+                spared automatically, and you will have to do it manually with the <span class="term">Spare()</span> function. <span class="term">OnSpare()
+                </span> will only happen through a monster spare that happened with the SPARE command - scripted <span class="term">Spare()</span> calls will 
+                not trigger it.
+            </p>
+            <p>
+                <br><span class="function"><span class="CYF"></span>BeforeDamageCalculation()</span>
+                Happens before the damage calculation after pressing Z when attacking. You can easily use <span class="term">SetDamage()</span>
+                in this function and lots of other animations and such.
+                <br><i>Previous name: <span class="term">OnAttack()</span></i>
+            </p>
+            <p>
+                <br><span class="function"><span class="CYF"></span>BeforeDamageValues()</span>
+                Happens before the damage ui is displayed on the monster (the life bar and the damage number) and before
+                the hp changing. You can still change the target with <span class="term">Player.changeTarget(targetNumber)</span> in this function.
+            </p>
+            <p>
+                <br><span class="function">HandleCustomCommand(actcommand)</span>
+                Happens when you select an Act command on this monster. <span class="term">actcommand</span> will be the same as how you
+                defined it in the <span class="term">commands</span> list, except it will be <i>in all caps</i>. Intermediate example
+                below, showing how you can use it and spice it up a little.
+            </p>
+            <div class="code-container">
+  <pre class="brush:lua;">commands = {"Sing", "Dance", "Wiggle"} --somewhere at the beginning
+wigglecounter = 0 --let's keep a counter to check how often we've wiggled
+ 
+function HandleCustomCommand(command)
+    if command == "SING" then
+        BattleDialog({"You sing your heart out. It's in the arena now."})
+    elseif command == "DANCE" then
+        BattleDialog({"You busted out your best moves."})
+    elseif command == "WIGGLE" then
+        if wigglecounter == 0 then --you can use variables to make commands more exciting!
+            BattleDialog({"You just kind of stood there and wiggled."})
+        elseif wigglecounter == 1 then
+            BattleDialog({"You're still kind of standing there and wiggling."})
+        else
+            BattleDialog({"Your wiggled so often that your wiggling technique\ris now legendary."})
+        end
+        wigglecounter = wigglecounter + 1 --be sure to increase the wiggle counter, or it'll stay at 0
+    end
+end
+</pre>
+            </div>
+            <br>
+            <hr>
+            <h4>Wave script events</h4>
+            <p>
+                <br><span class="function">Update()</span>
+                This function is launched every frame (usually at 60FPS) while monsters are attacking (the defense step). That's pretty
+                much it. Update your bullets here - more on bullet creation and control is on the <span class="ref">API - Projectile
+                management</span> page.
+            </p>
+            <p>
+                <br><span class="function"><span class="CYF"></span>EndingWave()</span>
+                This function is launched just before the wave ends. It permits you to easily reset some variables and other such things.
+            </p>
+            <p>
+                <br><span class="function">OnHit(bullet)</span>
+                Every time a bullet collides with a player, this function gets called on the script that created the
+                projectile. The bullet object in this function can be modified if you feel like it. For more information
+                on the bullet object, see the documentation above.<br>
+                <br>
+                If you implement this function in your script, you have to define manually what should happen after
+                bullet collision. This is what allows you to create orange, cyan and green projectiles, and much much
+                more. If you don't implement this function in your wave script, it'll stick to the default of dealing 3
+                damage on hit.<!-- Below are multiple examples of how to use this function. -->
+            </p>
+        </div>
+
+        <div class="tab-pane text-style" id="mercy">
+            <h2 style="text-decoration: none; line-height:50px;">
+                * YOU WON!<br>
+                * You earned 0 EXP and 0 gold.<br>
+                * also the nav menu is broken now
+            </h2><br>
+        </div>
+
+    </div>
+</div>
+
+<div class="container">
+    <div class="col-xs-3"><img class="centerbt black" alt="Undertale fake button" src="../img/fightbt_0.png" height="42">
+    </div>
+    <div class="col-xs-3"><img class="centerbt black" alt="Undertale fake button" src="../img/actbt_0.png" height="42">
+    </div>
+    <div class="col-xs-3"><img class="centerbt black" alt="Undertale fake button" src="../img/itembt_0.png" height="42">
+    </div>
+    <div class="col-xs-3"><a href="#mercy" data-toggle="tab"><img class="centerbt black" alt="Undertale fake button"
+                                                                  src="../img/mercybt_0.png" height="42"></a>
+    </div>
+</div>
+<br>
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="../js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../js/show_hide_comments.js"></script>
+
+<script type="text/javascript" src="../js/FontToggleButton.js"></script>
+</body>
+</html>

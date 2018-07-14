@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<!--
+since you're here anyway: there's a small easter egg on the text commands page but it's probably not worth finding, sorry
+you may notice this page's code is garbage: i'm not a web designer! ;-;
+it's w3c valid, at least
+-->
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="favicon.ico">
+
+    <title>CYF Documentation - Misc. Functions</title>
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="../css/themesidebar.css" rel="stylesheet">
+    <link href="../css/shThemeRDark.css" rel="stylesheet">
+
+    <!-- Syntax highlighting -->
+    <script type="text/javascript" src="../js/shCore.js"></script>
+    <script type="text/javascript" src="../js/shBrushLua.js"></script>
+    <script type="text/javascript">SyntaxHighlighter.all();</script>
+</head>
+<body>
+<img src="../img/bg2.png" alt="Undertale background" class="backimg">
+<div class="container arena black">
+    <div class="col-md-2">
+        <!--navigation-->
+        <nav class="nav-sidebar">
+            <ul class="nav tabs">
+                <li class="li-header">Basics</li>
+                    <li><a href="../documentation.html">Welcome</a></li>
+                    <li><a href="howtoread.html">How to read this documentation</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li><a href="controls.html">Controls</a></li>
+                    <li><a href="basic.html">Basic setup</a></li>
+                    <li><a href="variables.html">Special Variables</a></li>
+                    <li><a href="terms.html">Terminology</a></li>
+                <li class="li-header">API</li>
+                    <li><a href="api-text.html">Text commands</a></li>
+                    <li><a href="api-events.html">Game events</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li class="li-indent">Functions &amp; Objects:</li>
+                        <li class="li-indent active" style="margin-left:5px;">> Misc. Functions <</li>
+                        <li class="li-indent"><a href="api-functions-player.html">The Player Object</a></li>
+                        <li class="li-indent"><a href="api-functions-script.html">The Script Object</a></li>
+                        <li class="li-indent"><a href="api-functions-audio.html">The Audio Object</a></li>
+                        <li class="li-indent"><a href="api-functions-newaudio.html"><span class="CYF"></span> The NewAudio Object</a></li>
+                        <li class="li-indent"><a href="api-functions-input.html">The Input Object</a></li>
+                        <li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
+                        <li class="li-indent"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
+                        <li class="li-indent"><a href="api-functions-waves.html">Wave Scripts</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li><a href="api-projectile.html">Projectile management</a></li>
+                    <li><a href="api-animation.html">Sprites &amp; Animation</a></li>
+                    <li><a href="api-keys.html"><span class="CYF"></span> Key List</a></li>
+                <li class="li-header">Create Your Frisk's new features</li>     
+                    <li><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory System</a></li>
+                    <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
+                    <li><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
+				<li class="li-header">Overworld</li>
+                    <li><a href="overworld.html"><span class="CYF"></span> Basics</a></li>
+                    <li><a href="overworld-howto-map.html"><span class="CYF"></span> How to create a map</a></li>
+                    <li><a href="overworld-howto-event.html"><span class="CYF"></span> How to create an event</a></li>
+                    <li><a href="overworld-howto-animevent.html"><span class="CYF"></span> How to animate an event</a></li>
+                    <li><a href="overworld-howto-shop.html"><span class="CYF"></span> How to create a shop</a></li>
+                    <li><a href="overworld-object-general.html"><span class="CYF"></span> The General Object</a></li>
+                    <li><a href="overworld-object-event.html"><span class="CYF"></span> The Event Object</a></li>
+                    <li><a href="overworld-object-player.html"><span class="CYF"></span> The Player Object</a></li>
+                    <li><a href="overworld-object-screen.html"><span class="CYF"></span> The Screen Object</a></li>
+                    <li><a href="overworld-object-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
+                    <li><a href="overworld-object-map.html"><span class="CYF"></span> The Map Object</a></li>
+                <li class="li-header">Resources</li>
+                    <li><a href="../media/dialogoptions.png">Dialog bubble names</a></li>
+            </ul>
+        </nav>
+    </div>
+    <!--tabs'n'shit-->
+    <div class="tab-content col-md-10">
+        <div class="tab-pane active text-style" id="api-functions-main">
+            <h2>Functions &amp; Objects</h2><br><br>
+            <p>
+                This section details functions Unitale adds to your Lua scripts to interact with the game in various
+                ways. All functions will have a suffix in square brackets to denote in which scripts they may be used.
+                The key for this is E for Encounter, M for Monster and W for Wave. If, for example, a function can be
+                used in all scripts, it will be written as <i>functionName() [E/M/W]</i>.
+            </p>
+            
+            <hr>
+            <h4>All-script functions</h4>
+            
+            <p>
+                <br><span class="function">DEBUG(text) [E/M/W]</span>
+                Write text to the debug console (toggleable with <span class="term">F9</span>). It will appear automatically the first time you
+                write text to it. You can use this to check values in your code, or make sure some pieces of code are
+                actually running.
+            </p>
+
+            <p>
+                <br><span class="function">SetGlobal(your_variable_name, value) [E/M/W]</span>
+                DEPRECATED. Instead, set variables in the Encounter script, as it is accessible from everywhere.
+                <br>You can retrieve these variables with <span class="term">Encounter.GetVar("yourvar")</span> or <span class="term">Encounter["yourvar"]
+                </span> and set them with <span class="term">Encounter.SetVar("yourvar", value)</span> or <span class="term">Encounter["yourvar"] = value.</span> 
+                (For more info, scroll down and look for <span class="ref">The Script object (and the Encounter object)</span>)
+                <br><br>
+                Sets a global variable. After setting, you can retrieve it from all your scripts at any time with
+                <span class="term">GetGlobal(variable_name)</span>.
+            </p>
+
+            <p>
+                <br><span class="function">GetGlobal(your_variable_name) returns variable [E/M/W]</span>
+                DEPRECATED. Instead, set variables in the Encounter script, as it is accessible from everywhere.
+                <br><br>Gets a Global Variable that you previously set using <span class="term">SetGlobal()</span>.
+            </p>
+
+            <p>
+                <br><span class="function"><span class="CYF"></span> SetRealGlobal(your_variable_name, value) [E/M/W]</span>
+                Sets a Global variable that is accessible even in the overworld. After setting it, you can retrieve it from all of
+                your scripts at any time with <span class="term">GetRealGlobal(variable_name)</span>.
+                Persists through battles, but not between sessions. These variables can be saved using the overworld save system.<br>
+                Can be used in the overworld.
+            </p>
+
+            <p>
+                <br><span class="function"><span class="CYF"></span> GetRealGlobal(your_variable_name) returns variable [E/M/W]</span>
+                Gets a Global that you previously set using <span class="term">SetRealGlobal()</span>.<br>
+                Can be used in the overworld.
+            </p>
+
+            <p>
+                <br><span class="function"><span class="CYF"></span> SetAlMightyGlobal(your_variable_name, value) [E/M/W]</span>
+                <i>AlMighty Globals</i> are globals that are instantly saved into a file when set: these globals persist
+                through sessions, even in devMod mode, and can't be removed.
+                However, you can still access the <span class="term">Remove AlMighty Globals</span> button in devMod to remove them.<br>
+                Can be used in the overworld.
+            </p>
+
+            <p>
+                <br><span class="function"><span class="CYF"></span> GetAlMightyGlobal(your_variable_name) returns variable [E/M/W]</span>
+                Gets an AlMighty Global that you previously set using <span class="term">SetAlMightyGlobal()</span>.<br>
+                Can be used in the overworld.
+            </p>
+            
+            <p>
+                <br><span class="function"><span class="CYF"></span> SetFrameBasedMovement(bool) [E/M/W]</span>
+                Set to <span class="term">true</span> if you want frame-based player movement (2px/frame) instead of time based player movement (120px/s).
+                <br>Set it to <span class="term">false</span> if you already are in frame-based movement and you want to go back to the time based movement.
+            </p>
+
+            <p>
+                <br><span class="function"><span class="CYF"></span> SetAction("FIGHT" or "ACT") [E/M/W]</span>
+                Used alongside <span class="term">EnteringState</span> to force the player to choose FIGHT or ACT. Does nothing outside of this function.
+            </p>
+           
+            <p>         
+                <br><span class="function"><span class="CYF"></span> AllowPlayerDef(bool) [E/M/W]</span>
+                If this value is set to true, all damage that the player will take will be reduced - like in Undertale - by 1 point for each 5 defense,
+                with the player's defense at LV1 not affecting the damage.<br/>
+                Each damage that is originally positive but lower than 1 will be replaced by 1.
+                <br>False by default.
+            </p>
+
+            <p>
+                <br><span class="function"><span class="CYF"></span> SetPPCollision(bool) [E/M/W]</span>
+                Setting this to true will force all bullets that don't have a specified collision type to use the Pixel-Perfect collision system.
+                If you want to use it, then I'd highly recommend seeing <span class="ref">The Pixel-Perfect Collision System</span>.
+                <br>False by default.
+            </p>
+
+            <p>
+                <br><span class="function">BattleDialog(list_of_strings) [E/M/W]</span>
+                This makes the list of strings you give to the function appear in the UI dialog box. After skipping through
+                them, you will automatically go to the monster dialogue step by default. Below is a working example of
+                how you could use it for a Vegetoid encounter.
+            </p>
+            <div class="code-container">
+   <pre class="brush: lua;">function HandleCustomCommand(command)
+    if command == "DINNER" then
+        if ate_greens then -- ate_greens is a non-default variable, of course
+            currentdialogue = {"Ate\nYour\nGreens"}
+        else
+            currentdialogue = {"Eat\nYour\nGreens"}
+        end
+        BattleDialog({"You pat your stomach.\nVegetoid offers a healthy meal."})
+    end
+end
+</pre>
+                <p>(For the Lua specialists; it is indeed a table of strings rather than a list of strings.)</p>
+            </div>
+
+            <p>
+                <br><span class="function">State(state_to_go_to) [E/M/W]</span>
+                A powerful function that immediately skips the battle to the specified state, rather than following the
+                default conventions. Below is a list of valid strings you can pass to it, what state you'll be going to
+                and what that state entails. The states you pass to it are case-invariant, but uppercase is recommended
+                for readability.
+            </p>
+            
+            <p>            
+                Arguably the best part about <span class="term">State</span> is that it can be used in conjunction with the text command <span class="term">
+                [func]</span> to change the state from within your dialogue. An example is below - this will have a monster say that he will
+                not fight you, then return to the action select screen rather than launching an attack.
+            </p>
+            
+            <div class="code-container">
+                <pre class="brush: lua;">currentdialogue = {"I won't fight you.", "[func:State,ACTIONSELECT]"}</pre>
+            </div>
+            
+            <ul>
+                <li><span class="term">ACTIONSELECT</span> - While in this state, you can select FIGHT/ACT/ITEM/MERCY.</li><br>
+                <li><span class="term">ENEMYDIALOGUE</span> - When starting this state, <span class="term">currentdialogue</span> gets read from the 
+                    Encounter script for every monster and their dialogue is displayed. If that doesn't exist, it'll return something at
+                    random from the <span class="term">randomdialogue</span> list.
+                </li><br>
+                <li><span class="term">DEFENDING</span> - When starting this state, <span class="term">nextwaves</span> is read out from the Encounter 
+                    script and all scripts in the Waves folder with matching names will be part of this defense step. <span class="term">wavetimer</span>
+                    is also read from the Encounter script at this time.
+                </li><br>
+            </ul>
+            
+            <p>
+                There are some other states available, but entering some might have nasty side effects. It's possible that
+                they might lock up your battle if you enter them with <span class="term">State</span>. So, use at your own risk:
+            </p>
+            
+            <ul>
+                <li><span class="term">ATTACKING</span> - Starting this state will put you in the screen where you either deal damage to an enemy by pressing
+                "Z" at the right time, or you wait and miss entirely. The enemy this affects is the same as the last enemy selected in the states <span class=
+                "term">ENEMYSELECT</span> or <span class="term">ACTMENU</span>. After this state ends, the encounter moves on to the <span class="term">
+                ENEMYDIALOGUE</span> state by default.</li><br>
+                <li><span class="term">ENEMYSELECT</span> - This state displays a list of all active enemies in the encounter. This state gets entered
+                automatically after choosing FIGHT or ACT. If the Player got here from choosing FIGHT, the state loaded from pressing "Z" is <span class=
+                "term">ATTACKING</span>, if they got here from choosing ACT, that state will be <span class="term">ACTMENU</span>, but if they got here from
+                calling <span class="term">State</span> and press "Z", nothing will happen.</li><br>
+                <li><span class="term">ACTMENU</span> - This state displays all of the options from the enemy's <span class="term">commands</span> in order. 
+                If the enemy has <span class="term">cancheck</span> set to <i>true</i>, then a "Check" option will be displayed here - which
+                will follow the syntax seen in the description for <span class="term">commands</span> as seen in <span class="ref">Basic Setup</span>. 
+                Having more than 6 ACT commands may cause glitchiness, though, so watch out! (Additional note: the enemy chosen will always be the same as
+                the last enemy chosen in <span class="term">ENEMYSELECT</span>.)</li><br>
+                <li><span class="term">ITEMMENU</span> - This state shows all of the player's available items. It's tied with the
+                <span class="term">HandleItem</span> function (see <span class="ref">Game events</span> for more information).</li><br>
+                <li><span class="term">MERCYMENU</span> - This state lets you choose from either "Spare" or "Flee". If at least one active enemy
+                has <span class="term">canspare</span> set to <i>true</i>, then "Spare" will be yellow - and selecting it will spare that enemy.
+                Otherwise, if the option is not yellow, then choosing "Spare" will activate the encounter function <span class="term">HandleSpare</span>.
+                Also, choosing "Flee" prompts some silly messages :P<br><span class="CYF"></span> If the encounter was entered from the
+                overworld, choosing "Flee" allows the player to flee the battle and return to the overworld.</li><br>
+                <li><span class="term">DIALOGRESULT</span> - This is the state that is entered whenever <span class="term">BattleDialog</span> is called,
+                when the victory message displays, when the player fails to flee, or when an item is used. When all text is done and the player presses 
+                "Z", the state <span class="term">ENEMYDIALOGUE</span> is entered next. The soul is forcibly invisible during this state.</li><br>
+            </ul>
+            
+            <p>
+                Finally, there are three states that are not encountered during regular gameplay. These include:
+            </p>
+            
+            <ul>
+                <li><span class="term">DONE</span> - Changing state to <span class="term">DONE</span> will instantly force the player to the mod selection screen.</li><br>
+                <li><span class="term">NONE</span> - This state does nothing. It is entered for the first frame of the encounter, but entering it manually will completely freeze your encounter. It might be useful if you want to disable all of Unitale/CYF's basic functionality.</li><br>
+                <li><span style="color:#ffffff;border-bottom:1px solid #ffffff;"><0.2.1a></span> <span class="term">RESETTING</span> - DEPRECATED, DO NOT USE. Only listed for completion purposes. It only exists in Unitale 0.2.1a, so trying to use it in CYF won't work. It doesn't really do much, anyway, so it probably isn't worth messing with.</li><br>
+            </ul>
+            
+            <p>
+                <br><span class="function"><span class="CYF"></span> GetCurrentState() [E/M/W]</span>
+                Returns the name of the current state (see above for all states).
+            </p>
+            
+            <hr>
+            <h4>Encounter script functions</h4>
+            
+            <p>
+                <br><span class="function">RandomEncounterText() returns string [E]</span>
+                Select a random monster from the encounter, then get a random entry from the <span class="term">comments</span> table there.
+                You'll want to use this to replicate default encounter behaviour. See code below (or one of the example
+                encounters).
+            </p>
+            <div class="code-container">
+   <pre class="brush: lua;">function DefenseEnding() --This built-in function fires after the defense round ends.
+    encountertext = RandomEncounterText()
+end</pre>
+            </div>
+
+            <p>
+                <br><span class="function"><span class="CYF"></span> SetButtonLayer(string layer) [E]</span>
+                Changes the <span class="term">layer</span> of the FIGHT, ACT, ITEM and MERCY buttons.
+                The usable layers are created sprite layers and those base layers:
+                <ul>
+                    <li><span class="term">"Bottom"</span>: Under everything, even the background.</li><br>
+                    <li><span class="term">"BelowUI"</span>: Above the background.</li><br>
+                    <li><span class="term">"BelowArena"</span>: Above the background and the UI.</li><br>
+                    <li><span class="term">"BelowPlayer"</span>: Above the background, the UI and the Arena.</li><br>
+                    <li><span class="term">"BelowBullet"</span>: Above the background, the UI, the Arena and the Player.</li><br>
+                    <li><span class="term">"Top"</span>: Above everything.</li><br>
+                    <li><span class="term">"default"</span>: Will put the buttons where they usually are in the sprite hierarchy.</li><br>
+                </ul>
+            </p>
+            
+            <p>
+                <br><span class="function">SetSprite(filename) [M]</span>
+                Sets the monster's sprite from the Sprites folder to <span class="term">filename.png</span>. Can be used with <span class="term">[func]
+                </span> to change sprites mid-dialogue.
+            </p>
+            
+            <hr>
+            <h4>Monster script functions</h4>
+            
+            <p>
+                <br><span class="function">SetActive(active) [M]</span>
+                Either true or false. If false, this monster will stay on screen but will not show up in menus, do its
+                dialogue or run any of its events. You can use this to introduce monsters to an encounter at a later
+                point. The battle will end when a monster is killed or spared and there are no active monsters left.
+                Having no active monsters at all will likely cause a bunch of errors right now.
+            </p>
+
+            <p>
+                <br><span class="function"><span class="CYF"></span> SetDamage(amount) [M]</span>
+                Set the amount of damage the monster will take nex time it is attacked. Can be negative.<br>
+                <b>THIS MUST ONLY BE USED IN A FUNCTION!</b> You also don't want to use it beside <span class="term">SetActive(false)</span>.
+            </p>
+
+            <p>
+                <br><span class="function">Kill() [M]</span>
+                Kills the monster immediately. If this was the last monster, the battle ends.
+            </p>
+
+            <p>
+                <br><span class="function">Spare() [M]</span>
+                Spares the monster immediately. Similar to <span class="term">Kill()</span>, if this was the last monster, the battle ends.
+            </p>
+
+            <p>
+                <br><span class="function"><span class="CYF"></span> Move(float x, float y, bool bindToArena = false) [M]</span>
+                Moves the enemy's sprite from its current position.<br>
+                <span class="term">bindToArena</span>: if the enemy's sprite will follow the Arena. Same as <span class="term">BindToArena()</span>.
+            </p>
+            
+            <p>
+                <br><span class="function"><span class="CYF"></span> MoveTo(float x, float y, bool bindToArena = false) [M]</span>
+                Moves the enemy's sprite relative to the bottom left corner.<br>
+                <span class="term">bindToArena</span>: if the enemy's sprite will follow the Arena. Same as <span class="term">BindToArena()</span>.
+            </p>
+            
+            <p>
+                <br><span class="function"><span class="CYF"></span> BindToArena(bool bind, bool isUnderArena = false) [M]</span>
+                Controls whether the enemy's sprite will follow the Arena's movements.<br>
+                <span class="term">isUnderArena</span>: will the enemy's sprite be under the arena?
+            </p>
+            
+            <p>
+                <br><span class="function"><span class="CYF"></span> SetBubbleOffset(int x, int y) [M]</span>
+                Makes the enemy's dialogue bubble appear <span class="term">x</span> pixels horizontally and
+                <span class="term">y</span> pixels vertically relative to its original position.
+            </p>
+            
+            <p>
+                <br><span class="function"><span class="CYF"></span> SetDamageUIOffset(int x, int y) [M]</span>
+                Changes the offset of the enemy's damage UI (the enemy's health bar and the red numbers). Note that the damage UI is on a layer
+                above that of the arena.
+            </p>
+            
+            <p>
+                <br><span class="function"><span class="CYF"></span> SetSliceAnimOffset(int x, int y)[M]</span>
+                Changes the offset of the attack animation (the red slice by default) for when the player attacks this monster.
+            </p>
+        </div>
+
+        <div class="tab-pane text-style" id="mercy">
+            <h2 style="text-decoration: none; line-height:50px;">
+                * YOU WON!<br>
+                * You earned 0 EXP and 0 gold.<br>
+                * also the nav menu is broken now
+            </h2><br>
+        </div>
+
+    </div>
+</div>
+
+<div class="container">
+    <div class="col-xs-3"><img class="centerbt black" alt="Undertale fake button" src="../img/fightbt_0.png" height="42">
+    </div>
+    <div class="col-xs-3"><img class="centerbt black" alt="Undertale fake button" src="../img/actbt_0.png" height="42">
+    </div>
+    <div class="col-xs-3"><img class="centerbt black" alt="Undertale fake button" src="../img/itembt_0.png" height="42">
+    </div>
+    <div class="col-xs-3"><a href="#mercy" data-toggle="tab"><img class="centerbt black" alt="Undertale fake button"
+                                                                  src="../img/mercybt_0.png" height="42"></a>
+    </div>
+</div>
+<br>
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="../js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../js/show_hide_comments.js"></script>
+
+<script type="text/javascript" src="../js/FontToggleButton.js"></script>
+</body>
+</html>

@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<!--
+since you're here anyway: there's a small easter egg on the text commands page but it's probably not worth finding, sorry
+you may notice this page's code is garbage: i'm not a web designer! ;-;
+it's w3c valid, at least
+-->
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="favicon.ico">
+
+    <title>CYF Documentation - Special Variables</title>
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="../css/themesidebar.css" rel="stylesheet">
+    <link href="../css/shThemeRDark.css" rel="stylesheet">
+
+    <!-- Syntax highlighting -->
+    <script type="text/javascript" src="../js/shCore.js"></script>
+    <script type="text/javascript" src="../js/shBrushLua.js"></script>
+    <script type="text/javascript">SyntaxHighlighter.all();</script>
+</head>
+<body>
+<img src="../img/bg2.png" alt="Undertale background" class="backimg">
+<div class="container arena black">
+    <div class="col-md-2">
+        <!--navigation-->
+        <nav class="nav-sidebar">
+            <ul class="nav tabs">
+                <li class="li-header">Basics</li>
+                    <li><a href="../documentation.html">Welcome</a></li>
+                    <li><a href="howtoread.html">How to read this documentation</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li><a href="controls.html">Controls</a></li>
+                    <li><a href="basic.html">Basic setup</a></li>
+                    <li class="active" style="margin-left:5px;">> Special Variables <</li>
+                    <li><a href="terms.html">Terminology</a></li>
+                <li class="li-header">API</li>
+                    <li><a href="api-text.html">Text commands</a></li>
+                    <li><a href="api-events.html">Game events</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li class="li-indent">Functions &amp; Objects:</li>
+                        <li class="li-indent"><a href="api-functions-main.html">Misc. Functions</a></li>
+                        <li class="li-indent"><a href="api-functions-player.html">The Player Object</a></li>
+                        <li class="li-indent"><a href="api-functions-script.html">The Script Object</a></li>
+                        <li class="li-indent"><a href="api-functions-audio.html">The Audio Object</a></li>
+                        <li class="li-indent"><a href="api-functions-newaudio.html"><span class="CYF"></span> The NewAudio Object</a></li>
+                        <li class="li-indent"><a href="api-functions-input.html">The Input Object</a></li>
+                        <li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
+                        <li class="li-indent"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
+                        <li class="li-indent"><a href="api-functions-waves.html">Wave Scripts</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li><a href="api-projectile.html">Projectile management</a></li>
+                    <li><a href="api-animation.html">Sprites &amp; Animation</a></li>
+                    <li><a href="api-keys.html"><span class="CYF"></span> Key List</a></li>
+                <li class="li-header">Create Your Frisk's new features</li>     
+                    <li><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory System</a></li>
+                    <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
+                    <li><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
+				<li class="li-header">Overworld</li>
+                    <li><a href="overworld.html"><span class="CYF"></span> Basics</a></li>
+                    <li><a href="overworld-howto-map.html"><span class="CYF"></span> How to create a map</a></li>
+                    <li><a href="overworld-howto-event.html"><span class="CYF"></span> How to create an event</a></li>
+                    <li><a href="overworld-howto-animevent.html"><span class="CYF"></span> How to animate an event</a></li>
+                    <li><a href="overworld-howto-shop.html"><span class="CYF"></span> How to create a shop</a></li>
+                    <li><a href="overworld-object-general.html"><span class="CYF"></span> The General Object</a></li>
+                    <li><a href="overworld-object-event.html"><span class="CYF"></span> The Event Object</a></li>
+                    <li><a href="overworld-object-player.html"><span class="CYF"></span> The Player Object</a></li>
+                    <li><a href="overworld-object-screen.html"><span class="CYF"></span> The Screen Object</a></li>
+                    <li><a href="overworld-object-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
+                    <li><a href="overworld-object-map.html"><span class="CYF"></span> The Map Object</a></li>
+                <li class="li-header">Resources</li>
+                    <li><a href="../media/dialogoptions.png">Dialog bubble names</a></li>
+            </ul>
+        </nav>
+    </div>
+    <!--tabs'n'shit-->
+    <div class="tab-content col-md-10">
+        <div class="tab-pane active text-style" id="variables">
+            <h3>Special variables</h3><br><br>
+            <p>It's time to set up the basics of an encounter! The fastest way to
+                get started is to copy the 'Encounter Skeleton' mod and play with the values in it, then either copying
+                over existing examples' code, or writing your own. This section serves to explain the variables you
+                see.</p>
+            <hr>
+            <h4>All-script variables</h4>
+            
+            <p>
+                <br><span class="function"><span class="CYF"></span> isCYF [E/M/W]</span>
+                A value - true by default - that indicates that if you're on CYF. nil if not on CYF. Test it with
+                <span class="term">if not isCYF then</span> or <span class="term">if isCYF then</span>.
+            </p>
+            
+            <p>
+                <br><span class="function"><span class="CYF"></span> safe [E/M/W]</span>
+                True if CYF's safe mode is enabled, false otherwise.
+            </p>
+            
+            <p>
+                <br><span class="function"><span class="CYF"></span> windows [E/M/W]</span>
+                Returns true if the user is on Windows, false otherwise.
+            </p>
+            
+            <p>
+                <br><span class="function"><span class="CYF"></span> CYFversion [E/M/W]</span>
+                Returns the current version of CYF. For example: for CYF 0.4.5, it'll return "0.4.5".
+            </p>
+            
+            <hr>
+            <h4>Encounter script variables</h4>
+            <div class="code-container">
+<pre class="brush: lua;">music = "yourmusicname_without_extension"
+encountertext = "Vegetoid came out of\rthe earth!"
+nextwaves = {"bullettest_wavy", "bullettest_homing"}
+wavetimer = 4.0
+arenasize = {155, 130}
+
+enemies = { "vegetoid" }
+
+enemypositions = {
+{0, 50},
+{-70, 30},
+{70, 30}
+}
+
+</pre>
+            </div>
+            <br><p><span class="string"></span> <span class="term">music</span> - Name of your encounter's starting music, without the file extension.
+                If this variable isn't present, it'll play Undertale's default battle theme. If you don't want any music, call
+                <span class="term">Audio.Stop()</span> in the <span class="term">EncounterStarting()</span> function.
+                For more information see <span class="ref">API - Game events</span>.</p>
+            <br><p><span class="string"></span> <span class="term">encountertext</span> - Set the initial text of your encounter here.
+                After that, you can modify it at any time in preparation for the next turn. <span class="term">encountertext</span> gets read out at the 
+                start of every new turn (i.e. you going back to the FIGHT/ACT/ITEM/MERCY selection).</p>
+            <br><p><span class="luatable"><span class="string"></span></span> <span class="term">nextwaves</span> - A list of all simultaneous attack waves
+                you want when the monsters start their attacks. You can modify this at any time, and it'll get read out before the enemies start their
+                attack. For most boss-type encounters, you'll likely only want one wave simultaneously - but you can get creative
+                here.</p>
+            <br><p><span class="number"></span> <span class="term">wavetimer</span> - How long it takes for the defending step to end.
+                If this isn't set anywhere, it'll be the default <i>4.0 seconds</i>.</p>
+            <br><p><span class="luatable"><span class="number"></span></span> <span class="term">arenasize</span> - The inner size of the box the player's 
+                constrained to. <span class="term">{155, 130}</span> is the default size for a
+                lot of basic Undertale encounters. Papyrus' battle, for instance, has this at <span class="term">{245, 130}</span> most of the
+                time. You may modify this at any time - it'll only get read out before the enemies start their
+                attack.<br>
+                Note: lowest possible setting is <span class="term">{16, 16}</span> - this is the size of the player's soul. Anything lower will
+                be set to 16 anyway.</p>
+            <br><p><span class="luatable"><span class="string"></span></span> <span class="term">enemies</span> - Defines the names of your enemy scripts
+                that will be used in your encounter. In this example,
+                <span class="term">vegetoid.lua</span> will be used from the Monsters folder. After initialization, the names will be
+                replaced by Script controller objects you can use to control your monster scripts.<br>Refer to <span class="ref">API -
+                    Functions &amp; Objects</span> for more information.</p>
+            <br><p><span class="luatable"><span class="luatable"><span class="number"></span>, <span class="number"></span></span></span> 
+            <span class="term">enemypositions</span> - 
+            Defines where the enemies are on the screen. <span class="term">{0, 0}</span> means they're centered just above the arena, with 1 pixel of space 
+            inbetween. <span class="term">{-30, 0}</span> means above the arena to the left; <span class="term">{50, 80}</span> means 50 pixels to the right 
+            and 80 pixels above that center.<br>
+                You will always need at least as many enemy positions as enemies in your encounter. In this example we
+                have 3 enemy positions set to show you how you can define more than one, but since this example only
+                contains Vegetoid you only really need one position.</p>
+            <br><p><span class="CYF"></span> <span class="boolean"></span> <span class="term">autolinebreak</span> - False by default. If this value is set to
+                true, the auto linebreak system will automatically add line breaks (<span class="term">\r</span>) to the text. 
+                No need to use <span class="term">\r</span> or <span class="term">\n</span> anymore!</p>
+            <br><p><span class="CYF"></span> <span class="boolean"></span> <span class="term">playerskipdocommand</span> - False by default. If this value is
+                set to true, the text commands will be launched even if the player skips the text-  except for <span class="term">[w]</span> and
+                <span class="term">[letters]</span> commands and commands with the tag "<span class="term">skipover</span>".</p>
+            <br><p><span class="CYF"></span> <span class="boolean"></span> <span class="term">unescape</span> - False by default. If this value is set 
+                to true, you can't exit the battle with the ESC key anymore.</p>
+            <br><p><span class="CYF"></span> <span class="boolean"></span> <span class="term">flee</span> - True by default. If this value is set to false, 
+            the flee option will not be available anymore.</p>
+            <br><p><span class="CYF"></span> <span class="boolean"></span> <span class="term">revive</span> - If this variable is set to true, the player 
+            will be revived when they hit 0 HP.<br>By default, there will be no special text for the player being revived; however, if you set
+            <span class="term">deathtext</span>, that will be used.</p>
+            <br><p><span class="CYF"></span> <span class="luatable"><span class="string"></span></span> <span class="term">deathtext</span> - Text displayed 
+            when the player dies, in the Game Over screen. By default, it'll use the normal death text.<br>
+            This text is also used if the player gets revived while <span class="term">revive</span> is true. Otherwise, there is no revive text.</p>
+            <br><p><span class="CYF"></span> <span class="string"></span> <span class="term">deathmusic</span> - Sets the death music. The music is launched 
+            if <span class="term">revive</span> is not set.</p>
+            <br><p><span class="CYF"></span> <span class="luatable"><span class="string"></span></span> <span class="term">Wave</span> - A table returning the 
+            current wave scripts used. Returns a table with a length of 0 if not in the state DEFENDING.</p>
+            <br><p><span class="CYF"></span> <span class="luatable"><span class="string"></span></span> <span class="term">fleetexts</span> - If you set this
+            to a table filled with strings, a random one of your strings will be displayed whenever the player flees the battle (if that's enabled).</p>
+            
+            <hr>
+            <h4>Monster script variables</h4>
+            <div class="code-container">
+<pre class="brush: lua;">comments = {"Vegetoid cackles softly.", "Vegetoid's here for your health."}
+commands = {"Talk", "Devour", "Dinner"}
+randomdialogue = {"Fresh\nMorning\nTaste", "Farmed\nLocally,\nVery\nLocally"}
+currentdialogue = {'Eat\nYour\nGreens'}
+cancheck = true
+canspare = false
+
+sprite = "vegetoid_sprite"
+dialogbubble = "rightshort"
+name = "Vegetoid"
+hp = 20
+atk = 6
+def = 6
+xp = 6
+gold = 1
+check = "Serving Size: 1 Monster\nNot monitored by the USDA"</pre>
+            </div>
+            <p><span class="luatable"><span class="string"></span></span> <span class="term">comments</span> - A list of random comments attached to this 
+            monster. You can retrieve one at random using the
+                <span class="term">RandomEncounterText()</span> function in your Encounter script. See <span class="ref">API - Functions &amp; Objects</span> 
+                for details.</p>
+            <p><span class="luatable"><span class="string"></span></span> <span class="term">commands</span> - A list of ACT commands you can do. Listed in 
+            the ACT menu and used in <span class="term">HandleCustomCommand()</span>.
+                See <span class="ref">API - Game events</span> for details. Note that the behaviour for Check is built-in, and shows you
+                the monster's <span class="term">name</span> followed by the <span class="term">ATK</span> and <span class="term">DEF</span>, and then the 
+                <span class="term">check</span> variable you'll see all the way down.</p>
+            <p><span class="luatable"><span class="string"></span></span> <span class="term">randomdialogue</span> - A list of random dialogue the monster 
+                can have. One of these is selected at random if <span class="term">currentdialogue</span> is <span class="term">nil</span> 
+                (i.e. has no value).</p>
+            <p><span class="luatable"><span class="string"></span></span> <span class="term">currentdialogue</span> - The next dialogue for this monster. 
+                This overrides the random dialogue and is meant for special actions (e.g. you hit Vegetoid's green carrots after selecting Dinner from the 
+                ACT menu). This variable gets <i>cleared every time after it's read out in the monster dialogue phase</i>. This is done
+                so you don't have to take care of managing it manually.</p>
+            <p><span class="boolean"></span> <span class="term">cancheck</span> - Either true or false. You can leave this line out; it will be true by 
+                default. If set to false, it will disable the default Check action that shows up in your ACT menu. If you want a custom
+                Check action, you can add it back into your <span class="term">commands</span> table, and handle it like any other custom
+                command. See <span class="ref">API - Game events</span> for details.</p>
+            <p><span class="boolean"></span> <span class="term">canspare</span> - Either true or false. If you leave this line out, it'll be set to false by 
+                default. If you change this to true, your monster's name will turn yellow and it will be spareable.</p>
+            <br>
+            <p><span class="string"></span> <span class="term">sprite</span> - Name of the sprite in your Sprites folder, without the .PNG extension.
+                This is the initial sprite for your monster. It can be changed using <span class="term">SetSprite(name)</span>; see <span class="ref">API - 
+                Functions &amp; Objects</span> for details.</p>
+            <p><span class="unitalesprite"></span> <span class="CYF"></span> <span class="term">monstersprite</span> - Sprite handler of the monster.</p>
+            <p><span class="string"></span> <span class="term">dialogbubble</span> - What dialogue bubble will be used for the monster's dialogue. You can 
+                change this at any time, but this <i>must</i> be initially set to something. For a list of all possible options, check the
+                <a href="../media/dialogoptions.png">dialog bubble names</a> chart; it's also in the sidebar.
+                Positioning of the bubbles is done automatically.</p>
+            <p><span class="string"></span> <span class="term">name</span> - Monster name. Fairly self-explanatory; shows up in the FIGHT/ACT menus. 
+                Can also be changed at any time.</p>
+            <p><span class="number"></span> <span class="term">hp</span> - Your monster's max HP, initially. After the fight has started, 
+                this value will always accurately reflect your monster's current HP. You can then modify this value to change your monster's current HP.</p>
+            <p><span class="number"></span> <span class="CYF"></span> <span class="term">maxhp</span> - Your monster's max HP. After the fight has 
+                started this value will be always the same, unless you change it. It is mainly used for lifebars and such. You better not set it as 0 or as a 
+                negative number, though.</p>
+            <p><span class="number"></span> <span class="term">atk</span> - Your monster's ATK. Only used in the default Check handler; bullet damage 
+                is set through wave scripts. If you're not using the default Check you can leave this out.</p>
+            <p><span class="number"></span> <span class="term">def</span> - Your monster's DEF.</p>
+            <p><span class="number"></span> <span class="term">xp</span> - Your monster's XP upon actually defeating them. You only get this by 
+                killing the monster.</p>
+            <p><span class="number"></span> <span class="term">gold</span> - Gold you get from either killing or sparing this monster. Since the gold 
+                can change based on whether you kill or spare the monster, you can modify this at any time up until the fight ends.</p>
+            <p><span class="string"></span> <span class="term">check</span> - When checking with the default Check option, this is what's listed under 
+                the monster's name, ATK and DEF.</p>
+            <p><span class="boolean"></span> <span class="CYF"></span> <span class="term">unkillable</span> - Set it to true and the monster will not 
+                be killed if it has less than 1 HP. However, it can still be killed with <span class="term">Kill()</span>.</p>
+            <p><span class="boolean"></span> <span class="CYF"></span> <span class="term">canmove</span> - The enemies need some initialization frames 
+                to place themselves correctly, so you can't move or unbind the enemy's sprite if those haven't finished.<br>This will be true if you can 
+                move the sprite, otherwise it's false.<br>Actually, now that the battle's launch is delayed, this value is deprecated as it'll always 
+                be true.</p>
+            <p><span class="number"></span> <span class="CYF"></span> <span class="term">posx</span> - The x position of the center of the enemy's sprite.</p>
+            <p><span class="number"></span> <span class="CYF"></span> <span class="term">posy</span> - The y position of the bottom of the enemy's sprite.</p>
+            <p><span class="string"></span> <span class="CYF"></span> <span class="term">font</span> - The default font used by the monster. Set it to 
+            <span class="term">nil</span> if you want to use the normal monster font.</p>
+            <p><span class="string"></span> <span class="CYF"></span> <span class="term">voice</span> - The default voice used by the monster. Set it 
+            to <span class="term">nil</span> if you want to use the default voice.</p>
+            <hr>
+           
+            <h4>Wave script variables</h4>
+            <p>Wave scripts don't have any variables that are read out from the start, but you can define your own. An
+                instance of a wave script is made when you start defending, and is destroyed when the defending step
+                ends. As such, you can't store variables in a wave script for reusing later. Use the Encounter script to
+                keep track of things.</p>
+        </div>
+
+        <div class="tab-pane text-style" id="mercy">
+            <h2 style="text-decoration: none; line-height:50px;">
+                * YOU WON!<br>
+                * You earned 0 EXP and 0 gold.<br>
+                * also the nav menu is broken now
+            </h2><br>
+        </div>
+
+    </div>
+</div>
+
+<div class="container">
+    <div class="col-xs-3"><img class="centerbt black" alt="Undertale fake button" src="../img/fightbt_0.png" height="42">
+    </div>
+    <div class="col-xs-3"><img class="centerbt black" alt="Undertale fake button" src="../img/actbt_0.png" height="42">
+    </div>
+    <div class="col-xs-3"><img class="centerbt black" alt="Undertale fake button" src="../img/itembt_0.png" height="42">
+    </div>
+    <div class="col-xs-3"><a href="#mercy" data-toggle="tab"><img class="centerbt black" alt="Undertale fake button"
+                                                                  src="../img/mercybt_0.png" height="42"></a>
+    </div>
+</div>
+<br>
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="../js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../js/show_hide_comments.js"></script>
+
+<script type="text/javascript" src="../js/FontToggleButton.js"></script>
+</body>
+</html>

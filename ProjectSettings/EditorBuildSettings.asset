@@ -17,9 +17,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/TransitionOverworld.unity
     guid: 2b6255523adf4cb44b2e70e054ad1894
-  - enabled: 0
-    path: Assets/Scenes/Loading.unity
-    guid: 00000000000000000000000000000000
   - enabled: 1
     path: Assets/Scenes/test.unity
     guid: b409eeea8aa246847b09eebcd266ef18
@@ -71,15 +68,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Void.unity
     guid: 596e0ee3d3ed69d4096eea1844c02b39
-  - enabled: 0
-    path: 
-    guid: 99172127633cf57458152aa0d7124202
-  - enabled: 0
-    path: 
-    guid: f5372540ec9416648b8840170b93a7a0
   - enabled: 1
     path: Assets/Scenes/Shop.unity
     guid: f4bbae101a4c667429ad4c726c7bf820
   - enabled: 1
     path: Assets/Scenes/SpecialAnnouncement.unity
     guid: f9d2349a99292a24c91eaee50a95a87e
+  m_configObjects: {}

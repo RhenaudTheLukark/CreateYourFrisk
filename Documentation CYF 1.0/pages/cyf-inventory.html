@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<!--
+since you're here anyway: there's a small easter egg on the text commands page but it's probably not worth finding, sorry
+you may notice this page's code is garbage: i'm not a web designer! ;-;
+it's w3c valid, at least
+-->
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="favicon.ico">
+
+    <title>CYF Documentation - The Inventory System</title>
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="../css/themesidebar.css" rel="stylesheet">
+    <link href="../css/shThemeRDark.css" rel="stylesheet">
+
+    <!-- Syntax highlighting -->
+    <script type="text/javascript" src="../js/shCore.js"></script>
+    <script type="text/javascript" src="../js/shBrushLua.js"></script>
+    <script type="text/javascript">SyntaxHighlighter.all();</script>
+</head>
+<body>
+<img src="../img/bg2.png" alt="Undertale background" class="backimg">
+<div class="container arena black">
+    <div class="col-md-2">
+        <!--navigation-->
+        <nav class="nav-sidebar">
+            <ul class="nav tabs">
+                <li class="li-header">Basics</li>
+                    <li><a href="../documentation.html">Welcome</a></li>
+                    <li><a href="howtoread.html">How to read this documentation</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li><a href="controls.html">Controls</a></li>
+                    <li><a href="basic.html">Basic setup</a></li>
+                    <li><a href="variables.html">Special Variables</a></li>
+                    <li><a href="terms.html">Terminology</a></li>
+                <li class="li-header">API</li>
+                    <li><a href="api-text.html">Text commands</a></li>
+                    <li><a href="api-events.html">Game events</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li class="li-indent">Functions &amp; Objects:</li>
+                        <li class="li-indent"><a href="api-functions-main.html">Misc. Functions</a></li>
+                        <li class="li-indent"><a href="api-functions-player.html">The Player Object</a></li>
+                        <li class="li-indent"><a href="api-functions-script.html">The Script Object</a></li>
+                        <li class="li-indent"><a href="api-functions-audio.html">The Audio Object</a></li>
+                        <li class="li-indent"><a href="api-functions-newaudio.html"><span class="CYF"></span> The NewAudio Object</a></li>
+                        <li class="li-indent"><a href="api-functions-input.html">The Input Object</a></li>
+						<li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
+                        <li class="li-indent"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
+                        <li class="li-indent"><a href="api-functions-waves.html">Wave Scripts</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li><a href="api-projectile.html">Projectile management</a></li>
+                    <li><a href="api-animation.html">Sprites &amp; Animation</a></li>
+                    <li><a href="api-keys.html"><span class="CYF"></span> Key List</a></li>
+                <li class="li-header">Create Your Frisk's new features</li>
+                    <li style="margin-left:5px;">> <span class="CYF"></span> The Inventory<br>System <</li>
+                    <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
+                    <li><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
+				<li class="li-header">Overworld</li>
+                    <li><a href="overworld.html"><span class="CYF"></span> Basics</a></li>
+                    <li><a href="overworld-howto-map.html"><span class="CYF"></span> How to create a map</a></li>
+                    <li><a href="overworld-howto-event.html"><span class="CYF"></span> How to create an event</a></li>
+                    <li><a href="overworld-howto-animevent.html"><span class="CYF"></span> How to animate an event</a></li>
+                    <li><a href="overworld-howto-shop.html"><span class="CYF"></span> How to create a shop</a></li>
+                    <li><a href="overworld-object-general.html"><span class="CYF"></span> The General Object</a></li>
+                    <li><a href="overworld-object-event.html"><span class="CYF"></span> The Event Object</a></li>
+                    <li><a href="overworld-object-player.html"><span class="CYF"></span> The Player Object</a></li>
+                    <li><a href="overworld-object-screen.html"><span class="CYF"></span> The Screen Object</a></li>
+                    <li><a href="overworld-object-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
+                    <li><a href="overworld-object-map.html"><span class="CYF"></span> The Map Object</a></li>
+                <li class="li-header">Resources</li>
+                    <li><a href="../media/dialogoptions.png">Dialog bubble names</a></li>
+            </ul>
+        </nav>
+    </div>
+    <!--tabs'n'shit-->
+    <div class="tab-content col-md-10">
+        <div class="tab-pane active text-style" id="cyf-inventory">
+            <h2><span class="CYF"></span> Create Your Frisk: The Inventory System</h2><br><br>
+            <p>
+                It was hard to customize items and such in Unitale, right? Plus, items wouldn't go away when you used them,
+                because they are the only ones that will ever love you. But now, nobody loves you at all, items
+                can be deleted and the Inventory System has been simplified! Here are the functions that are created to
+                help you with this hellish mechanism that added items.
+                <br><br>Some of these functions can only be used in <span class="term">HandleItem</span>. Examples are 
+                included at the bottom of this page.
+                <br><br>Don't forget to use inventory functions like this: <span class="term">Inventory.function</span>!
+            </p><br>
+            
+            <p>
+                <br><span class="function">Inventory.GetItem(int index)</span>
+                Returns the name of the item of the inventory at the given index.
+                <br><span class="term" style="margin-left:20px">index</span> = Index of the chosen item.
+            </p>
+            <p>
+                <br><span class="function">Inventory.SetItem(int index, string Name)</span>
+                Sets the inventory item at <span class="term">index</span> to the item <span class="term">Name</span>.
+                <br><span class="term" style="margin-left:20px">index</span> = Index to put the item in. The first item is position 1.
+                <br><span class="term" style="margin-left:20px">Name</span> = Name of the item to put in the inventory.
+            </p>
+            <p>
+                <br><span class="function">Inventory.AddCustomItems(table names, table types)</span>
+                If you want to add custom items, this has to be used before <span class="term">SetInventory</span>.
+                This adds all items in <span class="term">names</span> to the inventory, where each item matches to an 
+                item type in <span class="term">types</span>. If you don't do this, the engine
+                will not recognise your newly created items.
+                <br><br>Usage: <span class="term">Inventory.AddCustomItems({"item1", "item2"}, {1, 0})</span>
+                <br><br><span class="term" style="margin-left:20px">names</span> = The names of your custom items.
+                <br><span class="term" style="margin-left:20px">types</span> = The item types of your custom items. This array must be same size as <span class="term">names</span>.
+
+                <br>Types:<br>
+                <div style="margin-left:20px">
+                    <span class="term">0</span> = Consumable. Will be deleted upon use.
+                    <br><span class="term">1</span> = Weapon. You will be able to equip this item as a weapon.
+                    <br><span class="term">2</span> = Armor. You will be able to equip this item as armor.
+                    <br><span class="term">3</span> = Special. This item will not be deleted upon use.
+                </div>
+            </p>
+            <p>
+                <br><span class="function">Inventory.SetInventory(table names)</span>
+                Sets the player's inventory. To use custom items, this must be used after <span class="term">AddCustomItems</span>.
+                <br>This function is used like this: <span class="term">Inventory.SetInventory({"item1", "item2"})</span>;
+                <br><span class="term" style="margin-left:20px">names</span> = The names of the items.
+            </p>
+            <p>
+                <br><span class="function">Inventory.ItemCount</span>
+                Returns the number of items the player has in their inventory. Read-only.
+            </p>
+            <p>
+                <br><span class="function">Inventory.NoDelete</span>
+                <i>In the encounter function</i> <span class="term">HandleItem</span>, using this with <span class="term">Inventory.NoDelete</span> as true will make the item the player is using stay in the inventory.
+            </p>
+            <p>
+                <br><span class="function">Inventory.SetAmount(int amount)</span>
+                Used with Weapon and Armor items. If the item is a Weapon, this sets its ATK. If the item is armor,
+                this sets its DEF.
+                <br><span class="term" style="margin-left:20px">amount</span>: the amount of ATK/DEF the item will have.
+            </p>
+            <br><br><h4>Examples:</h4>
+            <br>Example of a healing item:
+            <br><div class="code-container"><pre class="brush: lua">function EncounterStarting()
+    Inventory.AddCustomItems({"Starfait"}, {0})
+    Inventory.SetInventory({"Starfait"})
+end
+
+function HandleItem(ItemID)
+    if ItemID == "STARFAIT" then
+        Player.Heal(14)
+        BattleDialog({"You eat the Starfait.[w:10]\nYou recovered 14 HP!"})
+    end
+end
+            </pre></div>
+            <br>Example of a weapon:
+            <br><div class="code-container"><pre class="brush: lua">function EncounterStarting()
+    Inventory.AddCustomItems({"Shotgun"}, {1})
+    Inventory.SetInventory({"Shotgun"})
+end
+
+function HandleItem(ItemID)
+    if ItemID == "SHOTGUN" then
+        Inventory.SetAmount(16777215)
+        BattleDialog({"You equipped the Shotgun."})
+    end
+end
+            </pre></div>
+            <br>Example of armor:
+            <br><div class="code-container"><pre class="brush: lua">function EncounterStarting()
+    Inventory.AddCustomItems({"Shield"}, {2})
+    Inventory.SetInventory({"Shield"})
+end
+
+function HandleItem(ItemID)
+    if ItemID == "Shield" then
+        Inventory.SetAmount(8)
+        BattleDialog({"You equipped the rusty shield."})
+    end
+end
+            </pre></div>
+            <br>Example of a special item:
+            <br><div class="code-container"><pre class="brush: lua">function EncounterStarting()
+    Inventory.AddCustomItems({"Music Box"}, {3})
+    Inventory.SetInventory({"Music Box"})
+end
+
+function HandleItem(ItemID)
+    if ItemID == "MUSIC BOX" then
+        BattleDialog({"[noskip]You wind up the music box.[w:10]\nA haunting melody fills the room.", "The enemy's DEF drops!"})
+        enemies[1].SetVar("def", enemies[1].GetVar("def") / 2)
+    end
+end
+            </pre></div>
+            <br>Example of a persistent item:
+            <br><div class="code-container"><pre class="brush: lua">function EncounterStarting()
+    Inventory.AddCustomItems({"Test"}, {0})
+    Inventory.SetInventory({"Test"})
+end
+
+function HandleItem(ItemID)
+    if ItemID == "TEST" then
+        Inventory.NoDelete = true
+        BattleDialog({"This item won't be\rdeleted!"})
+    end
+end
+            </pre></div>
+            <br>Many items:
+            <br><div class="code-container"><pre class="brush: lua">function EncounterStarting()
+    Inventory.AddCustomItems({"Test", "Test2", "Shotgun", "Shield", "PsnPotion", "Life Roll", "Nothing"}, {0, 0, 1, 2, 0, 0, 3})
+    Inventory.SetInventory({"Test", "Test2", "Shotgun", "Shield", "PsnPotion", "Life Roll", "Nothing"})
+end
+
+function HandleItem(ItemID)
+    if (ItemID == "TEST") then
+        Inventory.NoDelete = true
+        BattleDialog({"This is a persistent item.[w:5]\nThe item will be in the\rinventory in the next turn!"})
+    elseif (ItemID == "TEST2") then
+        BattleDialog({"This is a normal item.[w:10]\nThe item will be gone\rby the next turn!"})
+    elseif (ItemID == "SHOTGUN") then
+        Inventory.SetAmount(16777215)
+        BattleDialog({"You equipped the Shotgun."})
+    elseif (ItemID == "SHIELD") then
+        Inventory.SetAmount(30)
+        AllowPlayerDef(true)
+        BattleDialog({"You equipped the shield."})
+    elseif (ItemID == "PSNPOTION") then
+        BattleDialog({"You drank the Poison Potion.","[noskip][waitall:10]...[waitall:1][w:20]\rThat was a bad idea.[w:20][health:kill]"})
+    elseif (ItemID == "LIFE ROLL") then
+        BattleDialog({"Your HP goes to 1[waitall:10]...[waitall:1][health:1,set]now.[w:20]\nNow, byebye![w:20][health:-1, killable]"})
+    elseif (ItemID == "NOTHING") then
+        BattleDialog({"You use Nothing. [w:10]Did you really\rthink that something would\rhappen?"})
+    end
+end
+            </pre></div>
+        </div>
+		
+		<div class="tab-pane text-style" id="mercy">
+            <h2 style="text-decoration: none; line-height:50px;">
+                * YOU WON!<br>
+                * You earned 0 EXP and 0 gold.<br>
+                * also the nav menu is broken now
+            </h2><br>
+        </div>
+	</div>
+</div>
+
+<div class="container">
+    <div class="col-xs-3"><img class="centerbt black" alt="Undertale fake button" src="../img/fightbt_0.png" height="42">
+    </div>
+    <div class="col-xs-3"><img class="centerbt black" alt="Undertale fake button" src="../img/actbt_0.png" height="42">
+    </div>
+    <div class="col-xs-3"><img class="centerbt black" alt="Undertale fake button" src="../img/itembt_0.png" height="42">
+    </div>
+    <div class="col-xs-3"><a href="#mercy" data-toggle="tab"><img class="centerbt black" alt="Undertale fake button"
+                                                                  src="../img/mercybt_0.png" height="42"></a>
+    </div>
+</div>
+<br>
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="../js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../js/show_hide_comments.js"></script>
+
+<script type="text/javascript" src="../js/FontToggleButton.js"></script>
+</body>
+</html>

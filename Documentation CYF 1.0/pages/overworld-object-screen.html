@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<!--
+since you're here anyway: there's a small easter egg on the text commands page but it's probably not worth finding, sorry
+you may notice this page's code is garbage: i'm not a web designer! ;-;
+it's w3c valid, at least
+-->
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="favicon.ico">
+
+    <title>CYF Documentation - The Screen Object</title>
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="../css/themesidebar.css" rel="stylesheet">
+    <link href="../css/shThemeRDark.css" rel="stylesheet">
+
+    <!-- Syntax highlighting -->
+    <script type="text/javascript" src="../js/shCore.js"></script>
+    <script type="text/javascript" src="../js/shBrushLua.js"></script>
+    <script type="text/javascript">SyntaxHighlighter.all();</script>
+</head>
+<body>
+<img src="../img/bg2.png" alt="Undertale background" class="backimg">
+<div class="container arena black">
+    <div class="col-md-2">
+        <!--navigation-->
+        <nav class="nav-sidebar">
+            <ul class="nav tabs">
+                <li class="li-header">Basics</li>
+                    <li><a href="../documentation.html">Welcome</a></li>
+                    <li><a href="howtoread.html">How to read this documentation</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li><a href="controls.html">Controls</a></li>
+                    <li><a href="basic.html">Basic setup</a></li>
+                    <li><a href="variables.html">Special Variables</a></li>
+                    <li><a href="terms.html">Terminology</a></li>
+                <li class="li-header">API</li>
+                    <li><a href="api-text.html">Text commands</a></li>
+                    <li><a href="api-events.html">Game events</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li class="li-indent">Functions &amp; Objects:</li>
+                        <li class="li-indent"><a href="api-functions-main.html">Misc. Functions</a></li>
+                        <li class="li-indent"><a href="api-functions-player.html">The Player Object</a></li>
+                        <li class="li-indent"><a href="api-functions-script.html">The Script Object</a></li>
+                        <li class="li-indent"><a href="api-functions-audio.html">The Audio Object</a></li>
+                        <li class="li-indent"><a href="api-functions-newaudio.html"><span class="CYF"></span> The NewAudio Object</a></li>
+                        <li class="li-indent"><a href="api-functions-input.html">The Input Object</a></li>
+						<li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
+                        <li class="li-indent"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
+                        <li class="li-indent"><a href="api-functions-waves.html">Wave Scripts</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li><a href="api-projectile.html">Projectile management</a></li>
+                    <li><a href="api-animation.html">Sprites &amp; Animation</a></li>
+                    <li><a href="api-keys.html"><span class="CYF"></span> Key List</a></li>
+                <li class="li-header">Create Your Frisk's new features</li>
+                    <li><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory System</a></li>
+                    <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
+                    <li><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
+				<li class="li-header">Overworld</li>
+                    <li><a href="overworld.html"><span class="CYF"></span> Basics</a></li>
+                    <li><a href="overworld-howto-map.html"><span class="CYF"></span> How to create a map</a></li>
+                    <li><a href="overworld-howto-event.html"><span class="CYF"></span> How to create an event</a></li>
+                    <li><a href="overworld-howto-animevent.html"><span class="CYF"></span> How to animate an event</a></li>
+                    <li><a href="overworld-howto-shop.html"><span class="CYF"></span> How to create a shop</a></li>
+                    <li><a href="overworld-object-general.html"><span class="CYF"></span> The General Object</a></li>
+                    <li><a href="overworld-object-event.html"><span class="CYF"></span> The Event Object</a></li>
+                    <li><a href="overworld-object-player.html"><span class="CYF"></span> The Player Object</a></li>
+                    <li style="margin-left:5px;">> <span class="CYF"></span> The Screen Object <</li>
+                    <li><a href="overworld-object-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
+                    <li><a href="overworld-object-map.html"><span class="CYF"></span> The Map Object</a></li>
+                <li class="li-header">Resources</li>
+                    <li><a href="../media/dialogoptions.png">Dialog bubble names</a></li>
+            </ul>
+        </nav>
+    </div>
+    <!--tabs'n'shit-->
+    <div class="tab-content col-md-10">
+		<div class="tab-pane active text-style" id="overworld-object-screen">
+            <h2><span class="CYF"></span>The Overworld: The Screen Object</h2><br>
+            
+            <p>
+                <br><span class="function">Screen.DispImg(string path, int id, float posX, float posY, int toneR = 255, int toneG = 255, int toneB = 255, 
+				int toneA = 255)</span>
+                This function displays an image on a given point on the map. This image will take the form of an event, and this event will be 
+				named <span class="term">"Image" + ID</span>.<br>
+                Also, you'll have to give the position of your image using <span class="term">posX</span> and <span class="term">posY</span>.<br>
+                You can add a color to the image with the 4 last values, if you want to. If you do, these values must be between 0 and 255.
+            </p>
+            
+            <p>
+                <br><span class="function">Screen.SupprImg(int id)</span>
+                Deletes an image previously created with a <span class="term">Screen.DispImg()</span> function.<br>
+                In application, it's basically the same as <span class="term">Event.Remove("Image" .. id)</span>.
+            </p>
+            
+            <p>
+                <br><span class="function">Screen.SetTone(bool anim, bool waitEnd, int r = 255, int g = 255, int b = 255, int a = 128)</span>
+                Adds an image above all previous images that sets a selected tone (for instance, you can use this for a sepia tone).<br>
+				Set <span class="term">anim</span> to true to make it transition to the tone.<br>
+				If <span class="term">anim</span> is set to true, you can also set <span class="term">waitEnd</span> to true to make the event's code 
+				pause until the transition is done. For the other values, they must be between 0 and 255.
+				<br><span style="color:#ff0000">NOTE: Make sure that <span class="term">a</span> is less than 255. 128 is recommended. If the 
+				<span class="term">a</span> value is great enough, your vision will be obscured in-game when this function is called!</span>
+            </p>
+            
+            <p>
+                <br><span class="function">Screen.Flash(float frames, int colorR = 255, int colorG = 255, int colorB = 255, int colorA = 255, bool waitEnd = true)</span> 
+                Flashes the screen for a given number of frames. A flash is an image that is displayed on top of the entire screen and fades afterwards.<br>
+                Change the color of the flash by changing the values of the 4 other variables. Each one must be between 0 and 255.
+				<br>By default, the script will halt execution until the flash has stopped. Set <span class="term">waitEnd</span> to false to bypass this and 
+				directly continue the script instead.
+			</p>
+            
+            <p>
+                <br><span class="function">Screen.CenterEventOnCamera(string name, int speed = 5, bool straightLine = false, bool waitEnd = true)</span> 
+                This function is an alias of <span class="term">Event.CenterOnScreen()</span>.<br>
+				Centers the camera on the given event. The camera will move at <span class="term">speed</span> pixels per second in each direction, 
+                unless you set <span class="term">straightLine</span> to true. In that case, the camera will follow a line to the center of the event.
+				<br>By default, the script will halt execution until the camera has stopped moving. Set <span class="term">waitEnd</span> to false to bypass this and 
+				directly continue the script instead.
+			</p>
+            
+            <p>
+                <br><span class="function">Screen.MoveCamera(int pixX, int pixY, int speed = 5, bool straightLine = falsee, bool waitEnd = true)</span> 
+                Moves the camera to a given position from the bottom left center of the screen.<br>The camera's speed will be 
+				<span class="term">speed</span> pixels per second in each direction, unless you set <span class="term">straightLine</span> to true. 
+				In that case, the camera will follow a line to reach the destination you entered.
+				<br>By default, the script will halt execution until the camera has stopped moving. Set <span class="term">waitEnd</span> to false to bypass this and  
+				directly continue the script instead.
+            </p>
+            
+            <p>
+                <br><span class="function">Screen.ResetCameraPosition(int speed = 5, bool straightLine = falsee, bool waitEnd = true)</span> 
+                Centers the camera on the player.<br>
+				The camera's speed will be <span class="term">speed</span> pixels per second in each direction, 
+                unless you set <span class="term">straightLine</span> to true. In that case, the camera will follow a line to the player's center.
+				<br>By default, the script will halt execution until the camera has stopped moving. Set <span class="term">waitEnd</span> to false to bypass this and 
+				directly continue the script instead.
+            </p>
+        </div>
+		
+		<div class="tab-pane text-style" id="mercy">
+            <h2 style="text-decoration: none; line-height:50px;">
+                * YOU WON!<br>
+                * You earned 0 EXP and 0 gold.<br>
+                * also the nav menu is broken now
+            </h2><br>
+        </div>
+	</div>
+</div>
+
+<div class="container">
+    <div class="col-xs-3"><img class="centerbt black" alt="Undertale fake button" src="../img/fightbt_0.png" height="42">
+    </div>
+    <div class="col-xs-3"><img class="centerbt black" alt="Undertale fake button" src="../img/actbt_0.png" height="42">
+    </div>
+    <div class="col-xs-3"><img class="centerbt black" alt="Undertale fake button" src="../img/itembt_0.png" height="42">
+    </div>
+    <div class="col-xs-3"><a href="#mercy" data-toggle="tab"><img class="centerbt black" alt="Undertale fake button"
+                                                                  src="../img/mercybt_0.png" height="42"></a>
+    </div>
+</div>
+<br>
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="../js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../js/show_hide_comments.js"></script>
+
+<script type="text/javascript" src="../js/FontToggleButton.js"></script>
+</body>
+</html>

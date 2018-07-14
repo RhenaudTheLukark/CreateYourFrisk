@@ -60,7 +60,7 @@ public class GameOverBehavior : MonoBehaviour {
     public AudioSource musicBefore = null;
     public AudioClip music = null;
 
-    public void ResetGameOver(bool deactivate = false) {
+    public void ResetGameOver() {
         if (!UnitaleUtil.IsOverworld) {
             UIController.instance.encounter.gameOverStance = false;
             LuaEnemyEncounter.script.SetVar("autolinebreak", MoonSharp.Interpreter.DynValue.NewBoolean(autolinebreakstate));
@@ -87,11 +87,6 @@ public class GameOverBehavior : MonoBehaviour {
         autolinebreakstate = false;
         revived = false;
         reviveTextSet = false;
-        if (deactivate)
-            if (UnitaleUtil.IsOverworld)
-                gameOverContainerOw.SetActive(false);
-            else
-                gameOverContainer.SetActive(false);
     }
 
     public void Revive() { revived = true; }
@@ -159,11 +154,13 @@ public class GameOverBehavior : MonoBehaviour {
         //if (overworld)
         //    gameObject.transform.SetParent(GameObject.Find("Canvas OW").transform);
         //else
+        PlayerCharacter.instance.HP = PlayerCharacter.instance.MaxHP;
         if (UnitaleUtil.IsOverworld)
             gameObject.transform.parent.SetParent(GameObject.Find("Canvas GameOver").transform);
-        else
+        else {
             gameObject.transform.SetParent(GameObject.Find("Canvas GameOver").transform);
-        PlayerCharacter.instance.HP = PlayerCharacter.instance.MaxHP;
+            UIStats.instance.setHP(PlayerCharacter.instance.MaxHP);
+        }
         brokenHeartPrefab = Resources.Load<GameObject>("Prefabs/heart_broken");
         if (SpriteRegistry.GENERIC_SPRITE_PREFAB == null)
             SpriteRegistry.GENERIC_SPRITE_PREFAB = Resources.Load<Image>("Prefabs/generic_sprite");
@@ -321,16 +318,13 @@ public class GameOverBehavior : MonoBehaviour {
                 if (InputUtil.Pressed(GlobalControls.input.Confirm) && gameOverTxt.LineComplete())
                     gameOverTxt.NextLineText();
         } else {
-            /*if (internalTimer <= breakHeartAfter) {
-
-            } else {*/
-            if (reviveTextSet &&!reviveText.AllLinesComplete()) {
+            if (reviveTextSet && !reviveText.AllLinesComplete()) {
                 // Note: [noskip] only affects the UI controller's ability to skip, so we have to redo that here.
                 if (InputUtil.Pressed(GlobalControls.input.Confirm) && reviveText.LineComplete())
                     reviveText.NextLineText();
-            } else if (reviveTextSet &&!exiting) {
+            } else if (reviveTextSet && !exiting) {
                 exiting = true;
-            } else if (internalTimerRevive >= 5.0f &&!reviveTextSet && breakHeartReviveAfter) {
+            } else if (internalTimerRevive >= 5.0f && !reviveTextSet && breakHeartReviveAfter) {
                 if (deathText != null) {
                     reviveText.SetHorizontalSpacing(7);
                     List<TextMessage> text = new List<TextMessage>();
@@ -356,16 +350,6 @@ public class GameOverBehavior : MonoBehaviour {
                 }
                 GameObject.Destroy(brokenHeartPrefab);
             }
-            //}
-
-            if (internalTimer > explodeHeartAfter) { }
-
-            if (internalTimer > gameOverAfter) { }
-
-            if (internalTimer > fluffybunsAfter) { }
-
-            if (!done) { } 
-            else if (!exiting &&!reviveText.AllLinesComplete()) { }
 
             if (!reviveTextSet) internalTimerRevive += Time.deltaTime;
 
@@ -455,13 +439,17 @@ public class GameOverBehavior : MonoBehaviour {
             transform.parent.SetSiblingIndex(playerIndex);
         }
         battleCamera.SetActive(true);
-        if (!UnitaleUtil.IsOverworld)
-            ResetGameOver();
-        else {
+        if (UnitaleUtil.IsOverworld) {
             canvasOW.SetActive(true);
             PlayerOverworld.instance.enabled = true;
             PlayerOverworld.instance.RestartMusic();
         }
-        ResetGameOver(true);
+        ResetGameOver();
+        if (!UnitaleUtil.IsOverworld) {
+            ArenaManager.instance.ResizeImmediate(ArenaManager.UIWidth, ArenaManager.UIHeight);
+            UIController.instance.SwitchState(UIController.UIState.ACTIONSELECT);
+            gameOverContainer.SetActive(false);
+        } else
+            gameOverContainerOw.SetActive(false);
     }
 }

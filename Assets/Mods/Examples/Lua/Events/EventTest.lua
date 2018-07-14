@@ -1,7 +1,8 @@
 function EventPage1()
+    Map.SetMusicKeptMap("test4", false)
     Event.MoveToPoint("Player", 320, 400, false)
     hp = Player.GetHP()
-    General.SetDialog({"Erm[waitall:3]...[waitall:1][w:10] Why did you go here with your " ..hp .." HP?"}, true, {"papyrus_mugshot_2"})
+    General.SetDialog({"Music kept = false\nErm[waitall:3]...[waitall:1][w:10] Why did you go here with your " ..hp .." HP?"}, true, {"papyrus_mugshot_2"})
 end
 
 function EventPage2()

@@ -16,6 +16,7 @@ public class LuaTextManager : TextManager {
     private int _bubbleHeight = -1;
     private BubbleSide bubbleSide = BubbleSide.NONE;
     private ProgressMode progress = ProgressMode.AUTO;
+    private Color textColor;
 
     enum BubbleSide { LEFT = 0, DOWN = 90, RIGHT = 180, UP = 270, NONE = -1 }
     enum ProgressMode { AUTO, MANUAL, NONE }
@@ -52,12 +53,12 @@ public class LuaTextManager : TextManager {
     }
 
     private void ResizeBubble() {
-        float effectiveBubbleHeight = bubbleHeight != -1 ? bubbleHeight < 16 ? 40 : bubbleHeight + 24 : UnitaleUtil.CalcTotalHeight(this) < 16 ? 40 : UnitaleUtil.CalcTotalHeight(this) + 24;
-        containerBubble.transform.GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth + 20, effectiveBubbleHeight);                                                      //To set the borders
-        UnitaleUtil.GetChildPerName(containerBubble.transform, "BackHorz").GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth + 20, effectiveBubbleHeight - 20 * 2);    //BackHorz
-        UnitaleUtil.GetChildPerName(containerBubble.transform, "BackVert").GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth - 20, effectiveBubbleHeight);             //BackVert
-        UnitaleUtil.GetChildPerName(containerBubble.transform, "CenterHorz").GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth + 16, effectiveBubbleHeight - 16 * 2);  //CenterHorz
-        UnitaleUtil.GetChildPerName(containerBubble.transform, "CenterVert").GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth - 16, effectiveBubbleHeight - 4);       //CenterVert
+        float effectiveBubbleHeight = bubbleHeight != -1 ? bubbleHeight < 16 ? 40 : bubbleHeight + 24 : UnitaleUtil.CalcTextHeight(this) < 16 ? 40 : UnitaleUtil.CalcTextHeight(this) + 24;
+        containerBubble.transform.GetComponent<RectTransform>().sizeDelta = new Vector2(textMaxWidth + 20, effectiveBubbleHeight);                                                      //To set the borders
+        UnitaleUtil.GetChildPerName(containerBubble.transform, "BackHorz").GetComponent<RectTransform>().sizeDelta = new Vector2(textMaxWidth + 20, effectiveBubbleHeight - 20 * 2);    //BackHorz
+        UnitaleUtil.GetChildPerName(containerBubble.transform, "BackVert").GetComponent<RectTransform>().sizeDelta = new Vector2(textMaxWidth - 20, effectiveBubbleHeight);             //BackVert
+        UnitaleUtil.GetChildPerName(containerBubble.transform, "CenterHorz").GetComponent<RectTransform>().sizeDelta = new Vector2(textMaxWidth + 16, effectiveBubbleHeight - 16 * 2);  //CenterHorz
+        UnitaleUtil.GetChildPerName(containerBubble.transform, "CenterVert").GetComponent<RectTransform>().sizeDelta = new Vector2(textMaxWidth - 16, effectiveBubbleHeight - 4);       //CenterVert
         SetSpeechThingPositionAndSide(bubbleSide.ToString(), bubbleLastVar);
     }
     
@@ -89,7 +90,7 @@ public class LuaTextManager : TextManager {
         set { MoveTo(absx, value); }
     }
 
-    public int textWidth {
+    public int textMaxWidth {
         get { return _textWidth; }
         set { _textWidth = value < 16 ? 16 : value; }
     }
@@ -113,6 +114,8 @@ public class LuaTextManager : TextManager {
     }
 
     public Color _color = Color.white;
+    public bool hasColorBeenSet = false;
+    public bool hasAlphaBeenSet = false;
     // The color of the text. It uses an array of three floats between 0 and 1
     public float[] color {
         get { return new float[] { _color.r, _color.g, _color.b }; }
@@ -121,12 +124,22 @@ public class LuaTextManager : TextManager {
             if (value.Length == 3)      _color = new Color(value[0], value[1], value[2], alpha);
             else if (value.Length == 4) _color = new Color(value[0], value[1], value[2], value[3]);
             else                        throw new CYFException("You need 3 or 4 numeric values when setting a text's color.");
-            //print(((_color.r + 1) / 2) + ", " + ((_color.g + 1) / 2) + ", " + ((_color.b + 1) / 2) + ", " + (_color.a * 1));
+
+            hasColorBeenSet = true;
+            hasAlphaBeenSet = false;
+
             foreach (Letter l in letters) {
-                try { l.GetComponent<UnityEngine.UI.Image>().color = new Color((_color.r + l.colorFromText.r) / 2, (_color.g + l.colorFromText.g) / 2, 
-                                                                               (_color.b + l.colorFromText.b) / 2, _color.a * l.colorFromText.a);
-                } catch { }
+                if (l.GetComponent<UnityEngine.UI.Image>().color == defaultColor) {
+                    l.GetComponent<UnityEngine.UI.Image>().color = _color;
+                } else {
+                    break;
+                }
             }
+            
+            if (currentColor == defaultColor) {
+                currentColor = _color;
+            }
+            defaultColor = _color;
         }
     }
 
@@ -134,47 +147,23 @@ public class LuaTextManager : TextManager {
     public float[] color32 {
         // We need first to convert the Color into a Color32, and then get the values.
         get { return new float[] { ((Color32)_color).r, ((Color32)_color).g, ((Color32)_color).b }; }
-        set {
-            for (int i = 0; i < value.Length; i++)
-                if (value[i] < 0) value[i] = 0;
-                else if (value[i] > 255) value[i] = 255;
-            // If we don't have three floats, we throw an error
-            if (value.Length == 3)      _color = new Color32((byte)value[0], (byte)value[1], (byte)value[2], (byte)alpha32);
-            else if (value.Length == 4) _color = new Color32((byte)value[0], (byte)value[1], (byte)value[2], (byte)value[3]);
-            else                        throw new CYFException("You need 3 or 4 numeric values when setting a text's color.");
-            foreach (Letter l in letters)
-                try {
-                    l.GetComponent<UnityEngine.UI.Image>().color = new Color((_color.r + l.colorFromText.r) / 2, (_color.g + l.colorFromText.g) / 2,
-                                                                            (_color.b + l.colorFromText.b) / 2, _color.a * l.colorFromText.a);
-                } catch { }
-        }
+        set { color = new float[] { value[0] / 255, value[1] / 255, value[2] / 255, value.Length == 3 ? alpha : value[3] / 255 }; }
     }
 
     // The alpha of the text. It is clamped between 0 and 1
     public float alpha {
         get { return _color.a; }
         set {
-            _color = new Color(_color.r, _color.g, _color.b, Mathf.Clamp01(value));
-            foreach (Letter l in letters)
-                try {
-                    l.GetComponent<UnityEngine.UI.Image>().color = new Color((_color.r + l.colorFromText.r) / 2, (_color.g + l.colorFromText.g) / 2,
-                                                                            (_color.b + l.colorFromText.b) / 2, _color.a * l.colorFromText.a);
-                } catch { }
+            color = new float[] { _color.r, _color.g, _color.b, Mathf.Clamp01(value) };
+            hasAlphaBeenSet = true;
+            hasColorBeenSet = false;
         }
     }
 
     // The alpha of the text in a 32 bits format. It is clamped between 0 and 255
     public float alpha32 {
         get { return ((Color32)_color).a; }
-        // We need first to convert the Color into a Color32, and then get the values.
-        set {
-            _color = new Color32(((Color32)_color).r, ((Color32)_color).g, ((Color32)_color).b, (byte)(value > 255 ? 255 : value < 0 ? 0 : value));
-            foreach (Letter l in letters)
-                try {
-                    l.GetComponent<UnityEngine.UI.Image>().color = new Color((_color.r + l.colorFromText.r) / 2, (_color.g + l.colorFromText.g) / 2,
-                                                                            (_color.b + l.colorFromText.b) / 2, _color.a * l.colorFromText.a);
-                } catch { }
-        }
+        set { alpha = value / 255; }
     }
 
     public bool lineComplete {
@@ -343,5 +332,13 @@ public class LuaTextManager : TextManager {
 
     public void SetPivot(float x, float y) {
         container.GetComponent<RectTransform>().pivot = new Vector2(x, y);
+    }
+
+    public int GetTextWidth() {
+        return (int)UnitaleUtil.CalcTextWidth(this);
+    }
+
+    public int GetTextHeight() {
+        return (int)UnitaleUtil.CalcTextHeight(this);
     }
 }

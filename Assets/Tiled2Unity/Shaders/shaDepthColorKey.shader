@@ -1,13 +1,11 @@
-﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
-
-Shader "Tiled2Unity/Depth Color Key"
+﻿Shader "Tiled2Unity/Depth Color Key"
 {
 	Properties
 	{
 		[PerRendererData] _MainTex("Tiled Texture", 2D) = "white" {}
 		_Color("Tint", Color) = (1,1,1,1)
 		_AlphaColorKey("Alpha Color Key", Color) = (0,0,0,0)
-		[MaterialToggle] PixelSnap("Pixel snap", Float) = 1
+		[MaterialToggle] PixelSnap("Pixel snap", Float) = 0
 	}
 
 	SubShader
@@ -30,10 +28,11 @@ Shader "Tiled2Unity/Depth Color Key"
 		Pass
 		{
 			CGPROGRAM
-#pragma vertex vert
-#pragma fragment frag
-#pragma multi_compile DUMMY PIXELSNAP_ON
-#include "UnityCG.cginc"
+			#pragma vertex vert
+			#pragma fragment frag
+			#pragma multi_compile DUMMY PIXELSNAP_ON
+			#include "UnityCG.cginc"
+			#include "Tiled2Unity.cginc"
 
 			struct appdata_t
 			{

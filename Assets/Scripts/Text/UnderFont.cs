@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class UnderFont {
     public UnderFont(Dictionary<char, Sprite> letters, string name) {
+        Name = name;
         Letters = letters;
         Sound = null;
         try { LineSpacing = Letters[' '].rect.height * 1.5f; } 
@@ -11,6 +12,7 @@ public class UnderFont {
         DefaultColor = Color.white;
     }
 
+    public string Name { get; private set; }
     public Dictionary<char, Sprite> Letters { get; private set; }
     public AudioClip Sound { get; set; }
     public Color DefaultColor { get; set; }

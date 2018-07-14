@@ -9,7 +9,7 @@ QualitySettings:
   - serializedVersion: 2
     name: Unitale
     pixelLightCount: 1
-    shadows: 2
+    shadows: 0
     shadowResolution: 2
     shadowProjection: 1
     shadowCascades: 4

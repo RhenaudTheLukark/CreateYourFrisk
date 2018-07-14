@@ -6,7 +6,7 @@ using UnityEngine;
 /// </summary>
 public class BulletPool : MonoBehaviour {
     public static BulletPool instance;
-    public static int POOLSIZE = 1000;
+    public static int POOLSIZE = 100;
     private static Queue<Projectile> pool = new Queue<Projectile>();
     private static Projectile bPrefab; // bullet prefab
     //private static int currentProjectile = 0;

@@ -58,7 +58,9 @@ public class TextManager : MonoBehaviour {
     private int letterOnceValue = 0;
     private KeyCode waitingChar = KeyCode.None;
 
-    private Color currentColor = Color.white;
+    protected Color currentColor = Color.white;
+    private bool colorSet = false;
+    protected Color defaultColor = Color.white;
     //private Color defaultColor = Color.white;
 
     private float letterTimer = 0.0f;
@@ -67,7 +69,7 @@ public class TextManager : MonoBehaviour {
 
     private ScriptWrapper caller;
 
-    public UnderFont Charset { get; private set; }
+    public UnderFont Charset { get; protected set; }
     public TextMessage[] textQueue = null;
     //public string[] mugshotsPath;
     //public bool overworld;
@@ -83,12 +85,33 @@ public class TextManager : MonoBehaviour {
         if (default_charset == null)
             default_charset = font;
         if (firstTime) {
-            if (letterSound == null)          letterSound.clip = font.Sound;
-            if (currentColor == Color.white)  currentColor = font.DefaultColor;
-            if (hSpacing == 3)                hSpacing = font.CharSpacing;
+            if (letterSound == null)
+                letterSound.clip = font.Sound;
+            if (currentColor == Color.white) {
+                // TODO: DO NOT OVERRIDE font.XXX!!!
+                defaultColor = Charset.DefaultColor;
+                if (GetType() == typeof(LuaTextManager)) {
+                    if (((LuaTextManager)this).hasColorBeenSet) {
+                        defaultColor = ((LuaTextManager)this)._color;
+                    } else if (((LuaTextManager)this).hasAlphaBeenSet) {
+                        defaultColor = new Color(font.DefaultColor.r, font.DefaultColor.g, font.DefaultColor.b, ((LuaTextManager)this).alpha);
+                    }
+                }
+                currentColor = defaultColor;
+            }
+            if (hSpacing == 3)
+                hSpacing = font.CharSpacing;
         } else {
             letterSound.clip = font.Sound;
-            currentColor = font.DefaultColor;
+            defaultColor = Charset.DefaultColor;
+            if (GetType() == typeof(LuaTextManager)) {
+                if (((LuaTextManager)this).hasColorBeenSet) {
+                    defaultColor = ((LuaTextManager)this)._color;
+                } else if (((LuaTextManager)this).hasAlphaBeenSet) {
+                    defaultColor = new Color(font.DefaultColor.r, font.DefaultColor.g, font.DefaultColor.b, ((LuaTextManager)this).alpha);
+                }
+            }
+            currentColor = defaultColor;
             hSpacing = font.CharSpacing;
         }
     }
@@ -281,7 +304,8 @@ public class TextManager : MonoBehaviour {
 
                     if (!offsetSet)
                         SetOffset(0, 0);
-                    currentColor = Charset.DefaultColor;
+                    currentColor = defaultColor;
+                    colorSet = false;
                     currentSkippable = true;
                     autoSkipThis = false;
                     autoSkip = false;
@@ -469,24 +493,24 @@ public class TextManager : MonoBehaviour {
             if (UIController.instance.inited) {
                 if (UIController.instance.encounter.gameOverStance) limit = 320;
                 else if (name == "DialogBubble(Clone)")             limit = (int)transform.parent.GetComponent<LuaEnemyController>().bubbleWideness;
-                else if (GetType() == typeof(LuaTextManager))       limit = gameObject.GetComponent<LuaTextManager>().textWidth;
+                else if (GetType() == typeof(LuaTextManager))       limit = gameObject.GetComponent<LuaTextManager>().textMaxWidth;
                 else                                                limit = 534;
             } else                                                  limit = 534;
         } else                                                      limit = 534;
-        if (UnitaleUtil.CalcTotalLength(this, beginIndex, finalIndex) > limit && limit > 0) {
+        if (UnitaleUtil.CalcTextWidth(this, beginIndex, finalIndex) > limit && limit > 0) {
             int realBeginIndex = beginIndex, realFinalIndex = finalIndex;
             beginIndex = finalIndex - 1;
             while (textQueue[currentLine].Text[beginIndex] != ' ' && textQueue[currentLine].Text[beginIndex] != '\n' && textQueue[currentLine].Text[beginIndex] != '\r' && beginIndex > 0)
                 beginIndex--;
             if (textQueue[currentLine].Text[beginIndex] == ' ' || textQueue[currentLine].Text[beginIndex] == '\n' || textQueue[currentLine].Text[beginIndex] == '\r' || beginIndex < 0)
                 beginIndex++;
-            if (UnitaleUtil.CalcTotalLength(this, beginIndex, finalIndex) > limit) {
+            if (UnitaleUtil.CalcTextWidth(this, beginIndex, finalIndex) > limit) {
                 finalIndex = beginIndex;
                 int testFinal = finalIndex;
                 beginIndex = realBeginIndex;
                 string currentText3 = currentText;
                 for (; finalIndex <= realFinalIndex && finalIndex < currentText3.Length; finalIndex++)
-                    if (UnitaleUtil.CalcTotalLength(this, beginIndex, finalIndex) > limit) {
+                    if (UnitaleUtil.CalcTextWidth(this, beginIndex, finalIndex) > limit) {
                         if (finalIndex == testFinal) {
                             currentX = self.position.x + offset.x;
                             /*if (GetType() == typeof(LuaTextManager))
@@ -632,10 +656,13 @@ public class TextManager : MonoBehaviour {
             letterPositions[i] = ltrRect.anchoredPosition;
             ltrImg.SetNativeSize();
             if (GetType() == typeof(LuaTextManager)) {
-                Color c = ((LuaTextManager)this)._color;
-                if (currentColor == Color.white) ltrImg.color = c;
-                else                             ltrImg.color = currentColor;
-            } else                               ltrImg.color = currentColor;
+                Color luaColor = ((LuaTextManager)this)._color;
+                if (!colorSet) {
+                    if (((LuaTextManager)this).hasColorBeenSet) ltrImg.color = luaColor;
+                    else                                        ltrImg.color = currentColor;
+                    if (((LuaTextManager)this).hasAlphaBeenSet) ltrImg.color = new Color(ltrImg.color.r, ltrImg.color.g, ltrImg.color.b, luaColor.a);
+                } else                                          ltrImg.color = currentColor;
+            } else                                              ltrImg.color = currentColor;
             ltrImg.GetComponent<Letter>().colorFromText = currentColor;
             ltrImg.enabled = displayImmediate;
             letters.Add(singleLtr.GetComponent<Letter>());
@@ -737,26 +764,37 @@ public class TextManager : MonoBehaviour {
             letterTimer = 0.0f;
             bool soundPlayed = false;
             int lastLetter = -1;
-            if (letterOnceValue != 0 && !instantCommand)
-                while (letterOnceValue != 0 && !instantCommand) {
-                    if (!HandleShowLetter(ref soundPlayed, ref lastLetter))
-                        return;
-                    letterOnceValue--;
-                }
+            if (HandleShowLettersOnce(ref soundPlayed, ref lastLetter))
+                return;
             else
                 for (int i = 0; (instantCommand || i < letterSpeed) && currentCharacter < letterReferences.Length; i++)
-                    if (!HandleShowLetter(ref soundPlayed, ref lastLetter))
+                    if (!HandleShowLetter(ref soundPlayed, ref lastLetter)) {
+                        HandleShowLettersOnce(ref soundPlayed, ref lastLetter);
                         return;
+                    }
         }
         noSkip1stFrame = false;
+    }
+
+    private bool HandleShowLettersOnce(ref bool soundPlayed, ref int lastLetter) {
+        bool wentIn = false;
+        while (letterOnceValue != 0 && !instantCommand) {
+            wentIn = true;
+            if (!HandleShowLetter(ref soundPlayed, ref lastLetter)) {
+                return false;
+            }
+            letterOnceValue--;
+        }
+        return wentIn;
     }
 
     private bool HandleShowLetter(ref bool soundPlayed, ref int lastLetter) {
         if (lastLetter != currentCharacter) {
             float oldLetterTimer = letterTimer;
+            int oldLetterOnceValue = letterOnceValue;
             lastLetter = currentCharacter;
             while (CheckCommand()) {
-                if (displayImmediate || letterTimer != oldLetterTimer)
+                if (displayImmediate || letterTimer != oldLetterTimer || waitingChar != KeyCode.None || letterOnceValue != oldLetterOnceValue)
                     return false;
             }
             if (currentCharacter >= letterReferences.Length)
@@ -830,7 +868,10 @@ public class TextManager : MonoBehaviour {
             cmds[1] = args[0];
         }
         switch (cmds[0].ToLower()) {
-            case "color":       currentColor = ParseUtil.GetColor(cmds[1]);        break;
+            case "color":
+                currentColor = ParseUtil.GetColor(cmds[1]);
+                colorSet = true;
+                break;
             case "charspacing": SetHorizontalSpacing(ParseUtil.GetFloat(cmds[1])); break;
             case "linespacing": SetVerticalSpacing(ParseUtil.GetFloat(cmds[1]));   break;
 
@@ -951,27 +992,20 @@ public class TextManager : MonoBehaviour {
                     if (caller == null)
                         UnitaleUtil.DisplayLuaError("???", "Func called but no script to reference. This is the engine's fault, not yours.");
                     if (args.Length > 1) {
-                        DynValue[] argsbis = new DynValue[args.Length - 1];
-
-                        for (int i = 1; i < args.Length; i++) {
-                            //The character " is forbidden at the beginning and at the end of the string, as it is the sign of a String.
-                            args[i] = args[i].TrimStart('"').TrimEnd('"');
-                            Type type = UnitaleUtil.CheckRealType(args[i]);
-                            //Boolean
-                            if (type == typeof(bool)) {
-                                if (args[i].Replace(" ", "") == "true")
-                                    argsbis[i - 1] = DynValue.NewBoolean(true);
-                                else
-                                    argsbis[i - 1] = DynValue.NewBoolean(false);
-                            //Number
-                            } else if (type == typeof(float)) {
-                                args[i] = args[i].Replace(" ", "");
-                                float number = CreateNumber(args[i]);
-                                argsbis[i - 1] = DynValue.NewNumber(number);
-                            //String
-                            } else
-                                argsbis[i - 1] = DynValue.NewString(args[i]);
+                        //Check array as argument
+                        if (args.Length == 2) {
+                            args[1] = args[1].Trim();
+                            if (args[1][0] == '{' && args[1][args[1].Length - 1] == '}') {
+                                args[1] = args[1].Substring(1, args[1].Length - 2);
+                                string[] newArgs = UnitaleUtil.SpecialSplit(',', args[1], true);
+                                Array.Resize(ref args, 1 + newArgs.Length);
+                                Array.Copy(newArgs, 0, args, 1, newArgs.Length);
+                            }
                         }
+
+                        DynValue[] argsbis = new DynValue[args.Length - 1];
+                        for (int i = 1; i < args.Length; i++)
+                            argsbis[i - 1] = ComputeArgument(args[i]);
                         caller.Call(args[0], argsbis, true); //ADD TRY
                                                              //caller.Call(args[0], DynValue.NewString(args[1]));
                     } else
@@ -1046,6 +1080,27 @@ public class TextManager : MonoBehaviour {
                     letterIntensity = ParseUtil.GetFloat(args[1]);
                 break;
         }
+    }
+
+    private DynValue ComputeArgument(string arg) {
+        arg = arg.Trim();
+        Type type = UnitaleUtil.CheckRealType(arg);
+        DynValue dyn;
+        //Boolean
+        if (type == typeof(bool)) {
+            if (arg.Replace(" ", "") == "true")
+                dyn = DynValue.NewBoolean(true);
+            else
+                dyn = DynValue.NewBoolean(false);
+        //Number
+        } else if (type == typeof(float)) {
+            arg = arg.Replace(" ", "");
+            float number = CreateNumber(arg);
+            dyn = DynValue.NewNumber(number);
+        //String
+        } else
+            dyn = DynValue.NewString(arg);
+        return dyn;
     }
 
     private void SetHP(float newhp) {

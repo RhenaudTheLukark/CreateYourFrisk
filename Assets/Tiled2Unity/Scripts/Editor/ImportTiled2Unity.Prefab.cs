@@ -2,16 +2,17 @@
 #define T2U_IS_UNITY_4
 #endif
 
-#if!UNITY_WEBPLAYER
+#if !UNITY_WEBPLAYER
 using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Xml.Linq;
 
 using UnityEngine;
 using UnityEditor;
+
+using Path = System.IO.Path;
 
 namespace Tiled2Unity
 {
@@ -20,12 +21,12 @@ namespace Tiled2Unity
         public void PrefabImported(string prefabPath)
         {
             // Find the import behaviour that was waiting on this prefab to be imported
-            string asset = System.IO.Path.GetFileName(prefabPath);
+            string asset = Path.GetFileName(prefabPath);
             ImportBehaviour importComponent = ImportBehaviour.FindImportBehavior_ByWaitingPrefab(asset);
             if (importComponent != null)
             {
                 // The prefab has finished loading. Keep track of that status.
-                if (!importComponent.ImportComplete_Prefabs.Contains(asset))
+                if (!importComponent.ImportComplete_Prefabs.Contains(asset, StringComparer.OrdinalIgnoreCase))
                 {
                     importComponent.ImportComplete_Prefabs.Add(asset);
                 }
@@ -39,15 +40,15 @@ namespace Tiled2Unity
             }
         }
 
-        private void ImportAllPrefabs(Tiled2Unity.ImportBehaviour importComponent, string objPath)
+        private void ImportAllPrefabs(Tiled2Unity.ImportBehaviour importComponent)
         {
             foreach (var xmlPrefab in importComponent.XmlDocument.Root.Elements("Prefab"))
             {
-                CreatePrefab(xmlPrefab, objPath, importComponent);
+                CreatePrefab(xmlPrefab, importComponent);
             }
         }
 
-        private void CreatePrefab(XElement xmlPrefab, string objPath, Tiled2Unity.ImportBehaviour importComponent)
+        private void CreatePrefab(XElement xmlPrefab, Tiled2Unity.ImportBehaviour importComponent)
         {
             var customImporters = GetCustomImporterInstances(importComponent);
 
@@ -61,7 +62,7 @@ namespace Tiled2Unity
             // Part 2: Build out the prefab
             // We may have an 'isTrigger' attribute that we want our children to obey
             bool isTrigger = ImportUtils.GetAttributeAsBoolean(xmlPrefab, "isTrigger", false);
-            AddGameObjectsTo(tempPrefab, xmlPrefab, isTrigger, objPath, importComponent, customImporters);
+            AddGameObjectsTo(tempPrefab, xmlPrefab, isTrigger, importComponent, customImporters);
 
             // Part 3: Allow for customization from other editor scripts to be made on the prefab
             // (These are generally for game-specific needs)
@@ -72,12 +73,12 @@ namespace Tiled2Unity
 
             // Part 4: Save the prefab, keeping references intact.
             string resourcePath = ImportUtils.GetAttributeAsString(xmlPrefab, "resourcePath", "");
-            bool isResource =!String.IsNullOrEmpty(resourcePath) || ImportUtils.GetAttributeAsBoolean(xmlPrefab, "resource", false);
+            bool isResource = !String.IsNullOrEmpty(resourcePath) || ImportUtils.GetAttributeAsBoolean(xmlPrefab, "resource", false);
             string prefabPath = GetPrefabAssetPath(prefabName, isResource, resourcePath);
-            string prefabFile = System.IO.Path.GetFileName(prefabPath);
+            string prefabFile = Path.GetFileName(prefabPath);
 
             // Keep track of the prefab file being imported
-            if (!importComponent.ImportWait_Prefabs.Contains(prefabFile))
+            if (!importComponent.ImportWait_Prefabs.Contains(prefabFile, StringComparer.OrdinalIgnoreCase))
             {
                 importComponent.ImportWait_Prefabs.Add(prefabFile);
                 importComponent.ImportingAssets.Add(prefabPath);
@@ -95,50 +96,40 @@ namespace Tiled2Unity
             // Replace the prefab, keeping connections based on name. This imports the prefab asset as a side-effect.
             PrefabUtility.ReplacePrefab(tempPrefab, finalPrefab, ReplacePrefabOptions.ReplaceNameBased);
 
-            // Destroy the instance from the current scene hiearchy.
+            // Destroy the instance from the current scene hierarchy.
             UnityEngine.Object.DestroyImmediate(tempPrefab);
         }
 
-        private void AddGameObjectsTo(GameObject parent, XElement xml, bool isParentTrigger, string objPath, ImportBehaviour importComponent, IList<ICustomTiledImporter> customImporters)
+        private void AddGameObjectsTo(GameObject parent, XElement xml, bool isParentTrigger, ImportBehaviour importComponent, IList<ICustomTiledImporter> customImporters)
         {
             foreach (XElement goXml in xml.Elements("GameObject"))
             {
                 string name = ImportUtils.GetAttributeAsString(goXml, "name", "");
                 string copyFrom = ImportUtils.GetAttributeAsString(goXml, "copy", "");
+                string mesh = ImportUtils.GetAttributeAsString(goXml, "mesh", "");
 
                 GameObject child = null;
-                if (!String.IsNullOrEmpty(copyFrom))
+
+                if (!String.IsNullOrEmpty(mesh))
                 {
-                    float opacity = ImportUtils.GetAttributeAsFloat(goXml, "opacity", 1);
-                    child = CreateCopyFromMeshObj(copyFrom, objPath, opacity, importComponent);
-                    if (child == null)
-                    {
-                        // We're in trouble. Errors should already be in the log.
-                        return;
-                    }
-
-                    // Apply the sorting to the renderer of the mesh object we just copied into the child
-                    Renderer renderer = child.GetComponent<Renderer>();
-
-                    string sortingLayer = ImportUtils.GetAttributeAsString(goXml, "sortingLayerName", "");
-                    if (!String.IsNullOrEmpty(sortingLayer) &&!SortingLayerExposedEditor.GetSortingLayerNames().Contains(sortingLayer))
-                    {
-                        importComponent.RecordError("Sorting Layer \"{0}\" does not exist. Check your Project Settings -> Tags and Layers", sortingLayer);
-                        renderer.sortingLayerName = "Default";
-                    }
-                    else
-                    {
-                        renderer.sortingLayerName = sortingLayer;
-                    }
-
-                    // Set the sorting order
-                    renderer.sortingOrder = ImportUtils.GetAttributeAsInt(goXml, "sortingOrder", 0);
+                    child = CreateGameObjectWithMesh(mesh, importComponent);
+                }
+                else if (!String.IsNullOrEmpty(copyFrom))
+                {
+                    child = CreateCopyFromMeshObj(copyFrom, importComponent);
                 }
                 else
                 {
                     child = new GameObject();
                 }
 
+                if (child == null)
+                {
+                    importComponent.RecordError("Error creating child object '{0}'", name);
+                    return;
+                }
+
+                // Assign the given name to our child
                 if (!String.IsNullOrEmpty(name))
                 {
                     child.name = name;
@@ -156,6 +147,7 @@ namespace Tiled2Unity
                 // Add any layer components
                 AddTileLayerComponentsTo(child, goXml);
                 AddObjectLayerComponentsTo(child, goXml);
+                AddGroupLayerComponentsTo(child, goXml);
 
                 // Add any object group items
                 AddTmxObjectComponentsTo(child, goXml);
@@ -169,12 +161,12 @@ namespace Tiled2Unity
                 AddTileAnimatorsTo(child, goXml);
 
                 // Do we have any collision data?
-                // Check if we are setting 'isTrigger' for ourselves or for our childen
+                // Check if we are setting 'isTrigger' for ourselves or for our children
                 bool isTrigger = ImportUtils.GetAttributeAsBoolean(goXml, "isTrigger", isParentTrigger);
                 AddCollidersTo(child, isTrigger, goXml);
 
                 // Do we have any children of our own?
-                AddGameObjectsTo(child, goXml, isTrigger, objPath, importComponent, customImporters);
+                AddGameObjectsTo(child, goXml, isTrigger, importComponent, customImporters);
 
                 // Does this game object have a tag?
                 AssignTagTo(child, goXml, importComponent);
@@ -182,8 +174,10 @@ namespace Tiled2Unity
                 // Does this game object have a layer?
                 AssignLayerTo(child, goXml, importComponent);
 
-                // Are there any custom properties?
-                HandleCustomProperties(child, goXml, customImporters);
+                // Assign from various attributes
+                AssignOpacityTo(child, goXml, importComponent);
+                AssignSortingLayerNameTo(child, goXml, importComponent);
+                AssignSortingOrderTo(child, goXml, importComponent);
 
                 // Set scale and rotation *after* children are added otherwise Unity will have child+parent transform cancel each other out
                 float sx = ImportUtils.GetAttributeAsFloat(goXml, "scaleX", 1.0f);
@@ -195,7 +189,62 @@ namespace Tiled2Unity
                 Vector3 localRotation = new Vector3();
                 localRotation.z = -ImportUtils.GetAttributeAsFloat(goXml, "rotation", 0);
                 child.transform.eulerAngles = localRotation;
+
+                // Are there any custom properties? (This comes last - after all transformations have taken place.)
+                HandleCustomProperties(child, goXml, customImporters);
             }
+        }
+
+        private void AssignSortingOrderTo(GameObject gameObject, XElement xml, ImportBehaviour importComponent)
+        {
+            if (xml.Attribute("sortingOrder") == null)
+                return;
+
+            int sortingOrder = ImportUtils.GetAttributeAsInt(xml, "sortingOrder");
+
+            Renderer renderer = gameObject.GetComponent<Renderer>();
+            if (renderer == null)
+            {
+                importComponent.RecordWarning("Sorting Order '{0}' cannot be assigned on '{1}' without a RendererComponent", sortingOrder, gameObject.name);
+                return;
+            }
+
+            renderer.sortingOrder = sortingOrder;
+        }
+
+        private void AssignSortingLayerNameTo(GameObject gameObject, XElement xml, ImportBehaviour importComponent)
+        {
+            string sortingLayer = ImportUtils.GetAttributeAsString(xml, "sortingLayerName", "");
+            if (String.IsNullOrEmpty(sortingLayer))
+                return;
+
+            Renderer renderer = gameObject.GetComponent<Renderer>();
+            if (renderer == null)
+            {
+                importComponent.RecordWarning("Sorting Layer '{0}' cannot be assigned on '{1}' without a RendererComponent", sortingLayer, gameObject.name);
+                return;
+            }
+
+            if (!SortingLayerExposedEditor.GetSortingLayerNames().Contains(sortingLayer))
+            {
+                importComponent.RecordError("Sorting Layer \"{0}\" does not exist. Check your Project Settings -> Tags and Layers", sortingLayer);
+                renderer.sortingLayerName = "Default";
+            }
+
+            renderer.sortingLayerName = sortingLayer;
+        }
+
+        private void AssignOpacityTo(GameObject gameObject, XElement xml, ImportBehaviour importComponent)
+        {
+            float opacity = ImportUtils.GetAttributeAsFloat(xml, "opacity", 1.0f);
+            if (opacity == 1.0f)
+                return;
+
+#if UNITY_5_6_OR_NEWER
+            // Add a component that will control our instanced shader properties
+            Tiled2Unity.GPUInstancing instancing = gameObject.GetOrAddComponent<Tiled2Unity.GPUInstancing>();
+            instancing.Opacity = opacity;
+#endif
         }
 
         private void AssignLayerTo(GameObject gameObject, XElement xml, ImportBehaviour importComponent)
@@ -241,7 +290,7 @@ namespace Tiled2Unity
             if (String.IsNullOrEmpty(tag))
                 return;
 
-            // Let the user know if the tag doesn't exist in our project sttings
+            // Let the user know if the tag doesn't exist in our project settings
             try
             {
                 gameObject.tag = tag;
@@ -325,8 +374,8 @@ namespace Tiled2Unity
                 // The data looks like this:
                 //  x0,y0 x1,y1 x2,y2 ...
                 var points = from pt in data.Split(' ')
-                             let x = Convert.ToSingle(pt.Split(',')[0])
-                             let y = Convert.ToSingle(pt.Split(',')[1])
+                             let x = Convert.ToSingle(pt.Split(',')[0], CultureInfo.InvariantCulture)
+                             let y = Convert.ToSingle(pt.Split(',')[1], CultureInfo.InvariantCulture)
                              select new Vector2(x, y);
 
                 collider.points = points.ToArray();
@@ -366,8 +415,8 @@ namespace Tiled2Unity
                     // The data looks like this:
                     //  x0,y0 x1,y1 x2,y2 ...
                     var points = from pt in data.Split(' ')
-                                 let x = Convert.ToSingle(pt.Split(',')[0])
-                                 let y = Convert.ToSingle(pt.Split(',')[1])
+                                 let x = Convert.ToSingle(pt.Split(',')[0], CultureInfo.InvariantCulture)
+                                 let y = Convert.ToSingle(pt.Split(',')[1], CultureInfo.InvariantCulture)
 #if T2U_IS_UNITY_4
                                  // Hack for Unity 4.x
                                  select new Vector2(x + offset_x, y + offset_y);
@@ -378,16 +427,44 @@ namespace Tiled2Unity
                     collider.SetPath(p, points.ToArray());
                 }
 
-#if!T2U_IS_UNITY_4
+#if !T2U_IS_UNITY_4
                 collider.offset += new Vector2(offset_x, offset_y);
 #endif
             }
         }
 
-        private GameObject CreateCopyFromMeshObj(string copyFromName, string objPath, float opacity, ImportBehaviour importComponent)
+        private GameObject CreateGameObjectWithMesh(string meshName, ImportBehaviour importComponent)
         {
+            string meshAssetPath = GetMeshAssetPath(importComponent.MapName, meshName);
+            UnityEngine.Object[] objects = AssetDatabase.LoadAllAssetsAtPath(meshAssetPath);
+            foreach (var obj in objects)
+            {
+                // Do we have a game object?
+                GameObject gameObj = obj as GameObject;
+                if (gameObj == null)
+                    continue;
+
+                // Does the game object have a MeshRenderer component?
+                if (gameObj.GetComponent<MeshRenderer>() != null)
+                {
+                    GameObject instancedGameObj = GameObject.Instantiate(gameObj) as GameObject;
+                    instancedGameObj.AddComponent<SortingLayerExposed>();
+                    return instancedGameObj;
+                }
+            }
+
+            // If we're here then there's an error
+            importComponent.RecordError("No mesh named '{0}' to create game object from.\nXml File: {1}\nObject: {2}", meshName, importComponent.Tiled2UnityXmlPath, meshAssetPath);
+            return null;
+        }
+
+        private GameObject CreateCopyFromMeshObj(string copyFromName, ImportBehaviour importComponent)
+        {
+            importComponent.RecordWarning("Deprecated import action. Re-export map '{0}' with newer version of Tiled2Unity.", importComponent.MapName);
+
             // Find a matching game object within the mesh object and "copy" it
             // (In Unity terms, the Instantiated object is a copy)
+            string objPath = GetMeshAssetPath(importComponent.MapName, importComponent.MapName);
             UnityEngine.Object[] objects = AssetDatabase.LoadAllAssetsAtPath(objPath);
             foreach (var obj in objects)
             {
@@ -398,10 +475,6 @@ namespace Tiled2Unity
                 GameObject gameObj = GameObject.Instantiate(obj) as GameObject;
                 if (gameObj == null)
                     continue;
-
-                // Add a component that will control our initial shader properties
-                TiledInitialShaderProperties shaderProps = gameObj.AddComponent<TiledInitialShaderProperties>();
-                shaderProps.InitialOpacity = opacity;
 
                 // Reset the name so it is not decorated by the Instantiate call
                 gameObj.name = obj.name;
@@ -431,6 +504,16 @@ namespace Tiled2Unity
                 Tiled2Unity.ObjectLayer objectLayer = gameObject.AddComponent<Tiled2Unity.ObjectLayer>();
                 objectLayer.Color = ImportUtils.GetAttributeAsColor(xml, "color", Color.black);
                 SetLayerComponentProperties(objectLayer, xml);
+            }
+        }
+
+        private void AddGroupLayerComponentsTo(GameObject gameObject, XElement goXml)
+        {
+            var xml = goXml.Element("GroupLayer");
+            if (xml != null)
+            {
+                Tiled2Unity.GroupLayer groupLayer = gameObject.AddComponent<Tiled2Unity.GroupLayer>();
+                SetLayerComponentProperties(groupLayer, xml);
             }
         }
 
@@ -584,7 +667,7 @@ namespace Tiled2Unity
             var errorTypes = from a in AppDomain.CurrentDomain.GetAssemblies()
                              from t in a.GetTypes()
                              where typeof(ICustomTiledImporter).IsAssignableFrom(t)
-                             where!t.IsAbstract
+                             where !t.IsAbstract
                              where System.Attribute.GetCustomAttribute(t, typeof(CustomTiledImporterAttribute)) == null
                              select t;
             foreach (var t in errorTypes)
@@ -596,7 +679,7 @@ namespace Tiled2Unity
             var types = from a in AppDomain.CurrentDomain.GetAssemblies()
                         from t in a.GetTypes()
                         where typeof(ICustomTiledImporter).IsAssignableFrom(t)
-                        where!t.IsAbstract
+                        where !t.IsAbstract
                         from attr in System.Attribute.GetCustomAttributes(t, typeof(CustomTiledImporterAttribute))
                         let custom = attr as CustomTiledImporterAttribute
                         orderby custom.Order

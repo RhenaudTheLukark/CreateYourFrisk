@@ -20,7 +20,8 @@ public class GameState {
     public Dictionary<string, double> playerVariablesNum = new Dictionary<string, double>();
     public Dictionary<string, bool> playerVariablesBool = new Dictionary<string, bool>();
     public string lastScene = null;
-    public Dictionary<int, MapInfos> mapInfos = new Dictionary<int, MapInfos>();
+    public Dictionary<int, MapData> mapInfos = new Dictionary<int, MapData>();
+    public Dictionary<string, TempMapData> tempMapInfos = new Dictionary<string, TempMapData>();
     public List<string> inventory = new List<string>();
 
     [System.Serializable]
@@ -33,12 +34,26 @@ public class GameState {
     }
 
     [System.Serializable]
-    public struct MapInfos {
+    public struct MapData {
+        public string Name;
         public string Music;
         public string ModToLoad;
         public bool MusicKept;
         public bool NoRandomEncounter;
         public Dictionary<string, EventInfos> EventInfo;
+    }
+
+    [System.Serializable]
+    public struct TempMapData {
+        public string Name;
+        public string Music;
+        public bool MusicChanged;
+        public string ModToLoad;
+        public bool ModToLoadChanged;
+        public bool MusicKept;
+        public bool MusicKeptChanged;
+        public bool NoRandomEncounter;
+        public bool NoRandomEncounterChanged;
     }
 
     [System.Serializable]
@@ -88,11 +103,13 @@ public class GameState {
             }
         } catch { }
 
-        mapInfos = GlobalControls.MapData;
+        mapInfos = GlobalControls.GameMapData;
+        tempMapInfos = GlobalControls.TempGameMapData;
     }
 
     public void LoadGameVariables(bool loadGlobals = true) {
-        GlobalControls.MapData = mapInfos;
+        GlobalControls.TempGameMapData = tempMapInfos;
+        GlobalControls.GameMapData = mapInfos;
         
         foreach (string key in playerVariablesNum.Keys) {
             if (loadGlobals || key.Contains("PlayerPos")) {

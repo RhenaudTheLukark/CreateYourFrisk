@@ -30,8 +30,8 @@ public static class UnitaleUtil {
             /*sr.WriteLine("By DEBUG: " + mess.Replace("\n", "\\n").Replace("\r", "\\r").Replace("\t", "\\t"));
             sr.Flush();*/
             UserDebugger.instance.UserWriteLine(mess);
-        } catch (Exception e) {
-            Debug.Log("Couldn't write on the log:\n" + e.Message + "\nMessage: " + mess);
+        } catch /*(Exception e)*/ {
+            //Debug.Log("Couldn't write on the log:\n" + e.Message + "\nMessage: " + mess);
             printDebuggerBeforeInit += (printDebuggerBeforeInit == "" ? "" : "\n") + mess;
         }
     }
@@ -130,10 +130,12 @@ public static class UnitaleUtil {
         return table;
     }
 
-    public static float CalcTotalLength(TextManager txtmgr, int fromLetter = -1, int toLetter = -1) {
-        float totalWidth = 0, totalMaxWidth = 0, hSpacing = txtmgr.Charset.CharSpacing;
-        if (fromLetter == -1) fromLetter = 0;
-        if (toLetter == -1)   toLetter = txtmgr.textQueue[txtmgr.currentLine].Text.Length;
+    public static float CalcTextWidth(TextManager txtmgr, int fromLetter = -1, int toLetter = -1) {
+        float totalWidth = 0, totalWidthSpaceTest = 0, totalMaxWidth = 0, hSpacing = txtmgr.Charset.CharSpacing;
+        if (fromLetter == -1)                                                                                       fromLetter = 0;
+        if (txtmgr.textQueue == null)                                                                               return 0;
+        if (txtmgr.textQueue[txtmgr.currentLine] == null)                                                           return 0;
+        if (toLetter == -1)                                                                                         toLetter = txtmgr.textQueue[txtmgr.currentLine].Text.Length;
         if (fromLetter > toLetter || fromLetter < 0 || toLetter > txtmgr.textQueue[txtmgr.currentLine].Text.Length) return -1;
         if (fromLetter == toLetter)                                                                                 return 0;
 
@@ -154,36 +156,46 @@ public static class UnitaleUtil {
                     break;
                 case '\r':
                 case '\n':
-                    if (totalMaxWidth < totalWidth - hSpacing)
-                        totalMaxWidth = totalWidth - hSpacing;
+                    if (totalMaxWidth < totalWidthSpaceTest - hSpacing)
+                        totalMaxWidth = totalWidthSpaceTest - hSpacing;
                     totalWidth = 0;
+                    totalWidthSpaceTest = 0;
                     break;
                 default:
-                    if (txtmgr.Charset.Letters.ContainsKey(txtmgr.textQueue[txtmgr.currentLine].Text[i]))
+                    if (txtmgr.Charset.Letters.ContainsKey(txtmgr.textQueue[txtmgr.currentLine].Text[i])) {
                         totalWidth += txtmgr.Charset.Letters[txtmgr.textQueue[txtmgr.currentLine].Text[i]].textureRect.size.x + hSpacing;
+                        //Do not count end of line spaces
+                        if (txtmgr.textQueue[txtmgr.currentLine].Text[i] != ' ')
+                            totalWidthSpaceTest = totalWidth;
+                    }
                     break;
             }
         }
-        if (totalMaxWidth < totalWidth - hSpacing)
-            totalMaxWidth = totalWidth - hSpacing;
+        if (totalMaxWidth < totalWidthSpaceTest - hSpacing)
+            totalMaxWidth = totalWidthSpaceTest - hSpacing;
         return totalMaxWidth;
     }
 
-    public static float CalcTotalHeight(TextManager txtmgr, int fromLetter = -1, int toLetter = -1) {
-        float maxHeight = -999, minHeight = 999;
+    public static float CalcTextHeight(TextManager txtmgr, int fromLetter = -1, int toLetter = -1) {
+        float maxY = -999, minY = 999;
         if (fromLetter == -1) fromLetter = 0;
         if (toLetter == -1)   toLetter = txtmgr.textQueue[txtmgr.currentLine].Text.Length;
         if (fromLetter > toLetter || fromLetter < 0 || toLetter > txtmgr.textQueue[txtmgr.currentLine].Text.Length) return -1;
         if (fromLetter == toLetter)                                                                                 return 0;
-
-        for (int i = fromLetter; i < toLetter; i++)
+        for (int i = fromLetter; i < toLetter; i++) {
             if (txtmgr.Charset.Letters.ContainsKey(txtmgr.textQueue[txtmgr.currentLine].Text[i])) {
-                if (txtmgr.letterPositions[i].y < minHeight)
-                    minHeight = txtmgr.letterPositions[i].y;
-                if (txtmgr.letterPositions[i].y + txtmgr.Charset.Letters[txtmgr.textQueue[txtmgr.currentLine].Text[i]].textureRect.size.y > maxHeight)
-                    maxHeight = txtmgr.letterPositions[i].y + txtmgr.Charset.Letters[txtmgr.textQueue[txtmgr.currentLine].Text[i]].textureRect.size.y;
+                if (txtmgr.letterPositions[i].y < minY) {
+                    //Debug.Log("minY change: going from " + minY + " to " + txtmgr.letterPositions[i].y);
+                    minY = txtmgr.letterPositions[i].y;
+                }
+                if (txtmgr.letterPositions[i].y + txtmgr.Charset.Letters[txtmgr.textQueue[txtmgr.currentLine].Text[i]].textureRect.size.y > maxY) {
+                    //Debug.Log("maxY change: going from " + maxY + " to " + (txtmgr.letterPositions[i].y + txtmgr.Charset.Letters[txtmgr.textQueue[txtmgr.currentLine].Text[i]].textureRect.size.y));
+                    maxY = txtmgr.letterPositions[i].y + txtmgr.Charset.Letters[txtmgr.textQueue[txtmgr.currentLine].Text[i]].textureRect.size.y;
+                }
             }
-        return maxHeight - minHeight;
+        }
+        //Debug.Log("The final height is " + (maxY - minY));
+        return maxY - minY;
     }
 
     public static DynValue RebuildTableFromString(string text) {

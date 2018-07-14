@@ -4,10 +4,6 @@ bullets = {}
 yOffset = 180
 mult = 0.5
 
-function OMGITWORKS()
-    DEBUG("Access to wave: Check!")
-end
-
 function Update()
     spawntimer = spawntimer + 1
     if(spawntimer % 30 == 0) then
@@ -39,8 +35,4 @@ function Update()
         end
         bullet.SetVar('lerp', lerp)
     end
-end
-
-function OnHit(bullet)
-    Player.Hurt(300)
 end

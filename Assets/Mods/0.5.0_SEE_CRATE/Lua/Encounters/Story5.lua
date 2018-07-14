@@ -74,6 +74,7 @@ function Update()
 		if fade.alpha < 0 then fade.alpha = 0 end
 	end
 end
+require "Waves/bullettest_bouncy"
 
 function EnteringState(newstate, oldstate)
 	if newstate == "DONE" then

@@ -1,4 +1,4 @@
-﻿#if!UNITY_WEBPLAYER
+﻿#if !UNITY_WEBPLAYER
 // Note: This parital class is not compiled in for WebPlayer builds.
 // The Unity Webplayer is deprecated. If you *must* use it then make sure Tiled2Unity assets are imported via another build target first.
 using System;
@@ -24,7 +24,7 @@ namespace Tiled2Unity
         {
             // Create a (tempoary) gameobject in the scene hierarchy that can manage state of the import process
             GameObject t2uImporter = new GameObject("__tiled2unity_importer");
-#if!UNITY_4_0 &&!UNITY_4_0_1 &&!UNITY_4_2 &&!UNITY_4_3
+#if !UNITY_4_0 && !UNITY_4_0_1 && !UNITY_4_2 && !UNITY_4_3
             t2uImporter.gameObject.transform.SetAsFirstSibling();
 #endif
             // Add the ImportBehaviour component. This will track the state of the importer and get everything to happen in the right order.
@@ -34,6 +34,7 @@ namespace Tiled2Unity
             if (LoadTiled2UnityXml(importComponent, xmlPath))
             {
                 CheckVersion(importComponent, importTiled2Unity);
+                CheckSettings(importComponent);
 
                 // Start the import process by importing all our textures
                 ImportAllTextures(importComponent);
@@ -82,6 +83,15 @@ namespace Tiled2Unity
             }
         }
 
+        private void CheckSettings(Tiled2Unity.ImportBehaviour importComponent)
+        {
+            // Check anti-aliasing
+            if (QualitySettings.antiAliasing != 0)
+            {
+                importComponent.RecordWarning("Anti-aliasing is enabled and may cause seams. See Edit->Project Settings->Quality to disable.");
+            }
+        }
+
         private UnityEngine.Material CreateMaterialFromXml(XElement xml, Tiled2Unity.ImportBehaviour importComponent)
         {
             // Does this material support alpha color key?
@@ -109,6 +119,11 @@ namespace Tiled2Unity
                 shaderName += " Color Key";
             }
 
+            // Are we using instanced shaders?
+#if UNITY_5_6_OR_NEWER
+            shaderName += " (Instanced)";
+#endif
+
             // Try creating the material with the right shader. Fall back to the built-in Sprites/Default shader if there's a problem.
             UnityEngine.Material material = null;
             try
@@ -130,6 +145,10 @@ namespace Tiled2Unity
             {
                 material.SetColor("_AlphaColorKey", keyColor);
             }
+
+#if UNITY_5_6_OR_NEWER
+            material.enableInstancing = true;
+#endif
 
             return material;
         }

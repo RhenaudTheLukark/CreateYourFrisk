@@ -56,13 +56,6 @@ public static class SaveLoad {
             file.Close();
             return true;
         } else {
-
-            LuaScriptBinder.Set(null, "PlayerPosX", MoonSharp.Interpreter.DynValue.NewNumber(GlobalControls.beginPosition.x));
-            LuaScriptBinder.Set(null, "PlayerPosY", MoonSharp.Interpreter.DynValue.NewNumber(GlobalControls.beginPosition.y));
-            string mapName2;
-            if (UnitaleUtil.MapCorrespondanceList.ContainsKey("test2")) mapName2 = UnitaleUtil.MapCorrespondanceList["test2"];
-            else                                                        mapName2 = "test2";
-            LuaScriptBinder.Set(null, "PlayerMap", MoonSharp.Interpreter.DynValue.NewString(mapName2));
             Debug.Log("There's no save to load.");
             return false;
         }

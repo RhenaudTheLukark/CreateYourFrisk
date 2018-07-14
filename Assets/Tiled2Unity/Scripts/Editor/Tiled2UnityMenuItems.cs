@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-#if!UNITY_WEBPLAYER
+#if !UNITY_WEBPLAYER
 using System.Xml.Linq;
 #endif
 
@@ -16,7 +16,7 @@ namespace Tiled2Unity
 {
     class Tiled2UnityMenuItems
     {
-#if!UNITY_WEBPLAYER
+#if !UNITY_WEBPLAYER
         // Convenience function for packaging this library
         [MenuItem("Tiled2Unity/Export Tiled2Unity Library ...")]
         static void ExportLibrary()
@@ -34,7 +34,7 @@ namespace Tiled2Unity
                 List<string> packageFiles = new List<string>();
 
                 // Export all C# files, shaders, text files, and some select materials
-                packageFiles.AddRange(EnumerateAssetFilesAt("Assets/Tiled2Unity",".cs", ".shader", ".txt", "t2uSprite-Depth.mat", "t2uSprite-DiffuseDepth.mat"));
+                packageFiles.AddRange(EnumerateAssetFilesAt("Assets/Tiled2Unity",".cs", ".shader", ".cginc", ".txt", "t2uSprite-Depth.mat", "t2uSprite-DiffuseDepth.mat"));
                 AssetDatabase.ExportPackage(packageFiles.ToArray(), path);
             }
         }
