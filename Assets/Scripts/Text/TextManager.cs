@@ -881,11 +881,16 @@ public class TextManager : MonoBehaviour {
                 if (indexOfStar > -1)
                     letterReferences[indexOfStar].color = starColor;
                 break;
-
+            
             case "instant":
                 if (args.Length == 0)
                     if (!skipFromPlayer)
                         displayImmediate = true;
+                break;
+            
+            case "noskip":
+                if (args.Length == 0)      currentSkippable = false;
+                else if (args[0] == "off") currentSkippable = true;
                 break;
 
             case "font":
