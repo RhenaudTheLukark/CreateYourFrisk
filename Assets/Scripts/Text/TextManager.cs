@@ -612,14 +612,15 @@ public class TextManager : MonoBehaviour {
                                 while (precedingText.IndexOf('[') > -1) {
                                     for (int j = 0; j < precedingText.Length; j++) {
                                         if (precedingText[j] == ']') {
-                                            precedingText = precedingText.Replace(precedingText.Substring(0, j), "");
+                                            precedingText = precedingText.Replace(precedingText.Substring(0, j + 1), "");
                                             break;
                                         }
                                     }
                                 }
                                 
                                 // Confirm that the effects of noskip should be applied!
-                                currentSkippable = false;
+                                if (precedingText.Length == 0)
+                                    currentSkippable = false;
                             }
                             
                             continue;
