@@ -602,6 +602,27 @@ public class TextManager : MonoBehaviour {
                     if (command != null) {
                         if (commandList.Contains(command.Split(':')[0])) {
                             PreCreateControlCommand(command);
+                            
+                            // Work-around for noskip
+                            if (command == "noskip") {
+                                // Copy all text before the command
+                                string precedingText = currentText.Substring(0, i - (command.Length + 1));
+                                
+                                // Remove all commands
+                                while (precedingText.IndexOf('[') > -1) {
+                                    for (int j = 0; j < precedingText.Length; j++) {
+                                        if (precedingText[j] == ']') {
+                                            precedingText = precedingText.Replace(precedingText.Substring(0, j + 1), "");
+                                            break;
+                                        }
+                                    }
+                                }
+                                
+                                // Confirm that the effects of noskip should be applied!
+                                if (precedingText.Length == 0)
+                                    currentSkippable = false;
+                            }
+                            
                             continue;
                         } else
                             i = currentChar;
@@ -881,7 +902,7 @@ public class TextManager : MonoBehaviour {
                 if (indexOfStar > -1)
                     letterReferences[indexOfStar].color = starColor;
                 break;
-
+            
             case "instant":
                 if (args.Length == 0)
                     if (!skipFromPlayer)
