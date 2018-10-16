@@ -231,11 +231,14 @@ public class UIController : MonoBehaviour {
 
             case UIState.ACTIONSELECT:
                 forcedaction = Actions.NONE;
-                PlayerController.instance.setControlOverride(true);
-                PlayerController.instance.GetComponent<Image>().enabled = true;
-                SetPlayerOnAction(action);
-                textmgr.SetPause(ArenaManager.instance.isResizeInProgress());
-                textmgr.SetCaller(LuaEnemyEncounter.script); // probably not necessary due to ActionDialogResult changes
+                PlayerController.instance.setControlOverride (true);
+                PlayerController.instance.GetComponent<Image> ().enabled = true;
+                SetPlayerOnAction (action);
+                textmgr.SetPause (ArenaManager.instance.isResizeInProgress ());
+                textmgr.SetCaller (LuaEnemyEncounter.script); // probably not necessary due to ActionDialogResult changes
+                if (!GlobalControls.retroMode) {
+                    encounter.EncounterText = LuaEnemyEncounter.script.GetVar ("encountertext").String;
+                }
                 if (encounter.EncounterText == null) {
                     encounter.EncounterText = "";
                     UnitaleUtil.WriteInLogAndDebugger("[WARN]There is no encounter text!");

@@ -328,7 +328,9 @@ internal class LuaEnemyEncounter : EnemyEncounter {
         if (!death)
             CallOnSelfOrChildren("DefenseEnding");
         ArenaManager.instance.resetArena();
-        EncounterText = script.GetVar("encountertext").String;
+        if (GlobalControls.retroMode) {
+            EncounterText = script.GetVar ("encountertext").String;
+        }
         EraseDust();
         script.SetVar("Wave", DynValue.NewTable(new Table(null)));
         // Projectile.Z_INDEX_NEXT = Projectile.Z_INDEX_INITIAL; // doesn't work yet
