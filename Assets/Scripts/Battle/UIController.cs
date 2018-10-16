@@ -724,6 +724,7 @@ public class UIController : MonoBehaviour {
                             } else {
                                 if (Inventory.inventory.Count == 0) {
                                     //ActionDialogResult(new TextMessage("Your Inventory is empty.", true, false), UIState.ACTIONSELECT);
+									textmgr.DoSkipFromPlayer();
                                     return;
                                 }
                                 SwitchState(UIState.ITEMMENU);
