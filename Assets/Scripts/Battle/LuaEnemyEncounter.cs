@@ -346,18 +346,22 @@ internal class LuaEnemyEncounter : EnemyEncounter {
     public new bool WaveInProgress() { return Time.time < waveTimer; }
 
     public static void BattleDialog(DynValue arg) {
-        UIController.instance.battleDialogued = true;
-        TextMessage[] msgs = null;
-        if (arg.Type == DataType.String)
-            msgs = new TextMessage[]{new RegularMessage(arg.String)};
-        else if (arg.Type == DataType.Table) {
-            msgs = new TextMessage[arg.Table.Length];
-            for (int i = 0; i < arg.Table.Length; i++)
-                msgs[i] = new RegularMessage(arg.Table.Get(i + 1).String);
-        } else
-            UnitaleUtil.DisplayLuaError("BattleDialog", "You need to input a non-empty array or a string here." + 
-                                                        "\n\nIf you're sure that you've entered what's needed, you may contact the dev.");
-        UIController.instance.ActionDialogResult(msgs, UIController.UIState.ENEMYDIALOGUE);
+        if (UIController.instance == null) {
+            UnitaleUtil.WriteInLogAndDebugger("[WARN]BattleDialog can only be used as early as EncounterStarting.");
+        } else {
+            UIController.instance.battleDialogued = true;
+            TextMessage[] msgs = null;
+            if (arg.Type == DataType.String)
+                msgs = new TextMessage[]{new RegularMessage(arg.String)};
+            else if (arg.Type == DataType.Table) {
+                msgs = new TextMessage[arg.Table.Length];
+                for (int i = 0; i < arg.Table.Length; i++)
+                    msgs[i] = new RegularMessage(arg.Table.Get(i + 1).String);
+            } else
+                UnitaleUtil.DisplayLuaError("BattleDialog", "You need to input a non-empty array or a string here." + 
+                                                            "\n\nIf you're sure that you've entered what's needed, you may contact the dev.");
+            UIController.instance.ActionDialogResult(msgs, UIController.UIState.ENEMYDIALOGUE);
+        }
     }
 
     /*public static void BattleDialog(List<string> lines) {
