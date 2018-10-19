@@ -258,14 +258,19 @@ public class UIController : MonoBehaviour {
 
             case UIState.ITEMMENU:
                 battleDialogued = false;
-                string[] items = GetInventoryPage(0);
-                selectedItem = 0;
-                SetPlayerOnSelection(0);
-                textmgr.SetText(new SelectMessage(items, false));
-                /*ActionDialogResult(new TextMessage[] {
-                    new TextMessage("Can't open inventory.\nClogged with pasta residue.", true, false),
-                    new TextMessage("Might also be a dog.\nIt's ambiguous.",true,false)
-                }, UIState.ENEMYDIALOG);*/
+                if (Inventory.inventory.Count == 0) {
+                    throw new CYFException("Cannot enter state ITEMMENU with empty inventory.");
+                    break;
+                } else {
+                    string[] items = GetInventoryPage(0);
+                    selectedItem = 0;
+                    SetPlayerOnSelection(0);
+                    textmgr.SetText(new SelectMessage(items, false));
+                    /*ActionDialogResult(new TextMessage[] {
+                        new TextMessage("Can't open inventory.\nClogged with pasta residue.", true, false),
+                        new TextMessage("Might also be a dog.\nIt's ambiguous.",true,false)
+                    }, UIState.ENEMYDIALOG);*/
+                }
                 break;
 
             case UIState.MERCYMENU:
@@ -428,7 +433,9 @@ public class UIController : MonoBehaviour {
             try {
                 UIState newState = (UIState)Enum.Parse(typeof(UIState), state, true);
                 instance.SwitchState(newState);
-            } catch { throw new CYFException("The state " + state + " isn't a valid state."); }
+            } catch (Exception ex) {
+                throw new CYFException("An error occured while trying to enter the state \"" + state + "\":\n" + ex.Message + "\n\nTraceback (for devs):\n" + ex.ToString());
+            }
         }
     }
 
@@ -724,7 +731,7 @@ public class UIController : MonoBehaviour {
                             } else {
                                 if (Inventory.inventory.Count == 0) {
                                     //ActionDialogResult(new TextMessage("Your Inventory is empty.", true, false), UIState.ACTIONSELECT);
-									textmgr.DoSkipFromPlayer();
+                                    textmgr.DoSkipFromPlayer();
                                     return;
                                 }
                                 SwitchState(UIState.ITEMMENU);
