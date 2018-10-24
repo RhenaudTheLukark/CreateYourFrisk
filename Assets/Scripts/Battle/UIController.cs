@@ -260,7 +260,6 @@ public class UIController : MonoBehaviour {
                 battleDialogued = false;
                 if (Inventory.inventory.Count == 0) {
                     throw new CYFException("Cannot enter state ITEMMENU with empty inventory.");
-                    break;
                 } else {
                     string[] items = GetInventoryPage(0);
                     selectedItem = 0;
