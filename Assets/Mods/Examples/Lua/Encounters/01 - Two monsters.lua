@@ -11,12 +11,6 @@ enemypositions = { {-180, 0}, {120, 0} }
 -- A custom list with attacks to choose from. Actual selection happens in EnemyDialogueEnding(). Put here in case you want to use it.
 possible_attacks = {"bullettest_bouncy", "bullettest_chaserorb", "bullettest_touhou"}
 
-function EncounterStarting()
-    -- Sets up an inventory!
-	Inventory.AddCustomItems({"TEST", "TEST2", "Shotgun", "Bandage", "PsnPotion", "Life Roll", "Nothing", "Pie", "Snails"}, {0, 0, 1, 1, 1, 1, 0, 0, 0, 3, 0, 0})
-	Inventory.SetInventory({"TEST", "TEST2", "Shotgun", "Butterscotch Pie", "Bandage", "Nothing", "PsnPotion", "Life Roll", "Real Knife"})
-end
-
 function EnemyDialogueStarting()
     -- Good location for setting monster dialogue depending on how the battle is going.
     nextwaves = { possible_attacks[math.random(#possible_attacks)] }
