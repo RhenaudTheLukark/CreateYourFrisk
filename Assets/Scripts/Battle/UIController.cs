@@ -121,6 +121,9 @@ public class UIController : MonoBehaviour {
             if (GlobalControls.crate)  Misc.WindowName = ControlPanel.instance.WinodwBsaisNmae;
             else                       Misc.WindowName = ControlPanel.instance.WindowBasisName;
         #endif
+        
+        ScriptWrapper.instances.Clear();
+        
         for (int i = 0; i < LuaScriptBinder.scriptlist.Count; i++)
             LuaScriptBinder.scriptlist[i] = null;
         LuaScriptBinder.ClearBattleVar();
