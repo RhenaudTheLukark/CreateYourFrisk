@@ -31,7 +31,7 @@ public class GlobalControls : MonoBehaviour {
     private bool screenShaking = false;
     public static Vector2 beginPosition;
     //public static bool samariosNightmare = false;
-    public static string[] nonOWScenes = new string[] { "Battle", "Error", "EncounterSelect", "ModSelect", "GameOver", "TitleScreen", "Disclaimer", "EnterName", "TransitionOverworld", "Intro" };
+    public static string[] nonOWScenes = new string[] { "Battle", "Error", /*"EncounterSelect",*/ "ModSelect", "GameOver", "TitleScreen", "Disclaimer", "EnterName", "TransitionOverworld", "Intro" };
     public static string[] canTransOW = new string[] { "Battle", "Error", "GameOver" };
     //Wow what's this
     public static Dictionary<int, GameState.MapData> GameMapData = new Dictionary<int, GameState.MapData>();
@@ -48,13 +48,6 @@ public class GlobalControls : MonoBehaviour {
 
     void Awake() {
         SceneManager.sceneLoaded += LoadScene;
-        LoadGraphicsSettings();
-    }
-
-    void LoadGraphicsSettings() {
-        QualitySettings.vSyncCount = 0;
-        Application.targetFrameRate = 60;
-        Screen.SetResolution(640, 480, false, 0);
     }
 
     /// <summary>
@@ -63,7 +56,7 @@ public class GlobalControls : MonoBehaviour {
     void Update () {
         stopScreenShake = false;
         frame ++;
-        if (SceneManager.GetActiveScene().name == "EncounterSelect") lastSceneUnitale = true;
+        if (SceneManager.GetActiveScene().name == "ModSelect") lastSceneUnitale = true;
         else                                                         lastSceneUnitale = false;
         if (UserDebugger.instance && Input.GetKeyDown(KeyCode.F9)) {
             if (UserDebugger.instance.gameObject.activeSelf)
@@ -112,8 +105,10 @@ public class GlobalControls : MonoBehaviour {
                     else if (Input.anyKeyDown)       fleeIndex = 0;
                     break;
             }
+        /*
         if (!Screen.fullScreen && (Screen.currentResolution.height != 480 || Screen.currentResolution.width != 640))
             Screen.SetResolution(640, 480, false, 0);
+        */
         if (Input.GetKeyDown(KeyCode.F4))
             Screen.fullScreen =!Screen.fullScreen;
     }
