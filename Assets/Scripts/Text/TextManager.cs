@@ -301,6 +301,11 @@ public class TextManager : MonoBehaviour {
                             blockSkip = true;
                         }
                     }
+                    
+                    // workaround...
+                    // use the default Monster font to position text,
+                    // because it works perfectly.
+                    SetFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_MONSTERTEXT_NAME), true);
 
                     if (!offsetSet)
                         SetOffset(0, 0);
