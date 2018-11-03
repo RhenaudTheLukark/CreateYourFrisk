@@ -122,7 +122,11 @@ public class UIController : MonoBehaviour {
             else                       Misc.WindowName = ControlPanel.instance.WindowBasisName;
         #endif
         
+        // stop encounter storage for good!
         ScriptWrapper.instances.Clear();
+        
+        // properly set "isInFight" to false, as it's not true anymore
+        GlobalControls.isInFight = false;
         
         for (int i = 0; i < LuaScriptBinder.scriptlist.Count; i++)
             LuaScriptBinder.scriptlist[i] = null;
@@ -143,7 +147,6 @@ public class UIController : MonoBehaviour {
                 if (str != "StaticKeptAudio")
                     NewMusicManager.Stop(str);
             SceneManager.UnloadSceneAsync("Battle");
-            GlobalControls.isInFight = false;
             PlayerOverworld.ShowOverworld("Battle");
         }
     }

@@ -56,8 +56,8 @@ public class GlobalControls : MonoBehaviour {
     void Update () {
         stopScreenShake = false;
         frame ++;
-        if (SceneManager.GetActiveScene().name == "ModSelect") lastSceneUnitale = true;
-        else                                                         lastSceneUnitale = false;
+        if (SceneManager.GetActiveScene().name == "ModSelect")        lastSceneUnitale = true;
+        else                                                          lastSceneUnitale = false;
         if (UserDebugger.instance && Input.GetKeyDown(KeyCode.F9)) {
             if (UserDebugger.instance.gameObject.activeSelf)
                 GameObject.Find("Text").transform.SetParent(UserDebugger.instance.gameObject.transform);
@@ -65,7 +65,7 @@ public class GlobalControls : MonoBehaviour {
             Camera.main.GetComponent<FPSDisplay>().enabled = !Camera.main.GetComponent<FPSDisplay>().enabled;
         } else if (isInFight && Input.GetKeyDown(KeyCode.H))
             GameObject.Find("Main Camera").GetComponent<ProjectileHitboxRenderer>().enabled = !GameObject.Find("Main Camera").GetComponent<ProjectileHitboxRenderer>().enabled;
-        else if (Input.GetKeyDown(KeyCode.Escape) && (canTransOW.Contains(SceneManager.GetActiveScene().name) || isInFight)) {
+        else if (Input.GetKeyDown(KeyCode.Escape) && (canTransOW.Contains(SceneManager.GetActiveScene().name) || isInFight || SceneManager.GetActiveScene().name == "ModSelect")) {
             if (isInFight && LuaEnemyEncounter.script.GetVar("unescape").Boolean)
                 return;
             if (SceneManager.GetActiveScene().name == "Error" && !modDev)
@@ -76,8 +76,12 @@ public class GlobalControls : MonoBehaviour {
                     GameObject.FindObjectOfType<GameOverBehavior>().EndGameOver();
                 else
                     UIController.EndBattle();
-            else
-                UIController.EndBattle();
+            else {
+                if (SceneManager.GetActiveScene().name == "ModSelect" && GlobalControls.modDev)
+                    SceneManager.LoadScene("Disclaimer");
+                else
+                    UIController.EndBattle();
+            }
             //StaticInits.Reset();
         } else if (input.Menu == UndertaleInput.ButtonState.PRESSED && !nonOWScenes.Contains(SceneManager.GetActiveScene().name) && !isInFight)
             if (!PlayerOverworld.instance.PlayerNoMove && EventManager.instance.script == null && !PlayerOverworld.instance.menuRunning[2] && !PlayerOverworld.instance.menuRunning[4] && EventManager.instance.script == null)
