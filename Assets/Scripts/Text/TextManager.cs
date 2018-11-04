@@ -14,7 +14,7 @@ public class TextManager : MonoBehaviour {
     protected UnderFont default_charset = null;
     protected AudioClip default_voice = null;
     public AudioSource letterSound = null;
-    protected TextEffect textEffect;
+    protected TextEffect textEffect = null;
     public List<Letter> letters = new List<Letter>();
     private string letterEffect = "none";
     private string[] commandList = new string[] { "color", "charspacing", "linespacing", "starcolor", "instant", "font", "effect", "noskip", "w", "waitall", "novoice",
@@ -77,6 +77,8 @@ public class TextManager : MonoBehaviour {
     public bool hidden = false;
     public bool skipNowIfBlocked = false;
     internal bool noSkip1stFrame = true;
+    
+    public bool LateStartWaiting = false; // Lua text objects will use a late start
 
     public void SetCaller(ScriptWrapper s) { caller = s; }
 
@@ -85,7 +87,7 @@ public class TextManager : MonoBehaviour {
         if (default_charset == null)
             default_charset = font;
         if (firstTime) {
-            if (letterSound == null)
+            if (letterSound == null && font.Sound != null)
                 letterSound.clip = font.Sound;
             if (currentColor == Color.white) {
                 // TODO: DO NOT OVERRIDE font.XXX!!!
@@ -102,7 +104,8 @@ public class TextManager : MonoBehaviour {
             if (hSpacing == 3)
                 hSpacing = font.CharSpacing;
         } else {
-            letterSound.clip = font.Sound;
+            if (font.Sound != null)
+                letterSound.clip = font.Sound;
             defaultColor = Charset.DefaultColor;
             if (GetType() == typeof(LuaTextManager)) {
                 if (((LuaTextManager)this).hasColorBeenSet) {
@@ -313,7 +316,10 @@ public class TextManager : MonoBehaviour {
                     instantCommand = false;
                     skipFromPlayer = false;
                     firstChar = false;
-                    letterSound.clip = Charset.Sound;
+                    
+                    if (Charset.Sound != null)
+                        letterSound.clip = Charset.Sound;
+                    
                     timePerLetter = singleFrameTiming;
                     letterTimer = 0.0f;
                     DestroyText();
@@ -324,9 +330,9 @@ public class TextManager : MonoBehaviour {
                         print("currentY from ShowLine (" + textQueue[currentLine].Text + ") = " + self.position.y + " + " + offset.y + " - " + Charset.LineSpacing + " = " + currentY);*/
                     currentCharacter = 0;
                     currentReferenceCharacter = 0;
-                    letterEffect = "none";
+                    /*letterEffect = "none";
                     textEffect = null;
-                    letterIntensity = 0;
+                    letterIntensity = 0;*/
                     letterSpeed = 1;
                     displayImmediate = textQueue[line].ShowImmediate;
                     SpawnText();
@@ -599,7 +605,7 @@ public class TextManager : MonoBehaviour {
                 case '[':
                     int currentChar = i;
                     string command = ParseCommandInline(currentText, ref i);
-                    if (command != null) {
+                    if (command != null && !LateStartWaiting) {
                         if (commandList.Contains(command.Split(':')[0])) {
                             PreCreateControlCommand(command);
                             
@@ -764,6 +770,8 @@ public class TextManager : MonoBehaviour {
         if (textQueue == null || textQueue.Length == 0)
             return;
         if (paused)
+            return;
+        if (LateStartWaiting)
             return;
         /*if (currentLine >= lineCount() && overworld) {
             endTextEvent();

@@ -342,7 +342,7 @@ public static class LuaScriptBinder {
         UnitaleUtil.GetChildPerName(go.transform, "BackVert").GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth - 20, 100);            //BackVert
         UnitaleUtil.GetChildPerName(go.transform, "CenterHorz").GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth + 16, 96 - 16 * 2);  //CenterHorz
         UnitaleUtil.GetChildPerName(go.transform, "CenterVert").GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth - 16, 96);           //CenterVert
-        luatm.SetFont(SpriteFontRegistry.UI_MONSTERTEXT_NAME, true);
+        //luatm.SetFont(SpriteFontRegistry.UI_MONSTERTEXT_NAME, true);
         foreach (ScriptWrapper scrWrap in ScriptWrapper.instances) {
             if (scrWrap.script == scr) {
                 luatm.SetCaller(scrWrap);
@@ -355,7 +355,52 @@ public static class LuaScriptBinder {
         luatm.ShowBubble();
         if (text == DynValue.Nil || text.Table.Length == 0)
             text = null;
+        
+        // Text objects' Late Start will be disabled if the first line of text contains [instant] before any regular characters
+        bool enableLateStart = true;
+        
+        // so, first, make sure that the text argument is a non-empty table
+        if (text == null || text.Type != DataType.Table)
+            throw new CYFException("CreateText: the text argument must be a non-empty table of strings.");
+        
+        // if we've made it this far, then the text is valid.
+        
+        // so, let's scan the first line of text for [instant]
+        string firstLine = text.Table.Get(1).String;
+        
+        // if [instant] or [instant:allowcommand] is found, check for the earliest match, and whether it is at the beginning
+        if (firstLine.IndexOf("[instant]") > -1 || firstLine.IndexOf("[instant:allowcommand]") > -1) {
+            // determine whether [instant] or [instant:allowcommand] is first
+            string testFor = "[instant]";
+            if (firstLine.IndexOf("[instant:allowcommand]") > -1 &&
+                ((firstLine.IndexOf("[instant]") > -1 && firstLine.IndexOf("[instant:allowcommand]") < firstLine.IndexOf("[instant]"))
+                || firstLine.IndexOf("[instant]") == -1)) {
+                testFor = "[instant:allowcommand]";
+            }
+            
+            // grab all of the text that comes before the matched command
+            string precedingText = firstLine.Substring(0, firstLine.IndexOf(testFor));
+            
+            // remove all commands other than the matched command from this variable
+            while (precedingText.IndexOf('[') > -1) {
+                for (var i = 0; i < precedingText.Length; i++) {
+                    if (precedingText[i] == ']') {
+                        precedingText = precedingText.Replace(precedingText.Substring(0, i + 1), "");
+                        break;
+                    }
+                }
+            }
+            
+            // if the length of the remaining string is 0, then disable late start!
+            if (precedingText.Length == 0)
+                enableLateStart = false;
+        }
+        
+        if (enableLateStart)
+            luatm.LateStartWaiting = true;
         luatm.SetText(text);
+        if (enableLateStart)
+            luatm.LateStart(text);
         return luatm;
     }
 

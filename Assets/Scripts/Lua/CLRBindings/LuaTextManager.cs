@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System;
+using System.Collections;
 using MoonSharp.Interpreter;
 
 public class LuaTextManager : TextManager {
@@ -195,6 +196,41 @@ public class LuaTextManager : TextManager {
         try { SetTextQueue(msgs); } catch { }
         if (text.Table.Length != 0 && bubble)
             ResizeBubble();
+    }
+    
+    public void LateStart(DynValue text) {
+        StartCoroutine(LateStartSetText(text));
+    }
+    
+    IEnumerator LateStartSetText(DynValue text) {
+        UnderFont currentCharset = Charset;
+        
+        yield return new WaitForEndOfFrame();
+        
+        // manually do SetText, except without calling SetTextQueue
+        TextMessage[] msgs = null;
+        msgs = new TextMessage[text.Table.Length];
+        for (int i = 0; i < text.Table.Length; i++)
+            msgs[i] = new TextMessage(text.Table.Get(i + 1).String, false, false);
+        // unsure if the following code is needed
+        /*isActive = true;
+        if (bubble)
+            containerBubble.SetActive(true);
+        if (text.Table.Length != 0 && bubble)
+            ResizeBubble();*/
+        
+        base.textQueue = msgs;
+        
+        if (default_voice != null) {
+            letterSound.clip = default_voice;
+        } else
+            letterSound.clip = default_charset.Sound;
+        
+        // only allow inline text commands and letter sounds on the second frame
+        base.LateStartWaiting = false;
+        
+        base.currentLine = 0;
+        ShowLine(0);
     }
 
     public void AddText(DynValue text) {
