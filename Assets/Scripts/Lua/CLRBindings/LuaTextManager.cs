@@ -223,7 +223,8 @@ public class LuaTextManager : TextManager {
         //if (forced)
         //    default_charset = uf;
         containerBubble.GetComponent<RectTransform>().localPosition = new Vector2(-12, 24);
-        GetComponent<RectTransform>().localPosition = new Vector2(0, 16);
+        // GetComponent<RectTransform>().localPosition = new Vector2(0, 16);
+        GetComponent<RectTransform>().localPosition = new Vector2(0, 0);
     }
 
     public void SetEffect(string effect, float intensity) {

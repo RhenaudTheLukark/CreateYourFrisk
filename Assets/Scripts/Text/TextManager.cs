@@ -301,7 +301,7 @@ public class TextManager : MonoBehaviour {
                             blockSkip = true;
                         }
                     }
-
+                    
                     if (!offsetSet)
                         SetOffset(0, 0);
                     currentColor = defaultColor;
@@ -670,7 +670,14 @@ public class TextManager : MonoBehaviour {
 
             letterReferences[i] = ltrImg;
             
-            ltrRect.position = new Vector3(currentX + .1f, (currentY + Charset.Letters[currentText[i]].border.w - Charset.Letters[currentText[i]].border.y + 2) + .1f, 0);
+            if (GetType() == typeof(LuaTextManager)) {
+                float diff = (Charset.Letters[currentText[i]].border.w - Charset.Letters[currentText[i]].border.y);
+                ltrRect.localPosition = new Vector3(currentX - self.position.x - .9f, diff + .1f, 0);
+            // keep what we already have for all text boxes that are not Text Objects in an encounter
+            } else {
+                ltrRect.position = new Vector3(currentX + .1f, (currentY + Charset.Letters[currentText[i]].border.w - Charset.Letters[currentText[i]].border.y + 2) + .1f, 0);
+            };
+            
             /*if (GetType() == typeof(LuaTextManager))
                 print("currentY from SpawnText (" + textQueue[currentLine].Text + ") = " + currentY + " + " + Charset.Letters[currentText[i]].border.w + " - " + Charset.Letters[currentText[i]].border.y + " + 2 = " + (currentY + Charset.Letters[currentText[i]].border.w - Charset.Letters[currentText[i]].border.y + 2)); */
 
