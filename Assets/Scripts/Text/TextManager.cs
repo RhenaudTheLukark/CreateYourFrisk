@@ -496,12 +496,12 @@ public class TextManager : MonoBehaviour {
                 else                                                limit = 534;
             else                                                    limit = 534;
         } else if (GlobalControls.isInFight) {
-            if (UIController.instance.inited) {
-                if (UIController.instance.encounter.gameOverStance) limit = 320;
-                else if (name == "DialogBubble(Clone)")             limit = (int)transform.parent.GetComponent<LuaEnemyController>().bubbleWideness;
-                else if (GetType() == typeof(LuaTextManager))       limit = gameObject.GetComponent<LuaTextManager>().textMaxWidth;
-                else                                                limit = 534;
-            } else                                                  limit = 534;
+            //if (UIController.instance.inited) {
+            if (UIController.instance.encounter.gameOverStance) limit = 320;
+            else if (name == "DialogBubble(Clone)")             limit = (int)transform.parent.GetComponent<LuaEnemyController>().bubbleWideness;
+            else if (GetType() == typeof(LuaTextManager))       limit = gameObject.GetComponent<LuaTextManager>().textMaxWidth;
+            else                                                limit = 534;
+            //} else                                                  limit = 534;
         } else                                                      limit = 534;
         if (UnitaleUtil.CalcTextWidth(this, beginIndex, finalIndex) > limit && limit > 0) {
             int realBeginIndex = beginIndex, realFinalIndex = finalIndex;

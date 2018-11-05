@@ -22,7 +22,6 @@ using UnityEngine.SceneManagement;
 public class UIController : MonoBehaviour {
     public static UIController instance;
     internal TextManager textmgr;
-    public bool inited = false;
 
     private static Sprite actB1;
     private static Sprite fightB1;
@@ -1112,9 +1111,32 @@ public class UIController : MonoBehaviour {
     }
 
     private void Start() {
-        GameObject.Find("HideEncounter").GetComponent<Image>().sprite = Sprite.Create(GlobalControls.texBeforeEncounter, 
+        textmgr = GameObject.Find("TextManager").GetComponent<TextManager>();
+        textmgr.SetEffect(new TwitchEffect(textmgr));
+        textmgr.SetCaller(LuaEnemyEncounter.script);
+        encounter = FindObjectOfType<LuaEnemyEncounter>();
+        
+        fightBtn = GameObject.Find("FightBt").GetComponent<Image>();
+        actBtn = GameObject.Find("ActBt").GetComponent<Image>();
+        itemBtn = GameObject.Find("ItemBt").GetComponent<Image>();
+        mercyBtn = GameObject.Find("MercyBt").GetComponent<Image>();
+        if (GlobalControls.crate) {
+            fightBtn.sprite = SpriteRegistry.Get("UI/Buttons/gifhtbt_0");
+            fightBtn.GetComponent<AutoloadResourcesFromRegistry>().SpritePath = "UI/Buttons/gifhtbt_0";
+            actBtn.sprite = SpriteRegistry.Get("UI/Buttons/catbt_0");
+            actBtn.GetComponent<AutoloadResourcesFromRegistry>().SpritePath = "UI/Buttons/catbt_0";
+            itemBtn.sprite = SpriteRegistry.Get("UI/Buttons/tembt_0");
+            itemBtn.GetComponent<AutoloadResourcesFromRegistry>().SpritePath = "UI/Buttons/tembt_0";
+            mercyBtn.sprite = SpriteRegistry.Get("UI/Buttons/mecrybt_0");
+            mercyBtn.GetComponent<AutoloadResourcesFromRegistry>().SpritePath = "UI/Buttons/mecrybt_0";
+        }
+        
+        ArenaManager.instance.ResizeImmediate(ArenaManager.UIWidth, ArenaManager.UIHeight);
+        //ArenaManager.instance.MoveToImmediate(0, -160, false);
+        
+        /*GameObject.Find("HideEncounter").GetComponent<Image>().sprite = Sprite.Create(GlobalControls.texBeforeEncounter, 
                                                                                       new Rect(0, 0, GlobalControls.texBeforeEncounter.width, GlobalControls.texBeforeEncounter.height), 
-                                                                                      new Vector2(0.5f, 0.5f));
+                                                                                      new Vector2(0.5f, 0.5f));*/
         //if (GameOverBehavior.gameOverContainer)
         //    GameObject.Destroy(GameOverBehavior.gameOverContainer);
         GameOverBehavior.gameOverContainer = GameObject.Find("GameOverContainer");
@@ -1134,49 +1156,6 @@ public class UIController : MonoBehaviour {
 
         GlobalControls.ppcollision = false;
         ControlPanel.instance.FrameBasedMovement = false;
-        textmgr = GameObject.Find("TextManager").GetComponent<TextManager>();
-        textmgr.SetEffect(new TwitchEffect(textmgr));
-        textmgr.SetCaller(LuaEnemyEncounter.script);
-        encounter = FindObjectOfType<LuaEnemyEncounter>();
-
-        fightBtn = GameObject.Find("FightBt").GetComponent<Image>();
-        actBtn = GameObject.Find("ActBt").GetComponent<Image>();
-        itemBtn = GameObject.Find("ItemBt").GetComponent<Image>();
-        mercyBtn = GameObject.Find("MercyBt").GetComponent<Image>();
-        if (GlobalControls.crate) {
-            fightBtn.sprite = SpriteRegistry.Get("UI/Buttons/gifhtbt_0");
-            fightBtn.GetComponent<AutoloadResourcesFromRegistry>().SpritePath = "UI/Buttons/gifhtbt_0";
-            actBtn.sprite = SpriteRegistry.Get("UI/Buttons/catbt_0");
-            actBtn.GetComponent<AutoloadResourcesFromRegistry>().SpritePath = "UI/Buttons/catbt_0";
-            itemBtn.sprite = SpriteRegistry.Get("UI/Buttons/tembt_0");
-            itemBtn.GetComponent<AutoloadResourcesFromRegistry>().SpritePath = "UI/Buttons/tembt_0";
-            mercyBtn.sprite = SpriteRegistry.Get("UI/Buttons/mecrybt_0");
-            mercyBtn.GetComponent<AutoloadResourcesFromRegistry>().SpritePath = "UI/Buttons/mecrybt_0";
-        }
-        StaticInits.SendLoaded();
-    }
-
-    // Use this for initialization
-    private void LateStart() {
-        GameObject.Destroy(GameObject.Find("HideEncounter"));
-        psContainer = new GameObject("psContainer");
-        psContainer.transform.SetAsFirstSibling();
-
-        //Play that funky music
-        if (MusicManager.IsStoppedOrNull(PlayerOverworld.audioKept))
-            GameObject.Find("Main Camera").GetComponent<AudioSource>().Play();
-
-        ArenaManager.instance.ResizeImmediate(ArenaManager.UIWidth, ArenaManager.UIHeight);
-        //ArenaManager.instance.MoveToImmediate(0, -160, false);
-
-        if (SendToStaticInits != null)
-            SendToStaticInits();
-
-        PlayerController.instance.Awake();
-        PlayerController.instance.setControlOverride(true);
-        PlayerController.instance.SetPosition(48, 25, true);
-        fightUI = GameObject.Find("FightUI").GetComponent<FightUIController>();
-        fightUI.gameObject.SetActive(false);
 
         LuaScriptBinder.CopyToBattleVar();
         spareList = new bool[encounter.enemies.Length];
@@ -1210,11 +1189,25 @@ public class UIController : MonoBehaviour {
         if (toAdd)
             rts[indexText].SetParent(rts[indexDeb]);*/
         //}
+        
+        StaticInits.SendLoaded();
+        // GameObject.Destroy(GameObject.Find("HideEncounter"));
+        psContainer = new GameObject("psContainer");
+        psContainer.transform.SetAsFirstSibling();
+
+        //Play that funky music
+        if (MusicManager.IsStoppedOrNull(PlayerOverworld.audioKept))
+            GameObject.Find("Main Camera").GetComponent<AudioSource>().Play();
+
+        if (SendToStaticInits != null)
+            SendToStaticInits();
+        
         if (GlobalControls.crate) {
             UserDebugger.instance.gameObject.transform.GetChild(0).gameObject.GetComponent<Text>().text = "DEGUBBER (F9 OT TOGLGE, DEBUG(STIRNG) TO PRNIT)";
             GameObject.Find("HPLabelCrate").GetComponent<Image>().enabled = true;
             GameObject.Find("HPLabel").GetComponent<Image>().enabled = false;
         }
+        
         encounter.CallOnSelfOrChildren("EncounterStarting");
         if (GameObject.Find("Text")) {
             GameObject.Find("Text").transform.SetParent(UserDebugger.instance.transform);
@@ -1223,6 +1216,12 @@ public class UIController : MonoBehaviour {
 
         if (!stated)
             SwitchState(UIState.ACTIONSELECT, true);
+        
+        PlayerController.instance.Awake();
+        PlayerController.instance.setControlOverride(true);
+        PlayerController.instance.SetPosition(48, 25, true);
+        fightUI = GameObject.Find("FightUI").GetComponent<FightUIController>();
+        fightUI.gameObject.SetActive(false);
     }
 
     public void CheckAndTriggerVictory() {
@@ -1294,13 +1293,6 @@ public class UIController : MonoBehaviour {
     private void Update() {
         //frameDebug++;
         stated = false;
-        if (!inited) {
-            if (!ArenaManager.instance.firstTurn) {
-                inited = true;
-                LateStart();
-            } else 
-                return;
-        }
         if (encounter.gameOverStance)
             return;
         if (encounterHasUpdate)

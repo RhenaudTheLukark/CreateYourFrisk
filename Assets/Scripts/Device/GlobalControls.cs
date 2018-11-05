@@ -13,7 +13,7 @@ public class GlobalControls : MonoBehaviour {
     public static UndertaleInput input = new KeyboardInput();
     public static LuaInputBinding luaInput = new LuaInputBinding(input);
     public static AudioClip Music;
-    public static Texture2D texBeforeEncounter;
+    // public static Texture2D texBeforeEncounter;
     public static string realName;
     public static string lastScene = "test2";
     public static int uduu; //A secret for everyone :)

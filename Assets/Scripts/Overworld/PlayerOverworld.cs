@@ -591,12 +591,12 @@ public class PlayerOverworld : MonoBehaviour {
         LuaScriptBinder.ClearBattleVar();
 
         yield return new WaitForEndOfFrame();
-        int width = Screen.width;
+        /*int width = Screen.width;
         int height = Screen.height;
         Texture2D tex = new Texture2D(width, height, TextureFormat.RGB24, false);
         tex.ReadPixels(new Rect(0, 0, width, height), 0, 0);
         tex.Apply();
-        GlobalControls.texBeforeEncounter = tex;
+        GlobalControls.texBeforeEncounter = tex;*/
         GameObject.FindObjectOfType<Fading>().FadeInstant(1);
 
         //Reset how many times the player has to move before encounter an enemy

@@ -239,7 +239,7 @@ public class FightUIController : MonoBehaviour {
 
             float mv = xSpeed * Time.deltaTime;
             targetRt.anchoredPosition = new Vector2(targetRt.anchoredPosition.x + mv, 0);
-            if (Finished() && UIController.instance.inited && boundFightUiInstances.Count != 0) {
+            if (Finished() && /*UIController.instance.inited &&*/ boundFightUiInstances.Count != 0) {
                 stopped = true;
                 StationaryMissScript smc = Resources.Load<StationaryMissScript>("Prefabs/StationaryMiss");
                 for (int i = 0; i < boundFightUiInstances.Count; i++) {
