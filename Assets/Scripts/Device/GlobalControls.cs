@@ -66,7 +66,7 @@ public class GlobalControls : MonoBehaviour {
         } else if (isInFight && Input.GetKeyDown(KeyCode.H))
             GameObject.Find("Main Camera").GetComponent<ProjectileHitboxRenderer>().enabled = !GameObject.Find("Main Camera").GetComponent<ProjectileHitboxRenderer>().enabled;
         else if (Input.GetKeyDown(KeyCode.Escape) && (canTransOW.Contains(SceneManager.GetActiveScene().name) || isInFight || SceneManager.GetActiveScene().name == "ModSelect")) {
-            if (isInFight && LuaEnemyEncounter.script.GetVar("unescape").Boolean)
+            if (isInFight && LuaEnemyEncounter.script.GetVar("unescape").Boolean && SceneManager.GetActiveScene().name == "Battle")
                 return;
             if (SceneManager.GetActiveScene().name == "Error" && !modDev)
                 return;
