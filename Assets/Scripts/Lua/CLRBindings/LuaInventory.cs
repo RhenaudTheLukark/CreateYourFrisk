@@ -1,15 +1,44 @@
 ﻿public class LuaInventory {
     public string GetItem(int index) {
         if (index > Inventory.inventory.Count) {
-            UnitaleUtil.DisplayLuaError("Getting an item", "Out of bounds. You tried to access the item n°" + index + 1 + " of your inventory, but you only have " + Inventory.inventory.Count + " items.");
+            UnitaleUtil.DisplayLuaError("Getting an item", "Out of bounds. You tried to access item #" + index + 1 + " in your inventory, but you only have " + Inventory.inventory.Count + " items.");
             return "";
         }
         return Inventory.inventory[index-1].Name;
+    }
+    
+    public int GetType(int index) {
+        if (index > Inventory.inventory.Count) {
+            UnitaleUtil.DisplayLuaError("Getting an item", "Out of bounds. You tried to access item #" + index + 1 + " in your inventory, but you only have " + Inventory.inventory.Count + " items.");
+            return -1;
+        }
+        // Check if the encounter has defined a type for this item
+        if (Inventory.inventory[index-1].Type == 0) {
+            // Locate the item within Inventory.addedItems
+            for (var i = 0; i < Inventory.addedItems.Length; i++) {
+                // If the item is located, then match its type!
+                if (Inventory.addedItems[i] == Inventory.inventory[index-1].Name) {
+                    return Inventory.addedItemsTypes[i];
+                }
+            }
+        }
+        
+        return Inventory.inventory[index-1].Type;
     }
 
     public void SetItem(int index, string Name) { Inventory.SetItem(index-1, Name); }
 
     public bool AddItem(string Name) { return Inventory.AddItem(Name); }
+    
+    public void RemoveItem(int index) {
+        if (Inventory.inventory.Count > 0 && (index < 1 || index > Inventory.inventory.Count))
+            UnitaleUtil.DisplayLuaError("Removing an item", "Cannot remove item #" + index + " from an Inventory with " + Inventory.inventory.Count
+                + " items.\nRemember that the first item in the inventory is #1.");
+        else if (Inventory.inventory.Count == 0)
+            UnitaleUtil.DisplayLuaError("Removing an item", "Cannot remove an item when the inventory is empty.");
+        
+        Inventory.inventory.RemoveAt(index-1);
+    }
 
     public void AddCustomItems(string[] names, int[] types) { Inventory.addedItems = names; Inventory.addedItemsTypes = types; }
 
