@@ -12,17 +12,6 @@
             UnitaleUtil.DisplayLuaError("Getting an item", "Out of bounds. You tried to access item #" + index + 1 + " in your inventory, but you only have " + Inventory.inventory.Count + " items.");
             return -1;
         }
-        // Check if the encounter has defined a type for this item
-        if (Inventory.inventory[index-1].Type == 0) {
-            // Locate the item within Inventory.addedItems
-            for (var i = 0; i < Inventory.addedItems.Length; i++) {
-                // If the item is located, then match its type!
-                if (Inventory.addedItems[i] == Inventory.inventory[index-1].Name) {
-                    return Inventory.addedItemsTypes[i];
-                }
-            }
-        }
-        
         return Inventory.inventory[index-1].Type;
     }
 
