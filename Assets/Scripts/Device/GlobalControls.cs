@@ -55,7 +55,8 @@ public class GlobalControls : MonoBehaviour {
     /// </summary>
     void Update () {
         stopScreenShake = false;
-        frame ++;
+        if (isInFight)
+            frame ++;
         if (SceneManager.GetActiveScene().name == "ModSelect")        lastSceneUnitale = true;
         else                                                          lastSceneUnitale = false;
         if (UserDebugger.instance && Input.GetKeyDown(KeyCode.F9)) {

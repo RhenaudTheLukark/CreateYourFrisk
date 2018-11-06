@@ -1111,6 +1111,9 @@ public class UIController : MonoBehaviour {
     }
 
     private void Start() {
+        // reset GlobalControls' frame timer
+        GlobalControls.frame = -1;
+        
         textmgr = GameObject.Find("TextManager").GetComponent<TextManager>();
         textmgr.SetEffect(new TwitchEffect(textmgr));
         textmgr.SetCaller(LuaEnemyEncounter.script);
