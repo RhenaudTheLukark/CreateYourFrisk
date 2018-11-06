@@ -58,6 +58,9 @@ public class DisclaimerScript : MonoBehaviour {
     /// </summary>
     private void Update() {
         if (Input.GetKeyDown(KeyCode.O)) {
+            StaticInits.MODFOLDER = StaticInits.EDITOR_MODFOLDER;
+            StaticInits.Initialized = false;
+            StaticInits.InitAll();
             SceneManager.LoadScene("Intro");
             Destroy(this);
         } else if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)) {
