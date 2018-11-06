@@ -925,7 +925,7 @@ public class TextManager : MonoBehaviour {
                 break;
             
             case "instant":
-                if (args.Length == 0)
+                if (args.Length == 0 && GlobalControls.retroMode)
                     if (!skipFromPlayer)
                         displayImmediate = true;
                 break;
@@ -1026,7 +1026,12 @@ public class TextManager : MonoBehaviour {
                             break;
                         case "stopall": instantCommand = false; break;
                     }
-                }
+                } else if (args.Length == 0 && !GlobalControls.retroMode)
+                    if (!skipFromPlayer) {
+                        displayImmediate = true;
+                        foreach (Letter l in letters)
+                            l.transform.gameObject.GetComponent<Image>().enabled = true;
+                    }
                 break;
 
             case "func":
