@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 public class SelectOMatic : MonoBehaviour {
     private static int CurrentSelectedMod = 0;
     private static List<DirectoryInfo> modDirs;
-    private Dictionary<int, Sprite> bgs = new Dictionary<int, Sprite>();
+    private static Dictionary<string, Sprite> bgs = new Dictionary<string, Sprite>();
     private GameObject encounterBox;
     private GameObject devMod;
     private GameObject btnList;
@@ -26,7 +26,7 @@ public class SelectOMatic : MonoBehaviour {
         var modDirsTemp = di.GetDirectories();
         
         // remove mods with 0 encounters and hidden mods from the list
-        var purged = new List<DirectoryInfo>();
+        List<DirectoryInfo> purged = new List<DirectoryInfo>();
         foreach (DirectoryInfo modDir in modDirsTemp) {
             
             // make sure the Encounters folder exists
@@ -35,28 +35,37 @@ public class SelectOMatic : MonoBehaviour {
             
             // count encounters
             bool hasEncounters = false;
-            foreach(FileInfo file in new DirectoryInfo(System.IO.Path.Combine(FileLoader.DataRoot, "Mods/" + modDir.Name + "/Lua/Encounters")).GetFiles()) {
-                if (file.Name.EndsWith(".lua")) {
-                    hasEncounters = true;
-                    break;
-                }
+            foreach(FileInfo file in new DirectoryInfo(System.IO.Path.Combine(FileLoader.DataRoot, "Mods/" + modDir.Name + "/Lua/Encounters")).GetFiles("*.lua")) {
+                hasEncounters = true;
+                break;
             }
             
             if (/*modDir.Name != "0.5.0_SEE_CRATE" && modDir.Name != "Title" && */hasEncounters && (modDir.Attributes & FileAttributes.Hidden) != FileAttributes.Hidden && !modDir.Name.StartsWith("@"))
                 purged.Add(modDir);
         }
         modDirs = purged;
+        
+        // make sure that there is at least one playable mod present
+        if (purged.Count == 0) {
+            GlobalControls.modDev = false;
+            UnitaleUtil.DisplayLuaError("loading", "<b>Your mod folder is empty!</b>\nYou need at least 1 playable mod to use the Mod Selector.\n\n"
+                + "Remember:\n1. Mods whose names start with \"@\" do not count\n2. Folders without encounter files do not count");
+            return;
+        }
+        
         modDirs.Sort(delegate(DirectoryInfo a, DirectoryInfo b) {
             return a.Name.CompareTo(b.Name);
         });
         
         // bind button functions
+        GameObject.Find("BtnBack").GetComponent<Button>().onClick.RemoveAllListeners();
         GameObject.Find("BtnBack").GetComponent<Button>().onClick.AddListener(() => {
             if (animationDone) {
                 modFolderSelection();
                 ScrollMods(-1);
             }
             });
+        GameObject.Find("BtnNext").GetComponent<Button>().onClick.RemoveAllListeners();
         GameObject.Find("BtnNext").GetComponent<Button>().onClick.AddListener(() => {
             if (animationDone) {
                 modFolderSelection();
@@ -65,11 +74,15 @@ public class SelectOMatic : MonoBehaviour {
             });
         
         // grab the encounter selection box
-        encounterBox = GameObject.Find("ScrollWin");
+        if (encounterBox == null)
+            encounterBox = GameObject.Find("ScrollWin");
         // grab the devMod box
-        devMod = GameObject.Find("devMod");
+        if (devMod == null)
+            devMod = GameObject.Find("devMod");
         // grab the mod list button, and give it a function
-        btnList = GameObject.Find("BtnList");
+        if (btnList == null)
+            btnList = GameObject.Find("BtnList");
+        btnList.GetComponent<Button>().onClick.RemoveAllListeners();
         btnList.GetComponent<Button>().onClick.AddListener(() => {
             if (animationDone)
                 modFolderMiniMenu();
@@ -77,6 +90,12 @@ public class SelectOMatic : MonoBehaviour {
         
         // add devMod button functions
         if (GlobalControls.modDev) {
+            // clear prior button functions just in case
+            devMod.transform.Find("ResetRG").GetComponent<Button>().onClick.RemoveAllListeners();
+            devMod.transform.Find("ResetAG").GetComponent<Button>().onClick.RemoveAllListeners();
+            devMod.transform.Find("Safe").GetComponent<Button>().onClick.RemoveAllListeners();
+            devMod.transform.Find("Retro").GetComponent<Button>().onClick.RemoveAllListeners();
+            
             // reset RealGlobals
             devMod.transform.Find("ResetRG").GetComponent<Button>().onClick.AddListener(() => {
                 LuaScriptBinder.ClearVariables();
@@ -161,8 +180,8 @@ public class SelectOMatic : MonoBehaviour {
             // check to see if there is more than one encounter in the mod just exited from
             List<string> encounters = new List<string>();
             DirectoryInfo di2 = new DirectoryInfo(System.IO.Path.Combine(FileLoader.ModDataPath, "Lua/Encounters"));
-            foreach (FileInfo f in di2.GetFiles()) {
-                if (f.Name.EndsWith(".lua") && encounters.Count < 2)
+            foreach (FileInfo f in di2.GetFiles("*.lua")) {
+                if (encounters.Count < 2)
                     encounters.Add(Path.GetFileNameWithoutExtension(f.Name));
             }
             
@@ -171,14 +190,32 @@ public class SelectOMatic : MonoBehaviour {
         }
     }
     
+    // A special function used specifically for error handling
+    // It re-generates the mod list, and selects the first mod
+    // Used for cases where the player selects a mod that no longer exists
+    private void HandleErrors() {
+        Debug.Log("Error detected! Mod not found! Resetting mod list...");
+        CurrentSelectedMod = 0;
+        bgs = new Dictionary<string, Sprite>();
+        Start();
+    }
+    
     IEnumerator LaunchMod() {
+        // first: make sure the mod is still here and can be opened
+        if (!(new DirectoryInfo(Path.Combine(FileLoader.DataRoot, "Mods/" + modDirs[CurrentSelectedMod].Name + "/Lua/Encounters/"))).Exists) {
+            HandleErrors();
+            yield break;
+        }
+        
+        // dim the background to indicate loading
+        GameObject.Find("ModBackground").GetComponent<Image>().color = new Color(1f, 1f, 1f, 0.1875f);
         yield return new WaitForEndOfFrame();
-        int width = Screen.width;
+        /*int width = Screen.width;
         int height = Screen.height;
         Texture2D tex = new Texture2D(width, height, TextureFormat.RGB24, false);
         tex.ReadPixels(new Rect(0, 0, width, height), 0, 0);
         tex.Apply();
-        GlobalControls.texBeforeEncounter = tex;
+        GlobalControls.texBeforeEncounter = tex;*/
         //byte[] bytes = tex.EncodeToPNG();
         //File.WriteAllBytes(Application.dataPath + "/ItsAVeryHackyWayToMakeTransitionsIKnowThanksYouCanDeleteThisFileIfYouWantTo.png", bytes);
         StaticInits.Initialized = false;
@@ -191,8 +228,13 @@ public class SelectOMatic : MonoBehaviour {
     // Shows a mod's "page".
     private void ShowMod(int id) {
         // error handler
-        if (id < 0 || id > modDirs.Count)
-            id = 0;
+        // if current index is now out of range OR currently selected mod is not present:
+        if (CurrentSelectedMod < 0 || CurrentSelectedMod > modDirs.Count - 1
+            || !(new DirectoryInfo(Path.Combine(FileLoader.DataRoot, "Mods/" + modDirs[CurrentSelectedMod].Name + "/Lua/Encounters"))).Exists
+            ||  (new DirectoryInfo(Path.Combine(FileLoader.DataRoot, "Mods/" + modDirs[CurrentSelectedMod].Name + "/Lua/Encounters"))).GetFiles("*.lua").Length == 0) {
+            HandleErrors();
+            return;
+        }
         
         // Update currently selected mod folder
         StaticInits.MODFOLDER = modDirs[id].Name;
@@ -207,8 +249,8 @@ public class SelectOMatic : MonoBehaviour {
         // Update the background
         var ImgComp = GameObject.Find("ModBackground").GetComponent<Image>();
         // first check if we already have this mod's background loaded in memory
-        if (bgs.ContainsKey(CurrentSelectedMod)) {
-            ImgComp.sprite = bgs[CurrentSelectedMod];
+        if (bgs.ContainsKey(modDirs[CurrentSelectedMod].Name)) {
+            ImgComp.sprite = bgs[modDirs[CurrentSelectedMod].Name];
         } else {
             // if not, find it and store it
             try {
@@ -222,15 +264,14 @@ public class SelectOMatic : MonoBehaviour {
                     ImgComp.sprite = SpriteUtil.FromFile("Sprites/black.png");
                 }
             }
-            bgs.Add(CurrentSelectedMod, ImgComp.sprite);
+            bgs.Add(modDirs[CurrentSelectedMod].Name, ImgComp.sprite);
         }
         
         // Get all encounters in the mod's Encounters folder
         List<string> encounters = new List<string>();
         DirectoryInfo di = new DirectoryInfo(System.IO.Path.Combine(FileLoader.ModDataPath, "Lua/Encounters"));
-        foreach (FileInfo f in di.GetFiles()) {
-            if (f.Name.EndsWith(".lua"))
-                encounters.Add(Path.GetFileNameWithoutExtension(f.Name));
+        foreach (FileInfo f in di.GetFiles("*.lua")) {
+            encounters.Add(Path.GetFileNameWithoutExtension(f.Name));
         }
         
         // Update the text
@@ -414,36 +455,34 @@ public class SelectOMatic : MonoBehaviour {
         
         DirectoryInfo di = new DirectoryInfo(Path.Combine(FileLoader.DataRoot, "Mods/" + StaticInits.MODFOLDER + "/Lua/Encounters"));
         if (di.Exists && di.GetFiles().Length > 0) {
-            FileInfo[] encounterFiles = di.GetFiles();
+            FileInfo[] encounterFiles = di.GetFiles("*.lua");
             
             int count = 0;
             foreach (FileInfo encounter in encounterFiles) {
-                if (encounter.Extension == ".lua") {
-                    count += 1;
-                    
-                    // create a button for each encounter file
-                    GameObject button = Instantiate(back);
-                    // set parent and name
-                    button.transform.SetParent(content.transform);
-                    button.name = "EncounterButton";
-                    // set position
-                    button.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 100 - (count * 30));
-                    // set color
-                    button.GetComponent<Image>().color = new Color(0.75f, 0.75f, 0.75f, 0.5f);
-                    button.transform.Find("Fill").GetComponent<Image>().color = new Color(0.5f, 0.5f, 0.5f, 0.5f);
-                    // set text
-                    button.transform.Find("Text").GetComponent<Text>().text = Path.GetFileNameWithoutExtension(encounter.Name);
-                    if (GlobalControls.crate)
-                        button.transform.Find("Text").GetComponent<Text>().text = Temmify.Convert(Path.GetFileNameWithoutExtension(encounter.Name), true);
-                    // finally, set function!
-                    string filename = Path.GetFileNameWithoutExtension(encounter.Name);
-                    
-                    button.GetComponent<Button>().onClick.RemoveAllListeners();
-                    button.GetComponent<Button>().onClick.AddListener(() => {
-                        StaticInits.ENCOUNTER = filename;
-                        StartCoroutine(LaunchMod());
-                    });
-                }
+                count += 1;
+                
+                // create a button for each encounter file
+                GameObject button = Instantiate(back);
+                // set parent and name
+                button.transform.SetParent(content.transform);
+                button.name = "EncounterButton";
+                // set position
+                button.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 100 - (count * 30));
+                // set color
+                button.GetComponent<Image>().color = new Color(0.75f, 0.75f, 0.75f, 0.5f);
+                button.transform.Find("Fill").GetComponent<Image>().color = new Color(0.5f, 0.5f, 0.5f, 0.5f);
+                // set text
+                button.transform.Find("Text").GetComponent<Text>().text = Path.GetFileNameWithoutExtension(encounter.Name);
+                if (GlobalControls.crate)
+                    button.transform.Find("Text").GetComponent<Text>().text = Temmify.Convert(Path.GetFileNameWithoutExtension(encounter.Name), true);
+                // finally, set function!
+                string filename = Path.GetFileNameWithoutExtension(encounter.Name);
+                
+                button.GetComponent<Button>().onClick.RemoveAllListeners();
+                button.GetComponent<Button>().onClick.AddListener(() => {
+                    StaticInits.ENCOUNTER = filename;
+                    StartCoroutine(LaunchMod());
+                });
             }
         }
     }
