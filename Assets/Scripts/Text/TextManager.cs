@@ -905,7 +905,13 @@ public class TextManager : MonoBehaviour {
         }
         switch (cmds[0].ToLower()) {
             case "color":
-                currentColor = ParseUtil.GetColor(cmds[1]);
+                if (cmds[1].Length == 6)
+                    currentColor = ParseUtil.GetColor(cmds[1]);
+                else if (cmds[1].Length == 8) {
+                    currentColor = ParseUtil.GetColor(cmds[1].Substring(0, 6));
+                    currentColor = new Color(currentColor.r, currentColor.g, currentColor.b, int.Parse(cmds[1].Substring(6), System.Globalization.NumberStyles.HexNumber) / 255f);
+                } else
+                    break;
                 colorSet = true;
                 break;
             case "charspacing": SetHorizontalSpacing(ParseUtil.GetFloat(cmds[1])); break;
