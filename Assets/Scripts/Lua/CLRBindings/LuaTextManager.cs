@@ -203,8 +203,6 @@ public class LuaTextManager : TextManager {
     }
     
     IEnumerator LateStartSetText(DynValue text) {
-        UnderFont currentCharset = Charset;
-        
         yield return new WaitForEndOfFrame();
         
         // manually do SetText, except without calling SetTextQueue

@@ -334,7 +334,7 @@ public static class LuaScriptBinder {
         GameObject go = UnityEngine.Object.Instantiate(Resources.Load<GameObject>("Prefabs/CstmTxtContainer"));
         LuaTextManager luatm = go.GetComponentInChildren<LuaTextManager>();
         go.GetComponent<RectTransform>().position = new Vector2((float)position.Table.Get(1).Number, (float)position.Table.Get(2).Number);
-
+        
         UnitaleUtil.GetChildPerName(go.transform, "BubbleContainer").GetComponent<RectTransform>().pivot = new Vector2(0, 1);
         UnitaleUtil.GetChildPerName(go.transform, "BubbleContainer").GetComponent<RectTransform>().localPosition = new Vector2(-12, 8);
         UnitaleUtil.GetChildPerName(go.transform, "BubbleContainer").GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth + 20, 100);     //Used to set the borders
@@ -355,6 +355,10 @@ public static class LuaScriptBinder {
         luatm.ShowBubble();
         if (text == DynValue.Nil || text.Table.Length == 0)
             text = null;
+        
+        //////////////////////////////////////////
+        ///////////  LATE START SETTER  //////////
+        //////////////////////////////////////////
         
         // Text objects' Late Start will be disabled if the first line of text contains [instant] before any regular characters
         bool enableLateStart = true;
@@ -394,6 +398,33 @@ public static class LuaScriptBinder {
             // if the length of the remaining string is 0, then disable late start!
             if (precedingText.Length == 0)
                 enableLateStart = false;
+        }
+        
+        //////////////////////////////////////////
+        /////////// INITIAL FONT SETTER //////////
+        //////////////////////////////////////////
+        
+        // If the first line of text has [font] at the beginning, use it intially!
+        if (firstLine.IndexOf("[font:") > -1) {
+            // grab all of the text that comes before the matched command
+            string precedingText = firstLine.Substring(0, firstLine.IndexOf("[font:"));
+            
+            // remove all commands other than the matched command from this variable
+            while (precedingText.IndexOf('[') > -1) {
+                for (var i = 0; i < precedingText.Length; i++) {
+                    if (precedingText[i] == ']') {
+                        precedingText = precedingText.Replace(precedingText.Substring(0, i + 1), "");
+                        break;
+                    }
+                }
+            }
+            
+            // if the length of the remaining string is 0, then set the font!
+            if (precedingText.Length == 0) {
+                string fontPartOne = firstLine.Substring(firstLine.IndexOf("[font:") + 6);
+                string fontPartTwo = fontPartOne.Substring(0, fontPartOne.IndexOf("]") - 0);
+                luatm.SetFont(fontPartTwo, true);
+            }
         }
         
         if (enableLateStart)

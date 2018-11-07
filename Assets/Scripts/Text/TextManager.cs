@@ -678,7 +678,8 @@ public class TextManager : MonoBehaviour {
             
             if (GetType() == typeof(LuaTextManager)) {
                 float diff = (Charset.Letters[currentText[i]].border.w - Charset.Letters[currentText[i]].border.y);
-                ltrRect.localPosition = new Vector3(currentX - self.position.x - .9f, diff + .1f, 0);
+                diff += Charset.LineSpacing;
+                ltrRect.localPosition = new Vector3(currentX - self.position.x - .9f, (currentY - self.position.y) + diff + .1f, 0);
             // keep what we already have for all text boxes that are not Text Objects in an encounter
             } else {
                 ltrRect.position = new Vector3(currentX + .1f, (currentY + Charset.Letters[currentText[i]].border.w - Charset.Letters[currentText[i]].border.y + 2) + .1f, 0);
