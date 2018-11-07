@@ -1112,7 +1112,7 @@ public class UIController : MonoBehaviour {
 
     private void Start() {
         // reset GlobalControls' frame timer
-        GlobalControls.frame = -1;
+        GlobalControls.frame = 0;
         
         textmgr = GameObject.Find("TextManager").GetComponent<TextManager>();
         textmgr.SetEffect(new TwitchEffect(textmgr));
