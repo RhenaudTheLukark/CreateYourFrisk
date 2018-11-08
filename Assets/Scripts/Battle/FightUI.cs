@@ -113,6 +113,10 @@ public class FightUI : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
+        // do not update the attack UI if the ATTACKING state is frozen
+        if (UIController.instance.frozenState != UIController.UIState.NONE)
+            return;
+        
         if (shakeInProgress) {
             int shakeidx = (int)Mathf.Floor(shakeTimer * shakeX.Length / totalShakeTime);
             bool wentIn = false;

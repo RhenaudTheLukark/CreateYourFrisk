@@ -10,7 +10,7 @@ public class FightUIController : MonoBehaviour {
 
     public RectTransform targetRt;
     public int presetDmg = 0;
-    private LuaSpriteController line;
+    public LuaSpriteController line;
     private float borderX;
     private float xSpeed = -450.0f;
     public int[] shakeX; //Modify it in the Editor if needed
@@ -183,6 +183,11 @@ public class FightUIController : MonoBehaviour {
 
     // Update is called once per frame
     private void Update() {
+        // do not update the attack UI if the ATTACKING state is frozen
+        if (UIController.instance.frozenState != UIController.UIState.NONE) {
+            return;
+        }
+        
         if (!ArenaManager.instance.firstTurn) {
             for (int i = 0; i < allFightUiInstances.Count; i++)
                 if (!boundFightUiInstances.Contains(allFightUiInstances[i]))
