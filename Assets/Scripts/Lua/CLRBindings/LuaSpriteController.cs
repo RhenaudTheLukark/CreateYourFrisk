@@ -469,18 +469,20 @@ public class LuaSpriteController {
     // Gets or sets the paused state of a sprite's animation.
     public DynValue animationpaused {
         get {
-            if (keyframes != null)
+            if (img.GetComponent<Image>() && keyframes != null)
                 return DynValue.NewBoolean(keyframes.paused);
             return DynValue.NewNil();
         }
         set {
-            if (value.Type.ToString() != "Boolean")
-                throw new CYFException("sprite.paused can only be set to a boolean value.");
-            
-            if (keyframes != null)
-                keyframes.paused = value.Boolean;
-            else
-                throw new CYFException("Unable to pause/resume a sprite without an active animation.");
+            if (img.GetComponent<Image>()) {
+                if (value.Type.ToString() != "Boolean")
+                    throw new CYFException("sprite.paused can only be set to a boolean value.");
+                
+                if (keyframes != null)
+                    keyframes.paused = value.Boolean;
+                else
+                    throw new CYFException("Unable to pause/resume a sprite without an active animation.");
+            }
         }
     }
     
@@ -489,19 +491,21 @@ public class LuaSpriteController {
     // then for each sprite in the table, this will be: ^ 1            ^ 2            ^ 3            ^ 4
     public int currentframe {
         set {
-            if (keyframes != null) {
-                if (value < 1 || value > keyframes.keyframes.Length)
-                    throw new CYFException("sprite.currentframe: New value " + value + " is out of bounds.");
-                else {
-                    // Calls keyframes.currTime %= keyframes.totalTime
-                    keyframes.SetLoop(keyframes.loop);
-                    keyframes.currTime = value * keyframes.timePerFrame;
-                }
-            } else
-                throw new CYFException("sprite.currentframe: You can not set the current frame of a sprite without an active animation.");
+            if (img.GetComponent<Image>()) {
+                if (keyframes != null) {
+                    if (value < 1 || value > keyframes.keyframes.Length)
+                        throw new CYFException("sprite.currentframe: New value " + value + " is out of bounds.");
+                    else {
+                        // Calls keyframes.currTime %= keyframes.totalTime
+                        keyframes.SetLoop(keyframes.loop);
+                        keyframes.currTime = value * keyframes.timePerFrame;
+                    }
+                } else
+                    throw new CYFException("sprite.currentframe: You can not set the current frame of a sprite without an active animation.");
+            }
         }
         get {
-            if (keyframes != null)
+            if (img.GetComponent<Image>() && keyframes != null)
                 return keyframes.getIndex();
             return 0;
         }
@@ -510,23 +514,25 @@ public class LuaSpriteController {
     // Gets or sets the speed of an animated sprite's animation.
     public float animationspeed {
         set {
-            if (keyframes != null) {
-                if (value < 0)
-                    throw new CYFException("sprite.animationspeed: An animation can not have negative speed!");
-                else if (value == 0)
-                    throw new CYFException("sprite.animationspeed: An animation can not play at 0 frames per second!");
-                
-                float percentCompletion = keyframes.currTime / (keyframes.keyframes.Length * keyframes.timePerFrame);
-                // Calls keyframes.totalTime = keyframes.timePerFrame * keyframes.Length;
-                keyframes.Set(keyframes.keyframes, value);
-                keyframes.currTime = percentCompletion * (keyframes.keyframes.Length * keyframes.timePerFrame);
-                // Calls keyframes.currTime %= keyframes.totalTime
-                keyframes.SetLoop(keyframes.loop);
-            } else
-                throw new CYFException("sprite.animationspeed: You can not change the speed of a sprite without an active animation.");
+            if (img.GetComponent<Image>()) {
+                if (keyframes != null) {
+                    if (value < 0)
+                        throw new CYFException("sprite.animationspeed: An animation can not have negative speed!");
+                    else if (value == 0)
+                        throw new CYFException("sprite.animationspeed: An animation can not play at 0 frames per second!");
+                    
+                    float percentCompletion = keyframes.currTime / (keyframes.keyframes.Length * keyframes.timePerFrame);
+                    // Calls keyframes.totalTime = keyframes.timePerFrame * keyframes.Length;
+                    keyframes.Set(keyframes.keyframes, value);
+                    keyframes.currTime = percentCompletion * (keyframes.keyframes.Length * keyframes.timePerFrame);
+                    // Calls keyframes.currTime %= keyframes.totalTime
+                    keyframes.SetLoop(keyframes.loop);
+                } else
+                    throw new CYFException("sprite.animationspeed: You can not change the speed of a sprite without an active animation.");
+            }
         }
         get {
-            if (keyframes != null)
+            if (img.GetComponent<Image>()&& keyframes != null)
                 return keyframes.timePerFrame;
             return 0;
         }
