@@ -3,7 +3,7 @@
 public class KeyframeCollection : MonoBehaviour {
     public float timePerFrame = 1 / 30f;
     public Keyframe[] keyframes;
-    internal float currTime = 0;
+    public float currTime = 0;
     internal LuaSpriteController spr;
     internal LoopMode loop = LoopMode.LOOP;
     private float totalTime;
@@ -36,6 +36,17 @@ public class KeyframeCollection : MonoBehaviour {
                 else                          return EMPTY_KEYFRAME;
             return keyframes[index];
         }
+    }
+    
+    // Gets the index of the current sprite.
+    public int getIndex() {
+        int index;
+        if (loop == LoopMode.LOOP)
+            index = (int)((currTime % totalTime) / timePerFrame);
+        else
+            index = (int)(currTime / timePerFrame);
+        
+        return index + 1;
     }
 
     public bool animationComplete() {
