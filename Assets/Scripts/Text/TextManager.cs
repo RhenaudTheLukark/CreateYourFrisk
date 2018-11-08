@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Diagnostics;
 using MoonSharp.Interpreter;
 using UnityEngine;
 using UnityEngine.UI;
@@ -473,6 +474,11 @@ public class TextManager : MonoBehaviour {
     public void DestroyText() {
         foreach (Transform child in gameObject.transform)
             Destroy(child.gameObject);
+        
+        // the following code is activated if DestroyText is called from an actual CYF mod, on the Lua side
+        // hopefully we will never have to use any lambda functions on Lua Text Managers...
+        if (GetType() == typeof(LuaTextManager) && new StackFrame(1).GetMethod().Name == "lambda_method")
+            GameObject.Destroy(this.transform.parent.gameObject);
     }
 
     private void SpawnTextSpaceTest(int i, string currentText, out string currentText2) {
@@ -910,7 +916,7 @@ public class TextManager : MonoBehaviour {
 
     private bool CheckCharInBounds(int i, int length) {
         if (i >= length) {
-            Debug.LogWarning("Went out of bounds looking for arguments after control character.");
+            UnityEngine.Debug.LogWarning("Went out of bounds looking for arguments after control character.");
             return true;
         } else
             return false;
