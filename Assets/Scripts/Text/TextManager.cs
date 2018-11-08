@@ -607,7 +607,26 @@ public class TextManager : MonoBehaviour {
                     string command = ParseCommandInline(currentText, ref i);
                     if (command != null && !LateStartWaiting) {
                         if (commandList.Contains(command.Split(':')[0])) {
-                            PreCreateControlCommand(command);
+                            // Work-around for [instant]/[instant:allowcommand]
+                            if ((command == "instant" || command == "instant:allowcommand") && !GlobalControls.retroMode) {
+                                // Copy all text before the command
+                                string precedingText = currentText.Substring(0, i - (command.Length + 1));
+                                
+                                // Remove all commands
+                                while (precedingText.IndexOf('[') > -1) {
+                                    for (int j = 0; j < precedingText.Length; j++) {
+                                        if (precedingText[j] == ']') {
+                                            precedingText = precedingText.Replace(precedingText.Substring(0, j + 1), "");
+                                            break;
+                                        }
+                                    }
+                                }
+                                
+                                // Confirm that [instant]/[instant:allowcommand] is at the beginning!
+                                if (precedingText.Length == 0)
+                                    PreCreateControlCommand(command);
+                            } else
+                                PreCreateControlCommand(command);
                             
                             // Work-around for noskip
                             if (command == "noskip") {
@@ -699,7 +718,7 @@ public class TextManager : MonoBehaviour {
                 } else                                          ltrImg.color = currentColor;
             } else                                              ltrImg.color = currentColor;
             ltrImg.GetComponent<Letter>().colorFromText = currentColor;
-            ltrImg.enabled = displayImmediate;
+            ltrImg.enabled = displayImmediate || instantCommand;
             letters.Add(singleLtr.GetComponent<Letter>());
 
             currentX += ltrRect.rect.width + hSpacing; // TODO remove hardcoded letter offset
@@ -926,9 +945,16 @@ public class TextManager : MonoBehaviour {
                 break;
             
             case "instant":
-                if (args.Length == 0 && GlobalControls.retroMode)
+                if (args.Length == 0 || (args.Length == 1 && cmds[1] == "allowcommand")) {
+                    if (args.Length == 1 && cmds[1] == "allowcommand") {
+                        instantCommand = true;
+                        Update();
+                        InUpdateControlCommand(DynValue.NewString("noskip"));
+                        break;
+                    }
                     if (!skipFromPlayer)
                         displayImmediate = true;
+                }
                 break;
 
             case "font":
