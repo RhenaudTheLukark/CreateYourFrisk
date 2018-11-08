@@ -157,6 +157,30 @@ public class LuaTextManager : TextManager {
             catch { throw new CYFException("The layer \"" + value + "\" doesn't exist."); }
         }
     }
+    
+    public void MoveBelow(LuaTextManager otherText) {
+        CheckExists();
+        if (otherText == null || !otherText.isActive)
+            throw new CYFException("The text object passed as an argument is null or inactive.");
+        else if (this.transform.parent.parent != otherText.transform.parent.parent)
+            UnitaleUtil.WriteInLogAndDebugger("[WARN]You can't change the order of two text objects on different layers.");
+        else {
+            try { this.transform.parent.SetSiblingIndex(otherText.transform.parent.GetSiblingIndex()); }
+            catch { throw new CYFException("Error while calling text.MoveBelow."); }
+        }
+    }
+    
+    public void MoveAbove(LuaTextManager otherText) {
+        CheckExists();
+        if (otherText == null || !otherText.isActive)
+            throw new CYFException("The text object passed as an argument is null or inactive.");
+        else if (this.transform.parent.parent != otherText.transform.parent.parent)
+            UnitaleUtil.WriteInLogAndDebugger("[WARN]You can't change the order of two text objects on different layers.");
+        else {
+            try { this.transform.parent.SetSiblingIndex(otherText.transform.parent.GetSiblingIndex() + 1); }
+            catch { throw new CYFException("Error while calling text.MoveBelow."); }
+        }
+    }
 
     public Color _color = Color.white;
     public bool hasColorBeenSet = false;
