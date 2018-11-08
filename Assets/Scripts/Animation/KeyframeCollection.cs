@@ -8,6 +8,8 @@ public class KeyframeCollection : MonoBehaviour {
     internal LoopMode loop = LoopMode.LOOP;
     private float totalTime;
     public Keyframe EMPTY_KEYFRAME = new Keyframe(SpriteRegistry.EMPTY_SPRITE);
+    
+    public bool paused = false;
 
     public enum LoopMode { ONESHOT, ONESHOTEMPTY, LOOP }
 
@@ -25,7 +27,8 @@ public class KeyframeCollection : MonoBehaviour {
     }
 
     public Keyframe getCurrent() {
-        currTime += Time.deltaTime;
+        if (!paused)
+            currTime += Time.deltaTime;
         if (loop == LoopMode.LOOP) {
             int index = (int)((currTime % totalTime) / timePerFrame);
             return keyframes[index];

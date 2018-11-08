@@ -466,6 +466,24 @@ public class LuaSpriteController {
         }
     }
     
+    // Gets or sets the paused state of a sprite's animation.
+    public DynValue animationpaused {
+        get {
+            if (keyframes != null)
+                return DynValue.NewBoolean(keyframes.paused);
+            return DynValue.NewNil();
+        }
+        set {
+            if (value.Type.ToString() != "Boolean")
+                throw new CYFException("sprite.paused can only be set to a boolean value.");
+            
+            if (keyframes != null)
+                keyframes.paused = value.Boolean;
+            else
+                throw new CYFException("Unable to pause/resume a sprite without an active animation.");
+        }
+    }
+    
     // Gets or sets the current frame of an animated sprite's animation.
     // Example: If a sprite's animation table is      {"sans_head_1", "sans_head_2", "sans_head_3", "sans_head"2},
     // then for each sprite in the table, this will be: ^ 1            ^ 2            ^ 3            ^ 4
