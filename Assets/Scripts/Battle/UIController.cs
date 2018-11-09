@@ -1293,6 +1293,12 @@ public class UIController : MonoBehaviour {
             GameObject.Find("HPLabel").GetComponent<Image>().enabled = false;
         }
         
+        PlayerController.instance.Awake();
+        PlayerController.instance.setControlOverride(true);
+        PlayerController.instance.SetPosition(48, 25, true);
+        fightUI = GameObject.Find("FightUI").GetComponent<FightUIController>();
+        fightUI.gameObject.SetActive(false);
+        
         encounter.CallOnSelfOrChildren("EncounterStarting");
         if (GameObject.Find("Text")) {
             GameObject.Find("Text").transform.SetParent(UserDebugger.instance.transform);
@@ -1301,12 +1307,6 @@ public class UIController : MonoBehaviour {
 
         if (!stated)
             SwitchState(UIState.ACTIONSELECT, true);
-        
-        PlayerController.instance.Awake();
-        PlayerController.instance.setControlOverride(true);
-        PlayerController.instance.SetPosition(48, 25, true);
-        fightUI = GameObject.Find("FightUI").GetComponent<FightUIController>();
-        fightUI.gameObject.SetActive(false);
     }
 
     public void CheckAndTriggerVictory() {
