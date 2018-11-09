@@ -935,14 +935,16 @@ public class TextManager : MonoBehaviour {
         }
         switch (cmds[0].ToLower()) {
             case "color":
+                float oldAlpha = currentColor.a;
                 currentColor = ParseUtil.GetColor(cmds[1]);
+                currentColor = new Color(currentColor.r, currentColor.g, currentColor.b, oldAlpha);
                 colorSet = true;
                 break;
             case "alpha":
                 if (cmds[1].Length == 2) {
-                    currentColor = new Color(currentColor.r, currentColor.g, currentColor.b, ParseUtil.GetByte("000000" + cmds[1]) / 255);
+                    currentColor = new Color(currentColor.r, currentColor.g, currentColor.b, ParseUtil.GetByte(cmds[1]) / 255);
                     if (GetType() == typeof(LuaTextManager))
-                        ((LuaTextManager)this).hasAlphaBeenSet = true;
+                        ((LuaTextManager)this)._color = new Color(((LuaTextManager)this)._color.r, ((LuaTextManager)this)._color.g, ((LuaTextManager)this)._color.b, currentColor.a);
                 }
                 break;
             case "charspacing": SetHorizontalSpacing(ParseUtil.GetFloat(cmds[1])); break;
