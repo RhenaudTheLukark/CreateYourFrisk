@@ -66,7 +66,7 @@ public class GlobalControls : MonoBehaviour {
             Camera.main.GetComponent<FPSDisplay>().enabled = !Camera.main.GetComponent<FPSDisplay>().enabled;
         } else if (isInFight && Input.GetKeyDown(KeyCode.H))
             GameObject.Find("Main Camera").GetComponent<ProjectileHitboxRenderer>().enabled = !GameObject.Find("Main Camera").GetComponent<ProjectileHitboxRenderer>().enabled;
-        else if (Input.GetKeyDown(KeyCode.Escape) && (canTransOW.Contains(SceneManager.GetActiveScene().name) || isInFight || SceneManager.GetActiveScene().name == "ModSelect")) {
+        else if (Input.GetKeyDown(KeyCode.Escape) && (canTransOW.Contains(SceneManager.GetActiveScene().name) || isInFight)) {
             if (isInFight && LuaEnemyEncounter.script.GetVar("unescape").Boolean && SceneManager.GetActiveScene().name == "Battle")
                 return;
             if (SceneManager.GetActiveScene().name == "Error" && !modDev)
@@ -78,10 +78,7 @@ public class GlobalControls : MonoBehaviour {
                 else
                     UIController.EndBattle();
             else {
-                if (SceneManager.GetActiveScene().name == "ModSelect" && GlobalControls.modDev)
-                    SceneManager.LoadScene("Disclaimer");
-                else
-                    UIController.EndBattle();
+                UIController.EndBattle();
             }
             //StaticInits.Reset();
         } else if (input.Menu == UndertaleInput.ButtonState.PRESSED && !nonOWScenes.Contains(SceneManager.GetActiveScene().name) && !isInFight)

@@ -17,6 +17,9 @@ public class SelectOMatic : MonoBehaviour {
     
     private static float modListScroll = 0.0f; // used to keep track of the position of the mod list specifically. resets if you press escape
     
+    // used to fade the "Exit" button in and out
+    private float ExitButtonAlpha = 5f; 
+    
     // Use this for initialization
     private void Start() {
         GameObject.Destroy(GameObject.Find("Player"));
@@ -89,6 +92,9 @@ public class SelectOMatic : MonoBehaviour {
             if (animationDone)
                 modFolderMiniMenu();
             });
+        // grab the exit button, and give it some functions
+        GameObject.Find("BtnExit").GetComponent<Button>().onClick.RemoveAllListeners();
+        GameObject.Find("BtnExit").GetComponent<Button>().onClick.AddListener(() => {SceneManager.LoadScene("Disclaimer");});
         
         // add devMod button functions
         if (GlobalControls.modDev) {
@@ -189,6 +195,11 @@ public class SelectOMatic : MonoBehaviour {
             
             if (encounters.Count > 1)
                 encounterSelection();
+            
+            // start the Exit button at half transparency
+            ExitButtonAlpha = 0.5f;
+            GameObject.Find("BtnExit/Text").gameObject.GetComponent<Text>().color       = new Color(1f, 1f, 1f, 0.5f);
+            GameObject.Find("BtnExit/TextShadow").gameObject.GetComponent<Text>().color = new Color(0f, 0f, 0f, 0.5f);
             
             // reset it to let us accurately tell if the player just came here from the Disclaimer scene or the Battle scene
             StaticInits.ENCOUNTER = "";
@@ -370,6 +381,7 @@ public class SelectOMatic : MonoBehaviour {
     
     // Used to animate scrolling left or right.
     private void Update() {
+        // Animation updating section
         if (GameObject.Find("ANIM ModBackground") != null) {
             if (animationTimer > 0)
                 animationTimer = Mathf.Floor((animationTimer + 1));
@@ -416,6 +428,17 @@ public class SelectOMatic : MonoBehaviour {
                 content.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -200);
             else if (content.GetComponent<RectTransform>().anchoredPosition.y > (content.transform.childCount - 1) * 30)
                 content.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, (content.transform.childCount - 1) * 30);
+        }
+        
+        // detect hovering over the Exit button and handle fading
+        if (Input.mousePosition.x < 75 && Input.mousePosition.y > 450 && ExitButtonAlpha < 1f) {
+            ExitButtonAlpha += 0.05f;
+            GameObject.Find("BtnExit/Text").GetComponent<Text>().color =        new Color(1f, 1f, 1f, ExitButtonAlpha);
+            GameObject.Find("BtnExit/TextShadow").GetComponent<Text>().color =  new Color(0f, 0f, 0f, ExitButtonAlpha);
+        } else if (ExitButtonAlpha > 0.5f) {
+            ExitButtonAlpha -= 0.05f;
+            GameObject.Find("BtnExit/Text").GetComponent<Text>().color =        new Color(1f, 1f, 1f, ExitButtonAlpha);
+            GameObject.Find("BtnExit/TextShadow").GetComponent<Text>().color =  new Color(0f, 0f, 0f, ExitButtonAlpha);
         }
     }
     
