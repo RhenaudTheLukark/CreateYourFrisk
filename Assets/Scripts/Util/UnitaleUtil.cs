@@ -377,28 +377,35 @@ public static class UnitaleUtil {
     public static bool TestPP(Color32[] playerMatrix, Color32[] bulletMatrix, float rotation, int playerHeight, int bulletHeight, Vector2 scale, Vector2 fromCenterProjectile, float spriteAlpha) {
         int bulletWidth = bulletMatrix.Length / bulletHeight, playerWidth = playerMatrix.Length / playerHeight;
         rotation *= Mathf.Deg2Rad;
+        Vector2 start = new Vector2();
+        Vector2 xDiff = new Vector2();
+        Vector2 yDiff = new Vector2();
         for (int currentHeight = 0; currentHeight < playerHeight && currentHeight >= 0; currentHeight ++)
             for (int currentWidth = 0; currentWidth < playerWidth && currentWidth >= 0; currentWidth ++) {
-                if (ControlPanel.instance.MinimumAlpha == 0) {
-                    if (playerMatrix[currentHeight * playerWidth + currentWidth].a * spriteAlpha == 0)
-                        continue;
-                } else if (playerMatrix[currentHeight * playerWidth + currentWidth].a * spriteAlpha < ControlPanel.instance.MinimumAlpha)
-                    continue;
-                float dx = currentWidth + fromCenterProjectile.x,
-                      dy = currentHeight + fromCenterProjectile.y;
-                if (scale.x < 0) dx = -dx;
-                if (scale.y < 0) dy = -dy;
-                float DFromCenter = Mathf.Sqrt(Mathf.Pow(dx, 2) + Mathf.Pow(dy, 2)),
-                      angle = Mathf.Atan2(dy, dx) - rotation,
-                      totalValX = Mathf.RoundToInt(bulletWidth  / 2 + (Mathf.Cos(angle) * DFromCenter) / Mathf.Abs(scale.x)),
-                      totalValY = Mathf.RoundToInt(bulletHeight / 2 + (Mathf.Sin(angle) * DFromCenter) / Mathf.Abs(scale.y));
+                int totalValX, totalValY;
+                if (currentWidth > 1 || currentHeight > 1 || (currentWidth != 0 && currentHeight != 0)) {
+                    totalValX = Mathf.RoundToInt(start.x + xDiff.x * currentWidth + yDiff.x * currentHeight);
+                    totalValY = Mathf.RoundToInt(start.y + xDiff.y * currentWidth + yDiff.y * currentHeight);
+                } else {
+                    float dx = currentWidth + fromCenterProjectile.x,
+                          dy = currentHeight + fromCenterProjectile.y;
+                    if (scale.x < 0) dx = -dx;
+                    if (scale.y < 0) dy = -dy;
+
+                    float DFromCenter = Mathf.Sqrt(Mathf.Pow(dx, 2) + Mathf.Pow(dy, 2)),
+                          angle = Mathf.Atan2(dy, dx) - rotation,
+                          fullValX = bulletWidth  / 2 + (Mathf.Cos(angle) * DFromCenter) / Mathf.Abs(scale.x),
+                          fullValY = bulletHeight / 2 + (Mathf.Sin(angle) * DFromCenter) / Mathf.Abs(scale.y);
+                    totalValX = Mathf.RoundToInt(fullValX);
+                    totalValY = Mathf.RoundToInt(fullValY);
+
+                    if (currentWidth == 0 && currentHeight == 0)      start = new Vector2(fullValX, fullValY);
+                    else if (currentWidth == 1 && currentHeight == 0) xDiff = new Vector2(fullValX - start.x, fullValY - start.y);
+                    else if (currentWidth == 0 && currentHeight == 1) yDiff = new Vector2(fullValX - start.x, fullValY - start.y);
+                }
                 if (totalValY >= 0 && totalValY < bulletHeight && totalValX >= 0 && totalValX < bulletWidth)
-                    if (bulletMatrix[Mathf.RoundToInt(totalValY * bulletWidth + totalValX)].a != 0) {
-                        //Debug.Log("pixel at (" + "(" + bulletWidth  / 2 + " + (" + Mathf.Cos(angle) + " * " + DFromCenter + ") / " + Mathf.Abs(scale.x) + ") = " + totalValX + ", " + 
-                        //                         "(" + bulletHeight / 2 + " + (" + Mathf.Sin(angle) + " * " + DFromCenter + ") / " + Mathf.Abs(scale.y) + ") = " + totalValY + ") " +
-                        //                         "is full pixel: PP detected for player pixel = (" + currentWidth + ", " + currentHeight + ")!");
+                    if (bulletMatrix[Mathf.RoundToInt(totalValY * bulletWidth + totalValX)].a != 0)
                         return true;
-                    }
             }
         return false;
     }
