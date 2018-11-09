@@ -1278,7 +1278,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 577590892}
-  - component: {fileID: 577590896}
   - component: {fileID: 577590895}
   - component: {fileID: 577590894}
   - component: {fileID: 577590893}
@@ -1354,38 +1353,6 @@ CanvasRenderer:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 577590891}
   m_CullTransparentMesh: 1
---- !u!114 &577590896
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 114946384992659172, guid: e264c08f2eb1b0a42a121539d52a0279,
-    type: 2}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 577590891}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1367256648, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Content: {fileID: 0}
-  m_Horizontal: 0
-  m_Vertical: 1
-  m_MovementType: 1
-  m_Elasticity: 0.1
-  m_Inertia: 0
-  m_DecelerationRate: 0.135
-  m_ScrollSensitivity: 8
-  m_Viewport: {fileID: 0}
-  m_HorizontalScrollbar: {fileID: 0}
-  m_VerticalScrollbar: {fileID: 0}
-  m_HorizontalScrollbarVisibility: 0
-  m_VerticalScrollbarVisibility: 2
-  m_HorizontalScrollbarSpacing: 0
-  m_VerticalScrollbarSpacing: 0
-  m_OnValueChanged:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UnityEngine.UI.ScrollRect+ScrollRectEvent, UnityEngine.UI, Version=1.0.0.0,
-      Culture=neutral, PublicKeyToken=null
 --- !u!1 &668384058
 GameObject:
   m_ObjectHideFlags: 0
@@ -3446,6 +3413,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ccac28fe9b88c1c4084360fe5e2e1697, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  b: {fileID: 11400648, guid: 39f0d6b05fe50e94d829efd22dea79ce, type: 2}
-  bs: {fileID: 0}
-  target: 0

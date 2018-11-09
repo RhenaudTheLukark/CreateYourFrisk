@@ -15,6 +15,8 @@ public class SelectOMatic : MonoBehaviour {
     private bool animationDone = true;
     private float animationTimer = 0;
     
+    private static float modListScroll = 0.0f; // used to keep track of the position of the mod list specifically. resets if you press escape
+    
     // Use this for initialization
     private void Start() {
         GameObject.Destroy(GameObject.Find("Player"));
@@ -187,7 +189,13 @@ public class SelectOMatic : MonoBehaviour {
             
             if (encounters.Count > 1)
                 encounterSelection();
-        }
+            
+            // reset it to let us accurately tell if the player just came here from the Disclaimer scene or the Battle scene
+            StaticInits.ENCOUNTER = "";
+        // player is coming here from the Disclaimer scene
+        } else
+            // when the player enters from the Disclaimer screen, reset stored scroll positions
+            modListScroll = 0.0f;
     }
     
     // A special function used specifically for error handling
@@ -400,6 +408,15 @@ public class SelectOMatic : MonoBehaviour {
                 animationDone = true;
             }
         }
+        
+        // prevent scrolling too far in the encounter box
+        if (GameObject.Find("ScrollWin")) {
+            GameObject content = encounterBox.transform.Find("ScrollCutoff/Content").gameObject;
+            if (content.GetComponent<RectTransform>().anchoredPosition.y < -200)
+                content.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -200);
+            else if (content.GetComponent<RectTransform>().anchoredPosition.y > (content.transform.childCount - 1) * 30)
+                content.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, (content.transform.childCount - 1) * 30);
+        }
     }
     
     // Shows the "mod page" screen.
@@ -487,27 +504,37 @@ public class SelectOMatic : MonoBehaviour {
         }
     }
     
+    // opens the scrolling interface and lets the user browse their mods
     private void modFolderMiniMenu() {
         // hide the mod list button
         btnList.SetActive(false);
-        
-        // make clicking the background exit this menu
-        GameObject.Find("ModBackground").GetComponent<Button>().onClick.RemoveAllListeners();
-        GameObject.Find("ModBackground").GetComponent<Button>().onClick.AddListener(() => {
-            if (animationDone)
-                modFolderSelection();
-            });
-        // show the encounter selection box
-        encounterBox.SetActive(true);
-        // reset the encounter box's position
-        encounterBox.transform.Find("ScrollCutoff/Content").GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
         
         // grab pre-existing objects
         GameObject content = encounterBox.transform.Find("ScrollCutoff/Content").gameObject;
         // give the back button its function
         GameObject back = content.transform.Find("Back").gameObject;
         back.GetComponent<Button>().onClick.RemoveAllListeners();
-        back.GetComponent<Button>().onClick.AddListener(() => {modFolderSelection();});
+        back.GetComponent<Button>().onClick.AddListener(() => {
+            // reset the encounter box's position
+            modListScroll = 0.0f;
+            
+            modFolderSelection();
+            });
+        
+        // make clicking the background exit this menu
+        GameObject.Find("ModBackground").GetComponent<Button>().onClick.RemoveAllListeners();
+        GameObject.Find("ModBackground").GetComponent<Button>().onClick.AddListener(() => {
+            if (animationDone) {
+                // store the encounter box's position so it can be remembered upon exiting a mod
+                modListScroll = content.GetComponent<RectTransform>().anchoredPosition.y;
+                
+                modFolderSelection();
+            }
+            });
+        // show the encounter selection box
+        encounterBox.SetActive(true);
+        // move the encounter box to the stored position, for easier mod browsing
+        content.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, modListScroll);
         
         int count = -1;
         foreach (DirectoryInfo mod in modDirs) {
@@ -531,7 +558,14 @@ public class SelectOMatic : MonoBehaviour {
             int tempCount = count;
             
             button.GetComponent<Button>().onClick.RemoveAllListeners();
-            button.GetComponent<Button>().onClick.AddListener(() => {CurrentSelectedMod = tempCount; modFolderSelection(); ShowMod(CurrentSelectedMod);});
+            button.GetComponent<Button>().onClick.AddListener(() => {
+                // store the encounter box's position so it can be remembered upon exiting a mod
+                modListScroll = content.GetComponent<RectTransform>().anchoredPosition.y;
+                
+                CurrentSelectedMod = tempCount;
+                modFolderSelection();
+                ShowMod(CurrentSelectedMod);
+            });
         }
     }
 }
