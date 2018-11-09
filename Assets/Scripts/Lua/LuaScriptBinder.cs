@@ -433,7 +433,7 @@ public static class LuaScriptBinder {
             luatm.LateStartWaiting = true;
         luatm.SetText(text);
         if (enableLateStart)
-            luatm.LateStart(text);
+            luatm.LateStart();
         return luatm;
     }
 

@@ -281,30 +281,26 @@ public class LuaTextManager : TextManager {
             ResizeBubble();
     }
     
-    public void LateStart(DynValue text) {
+    public void LateStart() {
         if (new StackFrame(1).GetMethod().Name != "lambda_method")
-            StartCoroutine(LateStartSetText(text));
+            StartCoroutine(LateStartSetText());
     }
     
-    IEnumerator LateStartSetText(DynValue text) {
+    IEnumerator LateStartSetText() {
         yield return new WaitForEndOfFrame();
         
         if (!isActive)
             yield break;
         
+        /*
         // manually do SetText, except without calling SetTextQueue
         TextMessage[] msgs = null;
         msgs = new TextMessage[text.Table.Length];
         for (int i = 0; i < text.Table.Length; i++)
             msgs[i] = new TextMessage(text.Table.Get(i + 1).String, false, false);
-        // unsure if the following code is needed
-        /*isActive = true;
-        if (bubble)
-            containerBubble.SetActive(true);
-        if (text.Table.Length != 0 && bubble)
-            ResizeBubble();*/
         
         base.textQueue = msgs;
+        */
         
         if (default_voice != null) {
             letterSound.clip = default_voice;
