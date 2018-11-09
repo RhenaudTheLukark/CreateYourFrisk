@@ -18,7 +18,7 @@ public class TextManager : MonoBehaviour {
     protected TextEffect textEffect = null;
     public List<Letter> letters = new List<Letter>();
     private string letterEffect = "none";
-    private string[] commandList = new string[] { "color", "charspacing", "linespacing", "starcolor", "instant", "font", "effect", "noskip", "w", "waitall", "novoice",
+    private string[] commandList = new string[] { "color", "alpha", "charspacing", "linespacing", "starcolor", "instant", "font", "effect", "noskip", "w", "waitall", "novoice",
                                                   "next", "finished", "nextthisnow", "noskipatall", "waitfor", "speed", "letters", "voice", "func", "mugshot", "name",
                                                   "music", "sound", "health", "lettereffect"};
     private float letterIntensity = 0.0f;
@@ -935,14 +935,15 @@ public class TextManager : MonoBehaviour {
         }
         switch (cmds[0].ToLower()) {
             case "color":
-                if (cmds[1].Length == 6)
-                    currentColor = ParseUtil.GetColor(cmds[1]);
-                else if (cmds[1].Length == 8) {
-                    currentColor = ParseUtil.GetColor(cmds[1].Substring(0, 6));
-                    currentColor = new Color(currentColor.r, currentColor.g, currentColor.b, int.Parse(cmds[1].Substring(6), System.Globalization.NumberStyles.HexNumber) / 255f);
-                } else
-                    break;
+                currentColor = ParseUtil.GetColor(cmds[1]);
                 colorSet = true;
+                break;
+            case "alpha":
+                if (cmds[1].Length == 2) {
+                    currentColor = new Color(currentColor.r, currentColor.g, currentColor.b, ParseUtil.GetByte("000000" + cmds[1]) / 255);
+                    if (GetType() == typeof(LuaTextManager))
+                        ((LuaTextManager)this).hasAlphaBeenSet = true;
+                }
                 break;
             case "charspacing": SetHorizontalSpacing(ParseUtil.GetFloat(cmds[1])); break;
             case "linespacing": SetVerticalSpacing(ParseUtil.GetFloat(cmds[1]));   break;
