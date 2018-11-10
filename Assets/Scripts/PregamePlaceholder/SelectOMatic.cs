@@ -386,6 +386,13 @@ public class SelectOMatic : MonoBehaviour {
             GameObject OldCount = Instantiate(GameObject.Find("EncounterCount"), GameObject.Find("Canvas").transform);
             OldCount.name = "ANIM EncounterCount";
             
+            // properly layer all "fake" assets
+            OldCount.transform.SetAsFirstSibling();
+            OldCountShadow.transform.SetAsFirstSibling();
+            OldTitle.transform.SetAsFirstSibling();
+            OldTitleShadow.transform.SetAsFirstSibling();
+            OldBG.transform.SetAsFirstSibling();
+            
             // move all real assets to the side
             GameObject.Find("ModBackground").transform.Translate(640 * dir, 0, 0);
             GameObject.Find("ModTitleShadow").transform.Translate(640 * dir, 0, 0);
