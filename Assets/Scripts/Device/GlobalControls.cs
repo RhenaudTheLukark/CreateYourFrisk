@@ -111,8 +111,22 @@ public class GlobalControls : MonoBehaviour {
         if (!Screen.fullScreen && (Screen.currentResolution.height != 480 || Screen.currentResolution.width != 640))
             Screen.SetResolution(640, 480, false, 0);
         */
-        if (Input.GetKeyDown(KeyCode.F4))
+        if (Input.GetKeyDown(KeyCode.F4)) {
             Screen.fullScreen =!Screen.fullScreen;
+            
+            // move the window to the correct place on screen when the user exits fullscreen! hooray!
+            // yes, this check is correct, even though it appears to check for the wrong value. I don't know why
+            if (Screen.fullScreen)
+                StartCoroutine(RepositionScreen());
+        }
+    }
+    
+    IEnumerator RepositionScreen() {
+        yield return new WaitForFixedUpdate();
+        
+        try {
+            Misc.MoveWindowTo((int)(Screen.currentResolution.width/2 - 320), (int)(Screen.currentResolution.height/2 - 240));
+        } catch {}
     }
 
     void LoadScene(Scene scene, LoadSceneMode mode) {
