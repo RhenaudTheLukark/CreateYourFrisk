@@ -62,9 +62,9 @@ it's w3c valid, at least
                     <li><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory System</a></li>
                     <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
                     <li><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
-				<li class="li-header">Overworld</li>
+                <li class="li-header">Overworld</li>
                     <li><a href="overworld.html"><span class="CYF"></span> Basics</a></li>
-                    <li style="margin-left:5px;">> <span class="CYF"></span> How to create a map <</li>
+                    <li class="active" style="margin-left:5px;">> <span class="CYF"></span> How to create a map <</li>
                     <li><a href="overworld-howto-event.html"><span class="CYF"></span> How to create an event</a></li>
                     <li><a href="overworld-howto-animevent.html"><span class="CYF"></span> How to animate an event</a></li>
                     <li><a href="overworld-howto-shop.html"><span class="CYF"></span> How to create a shop</a></li>
@@ -90,8 +90,8 @@ it's w3c valid, at least
             </p>
 
             <p>
-                The very first step is to create the map on Tiled, and save it.<br>
-                <u>Tip:</u> Undertale's tiles are 20x20 pixels, with a scale factor of 2: I suggest you to 
+                The very first step is to create the map in Tiled, and save it.<br>
+                <u>Tip:</u> Undertale's tiles are 20x20 pixels, with a scale factor of 2: I suggest for you to 
                 make a tileset of 40x40px tiles so you will not have to worry about scaling.
             </p>
             
@@ -107,12 +107,12 @@ it's w3c valid, at least
             <p>
                 <li>Now that you're in Unity, you should create a scene, then delete the Main Camera object, save and then name the map 
                 (the name will be important!)</li>
-                <li>Open the scene <span class="term">Assets\Scenes\test3.unity</span>, copy all its content and paste them into your newly 
+                <li>Open the scene <span class="term">Assets\Scenes\test3.unity</span>, copy all its contents and paste them into your newly 
 				created scene.</li>
                 <li>In the <span class="term">Project</span> tab, go to <span class="term">Assets\Tiled2Unity\Prefabs</span> and you should 
 				see your map. Drag and drop it over the scene. (Put it in the root, not in a directory)</li>
                 <li>Go to <span class="term">Assets\Resources\Prefabs</span> and include <span class="term">Main Camera OW</span> like you 
-				did with the previous  line. Now you should be able to see something in the Game tab!</li>
+				did in the previous  line. Now you should be able to see something in the Game tab!</li>
             </p>
             <br>
             <p>
@@ -121,8 +121,8 @@ it's w3c valid, at least
 				object's name.</li>
                 <li>Move your map so that the bottom-left corners of the map and the camera are at the same coordinates.</li>
                 <li>Delete everything that is in the GameObject <span class="term">Background</span>, except for the TPs. You'll see that 
-                  your map object is composed of every layer that you've added in your map.<br>
-				  Now, inside of <span class="term">Background</span>, you'll have to insert the main object component of your map and 
+                  your map object is composed of every layer that you've added in your map.</li>
+				 <li>Now, inside of <span class="term">Background</span>, you'll have to insert the main object component of your map and 
 				  its colliders (in your object layers).<br>
                   If Unity asks you if you want to break the prefab, say "Yes".</li>
                 <li>If there are other layers, just put them in the root.</li>
@@ -156,20 +156,20 @@ it's w3c valid, at least
                   Set <span class="term">Background</span>'s Z value to 140, then play around this value to set the Z value of other 
                   background layers (between 139 and 141; you can use decimal numbers, of course).<br>
                   For foreground layers' Z values, you should use values between -1.5 and -0.5.<br>
-                  <u>Warning</u>: The maps' Z value must be set to 0 after setting the layers' Z value!</li>
+                  <u>Warning</u>: The maps' Z value must be set to 0 after setting the layers' Z values!</li>
             </p>
             <br>
             <p>
                 <li>Edit, add and/or remove the TP objects. You'll have to set some values for the TP: see the 
-                  component TP Handler.
+                  component <span class="term">TP Handler</span>.
                   <ul>
                       <li><span class="term">Scene Name</span> = Name of the destination scene of the TP.</li>
                       <li><span class="term">Position</span> = Position of the player in the destination map, from the bottom-left corner of 
                       the map.</li>
-                      <li><span class="term">Direction</span> = Direction of the player after the TP. <span class="term">2</span> = Bottom, 
-					  <span class="term">4</span> = Left, <span class="term">6</span> = Right, <span class="term">8</span> = Up .
+                      <li><span class="term">Direction</span> = Direction the player will be facing after the TP. <span class="term">2</span> = Down, 
+					  <span class="term">4</span> = Left, <span class="term">6</span> = Right, <span class="term">8</span> = Up.<br>
                       (I used the NumPad for this, yeah ^^)</li>
-                      <li><span class="term">Activated</span> = Boolean used when the TP is launched. Don't activate it manually!</li>
+                      <li><span class="term">Activated</span> = Boolean used when the TP is activated. Don't activate it manually!</li>
                   </ul></li>
             </p>
             <br>
@@ -177,41 +177,45 @@ it's w3c valid, at least
                 <li>Change the layer of all of the colliders. Give them the layer <span class="term">BlockingLayer</span>.<br>
                   <u>Tip:</u> Select the first one, then shift-click on the last one. Then, you can change the 
                       layer of all objects simultaneously!</li>
-                <li>Finally, modify the data in the object <span class="term">Background</span>, in the Map Infos Component.
+                <li>Finally, modify the data in the object <span class="term">Background</span>, in the <span class="term">Map Info</span> Component.
                   <ul>
                       <li><span class="term">ID</span> = ID of the map. Used in the database to register event states. Must be unique.</li>
-                      <li><span class="term">Music</span> = Name of the BGM played on the map. The BGM must be in the folder Audio of the mod 
-                        or the default folder.</li>
+                      <li><span class="term">Music</span> = Name of the BGM played on the map. The BGM must be in the <span class="term">Audio</span>
+                      folder of the mod or the <span class="term">Default</span> folder.</li>
                       <li><span class="term">Mod To Load</span> = Name of the mod loaded by the map.</li>
                       <li><span class="term">Beginning Position</span> = Position of the player in the first map, from the bottom-left corner 
                         of the map.</li>
                   </ul></li>
                 <li>When everything is ready, remove the <span class="term">Main Camera OW</span> object and save the map.</li>
             </p>
-            <br>
+            <hr>
             <p>
-                Your map is now ready! But it isn't playable yet...Before testing it, we'll need to add it to the Build.<br>
+                <h4>Now, it's time to test it!</h4><br><br>
+                Your map is now ready! But it isn't playable yet...Before testing it, we'll need to add it to the Build.<br><br>
                 When you're on your newly created map, open <span class="term">File</span> --> <span class="term">Build Settings</span>...<br>
-                Click on the button "Add Open Scenes" while you're on your map. It should now be in the list of Scenes in the
+                Click on the button <span class="term">Add Open Scenes</span> while you're on your map. It should now be in the list of Scenes in the
                 Build. It'll be built with the project and it can now be used!
             </p><br>
             <p>
-                <h4>Now, it's time to test it!</h4><br><br>
                 <li>Open the scene <span class="term">Assets\Scenes\TransitionOverworld.unity</span> and search for the GameObject 
                   <span class="term">Main Camera OW</span>.<br>
-                  Go to the component <span class="term">Transition Overworld</span> and change the values.
+                  <li>Go to the component <span class="term">Transition Overworld</span> and change the values.</li>
 				  <ul>
                   <li><span class="term">First Level To Load</span>: Name of the first scene to load.</li>
                   <li><span class="term">First Mod Folder</span>: Name of the mod folder of the first scene to load.</li>
 				  </ul>
 			  </li>
-              <li>Load the scene <span class="term">Disclaimer.unity</span> and launch the game. Launch a new game if you've already 
-                  saved. You should now be on your map!</li>
+              <li>Load the scene <span class="term">Disclaimer.unity</span> and launch the game.<br>
+                Start a new game if you've already saved.<br><br>
+                You should now be in your map!</li>
             </p>
             <br>
             <p>
-                Make some tests on the map if there are problems. If there are no problems, now you can add 
-                events!<br><br>
+                Run some tests on the map if there are problems.<br>
+                If there are no problems, you can now move on to adding events!<br><br>
+            </p>
+            <hr>
+            <p>
                 If you had any problems with this tutorial, please tell me what went wrong.<br>
                 If you see any ways that this tutorial can be improved, please tell me that as well.<br>
                 You'll have more chances to contact me on Unitale's Discord server - the response will be way faster and it will be much 

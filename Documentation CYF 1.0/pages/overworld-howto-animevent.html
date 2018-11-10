@@ -62,11 +62,11 @@ it's w3c valid, at least
                     <li><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory System</a></li>
                     <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
                     <li><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
-				<li class="li-header">Overworld</li>
+                <li class="li-header">Overworld</li>
                     <li><a href="overworld.html"><span class="CYF"></span> Basics</a></li>
                     <li><a href="overworld-howto-map.html"><span class="CYF"></span> How to create a map</a></li>
                     <li><a href="overworld-howto-event.html"><span class="CYF"></span> How to create an event</a></li>
-                    <li style="margin-left: 5px;">> <span class="CYF"></span> How to animate an event <</li>
+                    <li class="active" style="margin-left:5px;">> <span class="CYF"></span> How to animate an<br>event <</li>
                     <li><a href="overworld-howto-shop.html"><span class="CYF"></span> How to create a shop</a></li>
                     <li><a href="overworld-object-general.html"><span class="CYF"></span> The General Object</a></li>
                     <li><a href="overworld-object-event.html"><span class="CYF"></span> The Event Object</a></li>
@@ -99,24 +99,26 @@ it's w3c valid, at least
             
             <br><img src="../img/CYFAnimator screenshot.png" alt="CYFAnimator screenshot"><br><br>
             <p>
-                This is a working example of CYFAnimator object. The 8 anims pictured here are the minimum ones required to make the component run correctly.
+                This is a working example of the <span class="term">CYFAnimator</span> object.
+                The 8 animations pictured here are the minimum ones required to make the component run correctly.
             </p>
             <br>
             <p>
-                Now you should be able to see some variables. Here is a description of them:
+                You should be able to see some variables. Here is a description of each of them:
                 <li><span class="term">Movement Direction</span>: The direction that the event goes. Normally, you don't need to modify this, 
 				as the component will calculate this by itself.</li>
-                <li><span class="term">Begin Anim</span>: The name of the animation that the event will start on.</li>
-                <li><span class="term">Special Header</span>: This variable is used to modify the event's animation scheme. Normally, 
-				the event will launch the anims <span class="term">StopDown</span>, <span class="term">StopUp</span>, <span class="term">MovingDown</span>,  
-				<span class="term">MovingUp</span> and the others. But if you add this header, it'll be added at the beginning of the animator's name.<br>
-                So, if the special header is "Frisk", the CYFAnimator component will launch FriskMovingDown, FriskMovingUp, ... instead of the others.<br>
-                <br>There is one exception to this scheme. If the special header is equal to an anim's name, this anim will be launched while the 
-				special header won't be changed.</li>
+                <li><span class="term">Begin Anim</span>: The name of the animation that the event will start with.</li>
+                <li><span class="term">Special Header</span>: This variable is used to modify the event's animation scheme.<br>
+                Normally, the event will start the animations <span class="term">StopDown</span>, <span class="term">StopUp</span>, 
+                <span class="term">MovingDown</span>,  <span class="term">MovingUp</span> and all the others in the screenshot.<br>
+                But if you set this variable, it'll act as a prefix for the animations.<br>
+                So, if this variable is set to "Frisk", the <span class="term">CYFAnimator</span> component will use 
+                <span class="term">FriskMovingDown</span>, <span class="term">FriskMovingUp</span>, ... instead of the others.<br>
+                <br>There is one exception to this scheme. If the special header is equal to an animation's name, this animation will be the only one used
+                while this variable has this value.</li>
                 <li><span class="term">Anims</span>: Your list of animations. Check the screenshot above to see how you should fill it.</li>
             </p>
-            <br>
-			<br>
+            <hr>
             <p>
                 And that's it for animated events! As I said, the biggest part here is to fill in the Anims list, so it's not much of a deal!<br><br>
                 If you had any problems with this tutorial, please tell me what went wrong.<br>

@@ -62,7 +62,7 @@ it's w3c valid, at least
                     <li><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory System</a></li>
                     <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
                     <li><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
-				<li class="li-header">Overworld</li>
+                <li class="li-header">Overworld</li>
                     <li><a href="overworld.html"><span class="CYF"></span> Basics</a></li>
                     <li><a href="overworld-howto-map.html"><span class="CYF"></span> How to create a map</a></li>
                     <li><a href="overworld-howto-event.html"><span class="CYF"></span> How to create an event</a></li>
@@ -88,25 +88,26 @@ it's w3c valid, at least
                 don't forget to check if the user is playing with a Windows OS by using the variable <span class="term">windows</span>!
             </p>
             <ul>
-                <li><span class="term">Misc.MachineName</span> (read-only) - Returns the name of the player's session.</li><br>
-                <li><span class="term">Misc.ShakeScreen(int durationInFrames, int intensity = 3, bool isIntensityDecreasing = false)</span> - Shakes the 
-                screen for <span class="term">durationInFrames</span> frames, with a maximum of <span class="term">intensity</span> pixels out of the 
+                <li><span class="string"></span> <span class="term">Misc.MachineName</span> (read-only) - Returns the name of the player's session.</li><br>
+                <li><span class="term">Misc.ShakeScreen(<span class="number"></span> durationInFrames, <span class="number"></span> intensity = 3, 
+                <span class="boolean"></span> isIntensityDecreasing = false)</span> - Shakes the 
+                screen for <span class="term">durationInFrames</span> frames, with a maximum of <span class="term">intensity</span> pixels away from the 
                 normal position. Set <span class="term">isIntensityDecreasing</span> as true to reduce the intensity over time.</li><br>
-                <li><span class="term">Misc.StopShake()</span> - Stops a previously launched <span class="term">Misc.ShakeScreen</span>, does nothing 
+                <li><span class="term">Misc.StopShake()</span> - Stops a previous <span class="term">Misc.ShakeScreen</span> call, does nothing 
                 otherwise.</li><br>
-                <li><span class="term">Misc.FullScreen</span> - Returns a boolean representing whether the user is in fullscreen mode.</li><br>
-                <li><span class="term">Misc.ScreenWidth</span> - Returns the width of the user's screen.</li><br>
-                <li><span class="term">Misc.ScreenHeight</span> - Returns the height of the user's screen.</li><br>
+                <li><span class="boolean"></span> <span class="term">Misc.FullScreen</span> - Controls or detects whether the user is in fullscreen mode.</li><br>
+                <li><span class="number"></span> <span class="term">Misc.ScreenWidth</span> (read-only) - Returns the width of the user's screen.</li><br>
+                <li><span class="number"></span> <span class="term">Misc.ScreenHeight</span> (read-only) - Returns the height of the user's screen.</li><br>
                 <li><span class="term">Misc.DestroyWindow()</span> - Closes the window instantly.</li><br>
                 <span style="color:#aa0000;font-size:18px;">THE FOLLOWING VARIABLES AND FUNCTIONS ARE <u>WINDOWS ONLY</u>.</span><br><br>
-                <li><span class="term">Misc.WindowName</span> - Gets or sets the name of the window.</li><br>
-                <li><span class="term">Misc.WindowX</span> - Gets or sets the X position of the bottom left corner of the window.</li><br>
-                <li><span class="term">Misc.WindowY</span> - Gets or sets the Y position of the bottom left corner of the window.</li><br>
-                <li><span class="term">Misc.MoveWindow(int X, int Y)</span> - Move the window by X pixels horizontally and Y pixels vertically.</li><br>
-                <li><span class="term">Misc.MoveWindowTo(int X, int Y)</span> - Moves the bottom left corner of the window to the given coordinates.
+                <li><span class="string"></span> <span class="term">Misc.WindowName</span> - Gets or sets the name of the window.</li><br>
+                <li><span class="number"></span> <span class="term">Misc.WindowX</span> - Gets or sets the X position of the bottom left corner of the window.</li><br>
+                <li><span class="number"></span> <span class="term">Misc.WindowY</span> - Gets or sets the Y position of the bottom left corner of the window.</li><br>
+                <li><span class="term">Misc.MoveWindow(<span class="number"></span> X, <span class="number"></span>  Y)</span> - Move the window by X pixels horizontally and Y pixels vertically.</li><br>
+                <li><span class="term">Misc.MoveWindowTo(<span class="number"></span> X, <span class="number"></span> Y)</span> - Moves the bottom left corner of the window to the given coordinates.
                 </li><br>
-                <li><span class="term">Misc.WindowWidth</span> (readonly) - The width of the window.</li><br>
-                <li><span class="term">Misc.WindowHeight</span> (readonly) - The height of the window.</li>
+                <li><span class="number"></span> <span class="term">Misc.WindowWidth</span> (readonly) - The width of the window.</li><br>
+                <li><span class="number"></span> <span class="term">Misc.WindowHeight</span> (readonly) - The height of the window.</li>
             </ul>
         </div>
 		

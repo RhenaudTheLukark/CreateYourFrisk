@@ -62,7 +62,7 @@ it's w3c valid, at least
                     <li><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory System</a></li>
                     <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
                     <li><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
-				<li class="li-header">Overworld</li>
+                <li class="li-header">Overworld</li>
                     <li><a href="overworld.html"><span class="CYF"></span> Basics</a></li>
                     <li><a href="overworld-howto-map.html"><span class="CYF"></span> How to create a map</a></li>
                     <li><a href="overworld-howto-event.html"><span class="CYF"></span> How to create an event</a></li>
@@ -89,18 +89,18 @@ it's w3c valid, at least
                 ensure equal behaviour across all framerates.
             </p>
             <ul>
-                <li><span class="term">Time.time</span> - Time (in seconds) since the game application started. If you want to time specific
+                <li><span class="number"></span> <span class="term">Time.time</span> - Time (in seconds) since the game application started. If you want to time specific
                     events, store <span class="term">Time.time</span> in a variable of your own at the start of what you want to time, then
                     subtract <span class="term">Time.time</span> from your stored time to calculate the difference.
                 </li><br>
-                <li><span class="term">Time.dt</span> - Delta time (in seconds). This is the time it took for the last game update to complete.
+                <li><span class="number"></span> <span class="term">Time.dt</span> - Delta time (in seconds). This is the time it took for the last game update to complete.
                 </li><br>
-                <li><span class="term">Time.mult</span> - Multiplier to ensure equal movement across all framerates (this is essentially
+                <li><span class="number"></span> <span class="term">Time.mult</span> - Multiplier to ensure equal movement across all framerates (this is essentially
                     <span class="term">deltatime*framerate</span>). This will be around 1.0 when the application runs at 60FPS, ~0.5 at 120FPS and
                     ~2.0 at 30FPS, etc. By multiplying your movement by this value, your waves will be consistent on
                     lower framerates as well.
                 </li><br>
-                <li><span class="CYF"></span> <span class="term">Time.wave</span> - Returns the remaining time before the end of the waves in
+                <li><span class="CYF"></span> <span class="number"></span> <span class="term">Time.wave</span> - Returns the remaining time before the end of the waves in
                 <span class="term">DEFENDING</span>. -1 outside of <span class="term">DEFENDING</span>.</li><br>
             </ul>
         </div>

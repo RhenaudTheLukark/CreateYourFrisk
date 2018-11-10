@@ -62,12 +62,12 @@ it's w3c valid, at least
                     <li><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory System</a></li>
                     <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
                     <li><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
-				<li class="li-header">Overworld</li>
+                <li class="li-header">Overworld</li>
                     <li><a href="overworld.html"><span class="CYF"></span> Basics</a></li>
                     <li><a href="overworld-howto-map.html"><span class="CYF"></span> How to create a map</a></li>
                     <li><a href="overworld-howto-event.html"><span class="CYF"></span> How to create an event</a></li>
-                    <li><a href="overworld-howt-animevent.html"><span class="CYF"></span> How to animate an event</a></li>
-                    <li style="margin-left: 5px;">> <span class="CYF"></span> How to create a shop <</li>
+                    <li><a href="overworld-howto-animevent.html"><span class="CYF"></span> How to animate an event</a></li>
+                    <li class="active" style="margin-left:5px;">> <span class="CYF"></span> How to create a shop <</li>
                     <li><a href="overworld-object-general.html"><span class="CYF"></span> The General Object</a></li>
                     <li><a href="overworld-object-event.html"><span class="CYF"></span> The Event Object</a></li>
                     <li><a href="overworld-object-player.html"><span class="CYF"></span> The Player Object</a></li>
@@ -84,20 +84,21 @@ it's w3c valid, at least
 		<div class="tab-pane active text-style" id="overworld-howto-shop">
             <h2><span class="CYF"></span>The Overworld: How to create a shop</h2><br><br>
 			
-			<p><h3><span style="color:#aa0000;line-height:30px;"><u>CAUTION! You will need to code in C# for some aspects of this feature! 
-			</u></span></h3><br><u>In the future, all CYF projects will have to be compiled into singular .exe files before being distributed. It's 
-			recommended to wait until then before you try to make a custom shop in your mod's overworld!</u></p><br><br>
-			<p>
-				You may know what a shop is in Undertale. Well, here you'll learn how to make one in Create Your Frisk!
-			</p>
-			<p>
-				Shop scripts contain some of the same functions and objects that are in all scripts, such as the <span class="term">Audio</span> object, 
-				the <span class="term">NewAudio</span> object, the <span class="term">Inventory</span> object, the <span class="term">Input</span> object, 
-				the <span class="term">Misc</span> object, and the <span class="term">Time</span> object, as well as <span class="term">RealGlobals</span> 
-				and <span class="term">AlMightyGlobals</span>. 
-				<br>Finally, the variables <span class="term">isCYF</span>, <span class="term">safe</span>, <span class="term">windows</span> 
-				and <span class="term">CYFversion</span> are also accessible.
-			</p>
+            <p>
+            You may know what a shop is in Undertale. Well, here you'll learn how to make one in Create Your Frisk!
+            <br><br>
+            Shop scripts contain some of the same functions and objects that are in all scripts, such as the <span class="term">Audio</span> object, 
+            the <span class="term">NewAudio</span> object, the <span class="term">Inventory</span> object, the <span class="term">Input</span> object, 
+            the <span class="term">Misc</span> object, and the <span class="term">Time</span> object, as well as <span class="term">RealGlobals</span> 
+            and <span class="term">AlMightyGlobals</span>. 
+            <br>Finally, the variables <span class="term">isCYF</span>, <span class="term">safe</span>, <span class="term">windows</span> 
+            and <span class="term">CYFversion</span> are also accessible (see <span class="ref">Overworld Basics</span>).
+            
+            <h3><span style="color:#aa0000;line-height:30px;"><u>CAUTION! You will need to code in C# for some aspects of this feature! 
+			</u></span></h3><br><u>In the future, all CYF projects will have to be compiled into separate .exe files before being distributed. It's 
+			recommended to wait until then before you try to make a custom shop in your mod's overworld!</u>
+            </p>
+            <hr>
 			<p>
 				Shop scripts have their own State system. You can't directly access them, but here is a list of the shop's states:
 				<ul>
@@ -120,156 +121,195 @@ it's w3c valid, at least
 			<p>
 				Other than that, other functions and variables are available, to personalize your shop. The following is a detailed list of those.<br>
 			</p>
-			<h3>Setting up your shop for the overworld</h3>
+            <hr>
+			<h3>Setting up your shop for use in the overworld</h3>
 			<p>
-				CYF's shops are different from what you've seen so far. The new shop scripts are to be put in the <span class="term">YOURMOD/Lua/Shops/</span> directory.
-				<br><br>A shop can be loaded with the function <span class="term">General.EnterShop(scriptName)</span>, with <span class="term">scriptName
-				</span> being the name of your shop's lua file, without the extension.
+				CYF's shops are different from what you've seen so far.<br>
+                Your shop scripts are to be put in the directory <span class="term">YOURMOD/Lua/Shops/</span>.
+				<br><br>A shop can be loaded with this function:
+                <span class="function">General.EnterShop(<span class="string"></span> scriptName)</span>
+                Enters a shop scene from the overworld.<br>
+                <span class="term">scriptName</span> should be the name of your shop's lua file, without the extension.
 				<br>So, if you have want to load <span class="term">YOURMOD/Lua/Shops/shop.lua</span>, you would use 
 				<span class="term">General.EnterShop("shop")</span>.
 			</p>
 			
-	
-			<h3>Shop variables</h3><br>
+            <hr>
+			<h3>Shop variables</h3>
+            <br>
 			
 			<p>
 				<ul>
-					<li><span class="term">background</span> - A sprite object used as the background of the shop. Optimally, this sprite should be 640x240 
-					pixels.</li><br>
-					<li><span class="term">returnscene</span> - The name of the scene the Player will go back to when exiting the shop.</li>
-					<li><span class="term">returnpos</span> - A table containing the position the Player will appear at in the map when leaving the shop.</li>
-					<li><span class="term">returndir</span> - Direction the Player will face when exiting the shop. 2 = Down, 4 = Left, 6 = Right, 8 = Up.
-					</li><br>
-					<li><span class="term">music</span> - Name of the music file the shop will use. The music file must be .ogg or .wav and must be in
+					<li><span class="userdata">sprite</span> <span class="term">background</span> - A sprite object used as the background of the shop. Optimally, this sprite should be 640x240 pixels.</li>
+                    <br>
+					<li><span class="string"></span> <span class="term">returnscene</span> - The name of the scene the Player will go back to when exiting the shop.</li>
+                    <br>
+					<li><span class="luatable"><span class="number"></span>, <span class="number"></span></span> <span class="term">returnpos</span> - A table containing the position the Player will appear at in the map when leaving the shop.</li>
+                    <br>
+					<li><span class="number"></span> <span class="term">returndir</span> - Direction the Player will face when returned to the overworld.<br>
+                    Possible values:
+                    <ul>
+                        <li><span class="term">2</span>: Down</li>
+                        <li><span class="term">4</span>: Left</li>
+                        <li><span class="term">6</span>: Right</li>
+                        <li><span class="term">8</span>: Up</li>
+                    </ul>
+					</li>
+                    <br>
+					<li><span class="string"></span> <span class="term">music</span> - Name of the music file the shop will use. The music file must be .ogg or .wav and must be in
 					<span class="term">YOURMOD/Audio</span>.</li>
 					<br>
-					<li><span class="term">buylist</span> - A table defining which items the shop will have in store. This table is composed of 3 other tables:
+					<li><span class="luatable"><span class="luatable"><span class="string"></span></span>, 
+                    <span class="luatable"><span class="string"></span></span>, <span class="luatable"><span class="number"></span></span></span> <span class="term">buylist</span> - A table defining which items the shop will have in store.<br>
+                    This table is composed of 3 other tables:
 						<ul>
-							<li>The first table contains the names of the items to be sold. The items must be in the item database (<span class="term">
+							<li>The first table contains the names of the items to be sold.<br>
+                            The items must be in the item database (<span class="term">
 							CYF/Scripts/Inventory/Inventory.cs</span>).</li>
 							<li>The second table contains the descriptions for each item.</li>
-							<li>The third table contains the prices of each item. Use -1 to use the price set in the database (<span class="term">
+							<li>The third table contains the prices of each item.<br>
+                            Use -1 to use the price set in the database (<span class="term">
 							CYF/Scripts/Inventory/Inventory.cs</span>).</li>
 						</ul>
 					</li>
-					<li><span class="term">talklist</span> - A table containing the list of all the talk options in the shop. This table is composed of 2 other tables:
+                    <br>
+					<li><span class="luatable"><span class="luatable"><span class="string"></span></span>, 
+                    <span class="luatable"><span class="luatable"><span class="string"></span></span> or <span class="string"></span></span></span> <span class="term">talklist</span> - A table containing the list of all the talk options in the shop. This table is composed of 2 other tables:
 						<ul>
 							<li>The first table contains the name of each TALK option the Player can pick.</li>
 							<li>The second table contains the text associated with these TALK actions. These can each be a single string or a table of 
 							strings.</li>
 						</ul>
+                        <br>
+                        Example setup:
+                        <div class="code-container">
+                        <pre class="brush: lua;">
+talklist = { { "Job", "Hobbies", "Threaten" },
+{ {"Me?", "I'm just a shopkeeper." }, "Just a shopkeeper.", { "Threats? I'm not impressed, I'm just a shopkeeper." } } }
+                        </pre>
+                        </div>
 					</li>
 					<br>
-					<li><span class="term">maintalk</span> - The text displayed in the main Shop menu.</li>
-					<li><span class="term">buytalk</span> - The text displayed when entering the Buy menu.</li>
-					<li><span class="term">talktalk</span> - The text displayed when entering the Talk menu.</li>
-					<li><span class="term">exittalk</span> - The text displayed when entering the Exit menu.</li>
+					<li><span class="string"></span> <span class="term">maintalk</span> - The text displayed in the main Shop menu.</li>
+                    <br>
+					<li><span class="string"></span> <span class="term">buytalk</span> - The text displayed when entering the Buy menu.</li>
+                    <br>
+					<li><span class="string"></span> <span class="term">talktalk</span> - The text displayed when entering the Talk menu.</li>
+                    <br>
+					<li><span class="string"></span> <span class="term">exittalk</span> - The text displayed when entering the Exit menu.</li>
 				</ul>
 			</p>
 			
-			<h3>Shop functions</h3><br>
-			
+            <hr>
+			<h3>Shop events</h3>
+			<br>
+            
+            These events work the same way as events work in-battle. See <span class="ref">Game events</span>.
+            
             <p>
                 <br><span class="function">Start()</span>
-				This function is launched when entering the shop. 
+				This event is called when entering the shop. 
 				<br>It is advised to set the background's image here.
             </p>
 			
             <p>
                 <br><span class="function">Update()</span>
 				Every well-functioning script needs an Update() function.<br>
-				This function is launched once per frame.
+				This function is called once per frame.
             </p>
 			
             <p>
                 <br><span class="function">EnterMenu()</span>
-				Launched when entering the main Shop menu.
+				Entered when entering the main Shop menu.
             </p>
 			
             <p>
                 <br><span class="function">EnterBuy()</span>
-				Launched when entering the Buy menu.
+				Entered when entering the Buy menu.
             </p>
 			
             <p>
-                <br><span class="function">SuccessBuy(string itemName)</span>
-				Launched when an item is successfully purchased.
+                <br><span class="function">SuccessBuy(<span class="string"></span> itemName)</span>
+				Entered when an item is successfully purchased.
 				<br><span class="term">itemName</span> is the name of the item bought.
             </p>
 			
             <p>
-                <br><span class="function">FailBuy(string error)</span>
-				Launched when the Player tries to buy an item, but can't. 
+                <br><span class="function">FailBuy(<span class="string"></span>error)</span>
+				Entered when the Player tries to buy an item, but can't. 
 				<br><span class="term">error</span> has two possible values:
 				<ul>
-					<li><span class="term">"gold"</span> - Used if the Player doesn't have enough Gold.</li>
-					<li><span class="term">"full"</span> - Used if the Player's inventory is full.</li>
+					<li><span class="term">"gold"</span> - If the Player doesn't have enough Gold.</li>
+					<li><span class="term">"full"</span> - If the Player's inventory is full.</li>
 				</ul>
             </p>
 			
             <p>
                 <br><span class="function">ReturnBuy()</span>
-				Launched when the player selects an item to buy, then chooses "No" or presses the Cancel button.
+				Entered when the player selects an item to buy, then chooses "No" or presses the Cancel button.
             </p>
 			
             <p>
                 <br><span class="function">EnterSell()</span>
-				Launched when entering the Sell menu.
+				Entered when entering the Sell menu.
 				<br>To prevent the player from selling, use the function <span class="term">Interrupt()</span> here (see below).
             </p>
 			
             <p>
-                <br><span class="function">SuccessSell(string itemName)</span>
-				Launched when an item is successfully sold. 
+                <br><span class="function">SuccessSell(<span class="string"></span> itemName)</span>
+				Entered when an item is successfully sold. 
 				<br><span class="term">itemName</span> is the name of the item sold.
             </p>
 			
             <p>
                 <br><span class="function">FailSell()</span>
-				Launched if the player's inventory is empty and they try to enter the Sell menu.
+				Entered if the player's inventory is empty and they try to enter the Sell menu.
             </p>
 			
             <p>
                 <br><span class="function">ReturnSell()</span>
-				Launched when the player selects an item to sell, then chooses "No" or presses the Cancel button.
+				Entered when the player selects an item to sell, then chooses "No" or presses the Cancel button.
             </p>
 			
             <p>
                 <br><span class="function">EnterTalk()</span>
-				Launched when entering the Talk menu.
+				Entered when entering the Talk menu.
             </p>
 			
             <p>
-                <br><span class="function">SuccessTalk(strig talkOption)</span>
-				Launched when a Talk option is successfully selected.
+                <br><span class="function">SuccessTalk(<span class="string"></span> talkOption)</span>
+				Entered when a Talk option is successfully selected.
 				<br><span class="term">talkOption</span> is the name of the option selected.
             </p>
 			
             <p>
                 <br><span class="function">EnterExit()</span>
-				Launched when choosing the Exit option.
+				Entered when choosing the Exit option.
             </p>
 			
 			<p>
-                <br><span class="function">Interrupt(table text, string newState = "MENU")</span>
-                Interrupts any current state (except the INTERRUPT state) to display the message given in <span class="term">text</span>.<br>
-				At the end of the message, the state <span class="term">newState</span> will be entered.<br>
-				<i>I advise you to not use this to enter the states</i> <span class="term">BUYCONFIRM</span>, 
+                <br><span class="function">Interrupt(<span class="luatable"><span class="string"></span></span> text, <span class="string"></span> newState = "MENU")</span>
+                Interrupts any current state (except the <span class="term">INTERRUPT</span> state) to display the message given in 
+                <span class="term">text</span>.<br>
+				At the end of the message, the state <span class="term">newState</span> will be entered.<br><br>
+				<i>I advise for you to not use this to enter the states</i> <span class="term">BUYCONFIRM</span>, 
 				<span class="term">SELLCONFIRM</span> <i>or</i> <span class="term">TALKINPROGRESS</span>.
             </p>
 			
 			<p>
-                <br><span class="function">OnInterrupt(string newState)</span>
-				This function is launched when entering the Interrupt state.
+                <br><span class="function">OnInterrupt(<span class="string"></span> newState)</span>
+				This function is called when entering the Interrupt state.
 				<br><span class="term">newState</span> is the name of the state the Player will enter when the 
 				Interrupt state finishes its text.<br>
             </p>
 			
-			<h3>Additional info</h3><br><br>
+            <hr>
+			<h3>Additional info</h3>
+            <br>
 			
 			<p>
-				The layers in the Shop scene aren't the same as everywhere else. This is the Shop script's 
-				layering system: 
+				The layers in the Shop scene aren't the same as everywhere else.<br>
+                This is the Shop script's layering system: 
 				<ul>
 				    <li><span class="term">"Bottom"</span>: Under everything, even the background.</li><br>
 				    <li><span class="term">"BelowUI"</span>: Above the background.</li><br>

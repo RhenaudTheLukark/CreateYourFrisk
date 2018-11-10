@@ -62,14 +62,14 @@ it's w3c valid, at least
                     <li><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory System</a></li>
                     <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
                     <li><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
-				<li class="li-header">Overworld</li>
+                <li class="li-header">Overworld</li>
                     <li><a href="overworld.html"><span class="CYF"></span> Basics</a></li>
                     <li><a href="overworld-howto-map.html"><span class="CYF"></span> How to create a map</a></li>
                     <li><a href="overworld-howto-event.html"><span class="CYF"></span> How to create an event</a></li>
                     <li><a href="overworld-howto-animevent.html"><span class="CYF"></span> How to animate an event</a></li>
                     <li><a href="overworld-howto-shop.html"><span class="CYF"></span> How to create a shop</a></li>
-                    <li><a href="overworld-object-general.html"><span class="CYF"></span> The General Object</a></li>
-                    <li style="margin-left:5px;">> <span class="CYF"></span> The Event Object <</li>
+                    <li><a href="overworld-object-general.html"> <span class="CYF"></span> The General Object</a></li>
+                    <li class="active" style="margin-left:5px;">> <span class="CYF"></span> The Event Object <</li>
                     <li><a href="overworld-object-player.html"><span class="CYF"></span> The Player Object</a></li>
                     <li><a href="overworld-object-screen.html"><span class="CYF"></span> The Screen Object</a></li>
                     <li><a href="overworld-object-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
@@ -84,92 +84,111 @@ it's w3c valid, at least
 		<div class="tab-pane active text-style" id="overworld-object-event">
             <h2><span class="CYF"></span>The Overworld: The Event Object</h2><br><br>
             <p>
-                <br><span class="function">Event.Teleport(string name, number dirX, number dirY)</span>
+                <br><span class="function">Event.Teleport(<span class="string"></span> name, <span class="number"></span> dirX, 
+                <span class="number"></span> dirY)</span>
                 Teleports the given event to a given point in space. The position (dirX and dirY) is computed based off of the bottom left corner of the map.
             </p>
             <p>
-                <br><span class="function">Event.MoveToPoint(string name, number dirX, number dirY, bool wallPass = false, bool waitEnd = true)</span>
+                <br><span class="function">Event.MoveToPoint(<span class="string"></span> name, <span class="number"></span> dirX, 
+                <span class="number"></span> dirY, <span class="boolean"></span> wallPass = false, <span class="boolean"></span> waitEnd = true)</span>
                 Moves an event to a given point in space. The event's speed will be the speed variable of its <span class="term">EventOW</span> 
-				component, so choose that wisely.<br>
-				Set <span class="term">wallPass</span> to true to ignore any obstacle that the event may encounter while moving.
-				<br>By default, the script will pause until the event has stopped moving. Set <span class="term">waitEnd</span> to false
-				to bypass this and directly continue the script instead.
+				component, so choose that wisely, or use <span class="term">Event.SetSpeed()</span>.<br>
+				Set <span class="term">wallPass</span> to true to ignore any obstacles that the event may encounter while moving.<br><br>
+                By default, the script will pause until the event has stopped moving. Set <span class="term">waitEnd</span> to false
+				to bypass this and continue the script instead.
             </p>
             <p>
-                <br><span class="function">Event.SetAnimHeader(string name, string anim)</span>
-                If the event given has a CYFAnimator component, it'll set <span class="term">anim</span> as its anim header.<br>
-                Don't forget that if the anim header is an existing animation, that animation will be launched instead of the component's 
-				normal behaviour.               
+                <br><span class="function">Event.SetAnimHeader(<span class="string"></span> name, <span class="string"></span> anim)</span>
+                If the event given has a <span class="term">CYFAnimator</span> component, this will set its <span class="term">Special Header</span> 
+                property to <span class="term">anim</span>.<br><br>
+                Read about how the <span class="term">Special Header</span> works in <span class="ref">How to animate an event</span>.
             </p>
             <p>
-                <br><span class="function">Event.GetAnimHeader(string name)</span>
-                Returns the anim header of the given event, if it has a CYFAnimator event.
+                <br><span class="function">Event.GetAnimHeader(string name) returns <span class="string"></span></span>
+                If the event given has a <span class="term">CYFAnimator</span> component, this will return its <span class="term">Special Header</span> 
+                value.
             </p>
             <p>
-                <br><span class="function">Event.SetDirection(string name, int dir)</span>
-                If the event has a CYFAnimator component, it sets the direction of the event.<br>
-                2 for Down, 4 for Left, 6 for Right and 8 for Up.
+                <br><span class="function">Event.SetDirection(<span class="string"></span> name, <span class="number"></span> dir)</span>
+                If the event has a CYFAnimator component, this sets the direction the event is facing.<br>
+                Possible values:
+                <ul>
+                    <li><span class="term">2</span>: Down</li>
+                    <li><span class="term">4</span>: Left</li>
+                    <li><span class="term">6</span>: Right</li>
+                    <li><span class="term">8</span>: Up</li>
+                </ul>
             </p>
             <p>
-                <br><span class="function">Event.Rotate(string name, float rotateX, float rotateY, float rotateZ, bool anim = true, bool waitEnd = true)</span>
+                <br><span class="function">Event.Rotate(<span class="string"></span> name, <span class="number"></span> rotateX, 
+                <span class="number"></span> rotateY, <span class="number"></span> rotateZ, <span class="boolean"></span> anim = true, 
+                <span class="boolean"></span> waitEnd = true)</span>
                 This function rotates the event. The Z rotation is the rotation we normally use, while X and Y rotations are 3D rotations.
                 <br>To see some examples of rotation, remove the comment block of the function <span class="term">EventPage4</span> of  
 				<span class="term">Mods/Examples/Lua/Events/EventTest.lua</span>.<br>
-                Set <span class="term">anim</span> to false to disable the animation of the rotation. 
-				<br>By default, the script will pause until the event has stopped rotating. Set <span class="term">waitEnd</span> to false
-				to bypass this and directly continue the script instead.
+                Set <span class="term">anim</span> to false to make the rotation instantaneous.<br><br>
+                By default, the script will pause until the event has stopped rotating. Set <span class="term">waitEnd</span> to false
+				to bypass this and continue the script instead.
             </p>
             <p>
                 <br><span class="function">Event.Stop()</span>
-                If this function is launched in a normal event, it stops the event instantly.
-                If it's launched in a coroutine event, it'll launch <span class="term">Event.StopCoroutine()</span> instead. If you want to 
-				stop the coroutine instantly, just add <span class="term">return</span> after this function.
+                If this function is called in a normal event, it stops the event instantly.<br>
+                If called in a coroutine event, this will call <span class="term">Event.StopCoroutine()</span> instead.<br>
+                If you want to stop the coroutine instantly, just add <span class="term">return</span> after this function.
             </p>
             <p>
-                <br><span class="function">Event.StopCoroutine(string eventName = "thisevent")</span>
-                Stops the coroutine of the given event. Use the string <span class="term">thisevent</span> to stop the coroutine of this event.
+                <br><span class="function">Event.StopCoroutine(<span class="string"></span> eventName = "thisevent")</span>
+                Stops the coroutine of the given event.<br>
+                Use the string <span class="term">thisevent</span> to stop the coroutine of the calling event.
             </p>
             <p>
-                <br><span class="function">Event.Remove(string name)</span>
-				Remove the given event from the scene. It won't be accessible afterwards until the player exits the scene! 
-                However, if the player comes back, it'll be here again.<br>
+                <br><span class="function">Event.Remove(<span class="string"></span> name)</span>
+				Removes the given event from the scene.<br>
+                Then, it won't be accessible until the player re-enters the room!<br><br>
                 To permanently remove an event, set its page to -1.
             </p>
             <p>
-                <br><span class="function">Event.SetPage(string name, int page)</span>
-				Sets the page of the given event. Set it to -1 to totally remove an event.
+                <br><span class="function">Event.SetPage(<span class="string"></span> name, <span class="number"></span> page)</span>
+				Sets the page of a given event.<br>
+                Set it to -1 to totally remove the event.
             </p>
             <p>
-                <br><span class="function">Event.GetPage(string name)</span>
+                <br><span class="function">Event.GetPage(<span class="string"></span> name) returns <span class="number"></span></span>
 				Returns the current page of the given event.
             </p>
             <p>
-                <br><span class="function">Event.GetSprite(string name)</span>
+                <br><span class="function">Event.GetSprite(<span class="string"></span> name) returns <span class="string"></span></span>
 				Returns the sprite object of the given event.
             </p>
             <p>
-                <br><span class="function">Event.CenterOnCamera(string name, int speed = 5, bool straightLine = false, bool waitEnd = true)</span>
-				Centers the camera on the given event. The camera's speed will be <span class="term">speed</span> pixels per second in each direction, 
-                unless you set <span class="term">straightLine</span> to true. In that case, the camera will follow a line to the center of the event.
-				<br>By default, the script will halt execution until the camera has stopped moving. Set <span class="term">waitEnd</span> to false
-				to bypass this and directly continue the script instead. 
+                <br><span class="function">Event.CenterOnCamera(<span class="string"></span> name, <span class="number"></span> speed = 5, 
+                <span class="boolean"></span> straightLine = false, <span class="boolean"></span> waitEnd = true)</span>
+				Centers the camera on the given event.<br>
+                The camera's speed will be <span class="term">speed</span> pixels per second in each direction, unless you set 
+                <span class="term">straightLine</span> to true.<br>
+                In that case, the camera will follow a line to the center of the event.<br><br>
+				By default, the script will halt execution until the camera has stopped moving.<br>
+                Set <span class="term">waitEnd</span> to false to bypass this and continue the script instead. 
             </p>
             <p>
-                <br><span class="function">Event.GetName()</span>
-                Returns the name of the event which is launching this function.
+                <br><span class="function">Event.GetName() returns <span class="string"></span></span>
+                Returns the name of the calling event.
             </p>
             <p>
-                <br><span class="function">Event.GetPosition(string name)</span>
+                <br><span class="function">Event.GetPosition(<span class="string"></span> name) returns 
+                <span class="luatable"><span class="number"></span>, <span class="number"></span></span></span>
                 Returns a table of two values containing the position of the given event.
             </p>
             <p>
-                <br><span class="function">Event.IgnoreCollision(string name, bool ignore)</span>
-                Sets the collision mode of the event. If <span class="term">ignore</span> is set to true, 
-				all other events may pass through it normally.<br>
-				Events launched when the player touches them need their collision to be ignored in order to function properly.
+                <br><span class="function">Event.IgnoreCollision(<span class="string"></span> name, <span class="boolean"></span> ignore)</span>
+                Sets the collision mode of the event.<br>
+                If <span class="term">ignore</span> is set to true, 
+				all other events may pass through it normally.<br><br>
+				Events activated when the player touches them (touch-enabled events, see <span class="ref">How to create an event</span>) need their 
+                collision to be ignored in order to function properly.
             </p>
             <p>
-                <br><span class="function">Event.SetSpeed(string name, float speed)</span>
+                <br><span class="function">Event.SetSpeed(<span class="string"></span> name, <span class="number"></span> speed)</span>
                 Sets the speed of an event.
             </p>
         </div>
