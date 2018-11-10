@@ -21,8 +21,8 @@ public class SelectOMatic : MonoBehaviour {
     private float ExitButtonAlpha = 5f; 
     
     // used to prevent the player from erasing real/almighty globals by accident
-    private float RealGlobalCooldown = 0f;
-    private float AlMightyGlobalCooldown = 0f;
+    private int RealGlobalCooldown = 0;
+    private int AlMightyGlobalCooldown = 0;
     
     // Use this for initialization
     private void Start() {
@@ -110,14 +110,14 @@ public class SelectOMatic : MonoBehaviour {
             
             // reset RealGlobals
             devMod.transform.Find("ResetRG").GetComponent<Button>().onClick.AddListener(() => {
-                if (RealGlobalCooldown > 0f) {
+                if (RealGlobalCooldown > 0) {
                     LuaScriptBinder.ClearVariables();
                     if (!GlobalControls.crate)
                         devMod.transform.Find("ResetRG").GetComponentInChildren<Text>().text =     "RealGlobals Erased!";
                     else
                         devMod.transform.Find("ResetRG").GetComponentInChildren<Text>().text ="REELGOLBELZ\nDELEET!!!!!";
                 } else {
-                    RealGlobalCooldown = 3f;
+                    RealGlobalCooldown = 60 * 2;
                     if (!GlobalControls.crate)
                         devMod.transform.Find("ResetRG").GetComponentInChildren<Text>().text = "Are you sure?";
                     else
@@ -127,14 +127,14 @@ public class SelectOMatic : MonoBehaviour {
             
             // reset AlMighties
             devMod.transform.Find("ResetAG").GetComponent<Button>().onClick.AddListener(() => {
-                if (AlMightyGlobalCooldown > 0f) {
+                if (AlMightyGlobalCooldown > 0) {
                     LuaScriptBinder.ClearVariables();
                     if (!GlobalControls.crate)
                         devMod.transform.Find("ResetAG").GetComponentInChildren<Text>().text =        "AlMighty Erased!";
                     else
                         devMod.transform.Find("ResetAG").GetComponentInChildren<Text>().text =  "ALMEIGHTIZ DELEET!!!!!";
                 } else {
-                    AlMightyGlobalCooldown = 3f;
+                    AlMightyGlobalCooldown = 60 * 2;
                     if (!GlobalControls.crate)
                         devMod.transform.Find("ResetAG").GetComponentInChildren<Text>().text = "Are you sure?";
                     else
@@ -462,20 +462,20 @@ public class SelectOMatic : MonoBehaviour {
         }
         
         // make the player click twice to reset RG or AG
-        if (RealGlobalCooldown > 0f)
-            RealGlobalCooldown -= 0.05f;
-        else if (RealGlobalCooldown == 0f) {
-            RealGlobalCooldown = -1f;
+        if (RealGlobalCooldown > 0)
+            RealGlobalCooldown -= 1;
+        else if (RealGlobalCooldown == 0) {
+            RealGlobalCooldown = -1;
             if (!GlobalControls.crate)
                 devMod.transform.Find("ResetRG").GetComponentInChildren<Text>().text =    "Reset RealGlobals";
             else
                 devMod.transform.Find("ResetRG").GetComponentInChildren<Text>().text =     "RSETE RAELGLOBALS";
         }
         
-        if (AlMightyGlobalCooldown > 0f) {
-            AlMightyGlobalCooldown -= 0.05f;
-        } else if (AlMightyGlobalCooldown == 0f) {
-            AlMightyGlobalCooldown = -1f;
+        if (AlMightyGlobalCooldown > 0) {
+            AlMightyGlobalCooldown -= 1;
+        } else if (AlMightyGlobalCooldown == 0) {
+            AlMightyGlobalCooldown = -1;
             if (!GlobalControls.crate)
                 devMod.transform.Find("ResetAG").GetComponentInChildren<Text>().text =     "Reset AlMighty";
             else
