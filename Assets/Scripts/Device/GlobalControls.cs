@@ -116,8 +116,10 @@ public class GlobalControls : MonoBehaviour {
             
             // move the window to the correct place on screen when the user exits fullscreen! hooray!
             // yes, this check is correct, even though it appears to check for the wrong value. I don't know why
-            if (Screen.fullScreen)
-                StartCoroutine(RepositionScreen());
+            #if UNITY_STANDALONE_WIN || UNITY_EDITOR
+                if (Screen.fullScreen)
+                    StartCoroutine(RepositionScreen());
+            #endif
         }
     }
     
