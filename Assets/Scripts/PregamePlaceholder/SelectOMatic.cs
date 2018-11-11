@@ -16,6 +16,7 @@ public class SelectOMatic : MonoBehaviour {
     private float animationTimer = 0;
     
     private static float modListScroll = 0.0f; // used to keep track of the position of the mod list specifically. resets if you press escape
+    private static float encounterListScroll = 0.0f; // used to keep track of the position of the encounter list. resets if you press escape
     
     // used to fade the "Exit" button in and out
     private float ExitButtonAlpha = 5f; 
@@ -216,6 +217,9 @@ public class SelectOMatic : MonoBehaviour {
             if (encounters.Count > 1)
                 encounterSelection();
             
+            // move the scrolly bit to where it was when the player entered the encounter
+            encounterBox.transform.Find("ScrollCutoff/Content").gameObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, encounterListScroll);
+            
             // start the Exit button at half transparency
             ExitButtonAlpha = 0.5f;
             GameObject.Find("BtnExit/Text").gameObject.GetComponent<Text>().color       = new Color(1f, 1f, 1f, 0.5f);
@@ -224,9 +228,11 @@ public class SelectOMatic : MonoBehaviour {
             // reset it to let us accurately tell if the player just came here from the Disclaimer scene or the Battle scene
             StaticInits.ENCOUNTER = "";
         // player is coming here from the Disclaimer scene
-        } else
+        } else {
             // when the player enters from the Disclaimer screen, reset stored scroll positions
             modListScroll = 0.0f;
+            encounterListScroll = 0.0f;
+        }
     }
     
     // A special function used specifically for error handling
@@ -248,6 +254,10 @@ public class SelectOMatic : MonoBehaviour {
         
         // dim the background to indicate loading
         GameObject.Find("ModBackground").GetComponent<Image>().color = new Color(1f, 1f, 1f, 0.1875f);
+        
+        // store the current position of the scrolly bit
+        encounterListScroll = encounterBox.transform.Find("ScrollCutoff/Content").gameObject.GetComponent<RectTransform>().anchoredPosition.y;
+        
         yield return new WaitForEndOfFrame();
         /*int width = Screen.width;
         int height = Screen.height;
