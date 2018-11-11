@@ -186,7 +186,7 @@ public class LuaGeneralOW {
         NewMusicManager.DestroyChannel("StaticKeptAudio");
         GameObject.Destroy(GameObject.Find("Player"));
         GameObject.Destroy(GameObject.Find("Canvas OW"));
-        StaticInits.MODFOLDER = "Title";
+        StaticInits.MODFOLDER = "@Title";
         StaticInits.Initialized = false;
         StaticInits.InitAll();
         GameObject.Destroy(GameObject.Find("Main Camera OW"));

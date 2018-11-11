@@ -22,7 +22,7 @@ public class DisclaimerScript : MonoBehaviour {
                 else                       Misc.WindowName = ControlPanel.instance.WindowBasisName;
             #endif
             SaveLoad.LoadAlMighty();
-            LuaScriptBinder.Set(null, "ModFolder", DynValue.NewString("Title"));
+            LuaScriptBinder.Set(null, "ModFolder", DynValue.NewString("@Title"));
             
             UnitaleUtil.AddKeysToMapCorrespondanceList();
             

@@ -24,23 +24,19 @@ public class ScriptRegistry {
     public static void init() {
         dict.Clear();
         for (int i = 0; i < folders.Length; i++) {
-            string modPath = FileLoader.pathToModFile("Lua/" + folders[i]);
-            //string defaultPath = FileLoader.pathToDefaultFile("Lua/" + folders[i]);
-            loadAllFrom(modPath, prefixes[i]);
-            //loadAllFrom(defaultPath, prefixes[i]);
+            loadAllFrom(folders[i], prefixes[i], i < 3 && !(StaticInits.MODFOLDER == "@Title"));
         }
     }
 
-    private static void loadAllFrom(string directoryPath, string script_prefix) {
+    private static void loadAllFrom(string folderName, string script_prefix, bool needed) {
+        string directoryPath = FileLoader.pathToModFile("Lua/" + folderName);
         DirectoryInfo dInfo = new DirectoryInfo(directoryPath);
-        FileInfo[] fInfo;
-
         if (!dInfo.Exists) {
-            UnitaleUtil.DisplayLuaError("mod loading", "You tried to load the mod \"" + StaticInits.MODFOLDER + "\" but it can't be found, or at least its \"Lua\" folder can't be found.\nAre you sure it exists?");
+            if (needed)
+                UnitaleUtil.DisplayLuaError("mod loading", "You tried to load the mod \"" + StaticInits.MODFOLDER + "\" but it can't be found, or at least its \"Lua/" + folderName + "\" folder can't be found.\nAre you sure it exists?");
+            return;
         }
-
-        fInfo = dInfo.GetFiles("*.lua", SearchOption.AllDirectories);
-
+        FileInfo[] fInfo = dInfo.GetFiles("*.lua", SearchOption.AllDirectories);
         foreach (FileInfo file in fInfo) {
             //UnitaleUtil.writeInLog(file.Name);
             string scriptName = FileLoader.getRelativePathWithoutExtension(directoryPath, file.FullName).ToLower();

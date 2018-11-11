@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 public static class StaticInits {
     public static string MODFOLDER;
     public static string ENCOUNTER = "";
-    public static string EDITOR_MODFOLDER = "Title";
+    public static string EDITOR_MODFOLDER = "@Title";
     private static bool firstInit = false;
 
     public static bool Initialized { get; set; }
