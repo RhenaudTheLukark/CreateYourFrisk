@@ -28,11 +28,13 @@ public class LuaInventory {
             
             List<UnderItem> inv = new List<UnderItem>();
             bool result = false;
-            for (var i = 0; i < Inventory.inventory.Count; i++) {
+            for (var i = 0; i <= Inventory.inventory.Count; i++) {
                 if (i == index - 1) {
                     inv.Add(new UnderItem(Name));
                     result = true;
                 }
+                if (i == Inventory.inventory.Count)
+                    break;
                 inv.Add(Inventory.inventory[i]);
             }
             Inventory.inventory = inv;
