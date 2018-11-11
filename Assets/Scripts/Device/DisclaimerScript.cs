@@ -61,6 +61,7 @@ public class DisclaimerScript : MonoBehaviour {
             StaticInits.MODFOLDER = StaticInits.EDITOR_MODFOLDER;
             StaticInits.Initialized = false;
             StaticInits.InitAll();
+            GlobalControls.modDev = false;
             SceneManager.LoadScene("Intro");
             Destroy(this);
         } else if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)) {
