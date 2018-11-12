@@ -164,11 +164,11 @@ it's w3c valid, at least
                     properties. Trying to move a removed bullet will give you a Lua error. If you're not sure if your
                     bullet still exists, check <span class="term">Bullet.isactive</span> first.
                 </li><br>
-                <li><span class="term">Bullet.SetVar(<span class="string"></span> your_variable_name, value)</span> - Set a variable on this bullet that you can retrieve with
+                <li><span class="term">Bullet.SetVar(<span class="string"></span> your_variable_name, value)</span> or <span class="CYF"></span> <span class="term">Bullet[<span class="string"></span> your_variable_name] = value</span> - Set a variable on this bullet that you can retrieve with
                     <span class="term">Bullet.GetVar(<span class="string"></span> your_variable_name)</span>. Similar in use to <span class="term">SetGlobal()</span> - but
                     you can use this to store specific variables on a per-bullet basis.
                 </li><br>
-                <li><span class="term">Bullet.GetVar(<span class="string"></span> your_variable_name)</span> - Get a variable that you previously set using
+                <li><span class="term">Bullet.GetVar(<span class="string"></span> your_variable_name)</span> or <span class="CYF"></span> <span class="term">Bullet[<span class="string"></span> your_variable_name]</span> - Get a variable that you previously set using
                     <span class="term">Bullet.SetVar()</span>.
                 </li><br>
                 <li><span class="term">Bullet.SendToTop()</span> - Moves this bullet on top of all currently existing projectiles. Note that newly
