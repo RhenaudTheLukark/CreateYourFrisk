@@ -116,6 +116,7 @@ public class SelectOMatic : MonoBehaviour {
             devMod.transform.Find("ResetRG").GetComponent<Button>().onClick.AddListener(() => {
                 if (RealGlobalCooldown > 0) {
                     LuaScriptBinder.ClearVariables();
+                    RealGlobalCooldown = 60 * 2;
                     if (!GlobalControls.crate)
                         devMod.transform.Find("ResetRG").GetComponentInChildren<Text>().text =     "RealGlobals Erased!";
                     else
@@ -133,6 +134,7 @@ public class SelectOMatic : MonoBehaviour {
             devMod.transform.Find("ResetAG").GetComponent<Button>().onClick.AddListener(() => {
                 if (AlMightyGlobalCooldown > 0) {
                     LuaScriptBinder.ClearVariables();
+                    AlMightyGlobalCooldown = 60 * 2;
                     if (!GlobalControls.crate)
                         devMod.transform.Find("ResetAG").GetComponentInChildren<Text>().text =        "AlMighty Erased!";
                     else
