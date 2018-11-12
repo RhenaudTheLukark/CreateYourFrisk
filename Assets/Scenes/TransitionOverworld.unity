@@ -2756,7 +2756,7 @@ Prefab:
     - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
         type: 2}
       propertyPath: anims.Array.data[40].transitionTime
-      value: 0.25
+      value: 0.1875
       objectReference: {fileID: 0}
     - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
         type: 2}
@@ -2771,7 +2771,7 @@ Prefab:
     - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
         type: 2}
       propertyPath: anims.Array.data[41].transitionTime
-      value: 0.25
+      value: 0.1875
       objectReference: {fileID: 0}
     - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
         type: 2}
@@ -2786,7 +2786,7 @@ Prefab:
     - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
         type: 2}
       propertyPath: anims.Array.data[42].transitionTime
-      value: 0.25
+      value: 0.1875
       objectReference: {fileID: 0}
     - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
         type: 2}
@@ -2801,7 +2801,7 @@ Prefab:
     - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
         type: 2}
       propertyPath: anims.Array.data[43].transitionTime
-      value: 0.25
+      value: 0.1875
       objectReference: {fileID: 0}
     - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
         type: 2}
@@ -2889,7 +2889,107 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 11463766, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
       propertyPath: speed
-      value: 2
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
+        type: 2}
+      propertyPath: anims.Array.data[0].transitionTime
+      value: 0.1875
+      objectReference: {fileID: 0}
+    - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
+        type: 2}
+      propertyPath: anims.Array.data[3].transitionTime
+      value: 0.1875
+      objectReference: {fileID: 0}
+    - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
+        type: 2}
+      propertyPath: anims.Array.data[2].transitionTime
+      value: 0.1875
+      objectReference: {fileID: 0}
+    - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
+        type: 2}
+      propertyPath: anims.Array.data[1].transitionTime
+      value: 0.1875
+      objectReference: {fileID: 0}
+    - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
+        type: 2}
+      propertyPath: anims.Array.data[8].transitionTime
+      value: 0.1875
+      objectReference: {fileID: 0}
+    - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
+        type: 2}
+      propertyPath: anims.Array.data[9].transitionTime
+      value: 0.1875
+      objectReference: {fileID: 0}
+    - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
+        type: 2}
+      propertyPath: anims.Array.data[10].transitionTime
+      value: 0.1875
+      objectReference: {fileID: 0}
+    - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
+        type: 2}
+      propertyPath: anims.Array.data[11].transitionTime
+      value: 0.1875
+      objectReference: {fileID: 0}
+    - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
+        type: 2}
+      propertyPath: anims.Array.data[16].transitionTime
+      value: 0.1875
+      objectReference: {fileID: 0}
+    - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
+        type: 2}
+      propertyPath: anims.Array.data[17].transitionTime
+      value: 0.1875
+      objectReference: {fileID: 0}
+    - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
+        type: 2}
+      propertyPath: anims.Array.data[18].transitionTime
+      value: 0.1875
+      objectReference: {fileID: 0}
+    - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
+        type: 2}
+      propertyPath: anims.Array.data[19].transitionTime
+      value: 0.1875
+      objectReference: {fileID: 0}
+    - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
+        type: 2}
+      propertyPath: anims.Array.data[24].transitionTime
+      value: 0.1875
+      objectReference: {fileID: 0}
+    - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
+        type: 2}
+      propertyPath: anims.Array.data[25].transitionTime
+      value: 0.1875
+      objectReference: {fileID: 0}
+    - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
+        type: 2}
+      propertyPath: anims.Array.data[26].transitionTime
+      value: 0.1875
+      objectReference: {fileID: 0}
+    - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
+        type: 2}
+      propertyPath: anims.Array.data[27].transitionTime
+      value: 0.1875
+      objectReference: {fileID: 0}
+    - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
+        type: 2}
+      propertyPath: anims.Array.data[32].transitionTime
+      value: 0.1875
+      objectReference: {fileID: 0}
+    - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
+        type: 2}
+      propertyPath: anims.Array.data[34].transitionTime
+      value: 0.1875
+      objectReference: {fileID: 0}
+    - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
+        type: 2}
+      propertyPath: anims.Array.data[33].transitionTime
+      value: 0.1875
+      objectReference: {fileID: 0}
+    - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
+        type: 2}
+      propertyPath: anims.Array.data[35].transitionTime
+      value: 0.1875
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
