@@ -420,6 +420,16 @@ public class GameOverBehavior : MonoBehaviour {
         if (!GlobalControls.modDev) {
             TPHandler tp = Instantiate(Resources.Load<TPHandler>("Prefabs/TP On-the-fly"));
             tp.sceneName = LuaScriptBinder.Get(null, "PlayerMap").String;
+            
+            if (UnitaleUtil.MapCorrespondanceList.ContainsValue(tp.sceneName)) {
+                foreach (KeyValuePair<string, string> entry in UnitaleUtil.MapCorrespondanceList) {
+                    if (entry.Value == tp.sceneName) {
+                        tp.sceneName = entry.Key;
+                        break;
+                    }
+                }
+            }
+            
             tp.position = new Vector3((float)LuaScriptBinder.Get(null, "PlayerPosX").Number, (float)LuaScriptBinder.Get(null, "PlayerPosY").Number, LuaScriptBinder.Get(null, "PlayerPosZ") == null ? 0 : (float)LuaScriptBinder.Get(null, "PlayerPosZ").Number);
             tp.direction = 2;
             tp.noFadeIn = true;
