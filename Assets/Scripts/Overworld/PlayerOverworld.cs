@@ -301,27 +301,29 @@ public class PlayerOverworld : MonoBehaviour {
                                      "Hope you liked it!" },
                           true, new string[] { "rtlukark_angry", "rtlukark_normal", "rtlukark_waitwhat", "rtlukark_angry", "rtlukark_determined", "rtlukark_perv", "rtlukark_determined" });
             } else*/
-            if (Input.GetKeyDown("m"))
-                GameObject.Find("Main Camera OW").GetComponent<AudioSource>().time = Random.value * GameObject.Find("Main Camera OW").GetComponent<AudioSource>().clip.length;
-            else if (Input.GetKeyDown("h") && SceneManager.GetActiveScene().name == "test2") {
-                /*if (GameObject.Find("Event1").GetComponent<EventOW>().actualPage == 4)
-                    rolled++;
-                if (GameObject.Find("Event1").GetComponent<EventOW>().actualPage == 666) {
-                    LuaEventOW.SetPage2("Event1", 1); 
-                    rolled++;
-                } else*/
-                LuaEventOW.SetPage2("Event1", (GameObject.Find("Event1").GetComponent<EventOW>().actualPage + 1) % 4);
-                /*if (GameObject.Find("Event1").GetComponent<EventOW>().actualPage == 1 && rolled % 4 == 3)  LuaEventOW.SetPage2("Event1", 666);
-                else*/
-                if (GameObject.Find("Event1").GetComponent<EventOW>().actualPage == 0) LuaEventOW.SetPage2("Event1", 4);
-                /*if (GameObject.Find("Event1").GetComponent<EventOW>().actualPage == 666)
-                    SetDialog(new string[] { "[color:ff0000]Event page = " + GameObject.Find("Event1").GetComponent<EventOW>().actualPage + " :)" }, true, new string[] { "rtlukark_determimed" });
-                else*/
-                SetDialog(new string[] { "Event page = " + GameObject.Find("Event1").GetComponent<EventOW>().actualPage + "." }, true, DynValue.NewString("rtlukark_determined"));
-            } else if (Input.GetKeyDown("t") && GameObject.Find("textframe_border_outer").GetComponent<Image>().color.a == 0)
-                SetDialog(new string[] { "Your game is saved at\n" + Application.persistentDataPath + "/save.gd" }, true, null);
-            else if (Input.GetKeyDown("b"))
-                SetEncounterAnim();
+            if (SceneManager.GetActiveScene().name == "test2") {
+                if (Input.GetKeyDown("m"))
+                    GameObject.Find("Main Camera OW").GetComponent<AudioSource>().time = Random.value * GameObject.Find("Main Camera OW").GetComponent<AudioSource>().clip.length;
+                else if (Input.GetKeyDown("h") && SceneManager.GetActiveScene().name == "test2") {
+                    /*if (GameObject.Find("Event1").GetComponent<EventOW>().actualPage == 4)
+                        rolled++;
+                    if (GameObject.Find("Event1").GetComponent<EventOW>().actualPage == 666) {
+                        LuaEventOW.SetPage2("Event1", 1); 
+                        rolled++;
+                    } else*/
+                    LuaEventOW.SetPage2("Event1", (GameObject.Find("Event1").GetComponent<EventOW>().actualPage + 1) % 4);
+                    /*if (GameObject.Find("Event1").GetComponent<EventOW>().actualPage == 1 && rolled % 4 == 3)  LuaEventOW.SetPage2("Event1", 666);
+                    else*/
+                    if (GameObject.Find("Event1").GetComponent<EventOW>().actualPage == 0) LuaEventOW.SetPage2("Event1", 4);
+                    /*if (GameObject.Find("Event1").GetComponent<EventOW>().actualPage == 666)
+                        SetDialog(new string[] { "[color:ff0000]Event page = " + GameObject.Find("Event1").GetComponent<EventOW>().actualPage + " :)" }, true, new string[] { "rtlukark_determimed" });
+                    else*/
+                    SetDialog(new string[] { "Event page = " + GameObject.Find("Event1").GetComponent<EventOW>().actualPage + "." }, true, DynValue.NewString("rtlukark_determined"));
+                } else if (Input.GetKeyDown("t") && GameObject.Find("textframe_border_outer").GetComponent<Image>().color.a == 0)
+                    SetDialog(new string[] { "Your game is saved at\n" + Application.persistentDataPath + "/save.gd" }, true, null);
+                else if (Input.GetKeyDown("b"))
+                    SetEncounterAnim();
+            }
         }
 
         if (currentDirection != 0) animator.movementDirection = currentDirection;
