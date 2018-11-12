@@ -25,6 +25,9 @@ public class SelectOMatic : MonoBehaviour {
     private int RealGlobalCooldown = 0;
     private int AlMightyGlobalCooldown = 0;
     
+    // used to let users navigate the mod and encounter menus with the arrow keys!
+    private static int selectedItem = 0;
+    
     // Use this for initialization
     private void Start() {
         GameObject.Destroy(GameObject.Find("Player"));
@@ -214,8 +217,13 @@ public class SelectOMatic : MonoBehaviour {
                     encounters.Add(Path.GetFileNameWithoutExtension(f.Name));
             }
             
-            if (encounters.Count > 1)
+            if (encounters.Count > 1) {
+                // highlight the chosen encounter whenever the user exits the mod menu
+                int temp = selectedItem;
                 encounterSelection();
+                selectedItem = temp;
+                encounterBox.transform.Find("ScrollCutoff/Content").GetChild(selectedItem).GetComponent<MenuButton>().StartAnimation(1);
+            }
             
             // move the scrolly bit to where it was when the player entered the encounter
             encounterBox.transform.Find("ScrollCutoff/Content").gameObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, encounterListScroll);
@@ -498,6 +506,100 @@ public class SelectOMatic : MonoBehaviour {
             else
                 devMod.transform.Find("ResetAG").GetComponentInChildren<Text>().text =     "RESET ALIMGHTY";
         }
+        
+        // let the player use the keyboard to control the mod select menu!!
+        // controls:
+        
+        ////////////////////// Main: ////////////////////////////////////
+        //    Z, W, or Return: start encounter (if mod has only one    //
+        //                     encounter), or open encounter list      //
+        //         Shift or X: return to Disclaimer screen             //
+        //            Up or C: open the mod list                       //
+        //               Left: scroll left                             //
+        //              Right: scroll right                            //
+        //                                                             //
+        ////////////////////// Encounter or Mod list: ///////////////////
+        //    Z, W, or Return: start an encounter, or select a mod     //
+        //         Shift or X: exit                                    //
+        //                 Up: move up                                 //
+        //               Down: move down                               //
+        /////////////////////////////////////////////////////////////////
+        
+        // Main controls:
+        if (!GameObject.Find("ScrollWin")) {
+            if (animationDone) {
+                // Scroll left
+                if (Input.GetKeyDown(KeyCode.LeftArrow))
+                    ScrollMods(-1);
+                // Scroll right
+                else if (Input.GetKeyDown(KeyCode.RightArrow))
+                    ScrollMods(1);
+                // Open the mod list
+                else if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.C)) {
+                    modFolderMiniMenu();
+                    encounterBox.transform.Find("ScrollCutoff/Content").GetChild(selectedItem).GetComponent<MenuButton>().StartAnimation(1);
+                // Open the encounter list or start the encounter (if there is only one encounter)
+                } else if (Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.Return)) {
+                    GameObject.Find("ModBackground").GetComponent<Button>().onClick.Invoke();
+                    encounterBox.transform.Find("ScrollCutoff/Content").GetChild(selectedItem).GetComponent<MenuButton>().StartAnimation(1);
+                }
+            }
+            
+            // Return to the Disclaimer screen
+            if (Input.GetKeyDown(KeyCode.X) || Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift))
+                GameObject.Find("BtnExit").GetComponent<Button>().onClick.Invoke();
+        // Encounter or Mod List controls:
+        } else {
+            if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow)) {
+                GameObject content = encounterBox.transform.Find("ScrollCutoff/Content").gameObject;
+                
+                // Store previous value of selectedItem
+                int previousSelectedItem = selectedItem;
+                
+                // Move up
+                if (Input.GetKeyDown(KeyCode.UpArrow))
+                    selectedItem -= 1;
+                // Move down
+                else if (Input.GetKeyDown(KeyCode.DownArrow))
+                    selectedItem += 1;
+                
+                // Keep the selector in-bounds!
+                if (selectedItem < 0)
+                    selectedItem = content.transform.childCount - 1;
+                else if (selectedItem > content.transform.childCount - 1)
+                    selectedItem = 0;
+                
+                // Update the buttons!
+                // Animate the old button
+                GameObject previousButton = content.transform.GetChild(previousSelectedItem).gameObject;
+                previousButton.GetComponent<MenuButton>().StartAnimation(-1);
+                // previousButton.spriteState = SpriteState.
+                // Animate the new button
+                GameObject newButton = content.transform.GetChild(selectedItem).gameObject;
+                newButton.GetComponent<MenuButton>().StartAnimation(1);
+                
+                // Scroll to the newly chosen button if it is hidden!
+                float buttonTopEdge    = -newButton.GetComponent<RectTransform>().anchoredPosition.y + 100;
+                float buttonBottomEdge = -newButton.GetComponent<RectTransform>().anchoredPosition.y + 100 + 30;
+                
+                float topEdge    = content.GetComponent<RectTransform>().anchoredPosition.y;
+                float bottomEdge = content.GetComponent<RectTransform>().anchoredPosition.y + 230;
+                
+                // button is above the top of the scrolly bit
+                if      (topEdge    > buttonTopEdge)
+                    content.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, buttonTopEdge);
+                // button is below the bottom of the scrolly bit
+                else if (bottomEdge < buttonBottomEdge)
+                    content.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, buttonBottomEdge - 230);
+            }
+            
+            // Exit
+            if (Input.GetKeyDown(KeyCode.X) || Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift))
+                GameObject.Find("ModBackground").GetComponent<Button>().onClick.Invoke();
+            // Select the mod or encounter
+            else if (Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.Return))
+                encounterBox.transform.Find("ScrollCutoff/Content").GetChild(selectedItem).gameObject.GetComponent<Button>().onClick.Invoke();
+        }
     }
     
     // Shows the "mod page" screen.
@@ -518,9 +620,10 @@ public class SelectOMatic : MonoBehaviour {
         try {
             Transform content = encounterBox.transform.Find("ScrollCutoff/Content");
             foreach (Transform b in content) {
-                if (b.gameObject.name != "Back") {
+                if (b.gameObject.name != "Back")
                     Destroy(b.gameObject);
-                }
+                else
+                    b.GetComponent<MenuButton>().Reset();
             }
         } catch {
             // do nothing
@@ -528,10 +631,14 @@ public class SelectOMatic : MonoBehaviour {
         // hide the encounter selection box
         encounterBox.SetActive(false);
     }
-
+    
+    // Shows the list of available encounters in a mod.
     private void encounterSelection() {
         // hide the mod list button
         btnList.SetActive(false);
+        
+        // automatically choose "back"
+        selectedItem = 0;
         
         // make clicking the background exit the encounter selection screen
         GameObject.Find("ModBackground").GetComponent<Button>().onClick.RemoveAllListeners();
@@ -568,6 +675,8 @@ public class SelectOMatic : MonoBehaviour {
                 button.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 100 - (count * 30));
                 // set color
                 button.GetComponent<Image>().color = new Color(0.75f, 0.75f, 0.75f, 0.5f);
+                button.GetComponent<MenuButton>().NormalColor = new Color(0.75f, 0.75f, 0.75f, 0.5f);
+                button.GetComponent<MenuButton>().HoverColor  = new Color(0.75f, 0.75f, 0.75f, 1f);
                 button.transform.Find("Fill").GetComponent<Image>().color = new Color(0.5f, 0.5f, 0.5f, 0.5f);
                 // set text
                 button.transform.Find("Text").GetComponent<Text>().text = Path.GetFileNameWithoutExtension(encounter.Name);
@@ -589,6 +698,9 @@ public class SelectOMatic : MonoBehaviour {
     private void modFolderMiniMenu() {
         // hide the mod list button
         btnList.SetActive(false);
+        
+        // automatically select the current mod when the mod list appears
+        selectedItem = CurrentSelectedMod + 1;
         
         // grab pre-existing objects
         GameObject content = encounterBox.transform.Find("ScrollCutoff/Content").gameObject;
@@ -630,6 +742,8 @@ public class SelectOMatic : MonoBehaviour {
             button.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 100 - ((count + 1) * 30));
             // set color
             button.GetComponent<Image>().color = new Color(0.75f, 0.75f, 0.75f, 0.5f);
+            button.GetComponent<MenuButton>().NormalColor = new Color(0.75f, 0.75f, 0.75f, 0.5f);
+            button.GetComponent<MenuButton>().HoverColor  = new Color(0.75f, 0.75f, 0.75f, 1f);
             button.transform.Find("Fill").GetComponent<Image>().color = new Color(0.5f, 0.5f, 0.5f, 0.5f);
             // set text
             button.transform.Find("Text").GetComponent<Text>().text = mod.Name;
