@@ -328,7 +328,8 @@ public class PlayerOverworld : MonoBehaviour {
 
         if (currentDirection != 0) animator.movementDirection = currentDirection;
 
-        //Check is the movement is possible
+        //Check if the movement is possible
+        lastTimeMult = LuaUnityTime.mult;
         AttemptMove(horizontal, vertical);
 
         if (GlobalControls.input.Menu == UndertaleInput.ButtonState.PRESSED)
@@ -337,6 +338,10 @@ public class PlayerOverworld : MonoBehaviour {
         if (menuRunning[4])
             menuRunning[4] = false;
     }
+    
+    // used to allow event movement that accomodates for the framerate,
+    // because getting LuaUnityTime.mult multiple times in a frame isn't always guaranteed to give the same value
+    private float lastTimeMult = 0.0f;
 
     //Moves the object
     public void Move(float xDir, float yDir, GameObject go) {
@@ -352,7 +357,11 @@ public class PlayerOverworld : MonoBehaviour {
         else end *= go.GetComponent<EventOW>().moveSpeed;
         //end = new Vector2(Mathf.Round(end.x * 1000) / 1000, Mathf.Round(end.y * 1000) / 1000);
         //end += (Vector2)transform.position;
-
+        
+        // attempt to multiply movement speed by Time.mult if Time.mult is > 1
+        if (lastTimeMult > 1f)
+            end = new Vector2(Mathf.Round(end.x * lastTimeMult), Mathf.Round(end.y * lastTimeMult));
+        
         transform.position += (Vector3)end;
 
         //Creates the new position of our object, depending on our current position
@@ -396,6 +405,11 @@ public class PlayerOverworld : MonoBehaviour {
         boxCollider.enabled = false;
 
         float speed = go == rb2D.gameObject ? this.speed : go.GetComponent<EventOW>().moveSpeed;
+        
+        // attempt to multiply movement speed by Time.mult if Time.mult is > 1
+        if (lastTimeMult > 1f)
+            speed = Mathf.Round(speed * lastTimeMult);
+        
         //Cast a line from start point to end point checking collision on blockingLayer and then EventLayer
         hit = Physics2D.BoxCast(start, size, 0, dir, Mathf.Sqrt(Mathf.Pow(xDir * speed, 2) + Mathf.Pow(yDir * speed, 2)), BlockingLayer);
         if (hit.transform == null)
