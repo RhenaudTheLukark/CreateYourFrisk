@@ -687,8 +687,11 @@ public class SelectOMatic : MonoBehaviour {
                 // finally, set function!
                 string filename = Path.GetFileNameWithoutExtension(encounter.Name);
                 
+                int tempCount = count;
+                
                 button.GetComponent<Button>().onClick.RemoveAllListeners();
                 button.GetComponent<Button>().onClick.AddListener(() => {
+                    selectedItem = tempCount;
                     StaticInits.ENCOUNTER = filename;
                     StartCoroutine(LaunchMod());
                 });
