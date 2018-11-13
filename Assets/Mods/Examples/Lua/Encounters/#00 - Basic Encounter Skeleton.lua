@@ -23,18 +23,11 @@ end
 
 function EnemyDialogueStarting()
     -- Good location for setting monster dialogue depending on how the battle is going.
-    -- If the monster's text has not be set, use one of the default text the monster uses.
-    if enemies[1]["currentdialogue"] == nil then
-        local randomdialogue = enemies[1]["randomdialogue"]
-        enemies[1]["currentdialogue"] = randomdialogue[#randomdialogue]
-    end
 end
 
 function EnemyDialogueEnding()
     -- Good location to fill the 'nextwaves' table with the attacks you want to have simultaneously.
-    -- The wavetype is set in bullet_testing_poseur's act commands.
     nextwaves = { possible_attacks[math.random(#possible_attacks)] }
-    enemies[1]["currentdialogue"] = nil
 end
 
 function DefenseEnding() --This built-in function fires after the defense round ends.
