@@ -174,12 +174,7 @@ public abstract class Projectile : MonoBehaviour {
                 texture = ((Texture2D)img.mainTexture).GetPixels32();
                 needUpdateTex = false;
             }
-
-            if (ControlPanel.instance.MinimumAlpha == 0) {
-                if (img.color.a == 0)
-                    return false;
-            } else if (img.color.a < ControlPanel.instance.MinimumAlpha)
-                return false;
+            
             Vector2 positionPlayerFromProjectile = (Vector2)PlayerController.instance.self.position - selfAbs.position - (selfAbs.size + PlayerController.instance.playerAbs.size) / 2;
             return UnitaleUtil.TestPP(playerHitbox, texture, ctrl.sprite.rotation, 8, img.mainTexture.height, new Vector2(ctrl.sprite.xscale, ctrl.sprite.yscale), positionPlayerFromProjectile, img.color.a);
         }
