@@ -23,8 +23,18 @@ public static class Inventory {
         if (items != null)
             for (int i = 0; i < items.Length; i++) {
                 if (i == 8)
-                    throw new CYFException("You added too many items. The inventory can only contain 8 items.");
-                inventory.Add(new UnderItem(items[i]));
+                    UnitaleUtil.WriteInLogAndDebugger("[WARN]The inventory can only contain 8 items, yet you tried to add the item \"" + items[i] + "\" as the " + (i + 1) + "th item.");
+                else {
+                    // Search through addedItemsTypes to find the type of the new item
+                    int type = 0;
+                    
+                    // Get the index of the new item in addedItems
+                    for (int j = 0; j < addedItems.Length; j++) {
+                        if (addedItems[j] == items[i])
+                            type = addedItemsTypes[j];
+                    }
+                    inventory.Add(new UnderItem(items[i], type));
+                }
             }
     }
 

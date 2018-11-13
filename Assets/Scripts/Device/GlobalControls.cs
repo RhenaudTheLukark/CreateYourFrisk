@@ -8,12 +8,12 @@ using UnityEngine.SceneManagement;
 /// Controls that should be active on all screens. Pretty much a hack to allow people to reset. Now it's more useful.
 /// </summary>
 public class GlobalControls : MonoBehaviour {
-    public static int frame = -1;
+    public static int frame = 0;
     public static PlayerOverworld po;
     public static UndertaleInput input = new KeyboardInput();
     public static LuaInputBinding luaInput = new LuaInputBinding(input);
     public static AudioClip Music;
-    public static Texture2D texBeforeEncounter;
+    // public static Texture2D texBeforeEncounter;
     public static string realName;
     public static string lastScene = "test2";
     public static int uduu; //A secret for everyone :)
@@ -31,7 +31,7 @@ public class GlobalControls : MonoBehaviour {
     private bool screenShaking = false;
     public static Vector2 beginPosition;
     //public static bool samariosNightmare = false;
-    public static string[] nonOWScenes = new string[] { "Battle", "Error", "EncounterSelect", "ModSelect", "GameOver", "TitleScreen", "Disclaimer", "EnterName", "TransitionOverworld", "Intro" };
+    public static string[] nonOWScenes = new string[] { "Battle", "Error", /*"EncounterSelect",*/ "ModSelect", "GameOver", "TitleScreen", "Disclaimer", "EnterName", "TransitionOverworld", "Intro" };
     public static string[] canTransOW = new string[] { "Battle", "Error", "GameOver" };
     //Wow what's this
     public static Dictionary<int, GameState.MapData> GameMapData = new Dictionary<int, GameState.MapData>();
@@ -48,13 +48,6 @@ public class GlobalControls : MonoBehaviour {
 
     void Awake() {
         SceneManager.sceneLoaded += LoadScene;
-        LoadGraphicsSettings();
-    }
-
-    void LoadGraphicsSettings() {
-        QualitySettings.vSyncCount = 0;
-        Application.targetFrameRate = 60;
-        Screen.SetResolution(640, 480, false, 0);
     }
 
     /// <summary>
@@ -62,9 +55,10 @@ public class GlobalControls : MonoBehaviour {
     /// </summary>
     void Update () {
         stopScreenShake = false;
-        frame ++;
-        if (SceneManager.GetActiveScene().name == "EncounterSelect") lastSceneUnitale = true;
-        else                                                         lastSceneUnitale = false;
+        if (isInFight)
+            frame ++;
+        if (SceneManager.GetActiveScene().name == "ModSelect")        lastSceneUnitale = true;
+        else                                                          lastSceneUnitale = false;
         if (UserDebugger.instance && Input.GetKeyDown(KeyCode.F9)) {
             if (UserDebugger.instance.gameObject.activeSelf)
                 GameObject.Find("Text").transform.SetParent(UserDebugger.instance.gameObject.transform);
@@ -73,7 +67,7 @@ public class GlobalControls : MonoBehaviour {
         } else if (isInFight && Input.GetKeyDown(KeyCode.H))
             GameObject.Find("Main Camera").GetComponent<ProjectileHitboxRenderer>().enabled = !GameObject.Find("Main Camera").GetComponent<ProjectileHitboxRenderer>().enabled;
         else if (Input.GetKeyDown(KeyCode.Escape) && (canTransOW.Contains(SceneManager.GetActiveScene().name) || isInFight)) {
-            if (isInFight && LuaEnemyEncounter.script.GetVar("unescape").Boolean)
+            if (isInFight && LuaEnemyEncounter.script.GetVar("unescape").Boolean && SceneManager.GetActiveScene().name == "Battle")
                 return;
             if (SceneManager.GetActiveScene().name == "Error" && !modDev)
                 return;
@@ -83,8 +77,9 @@ public class GlobalControls : MonoBehaviour {
                     GameObject.FindObjectOfType<GameOverBehavior>().EndGameOver();
                 else
                     UIController.EndBattle();
-            else
+            else {
                 UIController.EndBattle();
+            }
             //StaticInits.Reset();
         } else if (input.Menu == UndertaleInput.ButtonState.PRESSED && !nonOWScenes.Contains(SceneManager.GetActiveScene().name) && !isInFight)
             if (!PlayerOverworld.instance.PlayerNoMove && EventManager.instance.script == null && !PlayerOverworld.instance.menuRunning[2] && !PlayerOverworld.instance.menuRunning[4] && EventManager.instance.script == null)
@@ -112,10 +107,28 @@ public class GlobalControls : MonoBehaviour {
                     else if (Input.anyKeyDown)       fleeIndex = 0;
                     break;
             }
+        /*
         if (!Screen.fullScreen && (Screen.currentResolution.height != 480 || Screen.currentResolution.width != 640))
             Screen.SetResolution(640, 480, false, 0);
-        if (Input.GetKeyDown(KeyCode.F4))
+        */
+        if (Input.GetKeyDown(KeyCode.F4)) {
             Screen.fullScreen =!Screen.fullScreen;
+            
+            // move the window to the correct place on screen when the user exits fullscreen! hooray!
+            // yes, this check is correct, even though it appears to check for the wrong value. I don't know why
+            #if UNITY_STANDALONE_WIN || UNITY_EDITOR
+                if (Screen.fullScreen)
+                    StartCoroutine(RepositionScreen());
+            #endif
+        }
+    }
+    
+    IEnumerator RepositionScreen() {
+        yield return new WaitForFixedUpdate();
+        
+        try {
+            Misc.MoveWindowTo((int)(Screen.currentResolution.width/2 - 320), (int)(Screen.currentResolution.height/2 - 240));
+        } catch {}
     }
 
     void LoadScene(Scene scene, LoadSceneMode mode) {

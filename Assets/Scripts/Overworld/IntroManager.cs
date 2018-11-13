@@ -26,7 +26,7 @@ public class IntroManager : MonoBehaviour {
                 else Misc.WindowName = ControlPanel.instance.WindowBasisName;
             #endif
             SaveLoad.LoadAlMighty();
-            LuaScriptBinder.Set(null, "ModFolder", MoonSharp.Interpreter.DynValue.NewString("Title"));
+            LuaScriptBinder.Set(null, "ModFolder", MoonSharp.Interpreter.DynValue.NewString("@Title"));
             UnitaleUtil.AddKeysToMapCorrespondanceList();
         }
         Camera.main.GetComponent<AudioSource>().clip = AudioClipRegistry.GetMusic("mus_intro");

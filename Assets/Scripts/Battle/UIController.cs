@@ -22,7 +22,6 @@ using UnityEngine.SceneManagement;
 public class UIController : MonoBehaviour {
     public static UIController instance;
     internal TextManager textmgr;
-    public bool inited = false;
 
     private static Sprite actB1;
     private static Sprite fightB1;
@@ -91,16 +90,25 @@ public class UIController : MonoBehaviour {
         SPAREIDLE, // Used for OnSpare()'s inactivity, to make it works like OnDeath(). You don't want to go in there.
         UNUSED //Used for OnDeath. Keep this state secret, please.
     }
-
+    
+    // Variables for NONE's new "encounter freezing" behavior
+    public UIState frozenState = UIState.NONE;
+    public float frozenTimestamp       = 0.0f; // used for DEFENDING's wavetimer
+    private bool frozenControlOverride = true;
+    
     public delegate void Message();
     public static event Message SendToStaticInits;
 
-    public void ActionDialogResult(TextMessage msg, UIState afterDialogState, ScriptWrapper caller = null) { ActionDialogResult(new TextMessage[] { msg }, afterDialogState, caller); }
+    // TODO: Check the usefulness of the third argument
+    public void ActionDialogResult(TextMessage msg, UIState afterDialogState, ScriptWrapper caller = null) {
+        ActionDialogResult(new TextMessage[] { msg }, afterDialogState, caller);
+    }
 
     public void ActionDialogResult(TextMessage[] msg, UIState afterDialogState, ScriptWrapper caller = null) {
         stateAfterDialogs = afterDialogState;
-        if (caller != null)
+        if (caller != null) {
             textmgr.SetCaller(caller);
+        }
         textmgr.SetTextQueue(msg);
         SwitchState(UIState.DIALOGRESULT);
     }
@@ -117,6 +125,16 @@ public class UIController : MonoBehaviour {
             if (GlobalControls.crate)  Misc.WindowName = ControlPanel.instance.WinodwBsaisNmae;
             else                       Misc.WindowName = ControlPanel.instance.WindowBasisName;
         #endif
+        
+        // reset the battle camera's position
+        Misc.ResetCamera();
+        
+        // stop encounter storage for good!
+        ScriptWrapper.instances.Clear();
+        
+        // properly set "isInFight" to false, as it shouldn't be true anymore
+        GlobalControls.isInFight = false;
+        
         for (int i = 0; i < LuaScriptBinder.scriptlist.Count; i++)
             LuaScriptBinder.scriptlist[i] = null;
         LuaScriptBinder.ClearBattleVar();
@@ -136,7 +154,6 @@ public class UIController : MonoBehaviour {
                 if (str != "StaticKeptAudio")
                     NewMusicManager.Stop(str);
             SceneManager.UnloadSceneAsync("Battle");
-            GlobalControls.isInFight = false;
             PlayerOverworld.ShowOverworld("Battle");
         }
     }
@@ -179,7 +196,84 @@ public class UIController : MonoBehaviour {
         }
         // END DEBUG
         // below: actions based on ending a previous state, or actions that affect multiple states
-
+        
+        // NONE can freeze states
+        if (!GlobalControls.retroMode) {
+            if (state == UIState.NONE && this.state != UIState.NONE && frozenState == UIState.NONE) {
+                frozenState = this.state;
+                
+                // execute extra code based on the state that is being frozen
+                switch(frozenState) {
+                    case UIState.ACTIONSELECT:
+                    case UIState.DIALOGRESULT:
+                        textmgr.SetPause(true);
+                        break;
+                    case UIState.DEFENDING:
+                        frozenControlOverride = PlayerController.instance.overrideControl;
+                        PlayerController.instance.setControlOverride(true);
+                        
+                        frozenTimestamp = Time.time;
+                        break;
+                    case UIState.ENEMYDIALOGUE:
+                        TextManager[] textmen = FindObjectsOfType<TextManager>();
+                        foreach (TextManager textman in textmen)
+                            if (textman.gameObject.name.StartsWith("DialogBubble")) // game object name is hardcoded as it won't change
+                                textman.SetPause(true);
+                        break;
+                    case UIState.ATTACKING:
+                        FightUI fui = fightUI.boundFightUiInstances[0];
+                        if (fui.slice != null && fui.slice.keyframes != null)
+                            fui.slice.keyframes.paused = true;
+                        
+                        if (fightUI.line != null && fightUI.line.keyframes != null)
+                            fightUI.line.keyframes.paused = true;
+                        break;
+                }
+                
+                // Debug.Log("<b><color='blue'>Freezing state " + frozenState.ToString() + "</color></b>");
+                
+                return;
+            //else if (state != UIState.NONE && this.state == UIState.NONE && frozenState != UIState.NONE) {
+            } else if (state == frozenState && frozenState != UIState.NONE) {
+                // execute extra code based on the state that is being un-frozen
+                switch(frozenState) {
+                    case UIState.ACTIONSELECT:
+                    case UIState.DIALOGRESULT:
+                        textmgr.SetPause(true);
+                        break;
+                    case UIState.DEFENDING:
+                        PlayerController.instance.setControlOverride(frozenControlOverride);
+                        
+                        frozenTimestamp = Time.time - frozenTimestamp;
+                        encounter.waveTimer += frozenTimestamp;
+                        break;
+                    case UIState.ENEMYDIALOGUE:
+                        TextManager[] textmen = FindObjectsOfType<TextManager>();
+                        foreach (TextManager textman in textmen)
+                            if (textman.gameObject.name.StartsWith("DialogBubble")) // game object name is hardcoded as it won't change
+                                textman.SetPause(false);
+                        break;
+                    case UIState.ATTACKING:
+                        FightUI fui = fightUI.boundFightUiInstances[0];
+                        if (fui.slice != null && fui.slice.keyframes != null)
+                            fui.slice.keyframes.paused = false;
+                        
+                        if (fightUI.line != null && fightUI.line.keyframes != null)
+                            fightUI.line.keyframes.paused = false;
+                        break;
+                }
+                
+                // Debug.Log("<b><color='blue'>Unfreezing state " + frozenState.ToString() + "</color></b>");
+                
+                frozenState = UIState.NONE;
+                
+                return;
+            } else if (frozenState != UIState.NONE)
+                frozenState = UIState.NONE;
+        }
+        
+        frozenTimestamp  = 0.0f;
+        
         if (state == UIState.DEFENDING || state == UIState.ENEMYDIALOGUE) {
             PlayerController.instance.setControlOverride(state != UIState.DEFENDING);
             textmgr.DestroyText();
@@ -232,6 +326,9 @@ public class UIController : MonoBehaviour {
                 SetPlayerOnAction(action);
                 textmgr.SetPause(ArenaManager.instance.isResizeInProgress());
                 textmgr.SetCaller(LuaEnemyEncounter.script); // probably not necessary due to ActionDialogResult changes
+                if (!GlobalControls.retroMode) {
+                    encounter.EncounterText = LuaEnemyEncounter.script.GetVar ("encountertext").String;
+                }
                 if (encounter.EncounterText == null) {
                     encounter.EncounterText = "";
                     UnitaleUtil.WriteInLogAndDebugger("[WARN]There is no encounter text!");
@@ -251,14 +348,18 @@ public class UIController : MonoBehaviour {
 
             case UIState.ITEMMENU:
                 battleDialogued = false;
-                string[] items = GetInventoryPage(0);
-                selectedItem = 0;
-                SetPlayerOnSelection(0);
-                textmgr.SetText(new SelectMessage(items, false));
-                /*ActionDialogResult(new TextMessage[] {
-                    new TextMessage("Can't open inventory.\nClogged with pasta residue.", true, false),
-                    new TextMessage("Might also be a dog.\nIt's ambiguous.",true,false)
-                }, UIState.ENEMYDIALOG);*/
+                if (Inventory.inventory.Count == 0) {
+                    throw new CYFException("Cannot enter state ITEMMENU with empty inventory.");
+                } else {
+                    string[] items = GetInventoryPage(0);
+                    selectedItem = 0;
+                    SetPlayerOnSelection(0);
+                    textmgr.SetText(new SelectMessage(items, false));
+                    /*ActionDialogResult(new TextMessage[] {
+                        new TextMessage("Can't open inventory.\nClogged with pasta residue.", true, false),
+                        new TextMessage("Might also be a dog.\nIt's ambiguous.",true,false)
+                    }, UIState.ENEMYDIALOG);*/
+                }
                 break;
 
             case UIState.MERCYMENU:
@@ -421,7 +522,9 @@ public class UIController : MonoBehaviour {
             try {
                 UIState newState = (UIState)Enum.Parse(typeof(UIState), state, true);
                 instance.SwitchState(newState);
-            } catch { throw new CYFException("The state " + state + " isn't a valid state."); }
+            } catch (Exception ex) {
+                throw new CYFException("An error occured while trying to enter the state \"" + state + "\":\n" + ex.Message + "\n\nTraceback (for devs):\n" + ex.ToString());
+            }
         }
     }
 
@@ -717,6 +820,8 @@ public class UIController : MonoBehaviour {
                             } else {
                                 if (Inventory.inventory.Count == 0) {
                                     //ActionDialogResult(new TextMessage("Your Inventory is empty.", true, false), UIState.ACTIONSELECT);
+                                    PlaySound(AudioClipRegistry.GetSound("menuconfirm"));
+                                    textmgr.DoSkipFromPlayer();
                                     return;
                                 }
                                 SwitchState(UIState.ITEMMENU);
@@ -1092,9 +1197,35 @@ public class UIController : MonoBehaviour {
     }
 
     private void Start() {
-        GameObject.Find("HideEncounter").GetComponent<Image>().sprite = Sprite.Create(GlobalControls.texBeforeEncounter, 
+        // reset GlobalControls' frame timer
+        GlobalControls.frame = 0;
+        
+        textmgr = GameObject.Find("TextManager").GetComponent<TextManager>();
+        textmgr.SetEffect(new TwitchEffect(textmgr));
+        textmgr.SetCaller(LuaEnemyEncounter.script);
+        encounter = FindObjectOfType<LuaEnemyEncounter>();
+        
+        fightBtn = GameObject.Find("FightBt").GetComponent<Image>();
+        actBtn = GameObject.Find("ActBt").GetComponent<Image>();
+        itemBtn = GameObject.Find("ItemBt").GetComponent<Image>();
+        mercyBtn = GameObject.Find("MercyBt").GetComponent<Image>();
+        if (GlobalControls.crate) {
+            fightBtn.sprite = SpriteRegistry.Get("UI/Buttons/gifhtbt_0");
+            fightBtn.GetComponent<AutoloadResourcesFromRegistry>().SpritePath = "UI/Buttons/gifhtbt_0";
+            actBtn.sprite = SpriteRegistry.Get("UI/Buttons/catbt_0");
+            actBtn.GetComponent<AutoloadResourcesFromRegistry>().SpritePath = "UI/Buttons/catbt_0";
+            itemBtn.sprite = SpriteRegistry.Get("UI/Buttons/tembt_0");
+            itemBtn.GetComponent<AutoloadResourcesFromRegistry>().SpritePath = "UI/Buttons/tembt_0";
+            mercyBtn.sprite = SpriteRegistry.Get("UI/Buttons/mecrybt_0");
+            mercyBtn.GetComponent<AutoloadResourcesFromRegistry>().SpritePath = "UI/Buttons/mecrybt_0";
+        }
+        
+        ArenaManager.instance.ResizeImmediate(ArenaManager.UIWidth, ArenaManager.UIHeight);
+        //ArenaManager.instance.MoveToImmediate(0, -160, false);
+        
+        /*GameObject.Find("HideEncounter").GetComponent<Image>().sprite = Sprite.Create(GlobalControls.texBeforeEncounter, 
                                                                                       new Rect(0, 0, GlobalControls.texBeforeEncounter.width, GlobalControls.texBeforeEncounter.height), 
-                                                                                      new Vector2(0.5f, 0.5f));
+                                                                                      new Vector2(0.5f, 0.5f));*/
         //if (GameOverBehavior.gameOverContainer)
         //    GameObject.Destroy(GameOverBehavior.gameOverContainer);
         GameOverBehavior.gameOverContainer = GameObject.Find("GameOverContainer");
@@ -1114,48 +1245,6 @@ public class UIController : MonoBehaviour {
 
         GlobalControls.ppcollision = false;
         ControlPanel.instance.FrameBasedMovement = false;
-        textmgr = GameObject.Find("TextManager").GetComponent<TextManager>();
-        textmgr.SetEffect(new TwitchEffect(textmgr));
-        encounter = FindObjectOfType<LuaEnemyEncounter>();
-
-        fightBtn = GameObject.Find("FightBt").GetComponent<Image>();
-        actBtn = GameObject.Find("ActBt").GetComponent<Image>();
-        itemBtn = GameObject.Find("ItemBt").GetComponent<Image>();
-        mercyBtn = GameObject.Find("MercyBt").GetComponent<Image>();
-        if (GlobalControls.crate) {
-            fightBtn.sprite = SpriteRegistry.Get("UI/Buttons/gifhtbt_0");
-            fightBtn.GetComponent<AutoloadResourcesFromRegistry>().SpritePath = "UI/Buttons/gifhtbt_0";
-            actBtn.sprite = SpriteRegistry.Get("UI/Buttons/catbt_0");
-            actBtn.GetComponent<AutoloadResourcesFromRegistry>().SpritePath = "UI/Buttons/catbt_0";
-            itemBtn.sprite = SpriteRegistry.Get("UI/Buttons/tembt_0");
-            itemBtn.GetComponent<AutoloadResourcesFromRegistry>().SpritePath = "UI/Buttons/tembt_0";
-            mercyBtn.sprite = SpriteRegistry.Get("UI/Buttons/mecrybt_0");
-            mercyBtn.GetComponent<AutoloadResourcesFromRegistry>().SpritePath = "UI/Buttons/mecrybt_0";
-        }
-        StaticInits.SendLoaded();
-    }
-
-    // Use this for initialization
-    private void LateStart() {
-        GameObject.Destroy(GameObject.Find("HideEncounter"));
-        psContainer = new GameObject("psContainer");
-        psContainer.transform.SetAsFirstSibling();
-
-        //Play that funky music
-        if (MusicManager.IsStoppedOrNull(PlayerOverworld.audioKept))
-            GameObject.Find("Main Camera").GetComponent<AudioSource>().Play();
-
-        ArenaManager.instance.ResizeImmediate(ArenaManager.UIWidth, ArenaManager.UIHeight);
-        //ArenaManager.instance.MoveToImmediate(0, -160, false);
-
-        if (SendToStaticInits != null)
-            SendToStaticInits();
-
-        PlayerController.instance.Awake();
-        PlayerController.instance.setControlOverride(true);
-        PlayerController.instance.SetPosition(48, 25, true);
-        fightUI = GameObject.Find("FightUI").GetComponent<FightUIController>();
-        fightUI.gameObject.SetActive(false);
 
         LuaScriptBinder.CopyToBattleVar();
         spareList = new bool[encounter.enemies.Length];
@@ -1189,11 +1278,31 @@ public class UIController : MonoBehaviour {
         if (toAdd)
             rts[indexText].SetParent(rts[indexDeb]);*/
         //}
+        
+        StaticInits.SendLoaded();
+        // GameObject.Destroy(GameObject.Find("HideEncounter"));
+        psContainer = new GameObject("psContainer");
+        psContainer.transform.SetAsFirstSibling();
+
+        //Play that funky music
+        if (MusicManager.IsStoppedOrNull(PlayerOverworld.audioKept))
+            GameObject.Find("Main Camera").GetComponent<AudioSource>().Play();
+
+        if (SendToStaticInits != null)
+            SendToStaticInits();
+        
         if (GlobalControls.crate) {
             UserDebugger.instance.gameObject.transform.GetChild(0).gameObject.GetComponent<Text>().text = "DEGUBBER (F9 OT TOGLGE, DEBUG(STIRNG) TO PRNIT)";
             GameObject.Find("HPLabelCrate").GetComponent<Image>().enabled = true;
             GameObject.Find("HPLabel").GetComponent<Image>().enabled = false;
         }
+        
+        PlayerController.instance.Awake();
+        PlayerController.instance.setControlOverride(true);
+        PlayerController.instance.SetPosition(48, 25, true);
+        fightUI = GameObject.Find("FightUI").GetComponent<FightUIController>();
+        fightUI.gameObject.SetActive(false);
+        
         encounter.CallOnSelfOrChildren("EncounterStarting");
         if (GameObject.Find("Text")) {
             GameObject.Find("Text").transform.SetParent(UserDebugger.instance.transform);
@@ -1273,13 +1382,6 @@ public class UIController : MonoBehaviour {
     private void Update() {
         //frameDebug++;
         stated = false;
-        if (!inited) {
-            if (!ArenaManager.instance.firstTurn) {
-                inited = true;
-                LateStart();
-            } else 
-                return;
-        }
         if (encounter.gameOverStance)
             return;
         if (encounterHasUpdate)
@@ -1299,7 +1401,10 @@ public class UIController : MonoBehaviour {
                 i--; a--;
             }
         }
-
+        
+        if (frozenState != UIState.NONE)
+            return;
+        
         if (textmgr.IsPaused() &&!ArenaManager.instance.isResizeInProgress())
             textmgr.SetPause(false);
 
@@ -1327,10 +1432,10 @@ public class UIController : MonoBehaviour {
         if (state == UIState.DEFENDING) {
             if (!encounter.WaveInProgress()) {
                 if (GlobalControls.retroMode)
-                foreach (LuaProjectile p in FindObjectsOfType<LuaProjectile>())
-                        BulletPool.instance.Requeue(p);
+                    foreach (LuaProjectile p in FindObjectsOfType<LuaProjectile>())
+                            BulletPool.instance.Requeue(p);
                 SwitchState(UIState.ACTIONSELECT);
-            } else if (!encounter.gameOverStance)
+            } else if (!encounter.gameOverStance && (frozenState == UIState.NONE || GlobalControls.retroMode))
                 encounter.UpdateWave();
             return;
         }

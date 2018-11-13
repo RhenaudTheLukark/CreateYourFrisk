@@ -62,13 +62,13 @@ it's w3c valid, at least
                     <li><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory System</a></li>
                     <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
                     <li><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
-				<li class="li-header">Overworld</li>
+                <li class="li-header">Overworld</li>
                     <li><a href="overworld.html"><span class="CYF"></span> Basics</a></li>
                     <li><a href="overworld-howto-map.html"><span class="CYF"></span> How to create a map</a></li>
                     <li><a href="overworld-howto-event.html"><span class="CYF"></span> How to create an event</a></li>
                     <li><a href="overworld-howto-animevent.html"><span class="CYF"></span> How to animate an event</a></li>
                     <li><a href="overworld-howto-shop.html"><span class="CYF"></span> How to create a shop</a></li>
-                    <li style="margin-left:5px;">> <span class="CYF"></span> The General Object <</li>
+                    <li class="active" style="margin-left:5px;">> <span class="CYF"></span> The General Object <</li>
                     <li><a href="overworld-object-event.html"><span class="CYF"></span> The Event Object</a></li>
                     <li><a href="overworld-object-player.html"><span class="CYF"></span> The Player Object</a></li>
                     <li><a href="overworld-object-screen.html"><span class="CYF"></span> The Screen Object</a></li>
@@ -85,27 +85,33 @@ it's w3c valid, at least
             <h2><span class="CYF"></span>The Overworld: The General Object</h2><br>
            
             <p>
-                <br><span class="function">General.SetDialog(table texts, bool formatted = true, table mugshot = nil)</span>
+                <br><span class="function">General.SetDialog(<span class="luatable"><span class="string"></span></span> texts, 
+                <span class="boolean"></span> formatted = true, <span class="luatable"><span class="string"></span></span> mugshot = nil)</span>
                 Displays text.
+                <ul>
                 <li><span class="term">texts</span> = The different lines of text displayed.</li><br>
-                <li><span class="term">formatted</span> = Adds asterisks to your text, (if yes: \n for asterisks, \r for
-                    no asterisks)
+                <li><span class="term">formatted</span> = Adds asterisks to your text.<br>
+                    (if true: <span class="term">\n</span> for asterisks, <span class="term">\r</span> for no asterisks)
                     <br>True by default.</li><br>
-                <li><span class="term">mugshot</span> = The name of your mugshots (dialogue faces), without the file extension. 
+                <li><span class="term">mugshot</span> = The names of your mugshots (dialogue faces), without the file extensions.<br>
 				If you want to use them, you have to have at least one mugshot per text, or else it won't work.
                     <br>They have to be in the path <span class="term">YourMod/Sprites/Mugshots/</span>!</li><br>
+                </ul>
             </p>
             <p>
-                <br><span class="function">General.SetChoice(table choices, string question = null)</span>
-                Displays a choice. The response will be returned as either 0 for the first option or 1 for the second option. 
-                For now, there are a lot of constraints, but I hope that I'll find a better way to do this easily.<br>
+                <br><span class="function">General.SetChoice(<span class="luatable"><span class="string"></span></span> choices, 
+                <span class="string"></span> question = null)</span>
+                Displays a choice screen.<br>
+                The response will be returned to <span class="term">lastChoice</span> as either <span class="term">0</span> for the first option or 
+                <span class="term">1</span> for the second option.<br>
+                For now, there are a lot of constraints, but I hope that I'll find a better way to do this easily.<br><br>
                 Each choice must have no more than 3 lines. 
-				If you want there to be a question, it must be no more than one line long.<br>
+				If you want there to be a question, it must be no more than one line long.<br><br>
                 <span style="color:#ff0000">Due to the nature of this function, the result won't be returned directly, but the result 
                 will be stored in a variable named <span class="term">lastChoice</span>.</span>
             </p>
             <p>
-                <br><span class="function">General.Wait(int frames)</span>
+                <br><span class="function">General.Wait(<span class="number"></span> frames)</span>
                 Pauses code execution for a given amount of frames.
             </p>
             <p>
@@ -113,44 +119,48 @@ it's w3c valid, at least
                 Waits for the player to press the <span class="term">Confirm</span> input (Enter or Z) to continue.
             </p>
             <p>
-                <br><span class="function">General.GameOver(table deathText = nil, string deathMusic = nil)</span>
-                Launches the Game Over cutscene, putting the player back at their savepoint afterwards. <br>
+                <br><span class="function">General.GameOver(<span class="luatable"><span class="string"></span></span> deathText = nil, 
+                <span class="string"></span> deathMusic = nil)</span>
+                Starts the Game Over cutscene, putting the player back at their save point afterwards. <br>
                 You can choose the text and the music if you want to. Otherwise, it'll play the normal music and show a default message.
             </p>
             <p>
-                <br><span class="function">General.PlayBGM(string bgm, number volume)</span>
-                Plays music on the main music channel with a volume between 0 and 1. Watch out, <span class="term">NewAudio["src"]</span> ISN'T
-                the main music channel when music is kept between battles!
+                <br><span class="function">General.PlayBGM(<span class="string"></span> bgm, <span class="number"></span> volume)</span>
+                Plays music on the main music channel with a volume between 0 and 1.<br>
+                Watch out, <span class="term">NewAudio["src"]</span> ISN'T the main music channel when music is kept between battles!
             </p>
             <p>
-                <br><span class="function">General.StopBGM(int fadeFrames = 0, bool waitEnd = false)</span>
-                Stops the current music being played in the main music channel. If <span class="term">fadeFrames</span> is greater than 0, 
-				the music will fade out over that many frames. If <span class="term">waitEnd</span> is set to true, the script will wait 
-				until the BGM has stopped before continuing.
+                <br><span class="function">General.StopBGM(<span class="number"></span> fadeFrames = 0, <span class="boolean"></span> waitEnd = false)</span>
+                Stops the music currently being played in the main music channel.<br>
+                If <span class="term">fadeFrames</span> is greater than 0, the music will fade out over that many frames.<br>
+                If <span class="term">waitEnd</span> is set to true, the script will wait until the BGM has stopped before continuing.
             </p>
             <p>
-                <br><span class="function">General.PlaySound(string sound, float volume = 0.65)</span>
+                <br><span class="function">General.PlaySound(<span class="string"></span> sound, <span class="number"></span> volume = 0.65)</span>
                 Plays a sound in a temporary sound channel with a volume between 0 and 1.
             </p>
             <p>
                 <br><span class="function">General.Save()</span>
-                Launches the Save UI that allows the player to save their progression.
+                Opens the Save UI that allows the player to save their progress.
             </p>
             <p>
                 <br><span class="function">General.TitleScreen()</span>
-                Exits the current game and puts the player back on the title screen.
+                Exits the current game and sends the player back to the title screen.
             </p>
             <p>
-                <br><span class="function">General.SetBattle(string encounterName, bool quickAnim = false, bool ForceNoFlee = false)</span>
-                Initiates a battle with a chosen encounter. If the first encounter character is a <span class="term">#</span>, don't forget it.<br>
+                <br><span class="function">General.SetBattle(<span class="string"></span> encounterName, <span class="boolean"></span> quickAnim = false, 
+                <span class="boolean"></span> ForceNoFlee = false)</span>
+                Initiates a battle with a chosen encounter.<br>
+                If the first encounter character is a <span class="term">#</span>, don't forget it.<br>
                 If you want the battle's intro to be quick like Undyne's battle, set <span class="term">quickAnim</span> to true.<br>
                 Finally, <span class="term">ForceNoFlee</span> removes the flee option from the encounter - unless your encounter sets 
 				<span class="term">flee</span> to true.
             </p>
 			
 			<p>
-				<br><span class="function">General.EnterShop(string scriptName)</span>
-				Initializes the Shop menu, using the script given in <span class="term">scriptName</span>. The Shop script must be in <span class="term">YOURMOD/Lua/Shops/</span>.<br>
+				<br><span class="function">General.EnterShop(<span class="string"></span> scriptName)</span>
+				Initializes the Shop menu, using the script given in <span class="term">scriptName</span>.<br>
+                The Shop script must be in <span class="term">YOURMOD/Lua/Shops/</span>.<br>
 				Check the <span class="ref">How to create a shop</span> section for more informations.
 			</p>
         </div>

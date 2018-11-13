@@ -48,8 +48,11 @@ public static class SpriteFontRegistry {
 
     private static void LoadAllFrom(string directoryPath, bool mod = false) {
         DirectoryInfo dInfo = new DirectoryInfo(directoryPath);
-        if (!dInfo.Exists)
+
+        if (!dInfo.Exists) {
             return;
+        }
+
         FileInfo[] fInfo = dInfo.GetFiles("*.png", SearchOption.TopDirectoryOnly);
 
         if (mod) {

@@ -62,7 +62,7 @@ it's w3c valid, at least
                     <li><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory System</a></li>
                     <li style="margin-left:5px;">> <span class="CYF"></span> The Pixel-Perfect Collision System <</li>
                     <li><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
-				<li class="li-header">Overworld</li>
+                <li class="li-header">Overworld</li>
                     <li><a href="overworld.html"><span class="CYF"></span> Basics</a></li>
                     <li><a href="overworld-howto-map.html"><span class="CYF"></span> How to create a map</a></li>
                     <li><a href="overworld-howto-event.html"><span class="CYF"></span> How to create an event</a></li>
@@ -90,19 +90,18 @@ it's w3c valid, at least
                 or you can apply it just to a bullet with <span class="term">bullet.ppcollision</span>. 
                 The bullet's <span class="term">ppcollision</span> value will override the encounter's
                 <span class="term">ppcollision</span> value.</p>
-                <p>But wait just a minute before rushing to use the Pixel-Perfect Collision System...or not, do as you want!</p>
-                <p>Now, the Pixel-Perfect Collision System also supports bullets with scale! You can rotate and move bullets
+                <!-- <p>But wait just a minute before rushing to use the Pixel-Perfect Collision System...or not, do as you want!</p> -->
+                <p>The Pixel-Perfect Collision System now supports bullets with scale! You can rotate and move bullets
                 like always and collision will still work! (this is why it took me one week to make this feature)</p>
-                <p>Anoter thing: the Pixel-Perfect Collision System is more resource-intensive than the Normal Collision
-                System. So, I'll warn you: only use this for bullets that <i>need</i> Pixel-Perfect Collision; don't use it
-                for <i>all</i> bullets.</p>
-                <p>One last tip: Don't use Pixel-Perfect for bullets that won't damage you, as that will just waste resources!</p>
+                <p>One last tip: The Pixel-Perfect Collision System is more resource-intensive than the Normal Collision
+                System. Don't use Pixel-Perfect for bullets that won't damage you, as that will just waste resources!</p>
             <p>
-                <br><span class="function">Bullet.ppcollision</span>
-                The collision system of the bullet. If true, this bullet will use Pixel-Perfect Collision.
+                <br><span class="function"><span class="boolean"></span> Bullet.ppcollision</span>
+                The collision system of the bullet. If true, this bullet will use Pixel-Perfect Collision.<br><br>
+                <i>From <span class="ref">Projectile management</ref></i>.
             </p>
             <p>
-                <br><span class="function">SetPPCollision(bool) [E/M/W]</span>
+                <br><span class="function">SetPPCollision(<span class="boolean"></span> bool) [E/M/W]</span>
                 Setting this to true will force all bullets that don't have a specified collision type to be Pixel-Perfect bullets.
                 <br>False by default.
             </p>

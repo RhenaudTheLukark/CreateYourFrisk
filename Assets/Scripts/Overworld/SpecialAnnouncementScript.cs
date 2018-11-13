@@ -186,7 +186,7 @@ public class SpecialAnnouncementScript : MonoBehaviour {
             case 2:
                 if (MainAudio.time >= 73) {
                     Phase++;
-                    MainText.text = "(You really should write that down :P)";
+                    MainText.text = "(You really should write this down :P)";
                 }
                 break;
             case 3:
@@ -216,7 +216,7 @@ public class SpecialAnnouncementScript : MonoBehaviour {
             case 7:
                 if (MainAudio.time >= 142.5) {
                     Phase++;
-                    MainText.text = "(I ordered a Frisk, but all I got was a crate!)\nThanks for listening to the end guys, you can now close the game!)";
+                    MainText.text = "(I ordered a Frisk, but all I got was a crate!)\nThanks for listening to the end guys, you can now close the game!";
                 }
                 break;
         }

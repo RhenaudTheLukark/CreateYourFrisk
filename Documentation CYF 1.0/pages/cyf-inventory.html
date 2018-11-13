@@ -62,7 +62,7 @@ it's w3c valid, at least
                     <li style="margin-left:5px;">> <span class="CYF"></span> The Inventory<br>System <</li>
                     <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
                     <li><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
-				<li class="li-header">Overworld</li>
+                <li class="li-header">Overworld</li>
                     <li><a href="overworld.html"><span class="CYF"></span> Basics</a></li>
                     <li><a href="overworld-howto-map.html"><span class="CYF"></span> How to create a map</a></li>
                     <li><a href="overworld-howto-event.html"><span class="CYF"></span> How to create an event</a></li>
@@ -90,25 +90,63 @@ it's w3c valid, at least
                 help you with this hellish mechanism that added items.
                 <br><br>Some of these functions can only be used in <span class="term">HandleItem</span>. Examples are 
                 included at the bottom of this page.
-                <br><br>Don't forget to use inventory functions like this: <span class="term">Inventory.function</span>!
+                <!-- <br><br>Don't forget to use inventory functions like this: <span class="term">Inventory.function</span>! -->
             </p><br>
             
+            <hr>
+            <span class="function">The Inventory Object [E/M/W]</span>
+            
             <p>
-                <br><span class="function">Inventory.GetItem(int index)</span>
-                Returns the name of the item of the inventory at the given index.
-                <br><span class="term" style="margin-left:20px">index</span> = Index of the chosen item.
+                <br><span class="function"><span class="boolean"></span> Inventory.AddItem(<span class="string"></span> name, <span class="number"></span> index = 8)</span>
+                Attempts to add the item <span class="term">name</span> to the player's inventory.
+                <ul>
+                    <li>
+                        <span class="term" style="margin-left:20px">name</span> = The name of the item to add. Must have been set with <span class="term">Inventory.AddCustomItems</span>.
+                    </li>
+                    <li>
+                        <span class="term" style="margin-left:20px">index</span> = The position to place the item in, starting from 1.
+                        <br><span style="margin-left:90px"></span>Will "push away" items if placed in the same position as one.
+                        <br><span style="margin-left:90px"></span>If > the number of items in the inventory, the item will just be added to the end.
+                    </li>
+                </ul>
+                <br><br>
+                Can not make a player's inventory exceed 8 items.<br><br>
+                Returns <span class="term">true</span> if the item was successfully added, <span class="term">false</span> otherwise.
             </p>
             <p>
-                <br><span class="function">Inventory.SetItem(int index, string Name)</span>
+                <br><span class="function">Inventory.RemoveItem(<span class="number"></span> index)</span>
+                Removes the item in position <span class="term">index</span> from the player's inventory.
+                <br><span class="term" style="margin-left:20px">index</span> = Index to remove the item from. The first item is position 1.
+            </p>
+            <p>
+                <br><br><span class="function"><span class="string"></span> Inventory.GetItem(<span class="number"></span> index)</span>
+                Returns the name of the item in the inventory at the given index.
+                <br><span class="term" style="margin-left:20px">index</span> = Index of the chosen item. The first item is number 1.
+            </p>
+            <p>
+                <br><br><span class="function"><span class="number"></span> Inventory.GetType(<span class="number"></span> index)</span>
+                Returns the type of the item in the inventory at the given index.
+                <br><span class="term" style="margin-left:20px">index</span> = Index of the chosen item. The first item is number 1.<br>
+                <br>Types:<br>
+                <div style="margin-left:20px">
+                    <span class="term">0</span> = Consumable. Will be deleted upon use.
+                    <br><span class="term">1</span> = Weapon. You will be able to equip this item as a weapon.
+                    <br><span class="term">2</span> = Armor. You will be able to equip this item as armor.
+                    <br><span class="term">3</span> = Special. This item will not be deleted upon use.
+                </div>
+            </p>
+            <p>
+                <br><span class="function">Inventory.SetItem(<span class="number"></span> index, <span class="string"></span> name)</span>
                 Sets the inventory item at <span class="term">index</span> to the item <span class="term">Name</span>.
                 <br><span class="term" style="margin-left:20px">index</span> = Index to put the item in. The first item is position 1.
-                <br><span class="term" style="margin-left:20px">Name</span> = Name of the item to put in the inventory.
+                <br><span class="term" style="margin-left:20px">name</span> = Name of the item to put in the inventory.
             </p>
             <p>
-                <br><span class="function">Inventory.AddCustomItems(table names, table types)</span>
+                <br><span class="function">Inventory.AddCustomItems(<span class="luatable"><span class="string"></span></span> names, 
+                <span class="luatable"><span class="number"></span></span> types)</span>
                 If you want to add custom items, this has to be used before <span class="term">SetInventory</span>.
-                This adds all items in <span class="term">names</span> to the inventory, where each item matches to an 
-                item type in <span class="term">types</span>. If you don't do this, the engine
+                This adds all items in <span class="term">names</span> to the inventory, where each item matches up with a
+                type in <span class="term">types</span>. If you don't do this, the engine
                 will not recognise your newly created items.
                 <br><br>Usage: <span class="term">Inventory.AddCustomItems({"item1", "item2"}, {1, 0})</span>
                 <br><br><span class="term" style="margin-left:20px">names</span> = The names of your custom items.
@@ -123,21 +161,22 @@ it's w3c valid, at least
                 </div>
             </p>
             <p>
-                <br><span class="function">Inventory.SetInventory(table names)</span>
+                <br><span class="function">Inventory.SetInventory(<span class="luatable"><span class="string"></span></span> names)</span>
                 Sets the player's inventory. To use custom items, this must be used after <span class="term">AddCustomItems</span>.
                 <br>This function is used like this: <span class="term">Inventory.SetInventory({"item1", "item2"})</span>;
                 <br><span class="term" style="margin-left:20px">names</span> = The names of the items.
             </p>
             <p>
-                <br><span class="function">Inventory.ItemCount</span>
+                <br><span class="function"><span class="number"></span> Inventory.ItemCount</span>
                 Returns the number of items the player has in their inventory. Read-only.
             </p>
             <p>
-                <br><span class="function">Inventory.NoDelete</span>
-                <i>In the encounter function</i> <span class="term">HandleItem</span>, using this with <span class="term">Inventory.NoDelete</span> as true will make the item the player is using stay in the inventory.
+                <br><span class="function"><span class="boolean"></span> Inventory.NoDelete</span>
+                <u>In the encounter function</u> <span class="term">HandleItem</span> <u>only</u>, setting this to true will make the
+                last used item stay in the inventory.
             </p>
             <p>
-                <br><span class="function">Inventory.SetAmount(int amount)</span>
+                <br><span class="function">Inventory.SetAmount(<span class="number"></span> amount)</span>
                 Used with Weapon and Armor items. If the item is a Weapon, this sets its ATK. If the item is armor,
                 this sets its DEF.
                 <br><span class="term" style="margin-left:20px">amount</span>: the amount of ATK/DEF the item will have.

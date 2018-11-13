@@ -24,31 +24,32 @@ public class ScriptRegistry {
     public static void init() {
         dict.Clear();
         for (int i = 0; i < folders.Length; i++) {
-            string modPath = FileLoader.pathToModFile("Lua/" + folders[i]);
-            //string defaultPath = FileLoader.pathToDefaultFile("Lua/" + folders[i]);
-            loadAllFrom(modPath, prefixes[i]);
-            //loadAllFrom(defaultPath, prefixes[i]);
+            loadAllFrom(folders[i], prefixes[i], i < 3 && !(StaticInits.MODFOLDER == "@Title"));
         }
     }
 
-    private static void loadAllFrom(string directoryPath, string script_prefix) {
-        try {
-            DirectoryInfo dInfo = new DirectoryInfo(directoryPath);
-            FileInfo[] fInfo = dInfo.GetFiles("*.lua", SearchOption.AllDirectories);
-            foreach (FileInfo file in fInfo) {
-                //UnitaleUtil.writeInLog(file.Name);
-                string scriptName = FileLoader.getRelativePathWithoutExtension(directoryPath, file.FullName).ToLower();
-                string temp = "";
-                dict.TryGetValue(script_prefix + scriptName, out temp);
+    private static void loadAllFrom(string folderName, string script_prefix, bool needed) {
+        string directoryPath = FileLoader.pathToModFile("Lua/" + folderName);
+        DirectoryInfo dInfo = new DirectoryInfo(directoryPath);
+        if (!dInfo.Exists) {
+            if (needed)
+                UnitaleUtil.DisplayLuaError("mod loading", "You tried to load the mod \"" + StaticInits.MODFOLDER + "\" but it can't be found, or at least its \"Lua/" + folderName + "\" folder can't be found.\nAre you sure it exists?");
+            return;
+        }
+        FileInfo[] fInfo = dInfo.GetFiles("*.lua", SearchOption.AllDirectories);
+        foreach (FileInfo file in fInfo) {
+            //UnitaleUtil.writeInLog(file.Name);
+            string scriptName = FileLoader.getRelativePathWithoutExtension(directoryPath, file.FullName).ToLower();
+            string temp = "";
+            dict.TryGetValue(script_prefix + scriptName, out temp);
 
-                if (dict.ContainsKey(script_prefix + scriptName) && temp == FileLoader.getTextFrom(file.FullName))
-                    continue;
+            if (dict.ContainsKey(script_prefix + scriptName) && temp == FileLoader.getTextFrom(file.FullName))
+                continue;
 
-                else if (dict.ContainsKey(script_prefix + scriptName))
-                    dict.Remove(script_prefix + scriptName);
+            else if (dict.ContainsKey(script_prefix + scriptName))
+                dict.Remove(script_prefix + scriptName);
 
-                Set(script_prefix + scriptName, FileLoader.getTextFrom(file.FullName));
-            }
-        } catch { }
+            Set(script_prefix + scriptName, FileLoader.getTextFrom(file.FullName));
+        }
     }
 }

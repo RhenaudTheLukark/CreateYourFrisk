@@ -44,7 +44,7 @@ public class Fading : MonoBehaviour {
         eventSent = false;
         alpha = direction == 1 ? 0 : 1;
         fade.color = new Color(0, 0, 0, alpha);
-        if (StartFade != null && StaticInits.MODFOLDER != "Title")
+        if (StartFade != null && StaticInits.MODFOLDER != "@Title")
             StartFade();
         return 1f/fadeSpeed;     // Return the fadeSpeed variable so it's easy to time the Application.LoadLevel();
     }

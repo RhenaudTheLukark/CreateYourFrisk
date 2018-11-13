@@ -72,7 +72,7 @@ public class PlayerController : MonoBehaviour {
     /// <summary>
     /// if true, ignores movement input. Done when the player should be controlled by something else, like the UI
     /// </summary>
-    private bool overrideControl = false;
+    public bool overrideControl = false;
 
     /// <summary>
     /// the Image of the player
