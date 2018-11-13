@@ -62,7 +62,7 @@ it's w3c valid, at least
                     <li><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory System</a></li>
                     <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
                     <li><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
-				<li class="li-header">Overworld</li>
+                <li class="li-header">Overworld</li>
                     <li><a href="overworld.html"><span class="CYF"></span> Basics</a></li>
                     <li><a href="overworld-howto-map.html"><span class="CYF"></span> How to create a map</a></li>
                     <li><a href="overworld-howto-event.html"><span class="CYF"></span> How to create an event</a></li>
@@ -89,98 +89,99 @@ it's w3c valid, at least
                 the player's hitbox, if you need that for anything.
             </p>
             <ul>
-                <li><span class="term">Player.x</span> (readonly) - gets the X position of the <i>player's center</i> relative to the arena's
+                <li><span class="number"></span> <span class="term">Player.x</span> (readonly) - gets the X position of the <i>player's center</i> relative to the arena's
                     center.
                 </li><br>
-                <li><span class="term">Player.y</span> (readonly) - get the Y position of the <i>player's center</i> relative to the arena's
+                <li><span class="number"></span> <span class="term">Player.y</span> (readonly) - get the Y position of the <i>player's center</i> relative to the arena's
                     center.
                 </li><br>
-                <li><span class="term">Player.absx</span> (readonly) - get the X position of the <i>player's center</i> relative to the bottom
+                <li><span class="number"></span> <span class="term">Player.absx</span> (readonly) - get the X position of the <i>player's center</i> relative to the bottom
                     left corner of the screen.
                 </li><br>
-                <li><span class="term">Player.absy</span> (readonly) - get the Y position of the <i>player's center</i> relative to the bottom
+                <li><span class="number"></span> <span class="term">Player.absy</span> (readonly) - get the Y position of the <i>player's center</i> relative to the bottom
                     left corner of the screen.
                 </li><br>
-                <li><span class="term">Player.sprite</span> - the Player's soul sprite component. See the <span class="ref">Sprites &amp; Animation</span> 
+                <li><span class="userdata">sprite</span> <span class="term">Player.sprite</span> - the Player's soul sprite component. See the <span class="ref">Sprites &amp; Animation</span> 
                     section for usage details.
                 </li><br>
-                <li><span class="term">Player.hp</span> - get or set the player's current HP. Can't exceed max HP. If set to 0, game over
+                <li><span class="number"></span> <span class="term">Player.hp</span> - get or set the player's current HP. Can't exceed max HP. If set to 0, game over
                     triggers.<br>
                     <span class="CYF"></span> * The hp value is now a float, but there can be some problems about accuracy of float values.
                 </li><br>
-                <li><span class="CYF"></span> <span class="term">Player.maxhp</span> (readonly) - returns the player's MaxHP value. <br> 
+                <li><span class="CYF"></span> <span class="number"></span> <span class="term">Player.maxhp</span> (readonly) - returns the player's MaxHP value. <br> 
                     * The hp value is now a float, but there can be some problems about accuracy of float values.
                 </li><br>
-                <li><span class="CYF"></span> <span class="term">Player.maxhpshift</span> (readonly) - returns the difference between the player's current Max HP and their normal, 
+                <li><span class="CYF"></span> <span class="number"></span> <span class="term">Player.maxhpshift</span> (readonly) - returns the difference between the player's current Max HP and their normal, 
                 unmodified Max HP.
-                <br>* The hp value is now a float, but there can be some problems about accuracy of float values.
+                <br>* The hp value is now a float, but there can be some problems with the accuracy of float values.
                 </li><br>
-                <li><span class="CYF"></span> <span class="term">Player.atk</span> (readonly) - base attack of the player. Depends on the player's level.
+                <li><span class="CYF"></span> <span class="number"></span> <span class="term">Player.atk</span> (readonly) - base attack of the player. Depends on the player's level.
                 </li><br>
-                <li><span class="CYF"></span> <span class="term">Player.weapon</span> (readonly) - name of the player's current weapon.
+                <li><span class="CYF"></span> <span class="string"></span> <span class="term">Player.weapon</span> (readonly) - name of the player's current weapon.
                 </li><br>
-                <li><span class="CYF"></span> <span class="term">Player.weaponatk</span> (readonly) - attack value of the player's current weapon.
+                <li><span class="CYF"></span> <span class="number"></span> <span class="term">Player.weaponatk</span> (readonly) - attack value of the player's current weapon.
                 </li><br>
-                <li><span class="CYF"></span> <span class="term">Player.def</span> (readonly) - base defense of the player. Depends on the player's level.
+                <li><span class="CYF"></span> <span class="number"></span> <span class="term">Player.def</span> (readonly) - base defense of the player. Depends on the player's level.
                 </li><br>
-                <li><span class="CYF"></span> <span class="term">Player.armor</span> (readonly) - name of the player's current armor.
+                <li><span class="CYF"></span> <span class="string"></span> <span class="term">Player.armor</span> (readonly) - name of the player's current armor.
                 </li><br>
-                <li><span class="CYF"></span> <span class="term">Player.armordef</span> (readonly) - defense value of the player's current armor.
+                <li><span class="CYF"></span> <span class="number"></span> <span class="term">Player.armordef</span> (readonly) - defense value of the player's current armor.
                 </li><br>
-                <li><span class="term">Player.name</span> - get or set the player's current name. <br>
+                <li><span class="string"></span> <span class="term">Player.name</span> - get or set the player's current name. <br>
+                    <span class="unitale"></span> 6 letters max. By default, it is a name randomly chosen from a small list of pre-set names.<br>
                     <span class="CYF"></span> 9 letters max. "Rhenao" by default.</li><br>
-                <li><span class="term">Player.lv</span> - use this to get or set the player's current level. It can be between 1 and 20. It's 1 by default. 
+                <li><span class="number"></span> <span class="term">Player.lv</span> - use this to get or set the player's current level. It can be between 1 and 20. It's 1 by default. 
                 <span class="CYF"></span> 99 max - Player starts with 20HP / 10 ATK and gets 4 HP / 2 ATK per level. Leveling up the player through code 
                 doesn't automatically heal them; you'll have to do this manually.
                 </li><br>
-                <li><span class="CYF"></span> <span class="term">Player.lastenemychosen</span> (readonly) - gets the id of the last chosen enemy in the 
+                <li><span class="CYF"></span> <span class="number"></span> <span class="term">Player.lastenemychosen</span> (readonly) - gets the id of the last chosen enemy in the 
                 ACT/FIGHT menus. -1 at the beginning of a fight.
                 </li><br>
-                <li><span class="CYF"></span> <span class="term">Player.lasthitmultiplier</span> (readonly) - gets the accuracy value from the last time the
+                <li><span class="CYF"></span> <span class="number"></span> <span class="term">Player.lasthitmultiplier</span> (readonly) - gets the accuracy value from the last time the
                 player was in <span class="term">ATTACKING</span>. Normally, it will be between 0 and 2. It will be -1 if the player missed the attack (and 
                 at the beginning of the battle) and 2.2 if the attack was perfectly precise.
                 </li><br>
-                <li><span class="term">Player.ishurting</span> (readonly) - true if the player's currently blinking due to being hurt, false
+                <li><span class="boolean"></span> <span class="term">Player.ishurting</span> (readonly) - true if the player's currently blinking due to being hurt, false
                     otherwise.
                 </li><br>
-                <li><span class="term">Player.ismoving</span> (readonly) - true if the player is currently moving in battle, false otherwise. Will
+                <li><span class="boolean"></span> <span class="term">Player.ismoving</span> (readonly) - true if the player is currently moving in battle, false otherwise. Will
                     always be false while not in a wave script. NOTE: This only will change with the default control scheme (see below).
                 </li><br>
-                <li><span class="term">Player.Hurt(damage)</span> - deals damage to the player, and makes them invincible for the default time.
+                <li><span class="term">Player.Hurt(<span class="number"></span> damage)</span> - deals damage to the player, and makes them invincible for the default time.
                 </li><br>
-                <li><span class="term">Player.Hurt(damage, invul_time)</span> - deals damage to the player, and makes them invincible for <span class="term">
+                <li><span class="term">Player.Hurt(<span class="number"></span> damage, <span class="number"></span> invul_time)</span> - deals damage to the player, and makes them invincible for <span class="term">
                 invul_time</span> seconds.
                 </li><br>
-                <li><span class="term">Player.Heal(value)</span> - heals the player for this amount. This is exactly the same as
+                <li><span class="term">Player.Heal(<span class="number"></span> value)</span> - heals the player for this amount. This is exactly the same as
                     Player.Hurt(-value, 0). It also plays the healing sound.
                 </li><br>
-                <li><span class="term">Player.SetControlOverride(boolean)</span> - either true or false. Only useable in waves. If true, this will
+                <li><span class="term">Player.SetControlOverride(<span class="boolean"></span> boolean)</span> - either true or false. Only useable in waves. If true, this will
                     prevent the player soul from doing its regular movement/keyboard control for the rest of the wave.
                     Use this if you want to implement your own controls in a wave.
                 </li><br>
-                <li><span class="CYF"></span> <span class="term">Player.Move(x, y, ignoreWalls)</span> - Moves the player soul based on its last position.
+                <li><span class="CYF"></span> <span class="term">Player.Move(<span class="number"></span> x, <span class="number"></span> y, <span class="boolean"></span> ignoreWalls)</span> - Moves the player soul based on its last position.
                     If <span class="term">ignoreWalls</span> is false, it will make sure the player doesn't go outside of the arena;
                     otherwise, it ignores the arena's boundaries. If you want to move the player out of bounds in a wave, you'll
                     have to call <span class="term">Player.SetControlOverride(true)</span>, as the player's default movement keeps the soul inside
                     the arena otherwise.
                 </li><br>
-                <li><span class="term">Player.MoveTo(x, y, ignoreWalls)</span> - Moves the player soul to this position relative to the arena's
+                <li><span class="term">Player.MoveTo(<span class="number"></span> x, <span class="number"></span> y, <span class="boolean"></span> ignoreWalls)</span> - Moves the player soul to this position relative to the arena's
                     center. If <span class="term">ignoreWalls</span> is false, it will make sure the player doesn't go outside of the arena;
                     otherwise, it ignores the arena's boundaries. If you want to move the player out of bounds in a wave, you'll
                     have to call <span class="term">Player.SetControlOverride(true)</span> as the player's default movement keeps the soul inside
                     the arena.
                 </li><br>
-                <li><span class="term">Player.MoveToAbs(x, y, ignoreWalls)</span> - Moves the player soul to this position relative to the bottom left
+                <li><span class="term">Player.MoveToAbs(<span class="number"></span> x, <span class="number"></span> y, <span class="boolean"></span> ignoreWalls)</span> - Moves the player soul to this position relative to the bottom left
                     of the screen. If <span class="term">ignoreWalls</span> is false, it will make sure the player doesn't go outside of the arena;
                     otherwise, it ignores the arena's boundaries. If you want to move the player out of bounds in a wave, you'll
                     have to call <span class="term">Player.SetControlOverride(true)</span> as the player's default movement keeps the soul inside
                     the arena.
                 </li><br>
-                <li><span class="CYF"></span> <span class="term">Player.ForceHP(int amount)</span> - Lets you set the player's HP to a number above the 
+                <li><span class="CYF"></span> <span class="term">Player.ForceHP(<span class="number"></span> amount)</span> - Lets you set the player's HP to a number above the 
                 player's Max HP. The REAL maximum is 1.5 times the player's MaxHP.
                 </li><br>
-                <li><span class="CYF"></span> <span class="term">Player.SetMaxHPShift(int shift, float invulnerabilitySeconds = 1.7f, bool set = false,
-                bool canHeal = false)</span> - Lets you set the Player's MaxHP, relative to their normal MaxHP. If the total MaxHP is negative or nil, it
+                <li><span class="CYF"></span> <span class="term">Player.SetMaxHPShift(<span class="number"></span> shift, <span class="number"></span> invulnerabilitySeconds = 1.7f, <span class="boolean"></span> set = false,
+                <span class="boolean"></span> canHeal = false)</span> - Lets you set the Player's MaxHP, relative to their normal MaxHP. If the total MaxHP is negative or nil, it
                     causes a GameOver.<br>
                     Formula: Player's MaxHP = Basis MaxHP + MaxHP Shift
                     <ul>
@@ -192,34 +193,31 @@ it's w3c valid, at least
                         <li><span class="term">canHeal</span> = true if the player will be able to heal up to this new Max HP value.</li><br>
                     </ul>
                 </li><br>
-                <li><span class="CYF"></span> <span class="term">Player.SetAttackAnim(table anim, float frequency)</span> - Sets the animation used
+                <li><span class="CYF"></span> <span class="term">Player.SetAttackAnim(<span class="luatable"><span class="string"></span></span> anim, <span class="number"></span> frequency)</span> - Sets the animation used
                 when attacking an enemy. Use it like <span class="term">sprite.SetAnimation()</span></li><br>
                 <li><span class="CYF"></span> <span class="term">Player.ResetAttackAnim()</span> - Resets the animation of the player's 
                 attack to the default slashing animation.</li><br>
-                <li><span class="CYF"></span> <span class="term">Player.ChangeTarget(int targetNumber)</span> - Changes the target of the Player's attack
+                <li><span class="CYF"></span> <span class="term">Player.ChangeTarget(<span class="number"></span> targetNumber)</span> - Changes the target of the Player's attack
                 while in <span class="term">ATTACKING</span>. Does nothing outside of the state <span class="term">ATTACKING</span>.
                     It should be used in <span class="term">BeforeDamageCalculation()</span> or <span class="term">BeforeDamageValues()</span>.</li><br>
-                <li><span class="CYF"></span> <span class="term">Player.ForceAttack(int enemyID, int damage = normal_damage_values)</span> - Forces an 
+                <li><span class="CYF"></span> <span class="term">Player.ForceAttack(<span class="number"></span> enemyID, <span class="number"></span> damage = normal_damage_values)</span> - Forces an 
                     attack towards the enemy number <span class="term">enemyID</span>. If you want to, you can choose the attack's damage, too - but 
                     otherwise, damage will be calculated normally.
-                    <br><span style="color:#aa0000">After using this function, you have to check with <span class="term">Player.CheckDeath</span> to really 
-                    kill enemies that lost all their health this way.</span></li><br>
-                <li><span class="CYF"></span> <span class="term">Player.MultiTarget(table targetIDs = all, table damage = normal_damage_values)</span> - The 
+                    <br><span style="color:#ff0000">If you want enemies to be able to die this way, you MUST check with <span class="term">Player.CheckDeath</span>!</span></li><br>
+                <li><span class="CYF"></span> <span class="term">Player.MultiTarget(<span class="luatable"><span class="number"></span></span>  targetIDs = all, <span class="luatable"><span class="number"></span></span> damage = normal_damage_values)</span> - The 
                     next attack the player executes will attack the enemies contained in <span class="term">targetIDs</span> and deal <span class="term">
                     damage</span> damage. If you want to, you can choose the attack's damage, too - but otherwise, damage will be calculated normally.
                     If you put nothing as a parameter, this will attack all enemies with the normal damage calculations.</li><br>
-                <li><span class="CYF"></span> <span class="term">Player.MultiTarget(int damage)</span> - The next attack the player executes will attack all 
+                <li><span class="CYF"></span> <span class="term">Player.MultiTarget(<span class="number"></span> damage)</span> - The next attack the player executes will attack all 
                 enemies and deals <span class="term">damage</span> damage.</li><br>
-                <li><span class="CYF"></span> <span class="term">Player.ForceMultiAttack(table targetIDs = all, table damage = normal_damage_values)</span> 
+                <li><span class="CYF"></span> <span class="term">Player.ForceMultiAttack(<span class="luatable"><span class="number"></span></span> targetIDs = all, <span class="luatable"><span class="number"></span></span> = normal_damage_values)</span> 
                     - Forces an attack towards the enemies contained in <span class="term">targetIDs</span> and deals <span class="term">damage
                     </span> damage. If you want to, you can choose the attack's damage, too - but otherwise, damage will be calculated normally.
                     If you put nothing as a parameter, this will attack all enemies with the normal damage calculations.
-                    <br><span style="color:#aa0000">After using this function, you have to check with <span class="term">Player.CheckDeath</span> to really 
-                    kill enemies that lost all their health this way.</span></li><br>
-                <li><span class="CYF"></span> <span class="term">Player.ForceMultiAttack(int damage)</span> - Forces an attack that deals 
+                    <br><span style="color:#ff0000">If you want enemies to be able to die this way, you MUST check with <span class="term">Player.CheckDeath</span>!</span></li><br>
+                <li><span class="CYF"></span> <span class="term">Player.ForceMultiAttack(<span class="number"></span> damage)</span> - Forces an attack that deals 
                 <span class="term">damage</span> damage to all enemies.
-                    <br><span style="color:#aa0000">After using this function, you have to check with <span class="term">Player.CheckDeath</span> to really 
-                    kill enemies that lost all their health this way.</span></li><br>
+                    <br><span style="color:#ff0000">If you want enemies to be able to die this way, you MUST check with <span class="term">Player.CheckDeath</span>!</span></li><br>
                 <li><span class="CYF"></span> <span class="term">Player.CheckDeath()</span> - Checks if the enemies are dead after a forced attack.
                     I don't kill the enemies from forced attacks because death texts will be easier to implement if you use
                     <span class="term">ForceAttack</span> or <span class="term">ForceMultiAttack</span> in the middle of text.</li><br>

@@ -62,18 +62,18 @@ it's w3c valid, at least
                     <li><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory System</a></li>
                     <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
                     <li><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
-				<li class="li-header">Overworld</li>
+                <li class="li-header">Overworld</li>
                     <li><a href="overworld.html"><span class="CYF"></span> Basics</a></li>
                     <li><a href="overworld-howto-map.html"><span class="CYF"></span> How to create a map</a></li>
                     <li><a href="overworld-howto-event.html"><span class="CYF"></span> How to create an event</a></li>
                     <li><a href="overworld-howto-animevent.html"><span class="CYF"></span> How to animate an event</a></li>
                     <li><a href="overworld-howto-shop.html"><span class="CYF"></span> How to create a shop</a></li>
-                    <li><a href="overworld-object-general.html"><span class="CYF"></span> The General Object</a></li>
+                    <li><a href="overworld-object-general.html"> <span class="CYF"></span> The General Object</a></li>
                     <li><a href="overworld-object-event.html"><span class="CYF"></span> The Event Object</a></li>
                     <li><a href="overworld-object-player.html"><span class="CYF"></span> The Player Object</a></li>
                     <li><a href="overworld-object-screen.html"><span class="CYF"></span> The Screen Object</a></li>
                     <li><a href="overworld-object-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
-                    <li style="margin-left:5px;">> <span class="CYF"></span> The Map Object <</li>
+                    <li class="active" style="margin-left:5px;">> <span class="CYF"></span> The Map Object <</li>
                 <li class="li-header">Resources</li>
                     <li><a href="../media/dialogoptions.png">Dialog bubble names</a></li>
             </ul>
@@ -90,100 +90,97 @@ it's w3c valid, at least
 			</p>
             
             <p>
-                <br><span class="function">Map.GetMusic()</span>
-                Returns the name of the music the map launches when the player teleports to this map.
+                <br><span class="function">Map.GetMusic() returns <span class="string"></span></span>
+                Returns the name of the music the map plays when loaded.
             </p>
             <p>
-                <br><span class="function">Map.SetMusic(string value)</span>
-                Sets the name of the music the map launches when the player teleports to this map.
+                <br><span class="function">Map.SetMusic(<span class="string"></span>value)</span>
+                Sets the name of the music the map plays when loaded.
             </p>
             <p>
-                <br><span class="function">Map.GetModToLoad()</span>
+                <br><span class="function">Map.GetModToLoad() returns <span class="string"></span> </span>
                 Returns the name of the mod the map uses.
             </p>
             <p>
-                <br><span class="function">Map.SetModToLoad(string value)</span>
+                <br><span class="function">Map.SetModToLoad(<span class="string"></span> value)</span>
                 Sets the name of the mod the map uses. The player needs to enter the map again for this new mod to be loaded.
             </p>
             <p>
-                <br><span class="function">Map.GetNoRandomEncounter()</span>
-                Returns the value of the boolean <span class="term">NoRandomEncounter</span>. The boolean <span class="term">NoRandomEncounter</span>
-				prevents encounters from being launched if set to true.
+                <br><span class="function">Map.GetNoRandomEncounter() returns <span class="boolean"></span> </span>
+                Returns whether random encounters can occur on this map.
             </p>
             <p>
-                <br><span class="function">Map.SetNoRandomEncounter(bool value)</span>
-                Sets the value of the boolean <span class="term">NoRandomEncounter</span>.
+                <br><span class="function">Map.SetNoRandomEncounter(<span class="boolean"></span> value)</span>
+                Sets whether random encounters can occur on this map.
             </p>
             <p>
-                <br><span class="function">Map.GetMusicKept()</span>
-                Returns the value of the boolean <span class="term">isMusicKeptBetweenBattles</span>. This one is pretty straightforward, if set to true, 
-                the map's music won't be stopped during battles, like in The Core.
+                <br><span class="function">Map.GetMusicKept() returns <span class="boolean"></span></span>
+                Returns whether music will persist between the Overworld and battles, like in The Core.
             </p>
             <p>
-                <br><span class="function">Map.SetMusicKept(bool value)</span>
-                Sets the value of the boolean <span class="term">isMusicKeptBetweenBattles</span>. If you change the value of this boolean, the main Audio 
-				channel used for the map's bgm will be changed (and all of Audio's functions will be used on this new channel), being "scr" when this 
-				boolean's value is true, and "StaticKeptAudio" otherwise.
+                <br><span class="function">Map.SetMusicKept(<span class="boolean"></span> value)</span>
+                Sets whether music will persist between the Overworld and battles, like in The Core.<br>
+                The main Audio channel used for the map's bgm will be <span class="term">StaticKeptAudio</span> if true, and 
+                <span class="term">src</span> otherwise.
             </p>
             <p>
-                <br><span class="function">Map.GetMusicMap(string mapName)</span>
-                Returns the name of the music the map given launches when the player teleports to this map. If you choose to access the current map's
-                MusicKept value, it'll launch <span class="term">Map.GetMusic()</span> instead.<br>
-                <span style="color:#aa0000"><u>ONLY WORKS WHEN THE PLAYER HAS ALREADY ENTERED THE MAP BEFORE!</u></span> Use 
-				<span class="term">Map.HasPlayerBeenInMap()</span> to check if they did.
+                <br><span class="function">Map.GetMusicMap(<span class="string"></span> mapName) returns <span class="string"></span></span>
+                Returns the name of the music that the map <span class="term">mapName</span> plays when loaded.<br>
+                If <span class="term">mapName</span> is the current map's name, this will return <span class="term">Map.GetMusic()</span> instead.<br><br>
+                <span style="color:#ff0000"><u>NOTE: ONLY WORKS IF THE PLAYER HAS ENTERED THE MAP BEFORE!</u></span><br>
+                Use <span class="term">Map.HasPlayerBeenInMap()</span> to check if they have.
             </p>
             <p>
-                <br><span class="function">Map.SetMusicMap(string mapName, string value)</span>
-                Sets the name of the music the map given launches when the player teleports to this map. Also works on maps the player hasn't been
-                in yet. If you choose to modify the current map's Music value, it'll launch <span class="term">Map.SetMusic()</span> instead.
+                <br><span class="function">Map.SetMusicMap(<span class="string"></span> mapName, <span class="string"></span> value)</span>
+                Sets the name of the music that the map <span class="term">mapName</span> plays when loaded.<br>
+                Works with maps the player hasn't been in yet.<br>
+                If <span class="term">mapName</span> is the current map's name, this will call <span class="term">Map.SetMusic()</span> instead.
             </p>
             <p>
-                <br><span class="function">Map.GetModToLoadMap(string mapName)</span>
-                Returns the name of the mod the map given uses. If you choose to access the current map's ModToLoad value, it'll launch 
-                <span class="term">Map.GetModToLoad()</span> instead.<br>
-                <span style="color:#aa0000"><u>ONLY WORKS WHEN THE PLAYER HAS ALREADY ENTERED THE MAP BEFORE!</u></span> Use 
-				<span class="term">Map.HasPlayerBeenInMap()</span> to check if they did.
+                <br><span class="function">Map.GetModToLoadMap(<span class="string"></span> mapName) returns <span class="string"></span></span>
+                Returns the name of the mod that the map <span class="term">mapName</span> uses.<br>
+                If <span class="term">mapName</span> is the current map's name, this will return <span class="term">Map.GetModToLoad()</span> instead.<br><br>
+                <span style="color:#ff0000"><u>NOTE: ONLY WORKS IF THE PLAYER HAS ENTERED THE MAP BEFORE!</u></span><br>
+                Use <span class="term">Map.HasPlayerBeenInMap()</span> to check if they have.
             </p>
             <p>
-                <br><span class="function">Map.SetModToLoadMap(string mapName, string value)</span>
-                Sets the name of the mod the map uses. Also works on maps the player hasn't been in yet. If you choose to modify the current 
-                map's ModToLoad value, it'll launch <span class="term">Map.SetModToLoad()</span> instead.
+                <br><span class="function">Map.SetModToLoadMap(<span class="string"></span> mapName, <span class="string"></span> value)</span>
+                Sets the name of the mod that the map <span class="term">mapName</span> uses.<br>
+                Works with maps the player hasn't been in yet.<br>
+                If <span class="term">mapName</span> is the current map's name, this will call <span class="term">Map.SetModToLoad()</span> instead.
             </p>
             <p>
-                <br><span class="function">Map.GetNoRandomEncounterMap(string mapName)</span>
-                Returns the value of the boolean <span class="term">NoRandomEncounter</span> of the given map. The boolean 
-				<span class="term">NoRandomEncounter</span> prevents encounters from being launched if set to true. If you choose to access the 
-				current map's <span class="term">NoRandomEncounter</span> value, it'll launch <span class="term">Map.GetNoRandomEncounter()</span> 
-				instead.<br>
-                <span style="color:#aa0000"><u>ONLY WORKS WHEN THE PLAYER HAS ALREADY ENTERED THE MAP BEFORE!</u></span> Use 
-				<span class="term">Map.HasPlayerBeenInMap()</span> to check if they did.
+                <br><span class="function">Map.GetNoRandomEncounterMap(<span class="string"></span> mapName) returns <span class="string"></span></span>
+                Returns whether random encounters can occur on the map <span class="term">mapName</span>.<br>
+                If <span class="term">mapName</span> is the current map's name, this will return <span class="term">Map.GetNoRandomEncounter()</span> 
+				instead.<br><br>
+                <span style="color:#ff0000"><u>NOTE: ONLY WORKS IF THE PLAYER HAS ENTERED THE MAP BEFORE!</u></span><br>
+                Use <span class="term">Map.HasPlayerBeenInMap()</span> to check if they have.
             </p>
             <p>
-                <br><span class="function">Map.SetNoRandomEncounterMap(string mapName, bool value)</span>
-                Sets the value of the boolean <span class="term">NoRandomEncounter</span> in the given map's data. Also works on maps the player hasn't 
-				been in yet. 
-                If you choose to modify the current map's <span class="term">NoRandomEncounter</span> value, it'll launch 
-				<span class="term">Map.SetNoRandomEncounter()</span> instead.
+                <br><span class="function">Map.SetNoRandomEncounterMap(<span class="string"></span> mapName, <span class="boolean"></span> value)</span>
+                Sets whether random encounters can occur on the map <span class="term">mapName</span>.<br>
+                Works on maps the player hasn't been in yet.<br>
+                If <span class="term">mapName</span> is the current map's name, this will call <span class="term">Map.SetNoRandomEncounter()</span> instead.
             </p>
             <p>
-                <br><span class="function">Map.GetMusicKeptMap(string mapName)</span>
-                Returns the value of the boolean <span class="term">isMusicKeptBetweenBattles</span> in the given map's data. This one is pretty 
-				straightforward, if set to true, the map's music won't be stopped during battles, like in The Core. 
-				If you choose to access the current map's <span class="term">MusicKept</span> value, it'll launch <span class="term">Map.GetMusicKept()</span> instead.<br>
-                <span style="color:#aa0000"><u>ONLY WORKS WHEN THE PLAYER HAS ALREADY ENTERED THE MAP BEFORE!</u></span> Use 
-				<span class="term">Map.HasPlayerBeenInMap()</span> to check if they did.
+                <br><span class="function">Map.GetMusicKeptMap(<span class="string"></span> mapName)</span>
+                Returns whether music will persist between the Overworld and battles, like in The Core, for the map <span class="term">mapName</span>.<br>
+				If <span class="term">mapName</span> is the current map's name, this will return <span class="term">Map.GetMusicKept()</span> 
+				instead.<br><br>
+                <span style="color:#ff0000"><u>NOTE: ONLY WORKS IF THE PLAYER HAS ENTERED THE MAP BEFORE!</u></span><br>
+                Use <span class="term">Map.HasPlayerBeenInMap()</span> to check if they have.
             </p>
             <p>
-                <br><span class="function">Map.SetMusicKeptMap(string mapName, bool value)</span>
-                Sets the value of the boolean <span class="term">isMusicKeptBetweenBattles</span> in the given map's data. Also works on maps the player 
-				hasn't been in yet. 
-				If you choose to modify the current map's <span class="term">MusicKept</span> value, it'll launch 
-				<span class="term">Map.SetMusicKept()</span> instead.
+                <br><span class="function">Map.SetMusicKeptMap(<span class="string"></span> mapName, <span class="boolean"></span> value)</span>
+                Sets whether music will persist between the Overworld and battles, like in The Core, for the map <span class="term">mapName</span>.<br>
+                Works on maps the player hasn't been in yet. <br>
+				If <span class="term">mapName</span> is the current map's name, this will call <span class="term">Map.SetMusicKept()</span> instead.
             </p>
             <p>
-                <br><span class="function">Map.HasPlayerBeenInMap(string map)</span>
-                Returns a boolean specifying whether the player has been in that map before or not.
-                If they did, the function will return true, false otherwise.
+                <br><span class="function">Map.HasPlayerBeenInMap(<span class="string"></span> mapName) returns <span class="boolean"></span></span>
+                Returns a boolean specifying whether the player has been in the map <span class="term">mapName</span> before or not.<br>
+                If they have, the function will return true, false otherwise.
             </p>
         </div>
 		

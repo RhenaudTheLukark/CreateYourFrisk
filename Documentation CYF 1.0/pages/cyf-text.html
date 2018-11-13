@@ -62,7 +62,7 @@ it's w3c valid, at least
                     <li><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory System</a></li>
                     <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
                     <li style="margin-left:5px;">> <span class="CYF"></span> The Text Object <</li>
-				<li class="li-header">Overworld</li>
+                <li class="li-header">Overworld</li>
                     <li><a href="overworld.html"><span class="CYF"></span> Basics</a></li>
                     <li><a href="overworld-howto-map.html"><span class="CYF"></span> How to create a map</a></li>
                     <li><a href="overworld-howto-event.html"><span class="CYF"></span> How to create an event</a></li>
@@ -93,17 +93,18 @@ it's w3c valid, at least
                 to do so. Look down to see them!
             </p>
             <p>
-                <br><span class="function">CreateText(table text, table position, int textWidth, string layer = "BelowPlayer", int bubbleHeight = -1) returns TextObject [E/M/W]</span>
+                <br><span class="function">CreateText(<span class="luatable"><span class="string"></span></span>  text, 
+                <span class="luatable"><span class="number"></span>, <span class="number"></span></span> position, <span class="number"></span> textMaxWidth, <span class="string"></span> layer = "BelowPlayer", <span class="number"></span>  bubbleHeight = -1) returns <span class="userdata">textObject</span> [E/M/W]</span>
                 This function creates a Text Object and returns it. However, as you can see, a lot of parameters are needed.
-                <Br>Here is what you should put:
+                <Br>Here is what you need to set:
                 <ul>
                     <li><span class="term">text</span> - The text to display.
                     <br>Used the same way as in <span class="term">BattleDialog</span>: <span class="term">{"Text 1", "Text 2"}</span></li><br>
-                    <li><span class="term">position</span> - The position of the center of the object. Sorry if it may be hard to place it, but you'll be 
+                    <li><span class="term">position</span> - <b>Two numbers</b>: The x and y positions of the center of the object. Sorry if it may be hard to place it, but you'll be 
                     able to use <span class="term">SetPivot</span> and <span class="term">MoveTo</span> to adjust it afterwards.
                     <br>You only need two numbers, like this: 
                     <span class="term">{320, 240}</span></li><br>
-                    <li><span class="term">textWidth</span> - You'll always need this! The bubble's width will be 20px larger than the text's 
+                    <li><span class="term">textMaxWidth</span> - You'll always need this! The bubble's width will be 20px larger than the text's 
                     width. Also, bubbles have a minimum width of 40.<br>Example: <span class="term">150</span></li><br>
                     <li><span class="term">layer</span> - The sprite layer of the Text Object. If it doesn't exist, it returns an error. This argument is 
                     optional. If it's not provided, the Text Object will be in the layer <span class="term">BelowPlayer</span>. 
@@ -116,70 +117,88 @@ it's w3c valid, at least
             <p>
                 <br><span class="function">Text.DestroyText()</span>
                 This function destroys a text object, similar to <span class="term">.Remove()</span> for bullets and sprites.
-                <br>Note that this happens automatically if a text object closes itself, either by having the player close it or by closing automatically if <span class="term">progressmode</span> is <span class="term">"manual"</span>.
+                <br><br>
+                Trying to get, set or call almost anything besides <span class="term">Text.isactive</span> on a destroyed text object will error.
+                <br><br>
+                Note that this happens automatically if a text object closes itself, either by having the player close it or by closing automatically if <span class="term">progressmode</span> is <span class="term">"auto"</span>.
             </p>
             <p>
-                <br><span class="function">Text.progressmode</span>
-                This value is used to set the progression mode of the text: Setting it to <span class="term">"auto"</span> will make the text start a new 
-                line after a  given number of frames set in <span class="term">Text.SetAutoWaitTimeBetweenFrames()</span>. Setting it to
-                <span class="term">"manual"</span> will need the player to press the Confirm button at the end of each dialogue. Setting it to 
-                <span class="term">"none"</span> means that you'll need to manually display the next line in-code using 
-                <span class="term">Text.NextLine()</span>.
+                <br><span class="function"><span class="boolean"></span> Text.isactive</span>
+                Tells you if a text object is active.
+                <br><br>
+                A text object will become inactive when it finishes its text and tries to continue,
+                or if you call <span class="term">Text.DestroyText()</span>.
             </p>
             <p>
-                <br><span class="function">Text.x</span>
+                <br><span class="function"><span class="string"></span> Text.progressmode</span>
+                This value is used to set the progression mode of the text to one of the following values.
+                <ul>
+                    <li><span class="term">"auto"</span>: Makes the text start a new line after a  given number of frames 
+                    set in <span class="term">Text.SetAutoWaitTimeBetweenTexts()</span>.</li>
+                    <li><span class="term">"manual"</span>: Makes the text require the player to press the Confirm button at 
+                    the end of each line.</li>
+                    <li><span class="term">"none"</span>: With this option, you will need to manually display the next line 
+                    in-code using <span class="term">Text.NextLine()</span>.</li>
+                </ul>
+            </p>
+            <p>
+                <br><span class="function"><span class="number"></span> Text.x</span>
                 The local x position of the object, measured from the position of the text object's parent. This value depends on the object's pivot.
             </p>
             <p>
-                <br><span class="function">Text.y</span>
+                <br><span class="function"><span class="number"></span> Text.y</span>
                 The local y position of the object, measured from the position of the text object's parent. This value depends on the object's pivot.
             </p>
             <p>
-                <br><span class="function">Text.absx</span>
+                <br><span class="function"><span class="number"></span> Text.absx</span>
                 The absolute x position of the object, measured from the bottom left corner of the screen. This value depends on the object's pivot.
             </p>
             <p>
-                <br><span class="function">Text.absy</span>
+                <br><span class="function"><span class="number"></span> Text.absy</span>
                 The absolute y position of the object, measured from the bottom left corner of the screen. This value depends on the object's pivot.
             </p>
             <p>
-                <br><span class="function">Text.textWidth</span>
-                Width of the text. If the value is lower than 16, it'll be set back to 16.
+                <br><span class="function"><span class="number"></span> Text.textMaxWidth</span>
+                Get or set the maximum width of the text. If the value is lower than 16, it'll be set back to 16.
             </p>
             <p>
-                <br><span class="function">Text.bubbleHeight</span>
-                Height of the bubble. If the value is lower than 40, it'll be set back to 40.
+                <br><span class="function"><span class="number"></span> Text.bubbleHeight</span>
+                Get or set the height of the bubble. If the value is lower than 40, it'll be set back to 40.
             </p>
             <p>
-                <br><span class="function">Text.layer</span>
+                <br><span class="function"><span class="string"></span> Text.layer</span>
                 The sprite layer of the Text Object. If it doesn't exist, it returns an error. This is <span class="term">"BelowPlayer"</span> by default.
             </p>
             <p>
-                <br><span class="function">Text.color</span>
+                <br><span class="function"><span class="luatable"><span class="number"></span>, <span class="number"></span>, 
+                <span class="number"></span>, <span class="number"></span> = 1 </span> Text.color</span>
                 Get or set the color of the text, as a table of 3 or 4 values from 0 to 1.<br>For example, <span class="term">
-                sprite.color = {1.0, 0.0, 0.0}</span> makes the text red.<br>Black areas are not affected by coloration. The 4th value is the alpha (transparency) value of the text.
+                sprite.color = {1.0, 0.0, 0.0}</span> makes the text red.<br>Black areas are not affected by coloration.<br>
+                The 4th value is the alpha (transparency) value of the text.
             </p>
             <p>
-                <br><span class="function">Text.color32</span>
+                <br><span class="function"><span class="luatable"><span class="number"></span>, <span class="number"></span>, 
+                <span class="number"></span>, <span class="number"></span> = 255 </span> Text.color32</span>
                 Get or set the color of the text, as a table of 3 or 4 integer values from 0 to 255.<br>For example, <span class="term">
-                sprite.color = {250, 0, 0}</span> makes it red.<br>Black areas are not affected by coloration. The 4th value is the alpha (transparency) value of the text.
+                sprite.color = {250, 0, 0}</span> makes it red.<br>Black areas are not affected by coloration.<br>
+                The 4th value is the alpha (transparency) value of the text.
             </p>
             <p>
-                <br><span class="function">Text.alpha</span>
+                <br><span class="function"><span class="number"></span> Text.alpha</span>
                 Get or set the text's transparency, as a value between 0 and 1.
             </p>
             <p>
-                <br><span class="function">Text.alpha32</span>
+                <br><span class="function"><span class="number"></span> Text.alpha32</span>
                 Get or set the text's transparency, as an integer between 0 and 255.
             </p>
             <p>
-                <br><span class="function">Text.currentReferenceCharacter</span>
+                <br><span class="function"><span class="number"></span> Text.currentReferenceCharacter</span>
                 Returns a number representing the total number of visible characters currently shown in the text object's text.
                 <br>It also works the same if your text is slowed down or sped up.
                 <br><br>Any text commands that you have in your active line of text will be ignored by this number, as it only counts the visible characters, and not the length of the string you put into the text object.
             </p>
             <p>
-                <br><span class="function">Text.currentLine</span>
+                <br><span class="function"><span class="number"></span> Text.currentLine</span>
                 Returns the number of the line (page) that the text is currently on, starting from 0.
                 <br><br>So, if your text object's text table is <span class="term">{"Text 1", "Text 2"}</span>, then <span class="term">"Text 1"</span> is line 0, and <span class="term">"Text 2"</span> is line 1.
             </p>
@@ -188,15 +207,17 @@ it's w3c valid, at least
                 This function skips to the end of the text object's current text, as if using <span class="term">[instant]</span> (see <span class="ref">Text Commands</span>).
             </p>
             <p>
-                <br><span class="function">Text.lineComplete</span>
+                <br><span class="function"><span class="boolean"></span> Text.lineComplete</span>
+                Read-only.<br>
                 Returns true if the current line (page) of text is fully displayed, false otherwise.
             </p>
             <p>
-                <br><span class="function">Text.allLinesComplete</span>
+                <br><span class="function"><span class="boolean"></span> Text.allLinesComplete</span>
+                Read-only.<br>
                 Returns true if the current line of text is fully displayed <i>and</i> if this is the last line the test object will show, false otherwise.
             </p>
             <p>
-                <br><span class="function">Text.lineCount()</span>
+                <br><span class="function"><span class="number"></span> Text.lineCount()</span>
                 This function returns the total number of lines/pages of text set to the text object, regardless of whether they've been shown yet.
             </p>
             <p>
@@ -204,68 +225,79 @@ it's w3c valid, at least
                 Shows the next line (dialogue) of the text instantly, regardless of if the current one is finished or what progress mode the object has.
             </p>
             <p>
-                <br><span class="function">Text.SetAutoWaitTimeBetweenTexts(int time)</span>
+                <br><span class="function">Text.SetAutoWaitTimeBetweenTexts(<span class="number"></span> time)</span>
                 Sets the number of frames to wait before automatically going to the next line of text.<br><i>Only applies to the "auto" progress mode.</i>
             </p>
             <p>
-                <br><span class="function">Text.SetParent(sprite parent)</span>
+                <br><span class="function">Text.SetParent(<span class="userdata">sprite</span> parent)</span>
                 Sets the text object's parent.<br>The text object will follow around the parent object as it moves.
             </p>
             <p>
-                <br><span class="function">Text.AddText(table text)</span>
+                <br><span class="function">Text.MoveAbove(<span class="userdata">text</span> otherTextObject)</span>
+                Moves a text object above another text object.<br>They must both be on the same layer.
+            </p>
+            <p>
+                <br><span class="function">Text.MoveBelow(<span class="userdata">text</span> otherTextObject)</span>
+                Moves a text object below another text object.<br>They must both be on the same layer.
+            </p>
+            <p>
+                <br><span class="function">Text.AddText(<span class="luatable"><span class="string"></span></span> text)</span>
                 Adds the given text to the object's text table. Acts like <span class="term">Text.SetText()</span> if all the text is already done.
             </p>
             <p>
-                <br><span class="function">Text.SetText(table text)</span>
+                <br><span class="function">Text.SetText(<span class="luatable"><span class="string"></span></span> text)</span>
                 Sets the text in the Text Object.<br>If the text object is inactive when this is called, the object will reactive itself.
             </p>
             <p>
-                <br><span class="function">Text.SetPaused(bool pause)</span>
+                <br><span class="function">Text.SetPaused(<span class="boolean"></span> pause)</span>
                 Pauses the text object's typing, in the same way as <span class="term">[waitfor:key]</span>, except that it doesn't resume until you use this function again.
                 <br><br>However, while paused, text can still be skipped, unless <span class="term">[noskip]</span> is applied to the text first.
             </p>
             <p>
-                <br><span class="function">Text.isPaused()</span>
+                <br><span class="function"><span class="boolean"></span> Text.isPaused()</span>
                 This function will return a boolean, telling you whether text has been paused with <span class="term">SetPaused</span>.
                 <br>It does not count if the text object was paused by other means, such as <span class="term">[waitfor:key]</span>.
             </p>
             <p>
-                <br><span class="function">Text.SetVoice(string fontName)</span>
+                <br><span class="function">Text.SetVoice(<span class="string"></span> voiceName)</span>
                 Sets the voice of the text object. It's the same as the text command <span class="term">[voice]</span>, but whatever.<br>
             </p>
             <p>
-                <br><span class="function">Text.SetFont(string fontName)</span>
+                <br><span class="function">Text.SetFont(<span class="string"></span> fontName)</span>
                 Sets the font of the text. It's the same as the text command <span class="term">[font]</span>, but whatever.<br>
-                Returns an error if the font doesn't exist.
+                Returns an error if the font doesn't exist.<br>
             </p>
             <p>
-                <br><span class="function">Text.SetEffect(string effect, float intensity)</span>
-                Sets the effect of the text. Can be easily replaced be the text command <span class="term">[effect]</span>, but whatever.<br>
+                <br><span class="function">Text.SetEffect(<span class="string"></span> effect, <span class="number"></span> intensity)</span>
+                Sets the effect of the text. Can be easily replaced with the text command <span class="term">[effect]</span>, but whatever.<br>
                 Can only take <span class="term">none</span>, <span class="term">twitch</span>, <span class="term">shake</span> or
-                <span class="term">twitch</span> as the effect. If you want to use the basic intensity value, enter <span class="term">-1</span>.
+                <span class="term">twitch</span> as the effect.<br>
+                If you want to use the default intensity value, enter <span class="term">-1</span>.<br><br>
             </p>
             <p>
-                <br><span class="function">Text.ShowBubble(string side = null, int/string position = null)</span>
+                <br><span class="function">Text.ShowBubble(<span class="string"></span> side = null, <span class="number"></span>/<span class="string"></span> position = null)</span>
                 Use this function to add a bubble to the text. You can also set the side and the position of the tail (a.k.a. speech thing) if you
-                want to. Look at <span class="term">Text.SetSpeechThingSideAndPosition</span> to see how to use it.
+                want to.<br>
+                Look at <span class="term">Text.SetSpeechThingSideAndPosition</span> to see how to use this.
             </p>
             <p>
-                <br><span class="function">Text.SetSpeechThingPositionAndSide(string side, int/string position = center)</span>
+                <br><span class="function">Text.SetSpeechThingPositionAndSide(<span class="string"></span> side, 
+                <span class="number"></span>/<span class="string"></span> position = "50%")</span>
                 Sets the size and position of the dialogue bubble's tail (a.k.a speech thing). The <span class="term">side</span> can only take 
                 <span class="term">"left"</span>, <span class="term">"right"</span>, <span class="term">"up"</span>, <span class="term">"down"</span> or 
                 <span class="term">"none"</span>.<br>
                 <span class="term">"none"</span> is used to hide the speech thing, while the other directions control the side of the bubble where the 
-                speech thing is.<br>
-                You have two ways to set the speech thing's position (the <span class="term">center</span> argument):
+                speech thing is.<br><br>
+                <span class="term">center</span> can be set to one of two things:
                 <ul>
-                    <li>An int. If the <span class="term">side</span> is <span class="term">"left"</span> or <span class="term">"right"</span>, this will 
+                    <li>A number. If the <span class="term">side</span> is <span class="term">"left"</span> or <span class="term">"right"</span>, this will 
                     determine its distance from the bottom of the bubble. If the <span class="term">side</span> is <span class="term">"up"</span> 
-                    or <span class="term">"down"</span>, then this will determine its distance from the left side of the bubble.
+                    or <span class="term">"down"</span>, then this will determine its distance from the right side of the bubble.
                     <br>If on the bottom or top of the bubble, this value can only be between 0 and the bubble's width. If on the left or right sides 
                     of the bubble, this value can only be between 0 and the bubble's height.</li><br>
                     <li>A string. It must be formatted like <span class="term">"0%"</span>, where you can replace the "0" with any percentage. 
-                    If on the top or bottom of the bubble, <span class="term">"0%"</span> will be the left side of the bubble and 
-                    <span class="term">"100%"</span> will be the right side of the bubble. If on the left or right side, <span class="term">"0%"</span> 
+                    If on the top or bottom of the bubble, <span class="term">"0%"</span> will be the right side of the bubble and 
+                    <span class="term">"100%"</span> will be the left side of the bubble. If on the left or right side, <span class="term">"0%"</span> 
                     will be the bottom of the bubble and <span class="term">"100%"</span> will be the top of the bubble. The value can only be between 
                     "0%" and "100%".</li><br>
                 </ul>
@@ -275,32 +307,33 @@ it's w3c valid, at least
                 A function that hides the bubble.
             </p>
             <p>
-                <br><span class="function">Text.MoveTo(int x, int y)</span>
+                <br><span class="function">Text.MoveTo(<span class="number"></span> x, <span class="number"></span> y)</span>
                 Moves the text to a new position, relative to the text object's parent's position.
             </p>
             <p>
-                <br><span class="function">Text.MoveToAbs(int x, int y)</span>
+                <br><span class="function">Text.MoveToAbs(<span class="number"></span> x, <span class="number"></span> y)</span>
                 Moves the text to a new position, relative to the bottom left corner of the window.
             </p>
             <p>
-                <br><span class="function">Text.SetPivot(float x, float y)</span>
+                <br><span class="function">Text.SetPivot(<span class="number"></span> x, <span class="number"></span> y)</span>
                 Sets the pivot of the object. The pivot is the value where the text's position is set. The default value is 
                 <span class="term">{0.5, 0.5}</span>. If you set it to <span class="term">{0, 0}</span>, then each time you modify 
-                the object's position, the position will be based off of the bottom left corner of the object instead of its center. 
+                the object's position, the position will be based off of the bottom left corner of the object instead of its center.<br> 
                 <span class="term">{1, 1}</span> is the top right corner, <span class="term">{0, 1}</span> the top left corner and 
                 <span class="term">{1, 0}</span> is the bottom right corner.
             </p>
             <p>
-                <br><span class="function">Text.GetTextWidth()</span>
+                <br><span class="function"><span class="number"></span> Text.GetTextWidth()</span>
                 Returns the width of the current displayed text in pixels.
                 Useful if you want to center your text.
             </p>
             <p>
-                <br><span class="function">Text.GetTextHeight()</span>
-                Returns the height of the curent displayed text in pixels.<br>
-                <b>Warning:</b> If you want to center a Text Object using its height, you absolutely need to remove 10 to that value. Text Objects' 
-                height usually is 20 pixels, and their position is at the top of that height. Removing 10 pixels to the result will parmit to use the 
-                center of that position, permitting to have an exact value to center it.
+                <br><span class="function"><span class="number"></span> Text.GetTextHeight()</span>
+                Returns the height of the curent displayed text in pixels.<br><br>
+                <span style="color:#ff0000"> <b>Warning:</b> This function is unstable, as it tends to give unpredictable results! Use sparingly.</span><br><br>
+                If you want to center a Text Object using its height, you absolutely need to subtract 10 from the value this function gives you.<br><br>
+                A Text Object's actual pivot that determines its location is 20 pixels wide horizontally and vertically, and it is anchored on the
+                center of this box. By subtracting 10 pixels, you will get the actual height of your text, without taking the text object's pivot into account.
             </p>
         </div>
 		

@@ -1136,7 +1136,12 @@ public class EventManager : MonoBehaviour {
                 target = target ?? go.transform; //oof
                 if (!waitEnd)
                     scr.Call("CYFEventNextCommand");
-                Vector2 endPoint = new Vector2(dirX - target.position.x, dirY - target.position.y), endPointFromNow = endPoint;
+                
+                Vector2 endPoint = new Vector2(dirX - target.position.x, dirY - target.position.y);//, endPointFromNow = endPoint;
+                
+                // store the event's initial position
+                Vector2 originalPosition = new Vector2(target.position.x, target.position.y);
+                
                 //The animation process is automatic, if you renamed the Animation's triggers and animations as the Player's
                 if (go.GetComponent<CYFAnimator>()) {
                     int direction = CheckDirection(endPoint);
@@ -1146,22 +1151,29 @@ public class EventManager : MonoBehaviour {
                 //While the current position is different from the one we want our player to have
                 bool test = true;
                 try { test = (Vector2)target.position != endPoint; } catch (MissingReferenceException) { }
+                /*
                 float speed;
                 try {
                     speed = go != GameObject.Find("Player").transform.gameObject ? go.GetComponent<EventOW>().moveSpeed : PlayerOverworld.instance.speed;
                 } catch { yield break; }
+                */
                 while (test) {
+                    //Test is used to know if movement is possible or not
                     Vector2 clamped = Vector2.ClampMagnitude(endPoint, 1);
-                    //Test is used to know if the deplacement is possible or not
                     bool test2 = false;
-                    if (speed < endPointFromNow.magnitude)
+                    Vector2 distanceFromStart = new Vector2(0, 0);
+                    
+                    // silence the error that occurs when transitioning in the overworld
+                    try {
                         test2 = PlayerOverworld.instance.AttemptMove(clamped.x, clamped.y, go, wallPass);
-                    //If we reached the destination, stop the function
-                    else {
-                        endPointFromNow /= speed;
-                        test2 = PlayerOverworld.instance.AttemptMove(endPointFromNow.x, endPointFromNow.y, go, wallPass);
-                        if (test2)
-                            target.position = new Vector3(dirX, dirY, target.position.z);
+                        distanceFromStart = new Vector2(target.position.x - originalPosition.x, target.position.y - originalPosition.y);
+                    } catch (MissingReferenceException) {}
+                
+                    //If we have reached the destination, stop the function
+                    if (distanceFromStart.magnitude >= endPoint.magnitude) {
+                        // if this code is run, that means the player must have reached their destination
+                        
+                        target.position = new Vector3(dirX, dirY, target.position.z);
                         yield return 0;
 
                         if (waitEnd)
@@ -1176,12 +1188,12 @@ public class EventManager : MonoBehaviour {
                         yield break;
                     }
                     try {
-                        endPointFromNow = new Vector2(dirX - target.position.x, dirY - target.position.y);
+                        //endPointFromNow = new Vector2(dirX - target.position.x, dirY - target.position.y);
                         test = (Vector2)target.position != endPoint;
                     } catch (MissingReferenceException) { }
                 }
             }
-        UnitaleUtil.WriteInLogAndDebugger("Event.MoveToPoint: The name you entered in the function doesn't exists. Did you forget to add the 'Event' tag?");
+        UnitaleUtil.WriteInLogAndDebugger("Event.MoveToPoint: The name you entered in the function doesn't exist. Did you forget to add the 'Event' tag?");
         scr.Call("CYFEventNextCommand");
     }
 

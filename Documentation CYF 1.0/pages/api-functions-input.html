@@ -62,7 +62,7 @@ it's w3c valid, at least
                     <li><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory System</a></li>
                     <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
                     <li><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
-				<li class="li-header">Overworld</li>
+                <li class="li-header">Overworld</li>
                     <li><a href="overworld.html"><span class="CYF"></span> Basics</a></li>
                     <li><a href="overworld-howto-map.html"><span class="CYF"></span> How to create a map</a></li>
                     <li><a href="overworld-howto-event.html"><span class="CYF"></span> How to create an event</a></li>
@@ -85,9 +85,9 @@ it's w3c valid, at least
             <p>
                 <br><span class="function">The Input object [E/M/W]</span>
                 The Input object allows you to retrieve input status. All keys will return a number; 0 when not pressed,
-                1 on the first frame the key is pressed, 2 while it's being held, and -1 while it's released. You can
-                check if a key's value is greater than 0 to see if it's pressed, or if it's exactly 1/-1 to only have an
-                action if it was just pressed/released. Possible key options are below.<br>
+                1 on the first frame the key is pressed, 2 while it's being held, and -1 on the first frame it's released.
+                You can check if a key's value is greater than 0 to see if it's pressed, or if it's exactly 1/-1 to only
+                have an action if it was just pressed/released. Possible key options are below.<br>
                 <br>
                 Note: do not rely on the Input object to replace proper UI controls. Changing game state in the UI based
                 on input will likely cause a fair share of issues and is not supported at this moment (but feel free to
@@ -101,13 +101,13 @@ it's w3c valid, at least
                 <li><span class="term">Input.Down</span> - Down arrow or <span class="CYF"></span> S</li><br>
                 <li><span class="term">Input.Left</span> - Left arrow or <span class="CYF"></span> A</li><br>
                 <li><span class="term">Input.Right</span> - Right arrow or <span class="CYF"></span> D</li><br>
-                <li><span class="CYF"></span> <span class="term">Input.GetKey(string keyname)</span> - Get the state of the given key.
+                <li><span class="CYF"></span> <span class="term">Input.GetKey(<span class="string"></span> keyname)</span> - Get the state of the given key.
                 <br>Check the <span class="ref">Key List</span> to see the available keys.</li><br>
-                <li><span class="CYF"></span> <span class="term">Input.MousePosX</span> (readonly) - Returns the X position of the mouse relative to the 
+                <li><span class="CYF"></span> <span class="number"></span> <span class="term">Input.MousePosX</span> (readonly) - Returns the X position of the mouse relative to the 
                 bottom left corner of the screen. (from 0 to 640)</li><br>
-                <li><span class="CYF"></span> <span class="term">Input.MousePosY</span> (readonly) - Returns the Y position of the mouse relative to the 
+                <li><span class="CYF"></span> <span class="number"></span> <span class="term">Input.MousePosY</span> (readonly) - Returns the Y position of the mouse relative to the 
                 bottom left corner of the screen. (from 0 to 480)</li><br>
-                <li><span class="CYF"></span> <span class="term">Input.IsMouseInWindow</span> (readonly) - Returns true if the mouse is in the window, false 
+                <li><span class="CYF"></span> <span class="boolean"></span> <span class="term">Input.IsMouseInWindow</span> (readonly) - Returns true if the mouse is in the window, false 
                 otherwise.</li><br>
             </ul>
         </div>

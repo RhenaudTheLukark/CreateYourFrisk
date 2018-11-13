@@ -62,7 +62,7 @@ it's w3c valid, at least
                     <li><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory System</a></li>
                     <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
                     <li><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
-				<li class="li-header">Overworld</li>
+                <li class="li-header">Overworld</li>
                     <li><a href="overworld.html"><span class="CYF"></span> Basics</a></li>
                     <li><a href="overworld-howto-map.html"><span class="CYF"></span> How to create a map</a></li>
                     <li><a href="overworld-howto-event.html"><span class="CYF"></span> How to create an event</a></li>
@@ -99,8 +99,9 @@ it's w3c valid, at least
             <p class="exblock">
                 <br><span class="function">[color:rrggbb]</span>
                 This sets the text color for all text after this command to the specified hex code. It resets per
-                dialogue. <span class="term">[color:ff0000]</span> would be red, <span class="term">[color:555555]</span> a dark grey. Here are a few 
-                examples:</p>
+                dialogue. <span class="term">[color:ff0000]</span> would be red, <span class="term">[color:555555]</span> a dark grey.
+                <br>
+                Here are a few examples:</p>
             <table class="table">
                 <tr>
                     <td><span class="term">[color:ff0000]</span></td>
@@ -133,22 +134,25 @@ it's w3c valid, at least
             </table>
             <p class="exblock">
                 If you have to use colours, try to stick to these. While the option for any colour is offered, actual
-                usage in Undertale is very limited.<br>
-                <br>
+                usage in Undertale is very limited.
+                <br><br>
                 The default UI text is plain white and the default enemy dialogue text is plain black - <span class="term">[color:ffffff]</span>
                 and <span class="term">[color:000000]</span> respectively.
             </p>
 
             <p class="exblock">
+                <br><span class="function"><span class="CYF"></span> [alpha:aa]</span>
+                This command allows you to set the alpha (transparency) value of your text.
+                <br><br>
+                The number you enter should be a two-character hex value between <span class="term">"00"</span> and <span class="term">"ff"</span>.
+            </p>
+            
+            <p class="exblock">
                 <br><span class="function">[starcolor:rrggbb]</span>
                 Same usage as color but <i>only affects the first asterisk in a dialogue box that has asterisks.</i>
-                This is a dirty workaround, but now you don't need it anymore, it's deprecated.<br>
+                This is a dirty workaround, but now you don't need it anymore, it's deprecated.
+                <br><br>
                 <span class="CYF"></span> As commands are now executed before the star, you can use <span class="term">[color]</span> to color the star.
-            </p>
-
-            <p class="exblock">
-                <br><span class="function">[instant]</span>
-                Instantly shows the entire text without having to wait or press anything.
             </p>
 
             <p class="exblock">
@@ -191,28 +195,62 @@ it's w3c valid, at least
 
             <p class="exblock">
                 <br><span class="function"><span class="CYF"></span>[charspacing:number]</span>
-                Number of pixels that separates the characters on the same line.
+                Number of pixels that separate characters on the same line.<br>
+                Negative = less space between characters, Positive = more space between characters
+                <br><br>
+                The default value is <span class="term">3</span>.
             </p>
 
             <p class="exblock">
                 <br><span class="function"><span class="CYF"></span>[linespacing:number]</span>
-                Shift of the number of pixels that separates characters on different lines. Negative = upper, Positive = lower
+                Number of pixels that separate different lines.<br>
+                Negative = less space between lines, Positive = more space between lines
+                <br><br>
+                The default value is <span class="term">0</span>.<br>
+                Note that fonts can specify a <span class="term">&lt;linespacing&gt;</span> tag that <i>adds on to</i> this value.
             </p>
 
             <h3>Inline commands</h3><br>
 
             <p class="exblock">
                 <br><span class="function">[noskip]</span>
-                Prevents this dialogue from being skipped by pressing X. Has no effect in encounter texts as you don't
-                control that. Is effective only at the moment it's launched, so if you want a text to not be skippable at the beginning, use it as
-                the very first command of your text.
+                Prevents this dialogue from being skipped by pressing X.
+                <br><br>
+                It is effective only whenever the text reaches it, <font style='color: #fff'>but if it is placed at the
+                beginning of a line of text, it will always work, even if it is not the first command.</font>
             </p>
 
             <p class="exblock">
                 <br><span class="function"><span class="CYF"></span>[noskip:off]</span>
-                Cancels a previously launched <span class="term">[noskip]</span> command.
+                Cancels a previous <span class="term">[noskip]</span> command.
             </p>
-           
+            
+            <p class="exblock">
+                <br><span class="function">[instant]</span>
+                Instantly shows the entire text without having to wait or press anything.
+                <br><br>
+                <font style='color: #fff;'>* Note: This command works as an inline command
+                when placed at the beginning of a line of text.</font>
+            </p>
+            
+            <p class="exblock">
+                <br><span class="function"><span class="CYF"></span>[instant:allowcommand]</span>
+                The same as <span class="term">[instant]</span>, but here other text commands are called, except <span class="term">[w]</span>, <span class="term">[letters]</span> and commands with the "<span class="term">skipover</span>" tag.
+                <br><br>
+                <font style='color: #fff;'>* Note: This command works as an inline command
+                when placed at the beginning of a line of text.</font>
+            </p>
+
+            <p class="exblock">
+                <br><span class="function"><span class="CYF"></span>[instant:stop]</span>
+                Cancels a previous <span class="term">[instant:allowcommand]</span>.
+            </p>
+
+            <p class="exblock">
+                <br><span class="function"><span class="CYF"></span>[instant:stopall]</span>
+                Cancels a previous <span class="term">[instant:allowcommand]</span> or a player skip.
+            </p>
+            
             <p class="exblock">
                 <br><span class="function">[w:x]</span>
                 The wait command. This will pause your textbox for x frames.
@@ -297,22 +335,7 @@ end</pre>
             <br><span class="function"><span class="CYF"></span>[letters:x]</span>
                 For this frame only, the text box will show the next x characters.
             </p>
-           
-            <p class="exblock">
-                <br><span class="function"><span class="CYF"></span>[instant:allowcommand]</span>
-                The same as <span class="term">[instant]</span>, but here other text commands are called, except <span class="term">[w]</span>, <span class="term">[letters]</span> and commands with the "<span class="term">skipover</span>" tag.
-            </p>
-
-            <p class="exblock">
-                <br><span class="function"><span class="CYF"></span>[instant:stop]</span>
-                Stops a previously launched <span class="term">[instant:allowcommand]</span>.
-            </p>
-
-            <p class="exblock">
-                <br><span class="function"><span class="CYF"></span>[instant:stopall]</span>
-                Stops a previously launched <span class="term">[instant:allowcommand]</span> or a player skip.
-            </p>
-           
+            
             <p class="exblock">
                 <br><span class="function"><span class="CYF"></span>[name]</span>
                 This text gets replaced by by the name of the player. I totally forgot that we could actually use <span class="term">Player.name</span>, but 
@@ -384,9 +407,10 @@ end</pre>
            
             <p class="exblock">
                 <br><span class="function">skiponly</span>
-                The command will only be launched if the text has been skipped by using any <span class="term">[instant]</span> command or the player's skip if
-                <span class="term">playerskipdocommand</span> is set to true. This tag disables <span class="term">[w]</span> and <span class="term">[letters]
-                </span> commands if used on them.
+                The command this is attached to will only be activated if the text has been skipped by using any
+                <span class="term">[instant]</span> command, or if the player skips it manually and
+                <span class="term">playerskipdocommand</span> is set to true.
+                This tag disables the <span class="term">[w]</span> and <span class="term">[letters]</span> commands if used on them.
             </p>
         </div>
 

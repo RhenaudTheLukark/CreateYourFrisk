@@ -28,7 +28,7 @@ function EncounterStarting()
 	enemies[1]["currentdialogue"] = {"[noskip][func:LaunchFade, true][w:60][next]",
 	                                 "[noskip]If you came here,[w:20] it must be for a good reason.[w:60][next]",
 									 "[noskip]We'll tell you the story of Create Your Frisk.[w:60][next]",
-									 "[noskip]In February,[w:15] \nRhenaudTheLukark,[w:15] the creator of Create Your Frisk decided,[w:15] with some of their friends,[w:15] to create their own AU.[w:60][next]",
+									 "[noskip]In February 2016,[w:15] \nRhenaudTheLukark,[w:15] the creator of Create Your Frisk decided,[w:15] with some of their friends,[w:15] to create their own AU.[w:60][next]",
 									 "[noskip]They concluded that Unitale was the easiest way to do it.[w:60][next]",
 									 "[noskip]If we had told him what would have happened,[w:15] he'd have laughed at it.[w:60][next]",
 									 "[noskip][func:LaunchFade, false][w:35][func:State,DONE]"}

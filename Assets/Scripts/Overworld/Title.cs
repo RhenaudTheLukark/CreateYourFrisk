@@ -24,7 +24,7 @@ public class Title : MonoBehaviour {
                 else Misc.WindowName = ControlPanel.instance.WindowBasisName;
             #endif
             SaveLoad.LoadAlMighty();
-            LuaScriptBinder.Set(null, "ModFolder", MoonSharp.Interpreter.DynValue.NewString("Title"));
+            LuaScriptBinder.Set(null, "ModFolder", MoonSharp.Interpreter.DynValue.NewString("@Title"));
             UnitaleUtil.AddKeysToMapCorrespondanceList();
         }
         GameObject firstCamera = GameObject.Find("Main Camera");

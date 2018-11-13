@@ -24,7 +24,7 @@ public class ScriptRegistry {
     public static void init() {
         dict.Clear();
         for (int i = 0; i < folders.Length; i++) {
-            loadAllFrom(folders[i], prefixes[i], i < 3 && !(StaticInits.MODFOLDER == "Title"));
+            loadAllFrom(folders[i], prefixes[i], i < 3 && !(StaticInits.MODFOLDER == "@Title"));
         }
     }
 
