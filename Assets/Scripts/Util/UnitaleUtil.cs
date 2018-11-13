@@ -410,67 +410,6 @@ public static class UnitaleUtil {
         return false;
     }
 
-    /*//No updated
-    public static bool TestPPEasy(Color32[] playerMatrix, Color32[] basisMatrix, float rotation, int playerHeight, int basisHeight, Vector2 scale, Vector2 fromCenterProjectile) {
-        int basisWidth = basisMatrix.Length / basisHeight, playerWidth = playerMatrix.Length / playerHeight;
-        float rotationVal = rotation, iVal = 0, jVal = 0, angleVal = 0, Dval = 0, totalVal = 0;
-        rotation *= Mathf.Deg2Rad;
-
-        float realX = playerWidth * Mathf.Abs(Mathf.Cos(rotation)) + playerHeight * Mathf.Abs(Mathf.Sin(rotation)),
-              realY = playerHeight * Mathf.Abs(Mathf.Cos(rotation)) + playerWidth * Mathf.Abs(Mathf.Sin(rotation));
-        int totalValX = 0, totalValY = 0, x = Mathf.FloorToInt(realX) + 2, y = Mathf.FloorToInt(realY) + 2;
-
-        Vector2 fromCenterRotated = new Vector2();
-        float playerD = Mathf.Sqrt(Mathf.Pow(fromCenterProjectile.x, 2) + Mathf.Pow(fromCenterProjectile.y, 2)),
-                centerAngle = Mathf.Atan2(fromCenterProjectile.y, fromCenterProjectile.x),
-                playerAngle = centerAngle - rotation;
-        fromCenterRotated = new Vector2(Mathf.RoundToInt(Mathf.Cos(playerAngle) * playerD), Mathf.RoundToInt(Mathf.Cos(playerAngle) * playerD));
-
-        try {
-            for (float currentHeight = 0; currentHeight < playerHeight; currentHeight++)
-                for (float currentWidth = 0; currentWidth < playerWidth; currentWidth++) {
-                    totalValX = (int)fromCenterRotated.x; totalValY = (int)fromCenterRotated.y;
-                    int tempCurrentHeight = Mathf.FloorToInt(currentHeight), tempCurrentWidth = Mathf.FloorToInt(currentWidth);
-                    iVal = currentHeight; jVal = currentWidth;
-
-                    if (ControlPanel.instance.MinimumAlpha == 0) {
-                        if (playerMatrix[tempCurrentHeight * playerWidth + tempCurrentWidth].a == 0)
-                            continue;
-                    } else if (playerMatrix[tempCurrentHeight * playerWidth + tempCurrentWidth].a < ControlPanel.instance.MinimumAlpha) {
-                        Debug.Log("Not Enough Alpha : X = " + tempCurrentWidth + ", Y = " + tempCurrentHeight);
-                        continue;
-                    }
-
-                    float DFromCenter = Mathf.Sqrt(Mathf.Pow(tempCurrentHeight + fromCenterProjectile.y - playerHeight / 2, 2) +
-                                                   Mathf.Pow(tempCurrentWidth + fromCenterProjectile.x - playerWidth / 2, 2)),
-                          oldangle = Mathf.Atan2(tempCurrentHeight + fromCenterProjectile.y - playerHeight / 2, tempCurrentWidth + fromCenterProjectile.x - playerWidth / 2),
-                          angle = oldangle - rotation;
-                    Dval = DFromCenter;
-                    angleVal = angle;
-                    totalValX = Mathf.RoundToInt(basisWidth / 2 + Mathf.Cos(angle) * DFromCenter);
-                    totalValY = Mathf.RoundToInt(basisHeight / 2 + Mathf.Sin(angle) * DFromCenter);
-                    int tempY = totalValY - (int)fromCenterRotated.y - basisHeight / 2, tempX = totalValX - (int)fromCenterRotated.x - basisWidth / 2;
-                    totalVal = tempY * x + tempX;
-
-                    Debug.Log("X = " + jVal + " Y = " + iVal + "Total = " + totalVal + " (" + tempY + "x" + x + " + " + tempX + ")");
-                    if (totalValY >= 0 && totalValY < basisHeight && totalValX >= 0 && totalValX < basisWidth || tempY < 0 || tempY >= y || tempX < 0 || tempX >= x)
-                        Debug.LogWarning("Out of bounds: X = " + currentWidth + " Y = " + currentHeight + "\ntotalRet = " + totalVal + " (" + (totalValY - (int)fromCenterRotated.y - basisHeight / 2) +
-                                         "x" + x + " + " + (totalValX - (int)fromCenterRotated.x - basisWidth / 2) + ")          totalBasis = " +
-                                         (totalValY * basisWidth + totalValX) + " (" + totalValY + "x" + basisWidth + " + " + totalValX + ") / " + basisMatrix.Length);
-                    else if (basisMatrix[Mathf.RoundToInt(totalValY * basisWidth + totalValX)].a >= ControlPanel.instance.MinimumAlpha)
-                        return true;
-                }
-        } catch {
-            Debug.LogError("rotation = " + rotationVal + " D = " + Dval + " X = " + jVal + " Y = " + iVal +
-                           " angle = " + (((angleVal + 4 * Mathf.PI) % 2 * Mathf.PI) / Mathf.PI) + "π" + "\ntotalRet = " + totalVal + " (" + 
-                           (totalValY - (int)fromCenterRotated.y - basisHeight / 2) + "x" + x + " + " + (totalValX - (int)fromCenterRotated.x - basisWidth / 2) + 
-                           ") / " + (x * y) + "          " + "totalBasis = " + (totalValY * basisWidth + totalValX) + " (" + totalValY + "x" +
-                           basisWidth + " + " + totalValX + ") / " + basisMatrix.Length);
-        }
-        return false;
-        //return ret;
-    }*/
-
     /*public static Color32[] RotateMatrixOld(Color32[] matrix, float rotation, int height, Vector2 scale, out Vector2 sizeDelta) {
         int width = matrix.Length / height, shiftX = 0, shiftY = 0;
         float rotationVal = rotation, iVal = 0, jVal = 0, angleVal = 0, Dval = 0;
