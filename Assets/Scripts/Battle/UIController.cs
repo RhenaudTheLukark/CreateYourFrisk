@@ -126,6 +126,9 @@ public class UIController : MonoBehaviour {
             else                       Misc.WindowName = ControlPanel.instance.WindowBasisName;
         #endif
         
+        // reset the battle camera's position
+        Misc.ResetCamera();
+        
         // stop encounter storage for good!
         ScriptWrapper.instances.Clear();
         

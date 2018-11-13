@@ -27,6 +27,30 @@ public class Misc {
     public static int ScreenWidth {
         get { return Screen.currentResolution.width; }
     }
+    
+    public static float cameraX {
+        get { return Camera.main.transform.position.x - 320; }
+        set { Camera.main.transform.position = new Vector3(value + 320, Camera.main.transform.position.y, Camera.main.transform.position.z); }
+    }
+    
+    public static float cameraY {
+        get { return Camera.main.transform.position.y - 240; }
+        set { Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, value + 240, Camera.main.transform.position.z); }
+    }
+    
+    public static void MoveCamera(float x, float y) {
+        cameraX += x;
+        cameraY += y;
+    }
+    
+    public static void MoveCameraTo(float x, float y) {
+        cameraX = x;
+        cameraY = y;
+    }
+    
+    public static void ResetCamera() {
+        MoveCameraTo(0f, 0f);
+    }
 
     public static void DestroyWindow() { Application.Quit(); }
 

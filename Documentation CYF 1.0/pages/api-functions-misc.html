@@ -89,13 +89,21 @@ it's w3c valid, at least
             </p>
             <ul>
                 <li><span class="string"></span> <span class="term">Misc.MachineName</span> (read-only) - Returns the name of the player's session.</li><br>
-                <li><span class="term">Misc.ShakeScreen(<span class="number"></span> durationInFrames, <span class="number"></span> intensity = 3, 
-                <span class="boolean"></span> isIntensityDecreasing = false)</span> - Shakes the 
-                screen for <span class="term">durationInFrames</span> frames, with a maximum of <span class="term">intensity</span> pixels away from the 
-                normal position. Set <span class="term">isIntensityDecreasing</span> as true to reduce the intensity over time.</li><br>
+                <li>
+                    <span class="term">Misc.ShakeScreen(<span class="number"></span> durationInFrames, <span class="number"></span> intensity = 3, <span class="boolean"></span> isIntensityDecreasing = false)</span>
+                    - Shakes the screen for <span class="term">durationInFrames</span> frames, with a maximum of
+                    <span class="term">intensity</span> pixels away from the normal position.<br>
+                    Set <span class="term">isIntensityDecreasing</span> as true to reduce the intensity over time.
+                </li><br>
                 <li><span class="term">Misc.StopShake()</span> - Stops a previous <span class="term">Misc.ShakeScreen</span> call, does nothing 
                 otherwise.</li><br>
-                <li><span class="boolean"></span> <span class="term">Misc.FullScreen</span> - Controls or detects whether the user is in fullscreen mode.</li><br>
+                <li><span class="term">Misc.MoveCamera(<span class="number"></span> x, <span class="number"></span> y)</span> - Moves the camera right <span class="term">x</span> pixels and up <span class="term">y</span> pixels.</li><br>
+                <li><span class="term">Misc.MoveCameraTo(<span class="number"></span> x, <span class="number"></span> y)</span> - Moves the bottom-left of the camera directly to the point (<span class="term">x</span>, <span class="term">y</span>).<br>
+                <span class="term">(0, 0)</span> is the starting position.</li><br>
+                <li><span class="term">Misc.ResetCamera()</span> - Resets the position of the camera. Same as calling <span class="term">MoveCameraTo(0, 0)</span>.</li><br>
+                <li><span class="number"></span> <span class="term">Misc.cameraX</span> - Gets or sets the current x position of the bottom-left corner of the camera.</li><br>
+                <li><span class="number"></span> <span class="term">Misc.cameraY</span> - Gets or sets the current y position of the bottom-left corner of the camera.</li><br>
+                <li><span class="boolean"></span> <span class="term">Misc.FullScreen</span> - Gets or sets whether the user is in fullscreen mode.</li><br>
                 <li><span class="number"></span> <span class="term">Misc.ScreenWidth</span> (read-only) - Returns the width of the user's screen.</li><br>
                 <li><span class="number"></span> <span class="term">Misc.ScreenHeight</span> (read-only) - Returns the height of the user's screen.</li><br>
                 <li><span class="term">Misc.DestroyWindow()</span> - Closes the window instantly.</li><br>
