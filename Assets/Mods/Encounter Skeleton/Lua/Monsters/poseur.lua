@@ -25,7 +25,7 @@ end
 -- This handles the commands; all-caps versions of the commands list you have above.
 function HandleCustomCommand(command)
     if command == "ACT 1" then
-        currentdialogue = {"[voice:Dating]aaaaaaa\naaaaaaa\naaaaaaa"}
+        currentdialogue = {"Selected\nAct 1."}
     elseif command == "ACT 2" then
         currentdialogue = {"Selected\nAct 2."}
     elseif command == "ACT 3" then

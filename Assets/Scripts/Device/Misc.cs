@@ -27,21 +27,41 @@ public class Misc {
     public static int ScreenWidth {
         get { return Screen.currentResolution.width; }
     }
+    
+    public static float cameraX {
+        get { return Camera.main.transform.position.x - 320; }
+        set { Camera.main.transform.position = new Vector3(value + 320, Camera.main.transform.position.y, Camera.main.transform.position.z); }
+    }
+    
+    public static float cameraY {
+        get { return Camera.main.transform.position.y - 240; }
+        set { Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, value + 240, Camera.main.transform.position.z); }
+    }
+    
+    public static void MoveCamera(float x, float y) {
+        cameraX += x;
+        cameraY += y;
+    }
+    
+    public static void MoveCameraTo(float x, float y) {
+        cameraX = x;
+        cameraY = y;
+    }
+    
+    public static void ResetCamera() {
+        MoveCameraTo(0f, 0f);
+    }
 
     public static void DestroyWindow() { Application.Quit(); }
 
     #if UNITY_STANDALONE_WIN || UNITY_EDITOR
-        #if UNITY_EDITOR
-            [DllImport("user32.dll")]
-            private static extern int GetForegroundWindow(); 
-             
-            private static int window = GetForegroundWindow();
-        #else
-            private static int window = FindWindow(null, ControlPanel.instance.WindowBasisName);
-        #endif
-        [DllImport("user32.dll", EntryPoint = "FindWindow")]
+        [DllImport("user32.dll")]
+        private static extern int GetActiveWindow(); 
+        private static int window = GetActiveWindow();
+        
+        [DllImport("user32.dll")]
         public static extern int FindWindow(string className, string windowName);
-        [DllImport("user32.dll", EntryPoint = "MoveWindow")]
+        [DllImport("user32.dll")]
         private static extern int MoveWindow(int hwnd, int x, int y, int nWidth, int nHeight, int bRepaint);
         [DllImport("user32.dll", EntryPoint = "GetWindowText", ExactSpelling = false, CharSet = CharSet.Auto, SetLastError = true)]
         private static extern int GetWindowText(int hwnd, StringBuilder lpWindowText, int nMaxCount);

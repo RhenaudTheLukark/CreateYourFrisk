@@ -18,6 +18,9 @@ public class StationaryMissScript : MonoBehaviour {
 	}
 
     void Update(){
+        if (UIController.instance.frozenState != UIController.UIState.NONE)
+            return;
+        
         despawnTimer += Time.deltaTime;
         if (despawnTimer > secondsToDespawn)
             Destroy(this.gameObject);

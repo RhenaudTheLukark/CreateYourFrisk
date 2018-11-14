@@ -45,7 +45,7 @@ it's w3c valid, at least
                     <li><a href="api-events.html">Game events</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                     <li class="li-indent">Functions &amp; Objects:</li>
-                        <li class="li-indent active" style="margin-left:5px;">> Misc. Functions <</li>
+                        <li class="li-indent active" style="margin-left:5px;">> Misc. <br>Functions <</li>
                         <li class="li-indent"><a href="api-functions-player.html">The Player Object</a></li>
                         <li class="li-indent"><a href="api-functions-script.html">The Script Object</a></li>
                         <li class="li-indent"><a href="api-functions-audio.html">The Audio Object</a></li>
@@ -62,7 +62,7 @@ it's w3c valid, at least
                     <li><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory System</a></li>
                     <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
                     <li><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
-				<li class="li-header">Overworld</li>
+                <li class="li-header">Overworld</li>
                     <li><a href="overworld.html"><span class="CYF"></span> Basics</a></li>
                     <li><a href="overworld-howto-map.html"><span class="CYF"></span> How to create a map</a></li>
                     <li><a href="overworld-howto-event.html"><span class="CYF"></span> How to create an event</a></li>
@@ -94,85 +94,82 @@ it's w3c valid, at least
             <h4>All-script functions</h4>
             
             <p>
-                <br><span class="function">DEBUG(text) [E/M/W]</span>
+                <br><span class="function">DEBUG(<span class="string"></span> text) [E/M/W]</span>
                 Write text to the debug console (toggleable with <span class="term">F9</span>). It will appear automatically the first time you
                 write text to it. You can use this to check values in your code, or make sure some pieces of code are
                 actually running.
             </p>
 
             <p>
-                <br><span class="function">SetGlobal(your_variable_name, value) [E/M/W]</span>
-                DEPRECATED. Instead, set variables in the Encounter script, as it is accessible from everywhere.
-                <br>You can retrieve these variables with <span class="term">Encounter.GetVar("yourvar")</span> or <span class="term">Encounter["yourvar"]
-                </span> and set them with <span class="term">Encounter.SetVar("yourvar", value)</span> or <span class="term">Encounter["yourvar"] = value.</span> 
-                (For more info, scroll down and look for <span class="ref">The Script object (and the Encounter object)</span>)
-                <br><br>
-                Sets a global variable. After setting, you can retrieve it from all your scripts at any time with
+                <br><span class="function">SetGlobal(<span class="string"></span> your_variable_name, value) [E/M/W]</span>
+                OUTDATED, as you can set variables in the Encounter script, which can be accessed from anywhere.
+                <br><br>Sets a global variable. After setting, you can retrieve it from all your scripts at any time with
                 <span class="term">GetGlobal(variable_name)</span>.
             </p>
 
             <p>
-                <br><span class="function">GetGlobal(your_variable_name) returns variable [E/M/W]</span>
-                DEPRECATED. Instead, set variables in the Encounter script, as it is accessible from everywhere.
+                <br><span class="function">GetGlobal(<span class="string"></span> your_variable_name) returns variable [E/M/W]</span>
+                OUTDATED, as you can set variables in the Encounter script, which can be accessed from anywhere.
                 <br><br>Gets a Global Variable that you previously set using <span class="term">SetGlobal()</span>.
             </p>
 
             <p>
-                <br><span class="function"><span class="CYF"></span> SetRealGlobal(your_variable_name, value) [E/M/W]</span>
+                <br><span class="function"><span class="CYF"></span> SetRealGlobal(<span class="string"></span> your_variable_name, value) [E/M/W]</span>
                 Sets a Global variable that is accessible even in the overworld. After setting it, you can retrieve it from all of
-                your scripts at any time with <span class="term">GetRealGlobal(variable_name)</span>.
+                your scripts at any time with <span class="term">GetRealGlobal(variable_name)</span>.<br>
                 Persists through battles, but not between sessions. These variables can be saved using the overworld save system.<br>
                 Can be used in the overworld.
             </p>
 
             <p>
-                <br><span class="function"><span class="CYF"></span> GetRealGlobal(your_variable_name) returns variable [E/M/W]</span>
+                <br><span class="function"><span class="CYF"></span> GetRealGlobal(<span class="string"></span> your_variable_name) returns variable [E/M/W]</span>
                 Gets a Global that you previously set using <span class="term">SetRealGlobal()</span>.<br>
                 Can be used in the overworld.
             </p>
 
             <p>
-                <br><span class="function"><span class="CYF"></span> SetAlMightyGlobal(your_variable_name, value) [E/M/W]</span>
+                <br><span class="function"><span class="CYF"></span> SetAlMightyGlobal(<span class="string"></span> your_variable_name, value) [E/M/W]</span>
                 <i>AlMighty Globals</i> are globals that are instantly saved into a file when set: these globals persist
-                through sessions, even in devMod mode, and can't be removed.
-                However, you can still access the <span class="term">Remove AlMighty Globals</span> button in devMod to remove them.<br>
+                through sessions, even in modDev mode, and can't be removed.<br>
+                However, you can use the <span class="term">Remove AlMighty Globals</span> button in modDev to remove them.<br>
                 Can be used in the overworld.
             </p>
 
             <p>
-                <br><span class="function"><span class="CYF"></span> GetAlMightyGlobal(your_variable_name) returns variable [E/M/W]</span>
+                <br><span class="function"><span class="CYF"></span> GetAlMightyGlobal(<span class="string"></span> your_variable_name) returns variable [E/M/W]</span>
                 Gets an AlMighty Global that you previously set using <span class="term">SetAlMightyGlobal()</span>.<br>
                 Can be used in the overworld.
             </p>
             
             <p>
-                <br><span class="function"><span class="CYF"></span> SetFrameBasedMovement(bool) [E/M/W]</span>
+                <br><span class="function"><span class="CYF"></span> SetFrameBasedMovement(<span class="boolean"></span> bool) [E/M/W]</span>
                 Set to <span class="term">true</span> if you want frame-based player movement (2px/frame) instead of time based player movement (120px/s).
                 <br>Set it to <span class="term">false</span> if you already are in frame-based movement and you want to go back to the time based movement.
             </p>
 
             <p>
-                <br><span class="function"><span class="CYF"></span> SetAction("FIGHT" or "ACT") [E/M/W]</span>
-                Used alongside <span class="term">EnteringState</span> to force the player to choose FIGHT or ACT. Does nothing outside of this function.
+                <br><span class="function"><span class="CYF"></span> SetAction(<span class="string"></span> "FIGHT" or "ACT") [E/M/W]</span>
+                Used alongside <span class="term">EnteringState</span> to force the player to choose FIGHT or ACT. Does nothing outside of 
+                <span class="term">EnteringState</span>.
             </p>
            
             <p>         
-                <br><span class="function"><span class="CYF"></span> AllowPlayerDef(bool) [E/M/W]</span>
-                If this value is set to true, all damage that the player will take will be reduced - like in Undertale - by 1 point for each 5 defense,
+                <br><span class="function"><span class="CYF"></span> AllowPlayerDef(<span class="boolean"></span> bool) [E/M/W]</span>
+                If the given value is true, all damage that the player will take will be reduced - like in Undertale - by 1 point for each 5 defense,
                 with the player's defense at LV1 not affecting the damage.<br/>
-                Each damage that is originally positive but lower than 1 will be replaced by 1.
+                Damage taken can not be fully blocked and will always be at least 1.
                 <br>False by default.
             </p>
 
             <p>
-                <br><span class="function"><span class="CYF"></span> SetPPCollision(bool) [E/M/W]</span>
+                <br><span class="function"><span class="CYF"></span> SetPPCollision(<span class="boolean"></span> bool) [E/M/W]</span>
                 Setting this to true will force all bullets that don't have a specified collision type to use the Pixel-Perfect collision system.
                 If you want to use it, then I'd highly recommend seeing <span class="ref">The Pixel-Perfect Collision System</span>.
                 <br>False by default.
             </p>
 
             <p>
-                <br><span class="function">BattleDialog(list_of_strings) [E/M/W]</span>
+                <br><span class="function">BattleDialog(<span class="luatable"><span class="string"></span></span> list_of_strings) [E/M/W]</span>
                 This makes the list of strings you give to the function appear in the UI dialog box. After skipping through
                 them, you will automatically go to the monster dialogue step by default. Below is a working example of
                 how you could use it for a Vegetoid encounter.
@@ -193,7 +190,7 @@ end
             </div>
 
             <p>
-                <br><span class="function">State(state_to_go_to) [E/M/W]</span>
+                <br><span class="function">State(<span class="string"></span> state_to_go_to) [E/M/W]</span>
                 A powerful function that immediately skips the battle to the specified state, rather than following the
                 default conventions. Below is a list of valid strings you can pass to it, what state you'll be going to
                 and what that state entails. The states you pass to it are case-invariant, but uppercase is recommended
@@ -203,7 +200,7 @@ end
             <p>            
                 Arguably the best part about <span class="term">State</span> is that it can be used in conjunction with the text command <span class="term">
                 [func]</span> to change the state from within your dialogue. An example is below - this will have a monster say that he will
-                not fight you, then return to the action select screen rather than launching an attack.
+                not fight you, then return to the action select screen, instead of starting a wave.
             </p>
             
             <div class="code-container">
@@ -254,17 +251,27 @@ end
             </ul>
             
             <p>
-                Finally, there are three states that are not encountered during regular gameplay. These include:
+                Finally, there are two "special" states that evoke behavior in the engine itself:
             </p>
             
             <ul>
                 <li><span class="term">DONE</span> - Changing state to <span class="term">DONE</span> will instantly force the player to the mod selection screen.</li><br>
-                <li><span class="term">NONE</span> - This state does nothing. It is entered for the first frame of the encounter, but entering it manually will completely freeze your encounter. It might be useful if you want to disable all of Unitale/CYF's basic functionality.</li><br>
-                <li><span style="color:#ffffff;border-bottom:1px solid #ffffff;"><0.2.1a></span> <span class="term">RESETTING</span> - DEPRECATED, DO NOT USE. Only listed for completion purposes. It only exists in Unitale 0.2.1a, so trying to use it in CYF won't work. It doesn't really do much, anyway, so it probably isn't worth messing with.</li><br>
+                <li><span class="term">NONE</span> - This state does nothing. It is entered for the first frame of the encounter, but entering it manually will completely freeze your encounter. It might be useful if you want to disable all of Unitale/CYF's basic functionality.
+                <hr>
+                <span class="CYF"></span> As of CYF v0.6.2, the state <span class="term">NONE</span> will perfectly "pause" an encounter. The last active state will remain active, but in a frozen state, until you call <span class="term">State</span> again.
+                <br><br>
+                * <span style="color:#fff">Only the <span class="term">Update</span> function of the Encounter script will remain active here.
+                <br><br>
+                * To unfreeze a state, you must use <span class="term">State</span> to switch to the last active state.</span> <span class="term">GetCurrentState()</span> will tell you the name of the frozen state.
+                <br><br>
+                * This behavior is disabled in retrocompatibility mode.
+                <hr>
+                </li><br>
+                <li><span class="unitale"></span> <span class="term">RESETTING</span> - DEPRECATED, DO NOT USE. Only listed for completion purposes. It only exists in Unitale 0.2.1a, so trying to use it in CYF won't work. It was removed in the Github release of Unitale 0.2.1a, and seemed to be only for testing.</li><br>
             </ul>
             
             <p>
-                <br><span class="function"><span class="CYF"></span> GetCurrentState() [E/M/W]</span>
+                <br><span class="function"><span class="CYF"></span> GetCurrentState() returns <span class="string"></span> [E/M/W]</span>
                 Returns the name of the current state (see above for all states).
             </p>
             
@@ -272,7 +279,7 @@ end
             <h4>Encounter script functions</h4>
             
             <p>
-                <br><span class="function">RandomEncounterText() returns string [E]</span>
+                <br><span class="function">RandomEncounterText() returns <span class="string"></span> [E]</span>
                 Select a random monster from the encounter, then get a random entry from the <span class="term">comments</span> table there.
                 You'll want to use this to replicate default encounter behaviour. See code below (or one of the example
                 encounters).
@@ -284,7 +291,7 @@ end</pre>
             </div>
 
             <p>
-                <br><span class="function"><span class="CYF"></span> SetButtonLayer(string layer) [E]</span>
+                <br><span class="function"><span class="CYF"></span> SetButtonLayer(<span class="string"></span> layer) [E]</span>
                 Changes the <span class="term">layer</span> of the FIGHT, ACT, ITEM and MERCY buttons.
                 The usable layers are created sprite layers and those base layers:
                 <ul>
@@ -299,7 +306,7 @@ end</pre>
             </p>
             
             <p>
-                <br><span class="function">SetSprite(filename) [M]</span>
+                <br><span class="function">SetSprite(<span class="string"></span> filename) [M]</span>
                 Sets the monster's sprite from the Sprites folder to <span class="term">filename.png</span>. Can be used with <span class="term">[func]
                 </span> to change sprites mid-dialogue.
             </p>
@@ -308,7 +315,7 @@ end</pre>
             <h4>Monster script functions</h4>
             
             <p>
-                <br><span class="function">SetActive(active) [M]</span>
+                <br><span class="function">SetActive(<span class="boolean"></span> active) [M]</span>
                 Either true or false. If false, this monster will stay on screen but will not show up in menus, do its
                 dialogue or run any of its events. You can use this to introduce monsters to an encounter at a later
                 point. The battle will end when a monster is killed or spared and there are no active monsters left.
@@ -317,8 +324,9 @@ end</pre>
 
             <p>
                 <br><span class="function"><span class="CYF"></span> SetDamage(amount) [M]</span>
-                Set the amount of damage the monster will take nex time it is attacked. Can be negative.<br>
-                <b>THIS MUST ONLY BE USED IN A FUNCTION!</b> You also don't want to use it beside <span class="term">SetActive(false)</span>.
+                Set the amount of damage the monster will take the next time it is attacked. Can be negative.<br><br>
+                <b><span style="color:#ff0000">THIS MUST ONLY BE USED IN A FUNCTION!</span></b>
+                <br>You also don't want to use it with a monster who's been disabled with <span class="term">SetActive(false)</span>.
             </p>
 
             <p>
@@ -332,37 +340,37 @@ end</pre>
             </p>
 
             <p>
-                <br><span class="function"><span class="CYF"></span> Move(float x, float y, bool bindToArena = false) [M]</span>
+                <br><span class="function"><span class="CYF"></span> Move(<span class="number"></span> x, <span class="number"></span> y, <span class="boolean"></span> bindToArena = false) [M]</span>
                 Moves the enemy's sprite from its current position.<br>
                 <span class="term">bindToArena</span>: if the enemy's sprite will follow the Arena. Same as <span class="term">BindToArena()</span>.
             </p>
             
             <p>
-                <br><span class="function"><span class="CYF"></span> MoveTo(float x, float y, bool bindToArena = false) [M]</span>
+                <br><span class="function"><span class="CYF"></span> MoveTo(<span class="number"></span> x, <span class="number"></span> y, <span class="boolean"></span> bindToArena = false) [M]</span>
                 Moves the enemy's sprite relative to the bottom left corner.<br>
                 <span class="term">bindToArena</span>: if the enemy's sprite will follow the Arena. Same as <span class="term">BindToArena()</span>.
             </p>
             
             <p>
-                <br><span class="function"><span class="CYF"></span> BindToArena(bool bind, bool isUnderArena = false) [M]</span>
+                <br><span class="function"><span class="CYF"></span> BindToArena(<span class="boolean"></span> bind, <span class="boolean"></span> isUnderArena = false) [M]</span>
                 Controls whether the enemy's sprite will follow the Arena's movements.<br>
                 <span class="term">isUnderArena</span>: will the enemy's sprite be under the arena?
             </p>
             
             <p>
-                <br><span class="function"><span class="CYF"></span> SetBubbleOffset(int x, int y) [M]</span>
+                <br><span class="function"><span class="CYF"></span> SetBubbleOffset(<span class="number"></span> x, <span class="number"></span> y) [M]</span>
                 Makes the enemy's dialogue bubble appear <span class="term">x</span> pixels horizontally and
                 <span class="term">y</span> pixels vertically relative to its original position.
             </p>
             
             <p>
-                <br><span class="function"><span class="CYF"></span> SetDamageUIOffset(int x, int y) [M]</span>
+                <br><span class="function"><span class="CYF"></span> SetDamageUIOffset(<span class="number"></span> x, <span class="number"></span>y) [M]</span>
                 Changes the offset of the enemy's damage UI (the enemy's health bar and the red numbers). Note that the damage UI is on a layer
                 above that of the arena.
             </p>
             
             <p>
-                <br><span class="function"><span class="CYF"></span> SetSliceAnimOffset(int x, int y)[M]</span>
+                <br><span class="function"><span class="CYF"></span> SetSliceAnimOffset(<span class="number"></span> x, <span class="number"></span> y) [M]</span>
                 Changes the offset of the attack animation (the red slice by default) for when the player attacks this monster.
             </p>
         </div>

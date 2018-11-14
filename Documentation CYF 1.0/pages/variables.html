@@ -62,7 +62,7 @@ it's w3c valid, at least
                     <li><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory System</a></li>
                     <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
                     <li><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
-				<li class="li-header">Overworld</li>
+                <li class="li-header">Overworld</li>
                     <li><a href="overworld.html"><span class="CYF"></span> Basics</a></li>
                     <li><a href="overworld-howto-map.html"><span class="CYF"></span> How to create a map</a></li>
                     <li><a href="overworld-howto-event.html"><span class="CYF"></span> How to create an event</a></li>
@@ -91,24 +91,33 @@ it's w3c valid, at least
             <h4>All-script variables</h4>
             
             <p>
-                <br><span class="function"><span class="CYF"></span> isCYF [E/M/W]</span>
+                <br><span class="function"><span class="CYF"> </span><span class="boolean"></span> isCYF [E/M/W]</span>
                 A value - true by default - that indicates that if you're on CYF. nil if not on CYF. Test it with
                 <span class="term">if not isCYF then</span> or <span class="term">if isCYF then</span>.
             </p>
             
             <p>
-                <br><span class="function"><span class="CYF"></span> safe [E/M/W]</span>
+                <br><span class="function"><span class="CYF"></span><span class="boolean"></span> safe [E/M/W]</span>
                 True if CYF's safe mode is enabled, false otherwise.
             </p>
             
             <p>
-                <br><span class="function"><span class="CYF"></span> windows [E/M/W]</span>
+                <br><span class="function"><span class="CYF"></span><span class="boolean"></span> windows [E/M/W]</span>
                 Returns true if the user is on Windows, false otherwise.
             </p>
             
             <p>
-                <br><span class="function"><span class="CYF"></span> CYFversion [E/M/W]</span>
-                Returns the current version of CYF. For example: for CYF 0.4.5, it'll return "0.4.5".
+                <br><span class="function"><span class="CYF"></span><span class="string"></span> CYFversion [E/M/W]</span>
+                Returns a different string based on the version of CYF you are using.<br>
+                <ul>
+                    <li><span class="term">Versions before v0.6</span>: Previous version's number<br>
+                    For example, in CYF v0.5.5, this will be "0.5.4".</li>
+                    <br>
+                    <li><span class="term">Versions between v0.6 and v0.6.1.2</span>: always "1.0"</li>
+                    <br>
+                    <li><span class="term">Versions after v0.6.1.2</span>: Current version's number<br>
+                    For example, in CYF v0.6.2, this will be "0.6.2"</li>
+                </ul>
             </p>
             
             <hr>
@@ -167,7 +176,7 @@ enemypositions = {
                 true, the auto linebreak system will automatically add line breaks (<span class="term">\r</span>) to the text. 
                 No need to use <span class="term">\r</span> or <span class="term">\n</span> anymore!</p>
             <br><p><span class="CYF"></span> <span class="boolean"></span> <span class="term">playerskipdocommand</span> - False by default. If this value is
-                set to true, the text commands will be launched even if the player skips the text-  except for <span class="term">[w]</span> and
+                set to true, the text commands will be called even if the player skips the text-  except for <span class="term">[w]</span> and
                 <span class="term">[letters]</span> commands and commands with the tag "<span class="term">skipover</span>".</p>
             <br><p><span class="CYF"></span> <span class="boolean"></span> <span class="term">unescape</span> - False by default. If this value is set 
                 to true, you can't exit the battle with the ESC key anymore.</p>
@@ -179,7 +188,7 @@ enemypositions = {
             <br><p><span class="CYF"></span> <span class="luatable"><span class="string"></span></span> <span class="term">deathtext</span> - Text displayed 
             when the player dies, in the Game Over screen. By default, it'll use the normal death text.<br>
             This text is also used if the player gets revived while <span class="term">revive</span> is true. Otherwise, there is no revive text.</p>
-            <br><p><span class="CYF"></span> <span class="string"></span> <span class="term">deathmusic</span> - Sets the death music. The music is launched 
+            <br><p><span class="CYF"></span> <span class="string"></span> <span class="term">deathmusic</span> - Sets the death music. The music is played 
             if <span class="term">revive</span> is not set.</p>
             <br><p><span class="CYF"></span> <span class="luatable"><span class="string"></span></span> <span class="term">Wave</span> - A table returning the 
             current wave scripts used. Returns a table with a length of 0 if not in the state DEFENDING.</p>
@@ -232,7 +241,7 @@ check = "Serving Size: 1 Monster\nNot monitored by the USDA"</pre>
             <p><span class="string"></span> <span class="term">sprite</span> - Name of the sprite in your Sprites folder, without the .PNG extension.
                 This is the initial sprite for your monster. It can be changed using <span class="term">SetSprite(name)</span>; see <span class="ref">API - 
                 Functions &amp; Objects</span> for details.</p>
-            <p><span class="unitalesprite"></span> <span class="CYF"></span> <span class="term">monstersprite</span> - Sprite handler of the monster.</p>
+            <p><span class="CYF"></span> <span class="userdata">sprite</span> <span class="term">monstersprite</span> - Sprite handler of the monster.</p>
             <p><span class="string"></span> <span class="term">dialogbubble</span> - What dialogue bubble will be used for the monster's dialogue. You can 
                 change this at any time, but this <i>must</i> be initially set to something. For a list of all possible options, check the
                 <a href="../media/dialogoptions.png">dialog bubble names</a> chart; it's also in the sidebar.
@@ -241,7 +250,7 @@ check = "Serving Size: 1 Monster\nNot monitored by the USDA"</pre>
                 Can also be changed at any time.</p>
             <p><span class="number"></span> <span class="term">hp</span> - Your monster's max HP, initially. After the fight has started, 
                 this value will always accurately reflect your monster's current HP. You can then modify this value to change your monster's current HP.</p>
-            <p><span class="number"></span> <span class="CYF"></span> <span class="term">maxhp</span> - Your monster's max HP. After the fight has 
+            <p><span class="CYF"></span> <span class="number"></span> <span class="term">maxhp</span> - Your monster's max HP. After the fight has 
                 started this value will be always the same, unless you change it. It is mainly used for lifebars and such. You better not set it as 0 or as a 
                 negative number, though.</p>
             <p><span class="number"></span> <span class="term">atk</span> - Your monster's ATK. Only used in the default Check handler; bullet damage 
@@ -253,17 +262,14 @@ check = "Serving Size: 1 Monster\nNot monitored by the USDA"</pre>
                 can change based on whether you kill or spare the monster, you can modify this at any time up until the fight ends.</p>
             <p><span class="string"></span> <span class="term">check</span> - When checking with the default Check option, this is what's listed under 
                 the monster's name, ATK and DEF.</p>
-            <p><span class="boolean"></span> <span class="CYF"></span> <span class="term">unkillable</span> - Set it to true and the monster will not 
+            <p><span class="CYF"></span> <span class="boolean"></span> <span class="term">unkillable</span> - Set it to true and the monster will not 
                 be killed if it has less than 1 HP. However, it can still be killed with <span class="term">Kill()</span>.</p>
-            <p><span class="boolean"></span> <span class="CYF"></span> <span class="term">canmove</span> - The enemies need some initialization frames 
-                to place themselves correctly, so you can't move or unbind the enemy's sprite if those haven't finished.<br>This will be true if you can 
-                move the sprite, otherwise it's false.<br>Actually, now that the battle's launch is delayed, this value is deprecated as it'll always 
-                be true.</p>
-            <p><span class="number"></span> <span class="CYF"></span> <span class="term">posx</span> - The x position of the center of the enemy's sprite.</p>
-            <p><span class="number"></span> <span class="CYF"></span> <span class="term">posy</span> - The y position of the bottom of the enemy's sprite.</p>
-            <p><span class="string"></span> <span class="CYF"></span> <span class="term">font</span> - The default font used by the monster. Set it to 
+            <p><span class="CYF"></span> <span class="boolean"></span> <span class="term">canmove</span> - Deprecated, always returns true. <br>Old behavior: Returns true if you are able to move or unbind <span class="term">monstersprite</span>, false otherwise.</p>
+            <p><span class="CYF"></span> <span class="number"></span> <span class="term">posx</span> - The x position of the center of the enemy's sprite.</p>
+            <p><span class="CYF"></span> <span class="number"></span> <span class="term">posy</span> - The y position of the bottom of the enemy's sprite.</p>
+            <p><span class="CYF"></span> <span class="string"></span> <span class="term">font</span> - The default font used by the monster. Set it to 
             <span class="term">nil</span> if you want to use the normal monster font.</p>
-            <p><span class="string"></span> <span class="CYF"></span> <span class="term">voice</span> - The default voice used by the monster. Set it 
+            <p><span class="CYF"></span> <span class="string"></span> <span class="term">voice</span> - The default voice used by the monster. Set it 
             to <span class="term">nil</span> if you want to use the default voice.</p>
             <hr>
            

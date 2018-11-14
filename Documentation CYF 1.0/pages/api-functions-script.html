@@ -62,7 +62,7 @@ it's w3c valid, at least
                     <li><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory System</a></li>
                     <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
                     <li><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
-				<li class="li-header">Overworld</li>
+                <li class="li-header">Overworld</li>
                     <li><a href="overworld.html"><span class="CYF"></span> Basics</a></li>
                     <li><a href="overworld-howto-map.html"><span class="CYF"></span> How to create a map</a></li>
                     <li><a href="overworld-howto-event.html"><span class="CYF"></span> How to create an event</a></li>
@@ -85,22 +85,84 @@ it's w3c valid, at least
             <p>
                 <br><span class="function">The Script object (and the Encounter object) [varies]</span>
                 Script objects are a bit of a special case. They're used to refer to other scripts that were loaded by
-                the engine itself. In the encounter script, the <i>enemies</i> table is filled with Script objects after
-                the encounter starts and the <i>Wave</i> table is filled with Script objects in the state <span class="term">DEFENDING</span>. The Encounter 
-                object is also a script object that refers to the current encounter, and is accessible from anywhere except from the Encounter itself. Take 
-                note of the different way of accessing variables.
+                the engine itself. In the encounter script, the <span class="term">enemies</span> table is filled with Script objects after
+                the encounter starts, <span class="CYF"></span> and the <span class="term">Wave</span> table is filled with Script objects when entering the 
+                state <span class="term">DEFENDING</span>.<br>
+                The Encounter object is also a script object that refers to the current encounter, and is accessible from anywhere except from the Encounter 
+                itself. Take note of the different way of accessing variables.
             </p>
             <ul>
-                <li><span class="term">script.GetVar("variable_name")</span> - gets <span class="term">variable_name</span> from the script.</li><br>
-                <li><span class="term">script["variable_name"]</span> - same as the above.</li><br>
-                <li><span class="term">script.SetVar("variable_name", value)</span> - sets <span class="term">variable_name</span> on the script.</li><br>
-                <li><span class="term">script["variable_name"]</span> = value - same as the above.</li><br>
-                <li><span class="term">script.Call("function_name")</span> - runs <span class="term">function_name</span> from within the script.</li><br>
+                <li><span class="term">script.GetVar(<span class="string"></span> variable_name)</span> - gets <span class="term">variable_name</span> from the script.</li><br>
+                <li><span class="term">script[<span class="string"></span> variable_name]</span> - same as the above.</li><br>
+                <li><span class="term">script.SetVar(<span class="string"></span> variable_name, value)</span> - sets <span class="term">variable_name</span> on the script.</li><br>
+                <li><span class="term">script[<span class="string"></span> variable_name] = value</span> - same as the above.</li><br>
+                <li><span class="term">script.Call(<span class="string"></span> function_name)</span> - runs <span class="term">function_name</span> from within the target script.</li><br>
+                <li><span class="term">script.Call(<span class="string"></span> function_name, argument)</span> - runs <span class="term">function_name</span>
+                from within the target script with one argument.<br><br>
+                <span style="color:#ff0000"><b>NOTE:</b> You can only call another script's function with one argument.<br>
+                If you want to use multiple, see the last example.</span></li><br>
             </ul>
-
-            <p>So for instance, you can do <span class="term">enemies[1].Call("Kill")</span> to kill the first monster from your encounter. You
-                can do <span class="term">Encounter.SetVar("wavetimer", 1.0)</span> from anywhere to change the wave timer to 1 second.
-            </p>       
+            <hr>
+            <p>
+                <h4>Examples</h4>
+                Here are some quick examples:<br><br>
+                <div class="code-container">
+                <pre class="brush: lua;">
+                -- This is the ENCOUNTER file, and I want to deactivate my first enemy from here
+                -- To do that, I'll call the function "SetActive" (see Misc. Functions) in the MONSTER file from here
+                enemies[1].Call("SetActive", false)
+                </pre>
+                </div>
+                <br>
+                <div class="code-container">
+                <pre class="brush: lua;">
+                -- here is a simple way to change the encounter's "wavetimer" from another script, for instance,
+                -- a monster script if a player ACTs right, or just from a Wave that needs to last a certain time
+                Encounter.SetVar("wavetimer", 10)
+                -- alternatively:
+                Encounter["wavetimer"] = 10
+                </pre>
+                </div>
+                <br>
+                <div class="code-container">
+                <pre class="brush: lua;">
+                -- let's say we're in the MONSTER file, and we want to turn a Sprite in the ENCOUNTER file to dust
+                -- we can do it in at least two different ways:
+                local spriteToDust = Encounter.GetVar("torso")
+                spriteToDust.Dust(true, true) -- see Sprites & Animation.
+                -- alternatively:
+                Encounter["torso"].Dust(true, true)
+                </pre>
+                </div>
+                <br>
+                <hr>
+                <h4>Advanced usage of Call</h4>
+                Here is a way to call a function in another script with multiple arguments.<br>
+                This is mainly <span style="color:#ff0000">for advanced users</span>, so ignore this unless you know what's going on.<br><br>
+                <span class="function">Monster (source) file:</span>
+                <div class="code-container">
+                <pre class="brush: lua;">
+                -- I want to call a function in the ENCOUNTER file with 2 arguments
+                -- To do this, I need to create a table in the target file and use it as Call's 2nd argument
+                -- (The table MUST be created in the target file, otherwise it becomes nil)
+                Encounter["tempTable"] = {"It", "works!"}
+                Encounter.Call("MyFunction", Encounter["tempTable"])
+                </pre>
+                </div>
+                <span class="function">Encounter (target) file:</span>
+                <div class="code-container">
+                <pre class="brush: lua;">
+                function MyFunction(table)
+                    -- extract the variables from the table
+                    local var1 = table[1]
+                    local var2 = table[2]
+                    -- now, do with them what you please!
+                    
+                    DEBUG(var1 .. " " .. var2) -- output: "It works!"
+                end
+                </pre>
+                </div>
+            </p>
         </div>
 		
 		<div class="tab-pane text-style" id="mercy">

@@ -46,21 +46,17 @@ sysinfo.txt
 /Assets/Mods/*
 
 # Include basic mods
-!/Assets/Mods/0.5.0_SEE_CREATE/*
-!/Assets/Mods/0.5.0_SEE_CREATE.meta
-!/Assets/Mods/Donald Trump/*
-!/Assets/Mods/Donald Trump.meta
-!/Assets/Mods/Encounter Skeleton/*
+!/Assets/Mods/@0.5.0_SEE_CRATE
+!/Assets/Mods/@0.5.0_SEE_CRATE.meta
+!/Assets/Mods/Encounter Skeleton
 !/Assets/Mods/Encounter Skeleton.meta
-!/Assets/Mods/Examples/*
+!/Assets/Mods/Examples
 !/Assets/Mods/Examples.meta
-!/Assets/Mods/Examples 2/*
+!/Assets/Mods/Examples 2
 !/Assets/Mods/Examples 2.meta
-!/Assets/Mods/Mionn 2.1/*
-!/Assets/Mods/Mionn 2.1.meta
-!/Assets/Mods/OverWorld Test/*
-!/Assets/Mods/OverWorld Test.meta
-!/Assets/Mods/RTLGeno/*
+!/Assets/Mods/@OverWorld Test
+!/Assets/Mods/@OverWorld Test.meta
+!/Assets/Mods/RTLGeno
 !/Assets/Mods/RTLGeno.meta
-!/Assets/Mods/Title/*
-!/Assets/Mods/Title.meta
+!/Assets/Mods/@Title
+!/Assets/Mods/@Title.meta

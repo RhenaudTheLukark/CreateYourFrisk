@@ -301,32 +301,35 @@ public class PlayerOverworld : MonoBehaviour {
                                      "Hope you liked it!" },
                           true, new string[] { "rtlukark_angry", "rtlukark_normal", "rtlukark_waitwhat", "rtlukark_angry", "rtlukark_determined", "rtlukark_perv", "rtlukark_determined" });
             } else*/
-            if (Input.GetKeyDown("m"))
-                GameObject.Find("Main Camera OW").GetComponent<AudioSource>().time = Random.value * GameObject.Find("Main Camera OW").GetComponent<AudioSource>().clip.length;
-            else if (Input.GetKeyDown("h") && SceneManager.GetActiveScene().name == "test2") {
-                /*if (GameObject.Find("Event1").GetComponent<EventOW>().actualPage == 4)
-                    rolled++;
-                if (GameObject.Find("Event1").GetComponent<EventOW>().actualPage == 666) {
-                    LuaEventOW.SetPage2("Event1", 1); 
-                    rolled++;
-                } else*/
-                LuaEventOW.SetPage2("Event1", (GameObject.Find("Event1").GetComponent<EventOW>().actualPage + 1) % 4);
-                /*if (GameObject.Find("Event1").GetComponent<EventOW>().actualPage == 1 && rolled % 4 == 3)  LuaEventOW.SetPage2("Event1", 666);
-                else*/
-                if (GameObject.Find("Event1").GetComponent<EventOW>().actualPage == 0) LuaEventOW.SetPage2("Event1", 4);
-                /*if (GameObject.Find("Event1").GetComponent<EventOW>().actualPage == 666)
-                    SetDialog(new string[] { "[color:ff0000]Event page = " + GameObject.Find("Event1").GetComponent<EventOW>().actualPage + " :)" }, true, new string[] { "rtlukark_determimed" });
-                else*/
-                SetDialog(new string[] { "Event page = " + GameObject.Find("Event1").GetComponent<EventOW>().actualPage + "." }, true, DynValue.NewString("rtlukark_determined"));
-            } else if (Input.GetKeyDown("t") && GameObject.Find("textframe_border_outer").GetComponent<Image>().color.a == 0)
-                SetDialog(new string[] { "Your game is saved at\n" + Application.persistentDataPath + "/save.gd" }, true, null);
-            else if (Input.GetKeyDown("b"))
-                SetEncounterAnim();
+            if (SceneManager.GetActiveScene().name == "test2") {
+                if (Input.GetKeyDown("m"))
+                    GameObject.Find("Main Camera OW").GetComponent<AudioSource>().time = Random.value * GameObject.Find("Main Camera OW").GetComponent<AudioSource>().clip.length;
+                else if (Input.GetKeyDown("h") && SceneManager.GetActiveScene().name == "test2") {
+                    /*if (GameObject.Find("Event1").GetComponent<EventOW>().actualPage == 4)
+                        rolled++;
+                    if (GameObject.Find("Event1").GetComponent<EventOW>().actualPage == 666) {
+                        LuaEventOW.SetPage2("Event1", 1); 
+                        rolled++;
+                    } else*/
+                    LuaEventOW.SetPage2("Event1", (GameObject.Find("Event1").GetComponent<EventOW>().actualPage + 1) % 4);
+                    /*if (GameObject.Find("Event1").GetComponent<EventOW>().actualPage == 1 && rolled % 4 == 3)  LuaEventOW.SetPage2("Event1", 666);
+                    else*/
+                    if (GameObject.Find("Event1").GetComponent<EventOW>().actualPage == 0) LuaEventOW.SetPage2("Event1", 4);
+                    /*if (GameObject.Find("Event1").GetComponent<EventOW>().actualPage == 666)
+                        SetDialog(new string[] { "[color:ff0000]Event page = " + GameObject.Find("Event1").GetComponent<EventOW>().actualPage + " :)" }, true, new string[] { "rtlukark_determimed" });
+                    else*/
+                    SetDialog(new string[] { "Event page = " + GameObject.Find("Event1").GetComponent<EventOW>().actualPage + "." }, true, DynValue.NewString("rtlukark_determined"));
+                } else if (Input.GetKeyDown("t") && GameObject.Find("textframe_border_outer").GetComponent<Image>().color.a == 0)
+                    SetDialog(new string[] { "Your game is saved at\n" + Application.persistentDataPath + "/save.gd" }, true, null);
+                else if (Input.GetKeyDown("b"))
+                    SetEncounterAnim();
+            }
         }
 
         if (currentDirection != 0) animator.movementDirection = currentDirection;
 
-        //Check is the movement is possible
+        //Check if the movement is possible
+        lastTimeMult = LuaUnityTime.mult;
         AttemptMove(horizontal, vertical);
 
         if (GlobalControls.input.Menu == UndertaleInput.ButtonState.PRESSED)
@@ -335,6 +338,10 @@ public class PlayerOverworld : MonoBehaviour {
         if (menuRunning[4])
             menuRunning[4] = false;
     }
+    
+    // used to allow event movement that accomodates for the framerate,
+    // because getting LuaUnityTime.mult multiple times in a frame isn't always guaranteed to give the same value
+    private float lastTimeMult = 0.0f;
 
     //Moves the object
     public void Move(float xDir, float yDir, GameObject go) {
@@ -350,7 +357,11 @@ public class PlayerOverworld : MonoBehaviour {
         else end *= go.GetComponent<EventOW>().moveSpeed;
         //end = new Vector2(Mathf.Round(end.x * 1000) / 1000, Mathf.Round(end.y * 1000) / 1000);
         //end += (Vector2)transform.position;
-
+        
+        // attempt to multiply movement speed by Time.mult if Time.mult is > 1
+        if (lastTimeMult > 1f)
+            end = new Vector2(Mathf.Round(end.x * lastTimeMult), Mathf.Round(end.y * lastTimeMult));
+        
         transform.position += (Vector3)end;
 
         //Creates the new position of our object, depending on our current position
@@ -394,6 +405,11 @@ public class PlayerOverworld : MonoBehaviour {
         boxCollider.enabled = false;
 
         float speed = go == rb2D.gameObject ? this.speed : go.GetComponent<EventOW>().moveSpeed;
+        
+        // attempt to multiply movement speed by Time.mult if Time.mult is > 1
+        if (lastTimeMult > 1f)
+            speed = Mathf.Round(speed * lastTimeMult);
+        
         //Cast a line from start point to end point checking collision on blockingLayer and then EventLayer
         hit = Physics2D.BoxCast(start, size, 0, dir, Mathf.Sqrt(Mathf.Pow(xDir * speed, 2) + Mathf.Pow(yDir * speed, 2)), BlockingLayer);
         if (hit.transform == null)
@@ -591,12 +607,12 @@ public class PlayerOverworld : MonoBehaviour {
         LuaScriptBinder.ClearBattleVar();
 
         yield return new WaitForEndOfFrame();
-        int width = Screen.width;
+        /*int width = Screen.width;
         int height = Screen.height;
         Texture2D tex = new Texture2D(width, height, TextureFormat.RGB24, false);
         tex.ReadPixels(new Rect(0, 0, width, height), 0, 0);
         tex.Apply();
-        GlobalControls.texBeforeEncounter = tex;
+        GlobalControls.texBeforeEncounter = tex;*/
         GameObject.FindObjectOfType<Fading>().FadeInstant(1);
 
         //Reset how many times the player has to move before encounter an enemy

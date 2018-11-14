@@ -62,7 +62,7 @@ it's w3c valid, at least
                     <li><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory System</a></li>
                     <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
                     <li><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
-				<li class="li-header">Overworld</li>
+                <li class="li-header">Overworld</li>
                     <li><a href="overworld.html"><span class="CYF"></span> Basics</a></li>
                     <li><a href="overworld-howto-map.html"><span class="CYF"></span> How to create a map</a></li>
                     <li><a href="overworld-howto-event.html"><span class="CYF"></span> How to create an event</a></li>
@@ -86,14 +86,13 @@ it's w3c valid, at least
             <p>This section is all about game events. Game events are functions in your scripts that the Unitale engine
                 runs at various points in the game. By changing up your behaviour depending on the actions the player
                 takes, you can go beyond a basic encounter and make it great.</p>
-            <p>There are two kinds of events. We'll refer to them as <i>inherited events</i> and <i>script-specific
-                events</i>. An <i>inherited event</i> is a function that gets run first on your Encounter script. If the
-                function is not found in the Encounter script, it will try to run the same function on all monsters. If
-                it's not found there either, it will resort to a default, built-in handler. <i>Script-specific
-                    events</i> are, as the name implies, functions that only happen for this specific script type. We'll
-                start with the first type.</p>
             <hr>
             <h3>Inherited events (Encounter -> Monster)</h3><br><br>
+            <p>
+                An <span class="term">inherited event</span> is a function that gets run first on your Encounter script. If the
+                function is not found in the Encounter script, it will try to run the same function on all monsters. If
+                it's not found there either, it will resort to a default, built-in handler.
+            </p>
             <p>
                 <br><span class="function">EncounterStarting()</span>
                 Happens once when everything's done initializing but before any encounter actions start. You should do
@@ -113,16 +112,6 @@ it's w3c valid, at least
                 Happens when you go from the defending state of the game to any other state. If you read up on the
                 <span class="term">RandomEncounterText()</span> function, you'll want to use it here.
             </p>
-            <div class="code-container">
-  <pre class="brush:lua;">function HandleItem(ItemID)
-    if ItemID == "DOGTEST2" then
-        BattleDialog({"You selected The Second Dog.", "You are truly great."})
-    else
-        BattleDialog({"You didn't select The Second Dog.", "You could've picked better."})
-    end
-end
-</pre>
-            </div>
             <p>
                 <br><span class="function">HandleSpare()</span>
                 Happens when you select the Spare option from the Mercy menu, regardless of whether a monster is
@@ -130,19 +119,40 @@ end
                 last enemy in the encounter, this function will not happen - the encounter is over at that point.
             </p>
             <br>
-            <h3>Script-specific events</h3><br><br>
             <hr>
+            <h3>Script-specific events</h3><br><br>
+            <p>
+                <i>Script-specific
+                    events</i> are, as the name implies, functions that only happen for this specific script type.
+            </p>
+            <br>
             <h4>Encounter script events</h4>
             <p>
-                <br><span class="function">HandleItem(item_ID)</span>
+                <br><span class="function">HandleItem(<span class="string"></span> item_ID, <span class="number"></span> position)</span>
                 Happens when you select an item from the item menu. <br>
+                <ul>
+                    <li><span class="term">item_ID</span>: The name of the item used, converted to all-caps.
+                    Similar to <span class="term">HandleCustomCommand</span> in monster scripts.</li>
+                    <li><span class="term">position</span>: The position of the item used in the player's inventory. The first item is number 1.</li>
+                </ul>
                 <br><span class="CYF"></span> In CYF, you can use the Inventory object to edit the player's inventory.
                 The items' names will be in caps, like with <span class="term">HandleCustomCommand()</span>.
+                <div class="code-container">
+  <pre class="brush:lua;">function HandleItem(ItemID, position)
+    if ItemID == "DOGTEST2" then
+        BattleDialog({"You selected The Second Dog.", "You are truly great."})
+    else
+        BattleDialog({"You didn't select The Second Dog.", "You could've picked better."})
+    end
+    DEBUG("You chose item #" .. position .. " in your inventory.")
+end
+</pre>
+            </div>
             </p>
             <p>
-                <br><span class="function">EnteringState(newstate, oldstate)</span>
+                <br><span class="function">EnteringState(<span class="string"></span> newstate, <span class="string"></span>  oldstate)</span>
                 A new, more flexible way of handling state changes. When you enter a new state, this function will fire
-                with <i>newstate</i> containing the new state's name, and <i>oldstate</i> containing the previous
+                with <span class="term">newstate</span> containing the new state's name, and <span class="term">oldstate</span> containing the previous
                 state's name. Both are in all caps. One of the most powerful things about it is that you can use <span class="term">State()</span>
                 here to interrupt state changes initiated by the engine itself.
                 <br>
@@ -188,11 +198,12 @@ end
             <hr>
             <h4>Monster script events</h4>
             <p>
-                <br><span class="function">HandleAttack(damage)</span>
+                <br><span class="function">HandleAttack(<span class="number"></span> damage)</span>
                 Happens the moment the player's attack has applied damage - this is when you hear the hitting sound
-                after the slash animation. <span class="term">damage</span> will be -1 if the player pressed Fight, but didn't press any
+                after the slash animation.<br>
+                <span class="term">damage</span> will be -1 if the player pressed Fight, but didn't press any
                 buttons and let it end by itself. The monster's <span class="term">hp</span> variable will have updated at this time, too.
-                Don't call <span class="term">BattleDialog()</span> here, it's a bit buggy right now.
+                <br>Don't call <span class="term">BattleDialog()</span> here, it's a bit buggy right now.
             </p>
             <p>
                 <br><span class="function">OnDeath()</span>
@@ -221,9 +232,9 @@ end
                 the hp changing. You can still change the target with <span class="term">Player.changeTarget(targetNumber)</span> in this function.
             </p>
             <p>
-                <br><span class="function">HandleCustomCommand(actcommand)</span>
+                <br><span class="function">HandleCustomCommand(<span class="string"></span> actcommand)</span>
                 Happens when you select an Act command on this monster. <span class="term">actcommand</span> will be the same as how you
-                defined it in the <span class="term">commands</span> list, except it will be <i>in all caps</i>. Intermediate example
+                defined it in the <span class="term">commands</span> list, except it will be <b>in all caps</b>. Intermediate example
                 below, showing how you can use it and spice it up a little.
             </p>
             <div class="code-container">
@@ -262,12 +273,12 @@ end
                 This function is launched just before the wave ends. It permits you to easily reset some variables and other such things.
             </p>
             <p>
-                <br><span class="function">OnHit(bullet)</span>
-                Every time a bullet collides with a player, this function gets called on the script that created the
+                <br><span class="function">OnHit(<span class="userdata">bullet</span> bullet)</span>
+                Every time a bullet collides with a player, this function gets called from the script that created the
                 projectile. The bullet object in this function can be modified if you feel like it. For more information
-                on the bullet object, see the documentation above.<br>
+                on the bullet object, see the section <span class="ref">Projectile Management</span>.<br>
                 <br>
-                If you implement this function in your script, you have to define manually what should happen after
+                If you implement this function in your script, you have to manually define what should happen after
                 bullet collision. This is what allows you to create orange, cyan and green projectiles, and much much
                 more. If you don't implement this function in your wave script, it'll stick to the default of dealing 3
                 damage on hit.<!-- Below are multiple examples of how to use this function. -->

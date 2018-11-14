@@ -62,8 +62,8 @@ it's w3c valid, at least
                     <li><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory System</a></li>
                     <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
                     <li><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
-				<li class="li-header">Overworld</li>
-                    <li style="margin-left:5px;">> <span class="CYF"></span> Basics <</li>
+                <li class="li-header">Overworld</li>
+                    <li class="active" style="margin-left:5px;">> <span class="CYF"></span> Basics <</li>
                     <li><a href="overworld-howto-map.html"><span class="CYF"></span> How to create a map</a></li>
                     <li><a href="overworld-howto-event.html"><span class="CYF"></span> How to create an event</a></li>
                     <li><a href="overworld-howto-animevent.html"><span class="CYF"></span> How to animate an event</a></li>
@@ -90,13 +90,13 @@ it's w3c valid, at least
                 is the key feature that everyone was waiting to use for a long time.</p>
             <p>So I'm finally able and proud to give access to the overworld feature, which includes an efficient event handler
                with a lot of functions that you'll be able to use to create your own Undertale-like fangame!</p>
-            <p>However, to be able to use the overworld part of CYF, you will need to have a minimum of some experience with Unity and
-               you'll need to know at least some of the Game Objects' mechanisms.</p>
+            <p>However, to be able to use the overworld part of CYF, you will need to have at least some experience with Unity and
+               you'll need to know at least some of the Game Objects' mechanics.</p>
            <br>
             <h4>Get Started</h4>
            
-            <p>To get started, you'll need to, first of all, download the current version of Unity that CYF uses (at the moment I
-			    wrote this part of the documentation, the version was 5.6.0f3) and, of course download the project via
+            <p>To get started, you'll need to, first of all, download the current version of Unity that CYF uses (at the time of
+               writing, the Unity version was <b>5.6.0f3</b>) and, of course download the project via
                 <a href="https://github.com/RhenaudTheLukark/CreateYourFrisk">Github</a>.</p>
             <p>Unity may take a lot of time to install and to load the project for the first time, due to a lot of resources being
                registered by Unity - but you won't have to do it in the future.</p>
@@ -111,7 +111,7 @@ it's w3c valid, at least
            
             <h4>How does it work?</h4>
 
-            <p>Some softwares will have to be used to be able to create an overworld in CYF. First of all, you can use a software
+            <p>Some software will have to be used to create an overworld in CYF. First of all, you can use a software
                called <a href="http://www.mapeditor.org/">Tiled</a> that allows you to create maps out of tilesets - images that
                contain tiles used to fill in maps. This tiling system is absent from Unity, though - but it's easier to use to create 
 			   a map, so being able to translate a Tiled map to a Unity scene thanks to 
@@ -120,12 +120,12 @@ it's w3c valid, at least
                 beforehand, as some technical language may be used here.</p>
             <p>There are mostly two things to look at when making a map: the map itself (how the map will be made) and the events (how
                the map will work). Let's delve into the more complex stuff now.</p>
-            <p>As I said above, each map is converted into a scene with Tiled2Unity. This scene will have to contain at minimum one
+            <p>As I said above, each map is converted into a scene with Tiled2Unity. This scene will have to contain at least one
 			   element, which is the map object called <span class="term">Background</span>. To see more about how to create a map, 
-			   I suggest you to look at the tutorial on <span class="ref">How to create a map</span>.</p>
-            <p>Now, the events. These are universal and used the same way, at the exception of one "add-on" that is a 
-			   <span class="term">CYFAnimator</span> component. The events have different function-launching conditions, such as pressing 
-			   the confirm button to launch it, colliding with it, it being launched automatically, or the function being launched as a 
+			   I suggest for you to look at the tutorial on <span class="ref">How to create a map</span>.</p>
+            <p>Now, the events. These are universal and used the same way, with the exception of one "add-on" that is a 
+			   <span class="term">CYFAnimator</span> component. The events have different function-calling conditions, such as pressing 
+			   the confirm button to call it, colliding with it, it being called automatically, or the function being called as a 
 			   parallel process. The functions themselves have to be created in Lua scripts, like battles. To see more about how to use 
 			   the events, you should check out <span class="ref">How to create an event</span>.</p>
             <p>Of course, there are other things to see, but these are the two main parts of CYF's overworld coding. Now, let's look at the 
@@ -137,13 +137,27 @@ it's w3c valid, at least
 			   <span class="term">YOURMOD/Lua/Events/</span>. Maybe you already fiddled with them, maybe not. Now that the system 
 			   is stable and easier to use, event programming may be as easy as creating a battle: all that you have to do is to follow 
 			   the documentation and know what you're doing.</p>
-            <p>The overworld has a debugger like battles' (and it's used the same way). Use <span class="term">DEBUG(value)</span> to 
-			   print your value to the debugger (if it's a string value). </p>
+            <p>The overworld has a debugger like battles' (and it's used the same way):
+                <span class="function">DEBUG(<span class="string"></span> value)</span>
+                <i>Prints one string value to the Overworld debugger.</i>
+            </p>
+            <br>
             <p>The <span class="term">Audio</span>, <span class="term">NewAudio</span>, <span class="term">Inventory</span>, 
 			    <span class="term">Input</span>, <span class="term">Misc</span> and <span class="term">Time</span> objects from  battles 
 				are usable in the overworld too, as well as <span class="term">RealGlobals</span> and <span class="term">AlMightyGlobals</span>. 
-				Finally, the variables <span class="term">isCYF</span>, <span class="term">safe</span>, <span class="term">windows</span> 
-				and <span class="term">CYFversion</span> are also accessible.
+            </p>
+            <p>
+                Finally, these variables are also accessible:
+                <span class="function"><span class="boolean"></span> isCYF</span>
+                A value that indicates if you are using CYF. Because the Overworld is a feature exclusive to CYF, this will always be true.
+                <span class="function"><span class="boolean"></span> safe</span>
+                Indicates whether CYF's "safe mode" has been enabled from the modDev screen.
+                <span class="function"><span class="boolean"></span> windows</span>
+                This value indicates whether the user is playing on Windows.
+                <span class="function"><span class="string"></span> CYFversion</span>
+                Returns the current version of CYF as a string. For example, in CYF version 0.4.5 this would give <span class="term">"0.4.5"</span>.<br>
+                <span style="color:#ff0000">DEPRECATED - In CYF versions past <span class="term">0.5.5</span>, always returns <span class="term">1.0</span>.
+                <br>To be removed in a future version. Do not use.</span>
             </p>
         </div>
 		

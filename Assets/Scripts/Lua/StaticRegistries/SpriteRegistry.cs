@@ -40,7 +40,10 @@ public static class SpriteRegistry {
     public static void init() {
         //dict.Clear();
         GENERIC_SPRITE_PREFAB = Resources.Load<Image>("Prefabs/generic_sprite");
-        EMPTY_SPRITE = Sprite.Create(new Texture2D(1, 1), new Rect(0, 0, 1, 1), new Vector2(0.5f, 0.5f));
+        Texture2D tex = new Texture2D(1, 1);
+        tex.SetPixel(0, 0, new Color(0, 0, 0, 0));
+        tex.Apply();
+        EMPTY_SPRITE = Sprite.Create(tex, new Rect(0, 0, 1, 1), new Vector2(0.5f, 0.5f));
         EMPTY_SPRITE.name = "blank";
         string modPath = FileLoader.pathToModFile("Sprites");
         //string defaultPath = FileLoader.pathToDefaultFile("Sprites");
@@ -50,12 +53,17 @@ public static class SpriteRegistry {
 
     private static void prepareMod(string directoryPath) {
         dict.Clear();
+
         loadAllFrom(directoryPath, true);
     }
 
     private static void loadAllFrom(string directoryPath, bool mod = false) {
         DirectoryInfo dInfo = new DirectoryInfo(directoryPath);
         FileInfo[] fInfoTest;
+
+        if (!dInfo.Exists) {
+            UnitaleUtil.DisplayLuaError("mod loading", "You tried to load the mod \"" + StaticInits.MODFOLDER + "\" but it can't be found, or at least its \"Sprites\" folder can't be found.\nAre you sure it exists?");
+        }
 
         fInfoTest = dInfo.GetFiles("*.png", SearchOption.AllDirectories);
 
