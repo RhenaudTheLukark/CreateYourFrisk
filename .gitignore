@@ -60,3 +60,10 @@ sysinfo.txt
 !/Assets/Mods/RTLGeno.meta
 !/Assets/Mods/@Title
 !/Assets/Mods/@Title.meta
+
+# IDE Stuff and others
+
+/.vs/*
+/.vscode/*
+/.bin/*
+/.github
