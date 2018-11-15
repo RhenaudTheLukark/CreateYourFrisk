@@ -358,13 +358,18 @@ it's w3c valid, at least
             </p><br>
             
             <p>
-                <span class="function">sprite.SetAnimation(<span class="luatable"><span class="string"></span></span> spriteTable, <span class="number"></span> timePerFrame = 1/30)</span></span>
+                <span class="function">sprite.SetAnimation(<span class="luatable"><span class="string"></span></span> spriteTable, <span class="number"></span> timePerFrame = 1/30, <span class="CYF"></span> <span class="string"></span> prefix = "")</span></span>
                 Performs frame-by-frame animation with your own time
                 between frames, in seconds. If <span class="term">time_per_frame</span> is 1, it takes 1 second to move to the next sprite.
                 <br><br>
                 Example:
                 <span class="term">sprite.SetAnimation({"sans_head1", "sans_head2", "sans_head3"})</span>
-                <br><br><span class="CYF"></span> This can use sprites with different sizes!
+                <br><br>
+                <span class="CYF"></span> <span class="term">prefix</span>: An optional string providing the path to a folder contained within your Sprites folder. This path will be automatically added to the beginning of every sprite's name.
+                <br><br>
+                For example, you can load your collection of 6 sprites in <span class="term">Sprites/character</span> with <span class="term">sprite.SetAnimation({"spr1", "spr2", "spr3", "spr4", "spr5", "spr6"}, 1/30, "character")</span>.
+                <br><br>
+                <span class="CYF"></span> This can use sprites with different sizes!
             </p><br>
             
             <p>

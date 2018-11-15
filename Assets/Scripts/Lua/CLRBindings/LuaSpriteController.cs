@@ -424,11 +424,22 @@ public class LuaSpriteController {
     public void SetAnimation(string[] frames) { SetAnimation(frames, 1 / 30f); }
 
     // Sets an animation for this instance with a frame timer
-    public void SetAnimation(string[] spriteNames, float frametime) {
+    public void SetAnimation(string[] spriteNames, float frametime, string prefix = "") {
         if (frametime < 0)
             throw new CYFException("sprite.SetAnimation: An animation can not have negative speed!");
         else if (frametime == 0)
             throw new CYFException("sprite.SetAnimation: An animation can not play at 0 frames per second!");
+        
+        if (prefix != "") {
+            while (prefix.StartsWith("/"))
+                prefix = prefix.Substring(1);
+            
+            if (!prefix.EndsWith("/"))
+                prefix += "/";
+            
+            for (int i = 0; i < spriteNames.Length; i++)
+                spriteNames[i] = prefix + spriteNames[i];
+        }
         
         Vector2 pivot = img.GetComponent<RectTransform>().pivot;
         Keyframe[] kfArray = new Keyframe[spriteNames.Length];
