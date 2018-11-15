@@ -464,8 +464,10 @@ public class UIController : MonoBehaviour {
 
             case UIState.ENEMYDIALOGUE:
                 PlayerController.instance.GetComponent<Image>().enabled = true;
-                //ArenaManager.instance.Resize((int)encounter.ArenaSize.x, (int)encounter.ArenaSize.y);
-                ArenaManager.instance.Resize(155, 130);
+                if (!GlobalControls.retroMode)
+                    ArenaManager.instance.Resize((int)encounter.ArenaSize.x, (int)encounter.ArenaSize.y);
+                else
+                    ArenaManager.instance.Resize(155, 130);
                 encounter.CallOnSelfOrChildren("EnemyDialogueStarting");
                 monDialogues = new TextManager[encounter.EnabledEnemies.Length];
                 readyToNextLine = new bool[encounter.EnabledEnemies.Length];
