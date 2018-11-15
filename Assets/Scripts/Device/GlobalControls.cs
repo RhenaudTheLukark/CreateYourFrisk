@@ -38,15 +38,42 @@ public class GlobalControls : MonoBehaviour {
     public static Dictionary<string, GameState.EventInfos> EventData = new Dictionary<string, GameState.EventInfos>();
     public static Dictionary<string, GameState.TempMapData> TempGameMapData = new Dictionary<string, GameState.TempMapData>();
 
+	// Aspect Ratio Vars
+	public static int[] windowResolution = new int[2] {640, 480};
+	public static int[] aspectRatio = new int[2] {4, 3};
+	public static double ScreenWidth = Screen.width;
+	public static bool changeResolution = false;
 
-    /*void Start() {
+	/*void Start() {
         if ((Application.platform == RuntimePlatform.WindowsEditor || Application.platform == RuntimePlatform.WindowsPlayer) && windows == null)
             windows = new Windows();
         else if (window == null
             misc = new Misc();
     }*/
 
-    void Awake() {
+	public static void SetFullScreen(bool args) {
+		if (!args) {
+			Screen.SetResolution(windowResolution[0], windowResolution[1], false, 0);
+		}
+		else {
+			Screen.SetResolution(Screen.currentResolution.width, Screen.currentResolution.height, true, 0);
+		}
+		ChangeAspectRatio();
+	}
+
+	public static void ChangeAspectRatio() {
+		if (!Application.isEditor) {
+			ScreenWidth = (Screen.height / aspectRatio[1]) * aspectRatio[0];
+			Screen.SetResolution((int)RoundToNearestEven(ScreenWidth), Screen.height, Screen.fullScreen, 0);
+		}
+		changeResolution = false;
+	}
+
+	public static double RoundToNearestEven(double value) {
+		return System.Math.Truncate(value) + (System.Math.Truncate(value) % 2);
+	}
+
+	void Awake() {
         SceneManager.sceneLoaded += LoadScene;
     }
 
@@ -112,14 +139,15 @@ public class GlobalControls : MonoBehaviour {
             Screen.SetResolution(640, 480, false, 0);
         */
         if (Input.GetKeyDown(KeyCode.F4)) {
-            Screen.fullScreen =!Screen.fullScreen;
-            
-            // move the window to the correct place on screen when the user exits fullscreen! hooray!
-            // yes, this check is correct, even though it appears to check for the wrong value. I don't know why
-            #if UNITY_STANDALONE_WIN || UNITY_EDITOR
-                if (Screen.fullScreen)
-                    StartCoroutine(RepositionScreen());
-            #endif
+			//Screen.fullScreen =!Screen.fullScreen
+			SetFullScreen(!Screen.fullScreen);
+
+			// move the window to the correct place on screen when the user exits fullscreen! hooray!
+			// yes, this check is correct, even though it appears to check for the wrong value. I don't know why
+			//#if UNITY_STANDALONE_WIN || UNITY_EDITOR
+			//if (Screen.fullScreen)
+            //        StartCoroutine(RepositionScreen());
+            //#endif
         }
     }
     
