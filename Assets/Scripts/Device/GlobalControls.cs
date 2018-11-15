@@ -58,7 +58,7 @@ public class GlobalControls : MonoBehaviour {
 		else {
 			Screen.SetResolution(Screen.currentResolution.width, Screen.currentResolution.height, true, 0);
 		}
-		ChangeAspectRatio();
+		changeResolution = true;
 	}
 
 	public static void ChangeAspectRatio() {
@@ -81,7 +81,10 @@ public class GlobalControls : MonoBehaviour {
     /// Control checking, and way more.
     /// </summary>
     void Update () {
-        stopScreenShake = false;
+		if (changeResolution) {
+			ChangeAspectRatio();
+		}
+		stopScreenShake = false;
         if (isInFight)
             frame ++;
         if (SceneManager.GetActiveScene().name == "ModSelect")        lastSceneUnitale = true;

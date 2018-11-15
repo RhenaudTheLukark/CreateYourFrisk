@@ -16,10 +16,12 @@ public class EnterNameScript : MonoBehaviour {
     private Dictionary<string, string> specialNameDict = new Dictionary<string, string>();
     private string[] ForbiddenNames = new string[] { "lukark", "rtl", "rhenaud", "rtlgeno", "rtlukark", "hacker" };
     private string confirmText = null;
+	GameObject textObjFolder;
 
-    // Use this for initialization
-    void Start () {
-        AddToDict();
+	// Use this for initialization
+	void Start () {
+		textObjFolder = GameObject.Find("NameText");
+		AddToDict();
         isNewGame = SaveLoad.savedGame == null;
         uiAudio = GameObject.Find("TextManager Instructions").GetComponent<AudioSource>();
         try { GameObject.Find("textframe_border_outer").SetActive(false); } catch { }
@@ -126,7 +128,8 @@ public class EnterNameScript : MonoBehaviour {
                         confirm = true;
                         specialNameDict.TryGetValue(playerName.ToLower(), out confirmText);
                         StartCoroutine(waitConfirm(ForbiddenNames.Contains(playerName.ToLower())));
-                    }
+						textObjFolder.SetActive(false);
+					}
                 } else {
                     if (playerName.Length < 9)
                         playerName = playerName + choiceLetter;
@@ -193,7 +196,8 @@ public class EnterNameScript : MonoBehaviour {
         }
         uiAudio.PlayOneShot(AudioClipRegistry.GetSound("menuconfirm"));
         if (choiceLetter == "Quit") {
-            confirmText = null;
+			textObjFolder.SetActive(true);
+			confirmText = null;
             confirm = false;
             tmName.transform.localScale = new Vector3(1, 1, 1);
             tmName.SetEffect(null);
