@@ -5,7 +5,7 @@ randomdialogue = {"Random\nDialogue\n1.", "Random\nDialogue\n2.", "Random\nDialo
 
 sprite = "poseur" --Always PNG. Extension is added automatically.
 name = "Poseur"
-hp = 10
+hp = 100
 atk = 1
 def = 1
 check = "Check message goes here."
