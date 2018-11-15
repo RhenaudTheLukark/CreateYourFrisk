@@ -344,7 +344,7 @@ public static class LuaScriptBinder {
         UnitaleUtil.GetChildPerName(go.transform, "BackVert").GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth - 20, 100);            //BackVert
         UnitaleUtil.GetChildPerName(go.transform, "CenterHorz").GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth + 16, 96 - 16 * 2);  //CenterHorz
         UnitaleUtil.GetChildPerName(go.transform, "CenterVert").GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth - 16, 96);           //CenterVert
-        luatm.SetFont(SpriteFontRegistry.UI_MONSTERTEXT_NAME, true);
+        // luatm.SetFont(SpriteFontRegistry.UI_MONSTERTEXT_NAME, true);
         foreach (ScriptWrapper scrWrap in ScriptWrapper.instances) {
             if (scrWrap.script == scr) {
                 luatm.SetCaller(scrWrap);

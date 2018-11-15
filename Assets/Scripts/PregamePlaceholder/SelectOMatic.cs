@@ -133,7 +133,7 @@ public class SelectOMatic : MonoBehaviour {
             // reset AlMighties
             devMod.transform.Find("ResetAG").GetComponent<Button>().onClick.AddListener(() => {
                 if (AlMightyGlobalCooldown > 0) {
-                    LuaScriptBinder.ClearVariables();
+                    LuaScriptBinder.ClearAlMighty();
                     AlMightyGlobalCooldown = 60 * 2;
                     if (!GlobalControls.crate)
                         devMod.transform.Find("ResetAG").GetComponentInChildren<Text>().text =        "AlMighty Erased!";

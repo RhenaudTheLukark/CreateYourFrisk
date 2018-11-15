@@ -127,7 +127,7 @@ public class TextManager : MonoBehaviour {
     public void ResetFont() {
         if (Charset == null || default_charset == null)
             if (GetType() == typeof(LuaTextManager))
-                ((LuaTextManager)this).SetFont(SpriteFontRegistry.UI_DEFAULT_NAME);
+                ((LuaTextManager)this).SetFont(SpriteFontRegistry.UI_MONSTERTEXT_NAME);
             else
                 SetFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_DEFAULT_NAME), true);
         Charset = default_charset;
@@ -326,7 +326,7 @@ public class TextManager : MonoBehaviour {
                     DestroyText();
                     currentLine = line;
                     currentX = self.position.x + offset.x;
-                    currentY = self.position.y + offset.y - Charset.LineSpacing;
+                    currentY = self.position.y + offset.y;// - Charset.LineSpacing;
                     /*if (GetType() == typeof(LuaTextManager))
                         print("currentY from ShowLine (" + textQueue[currentLine].Text + ") = " + self.position.y + " + " + offset.y + " - " + Charset.LineSpacing + " = " + currentY);*/
                     currentCharacter = 0;
@@ -707,7 +707,7 @@ public class TextManager : MonoBehaviour {
             
             if (GetType() == typeof(LuaTextManager)) {
                 float diff = (Charset.Letters[currentText[i]].border.w - Charset.Letters[currentText[i]].border.y);
-                diff += Charset.LineSpacing;
+                // diff += Charset.LineSpacing;
                 ltrRect.localPosition = new Vector3(currentX - self.position.x - .9f, (currentY - self.position.y) + diff + .1f, 0);
             // keep what we already have for all text boxes that are not Text Objects in an encounter
             } else {

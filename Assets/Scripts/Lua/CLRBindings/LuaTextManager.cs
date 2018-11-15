@@ -266,6 +266,9 @@ public class LuaTextManager : TextManager {
     }
 
     public void SetText(DynValue text) {
+        // disable late start if SetText is used on the same frame the text is created
+        base.LateStartWaiting = false;
+        
         TextMessage[] msgs = null;
         if (text == null)
             throw new CYFException("In Text.SetText: the text argument must be a non-empty array.");
