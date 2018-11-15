@@ -326,10 +326,12 @@ public class TextManager : MonoBehaviour {
                     DestroyText();
                     currentLine = line;
                     currentX = self.position.x + offset.x;
-                    currentY = self.position.y + offset.y;// - Charset.LineSpacing;
-                    /*if (GetType() == typeof(LuaTextManager))
+					currentY = self.position.y + offset.y;// - Charset.LineSpacing;
+					if (GetType() != typeof(LuaTextManager))
+						currentY -= Charset.LineSpacing;
+					/*if (GetType() == typeof(LuaTextManager))
                         print("currentY from ShowLine (" + textQueue[currentLine].Text + ") = " + self.position.y + " + " + offset.y + " - " + Charset.LineSpacing + " = " + currentY);*/
-                    currentCharacter = 0;
+					currentCharacter = 0;
                     currentReferenceCharacter = 0;
                     /*letterEffect = "none";
                     textEffect = null;

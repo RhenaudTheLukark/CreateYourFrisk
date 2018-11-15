@@ -23,9 +23,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/test2.unity
     guid: c103ad422a1e2b844899434ccbb60e2a
-  - enabled: 0
-    path: 
-    guid: 00000000000000000000000000000000
   - enabled: 1
     path: Assets/Scenes/test4.unity
     guid: 3b343858ba50a2246ac6163b00a8384a
@@ -38,9 +35,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/ModSelect.unity
     guid: 07ece637afd80c14ab6c725c0c20242f
-  - enabled: 1
-    path: 
-    guid: 00000000000000000000000000000000
   - enabled: 1
     path: Assets/Scenes/Battle.unity
     guid: 6087b29e19bd5d64b84b0108a19a9536
