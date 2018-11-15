@@ -402,10 +402,12 @@ public class PlayerController : MonoBehaviour {
         else if (Input.GetKeyDown(KeyCode.Alpha2))
             SetSoul(new BlueSoul(this));*/
         // END DEBUG CONTROLS
+        /*
         if (!ArenaManager.instance.firstTurn && (tempQueue.x != -5000 || tempQueue.y != -5000)) {
             SetPosition(tempQueue.x, tempQueue.y, tempQueue2);
             tempQueue = new Vector2(-5000, -5000);
         }
+        */
         // handle input and movement, unless control is overridden by the UI controller, for instance
         if (!overrideControl) {
             intendedShift = Vector2.zero; // reset direction we are going in
