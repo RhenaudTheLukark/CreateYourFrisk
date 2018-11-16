@@ -34,7 +34,7 @@ public class GlobalControls : MonoBehaviour {
     public static string[] nonOWScenes = new string[] { "Battle", "Error", /*"EncounterSelect",*/ "ModSelect", "GameOver", "TitleScreen", "Disclaimer", "EnterName", "TransitionOverworld", "Intro" };
     public static string[] canTransOW = new string[] { "Battle", "Error", "GameOver" };
     //Wow what's this
-    public static Dictionary<int, GameState.MapData> GameMapData = new Dictionary<int, GameState.MapData>();
+    public static Dictionary<string, GameState.MapData> GameMapData = new Dictionary<string, GameState.MapData>();
     public static Dictionary<string, GameState.EventInfos> EventData = new Dictionary<string, GameState.EventInfos>();
     public static Dictionary<string, GameState.TempMapData> TempGameMapData = new Dictionary<string, GameState.TempMapData>();
 
