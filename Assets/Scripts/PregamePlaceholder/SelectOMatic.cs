@@ -20,10 +20,8 @@ public class SelectOMatic : MonoBehaviour {
     
     // used to fade the "Exit" button in and out
     private float ExitButtonAlpha = 5f; 
-    
-    // used to prevent the player from erasing real/almighty globals by accident
-    private int RealGlobalCooldown = 0;
-    private int AlMightyGlobalCooldown = 0;
+    // used to fade the "Options" button in and out
+    private float OptionsButtonAlpha = 5f;
     
     // used to let users navigate the mod and encounter menus with the arrow keys!
     private static int selectedItem = 0;
@@ -106,98 +104,15 @@ public class SelectOMatic : MonoBehaviour {
         
         // add devMod button functions
         if (GlobalControls.modDev) {
-            // clear prior button functions just in case
-            devMod.transform.Find("ResetRG").GetComponent<Button>().onClick.RemoveAllListeners();
-            devMod.transform.Find("ResetAG").GetComponent<Button>().onClick.RemoveAllListeners();
-            devMod.transform.Find("Safe").GetComponent<Button>().onClick.RemoveAllListeners();
-            devMod.transform.Find("Retro").GetComponent<Button>().onClick.RemoveAllListeners();
-            
-            // reset RealGlobals
-            devMod.transform.Find("ResetRG").GetComponent<Button>().onClick.AddListener(() => {
-                if (RealGlobalCooldown > 0) {
-                    LuaScriptBinder.ClearVariables();
-                    RealGlobalCooldown = 60 * 2;
-                    if (!GlobalControls.crate)
-                        devMod.transform.Find("ResetRG").GetComponentInChildren<Text>().text =     "RealGlobals Erased!";
-                    else
-                        devMod.transform.Find("ResetRG").GetComponentInChildren<Text>().text ="REELGOLBELZ\nDELEET!!!!!";
-                } else {
-                    RealGlobalCooldown = 60 * 2;
-                    if (!GlobalControls.crate)
-                        devMod.transform.Find("ResetRG").GetComponentInChildren<Text>().text = "Are you sure?";
-                    else
-                        devMod.transform.Find("ResetRG").GetComponentInChildren<Text>().text = "R U SUR???";
-                }
-            });
-            
-            // reset AlMighties
-            devMod.transform.Find("ResetAG").GetComponent<Button>().onClick.AddListener(() => {
-                if (AlMightyGlobalCooldown > 0) {
-                    LuaScriptBinder.ClearAlMighty();
-                    AlMightyGlobalCooldown = 60 * 2;
-                    if (!GlobalControls.crate)
-                        devMod.transform.Find("ResetAG").GetComponentInChildren<Text>().text =        "AlMighty Erased!";
-                    else
-                        devMod.transform.Find("ResetAG").GetComponentInChildren<Text>().text =  "ALMEIGHTIZ DELEET!!!!!";
-                } else {
-                    AlMightyGlobalCooldown = 60 * 2;
-                    if (!GlobalControls.crate)
-                        devMod.transform.Find("ResetAG").GetComponentInChildren<Text>().text = "Are you sure?";
-                    else
-                        devMod.transform.Find("ResetAG").GetComponentInChildren<Text>().text = "R U SUR???";
-                }
-            });
-            
-            // toggle safe mode
-            devMod.transform.Find("Safe").GetComponent<Button>().onClick.AddListener(() => {
-                ControlPanel.instance.Safe = !ControlPanel.instance.Safe;
-                if (!GlobalControls.crate) {
-                    if (ControlPanel.instance.Safe)
-                        devMod.transform.Find("Safe").GetComponentInChildren<Text>().text = "Safe mode: On";
-                    else
-                        devMod.transform.Find("Safe").GetComponentInChildren<Text>().text = "Safe mode: Off";
-                } else {
-                    if (ControlPanel.instance.Safe)
-                        devMod.transform.Find("Safe").GetComponentInChildren<Text>().text = "SFAE MDOE: ON";
-                    else
-                        devMod.transform.Find("Safe").GetComponentInChildren<Text>().text = "SFAE MDOE: OFF";
-                }
-            });
-            ControlPanel.instance.Safe = !ControlPanel.instance.Safe;
-            devMod.transform.Find("Safe").GetComponent<Button>().onClick.Invoke();
-            
-            // toggle retrocompatibility mode
-            devMod.transform.Find("Retro").GetComponent<Button>().onClick.AddListener(() => {
-                GlobalControls.retroMode =!GlobalControls.retroMode;
-                if (!GlobalControls.crate) {
-                    if (GlobalControls.retroMode)
-                        devMod.transform.Find("Retro").GetComponentInChildren<Text>().text = "Compatibility: On";
-                    else
-                        devMod.transform.Find("Retro").GetComponentInChildren<Text>().text = "Compatibility: Off";
-                } else {
-                    if (GlobalControls.retroMode)
-                        devMod.transform.Find("Retro").GetComponentInChildren<Text>().text = "CMOAPTIILBIYT: ON";
-                    else
-                        devMod.transform.Find("Retro").GetComponentInChildren<Text>().text = "CMOAPTIILBIYT: OFF";
-                }
-            });
-            GlobalControls.retroMode =!GlobalControls.retroMode;
-            devMod.transform.Find("Retro").GetComponent<Button>().onClick.Invoke();
+            GameObject.Find("BtnOptions").GetComponent<Button>().onClick.RemoveAllListeners();
+            GameObject.Find("BtnOptions").GetComponent<Button>().onClick.AddListener(() => {SceneManager.LoadScene("Options");});
         }
         
         // just for debugging, remove later.
-        // GlobalControls.crate = true;
+        GlobalControls.crate = true;
         
         // Crate Your Frisk initializer
         if (GlobalControls.crate) {
-            // devMod buttons
-            if (GlobalControls.modDev) {
-                devMod.transform.Find("ResetRG").GetComponentInChildren<Text>().text =     "RSETE RAELGLOBALS";
-                devMod.transform.Find("ResetAG").GetComponentInChildren<Text>().text =     "RESET ALIMGHTY";
-                devMod.transform.Find("Safe").GetComponentInChildren<Text>().text =        "SFAE MDOE: OFF";
-                devMod.transform.Find("Retro").GetComponentInChildren<Text>().text =       "CMOAPTIILBIYT: OFF";
-            }
-            
             // back button
             GameObject back = encounterBox.transform.Find("ScrollCutoff/Content/Back").gameObject;
             back.transform.Find("Text").GetComponent<Text>().text = "BCAK";
@@ -232,8 +147,15 @@ public class SelectOMatic : MonoBehaviour {
             
             // start the Exit button at half transparency
             ExitButtonAlpha = 0.5f;
-            GameObject.Find("BtnExit/Text").gameObject.GetComponent<Text>().color       = new Color(1f, 1f, 1f, 0.5f);
-            GameObject.Find("BtnExit/TextShadow").gameObject.GetComponent<Text>().color = new Color(0f, 0f, 0f, 0.5f);
+            GameObject.Find("BtnExit/Text").GetComponent<Text>().color       = new Color(1f, 1f, 1f, 0.5f);
+            GameObject.Find("BtnExit/TextShadow").GetComponent<Text>().color = new Color(0f, 0f, 0f, 0.5f);
+            
+            // start the Options button at half transparency
+            if (GlobalControls.modDev) {
+                OptionsButtonAlpha = 0.5f;
+                GameObject.Find("BtnOptions/Text").GetComponent<Text>().color       = new Color(1f, 1f, 1f, 0.5f);
+                GameObject.Find("BtnOptions/TextShadow").GetComponent<Text>().color = new Color(0f, 0f, 0f, 0.5f);
+            }
             
             // reset it to let us accurately tell if the player just came here from the Disclaimer scene or the Battle scene
             StaticInits.ENCOUNTER = "";
@@ -488,25 +410,17 @@ public class SelectOMatic : MonoBehaviour {
             GameObject.Find("BtnExit/TextShadow").GetComponent<Text>().color =  new Color(0f, 0f, 0f, ExitButtonAlpha);
         }
         
-        // make the player click twice to reset RG or AG
-        if (RealGlobalCooldown > 0)
-            RealGlobalCooldown -= 1;
-        else if (RealGlobalCooldown == 0) {
-            RealGlobalCooldown = -1;
-            if (!GlobalControls.crate)
-                devMod.transform.Find("ResetRG").GetComponentInChildren<Text>().text =    "Reset RealGlobals";
-            else
-                devMod.transform.Find("ResetRG").GetComponentInChildren<Text>().text =     "RSETE RAELGLOBALS";
-        }
-        
-        if (AlMightyGlobalCooldown > 0) {
-            AlMightyGlobalCooldown -= 1;
-        } else if (AlMightyGlobalCooldown == 0) {
-            AlMightyGlobalCooldown = -1;
-            if (!GlobalControls.crate)
-                devMod.transform.Find("ResetAG").GetComponentInChildren<Text>().text =     "Reset AlMighty";
-            else
-                devMod.transform.Find("ResetAG").GetComponentInChildren<Text>().text =     "RESET ALIMGHTY";
+        // detect hovering over the Options button and handle fading
+        if (GlobalControls.modDev) {
+            if (Input.mousePosition.x > 320 + 75 && Input.mousePosition.y > 450 && OptionsButtonAlpha < 1f) {
+                OptionsButtonAlpha += 0.05f;
+                GameObject.Find("BtnOptions/Text").GetComponent<Text>().color =        new Color(1f, 1f, 1f, OptionsButtonAlpha);
+                GameObject.Find("BtnOptions/TextShadow").GetComponent<Text>().color =  new Color(0f, 0f, 0f, OptionsButtonAlpha);
+            } else if (OptionsButtonAlpha > 0.5f) {
+                OptionsButtonAlpha -= 0.05f;
+                GameObject.Find("BtnOptions/Text").GetComponent<Text>().color =        new Color(1f, 1f, 1f, OptionsButtonAlpha);
+                GameObject.Find("BtnOptions/TextShadow").GetComponent<Text>().color =  new Color(0f, 0f, 0f, OptionsButtonAlpha);
+            }
         }
         
         // let the player use the keyboard to control the mod select menu!!
