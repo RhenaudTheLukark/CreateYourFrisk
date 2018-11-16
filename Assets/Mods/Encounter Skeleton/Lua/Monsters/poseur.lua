@@ -5,7 +5,7 @@ randomdialogue = {"Random\nDialogue\n1.", "Random\nDialogue\n2.", "Random\nDialo
 
 sprite = "poseur" --Always PNG. Extension is added automatically.
 name = "Poseur"
-hp = 10
+hp = 100
 atk = 1
 def = 1
 check = "Check message goes here."
@@ -25,7 +25,7 @@ end
 -- This handles the commands; all-caps versions of the commands list you have above.
 function HandleCustomCommand(command)
     if command == "ACT 1" then
-        currentdialogue = {"[voice:Dating]aaaaaaa\naaaaaaa\naaaaaaa"}
+        currentdialogue = {"Selected\nAct 1."}
     elseif command == "ACT 2" then
         currentdialogue = {"Selected\nAct 2."}
     elseif command == "ACT 3" then

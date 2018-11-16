@@ -6,12 +6,14 @@
 public class KeyframeCollection : MonoBehaviour {
     public float timePerFrame = 1 / 30f;     // Time that must pass in order for the next frame to appear.
     public Keyframe[] keyframes;             // Array of Keyframes.
-    internal float currTime = 0;             // Timer used to determine what sprite should be displayed.
+    public float currTime = 0;               // Timer used to determine what sprite should be displayed.
     internal LuaSpriteController spr;        // Sprite controller affected by the animation.
     internal LoopMode loop = LoopMode.LOOP;  // Loop mode of the animation.
                                              // See the LoopMode enumeration for more details on the possible values.
     private float totalTime;                 // Total time of the animation.
     public Keyframe EMPTY_KEYFRAME = new Keyframe(SpriteRegistry.EMPTY_SPRITE); // Empty sprite.
+    
+    public bool paused = false;              // Controls whether an animation is playing or paused.
 
     /// <summary>
     /// Determines if the animation repeats or not.
@@ -48,9 +50,10 @@ public class KeyframeCollection : MonoBehaviour {
     /// Check the animation's time and returns the current Keyframe in use.
     /// </summary>
     /// <returns>The current Keyframe in use.</returns>
-    public Keyframe GetCurrent() {
-        // Increase the timer.
-        currTime += Time.deltaTime;
+    public Keyframe getCurrent() {
+        if (!paused)
+            // Increase the timer.
+            currTime += Time.deltaTime;
         // The animation repeats.
         if (loop == LoopMode.LOOP) {
             // currTime must stay between 0 and totalTime to have a valid Keyframe index.
@@ -67,6 +70,17 @@ public class KeyframeCollection : MonoBehaviour {
                 else                          return EMPTY_KEYFRAME;
             return keyframes[index];
         }
+    }
+    
+    // Gets the index of the current sprite.
+    public int getIndex() {
+        int index;
+        if (loop == LoopMode.LOOP)
+            index = (int)((currTime % totalTime) / timePerFrame);
+        else
+            index = (int)(currTime / timePerFrame);
+        
+        return index + 1;
     }
 
     /// <summary>

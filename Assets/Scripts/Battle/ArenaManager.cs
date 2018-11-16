@@ -264,8 +264,15 @@ public class ArenaManager : MonoBehaviour {
             if (falseInit)  yup = true;
             return;
         }
-
+        
         // If the Arena is at its desired position/size, then we don't need to continue.
+        //if (UIController.instance.state != UIController.UIState.DEFENDING && UIController.instance.state != UIController.UIState.ENEMYDIALOGUE)
+        //    outer.position = new Vector3(320, 90, outer.position.z);
+        
+        // do not resize the arena if the state is frozen with NONE
+        if (UIController.instance.frozenState != UIController.UIState.NONE)
+            return;
+        
         if (currentWidth == newWidth && currentHeight == newHeight && currentX == newX && currentY == newY)
             return;
 

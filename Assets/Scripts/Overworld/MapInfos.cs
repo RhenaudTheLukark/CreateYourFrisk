@@ -8,6 +8,6 @@ public class MapInfos : MonoBehaviour {
     public bool noRandomEncounter;
 
     private void Start() {
-        EventManager.GetMapState(this, SceneManager.GetActiveScene().buildIndex);
+        EventManager.GetMapState(this, SceneManager.GetActiveScene().name);
     }
 }

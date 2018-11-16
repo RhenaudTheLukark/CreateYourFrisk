@@ -72,7 +72,7 @@ public class PlayerController : MonoBehaviour {
     /// <summary>
     /// if true, ignores movement input. Done when the player should be controlled by something else, like the UI
     /// </summary>
-    private bool overrideControl = false;
+    public bool overrideControl = false;
 
     /// <summary>
     /// the Image of the player
@@ -88,9 +88,6 @@ public class PlayerController : MonoBehaviour {
     /// contains a Soul type that affects what player movement does
     /// </summary>
     private AbstractSoul soul;
-
-    private Vector2 tempQueue = new Vector2(-5000, -5000);
-    private bool tempQueue2 = false;
 
     /// <summary>
     /// The last movement of the player.
@@ -295,12 +292,7 @@ public class PlayerController : MonoBehaviour {
     }
 
     public void SetPositionQueue(float xPos, float yPos, bool ignoreBounds) {
-        if (!ArenaManager.instance.firstTurn)
-            SetPosition(xPos, yPos, ignoreBounds);
-        else {
-            tempQueue = new Vector2(xPos, yPos);
-            tempQueue2 = ignoreBounds;
-        }
+        SetPosition(xPos, yPos, ignoreBounds);
     }
 
     public void SetPosition(float xPos, float yPos, bool ignoreBounds) {
@@ -402,10 +394,12 @@ public class PlayerController : MonoBehaviour {
         else if (Input.GetKeyDown(KeyCode.Alpha2))
             SetSoul(new BlueSoul(this));*/
         // END DEBUG CONTROLS
+        /*
         if (!ArenaManager.instance.firstTurn && (tempQueue.x != -5000 || tempQueue.y != -5000)) {
             SetPosition(tempQueue.x, tempQueue.y, tempQueue2);
             tempQueue = new Vector2(-5000, -5000);
         }
+        */
         // handle input and movement, unless control is overridden by the UI controller, for instance
         if (!overrideControl) {
             intendedShift = Vector2.zero; // reset direction we are going in

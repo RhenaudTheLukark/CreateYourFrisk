@@ -761,7 +761,8 @@ public class EventManager : MonoBehaviour {
 
     //Used to add event states before unloading the map
     public static void SetEventStates() {
-        int id = SceneManager.GetActiveScene().buildIndex;
+        // int id = SceneManager.GetActiveScene().buildIndex;
+        string id = SceneManager.GetActiveScene().name;
         EventOW[] events = (EventOW[])GameObject.FindObjectsOfType(typeof(EventOW));
         //MapDataAnalyser();
 
@@ -817,7 +818,7 @@ public class EventManager : MonoBehaviour {
             else                                          throw new CYFException("\"MusicKept\" and \"NoRandomEncounter\" are boolean values. You can only enter \"true\" or \"false\".");
         }
 
-        foreach (KeyValuePair<int, GameState.MapData> kvp in GlobalControls.GameMapData) {
+        foreach (KeyValuePair<string, GameState.MapData> kvp in GlobalControls.GameMapData) {
             if (kvp.Value.Name == mapName) {
                 GameState.MapData mi = kvp.Value;
                 GlobalControls.GameMapData.Remove(kvp.Key);
@@ -918,10 +919,10 @@ public class EventManager : MonoBehaviour {
     public static void MapDataAnalyser() {
         string str = "MapData = {\n";
         bool once = false, once2 = false;
-        foreach (int id in GlobalControls.GameMapData.Keys) {
+        foreach (string id in GlobalControls.GameMapData.Keys) {
             str += once ? ",\n" : "";
             if (!once) once = true;
-            str += "  id = " + id + " (scene " + System.IO.Path.GetFileNameWithoutExtension(SceneUtility.GetScenePathByBuildIndex(id)) + ") for\n";
+            str += "  scene " + id + " for\n";
             GameState.MapData mi = GlobalControls.GameMapData[id];
             str += "    Name = \"" + mi.Name + "\"\n";
             str += "    Music = \"" + mi.Music + "\"\n";
@@ -947,7 +948,7 @@ public class EventManager : MonoBehaviour {
         print(str);
     }
 
-    public static void GetMapState(MapInfos mi, int id) {
+    public static void GetMapState(MapInfos mi, string id) {
         if (!GlobalControls.GameMapData.ContainsKey(id)) {
             if (GlobalControls.TempGameMapData.ContainsKey(SceneManager.GetActiveScene().name)) {
                 GameState.TempMapData tmd = GlobalControls.TempGameMapData[SceneManager.GetActiveScene().name];
@@ -1136,7 +1137,12 @@ public class EventManager : MonoBehaviour {
                 target = target ?? go.transform; //oof
                 if (!waitEnd)
                     scr.Call("CYFEventNextCommand");
-                Vector2 endPoint = new Vector2(dirX - target.position.x, dirY - target.position.y), endPointFromNow = endPoint;
+                
+                Vector2 endPoint = new Vector2(dirX - target.position.x, dirY - target.position.y);//, endPointFromNow = endPoint;
+                
+                // store the event's initial position
+                Vector2 originalPosition = new Vector2(target.position.x, target.position.y);
+                
                 //The animation process is automatic, if you renamed the Animation's triggers and animations as the Player's
                 if (go.GetComponent<CYFAnimator>()) {
                     int direction = CheckDirection(endPoint);
@@ -1146,22 +1152,29 @@ public class EventManager : MonoBehaviour {
                 //While the current position is different from the one we want our player to have
                 bool test = true;
                 try { test = (Vector2)target.position != endPoint; } catch (MissingReferenceException) { }
+                /*
                 float speed;
                 try {
                     speed = go != GameObject.Find("Player").transform.gameObject ? go.GetComponent<EventOW>().moveSpeed : PlayerOverworld.instance.speed;
                 } catch { yield break; }
+                */
                 while (test) {
+                    //Test is used to know if movement is possible or not
                     Vector2 clamped = Vector2.ClampMagnitude(endPoint, 1);
-                    //Test is used to know if the deplacement is possible or not
                     bool test2 = false;
-                    if (speed < endPointFromNow.magnitude)
+                    Vector2 distanceFromStart = new Vector2(0, 0);
+                    
+                    // silence the error that occurs when transitioning in the overworld
+                    try {
                         test2 = PlayerOverworld.instance.AttemptMove(clamped.x, clamped.y, go, wallPass);
-                    //If we reached the destination, stop the function
-                    else {
-                        endPointFromNow /= speed;
-                        test2 = PlayerOverworld.instance.AttemptMove(endPointFromNow.x, endPointFromNow.y, go, wallPass);
-                        if (test2)
-                            target.position = new Vector3(dirX, dirY, target.position.z);
+                        distanceFromStart = new Vector2(target.position.x - originalPosition.x, target.position.y - originalPosition.y);
+                    } catch (MissingReferenceException) {}
+                
+                    //If we have reached the destination, stop the function
+                    if (distanceFromStart.magnitude >= endPoint.magnitude) {
+                        // if this code is run, that means the player must have reached their destination
+                        
+                        target.position = new Vector3(dirX, dirY, target.position.z);
                         yield return 0;
 
                         if (waitEnd)
@@ -1176,12 +1189,12 @@ public class EventManager : MonoBehaviour {
                         yield break;
                     }
                     try {
-                        endPointFromNow = new Vector2(dirX - target.position.x, dirY - target.position.y);
+                        //endPointFromNow = new Vector2(dirX - target.position.x, dirY - target.position.y);
                         test = (Vector2)target.position != endPoint;
                     } catch (MissingReferenceException) { }
                 }
             }
-        UnitaleUtil.WriteInLogAndDebugger("Event.MoveToPoint: The name you entered in the function doesn't exists. Did you forget to add the 'Event' tag?");
+        UnitaleUtil.WriteInLogAndDebugger("Event.MoveToPoint: The name you entered in the function doesn't exist. Did you forget to add the 'Event' tag?");
         scr.Call("CYFEventNextCommand");
     }
 

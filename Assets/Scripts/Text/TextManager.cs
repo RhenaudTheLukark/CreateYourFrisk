@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Diagnostics;
 using MoonSharp.Interpreter;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,10 +15,10 @@ public class TextManager : MonoBehaviour {
     protected UnderFont default_charset = null;
     protected AudioClip default_voice = null;
     public AudioSource letterSound = null;
-    protected TextEffect textEffect;
+    protected TextEffect textEffect = null;
     public List<Letter> letters = new List<Letter>();
     private string letterEffect = "none";
-    private string[] commandList = new string[] { "color", "charspacing", "linespacing", "starcolor", "instant", "font", "effect", "noskip", "w", "waitall", "novoice",
+    private string[] commandList = new string[] { "color", "alpha", "charspacing", "linespacing", "starcolor", "instant", "font", "effect", "noskip", "w", "waitall", "novoice",
                                                   "next", "finished", "nextthisnow", "noskipatall", "waitfor", "speed", "letters", "voice", "func", "mugshot", "name",
                                                   "music", "sound", "health", "lettereffect"};
     private float letterIntensity = 0.0f;
@@ -77,6 +78,8 @@ public class TextManager : MonoBehaviour {
     public bool hidden = false;
     public bool skipNowIfBlocked = false;
     internal bool noSkip1stFrame = true;
+    
+    public bool LateStartWaiting = false; // Lua text objects will use a late start
 
     public void SetCaller(ScriptWrapper s) { caller = s; }
 
@@ -85,7 +88,7 @@ public class TextManager : MonoBehaviour {
         if (default_charset == null)
             default_charset = font;
         if (firstTime) {
-            if (letterSound == null)
+            if (letterSound == null && font.Sound != null)
                 letterSound.clip = font.Sound;
             if (currentColor == Color.white) {
                 // TODO: DO NOT OVERRIDE font.XXX!!!
@@ -102,7 +105,8 @@ public class TextManager : MonoBehaviour {
             if (hSpacing == 3)
                 hSpacing = font.CharSpacing;
         } else {
-            letterSound.clip = font.Sound;
+            if (font.Sound != null)
+                letterSound.clip = font.Sound;
             defaultColor = Charset.DefaultColor;
             if (GetType() == typeof(LuaTextManager)) {
                 if (((LuaTextManager)this).hasColorBeenSet) {
@@ -123,7 +127,7 @@ public class TextManager : MonoBehaviour {
     public void ResetFont() {
         if (Charset == null || default_charset == null)
             if (GetType() == typeof(LuaTextManager))
-                ((LuaTextManager)this).SetFont(SpriteFontRegistry.UI_DEFAULT_NAME);
+                ((LuaTextManager)this).SetFont(SpriteFontRegistry.UI_MONSTERTEXT_NAME);
             else
                 SetFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_DEFAULT_NAME), true);
         Charset = default_charset;
@@ -301,7 +305,7 @@ public class TextManager : MonoBehaviour {
                             blockSkip = true;
                         }
                     }
-
+                    
                     if (!offsetSet)
                         SetOffset(0, 0);
                     currentColor = defaultColor;
@@ -313,20 +317,25 @@ public class TextManager : MonoBehaviour {
                     instantCommand = false;
                     skipFromPlayer = false;
                     firstChar = false;
-                    letterSound.clip = Charset.Sound;
+                    
+                    if (Charset.Sound != null)
+                        letterSound.clip = Charset.Sound;
+                    
                     timePerLetter = singleFrameTiming;
                     letterTimer = 0.0f;
                     DestroyText();
                     currentLine = line;
                     currentX = self.position.x + offset.x;
-                    currentY = self.position.y + offset.y - Charset.LineSpacing;
+                    currentY = self.position.y + offset.y;
+                    if (GetType() != typeof(LuaTextManager))
+                        currentY -= Charset.LineSpacing;
                     /*if (GetType() == typeof(LuaTextManager))
                         print("currentY from ShowLine (" + textQueue[currentLine].Text + ") = " + self.position.y + " + " + offset.y + " - " + Charset.LineSpacing + " = " + currentY);*/
                     currentCharacter = 0;
                     currentReferenceCharacter = 0;
-                    letterEffect = "none";
+                    /*letterEffect = "none";
                     textEffect = null;
-                    letterIntensity = 0;
+                    letterIntensity = 0;*/
                     letterSpeed = 1;
                     displayImmediate = textQueue[line].ShowImmediate;
                     SpawnText();
@@ -467,6 +476,15 @@ public class TextManager : MonoBehaviour {
     public void DestroyText() {
         foreach (Transform child in gameObject.transform)
             Destroy(child.gameObject);
+        
+        // the following code is activated if DestroyText is called from an actual CYF mod, on the Lua side,
+        // or if the text is done typing out.
+        // hopefully we will never have to use any lambda functions on Lua Text Managers...
+        if (GetType() == typeof(LuaTextManager)&&
+            (new StackFrame(1).GetMethod().Name == "lambda_method" || new StackFrame(1).GetMethod().Name == "NextLine")) {
+            GetComponent<LuaTextManager>().isActive = false;
+            GameObject.Destroy(this.transform.parent.gameObject);
+        }
     }
 
     private void SpawnTextSpaceTest(int i, string currentText, out string currentText2) {
@@ -490,12 +508,12 @@ public class TextManager : MonoBehaviour {
                 else                                                limit = 534;
             else                                                    limit = 534;
         } else if (GlobalControls.isInFight) {
-            if (UIController.instance.inited) {
-                if (UIController.instance.encounter.gameOverStance) limit = 320;
-                else if (name == "DialogBubble(Clone)")             limit = (int)transform.parent.GetComponent<LuaEnemyController>().bubbleWideness;
-                else if (GetType() == typeof(LuaTextManager))       limit = gameObject.GetComponent<LuaTextManager>().textMaxWidth;
-                else                                                limit = 534;
-            } else                                                  limit = 534;
+            //if (UIController.instance.inited) {
+            if (UIController.instance.encounter.gameOverStance) limit = 320;
+            else if (name == "DialogBubble(Clone)")             limit = (int)transform.parent.GetComponent<LuaEnemyController>().bubbleWideness;
+            else if (GetType() == typeof(LuaTextManager))       limit = gameObject.GetComponent<LuaTextManager>().textMaxWidth;
+            else                                                limit = 534;
+            //} else                                                  limit = 534;
         } else                                                      limit = 534;
         if (UnitaleUtil.CalcTextWidth(this, beginIndex, finalIndex) > limit && limit > 0) {
             int realBeginIndex = beginIndex, realFinalIndex = finalIndex;
@@ -599,9 +617,49 @@ public class TextManager : MonoBehaviour {
                 case '[':
                     int currentChar = i;
                     string command = ParseCommandInline(currentText, ref i);
-                    if (command != null) {
+                    if (command != null && !LateStartWaiting) {
                         if (commandList.Contains(command.Split(':')[0])) {
-                            PreCreateControlCommand(command);
+                            // Work-around for [instant]/[instant:allowcommand]
+                            if ((command == "instant" || command == "instant:allowcommand") && !GlobalControls.retroMode) {
+                                // Copy all text before the command
+                                string precedingText = currentText.Substring(0, i - (command.Length + 1));
+                                
+                                // Remove all commands
+                                while (precedingText.IndexOf('[') > -1) {
+                                    for (int j = 0; j < precedingText.Length; j++) {
+                                        if (precedingText[j] == ']') {
+                                            precedingText = precedingText.Replace(precedingText.Substring(0, j + 1), "");
+                                            break;
+                                        }
+                                    }
+                                }
+                                
+                                // Confirm that [instant]/[instant:allowcommand] is at the beginning!
+                                if (precedingText.Length == 0)
+                                    PreCreateControlCommand(command);
+                            } else
+                                PreCreateControlCommand(command);
+                            
+                            // Work-around for noskip
+                            if (command == "noskip") {
+                                // Copy all text before the command
+                                string precedingText = currentText.Substring(0, i - (command.Length + 1));
+                                
+                                // Remove all commands
+                                while (precedingText.IndexOf('[') > -1) {
+                                    for (int j = 0; j < precedingText.Length; j++) {
+                                        if (precedingText[j] == ']') {
+                                            precedingText = precedingText.Replace(precedingText.Substring(0, j + 1), "");
+                                            break;
+                                        }
+                                    }
+                                }
+                                
+                                // Confirm that the effects of noskip should be applied!
+                                if (precedingText.Length == 0)
+                                    currentSkippable = false;
+                            }
+                            
                             continue;
                         } else
                             i = currentChar;
@@ -649,7 +707,15 @@ public class TextManager : MonoBehaviour {
 
             letterReferences[i] = ltrImg;
             
-            ltrRect.position = new Vector3(currentX + .1f, (currentY + Charset.Letters[currentText[i]].border.w - Charset.Letters[currentText[i]].border.y + 2) + .1f, 0);
+            if (GetType() == typeof(LuaTextManager)) {
+                float diff = (Charset.Letters[currentText[i]].border.w - Charset.Letters[currentText[i]].border.y);
+                // diff += Charset.LineSpacing;
+                ltrRect.localPosition = new Vector3(currentX - self.position.x - .9f, (currentY - self.position.y) + diff + .1f, 0);
+            // keep what we already have for all text boxes that are not Text Objects in an encounter
+            } else {
+                ltrRect.position = new Vector3(currentX + .1f, (currentY + Charset.Letters[currentText[i]].border.w - Charset.Letters[currentText[i]].border.y + 2) + .1f, 0);
+            };
+            
             /*if (GetType() == typeof(LuaTextManager))
                 print("currentY from SpawnText (" + textQueue[currentLine].Text + ") = " + currentY + " + " + Charset.Letters[currentText[i]].border.w + " - " + Charset.Letters[currentText[i]].border.y + " + 2 = " + (currentY + Charset.Letters[currentText[i]].border.w - Charset.Letters[currentText[i]].border.y + 2)); */
 
@@ -664,7 +730,7 @@ public class TextManager : MonoBehaviour {
                 } else                                          ltrImg.color = currentColor;
             } else                                              ltrImg.color = currentColor;
             ltrImg.GetComponent<Letter>().colorFromText = currentColor;
-            ltrImg.enabled = displayImmediate;
+            ltrImg.enabled = displayImmediate || instantCommand;
             letters.Add(singleLtr.GetComponent<Letter>());
 
             currentX += ltrRect.rect.width + hSpacing; // TODO remove hardcoded letter offset
@@ -736,6 +802,8 @@ public class TextManager : MonoBehaviour {
         if (textQueue == null || textQueue.Length == 0)
             return;
         if (paused)
+            return;
+        if (LateStartWaiting)
             return;
         /*if (currentLine >= lineCount() && overworld) {
             endTextEvent();
@@ -854,7 +922,7 @@ public class TextManager : MonoBehaviour {
 
     private bool CheckCharInBounds(int i, int length) {
         if (i >= length) {
-            Debug.LogWarning("Went out of bounds looking for arguments after control character.");
+            UnityEngine.Debug.LogWarning("Went out of bounds looking for arguments after control character.");
             return true;
         } else
             return false;
@@ -869,8 +937,17 @@ public class TextManager : MonoBehaviour {
         }
         switch (cmds[0].ToLower()) {
             case "color":
+                float oldAlpha = currentColor.a;
                 currentColor = ParseUtil.GetColor(cmds[1]);
+                currentColor = new Color(currentColor.r, currentColor.g, currentColor.b, oldAlpha);
                 colorSet = true;
+                break;
+            case "alpha":
+                if (cmds[1].Length == 2) {
+                    currentColor = new Color(currentColor.r, currentColor.g, currentColor.b, ParseUtil.GetByte(cmds[1]) / 255);
+                    if (GetType() == typeof(LuaTextManager))
+                        ((LuaTextManager)this)._color = new Color(((LuaTextManager)this)._color.r, ((LuaTextManager)this)._color.g, ((LuaTextManager)this)._color.b, currentColor.a);
+                }
                 break;
             case "charspacing": SetHorizontalSpacing(ParseUtil.GetFloat(cmds[1])); break;
             case "linespacing": SetVerticalSpacing(ParseUtil.GetFloat(cmds[1]));   break;
@@ -883,9 +960,16 @@ public class TextManager : MonoBehaviour {
                 break;
             
             case "instant":
-                if (args.Length == 0)
+                if (args.Length == 0 || (args.Length == 1 && cmds[1] == "allowcommand")) {
+                    if (args.Length == 1 && cmds[1] == "allowcommand") {
+                        instantCommand = true;
+                        Update();
+                        InUpdateControlCommand(DynValue.NewString("noskip"));
+                        break;
+                    }
                     if (!skipFromPlayer)
                         displayImmediate = true;
+                }
                 break;
             
             case "noskip":
@@ -988,7 +1072,12 @@ public class TextManager : MonoBehaviour {
                             break;
                         case "stopall": instantCommand = false; break;
                     }
-                }
+                } else if (args.Length == 0 && !GlobalControls.retroMode)
+                    if (!skipFromPlayer) {
+                        displayImmediate = true;
+                        foreach (Letter l in letters)
+                            l.transform.gameObject.GetComponent<Image>().enabled = true;
+                    }
                 break;
 
             case "func":

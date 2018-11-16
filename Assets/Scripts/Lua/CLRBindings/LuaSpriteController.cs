@@ -424,10 +424,30 @@ public class LuaSpriteController {
     public void SetAnimation(string[] frames) { SetAnimation(frames, 1 / 30f); }
 
     // Sets an animation for this instance with a frame timer
-    public void SetAnimation(string[] spriteNames, float frametime) {
+    public void SetAnimation(string[] spriteNames, float frametime, string prefix = "") {
+        if (frametime < 0)
+            throw new CYFException("sprite.SetAnimation: An animation can not have negative speed!");
+        else if (frametime == 0)
+            throw new CYFException("sprite.SetAnimation: An animation can not play at 0 frames per second!");
+        
+        if (prefix != "") {
+            while (prefix.StartsWith("/"))
+                prefix = prefix.Substring(1);
+            
+            if (!prefix.EndsWith("/"))
+                prefix += "/";
+            
+            for (int i = 0; i < spriteNames.Length; i++)
+                spriteNames[i] = prefix + spriteNames[i];
+        }
+        
         Vector2 pivot = img.GetComponent<RectTransform>().pivot;
         Keyframe[] kfArray = new Keyframe[spriteNames.Length];
         for (int i = 0; i < spriteNames.Length; i++) {
+            // at least one sprite in the sequence was unable to be loaded
+            if (SpriteRegistry.Get(spriteNames[i]) == null)
+                throw new CYFException("sprite.SetAnimation: Failed to load sprite with the name\" " + spriteNames[i] + "\". Are you sure it is spelled correctly?");
+            
             kfArray[i] = new Keyframe(SpriteRegistry.Get(spriteNames[i]), spriteNames[i].ToLower());
         }
         if (keyframes == null) {
@@ -460,6 +480,78 @@ public class LuaSpriteController {
             img.GetComponent<RectTransform>().pivot = pivot;
         }
     }
+    
+    // Gets or sets the paused state of a sprite's animation.
+    public DynValue animationpaused {
+        get {
+            if (img.GetComponent<Image>() && keyframes != null)
+                return DynValue.NewBoolean(keyframes.paused);
+            return DynValue.NewNil();
+        }
+        set {
+            if (img.GetComponent<Image>()) {
+                if (value.Type.ToString() != "Boolean")
+                    throw new CYFException("sprite.paused can only be set to a boolean value.");
+                
+                if (keyframes != null)
+                    keyframes.paused = value.Boolean;
+                else
+                    throw new CYFException("Unable to pause/resume a sprite without an active animation.");
+            }
+        }
+    }
+    
+    // Gets or sets the current frame of an animated sprite's animation.
+    // Example: If a sprite's animation table is      {"sans_head_1", "sans_head_2", "sans_head_3", "sans_head"2},
+    // then for each sprite in the table, this will be: ^ 1            ^ 2            ^ 3            ^ 4
+    public int currentframe {
+        set {
+            if (img.GetComponent<Image>()) {
+                if (keyframes != null) {
+                    if (value < 1 || value > keyframes.keyframes.Length)
+                        throw new CYFException("sprite.currentframe: New value " + value + " is out of bounds.");
+                    else {
+                        // Calls keyframes.currTime %= keyframes.totalTime
+                        keyframes.SetLoop(keyframes.loop);
+                        keyframes.currTime = value * keyframes.timePerFrame;
+                    }
+                } else
+                    throw new CYFException("sprite.currentframe: You can not set the current frame of a sprite without an active animation.");
+            }
+        }
+        get {
+            if (img.GetComponent<Image>() && keyframes != null)
+                return keyframes.getIndex();
+            return 0;
+        }
+    }
+    
+    // Gets or sets the speed of an animated sprite's animation.
+    public float animationspeed {
+        set {
+            if (img.GetComponent<Image>()) {
+                if (keyframes != null) {
+                    if (value < 0)
+                        throw new CYFException("sprite.animationspeed: An animation can not have negative speed!");
+                    else if (value == 0)
+                        throw new CYFException("sprite.animationspeed: An animation can not play at 0 frames per second!");
+                    
+                    float percentCompletion = keyframes.currTime / (keyframes.keyframes.Length * keyframes.timePerFrame);
+                    // Calls keyframes.totalTime = keyframes.timePerFrame * keyframes.Length;
+                    keyframes.Set(keyframes.keyframes, value);
+                    keyframes.currTime = percentCompletion * (keyframes.keyframes.Length * keyframes.timePerFrame);
+                    // Calls keyframes.currTime %= keyframes.totalTime
+                    keyframes.SetLoop(keyframes.loop);
+                } else
+                    throw new CYFException("sprite.animationspeed: You can not change the speed of a sprite without an active animation.");
+            }
+        }
+        get {
+            if (img.GetComponent<Image>()&& keyframes != null)
+                return keyframes.timePerFrame;
+            return 0;
+        }
+    }
 
     public void SendToTop() {
         GetTarget().SetAsLastSibling();
@@ -471,13 +563,13 @@ public class LuaSpriteController {
 
     public void MoveBelow(LuaSpriteController sprite) {
         if (sprite == null)                                       throw new CYFException("The sprite passed as an argument is null.");
-        else if (sprite.GetTarget().parent != GetTarget().parent) UnitaleUtil.WriteInLogAndDebugger("[WARN]You can't move relatively two sprites without the same parent.");
+        else if (sprite.GetTarget().parent != GetTarget().parent) UnitaleUtil.WriteInLogAndDebugger("[WARN]You can't relatively move two sprites without the same parent.");
         else                                                      GetTarget().SetSiblingIndex(sprite.GetTarget().GetSiblingIndex());
     }
 
     public void MoveAbove(LuaSpriteController sprite) {
         if (sprite == null)                                       throw new CYFException("The sprite passed as an argument is null.");
-        else if (sprite.GetTarget().parent != GetTarget().parent) UnitaleUtil.WriteInLogAndDebugger("[WARN]You can't move relatively two sprites without the same parent.");
+        else if (sprite.GetTarget().parent != GetTarget().parent) UnitaleUtil.WriteInLogAndDebugger("[WARN]You can't relatively move two sprites without the same parent.");
         else                                                      GetTarget().SetSiblingIndex(sprite.GetTarget().GetSiblingIndex() + 1);
     }
 
@@ -529,7 +621,7 @@ public class LuaSpriteController {
             StopAnimation();
             return;
         }
-
+        
         if (k.sprite != null) {
             Quaternion rot = img.transform.rotation;
             Vector2 pivot = img.GetComponent<RectTransform>().pivot;

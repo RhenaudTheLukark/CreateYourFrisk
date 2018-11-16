@@ -62,7 +62,7 @@ it's w3c valid, at least
                     <li><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory System</a></li>
                     <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
                     <li><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
-				<li class="li-header">Overworld</li>
+                <li class="li-header">Overworld</li>
                     <li><a href="overworld.html"><span class="CYF"></span> Basics</a></li>
                     <li><a href="overworld-howto-map.html"><span class="CYF"></span> How to create a map</a></li>
                     <li><a href="overworld-howto-event.html"><span class="CYF"></span> How to create an event</a></li>
@@ -86,14 +86,27 @@ it's w3c valid, at least
             <p>Projectile management is, starting from 0.2.0, available from both the encounter and the wave scripts. As
                 a result it is now in its own section.</p>
             <p>
-                <br><span class="function"><span class="CYF"></span> CreateLayer(name, relatedTag = "BasisNewest", before = false) [E/W]</span>
-                Create a layer where you'll be able to put sprites. You'll choose another layer to create it, and it'll be
-                created after the selected layer. If <span class="term">before</span> is true, it'll be created before this layer.<br>
-                Base layers:
+                <br><span class="function"><span class="CYF"></span> CreateLayer(<span class="string"></span> name, 
+                <span class="string"></span> position = "BelowArenaLayer", <span class="boolean"></span> below = false) [E/W]</span>
+                Creates a layer named <span class="term">name</span> that sprites can be placed in. To create your new sprite layer, you'll need to choose a pre-existing layer.
+                <br><br>
+                <span class="term">position</span> can be one of three values:
+                <ul>
+                    <li><span class="term">(Name of existing sprite layer)</span>: Your new layer will be created above or below the specified layer.<br>
+                    See below for default layers and how to use <span class="term">below</span>.</li>
+                    <li><span class="term">"VeryHighest"</span>: Your new sprite layer will be created as high as possible, above everything else.<br>
+                    <b>This will make your layer appear above the debugger!</b></li>
+                    <li><span class="term">"VeryLowest"</span>: Your new sprite layer will be created as low as possible, below everything else.</li>
+                </ul>
+                <br>
+                If <span class="term">below</span> is true, the new layer will be created below the layer given in <span class="term">position</span>.
+                Otherwise, it will be above it.
+                <br><br>
+                Default layers:
                 <ul>
                     <li><span class="term">"Bottom"</span>: Under everything, even the background.</li><br>
                     <li><span class="term">"BelowUI"</span>: Above the background.</li><br>
-                    <li><span class="term">"BelowArena"</span>: Above the background and the UI.</li><br>
+                    <li><span class="term">"BelowArena" or "BasisNewest"</span>: Above the background and the UI.</li><br>
                     <li><span class="term">"BelowPlayer"</span>: Above the background, the UI and the Arena.</li><br>
                     <li><span class="term">"BelowBullet"</span>: Above the background, the UI, the Arena and the Player.</li><br>
                     <li><span class="term">"Top"</span>: Above everything.</li><br>
@@ -101,131 +114,322 @@ it's w3c valid, at least
             </p>
             
             <p>
-                <br><span class="function">CreateSprite(spritename, <span class="CYF"></span> layer = "BelowArena") returns Sprite [E/W]</span>
+                <br><span class="function">CreateSprite(<span class="string"></span> spritename, 
+                <span class="CYF"></span> <span class="string"></span> layer = "BelowArena") returns <span class="userdata">sprite</span>  [E/W]</span>
                 Creates a sprite in the far bottom left of the screen (at 0, 0) that you can modify in many ways.<br>
                 <span class="CYF"></span> You can add a layer if you want - otherwise, the sprite will be below the arena.
             </p>
 
+            <hr>
+            <h4>The Sprite object</h4>
+            
             <p>
-                <br><span class="function">The Sprite object</span>
                 The Sprite object has many controls intended for animation. There is a working intermediate example
-                included in the Examples folder.</p>
-            <ul>
-                <li><span class="CYF"></span><span class="term">sprite.spritename</span> (readonly) - Returns the name of the sprite used by this 
-                sprite from the <span class="term">Sprites/</span> folder.</li><br>
-                <li><span class="term">sprite.x</span> - horizontal position of sprite relative to bottom left of screen, measured from its
-                    pivot/anchor point (center by default). If parented, x position is relative to the parent.
-                </li><br>
-                <li><span class="term">sprite.y</span> - vertical position of sprite relative to bottom left of screen, measured from its
-                    pivot/anchor point (center by default). If parented, y position is relative to the parent.
-                </li><br>
-                <li><span class="CYF"></span><span class="term">sprite.z</span> - layering position of sprite relative to bottom left of screen, measured from its
-                    pivot/anchor point (center by default). If parented, z position is relative to the parent.<br><i>Only applies to the overworld.</i> 
-                </li><br>
-                <li><span class="term">sprite.absx</span> - horizontal position of sprite relative to bottom left of screen, ignoring its
-                    pivot/anchor point and all parents.
-                </li><br>
-                <li><span class="term">sprite.absy</span> - vertical position of sprite relative to bottom left of screen, ignoring its
-                    pivot/anchor point and all parents.
-                </li><br>
-                <li><span class="CYF"></span><span class="term">sprite.absz</span> - layering position of sprite relative to bottom left of screen, ignoring its
-                    pivot/anchor point and all parents.<br><i>Only applies to the overworld.</i> 
-                </li><br>
-                <li><span class="term">sprite.xscale</span> - horizontal scaling of sprite (1.0 by default). 2.0 is twice as large, 0.5 half as
-                    large.
-                </li><br>
-                <li><span class="term">sprite.yscale</span> - vertical scaling of sprite (1.0 by default). 2.0 is twice as large, 0.5 half as
-                    large.
-                </li><br>
-                <li><span class="CYF"></span><span class="term">sprite.isactive</span> (readonly) - In retromode, this is <i>true</i> if a sprite has been 
-                removed and <i>false</i> otherwise. If <i>not</i> in retromode, this is <i>false</i> if a sprite has been removed and <i>true</i>
-                otherwise.<br></li><br>
-                <li><span class="term">sprite.width</span> (readonly) - width of this sprite's image in pixels. This never changes until the
-                    sprite itself is swapped.
-                </li><br>
-                <li><span class="term">sprite.height</span> (readonly) - height of this sprite's image in pixels. This never changes until the
-                    sprite itself is swapped.
-                </li><br>
-                <li><span class="CYF"></span> <span class="term">sprite.animcomplete</span> - if the sprite has started an animation, this tells you if 
-                    the animation is complete.<br>
-                    If no new animation has started yet, if the loop mode is <span class="term">LOOP</span> or if the animation isn't finished, this will be 
-                    false. Otherwise, it will be true.</li><br>
-                <li><span class="CYF"></span> <span class="term">sprite.loopmode</span> - sets the loop mode of <span class="term">SetAnimation</span> 
-                    functions launched after this command. Can be:
-                    <ul>
-                        <li><span class="term">LOOP</span> - The default mode: when the animation is finished, it plays again. <span class="term">animcomplete
-                            </span> is always true with this mode.</li><br>
-                        <li><span class="term">ONESHOT</span> - Plays the animation once, and keeps the last frame of the animation.</li><br>
-                        <li><span class="term">ONESHOTEMPTY</span> - Same as <span class="term">ONESHOT</span>, except that the last frame will be an empty 
-                            sprite.</li><br>
-                    </ul></li><br>
-                <li><span class="term">sprite.color</span> - get or set the coloration of the sprite, as a table of 3 or 4 values from 0 to 1.<br>
-                    For example, <span class="term">sprite.color = {1.0, 0.0, 0.0}</span> colors the sprite red. This actually overlays the sprite's 
+                included in the Examples folder.
+            </p><br>
+            
+            <p>
+                <span class="function"><span class="CYF"></span> <span class="string"></span> sprite.spritename (readonly)</span>
+                Returns the path of the image used by this sprite, starting from the <span class="term">Sprites/</span> folder.</li><br>
+            </p><br>
+            
+            <p>
+                <span class="function"><span class="number"></span> sprite.x</span></span>
+                Horizontal position of sprite relative to the bottom left corner of the screen, measured from its pivot/anchor point (center by default).
+                <br><br>
+                If parented, x position is relative to the parent.
+            </p><br>
+            
+            <p>
+                <span class="function"><span class="number"></span> sprite.y</span></span>
+                Vertical position of sprite relative to the bottom left corner of the screen, measured from its pivot/anchor point (center by default).
+                <br><br>
+                If parented, y position is relative to the parent.
+            </p><br>
+            
+            <p>
+                <span class="function"><span class="CYF"></span> <span class="number"></span> sprite.z</span></span>
+                Layering position of sprite relative to the bottom left corner of the screen, measured from its pivot/anchor point (center by default).
+                <br><br>
+                If parented, z position is relative to the parent.
+                <br><br>
+                <i>Only applies to the overworld.</i> 
+            </p><br>
+            
+            <p>
+                <span class="function"><span class="number"></span> sprite.absx</span></span>
+                Horizontal position of sprite relative to the bottom left corner of the screen, ignoring its pivot/anchor point and all parents.
+            </p><br>
+            
+            <p>
+                <span class="function"><span class="number"></span> sprite.absy</span></span>
+                Vertical position of sprite relative to the bottom left corner of the screen, ignoring its pivot/anchor point and all parents.
+            </p><br>
+            
+            <p>
+                <span class="function"><span class="CYF"></span> <span class="number"></span> sprite.absz</span></span>
+                Layering position of sprite relative to the bottom left corner of the screen, ignoring its pivot/anchor point and all parents.
+                <br><br>
+                <i>Only applies to the overworld.</i> 
+            </p><br>
+            
+            <p>
+                <span class="function"><span class="number"></span> sprite.xscale</span></span>
+                Horizontal scaling of sprite (<span class="term">1.0</span> by default).
+                <span class="term">2.0</span> is twice as large, <span class="term">0.5</span> is half as large.
+            </p><br>
+            
+            <p>
+                <span class="function"><span class="number"></span> sprite.yscale</span></span>
+                Vertical scaling of sprite (<span class="term">1.0</span> by default).
+                <span class="term">2.0</span> is twice as large, <span class="term">0.5</span> is half as large.
+            </p><br>
+            
+            <p>
+                <span class="function"><span class="boolean"></span> sprite.isactive (readonly)</span></span>
+                <span class="unitale"></span> Returns <span class="term">true</span> if the sprite has been removed and <span class="term">false</span> otherwise.<br>
+                <span class="CYF"></span> <b>In retromode, behaves the same as 0.2.1a</b>.<br>
+                If not in retromode, this is <span class="term">false</span> if the sprite has been removed and <span class="term">true</span> otherwise.
+            </p><br>
+            
+            <p>
+                <span class="function"><span class="number"></span> sprite.width (readonly)</span></span>
+                Gives the width of the sprite object's active image in pixels.
+                <br><br>
+                This never changes until the sprite itself is swapped.
+                <br><br>
+                NOTE: Does not take <span class="term">sprite.xscale</span> into account.
+            </p><br>
+            
+            <p>
+                <span class="function"><span class="number"></span> sprite.height (readonly)</span></span>
+                Gives the height of the sprite object's active image in pixels.
+                <br><br>
+                This never changes until the sprite itself is swapped.
+                <br><br>
+                NOTE: Does not take <span class="term">sprite.xscale</span> into account.
+            </p><br>
+            
+            <p>
+                <span class="function"><span class="CYF"></span> <span class="boolean"></span> sprite.animcomplete (readonly)</span></span>
+                If a sprite has started an animation, this tells you if the animation is complete.
+                <br><br>
+                If a sprite does not have an active animation, if the animation's loop mode is <span class="term">LOOP</span>,
+                or if the animation isn't finished yet, this will be <span class="term">false</span>. Otherwise, it will be <span class="term">true</span>.
+            </p><br>
+            
+            <p>
+                <span class="function"><span class="CYF"></span> <span class="number"></span> sprite.currentframe</span></span>
+                If a sprite has an active animation running, this represents the index of the active frame in the animation.<br>
+                Can both be read and set.
+                <br><br>
+                For example: If this code is run:
+                <div class="code-container">
+                <pre class="brush: lua;">
+                sprite.SetAnimation({"sans_head1", "sans_head2", "sans_head3", "sans_head2"})
+                </pre>
+                </div>
+                Then this variable will be <span class="term">1</span> when the first image is shown, <span class="term">2</span> for the second, and so on, up to <span class="term">4</span> for the last one.
+            </p><br>
+            
+            <p>
+                <span class="function"><span class="CYF"></span> <span class="number"></span> sprite.animationspeed</span></span>
+                If a sprite has an active animation running, this represents the amount of seconds each frame will be displayed for.
+                <br><br>
+                Can both be read and set. Must be > 0.
+            </p><br>
+            
+            <p>
+                <span class="function"><span class="CYF"></span> <span class="boolean"></span> sprite.animationpaused</span></span>
+                If a sprite has an active animation running, you can set this to <span class="term">true</span> to pause it, or <span class="term">false</span> to resume it.
+            </p><br>
+            
+            <p>
+                <span class="function"><span class="CYF"></span> <span class="string"></span> sprite.loopmode</span></span>
+                Gets the loop mode of a sprite's current animation, or<br>
+                sets the loop mode of a sprite's <u>next</u> animation.
+                <br><br>
+                Can be:<br><br>
+                <ul>
+                    <li><span class="term">LOOP</span> - The default mode: when the animation is finished, it plays again. 
+                    <span class="term">animcomplete</span> is always false with this mode.</li><br>
+                    <li><span class="term">ONESHOT</span> - Plays the animation once. The sprite object will remain on the last frame of the animation.</li><br>
+                    <li><span class="term">ONESHOTEMPTY</span> - Same as <span class="term">ONESHOT</span>, except that when the animation is finished, the sprite object will use an empty sprite.</li><br>
+                </ul>
+            </p><br>
+            
+            <p>
+                <span class="function"><span class="luatable"><span class="number"></span>, <span class="number"></span>, <span class="number"></span>, <span class="CYF"></span> <span class="number"></span> = 1 </span> sprite.color</span></span>
+                Gets or sets the coloration of a sprite, as a table of 3 or 4 values from 0 to 1.
+                <br><br>
+                For example, <span class="term">sprite.color = {1.0, 0.0, 0.0}</span> colors the sprite red. This actually overlays the sprite's 
                     original color, so if you want full control over the color, make sure your sprite is white. <i>Black areas are not affected by 
-                    coloration.</i><br><span class="CYF"></span>: The 4th value is the alpha (transparency) of the sprite.
-                </li><br>
-                <li><span class="CYF"></span> <span class="term">sprite.color32</span> - get or set the coloration of the sprite, as a table of 3 or 4 
-                    values from 0 to 255.
-                    <br>For example, <span class="term">sprite.color32 = {255, 0, 0}</span> colors the sprite red. This actually overlays the sprite's 
-                    original color, so if you want full control over the color, make sure your sprite is white. <i>Black areas are not affected by
-                    coloration.</i><br>The 4th value is the alpha (transparency) of the sprite.
-                </li><br>
-                <li><span class="term">sprite.alpha</span> - gets or sets the sprite's transparency, as a value from 0 to 1.</li><br>
-                <li><span class="CYF"></span> <span class="term">sprite.alpha32</span> - gets or sets the sprite's transparency, as a value from 0 to 255.
-                </li><br>
-                <li><span class="term">sprite.rotation</span> - get or set sprite rotation, in degrees. It's clamped between 0 and 360, so if you
-                    change it to 365 it becomes 5.
-                </li><br>
-                <li><span class="CYF"></span> <span class="term">sprite.layer</span> - the current layer of the sprite. You can set it, but if the layer 
-                doesn't exists, it does nothing.<br>Default: <span class="term">"BelowArena"</span></li><br>
-                <li><span class="term">sprite.Set("new_sprite")</span> - change the sprite's image. It retains its scaling and rotation. If you
-                    have an animation running with <span class="term">SetAnimation</span>, the animation will override your sprite change.
-                </li><br>
-                <li><span class="term">sprite.SetParent(other_sprite_object)</span> - parents <span class="term">sprite</span> to <span class="term">
-                other_sprite_object</span>. This will make the original sprite move along with the object it's parented to.
-                </li><br>
-                <li><span class="term">sprite.SetPivot(x, y)</span> - changes the point the sprite rotates/scales around; (0,0) is bottom left of
-                    sprite, (1,1) is top right. You can have values outside of the 0-1 range, too.</li><br>
-                <li><span class="term">sprite.SetAnchor(x, y)</span> - change the point your sprite anchors to when moving. Mainly noticeable when
-                    rescaling the parent sprite, and you want to have this sprite stick to a certain edge of it. x/y
-                    should be in 0-1 range.</li><br>
-                <li><span class="term">sprite.MoveTo(x, y)</span> - same as setting x and y simultaneously.</li><br>
-                <li><span class="term">sprite.MoveToAbs(x, y)</span> - used to move a sprite to an absolute screen position, regardless of parent
-                    settings. The sprite itself will remain parented.</li><br>
-                <li><span class="term">sprite.Scale(xscale, yscale)</span> - same as setting xscale and yscale simultaneously</li><br>
-                <li><span class="term">sprite.SetAnimation(sprite_table)</span> to do frame-by-frame animation at 30FPS. Example:
-                    <span class="term">sprite.SetAnimation({"sans_head1", "sans_head2", "sans_head3"})</span>
-                    <br><span class="CYF"></span> In CYF, it can use sprites with different sizes!
-                </li><br>
-                <li><span class="term">sprite.SetAnimation(sprite_table, time_per_frame)</span> Performs frame-by-frame animation with your own time
-                    between frames, in seconds. If <span class="term">time_per_frame</span> is 1, it takes 1 second to move to the next sprite.
-                    <br><span class="CYF"></span> Now it can use sprites with different sizes!
-                </li><br>
-                <li><span class="term">sprite.StopAnimation()</span> - stop the frame-by-frame animation if it was running. Also changes back to
-                    the sprite it had before the animation, or whenever you last called <span class="term">sprite.Set()</span>.
-                </li><br>
-                <li><span class="term">sprite.SendToTop()</span> - sends this sprite to the top of its layer's hierarchy. If a sprite has 5
-                    children, for instance, you can use this to rearrange them internally. However, child sprites will
-                    always appear on top of their parents, regardless of this function being called.
-                </li><br>
-                <li><span class="term">sprite.SendToBottom()</span> sends this sprite to the bottom of its layer's hierarchy. Similar rules apply
-                    as with <span class="term">SendToTop()</span>.
-                </li><br>
-                <li><span class="CYF"></span> <span class="term"> sprite.MoveBelow(other_sprite_object)</span> - if the two sprites have the same parent, 
-                    it'll move this sprite just below the other sprite.
-                </li><br>
-                <li><span class="CYF"></span> <span class="term"> sprite.MoveAbove(other_sprite_object)</span> - if the two sprites have the same parent, 
-                    it'll move this sprite just above the other sprite.
-                </li><br>
-                <li><span class="term">sprite.Remove()</span> - removes the sprite. Calling anything other than <span class="term">isactive</span> after 
-                    this will give you an error.
-                </li><br>
-                <li><span class="CYF"></span> <span class="term">sprite.Dust(playDust = true, removeObject = false)</span> - Turns a sprite into dust, just
-                    like what happens in Undertale when an enemy is killed. Will remove a bullet or sprite if <span class="term">removeObject</span> is set 
-                    to true. Set <span class="term">playSound</span> to false to deactivate the dust sound.
-                </li><br>
-
-            </ul>
+                    coloration.</i>
+                    <br><br>
+                    <span class="CYF"></span>: You can provide a 4th value, which sets the alpha (transparency) of the sprite.
+            </p><br>
+            
+            <p>
+                <span class="function"><span class="CYF"></span> <span class="luatable"><span class="number"></span>, <span class="number"></span>, <span class="number"></span>, <span class="number"></span> = 255 </span> sprite.color32</span></span>
+                Gets or sets the coloration of a sprite, as a table of 3 or 4 values from 0 to 255.
+                <br><br>
+                For example, <span class="term">sprite.color32 = {255, 0, 0}</span> colors the sprite red. This actually overlays the sprite's 
+                    original color, so if you want full control over the color, make sure your sprite is white. <i>Black areas are not affected by 
+                    coloration.</i>
+                    <br><br>
+                    <span class="CYF"></span>: You can provide a 4th value, which sets the alpha (transparency) of the sprite.
+            </p><br>
+            
+            <p>
+                <span class="function"><span class="number"></span> sprite.alpha</span></span>
+                Gets or sets a sprite's transparency, as a value from 0 to 1.
+            </p><br>
+            
+            <p>
+                <span class="function"><span class="CYF"></span> <span class="number"></span> sprite.alpha32</span></span>
+                Gets or sets a sprite's transparency, as a value from 0 to 255.
+            </p><br>
+            
+            <p>
+                <span class="function"><span class="number"></span> sprite.rotation</span></span>
+                Gets or sets a sprite's rotation, in degrees.
+                <br><br>
+                It's clamped between 0 and 360, so if you set it to 365, it will become 5.
+            </p><br>
+            
+            <p>
+                <span class="function"><span class="CYF"></span> <span class="string"></span> sprite.layer</span></span>
+                Gets or sets the current layer a sprite is on. Does nothing if you set it to a layer that doesn't exist.
+                <br><br>
+                Default value: <span class="term">"BelowArena"</span>
+            </p><br>
+            
+            <p>
+                <span class="function">sprite.Set(<span class="string"></span> newSprite)</span></span>
+                Change a sprite's current image. It retains its scaling and rotation.
+                <br><br>
+                If you have an animation running with <span class="term">SetAnimation</span>, the animation will override your sprite change.
+            </p><br>
+            
+            <p>
+                <span class="function">sprite.SetParent(<span class="userdata">sprite</span> otherSpriteObject)</span></span>
+                Parents <span class="term">sprite</span> to <span class="term">otherSpriteObject</span>.
+                <br><br>
+                This will make the original sprite move along with the object it's parented to.
+            </p><br>
+            
+            <p>
+                <span class="function">sprite.SetPivot(<span class="number"></span> x, <span class="number"></span> y)</span></span>
+                Changes the point a sprite rotates and scales around.
+                <br><br>
+                <span class="term">(0, 0)</span> is the bottom-left corner of the sprite, <span class="term">(1, 1)</span> is the top-right corner.
+                <br>
+                You can also have values outside the 0-1 range.
+            </p><br>
+            
+            <p>
+                <span class="function">sprite.SetAnchor(<span class="number"></span> x, <span class="number"></span> y)</span></span>
+                Changes the point a sprite anchors to when moving.
+                <br><br>
+                Most useful when rescaling a parent sprite and making this child sprite stick to a certain edge of it.
+                <br>
+                <span class="term">x</span> and <span class="term">y</span> should be between 0 and 1.
+            </p><br>
+            
+            <p>
+                <span class="function">sprite.MoveTo(<span class="number"></span> x, <span class="number"></span> y)</span></span>
+                Same as setting x and y simultaneously.
+                <br><br>
+                See <span class="term">sprite.x</span> and <span class="term">sprite.y</span>.
+            </p><br>
+            
+            <p>
+                <span class="function">sprite.MoveToAbs(<span class="number"></span> x, <span class="number"></span> y)</span></span>
+                Same as setting absx and absy simultaneously. Moves a sprite to an absolute screen position, regardless of its parent settings.
+                <br><br>
+                See <span class="term">sprite.absx</span> and <span class="term">sprite.absy</span>.
+            </p><br>
+            
+            <p>
+                <span class="function">sprite.Scale(<span class="number"></span> xscale, <span class="number"></span> yscale)</span></span>
+                Same as setting xscale and yscale simultaneously.
+                <br><br>
+                See <span class="term">sprite.xscale</span> and <span class="term">sprite.yscale</span>.
+            </p><br>
+            
+            <p>
+                <span class="function">sprite.SetAnimation(<span class="luatable"><span class="string"></span></span> spriteTable, <span class="number"></span> timePerFrame = 1/30, <span class="CYF"></span> <span class="string"></span> prefix = "")</span></span>
+                Performs frame-by-frame animation with your own time
+                between frames, in seconds. If <span class="term">time_per_frame</span> is 1, it takes 1 second to move to the next sprite.
+                <br><br>
+                Example:
+                <span class="term">sprite.SetAnimation({"sans_head1", "sans_head2", "sans_head3"})</span>
+                <br><br>
+                <span class="CYF"></span> <span class="term">prefix</span>: An optional string providing the path to a folder contained within your Sprites folder. This path will be automatically added to the beginning of every sprite's name.
+                <br><br>
+                For example, you can load your collection of 6 sprites in <span class="term">Sprites/character</span> with <span class="term">sprite.SetAnimation({"spr1", "spr2", "spr3", "spr4", "spr5", "spr6"}, 1/30, "character")</span>.
+                <br><br>
+                <span class="CYF"></span> This can use sprites with different sizes!
+            </p><br>
+            
+            <p>
+                <span class="function">sprite.StopAnimation()</span></span>
+                Stops a frame-by-frame animation if it was running. Also changes back to
+                the sprite it had before the animation, or whenever you last called <span class="term">sprite.Set()</span>.
+            </p><br>
+            
+            <p>
+                <span class="function">sprite.SendToTop()</span></span>
+                Sends this sprite to the top of its layer's hierarchy. If a sprite has 5
+                children, for instance, you can use this to rearrange them internally. However, child sprites will
+                always appear on top of their parents, regardless of this function being called.
+            </p><br>
+            
+            <p>
+                <span class="function">sprite.SendToBottom()</span></span>
+                Sends this sprite to the bottom of its layer's hierarchy. Similar rules apply as with <span class="term">SendToTop()</span>.
+            </p><br>
+            
+            <p>
+                <span class="function"><span class="CYF"></span> sprite.MoveBelow(<span class="userdata">sprite</span> otherSpriteObject)</span></span>
+                If both sprites have the same parent, this will move the calling sprite just below the other sprite.
+            </p><br>
+            
+            <p>
+                <span class="function"><span class="CYF"></span> sprite.MoveAbove(<span class="userdata">sprite</span> otherSpriteObject)</span></span>
+                If both sprites have the same parent, this will move the calling sprite just above the other sprite.
+            </p><br>
+            
+            <p>
+                <span class="function">sprite.Remove()</span></span>
+                Removes a sprite object. Calling anything other than <span class="term">isactive</span> after this will give you an error.
+            </p><br>
+            
+            <p>
+                <span class="function"><span class="CYF"></span> sprite.SetVar(<span class="string"></span> yourVariableName, value)
+                <br></span>or <span class="function">sprite[<span class="string"> yourVariableName</span>]</span></span>
+                Sets a variable in a sprite object that you can retrieve with <span class="term">sprite.GetVar</span>.<br>
+                Identical to <span class="term">SetVar</span> in projectiles.
+            </p><br>
+            
+            <p>
+                <span class="function"><span class="CYF"></span> sprite.GetVar(<span class="string"></span> yourVariableName)
+                <br></span>or <span class="function">sprite[<span class="string"> yourVariableName</span>] = value</span></span>
+                Gets a variable in a sprite object that you previously set with <span class="term">sprite.SetVar</span>.<br>
+                Identical to <span class="term">GetVar</span> in projectiles.
+            </p><br>
+            
+            <p>
+                <span class="function"><span class="CYF"></span> sprite.Dust(<span class="boolean"></span> playSound=true, <span class="boolean"></span> removeObject = false)</span></span>
+                Turns a sprite into dust, just like what happens in Undertale when an enemy is killed.
+                <br><br>
+                Will remove a bullet or sprite if <span class="term">removeObject</span> is set to true.
+                <br><br>
+                Set <span class="term">playSound</span> to false to deactivate the dust sound.
+            </p><br>
+            
+            <hr>
+            
             <p>The animation script used in the example is shown below for reference.</p>
             <div class="code-container">
 <pre class="brush: lua;">-- First, we can create the torso, legs and head.

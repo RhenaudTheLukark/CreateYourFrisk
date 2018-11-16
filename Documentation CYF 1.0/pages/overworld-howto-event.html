@@ -62,10 +62,10 @@ it's w3c valid, at least
                     <li><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory System</a></li>
                     <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
                     <li><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
-				<li class="li-header">Overworld</li>
+                <li class="li-header">Overworld</li>
                     <li><a href="overworld.html"><span class="CYF"></span> Basics</a></li>
                     <li><a href="overworld-howto-map.html"><span class="CYF"></span> How to create a map</a></li>
-                    <li style="margin-left:5px;">> <span class="CYF"></span> How to create an event <</li>
+                    <li class="active" style="margin-left:5px;">> <span class="CYF"></span> How to create an event <</li>
                     <li><a href="overworld-howto-animevent.html"><span class="CYF"></span> How to animate an event</a></li>
                     <li><a href="overworld-howto-shop.html"><span class="CYF"></span> How to create a shop</a></li>
                     <li><a href="overworld-object-general.html"><span class="CYF"></span> The General Object</a></li>
@@ -92,60 +92,84 @@ it's w3c valid, at least
             <p>
                 <li>The first thing that you'll have to do is, of course, to open the map you want to add the event in.</li>
                 <li>As you may have seen in the previous tutorial, Unity uses "prefabs". These are generic objects that can 
-                be used in different scenes across the project. Here, you'd want to go to the Project tab and go to 
-                <span class="term">Assets/Resources/prefabs</span> to see those.<br>
+                be used in different scenes across the project.<br><br>
+                Here, you'll want to go to the Project tab and go to <span class="term">Assets/Resources/prefabs</span> to see them.<br>
                 The one that interests us here is the <span class="term">Event1</span> prefab. Click and drag it to the GameObject list 
 				to create an instance of this prefab.</li>
             </p>
             <br>
 			<p>
-				Now, as you can see there are two different objects, both named "Event1".<br>
-				You absolutely need to rename the paren't GameObject "SpritePivot" in order for the event to be correctly layered.<br>
-				This is a workaround I did to correctly layer the sprites. The position of that event must be set on that parent GameObject
-				in order for its layer to be correctly set. You can modify the position of the child GameObjct if you want to, it'll 
-				shift the layer point accordingly.<br>
-				<a href="https://forum.unity3d.com/threads/official-2d-sorting-feedback.376707/#post-3167142">For more infomation about that workaround and how it works, go here.</a>
+				Now, as you can see, there are two different objects, both named "Event1".<br>
+				You <b>absolutely need to</b> rename the parent GameObject to <span class="term">"SpritePivot"</span> in order for the event to be correctly layered.<br><br>
+				This is a workaround I use to correctly layer the sprites.<br>
+                The position (transform data) of the event must be held by the parent GameObject
+				in order for its layer to be correctly set. You can modify the position of the child GameObjct if you want to, and it'll 
+				move the layer point accordingly.<br>
+				<a href="https://forum.unity3d.com/threads/official-2d-sorting-feedback.376707/#post-3167142">For more infomation about this workaround and how it works, go here.</a>
 			</p>
-			<br>
+			<hr>
             <p>
                 Now the event is ready! Simple, isn't it? However, you'll want to modify it now. Keeping the object like this is not recommended.<br>
                 What follows is a list of things that you can modify.
             </p>
             <br>
             <p>
-                <li><span class="term">GameObject</span> ~ Name: All events must have a different name, so find one that fits this event!</li>
-                <li><span class="term">RectTransform</span> ~ PosX/PosY: The position of the event.</li>
-                <li><span class="term">RectTransform</span> ~ Anchors: Anchor of the event. Set them at the same value!</li>
-                <li><span class="term">RectTransform</span> ~ Pivot: Pivot of the event. It changes the object's position!</li>
-                <li><span class="term">SpriteRenderer</span> ~ Sprite: It's not what will be used to display the sprite. 
-				But you can still use this to see if the event's sprite looks good and to modify the event's hitbox.</li>
-                <li><span class="term">BoxCollider</span> ~ Edit Collider Button: Lets you modify the event's hitbox.</li>
-                <li><span class="term">BoxCollider</span> ~ Is Trigger: Must be activated for Touch events.</li>
-                <li><span class="term">BoxCollider</span> ~ Offset/Size: Same as the Edit Collider Button.</li>
-                <li><span class="term">EventOW</span> ~ Script To Load: Name of the event script to load when triggering this event. 
+                <ul>
+                <li><span class="term">GameObject</span>:<ul>
+                    <li><span class="term">Name</span>: All events must have a different name, so find one that fits this event!</li>
+                </ul></li>
+                <li><span class="term">RectTransform</span>:<ul>
+                    <li><span class="term">PosX</span>, <span class="term">PosY</span>: The position of the event.</li>
+                    <li><span class="term">Anchors</span>: The anchors of the event. Must have the same value!</li>
+                    <li><span class="term">Pivot</span>: Pivot of the event. It changes the object's position!</li>
+                </ul></li>
+                <li><span class="term">SpriteRenderer</span>:<ul>
+                    <li><span class="term">Sprite</span>: This is not what will be used to display the sprite.<br>
+				But, you can still use this to see if the event's sprite looks good and to modify its hitbox.</li>
+                </ul></li>
+                <li><span class="term">BoxCollider</span>:<ul>
+                    <li><span class="term">Edit Collider</span>: Lets you modify the event's hitbox.</li>
+                    <li><span class="term">Is Trigger</span>: Must be activated to allow Touch events.</li>
+                    <li><span class="term">Offset</span>, <span class="term">Size</span>: Same as the <span class="term">Edit Collider</span> Button.</li>
+                </ul></li>
+                <li><span class="term">EventOW</span>:<ul>
+                    <li><span class="term">Script to Load</span>: Name of the event script to load when triggering this event. 
 				The event must be in the directory <span class="term">MAPMOD/Lua/Events/</span>.</li>
-                <li><span class="term">EventOW</span> ~ Actual Page: The first page of the event (and in game the current page of the event)</li>
-                <li><span class="term">EventOW</span> ~ Event Triggers: This part MUST NOT be forgotten. Even if it doesn't seem to 
-				be important, it is still the most important part of the event.<br>
-				In your event, you'll need to name all your functions following the pattern <span class="term">"EventPage" + Page number</span>.<br>
-				For each X value, you'll input the Page number, and for each matching Y value, you'll need to input the trigger type of the event:<br>
-				0 = Confirm button, 1 = Hitbox touched, 2 = Auto, 3 = Parallel event.</li>
-                <li><span class="term">EventOW</span> ~ Move Speed: The speed of the event in px/frame, if you want to move the event.</li>
-                <li><span class="term">AutoloadRessourcesFromRegistry</span> ~ Sprite Path: Path of the sprite from 
-				<span class="term">MAPMOD/Sprites</span>.</li>
+                    <li><span class="term">Actual Page</span>: The first page of the event (and in-game, the current page of the event).</li>
+                    <li><span class="term">Event Triggers</span>: <span style="color:#ff0000">This part MUST NOT be forgotten.</span>
+                    It is the most important part of the event.<br><br>
+                    In your event's Lua code, you'll need to name all your functions following the pattern <span class="term">"EventPage" + Page number</span>,
+                    starting at 0.<br>
+                    For instance: <span class="term">EventPage0</span>, followed by <span class="term">EventPage1</span>, <span class="term">EventPage2</span>
+                    ...until you have all the functions you want.<br><br>
+                    Back in Unity, for each X value in the <span class="term">Event Trigger</span> table, you need to give the Page number, 
+                    and for each matching Y value, you'll need to input the trigger type of the event:<br>
+                    <ul>
+                        <li><span class="term">0</span>: Confirm button</li>
+                        <li><span class="term">1</span>: Hitbox touched</li>
+                        <li><span class="term">2</span>: Automatic activation</li>
+                        <li><span class="term">3</span>: Parallel process</li>
+                    </ul>
+                    <li><span class="term">Move Speed</span>: The speed of the event in px/frame, if you want to move the event.</li>
+                </ul></li>
+                <li><span class="term">AutoloadResourcesFromRegistry</span>:<ul>
+                    <li><span class="term">Sprite Path</span>: Path of the sprite from <span class="term">MAPMOD/Sprites</span>.
+                </ul></li>
+                </ul>
             </p>
             <br>
             <p>
                 Now you'll need to create your event's script. It needs to be located at <span class="term">MAPMOD/Lua/Events</span>.
             </p>
-            <br>
+            <hr>
             <p>
-                If you want to permanently disable an event in-game, set its event page to -1. It'll be automatically deleted when you re-enter the map.
+                If you want to permanently disable an event in-game, set its event page to -1. It'll be automatically deleted when you enter the map.
             </p>
             <br>
             <p>
-                All the other values must not be changed, unless you know what you're doing (except for some self-explanatory 
-				values like <span class="term">SpriteRenderer</span> ~ FlipX/FlipY)
+                All other values must not be changed, unless you know what you're doing<br>
+                (except for some self-explanatory values like <span class="term">SpriteRenderer</span>'s <span class="term">FlipX</span>/
+                <span class="term">FlipY</span>)
             </p>
             <br>
             <p>
@@ -157,8 +181,8 @@ it's w3c valid, at least
             </p>
             <br>
             <p>
-            I hope that you enjoyed this tutorial - and if you need further explanations, don't hesitate 
-            to ask RhenaudTheLukark on reddit or the Discord server!</p>
+                I hope that you enjoyed the tutorial!
+            </p>
         </div>
 		
 		<div class="tab-pane text-style" id="mercy">

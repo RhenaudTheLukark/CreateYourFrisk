@@ -377,92 +377,38 @@ public static class UnitaleUtil {
     public static bool TestPP(Color32[] playerMatrix, Color32[] bulletMatrix, float rotation, int playerHeight, int bulletHeight, Vector2 scale, Vector2 fromCenterProjectile, float spriteAlpha) {
         int bulletWidth = bulletMatrix.Length / bulletHeight, playerWidth = playerMatrix.Length / playerHeight;
         rotation *= Mathf.Deg2Rad;
+        Vector2 start = new Vector2();
+        Vector2 xDiff = new Vector2();
+        Vector2 yDiff = new Vector2();
         for (int currentHeight = 0; currentHeight < playerHeight && currentHeight >= 0; currentHeight ++)
             for (int currentWidth = 0; currentWidth < playerWidth && currentWidth >= 0; currentWidth ++) {
-                if (ControlPanel.instance.MinimumAlpha == 0) {
-                    if (playerMatrix[currentHeight * playerWidth + currentWidth].a * spriteAlpha == 0)
-                        continue;
-                } else if (playerMatrix[currentHeight * playerWidth + currentWidth].a * spriteAlpha < ControlPanel.instance.MinimumAlpha)
-                    continue;
-                float dx = currentWidth + fromCenterProjectile.x,
-                      dy = currentHeight + fromCenterProjectile.y;
-                if (scale.x < 0) dx = -dx;
-                if (scale.y < 0) dy = -dy;
-                float DFromCenter = Mathf.Sqrt(Mathf.Pow(dx, 2) + Mathf.Pow(dy, 2)),
-                      angle = Mathf.Atan2(dy, dx) - rotation,
-                      totalValX = Mathf.RoundToInt(bulletWidth  / 2 + (Mathf.Cos(angle) * DFromCenter) / Mathf.Abs(scale.x)),
-                      totalValY = Mathf.RoundToInt(bulletHeight / 2 + (Mathf.Sin(angle) * DFromCenter) / Mathf.Abs(scale.y));
+                int totalValX, totalValY;
+                if (currentWidth > 1 || currentHeight > 1 || (currentWidth != 0 && currentHeight != 0)) {
+                    totalValX = Mathf.RoundToInt(start.x + xDiff.x * currentWidth + yDiff.x * currentHeight);
+                    totalValY = Mathf.RoundToInt(start.y + xDiff.y * currentWidth + yDiff.y * currentHeight);
+                } else {
+                    float dx = currentWidth + fromCenterProjectile.x,
+                          dy = currentHeight + fromCenterProjectile.y;
+                    if (scale.x < 0) dx = -dx;
+                    if (scale.y < 0) dy = -dy;
+
+                    float DFromCenter = Mathf.Sqrt(Mathf.Pow(dx, 2) + Mathf.Pow(dy, 2)),
+                          angle = Mathf.Atan2(dy, dx) - rotation,
+                          fullValX = bulletWidth  / 2 + (Mathf.Cos(angle) * DFromCenter) / Mathf.Abs(scale.x),
+                          fullValY = bulletHeight / 2 + (Mathf.Sin(angle) * DFromCenter) / Mathf.Abs(scale.y);
+                    totalValX = Mathf.RoundToInt(fullValX);
+                    totalValY = Mathf.RoundToInt(fullValY);
+
+                    if (currentWidth == 0 && currentHeight == 0)      start = new Vector2(fullValX, fullValY);
+                    else if (currentWidth == 1 && currentHeight == 0) xDiff = new Vector2(fullValX - start.x, fullValY - start.y);
+                    else if (currentWidth == 0 && currentHeight == 1) yDiff = new Vector2(fullValX - start.x, fullValY - start.y);
+                }
                 if (totalValY >= 0 && totalValY < bulletHeight && totalValX >= 0 && totalValX < bulletWidth)
-                    if (bulletMatrix[Mathf.RoundToInt(totalValY * bulletWidth + totalValX)].a != 0) {
-                        //Debug.Log("pixel at (" + "(" + bulletWidth  / 2 + " + (" + Mathf.Cos(angle) + " * " + DFromCenter + ") / " + Mathf.Abs(scale.x) + ") = " + totalValX + ", " + 
-                        //                         "(" + bulletHeight / 2 + " + (" + Mathf.Sin(angle) + " * " + DFromCenter + ") / " + Mathf.Abs(scale.y) + ") = " + totalValY + ") " +
-                        //                         "is full pixel: PP detected for player pixel = (" + currentWidth + ", " + currentHeight + ")!");
+                    if (bulletMatrix[Mathf.RoundToInt(totalValY * bulletWidth + totalValX)].a != 0)
                         return true;
-                    }
             }
         return false;
     }
-
-    /*//No updated
-    public static bool TestPPEasy(Color32[] playerMatrix, Color32[] basisMatrix, float rotation, int playerHeight, int basisHeight, Vector2 scale, Vector2 fromCenterProjectile) {
-        int basisWidth = basisMatrix.Length / basisHeight, playerWidth = playerMatrix.Length / playerHeight;
-        float rotationVal = rotation, iVal = 0, jVal = 0, angleVal = 0, Dval = 0, totalVal = 0;
-        rotation *= Mathf.Deg2Rad;
-
-        float realX = playerWidth * Mathf.Abs(Mathf.Cos(rotation)) + playerHeight * Mathf.Abs(Mathf.Sin(rotation)),
-              realY = playerHeight * Mathf.Abs(Mathf.Cos(rotation)) + playerWidth * Mathf.Abs(Mathf.Sin(rotation));
-        int totalValX = 0, totalValY = 0, x = Mathf.FloorToInt(realX) + 2, y = Mathf.FloorToInt(realY) + 2;
-
-        Vector2 fromCenterRotated = new Vector2();
-        float playerD = Mathf.Sqrt(Mathf.Pow(fromCenterProjectile.x, 2) + Mathf.Pow(fromCenterProjectile.y, 2)),
-                centerAngle = Mathf.Atan2(fromCenterProjectile.y, fromCenterProjectile.x),
-                playerAngle = centerAngle - rotation;
-        fromCenterRotated = new Vector2(Mathf.RoundToInt(Mathf.Cos(playerAngle) * playerD), Mathf.RoundToInt(Mathf.Cos(playerAngle) * playerD));
-
-        try {
-            for (float currentHeight = 0; currentHeight < playerHeight; currentHeight++)
-                for (float currentWidth = 0; currentWidth < playerWidth; currentWidth++) {
-                    totalValX = (int)fromCenterRotated.x; totalValY = (int)fromCenterRotated.y;
-                    int tempCurrentHeight = Mathf.FloorToInt(currentHeight), tempCurrentWidth = Mathf.FloorToInt(currentWidth);
-                    iVal = currentHeight; jVal = currentWidth;
-
-                    if (ControlPanel.instance.MinimumAlpha == 0) {
-                        if (playerMatrix[tempCurrentHeight * playerWidth + tempCurrentWidth].a == 0)
-                            continue;
-                    } else if (playerMatrix[tempCurrentHeight * playerWidth + tempCurrentWidth].a < ControlPanel.instance.MinimumAlpha) {
-                        Debug.Log("Not Enough Alpha : X = " + tempCurrentWidth + ", Y = " + tempCurrentHeight);
-                        continue;
-                    }
-
-                    float DFromCenter = Mathf.Sqrt(Mathf.Pow(tempCurrentHeight + fromCenterProjectile.y - playerHeight / 2, 2) +
-                                                   Mathf.Pow(tempCurrentWidth + fromCenterProjectile.x - playerWidth / 2, 2)),
-                          oldangle = Mathf.Atan2(tempCurrentHeight + fromCenterProjectile.y - playerHeight / 2, tempCurrentWidth + fromCenterProjectile.x - playerWidth / 2),
-                          angle = oldangle - rotation;
-                    Dval = DFromCenter;
-                    angleVal = angle;
-                    totalValX = Mathf.RoundToInt(basisWidth / 2 + Mathf.Cos(angle) * DFromCenter);
-                    totalValY = Mathf.RoundToInt(basisHeight / 2 + Mathf.Sin(angle) * DFromCenter);
-                    int tempY = totalValY - (int)fromCenterRotated.y - basisHeight / 2, tempX = totalValX - (int)fromCenterRotated.x - basisWidth / 2;
-                    totalVal = tempY * x + tempX;
-
-                    Debug.Log("X = " + jVal + " Y = " + iVal + "Total = " + totalVal + " (" + tempY + "x" + x + " + " + tempX + ")");
-                    if (totalValY >= 0 && totalValY < basisHeight && totalValX >= 0 && totalValX < basisWidth || tempY < 0 || tempY >= y || tempX < 0 || tempX >= x)
-                        Debug.LogWarning("Out of bounds: X = " + currentWidth + " Y = " + currentHeight + "\ntotalRet = " + totalVal + " (" + (totalValY - (int)fromCenterRotated.y - basisHeight / 2) +
-                                         "x" + x + " + " + (totalValX - (int)fromCenterRotated.x - basisWidth / 2) + ")          totalBasis = " +
-                                         (totalValY * basisWidth + totalValX) + " (" + totalValY + "x" + basisWidth + " + " + totalValX + ") / " + basisMatrix.Length);
-                    else if (basisMatrix[Mathf.RoundToInt(totalValY * basisWidth + totalValX)].a >= ControlPanel.instance.MinimumAlpha)
-                        return true;
-                }
-        } catch {
-            Debug.LogError("rotation = " + rotationVal + " D = " + Dval + " X = " + jVal + " Y = " + iVal +
-                           " angle = " + (((angleVal + 4 * Mathf.PI) % 2 * Mathf.PI) / Mathf.PI) + "π" + "\ntotalRet = " + totalVal + " (" + 
-                           (totalValY - (int)fromCenterRotated.y - basisHeight / 2) + "x" + x + " + " + (totalValX - (int)fromCenterRotated.x - basisWidth / 2) + 
-                           ") / " + (x * y) + "          " + "totalBasis = " + (totalValY * basisWidth + totalValX) + " (" + totalValY + "x" +
-                           basisWidth + " + " + totalValX + ") / " + basisMatrix.Length);
-        }
-        return false;
-        //return ret;
-    }*/
 
     /*public static Color32[] RotateMatrixOld(Color32[] matrix, float rotation, int height, Vector2 scale, out Vector2 sizeDelta) {
         int width = matrix.Length / height, shiftX = 0, shiftY = 0;
@@ -569,7 +515,7 @@ public static class UnitaleUtil {
     public static void AddKeysToMapCorrespondanceList() {
         MapCorrespondanceList.Add("test", "Snowdin - The test map");
         MapCorrespondanceList.Add("test2", "Hotland - The test map");
-        MapCorrespondanceList.Add("test3", "The Core - The test map");
+        // MapCorrespondanceList.Add("test3", "The Core - The test map");
         MapCorrespondanceList.Add("test4", "The Core - Parallel universe");
         MapCorrespondanceList.Add("test5", "Snowdin - Parallax universe");
         MapCorrespondanceList.Add("test-1", "How did you find this one?");

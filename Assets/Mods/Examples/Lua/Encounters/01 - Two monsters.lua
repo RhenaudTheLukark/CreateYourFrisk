@@ -14,7 +14,7 @@ possible_attacks = {"bullettest_bouncy", "bullettest_chaserorb", "bullettest_tou
 function EncounterStarting()
     -- Sets up an inventory!
 	Inventory.AddCustomItems({"TEST", "TEST2", "Shotgun", "Bandage", "PsnPotion", "Life Roll", "Nothing", "Pie", "Snails"}, {0, 0, 1, 1, 1, 1, 0, 0, 0, 3, 0, 0})
-	Inventory.SetInventory({"TEST", "TEST2", "Shotgun", "Butterscotch Pie", "Bandage", "Nothing", "PsnPotion", "Life Roll"})
+	Inventory.SetInventory({"TEST", "TEST2", "Shotgun", "Butterscotch Pie", "Bandage", "PsnPotion", "Life Roll", "Real Knife"})
 end
 
 function EnemyDialogueStarting()

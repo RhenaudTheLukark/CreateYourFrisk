@@ -138,6 +138,10 @@ public class FightUI : MonoBehaviour {
     /// Updates the object. Called once per frame.
     /// </summary>
     void Update() {
+        // do not update the attack UI if the ATTACKING state is frozen
+        if (UIController.instance.frozenState != UIController.UIState.NONE)
+            return;
+        
         // Enemy is shaking
         if (shakeInProgress) {
             // Compute what shake position should the player be at.
