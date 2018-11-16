@@ -43,6 +43,7 @@ public class GlobalControls : MonoBehaviour {
 	public static int[] aspectRatio = new int[2] {4, 3};
 	public static double ScreenWidth = Screen.width;
 	public static bool changeResolution = false;
+	public static bool netbookMode = false;
 
 	/*void Start() {
         if ((Application.platform == RuntimePlatform.WindowsEditor || Application.platform == RuntimePlatform.WindowsPlayer) && windows == null)
@@ -57,6 +58,16 @@ public class GlobalControls : MonoBehaviour {
 		}
 		else {
 			Screen.SetResolution(Screen.currentResolution.width, Screen.currentResolution.height, true, 0);
+		}
+		changeResolution = true;
+	}
+
+	public static void SetFullScreenNetbookMode(bool args) {
+		if (!args) {
+			Screen.SetResolution(windowResolution[0], windowResolution[1], false, 0);
+		}
+		else {
+			Screen.SetResolution(windowResolution[0], windowResolution[1], true, 0);
 		}
 		changeResolution = true;
 	}
@@ -143,15 +154,18 @@ public class GlobalControls : MonoBehaviour {
         */
         if (Input.GetKeyDown(KeyCode.F4)) {
 			//Screen.fullScreen =!Screen.fullScreen
-			SetFullScreen(!Screen.fullScreen);
+			if (netbookMode)
+				SetFullScreenNetbookMode(!Screen.fullScreen);
+			else
+				SetFullScreen(!Screen.fullScreen);
 
 			// move the window to the correct place on screen when the user exits fullscreen! hooray!
 			// yes, this check is correct, even though it appears to check for the wrong value. I don't know why
 			//#if UNITY_STANDALONE_WIN || UNITY_EDITOR
 			//if (Screen.fullScreen)
-            //        StartCoroutine(RepositionScreen());
-            //#endif
-        }
+			//        StartCoroutine(RepositionScreen());
+			//#endif
+		}
     }
     
     IEnumerator RepositionScreen() {
