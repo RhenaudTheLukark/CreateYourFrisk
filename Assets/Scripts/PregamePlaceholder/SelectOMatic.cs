@@ -4,6 +4,7 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using MoonSharp.Interpreter;
 
 public class SelectOMatic : MonoBehaviour {
     private static int CurrentSelectedMod = 0;
@@ -108,11 +109,21 @@ public class SelectOMatic : MonoBehaviour {
             GameObject.Find("BtnOptions").GetComponent<Button>().onClick.AddListener(() => {SceneManager.LoadScene("Options");});
         }
         
-        // just for debugging, remove later.
-        GlobalControls.crate = true;
+        // just for testing, remove later.
+        // GlobalControls.crate = true;
+        // LuaScriptBinder.SetAlMighty(null, "CrateYourFrisk", DynValue.NewBoolean(true), true);
         
         // Crate Your Frisk initializer
         if (GlobalControls.crate) {
+            // exit button
+            foreach (Text txt in GameObject.Find("BtnExit").GetComponentsInChildren<Text>())
+                txt.text = "← BYEE";
+            
+            // options button
+            if (GlobalControls.modDev)
+                foreach (Text txt in GameObject.Find("BtnOptions").GetComponentsInChildren<Text>())
+                    txt.text = "OPSHUNZ →";
+            
             // back button
             GameObject back = encounterBox.transform.Find("ScrollCutoff/Content/Back").gameObject;
             back.transform.Find("Text").GetComponent<Text>().text = "BCAK";

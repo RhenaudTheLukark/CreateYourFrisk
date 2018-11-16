@@ -128,7 +128,7 @@ public class OptionsScript : MonoBehaviour {
         if (GlobalControls.crate) {
             // labels
             GameObject.Find("OptionsLabel").GetComponent<Text>().text =                                  "OPSHUNS";
-            GameObject.Find("DescriptionLable").GetComponent<Text>().text =                            "MORE TXET";
+            GameObject.Find("DescriptionLabel").GetComponent<Text>().text =                            "MORE TXET";
             
             // buttons
             GameObject.Find("ResetRG").GetComponentInChildren<Text>().text =                  "RESTE RELA GOLBALZ";
@@ -158,12 +158,12 @@ public class OptionsScript : MonoBehaviour {
                 else
                     return Temmify.Convert(response);
             case "ClearSave":
-                response = "Clears your save file.\n\nThis is the save file used for CYF's Overworld.\n\nYour save file is located at:\n\n<b><size='14'>";
+                response = "Clears your save file.\n\nThis is the save file used for CYF's Overworld.\n\nYour save file is located at:\n\n";
                 if (!GlobalControls.crate)
                     // return response + Application.persistentDataPath + "/save.gd</size></b>";
-                    return response + Application.persistentDataPath + "/save.gd</size></b>";
+                    return response + Application.persistentDataPath + "<b><size='14'>" + "/save.gd</size></b>";
                 else
-                    return Temmify.Convert(response) + Application.persistentDataPath + "/save.gd</size></b>";
+                    return Temmify.Convert(response) + "<b><size='14'>" + Application.persistentDataPath + "/save.gd</size></b>";
             case "Safe":
                 response = "Toggles safe mode.\n\nSafe mode is an option that mod authors can detect to filter unsafe content, such as blood and swear words.";
                 if (!GlobalControls.crate)
