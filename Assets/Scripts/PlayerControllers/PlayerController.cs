@@ -89,9 +89,6 @@ public class PlayerController : MonoBehaviour {
     /// </summary>
     private AbstractSoul soul;
 
-    private Vector2 tempQueue = new Vector2(-5000, -5000);
-    private bool tempQueue2 = false;
-
     /// <summary>
     /// The last movement of the player.
     /// </summary>
@@ -295,12 +292,7 @@ public class PlayerController : MonoBehaviour {
     }
 
     public void SetPositionQueue(float xPos, float yPos, bool ignoreBounds) {
-        if (!ArenaManager.instance.firstTurn)
-            SetPosition(xPos, yPos, ignoreBounds);
-        else {
-            tempQueue = new Vector2(xPos, yPos);
-            tempQueue2 = ignoreBounds;
-        }
+        SetPosition(xPos, yPos, ignoreBounds);
     }
 
     public void SetPosition(float xPos, float yPos, bool ignoreBounds) {
