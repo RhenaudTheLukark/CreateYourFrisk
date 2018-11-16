@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Collections;
 using System.IO;
+using MoonSharp.Interpreter;
 
 public class OptionsScript : MonoBehaviour {
     // used to prevent the player from erasing real/almighty globals or their save by accident
@@ -74,6 +75,10 @@ public class OptionsScript : MonoBehaviour {
         // toggle safe mode
         GameObject.Find("Safe").GetComponent<Button>().onClick.AddListener(() => {
             ControlPanel.instance.Safe = !ControlPanel.instance.Safe;
+            
+            // save Safe Mode preferences to AlMighties
+            LuaScriptBinder.SetAlMighty(null, "CYFSafeMode", DynValue.NewBoolean(ControlPanel.instance.Safe), true);
+            
             if (!GlobalControls.crate) {
                 if (ControlPanel.instance.Safe)
                     GameObject.Find("Safe").GetComponentInChildren<Text>().text =                  "Safe mode: On";
@@ -92,6 +97,10 @@ public class OptionsScript : MonoBehaviour {
         // toggle retrocompatibility mode
         GameObject.Find("Retro").GetComponent<Button>().onClick.AddListener(() => {
             GlobalControls.retroMode =!GlobalControls.retroMode;
+            
+            // save RetroMode preferences to AlMighties
+            LuaScriptBinder.SetAlMighty(null, "CYFRetroMode", DynValue.NewBoolean(ControlPanel.instance.Safe), true);
+            
             if (!GlobalControls.crate) {
                 if (GlobalControls.retroMode)
                     GameObject.Find("Retro").GetComponentInChildren<Text>().text =   "Retrocompatibility Mode: On";

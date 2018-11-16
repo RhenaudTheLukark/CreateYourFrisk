@@ -45,9 +45,26 @@ public class GlobalControls : MonoBehaviour {
         else if (window == null
             misc = new Misc();
     }*/
-
+    
+    // used to only call Awake once
+    private bool awakened = false;
+    
     void Awake() {
-        SceneManager.sceneLoaded += LoadScene;
+        if (!awakened) {
+            SceneManager.sceneLoaded += LoadScene;
+            
+            // use AlMightyGlobals to store Safe Mode, Retromode and Fullscreen mode preferences
+            if (LuaScriptBinder.GetAlMighty(null, "CYFSafeMode") != null && LuaScriptBinder.GetAlMighty(null, "CYFSafeMode").Boolean)
+                ControlPanel.instance.Safe = LuaScriptBinder.GetAlMighty(null, "CYFSafeMode").Boolean;
+            
+            if (LuaScriptBinder.GetAlMighty(null, "CYFRetroMode") != null && LuaScriptBinder.GetAlMighty(null, "CYFRetroMode").Boolean)
+                retroMode = LuaScriptBinder.GetAlMighty(null, "CYFRetroMode").Boolean;
+            
+            if (LuaScriptBinder.GetAlMighty(null, "CYFPerfectFullscreen") != null && LuaScriptBinder.GetAlMighty(null, "CYFPerfectFullscreen").Boolean)
+                // FULLSCREEN TODO !!
+            
+            awakened = true;
+        }
     }
 
     /// <summary>
