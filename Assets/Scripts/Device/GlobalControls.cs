@@ -42,7 +42,6 @@ public class GlobalControls : MonoBehaviour {
 	public static int[] windowResolution = new int[2] {640, 480};
 	public static int[] aspectRatio = new int[2] {4, 3};
 	public static double ScreenWidth = Screen.width;
-	public static bool changeResolution = false;
 	public static bool netbookMode = false;
 
     /*void Start() {
@@ -51,38 +50,6 @@ public class GlobalControls : MonoBehaviour {
         else if (window == null
             misc = new Misc();
     }*/
-    
-    public static void SetFullScreen(bool args) {
-		if (!args) {
-			Screen.SetResolution(windowResolution[0], windowResolution[1], false, 0);
-		}
-		else {
-			Screen.SetResolution(Screen.currentResolution.width, Screen.currentResolution.height, true, 0);
-		}
-		changeResolution = true;
-	}
-
-	public static void SetFullScreenNetbookMode(bool args) {
-		if (!args) {
-			Screen.SetResolution(windowResolution[0], windowResolution[1], false, 0);
-		}
-		else {
-			Screen.SetResolution(windowResolution[0], windowResolution[1], true, 0);
-		}
-		changeResolution = true;
-	}
-
-	public static void ChangeAspectRatio() {
-		if (!Application.isEditor) {
-			ScreenWidth = (Screen.height / aspectRatio[1]) * aspectRatio[0];
-			Screen.SetResolution((int)RoundToNearestEven(ScreenWidth), Screen.height, Screen.fullScreen, 0);
-		}
-		changeResolution = false;
-	}
-
-	public static double RoundToNearestEven(double value) {
-		return System.Math.Truncate(value) + (System.Math.Truncate(value) % 2);
-	}
     
     // used to only call Awake once
     private bool awakened = false;
@@ -104,14 +71,57 @@ public class GlobalControls : MonoBehaviour {
             awakened = true;
         }
     }
+    
+    public static int fullscreenSwitch = 0;
+    
+    static IEnumerator RepositionWindow() {
+        #if UNITY_STANDALONE_WIN || UNITY_EDITOR
+            yield return new WaitForEndOfFrame();
+            
+            try {
+                Misc.MoveWindowTo((int)(Screen.currentResolution.width/2 - 320), (int)(Screen.currentResolution.height/2 - 240));
+            } catch {}
+        #endif
+    }
+    
+    public static void SetFullScreen(bool fullscreen, int newSwitch = 1) {
+        if (!netbookMode) {
+            if (!fullscreen)
+                Screen.SetResolution(windowResolution[0], windowResolution[1], false, 0);
+            else
+                Screen.SetResolution(Screen.currentResolution.width, Screen.currentResolution.height, true, 0);
+        } else
+            Screen.SetResolution(windowResolution[0], windowResolution[1], fullscreen, 0);
+        
+        fullscreenSwitch = newSwitch;
+	}
+
+	private static double RoundToNearestEven(double value) {
+		return System.Math.Truncate(value) + (System.Math.Truncate(value) % 2);
+	}
+
+	static IEnumerator ChangeAspectRatio() {
+        yield return new WaitForFixedUpdate();
+        
+		if (!Application.isEditor) {
+			ScreenWidth = (Screen.height / aspectRatio[1]) * aspectRatio[0];
+			Screen.SetResolution((int)RoundToNearestEven(ScreenWidth), Screen.height, Screen.fullScreen, 0);
+		}
+	}
 
     /// <summary>
     /// Control checking, and way more.
     /// </summary>
     void Update () {
-		if (changeResolution) {
-			ChangeAspectRatio();
-		}
+        if (fullscreenSwitch != 0) {
+            StartCoroutine(ChangeAspectRatio());
+            
+            if (!Screen.fullScreen && fullscreenSwitch == 1)
+                StartCoroutine(RepositionWindow());
+            
+            fullscreenSwitch--;
+        }
+        
 		stopScreenShake = false;
         if (isInFight)
             frame ++;
@@ -171,26 +181,8 @@ public class GlobalControls : MonoBehaviour {
         */
         if (Input.GetKeyDown(KeyCode.F4)) {
 			//Screen.fullScreen =!Screen.fullScreen
-			if (netbookMode)
-				SetFullScreenNetbookMode(!Screen.fullScreen);
-			else
-				SetFullScreen(!Screen.fullScreen);
-
-			// move the window to the correct place on screen when the user exits fullscreen! hooray!
-			// yes, this check is correct, even though it appears to check for the wrong value. I don't know why
-			//#if UNITY_STANDALONE_WIN || UNITY_EDITOR
-			//if (Screen.fullScreen)
-			//        StartCoroutine(RepositionScreen());
-			//#endif
-		}
-    }
-    
-    IEnumerator RepositionScreen() {
-        yield return new WaitForFixedUpdate();
-        
-        try {
-            Misc.MoveWindowTo((int)(Screen.currentResolution.width/2 - 320), (int)(Screen.currentResolution.height/2 - 240));
-        } catch {}
+			SetFullScreen(!Screen.fullScreen);
+        }
     }
 
     void LoadScene(Scene scene, LoadSceneMode mode) {

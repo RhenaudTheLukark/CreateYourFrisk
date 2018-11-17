@@ -207,27 +207,27 @@ public class OptionsScript : MonoBehaviour {
             // try to find which button the player is hovering over
             string hoverItem = "";
             // if the player is within the range of the buttons
-            if (Input.mousePosition.x >= 40 && Input.mousePosition.x <= 290) {
+            if ((Input.mousePosition.x / Screen.width) * 640 >= 40 && (Input.mousePosition.x / Screen.width) * 480 <= 290) {
                 // ResetRG
-                if      (Input.mousePosition.y <= 420 && Input.mousePosition.y > 380)
+                if      ((Input.mousePosition.y / Screen.height) * 480 <= 420 && (Input.mousePosition.y / Screen.height) * 480 > 380)
                     hoverItem = "ResetRG";
                 // ResetAG
-                else if (Input.mousePosition.y <= 380 && Input.mousePosition.y > 340)
+                else if ((Input.mousePosition.y / Screen.height) * 480 <= 380 && (Input.mousePosition.y / Screen.height) * 480 > 340)
                     hoverItem = "ResetAG";
                 // ClearSave
-                else if (Input.mousePosition.y <= 340 && Input.mousePosition.y > 300)
+                else if ((Input.mousePosition.y / Screen.height) * 480 <= 340 && (Input.mousePosition.y / Screen.height) * 480 > 300)
                     hoverItem = "ClearSave";
                 // Safe
-                else if (Input.mousePosition.y <= 300 && Input.mousePosition.y > 260)
+                else if ((Input.mousePosition.y / Screen.height) * 480 <= 300 && (Input.mousePosition.y / Screen.height) * 480 > 260)
                     hoverItem = "ResetAG";
                 // Retro
-                else if (Input.mousePosition.y <= 260 && Input.mousePosition.y > 220)
+                else if ((Input.mousePosition.y / Screen.height) * 480 <= 260 && (Input.mousePosition.y / Screen.height) * 480 > 220)
                     hoverItem = "Retro";
                 // Fullscreen
-                else if (Input.mousePosition.y <= 220 && Input.mousePosition.y > 180)
+                else if ((Input.mousePosition.y / Screen.height) * 480 <= 220 && (Input.mousePosition.y / Screen.height) * 480 > 180)
                     hoverItem = "Fullscreen";
                 // Exit
-                else if (Input.mousePosition.y <=  60 && Input.mousePosition.y >  20)
+                else if ((Input.mousePosition.y / Screen.height) * 480 <=  60 && (Input.mousePosition.y / Screen.height) * 480 >  20)
                     hoverItem = "Exit";
             }
                 

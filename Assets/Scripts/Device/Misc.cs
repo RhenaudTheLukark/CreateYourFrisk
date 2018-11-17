@@ -17,7 +17,11 @@ public class Misc {
 
     public bool FullScreen {
         get { return Screen.fullScreen; }
-        set { Screen.fullScreen = value; }
+        set {
+            Screen.fullScreen = value;
+            
+            GlobalControls.SetFullScreen(value, 2);
+        }
     }
 
     public static int ScreenHeight {

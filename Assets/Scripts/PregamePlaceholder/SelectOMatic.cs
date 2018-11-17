@@ -126,7 +126,7 @@ public class SelectOMatic : MonoBehaviour {
             
             // back button
             GameObject back = encounterBox.transform.Find("ScrollCutoff/Content/Back").gameObject;
-            back.transform.Find("Text").GetComponent<Text>().text = "BCAK";
+            back.transform.Find("Text").GetComponent<Text>().text = "← BCAK";
             
             // mod list button
             btnList.transform.Find("Label").gameObject.GetComponent<Text>().text = "MDO LITS";
@@ -411,7 +411,7 @@ public class SelectOMatic : MonoBehaviour {
         }
         
         // detect hovering over the Exit button and handle fading
-        if (Input.mousePosition.x < 70 && Input.mousePosition.y > 450 && ExitButtonAlpha < 1f) {
+        if ((Input.mousePosition.x / Screen.width) * 640 < 70 && (Input.mousePosition.y / Screen.height) * 480 > 450 && ExitButtonAlpha < 1f) {
             ExitButtonAlpha += 0.05f;
             GameObject.Find("BtnExit/Text").GetComponent<Text>().color =        new Color(1f, 1f, 1f, ExitButtonAlpha);
             GameObject.Find("BtnExit/TextShadow").GetComponent<Text>().color =  new Color(0f, 0f, 0f, ExitButtonAlpha);
@@ -423,7 +423,7 @@ public class SelectOMatic : MonoBehaviour {
         
         // detect hovering over the Options button and handle fading
         if (GlobalControls.modDev) {
-            if (Input.mousePosition.x > 550 && Input.mousePosition.y > 450 && OptionsButtonAlpha < 1f) {
+            if ((Input.mousePosition.x / Screen.width) * 640 > 550 && (Input.mousePosition.y / Screen.height) * 480 > 450 && OptionsButtonAlpha < 1f) {
                 OptionsButtonAlpha += 0.05f;
                 GameObject.Find("BtnOptions/Text").GetComponent<Text>().color =        new Color(1f, 1f, 1f, OptionsButtonAlpha);
                 GameObject.Find("BtnOptions/TextShadow").GetComponent<Text>().color =  new Color(0f, 0f, 0f, OptionsButtonAlpha);
