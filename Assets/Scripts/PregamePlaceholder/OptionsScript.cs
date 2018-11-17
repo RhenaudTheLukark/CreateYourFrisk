@@ -125,9 +125,9 @@ public class OptionsScript : MonoBehaviour {
             
             if (!GlobalControls.crate) {
                 if (GlobalControls.perfectFullscreen)
-                    GameObject.Find("Fullscreen").GetComponentInChildren<Text>().text = "Pixel-perfect Fullscreen: On";
+                    GameObject.Find("Fullscreen").GetComponentInChildren<Text>().text =      "Blurless Fullscreen: On";
                 else
-                    GameObject.Find("Fullscreen").GetComponentInChildren<Text>().text ="Pixel-perfect Fullscreen: Off";
+                    GameObject.Find("Fullscreen").GetComponentInChildren<Text>().text =     "Blurless Fullscreen: Off";
             } else {
                 if (GlobalControls.retroMode)
                     GameObject.Find("Fullscreen").GetComponentInChildren<Text>().text =     "NOT UGLEE FULLSRCEEN: ON";
@@ -201,8 +201,9 @@ public class OptionsScript : MonoBehaviour {
                 else
                     return Temmify.Convert(response);
             case "Fullscreen":
-                response = "Toggles pixel-perfect Fullscreen mode.\n\n"
-                         + "This controls whether fullscreen mode will appear \"blurry\" or not.\n\nMay slow down some computers.";
+                response = "Toggles blurless Fullscreen mode.\n\n"
+                         + "This controls whether fullscreen mode will appear \"blurry\" or not.\n\n"
+                         + "May slow down some computers.";
                 if (!GlobalControls.crate)
                     return response;
                 else
