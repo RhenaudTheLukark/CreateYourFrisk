@@ -123,12 +123,18 @@ public class GameOverBehavior : MonoBehaviour {
             battleCamera = GameObject.Find("Main Camera OW");
             battleCamera.SetActive(false);
             GetComponent<SpriteRenderer>().enabled = true; // stop showing the player
+            
+            battleContainer = GameObject.Find("Canvas");
+            battleContainer.GetComponent<Canvas>().enabled = false;
         } else {
             UIController.instance.encounter.gameOverStance = true;
             GetComponent<PlayerController>().invulTimer = 0;
             GetComponent<Image>().enabled = true; // abort the blink animation if it was playing
             battleCamera = GameObject.Find("Main Camera");
             battleCamera.SetActive(false);
+            
+            battleContainer = GameObject.Find("Canvas");
+            battleContainer.GetComponent<Canvas>().enabled = false;
         }
 
         /*battleContainer = new GameObject("BattleContainer");
@@ -452,6 +458,9 @@ public class GameOverBehavior : MonoBehaviour {
             transform.parent.SetSiblingIndex(playerIndex);
         }
         battleCamera.SetActive(true);
+        
+        battleContainer.GetComponent<Canvas>().enabled = true;
+        
         if (UnitaleUtil.IsOverworld) {
             canvasOW.SetActive(true);
             PlayerOverworld.instance.enabled = true;
