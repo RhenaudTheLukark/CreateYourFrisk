@@ -88,6 +88,8 @@ public class GlobalControls : MonoBehaviour {
             try {
                 Misc.MoveWindowTo((int)(Screen.currentResolution.width/2 - 320), (int)(Screen.currentResolution.height/2 - 240));
             } catch {}
+        #else
+            yield return 0;
         #endif
     }
     

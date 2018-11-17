@@ -136,6 +136,12 @@ public class GameOverBehavior : MonoBehaviour {
             battleContainer = GameObject.Find("Canvas");
             battleContainer.GetComponent<Canvas>().enabled = false;
         }
+        
+        // remove all bullets if in retrocompatibility mode
+        if (GlobalControls.retroMode) {
+            foreach (LuaProjectile p in FindObjectsOfType<LuaProjectile>())
+                BulletPool.instance.Requeue(p);
+        }
 
         /*battleContainer = new GameObject("BattleContainer");
         foreach (Transform go in UnitaleUtil.GetFirstChildren(null, false))
