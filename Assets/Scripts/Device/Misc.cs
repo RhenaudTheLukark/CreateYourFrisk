@@ -61,7 +61,9 @@ public class Misc {
     #if UNITY_STANDALONE_WIN || UNITY_EDITOR
         [DllImport("user32.dll")]
         private static extern int GetActiveWindow(); 
-        private static int window = GetActiveWindow();
+        public static int window = GetActiveWindow();
+        
+        public static void RetargetWindow() { window = GetActiveWindow(); }
         
         [DllImport("user32.dll")]
         public static extern int FindWindow(string className, string windowName);
