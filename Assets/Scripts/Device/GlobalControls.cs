@@ -42,7 +42,7 @@ public class GlobalControls : MonoBehaviour {
 	public static int[] windowResolution = new int[2] {640, 480};
 	public static int[] aspectRatio = new int[2] {4, 3};
 	public static double ScreenWidth = Screen.width;
-	public static bool netbookMode = false;
+	public static bool perfectFullscreen = true;
 
     /*void Start() {
         if ((Application.platform == RuntimePlatform.WindowsEditor || Application.platform == RuntimePlatform.WindowsPlayer) && windows == null)
@@ -58,15 +58,22 @@ public class GlobalControls : MonoBehaviour {
         if (!awakened) {
             SceneManager.sceneLoaded += LoadScene;
             
-            // use AlMightyGlobals to store Safe Mode, Retromode and Fullscreen mode preferences
-            if (LuaScriptBinder.GetAlMighty(null, "CYFSafeMode") != null && LuaScriptBinder.GetAlMighty(null, "CYFSafeMode").Boolean)
+            // use AlMightyGlobals to load Safe Mode, Retromode and Fullscreen mode preferences
+            
+            // check if safe mode has a stored preference that is a boolean
+            if (LuaScriptBinder.GetAlMighty(null, "CYFSafeMode") != null
+             && LuaScriptBinder.GetAlMighty(null, "CYFSafeMode").Type.ToString() == "Boolean")
                 ControlPanel.instance.Safe = LuaScriptBinder.GetAlMighty(null, "CYFSafeMode").Boolean;
             
-            if (LuaScriptBinder.GetAlMighty(null, "CYFRetroMode") != null && LuaScriptBinder.GetAlMighty(null, "CYFRetroMode").Boolean)
+            // check if retro mode has a stored preference that is a boolean
+            if (LuaScriptBinder.GetAlMighty(null, "CYFRetroMode") != null
+             && LuaScriptBinder.GetAlMighty(null, "CYFRetroMode").Type.ToString() == "Boolean")
                 retroMode = LuaScriptBinder.GetAlMighty(null, "CYFRetroMode").Boolean;
             
-            if (LuaScriptBinder.GetAlMighty(null, "CYFPerfectFullscreen") != null && LuaScriptBinder.GetAlMighty(null, "CYFPerfectFullscreen").Boolean)
-                // FULLSCREEN TODO !!
+            // check if fullscreen mode has a stored preference that is a boolean
+            if (LuaScriptBinder.GetAlMighty(null, "CYFPerfectFullscreen") != null
+             && LuaScriptBinder.GetAlMighty(null, "CYFPerfectFullscreen").Type.ToString() == "Boolean")
+                perfectFullscreen = LuaScriptBinder.GetAlMighty(null, "CYFPerfectFullscreen").Boolean;
             
             awakened = true;
         }
@@ -85,7 +92,7 @@ public class GlobalControls : MonoBehaviour {
     }
     
     public static void SetFullScreen(bool fullscreen, int newSwitch = 1) {
-        if (!netbookMode) {
+        if (perfectFullscreen) {
             if (!fullscreen)
                 Screen.SetResolution(windowResolution[0], windowResolution[1], false, 0);
             else
