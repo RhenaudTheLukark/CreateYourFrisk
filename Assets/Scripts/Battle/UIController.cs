@@ -525,7 +525,12 @@ public class UIController : MonoBehaviour {
                 UIState newState = (UIState)Enum.Parse(typeof(UIState), state, true);
                 instance.SwitchState(newState);
             } catch (Exception ex) {
-                throw new CYFException("An error occured while trying to enter the state \"" + state + "\":\n" + ex.Message + "\n\nTraceback (for devs):\n" + ex.ToString());
+                // invalid state was given
+                if (ex.Message.ToString().Contains("The requested value '" + state + "' was not found."))
+                    throw new CYFException("The state \"" + state + "\" is not a valid state. Are you sure it exists?\n\nPlease double-check in the Misc. Functions section of the docs for a list of every valid state.");
+                // a different error has occured
+                else
+                    throw new CYFException("An error occured while trying to enter the state \"" + state + "\":\n" + ex.Message + "\n\nTraceback (for devs):\n" + ex.ToString());
             }
         }
     }
