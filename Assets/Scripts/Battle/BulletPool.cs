@@ -5,19 +5,11 @@ using UnityEngine;
 /// The bullet pool where Projectiles are drawn from for performance reasons.
 /// </summary>
 public class BulletPool : MonoBehaviour {
-<<<<<<< HEAD
     public static BulletPool instance;
     public static int POOLSIZE = 100;
     private static Queue<Projectile> pool = new Queue<Projectile>();
     private static Projectile bPrefab; // bullet prefab
     //private static int currentProjectile = 0;
-=======
-    public static BulletPool instance; // Instance of this object. Indicates that the class is a Singleton: 
-                                       // one and only one object of this class must be created.
-    public static int POOLSIZE = 100;  // Size of the standard bullet pool. Increases if the player needs more bullets on the screen.
-    private static Queue<Projectile> pool = new Queue<Projectile>(); // Pool with available bullets.
-    private static Projectile bPrefab; // Bullet prefabricated object (prefab).
->>>>>>> refs/remotes/RhenaudTheLukark/code_revamp
 
     /// <summary>
     /// Initialize the pool with POOLSIZE Projectiles ready to go.

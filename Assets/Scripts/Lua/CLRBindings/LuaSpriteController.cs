@@ -613,7 +613,7 @@ public class LuaSpriteController {
             return;
         if (keyframes == null)
             return;
-        Keyframe k = keyframes.GetCurrent();
+        Keyframe k = keyframes.getCurrent();
         Sprite s = SpriteRegistry.GENERIC_SPRITE_PREFAB.sprite;
         if (k != null)
             s = k.sprite;
