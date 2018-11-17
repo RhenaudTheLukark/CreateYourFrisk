@@ -60,7 +60,9 @@ public class GameOverBehavior : MonoBehaviour {
     public AudioSource musicBefore = null;
     public AudioClip music = null;
 
-    public void ResetGameOver() {
+	public int gameOverOffSet = -99000;
+
+	public void ResetGameOver() {
         if (!UnitaleUtil.IsOverworld) {
             UIController.instance.encounter.gameOverStance = false;
             LuaEnemyEncounter.script.SetVar("autolinebreak", MoonSharp.Interpreter.DynValue.NewBoolean(autolinebreakstate));
@@ -92,7 +94,10 @@ public class GameOverBehavior : MonoBehaviour {
     public void Revive() { revived = true; }
 
     public void StartDeath(string[] deathText = null, string deathMusic = null) {
-        PlayerOverworld.audioCurrTime = 0;
+		if (!UnitaleUtil.IsOverworld)
+			this.transform.position = new Vector3(this.transform.position.x + gameOverOffSet, this.transform.position.y + gameOverOffSet, this.transform.position.z);
+
+		PlayerOverworld.audioCurrTime = 0;
         if (!UnitaleUtil.IsOverworld) {
             UIController.instance.encounter.EndWave(true);
             autolinebreakstate = LuaEnemyEncounter.script.GetVar("autolinebreak").Boolean;

@@ -38,6 +38,12 @@ public class GlobalControls : MonoBehaviour {
     public static Dictionary<string, GameState.EventInfos> EventData = new Dictionary<string, GameState.EventInfos>();
     public static Dictionary<string, GameState.TempMapData> TempGameMapData = new Dictionary<string, GameState.TempMapData>();
 
+	// Aspect Ratio Vars
+	public static int[] windowResolution = new int[2] {640, 480};
+	public static int[] aspectRatio = new int[2] {4, 3};
+	public static double ScreenWidth = Screen.width;
+	public static bool changeResolution = false;
+	public static bool netbookMode = false;
 
     /*void Start() {
         if ((Application.platform == RuntimePlatform.WindowsEditor || Application.platform == RuntimePlatform.WindowsPlayer) && windows == null)
@@ -45,6 +51,38 @@ public class GlobalControls : MonoBehaviour {
         else if (window == null
             misc = new Misc();
     }*/
+    
+    public static void SetFullScreen(bool args) {
+		if (!args) {
+			Screen.SetResolution(windowResolution[0], windowResolution[1], false, 0);
+		}
+		else {
+			Screen.SetResolution(Screen.currentResolution.width, Screen.currentResolution.height, true, 0);
+		}
+		changeResolution = true;
+	}
+
+	public static void SetFullScreenNetbookMode(bool args) {
+		if (!args) {
+			Screen.SetResolution(windowResolution[0], windowResolution[1], false, 0);
+		}
+		else {
+			Screen.SetResolution(windowResolution[0], windowResolution[1], true, 0);
+		}
+		changeResolution = true;
+	}
+
+	public static void ChangeAspectRatio() {
+		if (!Application.isEditor) {
+			ScreenWidth = (Screen.height / aspectRatio[1]) * aspectRatio[0];
+			Screen.SetResolution((int)RoundToNearestEven(ScreenWidth), Screen.height, Screen.fullScreen, 0);
+		}
+		changeResolution = false;
+	}
+
+	public static double RoundToNearestEven(double value) {
+		return System.Math.Truncate(value) + (System.Math.Truncate(value) % 2);
+	}
     
     // used to only call Awake once
     private bool awakened = false;
@@ -71,7 +109,10 @@ public class GlobalControls : MonoBehaviour {
     /// Control checking, and way more.
     /// </summary>
     void Update () {
-        stopScreenShake = false;
+		if (changeResolution) {
+			ChangeAspectRatio();
+		}
+		stopScreenShake = false;
         if (isInFight)
             frame ++;
         if (SceneManager.GetActiveScene().name == "ModSelect")        lastSceneUnitale = true;
@@ -129,15 +170,19 @@ public class GlobalControls : MonoBehaviour {
             Screen.SetResolution(640, 480, false, 0);
         */
         if (Input.GetKeyDown(KeyCode.F4)) {
-            Screen.fullScreen =!Screen.fullScreen;
-            
-            // move the window to the correct place on screen when the user exits fullscreen! hooray!
-            // yes, this check is correct, even though it appears to check for the wrong value. I don't know why
-            #if UNITY_STANDALONE_WIN || UNITY_EDITOR
-                if (Screen.fullScreen)
-                    StartCoroutine(RepositionScreen());
-            #endif
-        }
+			//Screen.fullScreen =!Screen.fullScreen
+			if (netbookMode)
+				SetFullScreenNetbookMode(!Screen.fullScreen);
+			else
+				SetFullScreen(!Screen.fullScreen);
+
+			// move the window to the correct place on screen when the user exits fullscreen! hooray!
+			// yes, this check is correct, even though it appears to check for the wrong value. I don't know why
+			//#if UNITY_STANDALONE_WIN || UNITY_EDITOR
+			//if (Screen.fullScreen)
+			//        StartCoroutine(RepositionScreen());
+			//#endif
+		}
     }
     
     IEnumerator RepositionScreen() {
