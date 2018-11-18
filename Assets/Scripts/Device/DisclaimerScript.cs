@@ -58,11 +58,14 @@ public class DisclaimerScript : MonoBehaviour {
     /// </summary>
     private void Update() {
         // try to hook on to the game window when the user interacts
-        if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.O) || Input.GetKeyDown(KeyCode.F4)) {
-            #if UNITY_STANDALONE_WIN || UNITY_EDITOR
+        #if UNITY_STANDALONE_WIN || UNITY_EDITOR
+            if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.O)
+              || (Input.GetKeyDown(KeyCode.F4)        // F4
+              || (Input.GetKeyDown(KeyCode.Return)
+              &&(Input.GetKey(KeyCode.LeftAlt)        // LAlt  + Enter
+              || Input.GetKey(KeyCode.RightAlt)))))   // RAlt  + Enter
                 Misc.RetargetWindow();
-            #endif
-        }
+        #endif
         
         if (Input.GetKeyDown(KeyCode.O)) {
             StaticInits.MODFOLDER = StaticInits.EDITOR_MODFOLDER;

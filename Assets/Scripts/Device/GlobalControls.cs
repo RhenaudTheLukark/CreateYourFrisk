@@ -188,10 +188,11 @@ public class GlobalControls : MonoBehaviour {
         if (!Screen.fullScreen && (Screen.currentResolution.height != 480 || Screen.currentResolution.width != 640))
             Screen.SetResolution(640, 480, false, 0);
         */
-        if (Input.GetKeyDown(KeyCode.F4)) {
-			//Screen.fullScreen =!Screen.fullScreen
+        if  (Input.GetKeyDown(KeyCode.F4)        // F4
+          || (Input.GetKeyDown(KeyCode.Return)
+          &&(Input.GetKey(KeyCode.LeftAlt)       // LAlt  + Enter
+          || Input.GetKey(KeyCode.RightAlt))))   // RAlt  + Enter
 			SetFullScreen(!Screen.fullScreen);
-        }
     }
 
     void LoadScene(Scene scene, LoadSceneMode mode) {
