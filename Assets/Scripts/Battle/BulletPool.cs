@@ -16,19 +16,17 @@ public class BulletPool : MonoBehaviour {
     /// </summary>
     private void Start() {
         instance = this;
-        // Loads the bullet's prefab.
         bPrefab = Resources.Load<LuaProjectile>("Prefabs/LUAProjectile 1");
         
-        // Clears the pool if used before and fills it.
         pool.Clear();
         for (int i = 0; i < POOLSIZE; i++)
-            CreatePooledBullet();
+            createPooledBullet();
     }
 
     /// <summary>
     /// Creates a new Projectile and adds it to the pool. Used during instantion and when the pool is empty.
     /// </summary>
-    private void CreatePooledBullet() {
+    private void createPooledBullet() {
         Projectile lp = Instantiate(bPrefab);
         lp.transform.SetParent(transform);
         lp.GetComponent<RectTransform>().position = new Vector2(-999, -999); // Move offscreen to be safe, but shouldn't be necessary.
@@ -41,26 +39,20 @@ public class BulletPool : MonoBehaviour {
     /// </summary>
     /// <returns>A Projectile object for further modification.</returns>
     public Projectile Retrieve() {
-        // Creates a new bullet object if there's none available.
         if (pool.Count == 0)
-            CreatePooledBullet();
-        // Removes the bullet from the "available bullets" pool.
-        Projectile dq = pool.Dequeue();
+            createPooledBullet();
+        Projectile dq = pool.Dequeue(); // had some other stuff going on
         dq.renewController();
         return dq;
     }
 
     /// <summary>
-    /// Frees a projectile and returns it to the pool.
+    /// Return a projectile to the pool.
     /// </summary>
-    /// <param name="p">Projectile to return.</param>
+    /// <param name="p">Projectile to return</param>
     public void Requeue(Projectile p) {
-        // Sets the available bullet pool as the bullet's parent.
         if (p.transform.parent != GameObject.Find("BulletPool").transform)
             p.transform.SetParent(GameObject.Find("BulletPool").transform);
-
-        // TODO: Add check for children
-
         p.GetComponent<RectTransform>().position = new Vector2(-999, -999);
         p.gameObject.SetActive(false);
         pool.Enqueue(p);

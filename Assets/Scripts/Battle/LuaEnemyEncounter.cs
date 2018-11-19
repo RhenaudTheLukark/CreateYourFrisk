@@ -327,8 +327,7 @@ internal class LuaEnemyEncounter : EnemyEncounter {
                     p.ctrl.Remove();
         if (!death)
             CallOnSelfOrChildren("DefenseEnding");
-        
-        ArenaManager.instance.ResetArena();
+        ArenaManager.instance.resetArena();
         if (GlobalControls.retroMode) {
             EncounterText = script.GetVar ("encountertext").String;
         }

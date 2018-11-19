@@ -156,7 +156,7 @@ public class LuaSpriteController {
             if (keyframes != null)
                 if (keyframes.enabled == false)                    return true;
                 else if (loop == KeyframeCollection.LoopMode.LOOP) return false;
-                else                                               return keyframes.enabled && keyframes.AnimationComplete();
+                else                                               return keyframes.enabled && keyframes.animationComplete();
             return false;
         }
     }

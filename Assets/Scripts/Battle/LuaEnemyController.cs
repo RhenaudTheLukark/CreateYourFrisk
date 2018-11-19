@@ -237,6 +237,7 @@ public class LuaEnemyController : EnemyController {
             else
                 throw new CYFException("missing sprite");
 
+            ui = FindObjectOfType<UIController>();
             if (MaxHP == 0)
                 MaxHP = HP;
 

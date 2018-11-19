@@ -286,7 +286,7 @@ public class UIController : MonoBehaviour {
             textmgr.SetPause(true);
         } else {
             if (!first &&!ArenaManager.instance.firstTurn)
-                ArenaManager.instance.ResetArena();
+                ArenaManager.instance.resetArena();
             PlayerController.instance.invulTimer = 0.0f;
             PlayerController.instance.setControlOverride(true);
         }

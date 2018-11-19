@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
@@ -7,13 +8,11 @@ using UnityEngine.UI;
 /// Attached to the Background object in the Battle scene.
 /// </summary>
 public class BackgroundLoader : MonoBehaviour {
-    Image bgImage; // Background image.
-
+    Image bgImage;
     // Use this for initialization
     private void Start() {
         bgImage = GetComponent<Image>();
         try {
-            // Tries to set the background up.
             Sprite bg = SpriteUtil.FromFile(FileLoader.pathToModFile("Sprites/bg.png"));
             if (bg != null) {
                 bg.texture.filterMode = FilterMode.Point;
