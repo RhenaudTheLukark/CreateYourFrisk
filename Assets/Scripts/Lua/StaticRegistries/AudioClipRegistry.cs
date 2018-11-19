@@ -29,18 +29,8 @@ public class AudioClipRegistry {
         else if (dictDefault.ContainsKey(key))
             dict[key] = FileLoader.getAudioClip(currentPath, dictDefault[key].FullName);
         else {
-            if (GlobalControls.retroMode) {
-                Debug.Log("[WARN]The music file " + k + " doesn't exist.");
-                UnitaleUtil.WriteInLogAndDebugger("[WARN]The music file " + k + " doesn't exist.");
-            } else {
-                // show the actual path to the sound file that was attempted to load, to make it clearer
-                string pathToPrint = key;
-                pathToPrint = pathToPrint.Substring(0, 1).ToUpper() + pathToPrint.Substring(1);
-                if (pathToPrint.StartsWith("Sounds/voices"))
-                    pathToPrint = pathToPrint.Replace("Sounds/voices", "Sounds/Voices");
-                
-                throw new CYFException("Attempted to load the audio clip " + pathToPrint + " from either a mod or default directory, but it was missing in both.");
-            }
+            Debug.Log("[WARN]The music file " + k + " doesn't exist.");
+            UnitaleUtil.WriteInLogAndDebugger("[WARN]The music file " + k + " doesn't exist.");
             return null;
         }
         return dict[key];
