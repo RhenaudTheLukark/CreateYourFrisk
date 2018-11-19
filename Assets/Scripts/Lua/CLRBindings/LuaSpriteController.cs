@@ -513,7 +513,7 @@ public class LuaSpriteController {
                     else {
                         // Calls keyframes.currTime %= keyframes.totalTime
                         keyframes.SetLoop(keyframes.loop);
-                        keyframes.currTime = value * keyframes.timePerFrame;
+                        keyframes.currTime = (value - 1) * keyframes.timePerFrame;
                     }
                 } else
                     throw new CYFException("sprite.currentframe: You can not set the current frame of a sprite without an active animation.");
