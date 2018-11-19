@@ -466,10 +466,9 @@ public class SelectOMatic : MonoBehaviour {
                     modFolderMiniMenu();
                     encounterBox.transform.Find("ScrollCutoff/Content").GetChild(selectedItem).GetComponent<MenuButton>().StartAnimation(1);
                 // Open the encounter list or start the encounter (if there is only one encounter)
-                } else if (Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.Return)) {
+                } else if (Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.Return))
                     GameObject.Find("ModBackground").GetComponent<Button>().onClick.Invoke();
-                    encounterBox.transform.Find("ScrollCutoff/Content").GetChild(selectedItem).GetComponent<MenuButton>().StartAnimation(1);
-                }
+                    // encounterBox.transform.Find("ScrollCutoff/Content").GetChild(selectedItem).GetComponent<MenuButton>().StartAnimation(1);
             }
             
             // Return to the Disclaimer screen
