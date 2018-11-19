@@ -507,7 +507,7 @@ public class LuaSpriteController {
     public int currentframe {
         set {
             if (img.GetComponent<Image>()) {
-                if (keyframes != null) {
+                if (keyframes != null && keyframes.enabled) {
                     if (value < 1 || value > keyframes.keyframes.Length)
                         throw new CYFException("sprite.currentframe: New value " + value + " is out of bounds.");
                     else {
@@ -522,6 +522,40 @@ public class LuaSpriteController {
         get {
             if (img.GetComponent<Image>() && keyframes != null)
                 return keyframes.getIndex();
+            return 0;
+        }
+    }
+    
+    // Gets or sets the current "play position" of a sprite's animation, in seconds.
+    public float currenttime {
+        set {
+            if (img.GetComponent<Image>()) {
+                if (keyframes != null && keyframes.enabled) {
+                    if (value < 0 || value > keyframes.totalTime)
+                        throw new CYFException("sprite.currenttime: New value " + value + " is out of bounds.");
+                    else
+                        keyframes.currTime = value % keyframes.totalTime;
+                } else
+                    throw new CYFException("sprite.currenttime: You can not set the current time of a sprite without an active animation.");
+            }
+        }
+        get {
+            if (img.GetComponent<Image>() && keyframes != null) {
+                if (keyframes.enabled) {
+                    if (!keyframes.animationComplete())
+                        return keyframes.currTime % keyframes.totalTime;
+                }
+                return keyframes.totalTime;
+            }
+            return 0;
+        }
+    }
+    
+    // Gets (read-only) the total time an animation will run for, in seconds.
+    public float totaltime {
+        get {
+            if (img.GetComponent<Image>() && keyframes != null)
+                return keyframes.totalTime;
             return 0;
         }
     }

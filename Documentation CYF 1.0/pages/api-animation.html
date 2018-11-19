@@ -233,6 +233,28 @@ it's w3c valid, at least
             </p><br>
             
             <p>
+                <span class="function"><span class="CYF"></span> <span class="number"></span> sprite.currenttime</span></span>
+                If a sprite has an active animation running, this represents its current play time, in seconds.<br>
+                Can both be read and set.
+                <br><br>
+                If an animation is not running, this will be <span class="term">0</span>.
+                <br><br>
+                Similar in function to <span class="term">NewAudio.GetPlayTime</span> / <span class="term">NewAudio.GetCurrentTime</span>.
+            </p><br>
+            
+            <p>
+                <span class="function"><span class="CYF"></span> <span class="number"></span> sprite.totaltime (read-only)</span></span>
+                If a sprite has an active animation running, this represents the total amount of time its animation will last for.<br>
+                Can both be read and set.<br>
+                Note that this is based on the speed the animation runs at, and will always be equal to
+                (<span class="term">sprite.animationspeed</span> * the number of frames in a sprite's animation).
+                <br><br>
+                If an animation is not running, this will be <span class="term">0</span>.
+                <br><br>
+                Similar in function to <span class="term">NewAudio.GetTotalTime</span>.
+            </p><br>
+            
+            <p>
                 <span class="function"><span class="CYF"></span> <span class="number"></span> sprite.animationspeed</span></span>
                 If a sprite has an active animation running, this represents the amount of seconds each frame will be displayed for.
                 <br><br>
