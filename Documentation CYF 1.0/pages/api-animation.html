@@ -230,6 +230,15 @@ it's w3c valid, at least
                 </pre>
                 </div>
                 Then this variable will be <span class="term">1</span> when the first image is shown, <span class="term">2</span> for the second, and so on, up to <span class="term">4</span> for the last one.
+                <br><br>
+                <font style="font-size: 18px; color: #f00;">NOTE: Will not reset a sprite's animation timer!</font><br>
+                If you call <span class="term">sprite.currentframe = 1</span> every frame, <font style="color:#fff;">the sprite will continue to animate!</font><br>
+                To reset the timer as well, use this code:
+                <div class="code-container">
+                <pre class="brush: lua;">
+                sprite.currenttime = (sprite.currentframe - 1) * sprite.animationspeed
+                </pre>
+                </div>
             </p><br>
             
             <p>

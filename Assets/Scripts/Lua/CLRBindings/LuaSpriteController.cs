@@ -511,9 +511,11 @@ public class LuaSpriteController {
                     if (value < 1 || value > keyframes.keyframes.Length)
                         throw new CYFException("sprite.currentframe: New value " + value + " is out of bounds.");
                     else {
+                        // Store the previous "progress" of the frame
+                        float progress = (keyframes.currTime / keyframes.timePerFrame) % 1;
                         // Calls keyframes.currTime %= keyframes.totalTime
                         keyframes.SetLoop(keyframes.loop);
-                        keyframes.currTime = (value - 1) * keyframes.timePerFrame;
+                        keyframes.currTime = ((value - 1) * keyframes.timePerFrame) + (progress * keyframes.timePerFrame);
                     }
                 } else
                     throw new CYFException("sprite.currentframe: You can not set the current frame of a sprite without an active animation.");
