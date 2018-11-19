@@ -147,10 +147,12 @@ it's w3c valid, at least
                 <li><span class="boolean"></span> <span class="term">Player.ismoving</span> (readonly) - true if the player is currently moving in battle, false otherwise. Will
                     always be false while not in a wave script. NOTE: This only will change with the default control scheme (see below).
                 </li><br>
-                <li><span class="term">Player.Hurt(<span class="number"></span> damage)</span> - deals damage to the player, and makes them invincible for the default time.
-                </li><br>
-                <li><span class="term">Player.Hurt(<span class="number"></span> damage, <span class="number"></span> invul_time)</span> - deals damage to the player, and makes them invincible for <span class="term">
-                invul_time</span> seconds.
+                <li><span class="term">Player.Hurt(<span class="number"></span> damage, <span class="number"></span> invul_time = 3.0, <span class="boolean"></span> ignoreDef = false)</span> 
+                - deals damage to the player, and makes them invincible for <span class="term">invul_time</span> seconds.
+                <br><br>
+                Set <span class="term">ignoreDef</span> to true, and if the encounter variable <span clas="term">allowPlayerDef</span> is true, the damage dealt here will ignore the player's defense.
+                <br><br>
+                <span class="CYF"></span> Call <span class="term">Player.Hurt(0, 0)</span> to reset the player's hurt timer without making a sound.
                 </li><br>
                 <li><span class="term">Player.Heal(<span class="number"></span> value)</span> - heals the player for this amount. This is exactly the same as
                     Player.Hurt(-value, 0). It also plays the healing sound.

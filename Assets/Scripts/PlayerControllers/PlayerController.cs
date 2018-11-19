@@ -131,6 +131,14 @@ public class PlayerController : MonoBehaviour {
         // set timer and play the hurt sound if player was actually hurt
         // TODO: factor in stats and what the actual damage should be
         // TONOTDO: I don't care about stats, lvk :D
+        
+        // reset the hurt timer if the arguments passed are (0, 0)
+        if (damage == 0 && invulnerabilitySeconds == 0) {
+            invulTimer = 0;
+            selfImg.enabled = true;
+            return;
+        }
+        
         if (damage >= 0 && (invulTimer <= 0 || invulnerabilitySeconds < 0)) {
             if (soundDelay < 0) {
                 soundDelay = 2;
