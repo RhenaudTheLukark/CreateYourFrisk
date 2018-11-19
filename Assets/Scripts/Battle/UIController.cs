@@ -88,13 +88,15 @@ public class UIController : MonoBehaviour {
         DIALOGRESULT, // executed an action that results in dialogue that results in UIState.ENEMYDIALOG or UIState.DEFENDING
         DONE, // Finished state of battle. Currently just returns to the mod selection screen.
         SPAREIDLE, // Used for OnSpare()'s inactivity, to make it works like OnDeath(). You don't want to go in there.
-        UNUSED //Used for OnDeath. Keep this state secret, please.
+        UNUSED, //Used for OnDeath. Keep this state secret, please.
+        PAUSE // Used exclusively for State("PAUSE"). Not a real state, but it needs to be listed to allow users to call State("PAUSE").
     }
     
-    // Variables for NONE's new "encounter freezing" behavior
-    public UIState frozenState = UIState.NONE;
-    public float frozenTimestamp       = 0.0f; // used for DEFENDING's wavetimer
-    private bool frozenControlOverride = true;
+    // Variables for PAUSE's "encounter freezing" behavior
+    public UIState frozenState = UIState.PAUSE; // used to keep track of what state was frozen
+    public float frozenTimestamp       = 0.0f;  // used for DEFENDING's wavetimer
+    private bool frozenControlOverride = true;  // used for the player's control override
+    private bool frozenPlayerVisibility= true;  // used for the player's invincibility timer when hurt
     
     public delegate void Message();
     public static event Message SendToStaticInits;
@@ -197,80 +199,85 @@ public class UIController : MonoBehaviour {
         // END DEBUG
         // below: actions based on ending a previous state, or actions that affect multiple states
         
-        // NONE can freeze states
-        if (!GlobalControls.retroMode) {
-            if (state == UIState.NONE && this.state != UIState.NONE && frozenState == UIState.NONE) {
-                frozenState = this.state;
-                
-                // execute extra code based on the state that is being frozen
-                switch(frozenState) {
-                    case UIState.ACTIONSELECT:
-                    case UIState.DIALOGRESULT:
-                        textmgr.SetPause(true);
-                        break;
-                    case UIState.DEFENDING:
-                        frozenControlOverride = PlayerController.instance.overrideControl;
-                        PlayerController.instance.setControlOverride(true);
-                        
-                        frozenTimestamp = Time.time;
-                        break;
-                    case UIState.ENEMYDIALOGUE:
-                        TextManager[] textmen = FindObjectsOfType<TextManager>();
-                        foreach (TextManager textman in textmen)
-                            if (textman.gameObject.name.StartsWith("DialogBubble")) // game object name is hardcoded as it won't change
-                                textman.SetPause(true);
-                        break;
-                    case UIState.ATTACKING:
-                        FightUI fui = fightUI.boundFightUiInstances[0];
-                        if (fui.slice != null && fui.slice.keyframes != null)
-                            fui.slice.keyframes.paused = true;
-                        
-                        if (fightUI.line != null && fightUI.line.keyframes != null)
-                            fightUI.line.keyframes.paused = true;
-                        break;
-                }
-                
-                // Debug.Log("<b><color='blue'>Freezing state " + frozenState.ToString() + "</color></b>");
-                
-                return;
-            //else if (state != UIState.NONE && this.state == UIState.NONE && frozenState != UIState.NONE) {
-            } else if (state == frozenState && frozenState != UIState.NONE) {
-                // execute extra code based on the state that is being un-frozen
-                switch(frozenState) {
-                    case UIState.ACTIONSELECT:
-                    case UIState.DIALOGRESULT:
-                        textmgr.SetPause(true);
-                        break;
-                    case UIState.DEFENDING:
-                        PlayerController.instance.setControlOverride(frozenControlOverride);
-                        
-                        frozenTimestamp = Time.time - frozenTimestamp;
-                        encounter.waveTimer += frozenTimestamp;
-                        break;
-                    case UIState.ENEMYDIALOGUE:
-                        TextManager[] textmen = FindObjectsOfType<TextManager>();
-                        foreach (TextManager textman in textmen)
-                            if (textman.gameObject.name.StartsWith("DialogBubble")) // game object name is hardcoded as it won't change
-                                textman.SetPause(false);
-                        break;
-                    case UIState.ATTACKING:
-                        FightUI fui = fightUI.boundFightUiInstances[0];
-                        if (fui.slice != null && fui.slice.keyframes != null)
-                            fui.slice.keyframes.paused = false;
-                        
-                        if (fightUI.line != null && fightUI.line.keyframes != null)
-                            fightUI.line.keyframes.paused = false;
-                        break;
-                }
-                
-                // Debug.Log("<b><color='blue'>Unfreezing state " + frozenState.ToString() + "</color></b>");
-                
-                frozenState = UIState.NONE;
-                
-                return;
-            } else if (frozenState != UIState.NONE)
-                frozenState = UIState.NONE;
-        }
+        // PAUSE can freeze states
+        if (state == UIState.PAUSE && frozenState != UIState.PAUSE)
+            return;
+        else if (state == UIState.PAUSE && frozenState == UIState.PAUSE) {
+            frozenState = this.state;
+            
+            // execute extra code based on the state that is being frozen
+            switch(frozenState) {
+                case UIState.ACTIONSELECT:
+                case UIState.DIALOGRESULT:
+                    textmgr.SetPause(true);
+                    break;
+                case UIState.DEFENDING:
+                    frozenControlOverride = PlayerController.instance.overrideControl;
+                    PlayerController.instance.setControlOverride(true);
+                    
+                    frozenTimestamp = Time.time;
+                    break;
+                case UIState.ENEMYDIALOGUE:
+                    TextManager[] textmen = FindObjectsOfType<TextManager>();
+                    foreach (TextManager textman in textmen)
+                        if (textman.gameObject.name.StartsWith("DialogBubble")) // game object name is hardcoded as it won't change
+                            textman.SetPause(true);
+                    break;
+                case UIState.ATTACKING:
+                    FightUI fui = fightUI.boundFightUiInstances[0];
+                    if (fui.slice != null && fui.slice.keyframes != null)
+                        fui.slice.keyframes.paused = true;
+                    
+                    if (fightUI.line != null && fightUI.line.keyframes != null)
+                        fightUI.line.keyframes.paused = true;
+                    break;
+            }
+            
+            frozenPlayerVisibility = PlayerController.instance.selfImg.enabled;
+            PlayerController.instance.selfImg.enabled = true;
+            
+            // Debug.Log("<b><color='blue'>Freezing state " + frozenState.ToString() + "</color></b>");
+            
+            return;
+        //else if (state != UIState.NONE && this.state == UIState.NONE && frozenState != UIState.NONE) {
+        } else if (state == frozenState && frozenState != UIState.PAUSE) {
+            // execute extra code based on the state that is being un-frozen
+            switch(frozenState) {
+                case UIState.ACTIONSELECT:
+                case UIState.DIALOGRESULT:
+                    textmgr.SetPause(true);
+                    break;
+                case UIState.DEFENDING:
+                    PlayerController.instance.setControlOverride(frozenControlOverride);
+                    
+                    frozenTimestamp = Time.time - frozenTimestamp;
+                    encounter.waveTimer += frozenTimestamp;
+                    break;
+                case UIState.ENEMYDIALOGUE:
+                    TextManager[] textmen = FindObjectsOfType<TextManager>();
+                    foreach (TextManager textman in textmen)
+                        if (textman.gameObject.name.StartsWith("DialogBubble")) // game object name is hardcoded as it won't change
+                            textman.SetPause(false);
+                    break;
+                case UIState.ATTACKING:
+                    FightUI fui = fightUI.boundFightUiInstances[0];
+                    if (fui.slice != null && fui.slice.keyframes != null)
+                        fui.slice.keyframes.paused = false;
+                    
+                    if (fightUI.line != null && fightUI.line.keyframes != null)
+                        fightUI.line.keyframes.paused = false;
+                    break;
+            }
+            
+            // Debug.Log("<b><color='blue'>Unfreezing state " + frozenState.ToString() + "</color></b>");
+            
+            PlayerController.instance.selfImg.enabled = frozenPlayerVisibility;
+            
+            frozenState = UIState.PAUSE;
+            
+            return;
+        } else if (frozenState != UIState.PAUSE)
+            frozenState = UIState.PAUSE;
         
         frozenTimestamp  = 0.0f;
         
@@ -1409,7 +1416,7 @@ public class UIController : MonoBehaviour {
             }
         }
         
-        if (frozenState != UIState.NONE)
+        if (frozenState != UIState.PAUSE)
             return;
         
         if (textmgr.IsPaused() &&!ArenaManager.instance.isResizeInProgress())
@@ -1442,7 +1449,7 @@ public class UIController : MonoBehaviour {
                     foreach (LuaProjectile p in FindObjectsOfType<LuaProjectile>())
                             BulletPool.instance.Requeue(p);
                 SwitchState(UIState.ACTIONSELECT);
-            } else if (!encounter.gameOverStance && (frozenState == UIState.NONE || GlobalControls.retroMode))
+            } else if (!encounter.gameOverStance && frozenState == UIState.PAUSE)
                 encounter.UpdateWave();
             return;
         }
