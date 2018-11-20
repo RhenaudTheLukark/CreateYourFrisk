@@ -131,7 +131,7 @@ public class GlobalControls : MonoBehaviour {
             fullscreenSwitch--;
         }
         
-		stopScreenShake = false;
+		    stopScreenShake = false;
         if (isInFight)
             frame ++;
         if (SceneManager.GetActiveScene().name == "ModSelect")        lastSceneUnitale = true;
