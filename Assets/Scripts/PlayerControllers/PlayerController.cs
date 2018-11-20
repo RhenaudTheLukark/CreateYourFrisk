@@ -89,9 +89,6 @@ public class PlayerController : MonoBehaviour {
     /// </summary>
     private AbstractSoul soul;
 
-    private Vector2 tempQueue = new Vector2(-5000, -5000);
-    private bool tempQueue2 = false;
-
     /// <summary>
     /// The last movement of the player.
     /// </summary>
@@ -134,6 +131,14 @@ public class PlayerController : MonoBehaviour {
         // set timer and play the hurt sound if player was actually hurt
         // TODO: factor in stats and what the actual damage should be
         // TONOTDO: I don't care about stats, lvk :D
+        
+        // reset the hurt timer if the arguments passed are (0, 0)
+        if (damage == 0 && invulnerabilitySeconds == 0) {
+            invulTimer = 0;
+            selfImg.enabled = true;
+            return;
+        }
+        
         if (damage >= 0 && (invulTimer <= 0 || invulnerabilitySeconds < 0)) {
             if (soundDelay < 0) {
                 soundDelay = 2;
@@ -295,12 +300,7 @@ public class PlayerController : MonoBehaviour {
     }
 
     public void SetPositionQueue(float xPos, float yPos, bool ignoreBounds) {
-        if (!ArenaManager.instance.firstTurn)
-            SetPosition(xPos, yPos, ignoreBounds);
-        else {
-            tempQueue = new Vector2(xPos, yPos);
-            tempQueue2 = ignoreBounds;
-        }
+        SetPosition(xPos, yPos, ignoreBounds);
     }
 
     public void SetPosition(float xPos, float yPos, bool ignoreBounds) {
@@ -402,10 +402,17 @@ public class PlayerController : MonoBehaviour {
         else if (Input.GetKeyDown(KeyCode.Alpha2))
             SetSoul(new BlueSoul(this));*/
         // END DEBUG CONTROLS
+        /*
         if (!ArenaManager.instance.firstTurn && (tempQueue.x != -5000 || tempQueue.y != -5000)) {
             SetPosition(tempQueue.x, tempQueue.y, tempQueue2);
             tempQueue = new Vector2(-5000, -5000);
         }
+        */
+        
+        // prevent player actions from working and the timer from decreasing, if the game is paused
+        if (UIController.instance.frozenState != UIController.UIState.PAUSE)
+            return;
+        
         // handle input and movement, unless control is overridden by the UI controller, for instance
         if (!overrideControl) {
             intendedShift = Vector2.zero; // reset direction we are going in

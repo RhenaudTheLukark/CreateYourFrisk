@@ -14,7 +14,7 @@ public class ScreenResolution : MonoBehaviour {
         }
         QualitySettings.vSyncCount = 0;
         Application.targetFrameRate = 60;
-        Screen.SetResolution(640, 480, Screen.fullScreen);
-        hasInitialized = true;
+        //Screen.SetResolution(640, 480, Screen.fullScreen);
+        //hasInitialized = true;
     }
 }

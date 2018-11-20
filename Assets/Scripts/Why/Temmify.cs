@@ -19,12 +19,12 @@ public static class Temmify {
         string[] words = sentence.Split(new string[] { " " }, System.StringSplitOptions.RemoveEmptyEntries);
         
         for (int i = 0; i < words.Length; i++) {
+            // capitalize every word
+            words[i] = words[i].ToUpper();
+            
             if (words[i].Length < 3)
                 continue;
             else {
-                // capitalize every word
-                words[i] = words[i].ToUpper();
-                
                 // only words with at least 5% of their letters moved will be allowed
                 List<int> changesMade = new List<int>();
                 bool hasAnyEditableCharacters = false;

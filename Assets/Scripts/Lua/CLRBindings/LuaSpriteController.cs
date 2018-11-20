@@ -424,15 +424,30 @@ public class LuaSpriteController {
     public void SetAnimation(string[] frames) { SetAnimation(frames, 1 / 30f); }
 
     // Sets an animation for this instance with a frame timer
-    public void SetAnimation(string[] spriteNames, float frametime) {
+    public void SetAnimation(string[] spriteNames, float frametime, string prefix = "") {
         if (frametime < 0)
             throw new CYFException("sprite.SetAnimation: An animation can not have negative speed!");
         else if (frametime == 0)
             throw new CYFException("sprite.SetAnimation: An animation can not play at 0 frames per second!");
         
+        if (prefix != "") {
+            while (prefix.StartsWith("/"))
+                prefix = prefix.Substring(1);
+            
+            if (!prefix.EndsWith("/"))
+                prefix += "/";
+            
+            for (int i = 0; i < spriteNames.Length; i++)
+                spriteNames[i] = prefix + spriteNames[i];
+        }
+        
         Vector2 pivot = img.GetComponent<RectTransform>().pivot;
         Keyframe[] kfArray = new Keyframe[spriteNames.Length];
         for (int i = 0; i < spriteNames.Length; i++) {
+            // at least one sprite in the sequence was unable to be loaded
+            if (SpriteRegistry.Get(spriteNames[i]) == null)
+                throw new CYFException("sprite.SetAnimation: Failed to load sprite with the name\" " + spriteNames[i] + "\". Are you sure it is spelled correctly?");
+            
             kfArray[i] = new Keyframe(SpriteRegistry.Get(spriteNames[i]), spriteNames[i].ToLower());
         }
         if (keyframes == null) {
@@ -492,13 +507,15 @@ public class LuaSpriteController {
     public int currentframe {
         set {
             if (img.GetComponent<Image>()) {
-                if (keyframes != null) {
+                if (keyframes != null && keyframes.enabled) {
                     if (value < 1 || value > keyframes.keyframes.Length)
                         throw new CYFException("sprite.currentframe: New value " + value + " is out of bounds.");
                     else {
+                        // Store the previous "progress" of the frame
+                        float progress = (keyframes.currTime / keyframes.timePerFrame) % 1;
                         // Calls keyframes.currTime %= keyframes.totalTime
                         keyframes.SetLoop(keyframes.loop);
-                        keyframes.currTime = value * keyframes.timePerFrame;
+                        keyframes.currTime = ((value - 1) * keyframes.timePerFrame) + (progress * keyframes.timePerFrame);
                     }
                 } else
                     throw new CYFException("sprite.currentframe: You can not set the current frame of a sprite without an active animation.");
@@ -507,6 +524,40 @@ public class LuaSpriteController {
         get {
             if (img.GetComponent<Image>() && keyframes != null)
                 return keyframes.getIndex();
+            return 0;
+        }
+    }
+    
+    // Gets or sets the current "play position" of a sprite's animation, in seconds.
+    public float currenttime {
+        set {
+            if (img.GetComponent<Image>()) {
+                if (keyframes != null && keyframes.enabled) {
+                    if (value < 0 || value > keyframes.totalTime)
+                        throw new CYFException("sprite.currenttime: New value " + value + " is out of bounds.");
+                    else
+                        keyframes.currTime = value % keyframes.totalTime;
+                } else
+                    throw new CYFException("sprite.currenttime: You can not set the current time of a sprite without an active animation.");
+            }
+        }
+        get {
+            if (img.GetComponent<Image>() && keyframes != null) {
+                if (keyframes.enabled) {
+                    if (!keyframes.animationComplete())
+                        return keyframes.currTime % keyframes.totalTime;
+                }
+                return keyframes.totalTime;
+            }
+            return 0;
+        }
+    }
+    
+    // Gets (read-only) the total time an animation will run for, in seconds.
+    public float totaltime {
+        get {
+            if (img.GetComponent<Image>() && keyframes != null)
+                return keyframes.totalTime;
             return 0;
         }
     }

@@ -34,10 +34,15 @@ public class GlobalControls : MonoBehaviour {
     public static string[] nonOWScenes = new string[] { "Battle", "Error", /*"EncounterSelect",*/ "ModSelect", "GameOver", "TitleScreen", "Disclaimer", "EnterName", "TransitionOverworld", "Intro" };
     public static string[] canTransOW = new string[] { "Battle", "Error", "GameOver" };
     //Wow what's this
-    public static Dictionary<int, GameState.MapData> GameMapData = new Dictionary<int, GameState.MapData>();
+    public static Dictionary<string, GameState.MapData> GameMapData = new Dictionary<string, GameState.MapData>();
     public static Dictionary<string, GameState.EventInfos> EventData = new Dictionary<string, GameState.EventInfos>();
     public static Dictionary<string, GameState.TempMapData> TempGameMapData = new Dictionary<string, GameState.TempMapData>();
 
+	// Aspect Ratio Vars
+	public static int[] windowResolution = new int[2] {640, 480};
+	public static int[] aspectRatio = new int[2] {4, 3};
+	public static double ScreenWidth = Screen.width;
+	public static bool perfectFullscreen = true;
 
     /*void Start() {
         if ((Application.platform == RuntimePlatform.WindowsEditor || Application.platform == RuntimePlatform.WindowsPlayer) && windows == null)
@@ -45,16 +50,88 @@ public class GlobalControls : MonoBehaviour {
         else if (window == null
             misc = new Misc();
     }*/
-
+    
+    // used to only call Awake once
+    private bool awakened = false;
+    
     void Awake() {
-        SceneManager.sceneLoaded += LoadScene;
+        if (!awakened) {
+            SceneManager.sceneLoaded += LoadScene;
+            
+            // use AlMightyGlobals to load Safe Mode, Retromode and Fullscreen mode preferences
+            
+            // check if safe mode has a stored preference that is a boolean
+            if (LuaScriptBinder.GetAlMighty(null, "CYFSafeMode") != null
+             && LuaScriptBinder.GetAlMighty(null, "CYFSafeMode").Type.ToString() == "Boolean")
+                ControlPanel.instance.Safe = LuaScriptBinder.GetAlMighty(null, "CYFSafeMode").Boolean;
+            
+            // check if retro mode has a stored preference that is a boolean
+            if (LuaScriptBinder.GetAlMighty(null, "CYFRetroMode") != null
+             && LuaScriptBinder.GetAlMighty(null, "CYFRetroMode").Type.ToString() == "Boolean")
+                retroMode = LuaScriptBinder.GetAlMighty(null, "CYFRetroMode").Boolean;
+            
+            // check if fullscreen mode has a stored preference that is a boolean
+            if (LuaScriptBinder.GetAlMighty(null, "CYFPerfectFullscreen") != null
+             && LuaScriptBinder.GetAlMighty(null, "CYFPerfectFullscreen").Type.ToString() == "Boolean")
+                perfectFullscreen = LuaScriptBinder.GetAlMighty(null, "CYFPerfectFullscreen").Boolean;
+            
+            awakened = true;
+        }
     }
+    
+    public static int fullscreenSwitch = 0;
+    
+    static IEnumerator RepositionWindow() {
+        #if UNITY_STANDALONE_WIN || UNITY_EDITOR
+            yield return new WaitForEndOfFrame();
+            
+            try {
+                Misc.MoveWindowTo((int)(Screen.currentResolution.width/2 - 320), (int)(Screen.currentResolution.height/2 - 240));
+            } catch {}
+        #else
+            yield return 0;
+        #endif
+    }
+    
+    public static void SetFullScreen(bool fullscreen, int newSwitch = 1) {
+        if (perfectFullscreen) {
+            if (!fullscreen)
+                Screen.SetResolution(windowResolution[0], windowResolution[1], false, 0);
+            else
+                Screen.SetResolution(Screen.currentResolution.width, Screen.currentResolution.height, true, 0);
+        } else
+            Screen.SetResolution(windowResolution[0], windowResolution[1], fullscreen, 0);
+        
+        fullscreenSwitch = newSwitch;
+	}
+
+	private static double RoundToNearestEven(double value) {
+		return System.Math.Truncate(value) + (System.Math.Truncate(value) % 2);
+	}
+
+	static IEnumerator ChangeAspectRatio() {
+        yield return new WaitForFixedUpdate();
+        
+		if (!Application.isEditor) {
+			ScreenWidth = (Screen.height / aspectRatio[1]) * aspectRatio[0];
+			Screen.SetResolution((int)RoundToNearestEven(ScreenWidth), Screen.height, Screen.fullScreen, 0);
+		}
+	}
 
     /// <summary>
     /// Control checking, and way more.
     /// </summary>
     void Update () {
-        stopScreenShake = false;
+        if (fullscreenSwitch != 0) {
+            StartCoroutine(ChangeAspectRatio());
+            
+            if (!Screen.fullScreen && fullscreenSwitch == 1)
+                StartCoroutine(RepositionWindow());
+            
+            fullscreenSwitch--;
+        }
+        
+		    stopScreenShake = false;
         if (isInFight)
             frame ++;
         if (SceneManager.GetActiveScene().name == "ModSelect")        lastSceneUnitale = true;
@@ -111,24 +188,11 @@ public class GlobalControls : MonoBehaviour {
         if (!Screen.fullScreen && (Screen.currentResolution.height != 480 || Screen.currentResolution.width != 640))
             Screen.SetResolution(640, 480, false, 0);
         */
-        if (Input.GetKeyDown(KeyCode.F4)) {
-            Screen.fullScreen =!Screen.fullScreen;
-            
-            // move the window to the correct place on screen when the user exits fullscreen! hooray!
-            // yes, this check is correct, even though it appears to check for the wrong value. I don't know why
-            #if UNITY_STANDALONE_WIN || UNITY_EDITOR
-                if (Screen.fullScreen)
-                    StartCoroutine(RepositionScreen());
-            #endif
-        }
-    }
-    
-    IEnumerator RepositionScreen() {
-        yield return new WaitForFixedUpdate();
-        
-        try {
-            Misc.MoveWindowTo((int)(Screen.currentResolution.width/2 - 320), (int)(Screen.currentResolution.height/2 - 240));
-        } catch {}
+        if  (Input.GetKeyDown(KeyCode.F4)        // F4
+          || (Input.GetKeyDown(KeyCode.Return)
+          &&(Input.GetKey(KeyCode.LeftAlt)       // LAlt  + Enter
+          || Input.GetKey(KeyCode.RightAlt))))   // RAlt  + Enter
+			SetFullScreen(!Screen.fullScreen);
     }
 
     void LoadScene(Scene scene, LoadSceneMode mode) {

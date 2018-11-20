@@ -761,7 +761,8 @@ public class EventManager : MonoBehaviour {
 
     //Used to add event states before unloading the map
     public static void SetEventStates() {
-        int id = SceneManager.GetActiveScene().buildIndex;
+        // int id = SceneManager.GetActiveScene().buildIndex;
+        string id = SceneManager.GetActiveScene().name;
         EventOW[] events = (EventOW[])GameObject.FindObjectsOfType(typeof(EventOW));
         //MapDataAnalyser();
 
@@ -817,7 +818,7 @@ public class EventManager : MonoBehaviour {
             else                                          throw new CYFException("\"MusicKept\" and \"NoRandomEncounter\" are boolean values. You can only enter \"true\" or \"false\".");
         }
 
-        foreach (KeyValuePair<int, GameState.MapData> kvp in GlobalControls.GameMapData) {
+        foreach (KeyValuePair<string, GameState.MapData> kvp in GlobalControls.GameMapData) {
             if (kvp.Value.Name == mapName) {
                 GameState.MapData mi = kvp.Value;
                 GlobalControls.GameMapData.Remove(kvp.Key);
@@ -918,10 +919,10 @@ public class EventManager : MonoBehaviour {
     public static void MapDataAnalyser() {
         string str = "MapData = {\n";
         bool once = false, once2 = false;
-        foreach (int id in GlobalControls.GameMapData.Keys) {
+        foreach (string id in GlobalControls.GameMapData.Keys) {
             str += once ? ",\n" : "";
             if (!once) once = true;
-            str += "  id = " + id + " (scene " + System.IO.Path.GetFileNameWithoutExtension(SceneUtility.GetScenePathByBuildIndex(id)) + ") for\n";
+            str += "  scene " + id + " for\n";
             GameState.MapData mi = GlobalControls.GameMapData[id];
             str += "    Name = \"" + mi.Name + "\"\n";
             str += "    Music = \"" + mi.Music + "\"\n";
@@ -947,7 +948,7 @@ public class EventManager : MonoBehaviour {
         print(str);
     }
 
-    public static void GetMapState(MapInfos mi, int id) {
+    public static void GetMapState(MapInfos mi, string id) {
         if (!GlobalControls.GameMapData.ContainsKey(id)) {
             if (GlobalControls.TempGameMapData.ContainsKey(SceneManager.GetActiveScene().name)) {
                 GameState.TempMapData tmd = GlobalControls.TempGameMapData[SceneManager.GetActiveScene().name];

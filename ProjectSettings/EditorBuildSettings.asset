@@ -24,9 +24,6 @@ EditorBuildSettings:
     path: Assets/Scenes/test2.unity
     guid: c103ad422a1e2b844899434ccbb60e2a
   - enabled: 1
-    path: Assets/Scenes/test3.unity
-    guid: e2eaba65d41f9df44976be330f77f1f3
-  - enabled: 1
     path: Assets/Scenes/test4.unity
     guid: 3b343858ba50a2246ac6163b00a8384a
   - enabled: 1
@@ -39,8 +36,8 @@ EditorBuildSettings:
     path: Assets/Scenes/ModSelect.unity
     guid: 07ece637afd80c14ab6c725c0c20242f
   - enabled: 1
-    path: Assets/Scenes/EncounterSelect.unity
-    guid: 1c18690736ce0c44a90b098d2aed0a68
+    path: Assets/Scenes/Options.unity
+    guid: a67f45e3d89aa5743b3a5c9fe7ee5a1a
   - enabled: 1
     path: Assets/Scenes/Battle.unity
     guid: 6087b29e19bd5d64b84b0108a19a9536

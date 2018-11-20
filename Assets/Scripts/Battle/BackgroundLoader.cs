@@ -20,7 +20,7 @@ public class BackgroundLoader : MonoBehaviour {
                 bgImage.color = Color.white;
             }
         } catch {
-            // background failed loading, no need to do anything
+            // Background failed loading, no need to do anything.
             UnitaleUtil.WriteInLogAndDebugger("[WARN]No background file found. Using empty background.");
         }
     }
