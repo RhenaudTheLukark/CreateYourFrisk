@@ -35,6 +35,11 @@ public class MusicManager {
     }
 
     public static void LoadFile(string name) {
+        if (name == null) {
+            UnitaleUtil.WriteInLogAndDebugger("[WARN]Attempted to load a nil value as an Audio file.");
+            return;
+        }
+        
         src.Stop();
         src.clip = AudioClipRegistry.GetMusic(name);
         filename = "music:" + name.ToLower();
@@ -43,6 +48,11 @@ public class MusicManager {
     }
 
     public static void PlaySound(string name, float volume = 0.65f) {
+        if (name == null) {
+            UnitaleUtil.WriteInLogAndDebugger("[WARN]Attempted to load a nil value as a sound.");
+            return;
+        }
+        
         try { UnitaleUtil.PlaySound("MusicPlaySound", AudioClipRegistry.GetSound(name), volume); }
         catch {  }
     }

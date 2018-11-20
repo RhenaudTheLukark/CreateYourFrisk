@@ -102,7 +102,7 @@ it's w3c valid, at least
                 <span class="term">name</span> as a string.<br>For example, playing the sound <span class="term">dogsecret</span> in an audio channel 
                 and using this function on that channel would return the string <span class="term">"sound:dogsecret"</span>.</li><br>
                 <li><span class="number"></span> <span class="term">NewAudio.GetTotalTime(<span class="string"></span> name)</span> - Gets the length of time in seconds that an audio channel <span class="term">name</span>'s most recently played audio lasts for.</li><br>
-                <li><span class="number"></span> <span class="term">NewAudio.GetCurrentTime(<span class="string"></span> name)</span> - Get the current play position of the current audio of this channel
+                <li><span class="number"></span> <span class="term">NewAudio.GetPlayTime(<span class="string"></span> name)</span> or <span class="number"></span> <span class="term">NewAudio.GetCurrentTime(<span class="string"></span> name)</span> - Get the current play position of the current audio of this channel
                 in seconds.</li><br>
                 <li><span class="term">NewAudio.PlayMusic(<span class="string"></span> name, <span class="string"></span> music, 
                 <span class="boolean"></span> loop = false, <span class="number"></span> volume = 1)</span> - Plays the music 
@@ -139,8 +139,6 @@ it's w3c valid, at least
                 <li><span class="term">NewAudio.Unpause(<span class="string"></span> name)</span> - Unpauses the audio in the channel <span class="term">name</span>.</li><br>
                 <li><span class="term">NewAudio.SetPlayTime(<span class="string"></span> name, <span class="number"></span> value)</span> - Sets the track position of the audio channel
                 <span class="term">name</span>'s audio, in seconds.</li><br>
-                <li><span class="number"></span> <span class="term">NewAudio.GetPlayTime(<span class="string"></span> name)</span> - Gets the track position of the audio channel <span class="term">name</span>'s 
-                audio, in seconds.</li><br>
                 <li><span class="boolean"></span> <span class="term">NewAudio.isStopped(<span class="string"></span> name)</span> - Checks if the audio channel <span class="term">name</span> is stopped.</li><br>
                 <li><span class="term">NewAudio.StopAll()</span> - Stops all audio channels' audio.</li><br>
                 <li><span class="term">NewAudio.PauseAll()</span> - Pauses all the audio channels' audio.</li><br>

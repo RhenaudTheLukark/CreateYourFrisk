@@ -20,7 +20,7 @@ public class GameState {
     public Dictionary<string, double> playerVariablesNum = new Dictionary<string, double>();
     public Dictionary<string, bool> playerVariablesBool = new Dictionary<string, bool>();
     public string lastScene = null;
-    public Dictionary<int, MapData> mapInfos = new Dictionary<int, MapData>();
+    public Dictionary<string, MapData> mapInfos = new Dictionary<string, MapData>();
     public Dictionary<string, TempMapData> tempMapInfos = new Dictionary<string, TempMapData>();
     public List<string> inventory = new List<string>();
 

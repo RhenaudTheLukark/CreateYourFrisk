@@ -139,7 +139,7 @@ public static class LuaScriptBinder {
 
     public static string GetState() {
         try {
-            return (UIController.instance.frozenState != UIController.UIState.NONE) ? UIController.instance.frozenState.ToString() : UIController.instance.state.ToString();
+            return (UIController.instance.frozenState != UIController.UIState.PAUSE) ? UIController.instance.frozenState.ToString() : UIController.instance.state.ToString();
             }
         catch {
             return "NONE (error)";

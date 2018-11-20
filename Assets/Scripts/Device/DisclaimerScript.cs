@@ -57,6 +57,16 @@ public class DisclaimerScript : MonoBehaviour {
     /// Checks if you pressed one of the things the disclaimer tells you to. It's pretty straightforward.
     /// </summary>
     private void Update() {
+        // try to hook on to the game window when the user interacts
+        #if UNITY_STANDALONE_WIN || UNITY_EDITOR
+            if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.O)
+              || (Input.GetKeyDown(KeyCode.F4)        // F4
+              || (Input.GetKeyDown(KeyCode.Return)
+              &&(Input.GetKey(KeyCode.LeftAlt)        // LAlt  + Enter
+              || Input.GetKey(KeyCode.RightAlt)))))   // RAlt  + Enter
+                Misc.RetargetWindow();
+        #endif
+        
         if (Input.GetKeyDown(KeyCode.O)) {
             StaticInits.MODFOLDER = StaticInits.EDITOR_MODFOLDER;
             StaticInits.Initialized = false;

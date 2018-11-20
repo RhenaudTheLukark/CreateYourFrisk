@@ -326,7 +326,9 @@ public class TextManager : MonoBehaviour {
                     DestroyText();
                     currentLine = line;
                     currentX = self.position.x + offset.x;
-                    currentY = self.position.y + offset.y;// - Charset.LineSpacing;
+                    currentY = self.position.y + offset.y;
+                    if (GetType() != typeof(LuaTextManager))
+                        currentY -= Charset.LineSpacing;
                     /*if (GetType() == typeof(LuaTextManager))
                         print("currentY from ShowLine (" + textQueue[currentLine].Text + ") = " + self.position.y + " + " + offset.y + " - " + Charset.LineSpacing + " = " + currentY);*/
                     currentCharacter = 0;
@@ -968,6 +970,10 @@ public class TextManager : MonoBehaviour {
                     if (!skipFromPlayer)
                         displayImmediate = true;
                 }
+                break;
+            
+            case "noskip":
+                if (args.Length == 0)      currentSkippable = false;
                 break;
 
             case "font":

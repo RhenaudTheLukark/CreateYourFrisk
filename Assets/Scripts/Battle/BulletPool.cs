@@ -12,7 +12,7 @@ public class BulletPool : MonoBehaviour {
     //private static int currentProjectile = 0;
 
     /// <summary>
-    /// Initialize the pool with POOLSIZE Projectiles ready to go
+    /// Initialize the pool with POOLSIZE Projectiles ready to go.
     /// </summary>
     private void Start() {
         instance = this;
@@ -29,7 +29,7 @@ public class BulletPool : MonoBehaviour {
     private void createPooledBullet() {
         Projectile lp = Instantiate(bPrefab);
         lp.transform.SetParent(transform);
-        lp.GetComponent<RectTransform>().position = new Vector2(-999, -999); // move offscreen to be safe, but shouldn't be necessary
+        lp.GetComponent<RectTransform>().position = new Vector2(-999, -999); // Move offscreen to be safe, but shouldn't be necessary.
         pool.Enqueue(lp);
         lp.gameObject.SetActive(false);
     }

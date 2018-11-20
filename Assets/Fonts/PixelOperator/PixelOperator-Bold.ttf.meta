@@ -14,7 +14,7 @@ TrueTypeFontImporter:
   - Pixel Operator
   fallbackFontReferences: []
   customCharacters: 
-  fontRenderingMode: 0
+  fontRenderingMode: 2
   ascentCalculationMode: 1
   userData: 
   assetBundleName: 

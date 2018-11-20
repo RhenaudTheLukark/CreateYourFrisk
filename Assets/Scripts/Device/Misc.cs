@@ -17,7 +17,11 @@ public class Misc {
 
     public bool FullScreen {
         get { return Screen.fullScreen; }
-        set { Screen.fullScreen = value; }
+        set {
+            Screen.fullScreen = value;
+            
+            GlobalControls.SetFullScreen(value, 2);
+        }
     }
 
     public static int ScreenHeight {
@@ -57,7 +61,9 @@ public class Misc {
     #if UNITY_STANDALONE_WIN || UNITY_EDITOR
         [DllImport("user32.dll")]
         private static extern int GetActiveWindow(); 
-        private static int window = GetActiveWindow();
+        public static int window = GetActiveWindow();
+        
+        public static void RetargetWindow() { window = GetActiveWindow(); }
         
         [DllImport("user32.dll")]
         public static extern int FindWindow(string className, string windowName);
