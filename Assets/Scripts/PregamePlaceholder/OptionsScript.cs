@@ -183,7 +183,7 @@ public class OptionsScript : MonoBehaviour {
                          + "Your save file is located at:\n\n";
                 if (!GlobalControls.crate)
                     // return response + Application.persistentDataPath + "/save.gd</size></b>";
-                    return response + Application.persistentDataPath + "<b><size='14'>" + "/save.gd</size></b>";
+                    return response + "<b><size='14'>" + Application.persistentDataPath + "/save.gd</size></b>";
                 else
                     return Temmify.Convert(response) + "<b><size='14'>" + Application.persistentDataPath + "/save.gd</size></b>";
             case "Safe":
