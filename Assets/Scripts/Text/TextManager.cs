@@ -619,8 +619,8 @@ public class TextManager : MonoBehaviour {
                     string command = ParseCommandInline(currentText, ref i);
                     if (command != null && !LateStartWaiting) {
                         if (commandList.Contains(command.Split(':')[0])) {
-                            // Work-around for [instant]/[instant:allowcommand]
-                            if ((command == "instant" || command == "instant:allowcommand") && !GlobalControls.retroMode) {
+                            // Work-around for [noskip], [instant] and [instant:allowcommand]
+                            if (command == "noskip" || (!GlobalControls.retroMode && (command == "instant" || command == "instant:allowcommand"))) {
                                 // Copy all text before the command
                                 string precedingText = currentText.Substring(0, i - (command.Length + 1));
                                 
@@ -634,31 +634,11 @@ public class TextManager : MonoBehaviour {
                                     }
                                 }
                                 
-                                // Confirm that [instant]/[instant:allowcommand] is at the beginning!
+                                // Confirm that our command is at the beginning!
                                 if (precedingText.Length == 0)
                                     PreCreateControlCommand(command);
                             } else
                                 PreCreateControlCommand(command);
-                            
-                            // Work-around for noskip
-                            if (command == "noskip") {
-                                // Copy all text before the command
-                                string precedingText = currentText.Substring(0, i - (command.Length + 1));
-                                
-                                // Remove all commands
-                                while (precedingText.IndexOf('[') > -1) {
-                                    for (int j = 0; j < precedingText.Length; j++) {
-                                        if (precedingText[j] == ']') {
-                                            precedingText = precedingText.Replace(precedingText.Substring(0, j + 1), "");
-                                            break;
-                                        }
-                                    }
-                                }
-                                
-                                // Confirm that the effects of noskip should be applied!
-                                if (precedingText.Length == 0)
-                                    currentSkippable = false;
-                            }
                             
                             continue;
                         } else
@@ -1040,7 +1020,7 @@ public class TextManager : MonoBehaviour {
                 break;
 
             case "w":
-                if (!instantCommand)
+                if (!instantCommand && !displayImmediate)
                     letterTimer = timePerLetter - (singleFrameTiming * ParseUtil.GetInt(cmds[1]));
                 break;
 
