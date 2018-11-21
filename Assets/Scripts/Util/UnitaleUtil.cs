@@ -150,7 +150,6 @@ public static class UnitaleUtil {
                         }
                         str += txtmgr.textQueue[txtmgr.currentLine].Text[j];
                     }
-                    i--;
                     if (str.Split(':')[0] == "charspacing")
                         hSpacing = ParseUtil.GetFloat(str.Split(':')[1]);
                     break;
