@@ -245,7 +245,7 @@ public class OptionsScript : MonoBehaviour {
                     hoverItem = "ClearSave";
                 // Safe
                 else if ((Input.mousePosition.y / Screen.height) * 480 <= 300 && (Input.mousePosition.y / Screen.height) * 480 > 260)
-                    hoverItem = "ResetAG";
+                    hoverItem = "Safe";
                 // Retro
                 else if ((Input.mousePosition.y / Screen.height) * 480 <= 260 && (Input.mousePosition.y / Screen.height) * 480 > 220)
                     hoverItem = "Retro";
