@@ -143,13 +143,26 @@ public static class UnitaleUtil {
             switch (txtmgr.textQueue[txtmgr.currentLine].Text[i]) {
                 case '[':
                     string str = "";
+                    bool failSafe = false;
                     for (int j = i + 1; j < txtmgr.textQueue[txtmgr.currentLine].Text.Length; j++) {
                         if (txtmgr.textQueue[txtmgr.currentLine].Text[j] == ']') {
                             i = j + 1;
                             break;
                         }
                         str += txtmgr.textQueue[txtmgr.currentLine].Text[j];
+                        
+                        // unclosed [ has been detected
+                        if (j == txtmgr.textQueue[txtmgr.currentLine].Text.Length - 1) {
+                            failSafe = true;
+                            break;
+                        }
                     }
+                    
+                    // used to protect against unclosed open brackets
+                    if (failSafe)
+                        break;
+                    
+                    i--;
                     if (str.Split(':')[0] == "charspacing")
                         hSpacing = ParseUtil.GetFloat(str.Split(':')[1]);
                     break;
