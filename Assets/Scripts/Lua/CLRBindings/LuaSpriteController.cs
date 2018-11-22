@@ -446,7 +446,7 @@ public class LuaSpriteController {
         for (int i = 0; i < spriteNames.Length; i++) {
             // at least one sprite in the sequence was unable to be loaded
             if (SpriteRegistry.Get(spriteNames[i]) == null)
-                throw new CYFException("sprite.SetAnimation: Failed to load sprite with the name\" " + spriteNames[i] + "\". Are you sure it is spelled correctly?");
+                throw new CYFException("sprite.SetAnimation: Failed to load sprite with the name \"" + spriteNames[i] + "\". Are you sure it is spelled correctly?");
             
             kfArray[i] = new Keyframe(SpriteRegistry.Get(spriteNames[i]), spriteNames[i].ToLower());
         }
