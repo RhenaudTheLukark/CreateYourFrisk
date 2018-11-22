@@ -13,7 +13,7 @@ public static class FileLoader {
         
         // Mac compatibility
         if (Application.platform == RuntimePlatform.OSXPlayer)
-            rootInfo = rootInfo.Parent.Parent;
+            rootInfo = rootInfo.Parent;
         
         string SysDepDataRoot = rootInfo.FullName;
         
