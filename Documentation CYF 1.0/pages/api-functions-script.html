@@ -85,11 +85,13 @@ it's w3c valid, at least
             <p>
                 <br><span class="function">The Script object (and the Encounter object) [varies]</span>
                 Script objects are a bit of a special case. They're used to refer to other scripts that were loaded by
-                the engine itself. In the encounter script, the <span class="term">enemies</span> table is filled with Script objects after
+                the engine itself.
+                <br><br>
+                In the encounter script, the <span class="term">enemies</span> table is filled with Script objects after
                 the encounter starts, <span class="CYF"></span> and the <span class="term">Wave</span> table is filled with Script objects when entering the 
-                state <span class="term">DEFENDING</span>.<br>
-                The Encounter object is also a script object that refers to the current encounter, and is accessible from anywhere except from the Encounter 
-                itself. Take note of the different way of accessing variables.
+                state <span class="term">DEFENDING</span>.
+                <br><br>
+                The variable <span class="term">Encounter</span> is also a script object that refers to the current encounter, and is <b>accessible from anywhere except from the Encounter itself</b>. <i>Do not enter the name of your encounter file</i>, it will always just be <span class="term">Encounter</span>.
             </p>
             <ul>
                 <li><span class="term">script.GetVar(<span class="string"></span> variable_name)</span> - gets <span class="term">variable_name</span> from the script.</li><br>
@@ -98,9 +100,18 @@ it's w3c valid, at least
                 <li><span class="term">script[<span class="string"></span> variable_name] = value</span> - same as the above.</li><br>
                 <li><span class="term">script.Call(<span class="string"></span> function_name)</span> - runs <span class="term">function_name</span> from within the target script.</li><br>
                 <li><span class="term">script.Call(<span class="string"></span> function_name, argument)</span> - runs <span class="term">function_name</span>
-                from within the target script with one argument.<br><br>
-                <span style="color:#ff0000"><b>NOTE:</b> You can only call another script's function with one argument.<br>
-                If you want to use multiple, see the last example.</span></li><br>
+                from within the target script with one argument.</li><br>
+                <li><span class="CYF"></span> <span class="term">script.Call(<span class="string"></span> function_name, <span class="luatable">any types</span> arguments)</span> - runs <span class="term">function_name</span>
+                from within the target script with <font color="#fff">all arguments in <span class="term">arguments</span> as the arguments</font>.
+                <br><br>
+                So, for example, you can call an encounter function <span class="term">TakeTwoArguments</span> with two arguments by using:
+                <div class="code-container">
+                <pre class="brush: lua;">
+                Encounter.Call("TakeTwoArguments", {"argument 1!", "argument 2!"})
+                </pre>
+                </div>
+                and the two arguments given can be any variable types!
+                </li>
             </ul>
             <hr>
             <p>
@@ -132,34 +143,6 @@ it's w3c valid, at least
                 spriteToDust.Dust(true, true) -- see Sprites & Animation.
                 -- alternatively:
                 Encounter["torso"].Dust(true, true)
-                </pre>
-                </div>
-                <br>
-                <hr>
-                <h4>Advanced usage of Call</h4>
-                Here is a way to call a function in another script with multiple arguments.<br>
-                This is mainly <span style="color:#ff0000">for advanced users</span>, so ignore this unless you know what's going on.<br><br>
-                <span class="function">Monster (source) file:</span>
-                <div class="code-container">
-                <pre class="brush: lua;">
-                -- I want to call a function in the ENCOUNTER file with 2 arguments
-                -- To do this, I need to create a table in the target file and use it as Call's 2nd argument
-                -- (The table MUST be created in the target file, otherwise it becomes nil)
-                Encounter["tempTable"] = {"It", "works!"}
-                Encounter.Call("MyFunction", Encounter["tempTable"])
-                </pre>
-                </div>
-                <span class="function">Encounter (target) file:</span>
-                <div class="code-container">
-                <pre class="brush: lua;">
-                function MyFunction(table)
-                    -- extract the variables from the table
-                    local var1 = table[1]
-                    local var2 = table[2]
-                    -- now, do with them what you please!
-                    
-                    DEBUG(var1 .. " " .. var2) -- output: "It works!"
-                end
                 </pre>
                 </div>
             </p>
