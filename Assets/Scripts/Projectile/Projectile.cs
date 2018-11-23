@@ -121,11 +121,9 @@ public abstract class Projectile : MonoBehaviour {
     /// </summary>
     public virtual void UpdateHitRect() {
         if (ppcollision && ppchanged || GlobalControls.ppcollision &&!ppchanged) {
-            float cst = ctrl.sprite.rotation * Mathf.Deg2Rad,
-                  realX = self.sizeDelta.x * Mathf.Abs(Mathf.Cos(cst)) + self.sizeDelta.y * Mathf.Abs(Mathf.Sin(cst)),
-                  realY = self.sizeDelta.y * Mathf.Abs(Mathf.Cos(cst)) + self.sizeDelta.x * Mathf.Abs(Mathf.Sin(cst));
-            selfAbs.width = Mathf.CeilToInt(realX);
-            selfAbs.height = Mathf.CeilToInt(realY);
+            float cst = ctrl.sprite.rotation * Mathf.Deg2Rad;
+            selfAbs.width = Mathf.CeilToInt(self.sizeDelta.x * Mathf.Abs(Mathf.Cos(cst)) + self.sizeDelta.y * Mathf.Abs(Mathf.Sin(cst)));
+            selfAbs.height = Mathf.CeilToInt(self.sizeDelta.y * Mathf.Abs(Mathf.Cos(cst)) + self.sizeDelta.x * Mathf.Abs(Mathf.Sin(cst)));
         } else {
             selfAbs.width = self.sizeDelta.x;
             selfAbs.height = self.sizeDelta.y;
