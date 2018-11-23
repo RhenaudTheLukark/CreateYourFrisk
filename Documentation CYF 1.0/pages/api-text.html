@@ -253,13 +253,21 @@ it's w3c valid, at least
             
             <p class="exblock">
                 <br><span class="function">[w:x]</span>
-                The wait command. This will pause your textbox for x frames.
+                The wait command. Pauses your textbox temporarily based on the number you enter.
+                <br><br>
+                Technically: This will pause the textbox for <span class="term">x * 4</span> in-game frames.<br>
+                Calling <span class="term">[w:1]</span> will freeze the textbox for 4 in-game frames.<br>
+                <span class="term">[w:4]</span> is 16 in-game frames, <span class="term">[w:10]</span> is 40, and so on.
             </p>
 
             <p class="exblock">
                 <br><span class="function">[waitall:x]</span>
-                Like the wait command, but applies to all letters after this command. It resets per dialogue. Useful for
-                slow text.
+                Makes all letters after this command take <span class="term">x</span> times as long to type out.
+                (slightly different from <span class="term">[w:x]</span>)
+                <br><br>
+                Use <span class="term">[waitall:1]</span> to reset text to its default speed.
+                <br><br>
+                <b style="color:#fff">Overrides <span class="term">[speed:x]</span>.</b>
             </p>
 
             <p class="exblock">
@@ -328,7 +336,14 @@ end</pre>
             </div>
             <p class="exblock">
                 <br><span class="function"><span class="CYF"></span>[speed:x]</span>
-                Makes the text box show x characters per frame instead of the usual 1 per frame.
+                Makes the text handler print <span class="term">x</span> characters every 4 frames.<br>
+                The default text speed in CYF (<span class="term">[speed:1]</span>) is 1 character every 4 frames.
+                <br><br>
+                For example, <span class="term">[speed:4]</span> will type text at 4x the regular speed: 4 characters every 4 frames, or 1 per frame.
+                <br><br>
+                <b>* Supports fractional numbers!</b> <span class="term">[speed:0.25]</span> writes text at 1/4th the regular speed, for instance.
+                <br><br>
+                <b style="color:#fff">Overrides <span class="term">[waitall:x]</span>.</b>
             </p>
            
             <p class="exblock">

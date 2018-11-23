@@ -55,7 +55,7 @@ public class TextManager : MonoBehaviour {
     private string[] mugshotList = null;
     private string finalMugshot;
     private float mugshotTimer;
-    private int letterSpeed = 1;
+    // private int letterSpeed = 1;
     private int letterOnceValue = 0;
     private KeyCode waitingChar = KeyCode.None;
 
@@ -66,7 +66,7 @@ public class TextManager : MonoBehaviour {
 
     private float letterTimer = 0.0f;
     private float timePerLetter;
-    private float singleFrameTiming = 1.0f / 30;
+    private float singleFrameTiming = 1.0f / 20;
 
     public ScriptWrapper caller;
 
@@ -336,7 +336,7 @@ public class TextManager : MonoBehaviour {
                     /*letterEffect = "none";
                     textEffect = null;
                     letterIntensity = 0;*/
-                    letterSpeed = 1;
+                    // letterSpeed = 1;
                     displayImmediate = textQueue[line].ShowImmediate;
                     SpawnText();
                     //if (!overworld)
@@ -805,7 +805,8 @@ public class TextManager : MonoBehaviour {
             else
                 return;
         }
-
+        
+        /*
         letterTimer += Time.deltaTime;
         if ((letterTimer > timePerLetter || firstChar) && !LineComplete()) {
             firstChar = false;
@@ -821,6 +822,30 @@ public class TextManager : MonoBehaviour {
                         return;
                     }
         }
+        */
+        
+        letterTimer += Time.deltaTime;
+        if (((letterTimer >= timePerLetter) || firstChar) && !LineComplete() && timePerLetter > 0f) {
+            int repeats = (int)Mathf.Floor(letterTimer / timePerLetter);
+            
+            bool soundPlayed = false;
+            int lastLetter = -1;
+            
+            for (int i = 0; i < repeats; i++) {
+                if (!HandleShowLetter(ref soundPlayed, ref lastLetter)) {
+                    HandleShowLettersOnce(ref soundPlayed, ref lastLetter);
+                    return;
+                }
+                
+                if (!firstChar)
+                    letterTimer -= timePerLetter;
+                else {
+                    firstChar = false;
+                    return;
+                }
+            }
+        }
+        
         noSkip1stFrame = false;
     }
 
@@ -1030,7 +1055,16 @@ public class TextManager : MonoBehaviour {
             case "finished":    autoSkipThis = true;                                           break;
             case "nextthisnow": autoSkip = true;                                               break;
             case "noskipatall": blockSkip = true;                                              break;
-            case "speed":       letterSpeed = Int32.Parse(args[0]);                            break;
+            //case "speed":       letterSpeed = Int32.Parse(args[0]);                            break;
+            case "speed":
+                //you can only set text speed to a number >= 0
+                float newSpeedValue = float.Parse(args[0]);
+                // protect against divide-by-zero errors
+                if (newSpeedValue > 0f)
+                    timePerLetter = singleFrameTiming / newSpeedValue;
+                else if (newSpeedValue == 0f)
+                    timePerLetter = 0f;
+                break;
 
             case "letters":
                 if (!instantCommand)
