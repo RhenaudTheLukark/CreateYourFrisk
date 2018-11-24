@@ -1293,6 +1293,21 @@ public class UIController : MonoBehaviour {
             rts[indexText].SetParent(rts[indexDeb]);*/
         //}
         
+        // If retromode is enabled, set the inventory to the one with TESTDOGs (can be overridden)
+        if (GlobalControls.retroMode && GlobalControls.modDev) {
+            // Set the in-game names of these items to TestDogN instead of DOGTESTN
+            for (int i = 1; i <= 7; i++)
+                Inventory.NametoShortName.Add("DOGTEST" + i, "TestDog" + i);
+            
+            Inventory.luaInventory.AddCustomItems(new string[] {"DOGTEST1", "DOGTEST2", "DOGTEST3", "DOGTEST4", "DOGTEST5", "DOGTEST6", "DOGTEST7"},
+                                           new int[] {3, 3, 3, 3, 3, 3, 3});
+            Inventory.luaInventory.SetInventory(new string[] {"DOGTEST1", "DOGTEST2", "DOGTEST3", "DOGTEST4", "DOGTEST5", "DOGTEST6", "DOGTEST7"});
+            
+            // Undo our changes to this table!
+            for (int i = 1; i <= 7; i++)
+                Inventory.NametoShortName.Remove("DOGTEST" + i);
+        }
+        
         StaticInits.SendLoaded();
         // GameObject.Destroy(GameObject.Find("HideEncounter"));
         psContainer = new GameObject("psContainer");

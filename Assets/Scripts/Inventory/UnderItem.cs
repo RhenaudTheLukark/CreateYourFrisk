@@ -12,7 +12,11 @@ public class UnderItem {
         foreach (string str in Inventory.addedItems) {
             if (str.ToLower() == Name.ToLower()) {
                 this.Name = Name;
-                ShortName = Name;
+                string Short = "";
+                if (!Inventory.NametoShortName.TryGetValue(Name, out Short))
+                    ShortName = Name;
+                else
+                    ShortName = Short;
                 this.Type = type;
                 return;
             }
