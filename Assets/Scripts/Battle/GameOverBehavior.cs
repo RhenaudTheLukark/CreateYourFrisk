@@ -181,9 +181,11 @@ public class GameOverBehavior : MonoBehaviour {
             SpriteRegistry.GENERIC_SPRITE_PREFAB = Resources.Load<Image>("Prefabs/generic_sprite");
         heartShardPrefab = SpriteRegistry.GENERIC_SPRITE_PREFAB.gameObject;
         reviveText = GameObject.Find("ReviveText").GetComponent<TextManager>();
+        reviveText.SetCaller(LuaEnemyEncounter.script);
         reviveFade = GameObject.Find("ReviveFade").GetComponent<Image>();
         reviveFade.transform.SetAsLastSibling();
         gameOverTxt = GameObject.Find("TextParent").GetComponent<TextManager>();
+        gameOverTxt.SetCaller(LuaEnemyEncounter.script);
         gameOverImage = GameObject.Find("GameOver").GetComponent<Image>();
         if (UnitaleUtil.IsOverworld) {
             heartPos = new Vector3(GetComponent<RectTransform>().position.x, GetComponent<RectTransform>().position.y + GetComponent<RectTransform>().sizeDelta.y / 2, GetComponent<RectTransform>().position.z);

@@ -327,7 +327,8 @@ public class TextManager : MonoBehaviour {
                     currentLine = line;
                     currentX = self.position.x + offset.x;
                     currentY = self.position.y + offset.y;
-                    if (GetType() != typeof(LuaTextManager))
+                    // allow Game Over fonts to enjoy the fixed text positioning, too!
+                    if (GetType() != typeof(LuaTextManager) && this.gameObject.name != "TextParent" && this.gameObject.name != "ReviveText")
                         currentY -= Charset.LineSpacing;
                     /*if (GetType() == typeof(LuaTextManager))
                         print("currentY from ShowLine (" + textQueue[currentLine].Text + ") = " + self.position.y + " + " + offset.y + " - " + Charset.LineSpacing + " = " + currentY);*/
@@ -687,7 +688,8 @@ public class TextManager : MonoBehaviour {
 
             letterReferences[i] = ltrImg;
             
-            if (GetType() == typeof(LuaTextManager)) {
+            // allow Game Over fonts to enjoy the fixed text positioning, too!
+            if (GetType() == typeof(LuaTextManager) || this.gameObject.name == "TextParent" || this.gameObject.name == "ReviveText") {
                 float diff = (Charset.Letters[currentText[i]].border.w - Charset.Letters[currentText[i]].border.y);
                 // diff += Charset.LineSpacing;
                 ltrRect.localPosition = new Vector3(currentX - self.position.x - .9f, (currentY - self.position.y) + diff + .1f, 0);
