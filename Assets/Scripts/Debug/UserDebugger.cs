@@ -33,20 +33,19 @@ public class UserDebugger : MonoBehaviour{
     }
 
     public void UserWriteLine(string line, bool debug = true) {
+        line = line ?? "nil";
+        foreach (string str in line.Split('\n'))
+            WriteLine(str);
+        Debug.Log("Frame " + GlobalControls.frame + ": " + line);
         // activation of the debug window if you're printing to it for the first time
         if (!firstActive) {
             gameObject.SetActive(true);
-            transform.SetAsLastSibling();
             try {
                 Camera.main.GetComponent<FPSDisplay>().enabled = true;
             } catch { }
             GameObject.Find("Text").transform.SetParent(transform);
             firstActive = true;
         }
-        line = line ?? "nil";
-        Debug.Log("Frame " + GlobalControls.frame + ": " + line);
-        foreach (string str in line.Split('\n'))
-            WriteLine(str);
         transform.SetAsLastSibling();
     }
 
