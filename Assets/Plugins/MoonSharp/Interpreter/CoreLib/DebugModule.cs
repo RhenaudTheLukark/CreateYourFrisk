@@ -339,7 +339,7 @@ namespace MoonSharp.Interpreter.CoreLib
 					string source = wi.Value.Type == DataType.Function ? executionContext.GetScript().GetSourceCode(executionContext.CallingLocation.SourceIdx).Name : "[C]";
 					vt.Table.Set("source", DynValue.NewString("=" + source));
 					vt.Table.Set("short_src", DynValue.NewString(source.Length >= 60 ? source.Substring(0, 60) : source));
-					vt.Table.Set("what", DynValue.NewString(wi.Name == null ? "main" : wi.Value.Type == DataType.Function ? "C" : "Lua"));
+					vt.Table.Set("what", DynValue.NewString(wi.Name == null ? "main" : wi.Value.Type == DataType.Function ? "Lua" : "C"));
 				}
 				if (what.Contains("l"))
 				{
