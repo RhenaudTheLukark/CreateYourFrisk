@@ -57,6 +57,7 @@ public static class SaveLoad {
             return true;
         } else {
             Debug.Log("There's no save to load.");
+            savedGame = null;
             return false;
         }
     }
