@@ -37,7 +37,17 @@ public class LuaArenaStatus {
         if (UIController.instance.GetState() == UIController.UIState.DEFENDING) ArenaManager.instance.ResizeImmediate(w, h);
         else                                                                    UnitaleUtil.DisplayLuaError("NOT THE WAVE SCRIPT", "sorry but pls don't");
     }
-
+    
+    public void Hide() {
+        if (UIController.instance.GetState() == UIController.UIState.DEFENDING) ArenaManager.instance.Hide();
+        else                                                                    UnitaleUtil.DisplayLuaError("NOT THE WAVE SCRIPT", "sorry but pls don't");
+    }
+    
+    public void Show() {
+        if (UIController.instance.GetState() == UIController.UIState.DEFENDING) ArenaManager.instance.Show();
+        else                                                                    UnitaleUtil.DisplayLuaError("NOT THE WAVE SCRIPT", "sorry but pls don't");
+    }
+    
     public void Move(float x, float y, bool movePlayer = true, bool immediate = false) {
         if (UIController.instance.GetState() == UIController.UIState.DEFENDING) {
             if (immediate) ArenaManager.instance.MoveImmediate(x, y, movePlayer);
