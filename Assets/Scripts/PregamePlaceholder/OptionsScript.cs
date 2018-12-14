@@ -233,7 +233,7 @@ public class OptionsScript : MonoBehaviour {
             // try to find which button the player is hovering over
             string hoverItem = "";
             // if the player is within the range of the buttons
-            if ((Input.mousePosition.x / Screen.width) * 640 >= 40 && (Input.mousePosition.x / Screen.width) * 640 <= 290) {
+            if ((Input.mousePosition.x / Screen.width) * 640 >= 40 && (Input.mousePosition.x / Screen.width) * 640 <= 300) {
                 // ResetRG
                 if      ((Input.mousePosition.y / Screen.height) * 480 <= 420 && (Input.mousePosition.y / Screen.height) * 480 > 380)
                     hoverItem = "ResetRG";
