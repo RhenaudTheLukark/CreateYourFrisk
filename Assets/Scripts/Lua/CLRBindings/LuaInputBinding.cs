@@ -19,9 +19,9 @@ public class LuaInputBinding {
         } catch (Exception) { throw new CYFException("Input.GetKey(): The key \"" + Key + "\" doesn't exist."); }
     }
 
-    public int MousePosX { get { return (int)Input.mousePosition.x; } }
+    public int MousePosX { get { return (int)((Input.mousePosition.x /  Screen.width) * 640); } }
 
-    public int MousePosY { get { return (int)Input.mousePosition.y; } }
+    public int MousePosY { get { return (int)((Input.mousePosition.y / Screen.height) * 480); } }
 
     public bool isMouseInWindow {
         get {
