@@ -48,6 +48,9 @@ public class LuaSpriteController {
             return val;
         }
         set {
+            if (img.gameObject.name == "player" && !GlobalControls.retroMode)
+                throw new CYFException("You can not move the player using Player.sprite.x.\nInstead, use Player.Move, Player.MoveTo, or Player.MoveToAbs.");
+            
             if (img.transform.parent.name == "SpritePivot")
                 img.transform.parent.localPosition = new Vector3(value, img.transform.parent.localPosition.y, img.transform.parent.localPosition.z) - (Vector3)img.GetComponent<RectTransform>().anchoredPosition;
             else
@@ -65,6 +68,9 @@ public class LuaSpriteController {
             return val;
         }
         set {
+            if (img.gameObject.name == "player" && !GlobalControls.retroMode)
+                throw new CYFException("You can not move the player using Player.sprite.y.\nInstead, use Player.Move, Player.MoveTo, or Player.MoveToAbs.");
+            
             if (img.transform.parent.name == "SpritePivot")
                 img.transform.parent.localPosition = new Vector3(img.transform.parent.localPosition.x, value, img.transform.parent.localPosition.z) - (Vector3)img.GetComponent<RectTransform>().anchoredPosition;
             else
@@ -85,6 +91,9 @@ public class LuaSpriteController {
     public float absx {
         get { return GetTarget().position.x; }
         set {
+            if (img.gameObject.name == "player" && !GlobalControls.retroMode)
+                throw new CYFException("You can not move the player using Player.sprite.absx.\nInstead, use Player.Move, Player.MoveTo, or Player.MoveToAbs.");
+            
             Transform target = GetTarget();
             target.position = new Vector3(value, target.position.y, target.position.z);
         }
@@ -94,6 +103,9 @@ public class LuaSpriteController {
     public float absy {
         get { return GetTarget().position.y; }
         set {
+            if (img.gameObject.name == "player" && !GlobalControls.retroMode)
+                throw new CYFException("You can not move the player using Player.sprite.absx.\nInstead, use Player.Move, Player.MoveTo, or Player.MoveToAbs.");
+            
             Transform target = GetTarget();
             target.position = new Vector3(target.position.x, value, target.position.z);
         }
@@ -298,6 +310,7 @@ public class LuaSpriteController {
         // You can't get or set the layer on an enemy sprite
         get {
             Transform target = GetTarget();
+            if (img.gameObject.name == "player" && target.parent.name == "Canvas") return "none";
             if (tag == "bubble")                                              return "none";
             if (tag == "projectile" && !target.parent.name.Contains("Layer")) return "BulletPool";
             if (tag == "enemy" && !target.parent.name.Contains("Layer"))      return "specialEnemyLayer";
@@ -372,6 +385,9 @@ public class LuaSpriteController {
         if (tag == "bubble") {
             UnitaleUtil.WriteInLogAndDebugger("sprite.SetParent(): bubbles' parent can't be changed.");
             return;
+        } else if (img.gameObject.name == "player" && !GlobalControls.retroMode) {
+            UnitaleUtil.WriteInLogAndDebugger("sprite.SetParent(): the Player's parent can't be changed.");
+            return;
         }
         try {
             GetTarget().SetParent(parent.img.transform);
@@ -392,6 +408,9 @@ public class LuaSpriteController {
     }
 
     public void Move(float x, float y) {
+        if (img.gameObject.name == "player" && !GlobalControls.retroMode)
+            throw new CYFException("You can not move the player using Player.sprite.Move.\nInstead, use Player.Move.");
+        
         if (img.transform.parent.name == "SpritePivot")
             img.transform.parent.localPosition = new Vector3(x + this.x, y + this.y, img.transform.parent.localPosition.z) - (Vector3)img.GetComponent<RectTransform>().anchoredPosition;
         else
@@ -399,6 +418,9 @@ public class LuaSpriteController {
     }
 
     public void MoveTo(float x, float y) {
+        if (img.gameObject.name == "player" && !GlobalControls.retroMode)
+            throw new CYFException("You can not move the player using Player.sprite.MoveTo.\nInstead, use Player.MoveTo.");
+        
         if (img.transform.parent.name == "SpritePivot")
             img.transform.parent.localPosition = new Vector3(x, y, img.transform.parent.localPosition.z) - (Vector3)img.GetComponent<RectTransform>().anchoredPosition;
         else
@@ -406,6 +428,9 @@ public class LuaSpriteController {
     }
 
     public void MoveToAbs(float x, float y) {
+        if (img.gameObject.name == "player" && !GlobalControls.retroMode)
+            throw new CYFException("You can not move the player using Player.sprite.MoveToAbs.\nInstead, use Player.MoveToAbs.");
+        
         GetTarget().position = new Vector3(x, y, GetTarget().position.z);
     }
 
@@ -614,6 +639,9 @@ public class LuaSpriteController {
             return;
         if (tag == "enemy" || tag == "bubble") {
             UnitaleUtil.WriteInLogAndDebugger("sprite.Remove(): You can't remove a " + tag + "'s sprite!");
+            return;
+        } else if (img.gameObject.name == "player" && !GlobalControls.retroMode) {
+            UnitaleUtil.WriteInLogAndDebugger("sprite.Remove(): You can't remove the Player's sprite!");
             return;
         }
 
