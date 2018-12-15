@@ -1326,7 +1326,10 @@ public class UIController : MonoBehaviour {
             GameObject.Find("HPLabel").GetComponent<Image>().enabled = false;
         }
         
-        PlayerController.instance.Awake();
+        // PlayerController.instance.Awake();
+        PlayerController.instance.playerAbs = new Rect(0, 0,
+                                                        PlayerController.instance.selfImg.sprite.texture.width  - 8,
+                                                        PlayerController.instance.selfImg.sprite.texture.height - 8);
         PlayerController.instance.setControlOverride(true);
         PlayerController.instance.SetPosition(48, 25, true);
         fightUI = GameObject.Find("FightUI").GetComponent<FightUIController>();
