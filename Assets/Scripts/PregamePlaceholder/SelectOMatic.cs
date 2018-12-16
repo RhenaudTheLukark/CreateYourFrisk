@@ -297,11 +297,11 @@ public class SelectOMatic : MonoBehaviour {
         GameObject.Find("EncounterCountShadow").GetComponent<Text>().text = GameObject.Find("EncounterCount").GetComponent<Text>().text;
         
         // Update the color of the arrows
-        if (CurrentSelectedMod == 0)
+        if (CurrentSelectedMod == 0 && modDirs.Count == 1)
             GameObject.Find("BtnBack").transform.Find("Text").gameObject.GetComponent<Text>().color = new Color(0.25f, 0.25f, 0.25f, 1f);
         else
             GameObject.Find("BtnBack").transform.Find("Text").gameObject.GetComponent<Text>().color = new Color(1f, 1f, 1f, 1f);
-        if (CurrentSelectedMod == modDirs.Count - 1)
+        if (CurrentSelectedMod == modDirs.Count - 1 && modDirs.Count == 1)
             GameObject.Find("BtnNext").transform.Find("Text").gameObject.GetComponent<Text>().color = new Color(0.25f, 0.25f, 0.25f, 1f);
         else
             GameObject.Find("BtnNext").transform.Find("Text").gameObject.GetComponent<Text>().color = new Color(1f, 1f, 1f, 1f);
@@ -312,10 +312,9 @@ public class SelectOMatic : MonoBehaviour {
     private void ScrollMods(int dir) {
         // first, determine if the next mod should be shown
         bool animate = false;
-        if ((dir == -1 && CurrentSelectedMod > 0) || (dir == 1 && CurrentSelectedMod < modDirs.Count - 1)) {
-            // show the new mod
-            animate = true;
-        }
+        // if ((dir == -1 && CurrentSelectedMod > 0) || (dir == 1 && CurrentSelectedMod < modDirs.Count - 1)) {
+        if (modDirs.Count > 1)
+            animate = true; // show the new mod
         
         // if the new mod is being shown, start the animation!
         if (animate) {
@@ -354,7 +353,9 @@ public class SelectOMatic : MonoBehaviour {
             GameObject.Find("EncounterCount").transform.Translate(640 * dir, 0, 0);
             
             // actually choose the new mod
-            CurrentSelectedMod += dir;
+            CurrentSelectedMod = (CurrentSelectedMod + dir) % modDirs.Count;
+            if (CurrentSelectedMod < 0) CurrentSelectedMod += modDirs.Count;
+            
             ShowMod(CurrentSelectedMod);
         }
     }
