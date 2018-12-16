@@ -151,11 +151,20 @@ public class ProjectileController {
     public bool isPersistent = false;
 
     public string layer {
-        get { return spr.img.transform.parent.name.Substring(0, spr.img.transform.parent.name.Length - 5); }
+        get {
+            if (spr.img.transform.parent.name == "BulletPool")
+                return "";
+            else
+                return spr.img.transform.parent.name.Substring(0, spr.img.transform.parent.name.Length - 6);
+        }
         set {
             Transform parent = spr.img.transform.parent;
-            try { spr.img.transform.SetParent(GameObject.Find(value + "Bullet").transform); } 
-            catch { spr.img.transform.SetParent(parent); }
+            try {
+                if (value == "")
+                    spr.img.transform.SetParent(GameObject.Find("BulletPool").transform);
+                else
+                    spr.img.transform.SetParent(GameObject.Find(value + "Bullet").transform);
+            } catch { spr.img.transform.SetParent(parent); }
         }
     }
 
