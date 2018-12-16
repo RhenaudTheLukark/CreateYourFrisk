@@ -418,7 +418,6 @@ public class PlayerController : MonoBehaviour {
             intendedShift = Vector2.zero; // reset direction we are going in
             HandleInput(); // get direction we want to go in
             Move(intendedShift);
-            
         }
 
         // if the invulnerability timer has more than 0 seconds (usually when you get hurt), blink to reflect the hurt state
@@ -432,6 +431,10 @@ public class PlayerController : MonoBehaviour {
             if (invulTimer <= 0.0f)
                 selfImg.enabled = true;
         }
+        
+        // constantly update the hitbox to match the position of the sprite itself
+        playerAbs.x = (luaStatus.sprite.absx - (luaStatus.sprite.width  * self.pivot.x)) + hitboxInset;
+        playerAbs.y = (luaStatus.sprite.absy - (luaStatus.sprite.height * self.pivot.y)) + hitboxInset;
 
         soundDelay--;
     }
