@@ -483,7 +483,6 @@ public class TextManager : MonoBehaviour {
         // hopefully we will never have to use any lambda functions on Lua Text Managers...
         if (GetType() == typeof(LuaTextManager)&&
             (new StackFrame(1).GetMethod().Name == "lambda_method" || new StackFrame(1).GetMethod().Name == "NextLine")) {
-            GetComponent<LuaTextManager>().isActive = false;
             GameObject.Destroy(this.transform.parent.gameObject);
         }
     }
