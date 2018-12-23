@@ -1323,7 +1323,7 @@ public class EventManager : MonoBehaviour {
                 yield break;
             }
         }
-        UnitaleUtil.WriteInLogAndDebugger("Event.Rotate: The name you entered in the function isn't an event's name. Did you forget to add the 'Event' tag ?");
+        UnitaleUtil.WriteInLogAndDebugger("Event.Rotate: The name you entered in the function isn't an event's name. Did you forget to add the 'Event' tag?");
         scr.Call("CYFEventNextCommand");
     }
 

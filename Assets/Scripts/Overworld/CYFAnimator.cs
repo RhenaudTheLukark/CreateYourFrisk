@@ -35,7 +35,7 @@ public class CYFAnimator : MonoBehaviour {
         else {
             EventManager.instance.ResetEvents(false);
             if (!EventManager.instance.sprCtrls.ContainsKey(gameObject.name))
-                throw new CYFException("A CYFAnimator component must be tied to an event, however the GameObject " + gameObject.name + " doesn't seem to be one.");
+                throw new CYFException("A CYFAnimator component must be tied to an event, however the GameObject " + gameObject.name + " doesn't seem to have one.");
         }
         lastPos = gameObject.transform.position;
         waitForStart = false;

@@ -155,7 +155,7 @@ public class LuaGeneralOW {
     [CYFEventFunction] public void PlayBGM(string bgm, float volume) {
         volume = Mathf.Clamp01(volume);
         if (AudioClipRegistry.GetMusic(bgm) == null)
-            throw new CYFException("General.PlayBGM: The given BGM doesn't exist. Please check if you haven't mispelled it.");
+            throw new CYFException("General.PlayBGM: The given BGM doesn't exist. Please check if you've spelled it correctly.");
         AudioSource audio = UnitaleUtil.GetCurrentOverworldAudio();
         audio.clip = AudioClipRegistry.GetMusic(bgm);
         audio.volume = volume;
@@ -187,7 +187,7 @@ public class LuaGeneralOW {
     [CYFEventFunction] public void PlaySound(string sound, float volume = 0.65f) {
         volume = Mathf.Clamp01(volume);
         if (AudioClipRegistry.GetSound(sound) == null)
-            throw new CYFException("General.PlaySound: The given BGM doesn't exist. Please check if you haven't mispelled it.");
+            throw new CYFException("General.PlaySound: The given BGM doesn't exist. Please check if you've spelled it correctly.");
         UnitaleUtil.PlaySound("PlaySound", AudioClipRegistry.GetSound(sound), volume);
         //GameObject.Find("Player").GetComponent<AudioSource>().PlayOneShot(AudioClipRegistry.GetSound(sound), volume);
         appliedScript.Call("CYFEventNextCommand");

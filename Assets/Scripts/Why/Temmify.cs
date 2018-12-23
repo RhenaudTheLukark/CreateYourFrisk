@@ -11,18 +11,44 @@ public static class Temmify {
         
         // a list of every character that can be swapped
         string swappableCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        // uncomment this line to allow numbers to be swapped.
+        // uncomment this line to allow numbers to be swapped:
         // swappableCharacters += "0123456789";
+        
         // a list of characters that should be multiplied like crazy!!!!!
         string multiplyCharacters = "!?";
         
-        string[] words = sentence.Split(new string[] { " " }, System.StringSplitOptions.RemoveEmptyEntries);
+        string[] words = sentence.Split(new char[] {' '}, System.StringSplitOptions.RemoveEmptyEntries);
+        
+        // separate words by items in multiplyCharacters
+        List<string> newWords = new List<string>();
+        
+        for (int i = 0; i < words.Length; i++) {
+            bool separated = false;
+            
+            for (int j = 0; j < words[i].Length; j++) {
+                if (multiplyCharacters.Contains(words[i].Substring(j, 1))) {
+                    string before = words[i].Substring(0, j);
+                    string after  = words[i].Substring(j);
+                    
+                    newWords.Add(before);
+                    newWords.Add(after);
+                    
+                    separated = true;
+                    break;
+                }
+            }
+            
+            if (!separated)
+                newWords.Add(words[i]);
+        }
+        
+        words = newWords.ToArray();
         
         for (int i = 0; i < words.Length; i++) {
             // capitalize every word
             words[i] = words[i].ToUpper();
             
-            if (words[i].Length < 3)
+            if (words[i].Length < 4 && !multiplyCharacters.Contains(words[i].Substring(0, 1)))
                 continue;
             else {
                 // only words with at least 5% of their letters moved will be allowed
@@ -32,15 +58,33 @@ public static class Temmify {
                 do {
                     for (int j = 0; j < words[i].Length; j++) {
                         // special for the first character
-                        if (j == 0 && swappableCharacters.Contains(words[i].Substring(j, 1)) && Random.Range(1, 6) == 1
+                        /*if (j == 0 && swappableCharacters.Contains(words[i].Substring(j, 1)) && Random.Range(1, 6) == 1
                             && !changesMade.Contains(j)) {
                             words[i] = words[i].Substring(1, 1)
                                      + words[i].Substring(0, 1)
                                      + words[i].Substring(2);
                             changesMade.Add(j + 1);
-                        } else {
+                        } else {*/
+                        
+                        /*
+                        DEBUGGER
+                        string spaces = "";
+                        
+                        for (int k = 0; k < words[i].Length; k++)
+                            if (k == j)
+                                spaces += "^";
+                            else if (changesMade.Contains(k))
+                                spaces += words[i].Substring(k, 1);
+                            else
+                                spaces += " ";
+                        
+                        Debug.Log(words[i] + "\n" + spaces);
+                        */
+                        
+                        
+                        if (((j > 0 && j < words[i].Length - 2) || multiplyCharacters.Contains(words[i].Substring(j, 1))) && !changesMade.Contains(j)) {
                             // if character is swappable, see if it can be swapped
-                            if (swappableCharacters.Contains(words[i].Substring(j, 1)) && j < words[i].Length - 1
+                            if (swappableCharacters.Contains(words[i].Substring(j, 1))
                              && swappableCharacters.Contains(words[i].Substring(j + 1, 1))
                              && words[i].Substring(j, 1) != words[i].Substring(j + 1, 1)
                              && !changesMade.Contains(j)) {
@@ -57,6 +101,17 @@ public static class Temmify {
                                 
                                 int randomAddition = Random.Range(2, 5);
                                 
+                                string toAdd = words[i].Substring(j, 1);
+                                for (int k = 0; k < randomAddition; k++) {
+                                    toAdd += words[i].Substring(j, 1);
+                                    changesMade.Add(j + k);
+                                }
+                                changesMade.Add(j + randomAddition);
+                                
+                                words[i] = words[i].Substring(0, j > 0 ? j : 0)
+                                         + toAdd
+                                         + words[i].Substring(j + 1);
+                                /*
                                 for (var k = 0f; k < randomAddition; k++) {
                                     words[i] = words[i].Substring(0, j > 0 ? j : 0)
                                              + words[i].Substring(j, 1)
@@ -65,6 +120,7 @@ public static class Temmify {
                                     changesMade.Add(j + 1);
                                 }
                                 changesMade.Add(j);
+                                */
                                 j += randomAddition + 1;
                             }
                         }
@@ -82,8 +138,11 @@ public static class Temmify {
         
         sentence = "";
         
-        foreach (string word in words) {
-            sentence += word + " ";
+        for (int i = 0; i < words.Length; i++) {
+            if (i < words.Length - 1 && multiplyCharacters.Contains(words[i + 1].Substring(0, 1)))
+                sentence += words[i];
+            else
+                sentence += words[i] + " ";
         }
         sentence = sentence.Substring(0, sentence.Length - 1);
         

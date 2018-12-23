@@ -487,7 +487,7 @@ public static class UnitaleUtil {
 
     public static Transform GetChildPerName(Transform parent, string name, bool isInclusive = false, bool getInactive = false) {
         if (parent == null)
-            throw new CYFException("If you want the parent to be null, search the object with GameObject.Find() directly.");
+            throw new CYFException("If you want the parent to be null, find the object with GameObject.Find() directly.");
 
         Transform[] children = parent.GetComponentsInChildren<Transform>(getInactive);
         foreach (Transform go in children)

@@ -172,7 +172,7 @@ public class OptionsScript : MonoBehaviour {
             case "ResetAG":
                 response = "Resets all AlMighty Globals.\n\n"
                          + "AlMighty Globals are variables that are saved to a file, and stay even when you close CYF.\n\n"
-                         + "Theese options are stored as AlMighty Globals.";
+                         + "The options on this screen are stored as AlMighties.";
                 if (!GlobalControls.crate)
                     return response;
                 else
@@ -188,7 +188,7 @@ public class OptionsScript : MonoBehaviour {
                     return Temmify.Convert(response) + "<b><size='14'>" + Application.persistentDataPath + "/save.gd</size></b>";
             case "Safe":
                 response = "Toggles safe mode.\n\n"
-                         + "Safe mode is an option that mod authors can detect to filter unsafe content, such as blood and swear words.";
+                         + "It does nothing specifically, but mod authors can detect if you have this enabled, and use it to filter unsafe content, such as blood, gore, and swear words.";
                 if (!GlobalControls.crate)
                     return response;
                 else

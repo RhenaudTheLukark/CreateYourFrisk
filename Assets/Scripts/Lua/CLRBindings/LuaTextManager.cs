@@ -180,7 +180,7 @@ public class LuaTextManager : TextManager {
             UnitaleUtil.WriteInLogAndDebugger("[WARN]You can't change the order of two text objects on different layers.");
         else {
             try { this.transform.parent.SetSiblingIndex(otherText.transform.parent.GetSiblingIndex() + 1); }
-            catch { throw new CYFException("Error while calling text.MoveBelow."); }
+            catch { throw new CYFException("Error while calling text.MoveAbove."); }
         }
     }
 
@@ -342,7 +342,7 @@ public class LuaTextManager : TextManager {
         CheckExists();
         UnderFont uf = SpriteFontRegistry.Get(fontName);
         if (uf == null)
-            throw new CYFException("The font \"" + fontName + "\" doesn't exist.\nYou should check if you haven't made a typo or if the font really is in your mod.");
+            throw new CYFException("The font \"" + fontName + "\" doesn't exist.\nYou should check if you made a typo, or if the font really is in your mod.");
         SetFont(uf, firstTime);
         //if (forced)
         //    default_charset = uf;
@@ -391,7 +391,7 @@ public class LuaTextManager : TextManager {
         CheckExists();
         bubbleLastVar = position;
         try { bubbleSide = side != null ? (BubbleSide)Enum.Parse(typeof(BubbleSide), side.ToUpper()) : BubbleSide.NONE; } 
-        catch { throw new CYFException("The speech thing can only take \"RIGHT\", \"DOWN\" ,\"LEFT\" ,\"UP\" or \"NONE\" as value, but you entered \"" + side.ToUpper() + "\"."); }
+        catch { throw new CYFException("The speech thing (tail) can only take \"RIGHT\", \"DOWN\" ,\"LEFT\" ,\"UP\" or \"NONE\" as a positional value, but you entered \"" + side.ToUpper() + "\"."); }
 
         if (bubbleSide != BubbleSide.NONE) {
             speechThing.gameObject.SetActive(true);

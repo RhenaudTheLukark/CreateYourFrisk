@@ -139,7 +139,7 @@ public class ProjectileController {
     public bool ppchanged {
         get {
             if (p == null)
-                throw new CYFException("Attempted to get the value used to determine if a bullet's personal ppcollision value has been changed of a removed bullet.");
+                throw new CYFException("Attempted to get the value of bullet.ppchanged from a removed bullet.");
             return p.ppchanged;
         }
     }

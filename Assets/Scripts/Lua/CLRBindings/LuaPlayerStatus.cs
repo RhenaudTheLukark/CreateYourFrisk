@@ -269,7 +269,7 @@ public class LuaPlayerStatus {
             if (index <= UIController.instance.encounter.EnabledEnemies.Length && index > 0)
                 UIController.instance.fightUI.ChangeTarget(UIController.instance.encounter.EnabledEnemies[index-1]);
             else
-                UnitaleUtil.DisplayLuaError("Changing the target", "The enemy number " + index + " doesn't exists.");
+                UnitaleUtil.DisplayLuaError("Changing the target", "Enemy number " + index + " doesn't exist.");
     }
 
     public void ForceAttack(int enemyNumber, int damage = -478294) {
@@ -279,7 +279,7 @@ public class LuaPlayerStatus {
             UIController.instance.fightUI.targetIDs = new int[] { enemyNumber - 1 };
             UIController.instance.fightUI.quickInit(UIController.instance.encounter.EnabledEnemies[enemyNumber - 1], damage);
         } else
-            UnitaleUtil.DisplayLuaError("Force Attack", "The enemy number " + enemyNumber + " doesn't exists.");
+            UnitaleUtil.DisplayLuaError("Force Attack", "Enemy number " + enemyNumber + " doesn't exist.");
     }
 
     public int[] MultiTarget(int damage) { return MultiTarget(null, new int[] { damage }); }
@@ -293,7 +293,7 @@ public class LuaPlayerStatus {
             for (int i = 0; i < targets.Length; i++) {
                 targets[i]--;
                 if (targets[i] >= UIController.instance.encounter.EnabledEnemies.Length || targets[i] < 0) {
-                    UnitaleUtil.DisplayLuaError("Multi Target", "The enemy number " + targets[i] + " doesn't exists.");
+                    UnitaleUtil.DisplayLuaError("Multi Target", "Enemy number " + targets[i] + " doesn't exist.");
                     return null;
                 }
             }

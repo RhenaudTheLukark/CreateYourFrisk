@@ -13,7 +13,7 @@ public class SelectMessage : TextMessage {
 
         // If there is no option, there is an error somewhere : Let's create it then by throwing an ArgumentException
         if (options.Length == 0)
-            throw new CYFException("Can't create a text message for zero options.");
+            throw new CYFException("Can't create a select message for zero options.");
 
         // For each option...
         for (int i = 0; i < options.Length; i++) {

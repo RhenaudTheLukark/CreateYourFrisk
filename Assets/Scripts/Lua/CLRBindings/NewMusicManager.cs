@@ -54,7 +54,7 @@ public class NewMusicManager {
     }
 
     public static void PlayMusic(string name, string music, bool loop = false, float volume = 1) {
-        if (!audiolist.ContainsKey(name))  throw new CYFException("The audio channel " + name + " doesn't exist.");
+        if (!audiolist.ContainsKey(name)) throw new CYFException("The audio channel " + name + " doesn't exist.");
         ((AudioSource)audiolist[name]).Stop();
         ((AudioSource)audiolist[name]).loop = loop;
         ((AudioSource)audiolist[name]).volume = volume;
@@ -100,41 +100,41 @@ public class NewMusicManager {
     }
 
     public static float GetPitch(string name) {
-        if (!audiolist.ContainsKey(name))  throw new CYFException("The audio channel " + name + " doesn't exist.");
+        if (!audiolist.ContainsKey(name)) throw new CYFException("The audio channel " + name + " doesn't exist.");
         return ((AudioSource)audiolist[name]).pitch;
     }
 
     public static void SetVolume(string name, float value) {
-        if (!audiolist.ContainsKey(name))  throw new CYFException("The audio channel " + name + " doesn't exist.");
+        if (!audiolist.ContainsKey(name)) throw new CYFException("The audio channel " + name + " doesn't exist.");
         if (value < 0)      value = 0;
         else if (value > 1) value = 1;
         ((AudioSource)audiolist[name]).volume = value;
     }
 
     public static float GetVolume(string name) {
-        if (!audiolist.ContainsKey(name))  throw new CYFException("The audio channel " + name + " doesn't exist.");
+        if (!audiolist.ContainsKey(name)) throw new CYFException("The audio channel " + name + " doesn't exist.");
         return ((AudioSource)audiolist[name]).volume;
     }
 
     public static void Play(string name) {
-        if (!audiolist.ContainsKey(name))  throw new CYFException("The audio channel " + name + " doesn't exist.");
+        if (!audiolist.ContainsKey(name)) throw new CYFException("The audio channel " + name + " doesn't exist.");
         ((AudioSource)audiolist[name]).Play();
     }
     public static void Stop(string name) {
-        if (!audiolist.ContainsKey(name))  throw new CYFException("The audio channel " + name + " doesn't exist.");
+        if (!audiolist.ContainsKey(name)) throw new CYFException("The audio channel " + name + " doesn't exist.");
         ((AudioSource)audiolist[name]).Stop();
     }
     public static void Pause(string name) {
-        if (!audiolist.ContainsKey(name))  throw new CYFException("The audio channel " + name + " doesn't exist.");
+        if (!audiolist.ContainsKey(name)) throw new CYFException("The audio channel " + name + " doesn't exist.");
         ((AudioSource)audiolist[name]).Pause();
     }
     public static void Unpause(string name) {
-        if (!audiolist.ContainsKey(name))  throw new CYFException("The audio channel " + name + " doesn't exist.");
+        if (!audiolist.ContainsKey(name)) throw new CYFException("The audio channel " + name + " doesn't exist.");
         ((AudioSource)audiolist[name]).UnPause();
     }
 
     public static void SetPlayTime(string name, float value) {
-        if (!audiolist.ContainsKey(name))  throw new CYFException("The audio channel " + name + " doesn't exist.");
+        if (!audiolist.ContainsKey(name)) throw new CYFException("The audio channel " + name + " doesn't exist.");
         ((AudioSource)audiolist[name]).time = value;
     }
 
