@@ -53,7 +53,10 @@ public class LuaInventory {
         Inventory.inventory.RemoveAt(index-1);
     }
 
-    public void AddCustomItems(string[] names, int[] types) { Inventory.addedItems = names; Inventory.addedItemsTypes = types; }
+    public void AddCustomItems(string[] names, int[] types) {
+        Inventory.addedItems.AddRange(names);
+        Inventory.addedItemsTypes.AddRange(types);
+    }
 
     public void SetInventory(string[] names) { Inventory.SetItemList(names); }
 

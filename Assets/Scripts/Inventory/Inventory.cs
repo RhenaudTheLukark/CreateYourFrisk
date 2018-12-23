@@ -8,8 +8,8 @@ using MoonSharp.Interpreter;
 /// Static placeholder inventory class for the player. Will probably get moved to something else that makes sense, like the player...or not.
 /// </summary>
 public static class Inventory {
-    public static string[] addedItems = new string[] { };
-    public static int[] addedItemsTypes = new int[] { };
+    public static List<string> addedItems = new List<string>();
+    public static List<int> addedItemsTypes = new List<int>();
     public static LuaInventory luaInventory;
     public static int tempAmount = 0;
     public static Dictionary<string, string> NametoDesc = new Dictionary<string, string>(), NametoShortName = new Dictionary<string, string>(), NameToReplac = new Dictionary<string, string>();
@@ -29,7 +29,7 @@ public static class Inventory {
                     int type = 0;
                     
                     // Get the index of the new item in addedItems
-                    for (int j = 0; j < addedItems.Length; j++) {
+                    for (int j = 0; j < addedItems.Count; j++) {
                         if (addedItems[j] == items[i])
                             type = addedItemsTypes[j];
                     }
@@ -89,8 +89,8 @@ public static class Inventory {
         CallOnSelf("HandleItem", new DynValue[] { DynValue.NewString(Name.ToUpper()), DynValue.NewNumber(ID + 1) });
 
         TextMessage[] mess = new TextMessage[] { };
-        if (addedItems.Length != 0) {
-            for (int i = 0; i < addedItems.Length; i++)
+        if (addedItems.Count != 0) {
+            for (int i = 0; i < addedItems.Count; i++)
                 if (addedItems[i].ToLower() == Name.ToLower()) {
                     type = addedItemsTypes[i];
                     if (type == 1 || type == 2)
@@ -520,7 +520,7 @@ public static class Inventory {
             mode = NametoType[Name];
         else {
             if (addedItems.Contains(Name))
-                mode = addedItemsTypes[Array.IndexOf(addedItems, Name)];
+                mode = addedItemsTypes[addedItems.IndexOf(Name)];
             else
                 throw new CYFException("The item \"" + Name + "\" doesn't exist.");
         }
@@ -587,6 +587,7 @@ public static class Inventory {
                 PlayerCharacter.instance.ArmorDEF = (int)amount;
             }
         }
-        addedItems = new string[] { }; addedItemsTypes = new int[] { };
+        addedItems = new List<string>();
+        addedItemsTypes = new List<int>();
     }
 }
