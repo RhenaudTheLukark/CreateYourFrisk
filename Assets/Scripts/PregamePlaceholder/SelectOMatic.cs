@@ -9,7 +9,7 @@ using MoonSharp.Interpreter;
 public class SelectOMatic : MonoBehaviour {
     private static int CurrentSelectedMod = 0;
     private static List<DirectoryInfo> modDirs;
-    private static Dictionary<string, Sprite> bgs = new Dictionary<string, Sprite>();
+    private Dictionary<string, Sprite> bgs = new Dictionary<string, Sprite>();
     private GameObject encounterBox;
     private GameObject devMod;
     private GameObject btnList;
