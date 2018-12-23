@@ -360,8 +360,8 @@ public class UIController : MonoBehaviour {
                 } else {
                     string[] items = GetInventoryPage(0);
                     selectedItem = 0;
-                    SetPlayerOnSelection(0);
                     textmgr.SetText(new SelectMessage(items, false));
+                    SetPlayerOnSelection(0);
                     /*ActionDialogResult(new TextMessage[] {
                         new TextMessage("Can't open inventory.\nClogged with pasta residue.", true, false),
                         new TextMessage("Might also be a dog.\nIt's ambiguous.",true,false)
