@@ -12,13 +12,22 @@ public static class Inventory {
     public static List<int> addedItemsTypes = new List<int>();
     public static LuaInventory luaInventory;
     public static int tempAmount = 0;
-    public static Dictionary<string, string> NametoDesc = new Dictionary<string, string>(), NametoShortName = new Dictionary<string, string>(), NameToReplac = new Dictionary<string, string>();
+    public static Dictionary<string, string> NametoDesc = new Dictionary<string, string>(), NametoShortName = new Dictionary<string, string>();
     public static Dictionary<string, int> NametoType = new Dictionary<string, int>(), NametoPrice = new Dictionary<string, int>();
     public static bool usedItemNoDelete = false;
     //public static bool overworld = false;
     public static List<UnderItem> inventory = new List<UnderItem>();
 
     public static void SetItemList(string[] items = null) {
+        foreach (string item in items) {
+            string desc = "";
+            string sn   = "";
+            int type    =  0;
+            int price   =  0;
+            if (!addedItems.Contains(item) && !NametoDesc.TryGetValue(item, out desc) && !NametoShortName.TryGetValue(item, out sn) && !NametoType.TryGetValue(item, out type) && !NametoPrice.TryGetValue(item, out price))
+                throw new CYFException("Inventory.SetInventory: The item \"" + item + "\" was not found.\n\nAre you sure you called Inventory.AddCustomItems first?");
+        }
+        
         inventory = new List<UnderItem>(new UnderItem[] { });
         if (items != null)
             for (int i = 0; i < items.Length; i++) {
