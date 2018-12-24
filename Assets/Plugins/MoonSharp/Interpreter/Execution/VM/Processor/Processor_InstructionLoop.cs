@@ -714,7 +714,7 @@ namespace MoonSharp.Interpreter.Execution.VM
 					ErrorHandler = handler,
 					Continuation = continuation,
 					ErrorHandlerBeforeUnwind = unwindHandler,
-					Flags = flags,
+					Flags = flags
 				});
 
 				var ret = fn.Callback.Invoke(new ScriptExecutionContext(this, fn.Callback, sref), args, isMethodCall: thisCall);
@@ -739,6 +739,7 @@ namespace MoonSharp.Interpreter.Execution.VM
 					Continuation = continuation,
 					ErrorHandlerBeforeUnwind = unwindHandler,
 					Flags = flags,
+					Function = fn.Function
 				});
 				return fn.Function.EntryPointByteCodeLocation;
 			}

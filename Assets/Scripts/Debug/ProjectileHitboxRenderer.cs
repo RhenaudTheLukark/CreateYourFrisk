@@ -30,10 +30,9 @@ public class ProjectileHitboxRenderer : MonoBehaviour {
         yield return new WaitForEndOfFrame(); // need to wait for UI to finish drawing first, or it'll appear under the UI
         // note: it kinda still appears under the UI due to its rendering settings
         projectiles = root.GetComponentsInChildren<Projectile>();
-        gos = new GameObject[projectiles.Length];
-        for (int i = 0; i < projectiles.Length; i ++) 
-            gos[i] = projectiles[i].gameObject;
-        foreach (GameObject go in gos) {
+        for (int i = 0; i < projectiles.Length; i ++) {
+            GameObject go = projectiles[i].gameObject;
+
             bottomRight = go.GetComponent<Projectile>().selfAbs.center;
             topLeft.Set    (bottomRight.x - go.GetComponent<Projectile>().selfAbs.width / 2, bottomRight.y + go.GetComponent<Projectile>().selfAbs.height / 2, zIndex);
             topRight.Set   (bottomRight.x + go.GetComponent<Projectile>().selfAbs.width / 2, bottomRight.y + go.GetComponent<Projectile>().selfAbs.height / 2, zIndex);

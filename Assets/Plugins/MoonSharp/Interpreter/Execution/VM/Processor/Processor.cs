@@ -103,7 +103,8 @@ namespace MoonSharp.Interpreter.Execution.VM
 				ReturnAddress = -1,
 				ClosureScope = function.Function.ClosureContext,
 				CallingSourceRef = SourceRef.GetClrLocation(),
-				Flags = flags
+				Flags = flags,
+				Function = function.Function
 			});
 
 			return function.Function.EntryPointByteCodeLocation;

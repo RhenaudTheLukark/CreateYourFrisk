@@ -265,7 +265,7 @@ public class LuaEventOW {
         bool done = false;
         for (int i = 0; (i < EventManager.instance.events.Count || name == "Player") && !done; i++) {
             if (name != "Player")
-                if (EventManager.instance.events[i].gameObject.name != name)
+                if (EventManager.instance.events[i].gameObject == null || EventManager.instance.events[i].gameObject.name != name)
                     continue;
             done = true;
             GameObject go = name == "Player" ? PlayerOverworld.instance.gameObject : EventManager.instance.events[i];
@@ -286,7 +286,7 @@ public class LuaEventOW {
     [CYFEventFunction] public void IgnoreCollision(string name, bool ignore) {
         for (int i = 0; (i < EventManager.instance.events.Count || name == "Player"); i++) {
             if (name != "Player")
-                if (EventManager.instance.events[i].gameObject.name != name)
+                if (EventManager.instance.events[i].gameObject == null || EventManager.instance.events[i].gameObject.name != name)
                     continue;
             GameObject go = name == "Player" ? PlayerOverworld.instance.gameObject : EventManager.instance.events[i];
             go.layer = ignore ? 0 : 21;
@@ -300,7 +300,7 @@ public class LuaEventOW {
     [CYFEventFunction] public void SetSpeed(string name, float speed) {
         for (int i = 0; (i < EventManager.instance.events.Count || name == "Player"); i++) {
             if (name != "Player") {
-                if (EventManager.instance.events[i].gameObject.name != name)
+                if (EventManager.instance.events[i].gameObject == null || EventManager.instance.events[i].gameObject.name != name)
                     continue;
                 EventManager.instance.events[i].GetComponent<EventOW>().moveSpeed = speed;
             } else

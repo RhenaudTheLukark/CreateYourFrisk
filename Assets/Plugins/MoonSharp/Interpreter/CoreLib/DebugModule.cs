@@ -297,47 +297,68 @@ namespace MoonSharp.Interpreter.CoreLib
 		//}
 
 
-		//[MoonSharpMethod]
-		//public static DynValue getinfo(ScriptExecutionContext executionContext, CallbackArguments args)
-		//{
-		//	Coroutine cor = executionContext.GetCallingCoroutine();
-		//	int vfArgIdx = 0;
+		[MoonSharpModuleMethod]
+		public static DynValue getinfo(ScriptExecutionContext executionContext, CallbackArguments args)
+		{
+			Coroutine cor = executionContext.GetCallingCoroutine();
+			int vfArgIdx = 0;
 
-		//	if (args[0].Type == DataType.Thread)
-		//		cor = args[0].Coroutine;
+			if (args[0].Type == DataType.Thread) {
+				cor = args[0].Coroutine;
+				vfArgIdx++;
+			}
 
-		//	DynValue vf = args[vfArgIdx+0];
-		//	DynValue vwhat = args[vfArgIdx+1];
+			DynValue vf = args[vfArgIdx+0];
+			DynValue vwhat = args[vfArgIdx+1];
 
-		//	args.AsType(vfArgIdx + 1, "getinfo", DataType.String, true);
-			
-		//	string what = vwhat.CastToString() ?? "nfSlu";
+			if (vf.Type == DataType.Void || vf.Type == DataType.Nil)
+				vf = DynValue.NewNumber(1);
 
-		//	DynValue vt = DynValue.NewTable(executionContext.GetScript());
-		//	Table t = vt.Table;
+			args.AsType(vfArgIdx + 1, "getinfo", DataType.String, true);
 
-		//	if (vf.Type == DataType.Function)
-		//	{
-		//		Closure f = vf.Function;
-		//		executionContext.GetInfoForFunction
-		//	}
-		//	else if (vf.Type == DataType.ClrFunction)
-		//	{
+			string what = vwhat.CastToString() ?? "nfSlu";
 
-		//	}
-		//	else if (vf.Type == DataType.Number || vf.Type == DataType.String)
-		//	{
+			DynValue vt = DynValue.NewTable(executionContext.GetScript());
+			Table t = vt.Table;
 
-		//	}
-		//	else
-		//	{
-		//		args.AsType(vfArgIdx + 0, "getinfo", DataType.Number, true);
-		//	}
+			if (vf.Type == DataType.Number)
+			{
+				WatchItem[] stacktrace = cor.GetStackTrace((int)vf.Number, executionContext.CallingLocation);
+				if (stacktrace.Length == 0)
+					return DynValue.NewNil();
+				WatchItem wi = stacktrace[0];
 
-		//	return vt;
+				if (what.Contains("n"))
+				{
+					vt.Table.Set("name", DynValue.NewString(wi.Name ?? ""));
+				}
+				if (what.Contains("f"))
+				{
+					vt.Table.Set("func", wi.Value);
+				}
+				if (what.Contains("S"))
+				{
+					string source = wi.Value.Type == DataType.Function ? executionContext.GetScript().GetSourceCode(executionContext.CallingLocation.SourceIdx).Name : "[C]";
+					vt.Table.Set("source", DynValue.NewString("=" + source));
+					vt.Table.Set("short_src", DynValue.NewString(source.Length >= 60 ? source.Substring(0, 60) : source));
+					vt.Table.Set("what", DynValue.NewString(wi.Name == null ? "main" : wi.Value.Type == DataType.Function ? "Lua" : "C"));
+				}
+				if (what.Contains("l"))
+				{
+					vt.Table.Set("currentline", DynValue.NewNumber(executionContext.CallingLocation.FromLine));
+				}
+				if (what.Contains("u"))
+				{
+					vt.Table.Set("nups", DynValue.NewNumber(wi.Value.Type == DataType.Function ? wi.Value.Function.GetUpvaluesCount() : 0));
+				}
+			}
+			else
+			{
+				args.AsType(vfArgIdx + 0, "getinfo", DataType.Number, true);
+			}
 
-
-		//}
+			return vt;
+		}
 
 	}
 }

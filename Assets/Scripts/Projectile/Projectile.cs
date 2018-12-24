@@ -35,6 +35,8 @@ public abstract class Projectile : MonoBehaviour {
     public bool ppcollision = false;
     public bool ppchanged = false;
 
+    public bool needSizeRefresh = false;
+
     /// <summary>
     /// Built-in Unity function run for initialization
     /// </summary>
@@ -74,13 +76,12 @@ public abstract class Projectile : MonoBehaviour {
     /// </summary>
     public void renewController() { ctrl = new ProjectileController(this); }
 
-    public bool isPP() { return (ppcollision && ppchanged) || (GlobalControls.ppcollision &&!ppchanged); }
+    public bool isPP() { return (ppcollision && ppchanged) || (GlobalControls.ppcollision && !ppchanged); }
 
     /// <summary>
     /// Built-in Unity function run on every frame
     /// </summary>
     private void Update() {
-        //selfAbs = new Rect(self.anchoredPosition.x - self.rect.width / 2, self.anchoredPosition.y - self.rect.height / 2, self.sizeDelta.x, self.sizeDelta.y);
         float rot = -(self.eulerAngles.z + 90) * Mathf.Deg2Rad,
               Px = (0.5f - self.pivot.x) * selfAbs.width,
               Py = (0.5f - self.pivot.y) * selfAbs.height,
@@ -91,7 +92,7 @@ public abstract class Projectile : MonoBehaviour {
         
         //ctrl.UpdatePosition();
         //OnUpdate();
-        if (!GlobalControls.retroMode)
+        if (!GlobalControls.retroMode && needSizeRefresh)
             UpdateHitRect();
         if (HitTest())
             if (isPP()) {
@@ -120,18 +121,15 @@ public abstract class Projectile : MonoBehaviour {
     /// Updates the projectile's hitbox.
     /// </summary>
     public virtual void UpdateHitRect() {
-        if (ppcollision && ppchanged || GlobalControls.ppcollision &&!ppchanged) {
-            float cst = ctrl.sprite.rotation * Mathf.Deg2Rad,
-                  realX = self.sizeDelta.x * Mathf.Abs(Mathf.Cos(cst)) + self.sizeDelta.y * Mathf.Abs(Mathf.Sin(cst)),
-                  realY = self.sizeDelta.y * Mathf.Abs(Mathf.Cos(cst)) + self.sizeDelta.x * Mathf.Abs(Mathf.Sin(cst));
-            selfAbs.width = Mathf.FloorToInt(realX) + 2;
-            selfAbs.height = Mathf.FloorToInt(realY) + 2;
+        if (ppcollision && ppchanged || GlobalControls.ppcollision && !ppchanged) {
+            float cst = ctrl.sprite.rotation * Mathf.Deg2Rad;
+            selfAbs.width = Mathf.CeilToInt(self.sizeDelta.x * Mathf.Abs(Mathf.Cos(cst)) + self.sizeDelta.y * Mathf.Abs(Mathf.Sin(cst)));
+            selfAbs.height = Mathf.CeilToInt(self.sizeDelta.y * Mathf.Abs(Mathf.Cos(cst)) + self.sizeDelta.x * Mathf.Abs(Mathf.Sin(cst)));
         } else {
             selfAbs.width = self.sizeDelta.x;
             selfAbs.height = self.sizeDelta.y;
+            needSizeRefresh = false;
         }
-        //selfAbs.width = maxDistance.x*2;
-        //selfAbs.height = maxDistance.y*2;
     }
 
     /// <summary>

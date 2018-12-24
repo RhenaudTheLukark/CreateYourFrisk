@@ -67,7 +67,7 @@ public static class LuaScriptBinder {
         #else
             script.Globals["windows"] = false;
         #endif
-        script.Globals["CYFversion"] = "0.6.2";
+        script.Globals["CYFversion"] = "0.6.2.1";
         if (!UnitaleUtil.IsOverworld) {
             script.Globals["CreateSprite"] = (Func<string, string, int, DynValue>)SpriteUtil.MakeIngameSprite;
             script.Globals["CreateLayer"] = (Action<string, string, bool>)SpriteUtil.CreateLayer;
@@ -333,6 +333,12 @@ public static class LuaScriptBinder {
     }
 
     public static LuaTextManager CreateText(Script scr, DynValue text, DynValue position, int textWidth, string layer = "BelowPlayer", int bubbleHeight = -1) {
+        // Check if the arguments are what they should be
+        if (text == null || (text.Type != DataType.Table && text.Type != DataType.String))
+            throw new CYFException("CreateText: The text argument must be a non-empty table of strings or a simple string.");
+        if (position == null || position.Type != DataType.Table || position.Table.Get(1).Type != DataType.Number || position.Table.Get(2).Type != DataType.Number)
+            throw new CYFException("CreateText: The position argument must be a non-empty table of two numbers.");
+
         GameObject go = UnityEngine.Object.Instantiate(Resources.Load<GameObject>("Prefabs/CstmTxtContainer"));
         LuaTextManager luatm = go.GetComponentInChildren<LuaTextManager>();
         go.GetComponent<RectTransform>().position = new Vector2((float)position.Table.Get(1).Number, (float)position.Table.Get(2).Number);
@@ -355,7 +361,11 @@ public static class LuaScriptBinder {
         luatm.textMaxWidth = textWidth;
         luatm.bubbleHeight = bubbleHeight;
         luatm.ShowBubble();
-        if (text == DynValue.Nil || text.Table.Length == 0)
+
+        // Converts the text argument into a table if it's a simple string
+        text = text.Type == DataType.String ? DynValue.NewTable(scr, new DynValue[1] { text }) : text;
+
+        if (text.Table.Length == 0)
             text = null;
         
         //////////////////////////////////////////
@@ -364,10 +374,6 @@ public static class LuaScriptBinder {
         
         // Text objects' Late Start will be disabled if the first line of text contains [instant] before any regular characters
         bool enableLateStart = true;
-        
-        // so, first, make sure that the text argument is a non-empty table
-        if (text == null || text.Type != DataType.Table)
-            throw new CYFException("CreateText: the text argument must be a non-empty table of strings.");
         
         // if we've made it this far, then the text is valid.
         

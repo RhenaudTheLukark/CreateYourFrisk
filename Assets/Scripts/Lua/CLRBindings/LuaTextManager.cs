@@ -270,10 +270,11 @@ public class LuaTextManager : TextManager {
         base.LateStartWaiting = false;
         
         TextMessage[] msgs = null;
-        if (text == null)
-            throw new CYFException("In Text.SetText: the text argument must be a non-empty array.");
-        if (text.Type != DataType.Table)
-            throw new CYFException("In Text.SetText: the text argument must be a non-empty array.");
+        if (text == null || (text.Type != DataType.Table && text.Type != DataType.String))
+            throw new CYFException("Text.SetText: the text argument must be a non-empty array of strings or a simple string.");
+
+        // Converts the text argument into a table if it's a simple string
+        text = text.Type == DataType.String ? DynValue.NewTable(null, new DynValue[1] { text }) : text;
 
         msgs = new TextMessage[text.Table.Length];
         for (int i = 0; i < text.Table.Length; i++)
@@ -320,6 +321,14 @@ public class LuaTextManager : TextManager {
     
     public void AddText(DynValue text) {
         CheckExists();
+
+        // Checks if the parameter given is valid
+        if (text == null || (text.Type != DataType.Table && text.Type != DataType.String))
+            throw new CYFException("Text.AddText: the text argument must be a non-empty array of strings or a simple string.");
+
+        // Converts the text argument into a table if it's a simple string
+        text = text.Type == DataType.String ? DynValue.NewTable(null, new DynValue[1] { text }) : text;
+
         if (AllLinesComplete()) {
             SetText(text);
             return;
@@ -327,7 +336,7 @@ public class LuaTextManager : TextManager {
         TextMessage[] msgs = new TextMessage[text.Table.Length];
         for (int i = 0; i < text.Table.Length; i++)
             msgs[i] = new MonsterMessage(text.Table.Get(i + 1).String);
-        base.AddToTextQueue(msgs);
+        AddToTextQueue(msgs);
     }
 
     public void SetVoice(string voiceName) {

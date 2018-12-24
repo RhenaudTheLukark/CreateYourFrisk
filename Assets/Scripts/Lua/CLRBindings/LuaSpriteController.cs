@@ -290,6 +290,8 @@ public class LuaSpriteController {
             // We mod the value from 0 to 360 because angles are between 0 and 360 normally
             internalRotation.z = Math.Mod(value, 360);
             img.GetComponent<RectTransform>().eulerAngles = internalRotation;
+            if (img.GetComponent<Projectile>() && img.GetComponent<Projectile>().isPP())
+                img.GetComponent<Projectile>().needSizeRefresh = true;
         }
     }
 
@@ -411,6 +413,8 @@ public class LuaSpriteController {
 
     // Sets both xScale and yScale of a sprite 
     public void Scale(float xs, float ys) {
+        if (img.GetComponent<Projectile>())
+            img.GetComponent<Projectile>().needSizeRefresh = true;
         xScale = xs;
         yScale = ys;
         if (img.GetComponent<Image>()) nativeSizeDelta = new Vector2(img.GetComponent<Image>().sprite.texture.width, img.GetComponent<Image>().sprite.texture.height);
