@@ -462,11 +462,13 @@ public class LuaTextManager : TextManager {
         CheckExists();
         container.transform.position = new Vector3(x, y, container.transform.position.z);
     }
-
+    
+    /*
     public void SetPivot(float x, float y) {
         CheckExists();
         container.GetComponent<RectTransform>().pivot = new Vector2(x, y);
     }
+    */
 
     public int GetTextWidth() {
         CheckExists();
