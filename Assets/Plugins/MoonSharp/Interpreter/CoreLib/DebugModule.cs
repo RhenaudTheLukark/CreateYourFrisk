@@ -303,8 +303,10 @@ namespace MoonSharp.Interpreter.CoreLib
 			Coroutine cor = executionContext.GetCallingCoroutine();
 			int vfArgIdx = 0;
 
-			if (args[0].Type == DataType.Thread)
+			if (args[0].Type == DataType.Thread) {
 				cor = args[0].Coroutine;
+				vfArgIdx++;
+			}
 
 			DynValue vf = args[vfArgIdx+0];
 			DynValue vwhat = args[vfArgIdx+1];
@@ -321,7 +323,7 @@ namespace MoonSharp.Interpreter.CoreLib
 
 			if (vf.Type == DataType.Number)
 			{
-				WatchItem[] stacktrace = cor.GetStackTrace((int)vf.Number);
+				WatchItem[] stacktrace = cor.GetStackTrace((int)vf.Number, executionContext.CallingLocation);
 				if (stacktrace.Length == 0)
 					return DynValue.NewNil();
 				WatchItem wi = stacktrace[0];
