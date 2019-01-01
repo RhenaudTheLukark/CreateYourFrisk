@@ -155,6 +155,11 @@ public class PlayerController : MonoBehaviour {
 
     public void setHP(float newhp, bool actualDamage = true) {
         newhp = Mathf.Round(newhp * Mathf.Pow(10, ControlPanel.instance.MaxDigitsAfterComma)) / Mathf.Pow(10, ControlPanel.instance.MaxDigitsAfterComma);
+        
+        // Retromode: Make Player.hp act as an integer
+        if (GlobalControls.retroMode)
+            newhp = Mathf.Floor(newhp);
+        
         if (newhp <= 0) {
             if (!MusicManager.IsStoppedOrNull(PlayerOverworld.audioKept)) {
                 GetComponent<GameOverBehavior>().musicBefore = PlayerOverworld.audioKept;
