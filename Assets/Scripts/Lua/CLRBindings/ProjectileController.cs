@@ -207,8 +207,13 @@ public class ProjectileController {
     public void MoveTo(float x, float y) { MoveToAbs(ArenaManager.arenaCenter.x + x, ArenaManager.arenaCenter.y + y); }
 
     public void MoveToAbs(float x, float y) {
-        if (p == null)
-            throw new CYFException("Attempted to move a removed bullet. You can use a bullet's isactive property to check if it has been removed.");
+        if (p == null) {
+            if (GlobalControls.retroMode)
+                return;
+            else
+                throw new CYFException("Attempted to move a removed bullet. You can use a bullet's isactive property to check if it has been removed.");
+        }
+        
         if (GlobalControls.retroMode)
             p.self.anchoredPosition = new Vector2(x, y);
         else
