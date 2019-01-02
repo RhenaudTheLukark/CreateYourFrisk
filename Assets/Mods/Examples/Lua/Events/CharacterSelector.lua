@@ -12,10 +12,10 @@ local fadeCount = 1
 
 function EventPage0()
     NewAudio.CreateChannel("CharSelect")
-    Screen.DispImg("px", 1, 320, 240, 255, 255, 255, 255)
+    Screen.DispImg("px", 1, 320, 240, 0, 0, 0, 255)
     background = Event.GetSprite("Image1")
     background.Scale(640, 480)
-    Screen.DispImg("px", #animationKeys * 3 + 2, 320, 240, 255, 255, 255, 255)
+    Screen.DispImg("px", #animationKeys * 3 + 2, 320, 240, 0, 0, 0, 255)
     foreground = Event.GetSprite("Image17")
     foreground.Scale(640, 480)
     player = Event.GetSprite("Player")

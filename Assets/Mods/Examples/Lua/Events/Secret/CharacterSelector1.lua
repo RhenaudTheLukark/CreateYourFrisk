@@ -42,10 +42,10 @@ function EventPage0()
         end
         lastEnabled = currentChar
         NewAudio.CreateChannel("CharSelect")
-        Screen.DispImg("px", 1, 320, 240, 255, 255, 255, 255)
+        Screen.DispImg("px", 1, 320, 240, 0, 0, 0, 255)
         background = Event.GetSprite("Image1")
         background.Scale(640, 480)
-        Screen.DispImg("px", 4 * #animationKeys + 2, 320, 240, 255, 255, 255, 255)
+        Screen.DispImg("px", 4 * #animationKeys + 2, 320, 240, 0, 0, 0, 255)
         foreground = Event.GetSprite("Image" .. (4 * #animationKeys + 2))
         foreground.Scale(640, 480)
         local playerSprite = Event.GetSprite("Player")
