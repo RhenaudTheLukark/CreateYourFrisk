@@ -254,7 +254,6 @@ public class LuaTextManager : TextManager {
 
     public bool allLinesComplete {
         get {
-            CheckExists();
             return AllLinesComplete();
         }
     }

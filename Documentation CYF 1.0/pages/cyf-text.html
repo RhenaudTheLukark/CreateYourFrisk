@@ -93,13 +93,14 @@ it's w3c valid, at least
                 to do so. Look down to see them!
             </p>
             <p>
-                <br><span class="function">CreateText(<span class="luatable"><span class="string"></span></span>  text, 
+                <br><span class="function">CreateText(<span class="luatable"><span class="string"></span></span>  text <font style="color:#fff;">(OR)</font> <span class="string"></span> text, 
                 <span class="luatable"><span class="number"></span>, <span class="number"></span></span> position, <span class="number"></span> textMaxWidth, <span class="string"></span> layer = "BelowPlayer", <span class="number"></span>  bubbleHeight = -1) returns <span class="userdata">textObject</span> [E/M/W]</span>
                 This function creates a Text Object and returns it. However, as you can see, a lot of parameters are needed.
                 <Br>Here is what you need to set:
                 <ul>
                     <li><span class="term">text</span> - The text to display.
-                    <br>Used the same way as in <span class="term">BattleDialog</span>: <span class="term">{"Text 1", "Text 2"}</span></li><br>
+                    <br>Used the same way as in <span class="term">BattleDialog</span>: <span class="term">{"Text 1", "Text 2"}</span>
+                    <br>Can also just be a single line of text.</li><br>
                     <li><span class="term">position</span> - <b>Two numbers</b>: The x and y positions of the center of the object. Sorry if it may be hard to place it, but you'll be 
                     able to use <span class="term">SetPivot</span> and <span class="term">MoveTo</span> to adjust it afterwards.
                     <br>You only need two numbers, like this: 
