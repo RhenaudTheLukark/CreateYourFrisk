@@ -1001,6 +1001,7 @@ public class EventManager : MonoBehaviour {
         PlayerOverworld.instance.textmgr.textQueue = new TextMessage[] { };
         PlayerOverworld.instance.textmgr.DestroyText();
         PlayerOverworld.instance.PlayerNoMove = false; //Event finished
+        PlayerOverworld.instance.UIPos = 0;
         ScriptLaunched = false;
         script = null;
     }

@@ -170,6 +170,9 @@ public class TextManager : MonoBehaviour {
     public void SetText(TextMessage text) { SetTextQueue(new TextMessage[] { text }); }
 
     public void SetTextQueue(TextMessage[] textQueue) {
+        if (UnitaleUtil.IsOverworld && (gameObject.name == "TextManager OW"))
+            PlayerOverworld.AutoSetUIPos();
+        
         ResetFont();
         this.textQueue = textQueue;
         currentLine = 0;

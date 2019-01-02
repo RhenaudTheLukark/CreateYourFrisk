@@ -40,6 +40,8 @@ public class PlayerOverworld : MonoBehaviour {
     private CYFAnimator animator;
 
     //private bool lockedCamera = false;    //Used to stop the camera's position refresh
+    
+    public int UIPos = 0; // 0: Auto-decide UI position; 1: Bottom; 2: Top
 
     //Start overrides the Start function of MovingObject
     public void Start() {
@@ -680,6 +682,48 @@ public class PlayerOverworld : MonoBehaviour {
                                      Mathf.Round(dimPlx.y) > 480 ? (dimPlx.y / 2 + (backgroundSize.y - dimPlx.y) * ((pos.y - 240) / (backgroundSize.y - 480))) : t.position.y, t.position.z);
         }
     }
+    
+    public static void AutoSetUIPos() {
+        if (instance.UIPos == 0) {
+            // If the Player's position is <= <TODO>, flip the position of the menu
+            float cameraOffset = (GameObject.Find("Main Camera OW").GetComponent<RectTransform>().position.y - 240);
+            float playerPos = Mathf.Ceil(instance.gameObject.GetComponent<RectTransform>().position.y - cameraOffset);
+            
+            SetUIPos(playerPos < 230);
+        } else
+            SetUIPos(instance.UIPos == 2 ? true : false);
+    }
+    
+    public static void SetUIPos(bool top = false) {
+        instance.UIPos = top ? 2 : 1;
+        float cameraOffset = (GameObject.Find("Main Camera OW").GetComponent<RectTransform>().position.y - 240);
+        
+        // Inverted position
+        if (top) {
+            // Text box
+            GameObject.Find("textframe_border_outer").GetComponent<RectTransform>().position = new Vector3(
+                        GameObject.Find("textframe_border_outer").GetComponent<RectTransform>().position.x,
+                        318 + cameraOffset,
+                        GameObject.Find("textframe_border_outer").GetComponent<RectTransform>().position.z);
+            // Stat box
+            GameObject.Find("menustat_border_outer").GetComponent<RectTransform>().localPosition = new Vector3(
+                        GameObject.Find("menustat_border_outer").GetComponent<RectTransform>().localPosition.x,
+                        -192,
+                        GameObject.Find("menustat_border_outer").GetComponent<RectTransform>().localPosition.z);
+        // Normal position
+        } else {
+            // Text box
+            GameObject.Find("textframe_border_outer").GetComponent<RectTransform>().position = new Vector3(
+                        GameObject.Find("textframe_border_outer").GetComponent<RectTransform>().position.x,
+                        20 + cameraOffset,
+                        GameObject.Find("textframe_border_outer").GetComponent<RectTransform>().position.z);
+            // Stat box
+            GameObject.Find("menustat_border_outer").GetComponent<RectTransform>().localPosition = new Vector3(
+                        GameObject.Find("menustat_border_outer").GetComponent<RectTransform>().localPosition.x,
+                        78,
+                        GameObject.Find("menustat_border_outer").GetComponent<RectTransform>().localPosition.z);
+        }
+    }
 
     public static IEnumerator LaunchMenu() {
         instance.PlayerNoMove = true; instance.menuRunning[2] = true; instance.menuRunning[4] = true; //Launch menu
@@ -691,7 +735,10 @@ public class PlayerOverworld : MonoBehaviour {
            18-27 : Stat */
         foreach (TextManager txt in txtmgrs)
             txt.SetHorizontalSpacing(2);
-
+        
+        instance.UIPos = 0;
+        AutoSetUIPos();
+        
         GameObject.Find("TextManager OW").GetComponent<TextManager>().SetText(new TextMessage("[noskipatall]", false, false));
         GameObject.Find("menustat_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 1);
         GameObject.Find("menuchoice_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 1);
@@ -901,6 +948,8 @@ public class PlayerOverworld : MonoBehaviour {
         GameObject.Find("TextManager OW").GetComponent<TextManager>().skipNowIfBlocked = true;
         if (endOfInText)
             instance.PlayerNoMove = false; //Close menu
+        SetUIPos(false);
+        instance.UIPos = 0;
         return true;
     }
 

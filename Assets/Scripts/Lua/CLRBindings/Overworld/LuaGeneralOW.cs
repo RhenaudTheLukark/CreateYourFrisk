@@ -21,7 +21,14 @@ public class LuaGeneralOW {
     /// <param name="texts"></param>
     /// <param name="formatted"></param>
     /// <param name="mugshots"></param>
-    [CYFEventFunction] public void SetDialog(DynValue texts, bool formatted = true, DynValue mugshots = null) {
+    [CYFEventFunction] public void SetDialog(DynValue texts, bool formatted = true, DynValue mugshots = null, DynValue forcePosition = null) {
+        // Unfortunately, either C# or MoonSharp have a ridiculous limit in place
+        // Calling `SetDialog({""}, true, nil, true)` fails to pass the final argument
+        if (mugshots != null && mugshots.Type == DataType.Table && forcePosition != null)
+            PlayerOverworld.instance.UIPos = forcePosition.Type == DataType.Boolean ? (forcePosition.Boolean == true ? 2 : 1) : 0;
+        else
+            PlayerOverworld.instance.UIPos = 0;
+        
         if (EventManager.instance.coroutines.ContainsKey(appliedScript) && EventManager.instance.script != appliedScript) {
             UnitaleUtil.DisplayLuaError(EventManager.instance.events[EventManager.instance.actualEventIndex].name, "General.SetDialog: You can't use that function in a coroutine.");
             return;
@@ -31,7 +38,7 @@ public class LuaGeneralOW {
         }
         TextMessage[] textmsgs = new TextMessage[texts.Table.Length];
         for (int i = 0; i < texts.Table.Length; i++)
-            textmsgs[i] = new TextMessage(texts.Table.Get(i + 1).String, formatted, false, mugshots != null ? mugshots.Type == DataType.Table ? mugshots.Table.Get(i+1) : mugshots : null);
+            textmsgs[i] = new TextMessage(texts.Table.Get(i + 1).String, formatted, false, (mugshots != null && mugshots.Type == DataType.Table) ? mugshots.Table.Get(i+1) : null);
         textmgr.SetTextQueue(textmsgs);
         textmgr.transform.parent.parent.SetAsLastSibling();
     }
@@ -41,7 +48,9 @@ public class LuaGeneralOW {
     /// </summary>
     /// <param name="question"></param>
     /// <param name="varIndex"></param>
-    [CYFEventFunction] public void SetChoice(DynValue choices, string question = null) {
+    [CYFEventFunction] public void SetChoice(DynValue choices, string question = "", DynValue forcePosition = null) {
+        PlayerOverworld.instance.UIPos = forcePosition.Type == DataType.Boolean ? (forcePosition.Boolean == true ? 2 : 1) : 0;
+        
         bool threeLines = false;
         TextMessage textMsgChoice = new TextMessage("", false, false, true);
         textMsgChoice.AddToText("[mugshot:null]");
@@ -49,7 +58,7 @@ public class LuaGeneralOW {
 
         //Do not put more than 3 lines and 2 choices
         //If the 3rd parameter is a string, it has to be a question
-        if (question != null) {
+        if (question != "") {
             textMsgChoice.AddToText(question + "\n");
 
             //int lengthAfter = question.Split('\n').Length;
@@ -60,7 +69,7 @@ public class LuaGeneralOW {
         }
         for (int i = 0; i < choices.Table.Length; i++) {
             //If there's no text, just don't print it
-            if (i == 2 && question != null)
+            if (i == 2 && question != "")
                 break;
             if (choices.Table.Get(i + 1).String == null)
                 continue;
@@ -85,13 +94,13 @@ public class LuaGeneralOW {
         }
 
         //Add the text to the text to print then the SetChoice function with its parameters
-        if (!threeLines && question != null)
+        if (!threeLines && question != "")
             textMsgChoice.AddToText("\n");
         textMsgChoice.AddToText(finalText[0] + "\n" + finalText[1] + "\n" + finalText[2]);
         textmgr.SetText(textMsgChoice);
         textmgr.transform.parent.parent.SetAsLastSibling();
 
-        StCoroutine("ISetChoice", new object[] { question != null, threeLines });
+        StCoroutine("ISetChoice", new object[] { question != "", threeLines });
     }
 
     [CYFEventFunction] public void Wait(int frames) { StCoroutine("IWait", frames); }
