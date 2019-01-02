@@ -22,7 +22,7 @@ public class LuaGeneralOW {
     /// <param name="formatted"></param>
     /// <param name="mugshots"></param>
     [CYFEventFunction] public void SetDialog(DynValue texts, bool formatted = true, DynValue mugshots = null, DynValue forcePosition = null) {
-        // Unfortunately, either C# or MoonSharp have a ridiculous limit in place
+        // Unfortunately, either C# or MoonSharp (don't know which) has a ridiculous limit in place
         // Calling `SetDialog({""}, true, nil, true)` fails to pass the final argument
         if (mugshots != null && mugshots.Type == DataType.Table && forcePosition != null)
             PlayerOverworld.instance.UIPos = forcePosition.Type == DataType.Boolean ? (forcePosition.Boolean == true ? 2 : 1) : 0;
@@ -49,7 +49,12 @@ public class LuaGeneralOW {
     /// <param name="question"></param>
     /// <param name="varIndex"></param>
     [CYFEventFunction] public void SetChoice(DynValue choices, string question = "", DynValue forcePosition = null) {
-        PlayerOverworld.instance.UIPos = forcePosition.Type == DataType.Boolean ? (forcePosition.Boolean == true ? 2 : 1) : 0;
+        // Unfortunately, something weird is happening here
+        // Calling `SetChoice({"Yes", "No"}, nil, true)` fails to pass the final argument
+        if (question != null && forcePosition != null)
+            PlayerOverworld.instance.UIPos = forcePosition.Type == DataType.Boolean ? (forcePosition.Boolean == true ? 2 : 1) : 0;
+        else
+            PlayerOverworld.instance.UIPos = 0;
         
         bool threeLines = false;
         TextMessage textMsgChoice = new TextMessage("", false, false, true);
