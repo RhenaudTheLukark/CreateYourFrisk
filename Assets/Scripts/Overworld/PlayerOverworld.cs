@@ -877,6 +877,7 @@ public class PlayerOverworld : MonoBehaviour {
                             }
                         }
                     } else if (choice == 1) { // STAT
+                        GameObject.Find("utHeartMenu").GetComponent<Image>().color = new Color(c.r, c.g, c.b, 0);
                         txtmgrs[18].SetText(new TextMessage("[noskipatall]\"" + PlayerCharacter.instance.Name + "\"", false, true));
                         txtmgrs[19].SetText(new TextMessage("[noskipatall]LV " + PlayerCharacter.instance.LV, false, true));
                         txtmgrs[20].SetText(new TextMessage("[noskipatall]HP " + PlayerCharacter.instance.HP + "/" + PlayerCharacter.instance.MaxHP, false, true));
@@ -905,6 +906,7 @@ public class PlayerOverworld : MonoBehaviour {
                         yield return 0;
                         while (instance.menuRunning[0] && !instance.menuRunning[3]) {
                             if (GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED || GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED) {
+                                GameObject.Find("utHeartMenu").GetComponent<Image>().color = new Color(c.r, c.g, c.b, 1);
                                 instance.uiAudio.PlayOneShot(AudioClipRegistry.GetSound("menuconfirm"));
                                 instance.menuRunning[0] = false;
                                 for (int i = 18; i <= 27; i++) txtmgrs[i].DestroyText();
