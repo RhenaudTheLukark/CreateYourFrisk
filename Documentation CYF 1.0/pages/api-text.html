@@ -230,7 +230,7 @@ it's w3c valid, at least
                 <br><span class="function">[instant]</span>
                 Instantly shows the entire text without having to wait or press anything.
                 <br><br>
-                <font style='color: #fff;'>* Note: This command works as an inline command
+                <span class="CYF"></span> <font style='color: #fff;'>* Note: This command works as an inline command
                 when placed at the beginning of a line of text.</font>
             </p>
             
@@ -244,12 +244,14 @@ it's w3c valid, at least
 
             <p class="exblock">
                 <br><span class="function"><span class="CYF"></span>[instant:stop]</span>
-                Cancels a previous <span class="term">[instant:allowcommand]</span>.
+                Cancels a previous <span class="term">[instant]</span> or <span class="term">[instant:allowcommand]</span> command,
+                and resumes typing.
             </p>
 
             <p class="exblock">
                 <br><span class="function"><span class="CYF"></span>[instant:stopall]</span>
-                Cancels a previous <span class="term">[instant:allowcommand]</span> or a player skip.
+                Cancels a previous <span class="term">[instant]</span>, <span class="term">[instant:allowcommand]</span> command or a
+                Player skip, and resumes typing.
             </p>
             
             <p class="exblock">
@@ -337,7 +339,7 @@ end</pre>
             </div>
             <p class="exblock">
                 <br><span class="function"><span class="CYF"></span>[speed:x]</span>
-                Makes the text handler print <span class="term">x</span> characters every 4 frames.<br>
+                Makes the text handler print <span class="term">x</span> characters over every 4 frames.<br>
                 The default text speed in CYF (<span class="term">[speed:1]</span>) is 1 character every 4 frames.
                 <br><br>
                 For example, <span class="term">[speed:4]</span> will type text at 4x the regular speed: 4 characters every 4 frames, or 1 per frame.

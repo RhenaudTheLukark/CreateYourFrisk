@@ -25,7 +25,6 @@ public class TextManager : MonoBehaviour {
     public int currentLine = 0;
     private int currentCharacter = 0;
     public int currentReferenceCharacter = 0;
-    private bool displayImmediate = false;
     private bool currentSkippable = true;
     public bool nextMonsterDialogueOnce = false, nmd2 = false, wasStated = false;
     private RectTransform self;
@@ -41,12 +40,16 @@ public class TextManager : MonoBehaviour {
             _currentY = value;
         }
     }*/
+    
+    // Variables that have to do with "[instant]"
+    private bool instantActive  = false; // Will be true if "[instant]" or "[instant:allowcommand]" have been activated
+    private bool instantCommand = false; // Will be true only if "[instant:allowcommand]" has been activated
+    
     private bool paused = false;
     private bool muted = false;
     private bool autoSkipThis = false;
     private bool autoSkipAll = false;
     private bool autoSkip = false;
-    private bool instantCommand = false;
     private bool skipFromPlayer = false;
     private bool firstChar = false;
     internal float hSpacing = 3;
@@ -224,7 +227,7 @@ public class TextManager : MonoBehaviour {
     public bool LineComplete() {
         if (letterReferences == null)
             return false;
-        return (displayImmediate || currentCharacter == letterReferences.Length);
+        return (instantActive || currentCharacter == letterReferences.Length);
     }
 
     public bool AllLinesComplete() {
@@ -341,7 +344,7 @@ public class TextManager : MonoBehaviour {
                     textEffect = null;
                     letterIntensity = 0;*/
                     // letterSpeed = 1;
-                    displayImmediate = textQueue[line].ShowImmediate;
+                    instantActive = textQueue[line].ShowImmediate;
                     SpawnText();
                     //if (!overworld)
                     //    UIController.instance.encounter.CallOnSelfOrChildren("AfterText");
@@ -402,10 +405,21 @@ public class TextManager : MonoBehaviour {
 
     public void DoSkipFromPlayer() {
         skipFromPlayer = true;
+        
         if (LuaEnemyEncounter.script.GetVar("playerskipdocommand").Boolean)
             instantCommand = true;
+        
+        
+        // AudioClip temp = letterSound.clip;
+        // letterSound.clip = null;
+        if (!GlobalControls.retroMode)
+            InUpdateControlCommand(DynValue.NewString("instant"), currentCharacter);
         else
             SkipText();
+        
+        // letterSound.clip = temp;
+        
+        //SkipText();
     }
 
     public void SkipLine() {
@@ -615,6 +629,11 @@ public class TextManager : MonoBehaviour {
                     if (currentText != currentText2)
                         textQueue[currentLine].Text = currentText = currentText2;
                 }
+        
+        // Work-around for [instant] and [instant:allowcommand] at the beginning of a line of text
+        bool  skipImmediate = false;
+        string skipCommand  = "";
+        
         for (int i = 0; i < currentText.Length; i++) {
             switch (currentText[i]) {
                 case '[':
@@ -623,22 +642,58 @@ public class TextManager : MonoBehaviour {
                     if (command != null && !LateStartWaiting) {
                         if (commandList.Contains(command.Split(':')[0])) {
                             // Work-around for [noskip], [instant] and [instant:allowcommand]
-                            if (command == "noskip" || (!GlobalControls.retroMode && (command == "instant" || command == "instant:allowcommand"))) {
-                                // Copy all text before the command
-                                string precedingText = currentText.Substring(0, i - (command.Length + 1));
-                                
-                                // Remove all commands
-                                while (precedingText.IndexOf('[') > -1) {
-                                    for (int j = 0; j < precedingText.Length; j++) {
-                                        if (precedingText[j] == ']') {
-                                            precedingText = precedingText.Replace(precedingText.Substring(0, j + 1), "");
-                                            break;
+                            if (!GlobalControls.retroMode) {
+                                if (command == "noskip") {
+                                    // Copy all text before the command
+                                    string precedingText = currentText.Substring(0, i - (command.Length + 1));
+                                    
+                                    // Remove all commands
+                                    while (precedingText.IndexOf('[') > -1) {
+                                        int j = precedingText.IndexOf('[');
+                                        for (int k = 0; k < precedingText.Length; k++) {
+                                            if (precedingText[k] == ']') {
+                                                precedingText = precedingText.Replace(precedingText.Substring(j, (k - j) + 1), "");
+                                                break;
+                                            }
                                         }
                                     }
-                                }
-                                
-                                // Confirm that our command is at the beginning!
-                                if (precedingText.Length == 0)
+                                    
+                                    // Confirm that our command is at the beginning!
+                                    if (precedingText.Length == 0)
+                                        PreCreateControlCommand(command);
+                                // Special case for "[instant]" and "[instant:allowcommand]"
+                                } else if (command == "instant" || command == "instant:allowcommand") {
+                                    // The goal of this is to allow for commands executed "just before" [instant] on the first frame
+                                    // Example: "[func:test][instant]..."
+                                    
+                                    // Copy all text before the command
+                                    string precedingText = currentText.Substring(0, i - (command.Length + 1));
+                                    
+                                    // Remove all commands, store them for later
+                                    List<string> commands = new List<string>();
+                                    
+                                    while (precedingText.IndexOf('[') > -1) {
+                                        int j = precedingText.IndexOf('[');
+                                        for (int k = 0; k < precedingText.Length; k++) {
+                                            if (precedingText[k] == ']') {
+                                                commands.Add(precedingText.Substring(j + 1, (k - j) - 1));
+                                                precedingText = precedingText.Replace(precedingText.Substring(j, (k - j) + 1), "");
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    
+                                    // Confirm that our command is at the beginning!
+                                    if (precedingText.Length == 0) {
+                                        // Execute all commands that came before [instant] through InUpdateControlCommand
+                                        foreach (string cmd in commands)
+                                            InUpdateControlCommand(DynValue.NewString(cmd));
+                                        
+                                        skipImmediate = true;
+                                        skipCommand = command;
+                                        InUpdateControlCommand(DynValue.NewString(command), i);
+                                    }
+                                } else if (command.Length < 7 || command.Substring(0, 7) != "instant")
                                     PreCreateControlCommand(command);
                             } else
                                 PreCreateControlCommand(command);
@@ -714,11 +769,16 @@ public class TextManager : MonoBehaviour {
                 } else                                          ltrImg.color = currentColor;
             } else                                              ltrImg.color = currentColor;
             ltrImg.GetComponent<Letter>().colorFromText = currentColor;
-            ltrImg.enabled = displayImmediate || instantCommand;
+            ltrImg.enabled = textQueue[currentLine].ShowImmediate || (GlobalControls.retroMode && instantActive);
             letters.Add(singleLtr.GetComponent<Letter>());
 
             currentX += ltrRect.rect.width + hSpacing; // TODO remove hardcoded letter offset
         }
+        
+        // Work-around for [instant] and [instant:allowcommand] at the beginning of a line of text
+        if (skipImmediate)
+            InUpdateControlCommand(DynValue.NewString(skipCommand));
+        
         if (UnitaleUtil.IsOverworld && SceneManager.GetActiveScene().name != "TitleScreen" && SceneManager.GetActiveScene().name != "EnterName" && !GlobalControls.isInShop)
             try {
                 if (mugshot.alpha == 0)
@@ -744,7 +804,7 @@ public class TextManager : MonoBehaviour {
 
                     DynValue commandDV = DynValue.NewString(command);
                     if (commandList.Contains(commandDV.String.Split(':')[0]))
-                        InUpdateControlCommand(commandDV);
+                        InUpdateControlCommand(commandDV, currentCharacter);
                     else {
                         currentCharacter = currentChar;
                         return false;
@@ -796,10 +856,10 @@ public class TextManager : MonoBehaviour {
 
         if (textEffect != null)
             textEffect.UpdateEffects();
-
-        if (displayImmediate)
+        
+        if (GlobalControls.retroMode && instantActive)
             return;
-
+        
         if (currentCharacter >= letterReferences.Length)
             return;
 
@@ -866,12 +926,12 @@ public class TextManager : MonoBehaviour {
     }
 
     private bool HandleShowLetter(ref bool soundPlayed, ref int lastLetter) {
-        if (lastLetter != currentCharacter) {
+        if (lastLetter != currentCharacter && ((!GlobalControls.retroMode && (!instantActive || instantCommand)) || GlobalControls.retroMode)) {
             float oldLetterTimer = letterTimer;
             int oldLetterOnceValue = letterOnceValue;
             lastLetter = currentCharacter;
             while (CheckCommand()) {
-                if (displayImmediate || letterTimer != oldLetterTimer || waitingChar != KeyCode.None || letterOnceValue != oldLetterOnceValue)
+                if ((GlobalControls.retroMode && instantActive) || letterTimer != oldLetterTimer || waitingChar != KeyCode.None || letterOnceValue != oldLetterOnceValue)
                     return false;
             }
             if (currentCharacter >= letterReferences.Length)
@@ -969,6 +1029,7 @@ public class TextManager : MonoBehaviour {
                 break;
             
             case "instant":
+                /*
                 if (args.Length == 0 || (args.Length == 1 && cmds[1] == "allowcommand")) {
                     if (args.Length == 1 && cmds[1] == "allowcommand") {
                         instantCommand = true;
@@ -979,6 +1040,11 @@ public class TextManager : MonoBehaviour {
                     if (!skipFromPlayer)
                         displayImmediate = true;
                 }
+                */
+                if (GlobalControls.retroMode)
+                    instantActive = true;
+                else
+                    InUpdateControlCommand(DynValue.NewString(command));
                 break;
             
             case "noskip":
@@ -1024,7 +1090,7 @@ public class TextManager : MonoBehaviour {
         }
     }
 
-    private void InUpdateControlCommand(DynValue command) {
+    private void InUpdateControlCommand(DynValue command, int index = 0) {
         string[] cmds = UnitaleUtil.SpecialSplit(':', command.String);
         string[] args = new string[0];
         if (cmds.Length >= 2) {
@@ -1049,8 +1115,7 @@ public class TextManager : MonoBehaviour {
                 break;
 
             case "w":
-                if (!instantCommand && !displayImmediate)
-                    letterTimer = timePerLetter - (singleFrameTiming * ParseUtil.GetInt(cmds[1]));
+                letterTimer = timePerLetter - (singleFrameTiming * ParseUtil.GetInt(cmds[1]));
                 break;
 
             case "waitall":     timePerLetter = singleFrameTiming * ParseUtil.GetInt(cmds[1]); break;
@@ -1071,8 +1136,7 @@ public class TextManager : MonoBehaviour {
                 break;
 
             case "letters":
-                if (!instantCommand)
-                    letterOnceValue = Int32.Parse(args[0]);
+                letterOnceValue = Int32.Parse(args[0]);
                 break;
 
             case "voice":
@@ -1081,21 +1145,69 @@ public class TextManager : MonoBehaviour {
                 break;
                 
             case "instant":
-                if (args.Length != 0) {
-                    switch (args[0].ToLower()) {
-                        case "allowcommand": instantCommand = true; break;
-                        case "stop":
-                            if (!skipFromPlayer)
-                                instantCommand = false;
-                            break;
-                        case "stopall": instantCommand = false; break;
-                    }
-                } else if (args.Length == 0 && !GlobalControls.retroMode)
+                if (args.Length != 0 && (args.Length > 1 || args[0] != "allowcommand"))
+                    break;
+                
+                instantActive = true;
+                
+                if (command.String == "instant:allowcommand")
+                    instantCommand = true;
+                
+                // First:  Find the active line of text
+                string currentText = textQueue[currentLine].Text;
+                
+                // Second: Find the position to "end" at
+                // This will either be: [instant:stop], [instant:stopall] or the end of the string
+                int pos = currentText.Length;
+                
+                for (int i = index; i < pos; i++) {
                     if (!skipFromPlayer) {
-                        displayImmediate = true;
-                        foreach (Letter l in letters)
-                            l.transform.gameObject.GetComponent<Image>().enabled = true;
+                        if ((currentText.Substring(i)).Length >= 13 && currentText.Substring(i, 13) == "[instant:stop") {
+                            pos = i - 1;
+                            break;
+                        }
+                    } else {
+                        if ((currentText.Substring(i)).Length >= 16 && currentText.Substring(i, 16) == "[instant:stopall") {
+                            pos = i - 1;
+                            break;
+                        }
                     }
+                }
+                
+                // pos--;
+                
+                // Third:  Find all commands between the current position and the "end point"
+                for (int i = index; i < pos; i++)
+                    if (currentText[i] == '[' && currentText.Substring(i, 3) != "[w:" && currentText.Substring(i, 9) != "[waitfor:"
+                        && currentText.Substring(i, 8) != "[instant") {
+                        // Only execute the command if `instantCommand` is true
+                        if (instantCommand)
+                            try {
+                                InUpdateControlCommand(DynValue.NewString(currentText.Substring(i + 1, currentText.IndexOf(']', i) - (i + 1))));
+                            } catch {}
+                    }
+                
+                // Fourth: Display the next set of actually-created letter sprites between `index` and `pos`
+                for (int i = index; i < pos; i++) {
+                    if (letterReferences[i] != null)
+                        letterReferences[i].enabled = true;
+                }
+                
+                // Fifth:  Update variables
+                if (pos < currentText.Length) {
+                    instantActive  = false;
+                    instantCommand = false;
+                    letterTimer = timePerLetter;
+                    /*
+                    if (letterTimer >= timePerLetter * 2)
+                        letterTimer = timePerLetter + (letterTimer % timePerLetter);
+                    */
+                }
+                
+                skipFromPlayer = false;
+                
+                currentCharacter = pos;
+                currentReferenceCharacter = pos;
                 break;
 
             case "func":
