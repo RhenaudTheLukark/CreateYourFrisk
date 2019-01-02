@@ -154,8 +154,9 @@ public class GlobalControls : MonoBehaviour {
             }
             //StaticInits.Reset();
         } else if (input.Menu == UndertaleInput.ButtonState.PRESSED && !nonOWScenes.Contains(SceneManager.GetActiveScene().name) && !isInFight)
-            if (!PlayerOverworld.instance.PlayerNoMove && EventManager.instance.script == null && !PlayerOverworld.instance.menuRunning[2] && !PlayerOverworld.instance.menuRunning[4] && EventManager.instance.script == null)
+            if (!PlayerOverworld.instance.PlayerNoMove && EventManager.instance.script == null && !PlayerOverworld.instance.menuRunning[2] && !PlayerOverworld.instance.menuRunning[4] && EventManager.instance.script == null && GameObject.Find("FadingBlack").GetComponent<Fading>().alpha <= 0)
                 StartCoroutine(PlayerOverworld.LaunchMenu());
+        
         //else if (Input.GetKeyDown(KeyCode.L))
         //    MyFirstComponentClass.SpriteAnalyser();
         if (isInFight)
