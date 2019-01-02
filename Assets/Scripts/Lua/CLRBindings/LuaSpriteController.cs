@@ -616,13 +616,18 @@ public class LuaSpriteController {
     public void Remove() {
         if (_img == null)
             return;
-        if (tag == "enemy" || tag == "bubble") {
-            UnitaleUtil.WriteInLogAndDebugger("sprite.Remove(): You can't remove a " + tag + "'s sprite!");
-            return;
-        } else if (img.gameObject.name == "player" && !GlobalControls.retroMode) {
-            UnitaleUtil.WriteInLogAndDebugger("sprite.Remove(): You can't remove the Player's sprite!");
-            return;
+        
+        bool throwError = false;
+        if ((!GlobalControls.retroMode && img.gameObject.name == "player") || (!GlobalControls.retroMode && tag == "projectile") || tag == "enemy" || tag == "bubble") {
+            if (img.gameObject.name == "player")
+                throw new CYFException("sprite.Remove(): You can't remove the Player's sprite!");
+            else if (tag == "projectile") {
+                if (img.GetComponent<Projectile>().ctrl != null)
+                    if (img.GetComponent<Projectile>().ctrl.isactive) throwError = true;
+            } else                                                    throwError = true;
         }
+        if (throwError)
+            throw new CYFException("sprite.Remove(): You can't remove a " + tag + "'s sprite!");
 
         if (tag == "projectile") {
             Projectile[] pcs = img.GetComponentsInChildren<Projectile>();
@@ -635,10 +640,9 @@ public class LuaSpriteController {
     }
 
     public void Dust(bool playDust = true, bool removeObject = false) {
-        if (tag == "enemy" || tag == "bubble") {
-            UnitaleUtil.WriteInLogAndDebugger("sprite.Dust(): You can't dust a " + tag + "'s sprite that way!");
-            return;
-        }
+        if (tag == "enemy" || tag == "bubble")
+            throw new CYFException("sprite.Dust(): You can't dust a " + tag + "'s sprite!");
+
         GameObject go = GameObject.Instantiate(Resources.Load<GameObject>("Prefabs/MonsterDuster"));
         go.transform.SetParent(UIController.instance.psContainer.transform);
         if (playDust)
@@ -647,7 +651,7 @@ public class LuaSpriteController {
         if (img.gameObject.name != "player") {
             img.SetActive(false);
             if (removeObject)
-                img = null;
+                Remove();
         }
     }
 
