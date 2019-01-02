@@ -1770,7 +1770,7 @@ MonoBehaviour:
     anims: FriskUT/8, FriskUT/9, FriskUT/10, FriskUT/11
     transitionTime: 0.25
   - name: Glitch
-    anims: FriskUT/Glitch/g0, FriskUT/Glitch/g1, FriskUT/Glitch/g2, FriskUT/Glitch/g3
+    anims: FriskUT/Glitch/g0, FriskUT/Glitch/g1, FriskUT/Glitch/g2
     transitionTime: 0.2
   - name: CharaStopDown
     anims: CharaOW/1, CharaOW/1
