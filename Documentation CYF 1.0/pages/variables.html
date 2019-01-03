@@ -184,7 +184,10 @@ enemypositions = {
             <br><p><span class="CYF"></span> <span class="boolean"></span> <span class="term">unescape</span> - False by default. If this value is set 
                 to true, you can't exit the battle with the ESC key anymore.</p>
             <br><p><span class="CYF"></span> <span class="boolean"></span> <span class="term">flee</span> - True by default. If this value is set to false, 
-            the flee option will not be available anymore.</p>
+            the Flee option will not appear in the Mercy menu.</p>
+            <br><p><span class="CYF"></span> <span class="boolean"></span> <span class="term">canflee</span> - <span class="term">nil</span> by default.
+            Set this to <span class="term">true</span> or <span class="term">false</span> to force the Flee option to succeed or fail.
+            Otherwise, it's a 50% chance, like in Undertale.</p>
             <br><p><span class="CYF"></span> <span class="boolean"></span> <span class="term">revive</span> - If this variable is set to true, the player 
             will be revived when they hit 0 HP.<br>By default, there will be no special text for the player being revived; however, if you set
             <span class="term">deathtext</span>, that will be used.</p>
@@ -193,7 +196,7 @@ enemypositions = {
             This text is also used if the player gets revived while <span class="term">revive</span> is true. Otherwise, there is no revive text.</p>
             <br><p><span class="CYF"></span> <span class="string"></span> <span class="term">deathmusic</span> - Sets the death music. The music is played 
             if <span class="term">revive</span> is not set.</p>
-            <br><p><span class="CYF"></span> <span class="luatable"><span class="string"></span></span> <span class="term">Wave</span> - A table returning the 
+            <br><p><span class="CYF"></span> <span class="luatable"><span class="userdata">script</span></span> <span class="term">Wave</span> - A table returning the 
             current wave scripts used. Returns a table with a length of 0 if not in the state DEFENDING.</p>
             <br><p><span class="CYF"></span> <span class="luatable"><span class="string"></span></span> <span class="term">fleetexts</span> - If you set this
             to a table filled with strings, a random one of your strings will be displayed whenever the player flees the battle (if that's enabled).</p>

@@ -44,7 +44,7 @@ public class UIController : MonoBehaviour {
 
     // DEBUG Making running away a bit more fun. Remove this later.
     private bool musicPausedFromRunning = false;
-    //private int runawayattempts = 0;
+    private int runawayattempts = 0;
 
     private int selectedAction = 0;
     private int selectedEnemy = 0;
@@ -940,8 +940,72 @@ public class UIController : MonoBehaviour {
                             }
                         }*/
 
-                    } else if (selectedMercy == 1)
-                        StartCoroutine(ISuperFlee());
+                    } else if (selectedMercy == 1) {
+                        if (!GlobalControls.retroMode) {
+                            if ((LuaEnemyEncounter.script.GetVar("canflee").Type != DataType.Boolean && Math.RandomRange(0, 2) == 0)
+                              || LuaEnemyEncounter.script.GetVar("canflee").Boolean)
+                                StartCoroutine(ISuperFlee());
+                            else
+                                SwitchState(UIState.ENEMYDIALOGUE);
+                        } else {
+                            PlayerController.instance.GetComponent<Image>().enabled = false;
+                            AudioClip yay = AudioClipRegistry.GetSound("runaway");
+                            AudioSource.PlayClipAtPoint(yay, Camera.main.transform.position);
+                            string fittingLine = "";
+                            switch (runawayattempts)
+                            {
+                                case 0:
+                                    fittingLine = "...[w:15]But you realized\rthe overworld was missing.";
+                                    break;
+
+                                case 1:
+                                    fittingLine = "...[w:15]But the overworld was\rstill missing.";
+                                    break;
+
+                                case 2:
+                                    fittingLine = "You walked off as if there\rwere an overworld, but you\rran into an invisible wall.";
+                                    break;
+
+                                case 3:
+                                    fittingLine = "...[w:15]On second thought, the\rembarassment just now\rwas too much.";
+                                    break;
+
+                                case 4:
+                                    fittingLine = "But you became aware\rof the skeleton inside your\rbody, and forgot to run.";
+                                    break;
+
+                                case 5:
+                                    fittingLine = "But you needed a moment\rto forget about your\rscary skeleton.";
+                                    break;
+
+                                case 6:
+                                    fittingLine = "...[w:15]You feel as if you\rtried this before.";
+                                    break;
+
+                                case 7:
+                                    fittingLine = "...[w:15]Maybe if you keep\rsaying that, the\roverworld will appear.";
+                                    break;
+
+                                case 8:
+                                    fittingLine = "...[w:15]Or not.";
+                                    break;
+
+                                default:
+                                    fittingLine = "...[w:15]But you decided to\rstay anyway.";
+                                    break;
+                            }
+
+                            ActionDialogResult(new TextMessage[]
+                                {
+                                    new RegularMessage("I'm outta here."),
+                                    new RegularMessage(fittingLine)
+                                },
+                                UIState.ENEMYDIALOGUE);
+                            Camera.main.GetComponent<AudioSource>().Pause();
+                            musicPausedFromRunning = true;
+                            runawayattempts++;
+                        }
+                    }
                     PlaySound(AudioClipRegistry.GetSound("menuconfirm"));
                     break;
 
