@@ -68,20 +68,27 @@ public class GlobalControls : MonoBehaviour {
              && LuaScriptBinder.GetAlMighty(null, "CYFPerfectFullscreen").Type.ToString() == "Boolean")
                 perfectFullscreen = LuaScriptBinder.GetAlMighty(null, "CYFPerfectFullscreen").Boolean;
             
+            // check if window scale has a stored preference that is a number
+            if (LuaScriptBinder.GetAlMighty(null, "CYFWindowScale") != null
+             && LuaScriptBinder.GetAlMighty(null, "CYFWindowScale").Type.ToString() == "Number")
+                windowScale = (int)LuaScriptBinder.GetAlMighty(null, "CYFWindowScale").Number;
+            
             awakened = true;
         }
     }
     
-    // blurless fullscreen variables
+    // resolution variables
     public static bool perfectFullscreen = true;
     public static int fullscreenSwitch = 0;
+    
+    public static int windowScale = 1;
     
     #if UNITY_STANDALONE_WIN
         static IEnumerator RepositionWindow() {
             yield return new WaitForEndOfFrame();
             
             try {
-                Misc.MoveWindowTo((int)(Screen.currentResolution.width/2 - 320), (int)(Screen.currentResolution.height/2 - 240));
+                Misc.MoveWindowTo((int)(Screen.currentResolution.width/2 - (Screen.width/2)), (int)(Screen.currentResolution.height/2 - (Screen.height/2)));
             } catch {}
         }
     #endif
@@ -89,11 +96,11 @@ public class GlobalControls : MonoBehaviour {
     public static void SetFullScreen(bool fullscreen, int newSwitch = 1) {
         if (perfectFullscreen) {
             if (!fullscreen)
-                Screen.SetResolution(640, 480, false, 0);
+                Screen.SetResolution(640 * windowScale, 480 * windowScale, false, 0);
             else
                 Screen.SetResolution(Screen.currentResolution.width, Screen.currentResolution.height, true, 0);
         } else
-            Screen.SetResolution(640, 480, fullscreen, 0);
+            Screen.SetResolution(640 * windowScale, 480 * windowScale, fullscreen, 0);
         
         fullscreenSwitch = newSwitch;
 	}

@@ -138,6 +138,28 @@ public class OptionsScript : MonoBehaviour {
         GlobalControls.perfectFullscreen =!GlobalControls.perfectFullscreen;
         GameObject.Find("Fullscreen").GetComponent<Button>().onClick.Invoke();
         
+        // change window scale
+        GameObject.Find("Scale").GetComponent<Button>().onClick.AddListener(() => {
+            double maxScale = System.Math.Floor(Screen.currentResolution.height / 480.0);
+            if (GlobalControls.windowScale < maxScale)
+                GlobalControls.windowScale += 1;
+            else
+                GlobalControls.windowScale = 1;
+            
+            if (Screen.height != GlobalControls.windowScale * 480 && !Screen.fullScreen)
+                GlobalControls.SetFullScreen(false);
+            
+            // save RetroMode preferences to AlMighties
+            LuaScriptBinder.SetAlMighty(null, "CYFWindowScale", DynValue.NewNumber(GlobalControls.windowScale), true);
+            
+            if (!GlobalControls.crate)
+                GameObject.Find("Scale").GetComponentInChildren<Text>().text =  "Window Scale: " + GlobalControls.windowScale.ToString() + "x";
+            else
+                GameObject.Find("Scale").GetComponentInChildren<Text>().text = "WEENDO STRECH: " + GlobalControls.windowScale.ToString() + "X";
+        });
+        GlobalControls.windowScale--;
+        GameObject.Find("Scale").GetComponent<Button>().onClick.Invoke();
+        
         // exit
         GameObject.Find("Exit").GetComponent<Button>().onClick.AddListener(() => {SceneManager.LoadScene("ModSelect");});
         
@@ -154,6 +176,7 @@ public class OptionsScript : MonoBehaviour {
             GameObject.Find("Safe").GetComponentInChildren<Text>().text = "SFAE MODE: " + (ControlPanel.instance.Safe ? "ON" : "OFF");
             GameObject.Find("Retro").GetComponentInChildren<Text>().text = "RETORCMOAPTIILBIYT MOD: " + (ControlPanel.instance.Safe ? "ON" : "OFF");
             GameObject.Find("Fullscreen").GetComponentInChildren<Text>().text = "NOT UGLEE FULLSRCEEN: " + (GlobalControls.perfectFullscreen ? "ON" : "OFF");
+            GameObject.Find("Scale").GetComponentInChildren<Text>().text = "WEENDO STRECH: " + GlobalControls.windowScale.ToString() + "X";
             GameObject.Find("Exit").GetComponentInChildren<Text>().text =                         "EXIT TOO MAD SELCT";
         }
     }
@@ -208,6 +231,14 @@ public class OptionsScript : MonoBehaviour {
                     return response;
                 else
                     return Temmify.Convert(response);
+            case "Scale":
+                response = "Scales the window in Windowed mode.\n\n"
+                         + "This is useful for especially large screens (such as 4k monitors).\n\n"
+                         + "Has no effect in Fullscreen mode.";
+                if (!GlobalControls.crate)
+                    return response;
+                else
+                    return Temmify.Convert(response);
             case "Exit":
                 response = "Returns to the Mod Select screen.";
                 if (!GlobalControls.crate)
@@ -233,7 +264,7 @@ public class OptionsScript : MonoBehaviour {
             // try to find which button the player is hovering over
             string hoverItem = "";
             // if the player is within the range of the buttons
-            if ((Input.mousePosition.x / Screen.width) * 640 >= 40 && (Input.mousePosition.x / Screen.width) * 640 <= 300) {
+            if ((Input.mousePosition.x / Screen.width) * 640 >= 40 && (Input.mousePosition.x / Screen.width) * 640 <= 290) {
                 // ResetRG
                 if      ((Input.mousePosition.y / Screen.height) * 480 <= 420 && (Input.mousePosition.y / Screen.height) * 480 > 380)
                     hoverItem = "ResetRG";
@@ -252,6 +283,9 @@ public class OptionsScript : MonoBehaviour {
                 // Fullscreen
                 else if ((Input.mousePosition.y / Screen.height) * 480 <= 220 && (Input.mousePosition.y / Screen.height) * 480 > 180)
                     hoverItem = "Fullscreen";
+                // Scale
+                else if ((Input.mousePosition.y / Screen.height) * 480 <= 180 && (Input.mousePosition.y / Screen.height) * 480 > 140)
+                    hoverItem = "Scale";
                 // Exit
                 else if ((Input.mousePosition.y / Screen.height) * 480 <=  60 && (Input.mousePosition.y / Screen.height) * 480 >  20)
                     hoverItem = "Exit";
