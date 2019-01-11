@@ -412,7 +412,7 @@ public static class LuaScriptBinder {
         //////////////////////////////////////////
         
         // If the first line of text has [font] at the beginning, use it intially!
-        if (firstLine.IndexOf("[font:") > -1) {
+        if (firstLine.IndexOf("[font:") > -1 && firstLine.IndexOf(']') > firstLine.IndexOf("[font:")) {
             // grab all of the text that comes before the matched command
             string precedingText = firstLine.Substring(0, firstLine.IndexOf("[font:"));
             
@@ -443,15 +443,24 @@ public static class LuaScriptBinder {
     }
 
     public static void SetButtonLayer(string layer) {
-        GameObject obj = GameObject.Find("Stats");
-        Transform parent = obj.transform.parent;
+        GameObject obj1 = GameObject.Find("Stats");
+        GameObject obj2 = GameObject.Find("UIRect");
+        Transform parent1 = obj1.transform.parent;
+        Transform parent2 = obj2.transform.parent;
         try {
             if (layer == "default") {
-                obj.transform.SetParent(GameObject.Find("Canvas").transform);
-                obj.transform.SetSiblingIndex(obj.transform.parent.GetComponentInChildren<UIController>().transform.GetSiblingIndex() + 1);
-            } else
-                obj.transform.SetParent(GameObject.Find(layer + "Layer").transform);
+                obj1.transform.SetParent(GameObject.Find("Canvas").transform);
+                obj1.transform.SetSiblingIndex(obj1.transform.parent.GetComponentInChildren<UIController>().transform.GetSiblingIndex() + 1);
+                obj2.transform.SetParent(GameObject.Find("Canvas").transform);
+                obj2.transform.SetSiblingIndex(obj2.transform.parent.GetComponentInChildren<UIController>().transform.GetSiblingIndex() + 1);
+            } else {
+                obj1.transform.SetParent(GameObject.Find(layer + "Layer").transform);
+                obj2.transform.SetParent(GameObject.Find(layer + "Layer").transform);
+            }
         } 
-        catch { obj.transform.SetParent(parent); }
+        catch {
+            obj1.transform.SetParent(parent1);
+            obj2.transform.SetParent(parent2);
+        }
     }
 }

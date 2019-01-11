@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>
 /// Behaviour attached to the arena used to resize it.
@@ -203,6 +204,34 @@ public class ArenaManager : MonoBehaviour {
         currentHeight = this.newHeight;
         applyChanges(currentX, currentY, currentWidth, currentHeight);
     }
+    
+    /// <summary>
+    /// Makes the arena invisible, but it will stay active.
+    /// </summary>
+    public void Hide() {
+        inner.GetComponent<Image>().color = new Color(inner.GetComponent<Image>().color.r,
+                                                      inner.GetComponent<Image>().color.g,
+                                                      inner.GetComponent<Image>().color.b,
+                                                      0f);
+        outer.GetComponent<Image>().color = new Color(outer.GetComponent<Image>().color.r,
+                                                      outer.GetComponent<Image>().color.g,
+                                                      outer.GetComponent<Image>().color.b,
+                                                      0f);
+    }
+    
+    /// <summary>
+    /// Makes the arena visible, if it was previously set invisible with Hide().
+    /// </summary>
+    public void Show() {
+        inner.GetComponent<Image>().color = new Color(inner.GetComponent<Image>().color.r,
+                                                      inner.GetComponent<Image>().color.g,
+                                                      inner.GetComponent<Image>().color.b,
+                                                      1f);
+        outer.GetComponent<Image>().color = new Color(outer.GetComponent<Image>().color.r,
+                                                      outer.GetComponent<Image>().color.g,
+                                                      outer.GetComponent<Image>().color.b,
+                                                      1f);
+    }
 
     /// <summary>
     /// Gets how far along this arena is with changes. Does this by returning the lowest of ratios of desired width/height/x/y to intended width/height/x/y.
@@ -330,5 +359,6 @@ public class ArenaManager : MonoBehaviour {
         if (!firstTurn)
             MoveToImmediate(320, 90, false);
         Resize(UIWidth, UIHeight);
+        Show();
     }
 }

@@ -32,7 +32,7 @@ public class IntroManager : MonoBehaviour {
         Camera.main.GetComponent<AudioSource>().clip = AudioClipRegistry.GetMusic("mus_intro");
         Camera.main.GetComponent<AudioSource>().Play();
         if (imagePaths.Length != textsToDisplay.Length)
-            throw new Exception("You need to have the same number of images and text.");
+            throw new Exception("You need to have the same number of images and lines of text.");
         text = GameObject.FindObjectOfType<TextManager>();
         img = GameObject.Find("CutsceneImages").GetComponent<Image>();
         text.SetVerticalSpacing(6);

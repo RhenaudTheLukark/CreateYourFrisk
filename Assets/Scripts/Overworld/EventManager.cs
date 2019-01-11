@@ -1001,6 +1001,7 @@ public class EventManager : MonoBehaviour {
         PlayerOverworld.instance.textmgr.textQueue = new TextMessage[] { };
         PlayerOverworld.instance.textmgr.DestroyText();
         PlayerOverworld.instance.PlayerNoMove = false; //Event finished
+        PlayerOverworld.instance.UIPos = 0;
         ScriptLaunched = false;
         script = null;
     }
@@ -1323,7 +1324,7 @@ public class EventManager : MonoBehaviour {
                 yield break;
             }
         }
-        UnitaleUtil.WriteInLogAndDebugger("Event.Rotate: The name you entered in the function isn't an event's name. Did you forget to add the 'Event' tag ?");
+        UnitaleUtil.WriteInLogAndDebugger("Event.Rotate: The name you entered in the function isn't an event's name. Did you forget to add the 'Event' tag?");
         scr.Call("CYFEventNextCommand");
     }
 

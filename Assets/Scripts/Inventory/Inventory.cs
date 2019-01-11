@@ -8,28 +8,35 @@ using MoonSharp.Interpreter;
 /// Static placeholder inventory class for the player. Will probably get moved to something else that makes sense, like the player...or not.
 /// </summary>
 public static class Inventory {
-    public static string[] addedItems = new string[] { };
-    public static int[] addedItemsTypes = new int[] { };
+    public static List<string> addedItems = new List<string>();
+    public static List<int> addedItemsTypes = new List<int>();
     public static LuaInventory luaInventory;
     public static int tempAmount = 0;
-    public static Dictionary<string, string> NametoDesc = new Dictionary<string, string>(), NametoShortName = new Dictionary<string, string>(), NameToReplac = new Dictionary<string, string>();
+    public static Dictionary<string, string> NametoDesc = new Dictionary<string, string>(), NametoShortName = new Dictionary<string, string>();
     public static Dictionary<string, int> NametoType = new Dictionary<string, int>(), NametoPrice = new Dictionary<string, int>();
     public static bool usedItemNoDelete = false;
     //public static bool overworld = false;
     public static List<UnderItem> inventory = new List<UnderItem>();
 
     public static void SetItemList(string[] items = null) {
+        foreach (string item in items) {
+            string outStr = "";
+            int outInt    =  0;
+            if (!addedItems.Contains(item) && !NametoDesc.TryGetValue(item, out outString) && !NametoShortName.TryGetValue(item, out outString) && !NametoType.TryGetValue(item, out outInt) && !NametoPrice.TryGetValue(item, out outInt))
+                throw new CYFException("Inventory.SetInventory: The item \"" + item + "\" was not found.\n\nAre you sure you called Inventory.AddCustomItems first?");
+        }
+        
         inventory = new List<UnderItem>(new UnderItem[] { });
         if (items != null)
             for (int i = 0; i < items.Length; i++) {
                 if (i == 8)
-                    UnitaleUtil.WriteInLogAndDebugger("[WARN]The inventory can only contain 8 items, yet you tried to add the item \"" + items[i] + "\" as the " + (i + 1) + "th item.");
+                    UnitaleUtil.WriteInLogAndDebugger("[WARN]The inventory can only contain 8 items, yet you tried to add the item \"" + items[i] + "\" as item number " + (i + 1) + ".");
                 else {
                     // Search through addedItemsTypes to find the type of the new item
                     int type = 0;
                     
                     // Get the index of the new item in addedItems
-                    for (int j = 0; j < addedItems.Length; j++) {
+                    for (int j = 0; j < addedItems.Count; j++) {
                         if (addedItems[j] == items[i])
                             type = addedItemsTypes[j];
                     }
@@ -89,8 +96,8 @@ public static class Inventory {
         CallOnSelf("HandleItem", new DynValue[] { DynValue.NewString(Name.ToUpper()), DynValue.NewNumber(ID + 1) });
 
         TextMessage[] mess = new TextMessage[] { };
-        if (addedItems.Length != 0) {
-            for (int i = 0; i < addedItems.Length; i++)
+        if (addedItems.Count != 0) {
+            for (int i = 0; i < addedItems.Count; i++)
                 if (addedItems[i].ToLower() == Name.ToLower()) {
                     type = addedItemsTypes[i];
                     if (type == 1 || type == 2)
@@ -455,7 +462,7 @@ public static class Inventory {
                         mess = new TextMessage[] { new TextMessage("Through DETERMINATION,\rthe dream became true.[w:10]\nYou recovered 17 HP!", true, false) };
                         break;
                     default:
-                        UnitaleUtil.WriteInLogAndDebugger("[WARN]The item doesn't exists in this pool.");
+                        UnitaleUtil.WriteInLogAndDebugger("[WARN]The item doesn't exist in this pool.");
                         break;
                 }
                 if (amount != 0)
@@ -472,7 +479,7 @@ public static class Inventory {
                     case "Empty Gun": amount = 12; break;
                     case "Worn Dagger": amount = 15; break;
                     case "Real Knife": amount = 99; break;
-                    default: UnitaleUtil.WriteInLogAndDebugger("[WARN]The item doesn't exists in this pool."); break;
+                    default: UnitaleUtil.WriteInLogAndDebugger("[WARN]The item doesn't exist in this pool."); break;
                 }
                 break;
             case 2:
@@ -485,14 +492,14 @@ public static class Inventory {
                     case "Cowboy Hat": amount = 12; break;
                     case "Heart Locket": amount = 15; break;
                     case "The Locket": amount = 99; break;
-                    default: UnitaleUtil.WriteInLogAndDebugger("[WARN]The item doesn't exists in this pool."); break;
+                    default: UnitaleUtil.WriteInLogAndDebugger("[WARN]The item doesn't exist in this pool."); break;
                 }
                 break;
             default:
                 switch (name) {
                     case "Testing Dog": mess = new TextMessage[] { new TextMessage("This dog is testing something.", true, false), new TextMessage("I must leave it alone.", true, false) }; break;
                     case "Stick": mess = new TextMessage[] { new TextMessage("You throw the stick.[w:10]\nNothing happens.", true, false) }; break;
-                    default: UnitaleUtil.WriteInLogAndDebugger("[WARN]The item doesn't exists in this pool."); break;
+                    default: UnitaleUtil.WriteInLogAndDebugger("[WARN]The item doesn't exist in this pool."); break;
                 }
                 break;
         }
@@ -520,7 +527,7 @@ public static class Inventory {
             mode = NametoType[Name];
         else {
             if (addedItems.Contains(Name))
-                mode = addedItemsTypes[Array.IndexOf(addedItems, Name)];
+                mode = addedItemsTypes[addedItems.IndexOf(Name)];
             else
                 throw new CYFException("The item \"" + Name + "\" doesn't exist.");
         }
@@ -587,6 +594,7 @@ public static class Inventory {
                 PlayerCharacter.instance.ArmorDEF = (int)amount;
             }
         }
-        addedItems = new string[] { }; addedItemsTypes = new int[] { };
+        addedItems = new List<string>();
+        addedItemsTypes = new List<int>();
     }
 }

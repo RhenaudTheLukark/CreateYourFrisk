@@ -48,8 +48,7 @@ public class DisclaimerScript : MonoBehaviour {
                                                                                "U'LL HVAE A BED TMIE!!!";
                 GameObject.Find("Description (2)").GetComponent<Text>().text = "SPACE OR KLIK TO\n<color='#ff0000'>PALY MODS!!!!!</color>";
                 GameObject.Find("Description (3)").GetComponent<Text>().text = "PRSES O TO\n<color='#ffff00'>OOVERWURL!!!!!</color>";
-                GameObject.Find("Description (4)").GetComponent<Text>().text = "CRATE YOUR FRISK MDOS UES LUA!!!!\n" +
-                                                                                "KNOW YUOR CODE R U'LL HVAE A BED TMIE!!!";
+                GameObject.Find("Description (4)").GetComponent<Text>().text = "<b><color='red'>KNOW YUOR CODE</color> R U'LL HVAE A BED TMIE!!!</b>";
             }
     }
 
@@ -74,7 +73,7 @@ public class DisclaimerScript : MonoBehaviour {
             GlobalControls.modDev = false;
             SceneManager.LoadScene("Intro");
             Destroy(this);
-        } else if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)) {
+        } else if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Return)) {
             /*GlobalControls.modDev = true;
             SceneManager.LoadScene("ModSelect");*/
             StartCoroutine(ModSelect());

@@ -21,7 +21,14 @@ public class LuaGeneralOW {
     /// <param name="texts"></param>
     /// <param name="formatted"></param>
     /// <param name="mugshots"></param>
-    [CYFEventFunction] public void SetDialog(DynValue texts, bool formatted = true, DynValue mugshots = null) {
+    [CYFEventFunction] public void SetDialog(DynValue texts, bool formatted = true, DynValue mugshots = null, DynValue forcePosition = null) {
+        // Unfortunately, either C# or MoonSharp (don't know which) has a ridiculous limit in place
+        // Calling `SetDialog({""}, true, nil, true)` fails to pass the final argument
+        if (mugshots != null && mugshots.Type == DataType.Table && forcePosition != null)
+            PlayerOverworld.instance.UIPos = forcePosition.Type == DataType.Boolean ? (forcePosition.Boolean == true ? 2 : 1) : 0;
+        else
+            PlayerOverworld.instance.UIPos = 0;
+        
         if (EventManager.instance.coroutines.ContainsKey(appliedScript) && EventManager.instance.script != appliedScript) {
             UnitaleUtil.DisplayLuaError(EventManager.instance.events[EventManager.instance.actualEventIndex].name, "General.SetDialog: You can't use that function in a coroutine.");
             return;
@@ -41,7 +48,14 @@ public class LuaGeneralOW {
     /// </summary>
     /// <param name="question"></param>
     /// <param name="varIndex"></param>
-    [CYFEventFunction] public void SetChoice(DynValue choices, string question = null) {
+    [CYFEventFunction] public void SetChoice(DynValue choices, string question = "", DynValue forcePosition = null) {
+        // Unfortunately, something weird is happening here
+        // Calling `SetChoice({"Yes", "No"}, nil, true)` fails to pass the final argument
+        if (question != null && forcePosition != null)
+            PlayerOverworld.instance.UIPos = forcePosition.Type == DataType.Boolean ? (forcePosition.Boolean == true ? 2 : 1) : 0;
+        else
+            PlayerOverworld.instance.UIPos = 0;
+        
         bool threeLines = false;
         TextMessage textMsgChoice = new TextMessage("", false, false, true);
         textMsgChoice.AddToText("[mugshot:null]");
@@ -49,7 +63,7 @@ public class LuaGeneralOW {
 
         //Do not put more than 3 lines and 2 choices
         //If the 3rd parameter is a string, it has to be a question
-        if (question != null) {
+        if (question != "") {
             textMsgChoice.AddToText(question + "\n");
 
             //int lengthAfter = question.Split('\n').Length;
@@ -60,7 +74,7 @@ public class LuaGeneralOW {
         }
         for (int i = 0; i < choices.Table.Length; i++) {
             //If there's no text, just don't print it
-            if (i == 2 && question != null)
+            if (i == 2 && question != "")
                 break;
             if (choices.Table.Get(i + 1).String == null)
                 continue;
@@ -85,13 +99,13 @@ public class LuaGeneralOW {
         }
 
         //Add the text to the text to print then the SetChoice function with its parameters
-        if (!threeLines && question != null)
+        if (!threeLines && question != "")
             textMsgChoice.AddToText("\n");
         textMsgChoice.AddToText(finalText[0] + "\n" + finalText[1] + "\n" + finalText[2]);
         textmgr.SetText(textMsgChoice);
         textmgr.transform.parent.parent.SetAsLastSibling();
 
-        StCoroutine("ISetChoice", new object[] { question != null, threeLines });
+        StCoroutine("ISetChoice", new object[] { question != "", threeLines });
     }
 
     [CYFEventFunction] public void Wait(int frames) { StCoroutine("IWait", frames); }
@@ -106,8 +120,8 @@ public class LuaGeneralOW {
     /// </summary>
     [CYFEventFunction] public void GameOver(DynValue deathText = null, string deathMusic = null) {
         PlayerCharacter.instance.HP = PlayerCharacter.instance.MaxHP;
-        Transform rt = GameObject.Find("Player").GetComponent<Transform>();
-        rt.position = new Vector3(rt.position.x, rt.position.y, -1000);
+        /*Transform rt = GameObject.Find("Player").GetComponent<Transform>();
+        rt.position = new Vector3(rt.position.x, rt.position.y, -1000);*/
         string[] deathTable = null;
 
         if (deathText != null) {
@@ -123,8 +137,27 @@ public class LuaGeneralOW {
 
         GlobalControls.Music = UnitaleUtil.GetCurrentOverworldAudio().clip;
         PlayerOverworld.instance.enabled = false;
-
+        
+        // Stop the "kept audio" if it is playing
+        if (PlayerOverworld.audioKept == UnitaleUtil.GetCurrentOverworldAudio()) {
+            PlayerOverworld.audioKept.Stop();
+            PlayerOverworld.audioKept.clip = null;
+            PlayerOverworld.audioKept.time = 0;
+        }
+        
+        //Saves our most recent map and position to control where the player respawns
+        string mapName;
+        if (UnitaleUtil.MapCorrespondanceList.ContainsKey(SceneManager.GetActiveScene().name)) mapName = UnitaleUtil.MapCorrespondanceList[SceneManager.GetActiveScene().name];
+        else mapName = SceneManager.GetActiveScene().name;
+        LuaScriptBinder.Set(null, "PlayerMap", DynValue.NewString(mapName));
+        
+        Transform tf = GameObject.Find("Player").transform;
+        LuaScriptBinder.Set(null, "PlayerPosX", DynValue.NewNumber(tf.position.x));
+        LuaScriptBinder.Set(null, "PlayerPosY", DynValue.NewNumber(tf.position.y));
+        LuaScriptBinder.Set(null, "PlayerPosZ", DynValue.NewNumber(tf.position.z));
+        
         GameObject.FindObjectOfType<GameOverBehavior>().StartDeath(deathTable, deathMusic);
+        
         appliedScript.Call("CYFEventNextCommand");
     }
 
@@ -136,7 +169,7 @@ public class LuaGeneralOW {
     [CYFEventFunction] public void PlayBGM(string bgm, float volume) {
         volume = Mathf.Clamp01(volume);
         if (AudioClipRegistry.GetMusic(bgm) == null)
-            throw new CYFException("General.PlayBGM: The given BGM doesn't exist. Please check if you haven't mispelled it.");
+            throw new CYFException("General.PlayBGM: The given BGM doesn't exist. Please check if you've spelled it correctly.");
         AudioSource audio = UnitaleUtil.GetCurrentOverworldAudio();
         audio.clip = AudioClipRegistry.GetMusic(bgm);
         audio.volume = volume;
@@ -168,7 +201,7 @@ public class LuaGeneralOW {
     [CYFEventFunction] public void PlaySound(string sound, float volume = 0.65f) {
         volume = Mathf.Clamp01(volume);
         if (AudioClipRegistry.GetSound(sound) == null)
-            throw new CYFException("General.PlaySound: The given BGM doesn't exist. Please check if you haven't mispelled it.");
+            throw new CYFException("General.PlaySound: The given BGM doesn't exist. Please check if you've spelled it correctly.");
         UnitaleUtil.PlaySound("PlaySound", AudioClipRegistry.GetSound(sound), volume);
         //GameObject.Find("Player").GetComponent<AudioSource>().PlayOneShot(AudioClipRegistry.GetSound(sound), volume);
         appliedScript.Call("CYFEventNextCommand");

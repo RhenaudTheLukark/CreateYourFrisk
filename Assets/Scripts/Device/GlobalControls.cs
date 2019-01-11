@@ -37,13 +37,6 @@ public class GlobalControls : MonoBehaviour {
     public static Dictionary<string, GameState.MapData> GameMapData = new Dictionary<string, GameState.MapData>();
     public static Dictionary<string, GameState.EventInfos> EventData = new Dictionary<string, GameState.EventInfos>();
     public static Dictionary<string, GameState.TempMapData> TempGameMapData = new Dictionary<string, GameState.TempMapData>();
-
-	// Aspect Ratio Vars
-	public static int[] windowResolution = new int[2] {640, 480};
-	public static int[] aspectRatio = new int[2] {4, 3};
-	public static double ScreenWidth = Screen.width;
-	public static bool perfectFullscreen = true;
-
     /*void Start() {
         if ((Application.platform == RuntimePlatform.WindowsEditor || Application.platform == RuntimePlatform.WindowsPlayer) && windows == null)
             windows = new Windows();
@@ -75,32 +68,39 @@ public class GlobalControls : MonoBehaviour {
              && LuaScriptBinder.GetAlMighty(null, "CYFPerfectFullscreen").Type.ToString() == "Boolean")
                 perfectFullscreen = LuaScriptBinder.GetAlMighty(null, "CYFPerfectFullscreen").Boolean;
             
+            // check if window scale has a stored preference that is a number
+            if (LuaScriptBinder.GetAlMighty(null, "CYFWindowScale") != null
+             && LuaScriptBinder.GetAlMighty(null, "CYFWindowScale").Type.ToString() == "Number")
+                windowScale = (int)LuaScriptBinder.GetAlMighty(null, "CYFWindowScale").Number;
+            
             awakened = true;
         }
     }
     
+    // resolution variables
+    public static bool perfectFullscreen = true;
     public static int fullscreenSwitch = 0;
     
-    static IEnumerator RepositionWindow() {
-        #if UNITY_STANDALONE_WIN || UNITY_EDITOR
+    public static int windowScale = 1;
+    
+    #if UNITY_STANDALONE_WIN
+        static IEnumerator RepositionWindow() {
             yield return new WaitForEndOfFrame();
             
             try {
-                Misc.MoveWindowTo((int)(Screen.currentResolution.width/2 - 320), (int)(Screen.currentResolution.height/2 - 240));
+                Misc.MoveWindowTo((int)(Screen.currentResolution.width/2 - (Screen.width/2)), (int)(Screen.currentResolution.height/2 - (Screen.height/2)));
             } catch {}
-        #else
-            yield return 0;
-        #endif
-    }
+        }
+    #endif
     
     public static void SetFullScreen(bool fullscreen, int newSwitch = 1) {
         if (perfectFullscreen) {
             if (!fullscreen)
-                Screen.SetResolution(windowResolution[0], windowResolution[1], false, 0);
+                Screen.SetResolution(640 * windowScale, 480 * windowScale, false, 0);
             else
                 Screen.SetResolution(Screen.currentResolution.width, Screen.currentResolution.height, true, 0);
         } else
-            Screen.SetResolution(windowResolution[0], windowResolution[1], fullscreen, 0);
+            Screen.SetResolution(640 * windowScale, 480 * windowScale, fullscreen, 0);
         
         fullscreenSwitch = newSwitch;
 	}
@@ -113,7 +113,7 @@ public class GlobalControls : MonoBehaviour {
         yield return new WaitForFixedUpdate();
         
 		if (!Application.isEditor) {
-			ScreenWidth = (Screen.height / aspectRatio[1]) * aspectRatio[0];
+			double ScreenWidth = (Screen.height / (double)3) * (double)4;
 			Screen.SetResolution((int)RoundToNearestEven(ScreenWidth), Screen.height, Screen.fullScreen, 0);
 		}
 	}
@@ -125,13 +125,15 @@ public class GlobalControls : MonoBehaviour {
         if (fullscreenSwitch != 0) {
             StartCoroutine(ChangeAspectRatio());
             
-            if (!Screen.fullScreen && fullscreenSwitch == 1)
-                StartCoroutine(RepositionWindow());
+            #if UNITY_STANDALONE_WIN
+                if (!Screen.fullScreen && fullscreenSwitch == 1)
+                    StartCoroutine(RepositionWindow());
+            #endif
             
             fullscreenSwitch--;
         }
         
-		    stopScreenShake = false;
+        stopScreenShake = false;
         if (isInFight)
             frame ++;
         if (SceneManager.GetActiveScene().name == "ModSelect")        lastSceneUnitale = true;
@@ -159,8 +161,9 @@ public class GlobalControls : MonoBehaviour {
             }
             //StaticInits.Reset();
         } else if (input.Menu == UndertaleInput.ButtonState.PRESSED && !nonOWScenes.Contains(SceneManager.GetActiveScene().name) && !isInFight)
-            if (!PlayerOverworld.instance.PlayerNoMove && EventManager.instance.script == null && !PlayerOverworld.instance.menuRunning[2] && !PlayerOverworld.instance.menuRunning[4] && EventManager.instance.script == null)
+            if (!PlayerOverworld.instance.PlayerNoMove && EventManager.instance.script == null && !PlayerOverworld.instance.menuRunning[2] && !PlayerOverworld.instance.menuRunning[4] && EventManager.instance.script == null && GameObject.Find("FadingBlack").GetComponent<Fading>().alpha <= 0)
                 StartCoroutine(PlayerOverworld.LaunchMenu());
+        
         //else if (Input.GetKeyDown(KeyCode.L))
         //    MyFirstComponentClass.SpriteAnalyser();
         if (isInFight)
@@ -184,10 +187,6 @@ public class GlobalControls : MonoBehaviour {
                     else if (Input.anyKeyDown)       fleeIndex = 0;
                     break;
             }
-        /*
-        if (!Screen.fullScreen && (Screen.currentResolution.height != 480 || Screen.currentResolution.width != 640))
-            Screen.SetResolution(640, 480, false, 0);
-        */
         if  (Input.GetKeyDown(KeyCode.F4)        // F4
           || (Input.GetKeyDown(KeyCode.Return)
           &&(Input.GetKey(KeyCode.LeftAlt)       // LAlt  + Enter

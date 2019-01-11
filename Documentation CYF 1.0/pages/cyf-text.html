@@ -93,13 +93,14 @@ it's w3c valid, at least
                 to do so. Look down to see them!
             </p>
             <p>
-                <br><span class="function">CreateText(<span class="luatable"><span class="string"></span></span>  text, 
+                <br><span class="function">CreateText(<span class="luatable"><span class="string"></span></span>  text <font style="color:#fff;">(OR)</font> <span class="string"></span> text, 
                 <span class="luatable"><span class="number"></span>, <span class="number"></span></span> position, <span class="number"></span> textMaxWidth, <span class="string"></span> layer = "BelowPlayer", <span class="number"></span>  bubbleHeight = -1) returns <span class="userdata">textObject</span> [E/M/W]</span>
                 This function creates a Text Object and returns it. However, as you can see, a lot of parameters are needed.
                 <Br>Here is what you need to set:
                 <ul>
                     <li><span class="term">text</span> - The text to display.
-                    <br>Used the same way as in <span class="term">BattleDialog</span>: <span class="term">{"Text 1", "Text 2"}</span></li><br>
+                    <br>Used the same way as in <span class="term">BattleDialog</span>: <span class="term">{"Text 1", "Text 2"}</span>
+                    <br>Can also just be a single line of text.</li><br>
                     <li><span class="term">position</span> - <b>Two numbers</b>: The x and y positions of the center of the object. Sorry if it may be hard to place it, but you'll be 
                     able to use <span class="term">SetPivot</span> and <span class="term">MoveTo</span> to adjust it afterwards.
                     <br>You only need two numbers, like this: 
@@ -124,6 +125,7 @@ it's w3c valid, at least
             </p>
             <p>
                 <br><span class="function"><span class="boolean"></span> Text.isactive</span>
+                <b>Read-only.</b><br>
                 Tells you if a text object is active.
                 <br><br>
                 A text object will become inactive when it finishes its text and tries to continue,
@@ -208,12 +210,12 @@ it's w3c valid, at least
             </p>
             <p>
                 <br><span class="function"><span class="boolean"></span> Text.lineComplete</span>
-                Read-only.<br>
+                <b>Read-only.</b><br>
                 Returns true if the current line (page) of text is fully displayed, false otherwise.
             </p>
             <p>
                 <br><span class="function"><span class="boolean"></span> Text.allLinesComplete</span>
-                Read-only.<br>
+                <b>Read-only.</b><br>
                 Returns true if the current line of text is fully displayed <i>and</i> if this is the last line the test object will show, false otherwise.
             </p>
             <p>
@@ -233,12 +235,12 @@ it's w3c valid, at least
                 Sets the text object's parent.<br>The text object will follow around the parent object as it moves.
             </p>
             <p>
-                <br><span class="function">Text.MoveAbove(<span class="userdata">text</span> otherTextObject)</span>
-                Moves a text object above another text object.<br>They must both be on the same layer.
-            </p>
-            <p>
                 <br><span class="function">Text.MoveBelow(<span class="userdata">text</span> otherTextObject)</span>
                 Moves a text object below another text object.<br>They must both be on the same layer.
+            </p>
+            <p>
+                <br><span class="function">Text.MoveAbove(<span class="userdata">text</span> otherTextObject)</span>
+                Moves a text object above another text object.<br>They must both be on the same layer.
             </p>
             <p>
                 <br><span class="function">Text.AddText(<span class="luatable"><span class="string"></span></span> text)</span>
@@ -249,7 +251,7 @@ it's w3c valid, at least
                 Sets the text in the Text Object.<br>If the text object is inactive when this is called, the object will reactive itself.
             </p>
             <p>
-                <br><span class="function">Text.SetPaused(<span class="boolean"></span> pause)</span>
+                <br><span class="function">Text.SetPause(<span class="boolean"></span> pause)</span>
                 Pauses the text object's typing, in the same way as <span class="term">[waitfor:key]</span>, except that it doesn't resume until you use this function again.
                 <br><br>However, while paused, text can still be skipped, unless <span class="term">[noskip]</span> is applied to the text first.
             </p>
@@ -314,6 +316,7 @@ it's w3c valid, at least
                 <br><span class="function">Text.MoveToAbs(<span class="number"></span> x, <span class="number"></span> y)</span>
                 Moves the text to a new position, relative to the bottom left corner of the window.
             </p>
+            <!--
             <p>
                 <br><span class="function">Text.SetPivot(<span class="number"></span> x, <span class="number"></span> y)</span>
                 Sets the pivot of the object. The pivot is the value where the text's position is set. The default value is 
@@ -322,18 +325,22 @@ it's w3c valid, at least
                 <span class="term">{1, 1}</span> is the top right corner, <span class="term">{0, 1}</span> the top left corner and 
                 <span class="term">{1, 0}</span> is the bottom right corner.
             </p>
+            -->
             <p>
                 <br><span class="function"><span class="number"></span> Text.GetTextWidth()</span>
-                Returns the width of the current displayed text in pixels.
+                Returns the width of the currently set text in pixels.
+                <br>
+                Will give the same result even if the text isn't finished typing.
+                <br><br>
                 Useful if you want to center your text.
             </p>
             <p>
                 <br><span class="function"><span class="number"></span> Text.GetTextHeight()</span>
-                Returns the height of the curent displayed text in pixels.<br><br>
-                <span style="color:#ff0000"> <b>Warning:</b> This function is unstable, as it tends to give unpredictable results! Use sparingly.</span><br><br>
-                If you want to center a Text Object using its height, you absolutely need to subtract 10 from the value this function gives you.<br><br>
-                A Text Object's actual pivot that determines its location is 20 pixels wide horizontally and vertically, and it is anchored on the
-                center of this box. By subtracting 10 pixels, you will get the actual height of your text, without taking the text object's pivot into account.
+                Returns the height of the curently set text in pixels.
+                <br>
+                Will give the same result even if the text isn't finished typing.
+                <br><br>
+                <span style="color:#fff"> <b>Note:</b> This function is not 100% accurate.</span><br><br>
             </p>
         </div>
 		

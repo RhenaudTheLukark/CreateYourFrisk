@@ -39,10 +39,10 @@ public class ProjectileHitboxRenderer : MonoBehaviour {
             bottomLeft.Set (bottomRight.x - go.GetComponent<Projectile>().selfAbs.width / 2, bottomRight.y - go.GetComponent<Projectile>().selfAbs.height / 2, zIndex);
             bottomRight.Set(bottomRight.x + go.GetComponent<Projectile>().selfAbs.width / 2, bottomRight.y - go.GetComponent<Projectile>().selfAbs.height / 2, zIndex);
 
-            topLeft.Set(topLeft.x / Screen.width, topLeft.y / Screen.height, zIndex);
-            topRight.Set(topRight.x / Screen.width, topRight.y / Screen.height, zIndex);
-            bottomLeft.Set(bottomLeft.x / Screen.width, bottomLeft.y / Screen.height, zIndex);
-            bottomRight.Set(bottomRight.x / Screen.width, bottomRight.y / Screen.height, zIndex);
+            topLeft.Set(topLeft.x / 640, topLeft.y / 480, zIndex);
+            topRight.Set(topRight.x / 640, topRight.y / 480, zIndex);
+            bottomLeft.Set(bottomLeft.x / 640, bottomLeft.y / 480, zIndex);
+            bottomRight.Set(bottomRight.x / 640, bottomRight.y / 480, zIndex);
 
             // draw boxes
             GL.PushMatrix();
@@ -61,8 +61,8 @@ public class ProjectileHitboxRenderer : MonoBehaviour {
             GL.PopMatrix();
         }
         
-        player = new Rect(PlayerController.instance.playerAbs.x / Screen.width, PlayerController.instance.playerAbs.y / Screen.height,
-                          PlayerController.instance.playerAbs.width / Screen.width, PlayerController.instance.playerAbs.height / Screen.height);
+        player = new Rect(PlayerController.instance.playerAbs.x / 640, PlayerController.instance.playerAbs.y / 480,
+                          PlayerController.instance.playerAbs.width / 640, PlayerController.instance.playerAbs.height / 480);
 
         GL.PushMatrix();
         mat.SetPass(0);

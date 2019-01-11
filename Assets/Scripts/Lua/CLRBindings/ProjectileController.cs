@@ -139,7 +139,7 @@ public class ProjectileController {
     public bool ppchanged {
         get {
             if (p == null)
-                throw new CYFException("Attempted to get the value used to determine if a bullet's personal ppcollision value has been changed of a removed bullet.");
+                throw new CYFException("Attempted to get the value of bullet.ppchanged from a removed bullet.");
             return p.ppchanged;
         }
     }
@@ -151,11 +151,20 @@ public class ProjectileController {
     public bool isPersistent = false;
 
     public string layer {
-        get { return spr.img.transform.parent.name.Substring(0, spr.img.transform.parent.name.Length - 5); }
+        get {
+            if (spr.img.transform.parent.name == "BulletPool")
+                return "";
+            else
+                return spr.img.transform.parent.name.Substring(0, spr.img.transform.parent.name.Length - 6);
+        }
         set {
             Transform parent = spr.img.transform.parent;
-            try { spr.img.transform.SetParent(GameObject.Find(value + "Bullet").transform); } 
-            catch { spr.img.transform.SetParent(parent); }
+            try {
+                if (value == "")
+                    spr.img.transform.SetParent(GameObject.Find("BulletPool").transform);
+                else
+                    spr.img.transform.SetParent(GameObject.Find(value + "Bullet").transform);
+            } catch { spr.img.transform.SetParent(parent); }
         }
     }
 
@@ -198,8 +207,13 @@ public class ProjectileController {
     public void MoveTo(float x, float y) { MoveToAbs(ArenaManager.arenaCenter.x + x, ArenaManager.arenaCenter.y + y); }
 
     public void MoveToAbs(float x, float y) {
-        if (p == null)
-            throw new CYFException("Attempted to move a removed bullet. You can use a bullet's isactive property to check if it has been removed.");
+        if (p == null) {
+            if (GlobalControls.retroMode)
+                return;
+            else
+                throw new CYFException("Attempted to move a removed bullet. You can use a bullet's isactive property to check if it has been removed.");
+        }
+        
         if (GlobalControls.retroMode)
             p.self.anchoredPosition = new Vector2(x, y);
         else

@@ -43,7 +43,7 @@ public class GameOverBehavior : MonoBehaviour {
     private bool exiting = false;
     private bool once = false;
 
-    private Vector2 heartPos;
+    private Vector3 heartPos;
     private Color heartColor;
 
     //private bool overworld = false;
@@ -61,6 +61,19 @@ public class GameOverBehavior : MonoBehaviour {
     public AudioClip music = null;
 
     public void ResetGameOver() {
+        // Delete instantiated objects
+        Destroy(utHeart);
+        utHeart = null;
+        Destroy(brokenHeartPrefab);
+        brokenHeartPrefab = null;
+        for (int i = 0; i < heartShardInstances.Length; i++) {
+            Destroy(heartShardInstances[i].gameObject);
+            heartShardCtrl[i].Remove();
+            heartShardCtrl[i] = null;
+        }
+        if (reviveFade2 != null)
+            Destroy(reviveFade2.gameObject);
+        
         if (!UnitaleUtil.IsOverworld) {
             UIController.instance.encounter.gameOverStance = false;
             LuaEnemyEncounter.script.SetVar("autolinebreak", MoonSharp.Interpreter.DynValue.NewBoolean(autolinebreakstate));
@@ -110,7 +123,7 @@ public class GameOverBehavior : MonoBehaviour {
         if (UnitaleUtil.IsOverworld) {
             playerParent = transform.parent.parent;
             playerIndex = transform.parent.GetSiblingIndex();
-            transform.parent.SetParent(null);
+            // transform.parent.SetParent(null);
         } else {
             playerParent = transform.parent;
             playerIndex = transform.GetSiblingIndex();
@@ -118,14 +131,12 @@ public class GameOverBehavior : MonoBehaviour {
         }
 
         if (UnitaleUtil.IsOverworld) {
-            transform.parent.position = new Vector3(transform.parent.position.x - GameObject.Find("Main Camera OW").transform.position.x - 320,
-                                                    transform.parent.position.y - GameObject.Find("Main Camera OW").transform.position.y - 240, transform.parent.position.z);
+            
+            /* transform.parent.position = new Vector3(transform.parent.position.x - GameObject.Find("Main Camera OW").transform.position.x - 320,
+                                                    transform.parent.position.y - GameObject.Find("Main Camera OW").transform.position.y - 240, transform.parent.position.z); */
             battleCamera = GameObject.Find("Main Camera OW");
             battleCamera.SetActive(false);
             GetComponent<SpriteRenderer>().enabled = true; // stop showing the player
-            
-            battleContainer = GameObject.Find("Canvas");
-            battleContainer.GetComponent<Canvas>().enabled = false;
         } else {
             UIController.instance.encounter.gameOverStance = true;
             GetComponent<PlayerController>().invulTimer = 0;
@@ -171,7 +182,7 @@ public class GameOverBehavior : MonoBehaviour {
         //else
         PlayerCharacter.instance.HP = PlayerCharacter.instance.MaxHP;
         if (UnitaleUtil.IsOverworld)
-            gameObject.transform.parent.SetParent(GameObject.Find("Canvas GameOver").transform);
+            gameObject.transform.GetComponent<SpriteRenderer>().enabled = false;// gameObject.transform.parent.SetParent(GameObject.Find("Canvas GameOver").transform);
         else {
             gameObject.transform.SetParent(GameObject.Find("Canvas GameOver").transform);
             UIStats.instance.setHP(PlayerCharacter.instance.MaxHP);
@@ -181,12 +192,21 @@ public class GameOverBehavior : MonoBehaviour {
             SpriteRegistry.GENERIC_SPRITE_PREFAB = Resources.Load<Image>("Prefabs/generic_sprite");
         heartShardPrefab = SpriteRegistry.GENERIC_SPRITE_PREFAB.gameObject;
         reviveText = GameObject.Find("ReviveText").GetComponent<TextManager>();
+        reviveText.SetCaller(LuaEnemyEncounter.script);
         reviveFade = GameObject.Find("ReviveFade").GetComponent<Image>();
         reviveFade.transform.SetAsLastSibling();
         gameOverTxt = GameObject.Find("TextParent").GetComponent<TextManager>();
+        gameOverTxt.SetCaller(LuaEnemyEncounter.script);
         gameOverImage = GameObject.Find("GameOver").GetComponent<Image>();
         if (UnitaleUtil.IsOverworld) {
-            heartPos = new Vector3(GetComponent<RectTransform>().position.x, GetComponent<RectTransform>().position.y + GetComponent<RectTransform>().sizeDelta.y / 2, GetComponent<RectTransform>().position.z);
+            /*
+            heartPos = new Vector3(GetComponent<RectTransform>().position.x - transform.parent.position.x,
+                                   GetComponent<RectTransform>().position.y + (GetComponent<RectTransform>().sizeDelta.y / 2) - transform.parent.position.y,
+                                   GetComponent<RectTransform>().position.z + 100010);
+            */
+            heartPos = new Vector3((transform.parent.position.x - GameObject.Find("Canvas OW").transform.position.x) + 320,
+                                  ((transform.parent.position.y + (GetComponent<RectTransform>().sizeDelta.y / 2)) - GameObject.Find("Canvas OW").transform.position.y) + 240,
+                                   GetComponent<RectTransform>().position.z + 100010);
         } else
             heartPos = gameObject.GetComponent<RectTransform>().position;
         gameOverMusic = Camera.main.GetComponent<AudioSource>();
@@ -430,6 +450,14 @@ public class GameOverBehavior : MonoBehaviour {
             Destroy(gameObject);
             if (GlobalControls.modDev)
                 SceneManager.LoadScene("ModSelect");
+            else {
+                foreach (string str in NewMusicManager.audioname.Keys)
+                    if (str == "StaticKeptAudio") {
+                        NewMusicManager.Stop(str);
+                        ((AudioSource)NewMusicManager.audiolist[str]).clip = null;
+                        ((AudioSource)NewMusicManager.audiolist[str]).time = 0;
+                    }
+            }
         } else
             EndGameOverRevive();
         if (!GlobalControls.modDev) {
@@ -465,14 +493,17 @@ public class GameOverBehavior : MonoBehaviour {
         }
         battleCamera.SetActive(true);
         
-        battleContainer.GetComponent<Canvas>().enabled = true;
+        if (!UnitaleUtil.IsOverworld)
+            battleContainer.GetComponent<Canvas>().enabled = true;
         
         if (UnitaleUtil.IsOverworld) {
             canvasOW.SetActive(true);
             PlayerOverworld.instance.enabled = true;
             PlayerOverworld.instance.RestartMusic();
+            GetComponent<SpriteRenderer>().enabled = true;
         }
         ResetGameOver();
+        
         if (!UnitaleUtil.IsOverworld) {
             ArenaManager.instance.ResizeImmediate(ArenaManager.UIWidth, ArenaManager.UIHeight);
             UIController.instance.SwitchState(UIController.UIState.ACTIONSELECT);

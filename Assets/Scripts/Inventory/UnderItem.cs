@@ -12,7 +12,11 @@ public class UnderItem {
         foreach (string str in Inventory.addedItems) {
             if (str.ToLower() == Name.ToLower()) {
                 this.Name = Name;
-                ShortName = Name;
+                string Short = "";
+                if (!Inventory.NametoShortName.TryGetValue(Name, out Short))
+                    ShortName = Name;
+                else
+                    ShortName = Short;
                 this.Type = type;
                 return;
             }
@@ -24,7 +28,7 @@ public class UnderItem {
         }
 
         this.Name = Name; string Sn = "", Desc = ""; int Ty = type;
-        if (!Inventory.NametoDesc.TryGetValue(Name, out Desc))     UnitaleUtil.DisplayLuaError("Creating an item", "The item \"" + Name + "\" that is currently created doesn't have a description.");
+        if (!Inventory.NametoDesc.TryGetValue(Name, out Desc))     UnitaleUtil.DisplayLuaError("Creating an item", "Tried to create the item \"" + Name + "\", but a set description for it was not found.");
         if (!Inventory.NametoShortName.TryGetValue(Name, out Sn))  Sn = Name;
         if (type == 0)                                             Inventory.NametoType.TryGetValue(Name, out Ty);
 

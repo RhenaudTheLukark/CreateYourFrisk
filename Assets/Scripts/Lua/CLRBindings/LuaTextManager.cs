@@ -11,7 +11,6 @@ public class LuaTextManager : TextManager {
     private RectTransform speechThingShadow;
     private DynValue bubbleLastVar = DynValue.NewNil();
     private bool bubble = true;
-    public bool isActive = false;
     private int framesWait = 60;
     private int countFrames = 0;
     private int _textWidth;
@@ -21,7 +20,9 @@ public class LuaTextManager : TextManager {
     private Color textColor;
     
     public bool isactive {
-        get { return isActive; }
+        get {
+            return (container != null && containerBubble != null && speechThing != null && speechThingShadow != null);
+        }
     }
 
     enum BubbleSide { LEFT = 0, DOWN = 90, RIGHT = 180, UP = 270, NONE = -1 }
@@ -34,14 +35,13 @@ public class LuaTextManager : TextManager {
         containerBubble = UnitaleUtil.GetChildPerName(container.transform, "BubbleContainer").gameObject;
         speechThing = UnitaleUtil.GetChildPerName(containerBubble.transform, "SpeechThing", false, true).GetComponent<RectTransform>();
         speechThingShadow = UnitaleUtil.GetChildPerName(containerBubble.transform, "SpeechThingShadow", false, true).GetComponent<RectTransform>();
-        isActive = true;
     }
 
     protected override void Update() {
         base.Update();
 
         //Next line/EOF check
-        if (isActive) {
+        if (isactive) {
             if (progress == ProgressMode.MANUAL) {
                 if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED && LineComplete())
                     NextLine();
@@ -62,7 +62,7 @@ public class LuaTextManager : TextManager {
     
     // Used to test if a text object still exists.
     private void CheckExists() {
-        if (!isActive)
+        if (!isactive)
             throw new CYFException("Attempt to perform action on removed text object.");
     }
     
@@ -162,7 +162,7 @@ public class LuaTextManager : TextManager {
     
     public void MoveBelow(LuaTextManager otherText) {
         CheckExists();
-        if (otherText == null || !otherText.isActive)
+        if (otherText == null || !otherText.isactive)
             throw new CYFException("The text object passed as an argument is null or inactive.");
         else if (this.transform.parent.parent != otherText.transform.parent.parent)
             UnitaleUtil.WriteInLogAndDebugger("[WARN]You can't change the order of two text objects on different layers.");
@@ -174,13 +174,13 @@ public class LuaTextManager : TextManager {
     
     public void MoveAbove(LuaTextManager otherText) {
         CheckExists();
-        if (otherText == null || !otherText.isActive)
+        if (otherText == null || !otherText.isactive)
             throw new CYFException("The text object passed as an argument is null or inactive.");
         else if (this.transform.parent.parent != otherText.transform.parent.parent)
             UnitaleUtil.WriteInLogAndDebugger("[WARN]You can't change the order of two text objects on different layers.");
         else {
             try { this.transform.parent.SetSiblingIndex(otherText.transform.parent.GetSiblingIndex() + 1); }
-            catch { throw new CYFException("Error while calling text.MoveBelow."); }
+            catch { throw new CYFException("Error while calling text.MoveAbove."); }
         }
     }
 
@@ -254,7 +254,6 @@ public class LuaTextManager : TextManager {
 
     public bool allLinesComplete {
         get {
-            CheckExists();
             return AllLinesComplete();
         }
     }
@@ -279,7 +278,6 @@ public class LuaTextManager : TextManager {
         msgs = new TextMessage[text.Table.Length];
         for (int i = 0; i < text.Table.Length; i++)
             msgs[i] = new TextMessage(text.Table.Get(i + 1).String, false, false);
-        isActive = true;
         if (bubble)
             containerBubble.SetActive(true);
         try { SetTextQueue(msgs); } catch { }
@@ -295,7 +293,7 @@ public class LuaTextManager : TextManager {
     IEnumerator LateStartSetText() {
         yield return new WaitForEndOfFrame();
         
-        if (!isActive)
+        if (!isactive)
             yield break;
         
         /*
@@ -352,7 +350,7 @@ public class LuaTextManager : TextManager {
         CheckExists();
         UnderFont uf = SpriteFontRegistry.Get(fontName);
         if (uf == null)
-            throw new CYFException("The font \"" + fontName + "\" doesn't exist.\nYou should check if you haven't made a typo or if the font really is in your mod.");
+            throw new CYFException("The font \"" + fontName + "\" doesn't exist.\nYou should check if you made a typo, or if the font really is in your mod.");
         SetFont(uf, firstTime);
         //if (forced)
         //    default_charset = uf;
@@ -401,7 +399,7 @@ public class LuaTextManager : TextManager {
         CheckExists();
         bubbleLastVar = position;
         try { bubbleSide = side != null ? (BubbleSide)Enum.Parse(typeof(BubbleSide), side.ToUpper()) : BubbleSide.NONE; } 
-        catch { throw new CYFException("The speech thing can only take \"RIGHT\", \"DOWN\" ,\"LEFT\" ,\"UP\" or \"NONE\" as value, but you entered \"" + side.ToUpper() + "\"."); }
+        catch { throw new CYFException("The speech thing (tail) can only take \"RIGHT\", \"DOWN\" ,\"LEFT\" ,\"UP\" or \"NONE\" as a positional value, but you entered \"" + side.ToUpper() + "\"."); }
 
         if (bubbleSide != BubbleSide.NONE) {
             speechThing.gameObject.SetActive(true);
@@ -448,7 +446,6 @@ public class LuaTextManager : TextManager {
     public void NextLine() {
         CheckExists();
         if (AllLinesComplete()) {
-            isActive = false;
             if (bubble)
                 containerBubble.SetActive(false);
             DestroyText();
@@ -473,11 +470,13 @@ public class LuaTextManager : TextManager {
         CheckExists();
         container.transform.position = new Vector3(x, y, container.transform.position.z);
     }
-
+    
+    /*
     public void SetPivot(float x, float y) {
         CheckExists();
         container.GetComponent<RectTransform>().pivot = new Vector2(x, y);
     }
+    */
 
     public int GetTextWidth() {
         CheckExists();

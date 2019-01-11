@@ -86,6 +86,7 @@ it's w3c valid, at least
             <p>This section is all about game events. Game events are functions in your scripts that the Unitale engine
                 runs at various points in the game. By changing up your behaviour depending on the actions the player
                 takes, you can go beyond a basic encounter and make it great.</p>
+            <!--
             <hr>
             <h3>Inherited events (Encounter -> Monster)</h3><br><br>
             <p>
@@ -93,6 +94,16 @@ it's w3c valid, at least
                 function is not found in the Encounter script, it will try to run the same function on all monsters. If
                 it's not found there either, it will resort to a default, built-in handler.
             </p>
+            -->
+            <br>
+            <hr>
+            <h3>Script-specific events</h3><br><br>
+            <p>
+                <i>Script-specific
+                    events</i> are, as the name implies, functions that only happen for this specific script type.
+            </p>
+            <br>
+            <h4>Encounter script events</h4>
             <p>
                 <br><span class="function">EncounterStarting()</span>
                 Happens once when everything's done initializing but before any encounter actions start. You should do
@@ -118,15 +129,6 @@ it's w3c valid, at least
                 spareable or not. This event fires <i>after</i> the sparing of monsters is completed. If you spare the
                 last enemy in the encounter, this function will not happen - the encounter is over at that point.
             </p>
-            <br>
-            <hr>
-            <h3>Script-specific events</h3><br><br>
-            <p>
-                <i>Script-specific
-                    events</i> are, as the name implies, functions that only happen for this specific script type.
-            </p>
-            <br>
-            <h4>Encounter script events</h4>
             <p>
                 <br><span class="function">HandleItem(<span class="string"></span> item_ID, <span class="number"></span> position)</span>
                 Happens when you select an item from the item menu. <br>
@@ -270,7 +272,7 @@ end
             </p>
             <p>
                 <br><span class="function"><span class="CYF"></span>EndingWave()</span>
-                This function is called just before the wave ends. It permits you to easily reset some variables and other such things.
+                This function is called just before the wave ends. It allows you to easily reset some variables and other such things.
             </p>
             <p>
                 <br><span class="function">OnHit(<span class="userdata">bullet</span> bullet)</span>

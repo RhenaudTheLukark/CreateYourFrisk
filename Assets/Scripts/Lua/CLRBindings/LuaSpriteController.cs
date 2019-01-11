@@ -413,9 +413,8 @@ public class LuaSpriteController {
 
     // Sets both xScale and yScale of a sprite 
     public void Scale(float xs, float ys) {
-        if (img.GetComponent<Projectile>()) {
+        if (img.GetComponent<Projectile>())
             img.GetComponent<Projectile>().needSizeRefresh = true;
-        }
         xScale = xs;
         yScale = ys;
         if (img.GetComponent<Image>()) nativeSizeDelta = new Vector2(img.GetComponent<Image>().sprite.texture.width, img.GetComponent<Image>().sprite.texture.height);
@@ -451,7 +450,7 @@ public class LuaSpriteController {
         for (int i = 0; i < spriteNames.Length; i++) {
             // at least one sprite in the sequence was unable to be loaded
             if (SpriteRegistry.Get(spriteNames[i]) == null)
-                throw new CYFException("sprite.SetAnimation: Failed to load sprite with the name\" " + spriteNames[i] + "\". Are you sure it is spelled correctly?");
+                throw new CYFException("sprite.SetAnimation: Failed to load sprite with the name \"" + spriteNames[i] + "\". Are you sure it is spelled correctly?");
             
             kfArray[i] = new Keyframe(SpriteRegistry.Get(spriteNames[i]), spriteNames[i].ToLower());
         }
@@ -619,11 +618,14 @@ public class LuaSpriteController {
             return;
 
         bool throwError = false;
-        if (tag == "projectile" || tag == "enemy" || tag == "bubble")
-            if (tag == "projectile") {
+        if ((!GlobalControls.retroMode && img.gameObject.name == "player") || (!GlobalControls.retroMode && tag == "projectile") || tag == "enemy" || tag == "bubble") {
+            if (img.gameObject.name == "player")
+                throw new CYFException("sprite.Remove(): You can't remove the Player's sprite!");
+            else if (tag == "projectile") {
                 if (img.GetComponent<Projectile>().ctrl != null)
                     if (img.GetComponent<Projectile>().ctrl.isactive) throwError = true;
             } else                                                    throwError = true;
+        }
         if (throwError)
             throw new CYFException("sprite.Remove(): You can't remove a " + tag + "'s sprite!");
 

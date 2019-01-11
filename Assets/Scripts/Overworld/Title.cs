@@ -97,16 +97,16 @@ public class Title : MonoBehaviour {
                 } catch {
                     if (GlobalControls.crate)
                         UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, "U USED AN ODL VERSOIN OF CFY? IT ISN'T RERTOCOMAPTIBEL.\n\n"
-                                                                         + "DELEET UR SAVE OT NOT HVAE DA ERRRO AGAIN. HREE: \n"
-                                                                         + Application.persistentDataPath + "/save.gd\n"
+                                                                         + "DELEET UR SAVE OT NOT HVAE DA ERRRO AGAIN. HREE: <b>\n"
+                                                                         + Application.persistentDataPath + "/save.gd</b>\n"
                                                                          + "IF MOAR PORBLMES, TELL EM! :D\n\n"
                                                                          + "SP : NO ESPACE HERE!!!!!!");
                     else
-                        UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, "Have you saved on one of a previous CYF version ? The save isn't retrocompatible.\n\n"
-                                                                         + "To not have this error anymore, you'll have to delete the save file. Here it is : \n"
-                                                                         + Application.persistentDataPath + "/save.gd\n"
-                                                                         + "Tell me if you have some more problems, and thanks for following my fork! ^^\n\n"
-                                                                         + "PS : Don't try to press ESCAPE, or bad things can happen ;)");
+                        UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, "Have you saved on a previous version of CYF? Your save isn't compatible with this version.\n\n"
+                                                                         + "To fix this, you must delete your save file. It can be found here: \n<b>"
+                                                                         + Application.persistentDataPath + "/save.gd</b>\n"
+                                                                         + "Tell me if you have any more problems, and thanks for following my fork! ^^\n\n"
+                                                                         + "PS: Don't try to press ESCAPE, or bad things can happen ;)");
                 }
             } else {
                 if (GlobalControls.input.Right == UndertaleInput.ButtonState.PRESSED || GlobalControls.input.Left == UndertaleInput.ButtonState.PRESSED)
