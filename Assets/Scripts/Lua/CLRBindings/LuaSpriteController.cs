@@ -616,7 +616,7 @@ public class LuaSpriteController {
     public void Remove() {
         if (_img == null)
             return;
-        
+
         bool throwError = false;
         if ((!GlobalControls.retroMode && img.gameObject.name == "player") || (!GlobalControls.retroMode && tag == "projectile") || tag == "enemy" || tag == "bubble") {
             if (img.gameObject.name == "player")

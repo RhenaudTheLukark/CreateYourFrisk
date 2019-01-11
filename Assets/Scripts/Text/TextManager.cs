@@ -397,7 +397,7 @@ public class TextManager : MonoBehaviour {
                     letterReferences[currentCharacter].enabled = true;
                     currentReferenceCharacter++;
                 }
-            
+
                 currentCharacter++;
             }
         }
@@ -405,20 +405,19 @@ public class TextManager : MonoBehaviour {
 
     public void DoSkipFromPlayer() {
         skipFromPlayer = true;
-        
+
         if (LuaEnemyEncounter.script.GetVar("playerskipdocommand").Boolean)
             instantCommand = true;
-        
-        
+
         // AudioClip temp = letterSound.clip;
         // letterSound.clip = null;
         if (!GlobalControls.retroMode)
             InUpdateControlCommand(DynValue.NewString("instant"), currentCharacter);
         else
             SkipText();
-        
+
         // letterSound.clip = temp;
-        
+
         //SkipText();
     }
 
@@ -856,10 +855,10 @@ public class TextManager : MonoBehaviour {
 
         if (textEffect != null)
             textEffect.UpdateEffects();
-        
+
         if (GlobalControls.retroMode && instantActive)
             return;
-        
+
         if (currentCharacter >= letterReferences.Length)
             return;
 

@@ -38,7 +38,7 @@ public class LuaGeneralOW {
         }
         TextMessage[] textmsgs = new TextMessage[texts.Table.Length];
         for (int i = 0; i < texts.Table.Length; i++)
-            textmsgs[i] = new TextMessage(texts.Table.Get(i + 1).String, formatted, false, (mugshots != null && mugshots.Type == DataType.Table) ? mugshots.Table.Get(i+1) : null);
+            textmsgs[i] = new TextMessage(texts.Table.Get(i + 1).String, formatted, false, mugshots != null ? mugshots.Type == DataType.Table ? mugshots.Table.Get(i+1) : mugshots : null);
         textmgr.SetTextQueue(textmsgs);
         textmgr.transform.parent.parent.SetAsLastSibling();
     }
