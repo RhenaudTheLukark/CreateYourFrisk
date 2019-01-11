@@ -942,8 +942,8 @@ public class UIController : MonoBehaviour {
 
                     } else if (selectedMercy == 1) {
                         if (!GlobalControls.retroMode) {
-                            if ((LuaEnemyEncounter.script.GetVar("canflee").Type != DataType.Boolean && Math.RandomRange(0, 2) == 0)
-                              || LuaEnemyEncounter.script.GetVar("canflee").Boolean)
+                            if ((LuaEnemyEncounter.script.GetVar("fleesuccess").Type != DataType.Boolean && Math.RandomRange(0, 2) == 0)
+                              || LuaEnemyEncounter.script.GetVar("fleesuccess").Boolean)
                                 StartCoroutine(ISuperFlee());
                             else
                                 SwitchState(UIState.ENEMYDIALOGUE);
