@@ -438,8 +438,10 @@ public class PlayerController : MonoBehaviour {
         }
         
         // constantly update the hitbox to match the position of the sprite itself
-        playerAbs.x = (luaStatus.sprite.absx - (luaStatus.sprite.width  * self.pivot.x)) + hitboxInset;
-        playerAbs.y = (luaStatus.sprite.absy - (luaStatus.sprite.height * self.pivot.y)) + hitboxInset;
+        if (!GlobalControls.retroMode) {
+            playerAbs.x = luaStatus.sprite.absx - hitboxInset;
+            playerAbs.y = luaStatus.sprite.absy - hitboxInset;
+        }
 
         soundDelay--;
     }
