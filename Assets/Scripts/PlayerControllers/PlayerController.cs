@@ -304,10 +304,6 @@ public class PlayerController : MonoBehaviour {
         soul.setHalfSpeed(false);
     }
 
-    public void SetPositionQueue(float xPos, float yPos, bool ignoreBounds) {
-        SetPosition(xPos, yPos, ignoreBounds);
-    }
-
     public void SetPosition(float xPos, float yPos, bool ignoreBounds) {
         // check if new position would be out of arena bounds, and modify accordingly if it is
         if (!ignoreBounds) {

@@ -284,7 +284,7 @@ public class UIController : MonoBehaviour {
         if (state == UIState.DEFENDING || state == UIState.ENEMYDIALOGUE) {
             PlayerController.instance.setControlOverride(state != UIState.DEFENDING);
             textmgr.DestroyText();
-            PlayerController.instance.SetPositionQueue(320, 160, true);
+            PlayerController.instance.SetPosition(320, 160, true);
             PlayerController.instance.GetComponent<Image>().enabled = true;
             fightBtn.overrideSprite = null;
             actBtn.overrideSprite = null;
