@@ -6,10 +6,10 @@ namespace MoonSharp.Interpreter.Execution.VM
 	{
 		private SourceRef GetCurrentSourceRef(int instructionPtr)
 		{
-			if (instructionPtr >= 0 && instructionPtr < m_RootChunk.Code.Count)
-			{
+			if (m_doFileRequireHack != null)
+				return m_doFileRequireHack.SourceCodeRef;
+			else if (instructionPtr >= 0 && instructionPtr < m_RootChunk.Code.Count)
 				return m_RootChunk.Code[instructionPtr].SourceCodeRef;
-			}
 			return null;
 		}
 
