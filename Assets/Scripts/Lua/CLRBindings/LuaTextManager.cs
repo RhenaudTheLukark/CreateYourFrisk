@@ -163,9 +163,9 @@ public class LuaTextManager : TextManager {
     public void MoveBelow(LuaTextManager otherText) {
         CheckExists();
         if (otherText == null || !otherText.isactive)
-            throw new CYFException("The text object passed as an argument is null or inactive.");
+            throw new CYFException("The text object passed as an argument is nil or inactive.");
         else if (this.transform.parent.parent != otherText.transform.parent.parent)
-            UnitaleUtil.WriteInLogAndDebugger("[WARN]You can't change the order of two text objects on different layers.");
+            UnitaleUtil.WriteInLogAndDebugger("[WARN]You can't change the order of two text objects without the same parent.");
         else {
             try { this.transform.parent.SetSiblingIndex(otherText.transform.parent.GetSiblingIndex()); }
             catch { throw new CYFException("Error while calling text.MoveBelow."); }
@@ -175,9 +175,9 @@ public class LuaTextManager : TextManager {
     public void MoveAbove(LuaTextManager otherText) {
         CheckExists();
         if (otherText == null || !otherText.isactive)
-            throw new CYFException("The text object passed as an argument is null or inactive.");
+            throw new CYFException("The text object passed as an argument is nil or inactive.");
         else if (this.transform.parent.parent != otherText.transform.parent.parent)
-            UnitaleUtil.WriteInLogAndDebugger("[WARN]You can't change the order of two text objects on different layers.");
+            UnitaleUtil.WriteInLogAndDebugger("[WARN]You can't change the order of two text objects without the same parent.");
         else {
             try { this.transform.parent.SetSiblingIndex(otherText.transform.parent.GetSiblingIndex() + 1); }
             catch { throw new CYFException("Error while calling text.MoveAbove."); }
@@ -261,7 +261,7 @@ public class LuaTextManager : TextManager {
     public void SetParent(LuaSpriteController parent) {
         CheckExists();
         try { container.transform.SetParent(parent.img.transform); } 
-        catch { throw new CYFException("You tried to set a removed sprite/unexisting sprite as this text's parent."); }
+        catch { throw new CYFException("You tried to set a removed sprite/nil sprite as this text object's parent."); }
     }
 
     public void SetText(DynValue text) {
@@ -339,6 +339,8 @@ public class LuaTextManager : TextManager {
     }
 
     public void SetVoice(string voiceName) {
+        if (voiceName == null)
+            throw new CYFException("Text.SetVoice: The first argument (the voice name) is nil.\n\nSee the documentation for proper usage.");
         CheckExists();
         if (voiceName == "none")
             default_voice = null;
@@ -347,6 +349,8 @@ public class LuaTextManager : TextManager {
     }
 
     public void SetFont(string fontName, bool firstTime = false) {
+        if (fontName == null)
+            throw new CYFException("Text.SetFont: The first argument (the font name) is nil.\n\nSee the documentation for proper usage.");
         CheckExists();
         UnderFont uf = SpriteFontRegistry.Get(fontName);
         if (uf == null)
@@ -359,7 +363,9 @@ public class LuaTextManager : TextManager {
         GetComponent<RectTransform>().localPosition = new Vector2(0, 0);
     }
 
-    public void SetEffect(string effect, float intensity) {
+    public void SetEffect(string effect, float intensity = -1) {
+        if (effect == null)
+            throw new CYFException("Text.SetEffect: The first argument (the effect name) is nil.\n\nSee the documentation for proper usage.");
         CheckExists();
         switch (effect.ToLower()) {
             case "none":

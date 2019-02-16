@@ -29,11 +29,17 @@ public class ScriptWrapper {
 
     internal DynValue DoString(string source) { return script.DoString(source); }
 
-    public void SetVar(string key, DynValue value) { script.Globals.Set(key, MoonSharpUtil.CloneIfRequired(script, value)); }
+    public void SetVar(string key, DynValue value) {
+        if (key == null)
+            throw new CYFException("script.SetVar: The first argument (key) is null.\n\nSee the documentation for proper usage.");
+        script.Globals.Set(key, MoonSharpUtil.CloneIfRequired(script, value));
+    }
 
     public DynValue GetVar(string key) { return GetVar(null, key); }
 
     public DynValue GetVar(Script caller, string key) {
+        if (key == null)
+            throw new CYFException("script.GetVar: The first argument (key) is null.\n\nSee the documentation for proper usage.");
         DynValue value = script.Globals.Get(key);
         if (value == null || value.IsNil())  return DynValue.NewNil();
         if (caller == null)                  return value;
@@ -48,7 +54,7 @@ public class ScriptWrapper {
     public DynValue Call(Script caller, string function, DynValue[] args = null, bool checkExist = false) {
         if (script.Globals[function] == null || script.Globals.Get(function) == null) {
             if (checkExist &&!GlobalControls.retroMode)
-                UnitaleUtil.DisplayLuaError(scriptname, "Attempted to call the function " + function + " but it didn't exist.");
+                UnitaleUtil.DisplayLuaError(scriptname, "Attempted to call the function \"" + function + "\", but it didn't exist.");
             //Debug.LogWarning("Attempted to call the function " + function + " but it didn't exist.");
             return DynValue.Nil;
         }

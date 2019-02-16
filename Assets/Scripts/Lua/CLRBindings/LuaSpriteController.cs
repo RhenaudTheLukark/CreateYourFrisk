@@ -377,7 +377,7 @@ public class LuaSpriteController {
         }
         try {
             GetTarget().SetParent(parent.img.transform);
-        } catch { throw new CYFException("You tried to set a removed sprite/unexisting sprite as this sprite's parent."); }
+        } catch { throw new CYFException("You tried to set a removed sprite/nil sprite as this sprite's parent."); }
     }
 
     // Sets the pivot of a sprite (its rotation point)
@@ -429,6 +429,8 @@ public class LuaSpriteController {
 
     // Sets an animation for this instance with a frame timer
     public void SetAnimation(string[] spriteNames, float frametime, string prefix = "") {
+        if (spriteNames == null)
+            throw new CYFException("sprite.SetAnimation: The first argument (list of images) is nil.\n\nSee the documentation for proper usage.");
         if (frametime < 0)
             throw new CYFException("sprite.SetAnimation: An animation can not have negative speed!");
         else if (frametime == 0)
@@ -602,14 +604,14 @@ public class LuaSpriteController {
     }
 
     public void MoveBelow(LuaSpriteController sprite) {
-        if (sprite == null)                                       throw new CYFException("The sprite passed as an argument is null.");
-        else if (sprite.GetTarget().parent != GetTarget().parent) UnitaleUtil.WriteInLogAndDebugger("[WARN]You can't relatively move two sprites without the same parent.");
+        if (sprite == null)                                       throw new CYFException("sprite.MoveBelow: The sprite passed as an argument is nil.");
+        else if (sprite.GetTarget().parent != GetTarget().parent) UnitaleUtil.WriteInLogAndDebugger("[WARN]You can't change the order of two sprites without the same parent.");
         else                                                      GetTarget().SetSiblingIndex(sprite.GetTarget().GetSiblingIndex());
     }
 
     public void MoveAbove(LuaSpriteController sprite) {
-        if (sprite == null)                                       throw new CYFException("The sprite passed as an argument is null.");
-        else if (sprite.GetTarget().parent != GetTarget().parent) UnitaleUtil.WriteInLogAndDebugger("[WARN]You can't relatively move two sprites without the same parent.");
+        if (sprite == null)                                       throw new CYFException("sprite.MoveAbove: The sprite passed as an argument is nil.");
+        else if (sprite.GetTarget().parent != GetTarget().parent) UnitaleUtil.WriteInLogAndDebugger("[WARN]You can't change the order of two sprites without the same parent.");
         else                                                      GetTarget().SetSiblingIndex(sprite.GetTarget().GetSiblingIndex() + 1);
     }
 
@@ -716,9 +718,15 @@ public class LuaSpriteController {
         firstFrame = false;
     }
 
-    public void SetVar(string name, DynValue value) { vars[name] = value; }
+    public void SetVar(string name, DynValue value) {
+        if (name == null)
+            throw new CYFException("sprite.SetVar: The first argument (the index) is null.\n\nSee the documentation for proper usage.");
+        vars[name] = value;
+    }
 
     public DynValue GetVar(string name) {
+        if (name == null)
+            throw new CYFException("sprite.GetVar: The first argument (the index) is null.\n\nSee the documentation for proper usage.");
         DynValue retval;
         if (vars.TryGetValue(name, out retval)) return retval;
         else return DynValue.NewNil();

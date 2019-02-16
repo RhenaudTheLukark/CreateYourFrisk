@@ -130,6 +130,9 @@ public class LuaPlayerStatus {
     public string name {
         get { return PlayerCharacter.instance.Name; }
         set {
+            if (value == null)
+                throw new CYFException("Player.name: Attempt to set the player's name to a nil value.\n\nPlease double-check your code.");
+            
             string shortName = value;
             if (shortName.Length > 9)
                 shortName = value.Substring(0, 9);

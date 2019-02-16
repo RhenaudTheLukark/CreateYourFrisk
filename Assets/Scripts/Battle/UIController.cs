@@ -531,6 +531,8 @@ public class UIController : MonoBehaviour {
     }
 
     public static void SwitchStateOnString(Script scr, string state) {
+        if (state == null)
+            throw new CYFException("State: Argument cannot be nil.");
         if (!instance.encounter.gameOverStance) {
             try {
                 UIState newState = (UIState)Enum.Parse(typeof(UIState), state, true);
