@@ -20,6 +20,7 @@ public static class Inventory {
 
     public static void SetItemList(string[] items = null) {
         foreach (string item in items) {
+            // Make sure that the item exists before trying to create it
             string outString = "";
             int outInt       =  0;
             if (!addedItems.Contains(item) && !NametoDesc.TryGetValue(item, out outString) && !NametoShortName.TryGetValue(item, out outString) && !NametoType.TryGetValue(item, out outInt) && !NametoPrice.TryGetValue(item, out outInt))
@@ -54,6 +55,12 @@ public static class Inventory {
     public static bool AddItem(string Name) {
         if (inventory.Count == 8)
             return false;
+        // Make sure that the item exists before trying to create it
+        string outString = "";
+        int outInt       =  0;
+        if (!addedItems.Contains(Name) && !NametoDesc.TryGetValue(Name, out outString) && !NametoShortName.TryGetValue(Name, out outString) &&
+            !NametoType.TryGetValue(Name, out outInt) && !NametoPrice.TryGetValue(Name, out outInt))
+            throw new CYFException("Inventory.AddItem: The item \"" + Name + "\" was not found.\n\nAre you sure you called Inventory.AddCustomItems first?");
         inventory.Add(new UnderItem(Name));
         return true;
     }

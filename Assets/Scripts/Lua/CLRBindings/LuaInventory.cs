@@ -30,6 +30,13 @@ public class LuaInventory {
             bool result = false;
             for (var i = 0; i <= Inventory.inventory.Count; i++) {
                 if (i == index - 1) {
+                    // Make sure that the item exists before trying to create it
+                    string outString = "";
+                    int outInt       =  0;
+                    if (!Inventory.addedItems.Contains(Name) && !Inventory.NametoDesc.TryGetValue(Name, out outString) &&
+                        !Inventory.NametoShortName.TryGetValue(Name, out outString) && !Inventory.NametoType.TryGetValue(Name, out outInt) &&
+                        !Inventory.NametoPrice.TryGetValue(Name, out outInt))
+                        throw new CYFException("Inventory.AddItem: The item \"" + Name + "\" was not found.\n\nAre you sure you called Inventory.AddCustomItems first?");
                     inv.Add(new UnderItem(Name));
                     result = true;
                 }
