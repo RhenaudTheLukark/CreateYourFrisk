@@ -34,12 +34,20 @@ public class Misc {
     
     public static float cameraX {
         get { return Camera.main.transform.position.x - 320; }
-        set { Camera.main.transform.position = new Vector3(value + 320, Camera.main.transform.position.y, Camera.main.transform.position.z); }
+        set {
+            Camera.main.transform.position = new Vector3(value + 320, Camera.main.transform.position.y, Camera.main.transform.position.z);
+            if (!UnitaleUtil.IsOverworld)
+                UserDebugger.instance.transform.position = new Vector3(value + 620, UserDebugger.instance.transform.position.y, UserDebugger.instance.transform.position.z);
+        }
     }
     
     public static float cameraY {
         get { return Camera.main.transform.position.y - 240; }
-        set { Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, value + 240, Camera.main.transform.position.z); }
+        set {
+            Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, value + 240, Camera.main.transform.position.z);
+            if (!UnitaleUtil.IsOverworld)
+                UserDebugger.instance.transform.position = new Vector3(UserDebugger.instance.transform.position.x, value + 480, UserDebugger.instance.transform.position.z);
+        }
     }
     
     public static void MoveCamera(float x, float y) {

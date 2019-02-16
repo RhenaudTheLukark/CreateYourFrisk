@@ -213,6 +213,9 @@ public class GlobalControls : MonoBehaviour {
         while (frameCount < frames) {
             if (stopScreenShake) {
                 tf.position = new Vector3(tf.position.x - totalShift.x, tf.position.y - totalShift.y, tf.position.z);
+                UserDebugger.instance.transform.position = new Vector3(UserDebugger.instance.transform.position.x - totalShift.x,
+                                                                       UserDebugger.instance.transform.position.y - totalShift.y,
+                                                                       UserDebugger.instance.transform.position.z);
                 screenShaking = false;
                 yield break;
             }
@@ -222,8 +225,12 @@ public class GlobalControls : MonoBehaviour {
 
             if (UnitaleUtil.IsOverworld)
                 PlayerOverworld.instance.cameraShift = new Vector2(PlayerOverworld.instance.cameraShift.x + shift.x - totalShift.x, PlayerOverworld.instance.cameraShift.y + shift.y - totalShift.y);
-            else
+            else {
                 tf.position = new Vector3(tf.position.x + shift.x - totalShift.x, tf.position.y + shift.y - totalShift.y, tf.position.z);
+                UserDebugger.instance.transform.position = new Vector3(UserDebugger.instance.transform.position.x + shift.x - totalShift.x,
+                                                                       UserDebugger.instance.transform.position.y + shift.y - totalShift.y,
+                                                                       UserDebugger.instance.transform.position.z);
+            }
             //print(totalShift + " + " + shift + " = " + (totalShift + shift));
             totalShift = shift;
             frameCount++;
@@ -231,6 +238,10 @@ public class GlobalControls : MonoBehaviour {
         }
         screenShaking = false;
         tf.position = new Vector3(tf.position.x - totalShift.x, tf.position.y - totalShift.y, tf.position.z);
+        if (!UnitaleUtil.IsOverworld)
+            UserDebugger.instance.transform.position = new Vector3(UserDebugger.instance.transform.position.x - totalShift.x,
+                                                                   UserDebugger.instance.transform.position.y - totalShift.y,
+                                                                   UserDebugger.instance.transform.position.z);
     }
 
     public void ShakeScreen(float duration, float intensity, bool isIntensityDecreasing) {
