@@ -114,76 +114,138 @@ it's w3c valid, at least
             </p>
 
             <p>
-                <br><span class="function">The Bullet object</span>
+                <hr>
+                <h4>The Bullet object</h4>
                 This is what you use to move around the arena and store values in. You can store a bunch of bullets in a table
                 and modify them. The functions and variables you can use on a Bullet are as follows.</p>
-            <ul>
-                <li><span class="userdata">sprite</span> <span class="term">Bullet.sprite</span> - the Bullet's sprite component. See the
-                    <span class="ref">Sprites &amp; Animation</span> section for usage details.
-                    <br><br>NOTE: In 0.2.1a, modifying the sprite does not change the bullet's hitbox yet; it's always
-                    the original square of the bullet when it was created.
-                    <br><span class="CYF"></span> But, in CYF, changing the bullet's sprite <i>does</i> modify the bullet's hitbox!
-                </li><br>
-                <li><span class="number"></span> <span class="term">Bullet.x</span> (readonly) - The X position of this bullet, relative to the arena's center. A bullet at
-                    <span class="term">x=0</span> and <span class="term">y=0</span> will be at the center of the arena.
-                </li><br>
-                <li><span class="number"></span> <span class="term">Bullet.y</span> (readonly) - The Y position of this bullet, relative to the arena's center.</li><br>
-                <li><span class="number"></span> <span class="term">Bullet.absx</span> (readonly) - The X position of this bullet, relative to the bottom left corner of the
-                    screen.
-                </li><br>
-                <li><span class="number"></span> <span class="term">Bullet.absy</span> (readonly) - The Y position of this bullet, relative to the bottom left corner of the
-                    screen.
-                </li><br>
-                <li><span class="CYF"></span> <span class="boolean"></span> <span class="term">Bullet.ppcollision</span> - Whether the bullet uses Pixel-Perfect collision.
-                    If this is true, the bullet will use the Pixel-Perfect Collision system. I highly recommend for you to see
-                    the <span class="ref">Pixel-Perfect Collision System</span> section if you want to use this.
-                </li><br>
-                <li><span class="CYF"></span> <span class="boolean"></span> <span class="term">Bullet.ppchanged</span> - Determines if the collision
-                    system of the bullet has been set. True if it was, false otherwise.
-                </li><br>
-                <li><span class="CYF"></span> <span class="string"></span> <span class="term">Bullet.layer</span> - The bullet layer that the bullet is on.<br>
+            </p>
+            <p>
+                <br><span class="function"><span class="userdata">sprite</span> Bullet.sprite</span>
+                The bullet's sprite component. See the <span class="ref">Sprites &amp; Animation</span> section for usage details.
+                <br><br>
+                NOTE: In 0.2.1a, modifying the sprite does not change the bullet's hitbox yet. it's always
+                the original square of the bullet when it was created.
+                <br><br>
+                <span class="CYF"></span> But, in CYF, changing the bullet's sprite <i>does</i> modify the bullet's hitbox!
+            </p>
+            <p>
+                <br><span class="function"><span class="number"></span> Bullet.x</span>
+                The X position of this bullet, relative to the arena's center. A bullet at
+                <span class="term">x=0</span> and <span class="term">y=0</span> will be at the center of the arena.
+            </p>
+            <p>
+                <br><span class="function"><span class="number"></span> Bullet.y</span>
+                The Y position of this bullet, relative to the arena's center.
+            </p>
+            <p>
+                <br><span class="function"><span class="number"></span> Bullet.absx</span>
+                The X position of this bullet, relative to the bottom-left corner of the screen.
+            </p>
+            <p>
+                <br><span class="function"><span class="number"></span> Bullet.absy</span>
+                The Y position of this bullet, relative to the bottom-left corner of the screen.
+            </p>
+            <p>
+                <br><span class="function"><span class="CYF"></span> <span class="boolean"></span> Bullet.ppcollision</span>
+                If this is true, the bullet will use the Pixel-Perfect Collision system.
+                <br><br>
+                By default, this is the encounter's <b style="color:#fff">default</b> collision system.
+                <br><br>
+                <font color="#fff">* Manually setting this will set <span class="term">Bullet.ppchanged</span> to true.</font>
+                <br><br>
+                See <span class="term">SetPPCollision</span> in <span class="ref">The Pixel-Perfect Collision System</span> for more information.
+            </p>
+            <p>
+                <br><span class="function"><span class="CYF"></span> <span class="boolean"></span> Bullet.ppchanged (read-only)</span>
+                Tells you if the bullet's collision system has been changed by manually changing <span class="term">Bullet.ppcollision</span>.
+                <br><br>
+                <font color="#fff">* Bullets with <span class="term">Bullet.ppchanged</span> set to true will NOT be affected by future calls of<br>
+                <span class="term">SetPPCollision</span> (see <span class="ref">The Pixel-Perfect Collision System</span>).</font>
+                <br><br>
+                Will be false after you call <span class="term">Bullet.ResetCollisionSystem()</span>, or if you haven't changed
+                <span class="term">Bullet.ppcollision</span>.
+            </p>
+            <p>
+                <br><span class="function"><span class="CYF"></span> Bullet.ResetCollisionSystem()</span>
+                Resets the collision system of the bullet to the encounter's <b style="color:#fff">default</b> collision system.
+                <br><br>
+                The default collision system is set by <span class="term">SetPPCollision</span>.<br>
+                See <span class="ref">The Pixel-Perfect Collision System</span> for more information.
+            </p>
+            <p>
+                <br><span class="function"><span class="CYF"></span> <span class="string"></span> Bullet.layer</span>
+                The bullet layer that the bullet is on.
+                <br><br>
                 Set it back to <span class="term">""</span> to return the bullet to the default layer.
-                </li><br>
-                <li><span class="boolean"></span> <span class="term">Bullet.isactive</span> (readonly) - Checks if the bullet is still active. If the bullet has been
-                    removed, this will be false; otherwise, it will be true.
-                </li><br>
-                <li><span class="term">Bullet.Move(<span class="number"></span> x, <span class="number"></span> y)</span> - Move this bullet <span class="term">x</span> pixels to the right and
-                    <span class="term">y</span> pixels up. A negative <span class="term">x</span> will move it to the left, and a negative
-                    <span class="term">y</span> will move it downwards.
-<!-- <br><span class="CYF"></span> <span style="color:#ff0000;">DEPRECATED IN CYF - USE <span class="term">Bullet.sprite.Move</span> INSTEAD</span> -->
-                </li><br>
-                <li><span class="term">Bullet.MoveTo(<span class="number"></span> x, <span class="number"></span> y)</span> - Move this bullet to this position immediately, relative to the arena's
-                    center.
-<!-- <br><span class="CYF"></span> <span style="color:#ff0000;">DEPRECATED IN CYF - USE <span class="term">Bullet.sprite.MoveTo</span> INSTEAD</span> -->
-                </li><br>
-                <li><span class="term">Bullet.MoveToAbs(<span class="number"></span> x, <span class="number"></span> y)</span> - Move this bullet to this position immediately, relative to the bottom left
-                    corner of the screen.
-<!-- <br><span class="CYF"></span> <span style="color:#ff0000;">DEPRECATED IN CYF - USE <span class="term">Bullet.sprite.MoveToAbs</span> INSTEAD</span> -->
-                </li><br>
-                <li><span class="term">Bullet.Remove()</span> - destroys this bullet. You can continue retrieving its <span class="term">x</span>, 
-                    <span class="term">y</span>, <span class="term">absx</span> and <span class="term">absy</span>
-                    properties. Trying to move a removed bullet will give you a Lua error. If you're not sure if your
-                    bullet still exists, check <span class="term">Bullet.isactive</span> first.
-                </li><br>
-                <li><span class="term">Bullet.SetVar(<span class="string"></span> your_variable_name, value)</span> or <span class="CYF"></span> <span class="term">Bullet[<span class="string"></span> your_variable_name] = value</span> - Set a variable on this bullet that you can retrieve with
-                    <span class="term">Bullet.GetVar(<span class="string"></span> your_variable_name)</span>. Similar in use to <span class="term">SetGlobal()</span> - but
-                    you can use this to store specific variables on a per-bullet basis.
-                </li><br>
-                <li><span class="term">Bullet.GetVar(<span class="string"></span> your_variable_name)</span> or <span class="CYF"></span> <span class="term">Bullet[<span class="string"></span> your_variable_name]</span> - Get a variable that you previously set using
-                    <span class="term">Bullet.SetVar()</span>.
-                </li><br>
-                <li><span class="term">Bullet.SendToTop()</span> - Moves this bullet on top of all currently existing projectiles. Note that newly
-                    spawned projectiles are always on top by default; this function is mostly to move existing bullets
-                    to the top.
-                </li><br>
-                <li><span class="term">Bullet.SendToBottom()</span> - Moves this bullet below all currently existing projectiles.</li><br>
-                <li><span class="CYF"></span> <span class="term">Bullet.ResetCollisionSystem()</span> - Resets the collision system of the bullet to the 
-                    default one.</li><br>
-                <li><span class="CYF"></span> <span class="boolean"></span> <span class="term">Bullet.isColliding()</span> - Returns true if the player is colliding with the bullet. Will 
-                    use PP (pixel-perfect collisions) if the bullet has PP enabled.</li><br>
-                <li><span class="CYF"></span> <span class="boolean"></span> <span class="term">Bullet.isPersistent</span> - If you're not on retrocompatibility mode, then this
-                    will prevent a bullet from being automatically removed when a wave ends.</li><br>
-            </ul>
+            </p>
+            <p>
+                <br><span class="function"><span class="boolean"></span> Bullet.isactive (read-only)</span>
+                The bullet layer that the bullet is on.
+                <br><br>
+                Set it back to <span class="term">""</span> to return the bullet to the default layer.
+            </p>
+            <p>
+                <br><span class="function">Bullet.Move(<span class="number"></span> x, <span class="number"></span> y)</span>
+                Move this bullet <span class="term">x</span> pixels to the right and <span class="term">y</span> pixels up.
+                <br><br>
+                A negative <span class="term">x</span> will move it to the left, and a negative
+                <span class="term">y</span> will move it downwards.
+            </p>
+            <p>
+                <br><span class="function">Bullet.MoveTo(<span class="number"></span> x, <span class="number"></span> y)</span>
+                Move this bullet to this position immediately, relative to the arena's center.
+            </p>
+            <p>
+                <br><span class="function">Bullet.MoveToAbs(<span class="number"></span> x, <span class="number"></span> y)</span>
+                Move this bullet to this position immediately, relative to the bottom-left corner of the screen.
+            </p>
+            <p>
+                <br><span class="function">Bullet.Remove()</span>
+                Destroys this bullet.
+                <br><br>
+                You can continue retrieving its <span class="term">x</span>, 
+                <span class="term">y</span>, <span class="term">absx</span> and <span class="term">absy</span>
+                properties. Trying to move a removed bullet will give you a Lua error. If you're not sure if your
+                bullet still exists, check <span class="term">Bullet.isactive</span> first.
+            </p>
+            <p>
+                <br><span class="function">Bullet[<span class="string"></span> your_variable_name] = value <font style="color:#fff">(OR)</font></span>
+                <span class="function">Bullet.SetVar(<span class="string"></span> your_variable_name, value)</span>
+                Sets a variable on this bullet that you can retrieve with <span class="term">Bullet.GetVar</span>.
+                <br><br>
+                Similar in use to <span class="term">SetGlobal</span> - but you can use this to store specific variables on a per-bullet basis.
+            </p>
+            <p>
+                <br><span class="function">Bullet[<span class="string"></span> your_variable_name] <font style="color:#fff">(OR)</font></span>
+                <span class="function">Bullet.GetVar(<span class="string"></span> your_variable_name)</span>
+                Gets a variable that you previously set using <span class="term">Bullet.SetVar</span>.
+            </p>
+            <p>
+                <br><span class="function">Bullet.SendToTop()</span>
+                Moves this bullet on top of all currently existing projectiles.
+                <br><br>
+                Note that newly spawned projectiles are always on top by default;
+                this function is mostly to move existing bullets to the top.
+                <br><br>
+                <span class="CYF"></span> Moves the bullet to the top of its current layer.
+            </p>
+            <p>
+                <br><span class="function">Bullet.SendToBottom()</span>
+                Moves this bullet below all currently existing projectiles.
+                <br><br>
+                <span class="CYF"></span> Moves the bullet to the bottom of its current layer.
+            </p>
+            <p>
+                <br><span class="function"><span class="CYF"></span> Bullet.isColliding()</span>
+                Returns true if the player is colliding with the bullet.
+                <br><br>
+                Will use PPCollision (pixel-perfect collisions) if the bullet has PP enabled. See <span class="term">Bullet.ppcollision</span>.</li><br>
+            </p>
+            <p>
+                <br><span class="function"><span class="CYF"></span> <span class="boolean"></span> Bullet.isPersistent = false</span>
+                Set this to true and, if you're not in retrocompatibility mode, this will make the bullet stay loaded even after the wave ends.
+            </p>
+            <br><hr><br>
             <p>Here is an example of a bullet that chases you pretty fast, but slows down as it gets closer. You have to
                 keep moving to dodge it. This is a fairly basic example that makes use of the Player object.</p>
             <div class="code-container">
