@@ -128,6 +128,10 @@ public class UIController : MonoBehaviour {
             else                       Misc.WindowName = ControlPanel.instance.WindowBasisName;
         #endif
         
+        // empty the inventory if not in the overworld
+        if (GlobalControls.modDev)
+            Inventory.inventory.Clear();
+        
         // reset the battle camera's position
         Misc.ResetCamera();
         
