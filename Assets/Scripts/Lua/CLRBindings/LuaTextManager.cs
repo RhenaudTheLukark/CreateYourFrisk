@@ -395,6 +395,8 @@ public class LuaTextManager : TextManager {
         SetSpeechThingPositionAndSide(side, position);
     }
 
+    public void SetBubbleTail(string side, DynValue position) { SetSpeechThingPositionAndSide(side, position); }
+
     public void SetSpeechThingPositionAndSide(string side, DynValue position) {
         CheckExists();
         bubbleLastVar = position;
@@ -455,6 +457,8 @@ public class LuaTextManager : TextManager {
                 ResizeBubble();
         }
     }
+
+    public void SetWaitTime(int time) { SetAutoWaitTimeBetweenTexts(time); }
 
     public void SetAutoWaitTimeBetweenTexts(int time) {
         CheckExists();
