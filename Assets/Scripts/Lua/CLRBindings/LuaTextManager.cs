@@ -66,6 +66,9 @@ public class LuaTextManager : TextManager {
             throw new CYFException("Attempt to perform action on removed text object.");
     }
     
+    // Shortcut to `DestroyText()`
+    public void Remove() { DestroyText(true); }
+    
     private void ResizeBubble() {
         float effectiveBubbleHeight = bubbleHeight != -1 ? bubbleHeight < 16 ? 40 : bubbleHeight + 24 : UnitaleUtil.CalcTextHeight(this) < 16 ? 40 : UnitaleUtil.CalcTextHeight(this) + 24;
         containerBubble.transform.GetComponent<RectTransform>().sizeDelta = new Vector2(textMaxWidth + 20, effectiveBubbleHeight);                                                      //To set the borders
@@ -401,6 +404,7 @@ public class LuaTextManager : TextManager {
         SetSpeechThingPositionAndSide(side, position);
     }
 
+    // Shortcut to `SetSpeechThingPositionAndSide`
     public void SetBubbleTail(string side, DynValue position) { SetSpeechThingPositionAndSide(side, position); }
 
     public void SetSpeechThingPositionAndSide(string side, DynValue position) {
@@ -464,6 +468,7 @@ public class LuaTextManager : TextManager {
         }
     }
 
+    // Shortcut to `SetAutoWaitTimeBetweenTexts`
     public void SetWaitTime(int time) { SetAutoWaitTimeBetweenTexts(time); }
 
     public void SetAutoWaitTimeBetweenTexts(int time) {

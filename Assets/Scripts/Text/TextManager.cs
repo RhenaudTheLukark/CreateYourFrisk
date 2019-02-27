@@ -490,17 +490,16 @@ public class TextManager : MonoBehaviour {
 
     public void SetEffect(TextEffect effect) { textEffect = effect; }
 
-    public void DestroyText() {
+    public void DestroyText(bool force = false) {
         foreach (Transform child in gameObject.transform)
             Destroy(child.gameObject);
         
         // the following code is activated if DestroyText is called from an actual CYF mod, on the Lua side,
         // or if the text is done typing out.
         // hopefully we will never have to use any lambda functions on Lua Text Managers...
-        if (GetType() == typeof(LuaTextManager)&&
-            (new StackFrame(1).GetMethod().Name == "lambda_method" || new StackFrame(1).GetMethod().Name == "NextLine")) {
+        if (force || (GetType() == typeof(LuaTextManager)&&
+            (new StackFrame(1).GetMethod().Name == "lambda_method" || new StackFrame(1).GetMethod().Name == "NextLine")))
             GameObject.Destroy(this.transform.parent.gameObject);
-        }
     }
 
     private void SpawnTextSpaceTest(int i, string currentText, out string currentText2) {
