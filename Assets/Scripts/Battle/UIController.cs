@@ -320,6 +320,10 @@ public class UIController : MonoBehaviour {
             encounter.EndWave();
         switch (this.state) {
             case UIState.ATTACKING:
+                // Error for no active enemies
+                if (encounter.EnabledEnemies.Length == 0)
+                    throw new CYFException("Cannot enter state ATTACKING with no active enemies.");
+
                 textmgr.DestroyText();
                 PlayerController.instance.GetComponent<Image>().enabled = false;
                 if (!fightUI.multiHit) {
@@ -359,9 +363,10 @@ public class UIController : MonoBehaviour {
 
             case UIState.ITEMMENU:
                 battleDialogued = false;
-                if (Inventory.inventory.Count == 0) {
+                // Error for empty inventory
+                if (Inventory.inventory.Count == 0)
                     throw new CYFException("Cannot enter state ITEMMENU with empty inventory.");
-                } else {
+                else {
                     string[] items = GetInventoryPage(0);
                     selectedItem = 0;
                     textmgr.SetText(new SelectMessage(items, false));
@@ -396,6 +401,10 @@ public class UIController : MonoBehaviour {
                 break;
 
             case UIState.ENEMYSELECT:
+                // Error for no active enemies
+                if (encounter.EnabledEnemies.Length == 0)
+                    throw new CYFException("Cannot enter state ENEMYSELECT with no active enemies.");
+
                 string[] names = new string[encounter.EnabledEnemies.Length];
                 string[] colorPrefixes = new string[names.Length];
                 for (int i = 0; i < encounter.EnabledEnemies.Length; i++) {
@@ -543,7 +552,7 @@ public class UIController : MonoBehaviour {
                     throw new CYFException("The state \"" + state + "\" is not a valid state. Are you sure it exists?\n\nPlease double-check in the Misc. Functions section of the docs for a list of every valid state.");
                 // a different error has occured
                 else
-                    throw new CYFException("An error occured while trying to enter the state \"" + state + "\":\n" + ex.Message + "\n\nTraceback (for devs):\n" + ex.ToString());
+                    throw new CYFException("An error occured while trying to enter the state \"" + state + "\":\n\n" + ex.Message + "\n\nTraceback (for devs):\n" + ex.ToString());
             }
         }
     }
@@ -820,14 +829,20 @@ public class UIController : MonoBehaviour {
                 case UIState.ACTIONSELECT:
                     switch (action) {
                         case Actions.FIGHT:
-                            SwitchState(UIState.ENEMYSELECT);
+                            if (encounter.EnabledEnemies.Length > 0)
+                                SwitchState(UIState.ENEMYSELECT);
+                            else
+                                textmgr.DoSkipFromPlayer();
                             break;
 
                         case Actions.ACT:
                             if (GlobalControls.crate)
                                 if (ControlPanel.instance.Safe) UnitaleUtil.PlaySound("MEOW", "sounds/meow" + Math.RandomRange(1, 8));
                                 else UnitaleUtil.PlaySound("MEOW", "sounds/meow" + Math.RandomRange(1, 9));
-                            else SwitchState(UIState.ENEMYSELECT);
+                            else if (encounter.EnabledEnemies.Length > 0)
+                                SwitchState(UIState.ENEMYSELECT);
+                            else
+                                textmgr.DoSkipFromPlayer();
                             break;
 
                         case Actions.ITEM:
