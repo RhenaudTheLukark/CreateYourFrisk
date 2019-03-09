@@ -434,6 +434,9 @@ it's w3c valid, at least
             <p>
                 <span class="function">sprite.Remove()</span></span>
                 Removes a sprite object. Calling anything other than <span class="term">isactive</span> after this will give you an error.
+                <br><br>
+                <font color="#fff" style="font-size: 15px;"><span class="CYF"></span> NOTE: Calling <span class="term">bullet.sprite.Remove</span> will
+                instead call <span class="term">bullet.Remove</span>, unless you are using retromode.</font>
             </p><br>
             
             <p>
@@ -454,9 +457,12 @@ it's w3c valid, at least
                 <span class="function"><span class="CYF"></span> sprite.Dust(<span class="boolean"></span> playSound=true, <span class="boolean"></span> removeObject = false)</span></span>
                 Turns a sprite into dust, just like what happens in Undertale when an enemy is killed.
                 <br><br>
-                Will remove a bullet or sprite if <span class="term">removeObject</span> is set to true.
+                Will remove a <strike>bullet or</strike> sprite if <span class="term">removeObject</span> is set to true.
                 <br><br>
                 Set <span class="term">playSound</span> to false to deactivate the dust sound.
+                <br><br><br><br>
+                <font color="#fff" style="font-size: 15px;">* NOTE: Calling <span class="term">bullet.sprite.Dust(..., true)</span>
+                will call <span class="term">bullet.Remove</span>, unless you are using retromode.</font>
             </p><br>
             
             <hr>

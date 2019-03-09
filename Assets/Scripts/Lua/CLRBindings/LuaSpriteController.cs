@@ -618,6 +618,10 @@ public class LuaSpriteController {
     public void Remove() {
         if (_img == null)
             return;
+        else if (!GlobalControls.retroMode && tag == "projectile") {
+            img.GetComponent<Projectile>().ctrl.Remove();
+            return;
+        }
 
         bool throwError = false;
         if ((!GlobalControls.retroMode && img.gameObject.name == "player") || (!GlobalControls.retroMode && tag == "projectile") || tag == "enemy" || tag == "bubble") {
