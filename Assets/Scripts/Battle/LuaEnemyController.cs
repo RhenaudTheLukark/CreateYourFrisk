@@ -214,7 +214,7 @@ public class LuaEnemyController : EnemyController {
             script.scriptname = scriptName;
             script.Bind("SetSprite", (Action<string>)SetSprite);
             script.Bind("SetActive", (Action<bool>)SetActive);
-            script.Bind("isActive", (Func<bool>)InFight);
+            script.Bind("isactive", DynValue.NewBoolean(true));
             script.Bind("Kill", (Action)DoKill);
             script.Bind("Spare", (Action)DoSpare);
             script.Bind("Move", (Action<float, float, bool>)Move);
@@ -353,7 +353,10 @@ public class LuaEnemyController : EnemyController {
     /// Set if we should consider this monster for menus e.g.
     /// </summary>
     /// <param name="active"></param>
-    public void SetActive(bool active) { inFight = active; }
+    public void SetActive(bool active) {
+        inFight = active;
+        script.SetVar("isactive", DynValue.NewBoolean(active));
+    }
 
     public void Move(float x, float y, bool bindToArena = false) {
         if (!canMove)

@@ -243,6 +243,9 @@ check = "Serving Size: 1 Monster\nNot monitored by the USDA"</pre>
                 command. See <span class="ref">API - Game events</span> for details.</p>
             <p><span class="boolean"></span> <span class="term">canspare</span> - Either true or false. If you leave this line out, it'll be set to false by 
                 default. If you change this to true, your monster's name will turn yellow and it will be spareable.</p>
+            <p><span class="CYF"></span> <span class="boolean"></span> <span class="term">isactive</span> - Tells you whether this enemy is active.<br>
+                Will be false if they have been manually de-activated, killed or spared.<br>
+            <b><u>Setting this will do nothing! You must call</u></b> <span class="term">SetActive</span> (see <span class="ref">Misc. Functions</span>).</p>
             <br>
             <p><span class="string"></span> <span class="term">sprite</span> - Name of the sprite in your Sprites folder, without the .PNG extension.
                 This is the initial sprite for your monster. It can be changed using <span class="term">SetSprite(name)</span>; see <span class="ref">API - 
