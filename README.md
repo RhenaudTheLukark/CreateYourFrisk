@@ -7,7 +7,8 @@ When testing, you'll want to load the Disclaimer scene from the Scenes folder.
 ## Unity Version
 
 CYF's latest version is **v0.6.2.2**. It was built using **Unity Personal 2018.2.13f1**.  
-To get this version of Unity, either [**download the Unity Hub**](https://unity3d.com/get-unity/download) or
+To get this version of Unity, either [**download the Unity Hub**](https://unity3d.com/get-unity/download),  
+[**find it in the Unity Version Archive**](https://unity3d.com/get-unity/download/archive) (remember, it's **2018.2.13**) or  
 [**click here for a direct download**](https://netstorage.unity3d.com/unity/83fbdcd35118/UnityDownloadAssistant-2018.2.13f1.exe).
 
 ## Required files
