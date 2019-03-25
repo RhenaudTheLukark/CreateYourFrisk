@@ -218,11 +218,11 @@ public class OptionsScript : MonoBehaviour {
                     return Temmify.Convert(response);
             case "Retro":
                 response = "Toggles retrocompatibility mode.\n\n"
-                         + "This mode is designed specifically to make encounters imported from Unitale v0.2.1a act as they did on the old engine.";
+                         + "This mode is designed specifically to make encounters imported from Unitale v0.2.1a act as they did on the old engine.\n\n\n\n";
                 if (!GlobalControls.crate)
-                    return response;
+                    return response + "<b>CAUTION!\nDISABLE</b> this for mods made for CYF.";
                 else
-                    return Temmify.Convert(response);
+                    return Temmify.Convert(response) + "<b>" + Temmify.Convert("CAUTION!\nDISABLE") + "</b> " + Temmify.Convert("this for mods made for CYF.");
             case "Fullscreen":
                 response = "Toggles blurless Fullscreen mode.\n\n"
                          + "This controls whether fullscreen mode will appear \"blurry\" or not.\n\n"
