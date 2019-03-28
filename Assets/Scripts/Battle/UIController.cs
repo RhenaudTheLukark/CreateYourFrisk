@@ -508,7 +508,18 @@ public class UIController : MonoBehaviour {
                     Image speechBubImg = speechBub.GetComponent<Image>();
                     if (sbTextMan.CharacterCount(msgs[0]) == 0) speechBubImg.color = new Color(speechBubImg.color.r, speechBubImg.color.g, speechBubImg.color.b, 0);
                     else                                        speechBubImg.color = new Color(speechBubImg.color.r, speechBubImg.color.g, speechBubImg.color.b, 1);
-                    SpriteUtil.SwapSpriteFromFile(speechBubImg, encounter.EnabledEnemies[i].DialogBubble, i);
+
+                    // error catcher
+                    try { SpriteUtil.SwapSpriteFromFile(speechBubImg, encounter.EnabledEnemies[i].DialogBubble, i); }
+                    catch {
+                        if (encounter.EnabledEnemies[i].DialogBubble != "UI/SpeechBubbles/")
+                            UnitaleUtil.DisplayLuaError(encounter.EnabledEnemies[i].scriptName + ": Creating a dialogue bubble",
+                                                        "The dialogue bubble " + encounter.EnabledEnemies[i].script.GetVar("dialogbubble").ToString() + " doesn't exist.");
+                        else
+                            UnitaleUtil.DisplayLuaError(encounter.EnabledEnemies[i].scriptName + ": Creating a dialogue bubble",
+                                                        "This monster has no set dialogue bubble.");
+                    }
+
                     Sprite speechBubSpr = speechBubImg.sprite;
                     // TODO improve position setting/remove hardcoding of position setting
                     speechBub.transform.SetParent(encounter.EnabledEnemies[i].transform);
