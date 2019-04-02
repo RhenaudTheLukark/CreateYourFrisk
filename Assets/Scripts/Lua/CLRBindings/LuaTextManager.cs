@@ -56,7 +56,7 @@ public class LuaTextManager : TextManager {
             if (base.CanAutoSkipAll() || base.CanAutoSkipThis())
                 NextLine();
             if (CanSkip() && !LineComplete() && GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED)
-                SkipLine();
+                DoSkipFromPlayer();
         }
     }
     
