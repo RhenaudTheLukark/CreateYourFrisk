@@ -318,8 +318,10 @@ internal class LuaEnemyEncounter : EnemyEncounter {
         Table t = script["Wave"].Table;
         if (!death)
             foreach (object obj in t.Keys) {
-                try   { ((ScriptWrapper)t[obj]).Call("EndingWave"); }
-                catch { UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, "You shouldn't override Wave, now you get an error :P"); }
+                try {
+                    ((ScriptWrapper)t[obj]).Call("EndingWave");
+                    ScriptWrapper.instances.Remove(((ScriptWrapper)t[obj]));
+                } catch { UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, "You shouldn't override Wave, now you get an error :P"); }
             }
         if (!GlobalControls.retroMode)
             foreach (LuaProjectile p in FindObjectsOfType<LuaProjectile>())
