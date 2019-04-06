@@ -103,7 +103,7 @@ internal class LuaEnemyEncounter : EnemyEncounter {
             for (int i = 0; i < waves.Length; i++) {
                 currentWaveScript = i;
                 DynValue ArenaStatus = UserData.Create(ArenaManager.luaStatus);
-                waves[i] = new ScriptWrapper() { script = LuaScriptBinder.BoundScript() };
+                waves[i] = new ScriptWrapper();
                 waves[i].script.Globals.Set("Arena", ArenaStatus);
                 waves[i].script.Globals["EndWave"] = (Action)EndWaveTimer;
                 waves[i].script.Globals["State"] = (Action<Script, string>)UIController.SwitchStateOnString;
@@ -321,6 +321,7 @@ internal class LuaEnemyEncounter : EnemyEncounter {
                 try {
                     ((ScriptWrapper)t[obj]).Call("EndingWave");
                     ScriptWrapper.instances.Remove(((ScriptWrapper)t[obj]));
+                    LuaScriptBinder.scriptlist.Remove(((ScriptWrapper)t[obj]).script);
                 } catch { UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, "You shouldn't override Wave, now you get an error :P"); }
             }
         if (!GlobalControls.retroMode)

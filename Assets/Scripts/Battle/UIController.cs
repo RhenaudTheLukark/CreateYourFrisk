@@ -143,6 +143,7 @@ public class UIController : MonoBehaviour {
         
         for (int i = 0; i < LuaScriptBinder.scriptlist.Count; i++)
             LuaScriptBinder.scriptlist[i] = null;
+        LuaScriptBinder.scriptlist.Clear();
         LuaScriptBinder.ClearBattleVar();
         GlobalControls.stopScreenShake = true;
         MusicManager.hiddenDictionary.Clear();
