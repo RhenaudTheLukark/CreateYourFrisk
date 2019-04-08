@@ -211,7 +211,7 @@ public class OptionsScript : MonoBehaviour {
                     return Temmify.Convert(response) + "<b><size='14'>" + Application.persistentDataPath + "/save.gd</size></b>";
             case "Safe":
                 response = "Toggles safe mode.\n\n"
-                         + "It does nothing specifically, but mod authors can detect if you have this enabled, and use it to filter unsafe content, such as blood, gore, and swear words.";
+                         + "This does nothing on its own, but mod authors can detect if you have this enabled, and use it to filter unsafe content, such as blood, gore, and swear words.";
                 if (!GlobalControls.crate)
                     return response;
                 else
@@ -220,13 +220,13 @@ public class OptionsScript : MonoBehaviour {
                 response = "Toggles retrocompatibility mode.\n\n"
                          + "This mode is designed specifically to make encounters imported from Unitale v0.2.1a act as they did on the old engine.\n\n\n\n";
                 if (!GlobalControls.crate)
-                    return response + "<b>CAUTION!\nDISABLE</b> this for mods made for CYF.";
+                    return response + "<b>CAUTION!\nDISABLE</b> this for mods made for CYF. This feature should only be used with Mods made for\n<b>Unitale v0.2.1a</b>.";
                 else
                     return Temmify.Convert(response) + "<b>" + Temmify.Convert("CAUTION!\nDISABLE") + "</b> " + Temmify.Convert("this for mods made for CYF.");
             case "Fullscreen":
                 response = "Toggles blurless Fullscreen mode.\n\n"
                          + "This controls whether fullscreen mode will appear \"blurry\" or not.\n\n"
-                         + "May slow down some computers.";
+                         + "May slow down some computers.\n\n\nPress <b>F4</b> or <b>Alt+Enter</b> to toggle Fullscreen.";
                 if (!GlobalControls.crate)
                     return response;
                 else
