@@ -18,6 +18,8 @@ public class LuaTextManager : TextManager {
     private BubbleSide bubbleSide = BubbleSide.NONE;
     private ProgressMode progress = ProgressMode.AUTO;
     private Color textColor;
+    private float xScale = 1;
+    private float yScale = 1;
     
     public bool isactive {
         get {
@@ -146,6 +148,30 @@ public class LuaTextManager : TextManager {
             CheckExists();
             _bubbleHeight = value == -1 ? -1 : value < 40 ? 40 : value;
         }
+    }
+    
+    public float xscale {
+        get { return xScale; }
+        set {
+            xScale = value;
+            Scale(xScale, yScale);
+        }
+    }
+    
+    public float yscale {
+        get { return yScale; }
+        set {
+            yScale = value;
+            Scale(xScale, yScale);
+        }
+    }
+    
+    public void Scale(float xs, float ys) {
+        CheckExists();
+        xScale = xs;
+        yScale = ys;
+        
+        container.gameObject.GetComponent<RectTransform>().localScale = new Vector3(xs, ys, 1.0f);
     }
 
     public string layer {
