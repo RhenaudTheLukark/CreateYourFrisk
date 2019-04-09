@@ -358,13 +358,13 @@ public class LuaEnemyController : EnemyController {
         script.SetVar("isactive", DynValue.NewBoolean(active));
     }
 
-    public void Move(float x, float y, bool bindToArena = false) {
+    public void Move(float x, float y) {
         if (!canMove)
             return;
         GetComponent<RectTransform>().position = new Vector2(GetComponent<RectTransform>().position.x + x, GetComponent<RectTransform>().position.y + y);
     }
 
-    public void MoveTo(float x, float y, bool bindToArena = false) {
+    public void MoveTo(float x, float y) {
         if (!canMove)
             return;
         GetComponent<RectTransform>().position = new Vector2(x, y);
