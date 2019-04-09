@@ -148,7 +148,9 @@ enemypositions = {
                 For more information see <span class="ref">API - Game events</span>.</p>
             <br><p><span class="string"></span> <span class="term">encountertext</span> - Set the initial text of your encounter here.
                 After that, you can modify it at any time in preparation for the next turn. <span class="term">encountertext</span> gets read out at the 
-                start of every new turn (i.e. you going back to the FIGHT/ACT/ITEM/MERCY selection).</p>
+                start of every new turn (i.e. you going back to the FIGHT/ACT/ITEM/MERCY selection).<br><br>
+                * You can use <span class="term">\n</span> to create a new line <b>with a star</b> (*), and <span class="term">\r</span> to create
+                a new line <b>without</b> a star.</p>
             <br><p><span class="luatable"><span class="string"></span></span> <span class="term">nextwaves</span> - A list of all simultaneous attack waves
                 you want when the monsters start their attacks. You can modify this at any time, and it'll get read out before the enemies start their
                 attack. For most boss-type encounters, you'll likely only want one wave simultaneously - but you can get creative
