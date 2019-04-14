@@ -139,6 +139,16 @@ public static class SpriteUtil {
         return UserData.Create(new LuaSpriteController(i), LuaSpriteController.data);
     }
 
+    public static DynValue MakeIngameSpriteOW(string filename) {
+        Image i = GameObject.Instantiate<Image>(SpriteRegistry.GENERIC_SPRITE_PREFAB);
+        if (!string.IsNullOrEmpty(filename))
+            SwapSpriteFromFile(i, filename);
+        else
+            throw new CYFException("You can't create a sprite object with a nil sprite!");
+        i.transform.SetParent(GameObject.Find("Canvas OW").transform);
+        return UserData.Create(new LuaSpriteController(i), LuaSpriteController.data);
+    }
+
     public static void CreateLayer(string name, string relatedTag = "BasisNewest", bool before = false) {
         GameObject go = new GameObject(name + "Layer", typeof(RectTransform));
         string testName = relatedTag + "Layer";

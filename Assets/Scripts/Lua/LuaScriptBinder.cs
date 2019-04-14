@@ -356,7 +356,9 @@ public static class LuaScriptBinder {
                 break;
             }
         }
-        luatm.layer = layer;
+        // Layers don't exist in the overworld, so we don't set it
+        if (!UnitaleUtil.IsOverworld)
+            luatm.layer = layer;
         luatm.textMaxWidth = textWidth;
         luatm.bubbleHeight = bubbleHeight;
         luatm.ShowBubble();

@@ -191,8 +191,8 @@ public class PlayerOverworld : MonoBehaviour {
         Fading.FinishFade -= FinishFade;
     }
 
-    private void LoadScene(Scene scene, LoadSceneMode mode) { PlayerNoMove = true; } //Scene loaded
-    private void FinishFade() { PlayerNoMove = false; }
+    private void LoadScene(Scene scene, LoadSceneMode mode) { PlayerNoMove = true; } //Scene loading
+    private void FinishFade() { PlayerNoMove = false; } // Scene loaded
 
     private void NextText() {
         if (!textmgr.AllLinesComplete() && (textmgr.CanAutoSkipAll() || textmgr.LineComplete()))
@@ -212,10 +212,8 @@ public class PlayerOverworld : MonoBehaviour {
     IEnumerator TextCoroutine() {
         while (true) {
             yield return 0;
-            //UnitaleUtil.writeInLogAndDebugger("inText = " + inText + ", textmgr.lineCount = " + textmgr.lineCount());
             if (GameObject.Find("textframe_border_outer"))
                 if (GameObject.Find("textframe_border_outer").GetComponent<Image>().color.a != 0) {
-                    //UnitaleUtil.writeInLogAndDebugger("blockskip = " + textmgr.blockSkip + ", skipNowIfBlocked = " + textmgr.skipNowIfBlocked);
                     try {
                         if (textmgr.CanAutoSkipAll())
                             NextText();
@@ -726,7 +724,7 @@ public class PlayerOverworld : MonoBehaviour {
     }
 
     public static IEnumerator LaunchMenu() {
-        instance.PlayerNoMove = true; instance.menuRunning[2] = true; instance.menuRunning[4] = true; //Launch menu
+        instance.PlayerNoMove = true; instance.menuRunning[2] = true; instance.menuRunning[4] = true; //Start menu
         GameObject.Find("MenuContainer").transform.SetAsLastSibling();
         TextManager[] txtmgrs = GameObject.Find("MenuContainer").GetComponentsInChildren<TextManager>();
         instance.uiAudio.PlayOneShot(AudioClipRegistry.GetSound("menumove"));

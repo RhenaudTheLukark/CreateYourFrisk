@@ -19,10 +19,10 @@ public class LuaInventory {
 
     public void SetItem(int index, string Name) { Inventory.SetItem(index-1, Name); }
 
-    public bool AddItem(string Name, int index = 8) {
-        if (index == 8)
+    public bool AddItem(string Name, int index = -1) {
+        if (index == -1)
             return Inventory.AddItem(Name);
-        else if (index > 0 && Inventory.inventory.Count < 8) {
+        else if (index > 0 && Inventory.inventory.Count < Inventory.inventorySize) {
             if (index > Inventory.inventory.Count + 1)
                 index = Inventory.inventory.Count + 1;
             

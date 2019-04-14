@@ -419,7 +419,7 @@ public class ShopScript : MonoBehaviour {
                 else {
                     if (PlayerCharacter.instance.Gold < mainPrice[currentItemIndex])
                         script.Call("FailBuy", DynValue.NewString("gold"));
-                    else if (Inventory.inventory.Count == 8)
+                    else if (Inventory.inventory.Count == Inventory.inventorySize)
                         script.Call("FailBuy", DynValue.NewString("full"));
                     else {
                         script.Call("SuccessBuy", DynValue.NewString(mainName[currentItemIndex]));

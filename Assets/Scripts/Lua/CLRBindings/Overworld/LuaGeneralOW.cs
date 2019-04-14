@@ -56,56 +56,46 @@ public class LuaGeneralOW {
         else
             PlayerOverworld.instance.UIPos = 0;
         
-        bool threeLines = false;
         TextMessage textMsgChoice = new TextMessage("", false, false, true);
         textMsgChoice.AddToText("[mugshot:null]");
-        string[] finalText = new string[3];
+        List<string> finalText = new List<string>();
+        bool[] oneLiners = new bool[2];
 
         //Do not put more than 3 lines and 2 choices
         //If the 3rd parameter is a string, it has to be a question
         if (question != "") {
-            textMsgChoice.AddToText(question + "\n");
-
-            //int lengthAfter = question.Split('\n').Length;
-            //if (question.Split('\n').Length > lengthAfter) lengthAfter = question.Split('\n').Length;
-
-            /*if (lengthAfter > 2)*/ //textMsgChoice.addToText("\n");
-            //else                 textMsgChoice.addToText("\n\n");
+            textMsgChoice.AddToText("* " + question + "\n");
         }
-        for (int i = 0; i < choices.Table.Length; i++) {
+        for (int i = 0; i < 2; i++) {
             //If there's no text, just don't print it
-            if (i == 2 && question != "")
-                break;
             if (choices.Table.Get(i + 1).String == null)
                 continue;
 
-            string[] preText = choices.Table.Get(i + 1).String.Split('\n'), text = new string[3];
-            if (preText.Length == 3)
-                threeLines = true;
-            for (int j = 0; j < 3; j++) {
-                if (j < preText.Length) text[j] = preText[j];
-                else text[j] = "";
+            string[] preText = choices.Table.Get(i + 1).String.Split('\n');
+            oneLiners[i] = preText.Length == 1 && question != "";
+            if (oneLiners[i]) {
+                string line = preText[0];
+                preText = new string[] { "", line };
             }
 
-            for (int k = 0; k < 3; k++) {
-                if (text[k] != "")
-                    if (k == 0) text[k] = "* " + text[k];
-                    else text[k] = "  " + text[k];
-
-                finalText[k] += text[k] + '\t';
-                if (k == text.Length - 1)
+            for (int j = 0; j < 3; j++) {
+                if (j == finalText.Count)
+                    finalText.Add("");
+                finalText[j] += "[charspacing:8] [charspacing:2]" + (i == 0 ? "     " : "") + (j >= preText.Length ? "" : preText[j]) + (i == 0 ? "\t" : "");
+                if (j == 2)
                     break;
             }
         }
 
         //Add the text to the text to print then the SetChoice function with its parameters
-        if (!threeLines && question != "")
-            textMsgChoice.AddToText("\n");
-        textMsgChoice.AddToText(finalText[0] + "\n" + finalText[1] + "\n" + finalText[2]);
+        for (int i = 0; i < finalText.Count; i++) {
+            if (finalText[i] != "\t")
+                textMsgChoice.AddToText(finalText[i] + ((i == finalText.Count - 1) ? "" : "\n"));
+        }
         textmgr.SetText(textMsgChoice);
         textmgr.transform.parent.parent.SetAsLastSibling();
 
-        StCoroutine("ISetChoice", new object[] { question != "", threeLines });
+        StCoroutine("ISetChoice", new object[] { question != "", oneLiners });
     }
 
     [CYFEventFunction] public void Wait(int frames) { StCoroutine("IWait", frames); }

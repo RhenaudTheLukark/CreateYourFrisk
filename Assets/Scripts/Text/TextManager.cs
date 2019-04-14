@@ -298,19 +298,7 @@ public class TextManager : MonoBehaviour {
         if (textQueue != null)
             if (line < textQueue.Length)
                 if (textQueue[line] != null) {
-                    //print("Mugshot just before condition: " + textQueue[line].Mugshot.ToString());
                     SetMugshot(textQueue[line].Mugshot);
-                    if (UnitaleUtil.IsOverworld && GameObject.Find("textframe_border_outer")) {
-                        if (textQueue[line].ActualText) {
-                            if (GameObject.Find("textframe_border_outer").GetComponent<Image>().color.a == 0)
-                                SetTextFrameAlpha(1);
-                            blockSkip = false;
-                        } else {
-                            if ((GameObject.Find("textframe_border_outer").GetComponent<Image>().color.a == 1))
-                                SetTextFrameAlpha(0);
-                            blockSkip = true;
-                        }
-                    }
                     
                     if (!offsetSet)
                         SetOffset(0, 0);
@@ -348,13 +336,15 @@ public class TextManager : MonoBehaviour {
                     SpawnText();
                     //if (!overworld)
                     //    UIController.instance.encounter.CallOnSelfOrChildren("AfterText");
-                    if (UnitaleUtil.IsOverworld&& GameObject.Find("textframe_border_outer")) {
+                    if (UnitaleUtil.IsOverworld && GameObject.Find("textframe_border_outer") && this == PlayerOverworld.instance.textmgr) {
                         if (textQueue[line].ActualText) {
                             if (GameObject.Find("textframe_border_outer").GetComponent<Image>().color.a == 0)
                                 SetTextFrameAlpha(1);
+                            blockSkip = false;
                         } else {
                             if ((GameObject.Find("textframe_border_outer").GetComponent<Image>().color.a == 1))
                                 SetTextFrameAlpha(0);
+                            blockSkip = true;
                             DestroyText();
                         }
                         int lines = textQueue[line].Text.Split('\n').Length;
