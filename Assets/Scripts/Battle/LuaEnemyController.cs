@@ -217,8 +217,8 @@ public class LuaEnemyController : EnemyController {
             script.Bind("isactive", DynValue.NewBoolean(true));
             script.Bind("Kill", (Action)DoKill);
             script.Bind("Spare", (Action)DoSpare);
-            script.Bind("Move", (Action<float, float, bool>)Move);
-            script.Bind("MoveTo", (Action<float, float, bool>)MoveTo);
+            script.Bind("Move", (Action<float, float>)Move);
+            script.Bind("MoveTo", (Action<float, float>)MoveTo);
             script.Bind("BindToArena", (Action<bool, bool>)BindToArena);
             script.Bind("SetDamage", (Action<int>)SetDamage);
             script.Bind("SetBubbleOffset", (Action<int, int>)SetBubbleOffset);
