@@ -749,9 +749,8 @@ public class TextManager : MonoBehaviour {
                 // diff += Charset.LineSpacing;
                 ltrRect.localPosition = new Vector3(currentX - self.position.x - .9f, (currentY - self.position.y) + diff + .1f, 0);
             // keep what we already have for all text boxes that are not Text Objects in an encounter
-            } else {
+            } else
                 ltrRect.position = new Vector3(currentX + .1f, (currentY + Charset.Letters[currentText[i]].border.w - Charset.Letters[currentText[i]].border.y + 2) + .1f, 0);
-            };
             
             /*if (GetType() == typeof(LuaTextManager))
                 print("currentY from SpawnText (" + textQueue[currentLine].Text + ") = " + currentY + " + " + Charset.Letters[currentText[i]].border.w + " - " + Charset.Letters[currentText[i]].border.y + " + 2 = " + (currentY + Charset.Letters[currentText[i]].border.w - Charset.Letters[currentText[i]].border.y + 2)); */
@@ -943,7 +942,7 @@ public class TextManager : MonoBehaviour {
                 case "shake":  letterReferences[currentCharacter].GetComponent<Letter>().effect = new ShakeEffectLetter(letterReferences[currentCharacter].GetComponent<Letter>(), letterIntensity);    break;
                 default:       letterReferences[currentCharacter].GetComponent<Letter>().effect = null;                                                                                                 break;
             }
-            if (letterSound != null && !muted && !soundPlayed) {
+            if (letterSound != null && !muted && !soundPlayed && (GlobalControls.retroMode || textQueue[currentLine].Text[currentCharacter] != ' ')) {
                 soundPlayed = true;
                 if (letterSound.isPlaying) UnitaleUtil.PlaySound("BubbleSound", letterSound.clip.name);
                 else                       letterSound.Play();
