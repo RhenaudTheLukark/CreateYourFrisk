@@ -143,7 +143,7 @@ public class GlobalControls : MonoBehaviour {
                 GameObject.Find("Text").transform.SetParent(UserDebugger.instance.gameObject.transform);
             UserDebugger.instance.gameObject.SetActive(!UserDebugger.instance.gameObject.activeSelf);
             Camera.main.GetComponent<FPSDisplay>().enabled = !Camera.main.GetComponent<FPSDisplay>().enabled;
-        } else if (isInFight && Input.GetKeyDown(KeyCode.H))
+        } else if (isInFight && Input.GetKeyDown(KeyCode.H) && (LuaEnemyEncounter.script.GetVar("hitboxdebugger").Type.ToString() == "Nil" || LuaEnemyEncounter.script.GetVar("hitboxdebugger").Boolean))
             GameObject.Find("Main Camera").GetComponent<ProjectileHitboxRenderer>().enabled = !GameObject.Find("Main Camera").GetComponent<ProjectileHitboxRenderer>().enabled;
         else if (Input.GetKeyDown(KeyCode.Escape) && (canTransOW.Contains(SceneManager.GetActiveScene().name) || isInFight)) {
             if (isInFight && LuaEnemyEncounter.script.GetVar("unescape").Boolean && SceneManager.GetActiveScene().name != "Error")
