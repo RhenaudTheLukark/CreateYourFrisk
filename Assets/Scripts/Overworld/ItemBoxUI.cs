@@ -22,7 +22,7 @@ public class ItemBoxUI : MonoBehaviour {
             string[] words = new string[] { "effort", "time", "feeling" };
 
             Table text = new Table(EventManager.instance.luainvow.appliedScript.script);
-            text.Set(DynValue.NewNumber(1), DynValue.NewString("You have no items.\nYou put a little " + words[rnd.Next(1, 4)] + "\rinto the box."));
+            text.Set(DynValue.NewNumber(1), DynValue.NewString("You have no items.\nYou put a little " + words[rnd.Next(0, 3)] + "\rinto the box."));
 
             EventManager.instance.luagenow.SetDialog(DynValue.NewTable(text));
             Destroy(this);

@@ -41,7 +41,7 @@ public static class Inventory {
                         if (addedItems[j] == items[i])
                             type = addedItemsTypes[j];
                     }
-                    inventory.Add(new UnderItem(items[i], type));
+                    inventory.Add(new UnderItem(items[i]));
                 }
             }
     }
@@ -57,6 +57,16 @@ public static class Inventory {
             return false;
         inventory.Add(new UnderItem(Name));
         return true;
+    }
+
+    public static int GetItemType(string Name) {
+        int type = 0;
+        if (addedItems.Contains(Name))
+            for (int i = addedItems.Count - 1; i >= 0; i--)
+                if (addedItems[i] == Name)
+                    return addedItemsTypes[i];
+        NametoType.TryGetValue(Name, out type);
+        return type;
     }
 
     private static bool CallOnSelf(string func, DynValue[] param = null) {
@@ -100,7 +110,6 @@ public static class Inventory {
         if (addedItems.Count != 0) {
             for (int i = 0; i < addedItems.Count; i++)
                 if (addedItems[i].ToLower() == Name.ToLower()) {
-                    type = addedItemsTypes[i];
                     if (type == 1 || type == 2)
                         mess = ChangeEquipment(ID, mess);
                     if (!usedItemNoDelete && type == 0)

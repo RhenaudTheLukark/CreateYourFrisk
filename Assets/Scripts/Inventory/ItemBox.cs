@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using UnityEngine;
 
 public static class ItemBox {
     public static int capacity = 10;
@@ -14,9 +13,7 @@ public static class ItemBox {
             UnitaleUtil.WriteInLogAndDebugger("The box is already full! You can't add another item to it!");
             return;
         }
-        int type = 0;
-        Inventory.NametoType.TryGetValue(name, out type);
-        items.Add(new UnderItem(name, type));
+        items.Add(new UnderItem(name));
     }
 
     public static void RemoveFromBox(int index) {
