@@ -371,8 +371,6 @@ public class LuaEnemyController : EnemyController {
     }
 
     public void BindToArena(bool bind, bool isUnderArena = false) {
-        if (!canMove)
-            return;
         int count = 0;
         if (bind) { //If bind :ahde:
             foreach (LuaEnemyController luaec in GameObject.FindObjectsOfType<LuaEnemyController>()) //for each enemies...
