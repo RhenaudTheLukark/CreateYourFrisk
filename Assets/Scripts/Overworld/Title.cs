@@ -19,7 +19,7 @@ public class Title : MonoBehaviour {
             SaveLoad.Start();
             new ControlPanel();
             new PlayerCharacter();
-            #if UNITY_STANDALONE_WIN || UNITY_EDITOR
+            #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
                 if (GlobalControls.crate) Misc.WindowName = ControlPanel.instance.WinodwBsaisNmae;
                 else Misc.WindowName = ControlPanel.instance.WindowBasisName;
             #endif

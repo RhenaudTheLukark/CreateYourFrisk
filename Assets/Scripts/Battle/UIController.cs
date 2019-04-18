@@ -123,7 +123,7 @@ public class UIController : MonoBehaviour {
         Inventory.RemoveAddedItems();
         GlobalControls.lastTitle = false;
         PlayerCharacter.instance.MaxHPShift = 0;
-        #if UNITY_STANDALONE_WIN || UNITY_EDITOR
+        #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
             if (GlobalControls.crate)  Misc.WindowName = ControlPanel.instance.WinodwBsaisNmae;
             else                       Misc.WindowName = ControlPanel.instance.WindowBasisName;
         #endif
