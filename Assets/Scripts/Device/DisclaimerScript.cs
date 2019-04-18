@@ -17,7 +17,7 @@ public class DisclaimerScript : MonoBehaviour {
             SaveLoad.Start();
             new ControlPanel();
             new PlayerCharacter();
-            #if UNITY_STANDALONE_WIN || UNITY_EDITOR
+            #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
                 if (GlobalControls.crate)  Misc.WindowName = ControlPanel.instance.WinodwBsaisNmae;
                 else                       Misc.WindowName = ControlPanel.instance.WindowBasisName;
             #endif
@@ -57,7 +57,7 @@ public class DisclaimerScript : MonoBehaviour {
     /// </summary>
     private void Update() {
         // try to hook on to the game window when the user interacts
-        #if UNITY_STANDALONE_WIN || UNITY_EDITOR
+        #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
             if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.O)
               || (Input.GetKeyDown(KeyCode.F4)        // F4
               || (Input.GetKeyDown(KeyCode.Return)

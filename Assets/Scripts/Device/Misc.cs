@@ -58,7 +58,7 @@ public class Misc {
 
     public static void DestroyWindow() { Application.Quit(); }
 
-    #if UNITY_STANDALONE_WIN || UNITY_EDITOR
+    #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
         [DllImport("user32.dll")]
         private static extern int GetActiveWindow(); 
         public static int window = GetActiveWindow();
