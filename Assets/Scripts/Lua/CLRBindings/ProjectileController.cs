@@ -196,6 +196,8 @@ public class ProjectileController {
             lastY = y;
             lastAbsX = absx;
             lastAbsY = absy;
+            if (p.gameObject.GetComponent<KeyframeCollection>() != null)
+                GameObject.Destroy(p.gameObject.GetComponent<KeyframeCollection>());
             spr.StopAnimation();
             BulletPool.instance.Requeue(p);
             p = null;
