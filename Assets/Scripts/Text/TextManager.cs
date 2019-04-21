@@ -542,6 +542,7 @@ public class TextManager : MonoBehaviour {
                 int testFinal = finalIndex;
                 beginIndex = realBeginIndex;
                 string currentText3 = currentText;
+                int addedChars = 1;
                 for (; finalIndex <= realFinalIndex && finalIndex < currentText3.Length; finalIndex++)
                     if (UnitaleUtil.CalcTextWidth(this, beginIndex, finalIndex) > limit) {
                         if (finalIndex == testFinal) {
@@ -563,18 +564,22 @@ public class TextManager : MonoBehaviour {
                         } else {
                             if (!UnitaleUtil.IsOverworld) {
                                 if (SceneManager.GetActiveScene().name == "Intro") {
-                                    currentText3 = currentText3.Substring(0, finalIndex - 1) + "\n" + currentText3.Substring(finalIndex - 1, currentText.Length - finalIndex + 1);
+                                    currentText3 = currentText3.Substring(0, finalIndex - 1) + "\n" + currentText3.Substring(finalIndex - 1, currentText.Length - finalIndex + addedChars);
                                     realFinalIndex++;
+                                    addedChars++;
                                 } else if (name == "DialogBubble(Clone)" || UIController.instance.encounter.gameOverStance || GetType() == typeof(LuaTextManager)) {
-                                    currentText3 = currentText3.Substring(0, finalIndex - 1) + "\n" + currentText3.Substring(finalIndex - 1, currentText.Length - finalIndex + 1);
+                                    currentText3 = currentText3.Substring(0, finalIndex - 1) + "\n" + currentText3.Substring(finalIndex - 1, currentText.Length - finalIndex + addedChars);
                                     realFinalIndex++;
+                                    addedChars++;
                                 } else {
-                                    currentText3 = currentText3.Substring(0, finalIndex - 1) + "\n  " + currentText3.Substring(finalIndex - 1, currentText.Length - finalIndex + 1);
+                                    currentText3 = currentText3.Substring(0, finalIndex - 1) + "\n  " + currentText3.Substring(finalIndex - 1, currentText.Length - finalIndex + addedChars);
                                     realFinalIndex += 3;
+                                    addedChars += 3;
                                 }
                             } else {
-                                currentText3 = currentText3.Substring(0, finalIndex - 1) + "\n  " + currentText3.Substring(finalIndex - 1, currentText.Length - finalIndex + 1);
+                                currentText3 = currentText3.Substring(0, finalIndex - 1) + "\n  " + currentText3.Substring(finalIndex - 1, currentText.Length - finalIndex + addedChars);
                                 realFinalIndex += 3;
+                                addedChars += 3;
                             }
                         }
                         Array.Resize(ref letterReferences, currentText3.Length);
