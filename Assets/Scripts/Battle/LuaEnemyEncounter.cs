@@ -95,6 +95,13 @@ internal class LuaEnemyEncounter : EnemyEncounter {
 
     private void PrepareWave() {
         DynValue nextWaves = script.GetVar("nextwaves");
+        if (nextWaves.Type.ToString() != "Table") {
+            if (nextWaves.Type.ToString() == "Nil")
+                UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, "nextwaves is not defined in your script.");
+            else
+                UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, "nextwaves is a " + nextWaves.Type.ToString() + ", but should be a table.");
+            return;
+        }
         waves = new ScriptWrapper[nextWaves.Table.Length];
         waveNames = new string[waves.Length];
         int currentWaveScript = 0;
