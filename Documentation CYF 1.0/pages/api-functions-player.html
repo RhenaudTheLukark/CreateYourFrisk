@@ -184,7 +184,7 @@ it's w3c valid, at least
                 player's Max HP. The REAL maximum is 1.5 times the player's MaxHP.
                 </li><br>
                 <li><span class="CYF"></span> <span class="term">Player.SetMaxHPShift(<span class="number"></span> shift, <span class="number"></span> invulnerabilitySeconds = 1.7f, <span class="boolean"></span> set = false,
-                <span class="boolean"></span> canHeal = false)</span> - Lets you set the Player's MaxHP, relative to their normal MaxHP. If the total MaxHP is negative or nil, it
+                <span class="boolean"></span> canHeal = false, <span class="boolean"></span> playSound = true)</span> - Lets you set the Player's MaxHP, relative to their normal MaxHP. If the total MaxHP is negative or nil, it
                     causes a GameOver.<br>
                     Formula: Player's MaxHP = Basis MaxHP + MaxHP Shift
                     <ul>
@@ -194,6 +194,7 @@ it's w3c valid, at least
                         </li><br>
                         <li><span class="term">set</span> = true if you want to set the Player's MaxHP directly.</li><br>
                         <li><span class="term">canHeal</span> = true if the player will be able to heal up to this new Max HP value.</li><br>
+                        <li><span class="term">playSound</span> = true if you want to play the heal/hurt sound when the operation is done.</li><br>
                     </ul>
                 </li><br>
                 <li><span class="CYF"></span> <span class="term">Player.SetAttackAnim(<span class="luatable"><span class="string"></span></span> anim, <span class="number"></span> frequency)</span> - Sets the animation used

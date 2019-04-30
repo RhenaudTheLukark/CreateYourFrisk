@@ -242,8 +242,8 @@ public class LuaPlayerStatus {
     /// <param name="shift"></param>
     /// <param name="set"></param>
     /// <param name="canHeal"></param>
-    public void SetMaxHPShift(int shift, float invulSec = 1.7f, bool set = false, bool canHeal = false) { player.setMaxHPShift(shift, invulSec, set, canHeal); }
-    public void setMaxHPShift(int shift, float invulSec = 1.7f, bool set = false, bool canHeal = false) { SetMaxHPShift(shift, invulSec, set, canHeal); }
+    public void SetMaxHPShift(int shift, float invulSec = 1.7f, bool set = false, bool canHeal = false, bool sound = true) { player.setMaxHPShift(shift, invulSec, set, canHeal, sound); }
+    public void setMaxHPShift(int shift, float invulSec = 1.7f, bool set = false, bool canHeal = false, bool sound = true) { SetMaxHPShift(shift, invulSec, set, canHeal, sound); }
 
     public void SetAttackAnim(string[] anim, float frequency = 1 / 6f) {
         if (anim.Length == 0) {
