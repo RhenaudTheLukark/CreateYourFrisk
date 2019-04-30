@@ -147,6 +147,22 @@ public class LuaSpriteController {
         }
     }
 
+    // The x pivot of the sprite.
+    public float xpivot {
+        get { return img.GetComponent<RectTransform>().pivot.x; }
+        set {
+            SetPivot(value, img.GetComponent<RectTransform>().pivot.y);
+        }
+    }
+
+    // The y pivot of the sprite.
+    public float ypivot {
+        get { return img.GetComponent<RectTransform>().pivot.y; }
+        set {
+            SetPivot(img.GetComponent<RectTransform>().pivot.x, value);
+        }
+    }
+
     // Is the current animation finished? True if there is a finished animation, false otherwise
     public bool animcomplete {
         get {
