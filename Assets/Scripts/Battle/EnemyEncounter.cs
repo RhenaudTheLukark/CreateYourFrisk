@@ -27,10 +27,14 @@ public class EnemyEncounter : MonoBehaviour {
         if (EnabledEnemies.Length <= 0)
             return "";
         int randomEnemy = UnityEngine.Random.Range(0, EnabledEnemies.Length);
-        if (EnabledEnemies[randomEnemy].Comments.Length <= 0)
+        string[] comments;
+        try {
+            comments = EnabledEnemies[randomEnemy].Comments;
+        } catch { throw new CYFException("RandomEncounterText: Can not read the \"comments\" table of enemy #" + (randomEnemy + 1).ToString() + ".\nAre you sure it's set?"); }
+        if (comments.Length <= 0)
             return "";
-        int randomComment = UnityEngine.Random.Range(0, EnabledEnemies[randomEnemy].Comments.Length);
-        return EnabledEnemies[randomEnemy].Comments[randomComment];
+        int randomComment = UnityEngine.Random.Range(0, comments.Length);
+        return comments[randomComment];
     }
 
     public virtual void HandleItem(UnderItem item) {
