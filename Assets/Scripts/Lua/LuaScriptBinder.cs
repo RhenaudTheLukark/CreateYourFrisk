@@ -33,6 +33,7 @@ public static class LuaScriptBinder {
         UserData.RegisterType<Letter>();
         UserData.RegisterType<Misc>();
         UserData.RegisterType<LuaTextManager>();
+        UserData.RegisterType<LuaFile>();
         //UserData.RegisterType<Windows>();
         //Overworld
         UserData.RegisterType<LuaEventOW>();
@@ -241,6 +242,7 @@ public static class LuaScriptBinder {
         UserData.RegisterType<Letter>();
         UserData.RegisterType<Misc>();
         UserData.RegisterType<LuaTextManager>();
+        UserData.RegisterType<LuaFile>();
         //UserData.RegisterType<Windows>();
         //Overworld
         UserData.RegisterType<LuaEventOW>();
