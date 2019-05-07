@@ -120,18 +120,17 @@ public class UIController : MonoBehaviour {
         if (GameObject.Find("TopLayer"))
             spr.layer = "Top";
         spr.Scale(640, 480);
+        if (GlobalControls.modDev) // empty the inventory if not in the overworld
+            Inventory.inventory.Clear();
         Inventory.RemoveAddedItems();
         GlobalControls.lastTitle = false;
         PlayerCharacter.instance.MaxHPShift = 0;
+        PlayerCharacter.instance.SetLevel(PlayerCharacter.instance.LV);
         #if UNITY_STANDALONE_WIN || UNITY_EDITOR
             if (GlobalControls.crate)  Misc.WindowName = ControlPanel.instance.WinodwBsaisNmae;
             else                       Misc.WindowName = ControlPanel.instance.WindowBasisName;
         #endif
-        
-        // empty the inventory if not in the overworld
-        if (GlobalControls.modDev)
-            Inventory.inventory.Clear();
-        
+
         // reset the battle camera's position
         Misc.ResetCamera();
         
