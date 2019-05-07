@@ -32,7 +32,8 @@ public class LuaTextManager : TextManager {
 
     protected override void Awake() {
         base.Awake();
-        transform.parent.SetParent(GameObject.Find("TopLayer").transform);
+        if (!UnitaleUtil.IsOverworld)
+            transform.parent.SetParent(GameObject.Find("TopLayer").transform);
         container = transform.parent.gameObject;
         containerBubble = UnitaleUtil.GetChildPerName(container.transform, "BubbleContainer").gameObject;
         speechThing = UnitaleUtil.GetChildPerName(containerBubble.transform, "SpeechThing", false, true).GetComponent<RectTransform>();

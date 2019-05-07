@@ -11,6 +11,7 @@ public static class Inventory {
     public static List<string> addedItems = new List<string>();
     public static List<int> addedItemsTypes = new List<int>();
     public static LuaInventory luaInventory;
+    public static int inventorySize = 8;
     public static int tempAmount = 0;
     public static Dictionary<string, string> NametoDesc = new Dictionary<string, string>(), NametoShortName = new Dictionary<string, string>();
     public static Dictionary<string, int> NametoType = new Dictionary<string, int>(), NametoPrice = new Dictionary<string, int>();
@@ -30,8 +31,8 @@ public static class Inventory {
         inventory = new List<UnderItem>(new UnderItem[] { });
         if (items != null)
             for (int i = 0; i < items.Length; i++) {
-                if (i == 8)
-                    UnitaleUtil.WriteInLogAndDebugger("[WARN]The inventory can only contain 8 items, yet you tried to add the item \"" + items[i] + "\" as item number " + (i + 1) + ".");
+                if (i == inventorySize)
+                    UnitaleUtil.WriteInLogAndDebugger("[WARN]The inventory can only contain " + inventorySize + " items, yet you tried to add the item \"" + items[i] + "\" as item number " + (i + 1) + ".");
                 else {
                     // Search through addedItemsTypes to find the type of the new item
                     int type = 0;
@@ -41,19 +42,19 @@ public static class Inventory {
                         if (addedItems[j] == items[i])
                             type = addedItemsTypes[j];
                     }
-                    inventory.Add(new UnderItem(items[i], type));
+                    inventory.Add(new UnderItem(items[i]));
                 }
             }
     }
 
     public static void SetItem(int index, string Name) {
-        if (index > 7)                      throw new CYFException("The inventory can only contain 8 items.");
+        if (index >= inventorySize)         throw new CYFException("The inventory can only contain " + inventorySize + " items.");
         else if (index >= inventory.Count)  AddItem(Name);
         else                                inventory[index] = new UnderItem(Name);
     }
 
     public static bool AddItem(string Name) {
-        if (inventory.Count == 8)
+        if (inventory.Count == inventorySize)
             return false;
         // Make sure that the item exists before trying to create it
         string outString = "";
@@ -63,6 +64,16 @@ public static class Inventory {
             throw new CYFException("Inventory.AddItem: The item \"" + Name + "\" was not found.\n\nAre you sure you called Inventory.AddCustomItems first?");
         inventory.Add(new UnderItem(Name));
         return true;
+    }
+
+    public static int GetItemType(string Name) {
+        int type = 0;
+        if (addedItems.Contains(Name))
+            for (int i = addedItems.Count - 1; i >= 0; i--)
+                if (addedItems[i] == Name)
+                    return addedItemsTypes[i];
+        NametoType.TryGetValue(Name, out type);
+        return type;
     }
 
     private static bool CallOnSelf(string func, DynValue[] param = null) {
@@ -106,7 +117,6 @@ public static class Inventory {
         if (addedItems.Count != 0) {
             for (int i = 0; i < addedItems.Count; i++)
                 if (addedItems[i].ToLower() == Name.ToLower()) {
-                    type = addedItemsTypes[i];
                     if (type == 1 || type == 2)
                         mess = ChangeEquipment(ID, mess);
                     if (!usedItemNoDelete && type == 0)

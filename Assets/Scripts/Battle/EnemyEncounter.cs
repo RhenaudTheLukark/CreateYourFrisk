@@ -39,7 +39,7 @@ public class EnemyEncounter : MonoBehaviour {
 
     public virtual void HandleItem(UnderItem item) {
         //if (!CustomItemHandler(item))
-            item.inCombatUse();
+            //item.inCombatUse();
     }
 
     public virtual void HandleSpare() {

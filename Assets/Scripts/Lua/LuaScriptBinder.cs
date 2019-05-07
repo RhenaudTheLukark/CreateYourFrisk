@@ -33,6 +33,7 @@ public static class LuaScriptBinder {
         UserData.RegisterType<Letter>();
         UserData.RegisterType<Misc>();
         UserData.RegisterType<LuaTextManager>();
+        UserData.RegisterType<LuaFile>();
         //UserData.RegisterType<Windows>();
         //Overworld
         UserData.RegisterType<LuaEventOW>();
@@ -62,7 +63,7 @@ public static class LuaScriptBinder {
 
         script.Globals["isCYF"] = true;
         script.Globals["safe"] = ControlPanel.instance.Safe;
-        #if UNITY_STANDALONE_WIN || UNITY_EDITOR
+        #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
             script.Globals["windows"] = true;
         #else
             script.Globals["windows"] = false;
@@ -254,6 +255,7 @@ public static class LuaScriptBinder {
         UserData.RegisterType<Letter>();
         UserData.RegisterType<Misc>();
         UserData.RegisterType<LuaTextManager>();
+        UserData.RegisterType<LuaFile>();
         //UserData.RegisterType<Windows>();
         //Overworld
         UserData.RegisterType<LuaEventOW>();
@@ -369,7 +371,9 @@ public static class LuaScriptBinder {
                 break;
             }
         }
-        luatm.layer = layer;
+        // Layers don't exist in the overworld, so we don't set it
+        if (!UnitaleUtil.IsOverworld)
+            luatm.layer = layer;
         luatm.textMaxWidth = textWidth;
         luatm.bubbleHeight = bubbleHeight;
         luatm.ShowBubble();

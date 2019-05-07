@@ -16,7 +16,7 @@
     public string WinodwBsaisNmae = "Crate Your Frisk";
     public bool FrameBasedMovement = false;
     public bool Safe = false;
-    #if UNITY_STANDALONE_WIN || UNITY_EDITOR
+    #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
         public bool windows = true;
     #else
         public bool windows = false;
