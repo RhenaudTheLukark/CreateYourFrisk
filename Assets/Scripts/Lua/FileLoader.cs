@@ -57,7 +57,7 @@ public static class FileLoader {
     /// Get the full path to the main directory of the currently selected mod.
     /// </summary>
     public static string ModDataPath {
-        get { return Path.Combine(DataRoot, "Mods/" + StaticInits.MODFOLDER); }
+        get { return Path.Combine(DataRoot, "Mods\\" + StaticInits.MODFOLDER); }
     }
 
     /// <summary>
