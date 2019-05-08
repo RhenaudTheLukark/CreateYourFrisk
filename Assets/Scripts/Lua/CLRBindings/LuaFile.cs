@@ -11,6 +11,10 @@ public class LuaFile {
         get { return content.Length; }
     }
 
+    public string fileMode {
+        get { return mode; }
+    }
+
     public LuaFile(string path, string mode = "rw") {
         if (path.Contains(".."))
             throw new CYFException("You cannot open a file outside of the mod. The use of \"..\" allows the modder to reach beyond what it is supposed to reach, so it has been forbidden entirely.");
@@ -26,7 +30,7 @@ public class LuaFile {
         this.path = path;
         this.mode = mode;
 
-        content = File.ReadAllText(path).Split('\n');
+        content = File.Exists(path) ? File.ReadAllText(path).Split('\n') : null;
     }
 
     public string ReadLine(int line) {

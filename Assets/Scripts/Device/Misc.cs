@@ -70,10 +70,12 @@ public class Misc {
         return new LuaFile(path, mode);
     }
 
-    public static string OSType() {
-        if (Application.platform == RuntimePlatform.WindowsEditor || Application.platform == RuntimePlatform.WindowsPlayer)  return "Windows";
-        else if (Application.platform == RuntimePlatform.LinuxEditor || Application.platform == RuntimePlatform.LinuxPlayer) return "Linux";
-        else                                                                                                                 return "Mac";
+    public static string OSType {
+        get {
+            if (Application.platform == RuntimePlatform.WindowsEditor || Application.platform == RuntimePlatform.WindowsPlayer)  return "Windows";
+            else if (Application.platform == RuntimePlatform.LinuxEditor || Application.platform == RuntimePlatform.LinuxPlayer) return "Linux";
+            else                                                                                                                 return "Mac";
+        }
     }
 
     #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
