@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.IO;
 
 public class Misc {
     public string MachineName {
@@ -68,6 +69,33 @@ public class Misc {
 
     public static LuaFile OpenFile(string path, string mode = "rw") {
         return new LuaFile(path, mode);
+    }
+
+    public bool FileExists(string path) {
+        if (path.Contains(".."))
+            throw new CYFException("You cannot check for a file outside of a mod folder. The use of \"..\" is forbidden.");
+        return File.Exists(FileLoader.ModDataPath + "\\" + path);
+    }
+
+    public string[] ListDir(string path, bool getFolders = false) {
+        if (path == null)
+            throw new CYFException("Cannot list a directory with a nil path.");
+        if (path.Contains(".."))
+            throw new CYFException("You cannot list directories outside of a mod folder. The use of \"..\" is forbidden.");
+
+        path = FileLoader.ModDataPath + "\\" + path;
+        if (!Directory.Exists(path))
+            throw new CYFException("Invalid path:\n\n\"" + path + "\"");
+
+        DirectoryInfo d = new DirectoryInfo(path);
+        System.Collections.Generic.List<string> retval = new System.Collections.Generic.List<string>();
+        if (!getFolders)
+            foreach (FileInfo fi in d.GetFiles())
+                retval.Add(Path.GetFileName(fi.ToString()));
+        else
+            foreach (DirectoryInfo di in d.GetDirectories())
+                retval.Add(di.Name);
+        return retval.ToArray();
     }
 
     public static string OSType {
