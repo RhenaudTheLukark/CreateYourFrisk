@@ -432,7 +432,7 @@ public class LuaTextManager : TextManager {
     }
 
     // Shortcut to `SetSpeechThingPositionAndSide`
-    public void SetBubbleTail(string side, DynValue position) { SetSpeechThingPositionAndSide(side, position); }
+    public void SetTail(string side, DynValue position) { SetSpeechThingPositionAndSide(side, position); }
 
     public void SetSpeechThingPositionAndSide(string side, DynValue position) {
         CheckExists();
