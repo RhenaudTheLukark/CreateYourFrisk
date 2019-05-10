@@ -436,6 +436,8 @@ public class PlayerController : MonoBehaviour {
             if (invulTimer <= 0.0f)
                 selfImg.enabled = true;
         }
+        // constantly update the hitbox to match the sprite
+        playerAbs = new Rect(0, 0, selfImg.sprite.texture.width - hitboxInset * 2, selfImg.sprite.texture.height - hitboxInset * 2);
         
         // constantly update the hitbox to match the position of the sprite itself
         playerAbs.x = (luaStatus.sprite.absx - (luaStatus.sprite.width  * self.pivot.x)) + hitboxInset;
