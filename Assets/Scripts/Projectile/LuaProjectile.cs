@@ -6,8 +6,10 @@ public class LuaProjectile : Projectile {
     public override void OnStart() {
         self.sizeDelta = GetComponent<Image>().sprite.rect.size;
         ctrl.sprite.nativeSizeDelta = self.sizeDelta;
-        selfAbs.width = self.rect.width;
-        selfAbs.height = self.rect.height;
+        if (!this.isPP() || GlobalControls.retroMode) {
+            selfAbs.width = self.rect.width;
+            selfAbs.height = self.rect.height;
+        }
         GetComponent<Image>().enabled = true;
     }
 
