@@ -138,7 +138,9 @@ it's w3c valid, at least
             <p>For a long time, events' code was accessible and could only be modified by going into 
 			   <span class="term">YOURMOD/Lua/Events/</span>. Maybe you already fiddled with them, maybe not. Now that the system 
 			   is stable and easier to use, event programming may be as easy as creating a battle: all that you have to do is to follow 
-			   the documentation and know what you're doing.</p>
+			   the documentation and know what you're doing.
+            </p>
+            <br>
             <p>The overworld has a debugger like battles' (and it's used the same way):
                 <span class="function">DEBUG(<span class="string"></span> value)</span>
                 <i>Prints one string value to the Overworld debugger.</i>
@@ -147,9 +149,19 @@ it's w3c valid, at least
             <p>The <span class="term">Audio</span>, <span class="term">NewAudio</span>, <span class="term">Inventory</span>, 
 			    <span class="term">Input</span>, <span class="term">Misc</span> and <span class="term">Time</span> objects from  battles 
 				are usable in the overworld too, as well as <span class="term">RealGlobals</span> and <span class="term">AlMightyGlobals</span>. 
+                <br><br><br>
+                <span class="ref">The Sprite Object</span> and <span class="ref">The Text Object</span> are also usable here, except with these different functions:
+                <br><span class="function">CreateSprite(<span class="string"></span> spritename) returns <span class="userdata">sprite</span>  [E/M/W]</span>
+                (no argument for Layer)
+                <br><br><br>
+                <span class="function">CreateText(<span class="luatable"><span class="string"></span></span> text <font style="color:#fff;">(OR)</font> <span class="string"></span> text, 
+                <span class="luatable"><span class="number"></span>, <span class="number"></span></span> position, <span class="number"></span> textMaxWidth, <span class="string"></span> layer = "Ignored", <span class="number"></span>  bubbleHeight = -1) returns <span class="userdata">textObject</span> [E/M/W]</span>
+                (the Layer argument is completely ignored; it can be any value, but it must be a string)
             </p>
+            <br><br>
             <p>
                 Finally, these variables are also accessible:
+                <br><br>
                 <span class="function"><span class="boolean"></span> isCYF</span>
                 A value that indicates if you are using CYF. Because the Overworld is a feature exclusive to CYF, this will always be true.
                 <span class="function"><span class="boolean"></span> safe</span>
