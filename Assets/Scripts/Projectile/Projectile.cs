@@ -81,19 +81,30 @@ public abstract class Projectile : MonoBehaviour {
     /// <summary>
     /// Built-in Unity function run on every frame
     /// </summary>
-    private void Update() {
-        float rot = -(self.eulerAngles.z + 90) * Mathf.Deg2Rad,
-              Px = (0.5f - self.pivot.x) * selfAbs.width,
-              Py = (0.5f - self.pivot.y) * selfAbs.height,
-              Centerx = Px * Mathf.Sin(rot) + Py * Mathf.Cos(rot),
-              Centery = Px * Mathf.Cos(rot) - Py * Mathf.Sin(rot);
-        selfAbs.x = self.position.x + Centerx - selfAbs.width / 2;
-        selfAbs.y = self.position.y + Centery - selfAbs.height / 2;
-        
+    private void LateUpdate() {
         //ctrl.UpdatePosition();
         //OnUpdate();
         if (!GlobalControls.retroMode && needSizeRefresh)
             UpdateHitRect();
+
+        float Offsetx = 0, Offsety = 0;
+        if (self.pivot.x != 0.5f || self.pivot.y != 0.5f) {
+            float Px = (0.5f - self.pivot.x) * ctrl.sprite.width * ctrl.sprite.xscale;
+            float Py = (0.5f - self.pivot.y) * ctrl.sprite.height * ctrl.sprite.yscale;
+            float Pdist = Mathf.Sqrt(Mathf.Pow(Px, 2) + Mathf.Pow(Py, 2));
+            float Pang = Mathf.Atan2(Py, Px) + Mathf.Deg2Rad * ctrl.sprite.rotation;
+            float Centerx = Pdist * Mathf.Cos(Pang);
+            float Centery = Pdist * Mathf.Sin(Pang);
+            Offsetx = Centerx - selfAbs.width / 2;
+            Offsety = Centery - selfAbs.height / 2;
+        } else {
+            Offsetx = -0.5f * selfAbs.width;
+            Offsety = -0.5f * selfAbs.height;
+        }
+
+        selfAbs.x = self.position.x + Offsetx;
+        selfAbs.y = self.position.y + Offsety;
+
         if (HitTest())
             if (isPP()) {
                 if (HitTestPP())
