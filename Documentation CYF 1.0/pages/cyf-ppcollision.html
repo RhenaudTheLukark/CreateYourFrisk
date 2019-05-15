@@ -95,18 +95,54 @@ it's w3c valid, at least
                 like always and collision will still work! (this is why it took me one week to make this feature)</p>
                 <p>One last tip: The Pixel-Perfect Collision System is more resource-intensive than the Normal Collision
                 System. Don't use Pixel-Perfect for bullets that won't damage you, as that will just waste resources!</p>
-            <p>
-                <br><span class="function"><span class="boolean"></span> Bullet.ppcollision</span>
-                The collision system of the bullet. If true, this bullet will use Pixel-Perfect Collision.<br><br>
-                <i>From <span class="ref">Projectile management</ref></i>.
-            </p>
+            
+            <hr>
+            <img src="../img/PP.png">
+            <br><br>
+            <h4>Note: PPCollision does <b><u>NOT</u></b> affect the hitboxes shown when pressing <span class="term">H</span>.</h4>
+            <hr>
             <p>
                 <br><span class="function">SetPPCollision(<span class="boolean"></span> bool) [E/M/W]</span>
-                Setting this to true will force all bullets that don't have a specified collision type to be Pixel-Perfect bullets.
-                <br>False by default.
+                Call this to set the encounter's <b style="color:#fff">default</b> collision system.
+                <br><br>
+                Enter <span class="term">false</span> for the regular "Unitale" system, or <span class="term">true</span> for PPCollision.
+                <br><br>
+                <font color="#fff">* Calling this will force all bullets with <span class="term">Bullet.ppchanged</span> as
+                <span class="term">false</span> to use the collision system you enter here (see above).
+                <br><br>
+                <span class="term">Bullet.ppchanged</span> will remain <span class="term">false</span>.</font>
+                <br><br>
+                The initial value is <span class="term">false</span>.
             </p>
-            <br><br><br>
-            <img src="../img/PP.png">
+            
+            <hr>
+            <i>From <span class="ref">Projectile management</ref></i>:
+            <br><br>
+            
+            <p>
+                <br><span class="function"><span class="boolean"></span> Bullet.ppcollision</span>
+                If this is true, the bullet will use the Pixel-Perfect Collision system.
+                <br><br>
+                By default, this is the encounter's <b style="color:#fff">default</b> collision system.
+                <br><br>
+                <font color="#fff">* Manually setting this will set <span class="term">Bullet.ppchanged</span> to true.</font>
+            </p>
+            <p>
+                <br><span class="function"><span class="CYF"></span> <span class="boolean"></span> Bullet.ppchanged (read-only)</span>
+                Tells you if the bullet's collision system has been changed by manually changing <span class="term">Bullet.ppcollision</span>.
+                <br><br>
+                <font color="#fff">* Bullets with <span class="term">Bullet.ppchanged</span> set to true will NOT be affected by future calls of<br>
+                <span class="term">SetPPCollision</span>.</font>
+                <br><br>
+                Will be false after you call <span class="term">Bullet.ResetCollisionSystem()</span>, or if you haven't changed
+                <span class="term">Bullet.ppcollision</span>.
+            </p>
+            <p>
+                <br><span class="function"><span class="CYF"></span> Bullet.ResetCollisionSystem()</span>
+                Resets the collision system of the bullet to the encounter's <b style="color:#fff">default</b> collision system.
+                <br><br>
+                The default collision system is set by <span class="term">SetPPCollision</span>.
+            </p>
         </div>
 		
 		<div class="tab-pane text-style" id="mercy">

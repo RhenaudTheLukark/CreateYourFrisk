@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
+using MoonSharp.Interpreter;
 
 /// <summary>
 /// Controls that should be active on all screens. Pretty much a hack to allow people to reset. Now it's more useful.
@@ -55,22 +56,22 @@ public class GlobalControls : MonoBehaviour {
             
             // check if safe mode has a stored preference that is a boolean
             if (LuaScriptBinder.GetAlMighty(null, "CYFSafeMode") != null
-             && LuaScriptBinder.GetAlMighty(null, "CYFSafeMode").Type.ToString() == "Boolean")
+             && LuaScriptBinder.GetAlMighty(null, "CYFSafeMode").Type == DataType.Boolean)
                 ControlPanel.instance.Safe = LuaScriptBinder.GetAlMighty(null, "CYFSafeMode").Boolean;
             
             // check if retro mode has a stored preference that is a boolean
             if (LuaScriptBinder.GetAlMighty(null, "CYFRetroMode") != null
-             && LuaScriptBinder.GetAlMighty(null, "CYFRetroMode").Type.ToString() == "Boolean")
+             && LuaScriptBinder.GetAlMighty(null, "CYFRetroMode").Type == DataType.Boolean)
                 retroMode = LuaScriptBinder.GetAlMighty(null, "CYFRetroMode").Boolean;
             
             // check if fullscreen mode has a stored preference that is a boolean
             if (LuaScriptBinder.GetAlMighty(null, "CYFPerfectFullscreen") != null
-             && LuaScriptBinder.GetAlMighty(null, "CYFPerfectFullscreen").Type.ToString() == "Boolean")
+             && LuaScriptBinder.GetAlMighty(null, "CYFPerfectFullscreen").Type == DataType.Boolean)
                 perfectFullscreen = LuaScriptBinder.GetAlMighty(null, "CYFPerfectFullscreen").Boolean;
             
             // check if window scale has a stored preference that is a number
             if (LuaScriptBinder.GetAlMighty(null, "CYFWindowScale") != null
-             && LuaScriptBinder.GetAlMighty(null, "CYFWindowScale").Type.ToString() == "Number")
+             && LuaScriptBinder.GetAlMighty(null, "CYFWindowScale").Type == DataType.Number)
                 windowScale = (int)LuaScriptBinder.GetAlMighty(null, "CYFWindowScale").Number;
             
             awakened = true;
@@ -143,10 +144,10 @@ public class GlobalControls : MonoBehaviour {
                 GameObject.Find("Text").transform.SetParent(UserDebugger.instance.gameObject.transform);
             UserDebugger.instance.gameObject.SetActive(!UserDebugger.instance.gameObject.activeSelf);
             Camera.main.GetComponent<FPSDisplay>().enabled = !Camera.main.GetComponent<FPSDisplay>().enabled;
-        } else if (isInFight && Input.GetKeyDown(KeyCode.H))
+        } else if (isInFight && Input.GetKeyDown(KeyCode.H) && SceneManager.GetActiveScene().name != "Error" && UserDebugger.instance.gameObject.activeSelf)
             GameObject.Find("Main Camera").GetComponent<ProjectileHitboxRenderer>().enabled = !GameObject.Find("Main Camera").GetComponent<ProjectileHitboxRenderer>().enabled;
         else if (Input.GetKeyDown(KeyCode.Escape) && (canTransOW.Contains(SceneManager.GetActiveScene().name) || isInFight)) {
-            if (isInFight && LuaEnemyEncounter.script.GetVar("unescape").Boolean && SceneManager.GetActiveScene().name == "Battle")
+            if (isInFight && LuaEnemyEncounter.script.GetVar("unescape").Boolean && SceneManager.GetActiveScene().name != "Error")
                 return;
             if (SceneManager.GetActiveScene().name == "Error" && !modDev)
                 return;
@@ -213,6 +214,9 @@ public class GlobalControls : MonoBehaviour {
         while (frameCount < frames) {
             if (stopScreenShake) {
                 tf.position = new Vector3(tf.position.x - totalShift.x, tf.position.y - totalShift.y, tf.position.z);
+                UserDebugger.instance.transform.position = new Vector3(UserDebugger.instance.transform.position.x - totalShift.x,
+                                                                       UserDebugger.instance.transform.position.y - totalShift.y,
+                                                                       UserDebugger.instance.transform.position.z);
                 screenShaking = false;
                 yield break;
             }
@@ -222,8 +226,12 @@ public class GlobalControls : MonoBehaviour {
 
             if (UnitaleUtil.IsOverworld)
                 PlayerOverworld.instance.cameraShift = new Vector2(PlayerOverworld.instance.cameraShift.x + shift.x - totalShift.x, PlayerOverworld.instance.cameraShift.y + shift.y - totalShift.y);
-            else
+            else {
                 tf.position = new Vector3(tf.position.x + shift.x - totalShift.x, tf.position.y + shift.y - totalShift.y, tf.position.z);
+                UserDebugger.instance.transform.position = new Vector3(UserDebugger.instance.transform.position.x + shift.x - totalShift.x,
+                                                                       UserDebugger.instance.transform.position.y + shift.y - totalShift.y,
+                                                                       UserDebugger.instance.transform.position.z);
+            }
             //print(totalShift + " + " + shift + " = " + (totalShift + shift));
             totalShift = shift;
             frameCount++;
@@ -231,6 +239,10 @@ public class GlobalControls : MonoBehaviour {
         }
         screenShaking = false;
         tf.position = new Vector3(tf.position.x - totalShift.x, tf.position.y - totalShift.y, tf.position.z);
+        if (!UnitaleUtil.IsOverworld)
+            UserDebugger.instance.transform.position = new Vector3(UserDebugger.instance.transform.position.x - totalShift.x,
+                                                                   UserDebugger.instance.transform.position.y - totalShift.y,
+                                                                   UserDebugger.instance.transform.position.z);
     }
 
     public void ShakeScreen(float duration, float intensity, bool isIntensityDecreasing) {

@@ -95,6 +95,13 @@ internal class LuaEnemyEncounter : EnemyEncounter {
 
     private void PrepareWave() {
         DynValue nextWaves = script.GetVar("nextwaves");
+        if (nextWaves.Type != DataType.Table) {
+            if (nextWaves.Type == DataType.Nil)
+                UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, "nextwaves is not defined in your script.");
+            else
+                UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, "nextwaves is a " + nextWaves.Type.ToString() + ", but should be a table.");
+            return;
+        }
         waves = new ScriptWrapper[nextWaves.Table.Length];
         waveNames = new string[waves.Length];
         int currentWaveScript = 0;
@@ -103,7 +110,7 @@ internal class LuaEnemyEncounter : EnemyEncounter {
             for (int i = 0; i < waves.Length; i++) {
                 currentWaveScript = i;
                 DynValue ArenaStatus = UserData.Create(ArenaManager.luaStatus);
-                waves[i] = new ScriptWrapper() { script = LuaScriptBinder.BoundScript() };
+                waves[i] = new ScriptWrapper();
                 waves[i].script.Globals.Set("Arena", ArenaStatus);
                 waves[i].script.Globals["EndWave"] = (Action)EndWaveTimer;
                 waves[i].script.Globals["State"] = (Action<Script, string>)UIController.SwitchStateOnString;
@@ -318,8 +325,11 @@ internal class LuaEnemyEncounter : EnemyEncounter {
         Table t = script["Wave"].Table;
         if (!death)
             foreach (object obj in t.Keys) {
-                try   { ((ScriptWrapper)t[obj]).Call("EndingWave"); }
-                catch { UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, "You shouldn't override Wave, now you get an error :P"); }
+                try {
+                    ((ScriptWrapper)t[obj]).Call("EndingWave");
+                    ScriptWrapper.instances.Remove(((ScriptWrapper)t[obj]));
+                    LuaScriptBinder.scriptlist.Remove(((ScriptWrapper)t[obj]).script);
+                } catch { UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, "You shouldn't override Wave, now you get an error :P"); }
             }
         if (!GlobalControls.retroMode)
             foreach (LuaProjectile p in FindObjectsOfType<LuaProjectile>())

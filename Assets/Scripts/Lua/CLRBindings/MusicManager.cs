@@ -91,11 +91,15 @@ public class MusicManager {
     }
 
     public static string GetSoundDictionary(string key) {
+        if (key == null)
+            throw new CYFException("Audio.GetSoundDictionary: The first argument (the index) is nil.\n\nSee the documentation for proper usage.");
         if (hiddenDictionary.ContainsKey(key.ToLower()))  return (string)hiddenDictionary[key.ToLower()];
         else                                              return key;
     }
 
     public static void SetSoundDictionary(string key, string value) {
+        if (key == null)
+            throw new CYFException("Audio.SetSoundDictionary: The first argument (the index) is nil.\n\nSee the documentation for proper usage.");
         if (key == "RESETDICTIONARY")
             hiddenDictionary.Clear();
         else {

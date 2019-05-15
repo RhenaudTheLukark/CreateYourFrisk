@@ -378,8 +378,8 @@ public static class UnitaleUtil {
                 }
             } else
                 NewMusicManager.CreateChannel(basis + i);
-            NewMusicManager.SetVolume(basis + i, volume);
             NewMusicManager.PlaySound(basis + i, sound);
+            NewMusicManager.SetVolume(basis + i, volume);
             break;
         }
     }

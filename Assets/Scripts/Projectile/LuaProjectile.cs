@@ -6,8 +6,10 @@ public class LuaProjectile : Projectile {
     public override void OnStart() {
         self.sizeDelta = GetComponent<Image>().sprite.rect.size;
         ctrl.sprite.nativeSizeDelta = self.sizeDelta;
-        selfAbs.width = self.rect.width;
-        selfAbs.height = self.rect.height;
+        if (!this.isPP() || GlobalControls.retroMode) {
+            selfAbs.width = self.rect.width;
+            selfAbs.height = self.rect.height;
+        }
         GetComponent<Image>().enabled = true;
     }
 
@@ -26,7 +28,9 @@ public class LuaProjectile : Projectile {
     public override void OnProjectileHit() {
         if (owner.Globals["OnHit"] != null && owner.Globals.Get("OnHit") != null)
             try { owner.Call(owner.Globals["OnHit"], this.ctrl); } 
-            catch (ScriptRuntimeException ex) { UnitaleUtil.DisplayLuaError("[wave script filename here]\n(should be a filename, sorry! missing feature)", ex.DecoratedMessage); }
+            catch (ScriptRuntimeException ex) {
+                UnitaleUtil.DisplayLuaError((owner.Globals["wavename"] != null) ? (string)owner.Globals["wavename"] : "[wave script filename here]\n(should be a filename, sorry! missing feature)", ex.DecoratedMessage);
+            }
         else
             PlayerController.instance.Hurt(3);
     }
