@@ -19,10 +19,12 @@ public class LuaInventory {
 
     public void SetItem(int index, string Name) { Inventory.SetItem(index-1, Name); }
 
-    public bool AddItem(string Name, int index = 8) {
-        if (index == 8)
+    public bool AddItem(string Name, int index = -1) {
+        if (Name == null)
+            throw new CYFException("Inventory.AddItem: The first argument (item name) is nil.\n\nSee the documentation for proper usage.");
+        if (index == -1)
             return Inventory.AddItem(Name);
-        else if (index > 0 && Inventory.inventory.Count < 8) {
+        else if (index > 0 && Inventory.inventory.Count < Inventory.inventorySize) {
             if (index > Inventory.inventory.Count + 1)
                 index = Inventory.inventory.Count + 1;
             
@@ -30,6 +32,13 @@ public class LuaInventory {
             bool result = false;
             for (var i = 0; i <= Inventory.inventory.Count; i++) {
                 if (i == index - 1) {
+                    // Make sure that the item exists before trying to create it
+                    string outString = "";
+                    int outInt       =  0;
+                    if (!Inventory.addedItems.Contains(Name) && !Inventory.NametoDesc.TryGetValue(Name, out outString) &&
+                        !Inventory.NametoShortName.TryGetValue(Name, out outString) && !Inventory.NametoType.TryGetValue(Name, out outInt) &&
+                        !Inventory.NametoPrice.TryGetValue(Name, out outInt))
+                        throw new CYFException("Inventory.AddItem: The item \"" + Name + "\" was not found.\n\nAre you sure you called Inventory.AddCustomItems first?");
                     inv.Add(new UnderItem(Name));
                     result = true;
                 }
@@ -54,11 +63,19 @@ public class LuaInventory {
     }
 
     public void AddCustomItems(string[] names, int[] types) {
+        if (names == null)
+            throw new CYFException("Inventory.AddCustomItems: The first argument (list of item names) is nil.\n\nSee the documentation for proper usage.");
+        else if (types == null)
+            throw new CYFException("Inventory.AddCustomItems: The second argument (list of item types) is nil.\n\nSee the documentation for proper usage.");
         Inventory.addedItems.AddRange(names);
         Inventory.addedItemsTypes.AddRange(types);
     }
 
-    public void SetInventory(string[] names) { Inventory.SetItemList(names); }
+    public void SetInventory(string[] names) {
+        if (names == null)
+            throw new CYFException("Inventory.SetInventory: Attempt to set the player's inventory to nil.\n\nSee the documentation for proper usage.");
+        Inventory.SetItemList(names);
+    }
 
     public int ItemCount {
         get { return Inventory.inventory.Count; }

@@ -139,7 +139,24 @@ public static class SpriteUtil {
         return UserData.Create(new LuaSpriteController(i), LuaSpriteController.data);
     }
 
+    public static DynValue MakeIngameSpriteOW(string filename) {
+        Image i = GameObject.Instantiate<Image>(SpriteRegistry.GENERIC_SPRITE_PREFAB);
+        if (!string.IsNullOrEmpty(filename))
+            SwapSpriteFromFile(i, filename);
+        else
+            throw new CYFException("You can't create a sprite object with a nil sprite!");
+        i.transform.SetParent(GameObject.Find("Canvas OW").transform);
+        return UserData.Create(new LuaSpriteController(i), LuaSpriteController.data);
+    }
+
     public static void CreateLayer(string name, string relatedTag = "BasisNewest", bool before = false) {
+        if (name == null)
+            return;
+        else if (GameObject.Find("Canvas/" + name + "Layer") != null)
+            throw new CYFException("CreateLayer: The layer \"" + name + "\" already exists. Please use a different name.");
+        else if (relatedTag != "VeryHighest" && relatedTag != "VeryLowest" && relatedTag != "BasisNewest" && GameObject.Find("Canvas/" + relatedTag + "Layer") == null)
+            throw new CYFException("CreateLayer: Tried to make a new layer " + (before ? "below" : "above") + " the layer \"" + relatedTag + "\", but it didn't exist.");
+        
         GameObject go = new GameObject(name + "Layer", typeof(RectTransform));
         string testName = relatedTag + "Layer";
         Transform[] rts = UnitaleUtil.GetFirstChildren(GameObject.Find("Canvas").transform);

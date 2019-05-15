@@ -29,11 +29,17 @@ public class ScriptWrapper {
 
     internal DynValue DoString(string source) { return script.DoString(source); }
 
-    public void SetVar(string key, DynValue value) { script.Globals.Set(key, MoonSharpUtil.CloneIfRequired(script, value)); }
+    public void SetVar(string key, DynValue value) {
+        if (key == null)
+            throw new CYFException("script.SetVar: The first argument (key) is null.\n\nSee the documentation for proper usage.");
+        script.Globals.Set(key, MoonSharpUtil.CloneIfRequired(script, value));
+    }
 
     public DynValue GetVar(string key) { return GetVar(null, key); }
 
     public DynValue GetVar(Script caller, string key) {
+        if (key == null)
+            throw new CYFException("script.GetVar: The first argument (key) is null.\n\nSee the documentation for proper usage.");
         DynValue value = script.Globals.Get(key);
         if (value == null || value.IsNil())  return DynValue.NewNil();
         if (caller == null)                  return value;
@@ -48,7 +54,7 @@ public class ScriptWrapper {
     public DynValue Call(Script caller, string function, DynValue[] args = null, bool checkExist = false) {
         if (script.Globals[function] == null || script.Globals.Get(function) == null) {
             if (checkExist &&!GlobalControls.retroMode)
-                UnitaleUtil.DisplayLuaError(scriptname, "Attempted to call the function " + function + " but it didn't exist.");
+                UnitaleUtil.DisplayLuaError(scriptname, "Attempted to call the function \"" + function + "\", but it didn't exist.");
             //Debug.LogWarning("Attempted to call the function " + function + " but it didn't exist.");
             return DynValue.Nil;
         }
@@ -89,7 +95,14 @@ public class ScriptWrapper {
                                                                 ex.DecoratedMessage);
             } catch (Exception ex) {
                 if (!GlobalControls.retroMode)
-                    UnitaleUtil.DisplayLuaError(scriptname + ", calling the function " + function, "This is a " + ex.GetType() + " error. Contact the dev and show him this screen, this must be an engine-side error.\n\n" + ex.Message + "\n\n" + ex.StackTrace + "\n");
+                    // Special case for infinite loop...
+                    if (ex.GetType().ToString() == "System.IndexOutOfRangeException" && ex.StackTrace.StartsWith("  at (wrapper stelemref) object:stelemref (object,intptr,object)"
+                      + "\r\n  at MoonSharp.Interpreter.DataStructs.FastStack`1[MoonSharp.Interpreter.DynValue].Push (MoonSharp.Interpreter.DynValue item) [0x00001] in"))
+                        UnitaleUtil.DisplayLuaError(scriptname + ", calling the function " + function, "<b>Possible infinite loop</b>\n\nThis is a " + ex.GetType() + " error.\n\n"
+                          + "You almost definitely have an infinite loop in your code. A function tried to call itself infinitely. It could be a normal function or a metatable function."
+                          + "\n\n\nFull stracktrace (see CYF output log at <b>" + Application.persistentDataPath + "/output_log.txt</b>):\n\n" + ex.StackTrace);
+                    else
+                        UnitaleUtil.DisplayLuaError(scriptname + ", calling the function " + function, "This is a " + ex.GetType() + " error. Contact the dev and show him this screen, this must be an engine-side error.\n\n" + ex.Message + "\n\n" + ex.StackTrace + "\n");
             }
             return d;
         }

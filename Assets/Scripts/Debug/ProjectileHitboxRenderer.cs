@@ -33,7 +33,7 @@ public class ProjectileHitboxRenderer : MonoBehaviour {
         for (int i = 0; i < projectiles.Length; i ++) {
             GameObject go = projectiles[i].gameObject;
 
-            bottomRight = go.GetComponent<Projectile>().selfAbs.center;
+            bottomRight = go.GetComponent<Projectile>().selfAbs.center - new Vector2(Misc.cameraX, Misc.cameraY);
             topLeft.Set    (bottomRight.x - go.GetComponent<Projectile>().selfAbs.width / 2, bottomRight.y + go.GetComponent<Projectile>().selfAbs.height / 2, zIndex);
             topRight.Set   (bottomRight.x + go.GetComponent<Projectile>().selfAbs.width / 2, bottomRight.y + go.GetComponent<Projectile>().selfAbs.height / 2, zIndex);
             bottomLeft.Set (bottomRight.x - go.GetComponent<Projectile>().selfAbs.width / 2, bottomRight.y - go.GetComponent<Projectile>().selfAbs.height / 2, zIndex);

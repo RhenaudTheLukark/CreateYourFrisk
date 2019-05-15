@@ -34,7 +34,7 @@ public class SelectOMatic : MonoBehaviour {
         GameObject.Destroy(GameObject.Find("Canvas OW"));
 
         // load directory info
-        DirectoryInfo di = new DirectoryInfo(System.IO.Path.Combine(FileLoader.DataRoot, "Mods"));
+        DirectoryInfo di = new DirectoryInfo(Path.Combine(FileLoader.DataRoot, "Mods"));
         var modDirsTemp = di.GetDirectories();
         
         // remove mods with 0 encounters and hidden mods from the list
@@ -42,12 +42,12 @@ public class SelectOMatic : MonoBehaviour {
         foreach (DirectoryInfo modDir in modDirsTemp) {
             
             // make sure the Encounters folder exists
-            if (!(new DirectoryInfo(System.IO.Path.Combine(FileLoader.DataRoot, "Mods/" + modDir.Name + "/Lua/Encounters"))).Exists)
+            if (!(new DirectoryInfo(Path.Combine(FileLoader.DataRoot, "Mods/" + modDir.Name + "/Lua/Encounters"))).Exists)
                 continue;
             
             // count encounters
             bool hasEncounters = false;
-            foreach(FileInfo file in new DirectoryInfo(System.IO.Path.Combine(FileLoader.DataRoot, "Mods/" + modDir.Name + "/Lua/Encounters")).GetFiles("*.lua")) {
+            foreach(FileInfo file in new DirectoryInfo(Path.Combine(FileLoader.DataRoot, "Mods/" + modDir.Name + "/Lua/Encounters")).GetFiles("*.lua")) {
                 hasEncounters = true;
                 break;
             }
@@ -139,7 +139,7 @@ public class SelectOMatic : MonoBehaviour {
         if (StaticInits.ENCOUNTER != "") {
             // check to see if there is more than one encounter in the mod just exited from
             List<string> encounters = new List<string>();
-            DirectoryInfo di2 = new DirectoryInfo(System.IO.Path.Combine(FileLoader.ModDataPath, "Lua/Encounters"));
+            DirectoryInfo di2 = new DirectoryInfo(Path.Combine(FileLoader.ModDataPath, "Lua/Encounters"));
             foreach (FileInfo f in di2.GetFiles("*.lua")) {
                 if (encounters.Count < 2)
                     encounters.Add(Path.GetFileNameWithoutExtension(f.Name));
@@ -261,7 +261,7 @@ public class SelectOMatic : MonoBehaviour {
         
         // Get all encounters in the mod's Encounters folder
         List<string> encounters = new List<string>();
-        DirectoryInfo di = new DirectoryInfo(System.IO.Path.Combine(FileLoader.ModDataPath, "Lua/Encounters"));
+        DirectoryInfo di = new DirectoryInfo(Path.Combine(FileLoader.ModDataPath, "Lua/Encounters"));
         foreach (FileInfo f in di.GetFiles("*.lua")) {
             encounters.Add(Path.GetFileNameWithoutExtension(f.Name));
         }

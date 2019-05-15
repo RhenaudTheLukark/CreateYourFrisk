@@ -9,13 +9,13 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 /// <summary>
-/// The class responsible for making some people lose faith in the project. In very dire need of refactoring, 
+/// The class responsible for making some people lose faith in the project. In very dire need of refactoring,
 /// but hard to do until functionality can be split into battle and overworld functions.
-/// 
+///
 /// As it stands this class is a messy finite state machine that takes care of controlling not only the battle,
 /// but also a lot of things it shouldn't (text manager, enemy dialogue, keyboard controls etc.)
 /// If you're familiar with the term cyclomatic complexity, you probably wouldn't want to hire me at this point.
-/// 
+///
 /// The eventual redesign of the UI controller will try to change over as much of the functionality to Lua.
 /// As we're missing some key functionality to accomplish this, refactoring has been put off for now.
 /// </summary>
@@ -91,13 +91,13 @@ public class UIController : MonoBehaviour {
         UNUSED, //Used for OnDeath. Keep this state secret, please.
         PAUSE // Used exclusively for State("PAUSE"). Not a real state, but it needs to be listed to allow users to call State("PAUSE").
     }
-    
+
     // Variables for PAUSE's "encounter freezing" behavior
     public UIState frozenState = UIState.PAUSE; // used to keep track of what state was frozen
     public float frozenTimestamp       = 0.0f;  // used for DEFENDING's wavetimer
     private bool frozenControlOverride = true;  // used for the player's control override
     private bool frozenPlayerVisibility= true;  // used for the player's invincibility timer when hurt
-    
+
     public delegate void Message();
     public static event Message SendToStaticInits;
 
@@ -120,25 +120,29 @@ public class UIController : MonoBehaviour {
         if (GameObject.Find("TopLayer"))
             spr.layer = "Top";
         spr.Scale(640, 480);
+        if (GlobalControls.modDev) // empty the inventory if not in the overworld
+            Inventory.inventory.Clear();
         Inventory.RemoveAddedItems();
         GlobalControls.lastTitle = false;
         PlayerCharacter.instance.MaxHPShift = 0;
+        PlayerCharacter.instance.SetLevel(PlayerCharacter.instance.LV);
         #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
             if (GlobalControls.crate)  Misc.WindowName = ControlPanel.instance.WinodwBsaisNmae;
             else                       Misc.WindowName = ControlPanel.instance.WindowBasisName;
         #endif
-        
+
         // reset the battle camera's position
         Misc.ResetCamera();
-        
+
         // stop encounter storage for good!
         ScriptWrapper.instances.Clear();
-        
+
         // properly set "isInFight" to false, as it shouldn't be true anymore
         GlobalControls.isInFight = false;
-        
+
         for (int i = 0; i < LuaScriptBinder.scriptlist.Count; i++)
             LuaScriptBinder.scriptlist[i] = null;
+        LuaScriptBinder.scriptlist.Clear();
         LuaScriptBinder.ClearBattleVar();
         GlobalControls.stopScreenShake = true;
         MusicManager.hiddenDictionary.Clear();
@@ -198,13 +202,13 @@ public class UIController : MonoBehaviour {
         }
         // END DEBUG
         // below: actions based on ending a previous state, or actions that affect multiple states
-        
+
         // PAUSE can freeze states
         if (state == UIState.PAUSE && frozenState != UIState.PAUSE)
             return;
         else if (state == UIState.PAUSE && frozenState == UIState.PAUSE) {
             frozenState = this.state;
-            
+
             // execute extra code based on the state that is being frozen
             switch(frozenState) {
                 case UIState.ACTIONSELECT:
@@ -214,7 +218,7 @@ public class UIController : MonoBehaviour {
                 case UIState.DEFENDING:
                     frozenControlOverride = PlayerController.instance.overrideControl;
                     PlayerController.instance.setControlOverride(true);
-                    
+
                     frozenTimestamp = Time.time;
                     break;
                 case UIState.ENEMYDIALOGUE:
@@ -227,17 +231,17 @@ public class UIController : MonoBehaviour {
                     FightUI fui = fightUI.boundFightUiInstances[0];
                     if (fui.slice != null && fui.slice.keyframes != null)
                         fui.slice.keyframes.paused = true;
-                    
+
                     if (fightUI.line != null && fightUI.line.keyframes != null)
                         fightUI.line.keyframes.paused = true;
                     break;
             }
-            
+
             frozenPlayerVisibility = PlayerController.instance.selfImg.enabled;
             PlayerController.instance.selfImg.enabled = true;
-            
+
             // Debug.Log("<b><color='blue'>Freezing state " + frozenState.ToString() + "</color></b>");
-            
+
             return;
         //else if (state != UIState.NONE && this.state == UIState.NONE && frozenState != UIState.NONE) {
         } else if (state == frozenState && frozenState != UIState.PAUSE) {
@@ -249,7 +253,7 @@ public class UIController : MonoBehaviour {
                     break;
                 case UIState.DEFENDING:
                     PlayerController.instance.setControlOverride(frozenControlOverride);
-                    
+
                     frozenTimestamp = Time.time - frozenTimestamp;
                     encounter.waveTimer += frozenTimestamp;
                     break;
@@ -263,28 +267,28 @@ public class UIController : MonoBehaviour {
                     FightUI fui = fightUI.boundFightUiInstances[0];
                     if (fui.slice != null && fui.slice.keyframes != null)
                         fui.slice.keyframes.paused = false;
-                    
+
                     if (fightUI.line != null && fightUI.line.keyframes != null)
                         fightUI.line.keyframes.paused = false;
                     break;
             }
-            
+
             // Debug.Log("<b><color='blue'>Unfreezing state " + frozenState.ToString() + "</color></b>");
-            
+
             PlayerController.instance.selfImg.enabled = frozenPlayerVisibility;
-            
+
             frozenState = UIState.PAUSE;
-            
+
             return;
         } else if (frozenState != UIState.PAUSE)
             frozenState = UIState.PAUSE;
-        
+
         frozenTimestamp  = 0.0f;
-        
+
         if (state == UIState.DEFENDING || state == UIState.ENEMYDIALOGUE) {
             PlayerController.instance.setControlOverride(state != UIState.DEFENDING);
             textmgr.DestroyText();
-            PlayerController.instance.SetPositionQueue(320, 160, true);
+            PlayerController.instance.SetPosition(320, 160, true);
             PlayerController.instance.GetComponent<Image>().enabled = true;
             fightBtn.overrideSprite = null;
             actBtn.overrideSprite = null;
@@ -316,6 +320,10 @@ public class UIController : MonoBehaviour {
             encounter.EndWave();
         switch (this.state) {
             case UIState.ATTACKING:
+                // Error for no active enemies
+                if (encounter.EnabledEnemies.Length == 0)
+                    throw new CYFException("Cannot enter state ATTACKING with no active enemies.");
+
                 textmgr.DestroyText();
                 PlayerController.instance.GetComponent<Image>().enabled = false;
                 if (!fightUI.multiHit) {
@@ -355,9 +363,10 @@ public class UIController : MonoBehaviour {
 
             case UIState.ITEMMENU:
                 battleDialogued = false;
-                if (Inventory.inventory.Count == 0) {
+                // Error for empty inventory
+                if (Inventory.inventory.Count == 0)
                     throw new CYFException("Cannot enter state ITEMMENU with empty inventory.");
-                } else {
+                else {
                     string[] items = GetInventoryPage(0);
                     selectedItem = 0;
                     textmgr.SetText(new SelectMessage(items, false));
@@ -392,6 +401,10 @@ public class UIController : MonoBehaviour {
                 break;
 
             case UIState.ENEMYSELECT:
+                // Error for no active enemies
+                if (encounter.EnabledEnemies.Length == 0)
+                    throw new CYFException("Cannot enter state ENEMYSELECT with no active enemies.");
+
                 string[] names = new string[encounter.EnabledEnemies.Length];
                 string[] colorPrefixes = new string[names.Length];
                 for (int i = 0; i < encounter.EnabledEnemies.Length; i++) {
@@ -409,13 +422,13 @@ public class UIController : MonoBehaviour {
                     names = newnames;
                 }
                 for (int i = 0; i < names.Length; i++)
-                    names[i] += "[color:ffffff]";                    
+                    names[i] += "[color:ffffff]";
                 textmgr.SetText(new SelectMessage(names, true, colorPrefixes));
                 if (forcedaction != Actions.FIGHT && forcedaction != Actions.ACT)
                     forcedaction = action;
                 if (forcedaction == Actions.FIGHT) {
                     int maxWidth = (int)initialHealthPos.x, count = 0;
-                    
+
                     for (int i = 0; i < encounter.EnabledEnemies.Length; i++) {
                         if (encounter.EnabledEnemies.Length > 3)
                             if (i > 1)
@@ -495,7 +508,18 @@ public class UIController : MonoBehaviour {
                     Image speechBubImg = speechBub.GetComponent<Image>();
                     if (sbTextMan.CharacterCount(msgs[0]) == 0) speechBubImg.color = new Color(speechBubImg.color.r, speechBubImg.color.g, speechBubImg.color.b, 0);
                     else                                        speechBubImg.color = new Color(speechBubImg.color.r, speechBubImg.color.g, speechBubImg.color.b, 1);
-                    SpriteUtil.SwapSpriteFromFile(speechBubImg, encounter.EnabledEnemies[i].DialogBubble, i);
+
+                    // error catcher
+                    try { SpriteUtil.SwapSpriteFromFile(speechBubImg, encounter.EnabledEnemies[i].DialogBubble, i); }
+                    catch {
+                        if (encounter.EnabledEnemies[i].DialogBubble != "UI/SpeechBubbles/")
+                            UnitaleUtil.DisplayLuaError(encounter.EnabledEnemies[i].scriptName + ": Creating a dialogue bubble",
+                                                        "The dialogue bubble " + encounter.EnabledEnemies[i].script.GetVar("dialogbubble").ToString() + " doesn't exist.");
+                        else
+                            UnitaleUtil.DisplayLuaError(encounter.EnabledEnemies[i].scriptName + ": Creating a dialogue bubble",
+                                                        "This monster has no set dialogue bubble.");
+                    }
+
                     Sprite speechBubSpr = speechBubImg.sprite;
                     // TODO improve position setting/remove hardcoding of position setting
                     speechBub.transform.SetParent(encounter.EnabledEnemies[i].transform);
@@ -527,6 +551,8 @@ public class UIController : MonoBehaviour {
     }
 
     public static void SwitchStateOnString(Script scr, string state) {
+        if (state == null)
+            throw new CYFException("State: Argument cannot be nil.");
         if (!instance.encounter.gameOverStance) {
             try {
                 UIState newState = (UIState)Enum.Parse(typeof(UIState), state, true);
@@ -537,7 +563,7 @@ public class UIController : MonoBehaviour {
                     throw new CYFException("The state \"" + state + "\" is not a valid state. Are you sure it exists?\n\nPlease double-check in the Misc. Functions section of the docs for a list of every valid state.");
                 // a different error has occured
                 else
-                    throw new CYFException("An error occured while trying to enter the state \"" + state + "\":\n" + ex.Message + "\n\nTraceback (for devs):\n" + ex.ToString());
+                    throw new CYFException("An error occured while trying to enter the state \"" + state + "\":\n\n" + ex.Message + "\n\nTraceback (for devs):\n" + ex.ToString());
             }
         }
     }
@@ -562,7 +588,7 @@ public class UIController : MonoBehaviour {
 
         instance = this;
     }
-    
+
     public void UpdateBubble() {
         for (int i = 0; i < encounter.EnabledEnemies.Length; i++) {
             try {
@@ -792,7 +818,7 @@ public class UIController : MonoBehaviour {
     public UIState GetState() { return state; }
 
     private void HandleAction() {
-        if (!stated || state == UIState.ATTACKING) 
+        if (!stated || state == UIState.ATTACKING)
             switch (state) {
                 case UIState.ATTACKING:
                     fightUI.StopAction();
@@ -814,14 +840,20 @@ public class UIController : MonoBehaviour {
                 case UIState.ACTIONSELECT:
                     switch (action) {
                         case Actions.FIGHT:
-                            SwitchState(UIState.ENEMYSELECT);
+                            if (encounter.EnabledEnemies.Length > 0)
+                                SwitchState(UIState.ENEMYSELECT);
+                            else
+                                textmgr.DoSkipFromPlayer();
                             break;
 
                         case Actions.ACT:
                             if (GlobalControls.crate)
                                 if (ControlPanel.instance.Safe) UnitaleUtil.PlaySound("MEOW", "sounds/meow" + Math.RandomRange(1, 8));
                                 else UnitaleUtil.PlaySound("MEOW", "sounds/meow" + Math.RandomRange(1, 9));
-                            else SwitchState(UIState.ENEMYSELECT);
+                            else if (encounter.EnabledEnemies.Length > 0)
+                                SwitchState(UIState.ENEMYSELECT);
+                            else
+                                textmgr.DoSkipFromPlayer();
                             break;
 
                         case Actions.ITEM:
@@ -1079,7 +1111,7 @@ public class UIController : MonoBehaviour {
                     } else if (left) {
                         if (selectedEnemy % 2 == 1)
                             unpair = true;
-                        selectedEnemy = (selectedEnemy - 2 + encounter.EnabledEnemies.Length) % encounter.EnabledEnemies.Length; 
+                        selectedEnemy = (selectedEnemy - 2 + encounter.EnabledEnemies.Length) % encounter.EnabledEnemies.Length;
                         if (encounter.EnabledEnemies.Length % 2 == 1 && selectedEnemy > encounter.EnabledEnemies.Length - 3)
                             if (unpair && encounter.EnabledEnemies.Length % 2 == 0)      selectedEnemy = encounter.EnabledEnemies.Length - 1;
                             else if (unpair && encounter.EnabledEnemies.Length % 2 == 1) selectedEnemy = encounter.EnabledEnemies.Length - 2;
@@ -1277,12 +1309,12 @@ public class UIController : MonoBehaviour {
     private void Start() {
         // reset GlobalControls' frame timer
         GlobalControls.frame = 0;
-        
+
         textmgr = GameObject.Find("TextManager").GetComponent<TextManager>();
         textmgr.SetEffect(new TwitchEffect(textmgr));
         textmgr.SetCaller(LuaEnemyEncounter.script);
         encounter = FindObjectOfType<LuaEnemyEncounter>();
-        
+
         fightBtn = GameObject.Find("FightBt").GetComponent<Image>();
         actBtn = GameObject.Find("ActBt").GetComponent<Image>();
         itemBtn = GameObject.Find("ItemBt").GetComponent<Image>();
@@ -1297,12 +1329,12 @@ public class UIController : MonoBehaviour {
             mercyBtn.sprite = SpriteRegistry.Get("UI/Buttons/mecrybt_0");
             mercyBtn.GetComponent<AutoloadResourcesFromRegistry>().SpritePath = "UI/Buttons/mecrybt_0";
         }
-        
+
         ArenaManager.instance.ResizeImmediate(ArenaManager.UIWidth, ArenaManager.UIHeight);
         //ArenaManager.instance.MoveToImmediate(0, -160, false);
-        
-        /*GameObject.Find("HideEncounter").GetComponent<Image>().sprite = Sprite.Create(GlobalControls.texBeforeEncounter, 
-                                                                                      new Rect(0, 0, GlobalControls.texBeforeEncounter.width, GlobalControls.texBeforeEncounter.height), 
+
+        /*GameObject.Find("HideEncounter").GetComponent<Image>().sprite = Sprite.Create(GlobalControls.texBeforeEncounter,
+                                                                                      new Rect(0, 0, GlobalControls.texBeforeEncounter.width, GlobalControls.texBeforeEncounter.height),
                                                                                       new Vector2(0.5f, 0.5f));*/
         //if (GameOverBehavior.gameOverContainer)
         //    GameObject.Destroy(GameOverBehavior.gameOverContainer);
@@ -1356,22 +1388,22 @@ public class UIController : MonoBehaviour {
         if (toAdd)
             rts[indexText].SetParent(rts[indexDeb]);*/
         //}
-        
+
         // If retromode is enabled, set the inventory to the one with TESTDOGs (can be overridden)
         if (GlobalControls.retroMode && GlobalControls.modDev) {
             // Set the in-game names of these items to TestDogN instead of DOGTESTN
             for (int i = 1; i <= 7; i++)
                 Inventory.NametoShortName.Add("DOGTEST" + i, "TestDog" + i);
-            
+
             Inventory.luaInventory.AddCustomItems(new string[] {"DOGTEST1", "DOGTEST2", "DOGTEST3", "DOGTEST4", "DOGTEST5", "DOGTEST6", "DOGTEST7"},
                                            new int[] {3, 3, 3, 3, 3, 3, 3});
             Inventory.luaInventory.SetInventory(new string[] {"DOGTEST1", "DOGTEST2", "DOGTEST3", "DOGTEST4", "DOGTEST5", "DOGTEST6", "DOGTEST7"});
-            
+
             // Undo our changes to this table!
             for (int i = 1; i <= 7; i++)
                 Inventory.NametoShortName.Remove("DOGTEST" + i);
         }
-        
+
         StaticInits.SendLoaded();
         // GameObject.Destroy(GameObject.Find("HideEncounter"));
         psContainer = new GameObject("psContainer");
@@ -1383,13 +1415,13 @@ public class UIController : MonoBehaviour {
 
         if (SendToStaticInits != null)
             SendToStaticInits();
-        
+
         if (GlobalControls.crate) {
             UserDebugger.instance.gameObject.transform.GetChild(0).gameObject.GetComponent<Text>().text = "DEGUBBER (F9 OT TOGLGE, DEBUG(STIRNG) TO PRNIT)";
             GameObject.Find("HPLabelCrate").GetComponent<Image>().enabled = true;
             GameObject.Find("HPLabel").GetComponent<Image>().enabled = false;
         }
-        
+
         // PlayerController.instance.Awake();
         PlayerController.instance.playerAbs = new Rect(0, 0,
                                                         PlayerController.instance.selfImg.sprite.texture.width  - 8,
@@ -1398,7 +1430,7 @@ public class UIController : MonoBehaviour {
         PlayerController.instance.SetPosition(48, 25, true);
         fightUI = GameObject.Find("FightUI").GetComponent<FightUIController>();
         fightUI.gameObject.SetActive(false);
-        
+
         encounter.CallOnSelfOrChildren("EncounterStarting");
         if (GameObject.Find("Text")) {
             GameObject.Find("Text").transform.SetParent(UserDebugger.instance.transform);
@@ -1436,7 +1468,7 @@ public class UIController : MonoBehaviour {
         PlayerController.instance.GetComponent<Image>().enabled = false;
         AudioClip yay = AudioClipRegistry.GetSound("runaway");
         UnitaleUtil.PlaySound("Mercy", yay, 0.65f);
-        
+
         string[] fleeTexts;
         DynValue tempFleeTexts = LuaEnemyEncounter.script.GetVar("fleetexts");
         if (tempFleeTexts.Type == DataType.Table) {
@@ -1482,7 +1514,7 @@ public class UIController : MonoBehaviour {
             return;
         if (encounterHasUpdate)
             encounter.TryCall("Update");
-        
+
         ParticleSystem[] pss = GameObject.FindObjectsOfType<ParticleSystem>();
         //while (pss.Length > psList.Count)
         //    psList.Add(true);
@@ -1497,10 +1529,10 @@ public class UIController : MonoBehaviour {
                 i--; a--;
             }
         }
-        
+
         if (frozenState != UIState.PAUSE)
             return;
-        
+
         if (textmgr.IsPaused() &&!ArenaManager.instance.isResizeInProgress())
             textmgr.SetPause(false);
 
@@ -1565,7 +1597,7 @@ public class UIController : MonoBehaviour {
                             SwitchState(UIState.ENEMYDIALOGUE);
                         //else
                         //    checkAndTriggerVictory();
-                    } 
+                    }
                 }
                 tempIndex++;
             }

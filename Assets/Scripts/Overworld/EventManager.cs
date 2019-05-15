@@ -1058,10 +1058,11 @@ public class EventManager : MonoBehaviour {
 
     IEnumerator ISetChoice(object[] args) {
         ScriptWrapper scr = luagenow.appliedScript;
-        
-        bool question, threeLines;
+
+        bool question;
+        bool[] oneLiners;
         try { question = (bool)args[0]; }   catch { throw new CYFException("The argument \"question\" must be a boolean."); }
-        try { threeLines = (bool)args[1]; } catch { throw new CYFException("The argument \"threeLines\" must be a boolean."); }
+        try { oneLiners = (bool[])args[1]; } catch { throw new CYFException("The argument \"oneLiners\" must be a boolean table."); }
 
         if (coroutines.ContainsKey(scr) && script != scr) {
             UnitaleUtil.DisplayLuaError(scr.scriptname, "General.SetChoice: You can't use that function in a coroutine with waitEnd set to true.");
@@ -1084,11 +1085,11 @@ public class EventManager : MonoBehaviour {
         int actualChoice = 0;
 
         //We'll need to set the heart to the good positions, to be able to know where is our selection
-        SetPlayerOnSelection(0, question, threeLines);
+        SetPlayerOnSelection(0, question, !oneLiners[0]);
         while (true) {
             if (GlobalControls.input.Right == UndertaleInput.ButtonState.PRESSED || GlobalControls.input.Left == UndertaleInput.ButtonState.PRESSED) {
                 actualChoice = (actualChoice + 1) % 2;
-                SetPlayerOnSelection(actualChoice, question, threeLines);
+                SetPlayerOnSelection(actualChoice, question, !oneLiners[actualChoice]);
             } else if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED)
                 if (!textmgr.blockSkip && !textmgr.LineComplete() && textmgr.CanSkip())
                     textmgr.SkipLine();
@@ -1102,7 +1103,6 @@ public class EventManager : MonoBehaviour {
         script.script.Globals.Set(DynValue.NewString("lastChoice"), DynValue.NewNumber(actualChoice));
         //HEARTBROKEN
         Destroy(tempHeart);
-        script.Call("CYFEventNextCommand");
     }
 
     IEnumerator IMoveEventToPoint(object[] args) { //NEED PARENTAL REMOVE
@@ -1594,5 +1594,18 @@ public class EventManager : MonoBehaviour {
         PlayerOverworld.HideOverworld("Shop");
         GlobalControls.isInShop = true;
         SceneManager.LoadScene("Shop", LoadSceneMode.Additive);
+    }
+
+    IEnumerator ISpawnBoxMenu(object[] args) {
+        ScriptWrapper scr = luainvow.appliedScript;
+        GameObject.Find("itembox").AddComponent<ItemBoxUI>();
+        PlayerOverworld.instance.PlayerNoMove = true; //Start box menu
+
+        yield return 0;
+        PlayerOverworld.instance.PlayerNoMove = true; //Start box menu #2
+        while (ItemBoxUI.active)
+            yield return 0;
+
+        scr.Call("CYFEventNextCommand");
     }
 }

@@ -86,6 +86,7 @@ public class LuaPlayerStatus {
     /// Get player's current ATK.
     /// </summary>
     public int atk {
+        set { PlayerCharacter.instance.ATK = value; }
         get { return PlayerCharacter.instance.ATK; }
     }
 
@@ -107,6 +108,7 @@ public class LuaPlayerStatus {
     /// Get player's current DEF.
     /// </summary>
     public int def {
+        set { PlayerCharacter.instance.DEF = value; }
         get { return PlayerCharacter.instance.DEF; }
     }
 
@@ -130,6 +132,9 @@ public class LuaPlayerStatus {
     public string name {
         get { return PlayerCharacter.instance.Name; }
         set {
+            if (value == null)
+                throw new CYFException("Player.name: Attempt to set the player's name to a nil value.\n\nPlease double-check your code.");
+            
             string shortName = value;
             if (shortName.Length > 9)
                 shortName = value.Substring(0, 9);
@@ -239,8 +244,25 @@ public class LuaPlayerStatus {
     /// <param name="shift"></param>
     /// <param name="set"></param>
     /// <param name="canHeal"></param>
-    public void SetMaxHPShift(int shift, float invulSec = 1.7f, bool set = false, bool canHeal = false) { player.setMaxHPShift(shift, invulSec, set, canHeal); }
-    public void setMaxHPShift(int shift, float invulSec = 1.7f, bool set = false, bool canHeal = false) { SetMaxHPShift(shift, invulSec, set, canHeal); }
+    public void SetMaxHPShift(int shift, float invulSec = 1.7f, bool set = false, bool canHeal = false, bool sound = true) { player.setMaxHPShift(shift, invulSec, set, canHeal, sound); }
+    public void setMaxHPShift(int shift, float invulSec = 1.7f, bool set = false, bool canHeal = false, bool sound = true) { SetMaxHPShift(shift, invulSec, set, canHeal, sound); }
+
+    /// <summary>
+    /// Resets any of the player's Max HP, ATK and DEF to their default values, based on LV.
+    /// </summary>
+    /// <param name="resetMHP">If true, will reset Max HP.</param>
+    /// <param name="resetATK">If true, will reset ATK.</param>
+    /// <param name="resetDEF">If true, will reset DEF.</param>
+    public void ResetStats(bool resetMHP = true, bool resetATK = true, bool resetDEF = true) {
+        if (resetMHP) {
+            PlayerCharacter.instance.MaxHPShift = 0;
+            UIStats.instance.setMaxHP();
+        }
+        if (resetATK)
+            atk = 8 + (2 * lv);
+        if (resetDEF)
+            def = 10 + (int)UnityEngine.Mathf.Floor((lv - 1) / 4);
+    }
 
     public void SetAttackAnim(string[] anim, float frequency = 1 / 6f) {
         if (anim.Length == 0) {

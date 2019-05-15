@@ -87,7 +87,7 @@ it's w3c valid, at least
                 a result it is now in its own section.</p>
             <p>
                 <br><span class="function"><span class="CYF"></span> CreateLayer(<span class="string"></span> name, 
-                <span class="string"></span> position = "BelowArenaLayer", <span class="boolean"></span> below = false) [E/W]</span>
+                <span class="string"></span> position = "BelowArenaLayer", <span class="boolean"></span> below = false) [E/M/W]</span>
                 Creates a layer named <span class="term">name</span> that sprites can be placed in. To create your new sprite layer, you'll need to choose a pre-existing layer.
                 <br><br>
                 <span class="term">position</span> can be one of three values:
@@ -115,7 +115,7 @@ it's w3c valid, at least
             
             <p>
                 <br><span class="function">CreateSprite(<span class="string"></span> spritename, 
-                <span class="CYF"></span> <span class="string"></span> layer = "BelowArena") returns <span class="userdata">sprite</span>  [E/W]</span>
+                <span class="CYF"></span> <span class="string"></span> layer = "BelowArena") returns <span class="userdata">sprite</span>  [E/M/W]</span>
                 Creates a sprite in the far bottom left of the screen (at 0, 0) that you can modify in many ways.<br>
                 <span class="CYF"></span> You can add a layer if you want - otherwise, the sprite will be below the arena.
             </p>
@@ -208,6 +208,26 @@ it's w3c valid, at least
                 This never changes until the sprite itself is swapped.
                 <br><br>
                 NOTE: Does not take <span class="term">sprite.yscale</span> into account.
+            </p><br>
+            
+            <p>
+                <span class="function"><span class="number"></span> sprite.xpivot</span></span>
+                Horizontal pivot point of the sprite. <span class="term">0</span> is the left side, and <span class="term">1</span> is the right side.<br>
+                Can be any number inside or outside of this range.
+                <br><br>
+                <span class="term">0.5</span> by default.
+                <br><br>
+                See <span class="term">sprite.SetPivot</span>.
+            </p><br>
+            
+            <p>
+                <span class="function"><span class="number"></span> sprite.ypivot</span></span>
+                Vertical pivot point of the sprite. <span class="term">0</span> is the bottom side, and <span class="term">1</span> is the top side.<br>
+                Can be any number inside or outside of this range.
+                <br><br>
+                <span class="term">0.5</span> by default.
+                <br><br>
+                See <span class="term">sprite.SetPivot</span>.
             </p><br>
             
             <p>
@@ -368,6 +388,13 @@ it's w3c valid, at least
             </p><br>
             
             <p>
+                <span class="function"><span class="CYF"></span> sprite.Move(<span class="number"></span> x, <span class="number"></span> y)</span></span>
+                Moves the sprite <span class="term">x</span> pixels right, and <span class="term">y</span> pixels up.
+                <br><br>
+                See <span class="term">sprite.x</span> and <span class="term">sprite.y</span>.
+            </p><br>
+            
+            <p>
                 <span class="function">sprite.MoveTo(<span class="number"></span> x, <span class="number"></span> y)</span></span>
                 Same as setting x and y simultaneously.
                 <br><br>
@@ -434,6 +461,9 @@ it's w3c valid, at least
             <p>
                 <span class="function">sprite.Remove()</span></span>
                 Removes a sprite object. Calling anything other than <span class="term">isactive</span> after this will give you an error.
+                <br><br>
+                <font color="#fff" style="font-size: 15px;"><span class="CYF"></span> NOTE: Calling <span class="term">bullet.sprite.Remove</span> will
+                instead call <span class="term">bullet.Remove</span>, unless you are using retromode.</font>
             </p><br>
             
             <p>
@@ -454,9 +484,12 @@ it's w3c valid, at least
                 <span class="function"><span class="CYF"></span> sprite.Dust(<span class="boolean"></span> playSound=true, <span class="boolean"></span> removeObject = false)</span></span>
                 Turns a sprite into dust, just like what happens in Undertale when an enemy is killed.
                 <br><br>
-                Will remove a bullet or sprite if <span class="term">removeObject</span> is set to true.
+                Will remove a <strike>bullet or</strike> sprite if <span class="term">removeObject</span> is set to true.
                 <br><br>
                 Set <span class="term">playSound</span> to false to deactivate the dust sound.
+                <br><br><br><br>
+                <font color="#fff" style="font-size: 15px;">* NOTE: Calling <span class="term">bullet.sprite.Dust(..., true)</span>
+                will call <span class="term">bullet.Remove</span>, unless you are using retromode.</font>
             </p><br>
             
             <hr>

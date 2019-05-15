@@ -18,6 +18,8 @@ public class LuaTextManager : TextManager {
     private BubbleSide bubbleSide = BubbleSide.NONE;
     private ProgressMode progress = ProgressMode.AUTO;
     private Color textColor;
+    private float xScale = 1;
+    private float yScale = 1;
     
     public bool isactive {
         get {
@@ -30,7 +32,8 @@ public class LuaTextManager : TextManager {
 
     protected override void Awake() {
         base.Awake();
-        transform.parent.SetParent(GameObject.Find("TopLayer").transform);
+        if (!UnitaleUtil.IsOverworld)
+            transform.parent.SetParent(GameObject.Find("TopLayer").transform);
         container = transform.parent.gameObject;
         containerBubble = UnitaleUtil.GetChildPerName(container.transform, "BubbleContainer").gameObject;
         speechThing = UnitaleUtil.GetChildPerName(containerBubble.transform, "SpeechThing", false, true).GetComponent<RectTransform>();
@@ -56,7 +59,7 @@ public class LuaTextManager : TextManager {
             if (base.CanAutoSkipAll() || base.CanAutoSkipThis())
                 NextLine();
             if (CanSkip() && !LineComplete() && GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED)
-                SkipLine();
+                DoSkipFromPlayer();
         }
     }
     
@@ -65,6 +68,9 @@ public class LuaTextManager : TextManager {
         if (!isactive)
             throw new CYFException("Attempt to perform action on removed text object.");
     }
+    
+    // Shortcut to `DestroyText()`
+    public void Remove() { DestroyText(true); }
     
     private void ResizeBubble() {
         float effectiveBubbleHeight = bubbleHeight != -1 ? bubbleHeight < 16 ? 40 : bubbleHeight + 24 : UnitaleUtil.CalcTextHeight(this) < 16 ? 40 : UnitaleUtil.CalcTextHeight(this) + 24;
@@ -144,6 +150,30 @@ public class LuaTextManager : TextManager {
             _bubbleHeight = value == -1 ? -1 : value < 40 ? 40 : value;
         }
     }
+    
+    public float xscale {
+        get { return xScale; }
+        set {
+            xScale = value;
+            Scale(xScale, yScale);
+        }
+    }
+    
+    public float yscale {
+        get { return yScale; }
+        set {
+            yScale = value;
+            Scale(xScale, yScale);
+        }
+    }
+    
+    public void Scale(float xs, float ys) {
+        CheckExists();
+        xScale = xs;
+        yScale = ys;
+        
+        container.gameObject.GetComponent<RectTransform>().localScale = new Vector3(xs, ys, 1.0f);
+    }
 
     public string layer {
         get {
@@ -163,9 +193,9 @@ public class LuaTextManager : TextManager {
     public void MoveBelow(LuaTextManager otherText) {
         CheckExists();
         if (otherText == null || !otherText.isactive)
-            throw new CYFException("The text object passed as an argument is null or inactive.");
+            throw new CYFException("The text object passed as an argument is nil or inactive.");
         else if (this.transform.parent.parent != otherText.transform.parent.parent)
-            UnitaleUtil.WriteInLogAndDebugger("[WARN]You can't change the order of two text objects on different layers.");
+            UnitaleUtil.WriteInLogAndDebugger("[WARN]You can't change the order of two text objects without the same parent.");
         else {
             try { this.transform.parent.SetSiblingIndex(otherText.transform.parent.GetSiblingIndex()); }
             catch { throw new CYFException("Error while calling text.MoveBelow."); }
@@ -175,9 +205,9 @@ public class LuaTextManager : TextManager {
     public void MoveAbove(LuaTextManager otherText) {
         CheckExists();
         if (otherText == null || !otherText.isactive)
-            throw new CYFException("The text object passed as an argument is null or inactive.");
+            throw new CYFException("The text object passed as an argument is nil or inactive.");
         else if (this.transform.parent.parent != otherText.transform.parent.parent)
-            UnitaleUtil.WriteInLogAndDebugger("[WARN]You can't change the order of two text objects on different layers.");
+            UnitaleUtil.WriteInLogAndDebugger("[WARN]You can't change the order of two text objects without the same parent.");
         else {
             try { this.transform.parent.SetSiblingIndex(otherText.transform.parent.GetSiblingIndex() + 1); }
             catch { throw new CYFException("Error while calling text.MoveAbove."); }
@@ -261,7 +291,7 @@ public class LuaTextManager : TextManager {
     public void SetParent(LuaSpriteController parent) {
         CheckExists();
         try { container.transform.SetParent(parent.img.transform); } 
-        catch { throw new CYFException("You tried to set a removed sprite/unexisting sprite as this text's parent."); }
+        catch { throw new CYFException("You tried to set a removed sprite/nil sprite as this text object's parent."); }
     }
 
     public void SetText(DynValue text) {
@@ -339,6 +369,8 @@ public class LuaTextManager : TextManager {
     }
 
     public void SetVoice(string voiceName) {
+        if (voiceName == null)
+            throw new CYFException("Text.SetVoice: The first argument (the voice name) is nil.\n\nSee the documentation for proper usage.");
         CheckExists();
         if (voiceName == "none")
             default_voice = null;
@@ -347,6 +379,8 @@ public class LuaTextManager : TextManager {
     }
 
     public void SetFont(string fontName, bool firstTime = false) {
+        if (fontName == null)
+            throw new CYFException("Text.SetFont: The first argument (the font name) is nil.\n\nSee the documentation for proper usage.");
         CheckExists();
         UnderFont uf = SpriteFontRegistry.Get(fontName);
         if (uf == null)
@@ -359,7 +393,9 @@ public class LuaTextManager : TextManager {
         GetComponent<RectTransform>().localPosition = new Vector2(0, 0);
     }
 
-    public void SetEffect(string effect, float intensity) {
+    public void SetEffect(string effect, float intensity = -1) {
+        if (effect == null)
+            throw new CYFException("Text.SetEffect: The first argument (the effect name) is nil.\n\nSee the documentation for proper usage.");
         CheckExists();
         switch (effect.ToLower()) {
             case "none":
@@ -394,6 +430,9 @@ public class LuaTextManager : TextManager {
         containerBubble.SetActive(true);
         SetSpeechThingPositionAndSide(side, position);
     }
+
+    // Shortcut to `SetSpeechThingPositionAndSide`
+    public void SetTail(string side, DynValue position) { SetSpeechThingPositionAndSide(side, position); }
 
     public void SetSpeechThingPositionAndSide(string side, DynValue position) {
         CheckExists();
@@ -455,6 +494,9 @@ public class LuaTextManager : TextManager {
                 ResizeBubble();
         }
     }
+
+    // Shortcut to `SetAutoWaitTimeBetweenTexts`
+    public void SetWaitTime(int time) { SetAutoWaitTimeBetweenTexts(time); }
 
     public void SetAutoWaitTimeBetweenTexts(int time) {
         CheckExists();

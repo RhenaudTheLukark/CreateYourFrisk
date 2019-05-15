@@ -23,6 +23,7 @@ public class GameState {
     public Dictionary<string, MapData> mapInfos = new Dictionary<string, MapData>();
     public Dictionary<string, TempMapData> tempMapInfos = new Dictionary<string, TempMapData>();
     public List<string> inventory = new List<string>();
+    public List<string> boxContents = new List<string>();
 
     [System.Serializable]
     public struct EventInfos {
@@ -89,7 +90,11 @@ public class GameState {
         inventory.Clear();
         foreach (UnderItem item in Inventory.inventory)
             inventory.Add(item.Name);
-        
+
+        boxContents.Clear();
+        foreach (UnderItem item in ItemBox.items)
+            boxContents.Add(item.Name);
+
         try {
             foreach (string key in LuaScriptBinder.GetSavedDictionary().Keys) {
                 DynValue dv;
@@ -135,6 +140,10 @@ public class GameState {
         Inventory.inventory.Clear();
         foreach (string str in inventory)
             Inventory.inventory.Add(new UnderItem(str));
+
+        ItemBox.items.Clear();
+        foreach (string str in boxContents)
+            ItemBox.items.Add(new UnderItem(str));
 
         PlayerCharacter.instance = player;
         ControlPanel.instance = controlpanel;

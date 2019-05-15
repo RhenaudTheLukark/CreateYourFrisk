@@ -214,11 +214,11 @@ public class LuaEnemyController : EnemyController {
             script.scriptname = scriptName;
             script.Bind("SetSprite", (Action<string>)SetSprite);
             script.Bind("SetActive", (Action<bool>)SetActive);
-            script.Bind("isActive", (Func<bool>)InFight);
+            script.Bind("isactive", DynValue.NewBoolean(true));
             script.Bind("Kill", (Action)DoKill);
             script.Bind("Spare", (Action)DoSpare);
-            script.Bind("Move", (Action<float, float, bool>)Move);
-            script.Bind("MoveTo", (Action<float, float, bool>)MoveTo);
+            script.Bind("Move", (Action<float, float>)Move);
+            script.Bind("MoveTo", (Action<float, float>)MoveTo);
             script.Bind("BindToArena", (Action<bool, bool>)BindToArena);
             script.Bind("SetDamage", (Action<int>)SetDamage);
             script.Bind("SetBubbleOffset", (Action<int, int>)SetBubbleOffset);
@@ -246,7 +246,7 @@ public class LuaEnemyController : EnemyController {
             /*if (script.GetVar("canspare") == null) CanSpare = false;
             if (script.GetVar("cancheck") == null) CanCheck = true;*/
         }
-        catch (InterpreterException ex) { UnitaleUtil.DisplayLuaError(scriptName, ex.DecoratedMessage); }
+        catch (InterpreterException ex) { UnitaleUtil.DisplayLuaError(scriptName, ex.DecoratedMessage != null ? ex.DecoratedMessage : ex.Message); }
         catch (Exception ex)            { UnitaleUtil.DisplayLuaError(scriptName, "Unknown error. Usually means you're missing a sprite.\nSee documentation for details.\nStacktrace below in case you wanna notify a dev.\n\nError: " + ex.Message + "\n\n" + ex.StackTrace); }
     }
 
@@ -353,23 +353,24 @@ public class LuaEnemyController : EnemyController {
     /// Set if we should consider this monster for menus e.g.
     /// </summary>
     /// <param name="active"></param>
-    public void SetActive(bool active) { inFight = active; }
+    public void SetActive(bool active) {
+        inFight = active;
+        script.SetVar("isactive", DynValue.NewBoolean(active));
+    }
 
-    public void Move(float x, float y, bool bindToArena = false) {
+    public void Move(float x, float y) {
         if (!canMove)
             return;
         GetComponent<RectTransform>().position = new Vector2(GetComponent<RectTransform>().position.x + x, GetComponent<RectTransform>().position.y + y);
     }
 
-    public void MoveTo(float x, float y, bool bindToArena = false) {
+    public void MoveTo(float x, float y) {
         if (!canMove)
             return;
         GetComponent<RectTransform>().position = new Vector2(x, y);
     }
 
     public void BindToArena(bool bind, bool isUnderArena = false) {
-        if (!canMove)
-            return;
         int count = 0;
         if (bind) { //If bind :ahde:
             foreach (LuaEnemyController luaec in GameObject.FindObjectsOfType<LuaEnemyController>()) //for each enemies...

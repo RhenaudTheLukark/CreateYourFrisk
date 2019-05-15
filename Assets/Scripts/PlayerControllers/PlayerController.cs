@@ -217,7 +217,7 @@ public class PlayerController : MonoBehaviour {
         UIStats.instance.setHP(HP);
     }
 
-    public void setMaxHPShift(int shift, float invulnerabilitySeconds = 1.7f, bool set = false, bool canHeal = false) {
+    public void setMaxHPShift(int shift, float invulnerabilitySeconds = 1.7f, bool set = false, bool canHeal = false, bool sound = true) {
         invulTimer = invulnerabilitySeconds;
         if ((PlayerCharacter.instance.MaxHP + shift <= 0 &&!set) || (shift <= 0 && set)) {
             shift = 0;
@@ -233,12 +233,16 @@ public class PlayerController : MonoBehaviour {
                 if (shift == PlayerCharacter.instance.MaxHP)
                     return;
                 else if (shift < PlayerCharacter.instance.MaxHP) {
-                    playerAudio.clip = AudioClipRegistry.GetSound("hurtsound");
-                    playerAudio.Play();
+                    if (sound) {
+                        playerAudio.clip = AudioClipRegistry.GetSound("hurtsound");
+                        playerAudio.Play();
+                    }
                     setHP(PlayerCharacter.instance.HP - (PlayerCharacter.instance.MaxHP - shift));
                 } else {
-                    playerAudio.clip = AudioClipRegistry.GetSound("healsound");
-                    playerAudio.Play();
+                    if (sound) {
+                        playerAudio.clip = AudioClipRegistry.GetSound("healsound");
+                        playerAudio.Play();
+                    }
                     if (canHeal)
                         setHP(PlayerCharacter.instance.HP - (PlayerCharacter.instance.MaxHP - shift));
                 }
@@ -251,12 +255,16 @@ public class PlayerController : MonoBehaviour {
             if (shift == 0)
                 return;
             else if (shift < 0) {
-                playerAudio.clip = AudioClipRegistry.GetSound("hurtsound");
-                playerAudio.Play();
+                if (sound) {
+                    playerAudio.clip = AudioClipRegistry.GetSound("hurtsound");
+                    playerAudio.Play();
+                }
                 setHP(PlayerCharacter.instance.HP + shift);
             } else {
-                playerAudio.clip = AudioClipRegistry.GetSound("healsound");
-                playerAudio.Play();
+                if (sound) {
+                    playerAudio.clip = AudioClipRegistry.GetSound("healsound");
+                    playerAudio.Play();
+                }
                 if (canHeal)
                     setHP(PlayerCharacter.instance.HP + shift);
             }
@@ -302,10 +310,6 @@ public class PlayerController : MonoBehaviour {
     public void setControlOverride(bool overrideControls) {
         this.overrideControl = overrideControls;
         soul.setHalfSpeed(false);
-    }
-
-    public void SetPositionQueue(float xPos, float yPos, bool ignoreBounds) {
-        SetPosition(xPos, yPos, ignoreBounds);
     }
 
     public void SetPosition(float xPos, float yPos, bool ignoreBounds) {
@@ -438,8 +442,10 @@ public class PlayerController : MonoBehaviour {
         }
         
         // constantly update the hitbox to match the position of the sprite itself
-        playerAbs.x = (luaStatus.sprite.absx - (luaStatus.sprite.width  * self.pivot.x)) + hitboxInset;
-        playerAbs.y = (luaStatus.sprite.absy - (luaStatus.sprite.height * self.pivot.y)) + hitboxInset;
+        if (!GlobalControls.retroMode) {
+            playerAbs.x = luaStatus.sprite.absx - hitboxInset;
+            playerAbs.y = luaStatus.sprite.absy - hitboxInset;
+        }
 
         soundDelay--;
     }
