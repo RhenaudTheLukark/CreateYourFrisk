@@ -74,7 +74,7 @@ public class Misc {
     public bool FileExists(string path) {
         if (path.Contains(".."))
             throw new CYFException("You cannot check for a file outside of a mod folder. The use of \"..\" is forbidden.");
-        return File.Exists(FileLoader.ModDataPath + "\\" + path);
+        return File.Exists((FileLoader.ModDataPath + "/" + path).Replace('\\', '/'));
     }
 
     public string[] ListDir(string path, bool getFolders = false) {
@@ -83,7 +83,7 @@ public class Misc {
         if (path.Contains(".."))
             throw new CYFException("You cannot list directories outside of a mod folder. The use of \"..\" is forbidden.");
 
-        path = FileLoader.ModDataPath + "\\" + path;
+        path = (FileLoader.ModDataPath + "/" + path).Replace('\\', '/');
         if (!Directory.Exists(path))
             throw new CYFException("Invalid path:\n\n\"" + path + "\"");
 

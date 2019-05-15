@@ -20,7 +20,7 @@ public class LuaFile {
             throw new CYFException("Cannot open a file with a nil path.");
         if (path.Contains(".."))
             throw new CYFException("You cannot open a file outside of a mod folder. The use of \"..\" is forbidden.");
-        path = FileLoader.ModDataPath + "\\" + path;
+        path = (FileLoader.ModDataPath + "/" + path).Replace('\\', '/');
 
         if (mode != "r" && mode != "w" && mode != "rw" && mode != "wr")
             throw new CYFException("A file's open mode can only be r (read), w (write) or rw (read + write).");
