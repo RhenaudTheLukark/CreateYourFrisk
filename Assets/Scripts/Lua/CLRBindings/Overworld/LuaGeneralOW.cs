@@ -95,7 +95,6 @@ public class LuaGeneralOW {
 
         //Add the text to the text to print then the SetChoice function with its parameters
         for (int i = 0; i < finalText.Count; i++) {
-            Debug.Log(finalText[i]);
             if (finalText[i] != "\t")
                 textMsgChoice.AddToText(finalText[i] + ((i == finalText.Count - 1) ? "" : "\n"));
         }
