@@ -150,17 +150,13 @@ public class LuaSpriteController {
     // The x pivot of the sprite.
     public float xpivot {
         get { return img.GetComponent<RectTransform>().pivot.x; }
-        set {
-            SetPivot(value, img.GetComponent<RectTransform>().pivot.y);
-        }
+        set { SetPivot(value, img.GetComponent<RectTransform>().pivot.y); }
     }
 
     // The y pivot of the sprite.
     public float ypivot {
         get { return img.GetComponent<RectTransform>().pivot.y; }
-        set {
-            SetPivot(img.GetComponent<RectTransform>().pivot.x, value);
-        }
+        set { SetPivot(img.GetComponent<RectTransform>().pivot.x, value); }
     }
 
     // Is the current animation finished? True if there is a finished animation, false otherwise
@@ -512,7 +508,7 @@ public class LuaSpriteController {
         }
         set {
             if (img.GetComponent<Image>()) {
-                if (value.Type.ToString() != "Boolean")
+                if (value.Type != DataType.Boolean)
                     throw new CYFException("sprite.paused can only be set to a boolean value.");
                 
                 if (keyframes != null)

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
+using MoonSharp.Interpreter;
 
 /// <summary>
 /// Controls that should be active on all screens. Pretty much a hack to allow people to reset. Now it's more useful.
@@ -55,22 +56,22 @@ public class GlobalControls : MonoBehaviour {
             
             // check if safe mode has a stored preference that is a boolean
             if (LuaScriptBinder.GetAlMighty(null, "CYFSafeMode") != null
-             && LuaScriptBinder.GetAlMighty(null, "CYFSafeMode").Type.ToString() == "Boolean")
+             && LuaScriptBinder.GetAlMighty(null, "CYFSafeMode").Type == DataType.Boolean)
                 ControlPanel.instance.Safe = LuaScriptBinder.GetAlMighty(null, "CYFSafeMode").Boolean;
             
             // check if retro mode has a stored preference that is a boolean
             if (LuaScriptBinder.GetAlMighty(null, "CYFRetroMode") != null
-             && LuaScriptBinder.GetAlMighty(null, "CYFRetroMode").Type.ToString() == "Boolean")
+             && LuaScriptBinder.GetAlMighty(null, "CYFRetroMode").Type == DataType.Boolean)
                 retroMode = LuaScriptBinder.GetAlMighty(null, "CYFRetroMode").Boolean;
             
             // check if fullscreen mode has a stored preference that is a boolean
             if (LuaScriptBinder.GetAlMighty(null, "CYFPerfectFullscreen") != null
-             && LuaScriptBinder.GetAlMighty(null, "CYFPerfectFullscreen").Type.ToString() == "Boolean")
+             && LuaScriptBinder.GetAlMighty(null, "CYFPerfectFullscreen").Type == DataType.Boolean)
                 perfectFullscreen = LuaScriptBinder.GetAlMighty(null, "CYFPerfectFullscreen").Boolean;
             
             // check if window scale has a stored preference that is a number
             if (LuaScriptBinder.GetAlMighty(null, "CYFWindowScale") != null
-             && LuaScriptBinder.GetAlMighty(null, "CYFWindowScale").Type.ToString() == "Number")
+             && LuaScriptBinder.GetAlMighty(null, "CYFWindowScale").Type == DataType.Number)
                 windowScale = (int)LuaScriptBinder.GetAlMighty(null, "CYFWindowScale").Number;
             
             awakened = true;

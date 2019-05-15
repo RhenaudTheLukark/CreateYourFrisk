@@ -28,9 +28,8 @@ public class EnemyEncounter : MonoBehaviour {
             return "";
         int randomEnemy = UnityEngine.Random.Range(0, EnabledEnemies.Length);
         string[] comments;
-        try {
-            comments = EnabledEnemies[randomEnemy].Comments;
-        } catch { throw new CYFException("RandomEncounterText: Can not read the \"comments\" table of enemy #" + (randomEnemy + 1).ToString() + ".\nAre you sure it's set?"); }
+        try { comments = EnabledEnemies[randomEnemy].Comments; }
+        catch { throw new CYFException("RandomEncounterText: Can not read the \"comments\" table of enemy #" + (randomEnemy + 1).ToString() + ".\nAre you sure it's set?"); }
         if (comments.Length <= 0)
             return "";
         int randomComment = UnityEngine.Random.Range(0, comments.Length);
