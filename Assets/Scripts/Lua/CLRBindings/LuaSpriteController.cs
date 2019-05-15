@@ -147,6 +147,18 @@ public class LuaSpriteController {
         }
     }
 
+    // The x pivot of the sprite.
+    public float xpivot {
+        get { return img.GetComponent<RectTransform>().pivot.x; }
+        set { SetPivot(value, img.GetComponent<RectTransform>().pivot.y); }
+    }
+
+    // The y pivot of the sprite.
+    public float ypivot {
+        get { return img.GetComponent<RectTransform>().pivot.y; }
+        set { SetPivot(img.GetComponent<RectTransform>().pivot.x, value); }
+    }
+
     // Is the current animation finished? True if there is a finished animation, false otherwise
     public bool animcomplete {
         get {
@@ -377,7 +389,7 @@ public class LuaSpriteController {
         }
         try {
             GetTarget().SetParent(parent.img.transform);
-        } catch { throw new CYFException("You tried to set a removed sprite/unexisting sprite as this sprite's parent."); }
+        } catch { throw new CYFException("You tried to set a removed sprite/nil sprite as this sprite's parent."); }
     }
 
     // Sets the pivot of a sprite (its rotation point)
@@ -429,6 +441,8 @@ public class LuaSpriteController {
 
     // Sets an animation for this instance with a frame timer
     public void SetAnimation(string[] spriteNames, float frametime, string prefix = "") {
+        if (spriteNames == null)
+            throw new CYFException("sprite.SetAnimation: The first argument (list of images) is nil.\n\nSee the documentation for proper usage.");
         if (frametime < 0)
             throw new CYFException("sprite.SetAnimation: An animation can not have negative speed!");
         else if (frametime == 0)
@@ -494,7 +508,7 @@ public class LuaSpriteController {
         }
         set {
             if (img.GetComponent<Image>()) {
-                if (value.Type.ToString() != "Boolean")
+                if (value.Type != DataType.Boolean)
                     throw new CYFException("sprite.paused can only be set to a boolean value.");
                 
                 if (keyframes != null)
@@ -602,20 +616,24 @@ public class LuaSpriteController {
     }
 
     public void MoveBelow(LuaSpriteController sprite) {
-        if (sprite == null)                                       throw new CYFException("The sprite passed as an argument is null.");
-        else if (sprite.GetTarget().parent != GetTarget().parent) UnitaleUtil.WriteInLogAndDebugger("[WARN]You can't relatively move two sprites without the same parent.");
+        if (sprite == null)                                       throw new CYFException("sprite.MoveBelow: The sprite passed as an argument is nil.");
+        else if (sprite.GetTarget().parent != GetTarget().parent) UnitaleUtil.WriteInLogAndDebugger("[WARN]You can't change the order of two sprites without the same parent.");
         else                                                      GetTarget().SetSiblingIndex(sprite.GetTarget().GetSiblingIndex());
     }
 
     public void MoveAbove(LuaSpriteController sprite) {
-        if (sprite == null)                                       throw new CYFException("The sprite passed as an argument is null.");
-        else if (sprite.GetTarget().parent != GetTarget().parent) UnitaleUtil.WriteInLogAndDebugger("[WARN]You can't relatively move two sprites without the same parent.");
+        if (sprite == null)                                       throw new CYFException("sprite.MoveAbove: The sprite passed as an argument is nil.");
+        else if (sprite.GetTarget().parent != GetTarget().parent) UnitaleUtil.WriteInLogAndDebugger("[WARN]You can't change the order of two sprites without the same parent.");
         else                                                      GetTarget().SetSiblingIndex(sprite.GetTarget().GetSiblingIndex() + 1);
     }
 
     public void Remove() {
         if (_img == null)
             return;
+        else if (!GlobalControls.retroMode && tag == "projectile") {
+            img.GetComponent<Projectile>().ctrl.Remove();
+            return;
+        }
 
         bool throwError = false;
         if ((!GlobalControls.retroMode && img.gameObject.name == "player") || (!GlobalControls.retroMode && tag == "projectile") || tag == "enemy" || tag == "bubble") {
@@ -716,9 +734,15 @@ public class LuaSpriteController {
         firstFrame = false;
     }
 
-    public void SetVar(string name, DynValue value) { vars[name] = value; }
+    public void SetVar(string name, DynValue value) {
+        if (name == null)
+            throw new CYFException("sprite.SetVar: The first argument (the index) is null.\n\nSee the documentation for proper usage.");
+        vars[name] = value;
+    }
 
     public DynValue GetVar(string name) {
+        if (name == null)
+            throw new CYFException("sprite.GetVar: The first argument (the index) is null.\n\nSee the documentation for proper usage.");
         DynValue retval;
         if (vars.TryGetValue(name, out retval)) return retval;
         else return DynValue.NewNil();

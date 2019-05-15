@@ -5,8 +5,8 @@ bg.y = 240
 bg.color = {0,0,0}
 if enemies[1]["name"] ~= "Punderbolt" then
 	local buttoncover = CreateSprite("UI/sq_white", "BelowArena")
-	buttoncover.Scale(640/4,49/4)
-	buttoncover.MoveTo(320,24.5)
+	buttoncover.Scale(640/4,50/4)
+	buttoncover.MoveTo(320,25)
 	buttoncover.color = {0,0,0}
 	local namecover = CreateSprite("UI/sq_white", "BelowArena")
 	namecover.SetPivot(0,0.5)

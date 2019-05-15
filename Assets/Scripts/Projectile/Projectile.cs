@@ -27,7 +27,7 @@ public abstract class Projectile : MonoBehaviour {
     private static Color32[] playerHitbox = null;
     private Image img;
     public bool needUpdateTex = true;
-    public Rect selfAbs; // Rectangle containing position and size of this projectile
+    public Rect selfAbs = new Rect(-999, -999, 0, 0); // Rectangle containing position and size of this projectile
 
     private bool currentlyVisible = true; // Used to keep track of whether this object is currently visible to potentially save time in SetRenderingActive().
     //private bool Collision = false;
@@ -79,7 +79,7 @@ public abstract class Projectile : MonoBehaviour {
     public bool isPP() { return (ppcollision && ppchanged) || (GlobalControls.ppcollision && !ppchanged); }
 
     /// <summary>
-    /// Built-in Unity function run on every frame
+    /// Built-in Unity function run at the end of every frame
     /// </summary>
     private void LateUpdate() {
         //ctrl.UpdatePosition();

@@ -196,6 +196,8 @@ public class ProjectileController {
             lastY = y;
             lastAbsX = absx;
             lastAbsY = absy;
+            if (p.gameObject.GetComponent<KeyframeCollection>() != null)
+                GameObject.Destroy(p.gameObject.GetComponent<KeyframeCollection>());
             spr.StopAnimation();
             BulletPool.instance.Requeue(p);
             p = null;
@@ -224,9 +226,15 @@ public class ProjectileController {
 
     public void SendToBottom() { p.self.SetAsFirstSibling(); }
 
-    public void SetVar(string name, DynValue value) { vars[name] = value; }
+    public void SetVar(string name, DynValue value) {
+        if (name == null)
+            throw new CYFException("bullet.SetVar: The first argument (the index) is nil.\n\nSee the documentation for proper usage.");
+        vars[name] = value;
+    }
 
     public DynValue GetVar(string name) {
+        if (name == null)
+            throw new CYFException("bullet.GetVar: The first argument (the index) is nil.\n\nSee the documentation for proper usage.");
         DynValue retval;
         if (vars.TryGetValue(name, out retval)) return retval;
         else                                    return null;

@@ -93,7 +93,7 @@ it's w3c valid, at least
                 to do so. Look down to see them!
             </p>
             <p>
-                <br><span class="function">CreateText(<span class="luatable"><span class="string"></span></span>  text <font style="color:#fff;">(OR)</font> <span class="string"></span> text, 
+                <br><span class="function">CreateText(<span class="luatable"><span class="string"></span></span> text <font style="color:#fff;">(OR)</font> <span class="string"></span> text, 
                 <span class="luatable"><span class="number"></span>, <span class="number"></span></span> position, <span class="number"></span> textMaxWidth, <span class="string"></span> layer = "BelowPlayer", <span class="number"></span>  bubbleHeight = -1) returns <span class="userdata">textObject</span> [E/M/W]</span>
                 This function creates a Text Object and returns it. However, as you can see, a lot of parameters are needed.
                 <Br>Here is what you need to set:
@@ -114,6 +114,10 @@ it's w3c valid, at least
                     be -1, which will auto compute the height of the bubble. However, bubbles have a minimum height of 40.
                     <br>Example: <span class="term">150</span></li><br>
                 </ul>
+            </p>
+            <p>
+                <br><span class="function">Text.Remove()</span>
+                Shortcut to <span class="term">Text.DestroyText</span>.
             </p>
             <p>
                 <br><span class="function">Text.DestroyText()</span>
@@ -227,12 +231,27 @@ it's w3c valid, at least
                 Shows the next line (dialogue) of the text instantly, regardless of if the current one is finished or what progress mode the object has.
             </p>
             <p>
+                <br><span class="function">Text.SetWaitTime(<span class="number"></span> time)</span>
+                Shortcut to <span class="term">Text.SetAutoWaitTimeBetweenTexts</span>.
+            </p>
+            <p>
                 <br><span class="function">Text.SetAutoWaitTimeBetweenTexts(<span class="number"></span> time)</span>
                 Sets the number of frames to wait before automatically going to the next line of text.<br><i>Only applies to the "auto" progress mode.</i>
             </p>
             <p>
                 <br><span class="function">Text.SetParent(<span class="userdata">sprite</span> parent)</span>
                 Sets the text object's parent.<br>The text object will follow around the parent object as it moves.
+            </p>
+            <p>
+                <br><span class="function"><span class="number"></span> Text.xscale,<br>
+                <span class="number"></span> Text.yscale,<br></span>
+                Allows you to stretch and squish text objects, similarly to sprite objects.
+                <br><br>
+                <span style="color:#fff"> <b>Note:</b> Mainly designed for single-line text objects. Text that types out while a text object is already scaled <b>will</b> appear strangely!</span>
+            </p>
+            <p>
+                <br><span class="function">Text.Scale(<span class="number"></span> xscale, <span class="number"></span> yscale)</span>
+                Same as setting <span class="term">Text.xscale</span> and <span class="term">Text.yscale</span> at the same time.
             </p>
             <p>
                 <br><span class="function">Text.MoveBelow(<span class="userdata">text</span> otherTextObject)</span>
@@ -243,11 +262,11 @@ it's w3c valid, at least
                 Moves a text object above another text object.<br>They must both be on the same layer.
             </p>
             <p>
-                <br><span class="function">Text.AddText(<span class="luatable"><span class="string"></span></span> text)</span>
+                <br><span class="function">Text.AddText(<span class="luatable"><span class="string"></span></span> text <font style="color:#fff;">(OR)</font> <span class="string"></span> text)</span>
                 Adds the given text to the object's text table. Acts like <span class="term">Text.SetText()</span> if all the text is already done.
             </p>
             <p>
-                <br><span class="function">Text.SetText(<span class="luatable"><span class="string"></span></span> text)</span>
+                <br><span class="function">Text.SetText(<span class="luatable"><span class="string"></span></span> text <font style="color:#fff;">(OR)</font> <span class="string"></span> text)</span>
                 Sets the text in the Text Object.<br>If the text object is inactive when this is called, the object will reactive itself.
             </p>
             <p>
@@ -270,17 +289,22 @@ it's w3c valid, at least
                 Returns an error if the font doesn't exist.<br>
             </p>
             <p>
-                <br><span class="function">Text.SetEffect(<span class="string"></span> effect, <span class="number"></span> intensity)</span>
+                <br><span class="function">Text.SetEffect(<span class="string"></span> effect, <span class="number"></span> intensity = -1)</span>
                 Sets the effect of the text. Can be easily replaced with the text command <span class="term">[effect]</span>, but whatever.<br>
                 Can only take <span class="term">none</span>, <span class="term">twitch</span>, <span class="term">shake</span> or
-                <span class="term">twitch</span> as the effect.<br>
+                <span class="term">rotate</span> as the effect.
+                <br><br>
                 If you want to use the default intensity value, enter <span class="term">-1</span>.<br><br>
             </p>
             <p>
-                <br><span class="function">Text.ShowBubble(<span class="string"></span> side = null, <span class="number"></span>/<span class="string"></span> position = null)</span>
+                <br><span class="function">Text.ShowBubble(<span class="string"></span> side = nil, <span class="number"></span>/<span class="string"></span> position = nil)</span>
                 Use this function to add a bubble to the text. You can also set the side and the position of the tail (a.k.a. speech thing) if you
                 want to.<br>
-                Look at <span class="term">Text.SetSpeechThingSideAndPosition</span> to see how to use this.
+                Look at <span class="term">Text.SetSpeechThingPositionAndSide</span> to see how to use this.
+            </p>
+            <p>
+                <br><span class="function">Text.SetTail(<span class="string"></span>side, <span class="number"></span>/<span class="string"></span> position = "50%")</span>
+                Shortcut to <span class="term">Text.SetSpeechThingPositionAndSide</span>.
             </p>
             <p>
                 <br><span class="function">Text.SetSpeechThingPositionAndSide(<span class="string"></span> side, 
@@ -332,6 +356,8 @@ it's w3c valid, at least
                 <br>
                 Will give the same result even if the text isn't finished typing.
                 <br><br>
+                Also ignores <span class="term">Text.xscale</span>.
+                <br><br>
                 Useful if you want to center your text.
             </p>
             <p>
@@ -339,6 +365,8 @@ it's w3c valid, at least
                 Returns the height of the curently set text in pixels.
                 <br>
                 Will give the same result even if the text isn't finished typing.
+                <br><br>
+                Also ignores <span class="term">Text.yscale</span>.
                 <br><br>
                 <span style="color:#fff"> <b>Note:</b> This function is not 100% accurate.</span><br><br>
             </p>

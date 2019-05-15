@@ -480,17 +480,16 @@ public class TextManager : MonoBehaviour {
 
     public void SetEffect(TextEffect effect) { textEffect = effect; }
 
-    public void DestroyText() {
+    public void DestroyText(bool force = false) {
         foreach (Transform child in gameObject.transform)
             Destroy(child.gameObject);
         
         // the following code is activated if DestroyText is called from an actual CYF mod, on the Lua side,
         // or if the text is done typing out.
         // hopefully we will never have to use any lambda functions on Lua Text Managers...
-        if (GetType() == typeof(LuaTextManager)&&
-            (new StackFrame(1).GetMethod().Name == "lambda_method" || new StackFrame(1).GetMethod().Name == "NextLine")) {
+        if (force || (GetType() == typeof(LuaTextManager)&&
+            (new StackFrame(1).GetMethod().Name == "lambda_method" || new StackFrame(1).GetMethod().Name == "NextLine")))
             GameObject.Destroy(this.transform.parent.gameObject);
-        }
     }
 
     private void SpawnTextSpaceTest(int i, string currentText, out string currentText2) {
@@ -533,6 +532,7 @@ public class TextManager : MonoBehaviour {
                 int testFinal = finalIndex;
                 beginIndex = realBeginIndex;
                 string currentText3 = currentText;
+                int addedChars = 1;
                 for (; finalIndex <= realFinalIndex && finalIndex < currentText3.Length; finalIndex++)
                     if (UnitaleUtil.CalcTextWidth(this, beginIndex, finalIndex) > limit) {
                         if (finalIndex == testFinal) {
@@ -554,18 +554,22 @@ public class TextManager : MonoBehaviour {
                         } else {
                             if (!UnitaleUtil.IsOverworld) {
                                 if (SceneManager.GetActiveScene().name == "Intro") {
-                                    currentText3 = currentText3.Substring(0, finalIndex - 1) + "\n" + currentText3.Substring(finalIndex - 1, currentText.Length - finalIndex + 1);
+                                    currentText3 = currentText3.Substring(0, finalIndex - 1) + "\n" + currentText3.Substring(finalIndex - 1, currentText.Length - finalIndex + addedChars);
                                     realFinalIndex++;
+                                    addedChars++;
                                 } else if (name == "DialogBubble(Clone)" || UIController.instance.encounter.gameOverStance || GetType() == typeof(LuaTextManager)) {
-                                    currentText3 = currentText3.Substring(0, finalIndex - 1) + "\n" + currentText3.Substring(finalIndex - 1, currentText.Length - finalIndex + 1);
+                                    currentText3 = currentText3.Substring(0, finalIndex - 1) + "\n" + currentText3.Substring(finalIndex - 1, currentText.Length - finalIndex + addedChars);
                                     realFinalIndex++;
+                                    addedChars++;
                                 } else {
-                                    currentText3 = currentText3.Substring(0, finalIndex - 1) + "\n  " + currentText3.Substring(finalIndex - 1, currentText.Length - finalIndex + 1);
+                                    currentText3 = currentText3.Substring(0, finalIndex - 1) + "\n  " + currentText3.Substring(finalIndex - 1, currentText.Length - finalIndex + addedChars);
                                     realFinalIndex += 3;
+                                    addedChars += 3;
                                 }
                             } else {
-                                currentText3 = currentText3.Substring(0, finalIndex - 1) + "\n  " + currentText3.Substring(finalIndex - 1, currentText.Length - finalIndex + 1);
+                                currentText3 = currentText3.Substring(0, finalIndex - 1) + "\n  " + currentText3.Substring(finalIndex - 1, currentText.Length - finalIndex + addedChars);
                                 realFinalIndex += 3;
+                                addedChars += 3;
                             }
                         }
                         Array.Resize(ref letterReferences, currentText3.Length);
@@ -740,9 +744,8 @@ public class TextManager : MonoBehaviour {
                 // diff += Charset.LineSpacing;
                 ltrRect.localPosition = new Vector3(currentX - self.position.x - .9f, (currentY - self.position.y) + diff + .1f, 0);
             // keep what we already have for all text boxes that are not Text Objects in an encounter
-            } else {
+            } else
                 ltrRect.position = new Vector3(currentX + .1f, (currentY + Charset.Letters[currentText[i]].border.w - Charset.Letters[currentText[i]].border.y + 2) + .1f, 0);
-            };
             
             /*if (GetType() == typeof(LuaTextManager))
                 print("currentY from SpawnText (" + textQueue[currentLine].Text + ") = " + currentY + " + " + Charset.Letters[currentText[i]].border.w + " - " + Charset.Letters[currentText[i]].border.y + " + 2 = " + (currentY + Charset.Letters[currentText[i]].border.w - Charset.Letters[currentText[i]].border.y + 2)); */
@@ -934,7 +937,7 @@ public class TextManager : MonoBehaviour {
                 case "shake":  letterReferences[currentCharacter].GetComponent<Letter>().effect = new ShakeEffectLetter(letterReferences[currentCharacter].GetComponent<Letter>(), letterIntensity);    break;
                 default:       letterReferences[currentCharacter].GetComponent<Letter>().effect = null;                                                                                                 break;
             }
-            if (letterSound != null && !muted && !soundPlayed) {
+            if (letterSound != null && !muted && !soundPlayed && (GlobalControls.retroMode || textQueue[currentLine].Text[currentCharacter] != ' ')) {
                 soundPlayed = true;
                 if (letterSound.isPlaying) UnitaleUtil.PlaySound("BubbleSound", letterSound.clip.name);
                 else                       letterSound.Play();

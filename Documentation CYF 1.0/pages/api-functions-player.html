@@ -115,13 +115,17 @@ it's w3c valid, at least
                 unmodified Max HP.
                 <br>* The hp value is now a float, but there can be some problems with the accuracy of float values.
                 </li><br>
-                <li><span class="CYF"></span> <span class="number"></span> <span class="term">Player.atk</span> (readonly) - base attack of the player. Depends on the player's level.
+                <li><span class="CYF"></span> <span class="number"></span> <span class="term">Player.atk</span> - base attack of the player. Depends on the player's level.
+                    <br><br>
+                    Changing <span class="term">Player.lv</span> or ending the battle will <b>reset</b> this to its intended value.
                 </li><br>
                 <li><span class="CYF"></span> <span class="string"></span> <span class="term">Player.weapon</span> (readonly) - name of the player's current weapon.
                 </li><br>
                 <li><span class="CYF"></span> <span class="number"></span> <span class="term">Player.weaponatk</span> (readonly) - attack value of the player's current weapon.
                 </li><br>
-                <li><span class="CYF"></span> <span class="number"></span> <span class="term">Player.def</span> (readonly) - base defense of the player. Depends on the player's level.
+                <li><span class="CYF"></span> <span class="number"></span> <span class="term">Player.def</span> - base defense of the player. Depends on the player's level.
+                    <br><br>
+                    Changing <span class="term">Player.lv</span> or ending the battle will <b>reset</b> this to its intended value.
                 </li><br>
                 <li><span class="CYF"></span> <span class="string"></span> <span class="term">Player.armor</span> (readonly) - name of the player's current armor.
                 </li><br>
@@ -131,8 +135,9 @@ it's w3c valid, at least
                     <span class="unitale"></span> 6 letters max. By default, it is a name randomly chosen from a small list of pre-set names.<br>
                     <span class="CYF"></span> 9 letters max. "Rhenao" by default.</li><br>
                 <li><span class="number"></span> <span class="term">Player.lv</span> - use this to get or set the player's current level. It can be between 1 and 20. It's 1 by default. 
-                <span class="CYF"></span> 99 max - Player starts with 20HP / 10 ATK and gets 4 HP / 2 ATK per level. Leveling up the player through code 
-                doesn't automatically heal them; you'll have to do this manually.
+                <span class="CYF"></span> 99 max - Player starts with 20HP / 10 ATK and gets 4 HP / 2 ATK per level.
+                <br><br>
+                Leveling up the player through code doesn't automatically heal them; you'll have to do this manually.
                 </li><br>
                 <li><span class="CYF"></span> <span class="number"></span> <span class="term">Player.lastenemychosen</span> (readonly) - gets the id of the last chosen enemy in the 
                 ACT/FIGHT menus. -1 at the beginning of a fight.
@@ -183,7 +188,7 @@ it's w3c valid, at least
                 player's Max HP. The REAL maximum is 1.5 times the player's MaxHP.
                 </li><br>
                 <li><span class="CYF"></span> <span class="term">Player.SetMaxHPShift(<span class="number"></span> shift, <span class="number"></span> invulnerabilitySeconds = 1.7f, <span class="boolean"></span> set = false,
-                <span class="boolean"></span> canHeal = false)</span> - Lets you set the Player's MaxHP, relative to their normal MaxHP. If the total MaxHP is negative or nil, it
+                <span class="boolean"></span> canHeal = false, <span class="boolean"></span> playSound = true)</span> - Lets you set the Player's MaxHP, relative to their normal MaxHP. If the total MaxHP is negative or nil, it
                     causes a GameOver.<br>
                     Formula: Player's MaxHP = Basis MaxHP + MaxHP Shift
                     <ul>
@@ -193,7 +198,18 @@ it's w3c valid, at least
                         </li><br>
                         <li><span class="term">set</span> = true if you want to set the Player's MaxHP directly.</li><br>
                         <li><span class="term">canHeal</span> = true if the player will be able to heal up to this new Max HP value.</li><br>
+                        <li><span class="term">playSound</span> = true if you want to play the heal/hurt sound when the operation is done.</li><br>
                     </ul>
+                </li><br>
+                <li><span class="CYF"></span> <span class="term">Player.ResetStats(<span class="boolean"></span> resetMHP = true, <span class="boolean"></span> resetATK = true, <span class="boolean"></span> resetDEF = false)</span> - Resets the player's Max HP, ATK and/or DEF to their original values based on the player's LV.
+                    <br><br>
+                    You can choose which stats to reset through the arguments:
+                    <ul>
+                        <li><span class="term">resetMHP</span> = If true, the player's Max HP will be set back to what it should be based on the player's LV.</li><br>
+                        <li><span class="term">resetATK</span> = If true, the player's ATK will be set back to what it should be based on the player's LV.</li><br>
+                        <li><span class="term">resetDEF</span> = If true, the player's DEF will be set back to what it should be based on the player's LV.</li><br>
+                    </ul>
+                    The values set through this function are chosen according to <a href="https://undertale.fandom.com/wiki/Stats#Stat_Chart">this chart</a>.
                 </li><br>
                 <li><span class="CYF"></span> <span class="term">Player.SetAttackAnim(<span class="luatable"><span class="string"></span></span> anim, <span class="number"></span> frequency)</span> - Sets the animation used
                 when attacking an enemy. Use it like <span class="term">sprite.SetAnimation()</span></li><br>

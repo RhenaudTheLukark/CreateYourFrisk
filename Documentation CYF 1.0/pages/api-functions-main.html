@@ -85,9 +85,8 @@ it's w3c valid, at least
             <h2>Functions &amp; Objects</h2><br><br>
             <p>
                 This section details functions Unitale adds to your Lua scripts to interact with the game in various
-                ways. All functions will have a suffix in square brackets to denote in which scripts they may be used.
-                The key for this is E for Encounter, M for Monster and W for Wave. If, for example, a function can be
-                used in all scripts, it will be written as <i>functionName() [E/M/W]</i>.
+                ways. All functions will have a suffix in square brackets to denote in which scripts they may be used.<br>
+                See <span class="ref">How to read this documentation</span> for more details.
             </p>
             
             <hr>
@@ -116,22 +115,37 @@ it's w3c valid, at least
             <p>
                 <br><span class="function"><span class="CYF"></span> SetRealGlobal(<span class="string"></span> your_variable_name, value) [E/M/W]</span>
                 Sets a Global variable that is accessible even in the overworld. After setting it, you can retrieve it from all of
-                your scripts at any time with <span class="term">GetRealGlobal(variable_name)</span>.<br>
-                Persists through battles, but not between sessions. These variables can be saved using the overworld save system.<br>
+                your scripts at any time with <span class="term">GetRealGlobal(variable_name)</span>.
+                <br><br>
+                Persists through battles, but not between sessions. These variables can be saved using the overworld save system.
+                <br><br>
+                <font style="color:#fff">* Note: "Complex" variables (such as tables, functions and userdata) can not be saved as Real or AlMighty globals.</font>
+                <br><br>
+                <font style="color:#fff">* Also note: as Real and AlMighty Globals persist across mods, it is possible for mods to read each others' globals.
+                Be careful when choosing global names.</font>
+                <br><br>
                 Can be used in the overworld.
             </p>
 
             <p>
                 <br><span class="function"><span class="CYF"></span> GetRealGlobal(<span class="string"></span> your_variable_name) returns variable [E/M/W]</span>
-                Gets a Global that you previously set using <span class="term">SetRealGlobal()</span>.<br>
+                Gets a Global that you previously set using <span class="term">SetRealGlobal()</span>.
+                <br><br>
                 Can be used in the overworld.
             </p>
 
             <p>
                 <br><span class="function"><span class="CYF"></span> SetAlMightyGlobal(<span class="string"></span> your_variable_name, value) [E/M/W]</span>
-                <i>AlMighty Globals</i> are globals that are instantly saved into a file when set: these globals persist
-                through sessions, even in modDev mode, and can't be removed.<br>
-                However, you can use the <span class="term">Remove AlMighty Globals</span> button in modDev to remove them.<br>
+                <i>AlMighty Globals</i> are globals that are instantly saved into a file when set: these globals <b>persist
+                through sessions</b>.
+                <br><br>
+                However, you can use the <span class="term">Remove AlMighty Globals</span> button in modDev to remove them.
+                <br><br>
+                <font style="color:#fff">* Note: "Complex" variables (such as tables, functions and userdata) can not be saved as Real or AlMighty globals.</font>
+                <br><br>
+                <font style="color:#fff">* Also note: as Real and AlMighty Globals persist across mods, it is possible for mods to read each others' globals.
+                Be careful when choosing global names.</font>
+                <br><br>
                 Can be used in the overworld.
             </p>
 
@@ -169,10 +183,13 @@ it's w3c valid, at least
             </p>
 
             <p>
-                <br><span class="function">BattleDialog(<span class="luatable"><span class="string"></span></span> list_of_strings) [E/M/W]</span>
+                <br><span class="function">BattleDialogue(<span class="luatable"><span class="string"></span></span> list_of_strings) [E/M/W]<br><span class="cyf"></span>or BattleDialog</span>
                 This makes the list of strings you give to the function appear in the UI dialog box. After skipping through
                 them, you will automatically go to the monster dialogue step by default. Below is a working example of
                 how you could use it for a Vegetoid encounter.
+                <br><br>
+                * You can use <span class="term">\n</span> to create a new line <b>with a star</b> (*), and <span class="term">\r</span> to create
+                a new line <b>without</b> a star.
             </p>
             <div class="code-container">
    <pre class="brush: lua;">function HandleCustomCommand(command)
@@ -306,14 +323,14 @@ end</pre>
                 <font style="font-size:16px;color: white;">NOTE: Enter <span class="term">"default"</span> to reset the Buttons and UI.</font>
             </p>
             
+            <hr>
+            <h4>Monster script functions</h4>
+            
             <p>
                 <br><span class="function">SetSprite(<span class="string"></span> filename) [M]</span>
                 Sets the monster's sprite from the Sprites folder to <span class="term">filename.png</span>. Can be used with <span class="term">[func]
                 </span> to change sprites mid-dialogue.
             </p>
-            
-            <hr>
-            <h4>Monster script functions</h4>
             
             <p>
                 <br><span class="function">SetActive(<span class="boolean"></span> active) [M]</span>
@@ -341,15 +358,13 @@ end</pre>
             </p>
 
             <p>
-                <br><span class="function"><span class="CYF"></span> Move(<span class="number"></span> x, <span class="number"></span> y, <span class="boolean"></span> bindToArena = false) [M]</span>
-                Moves the enemy's sprite from its current position.<br>
-                <span class="term">bindToArena</span>: if the enemy's sprite will follow the Arena. Same as <span class="term">BindToArena()</span>.
+                <br><span class="function"><span class="CYF"></span> Move(<span class="number"></span> x, <span class="number"></span> y) [M]</span>
+                Moves the enemy's sprite from its current position.
             </p>
             
             <p>
-                <br><span class="function"><span class="CYF"></span> MoveTo(<span class="number"></span> x, <span class="number"></span> y, <span class="boolean"></span> bindToArena = false) [M]</span>
-                Moves the enemy's sprite relative to the bottom left corner.<br>
-                <span class="term">bindToArena</span>: if the enemy's sprite will follow the Arena. Same as <span class="term">BindToArena()</span>.
+                <br><span class="function"><span class="CYF"></span> MoveTo(<span class="number"></span> x, <span class="number"></span> y) [M]</span>
+                Moves the enemy's sprite relative to the bottom left corner.
             </p>
             
             <p>

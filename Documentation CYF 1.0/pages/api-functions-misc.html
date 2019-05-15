@@ -89,6 +89,7 @@ it's w3c valid, at least
             </p>
             <ul>
                 <li><span class="string"></span> <span class="term">Misc.MachineName</span> (read-only) - Returns the name of the player's session.</li><br>
+                <li><span class="string"></span> <span class="term">Misc.OSType</span> - Returns <span class="term">Windows</span>, <span class="term">Mac</span> or <span class="term">Linux</span>.</li><br>
                 <li>
                     <span class="term">Misc.ShakeScreen(<span class="number"></span> durationInFrames, <span class="number"></span> intensity = 3, <span class="boolean"></span> isIntensityDecreasing = false)</span>
                     - Shakes the screen for <span class="term">durationInFrames</span> frames, with a maximum of
@@ -107,7 +108,10 @@ it's w3c valid, at least
                 <li><span class="number"></span> <span class="term">Misc.ScreenWidth</span> (read-only) - Returns the width of the user's screen.</li><br>
                 <li><span class="number"></span> <span class="term">Misc.ScreenHeight</span> (read-only) - Returns the height of the user's screen.</li><br>
                 <li><span class="term">Misc.DestroyWindow()</span> - Closes the window instantly.</li><br>
-                <span style="color:#aa0000;font-size:18px;">THE FOLLOWING VARIABLES AND FUNCTIONS ARE <u>WINDOWS ONLY</u>.</span><br><br>
+            </ul>
+            <hr>
+            <span style="color:#aa0000;font-size:18px;">THE FOLLOWING VARIABLES AND FUNCTIONS ARE <u>WINDOWS ONLY</u>.</span><br><br>
+            <ul>
                 <li><span class="string"></span> <span class="term">Misc.WindowName</span> - Gets or sets the name of the window.</li><br>
                 <li><span class="number"></span> <span class="term">Misc.WindowX</span> - Gets or sets the X position of the bottom left corner of the window.</li><br>
                 <li><span class="number"></span> <span class="term">Misc.WindowY</span> - Gets or sets the Y position of the bottom left corner of the window.</li><br>
@@ -116,6 +120,85 @@ it's w3c valid, at least
                 </li><br>
                 <li><span class="number"></span> <span class="term">Misc.WindowWidth</span> (readonly) - The width of the window.</li><br>
                 <li><span class="number"></span> <span class="term">Misc.WindowHeight</span> (readonly) - The height of the window.</li>
+            </ul>
+            <hr>
+            <h3>File Functions</h3>
+            <br>
+            <br><span class="function"><span class="boolean"></span> Misc.FileExists(<span class="string"></span> path)</span>
+            Use this function to check if a file <u>in your Mod folder ONLY</u> exists.<br>
+            Using <span class="term">../</span> to go up a folder is NOT allowed.
+            <br><br>
+            <ul>
+                <li><span class="term">path</span>: Path to the file to open, relative to your Mod folder.<br>
+                    Can enter subfolders such as <span class="term">Lua</span>.</li><br>
+            </ul>
+            Use this before <span class="term">Misc.OpenFile</span> if you plan to read from a file.
+            <br><br>
+            <br><span class="function"><span class="luatable"><span class="string"></span></span> Misc.ListDir(<span class="string"></span> path, <span class="boolean"></span> getFolders = false)</span>
+            This function returns a list of either files or folders <u>in your Mod folder ONLY</u>.<br>
+            Using <span class="term">../</span> to go up a folder is NOT allowed.
+            <br><br>
+            <ul>
+                <li><span class="term">path</span>: Path to the file to open, relative to your Mod folder.<br>
+                    Can enter subfolders such as <span class="term">Lua</span>.</li><br>
+                <li><span class="term">getFolders</span>: If true, this function will return the names of all <b>Folders</b> in <span class="term">path</span>.<br>
+                    Otherwise, this function will return the names of all <b>Files</b> in <span class="term">path</span>.</li>
+            </ul>
+            <br><br>
+            <br><span class="function">Misc.OpenFile(<span class="string"></span> path, <span class="string"></span> mode = "rw") returns <span class="userdata">File</span></span>
+            This function opens a file <u>in your Mod folder ONLY</u>, for reading and writing.<br>
+            Using <span class="term">../</span> to go up a folder is NOT allowed.
+            <br><br>
+            <ul>
+                <li><span class="term">path</span>: Path to the file to open, relative to your Mod folder.<br>
+                    Can enter subfolders such as <span class="term">Lua</span>.</li><br>
+                <li>
+                    <span class="term">mode</span>: Determines how the file should be opened:
+                    <ul>
+                        <li><span class="term">r</span>: The file can only be <u>read</u> from.</li><br>
+                        <li><span class="term">w</span>: The file can only be <u>written</u> to.</li><br>
+                        <li><span class="term">rw</span>: The file can be read from <u>AND</u> written to.</li><br>
+                    </ul>
+                    Files can be <u>created</u> through use of <span class="term">File.Write</span> (see below).
+                </li>
+            </ul>
+            <br><br>
+            This function returns a <span class="userdata">File</span> object representing the file:
+            <br><br>
+            <br><span class="function"> The File object [E/M/W]</span>
+            <br><br>
+            <ul>
+                <li><span class="string"></span> <span class="term">File.openMode</span> (read-only):
+                    Returns the file mode being used by this File object.<br>
+                    This is what you entered for <span class="term">mode</span> in <span class="term">Misc.OpenFile</span>.</li><br>
+                <span class="function ref" style="display: inline;">"r"</span>
+                <br><br>
+                <li><span class="string"></span> <span class="term">File.ReadLine(<span class="number"></span> line)</span>:
+                    Returns the contents of line #<span class="term">line</span> as a string.</li><br>
+                <li><span class="luatable"><span class="string"></span></span> <span class="term">File.ReadLines()</span>:
+                    Returns every line in the file as a separate string, all within one table.<br>
+                    Same as using <span class="term">File.ReadLine</span> on every line.</li><br>
+                <li><span class="number"></span> <span class="term">File.lineCount</span>:
+                    The number of lines in the file.</li>
+                <hr>
+                <span class="function ref" style="display: inline;">"w"</span>
+                <br><br>
+                <li><span class="term">File.Write(<span class="string"></span> data, <span class="boolean"></span> append = true)</span>:
+                    Writes the text in <span class="term">data</span> to the file. Supports <span class="term">\n</span>.
+                    <br><br>
+                    Creates the file if it doesn't exist.
+                    <br><br>
+                    If <span class="term">append</span> is true, the new text will be added to the end of the file (without a new line).<br>
+                    Otherwise, the <u>entire file</u> will be replaced by <span class="term">data</span>.</li><br>
+                <li><span class="term">File.ReplaceLine(<span class="number"></span> line, <span class="string"></span> data)</span>:
+                    Sets the contents of line #<span class="term">line</span> in the file to <span class="term">data</span>.<br>
+                    Supports <span class="term">\n</span>.</li><br>
+                <li><span class="term">File.DeleteLine(<span class="number"></span> line)</span>:
+                    Removes line #<span class="term">line</span> from the file.<br>
+                    The line that came after it previously is now line #<span class="term">line</span>.</li><br>
+                <li><span class="term">File.Delete()</span> <span class="ref">(w)</span>:
+                    Deletes the file.<br>
+                    If using <span class="term">"w"</span> or <span class="term">"rw"</span> mode, you can use <span class="term">File.Write</span> to create the file again.</li><br>
             </ul>
         </div>
 		

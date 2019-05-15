@@ -218,8 +218,8 @@ end
             <p>
                 <br><span class="function"><span class="CYF"></span>OnSpare()</span>
                 Happens after you successfully spared a monster. If you implement <span class="term">OnSpare()</span>, your monster will not be
-                spared automatically, and you will have to do it manually with the <span class="term">Spare()</span> function. <span class="term">OnSpare()
-                </span> will only happen through a monster spare that happened with the SPARE command - scripted <span class="term">Spare()</span> calls will 
+                spared automatically, and you will have to do it manually with the <span class="term">Spare()</span> function.
+                <span class="term">OnSpare()</span> will only happen through a monster spare that happened with the SPARE command - scripted <span class="term">Spare()</span> calls will 
                 not trigger it.
             </p>
             <p>
@@ -234,9 +234,9 @@ end
                 the hp changing. You can still change the target with <span class="term">Player.changeTarget(targetNumber)</span> in this function.
             </p>
             <p>
-                <br><span class="function">HandleCustomCommand(<span class="string"></span> actcommand)</span>
-                Happens when you select an Act command on this monster. <span class="term">actcommand</span> will be the same as how you
-                defined it in the <span class="term">commands</span> list, except it will be <b>in all caps</b>. Intermediate example
+                <br><span class="function">HandleCustomCommand(<span class="string"></span> command)</span>
+                Happens when you select an Act command on this monster. <span class="term">command</span> will be the same as how you
+                defined it in the <span class="term">commands</span> list, except it will be <b><u>IN ALL CAPS</u></b>. Intermediate example
                 below, showing how you can use it and spice it up a little.
             </p>
             <div class="code-container">
@@ -266,9 +266,10 @@ end
             <h4>Wave script events</h4>
             <p>
                 <br><span class="function">Update()</span>
-                This function is called every frame (usually at 60FPS) while monsters are attacking (the defense step). That's pretty
-                much it. Update your bullets here - more on bullet creation and control is on the <span class="ref">API - Projectile
-                management</span> page.
+                This function is called every frame (usually at 60FPS) while monsters are attacking (the defense step).
+                <br><br>
+                That's pretty much it. Update your bullets here - more on bullet creation and control is on the
+                <span class="ref">API - Projectile Management</span> page.
             </p>
             <p>
                 <br><span class="function"><span class="CYF"></span>EndingWave()</span>
