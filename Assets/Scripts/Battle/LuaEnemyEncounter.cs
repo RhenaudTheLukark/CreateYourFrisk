@@ -128,7 +128,7 @@ internal class LuaEnemyEncounter : EnemyEncounter {
                 } catch (InterpreterException ex) { UnitaleUtil.DisplayLuaError(nextWaves.Table.Get(i + 1).String + ".lua", ex.DecoratedMessage);
                 } catch (Exception ex) {
                     if (!GlobalControls.retroMode &&!ScriptRegistry.dict.ContainsKey(ScriptRegistry.WAVE_PREFIX + nextWaves.Table.Get(i + 1).String))
-                        UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, "The wave " + nextWaves.Table.Get(i + 1).String + " doesn't exist.");
+                        UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, "The wave \"" + nextWaves.Table.Get(i + 1).String + "\" doesn't exist.");
                     else
                         UnitaleUtil.DisplayLuaError("<UNKNOWN LOCATION>", ex.Message + "\n\n" + ex.StackTrace);
                 }
