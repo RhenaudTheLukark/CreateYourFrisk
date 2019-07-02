@@ -2,15 +2,15 @@
 using System.IO;
 
 public class ScriptRegistry {
-    internal static string ENCOUNTER_PREFIX = "enc_";
     internal static string WAVE_PREFIX = "wave_";
+    internal static string ENCOUNTER_PREFIX = "enc_";
     internal static string MONSTER_PREFIX = "mon_";
     internal static string EVENT_PREFIX = "event_";
     internal static string SHOP_PREFIX = "shop_";
     public static Dictionary<string, string> dict = new Dictionary<string, string>();
 
-    private static string[] folders = new string[] { "Encounters", "Waves", "Monsters", "Events", "Shops" };
-    private static string[] prefixes = new string[] { ENCOUNTER_PREFIX, WAVE_PREFIX, MONSTER_PREFIX, EVENT_PREFIX, SHOP_PREFIX };
+    private static string[] folders = new string[] { "Waves", "Encounters", "Monsters", "Events", "Shops" };
+    private static string[] prefixes = new string[] { WAVE_PREFIX, ENCOUNTER_PREFIX, MONSTER_PREFIX, EVENT_PREFIX, SHOP_PREFIX };
 
     public static string Get(string key) {
         key = key.ToLower();
@@ -24,7 +24,7 @@ public class ScriptRegistry {
     public static void init() {
         dict.Clear();
         for (int i = 0; i < folders.Length; i++) {
-            loadAllFrom(folders[i], prefixes[i], i < 1);
+            loadAllFrom(folders[i], prefixes[i], StaticInits.MODFOLDER != "@Title" && i == 1);
         }
     }
 
