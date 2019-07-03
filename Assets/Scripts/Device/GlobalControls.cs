@@ -114,8 +114,9 @@ public class GlobalControls : MonoBehaviour {
         yield return new WaitForFixedUpdate();
         
 		if (!Application.isEditor) {
-			double ScreenWidth = (Screen.height / (double)3) * (double)4;
-			Screen.SetResolution((int)RoundToNearestEven(ScreenWidth), Screen.height, Screen.fullScreen, 0);
+			double ScreenWidth  = (Screen.height / (double)3) * (double)4;
+            double ScreenHeight = (Screen.width / (double)4) * (double)3;
+			Screen.SetResolution((int)RoundToNearestEven(ScreenWidth), (int)RoundToNearestEven(ScreenHeight), Screen.fullScreen, 0);
 		}
 	}
 
