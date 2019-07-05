@@ -685,6 +685,7 @@ public class TextManager : MonoBehaviour {
                                         skipImmediate = true;
                                         skipCommand = command;
                                         InUpdateControlCommand(DynValue.NewString(command), i);
+                                        UnityEngine.Debug.Log("<b>" + Charset.Name + "</b>");
                                     }
                                 } else if (command.Length < 7 || command.Substring(0, 7) != "instant")
                                     PreCreateControlCommand(command);
@@ -776,7 +777,8 @@ public class TextManager : MonoBehaviour {
                 if (mugshot.alpha == 0)
                     mugshot.color = new float[] { 1, 1, 1 };
             } catch { }
-        Update();
+        if (!instantActive)
+            Update();
     }
 
     private bool CheckCommand() {
