@@ -386,8 +386,8 @@ public class LuaTextManager : TextManager {
         if (uf == null)
             throw new CYFException("The font \"" + fontName + "\" doesn't exist.\nYou should check if you made a typo, or if the font really is in your mod.");
         SetFont(uf, firstTime);
-        // if (firstTime)
-            default_charset = uf;
+        //if (forced)
+        //    default_charset = uf;
         containerBubble.GetComponent<RectTransform>().localPosition = new Vector2(-12, 24);
         // GetComponent<RectTransform>().localPosition = new Vector2(0, 16);
         GetComponent<RectTransform>().localPosition = new Vector2(0, 0);
