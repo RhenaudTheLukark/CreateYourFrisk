@@ -447,7 +447,10 @@ public static class LuaScriptBinder {
             if (precedingText.Length == 0) {
                 string fontPartOne = firstLine.Substring(firstLine.IndexOf("[font:") + 6);
                 string fontPartTwo = fontPartOne.Substring(0, fontPartOne.IndexOf("]") - 0);
-                luatm.SetFont(fontPartTwo, true);
+                UnderFont uf = SpriteFontRegistry.Get(fontPartTwo);
+                if (uf == null)
+                    throw new CYFException("The font \"" + fontPartTwo + "\" doesn't exist.\nYou should check if you made a typo, or if the font really is in your mod.");
+                ((TextManager)luatm).SetFont(uf, true);
             }
         }
         
