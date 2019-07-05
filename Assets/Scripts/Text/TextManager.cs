@@ -776,7 +776,8 @@ public class TextManager : MonoBehaviour {
                 if (mugshot.alpha == 0)
                     mugshot.color = new float[] { 1, 1, 1 };
             } catch { }
-        Update();
+        if (!instantActive)
+            Update();
     }
 
     private bool CheckCommand() {

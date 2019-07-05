@@ -316,8 +316,12 @@ public class UIController : MonoBehaviour {
         this.state = state;
         //encounter.CallOnSelfOrChildren("Entered" + Enum.GetName(typeof(UIState), state).Substring(0, 1)
         //                                         + Enum.GetName(typeof(UIState), state).Substring(1, Enum.GetName(typeof(UIState), state).Length - 1).ToLower());
-        if (oldstate == UIState.DEFENDING && this.state != UIState.DEFENDING)
+        if (oldstate == UIState.DEFENDING && this.state != UIState.DEFENDING) {
+            UIState current = this.state;
             encounter.EndWave();
+            if (this.state != current)
+                return;
+        }
         switch (this.state) {
             case UIState.ATTACKING:
                 // Error for no active enemies

@@ -63,6 +63,7 @@ public static class SpriteRegistry {
 
         if (!dInfo.Exists) {
             UnitaleUtil.DisplayLuaError("mod loading", "You tried to load the mod \"" + StaticInits.MODFOLDER + "\" but it can't be found, or at least its \"Sprites\" folder can't be found.\nAre you sure it exists?");
+            throw new CYFException("mod loading");
         }
 
         fInfoTest = dInfo.GetFiles("*.png", SearchOption.AllDirectories);

@@ -150,10 +150,8 @@ public static class SpriteUtil {
     }
 
     public static void CreateLayer(string name, string relatedTag = "BasisNewest", bool before = false) {
-        if (name == null)
+        if (name == null || GameObject.Find("Canvas/" + name + "Layer") != null)
             return;
-        else if (GameObject.Find("Canvas/" + name + "Layer") != null)
-            throw new CYFException("CreateLayer: The layer \"" + name + "\" already exists. Please use a different name.");
         else if (relatedTag != "VeryHighest" && relatedTag != "VeryLowest" && relatedTag != "BasisNewest" && GameObject.Find("Canvas/" + relatedTag + "Layer") == null)
             throw new CYFException("CreateLayer: Tried to make a new layer " + (before ? "below" : "above") + " the layer \"" + relatedTag + "\", but it didn't exist.");
         

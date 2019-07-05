@@ -81,7 +81,7 @@ public abstract class Projectile : MonoBehaviour {
     /// <summary>
     /// Built-in Unity function run at the end of every frame
     /// </summary>
-    private void LateUpdate() {
+    private void Update() {
         //ctrl.UpdatePosition();
         //OnUpdate();
         if (!GlobalControls.retroMode && needSizeRefresh)
