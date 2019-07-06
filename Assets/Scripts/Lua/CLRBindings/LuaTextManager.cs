@@ -228,7 +228,7 @@ public class LuaTextManager : TextManager {
             else                        throw new CYFException("You need 3 or 4 numeric values when setting a text's color.");
 
             hasColorBeenSet = true;
-            hasAlphaBeenSet = false;
+            hasAlphaBeenSet = value.Length == 4;
 
             foreach (Letter l in letters) {
                 if (l.GetComponent<UnityEngine.UI.Image>().color == defaultColor) {
@@ -262,7 +262,6 @@ public class LuaTextManager : TextManager {
             CheckExists();
             color = new float[] { _color.r, _color.g, _color.b, Mathf.Clamp01(value) };
             hasAlphaBeenSet = true;
-            hasColorBeenSet = false;
         }
     }
 
@@ -386,8 +385,12 @@ public class LuaTextManager : TextManager {
         if (uf == null)
             throw new CYFException("The font \"" + fontName + "\" doesn't exist.\nYou should check if you made a typo, or if the font really is in your mod.");
         SetFont(uf, firstTime);
-        //if (forced)
-        //    default_charset = uf;
+        if (!firstTime)
+            default_charset = uf;
+        UpdateBubble();
+    }
+
+    public void UpdateBubble() {
         containerBubble.GetComponent<RectTransform>().localPosition = new Vector2(-12, 24);
         // GetComponent<RectTransform>().localPosition = new Vector2(0, 16);
         GetComponent<RectTransform>().localPosition = new Vector2(0, 0);

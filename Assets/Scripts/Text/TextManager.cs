@@ -93,51 +93,28 @@ public class TextManager : MonoBehaviour {
         if (firstTime) {
             if (letterSound == null && font.Sound != null)
                 letterSound.clip = font.Sound;
-            if (currentColor == Color.white) {
-                // TODO: DO NOT OVERRIDE font.XXX!!!
-                defaultColor = Charset.DefaultColor;
-                if (GetType() == typeof(LuaTextManager)) {
-                    if (((LuaTextManager)this).hasColorBeenSet) {
-                        defaultColor = ((LuaTextManager)this)._color;
-                    } else if (((LuaTextManager)this).hasAlphaBeenSet) {
-                        defaultColor = new Color(font.DefaultColor.r, font.DefaultColor.g, font.DefaultColor.b, ((LuaTextManager)this).alpha);
-                    }
-                }
-                currentColor = defaultColor;
-            }
-            if (hSpacing == 3)
-                hSpacing = font.CharSpacing;
-        } else {
-            if (font.Sound != null)
-                letterSound.clip = font.Sound;
-            defaultColor = Charset.DefaultColor;
-            if (GetType() == typeof(LuaTextManager)) {
-                if (((LuaTextManager)this).hasColorBeenSet) {
-                    defaultColor = ((LuaTextManager)this)._color;
-                } else if (((LuaTextManager)this).hasAlphaBeenSet) {
-                    defaultColor = new Color(font.DefaultColor.r, font.DefaultColor.g, font.DefaultColor.b, ((LuaTextManager)this).alpha);
-                }
-            }
-            currentColor = defaultColor;
-            hSpacing = font.CharSpacing;
+        } else if (font.Sound != null)
+            letterSound.clip = font.Sound;
+
+        vSpacing = 0;
+        hSpacing = font.CharSpacing;
+        defaultColor = font.DefaultColor;
+        if (GetType() == typeof(LuaTextManager)) {
+            if (((LuaTextManager) this).hasColorBeenSet) defaultColor = ((LuaTextManager) this)._color;
+            if (((LuaTextManager) this).hasAlphaBeenSet) defaultColor.a = ((LuaTextManager) this).alpha;
         }
+        currentColor = defaultColor;
     }
 
     public void SetHorizontalSpacing(float spacing = 3) { hSpacing = spacing; }
-
-    public void SetVerticalSpacing(float spacing = 0) { this.vSpacing = spacing; }
+    public void SetVerticalSpacing(float spacing = 0) { vSpacing = spacing; }
 
     public void ResetFont() {
         if (Charset == null || default_charset == null)
-            if (GetType() == typeof(LuaTextManager))
-                ((LuaTextManager)this).SetFont(SpriteFontRegistry.UI_MONSTERTEXT_NAME);
-            else
-                SetFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_DEFAULT_NAME), true);
+            SetFont(SpriteFontRegistry.Get(GetType() == typeof(LuaTextManager) ? SpriteFontRegistry.UI_MONSTERTEXT_NAME : SpriteFontRegistry.UI_DEFAULT_NAME), true);
         Charset = default_charset;
-        if (default_voice != null)
-            letterSound.clip = default_voice;
-        else
-            letterSound.clip = default_charset.Sound;
+        letterSound.clip = default_voice ?? default_charset.Sound;
+        defaultColor = default_charset.DefaultColor;
     }
 
     protected virtual void Awake() {
@@ -302,6 +279,7 @@ public class TextManager : MonoBehaviour {
                     
                     if (!offsetSet)
                         SetOffset(0, 0);
+                    ResetFont();
                     currentColor = defaultColor;
                     colorSet = false;
                     currentSkippable = true;
@@ -311,9 +289,6 @@ public class TextManager : MonoBehaviour {
                     instantCommand = false;
                     skipFromPlayer = false;
                     firstChar = false;
-                    
-                    if (Charset.Sound != null)
-                        letterSound.clip = Charset.Sound;
                     
                     timePerLetter = singleFrameTiming;
                     letterTimer = 0.0f;
@@ -596,8 +571,6 @@ public class TextManager : MonoBehaviour {
                 Array.Resize(ref letterPositions, currentText2.Length);
             }
             currentX = self.position.x + offset.x;
-            /*if (GetType() == typeof(LuaTextManager))
-                print("currentY from \\n (" + textQueue[currentLine].Text + ") = " + currentY + " - " + vSpacing + " - " + Charset.LineSpacing + " = " + (currentY - vSpacing - Charset.LineSpacing));*/
             currentY = currentY - vSpacing - Charset.LineSpacing;
         } else
             currentText2 = currentText;
@@ -1005,11 +978,8 @@ public class TextManager : MonoBehaviour {
                 colorSet = true;
                 break;
             case "alpha":
-                if (cmds[1].Length == 2) {
+                if (cmds[1].Length == 2)
                     currentColor = new Color(currentColor.r, currentColor.g, currentColor.b, ParseUtil.GetByte(cmds[1]) / 255);
-                    if (GetType() == typeof(LuaTextManager))
-                        ((LuaTextManager)this)._color = new Color(((LuaTextManager)this)._color.r, ((LuaTextManager)this)._color.g, ((LuaTextManager)this)._color.b, currentColor.a);
-                }
                 break;
             case "charspacing": SetHorizontalSpacing(ParseUtil.GetFloat(cmds[1])); break;
             case "linespacing": SetVerticalSpacing(ParseUtil.GetFloat(cmds[1]));   break;
@@ -1047,10 +1017,15 @@ public class TextManager : MonoBehaviour {
             case "font":
                 AudioClip oldClip = letterSound.clip;
                 float oldLineThing = Charset.LineSpacing;
+
+                UnderFont uf = SpriteFontRegistry.Get(cmds[1]);
+                if (uf == null)
+                    throw new CYFException("The font \"" + cmds[1] + "\" doesn't exist.\nYou should check if you made a typo, or if the font really is in your mod.");
+
+                SetFont(SpriteFontRegistry.Get(cmds[1]));
                 if (GetType() == typeof(LuaTextManager))
-                    ((LuaTextManager)this).SetFont(cmds[1]);
-                else
-                    SetFont(SpriteFontRegistry.Get(cmds[1]));
+                    ((LuaTextManager) this).UpdateBubble();
+
                 letterSound.clip = oldClip;
                 //foreach (Letter l in letters)
                 //    l.transform.position = new Vector2(l.transform.position.x, l.transform.position.y + (oldLineThing - Charset.LineSpacing));

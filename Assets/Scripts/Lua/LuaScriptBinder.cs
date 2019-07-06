@@ -364,7 +364,6 @@ public static class LuaScriptBinder {
         UnitaleUtil.GetChildPerName(go.transform, "BackVert").GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth - 20, 100);            //BackVert
         UnitaleUtil.GetChildPerName(go.transform, "CenterHorz").GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth + 16, 96 - 16 * 2);  //CenterHorz
         UnitaleUtil.GetChildPerName(go.transform, "CenterVert").GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth - 16, 96);           //CenterVert
-        // luatm.SetFont(SpriteFontRegistry.UI_MONSTERTEXT_NAME, true);
         foreach (ScriptWrapper scrWrap in ScriptWrapper.instances) {
             if (scrWrap.script == scr) {
                 luatm.SetCaller(scrWrap);
@@ -428,7 +427,9 @@ public static class LuaScriptBinder {
         /////////// INITIAL FONT SETTER //////////
         //////////////////////////////////////////
 
-        // If the first line of text has [font] at the beginning, use it intially!
+        luatm.ResetFont();
+
+        // If the first line of text has [font] at the beginning, use it initially!
         if (firstLine.IndexOf("[font:") > -1 && firstLine.IndexOf(']') > firstLine.IndexOf("[font:")) {
             // grab all of the text that comes before the matched command
             string precedingText = firstLine.Substring(0, firstLine.IndexOf("[font:"));
@@ -447,15 +448,21 @@ public static class LuaScriptBinder {
             if (precedingText.Length == 0) {
                 string fontPartOne = firstLine.Substring(firstLine.IndexOf("[font:") + 6);
                 string fontPartTwo = fontPartOne.Substring(0, fontPartOne.IndexOf("]") - 0);
-                luatm.SetFont(fontPartTwo, true);
+                UnderFont font = SpriteFontRegistry.Get(fontPartTwo);
+                if (font == null)
+                    throw new CYFException("The font \"" + fontPartTwo + "\" doesn't exist.\nYou should check if you made a typo, or if the font really is in your mod.");
+                luatm.SetFont(font, true);
+                luatm.UpdateBubble();
             }
         }
 
         if (enableLateStart)
             luatm.LateStartWaiting = true;
         luatm.SetText(text);
-        if (enableLateStart)
+        if (enableLateStart) {
+            luatm.DestroyText();
             luatm.LateStart();
+        }
         return luatm;
     }
 
