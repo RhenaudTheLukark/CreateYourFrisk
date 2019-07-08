@@ -111,7 +111,10 @@ public class TextManager : MonoBehaviour {
 
     public void ResetFont() {
         if (Charset == null || default_charset == null)
-            SetFont(SpriteFontRegistry.Get(GetType() == typeof(LuaTextManager) ? SpriteFontRegistry.UI_MONSTERTEXT_NAME : SpriteFontRegistry.UI_DEFAULT_NAME), true);
+            if (GetType() == typeof(LuaTextManager))
+                ((LuaTextManager)this).SetFont(SpriteFontRegistry.UI_MONSTERTEXT_NAME);
+            else
+                SetFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_DEFAULT_NAME), true);
         Charset = default_charset;
         letterSound.clip = default_voice ?? default_charset.Sound;
         defaultColor = default_charset.DefaultColor;
@@ -1022,7 +1025,7 @@ public class TextManager : MonoBehaviour {
                 if (uf == null)
                     throw new CYFException("The font \"" + cmds[1] + "\" doesn't exist.\nYou should check if you made a typo, or if the font really is in your mod.");
 
-                SetFont(SpriteFontRegistry.Get(cmds[1]));
+                SetFont(uf);
                 if (GetType() == typeof(LuaTextManager))
                     ((LuaTextManager) this).UpdateBubble();
 
