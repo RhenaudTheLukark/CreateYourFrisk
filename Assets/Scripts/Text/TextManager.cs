@@ -900,7 +900,7 @@ public class TextManager : MonoBehaviour {
             int oldLetterOnceValue = letterOnceValue;
             lastLetter = currentCharacter;
             while (CheckCommand()) {
-                if ((GlobalControls.retroMode && instantActive) || letterTimer != oldLetterTimer || waitingChar != KeyCode.None || letterOnceValue != oldLetterOnceValue)
+                if ((GlobalControls.retroMode && instantActive) || letterTimer != oldLetterTimer || waitingChar != KeyCode.None || letterOnceValue != oldLetterOnceValue || this.paused)
                     return false;
             }
             if (currentCharacter >= letterReferences.Length)
