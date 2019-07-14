@@ -858,8 +858,8 @@ public class TextManager : MonoBehaviour {
         */
         
         letterTimer += Time.deltaTime;
-        if (((letterTimer >= timePerLetter) || firstChar) && !LineComplete() && timePerLetter > 0f) {
-            int repeats = (int)Mathf.Floor(letterTimer / timePerLetter);
+        if (((letterTimer >= timePerLetter) || firstChar) && !LineComplete()) {
+            int repeats = timePerLetter == 0f ? 1 : (int)Mathf.Floor(letterTimer / timePerLetter);
             
             bool soundPlayed = false;
             int lastLetter = -1;
