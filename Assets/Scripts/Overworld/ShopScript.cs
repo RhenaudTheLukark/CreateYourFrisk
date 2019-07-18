@@ -534,7 +534,7 @@ public class ShopScript : MonoBehaviour {
                         return;
                     }
 
-                    tmBigTalk.DestroyText();
+                    tmBigTalk.DestroyChars();
                     
                     tp = Instantiate(Resources.Load<TPHandler>("Prefabs/TP On-the-fly"));
                     tp.sceneName = script.GetVar("returnscene").String;

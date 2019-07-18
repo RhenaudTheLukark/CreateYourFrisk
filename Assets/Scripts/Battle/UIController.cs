@@ -287,7 +287,7 @@ public class UIController : MonoBehaviour {
         
         if (state == UIState.DEFENDING || state == UIState.ENEMYDIALOGUE) {
             PlayerController.instance.setControlOverride(state != UIState.DEFENDING);
-            textmgr.DestroyText();
+            textmgr.DestroyChars();
             PlayerController.instance.SetPosition(320, 160, true);
             PlayerController.instance.GetComponent<Image>().enabled = true;
             fightBtn.overrideSprite = null;
@@ -328,7 +328,7 @@ public class UIController : MonoBehaviour {
                 if (encounter.EnabledEnemies.Length == 0)
                     throw new CYFException("Cannot enter state ATTACKING with no active enemies.");
 
-                textmgr.DestroyText();
+                textmgr.DestroyChars();
                 PlayerController.instance.GetComponent<Image>().enabled = false;
                 if (!fightUI.multiHit) {
                     fightUI.targetIDs = new int[] { selectedEnemy };
@@ -670,7 +670,7 @@ public class UIController : MonoBehaviour {
                 monDialogues[index].NextLineText();
                 complete = false;
             } else {
-                monDialogues[index].DestroyText();
+                monDialogues[index].DestroyChars();
                 GameObject.Destroy(monDialogues[index].gameObject);
             }
             if (complete)
@@ -683,7 +683,7 @@ public class UIController : MonoBehaviour {
                     continue;
 
                 if ((monDialogues[i].AllLinesComplete() && monDialogues[i].LineCount() != 0) || (!monDialogues[i].HasNext() && readyToNextLine[i])) {
-                    monDialogues[i].DestroyText();
+                    monDialogues[i].DestroyChars();
                     GameObject.Destroy(monDialogues[i].gameObject); // this text manager's game object is a dialog bubble and should be destroyed at this point
                     continue;
                 } else
@@ -703,7 +703,7 @@ public class UIController : MonoBehaviour {
                         }
                         monDialogues[i].NextLineText();
                     } else {
-                        monDialogues[i].DestroyText();
+                        monDialogues[i].DestroyChars();
                         GameObject.Destroy(monDialogues[i].gameObject); // code duplication? in my source? it's more likely than you think
                         if (!foiled)
                             complete = true;
@@ -836,7 +836,7 @@ public class UIController : MonoBehaviour {
                         textmgr.NextLineText();
                         break;
                     } else if (textmgr.AllLinesComplete() && textmgr.LineCount() != 0) {
-                        textmgr.DestroyText();
+                        textmgr.DestroyChars();
                         SwitchState(stateAfterDialogs);
                     }
                     break;
@@ -1545,7 +1545,7 @@ public class UIController : MonoBehaviour {
                 if (textmgr.HasNext())
                     textmgr.NextLineText();
                 else {
-                    textmgr.DestroyText();
+                    textmgr.DestroyChars();
                     SwitchState(stateAfterDialogs);
                 }
 

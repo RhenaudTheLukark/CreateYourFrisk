@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System;
-using System.Diagnostics;
 using System.Collections;
 using MoonSharp.Interpreter;
 
@@ -62,16 +61,18 @@ public class LuaTextManager : TextManager {
                 DoSkipFromPlayer();
         }
     }
-    
+
     // Used to test if a text object still exists.
     private void CheckExists() {
         if (!isactive)
             throw new CYFException("Attempt to perform action on removed text object.");
     }
-    
+
+    public void DestroyText() { print("<b>LuaTM</b>"); GameObject.Destroy(this.transform.parent.gameObject); }
+
     // Shortcut to `DestroyText()`
-    public void Remove() { DestroyText(true); }
-    
+    public void Remove() { DestroyText(); }
+
     private void ResizeBubble() {
         float effectiveBubbleHeight = bubbleHeight != -1 ? bubbleHeight < 16 ? 40 : bubbleHeight + 24 : UnitaleUtil.CalcTextHeight(this) < 16 ? 40 : UnitaleUtil.CalcTextHeight(this) + 24;
         containerBubble.transform.GetComponent<RectTransform>().sizeDelta = new Vector2(textMaxWidth + 20, effectiveBubbleHeight);                                                      //To set the borders
@@ -81,7 +82,7 @@ public class LuaTextManager : TextManager {
         UnitaleUtil.GetChildPerName(containerBubble.transform, "CenterVert").GetComponent<RectTransform>().sizeDelta = new Vector2(textMaxWidth - 16, effectiveBubbleHeight - 4);       //CenterVert
         SetSpeechThingPositionAndSide(bubbleSide.ToString(), bubbleLastVar);
     }
-    
+
     public string progressmode {
         get {
             CheckExists();
@@ -314,10 +315,7 @@ public class LuaTextManager : TextManager {
             ResizeBubble();
     }
     
-    public void LateStart() {
-        if (new StackFrame(1).GetMethod().Name != "lambda_method")
-            StartCoroutine(LateStartSetText());
-    }
+    public void LateStart() { StartCoroutine(LateStartSetText()); }
     
     IEnumerator LateStartSetText() {
         yield return new WaitForEndOfFrame();

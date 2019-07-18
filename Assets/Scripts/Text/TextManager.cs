@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.Diagnostics;
 using MoonSharp.Interpreter;
 using UnityEngine;
 using UnityEngine.UI;
@@ -295,7 +294,7 @@ public class TextManager : MonoBehaviour {
                     
                     timePerLetter = singleFrameTiming;
                     letterTimer = 0.0f;
-                    DestroyText();
+                    this.DestroyChars();
                     currentLine = line;
                     currentX = self.position.x + offset.x;
                     currentY = self.position.y + offset.y;
@@ -323,7 +322,7 @@ public class TextManager : MonoBehaviour {
                             if ((GameObject.Find("textframe_border_outer").GetComponent<Image>().color.a == 1))
                                 SetTextFrameAlpha(0);
                             blockSkip = true;
-                            DestroyText();
+                            this.DestroyChars();
                         }
                         int lines = textQueue[line].Text.Split('\n').Length;
                         if (lines >= 4) lines = 4;
@@ -458,16 +457,9 @@ public class TextManager : MonoBehaviour {
 
     public void SetEffect(TextEffect effect) { textEffect = effect; }
 
-    public void DestroyText(bool force = false) {
+    public virtual void DestroyChars() {
         foreach (Transform child in gameObject.transform)
             Destroy(child.gameObject);
-        
-        // the following code is activated if DestroyText is called from an actual CYF mod, on the Lua side,
-        // or if the text is done typing out.
-        // hopefully we will never have to use any lambda functions on Lua Text Managers...
-        if (force || (GetType() == typeof(LuaTextManager)&&
-            (new StackFrame(1).GetMethod().Name == "lambda_method" || new StackFrame(1).GetMethod().Name == "NextLine")))
-            GameObject.Destroy(this.transform.parent.gameObject);
     }
 
     private void SpawnTextSpaceTest(int i, string currentText, out string currentText2) {

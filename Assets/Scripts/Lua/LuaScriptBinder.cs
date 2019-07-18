@@ -460,7 +460,7 @@ public static class LuaScriptBinder {
             luatm.LateStartWaiting = true;
         luatm.SetText(text);
         if (enableLateStart) {
-            luatm.DestroyText();
+            luatm.DestroyChars();
             luatm.LateStart();
         }
         return luatm;

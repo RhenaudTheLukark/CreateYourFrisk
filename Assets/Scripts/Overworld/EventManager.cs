@@ -999,7 +999,7 @@ public class EventManager : MonoBehaviour {
     public void EndEvent() {
         PlayerOverworld.instance.textmgr.SetTextFrameAlpha(0);
         PlayerOverworld.instance.textmgr.textQueue = new TextMessage[] { };
-        PlayerOverworld.instance.textmgr.DestroyText();
+        PlayerOverworld.instance.textmgr.DestroyChars();
         PlayerOverworld.instance.PlayerNoMove = false; //Event finished
         PlayerOverworld.instance.UIPos = 0;
         ScriptLaunched = false;
@@ -1463,7 +1463,7 @@ public class EventManager : MonoBehaviour {
                 save = !save;
             } else if (GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED) {
                 PlayerOverworld.instance.utHeart.color = new Color(c.r, c.g, c.b, 0);
-                txtName.DestroyText(); txtLevel.DestroyText(); txtTime.DestroyText(); txtMap.DestroyText(); txtSave.DestroyText(); txtReturn.DestroyText();
+                txtName.DestroyChars(); txtLevel.DestroyChars(); txtTime.DestroyChars(); txtMap.DestroyChars(); txtSave.DestroyChars(); txtReturn.DestroyChars();
                 GameObject.Find("save_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 0);
                 GameObject.Find("save_interior").GetComponent<Image>().color = new Color(0, 0, 0, 0);
                 script.Call("CYFEventNextCommand");
@@ -1491,7 +1491,7 @@ public class EventManager : MonoBehaviour {
                     } while (GlobalControls.input.Confirm != UndertaleInput.ButtonState.PRESSED);
                 }
                 PlayerOverworld.instance.utHeart.color = new Color(c.r, c.g, c.b, 0);
-                txtName.DestroyText(); txtLevel.DestroyText(); txtTime.DestroyText(); txtMap.DestroyText(); txtSave.DestroyText(); txtReturn.DestroyText();
+                txtName.DestroyChars(); txtLevel.DestroyChars(); txtTime.DestroyChars(); txtMap.DestroyChars(); txtSave.DestroyChars(); txtReturn.DestroyChars();
                 GameObject.Find("save_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 0);
                 GameObject.Find("save_interior").GetComponent<Image>().color = new Color(0, 0, 0, 0);
                 script.Call("CYFEventNextCommand");
