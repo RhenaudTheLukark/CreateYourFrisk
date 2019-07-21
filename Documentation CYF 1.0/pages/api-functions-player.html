@@ -166,19 +166,19 @@ it's w3c valid, at least
                     prevent the player soul from doing its regular movement/keyboard control for the rest of the wave.
                     Use this if you want to implement your own controls in a wave.
                 </li><br>
-                <li><span class="CYF"></span> <span class="term">Player.Move(<span class="number"></span> x, <span class="number"></span> y, <span class="boolean"></span> ignoreWalls)</span> - Moves the player soul based on its last position.
+                <li><span class="CYF"></span> <span class="term">Player.Move(<span class="number"></span> x, <span class="number"></span> y, <span class="boolean"></span> ignoreWalls = false)</span> - Moves the player soul based on its last position.
                     If <span class="term">ignoreWalls</span> is false, it will make sure the player doesn't go outside of the arena;
                     otherwise, it ignores the arena's boundaries. If you want to move the player out of bounds in a wave, you'll
                     have to call <span class="term">Player.SetControlOverride(true)</span>, as the player's default movement keeps the soul inside
                     the arena otherwise.
                 </li><br>
-                <li><span class="term">Player.MoveTo(<span class="number"></span> x, <span class="number"></span> y, <span class="boolean"></span> ignoreWalls)</span> - Moves the player soul to this position relative to the arena's
+                <li><span class="term">Player.MoveTo(<span class="number"></span> x, <span class="number"></span> y, <span class="boolean"></span> ignoreWalls = false)</span> - Moves the player soul to this position relative to the arena's
                     center. If <span class="term">ignoreWalls</span> is false, it will make sure the player doesn't go outside of the arena;
                     otherwise, it ignores the arena's boundaries. If you want to move the player out of bounds in a wave, you'll
                     have to call <span class="term">Player.SetControlOverride(true)</span> as the player's default movement keeps the soul inside
                     the arena.
                 </li><br>
-                <li><span class="term">Player.MoveToAbs(<span class="number"></span> x, <span class="number"></span> y, <span class="boolean"></span> ignoreWalls)</span> - Moves the player soul to this position relative to the bottom left
+                <li><span class="term">Player.MoveToAbs(<span class="number"></span> x, <span class="number"></span> y, <span class="boolean"></span> ignoreWalls = false)</span> - Moves the player soul to this position relative to the bottom left
                     of the screen. If <span class="term">ignoreWalls</span> is false, it will make sure the player doesn't go outside of the arena;
                     otherwise, it ignores the arena's boundaries. If you want to move the player out of bounds in a wave, you'll
                     have to call <span class="term">Player.SetControlOverride(true)</span> as the player's default movement keeps the soul inside
