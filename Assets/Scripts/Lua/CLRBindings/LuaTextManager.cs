@@ -68,7 +68,13 @@ public class LuaTextManager : TextManager {
             throw new CYFException("Attempt to perform action on removed text object.");
     }
 
-    public void DestroyText() { GameObject.Destroy(this.transform.parent.gameObject); }
+    public void DestroyText() {
+        if (isactive) {
+            GameObject.Destroy(container);
+            container = null;
+        } else
+            throw new CYFException("Attempt to remove a removed text object.\nYou should use text.isactive to check if a text object is active before removing it.");
+    }
 
     // Shortcut to `DestroyText()`
     public void Remove() { DestroyText(); }
