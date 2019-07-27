@@ -68,7 +68,7 @@ public class LuaTextManager : TextManager {
             throw new CYFException("Attempt to perform action on removed text object.");
     }
 
-    public void DestroyText() { print("<b>LuaTM</b>"); GameObject.Destroy(this.transform.parent.gameObject); }
+    public void DestroyText() { GameObject.Destroy(this.transform.parent.gameObject); }
 
     // Shortcut to `DestroyText()`
     public void Remove() { DestroyText(); }
@@ -93,7 +93,10 @@ public class LuaTextManager : TextManager {
                 CheckExists();
                 progress = (ProgressMode)Enum.Parse(typeof(ProgressMode), value.ToUpper());
             } catch {
-                throw new CYFException("text.progressmode can only have either \"AUTO\", \"MANUAL\" or \"NONE\", but you entered \"" + value.ToUpper() + "\".");
+                if (value != null)
+                    throw new CYFException("text.progressmode can only have either \"AUTO\", \"MANUAL\" or \"NONE\", but you entered \"" + value.ToUpper() + "\".");
+                else
+                    throw new CYFException("text.progressmode can only have either \"AUTO\", \"MANUAL\" or \"NONE\", but you set it to a nil value.");
             }
         }
     }
