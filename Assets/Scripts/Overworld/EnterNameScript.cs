@@ -46,14 +46,10 @@ public class EnterNameScript : MonoBehaviour {
         }
         tmName.SetTextQueue(new TextMessage[] { new TextMessage(playerName, false, true) });
         tmLettersMaj = GameObject.Find("TextManager LettersMaj").GetComponent<TextManager>();
-        tmLettersMaj.SetHorizontalSpacing(52.2f);
-        tmLettersMaj.SetVerticalSpacing(-1);
-        tmLettersMaj.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]ABCDEFG\nHIJKLMN\nOPQRSTU\nVWXYZ", false, true) });
+        tmLettersMaj.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][charspacing:52.2][linespacing:-1]ABCDEFG\nHIJKLMN\nOPQRSTU\nVWXYZ", false, true) });
         tmLettersMaj.SetEffect(new ShakeEffect(tmLettersMaj));
         tmLettersMin = GameObject.Find("TextManager LettersMin").GetComponent<TextManager>();
-        tmLettersMin.SetHorizontalSpacing(52.2f);
-        tmLettersMin.SetVerticalSpacing(-1);
-        tmLettersMin.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]abcdefg\nhijklmn\nopqrstu\nvwxyz", false, true) });
+        tmLettersMin.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][charspacing:52.2][linespacing:-1]abcdefg\nhijklmn\nopqrstu\nvwxyz", false, true) });
         tmLettersMin.SetEffect(new ShakeEffect(tmLettersMin));
         for (int i = 0; i < GameObject.Find("TextManager LettersMaj").GetComponentsInChildren<Image>().Length; i ++)
             GameObject.Find("TextManager LettersMaj").GetComponentsInChildren<Image>()[i].name = GameObject.Find("TextManager LettersMaj").GetComponentsInChildren<Image>()[i].sprite.name;
