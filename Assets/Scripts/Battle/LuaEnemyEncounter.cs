@@ -216,7 +216,7 @@ internal class LuaEnemyEncounter : EnemyEncounter {
         }
         script.SetVar("enemies", DynValue.NewTable(luaEnemyTable));
         Table luaWaveTable = new Table(null);
-        script.SetVar("waves", DynValue.NewTable(luaWaveTable));
+        script.SetVar("Wave", DynValue.NewTable(luaWaveTable));
 
         //if (MusicManager.isStoppedOrNull(PlayerOverworld.audioKept))
         //    musicSource.Play(); // play that funky music
