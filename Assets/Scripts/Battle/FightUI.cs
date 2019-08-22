@@ -63,8 +63,6 @@ public class FightUI : MonoBehaviour {
         enePos = enemy.GetComponent<RectTransform>().position;
         eneSize = enemy.GetComponent<RectTransform>().sizeDelta;
         shakeTimer = 0;
-        Vector3 slicePos = new Vector3(enemy.offsets[0].x, eneSize.y / 2 + enemy.offsets[0].y - 55, 0);
-        slice.img.GetComponent<RectTransform>().localPosition = slicePos;
     }
 
     public void quickInit(int enemyIndex, LuaEnemyController target, int damage = -478294) {
@@ -93,8 +91,6 @@ public class FightUI : MonoBehaviour {
         slice.img.transform.SetParent(enemy.transform);
         /*Vector3 slicePos = new Vector3(enemy.GetComponent<RectTransform>().position.x + enemy.offsets[0].x,
                                        enemy.GetComponent<RectTransform>().position.y + eneSize.y / 2 + enemy.offsets[0].y - 55, enemy.GetComponent<RectTransform>().position.z);*/
-        Vector3 slicePos = new Vector3(enemy.offsets[0].x, eneSize.y / 2 + enemy.offsets[0].y - 55, 0);
-        slice.img.GetComponent<RectTransform>().localPosition = slicePos;
     }
 
     public void StopAction(float atkMult) {
@@ -106,6 +102,7 @@ public class FightUI : MonoBehaviour {
         enemy.TryCall("BeforeDamageCalculation");
         if (!damagePredefined)
             Damage = FightUIController.instance.getDamage(enemy, atkMult);
+        UpdateSlicePos();
         //slice.StopAnimation();
         slice.SetAnimation(sliceAnim, sliceAnimFrequency);
         slice.loopmode = "ONESHOT";
@@ -187,5 +184,13 @@ public class FightUI : MonoBehaviour {
             }
         } else if (!slice.animcomplete)
             slice.img.gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(slice.img.GetComponent<Image>().sprite.rect.width, slice.img.GetComponent<Image>().sprite.rect.height);
+    }
+
+    Vector3 CalculateSlicePos() {
+        return new Vector3(enemy.offsets[0].x, eneSize.y / 2 + enemy.offsets[0].y - 55, 0);
+    }
+
+    void UpdateSlicePos() {
+        slice.img.GetComponent<RectTransform>().localPosition = CalculateSlicePos();
     }
 }
