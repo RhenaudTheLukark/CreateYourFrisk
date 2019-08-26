@@ -22,6 +22,7 @@ public class EnemyController : MonoBehaviour {
     public virtual bool CanCheck { get; set; }
     public virtual bool Unkillable { get; set; }
     public virtual string DialogBubble { get; set; }
+    public virtual string DialoguePrefix { get; set; }
     public virtual string Font { get; set; }
     public virtual string Voice { get; set; }
 
