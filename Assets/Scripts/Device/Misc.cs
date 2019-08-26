@@ -20,7 +20,7 @@ public class Misc {
         get { return Screen.fullScreen; }
         set {
             Screen.fullScreen = value;
-            
+
             GlobalControls.SetFullScreen(value, 2);
         }
     }
@@ -32,7 +32,7 @@ public class Misc {
     public static int ScreenWidth {
         get { return Screen.currentResolution.width; }
     }
-    
+
     public static float cameraX {
         get { return Camera.main.transform.position.x - 320; }
         set {
@@ -41,7 +41,7 @@ public class Misc {
                 UserDebugger.instance.transform.position = new Vector3(value + 620, UserDebugger.instance.transform.position.y, UserDebugger.instance.transform.position.z);
         }
     }
-    
+
     public static float cameraY {
         get { return Camera.main.transform.position.y - 240; }
         set {
@@ -50,17 +50,17 @@ public class Misc {
                 UserDebugger.instance.transform.position = new Vector3(UserDebugger.instance.transform.position.x, value + 480, UserDebugger.instance.transform.position.z);
         }
     }
-    
+
     public static void MoveCamera(float x, float y) {
         cameraX += x;
         cameraY += y;
     }
-    
+
     public static void MoveCameraTo(float x, float y) {
         cameraX = x;
         cameraY = y;
     }
-    
+
     public static void ResetCamera() {
         MoveCameraTo(0f, 0f);
     }
@@ -108,11 +108,11 @@ public class Misc {
 
     #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
         [DllImport("user32.dll")]
-        private static extern int GetActiveWindow(); 
+        private static extern int GetActiveWindow();
         public static int window = GetActiveWindow();
-        
+
         public static void RetargetWindow() { window = GetActiveWindow(); }
-        
+
         [DllImport("user32.dll")]
         public static extern int FindWindow(string className, string windowName);
         [DllImport("user32.dll")]
@@ -179,7 +179,7 @@ public class Misc {
             GetWindowRect(window, out r);
             return new Rect(r.Left, r.Top, Mathf.Abs(r.Right - r.Left), Mathf.Abs(r.Top - r.Bottom));
         }
-    
+
         public static int WindowWidth {
             get {
                 Rect size = GetWindowRect();
@@ -195,54 +195,54 @@ public class Misc {
         }
 #else
         public static string WindowName {
-            get { 
-                UnitaleUtil.DisplayLuaError("Windows-only function", "This feature is Windows-only! Sorry, but you can't use it here."); 
+            get {
+                UnitaleUtil.DisplayLuaError("Windows-only function", "This feature is Windows-only! Sorry, but you can't use it here.");
                 return "";
             }
             set { UnitaleUtil.DisplayLuaError("Windows-only function", "This feature is Windows-only! Sorry, but you can't use it here."); }
         }
 
-        public static int WindowX { 
-            get { 
-                UnitaleUtil.DisplayLuaError("Windows-only function", "This feature is Windows-only! Sorry, but you can't use it here."); 
+        public static int WindowX {
+            get {
+                UnitaleUtil.DisplayLuaError("Windows-only function", "This feature is Windows-only! Sorry, but you can't use it here.");
                 return 0;
             }
             set { UnitaleUtil.DisplayLuaError("Windows-only function", "This feature is Windows-only! Sorry, but you can't use it here."); }
         }
 
         public static int WindowY {
-            get { 
-                UnitaleUtil.DisplayLuaError("Windows-only function", "This feature is Windows-only! Sorry, but you can't use it here."); 
+            get {
+                UnitaleUtil.DisplayLuaError("Windows-only function", "This feature is Windows-only! Sorry, but you can't use it here.");
                 return 0;
             }
             set { UnitaleUtil.DisplayLuaError("Windows-only function", "This feature is Windows-only! Sorry, but you can't use it here."); }
         }
 
         public static void MoveWindowTo(int X, int Y) {
-            UnitaleUtil.DisplayLuaError("Windows-only function", "This feature is Windows-only! Sorry, but you can't use it here."); 
+            UnitaleUtil.DisplayLuaError("Windows-only function", "This feature is Windows-only! Sorry, but you can't use it here.");
             return;
         }
 
         public static void MoveWindow(int X, int Y) {
-            UnitaleUtil.DisplayLuaError("Windows-only function", "This feature is Windows-only! Sorry, but you can't use it here."); 
+            UnitaleUtil.DisplayLuaError("Windows-only function", "This feature is Windows-only! Sorry, but you can't use it here.");
             return;
         }
 
         public static Rect GetWindowRect() {
-            UnitaleUtil.DisplayLuaError("Windows-only function", "This feature is Windows-only! Sorry, but you can't use it here."); 
+            UnitaleUtil.DisplayLuaError("Windows-only function", "This feature is Windows-only! Sorry, but you can't use it here.");
             return new Rect();
         }
-    
+
         public static int WindowWidth {
-            get { 
-                UnitaleUtil.DisplayLuaError("Windows-only function", "This feature is Windows-only! Sorry, but you can't use it here."); 
+            get {
+                UnitaleUtil.DisplayLuaError("Windows-only function", "This feature is Windows-only! Sorry, but you can't use it here.");
                 return 0;
             }
         }
 
         public static int WindowHeight {
-            get { 
-                UnitaleUtil.DisplayLuaError("Windows-only function", "This feature is Windows-only! Sorry, but you can't use it here."); 
+            get {
+                UnitaleUtil.DisplayLuaError("Windows-only function", "This feature is Windows-only! Sorry, but you can't use it here.");
                 return 0;
             }
         }

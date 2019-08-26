@@ -128,7 +128,7 @@ public class FightUI : MonoBehaviour {
                 Vector2 localEnePos = enemy.GetComponent<RectTransform>().anchoredPosition; // get local position to do the shake
                 enemy.GetComponent<RectTransform>().anchoredPosition = new Vector2(localEnePos.x + shakeX[shakeIndex], localEnePos.y);
 
-                /*#if UNITY_STANDALONE_WIN || UNITY_EDITOR
+                /*#if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
                     if (StaticInits.ENCOUNTER == "01 - Two monsters" && StaticInits.MODFOLDER == "Examples")
                         Misc.MoveWindow(shakeX[shakeIndex] * 2, 0);
                 #endif*/

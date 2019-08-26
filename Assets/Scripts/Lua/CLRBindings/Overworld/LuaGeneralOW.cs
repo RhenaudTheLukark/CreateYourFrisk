@@ -60,6 +60,8 @@ public class LuaGeneralOW {
         textMsgChoice.AddToText("[mugshot:null]");
         List<string> finalText = new List<string>();
         bool[] oneLiners = new bool[2];
+        List<string[]> preTexts = new List<string[]>();
+        bool threeLiner = false;
 
         //Do not put more than 3 lines and 2 choices
         //If the 3rd parameter is a string, it has to be a question
@@ -71,19 +73,23 @@ public class LuaGeneralOW {
             if (choices.Table.Get(i + 1).String == null)
                 continue;
 
-            string[] preText = choices.Table.Get(i + 1).String.Split('\n');
+            preTexts.Add(choices.Table.Get(i + 1).String.Split('\n'));
+            string[] preText = preTexts[preTexts.Count - 1];
             oneLiners[i] = preText.Length == 1 && question != "";
+            if (preText.Length == 3)
+                threeLiner = true;
             if (oneLiners[i]) {
                 string line = preText[0];
-                preText = new string[] { "", line };
+                preTexts[preTexts.Count - 1] = new string[] { "", line };
             }
+        }
 
-            for (int j = 0; j < 3; j++) {
+        for (int i = 0; i < 2; i++) {
+            string[] preText = preTexts[i];
+            for (int j = 0; j < (threeLiner ? 3 : 2); j++) {
                 if (j == finalText.Count)
                     finalText.Add("");
-                finalText[j] += "[charspacing:8] [charspacing:2]" + (i == 0 ? "     " : "") + (j >= preText.Length ? "" : preText[j]) + (i == 0 ? "\t" : "");
-                if (j == 2)
-                    break;
+                finalText[j] += "[charspacing:8] [charspacing:2]" + (j >= preText.Length ? "" : preText[j]) + (i == 0 ? "\t" : "");
             }
         }
 
