@@ -529,11 +529,10 @@ public class UIController : MonoBehaviour {
                     sbTextMan.SetOffset(speechBubSpr.border.x, -speechBubSpr.border.w);
                     //sbTextMan.setFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_MONSTERTEXT_NAME));
                     sbTextMan.SetFont(SpriteFontRegistry.Get(encounter.EnabledEnemies[i].Font));
-                    sbTextMan.SetEffect(new RotatingEffect(sbTextMan));
 
                     MonsterMessage[] monMsgs = new MonsterMessage[msgs.Length];
                     for (int j = 0; j < monMsgs.Length; j++)
-                        monMsgs[j] = new MonsterMessage(msgs[j]);
+                        monMsgs[j] = new MonsterMessage(encounter.EnabledEnemies[i].DialoguePrefix + msgs[j]);
 
                     sbTextMan.SetTextQueue(monMsgs);
                     speechBub.GetComponent<Image>().enabled = true;
