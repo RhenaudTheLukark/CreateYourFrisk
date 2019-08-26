@@ -161,6 +161,17 @@ public class LuaEnemyController : EnemyController {
         set { script.SetVar("cancheck", DynValue.NewBoolean(value)); }
     }
 
+    public override string DialoguePrefix {
+        get {
+            DynValue dialoguePrefix = script.GetVar("dialogueprefix");
+            if (dialoguePrefix == null || dialoguePrefix.Type == DataType.Nil)
+                return "[effect:rotate]";
+            return dialoguePrefix.String;
+        }
+
+        set { script.SetVar("dialogueprefix", DynValue.NewString(value)); }
+    }
+
     public override bool Unkillable {
         get {
             DynValue checkVal = script.GetVar("unkillable");
