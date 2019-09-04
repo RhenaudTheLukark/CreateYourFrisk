@@ -27,7 +27,7 @@ public class ScriptWrapper {
         instances.Remove(this);
     }
 
-    internal DynValue DoString(string source) { return script.DoString(source, null, scriptname != "???" ? scriptname : null); }
+    internal DynValue DoString(string source) { return script.DoString(source, null, (!GlobalControls.retroMode && scriptname != "???") ? scriptname : null); }
 
     public void SetVar(string key, DynValue value) {
         if (key == null)
