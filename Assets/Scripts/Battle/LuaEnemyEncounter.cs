@@ -110,7 +110,7 @@ internal class LuaEnemyEncounter : EnemyEncounter {
             for (int i = 0; i < waves.Length; i++) {
                 currentWaveScript = i;
                 DynValue ArenaStatus = UserData.Create(ArenaManager.luaStatus);
-                waves[i] = new ScriptWrapper();
+                waves[i] = new ScriptWrapper() { scriptname = nextWaves.Table.Get(i + 1).String };
                 waves[i].script.Globals.Set("Arena", ArenaStatus);
                 waves[i].script.Globals["EndWave"] = (Action)EndWaveTimer;
                 waves[i].script.Globals["State"] = (Action<Script, string>)UIController.SwitchStateOnString;

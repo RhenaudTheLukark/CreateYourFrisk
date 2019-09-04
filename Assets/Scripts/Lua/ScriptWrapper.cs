@@ -19,7 +19,7 @@ public class ScriptWrapper {
         this.Bind("_getv", (Func<Script, string, DynValue>)this.GetVar);
         string toDoString = "setmetatable({}, {__index=function(t, name) return _getv(name) end}) ";
         text = toDoString;
-        script.DoString(toDoString);
+        script.DoString(toDoString, null, scriptname);
         instances.Add(this);
     }
 
@@ -27,7 +27,7 @@ public class ScriptWrapper {
         instances.Remove(this);
     }
 
-    internal DynValue DoString(string source) { return script.DoString(source); }
+    internal DynValue DoString(string source) { return script.DoString(source, null, scriptname); }
 
     public void SetVar(string key, DynValue value) {
         if (key == null)
