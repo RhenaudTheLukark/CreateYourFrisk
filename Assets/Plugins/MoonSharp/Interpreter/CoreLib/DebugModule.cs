@@ -319,7 +319,6 @@ namespace MoonSharp.Interpreter.CoreLib
             string what = vwhat.CastToString() ?? "nfSlu";
 
 			DynValue vt = DynValue.NewTable(executionContext.GetScript());
-			Table t = vt.Table;
 
 			if (vf.Type == DataType.Number)
 			{
