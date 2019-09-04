@@ -345,7 +345,7 @@ namespace MoonSharp.Interpreter.CoreLib
 				}
 				if (what.Contains("l"))
 				{
-					vt.Table.Set("currentline", DynValue.NewNumber(wi.Location.FromLine));
+					vt.Table.Set("currentline", DynValue.NewNumber(wi.Location != null ? wi.Location.FromLine : executionContext.CallingLocation.FromLine));
 				}
 				if (what.Contains("u"))
 				{
