@@ -88,7 +88,7 @@ public class ScriptWrapper {
             DynValue d = DynValue.Nil;
             try { d = script.Call(script.Globals[function]); } 
             catch (InterpreterException ex) {
-                UnitaleUtil.DisplayLuaError(scriptname, ex.DecoratedMessage == null ? 
+                UnitaleUtil.DisplayLuaError(scriptname, ex.DoNotDecorateMessage ? 
                                                             ex.Message : 
                                                             ex.DecoratedMessage.Substring(5).Contains("chunk_") ? 
                                                                 ex.Message : 
