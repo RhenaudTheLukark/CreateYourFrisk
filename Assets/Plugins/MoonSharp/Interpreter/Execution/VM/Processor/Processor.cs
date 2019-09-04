@@ -8,11 +8,10 @@ namespace MoonSharp.Interpreter.Execution.VM
 {
 	sealed partial class Processor
 	{
-		public ByteCode m_RootChunk;
-		public Instruction m_doFileRequireHack;
+		ByteCode m_RootChunk;
 
-		public FastStack<DynValue> m_ValueStack = new FastStack<DynValue>(131072);
-		public FastStack<CallStackItem> m_ExecutionStack = new FastStack<CallStackItem>(131072);
+		FastStack<DynValue> m_ValueStack = new FastStack<DynValue>(131072);
+		FastStack<CallStackItem> m_ExecutionStack = new FastStack<CallStackItem>(131072);
 		List<Processor> m_CoroutinesStack;
 
 		Table m_GlobalTable;
@@ -104,8 +103,7 @@ namespace MoonSharp.Interpreter.Execution.VM
 				ReturnAddress = -1,
 				ClosureScope = function.Function.ClosureContext,
 				CallingSourceRef = SourceRef.GetClrLocation(),
-				Flags = flags,
-				Function = function.Function
+				Flags = flags
 			});
 
 			return function.Function.EntryPointByteCodeLocation;

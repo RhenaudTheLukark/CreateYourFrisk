@@ -18,7 +18,6 @@ namespace MoonSharp.Interpreter.Execution.VM
 		public int ReturnAddress;
 		public DynValue[] LocalScope;
 		public ClosureContext ClosureScope;
-		public Closure Function;
 
 		public CallStackItemFlags Flags;
 	}

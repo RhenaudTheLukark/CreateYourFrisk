@@ -179,7 +179,9 @@ namespace MoonSharp.Interpreter
 
 			m_Sources.Add(source);
 
-			int address = Loader_Fast.LoadChunk(this, source, m_ByteCode, m_MainProcessor);
+			int address = Loader_Fast.LoadChunk(this,
+				source,
+				m_ByteCode);
 
 			SignalSourceCodeChange(source);
 			SignalByteCodeChange();
