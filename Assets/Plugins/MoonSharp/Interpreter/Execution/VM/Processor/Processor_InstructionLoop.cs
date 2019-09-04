@@ -742,6 +742,7 @@ namespace MoonSharp.Interpreter.Execution.VM
 					Continuation = continuation,
 					ErrorHandlerBeforeUnwind = unwindHandler,
 					Flags = flags,
+                    Function = fn.Function
 				});
 				return fn.Function.EntryPointByteCodeLocation;
 			}
