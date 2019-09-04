@@ -334,14 +334,14 @@ namespace MoonSharp.Interpreter.CoreLib
 				}
 				if (what.Contains("f"))
 				{
-					vt.Table.Set("func", wi.Value);
+					vt.Table.Set("func", wi.Value ?? DynValue.NewNil());
 				}
 				if (what.Contains("S"))
 				{
-					string source = wi.Value.Type == DataType.Function ? executionContext.GetScript().GetSourceCode(executionContext.CallingLocation.SourceIdx).Name : "[C]";
+					string source = (wi.Value != null && wi.Value.Type == DataType.Function) ? executionContext.GetScript().GetSourceCode(executionContext.CallingLocation.SourceIdx).Name : "[C]";
 					vt.Table.Set("source", DynValue.NewString("=" + source));
 					vt.Table.Set("short_src", DynValue.NewString(source.Length >= 60 ? source.Substring(0, 60) : source));
-					vt.Table.Set("what", DynValue.NewString(wi.Name == null ? "main" : wi.Value.Type == DataType.Function ? "Lua" : "C"));
+					vt.Table.Set("what", DynValue.NewString(wi.Name == null ? "main" : ((wi.Value != null && wi.Value.Type == DataType.Function) ? "Lua" : "C")));
 				}
 				if (what.Contains("l"))
 				{
@@ -349,7 +349,7 @@ namespace MoonSharp.Interpreter.CoreLib
 				}
 				if (what.Contains("u"))
 				{
-					vt.Table.Set("nups", DynValue.NewNumber(wi.Value.Type == DataType.Function ? wi.Value.Function.GetUpvaluesCount() : 0));
+					vt.Table.Set("nups", DynValue.NewNumber((wi.Value != null && wi.Value.Type == DataType.Function) ? wi.Value.Function.GetUpvaluesCount() : 0));
 				}
 			}
 			else
