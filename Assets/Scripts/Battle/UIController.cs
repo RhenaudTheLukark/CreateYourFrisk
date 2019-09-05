@@ -1317,6 +1317,7 @@ public class UIController : MonoBehaviour {
 
         textmgr = GameObject.Find("TextManager").GetComponent<TextManager>();
         textmgr.SetEffect(new TwitchEffect(textmgr));
+        textmgr.ResetFont();
         textmgr.SetCaller(LuaEnemyEncounter.script);
         encounter = FindObjectOfType<LuaEnemyEncounter>();
 
