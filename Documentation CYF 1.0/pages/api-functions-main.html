@@ -284,7 +284,7 @@ end
                 <br><br>
                 * <span style="color:#fff">Only the <span class="term">Update</span> function of the Encounter script will remain active here.
                 <br><br>
-                * To unfreeze a state, you must use <span class="term">State</span> to switch to the last active state.</span> <span class="term">GetCurrentState()</span> will tell you the name of the frozen state.
+                * To unfreeze a state, you must use <span class="term">State</span> to switch to another state, preferably the last active state.</span> <span class="term">GetCurrentState()</span> will tell you the name of the frozen state.
                 <br><br>
             </p>
             
@@ -349,28 +349,33 @@ end</pre>
 
             <p>
                 <br><span class="function">Kill() [M]</span>
-                Kills the monster immediately. If this was the last monster, the battle ends.
+                Kills the monster immediately. If this was the last monster, the battle ends.<br>
+                Does NOT call the <span class="ref">Game Event</span> <span class="term">OnDeath</span>.
             </p>
 
             <p>
                 <br><span class="function">Spare() [M]</span>
-                Spares the monster immediately. Similar to <span class="term">Kill()</span>, if this was the last monster, the battle ends.
+                Spares the monster immediately. Similar to <span class="term">Kill()</span>, if this was the last monster, the battle ends.<br>
+                Does NOT call the <span class="ref">Game Event</span> <span class="term">OnDeath</span>.
             </p>
 
             <p>
                 <br><span class="function"><span class="CYF"></span> Move(<span class="number"></span> x, <span class="number"></span> y) [M]</span>
-                Moves the enemy's sprite from its current position.
+                Moves the enemy's sprite relative to its current position.
             </p>
             
             <p>
                 <br><span class="function"><span class="CYF"></span> MoveTo(<span class="number"></span> x, <span class="number"></span> y) [M]</span>
-                Moves the enemy's sprite relative to the bottom left corner.
+                Moves the enemy's sprite relative to the bottom left corner of the screen.<br>
+                This is effectively the same as setting <span class="term">enemypositions</span> again, except <span class="term">x</span> is 320px left and <span class="term">y</span> is 231px down.
             </p>
             
             <p>
                 <br><span class="function"><span class="CYF"></span> BindToArena(<span class="boolean"></span> bind, <span class="boolean"></span> isUnderArena = false) [M]</span>
-                Controls whether the enemy's sprite will follow the Arena's movements.<br>
-                <span class="term">isUnderArena</span>: will the enemy's sprite be under the arena?
+                Controls whether the enemy's sprite will follow the Arena's movements.
+                <br><br>
+                If <span class="term">bind</span> is true, the enemy will be parented to the Arena and follow all of its movements.<br>
+                <u>Otherwise</u>, it will be either behind or in front of the arena, depending on the value of <span class="term">isUnderArena</span>.
             </p>
             
             <p>

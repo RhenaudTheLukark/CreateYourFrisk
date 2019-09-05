@@ -197,6 +197,15 @@ end
                 point in time, it will not get executed.
             </p>
             <br><br>
+            <p>
+                <br><span class="function"><span class="CYF"></span>BeforeDeath()</span>
+                This function runs the moment the Player takes mortal damage, just before activating the Game Over sequence.
+                This is the perfect place to set Real and AlMighty Globals you want set when the player dies.
+                <br><br>
+                If you use <span class="term">Player.hp</span> or <span class="term">Player.Heal</span> here to bring the
+                Player's hp back to 1 or greater, they will live and the Game Over sequence will be cancelled.
+            </p>
+            <br><br>
             <hr>
             <h4>Monster script events</h4>
             <p>
