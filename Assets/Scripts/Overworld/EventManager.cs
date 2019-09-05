@@ -181,7 +181,7 @@ public class EventManager : MonoBehaviour {
                             i--;
                             Destroy(go);
                         } else if (!TestContainsListVector2(ev.eventTriggers, ev.actualPage) && ev.eventTriggers.Count != 0) {
-                            UnitaleUtil.DisplayLuaError(ev.name, "The trigger of the page n°" + ev.actualPage + " doesn't exist.\nYou'll need to add it via Unity, on this event's EventOW Component.");
+                            UnitaleUtil.DisplayLuaError(ev.name, "The trigger of the page #" + ev.actualPage + " doesn't exist.\nYou'll need to add it via Unity, on this event's EventOW Component.");
                             return;
                         }
                     }
@@ -305,9 +305,9 @@ public class EventManager : MonoBehaviour {
                     }
             }
         } catch (InterpreterException e) {
-            UnitaleUtil.DisplayLuaError(gameobject.name + ", page n°" + gameobject.GetComponent<EventOW>().actualPage, e.DecoratedMessage);
+            UnitaleUtil.DisplayLuaError(gameobject.name + ", page #" + gameobject.GetComponent<EventOW>().actualPage, e.DecoratedMessage);
         } catch (Exception e) {
-            UnitaleUtil.DisplayLuaError(gameobject.name + ", page n°" + gameobject.GetComponent<EventOW>().actualPage,
+            UnitaleUtil.DisplayLuaError(gameobject.name + ", page #" + gameobject.GetComponent<EventOW>().actualPage,
                                         "Unknown error of type " + e.GetType() + ". Please send this to the main dev.\n\n" + e.Message + "\n\n" + e.StackTrace);
         }
         return false;
@@ -343,9 +343,9 @@ public class EventManager : MonoBehaviour {
                     ExecuteEvent(events[i], -1, true);
                 }
             }
-        } catch (InterpreterException e) { UnitaleUtil.DisplayLuaError(gameobject.name + ", page n°" + gameobject.GetComponent<EventOW>().actualPage, e.DecoratedMessage); } 
+        } catch (InterpreterException e) { UnitaleUtil.DisplayLuaError(gameobject.name + ", page #" + gameobject.GetComponent<EventOW>().actualPage, e.DecoratedMessage); } 
         catch (Exception e) {
-            UnitaleUtil.DisplayLuaError(gameobject.name + ", page n°" + gameobject.GetComponent<EventOW>().actualPage,
+            UnitaleUtil.DisplayLuaError(gameobject.name + ", page #" + gameobject.GetComponent<EventOW>().actualPage,
                                         "Unknown error of type " + e.GetType() + ". Please send this to the main dev.\n\n" + e.Message + "\n\n" + e.StackTrace);
         }
     }

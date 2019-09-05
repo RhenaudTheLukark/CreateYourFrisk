@@ -622,7 +622,7 @@ public class UIController : MonoBehaviour {
                 if (encounter.EnabledEnemies[i].Voice != "")
                     sbTextMan.letterSound.clip = AudioClipRegistry.GetVoice(encounter.EnabledEnemies[i].Voice);
             } catch {
-                new CYFException("Error while updating the monster n°" + i);
+                new CYFException("Error while updating monster #" + i);
             }
         }
     }
