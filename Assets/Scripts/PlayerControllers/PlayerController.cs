@@ -145,8 +145,8 @@ public class PlayerController : MonoBehaviour {
                 PlaySound(AudioClipRegistry.GetSound("hurtsound"));
             }
 
-            if (HP - damage > 0 && invulnerabilitySeconds >= 0) invulTimer = invulnerabilitySeconds;
-            if (damage != 0)                                    setHP(HP - damage, false);
+            if (invulnerabilitySeconds >= 0) invulTimer = invulnerabilitySeconds;
+            if (damage != 0)                 setHP(HP - damage, false);
         } else if (damage < 0) {
             PlaySound(AudioClipRegistry.GetSound("healsound"));
             setHP(HP - damage);
@@ -155,11 +155,14 @@ public class PlayerController : MonoBehaviour {
 
     public void setHP(float newhp, bool actualDamage = true) {
         newhp = Mathf.Round(newhp * Mathf.Pow(10, ControlPanel.instance.MaxDigitsAfterComma)) / Mathf.Pow(10, ControlPanel.instance.MaxDigitsAfterComma);
-        
+
         // Retromode: Make Player.hp act as an integer
         if (GlobalControls.retroMode)
             newhp = Mathf.Floor(newhp);
-        
+
+        if (newhp <= 0 && !deathEscape)
+            return;
+
         if (newhp <= 0) {
             if (!MusicManager.IsStoppedOrNull(PlayerOverworld.audioKept)) {
                 GetComponent<GameOverBehavior>().musicBefore = PlayerOverworld.audioKept;
@@ -194,6 +197,7 @@ public class PlayerController : MonoBehaviour {
             }
             HP = 0;
             invulTimer = 0;
+            selfImg.enabled = true;
             setControlOverride(true);
             RectTransform rt = gameObject.GetComponent<RectTransform>();
             Vector2 pos = rt.position;
