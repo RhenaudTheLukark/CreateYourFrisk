@@ -32,4 +32,7 @@ public class LuaInputBinding {
     public bool IsMouseInWindow {
         get { return isMouseInWindow; }
     }
+
+    public float mouseScroll { get { return Input.mouseScrollDelta.y; } }
+    public float MouseScroll { get { return mouseScroll; } }
 }
