@@ -23,22 +23,22 @@ public class UIController : MonoBehaviour {
     public static UIController instance;
     internal TextManager textmgr;
 
-    private static Sprite actB1;
     private static Sprite fightB1;
+    private static Sprite actB1;
     private static Sprite itemB1;
     private static Sprite mercyB1;
+    private Image fightBtn;
     private Image actBtn;
+    private Image itemBtn;
+    private Image mercyBtn;
     private Actions action = Actions.FIGHT;
     public Actions forcedaction = Actions.NONE;
     private GameObject arenaParent;
     public GameObject psContainer;
     //private GameObject canvasParent;
     internal LuaEnemyEncounter encounter;
-    private Image fightBtn;
     [HideInInspector] public FightUIController fightUI;
     private Vector2 initialHealthPos = new Vector2(250, -10); // initial healthbar position for target selection
-    private Image itemBtn;
-    private Image mercyBtn;
 
     public TextManager[] monDialogues;
 
@@ -1298,6 +1298,16 @@ public class UIController : MonoBehaviour {
                 PlayerController.instance.SetPosition(515, 25, true);
                 break;
         }
+    }
+
+    public void MovePlayerToAction(Actions act) {
+        fightBtn.overrideSprite = null;
+        actBtn.overrideSprite = null;
+        itemBtn.overrideSprite = null;
+        mercyBtn.overrideSprite = null;
+
+        action = act;
+        SetPlayerOnAction(action);
     }
 
     // visualisation:

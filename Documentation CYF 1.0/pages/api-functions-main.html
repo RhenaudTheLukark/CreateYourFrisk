@@ -162,9 +162,12 @@ it's w3c valid, at least
             </p>
 
             <p>
-                <br><span class="function"><span class="CYF"></span> SetAction(<span class="string"></span> "FIGHT" or "ACT") [E/M/W]</span>
-                Used alongside <span class="term">EnteringState</span> to force the player to choose FIGHT or ACT. Does nothing outside of 
-                <span class="term">EnteringState</span>.
+                <br><span class="function"><span class="CYF"></span> SetAction(<span class="string"></span> "FIGHT", "ACT", "ITEM" or "MERCY") [E/M/W]</span>
+                Used alongside <span class="term">State("ENEMYSELECT")</span> (or <span class="term">EnteringState</span> when entering the same state) to
+                force the player to choose FIGHT or ACT. This controls whether you'll see the enemy's health bar in the menu and whether the next state upon
+                pressing Z is <span class="term">ATTACKING</span> or <span class="term">ACTMENU</span>.
+                <br><br>
+                If used in the state <span class="term">ACTIONSELECT</span>, this function will move the player over the specified button.
             </p>
            
             <p>         
