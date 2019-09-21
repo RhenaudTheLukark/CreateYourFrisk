@@ -193,8 +193,8 @@ public class ShopScript : MonoBehaviour {
             case State.TALKINPROGRESS:
                 script.Call("SuccessTalk", DynValue.NewString(mainName[selection]));
                 if (!interrupted) {
-                    selection = 1;
                     TextMessage[] texts = BuildTalkResultStrings();
+                    selection = 1;
                     tmBigTalk.SetTextQueue(texts);
                     utHeart.GetComponent<Image>().enabled = false;
                 }
