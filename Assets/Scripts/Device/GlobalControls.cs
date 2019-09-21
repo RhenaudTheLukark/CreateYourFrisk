@@ -45,96 +45,86 @@ public class GlobalControls : MonoBehaviour {
         else if (window == null
             misc = new Misc();
     }*/
-    
+
     // used to only call Awake once
     private bool awakened = false;
-    
+
     void Awake() {
         if (!awakened) {
             SceneManager.sceneLoaded += LoadScene;
-            
+
             // use AlMightyGlobals to load Safe Mode, Retromode and Fullscreen mode preferences
-            
+
             // check if safe mode has a stored preference that is a boolean
             if (LuaScriptBinder.GetAlMighty(null, "CYFSafeMode") != null
              && LuaScriptBinder.GetAlMighty(null, "CYFSafeMode").Type == DataType.Boolean)
                 ControlPanel.instance.Safe = LuaScriptBinder.GetAlMighty(null, "CYFSafeMode").Boolean;
-            
+
             // check if retro mode has a stored preference that is a boolean
             if (LuaScriptBinder.GetAlMighty(null, "CYFRetroMode") != null
              && LuaScriptBinder.GetAlMighty(null, "CYFRetroMode").Type == DataType.Boolean)
                 retroMode = LuaScriptBinder.GetAlMighty(null, "CYFRetroMode").Boolean;
-            
+
             // check if fullscreen mode has a stored preference that is a boolean
             if (LuaScriptBinder.GetAlMighty(null, "CYFPerfectFullscreen") != null
              && LuaScriptBinder.GetAlMighty(null, "CYFPerfectFullscreen").Type == DataType.Boolean)
                 perfectFullscreen = LuaScriptBinder.GetAlMighty(null, "CYFPerfectFullscreen").Boolean;
-            
+
             // check if window scale has a stored preference that is a number
             if (LuaScriptBinder.GetAlMighty(null, "CYFWindowScale") != null
              && LuaScriptBinder.GetAlMighty(null, "CYFWindowScale").Type == DataType.Number)
                 windowScale = (int)LuaScriptBinder.GetAlMighty(null, "CYFWindowScale").Number;
-            
+
             awakened = true;
         }
     }
-    
+
     // resolution variables
     public static bool perfectFullscreen = true;
-    public static int fullscreenSwitch = 0;
-    
-    public static int windowScale = 1;
-    
+    public static int  fullscreenSwitch = 0;
+    public static int  windowScale = 1;
+
     #if UNITY_STANDALONE_WIN
         static IEnumerator RepositionWindow() {
             yield return new WaitForEndOfFrame();
-            
+
             try {
                 Misc.MoveWindowTo((int)(Screen.currentResolution.width/2 - (Screen.width/2)), (int)(Screen.currentResolution.height/2 - (Screen.height/2)));
             } catch {}
         }
     #endif
-    
-    public static void SetFullScreen(bool fullscreen, int newSwitch = 1) {
+
+    public static void SetFullScreen(bool fullscreen, int fswitch = 1) {
         if (perfectFullscreen) {
             if (!fullscreen)
                 Screen.SetResolution(640 * windowScale, 480 * windowScale, false, 0);
-            else
-                Screen.SetResolution(Screen.currentResolution.width, Screen.currentResolution.height, true, 0);
+            else {
+                double ScreenWidth  = (Screen.currentResolution.height / (double)3) * (double)4;
+                double ScreenHeight = (Screen.currentResolution.width / (double)4) * (double)3;
+                Screen.SetResolution((int)RoundToNearestEven(ScreenWidth), (int)RoundToNearestEven(ScreenHeight), true, 0);
+            }
         } else
             Screen.SetResolution(640 * windowScale, 480 * windowScale, fullscreen, 0);
-        
-        fullscreenSwitch = newSwitch;
+
+        #if UNITY_STANDALONE_WIN
+            fullscreenSwitch = fswitch;
+        #endif
 	}
 
 	private static double RoundToNearestEven(double value) {
 		return System.Math.Truncate(value) + (System.Math.Truncate(value) % 2);
 	}
 
-	static IEnumerator ChangeAspectRatio() {
-        yield return new WaitForFixedUpdate();
-        
-		if (!Application.isEditor) {
-			double ScreenWidth  = (Screen.height / (double)3) * (double)4;
-            double ScreenHeight = (Screen.width / (double)4) * (double)3;
-			Screen.SetResolution((int)RoundToNearestEven(ScreenWidth), (int)RoundToNearestEven(ScreenHeight), Screen.fullScreen, 0);
-		}
-	}
-
     /// <summary>
     /// Control checking, and way more.
     /// </summary>
     void Update () {
-        if (fullscreenSwitch != 0) {
-            StartCoroutine(ChangeAspectRatio());
-            
-            #if UNITY_STANDALONE_WIN
-                if (!Screen.fullScreen && fullscreenSwitch == 1)
-                    StartCoroutine(RepositionWindow());
-            #endif
-            
-            fullscreenSwitch--;
-        }
+        #if UNITY_STANDALONE_WIN
+            if (fullscreenSwitch == 1)
+                StartCoroutine(RepositionWindow());
+            else if (fullscreenSwitch > 0)
+                fullscreenSwitch--;
+        #endif
 
         stopScreenShake = false;
         if (isInFight)
