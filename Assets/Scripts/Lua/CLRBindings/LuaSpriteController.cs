@@ -429,11 +429,23 @@ public class LuaSpriteController {
             img.GetComponent<Projectile>().needSizeRefresh = true;
         xScale = xs;
         yScale = ys;
-        if (img.GetComponent<Image>()) nativeSizeDelta = new Vector2(img.GetComponent<Image>().sprite.texture.width, img.GetComponent<Image>().sprite.texture.height);
-        else                           nativeSizeDelta = new Vector2(img.GetComponent<SpriteRenderer>().sprite.texture.width, img.GetComponent<SpriteRenderer>().sprite.texture.height);
+        if (img.GetComponent<Image>()) {
+            nativeSizeDelta = new Vector2(img.GetComponent<Image>().sprite.texture.width, img.GetComponent<Image>().sprite.texture.height);
+            float lowest = Mathf.Min(nativeSizeDelta.x * Mathf.Abs(xScale), nativeSizeDelta.y * Mathf.Abs(yScale));
+            if (Mathf.Min(Mathf.Abs(xScale), Mathf.Abs(yScale)) < 1)
+                img.GetComponent<Image>().sprite.texture.mipMapBias = lowest < 16 ? -4 : (lowest < 32 ? -2 : (lowest < 64 ? -1 : 0));
+            else
+                img.GetComponent<Image>().sprite.texture.mipMapBias = 0;
+        } else {
+            nativeSizeDelta = new Vector2(img.GetComponent<SpriteRenderer>().sprite.texture.width, img.GetComponent<SpriteRenderer>().sprite.texture.height);
+            float lowest = Mathf.Min(nativeSizeDelta.x * Mathf.Abs(xScale), nativeSizeDelta.y * Mathf.Abs(yScale));
+            if (Mathf.Min(Mathf.Abs(xScale), Mathf.Abs(yScale)) < 1)
+                img.GetComponent<SpriteRenderer>().sprite.texture.mipMapBias = lowest < 16 ? -4 : (lowest < 32 ? -2 : (lowest < 64 ? -1 : 0));
+            else
+                img.GetComponent<SpriteRenderer>().sprite.texture.mipMapBias = 0;
+        }
         img.GetComponent<RectTransform>().sizeDelta = new Vector2(nativeSizeDelta.x * Mathf.Abs(xScale), nativeSizeDelta.y * Mathf.Abs(yScale));
-        internalRotation = new Vector3(ys < 0 ? 180 : 0, xs < 0 ? 180 : 0, internalRotation.z);
-        img.GetComponent<RectTransform>().eulerAngles = internalRotation;
+        img.GetComponent<RectTransform>().localScale = new Vector3(xs < 0 ? -1 : 1, ys < 0 ? -1 : 1, 1);
     }
 
     // Sets an animation for this instance
