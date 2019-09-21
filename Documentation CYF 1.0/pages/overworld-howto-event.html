@@ -138,16 +138,22 @@ it's w3c valid, at least
                     <li><span class="term">Actual Page</span>: The first page of the event (and in-game, the current page of the event).</li>
                     <li><span class="term">Event Triggers</span>: <span style="color:#ff0000">This part MUST NOT be forgotten.</span>
                     It is the most important part of the event.<br><br>
-                    In your event's Lua code, you'll need to name all your functions following the pattern <span class="term">"EventPage" + Page number</span>,
-                    starting at 0.<br>
+                    In your event's Lua code, you will need to create <span class="term">EventPage0</span>, followed by one function for each event page you want,
+                    following the pattern <span class="term">"EventPage" + Page number</span>, starting at 0.<br><br>
                     For instance: <span class="term">EventPage0</span>, followed by <span class="term">EventPage1</span>, <span class="term">EventPage2</span>
                     ...until you have all the functions you want.<br><br>
+                    <b><span class="term">EventPage0</span></b> is a special event that is <b>always automatically called</b> as soon as the map loads.<br>
+                    So any custom events that you want to use the Event Trigger system below should be in <span class="term">EventPage1</span> and after.
+                    <br><br><br>
                     Back in Unity, for each X value in the <span class="term">Event Trigger</span> table, you need to give the Page number, 
                     and for each matching Y value, you'll need to input the trigger type of the event:
                     <br><br>
                     <ul>
                         <li><span class="term">0</span>: <b>Confirm Button</b>. Activates when the player presses <span class="term">Z</span> on this event.</li><br>
-                        <li><span class="term">1</span>: <b>Touch</b>. Activates when the player collides with this event's hitbox.</li><br>
+                        <li><span class="term">1</span>: <b>Touch</b>. Activates when the player collides with this event's hitbox.<br><br>
+                        <b>NOTE</b>: In order to have a Touch event, you must check <b><span class="term">Is Trigger</span></b> in the event's
+                        <span class="term">BoxCollider</span> component, and also use <span class="term">Event.IgnoreCollision</span> in
+                        <span class="term">EventPage0</span>. See <span class="ref">The Event Object</span>.</li><br>
                         <li><span class="term">2</span>: <b>Automatic</b>. Activates instantly, as soon as the map loads.</li><br>
                         <li><span class="term">3</span>: <b>Parallel Process</b>. Activates on every frame, identical to <span class="term">Update</span> in Mods.</li><br>
                     </ul>
