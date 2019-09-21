@@ -29,6 +29,7 @@ public class GlobalControls : MonoBehaviour {
     public static bool stopScreenShake = false;
     public static bool isInFight = false;
     public static bool isInShop = false;
+    public static bool allowWipeSave = false;
     private bool screenShaking = false;
     public static Vector2 beginPosition;
     //public static bool samariosNightmare = false;
@@ -134,19 +135,23 @@ public class GlobalControls : MonoBehaviour {
             
             fullscreenSwitch--;
         }
-        
+
         stopScreenShake = false;
         if (isInFight)
             frame ++;
         if (SceneManager.GetActiveScene().name == "ModSelect")        lastSceneUnitale = true;
         else                                                          lastSceneUnitale = false;
+
+        // Activate Debugger
         if (UserDebugger.instance && Input.GetKeyDown(KeyCode.F9)) {
             if (UserDebugger.instance.gameObject.activeSelf)
                 GameObject.Find("Text").transform.SetParent(UserDebugger.instance.gameObject.transform);
             UserDebugger.instance.gameObject.SetActive(!UserDebugger.instance.gameObject.activeSelf);
             Camera.main.GetComponent<FPSDisplay>().enabled = !Camera.main.GetComponent<FPSDisplay>().enabled;
+        // Activate Hitbox Debugger
         } else if (isInFight && Input.GetKeyDown(KeyCode.H) && SceneManager.GetActiveScene().name != "Error" && UserDebugger.instance.gameObject.activeSelf)
             GameObject.Find("Main Camera").GetComponent<ProjectileHitboxRenderer>().enabled = !GameObject.Find("Main Camera").GetComponent<ProjectileHitboxRenderer>().enabled;
+        // Exit a battle or the Error scene
         else if (Input.GetKeyDown(KeyCode.Escape) && (canTransOW.Contains(SceneManager.GetActiveScene().name) || isInFight)) {
             if (isInFight && LuaEnemyEncounter.script.GetVar("unescape").Boolean && SceneManager.GetActiveScene().name != "Error")
                 return;
@@ -158,14 +163,19 @@ public class GlobalControls : MonoBehaviour {
                     GameObject.FindObjectOfType<GameOverBehavior>().EndGameOver();
                 else
                     UIController.EndBattle();
-            else {
+            else
                 UIController.EndBattle();
-            }
             //StaticInits.Reset();
-        } else if (input.Menu == UndertaleInput.ButtonState.PRESSED && !nonOWScenes.Contains(SceneManager.GetActiveScene().name) && !isInFight)
+        // Open the Menu in the Overworld
+        } else if (input.Menu == UndertaleInput.ButtonState.PRESSED && !nonOWScenes.Contains(SceneManager.GetActiveScene().name) && !isInFight) {
             if (!PlayerOverworld.instance.PlayerNoMove && EventManager.instance.script == null && !PlayerOverworld.instance.menuRunning[2] && !PlayerOverworld.instance.menuRunning[4] && EventManager.instance.script == null && GameObject.Find("FadingBlack").GetComponent<Fading>().alpha <= 0)
                 StartCoroutine(PlayerOverworld.LaunchMenu());
-        
+        // Wipe save and close CYF in the Error scene if ControlPanel does not exist yet
+        } else if (SceneManager.GetActiveScene().name == "Error" && allowWipeSave && Input.GetKeyDown(KeyCode.R)) {
+            System.IO.File.Delete(Application.persistentDataPath + "/save.gd");
+            Application.Quit();
+        }
+
         //else if (Input.GetKeyDown(KeyCode.L))
         //    MyFirstComponentClass.SpriteAnalyser();
         if (isInFight)
