@@ -30,7 +30,6 @@ public static class LuaScriptBinder {
         UserData.RegisterType<ScriptWrapper>();
         UserData.RegisterType<LuaSpriteController>();
         UserData.RegisterType<LuaInventory>();
-        UserData.RegisterType<Letter>();
         UserData.RegisterType<Misc>();
         UserData.RegisterType<LuaTextManager>();
         UserData.RegisterType<LuaFile>();
@@ -77,7 +76,6 @@ public static class LuaScriptBinder {
             script.Globals["SetAction"] = (Action<string>)SetAction;
             script.Globals["SetPPCollision"] = (Action<bool>)SetPPCollision;
             script.Globals["AllowPlayerDef"] = (Action<bool>)AllowPlayerDef;
-            script.Globals["GetLetters"] = (Func<Letter[]>)GetLetters;
             script.Globals["CreateText"] = (Func<Script, DynValue, DynValue, int, string, int, LuaTextManager>)CreateText;
             script.Globals["GetCurrentState"] = (Func<string>)GetState;
             script.Globals["BattleDialog"] = (Action<DynValue>)LuaEnemyEncounter.BattleDialog;
@@ -252,7 +250,6 @@ public static class LuaScriptBinder {
         UserData.RegisterType<ScriptWrapper>();
         UserData.RegisterType<LuaSpriteController>();
         UserData.RegisterType<LuaInventory>();
-        UserData.RegisterType<Letter>();
         UserData.RegisterType<Misc>();
         UserData.RegisterType<LuaTextManager>();
         UserData.RegisterType<LuaFile>();
@@ -341,11 +338,6 @@ public static class LuaScriptBinder {
     public static void SetPPAlphaLimit(float f) {
         if (f < 0 || f > 1)  UnitaleUtil.DisplayLuaError("Pixel-Perfect alpha limit", "The alpha limit should be between 0 and 1.");
         else                 ControlPanel.instance.MinimumAlpha = f;
-    }
-
-    public static Letter[] GetLetters() {
-        if (UIController.instance.state != UIController.UIState.ACTIONSELECT)  return null;
-        else                                                                   return GameObject.Find("TextManager").GetComponentsInChildren<Letter>();
     }
 
     public static LuaTextManager CreateText(Script scr, DynValue text, DynValue position, int textWidth, string layer = "BelowPlayer", int bubbleHeight = -1) {
