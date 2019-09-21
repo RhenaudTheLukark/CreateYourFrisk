@@ -44,6 +44,7 @@ public class MusicManager {
         src.clip = AudioClipRegistry.GetMusic(name);
         filename = "music:" + name.ToLower();
         NewMusicManager.audioname["src"] = filename;
+        src.loop = true;
         src.Play();
     }
 
