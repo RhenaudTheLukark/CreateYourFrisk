@@ -122,7 +122,7 @@ public class GlobalControls : MonoBehaviour {
         #if UNITY_STANDALONE_WIN
             if (fullscreenSwitch == 1)
                 StartCoroutine(RepositionWindow());
-            else if (fullscreenSwitch > 0)
+            if (fullscreenSwitch > 0)
                 fullscreenSwitch--;
         #endif
 
