@@ -627,6 +627,43 @@ public class LuaSpriteController {
         else                                                      GetTarget().SetSiblingIndex(sprite.GetTarget().GetSiblingIndex() + 1);
     }
 
+    private int _masked = 0;
+    public void Mask(string mode) {
+        if (mode == null)
+            throw new CYFException("sprite.Mask: No argument provided.");
+
+        mode = mode.ToLower();
+        if (mode != "box" && mode != "sprite" && mode != "stencil" && mode != "off")
+            throw new CYFException("sprite.Mask: Invalid mask mode \"" + mode.ToString() + "\".");
+
+        int masked = mode == "box" ? 1 : (mode == "sprite" ? 2 : (mode == "stencil" ? 3 : 0));
+
+        if (masked != _masked) {
+            RectMask2D box = img.GetComponent<RectMask2D>();
+            Mask spr = img.GetComponent<Mask>();
+
+            if (masked == 1) {
+                if (spr != null)
+                    GameObject.Destroy(spr);
+                img.AddComponent<RectMask2D>();
+            } else if (masked > 1) {
+                if (box != null)
+                    GameObject.Destroy(box);
+                if (_masked < 2)
+                    img.AddComponent<Mask>();
+                if (masked == 3)
+                    img.GetComponent<Mask>().showMaskGraphic = false;
+            } else if (masked == 0) {
+                if (spr != null)
+                    GameObject.Destroy(spr);
+                else
+                    GameObject.Destroy(box);
+            }
+        }
+
+        _masked = masked;
+    }
+
     public void Remove() {
         if (_img == null)
             return;
