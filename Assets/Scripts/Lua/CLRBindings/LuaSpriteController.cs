@@ -436,7 +436,7 @@ public class LuaSpriteController {
                 img.GetComponent<Image>().sprite.texture.mipMapBias = lowest < 16 ? -4 : (lowest < 32 ? -2 : (lowest < 64 ? -1 : 0));
             else
                 img.GetComponent<Image>().sprite.texture.mipMapBias = 0;
-            img.GetComponent<RectTransform>().localScale = new Vector3(xs < 0 ? -1 : 1, ys < 0 ? -1 : 1, 1);
+            // img.GetComponent<RectTransform>().localScale = new Vector3(xs < 0 ? -1 : 1, ys < 0 ? -1 : 1, 1);
         } else { // In overworld
             nativeSizeDelta = new Vector2(img.GetComponent<SpriteRenderer>().sprite.texture.width, img.GetComponent<SpriteRenderer>().sprite.texture.height);
             float lowest = Mathf.Min(nativeSizeDelta.x * Mathf.Abs(xScale), nativeSizeDelta.y * Mathf.Abs(yScale));
@@ -444,10 +444,10 @@ public class LuaSpriteController {
                 img.GetComponent<SpriteRenderer>().sprite.texture.mipMapBias = lowest < 16 ? -4 : (lowest < 32 ? -2 : (lowest < 64 ? -1 : 0));
             else
                 img.GetComponent<SpriteRenderer>().sprite.texture.mipMapBias = 0;
-            internalRotation = new Vector3(ys < 0 ? 180 : 0, xs < 0 ? 180 : 0, internalRotation.z);
-            img.GetComponent<RectTransform>().eulerAngles = internalRotation;
         }
         img.GetComponent<RectTransform>().sizeDelta = new Vector2(nativeSizeDelta.x * Mathf.Abs(xScale), nativeSizeDelta.y * Mathf.Abs(yScale));
+        internalRotation = new Vector3(ys < 0 ? 180 : 0, xs < 0 ? 180 : 0, internalRotation.z);
+        img.GetComponent<RectTransform>().eulerAngles = internalRotation;
     }
 
     // Sets an animation for this instance
