@@ -125,7 +125,11 @@ it's w3c valid, at least
                 </ul></li>
                 <li><span class="term">SpriteRenderer</span>:<ul>
                     <li><span class="term">Sprite</span>: This is not what will be used to display the sprite.<br>
-				But, you can still use this to see if the event's sprite looks good and to modify its hitbox.</li>
+                    But, you can still use this to see if the event's sprite looks good and to modify its hitbox.</li><br>
+                    <u style="color:#ff0000">NOTE:</u> In order to make your Event appear in the same place in-game as in the editor,
+                    use Unity to change the "Pivot" property of the imported sprite image to "Bottom" instead of "Center". Otherwise, in the editor,
+                    you'll only be able to tell an Event's actual position by its hitbox and not its visual location.
+                    <br>
                 </ul></li>
                 <li><span class="term">BoxCollider</span>:<ul>
                     <li><span class="term">Edit Collider</span>: Lets you modify the event's hitbox.</li>
