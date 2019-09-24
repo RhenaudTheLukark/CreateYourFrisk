@@ -429,22 +429,8 @@ public class LuaSpriteController {
             img.GetComponent<Projectile>().needSizeRefresh = true;
         xScale = xs;
         yScale = ys;
-        if (img.GetComponent<Image>()) { // In battle
-            nativeSizeDelta = new Vector2(img.GetComponent<Image>().sprite.texture.width, img.GetComponent<Image>().sprite.texture.height);
-            float lowest = Mathf.Min(nativeSizeDelta.x * Mathf.Abs(xScale), nativeSizeDelta.y * Mathf.Abs(yScale));
-            if (Mathf.Min(Mathf.Abs(xScale), Mathf.Abs(yScale)) < 1)
-                img.GetComponent<Image>().sprite.texture.mipMapBias = lowest < 16 ? -4 : (lowest < 32 ? -2 : (lowest < 64 ? -1 : 0));
-            else
-                img.GetComponent<Image>().sprite.texture.mipMapBias = 0;
-            // img.GetComponent<RectTransform>().localScale = new Vector3(xs < 0 ? -1 : 1, ys < 0 ? -1 : 1, 1);
-        } else { // In overworld
-            nativeSizeDelta = new Vector2(img.GetComponent<SpriteRenderer>().sprite.texture.width, img.GetComponent<SpriteRenderer>().sprite.texture.height);
-            float lowest = Mathf.Min(nativeSizeDelta.x * Mathf.Abs(xScale), nativeSizeDelta.y * Mathf.Abs(yScale));
-            if (Mathf.Min(Mathf.Abs(xScale), Mathf.Abs(yScale)) < 1)
-                img.GetComponent<SpriteRenderer>().sprite.texture.mipMapBias = lowest < 16 ? -4 : (lowest < 32 ? -2 : (lowest < 64 ? -1 : 0));
-            else
-                img.GetComponent<SpriteRenderer>().sprite.texture.mipMapBias = 0;
-        }
+        if (img.GetComponent<Image>()) nativeSizeDelta = new Vector2(img.GetComponent<Image>().sprite.texture.width, img.GetComponent<Image>().sprite.texture.height);
+        else                           nativeSizeDelta = new Vector2(img.GetComponent<SpriteRenderer>().sprite.texture.width, img.GetComponent<SpriteRenderer>().sprite.texture.height);
         img.GetComponent<RectTransform>().sizeDelta = new Vector2(nativeSizeDelta.x * Mathf.Abs(xScale), nativeSizeDelta.y * Mathf.Abs(yScale));
         internalRotation = new Vector3(ys < 0 ? 180 : 0, xs < 0 ? 180 : 0, internalRotation.z);
         img.GetComponent<RectTransform>().eulerAngles = internalRotation;
@@ -639,43 +625,6 @@ public class LuaSpriteController {
         if (sprite == null)                                       throw new CYFException("sprite.MoveAbove: The sprite passed as an argument is nil.");
         else if (sprite.GetTarget().parent != GetTarget().parent) UnitaleUtil.WriteInLogAndDebugger("[WARN]You can't change the order of two sprites without the same parent.");
         else                                                      GetTarget().SetSiblingIndex(sprite.GetTarget().GetSiblingIndex() + 1);
-    }
-
-    private int _masked = 0;
-    public void Mask(string mode) {
-        if (mode == null)
-            throw new CYFException("sprite.Mask: No argument provided.");
-
-        mode = mode.ToLower();
-        if (mode != "box" && mode != "sprite" && mode != "stencil" && mode != "off")
-            throw new CYFException("sprite.Mask: Invalid mask mode \"" + mode.ToString() + "\".");
-
-        int masked = mode == "box" ? 1 : (mode == "sprite" ? 2 : (mode == "stencil" ? 3 : 0));
-
-        if (masked != _masked) {
-            RectMask2D box = img.GetComponent<RectMask2D>();
-            Mask spr = img.GetComponent<Mask>();
-
-            if (masked == 1) {
-                if (spr != null)
-                    GameObject.Destroy(spr);
-                img.AddComponent<RectMask2D>();
-            } else if (masked > 1) {
-                if (box != null)
-                    GameObject.Destroy(box);
-                if (_masked < 2)
-                    img.AddComponent<Mask>();
-                if (masked == 3)
-                    img.GetComponent<Mask>().showMaskGraphic = false;
-            } else if (masked == 0) {
-                if (spr != null)
-                    GameObject.Destroy(spr);
-                else
-                    GameObject.Destroy(box);
-            }
-        }
-
-        _masked = masked;
     }
 
     public void Remove() {

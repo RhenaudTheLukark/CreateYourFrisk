@@ -16,7 +16,7 @@ public class ErrorDisplay : MonoBehaviour {
         bool ow = !GlobalControls.modDev;
         UnitaleUtil.firstErrorShown = false;
         string mess;
-        if (ow) mess = "\n\nRestart CYF to further debug this error.";
+        if (ow) mess = "\n\nPressing ESC to go back to the overworld after an error is now forbidden. Restart CYF and use the modDev mode if you want to debug this error.";
         else    mess = "\n\nPress ESC to reload";
         GetComponent<Text>().text = Message + mess;
 	}

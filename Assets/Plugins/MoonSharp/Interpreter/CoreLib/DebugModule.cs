@@ -308,17 +308,18 @@ namespace MoonSharp.Interpreter.CoreLib
 				vfArgIdx++;
 			}
 
-            DynValue vf = args[vfArgIdx+0];
+			DynValue vf = args[vfArgIdx+0];
 			DynValue vwhat = args[vfArgIdx+1];
 
-            if (vf.Type == DataType.Void || vf.Type == DataType.Nil)
+			if (vf.Type == DataType.Void || vf.Type == DataType.Nil)
 				vf = DynValue.NewNumber(1);
 
-            args.AsType(vfArgIdx + 1, "getinfo", DataType.String, true);
+			args.AsType(vfArgIdx + 1, "getinfo", DataType.String, true);
 
-            string what = vwhat.CastToString() ?? "nfSlu";
+			string what = vwhat.CastToString() ?? "nfSlu";
 
 			DynValue vt = DynValue.NewTable(executionContext.GetScript());
+			Table t = vt.Table;
 
 			if (vf.Type == DataType.Number)
 			{
@@ -333,22 +334,22 @@ namespace MoonSharp.Interpreter.CoreLib
 				}
 				if (what.Contains("f"))
 				{
-					vt.Table.Set("func", wi.Value ?? DynValue.NewNil());
+					vt.Table.Set("func", wi.Value);
 				}
 				if (what.Contains("S"))
 				{
-					string source = (wi.Value != null && wi.Value.Type == DataType.Function) ? executionContext.GetScript().GetSourceCode(executionContext.CallingLocation.SourceIdx).Name : "[C]";
+					string source = wi.Value.Type == DataType.Function ? executionContext.GetScript().GetSourceCode(executionContext.CallingLocation.SourceIdx).Name : "[C]";
 					vt.Table.Set("source", DynValue.NewString("=" + source));
 					vt.Table.Set("short_src", DynValue.NewString(source.Length >= 60 ? source.Substring(0, 60) : source));
-					vt.Table.Set("what", DynValue.NewString(wi.Name == null ? "main" : ((wi.Value != null && wi.Value.Type == DataType.Function) ? "Lua" : "C")));
+					vt.Table.Set("what", DynValue.NewString(wi.Name == null ? "main" : wi.Value.Type == DataType.Function ? "Lua" : "C"));
 				}
 				if (what.Contains("l"))
 				{
-					vt.Table.Set("currentline", DynValue.NewNumber(wi.Location != null ? wi.Location.FromLine : executionContext.CallingLocation.FromLine));
+					vt.Table.Set("currentline", DynValue.NewNumber(executionContext.CallingLocation.FromLine));
 				}
 				if (what.Contains("u"))
 				{
-					vt.Table.Set("nups", DynValue.NewNumber((wi.Value != null && wi.Value.Type == DataType.Function) ? wi.Value.Function.GetUpvaluesCount() : 0));
+					vt.Table.Set("nups", DynValue.NewNumber(wi.Value.Type == DataType.Function ? wi.Value.Function.GetUpvaluesCount() : 0));
 				}
 			}
 			else

@@ -193,8 +193,8 @@ public class ShopScript : MonoBehaviour {
             case State.TALKINPROGRESS:
                 script.Call("SuccessTalk", DynValue.NewString(mainName[selection]));
                 if (!interrupted) {
-                    TextMessage[] texts = BuildTalkResultStrings();
                     selection = 1;
+                    TextMessage[] texts = BuildTalkResultStrings();
                     tmBigTalk.SetTextQueue(texts);
                     utHeart.GetComponent<Image>().enabled = false;
                 }
@@ -534,7 +534,7 @@ public class ShopScript : MonoBehaviour {
                         return;
                     }
 
-                    tmBigTalk.DestroyChars();
+                    tmBigTalk.DestroyText();
                     
                     tp = Instantiate(Resources.Load<TPHandler>("Prefabs/TP On-the-fly"));
                     tp.sceneName = script.GetVar("returnscene").String;

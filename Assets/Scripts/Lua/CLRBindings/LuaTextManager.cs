@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System;
+using System.Diagnostics;
 using System.Collections;
 using MoonSharp.Interpreter;
 
@@ -61,18 +62,16 @@ public class LuaTextManager : TextManager {
                 DoSkipFromPlayer();
         }
     }
-
+    
     // Used to test if a text object still exists.
     private void CheckExists() {
         if (!isactive)
             throw new CYFException("Attempt to perform action on removed text object.");
     }
-
-    public void DestroyText() { GameObject.Destroy(this.transform.parent.gameObject); }
-
+    
     // Shortcut to `DestroyText()`
-    public void Remove() { DestroyText(); }
-
+    public void Remove() { DestroyText(true); }
+    
     private void ResizeBubble() {
         float effectiveBubbleHeight = bubbleHeight != -1 ? bubbleHeight < 16 ? 40 : bubbleHeight + 24 : UnitaleUtil.CalcTextHeight(this) < 16 ? 40 : UnitaleUtil.CalcTextHeight(this) + 24;
         containerBubble.transform.GetComponent<RectTransform>().sizeDelta = new Vector2(textMaxWidth + 20, effectiveBubbleHeight);                                                      //To set the borders
@@ -82,7 +81,7 @@ public class LuaTextManager : TextManager {
         UnitaleUtil.GetChildPerName(containerBubble.transform, "CenterVert").GetComponent<RectTransform>().sizeDelta = new Vector2(textMaxWidth - 16, effectiveBubbleHeight - 4);       //CenterVert
         SetSpeechThingPositionAndSide(bubbleSide.ToString(), bubbleLastVar);
     }
-
+    
     public string progressmode {
         get {
             CheckExists();
@@ -93,10 +92,7 @@ public class LuaTextManager : TextManager {
                 CheckExists();
                 progress = (ProgressMode)Enum.Parse(typeof(ProgressMode), value.ToUpper());
             } catch {
-                if (value != null)
-                    throw new CYFException("text.progressmode can only have either \"AUTO\", \"MANUAL\" or \"NONE\", but you entered \"" + value.ToUpper() + "\".");
-                else
-                    throw new CYFException("text.progressmode can only have either \"AUTO\", \"MANUAL\" or \"NONE\", but you set it to a nil value.");
+                throw new CYFException("text.progressmode can only have either \"AUTO\", \"MANUAL\" or \"NONE\", but you entered \"" + value.ToUpper() + "\".");
             }
         }
     }
@@ -232,7 +228,7 @@ public class LuaTextManager : TextManager {
             else                        throw new CYFException("You need 3 or 4 numeric values when setting a text's color.");
 
             hasColorBeenSet = true;
-            hasAlphaBeenSet = value.Length == 4;
+            hasAlphaBeenSet = false;
 
             foreach (Letter l in letters) {
                 if (l.GetComponent<UnityEngine.UI.Image>().color == defaultColor) {
@@ -266,6 +262,7 @@ public class LuaTextManager : TextManager {
             CheckExists();
             color = new float[] { _color.r, _color.g, _color.b, Mathf.Clamp01(value) };
             hasAlphaBeenSet = true;
+            hasColorBeenSet = false;
         }
     }
 
@@ -318,7 +315,10 @@ public class LuaTextManager : TextManager {
             ResizeBubble();
     }
     
-    public void LateStart() { StartCoroutine(LateStartSetText()); }
+    public void LateStart() {
+        if (new StackFrame(1).GetMethod().Name != "lambda_method")
+            StartCoroutine(LateStartSetText());
+    }
     
     IEnumerator LateStartSetText() {
         yield return new WaitForEndOfFrame();
@@ -386,12 +386,8 @@ public class LuaTextManager : TextManager {
         if (uf == null)
             throw new CYFException("The font \"" + fontName + "\" doesn't exist.\nYou should check if you made a typo, or if the font really is in your mod.");
         SetFont(uf, firstTime);
-        if (!firstTime)
-            default_charset = uf;
-        UpdateBubble();
-    }
-
-    public void UpdateBubble() {
+        //if (forced)
+        //    default_charset = uf;
         containerBubble.GetComponent<RectTransform>().localPosition = new Vector2(-12, 24);
         // GetComponent<RectTransform>().localPosition = new Vector2(0, 16);
         GetComponent<RectTransform>().localPosition = new Vector2(0, 0);

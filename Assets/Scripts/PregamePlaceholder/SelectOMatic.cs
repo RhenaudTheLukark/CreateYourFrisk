@@ -211,14 +211,10 @@ public class SelectOMatic : MonoBehaviour {
         //byte[] bytes = tex.EncodeToPNG();
         //File.WriteAllBytes(Application.dataPath + "/ItsAVeryHackyWayToMakeTransitionsIKnowThanksYouCanDeleteThisFileIfYouWantTo.png", bytes);
         StaticInits.Initialized = false;
-        try {
-            StaticInits.InitAll();
-            Debug.Log("Loading " + StaticInits.ENCOUNTER);
-            GlobalControls.isInFight = true;
-            SceneManager.LoadScene("Battle");
-        } catch {
-            GameObject.Find("ModBackground").GetComponent<Image>().color = new Color(1f, 1f, 1f, 0.25f);
-        }
+        StaticInits.InitAll();
+        Debug.Log("Loading " + StaticInits.ENCOUNTER);
+        GlobalControls.isInFight = true;
+        SceneManager.LoadScene("Battle");
     }
     
     // Shows a mod's "page".

@@ -377,7 +377,7 @@ namespace MoonSharp.Interpreter.Execution.VM
 						RetAddress = c.ReturnAddress,
 						Location = startingRef,
 						Name = c.ClrFunction.Name,
-                        Value = DynValue.NewCallback(c.ClrFunction)
+						Value = DynValue.NewCallback(c.ClrFunction)
 					});
 				}
 				else
@@ -389,11 +389,9 @@ namespace MoonSharp.Interpreter.Execution.VM
 						RetAddress = c.ReturnAddress,
 						Name = callname,
 						Location = startingRef,
-                        Value = DynValue.NewClosure(c.Function)
+						Value = DynValue.NewClosure(c.Function)
 					});
 				}
-
-				startingRef = c.CallingSourceRef;
 
 				if (c.Continuation != null)
 				{
@@ -403,8 +401,6 @@ namespace MoonSharp.Interpreter.Execution.VM
 						Location = SourceRef.GetClrLocation()
 					});
 				}
-
-
 			}
 
 			return wis;

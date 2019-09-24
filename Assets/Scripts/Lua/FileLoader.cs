@@ -142,7 +142,7 @@ public static class FileLoader {
         //AudioClip music = AudioClipRegistry.Get(clipName);
         //if (music != null)
         //    return music;
-        WWW www = new WWW(new Uri(musicFilePath).AbsoluteUri.Replace("+", "%2B"));
+        WWW www = new WWW(new Uri(musicFilePath).AbsoluteUri);
         while (!www.isDone) { } // hold up a bit while it's loading; delay isn't noticeable and loading will fail otherwise
         AudioType type = AudioType.UNKNOWN;
         if (musicFilePath.EndsWith(".ogg"))       type = AudioType.OGGVORBIS;

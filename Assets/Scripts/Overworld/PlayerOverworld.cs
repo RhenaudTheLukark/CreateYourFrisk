@@ -200,7 +200,7 @@ public class PlayerOverworld : MonoBehaviour {
         else if ((textmgr.AllLinesComplete() || textmgr.CanAutoSkipAll()) && textmgr.LineCount() != 0) {
             textmgr.transform.parent.parent.SetAsFirstSibling();
             textmgr.SetTextQueue(null);
-            textmgr.DestroyChars();
+            textmgr.DestroyText();
             textmgr.SetTextFrameAlpha(0);
             if (EventManager.instance.script != null)
                 EventManager.instance.script.Call("CYFEventNextCommand");
@@ -814,7 +814,7 @@ public class PlayerOverworld : MonoBehaviour {
                                     GameObject.Find("utHeartMenu").transform.localPosition = new Vector3(-48, 143 - 32 * index, GameObject.Find("utHeartMenu").transform.position.z);
                                 } else if (GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED) {
                                     instance.menuRunning[0] = false;
-                                    for (int i = 7; i <= 17; i++) txtmgrs[i].DestroyChars();
+                                    for (int i = 7; i <= 17; i++) txtmgrs[i].DestroyText();
                                     GameObject.Find("Mugshot").GetComponent<Image>().color = new Color(1, 1, 1, 0);
                                     GameObject.Find("textframe_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 0);
                                     GameObject.Find("textframe_interior").GetComponent<Image>().color = new Color(0, 0, 0, 0);
@@ -907,7 +907,7 @@ public class PlayerOverworld : MonoBehaviour {
                                 GameObject.Find("utHeartMenu").GetComponent<Image>().color = new Color(c.r, c.g, c.b, 1);
                                 instance.uiAudio.PlayOneShot(AudioClipRegistry.GetSound("menuconfirm"));
                                 instance.menuRunning[0] = false;
-                                for (int i = 18; i <= 27; i++) txtmgrs[i].DestroyChars();
+                                for (int i = 18; i <= 27; i++) txtmgrs[i].DestroyText();
                                 GameObject.Find("Mugshot").GetComponent<Image>().color = new Color(1, 1, 1, 0);
                                 GameObject.Find("textframe_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 0);
                                 GameObject.Find("textframe_interior").GetComponent<Image>().color = new Color(0, 0, 0, 0);
@@ -939,7 +939,7 @@ public class PlayerOverworld : MonoBehaviour {
             if (tf.GetComponent<Image>()) tf.gameObject.GetComponent<Image>().color = new Color(tf.gameObject.GetComponent<Image>().color.a,
                                                                                                 tf.gameObject.GetComponent<Image>().color.b,
                                                                                                 tf.gameObject.GetComponent<Image>().color.g, 0);
-            if (tf.GetComponent<TextManager>()) tf.gameObject.GetComponent<TextManager>().DestroyChars();
+            if (tf.GetComponent<TextManager>()) tf.gameObject.GetComponent<TextManager>().DestroyText();
         }
         instance.menuRunning = new bool[] { false, false, false, true, true };
         GameObject.Find("Mugshot").GetComponent<Image>().color = new Color(1, 1, 1, 0);

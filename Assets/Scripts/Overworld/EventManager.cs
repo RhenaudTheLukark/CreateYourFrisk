@@ -181,7 +181,7 @@ public class EventManager : MonoBehaviour {
                             i--;
                             Destroy(go);
                         } else if (!TestContainsListVector2(ev.eventTriggers, ev.actualPage) && ev.eventTriggers.Count != 0) {
-                            UnitaleUtil.DisplayLuaError(ev.name, "The trigger of the page #" + ev.actualPage + " doesn't exist.\nYou'll need to add it via Unity, on this event's EventOW Component.");
+                            UnitaleUtil.DisplayLuaError(ev.name, "The trigger of the page n°" + ev.actualPage + " doesn't exist.\nYou'll need to add it via Unity, on this event's EventOW Component.");
                             return;
                         }
                     }
@@ -305,9 +305,9 @@ public class EventManager : MonoBehaviour {
                     }
             }
         } catch (InterpreterException e) {
-            UnitaleUtil.DisplayLuaError(gameobject.name + ", page #" + gameobject.GetComponent<EventOW>().actualPage, e.DecoratedMessage);
+            UnitaleUtil.DisplayLuaError(gameobject.name + ", page n°" + gameobject.GetComponent<EventOW>().actualPage, e.DecoratedMessage);
         } catch (Exception e) {
-            UnitaleUtil.DisplayLuaError(gameobject.name + ", page #" + gameobject.GetComponent<EventOW>().actualPage,
+            UnitaleUtil.DisplayLuaError(gameobject.name + ", page n°" + gameobject.GetComponent<EventOW>().actualPage,
                                         "Unknown error of type " + e.GetType() + ". Please send this to the main dev.\n\n" + e.Message + "\n\n" + e.StackTrace);
         }
         return false;
@@ -343,9 +343,9 @@ public class EventManager : MonoBehaviour {
                     ExecuteEvent(events[i], -1, true);
                 }
             }
-        } catch (InterpreterException e) { UnitaleUtil.DisplayLuaError(gameobject.name + ", page #" + gameobject.GetComponent<EventOW>().actualPage, e.DecoratedMessage); } 
+        } catch (InterpreterException e) { UnitaleUtil.DisplayLuaError(gameobject.name + ", page n°" + gameobject.GetComponent<EventOW>().actualPage, e.DecoratedMessage); } 
         catch (Exception e) {
-            UnitaleUtil.DisplayLuaError(gameobject.name + ", page #" + gameobject.GetComponent<EventOW>().actualPage,
+            UnitaleUtil.DisplayLuaError(gameobject.name + ", page n°" + gameobject.GetComponent<EventOW>().actualPage,
                                         "Unknown error of type " + e.GetType() + ". Please send this to the main dev.\n\n" + e.Message + "\n\n" + e.StackTrace);
         }
     }
@@ -999,7 +999,7 @@ public class EventManager : MonoBehaviour {
     public void EndEvent() {
         PlayerOverworld.instance.textmgr.SetTextFrameAlpha(0);
         PlayerOverworld.instance.textmgr.textQueue = new TextMessage[] { };
-        PlayerOverworld.instance.textmgr.DestroyChars();
+        PlayerOverworld.instance.textmgr.DestroyText();
         PlayerOverworld.instance.PlayerNoMove = false; //Event finished
         PlayerOverworld.instance.UIPos = 0;
         ScriptLaunched = false;
@@ -1463,7 +1463,7 @@ public class EventManager : MonoBehaviour {
                 save = !save;
             } else if (GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED) {
                 PlayerOverworld.instance.utHeart.color = new Color(c.r, c.g, c.b, 0);
-                txtName.DestroyChars(); txtLevel.DestroyChars(); txtTime.DestroyChars(); txtMap.DestroyChars(); txtSave.DestroyChars(); txtReturn.DestroyChars();
+                txtName.DestroyText(); txtLevel.DestroyText(); txtTime.DestroyText(); txtMap.DestroyText(); txtSave.DestroyText(); txtReturn.DestroyText();
                 GameObject.Find("save_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 0);
                 GameObject.Find("save_interior").GetComponent<Image>().color = new Color(0, 0, 0, 0);
                 script.Call("CYFEventNextCommand");
@@ -1491,7 +1491,7 @@ public class EventManager : MonoBehaviour {
                     } while (GlobalControls.input.Confirm != UndertaleInput.ButtonState.PRESSED);
                 }
                 PlayerOverworld.instance.utHeart.color = new Color(c.r, c.g, c.b, 0);
-                txtName.DestroyChars(); txtLevel.DestroyChars(); txtTime.DestroyChars(); txtMap.DestroyChars(); txtSave.DestroyChars(); txtReturn.DestroyChars();
+                txtName.DestroyText(); txtLevel.DestroyText(); txtTime.DestroyText(); txtMap.DestroyText(); txtSave.DestroyText(); txtReturn.DestroyText();
                 GameObject.Find("save_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 0);
                 GameObject.Find("save_interior").GetComponent<Image>().color = new Color(0, 0, 0, 0);
                 script.Call("CYFEventNextCommand");

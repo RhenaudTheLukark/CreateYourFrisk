@@ -24,7 +24,7 @@ public class ScriptRegistry {
     public static void init() {
         dict.Clear();
         for (int i = 0; i < folders.Length; i++) {
-            loadAllFrom(folders[i], prefixes[i], StaticInits.MODFOLDER != "@Title" && i == 1);
+            loadAllFrom(folders[i], prefixes[i], i < 3 && !(StaticInits.MODFOLDER == "@Title"));
         }
     }
 
@@ -32,10 +32,8 @@ public class ScriptRegistry {
         string directoryPath = FileLoader.pathToModFile("Lua/" + folderName);
         DirectoryInfo dInfo = new DirectoryInfo(directoryPath);
         if (!dInfo.Exists) {
-            if (needed) {
+            if (needed)
                 UnitaleUtil.DisplayLuaError("mod loading", "You tried to load the mod \"" + StaticInits.MODFOLDER + "\" but it can't be found, or at least its \"Lua/" + folderName + "\" folder can't be found.\nAre you sure it exists?");
-                throw new CYFException("mod loading");
-            }
             return;
         }
         FileInfo[] fInfo = dInfo.GetFiles("*.lua", SearchOption.AllDirectories);

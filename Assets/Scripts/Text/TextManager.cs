@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Diagnostics;
 using MoonSharp.Interpreter;
 using UnityEngine;
 using UnityEngine.UI;
@@ -92,21 +93,39 @@ public class TextManager : MonoBehaviour {
         if (firstTime) {
             if (letterSound == null && font.Sound != null)
                 letterSound.clip = font.Sound;
-        } else if (font.Sound != null)
-            letterSound.clip = font.Sound;
-
-        vSpacing = 0;
-        hSpacing = font.CharSpacing;
-        defaultColor = font.DefaultColor;
-        if (GetType() == typeof(LuaTextManager)) {
-            if (((LuaTextManager) this).hasColorBeenSet) defaultColor = ((LuaTextManager) this)._color;
-            if (((LuaTextManager) this).hasAlphaBeenSet) defaultColor.a = ((LuaTextManager) this).alpha;
+            if (currentColor == Color.white) {
+                // TODO: DO NOT OVERRIDE font.XXX!!!
+                defaultColor = Charset.DefaultColor;
+                if (GetType() == typeof(LuaTextManager)) {
+                    if (((LuaTextManager)this).hasColorBeenSet) {
+                        defaultColor = ((LuaTextManager)this)._color;
+                    } else if (((LuaTextManager)this).hasAlphaBeenSet) {
+                        defaultColor = new Color(font.DefaultColor.r, font.DefaultColor.g, font.DefaultColor.b, ((LuaTextManager)this).alpha);
+                    }
+                }
+                currentColor = defaultColor;
+            }
+            if (hSpacing == 3)
+                hSpacing = font.CharSpacing;
+        } else {
+            if (font.Sound != null)
+                letterSound.clip = font.Sound;
+            defaultColor = Charset.DefaultColor;
+            if (GetType() == typeof(LuaTextManager)) {
+                if (((LuaTextManager)this).hasColorBeenSet) {
+                    defaultColor = ((LuaTextManager)this)._color;
+                } else if (((LuaTextManager)this).hasAlphaBeenSet) {
+                    defaultColor = new Color(font.DefaultColor.r, font.DefaultColor.g, font.DefaultColor.b, ((LuaTextManager)this).alpha);
+                }
+            }
+            currentColor = defaultColor;
+            hSpacing = font.CharSpacing;
         }
-        currentColor = defaultColor;
     }
 
     public void SetHorizontalSpacing(float spacing = 3) { hSpacing = spacing; }
-    public void SetVerticalSpacing(float spacing = 0) { vSpacing = spacing; }
+
+    public void SetVerticalSpacing(float spacing = 0) { this.vSpacing = spacing; }
 
     public void ResetFont() {
         if (Charset == null || default_charset == null)
@@ -115,8 +134,10 @@ public class TextManager : MonoBehaviour {
             else
                 SetFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_DEFAULT_NAME), true);
         Charset = default_charset;
-        letterSound.clip = default_voice ?? default_charset.Sound;
-        defaultColor = default_charset.DefaultColor;
+        if (default_voice != null)
+            letterSound.clip = default_voice;
+        else
+            letterSound.clip = default_charset.Sound;
     }
 
     protected virtual void Awake() {
@@ -281,7 +302,6 @@ public class TextManager : MonoBehaviour {
                     
                     if (!offsetSet)
                         SetOffset(0, 0);
-                    ResetFont();
                     currentColor = defaultColor;
                     colorSet = false;
                     currentSkippable = true;
@@ -292,9 +312,12 @@ public class TextManager : MonoBehaviour {
                     skipFromPlayer = false;
                     firstChar = false;
                     
+                    if (Charset.Sound != null)
+                        letterSound.clip = Charset.Sound;
+                    
                     timePerLetter = singleFrameTiming;
                     letterTimer = 0.0f;
-                    this.DestroyChars();
+                    DestroyText();
                     currentLine = line;
                     currentX = self.position.x + offset.x;
                     currentY = self.position.y + offset.y;
@@ -322,7 +345,7 @@ public class TextManager : MonoBehaviour {
                             if ((GameObject.Find("textframe_border_outer").GetComponent<Image>().color.a == 1))
                                 SetTextFrameAlpha(0);
                             blockSkip = true;
-                            this.DestroyChars();
+                            DestroyText();
                         }
                         int lines = textQueue[line].Text.Split('\n').Length;
                         if (lines >= 4) lines = 4;
@@ -457,9 +480,16 @@ public class TextManager : MonoBehaviour {
 
     public void SetEffect(TextEffect effect) { textEffect = effect; }
 
-    public virtual void DestroyChars() {
+    public void DestroyText(bool force = false) {
         foreach (Transform child in gameObject.transform)
             Destroy(child.gameObject);
+        
+        // the following code is activated if DestroyText is called from an actual CYF mod, on the Lua side,
+        // or if the text is done typing out.
+        // hopefully we will never have to use any lambda functions on Lua Text Managers...
+        if (force || (GetType() == typeof(LuaTextManager)&&
+            (new StackFrame(1).GetMethod().Name == "lambda_method" || new StackFrame(1).GetMethod().Name == "NextLine")))
+            GameObject.Destroy(this.transform.parent.gameObject);
     }
 
     private void SpawnTextSpaceTest(int i, string currentText, out string currentText2) {
@@ -566,6 +596,8 @@ public class TextManager : MonoBehaviour {
                 Array.Resize(ref letterPositions, currentText2.Length);
             }
             currentX = self.position.x + offset.x;
+            /*if (GetType() == typeof(LuaTextManager))
+                print("currentY from \\n (" + textQueue[currentLine].Text + ") = " + currentY + " - " + vSpacing + " - " + Charset.LineSpacing + " = " + (currentY - vSpacing - Charset.LineSpacing));*/
             currentY = currentY - vSpacing - Charset.LineSpacing;
         } else
             currentText2 = currentText;
@@ -744,8 +776,7 @@ public class TextManager : MonoBehaviour {
                 if (mugshot.alpha == 0)
                     mugshot.color = new float[] { 1, 1, 1 };
             } catch { }
-        if (!instantActive)
-            Update();
+        Update();
     }
 
     private bool CheckCommand() {
@@ -850,8 +881,8 @@ public class TextManager : MonoBehaviour {
         */
         
         letterTimer += Time.deltaTime;
-        if (((letterTimer >= timePerLetter) || firstChar) && !LineComplete()) {
-            int repeats = timePerLetter == 0f ? 1 : (int)Mathf.Floor(letterTimer / timePerLetter);
+        if (((letterTimer >= timePerLetter) || firstChar) && !LineComplete() && timePerLetter > 0f) {
+            int repeats = (int)Mathf.Floor(letterTimer / timePerLetter);
             
             bool soundPlayed = false;
             int lastLetter = -1;
@@ -892,7 +923,7 @@ public class TextManager : MonoBehaviour {
             int oldLetterOnceValue = letterOnceValue;
             lastLetter = currentCharacter;
             while (CheckCommand()) {
-                if ((GlobalControls.retroMode && instantActive) || letterTimer != oldLetterTimer || waitingChar != KeyCode.None || letterOnceValue != oldLetterOnceValue || this.paused)
+                if ((GlobalControls.retroMode && instantActive) || letterTimer != oldLetterTimer || waitingChar != KeyCode.None || letterOnceValue != oldLetterOnceValue)
                     return false;
             }
             if (currentCharacter >= letterReferences.Length)
@@ -973,8 +1004,11 @@ public class TextManager : MonoBehaviour {
                 colorSet = true;
                 break;
             case "alpha":
-                if (cmds[1].Length == 2)
+                if (cmds[1].Length == 2) {
                     currentColor = new Color(currentColor.r, currentColor.g, currentColor.b, ParseUtil.GetByte(cmds[1]) / 255);
+                    if (GetType() == typeof(LuaTextManager))
+                        ((LuaTextManager)this)._color = new Color(((LuaTextManager)this)._color.r, ((LuaTextManager)this)._color.g, ((LuaTextManager)this)._color.b, currentColor.a);
+                }
                 break;
             case "charspacing": SetHorizontalSpacing(ParseUtil.GetFloat(cmds[1])); break;
             case "linespacing": SetVerticalSpacing(ParseUtil.GetFloat(cmds[1]));   break;
@@ -1012,15 +1046,10 @@ public class TextManager : MonoBehaviour {
             case "font":
                 AudioClip oldClip = letterSound.clip;
                 float oldLineThing = Charset.LineSpacing;
-
-                UnderFont uf = SpriteFontRegistry.Get(cmds[1]);
-                if (uf == null)
-                    throw new CYFException("The font \"" + cmds[1] + "\" doesn't exist.\nYou should check if you made a typo, or if the font really is in your mod.");
-
-                SetFont(uf);
                 if (GetType() == typeof(LuaTextManager))
-                    ((LuaTextManager) this).UpdateBubble();
-
+                    ((LuaTextManager)this).SetFont(cmds[1]);
+                else
+                    SetFont(SpriteFontRegistry.Get(cmds[1]));
                 letterSound.clip = oldClip;
                 //foreach (Letter l in letters)
                 //    l.transform.position = new Vector2(l.transform.position.x, l.transform.position.y + (oldLineThing - Charset.LineSpacing));
@@ -1307,8 +1336,8 @@ public class TextManager : MonoBehaviour {
                 gob.music = null;
             }
             PlayerCharacter.instance.HP = 0;
-            // gameObject.transform.SetParent(null);
-            // GameObject.DontDestroyOnLoad(this.gameObject);
+            gameObject.transform.SetParent(null);
+            GameObject.DontDestroyOnLoad(this.gameObject);
             RectTransform rt = gameObject.GetComponent<RectTransform>();
             rt.position = new Vector3(rt.position.x, rt.position.y, -1000);
             gob.StartDeath();

@@ -30,6 +30,7 @@ public static class LuaScriptBinder {
         UserData.RegisterType<ScriptWrapper>();
         UserData.RegisterType<LuaSpriteController>();
         UserData.RegisterType<LuaInventory>();
+        UserData.RegisterType<Letter>();
         UserData.RegisterType<Misc>();
         UserData.RegisterType<LuaTextManager>();
         UserData.RegisterType<LuaFile>();
@@ -76,6 +77,7 @@ public static class LuaScriptBinder {
             script.Globals["SetAction"] = (Action<string>)SetAction;
             script.Globals["SetPPCollision"] = (Action<bool>)SetPPCollision;
             script.Globals["AllowPlayerDef"] = (Action<bool>)AllowPlayerDef;
+            script.Globals["GetLetters"] = (Func<Letter[]>)GetLetters;
             script.Globals["CreateText"] = (Func<Script, DynValue, DynValue, int, string, int, LuaTextManager>)CreateText;
             script.Globals["GetCurrentState"] = (Func<string>)GetState;
             script.Globals["BattleDialog"] = (Action<DynValue>)LuaEnemyEncounter.BattleDialog;
@@ -250,6 +252,7 @@ public static class LuaScriptBinder {
         UserData.RegisterType<ScriptWrapper>();
         UserData.RegisterType<LuaSpriteController>();
         UserData.RegisterType<LuaInventory>();
+        UserData.RegisterType<Letter>();
         UserData.RegisterType<Misc>();
         UserData.RegisterType<LuaTextManager>();
         UserData.RegisterType<LuaFile>();
@@ -321,9 +324,7 @@ public static class LuaScriptBinder {
     public static void SetAction(string action) {
         try {
             UIController.instance.forcedaction = (UIController.Actions)Enum.Parse(typeof(UIController.Actions), action, true);
-            if (((GetState() == "ACTIONSELECT" && UIController.instance.frozenState == UIController.UIState.PAUSE) || !UIController.instance.stated) && UIController.instance.forcedaction != UIController.Actions.NONE)
-                UIController.instance.MovePlayerToAction(UIController.instance.forcedaction);
-        } catch { throw new CYFException("SetAction() can only take \"FIGHT\", \"ACT\", \"ITEM\" or \"MERCY\", but you entered \"" + action + "\"."); }
+        } catch { throw new CYFException("SetAction() can only take FIGHT or ACT, but you entered \"" + action + "\"."); }
     }
 
     public static void SetPPCollision(bool b) {
@@ -338,6 +339,11 @@ public static class LuaScriptBinder {
     public static void SetPPAlphaLimit(float f) {
         if (f < 0 || f > 1)  UnitaleUtil.DisplayLuaError("Pixel-Perfect alpha limit", "The alpha limit should be between 0 and 1.");
         else                 ControlPanel.instance.MinimumAlpha = f;
+    }
+
+    public static Letter[] GetLetters() {
+        if (UIController.instance.state != UIController.UIState.ACTIONSELECT)  return null;
+        else                                                                   return GameObject.Find("TextManager").GetComponentsInChildren<Letter>();
     }
 
     public static LuaTextManager CreateText(Script scr, DynValue text, DynValue position, int textWidth, string layer = "BelowPlayer", int bubbleHeight = -1) {
@@ -358,6 +364,7 @@ public static class LuaScriptBinder {
         UnitaleUtil.GetChildPerName(go.transform, "BackVert").GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth - 20, 100);            //BackVert
         UnitaleUtil.GetChildPerName(go.transform, "CenterHorz").GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth + 16, 96 - 16 * 2);  //CenterHorz
         UnitaleUtil.GetChildPerName(go.transform, "CenterVert").GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth - 16, 96);           //CenterVert
+        // luatm.SetFont(SpriteFontRegistry.UI_MONSTERTEXT_NAME, true);
         foreach (ScriptWrapper scrWrap in ScriptWrapper.instances) {
             if (scrWrap.script == scr) {
                 luatm.SetCaller(scrWrap);
@@ -421,9 +428,7 @@ public static class LuaScriptBinder {
         /////////// INITIAL FONT SETTER //////////
         //////////////////////////////////////////
 
-        luatm.ResetFont();
-
-        // If the first line of text has [font] at the beginning, use it initially!
+        // If the first line of text has [font] at the beginning, use it intially!
         if (firstLine.IndexOf("[font:") > -1 && firstLine.IndexOf(']') > firstLine.IndexOf("[font:")) {
             // grab all of the text that comes before the matched command
             string precedingText = firstLine.Substring(0, firstLine.IndexOf("[font:"));
@@ -442,21 +447,15 @@ public static class LuaScriptBinder {
             if (precedingText.Length == 0) {
                 string fontPartOne = firstLine.Substring(firstLine.IndexOf("[font:") + 6);
                 string fontPartTwo = fontPartOne.Substring(0, fontPartOne.IndexOf("]") - 0);
-                UnderFont font = SpriteFontRegistry.Get(fontPartTwo);
-                if (font == null)
-                    throw new CYFException("The font \"" + fontPartTwo + "\" doesn't exist.\nYou should check if you made a typo, or if the font really is in your mod.");
-                luatm.SetFont(font, true);
-                luatm.UpdateBubble();
+                luatm.SetFont(fontPartTwo, true);
             }
         }
 
         if (enableLateStart)
             luatm.LateStartWaiting = true;
         luatm.SetText(text);
-        if (enableLateStart) {
-            luatm.DestroyChars();
+        if (enableLateStart)
             luatm.LateStart();
-        }
         return luatm;
     }
 
