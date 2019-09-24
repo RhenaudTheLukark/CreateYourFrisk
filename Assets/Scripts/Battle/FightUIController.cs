@@ -250,10 +250,10 @@ public class FightUIController : MonoBehaviour {
                     boundFightUiInstances[i].enemy.HandleAttack(-1);
                     StationaryMissScript smc2 = Instantiate(smc);
                     if (boundFightUiInstances[i].enemy.NoAttackMissText != null)
-                    smc2.SetText(boundFightUiInstances[i].enemy.NoAttackMissText);
+                        smc2.SetText(boundFightUiInstances[i].enemy.NoAttackMissText);
                     smc2.transform.SetParent(GameObject.Find("Canvas").transform);
                     if (boundFightUiInstances[i].enemy.NoAttackMissText != null)
-                    smc2.setXPosition(boundFightUiInstances[i].enePos.x - 10 * boundFightUiInstances[i].enemy.NoAttackMissText.Length + 20);
+                        smc2.setXPosition(boundFightUiInstances[i].enePos.x - 10 * boundFightUiInstances[i].enemy.NoAttackMissText.Length + 20);
                     else smc2.setXPosition(boundFightUiInstances[i].enePos.x);
                 }
                 initFade();
