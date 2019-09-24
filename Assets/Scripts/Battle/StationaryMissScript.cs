@@ -19,7 +19,7 @@ public class StationaryMissScript : MonoBehaviour {
 	void Start () {
         TextManager mgr = GetComponent<TextManager>();
         mgr.SetFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_DAMAGETEXT_NAME));
-        mgr.SetText(new TextMessage("[color:c0c0c0]" + text.ToUpper(), false, true));
+        mgr.SetText(new TextMessage("[color:c0c0c0]" + text, false, true));
 	}
 
     void Update(){

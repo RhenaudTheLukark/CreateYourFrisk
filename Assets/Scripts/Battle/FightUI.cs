@@ -151,7 +151,7 @@ public class FightUI : MonoBehaviour {
                 string damageTextStr = "";
                 if (Damage == 0) {
                     if (enemy.DefenseMissText == null) damageTextStr = "[color:c0c0c0]MISS";
-                    else damageTextStr = "[color:c0c0c0]" + enemy.DefenseMissText.ToUpper();
+                    else damageTextStr = "[color:c0c0c0]" + enemy.DefenseMissText;
                 }
                 else if (Damage > 0) damageTextStr = "[color:ff0000]" + Damage;
                 else damageTextStr = "[color:00ff00]" + Damage;

@@ -128,10 +128,12 @@ public class LuaEnemyController : EnemyController {
         get { return (int)script.GetVar("gold").Number; }
         set { script.SetVar("gold", DynValue.NewNumber(value)); }
     }
+
     public string DefenseMissText {
         get { return script.GetVar("defensemisstext").String; }
         set { script.SetVar("defensemisstext", DynValue.NewString(value)); }
     }
+    
     public string NoAttackMissText {
         get { return script.GetVar("noattackmisstext").String; }
         set { script.SetVar("noattackmisstext", DynValue.NewString(value)); }
