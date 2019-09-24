@@ -129,6 +129,15 @@ public class LuaEnemyController : EnemyController {
         set { script.SetVar("gold", DynValue.NewNumber(value)); }
     }
 
+    public string DefenseMissText {
+        get { return script.GetVar("defensemisstext").String; }
+        set { script.SetVar("defensemisstext", DynValue.NewString(value)); }
+    }
+    public string NoAttackMissText {
+        get { return script.GetVar("noattackmisstext").String; }
+        set { script.SetVar("noattackmisstext", DynValue.NewString(value)); }
+    }
+
     public override string DialogBubble {
         get {
             if (script.GetVar("dialogbubble") == null)
@@ -235,6 +244,7 @@ public class LuaEnemyController : EnemyController {
             script.Bind("SetBubbleOffset", (Action<int, int>)SetBubbleOffset);
             script.Bind("SetDamageUIOffset", (Action<int, int>)SetDamageUIOffset);
             script.Bind("SetSliceAnimOffset", (Action<int, int>)SetSliceAnimOffset);
+            script.Bind("GetLetters", (Func<Letter[]>)GetLetters);
             script.Bind("State", (Action<Script, string>)UIController.SwitchStateOnString);
             script.SetVar("canmove", DynValue.NewBoolean(false));
             sprite = new LuaSpriteController(GetComponent<Image>());
@@ -415,6 +425,11 @@ public class LuaEnemyController : EnemyController {
     public void SetBubbleOffset(int x, int y) { offsets[1] = new Vector2(x, y); }
 
     public void SetDamageUIOffset(int x, int y) { offsets[2] = new Vector2(x, y); }
+
+    public Letter[] GetLetters() {
+        if (UIController.instance.state != UIController.UIState.ENEMYDIALOGUE)  return null;
+        else                                                                    return gameObject.GetComponentsInChildren<Letter>();
+    }
 
     public bool InFight() { return inFight; }
 }

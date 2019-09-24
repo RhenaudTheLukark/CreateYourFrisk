@@ -23,22 +23,22 @@ public class UIController : MonoBehaviour {
     public static UIController instance;
     internal TextManager textmgr;
 
-    private static Sprite fightB1;
     private static Sprite actB1;
+    private static Sprite fightB1;
     private static Sprite itemB1;
     private static Sprite mercyB1;
-    private Image fightBtn;
     private Image actBtn;
-    private Image itemBtn;
-    private Image mercyBtn;
     private Actions action = Actions.FIGHT;
     public Actions forcedaction = Actions.NONE;
     private GameObject arenaParent;
     public GameObject psContainer;
     //private GameObject canvasParent;
     internal LuaEnemyEncounter encounter;
+    private Image fightBtn;
     [HideInInspector] public FightUIController fightUI;
     private Vector2 initialHealthPos = new Vector2(250, -10); // initial healthbar position for target selection
+    private Image itemBtn;
+    private Image mercyBtn;
 
     public TextManager[] monDialogues;
 
@@ -130,6 +130,9 @@ public class UIController : MonoBehaviour {
             if (GlobalControls.crate)  Misc.WindowName = ControlPanel.instance.WinodwBsaisNmae;
             else                       Misc.WindowName = ControlPanel.instance.WindowBasisName;
         #endif
+
+        // reset the battle camera's position
+        Misc.ResetCamera();
 
         // stop encounter storage for good!
         ScriptWrapper.instances.Clear();
@@ -284,7 +287,7 @@ public class UIController : MonoBehaviour {
 
         if (state == UIState.DEFENDING || state == UIState.ENEMYDIALOGUE) {
             PlayerController.instance.setControlOverride(state != UIState.DEFENDING);
-            textmgr.DestroyChars();
+            textmgr.DestroyText();
             PlayerController.instance.SetPosition(320, 160, true);
             PlayerController.instance.GetComponent<Image>().enabled = true;
             fightBtn.overrideSprite = null;
@@ -313,19 +316,15 @@ public class UIController : MonoBehaviour {
         this.state = state;
         //encounter.CallOnSelfOrChildren("Entered" + Enum.GetName(typeof(UIState), state).Substring(0, 1)
         //                                         + Enum.GetName(typeof(UIState), state).Substring(1, Enum.GetName(typeof(UIState), state).Length - 1).ToLower());
-        if (oldstate == UIState.DEFENDING && this.state != UIState.DEFENDING) {
-            UIState current = this.state;
+        if (oldstate == UIState.DEFENDING && this.state != UIState.DEFENDING)
             encounter.EndWave();
-            if (this.state != current)
-                return;
-        }
         switch (this.state) {
             case UIState.ATTACKING:
                 // Error for no active enemies
                 if (encounter.EnabledEnemies.Length == 0)
                     throw new CYFException("Cannot enter state ATTACKING with no active enemies.");
 
-                textmgr.DestroyChars();
+                textmgr.DestroyText();
                 PlayerController.instance.GetComponent<Image>().enabled = false;
                 if (!fightUI.multiHit) {
                     fightUI.targetIDs = new int[] { selectedEnemy };
@@ -622,7 +621,7 @@ public class UIController : MonoBehaviour {
                 if (encounter.EnabledEnemies[i].Voice != "")
                     sbTextMan.letterSound.clip = AudioClipRegistry.GetVoice(encounter.EnabledEnemies[i].Voice);
             } catch {
-                new CYFException("Error while updating monster #" + i);
+                new CYFException("Error while updating the monster n°" + i);
             }
         }
     }
@@ -670,7 +669,7 @@ public class UIController : MonoBehaviour {
                 monDialogues[index].NextLineText();
                 complete = false;
             } else {
-                monDialogues[index].DestroyChars();
+                monDialogues[index].DestroyText();
                 GameObject.Destroy(monDialogues[index].gameObject);
             }
             if (complete)
@@ -683,7 +682,7 @@ public class UIController : MonoBehaviour {
                     continue;
 
                 if ((monDialogues[i].AllLinesComplete() && monDialogues[i].LineCount() != 0) || (!monDialogues[i].HasNext() && readyToNextLine[i])) {
-                    monDialogues[i].DestroyChars();
+                    monDialogues[i].DestroyText();
                     GameObject.Destroy(monDialogues[i].gameObject); // this text manager's game object is a dialog bubble and should be destroyed at this point
                     continue;
                 } else
@@ -703,7 +702,7 @@ public class UIController : MonoBehaviour {
                         }
                         monDialogues[i].NextLineText();
                     } else {
-                        monDialogues[i].DestroyChars();
+                        monDialogues[i].DestroyText();
                         GameObject.Destroy(monDialogues[i].gameObject); // code duplication? in my source? it's more likely than you think
                         if (!foiled)
                             complete = true;
@@ -836,7 +835,7 @@ public class UIController : MonoBehaviour {
                         textmgr.NextLineText();
                         break;
                     } else if (textmgr.AllLinesComplete() && textmgr.LineCount() != 0) {
-                        textmgr.DestroyChars();
+                        textmgr.DestroyText();
                         SwitchState(stateAfterDialogs);
                     }
                     break;
@@ -1300,16 +1299,6 @@ public class UIController : MonoBehaviour {
         }
     }
 
-    public void MovePlayerToAction(Actions act) {
-        fightBtn.overrideSprite = null;
-        actBtn.overrideSprite = null;
-        itemBtn.overrideSprite = null;
-        mercyBtn.overrideSprite = null;
-
-        action = act;
-        SetPlayerOnAction(action);
-    }
-
     // visualisation:
     // 0    1
     // 2    3
@@ -1327,7 +1316,6 @@ public class UIController : MonoBehaviour {
 
         textmgr = GameObject.Find("TextManager").GetComponent<TextManager>();
         textmgr.SetEffect(new TwitchEffect(textmgr));
-        textmgr.ResetFont();
         textmgr.SetCaller(LuaEnemyEncounter.script);
         encounter = FindObjectOfType<LuaEnemyEncounter>();
 
@@ -1557,7 +1545,7 @@ public class UIController : MonoBehaviour {
                 if (textmgr.HasNext())
                     textmgr.NextLineText();
                 else {
-                    textmgr.DestroyChars();
+                    textmgr.DestroyText();
                     SwitchState(stateAfterDialogs);
                 }
 
