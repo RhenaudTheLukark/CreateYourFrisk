@@ -153,13 +153,11 @@ it's w3c valid, at least
                 <li><span class="term">path</span>: Path to the file to open, relative to your Mod folder.<br>
                     Can enter subfolders such as <span class="term">Lua</span>.</li><br>
                 <li>
-                    <span class="term">mode</span>: Determines how the file should be opened
+                    <span class="term">mode</span>: Determines how the file should be opened:
                     <ul>
                         <li><span class="term">r</span>: The file can only be <u>read</u> from.</li><br>
                         <li><span class="term">w</span>: The file can only be <u>written</u> to.</li><br>
                         <li><span class="term">rw</span>: The file can be read from <u>AND</u> written to.</li><br>
-                        <li><span class="term">b</span>: The file's data is read from and written to using bytes rather than characters.
-                            <br>Must be used along with <span class="term">r</span> or <span class="term">w</span>.</li><br>
                     </ul>
                     Files can be <u>created</u> through use of <span class="term">File.Write</span> (see below).
                 </li>
@@ -170,15 +168,9 @@ it's w3c valid, at least
             <br><span class="function"> The File object [E/M/W]</span>
             <br><br>
             <ul>
-                <span class="function ref" style="display: inline;">All modes</span>
-                <br><Br>
                 <li><span class="string"></span> <span class="term">File.openMode</span> (read-only):
                     Returns the file mode being used by this File object.<br>
                     This is what you entered for <span class="term">mode</span> in <span class="term">Misc.OpenFile</span>.</li><br>
-                <li><span class="term">File.Move(<span class="string"></span> new_path)</span>:
-                    Moves the opened file to the path <span class="term">new_path</span>.<br>
-                    Can be used to rename a file.</li><br>
-                <hr><br>
                 <span class="function ref" style="display: inline;">"r"</span>
                 <br><br>
                 <li><span class="string"></span> <span class="term">File.ReadLine(<span class="number"></span> line)</span>:
@@ -188,7 +180,7 @@ it's w3c valid, at least
                     Same as using <span class="term">File.ReadLine</span> on every line.</li><br>
                 <li><span class="number"></span> <span class="term">File.lineCount</span>:
                     The number of lines in the file.</li>
-                <br><br>
+                <hr>
                 <span class="function ref" style="display: inline;">"w"</span>
                 <br><br>
                 <li><span class="term">File.Write(<span class="string"></span> data, <span class="boolean"></span> append = true)</span>:
@@ -207,27 +199,6 @@ it's w3c valid, at least
                 <li><span class="term">File.Delete()</span> <span class="ref">(w)</span>:
                     Deletes the file.<br>
                     If using <span class="term">"w"</span> or <span class="term">"rw"</span> mode, you can use <span class="term">File.Write</span> to create the file again.</li><br>
-                <br>
-                <span class="function ref" style="display: inline;">"b"</span>
-                <br><br>
-                <li><span class="term">File.encoding = "Unicode"</span>:
-                    Lets you choose the encoding method used to read from and write to your file.
-                    <br><br>
-                    Valid values:
-                    <ul>
-                        <li><span class="term">Default</span></li>
-                        <li><span class="term">Unicode</span></li>
-                        <li><span class="term">BigEndianUnicode</span></li>
-                        <li><span class="term">ASCII</span></li>
-                        <li><span class="term">UTF7</span></li>
-                        <li><span class="term">UTF8</span></li>
-                        <li><span class="term">UTF32</span></li>
-                    </ul>
-                    <br><br>
-                    Note that this <u>only</u> applies if you created your file with <span class="term">"b"</span> in your file opening mode.
-                    <br><br>
-                    <a href="https://docs.microsoft.com/en-us/dotnet/api/system.text.encoding">See here for more information on encoding.</a>
-                    </li><br>
             </ul>
         </div>
 		

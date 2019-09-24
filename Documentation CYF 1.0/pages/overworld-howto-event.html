@@ -125,11 +125,7 @@ it's w3c valid, at least
                 </ul></li>
                 <li><span class="term">SpriteRenderer</span>:<ul>
                     <li><span class="term">Sprite</span>: This is not what will be used to display the sprite.<br>
-                    But, you can still use this to see if the event's sprite looks good and to modify its hitbox.</li><br>
-                    <u style="color:#ff0000">NOTE:</u> In order to make your Event appear in the same place in-game as in the editor,
-                    use Unity to change the "Pivot" property of the imported sprite image to "Bottom" instead of "Center". Otherwise, in the editor,
-                    you'll only be able to tell an Event's actual position by its hitbox and not its visual location.
-                    <br>
+				But, you can still use this to see if the event's sprite looks good and to modify its hitbox.</li>
                 </ul></li>
                 <li><span class="term">BoxCollider</span>:<ul>
                     <li><span class="term">Edit Collider</span>: Lets you modify the event's hitbox.</li>
@@ -142,29 +138,21 @@ it's w3c valid, at least
                     <li><span class="term">Actual Page</span>: The first page of the event (and in-game, the current page of the event).</li>
                     <li><span class="term">Event Triggers</span>: <span style="color:#ff0000">This part MUST NOT be forgotten.</span>
                     It is the most important part of the event.<br><br>
-                    In your event's Lua code, you will need to create <span class="term">EventPage0</span>, followed by one function for each event page you want,
-                    following the pattern <span class="term">"EventPage" + Page number</span>, starting at 0.<br><br>
+                    In your event's Lua code, you'll need to name all your functions following the pattern <span class="term">"EventPage" + Page number</span>,
+                    starting at 0.<br>
                     For instance: <span class="term">EventPage0</span>, followed by <span class="term">EventPage1</span>, <span class="term">EventPage2</span>
                     ...until you have all the functions you want.<br><br>
-                    <b><span class="term">EventPage0</span></b> is a special event that is <b>always automatically called</b> as soon as the map loads.<br>
-                    So any custom events that you want to use the Event Trigger system below should be in <span class="term">EventPage1</span> and after.
-                    <br><br><br>
                     Back in Unity, for each X value in the <span class="term">Event Trigger</span> table, you need to give the Page number, 
-                    and for each matching Y value, you'll need to input the trigger type of the event:
-                    <br><br>
+                    and for each matching Y value, you'll need to input the trigger type of the event:<br>
                     <ul>
-                        <li><span class="term">0</span>: <b>Confirm Button</b>. Activates when the player presses <span class="term">Z</span> on this event.</li><br>
-                        <li><span class="term">1</span>: <b>Touch</b>. Activates when the player collides with this event's hitbox.<br><br>
-                        <b>NOTE</b>: In order to have a Touch event, you must check <b><span class="term">Is Trigger</span></b> in the event's
-                        <span class="term">BoxCollider</span> component, and also use <span class="term">Event.IgnoreCollision</span> in
-                        <span class="term">EventPage0</span>. See <span class="ref">The Event Object</span>.</li><br>
-                        <li><span class="term">2</span>: <b>Automatic</b>. Activates instantly, as soon as the map loads.</li><br>
-                        <li><span class="term">3</span>: <b>Parallel Process</b>. Activates on every frame, identical to <span class="term">Update</span> in Mods.</li><br>
+                        <li><span class="term">0</span>: Confirm button</li>
+                        <li><span class="term">1</span>: Hitbox touched</li>
+                        <li><span class="term">2</span>: Automatic activation</li>
+                        <li><span class="term">3</span>: Parallel process</li>
                     </ul>
                     <li><span class="term">Move Speed</span>: The speed of the event in px/frame, if you want to move the event.</li>
                 </ul></li>
                 <li><span class="term">AutoloadResourcesFromRegistry</span>:<ul>
-                    Used to select a "default" sprite for this Event. Think of it the same as how a sprite path is necessary to use <span class="term">CreateSprite</span>.
                     <li><span class="term">Sprite Path</span>: Path of the sprite from <span class="term">MAPMOD/Sprites</span>.
                 </ul></li>
                 </ul>

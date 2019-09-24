@@ -116,7 +116,7 @@ it's w3c valid, at least
             <p>
                 <br><span class="function">CreateSprite(<span class="string"></span> spritename, 
                 <span class="CYF"></span> <span class="string"></span> layer = "BelowArena") returns <span class="userdata">sprite</span>  [E/M/W]</span>
-                Creates a sprite at the center of the screen (at 320, 240) that you can modify in many ways.<br>
+                Creates a sprite in the far bottom left of the screen (at 0, 0) that you can modify in many ways.<br>
                 <span class="CYF"></span> You can add a layer if you want - otherwise, the sprite will be below the arena.
             </p>
 
@@ -367,25 +367,6 @@ it's w3c valid, at least
                 Parents <span class="term">sprite</span> to <span class="term">otherSpriteObject</span>.
                 <br><br>
                 This will make the original sprite move along with the object it's parented to.
-            </p><br>
-            
-            <p>
-                <span class="function"><span class="CYF"></span> sprite.Mask(<span class="string"></span> mode)</span></span>
-                Sets the masking mode of this sprite object.
-                <br><br>
-                Available modes are:
-                <ul>
-                    <li><span class="term">off</span> - The default mode. Has no special properties.</li><br>
-                    <li><span class="term">box</span> - Any objects parented to this sprite are restricted to the bounding box of the sprite.</li><br>
-                    <li><span class="term">sprite</span> - Any objects parented to this sprite will be "cookie cuttered" to the current image of the sprite.</li><br>
-                    <li><span class="term">stencil</span> - Same as <span class="term">sprite</span>, except that the parent sprite itself is not visible.</li><br>
-                </ul>
-                Anything parented to this sprite object through the use of <span class="term">SetParent</span> - including <b>Other Sprite Objects</b>,
-                <b>Projectiles</b>, and even <b>Text Objects</b> - will all be masked according to the mask mode entered here.
-                <br><br><br>
-                <b>NOTE:</b> This means that if you want to have a child that's not masked, you'll need to create a new invisible sprite (using the default
-                sprite "empty" is recommended), parent both the intended parent and child sprite to the invisible sprite, and apply motion to the invisible
-                sprite rather than the parent sprite.
             </p><br>
             
             <p>

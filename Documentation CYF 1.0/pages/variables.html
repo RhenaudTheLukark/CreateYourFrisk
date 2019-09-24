@@ -140,10 +140,6 @@ enemypositions = {
 {70, 30}
 }
 
-deathtext = {
-"[voice:v_fluffybuns][waitall:2]You cannot give up\njust yet...",
-"[voice:v_fluffybuns][waitall:2]Frisk!\n[w:15]Stay determined..."
-}
 </pre>
             </div>
             <br><p><span class="string"></span> <span class="term">music</span> - Name of your encounter's starting music, without the file extension.
@@ -194,8 +190,6 @@ deathtext = {
             <br><p><span class="CYF"></span> <span class="boolean"></span> <span class="term">fleesuccess</span> - <span class="term">nil</span> by default.
             Set this to <span class="term">true</span> or <span class="term">false</span> to force the Flee option to succeed or fail.
             Otherwise, it's a 50% chance, like in Undertale.</p>
-            <br><p><span class="CYF"></span> <span class="luatable"><span class="string"></span></span> <span class="term">fleetexts</span> - If you set this
-            to a table filled with strings, a random one of your strings will be displayed whenever the player flees the battle (if that's enabled).</p>
             <br><p><span class="CYF"></span> <span class="boolean"></span> <span class="term">revive</span> - If this variable is set to true, the player 
             will be revived when they hit 0 HP.<br>By default, there will be no special text for the player being revived; however, if you set
             <span class="term">deathtext</span>, that will be used.</p>
@@ -206,6 +200,8 @@ deathtext = {
             if <span class="term">revive</span> is not set.</p>
             <br><p><span class="CYF"></span> <span class="luatable"><span class="userdata">script</span></span> <span class="term">Wave</span> - A table returning the 
             current wave scripts used. Returns a table with a length of 0 if not in the state DEFENDING.</p>
+            <br><p><span class="CYF"></span> <span class="luatable"><span class="string"></span></span> <span class="term">fleetexts</span> - If you set this
+            to a table filled with strings, a random one of your strings will be displayed whenever the player flees the battle (if that's enabled).</p>
             
             <hr>
             <h4>Monster script variables</h4>
@@ -243,6 +239,8 @@ check = "Serving Size: 1 Monster\nNot monitored by the USDA"</pre>
                 This overrides the random dialogue and is meant for special actions (e.g. you hit Vegetoid's green carrots after selecting Dinner from the 
                 ACT menu). This variable gets <i>cleared every time after it's read out in the monster dialogue phase</i>. This is done
                 so you don't have to take care of managing it manually.</p>
+                <p><span class="CYF"></span> <span class="string"></span> <span class="term">defensemisstext</span> - The text who will be displayed when the <span class="term">def</span> is too high. "MISS" by default</p>
+                <p><span class="CYF"></span> <span class="string"></span> <span class="term">noattackmisstext</span> - The text who will be displayed when you don't press Z afterwards when attacking. "MISS" by default</p>
             <p><span class="boolean"></span> <span class="term">cancheck</span> - Either true or false. You can leave this line out; it will be true by 
                 default. If set to false, it will disable the default Check action that shows up in your ACT menu. If you want a custom
                 Check action, you can add it back into your <span class="term">commands</span> table, and handle it like any other custom
@@ -261,8 +259,6 @@ check = "Serving Size: 1 Monster\nNot monitored by the USDA"</pre>
                 change this at any time, but this <i>must</i> be initially set to something. For a list of all possible options, check the
                 <a href="../media/dialogoptions.png">dialog bubble names</a> chart; it's also in the sidebar.
                 Positioning of the bubbles is done automatically.</p>
-            <p><span class="CYF"></span> <span class="string"></span> <span class="term">dialogueprefix</span> - A string, appended to the beginning
-                of every monster's dialogue. The default is <span class="term">"[effect:rotate]"</span></p>
             <p><span class="string"></span> <span class="term">name</span> - Monster name. Fairly self-explanatory; shows up in the FIGHT/ACT menus. 
                 Can also be changed at any time.</p>
             <p><span class="number"></span> <span class="term">hp</span> - Your monster's max HP, initially. After the fight has started, 
