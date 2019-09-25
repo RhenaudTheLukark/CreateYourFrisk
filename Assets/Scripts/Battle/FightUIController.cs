@@ -249,8 +249,12 @@ public class FightUIController : MonoBehaviour {
                 for (int i = 0; i < boundFightUiInstances.Count; i++) {
                     boundFightUiInstances[i].enemy.HandleAttack(-1);
                     StationaryMissScript smc2 = Instantiate(smc);
+                    if (boundFightUiInstances[i].enemy.NoAttackMissText != null)
+                        smc2.SetText(boundFightUiInstances[i].enemy.NoAttackMissText);
                     smc2.transform.SetParent(GameObject.Find("Canvas").transform);
-                    smc2.setXPosition(boundFightUiInstances[i].enePos.x);
+                    if (boundFightUiInstances[i].enemy.NoAttackMissText != null)
+                        smc2.setXPosition(boundFightUiInstances[i].enePos.x - 10 * boundFightUiInstances[i].enemy.NoAttackMissText.Length + 20);
+                    else smc2.setXPosition(boundFightUiInstances[i].enePos.x);
                 }
                 initFade();
             }

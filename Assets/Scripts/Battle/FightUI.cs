@@ -149,7 +149,10 @@ public class FightUI : MonoBehaviour {
                 }
                 // set damage numbers and positioning
                 string damageTextStr = "";
-                if (Damage == 0) damageTextStr = "[color:c0c0c0]MISS";
+                if (Damage == 0) {
+                    if (enemy.DefenseMissText == null) damageTextStr = "[color:c0c0c0]MISS";
+                    else damageTextStr = "[color:c0c0c0]" + enemy.DefenseMissText;
+                }
                 else if (Damage > 0) damageTextStr = "[color:ff0000]" + Damage;
                 else damageTextStr = "[color:00ff00]" + Damage;
                 // the -14 is to compensate for the 14 characters that [color:rrggbb] is worth until commands no longer count for text length. soon
