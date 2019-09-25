@@ -129,16 +129,6 @@ public class LuaEnemyController : EnemyController {
         set { script.SetVar("gold", DynValue.NewNumber(value)); }
     }
 
-    public string DefenseMissText {
-        get { return script.GetVar("defensemisstext").String; }
-        set { script.SetVar("defensemisstext", DynValue.NewString(value)); }
-    }
-    
-    public string NoAttackMissText {
-        get { return script.GetVar("noattackmisstext").String; }
-        set { script.SetVar("noattackmisstext", DynValue.NewString(value)); }
-    }
-
     public override string DialogBubble {
         get {
             if (script.GetVar("dialogbubble") == null)
