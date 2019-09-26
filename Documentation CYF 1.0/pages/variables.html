@@ -243,6 +243,8 @@ check = "Serving Size: 1 Monster\nNot monitored by the USDA"</pre>
                 This overrides the random dialogue and is meant for special actions (e.g. you hit Vegetoid's green carrots after selecting Dinner from the 
                 ACT menu). This variable gets <i>cleared every time after it's read out in the monster dialogue phase</i>. This is done
                 so you don't have to take care of managing it manually.</p>
+                <p><span class="CYF"></span> <span class="string"></span> <span class="term">defensemisstext</span> - The text which will be displayed if the Player's attack is successful but deals 0 damage. "MISS" by default.</p>
+                <p><span class="CYF"></span> <span class="string"></span> <span class="term">noattackmisstext</span> - The text which will be displayed if the Player doesn't press Z when attacking. "MISS" by default.</p>
             <p><span class="boolean"></span> <span class="term">cancheck</span> - Either true or false. You can leave this line out; it will be true by 
                 default. If set to false, it will disable the default Check action that shows up in your ACT menu. If you want a custom
                 Check action, you can add it back into your <span class="term">commands</span> table, and handle it like any other custom
