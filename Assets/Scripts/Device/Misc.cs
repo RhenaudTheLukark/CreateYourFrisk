@@ -77,6 +77,43 @@ public class Misc {
         return File.Exists((FileLoader.ModDataPath + "/" + path).Replace('\\', '/'));
     }
 
+    public bool DirExists(string path) {
+        if (path.Contains(".."))
+            throw new CYFException("You cannot check for a directory outside of a mod folder. The use of \"..\" is forbidden.");
+        return Directory.Exists((FileLoader.ModDataPath + "/" + path).Replace('\\', '/'));
+    }
+
+    public bool CreateDir(string path) {
+        if (path.Contains(".."))
+            throw new CYFException("You cannot create a directory outside of a mod folder. The use of \"..\" is forbidden.");
+
+        if (!Directory.Exists((FileLoader.ModDataPath + "/" + path).Replace('\\', '/'))) {
+            Directory.CreateDirectory((FileLoader.ModDataPath + "/" + path));
+            return true;
+        }
+        return false;
+    }
+
+    public bool MoveDir(string path, string newPath) {
+        if (path.Contains("..") || newPath.Contains(".."))
+            throw new CYFException("You cannot move a directory outside of a mod folder. The use of \"..\" is forbidden.");
+
+        if (DirExists(path) && !DirExists(newPath) && path != " " && path != "" && path != "/" && path != "\\" && path != "." && path != "./" && path != ".\\") {
+            Directory.Move(FileLoader.ModDataPath + "/" + path, FileLoader.ModDataPath + "/" + newPath);
+            return true;
+        }
+        return false;
+    }
+
+    public bool RemoveDir(string path, bool force = false) {
+        if (path.Contains(".."))
+            throw new CYFException("You cannot remove a directory outside of a mod folder. The use of \"..\" is forbidden.");
+
+        if (Directory.Exists((FileLoader.ModDataPath + "/" + path).Replace('\\', '/')))
+            try { Directory.Delete((FileLoader.ModDataPath + "/" + path), force); } catch {}
+        return false;
+    }
+
     public string[] ListDir(string path, bool getFolders = false) {
         if (path == null)
             throw new CYFException("Cannot list a directory with a nil path.");

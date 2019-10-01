@@ -144,6 +144,36 @@ it's w3c valid, at least
                     Otherwise, this function will return the names of all <b>Files</b> in <span class="term">path</span>.</li>
             </ul>
             <br><br>
+            <br><span class="function"><span class="boolean"></span> Misc.DirExists(<span class="string"></span> path)</span>
+            Use this function to check if a folder <u>in your Mod folder ONLY</u> exists.<br>
+            Using <span class="term">../</span> to go up a folder is NOT allowed.
+            <br><br>
+            <ul>
+                <li><span class="term">path</span>: Path to the file to open, relative to your Mod folder.<br>
+                    Can enter subfolders such as <span class="term">Lua</span>.</li><br>
+            </ul>
+            <br><span class="function"><span class="boolean"></span> Misc.CreateDir(<span class="string"></span> path)</span>
+            Attempts to create a folder with the path <span class="term">path</span> relative to your Mod folder.<br>
+            Using <span class="term">../</span> to go up a folder is NOT allowed.
+            <br><br>
+            Returns <span class="term">true</span> if the operation was successful, <span class="term">false</span> otherwise.
+            <br><br>
+            <br><span class="function"><span class="boolean"></span> Misc.MoveDir(<span class="string"></span> path, <span class="string"></span> newPath)</span>
+            Attempts to move a folder with the path <span class="term">path</span> relative to your Mod folder to a new location <span class="term">newPath</span>
+            also relative to your mod folder.<br>
+            Using <span class="term">../</span> to go up a folder is NOT allowed.
+            <br><br>
+            Returns <span class="term">true</span> if the operation was successful, <span class="term">false</span> otherwise.
+            <br><br>
+            <br><span class="function"><span class="boolean"></span> Misc.RemoveDir(<span class="string"></span> path, <span class="boolean"></span> force = false)</span>
+            Attempts to delete a folder with the path <span class="term">path</span> relative to your Mod folder.<br>
+            Using <span class="term">../</span> to go up a folder is NOT allowed.
+            <br><br>
+            <ul>
+                <li><span class="term">force</span>: If true, this function will forcefully remove a folder. Otherwise, a folder will only be removed if it is empty.</li>
+            </ul>
+            Returns <span class="term">true</span> if the operation was successful, <span class="term">false</span> otherwise.
+            <br><br>
             <br><span class="function">Misc.OpenFile(<span class="string"></span> path, <span class="string"></span> mode = "rw") returns <span class="userdata">File</span></span>
             This function opens a file <u>in your Mod folder ONLY</u>, for reading and writing.<br>
             Using <span class="term">../</span> to go up a folder is NOT allowed.
