@@ -501,7 +501,7 @@ public class UIController : MonoBehaviour {
                     this.msgs.Add(i, encounter.EnabledEnemies[i].GetDefenseDialog());
                     string[] msgs = this.msgs[i];
                     if (msgs == null) {
-                        UserDebugger.Warn("Entered ENEMYDIALOGUE, but no current/random dialogue was set for " + encounter.EnabledEnemies[i].Name);
+                        UnitaleUtil.WriteInLogAndDebugger("[WARN]Entered ENEMYDIALOGUE, but no current/random dialogue was set for " + encounter.EnabledEnemies[i].Name);
                         SwitchState(UIState.DEFENDING);
                         break;
                     }
