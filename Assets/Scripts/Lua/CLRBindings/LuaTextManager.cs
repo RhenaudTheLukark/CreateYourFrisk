@@ -75,11 +75,11 @@ public class LuaTextManager : TextManager {
 
     private void ResizeBubble() {
         float effectiveBubbleHeight = bubbleHeight != -1 ? bubbleHeight < 16 ? 40 : bubbleHeight + 24 : UnitaleUtil.CalcTextHeight(this) < 16 ? 40 : UnitaleUtil.CalcTextHeight(this) + 24;
-        containerBubble.transform.GetComponent<RectTransform>().sizeDelta = new Vector2(textMaxWidth + 20, effectiveBubbleHeight);                                                      //To set the borders
-        UnitaleUtil.GetChildPerName(containerBubble.transform, "BackHorz").GetComponent<RectTransform>().sizeDelta = new Vector2(textMaxWidth + 20, effectiveBubbleHeight - 20 * 2);    //BackHorz
-        UnitaleUtil.GetChildPerName(containerBubble.transform, "BackVert").GetComponent<RectTransform>().sizeDelta = new Vector2(textMaxWidth - 20, effectiveBubbleHeight);             //BackVert
-        UnitaleUtil.GetChildPerName(containerBubble.transform, "CenterHorz").GetComponent<RectTransform>().sizeDelta = new Vector2(textMaxWidth + 16, effectiveBubbleHeight - 16 * 2);  //CenterHorz
-        UnitaleUtil.GetChildPerName(containerBubble.transform, "CenterVert").GetComponent<RectTransform>().sizeDelta = new Vector2(textMaxWidth - 16, effectiveBubbleHeight - 4);       //CenterVert
+        containerBubble.transform.GetComponent<RectTransform>().sizeDelta = new Vector2(textMaxWidth + 40, effectiveBubbleHeight);                                                      //To set the borders
+        UnitaleUtil.GetChildPerName(containerBubble.transform, "BackHorz").GetComponent<RectTransform>().sizeDelta = new Vector2(textMaxWidth + 40, effectiveBubbleHeight - 20 * 2);    //BackHorz
+        UnitaleUtil.GetChildPerName(containerBubble.transform, "BackVert").GetComponent<RectTransform>().sizeDelta = new Vector2(textMaxWidth, effectiveBubbleHeight);             //BackVert
+        UnitaleUtil.GetChildPerName(containerBubble.transform, "CenterHorz").GetComponent<RectTransform>().sizeDelta = new Vector2(textMaxWidth + 36, effectiveBubbleHeight - 16 * 2);  //CenterHorz
+        UnitaleUtil.GetChildPerName(containerBubble.transform, "CenterVert").GetComponent<RectTransform>().sizeDelta = new Vector2(textMaxWidth +  4, effectiveBubbleHeight - 4);       //CenterVert
         SetSpeechThingPositionAndSide(bubbleSide.ToString(), bubbleLastVar);
     }
 
@@ -459,17 +459,16 @@ public class LuaTextManager : TextManager {
                 speechThing.anchoredPosition = speechThingShadow.anchoredPosition = new Vector3(0, 0);
             else {
                 if (position.Type == DataType.Number) {
-                    float number = (float)position.Number < 0 ? (float)position.Number : (size - (float)position.Number) - size / 2;
+                    float number = (float)position.Number < 0 ? (float)position.Number : ((float)position.Number) - size / 2;
                     speechThing.anchoredPosition = speechThingShadow.anchoredPosition = new Vector3(isSide ? 0 : Mathf.Clamp(number, -size / 2, size / 2),
                                                                                                     isSide ? Mathf.Clamp(number, -size / 2, size / 2) : 0);
                 } else if (position.Type == DataType.String) {
                     string str = position.String.Replace(" ", "");
                     if (str.Contains("%")) {
-                        size -= 20;
                         try {
                             float percentage = Mathf.Clamp01(ParseUtil.GetFloat(str.Replace("%", "")) / 100);
-                            float x = isSide ? 0 : 10 + Mathf.Round(percentage * size) - size / 2;
-                            float y = isSide ? 10 + Mathf.Round(percentage * size) - size / 2 : 0;
+                            float x = isSide ? 0 : Mathf.Round(percentage * size) - size / 2;
+                            float y = isSide ? Mathf.Round(percentage * size) - size / 2 : 0;
                             speechThing.anchoredPosition = speechThingShadow.anchoredPosition = new Vector3(x, y);
                         } catch { throw new CYFException("If you use a '%' in your string, you should only have a number with it."); }
                     } else
