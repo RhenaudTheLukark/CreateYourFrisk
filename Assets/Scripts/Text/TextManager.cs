@@ -552,22 +552,44 @@ public class TextManager : MonoBehaviour {
             }
             beginIndex--;
             if (!UnitaleUtil.IsOverworld) {
-                if (SceneManager.GetActiveScene().name == "Intro")
+                if (SceneManager.GetActiveScene().name == "Intro") {
                     currentText2 = currentText.Substring(0, beginIndex) + "\n" + currentText.Substring(beginIndex + 1, currentText.Length - beginIndex - 1);
-                else if (name == "DialogBubble(Clone)" || UIController.instance.encounter.gameOverStance || GetType() == typeof(LuaTextManager))
+                    currentX = self.position.x + offset.x;
+                    currentY = currentY - vSpacing - Charset.LineSpacing;
+                } else if (name == "DialogBubble(Clone)" || UIController.instance.encounter.gameOverStance || GetType() == typeof(LuaTextManager)) {
                     currentText2 = currentText.Substring(0, beginIndex) + "\n" + currentText.Substring(beginIndex + 1, currentText.Length - beginIndex - 1);
-                else {
+                    currentX = self.position.x + offset.x;
+                    currentY = currentY - vSpacing - Charset.LineSpacing;
+                } else {
+                    float before = UnitaleUtil.CalcTextWidth(this, beginIndex, finalIndex, countEOLSpace);
                     currentText2 = currentText.Substring(0, beginIndex) + "\n  " + currentText.Substring(beginIndex + 1, currentText.Length - beginIndex - 1);
                     Array.Resize(ref letterReferences, currentText2.Length);
                     Array.Resize(ref letterPositions, currentText2.Length);
+
+                    if (UnitaleUtil.CalcTextWidth(this, beginIndex, finalIndex, countEOLSpace) == before) {
+                        int j = 0;
+                        do {
+                            j++;
+                            currentText2 = currentText.Substring(0, currentText.Length - j) + "\n  " + currentText.Substring(currentText.Length - j, j);
+                            textQueue[currentLine].Text = currentText2;
+                        } while (UnitaleUtil.CalcTextWidth(this, beginIndex, finalIndex, countEOLSpace) > limit);
+                        Array.Resize(ref letterReferences, currentText2.Length);
+                        Array.Resize(ref letterPositions, currentText2.Length);
+                        // UnityEngine.Debug.Log(UnitaleUtil.CalcTextWidth(this, beginIndex, finalIndex, countEOLSpace) > limit);
+                    } else {
+                        currentX = self.position.x + offset.x;
+                        currentY = currentY - vSpacing - Charset.LineSpacing;
+                    }
                 }
             } else {
                 currentText2 = currentText.Substring(0, beginIndex) + "\n  " + currentText.Substring(beginIndex + 1, currentText.Length - beginIndex - 1);
                 Array.Resize(ref letterReferences, currentText2.Length);
                 Array.Resize(ref letterPositions, currentText2.Length);
+
+                // TODO COPY CODE STARTING ON LINE 569
+                currentX = self.position.x + offset.x;
+                currentY = currentY - vSpacing - Charset.LineSpacing;
             }
-            currentX = self.position.x + offset.x;
-            currentY = currentY - vSpacing - Charset.LineSpacing;
         } else
             currentText2 = currentText;
     }
