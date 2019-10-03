@@ -67,7 +67,7 @@ public class Misc {
 
     public static void DestroyWindow() { Application.Quit(); }
 
-    public static LuaFile OpenFile(string path, string mode = "rw") {
+    public static LuaFile OpenFile(string path, string mode = "rw") { // TODO: When OW is reworked, add 3rd argument to open a file in any of "mod", "map" or "default" locations
         return new LuaFile(path, mode);
     }
 
@@ -94,11 +94,13 @@ public class Misc {
         return false;
     }
 
+    private bool PathValid(string path) { return (path != " " && path != "" && path != "/" && path != "\\" && path != "." && path != "./" && path != ".\\"); }
+
     public bool MoveDir(string path, string newPath) {
         if (path.Contains("..") || newPath.Contains(".."))
             throw new CYFException("You cannot move a directory outside of a mod folder. The use of \"..\" is forbidden.");
 
-        if (DirExists(path) && !DirExists(newPath) && path != " " && path != "" && path != "/" && path != "\\" && path != "." && path != "./" && path != ".\\") {
+        if (DirExists(path) && !DirExists(newPath) && PathValid(path)) {
             Directory.Move(FileLoader.ModDataPath + "/" + path, FileLoader.ModDataPath + "/" + newPath);
             return true;
         }

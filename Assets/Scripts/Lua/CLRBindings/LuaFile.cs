@@ -46,7 +46,7 @@ public class LuaFile {
                 {"ASCII",               System.Text.Encoding.ASCII},
                 {"UTF7",                System.Text.Encoding.UTF7},
                 {"UTF8",                System.Text.Encoding.UTF8},
-                {"UTF32",   System.Text.Encoding.UTF32}
+                {"UTF32",               System.Text.Encoding.UTF32}
             };
 
             System.Text.Encoding newValue = null;
