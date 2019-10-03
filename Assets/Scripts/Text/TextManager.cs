@@ -490,21 +490,22 @@ public class TextManager : MonoBehaviour {
             else                                                limit = 534;
             //} else                                                  limit = 534;
         } else                                                      limit = 534;
-        if (UnitaleUtil.CalcTextWidth(this, beginIndex, finalIndex) > limit && limit > 0) {
+        bool countEOLSpace = (LuaEnemyEncounter.script.GetVar("autolinebreak").Boolean || GetType() == typeof(LuaTextManager));
+        if (UnitaleUtil.CalcTextWidth(this, beginIndex, finalIndex, countEOLSpace) > limit && limit > 0) {
             int realBeginIndex = beginIndex, realFinalIndex = finalIndex;
             beginIndex = finalIndex - 1;
             while (textQueue[currentLine].Text[beginIndex] != ' ' && textQueue[currentLine].Text[beginIndex] != '\n' && textQueue[currentLine].Text[beginIndex] != '\r' && beginIndex > 0)
                 beginIndex--;
             if (textQueue[currentLine].Text[beginIndex] == ' ' || textQueue[currentLine].Text[beginIndex] == '\n' || textQueue[currentLine].Text[beginIndex] == '\r' || beginIndex < 0)
                 beginIndex++;
-            if (UnitaleUtil.CalcTextWidth(this, beginIndex, finalIndex) > limit) {
+            if (UnitaleUtil.CalcTextWidth(this, beginIndex, finalIndex, countEOLSpace) > limit) {
                 finalIndex = beginIndex;
                 int testFinal = finalIndex;
                 beginIndex = realBeginIndex;
                 string currentText3 = currentText;
                 int addedChars = 1;
                 for (; finalIndex <= realFinalIndex && finalIndex < currentText3.Length; finalIndex++)
-                    if (UnitaleUtil.CalcTextWidth(this, beginIndex, finalIndex) > limit) {
+                    if (UnitaleUtil.CalcTextWidth(this, beginIndex, finalIndex, countEOLSpace) > limit) {
                         if (finalIndex == testFinal) {
                             currentX = self.position.x + offset.x;
                             /*if (GetType() == typeof(LuaTextManager))

@@ -130,7 +130,7 @@ public static class UnitaleUtil {
         return table;
     }
 
-    public static float CalcTextWidth(TextManager txtmgr, int fromLetter = -1, int toLetter = -1) {
+    public static float CalcTextWidth(TextManager txtmgr, int fromLetter = -1, int toLetter = -1, bool countEOLSpace = false) {
         float totalWidth = 0, totalWidthSpaceTest = 0, totalMaxWidth = 0, hSpacing = txtmgr.Charset.CharSpacing;
         if (fromLetter == -1)                                                                                       fromLetter = 0;
         if (txtmgr.textQueue == null)                                                                               return 0;
@@ -177,7 +177,7 @@ public static class UnitaleUtil {
                     if (txtmgr.Charset.Letters.ContainsKey(txtmgr.textQueue[txtmgr.currentLine].Text[i])) {
                         totalWidth += txtmgr.Charset.Letters[txtmgr.textQueue[txtmgr.currentLine].Text[i]].textureRect.size.x + hSpacing;
                         //Do not count end of line spaces
-                        if (txtmgr.textQueue[txtmgr.currentLine].Text[i] != ' ')
+                        if (txtmgr.textQueue[txtmgr.currentLine].Text[i] != ' ' || countEOLSpace)
                             totalWidthSpaceTest = totalWidth;
                     }
                     break;
