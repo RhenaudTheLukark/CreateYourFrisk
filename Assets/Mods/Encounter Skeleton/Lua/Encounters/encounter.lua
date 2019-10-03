@@ -19,6 +19,24 @@ possible_attacks = {"bullettest_bouncy", "bullettest_chaserorb", "bullettest_tou
 
 function EncounterStarting()
     -- If you want to change the game state immediately, this is the place.
+    autolinebreak = true
+    txtt = {"wowaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaa",
+    "wowaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaab",
+    "abcdefgabcdefgabcdefgabcdefgabcde",
+    "abcdefgabcdefgabcdefgabcdefgabcdef",
+    "abcdefgabcdefgabcdefgabcdefgabcdefg",
+    "abcdefgabcdefgabcdefgabcdefgabcdefga",
+    "abcdefgabcdefgabcdefgabcdefgabcdefgab",
+    "abcdefgabcdefgabcdefgabcdefgabcdefgabc"}
+    BattleDialog(txtt)
+
+    txt = CreateText(txtt, {60 + 32, 250}, 530 - 32, "Top")
+    txt.SetFont("uidialog")
+    txt.color = {1, 0, 0}
+    txt.progressmode = "manual"
+
+    enemies[1]["dialogueprefix"] = "[color:ff0000]"
+    enemies[1]["currentdialogue"] = {"I I I I I I I I I I I I I I I I I I I"}
 end
 
 function EnemyDialogueStarting()

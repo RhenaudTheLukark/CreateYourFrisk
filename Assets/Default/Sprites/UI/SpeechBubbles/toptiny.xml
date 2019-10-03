@@ -3,5 +3,5 @@
     <sprite name="toptiny">
         <border x="8" y="12" z="7" w="3"/>
     </sprite>
-    <wideness>55</wideness>
+    <width>55</width>
 </spritesheet>
