@@ -525,19 +525,20 @@ public class TextManager : MonoBehaviour {
                         } else {
                             if (!UnitaleUtil.IsOverworld) {
                                 if (SceneManager.GetActiveScene().name == "Intro") {
-                                    currentText3 = currentText3.Substring(0, finalIndex - 1) + "\n" + currentText3.Substring(finalIndex - 1, currentText.Length - finalIndex + addedChars);
+                                    currentText3 = currentText3.Substring(0, finalIndex) + "\n" + currentText3.Substring(finalIndex, currentText.Length - finalIndex + addedChars - 1);
                                     realFinalIndex++;
                                     addedChars++;
                                 } else if (name == "DialogBubble(Clone)" || UIController.instance.encounter.gameOverStance || GetType() == typeof(LuaTextManager)) {
-                                    currentText3 = currentText3.Substring(0, finalIndex - 1) + "\n" + currentText3.Substring(finalIndex - 1, currentText.Length - finalIndex + addedChars);
+                                    currentText3 = currentText3.Substring(0, finalIndex) + "\n" + currentText3.Substring(finalIndex, currentText.Length - finalIndex + addedChars - 1);
                                     realFinalIndex++;
                                     addedChars++;
                                 } else {
-                                    currentText3 = currentText3.Substring(0, finalIndex - 1) + "\n  " + currentText3.Substring(finalIndex - 1, currentText.Length - finalIndex + addedChars);
+                                    currentText3 = currentText3.Substring(0, finalIndex) + "\n  " + currentText3.Substring(finalIndex, currentText.Length - finalIndex + addedChars - 1);
                                     realFinalIndex += 3;
                                     addedChars += 3;
                                 }
                             } else {
+                                // TODO COPY CODE FROM ABOVE
                                 currentText3 = currentText3.Substring(0, finalIndex - 1) + "\n  " + currentText3.Substring(finalIndex - 1, currentText.Length - finalIndex + addedChars);
                                 realFinalIndex += 3;
                                 addedChars += 3;
@@ -575,7 +576,6 @@ public class TextManager : MonoBehaviour {
                         } while (UnitaleUtil.CalcTextWidth(this, beginIndex, finalIndex, countEOLSpace) > limit);
                         Array.Resize(ref letterReferences, currentText2.Length);
                         Array.Resize(ref letterPositions, currentText2.Length);
-                        // UnityEngine.Debug.Log(UnitaleUtil.CalcTextWidth(this, beginIndex, finalIndex, countEOLSpace) > limit);
                     } else {
                         currentX = self.position.x + offset.x;
                         currentY = currentY - vSpacing - Charset.LineSpacing;
