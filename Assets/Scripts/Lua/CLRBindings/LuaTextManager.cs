@@ -346,6 +346,8 @@ public class LuaTextManager : TextManager {
         
         base.currentLine = 0;
         ShowLine(0);
+        if (bubble)
+            ResizeBubble();
     }
     
     public void AddText(DynValue text) {
