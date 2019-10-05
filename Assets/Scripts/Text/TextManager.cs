@@ -490,7 +490,7 @@ public class TextManager : MonoBehaviour {
             else                                                limit = 534;
             //} else                                                  limit = 534;
         } else                                                      limit = 534;
-        bool countEOLSpace = (LuaEnemyEncounter.script.GetVar("autolinebreak").Boolean || GetType() == typeof(LuaTextManager));
+        bool countEOLSpace = (GlobalControls.isInFight && LuaEnemyEncounter.script.GetVar("autolinebreak").Boolean || GetType() == typeof(LuaTextManager));
         if (UnitaleUtil.CalcTextWidth(this, beginIndex, finalIndex, countEOLSpace) > limit && limit > 0) {
             int realBeginIndex = beginIndex, realFinalIndex = finalIndex;
             beginIndex = finalIndex - 1;
