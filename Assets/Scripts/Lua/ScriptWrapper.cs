@@ -2,6 +2,7 @@
 using MoonSharp.Interpreter;
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 public class ScriptWrapper {
     public static List<ScriptWrapper> instances = new List<ScriptWrapper>();
@@ -67,7 +68,7 @@ public class ScriptWrapper {
                     try { d = script.Call(script.Globals[function], argsNew); } 
                     catch (InterpreterException ex) { UnitaleUtil.DisplayLuaError(scriptname, ex.DecoratedMessage == null ? 
                                                                                                   ex.Message : 
-                                                                                                  ex.DecoratedMessage); } 
+                                                                                                  FormatErrorSource(ex.DecoratedMessage.Substring(0, ex.DecoratedMessage.Length - ex.Message.Length)) + ex.Message); } 
                     catch (Exception ex) {
                         if (!GlobalControls.retroMode)
                             UnitaleUtil.DisplayLuaError(scriptname + ", calling the function " + function, "This is a " + ex.GetType() + " error. Contact the dev and show him this screen, this must be an engine-side error.\n\n" + ex.Message + "\n\n" + ex.StackTrace + "\n");
@@ -75,7 +76,7 @@ public class ScriptWrapper {
                 } else if (e.GetType() == typeof(InterpreterException) || e.GetType().BaseType == typeof(InterpreterException) || e.GetType().BaseType.BaseType == typeof(InterpreterException))
                     UnitaleUtil.DisplayLuaError(scriptname, ((InterpreterException)e).DecoratedMessage == null ? 
                                                                 ((InterpreterException)e).Message : 
-                                                                ((InterpreterException)e).DecoratedMessage);
+                                                                FormatErrorSource(((InterpreterException)e).DecoratedMessage.Substring(0, ((InterpreterException)e).DecoratedMessage.Length - ((InterpreterException)e).Message.Length)) + ((InterpreterException)e).Message);
                 else if (!GlobalControls.retroMode)
                     UnitaleUtil.DisplayLuaError(scriptname + ", calling the function " + function, "This is a " + e.GetType() + " error. Contact the dev and show him this screen, this must be an engine-side error.\n\n" + e.Message + "\n\n" + e.StackTrace + "\n");
             }
@@ -86,7 +87,7 @@ public class ScriptWrapper {
             catch (InterpreterException ex) {
                 UnitaleUtil.DisplayLuaError(scriptname, ex.DecoratedMessage == null ? 
                                                             ex.Message : 
-                                                            ex.DecoratedMessage);
+                                                            FormatErrorSource(ex.DecoratedMessage.Substring(0, ex.DecoratedMessage.Length - ex.Message.Length)) + ex.Message);
             } catch (Exception ex) {
                 if (!GlobalControls.retroMode)
                     // Special case for infinite loop...
@@ -101,7 +102,23 @@ public class ScriptWrapper {
             return d;
         }
     }
-    
+
+    private string FormatErrorSource(string source) {
+        Regex validator = new Regex(@"\(\d+,\d+(-[\d,]+)?\)"); // finds `(13,9-16)` or `(13,9-14,10)` or `(20,0)`
+        Match scanned = validator.Match(source);
+        if (scanned.Success) {
+            string stacktrace = scanned.Value;
+            validator = new Regex(@"(\d+),(\d+)"); // finds `13,9`
+            MatchCollection matches = validator.Matches(stacktrace);
+
+            // add "line " and "char " before some numbers
+            foreach (Match match in matches)
+                source = source.Replace(match.Value, "line " + match.Groups[1].Value + ", char " + match.Groups[2].Value);
+        }
+
+        return source;
+    }
+
     //Used for enemies
     public LuaSpriteController monstersprite;
 
