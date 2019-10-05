@@ -538,8 +538,7 @@ public class TextManager : MonoBehaviour {
                                     addedChars += 3;
                                 }
                             } else {
-                                // TODO COPY CODE FROM ABOVE
-                                currentText3 = currentText3.Substring(0, finalIndex - 1) + "\n  " + currentText3.Substring(finalIndex - 1, currentText.Length - finalIndex + addedChars);
+                                currentText3 = currentText3.Substring(0, finalIndex) + "\n  " + currentText3.Substring(finalIndex, currentText.Length - finalIndex + addedChars - 1);
                                 realFinalIndex += 3;
                                 addedChars += 3;
                             }
@@ -567,6 +566,11 @@ public class TextManager : MonoBehaviour {
                     Array.Resize(ref letterReferences, currentText2.Length);
                     Array.Resize(ref letterPositions, currentText2.Length);
 
+                    // ! ! !!! !!! THERE IS A REALLY HUGE PROBLEM WITH THIS CODE
+                    // UnitaleUtil.CalcTextWidth ONLY GETS THE WIDTH OF THE BOTTOM-MOST LINE OF TEXT
+                    // SO, RATHER THAN ADDING A NEW LINE ONE CHARACTER BACK UNTIL THE WIDTH FITS WITHIN THE ARENA
+                    // I NEED TO TRIM OFF ONE CHARACTER AT A TIME FROM THE END OF THE STRING
+                    // AND I'M REALLY WORRIED ABOUT TEXT COMMANDS...
                     if (UnitaleUtil.CalcTextWidth(this, beginIndex, finalIndex, countEOLSpace) == before) {
                         int j = 0;
                         do {
@@ -586,7 +590,6 @@ public class TextManager : MonoBehaviour {
                 Array.Resize(ref letterReferences, currentText2.Length);
                 Array.Resize(ref letterPositions, currentText2.Length);
 
-                // TODO COPY CODE STARTING ON LINE 569
                 currentX = self.position.x + offset.x;
                 currentY = currentY - vSpacing - Charset.LineSpacing;
             }
