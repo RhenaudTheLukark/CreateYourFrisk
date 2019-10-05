@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
 /// <summary>
 /// Utility class for the Unitale engine.
@@ -83,6 +84,23 @@ public static class UnitaleUtil {
         else
             SceneManager.LoadScene("Error");
         Debug.Log("It's a Lua error! : " + ErrorDisplay.Message);
+    }
+
+    public static string FormatErrorSource(string DecoratedMessage, string message) {
+        string source = DecoratedMessage.Substring(0, DecoratedMessage.Length - message.Length);
+        Regex validator = new Regex(@"\(\d+,\d+(-[\d,]+)?\)"); // finds `(13,9-16)` or `(13,9-14,10)` or `(20,0)`
+        Match scanned = validator.Match(source);
+        if (scanned.Success) {
+            string stacktrace = scanned.Value;
+            validator = new Regex(@"(\d+),(\d+)"); // finds `13,9`
+            MatchCollection matches = validator.Matches(stacktrace);
+
+            // add "line " and "char " before some numbers
+            foreach (Match match in matches)
+                source = source.Replace(match.Value, "line " + match.Groups[1].Value + ", char " + match.Groups[2].Value);
+        }
+
+        return source;
     }
 
     public static AudioSource GetCurrentOverworldAudio() {

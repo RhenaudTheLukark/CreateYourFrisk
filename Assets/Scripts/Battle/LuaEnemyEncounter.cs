@@ -50,7 +50,7 @@ internal class LuaEnemyEncounter : EnemyEncounter {
             string scriptText = ScriptRegistry.Get(ScriptRegistry.ENCOUNTER_PREFIX + StaticInits.ENCOUNTER);
             try { script.DoString(scriptText); } 
             catch (InterpreterException ex) {
-                UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, ex.DecoratedMessage);
+                UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message);
                 return false;
             }
             script.Bind("State", (Action<Script, string>)UIController.SwitchStateOnString);
@@ -125,7 +125,7 @@ internal class LuaEnemyEncounter : EnemyEncounter {
                 try {
                     waves[i].DoString(ScriptRegistry.Get(ScriptRegistry.WAVE_PREFIX + nextWaves.Table.Get(i + 1).String));
                     indexes.Add(i);
-                } catch (InterpreterException ex) { UnitaleUtil.DisplayLuaError(nextWaves.Table.Get(i + 1).String + ".lua", ex.DecoratedMessage);
+                } catch (InterpreterException ex) { UnitaleUtil.DisplayLuaError(nextWaves.Table.Get(i + 1).String + ".lua", UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message);
                 } catch (Exception ex) {
                     if (!GlobalControls.retroMode &&!ScriptRegistry.dict.ContainsKey(ScriptRegistry.WAVE_PREFIX + nextWaves.Table.Get(i + 1).String))
                         UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, "The wave \"" + nextWaves.Table.Get(i + 1).String + "\" doesn't exist.");
@@ -137,7 +137,7 @@ internal class LuaEnemyEncounter : EnemyEncounter {
             for (int i = 0; i < indexes.Count; i++)
                 luaWaveTable.Set(i + 1, UserData.Create(waves[indexes[i]]));
             script.SetVar("Wave", DynValue.NewTable(luaWaveTable));
-        } catch (InterpreterException ex) { UnitaleUtil.DisplayLuaError(nextWaves.Table.Get(currentWaveScript + 1).String + ".lua", ex.DecoratedMessage); }
+        } catch (InterpreterException ex) { UnitaleUtil.DisplayLuaError(nextWaves.Table.Get(currentWaveScript + 1).String + ".lua", UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message); }
     }
 
     public void Awake() {
@@ -261,7 +261,7 @@ internal class LuaEnemyEncounter : EnemyEncounter {
             else                             script.Call(func);
             return true;
         } catch (InterpreterException ex) {
-            UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, ex.DecoratedMessage);
+            UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message);
             return true;
         }
     }
@@ -291,7 +291,7 @@ internal class LuaEnemyEncounter : EnemyEncounter {
                 currentScript = waveNames[i];
                 try { waves[i].script.Call(waves[i].script.Globals["Update"]); } 
                 catch (InterpreterException ex) {
-                    UnitaleUtil.DisplayLuaError(currentScript, ex.DecoratedMessage);
+                    UnitaleUtil.DisplayLuaError(currentScript, UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message);
                     return;
                 } catch (Exception ex) {
                     if (!GlobalControls.retroMode) {
@@ -304,7 +304,7 @@ internal class LuaEnemyEncounter : EnemyEncounter {
                 }
             }
         } catch (InterpreterException ex) {
-            UnitaleUtil.DisplayLuaError(currentScript, ex.DecoratedMessage);
+            UnitaleUtil.DisplayLuaError(currentScript, UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message);
             return;
         }
     }

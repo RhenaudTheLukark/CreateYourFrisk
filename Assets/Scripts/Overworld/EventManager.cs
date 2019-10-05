@@ -305,7 +305,7 @@ public class EventManager : MonoBehaviour {
                     }
             }
         } catch (InterpreterException e) {
-            UnitaleUtil.DisplayLuaError(gameobject.name + ", page #" + gameobject.GetComponent<EventOW>().actualPage, e.DecoratedMessage);
+            UnitaleUtil.DisplayLuaError(gameobject.name + ", page #" + gameobject.GetComponent<EventOW>().actualPage, UnitaleUtil.FormatErrorSource(e.DecoratedMessage, e.Message) + e.Message);
         } catch (Exception e) {
             UnitaleUtil.DisplayLuaError(gameobject.name + ", page #" + gameobject.GetComponent<EventOW>().actualPage,
                                         "Unknown error of type " + e.GetType() + ". Please send this to the main dev.\n\n" + e.Message + "\n\n" + e.StackTrace);
@@ -448,7 +448,7 @@ public class EventManager : MonoBehaviour {
             scr.Call("CYFEventStartEvent", DynValue.NewString("EventPage" + (page == -1 ? go.GetComponent<EventOW>().actualPage : page)));
             //scr.Call("EventPage" + go.GetComponent<EventOW>().actualPage);
         } catch (InterpreterException ex) {
-            UnitaleUtil.DisplayLuaError(go.GetComponent<EventOW>().scriptToLoad, ex.DecoratedMessage);
+            UnitaleUtil.DisplayLuaError(go.GetComponent<EventOW>().scriptToLoad, UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message);
             return false;
         } catch (Exception ex) {
             UnitaleUtil.DisplayLuaError(go.GetComponent<EventOW>().scriptToLoad, ex.Message);
@@ -616,7 +616,7 @@ public class EventManager : MonoBehaviour {
 
         try { scr.DoString(scriptText); } 
         catch (InterpreterException ex) {
-            UnitaleUtil.DisplayLuaError(name, ex.DecoratedMessage);
+            UnitaleUtil.DisplayLuaError(name, UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message);
             return null;
         } catch (Exception ex) {
             UnitaleUtil.DisplayLuaError(name, ex.Message);

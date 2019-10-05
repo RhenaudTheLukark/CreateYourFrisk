@@ -180,7 +180,7 @@ public class UIController : MonoBehaviour {
             try {
                 LuaEnemyEncounter.script.Call("EnteringState", new DynValue[] { DynValue.NewString(state.ToString()), DynValue.NewString(this.state.ToString()) });
             } catch (InterpreterException ex) {
-                UnitaleUtil.DisplayLuaError(LuaEnemyEncounter.script.scriptname, ex.DecoratedMessage);
+                UnitaleUtil.DisplayLuaError(LuaEnemyEncounter.script.scriptname, UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message);
             }
             parentStateCall = true;
 

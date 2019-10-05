@@ -97,7 +97,7 @@ public static class Inventory {
                 else                LuaEnemyEncounter.script.Call(func);
                 return true;
             } catch (InterpreterException ex) {
-                UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, ex.DecoratedMessage);
+                UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message);
                 return true;
             }
         else

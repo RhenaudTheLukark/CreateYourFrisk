@@ -266,7 +266,7 @@ public class LuaEnemyController : EnemyController {
             /*if (script.GetVar("canspare") == null) CanSpare = false;
             if (script.GetVar("cancheck") == null) CanCheck = true;*/
         }
-        catch (InterpreterException ex) { UnitaleUtil.DisplayLuaError(scriptName, ex.DecoratedMessage != null ? ex.DecoratedMessage : ex.Message); }
+        catch (InterpreterException ex) { UnitaleUtil.DisplayLuaError(scriptName, ex.DecoratedMessage != null ? UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message : ex.Message); }
         catch (Exception ex)            { UnitaleUtil.DisplayLuaError(scriptName, "Unknown error. Usually means you're missing a sprite.\nSee documentation for details.\nStacktrace below in case you wanna notify a dev.\n\nError: " + ex.Message + "\n\n" + ex.StackTrace); }
     }
 
@@ -310,7 +310,7 @@ public class LuaEnemyController : EnemyController {
             else                                           script.Call(func);
             return true;
         }
-        catch (InterpreterException ex) { UnitaleUtil.DisplayLuaError(scriptName, ex.DecoratedMessage); }
+        catch (InterpreterException ex) { UnitaleUtil.DisplayLuaError(scriptName, UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message); }
         return true;
     }
 

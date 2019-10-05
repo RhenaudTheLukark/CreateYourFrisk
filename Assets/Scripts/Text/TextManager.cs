@@ -1221,7 +1221,7 @@ public class TextManager : MonoBehaviour {
                         caller.Call(cmds[1], null, true);
                     if (cmds[1] == "State")
                         wasStated = true;
-                } catch (InterpreterException ex) { UnitaleUtil.DisplayLuaError(caller.scriptname, ex.DecoratedMessage); }
+                } catch (InterpreterException ex) { UnitaleUtil.DisplayLuaError(caller.scriptname, UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message); }
                 break;
 
             case "mugshot":
