@@ -27,7 +27,7 @@ public class ScriptWrapper {
         instances.Remove(this);
     }
 
-    internal DynValue DoString(string source) { return script.DoString(source, null, (!GlobalControls.retroMode && scriptname != "???") ? scriptname : null); }
+    internal DynValue DoString(string source) { return script.DoString(source, null, scriptname != "???" ? scriptname : null); }
 
     public void SetVar(string key, DynValue value) {
         if (key == null)
@@ -67,9 +67,7 @@ public class ScriptWrapper {
                     try { d = script.Call(script.Globals[function], argsNew); } 
                     catch (InterpreterException ex) { UnitaleUtil.DisplayLuaError(scriptname, ex.DecoratedMessage == null ? 
                                                                                                   ex.Message : 
-                                                                                                  ex.DecoratedMessage.Substring(5).Contains("chunk_") ? 
-                                                                                                      ex.Message : 
-                                                                                                      ex.DecoratedMessage); } 
+                                                                                                  ex.DecoratedMessage); } 
                     catch (Exception ex) {
                         if (!GlobalControls.retroMode)
                             UnitaleUtil.DisplayLuaError(scriptname + ", calling the function " + function, "This is a " + ex.GetType() + " error. Contact the dev and show him this screen, this must be an engine-side error.\n\n" + ex.Message + "\n\n" + ex.StackTrace + "\n");
@@ -77,9 +75,7 @@ public class ScriptWrapper {
                 } else if (e.GetType() == typeof(InterpreterException) || e.GetType().BaseType == typeof(InterpreterException) || e.GetType().BaseType.BaseType == typeof(InterpreterException))
                     UnitaleUtil.DisplayLuaError(scriptname, ((InterpreterException)e).DecoratedMessage == null ? 
                                                                 ((InterpreterException)e).Message : 
-                                                                ((InterpreterException)e).DecoratedMessage.Substring(5).Contains("chunk_") ? 
-                                                                    ((InterpreterException)e).Message : 
-                                                                    ((InterpreterException)e).DecoratedMessage);
+                                                                ((InterpreterException)e).DecoratedMessage);
                 else if (!GlobalControls.retroMode)
                     UnitaleUtil.DisplayLuaError(scriptname + ", calling the function " + function, "This is a " + e.GetType() + " error. Contact the dev and show him this screen, this must be an engine-side error.\n\n" + e.Message + "\n\n" + e.StackTrace + "\n");
             }
@@ -88,11 +84,9 @@ public class ScriptWrapper {
             DynValue d = DynValue.Nil;
             try { d = script.Call(script.Globals[function]); } 
             catch (InterpreterException ex) {
-                UnitaleUtil.DisplayLuaError(scriptname, ex.DoNotDecorateMessage ? 
+                UnitaleUtil.DisplayLuaError(scriptname, ex.DecoratedMessage == null ? 
                                                             ex.Message : 
-                                                            ex.DecoratedMessage.Substring(5).Contains("chunk_") ? 
-                                                                ex.Message : 
-                                                                ex.DecoratedMessage);
+                                                            ex.DecoratedMessage);
             } catch (Exception ex) {
                 if (!GlobalControls.retroMode)
                     // Special case for infinite loop...
