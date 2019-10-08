@@ -20,17 +20,32 @@ public class Misc {
         get { return Screen.fullScreen; }
         set {
             Screen.fullScreen = value;
-
             GlobalControls.SetFullScreen(value, 2);
         }
+    }
+
+    public static int ScreenWidth {
+        get { return Screen.currentResolution.width; }
     }
 
     public static int ScreenHeight {
         get { return Screen.currentResolution.height; }
     }
 
-    public static int ScreenWidth {
-        get { return Screen.currentResolution.width; }
+    public static int MonitorWidth {
+        get { return GlobalControls.lastMonitorWidth; }
+    }
+
+    public static int MonitorHeight {
+        get { return GlobalControls.lastMonitorHeight; }
+    }
+
+    public void SetWideFullscreen(bool borderless) {
+        if (!GlobalControls.isInFight)
+            throw new CYFException("SetWideFullscreen is only usable from within battles. Sorry!");
+        GlobalControls.wideFullscreen = borderless;
+        if (Screen.fullScreen)
+            GlobalControls.SetFullScreen(true, 0);
     }
 
     public static float cameraX {

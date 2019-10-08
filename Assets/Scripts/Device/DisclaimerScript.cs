@@ -9,47 +9,27 @@ using System.Collections;
 /// Attached to the disclaimer screen so you can skip it.
 /// </summary>
 public class DisclaimerScript : MonoBehaviour {
-    private static bool initial = false;
-    
     private void Start() {
-        if (!initial) {
-            StaticInits.Start();
-            SaveLoad.Start();
-            new ControlPanel();
-            new PlayerCharacter();
-            #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
-                if (GlobalControls.crate)  Misc.WindowName = ControlPanel.instance.WinodwBsaisNmae;
-                else                       Misc.WindowName = ControlPanel.instance.WindowBasisName;
-            #endif
-            SaveLoad.LoadAlMighty();
-            LuaScriptBinder.Set(null, "ModFolder", DynValue.NewString("@Title"));
-            
-            UnitaleUtil.AddKeysToMapCorrespondanceList();
-            
-            initial = true;
-        }
-        
-        if (LuaScriptBinder.GetAlMighty(null, "CrateYourFrisk") != null) 
-            if (LuaScriptBinder.GetAlMighty(null, "CrateYourFrisk").Boolean) {
-                GameObject.Find("Image").GetComponent<Image>().enabled = false;
-                GameObject.Find("Image (1)").GetComponent<Image>().enabled = true;
-                /*GameObject.Find("Description").GetComponent<Text>().text = "CRATE YOUR FRISK IS A FERE AND SUPER KEWL EJNINE!!!!1!!\n" +
-                                                                           "GO ON WWW.REDIDT.CMO/R/UNITLAE. FOR UPDTAES!!!!!\n" +
-                                                                           "NO RELESLING HERE!!! IT'S RFEE!!!\n" +
-                                                                           "OR TUBY FEX WILL BE ANGER!!!\n\n" +
+        if (GlobalControls.crate) {
+            GameObject.Find("Image").GetComponent<Image>().enabled = false;
+            GameObject.Find("Image (1)").GetComponent<Image>().enabled = true;
+            /*GameObject.Find("Description").GetComponent<Text>().text = "CRATE YOUR FRISK IS A FERE AND SUPER KEWL EJNINE!!!!1!!\n" +
+                                                                       "GO ON WWW.REDIDT.CMO/R/UNITLAE. FOR UPDTAES!!!!!\n" +
+                                                                       "NO RELESLING HERE!!! IT'S RFEE!!!\n" +
+                                                                       "OR TUBY FEX WILL BE ANGER!!!\n\n" +
+                                                                       "U'LL HVAE A BED TMIE!!!";
+            GameObject.Find("Description (1)").GetComponent<Text>().text = "NU FEAUTRES IN EXAMPLES MODS!!!!! CHEKC IT OTU!!!!!\n" +
+                                                                           "REALLY!!!\n" +
+                                                                           "IF U DAD A # IN AN ECNOUNTRE NAME IT'LL NTO BE CHOSE NI\n" +
+                                                                           "ENCONUTERS ON THE PAMS!!!! SO COLO!!!";*/
+            GameObject.Find("Description").GetComponent<Text>().text = "GO TO /R/UNITLAE. FOR UPDTAES!!!!!";
+            GameObject.Find("Description (1)").GetComponent<Text>().text = "NO RELESLING HERE!!! IT'S RFEE!!! " +
+                                                                           "OR TUBY FEX WILL BE ANGER!!! " +
                                                                            "U'LL HVAE A BED TMIE!!!";
-                GameObject.Find("Description (1)").GetComponent<Text>().text = "NU FEAUTRES IN EXAMPLES MODS!!!!! CHEKC IT OTU!!!!!\n" +
-                                                                               "REALLY!!!\n" +
-                                                                               "IF U DAD A # IN AN ECNOUNTRE NAME IT'LL NTO BE CHOSE NI\n" +
-                                                                               "ENCONUTERS ON THE PAMS!!!! SO COLO!!!";*/
-                GameObject.Find("Description").GetComponent<Text>().text = "GO TO /R/UNITLAE. FOR UPDTAES!!!!!";
-                GameObject.Find("Description (1)").GetComponent<Text>().text = "NO RELESLING HERE!!! IT'S RFEE!!! " +
-                                                                               "OR TUBY FEX WILL BE ANGER!!! " +
-                                                                               "U'LL HVAE A BED TMIE!!!";
-                GameObject.Find("Description (2)").GetComponent<Text>().text = "SPACE OR KLIK TO\n<color='#ff0000'>PALY MODS!!!!!</color>";
-                GameObject.Find("Description (3)").GetComponent<Text>().text = "PRSES O TO\n<color='#ffff00'>OOVERWURL!!!!!</color>";
-                GameObject.Find("Description (4)").GetComponent<Text>().text = "<b><color='red'>KNOW YUOR CODE</color> R U'LL HVAE A BED TMIE!!!</b>";
-            }
+            GameObject.Find("Description (2)").GetComponent<Text>().text = "SPACE OR KLIK TO\n<color='#ff0000'>PALY MODS!!!!!</color>";
+            GameObject.Find("Description (3)").GetComponent<Text>().text = "PRSES O TO\n<color='#ffff00'>OOVERWURL!!!!!</color>";
+            GameObject.Find("Description (4)").GetComponent<Text>().text = "<b><color='red'>KNOW YUOR CODE</color> R U'LL HVAE A BED TMIE!!!</b>";
+        }
     }
 
     /// <summary>
@@ -65,7 +45,7 @@ public class DisclaimerScript : MonoBehaviour {
               || Input.GetKey(KeyCode.RightAlt)))))   // RAlt  + Enter
                 Misc.RetargetWindow();
         #endif
-        
+
         if (Input.GetKeyDown(KeyCode.O)) {
             StaticInits.MODFOLDER = StaticInits.EDITOR_MODFOLDER;
             StaticInits.Initialized = false;
@@ -79,7 +59,7 @@ public class DisclaimerScript : MonoBehaviour {
             StartCoroutine(ModSelect());
         }
     }
-    
+
     // The mod select screen can take some extra time to load,
     // because it now searches for encounter files on top of mods.
     // To compensate, this function will add "Loading" text to the Disclaimer screen

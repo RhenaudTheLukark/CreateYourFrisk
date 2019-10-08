@@ -46,14 +46,27 @@ public class GlobalControls : MonoBehaviour {
             misc = new Misc();
     }*/
 
-    // used to only call Awake once
-    private bool awakened = false;
+    // used to only run Awake once
+    private static bool awakened = false;
 
-    void Awake() {
+    public void Awake() {
         if (!awakened) {
-            SceneManager.sceneLoaded += LoadScene;
+            StaticInits.Start();
+            SaveLoad.Start();
+            new ControlPanel();
+            new PlayerCharacter();
+            SaveLoad.LoadAlMighty();
+            LuaScriptBinder.Set(null, "ModFolder", DynValue.NewString("@Title"));
 
-            // use AlMightyGlobals to load Safe Mode, Retromode and Fullscreen mode preferences
+            UnitaleUtil.AddKeysToMapCorrespondanceList();
+
+            // use AlMightyGlobals to load Crate Your Frisk, Safe Mode, Retromode and Fullscreen mode preferences
+
+            if (LuaScriptBinder.GetAlMighty(null, "CrateYourFrisk") != null && LuaScriptBinder.GetAlMighty(null, "CrateYourFrisk").Boolean)
+                crate = true;
+            #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
+                Misc.WindowName = crate ? ControlPanel.instance.WinodwBsaisNmae : ControlPanel.instance.WindowBasisName;
+            #endif
 
             // check if safe mode has a stored preference that is a boolean
             if (LuaScriptBinder.GetAlMighty(null, "CYFSafeMode") != null
@@ -83,6 +96,9 @@ public class GlobalControls : MonoBehaviour {
     public static bool perfectFullscreen = true;
     public static int  fullscreenSwitch = 0;
     public static int  windowScale = 1;
+    public static bool wideFullscreen = false;
+    public static int  lastMonitorWidth = 640;
+    public static int  lastMonitorHeight = 480;
 
     #if UNITY_STANDALONE_WIN
         static IEnumerator RepositionWindow() {
@@ -94,17 +110,42 @@ public class GlobalControls : MonoBehaviour {
         }
     #endif
 
+    public static IEnumerator UpdateMonitorSize() {
+        yield return new WaitForEndOfFrame();
+
+        try {
+            lastMonitorWidth = Screen.currentResolution.width;
+            lastMonitorHeight = Screen.currentResolution.height;
+        } catch {}
+    }
+
     public static void SetFullScreen(bool fullscreen, int fswitch = 1) {
-        if (perfectFullscreen) {
-            if (!fullscreen)
-                Screen.SetResolution(640 * windowScale, 480 * windowScale, false, 0);
-            else {
-                double ScreenWidth  = (Screen.currentResolution.height / (double)3) * (double)4;
-                double ScreenHeight = (Screen.currentResolution.width / (double)4) * (double)3;
-                Screen.SetResolution((int)RoundToNearestEven(ScreenWidth), (int)RoundToNearestEven(ScreenHeight), true, 0);
+        if (!wideFullscreen || ((float)lastMonitorWidth / (float)lastMonitorHeight) < 1.333334) {
+            if (perfectFullscreen) {
+                if (!fullscreen)
+                    Screen.SetResolution(640 * windowScale, 480 * windowScale, false, 0);
+                else {
+                    double ScreenWidth  = (lastMonitorHeight / (double)3) * (double)4;
+                    double ScreenHeight = (lastMonitorWidth / (double)4) * (double)3;
+                    Screen.SetResolution((int)RoundToNearestEven(ScreenWidth), (int)RoundToNearestEven(ScreenHeight), true, 0);
+                }
+            } else
+                Screen.SetResolution(640 * windowScale, 480 * windowScale, fullscreen, 0);
+        } else {
+            if (perfectFullscreen) {
+                if (!fullscreen)
+                    Screen.SetResolution(640 * windowScale, 480 * windowScale, false, 0);
+                else
+                    Screen.SetResolution(lastMonitorWidth, lastMonitorHeight, true, 0);
+            } else {
+                if (!fullscreen)
+                    Screen.SetResolution(640 * windowScale, 480 * windowScale, false, 0);
+                else {
+                    double ScreenWidth  = ((double)480 / lastMonitorHeight) * lastMonitorWidth;
+                    Screen.SetResolution((int)RoundToNearestEven(ScreenWidth), 480, true, 0);
+                }
             }
-        } else
-            Screen.SetResolution(640 * windowScale, 480 * windowScale, fullscreen, 0);
+        }
 
         #if UNITY_STANDALONE_WIN
             fullscreenSwitch = fswitch;
@@ -192,13 +233,11 @@ public class GlobalControls : MonoBehaviour {
         if  (Input.GetKeyDown(KeyCode.F4)        // F4
           || (Input.GetKeyDown(KeyCode.Return)
           &&(Input.GetKey(KeyCode.LeftAlt)       // LAlt  + Enter
-          || Input.GetKey(KeyCode.RightAlt))))   // RAlt  + Enter
+          || Input.GetKey(KeyCode.RightAlt)))) { // RAlt  + Enter
 			SetFullScreen(!Screen.fullScreen);
-    }
-
-    void LoadScene(Scene scene, LoadSceneMode mode) {
-        if (LuaScriptBinder.GetAlMighty(null, "CrateYourFrisk") != null)  crate = LuaScriptBinder.GetAlMighty(null, "CrateYourFrisk").Boolean;
-        else                                                              crate = false;
+            if (!Screen.fullScreen)
+                StartCoroutine(UpdateMonitorSize());
+          }
     }
 
     private IEnumerator IShakeScreen(object[] args) {

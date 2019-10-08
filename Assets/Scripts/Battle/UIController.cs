@@ -127,8 +127,7 @@ public class UIController : MonoBehaviour {
         PlayerCharacter.instance.MaxHPShift = 0;
         PlayerCharacter.instance.SetLevel(PlayerCharacter.instance.LV);
         #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
-            if (GlobalControls.crate)  Misc.WindowName = ControlPanel.instance.WinodwBsaisNmae;
-            else                       Misc.WindowName = ControlPanel.instance.WindowBasisName;
+            Misc.WindowName = GlobalControls.crate ? ControlPanel.instance.WinodwBsaisNmae : ControlPanel.instance.WindowBasisName;
         #endif
 
         // stop encounter storage for good!
@@ -159,6 +158,13 @@ public class UIController : MonoBehaviour {
             SceneManager.UnloadSceneAsync("Battle");
             PlayerOverworld.ShowOverworld("Battle");
         }
+
+        // reset to 4:3
+        if (Screen.fullScreen && GlobalControls.wideFullscreen) {
+            GlobalControls.wideFullscreen = false;
+            GlobalControls.SetFullScreen(true, 0);
+        }
+        GlobalControls.wideFullscreen = false;
     }
 
     public void ShowError(TextMessage msg) { ActionDialogResult(msg, UIState.ACTIONSELECT);  }

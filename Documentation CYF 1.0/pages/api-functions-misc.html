@@ -83,8 +83,7 @@ it's w3c valid, at least
         <div class="tab-pane active text-style" id="api-functions-misc">
             <p>
                 <br><span class="function"><span class="CYF"></span> The Misc object [E/M/W]</span>
-                The Misc object has some window-related and computer-related functions. Most of them are functions:
-                don't forget to check if the user is playing with a Windows OS by using the variable <span class="term">windows</span>!
+                The Misc object has some window-related and computer-related functions. Most of them are functions.
             </p>
             <ul>
                 <li><span class="string"></span> <span class="term">Misc.MachineName</span> (read-only) - Returns the name of the player's session.</li><br>
@@ -104,21 +103,45 @@ it's w3c valid, at least
                 <li><span class="number"></span> <span class="term">Misc.cameraX</span> - Gets or sets the current x position of the bottom-left corner of the camera.</li><br>
                 <li><span class="number"></span> <span class="term">Misc.cameraY</span> - Gets or sets the current y position of the bottom-left corner of the camera.</li><br>
                 <li><span class="boolean"></span> <span class="term">Misc.FullScreen</span> - Gets or sets whether the user is in fullscreen mode.</li><br>
-                <li><span class="number"></span> <span class="term">Misc.ScreenWidth</span> (read-only) - Returns the width of the user's screen.</li><br>
-                <li><span class="number"></span> <span class="term">Misc.ScreenHeight</span> (read-only) - Returns the height of the user's screen.</li><br>
+                <li><span class="number"></span> <span class="term">Misc.ScreenWidth</span> (read-only) - Returns the width of the user's screen in windowed mode, or the number of displayed pixel columns when in fullscreen.</li><br>
+                <li><span class="number"></span> <span class="term">Misc.ScreenHeight</span> (read-only) - Returns the height of the user's screen in windowed mode, or the number of displayed pixel rows when in fullscreen.</li><br>
+                <li><span class="number"></span> <span class="term">Misc.MonitorWidth</span> (read-only) - Returns the width of the user's monitor, regardless of the user's settings or if <span class="term">Misc.SetWideFullscreen</span> has been used.</li><br>
+                <li><span class="number"></span> <span class="term">Misc.MonitorHeight</span> (read-only) - Returns the height of the user's monitor, regardless of the user's settings or if <span class="term">Misc.SetWideFullscreen</span> has been used.</li><br>
+                <li>
+                    <span class="term">Misc.SetWideFullscreen(<span class="boolean"></span> wide)</span> - If the user is playing with an aspect ratio wider than 4:3, this function will expand the view in fullscreen to show the space to the left and right of the 640x480 screen space.
+                    <br><br>
+                    It will only take effect when in fullscreen, and will automatically resize the view if already in fullscreen.<br>
+                    If the user's aspect ratio is 4:3 or thinner, nothing will change.<br>
+                    Note that object positions, such as projectiles and sprites, will remain the same.
+                    <br><br>
+                    <font color="red">* NOTE: Only allowed during battles.</font>
+                    <br><br><br>
+                    You can use this code to determine how much space you have available on either side (still using the relative position system in which the screen is always assumed to be 640x480):
+                    <br><br>
+                    <div class="code-container">
+   <pre class="brush: lua;">local displayedWidth = Misc.MonitorHeight / 0.75
+local scale = 640 / displayedWidth
+local widthOnEachSide = math.max(scale * (Misc.MonitorWidth - displayedWidth) / 2, 0)
+
+CreateProjectileAbs("bullet", 0 - widthOnEachSide, 240) -- creates a bullet at the absolute left side of the screen when in wide fullscreen</pre>
+            </div>
+                    Here, if <span class="term">widthOnEachSide</span> is 0, the user is using a resolution that is 4:3 or thinner. Be sure to check if this number is greater than 0 before doing operations that require fullscreen!
+                    <br><br>
+                </li><br>
                 <li><span class="term">Misc.DestroyWindow()</span> - Closes the window instantly.</li><br>
             </ul>
             <hr>
-            <span style="color:#aa0000;font-size:18px;">THE FOLLOWING VARIABLES AND FUNCTIONS ARE <u>WINDOWS ONLY</u>.</span><br><br>
+            <span style="color:#aa0000;font-size:18px;">THE FOLLOWING VARIABLES AND FUNCTIONS ARE <u>WINDOWS ONLY</u>.</span><br>
+            Don't forget to check if the user is playing with a Windows OS by using the variable <span class="term">windows</span>!<br><br>
             <ul>
                 <li><span class="string"></span> <span class="term">Misc.WindowName</span> - Gets or sets the name of the window.</li><br>
                 <li><span class="number"></span> <span class="term">Misc.WindowX</span> - Gets or sets the X position of the bottom left corner of the window.</li><br>
                 <li><span class="number"></span> <span class="term">Misc.WindowY</span> - Gets or sets the Y position of the bottom left corner of the window.</li><br>
-                <li><span class="term">Misc.MoveWindow(<span class="number"></span> X, <span class="number"></span>  Y)</span> - Move the window by X pixels horizontally and Y pixels vertically.</li><br>
+                <li><span class="term">Misc.MoveWindow(<span class="number"></span> X, <span class="number"></span>  Y)</span> - Moves the window X pixels horizontally and Y pixels vertically.</li><br>
                 <li><span class="term">Misc.MoveWindowTo(<span class="number"></span> X, <span class="number"></span> Y)</span> - Moves the bottom left corner of the window to the given coordinates.
                 </li><br>
-                <li><span class="number"></span> <span class="term">Misc.WindowWidth</span> (readonly) - The width of the window.</li><br>
-                <li><span class="number"></span> <span class="term">Misc.WindowHeight</span> (readonly) - The height of the window.</li>
+                <li><span class="number"></span> <span class="term">Misc.WindowWidth</span> (readonly) - The width of the game window.</li><br>
+                <li><span class="number"></span> <span class="term">Misc.WindowHeight</span> (readonly) - The height of the game window.</li>
             </ul>
             <hr>
             <h3>File Functions</h3>
