@@ -316,7 +316,7 @@ public class UIController : MonoBehaviour {
         if (oldstate == UIState.DEFENDING && this.state != UIState.DEFENDING) {
             UIState current = this.state;
             encounter.EndWave();
-            if (this.state != current)
+            if (this.state != current && !GlobalControls.retroMode)
                 return;
         }
         switch (this.state) {
