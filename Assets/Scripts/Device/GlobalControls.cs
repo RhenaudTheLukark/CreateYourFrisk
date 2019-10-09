@@ -125,9 +125,9 @@ public class GlobalControls : MonoBehaviour {
                 if (!fullscreen)
                     Screen.SetResolution(640 * windowScale, 480 * windowScale, false, 0);
                 else {
-                    double ScreenWidth  = (lastMonitorHeight / (double)3) * (double)4;
-                    double ScreenHeight = (lastMonitorWidth / (double)4) * (double)3;
-                    Screen.SetResolution((int)RoundToNearestEven(ScreenWidth), (int)RoundToNearestEven(ScreenHeight), true, 0);
+                    double ScreenWidth  = (lastMonitorHeight / (double)3) * (double)4; // 1066
+                    double ScreenHeight = (lastMonitorWidth / (double)4) * (double)3; // 960
+                    Screen.SetResolution(System.Math.Min((int)RoundToNearestEven(ScreenWidth), lastMonitorWidth), System.Math.Min((int)RoundToNearestEven(ScreenHeight), lastMonitorHeight), true, 0);
                 }
             } else
                 Screen.SetResolution(640 * windowScale, 480 * windowScale, fullscreen, 0);
@@ -142,7 +142,7 @@ public class GlobalControls : MonoBehaviour {
                     Screen.SetResolution(640 * windowScale, 480 * windowScale, false, 0);
                 else {
                     double ScreenWidth  = ((double)480 / lastMonitorHeight) * lastMonitorWidth;
-                    Screen.SetResolution((int)RoundToNearestEven(ScreenWidth), 480, true, 0);
+                    Screen.SetResolution(System.Math.Min((int)RoundToNearestEven(ScreenWidth), lastMonitorWidth), 480, true, 0);
                 }
             }
         }
