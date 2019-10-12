@@ -23,16 +23,10 @@ public class OptionsScript : MonoBehaviour {
             if (RealGlobalCooldown > 0) {
                 LuaScriptBinder.ClearVariables();
                 RealGlobalCooldown = 60 * 2;
-                if (!GlobalControls.crate)
-                    GameObject.Find("ResetRG").GetComponentInChildren<Text>().text =            "Real Globals Erased!";
-                else
-                    GameObject.Find("ResetRG").GetComponentInChildren<Text>().text =        "REEL GOLBELZ DELEET!!!!!";
+                GameObject.Find("ResetRG").GetComponentInChildren<Text>().text = !GlobalControls.crate ? "Real Globals Erased!" : "REEL GOLBELZ DELEET!!!!!";
             } else {
                 RealGlobalCooldown = 60 * 2;
-                if (!GlobalControls.crate)
-                    GameObject.Find("ResetRG").GetComponentInChildren<Text>().text =                   "Are you sure?";
-                else
-                    GameObject.Find("ResetRG").GetComponentInChildren<Text>().text =                      "R U SUR???";
+                GameObject.Find("ResetRG").GetComponentInChildren<Text>().text = !GlobalControls.crate ? "Are you sure?" : "R U SUR???";
             }
         });
         
@@ -41,16 +35,10 @@ public class OptionsScript : MonoBehaviour {
             if (AlMightyGlobalCooldown > 0) {
                 LuaScriptBinder.ClearAlMighty();
                 AlMightyGlobalCooldown = 60 * 2;
-                if (!GlobalControls.crate)
-                    GameObject.Find("ResetAG").GetComponentInChildren<Text>().text =        "AlMighty Globals Erased!";
-                else
-                    GameObject.Find("ResetAG").GetComponentInChildren<Text>().text =          "ALMEIGHTIZ DELEET!!!!!";
+                GameObject.Find("ResetAG").GetComponentInChildren<Text>().text = !GlobalControls.crate ? "AlMighty Globals Erased!" : "ALMEIGHTIZ DELEET!!!!!";
             } else {
                 AlMightyGlobalCooldown = 60 * 2;
-                if (!GlobalControls.crate)
-                    GameObject.Find("ResetAG").GetComponentInChildren<Text>().text =                   "Are you sure?";
-                else
-                    GameObject.Find("ResetAG").GetComponentInChildren<Text>().text =                      "R U SUR???";
+                GameObject.Find("ResetAG").GetComponentInChildren<Text>().text = !GlobalControls.crate ? "Are you sure?" : "R U SUR???";
             }
         });
         
@@ -59,16 +47,10 @@ public class OptionsScript : MonoBehaviour {
             if (SaveCooldown > 0) {
                 File.Delete(Application.persistentDataPath + "/save.gd");
                 SaveCooldown = 60 * 2;
-                if (!GlobalControls.crate)
-                    GameObject.Find("ClearSave").GetComponentInChildren<Text>().text =                   "Save wiped!";
-                else
-                    GameObject.Find("ClearSave").GetComponentInChildren<Text>().text =                           "RIP";
+                GameObject.Find("ClearSave").GetComponentInChildren<Text>().text = !GlobalControls.crate ? "Save wiped!" : "RIP";
             } else {
                 SaveCooldown = 60 * 2;
-                if (!GlobalControls.crate)
-                    GameObject.Find("ClearSave").GetComponentInChildren<Text>().text =                 "Are you sure?";
-                else
-                    GameObject.Find("ClearSave").GetComponentInChildren<Text>().text =                    "R U SUR???";
+                GameObject.Find("ClearSave").GetComponentInChildren<Text>().text = !GlobalControls.crate ? "Are you sure?" : "R U SUR???";
             }
         });
         
@@ -79,20 +61,13 @@ public class OptionsScript : MonoBehaviour {
             // save Safe Mode preferences to AlMighties
             LuaScriptBinder.SetAlMighty(null, "CYFSafeMode", DynValue.NewBoolean(ControlPanel.instance.Safe), true);
             
-            if (!GlobalControls.crate) {
-                if (ControlPanel.instance.Safe)
-                    GameObject.Find("Safe").GetComponentInChildren<Text>().text =                      "Safe mode: On";
-                else
-                    GameObject.Find("Safe").GetComponentInChildren<Text>().text =                     "Safe mode: Off";
-            } else {
-                if (ControlPanel.instance.Safe)
-                    GameObject.Find("Safe").GetComponentInChildren<Text>().text =                      "SFAE MDOE: ON";
-                else
-                    GameObject.Find("Safe").GetComponentInChildren<Text>().text =                     "SFAE MDOE: OFF";
-            }
+            GameObject.Find("Safe").GetComponentInChildren<Text>().text = !GlobalControls.crate
+                ? ("Safe mode: " + (ControlPanel.instance.Safe ? "On" : "Off"))
+                : ("SFAE MDOE: " + (ControlPanel.instance.Safe ? "ON" : "OFF"));
         });
-        ControlPanel.instance.Safe = !ControlPanel.instance.Safe;
-        GameObject.Find("Safe").GetComponent<Button>().onClick.Invoke();
+        GameObject.Find("Safe").GetComponentInChildren<Text>().text = !GlobalControls.crate
+            ? ("Safe mode: " + (ControlPanel.instance.Safe ? "On" : "Off"))
+            : ("SFAE MDOE: " + (ControlPanel.instance.Safe ? "ON" : "OFF"));
         
         // toggle retrocompatibility mode
         GameObject.Find("Retro").GetComponent<Button>().onClick.AddListener(() => {
@@ -101,20 +76,13 @@ public class OptionsScript : MonoBehaviour {
             // save RetroMode preferences to AlMighties
             LuaScriptBinder.SetAlMighty(null, "CYFRetroMode", DynValue.NewBoolean(GlobalControls.retroMode), true);
             
-            if (!GlobalControls.crate) {
-                if (GlobalControls.retroMode)
-                    GameObject.Find("Retro").GetComponentInChildren<Text>().text =       "Retrocompatibility Mode: On";
-                else
-                    GameObject.Find("Retro").GetComponentInChildren<Text>().text =      "Retrocompatibility Mode: Off";
-            } else {
-                if (GlobalControls.retroMode)
-                    GameObject.Find("Retro").GetComponentInChildren<Text>().text =        "RETORCMOAPTIILBIYT MOD: ON";
-                else
-                    GameObject.Find("Retro").GetComponentInChildren<Text>().text =       "RETORCMOAPTIILBIYT MOD: OFF";
-            }
+            GameObject.Find("Retro").GetComponentInChildren<Text>().text = !GlobalControls.crate
+                ? ("Retrocompatibility Mode: " + (GlobalControls.retroMode ? "On" : "Off"))
+                : ( "RETORCMOAPTIILBIYT MOD: " + (GlobalControls.retroMode ? "ON" : "OFF"));
         });
-        GlobalControls.retroMode =!GlobalControls.retroMode;
-        GameObject.Find("Retro").GetComponent<Button>().onClick.Invoke();
+        GameObject.Find("Retro").GetComponentInChildren<Text>().text = !GlobalControls.crate
+            ? ("Retrocompatibility Mode: " + (GlobalControls.retroMode ? "On" : "Off"))
+            : ( "RETORCMOAPTIILBIYT MOD: " + (GlobalControls.retroMode ? "ON" : "OFF"));
         
         // toggle pixel-perfect fullscreen
         GameObject.Find("Fullscreen").GetComponent<Button>().onClick.AddListener(() => {
@@ -123,20 +91,13 @@ public class OptionsScript : MonoBehaviour {
             // save RetroMode preferences to AlMighties
             LuaScriptBinder.SetAlMighty(null, "CYFPerfectFullscreen", DynValue.NewBoolean(GlobalControls.perfectFullscreen), true);
             
-            if (!GlobalControls.crate) {
-                if (GlobalControls.perfectFullscreen)
-                    GameObject.Find("Fullscreen").GetComponentInChildren<Text>().text =      "Blurless Fullscreen: On";
-                else
-                    GameObject.Find("Fullscreen").GetComponentInChildren<Text>().text =     "Blurless Fullscreen: Off";
-            } else {
-                if (GlobalControls.retroMode)
-                    GameObject.Find("Fullscreen").GetComponentInChildren<Text>().text =     "NOT UGLEE FULLSRCEEN: ON";
-                else
-                    GameObject.Find("Fullscreen").GetComponentInChildren<Text>().text =    "NOT UGLEE FULLSRCEEN: OFF";
-            }
+            GameObject.Find("Fullscreen").GetComponentInChildren<Text>().text = !GlobalControls.crate
+                ? ( "Blurless Fullscreen: " + (GlobalControls.perfectFullscreen ? "On" : "Off"))
+                : ("NOT UGLEE FULLSCREEN: " + (GlobalControls.perfectFullscreen ? "ON" : "OFF"));
         });
-        GlobalControls.perfectFullscreen =!GlobalControls.perfectFullscreen;
-        GameObject.Find("Fullscreen").GetComponent<Button>().onClick.Invoke();
+        GameObject.Find("Fullscreen").GetComponentInChildren<Text>().text = !GlobalControls.crate
+            ? ( "Blurless Fullscreen: " + (GlobalControls.perfectFullscreen ? "On" : "Off"))
+            : ("NOT UGLEE FULLSCREEN: " + (GlobalControls.perfectFullscreen ? "ON" : "OFF"));
         
         // change window scale
         GameObject.Find("Scale").GetComponent<Button>().onClick.AddListener(() => {
@@ -152,10 +113,9 @@ public class OptionsScript : MonoBehaviour {
             // save RetroMode preferences to AlMighties
             LuaScriptBinder.SetAlMighty(null, "CYFWindowScale", DynValue.NewNumber(GlobalControls.windowScale), true);
             
-            if (!GlobalControls.crate)
-                GameObject.Find("Scale").GetComponentInChildren<Text>().text =  "Window Scale: " + GlobalControls.windowScale.ToString() + "x";
-            else
-                GameObject.Find("Scale").GetComponentInChildren<Text>().text = "WEENDO STRECH: " + GlobalControls.windowScale.ToString() + "X";
+            GameObject.Find("Scale").GetComponentInChildren<Text>().text = !GlobalControls.crate
+                ? ( "Window Scale: " + GlobalControls.windowScale.ToString() + "x")
+                : ("WEENDO STRECH: " + GlobalControls.windowScale.ToString() + "X");
         });
         GlobalControls.windowScale--;
         GameObject.Find("Scale").GetComponent<Button>().onClick.Invoke();
@@ -188,18 +148,12 @@ public class OptionsScript : MonoBehaviour {
             case "ResetRG":
                 response = "Resets all Real Globals.\n\n"
                          + "Real Globals are variables that persist through battles, but are deleted when CYF is closed.";
-                if (!GlobalControls.crate)
-                    return response;
-                else
-                    return Temmify.Convert(response);
+                return !GlobalControls.crate ? response : Temmify.Convert(response);
             case "ResetAG":
                 response = "Resets all AlMighty Globals.\n\n"
                          + "AlMighty Globals are variables that are saved to a file, and stay even when you close CYF.\n\n"
                          + "The options on this screen are stored as AlMighties.";
-                if (!GlobalControls.crate)
-                    return response;
-                else
-                    return Temmify.Convert(response);
+                return !GlobalControls.crate ? response : Temmify.Convert(response);
             case "ClearSave":
                 response = "Clears your save file.\n\n"
                          + "This is the save file used for CYF's Overworld.\n\n"
@@ -212,10 +166,7 @@ public class OptionsScript : MonoBehaviour {
             case "Safe":
                 response = "Toggles safe mode.\n\n"
                          + "This does nothing on its own, but mod authors can detect if you have this enabled, and use it to filter unsafe content, such as blood, gore, and swear words.";
-                if (!GlobalControls.crate)
-                    return response;
-                else
-                    return Temmify.Convert(response);
+                return !GlobalControls.crate ? response : Temmify.Convert(response);
             case "Retro":
                 response = "Toggles retrocompatibility mode.\n\n"
                          + "This mode is designed specifically to make encounters imported from Unitale v0.2.1a act as they did on the old engine.\n\n\n\n";
@@ -225,20 +176,14 @@ public class OptionsScript : MonoBehaviour {
                     return Temmify.Convert(response) + "<b>" + Temmify.Convert("CAUTION!\nDISABLE") + "</b> " + Temmify.Convert("this for mods made for CYF.");
             case "Fullscreen":
                 response = "Toggles blurless Fullscreen mode.\n\n"
-                         + "This controls whether fullscreen mode will appear \"blurry\" or not.\n\n"
-                         + "May slow down some computers.\n\n\nPress <b>F4</b> or <b>Alt+Enter</b> to toggle Fullscreen.";
-                if (!GlobalControls.crate)
-                    return response;
-                else
-                    return Temmify.Convert(response);
+                         + "This controls whether fullscreen mode will appear \"blurry\" or not.\n\n\n"
+                         + "Press <b>F4</b> or <b>Alt+Enter</b> to toggle Fullscreen.";
+                return !GlobalControls.crate ? response : Temmify.Convert(response);
             case "Scale":
                 response = "Scales the window in Windowed mode.\n\n"
                          + "This is useful for especially large screens (such as 4k monitors).\n\n"
                          + "Has no effect in Fullscreen mode.";
-                if (!GlobalControls.crate)
-                    return response;
-                else
-                    return Temmify.Convert(response);
+                return !GlobalControls.crate ? response : Temmify.Convert(response);
             case "Exit":
                 response = "Returns to the Mod Select screen.";
                 if (!GlobalControls.crate)
@@ -246,10 +191,7 @@ public class OptionsScript : MonoBehaviour {
                 else
                     return Temmify.Convert(response);
             default:
-                if (!GlobalControls.crate)
-                    return "Hover over an option and its description will appear here!";
-                else
-                    return "HOVR OVR DA TING N GET TEXT HEAR!!";
+                return !GlobalControls.crate ? "Hover over an option and its description will appear here!" : "HOVR OVR DA TING N GET TEXT HEAR!!";
         }
     }
     
@@ -299,30 +241,21 @@ public class OptionsScript : MonoBehaviour {
             RealGlobalCooldown -= 1;
         else if (RealGlobalCooldown == 0) {
             RealGlobalCooldown = -1;
-            if (!GlobalControls.crate)
-                GameObject.Find("ResetRG").GetComponentInChildren<Text>().text =                  "Reset Real Globals";
-            else
-                GameObject.Find("ResetRG").GetComponentInChildren<Text>().text =                  "RSETE RAEL GLOBALS";
+            GameObject.Find("ResetRG").GetComponentInChildren<Text>().text = !GlobalControls.crate ? "Reset Real Globals" : "RSETE RAEL GLOBALS";
         }
         
         if (AlMightyGlobalCooldown > 0)
             AlMightyGlobalCooldown -= 1;
         else if (AlMightyGlobalCooldown == 0) {
             AlMightyGlobalCooldown = -1;
-            if (!GlobalControls.crate)
-                GameObject.Find("ResetAG").GetComponentInChildren<Text>().text =              "Reset AlMighty Globals";
-            else
-                GameObject.Find("ResetAG").GetComponentInChildren<Text>().text =                      "RESET ALIMGHTY";
+            GameObject.Find("ResetAG").GetComponentInChildren<Text>().text = !GlobalControls.crate ? "Reset AlMighty Globals" : "RESET ALIMGHTY";
         }
         
         if (SaveCooldown > 0)
             SaveCooldown -= 1;
         else if (SaveCooldown == 0) {
             SaveCooldown = -1;
-            if (!GlobalControls.crate)
-                GameObject.Find("ClearSave").GetComponentInChildren<Text>().text =                         "Wipe Save";
-            else
-                GameObject.Find("ClearSave").GetComponentInChildren<Text>().text =                          "WYPE SAV";
+            GameObject.Find("ClearSave").GetComponentInChildren<Text>().text = !GlobalControls.crate ? "Wipe Save" : "WYPE SAV";
         }
     }
 }

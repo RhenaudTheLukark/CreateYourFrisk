@@ -658,7 +658,7 @@ public class TextManager : MonoBehaviour {
                     currentY = currentY - vSpacing - Charset.LineSpacing;
                     break;
                 case '\t':
-                    currentX = 356 + Camera.main.transform.position.x - 320; // HACK: bad tab usage
+                    currentX = 356; // HACK: bad tab usage
                     break;
                 case ' ':
                     if (i + 1 == currentText.Length || currentText[i + 1] == ' ')

@@ -322,6 +322,7 @@ internal class LuaEnemyEncounter : EnemyEncounter {
     public void EndWaveTimer() { waveTimer = Time.time; }
 
     public override void EndWave(bool death = false) {
+        ArenaManager.instance.resetArena();
         Table t = script["Wave"].Table;
         if (!death)
             foreach (object obj in t.Keys) {
@@ -337,7 +338,6 @@ internal class LuaEnemyEncounter : EnemyEncounter {
                     p.ctrl.Remove();
         if (!death)
             CallOnSelfOrChildren("DefenseEnding");
-        ArenaManager.instance.resetArena();
         if (GlobalControls.retroMode) {
             EncounterText = script.GetVar ("encountertext").String;
         }
