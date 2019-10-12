@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System;
 using System.Collections;
 using MoonSharp.Interpreter;
@@ -234,17 +235,12 @@ public class LuaTextManager : TextManager {
             hasColorBeenSet = true;
             hasAlphaBeenSet = value.Length == 4;
 
-            foreach (Letter l in letters) {
-                if (l.GetComponent<UnityEngine.UI.Image>().color == defaultColor) {
-                    l.GetComponent<UnityEngine.UI.Image>().color = _color;
-                } else {
-                    break;
-                }
-            }
+            foreach (Image i in letterReferences)
+                if (i.color == defaultColor) i.color = _color;
+                else                         break; // Only because we can't go back to the default color
             
-            if (currentColor == defaultColor) {
+            if (currentColor == defaultColor)
                 currentColor = _color;
-            }
             defaultColor = _color;
         }
     }

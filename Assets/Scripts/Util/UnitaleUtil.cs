@@ -148,16 +148,16 @@ public static class UnitaleUtil {
         return table;
     }
 
-    public static float CalcTextWidth(TextManager txtmgr, int fromLetter = -1, int toLetter = -1, bool countEOLSpace = false) {
+    public static float CalcTextWidth(TextManager txtmgr, int fromLetter = -1, int toLetter = -1, bool countEOLSpace = false, bool getLastSpace = false) {
         float totalWidth = 0, totalWidthSpaceTest = 0, totalMaxWidth = 0, hSpacing = txtmgr.Charset.CharSpacing;
         if (fromLetter == -1)                                                                                       fromLetter = 0;
         if (txtmgr.textQueue == null)                                                                               return 0;
         if (txtmgr.textQueue[txtmgr.currentLine] == null)                                                           return 0;
-        if (toLetter == -1)                                                                                         toLetter = txtmgr.textQueue[txtmgr.currentLine].Text.Length;
+        if (toLetter == -1)                                                                                         toLetter = txtmgr.textQueue[txtmgr.currentLine].Text.Length - 1;
         if (fromLetter > toLetter || fromLetter < 0 || toLetter > txtmgr.textQueue[txtmgr.currentLine].Text.Length) return -1;
         if (fromLetter == toLetter)                                                                                 return 0;
 
-        for (int i = fromLetter; i < toLetter; i++) {
+        for (int i = fromLetter; i <= toLetter; i++) {
             switch (txtmgr.textQueue[txtmgr.currentLine].Text[i]) {
                 case '[':
                     string str = "";
@@ -203,7 +203,7 @@ public static class UnitaleUtil {
         }
         if (totalMaxWidth < totalWidthSpaceTest - hSpacing)
             totalMaxWidth = totalWidthSpaceTest - hSpacing;
-        return totalMaxWidth;
+        return totalMaxWidth + (getLastSpace ? hSpacing : 0);
     }
 
     public static float CalcTextHeight(TextManager txtmgr, int fromLetter = -1, int toLetter = -1) {

@@ -21,7 +21,7 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class UIController : MonoBehaviour {
     public static UIController instance;
-    internal TextManager textmgr;
+    public TextManager textmgr;
 
     private static Sprite fightB1;
     private static Sprite actB1;

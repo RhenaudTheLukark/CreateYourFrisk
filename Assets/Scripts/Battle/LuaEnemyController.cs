@@ -14,7 +14,7 @@ public class LuaEnemyController : EnemyController {
     public int presetDmg = -1826643; // You'll not be able to deal exactly -1 826 643 dmg with this technique.
     public float xFightAnimShift = 0;
     public LuaSpriteController sprite;
-    public float bubbleWideness = 0;
+    public float bubbleWidth = 0;
     public int index = -1;
     public Vector2[] offsets = new Vector2[] { new Vector2(0, 0), new Vector2(0, 0), new Vector2(0, 0) };
                                              //SliceAnimOffset    BubbleOffset       DamageUIOffset

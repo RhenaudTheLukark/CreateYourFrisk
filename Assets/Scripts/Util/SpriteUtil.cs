@@ -20,14 +20,14 @@ public static class SpriteUtil {
                     xmld.Load(fi.FullName);
                     if (xmld["spritesheet"] != null && "single".Equals(xmld["spritesheet"].GetAttribute("type")))
                         if (!UnitaleUtil.IsOverworld)
-                            UIController.instance.encounter.EnabledEnemies[bubbleID].bubbleWideness = ParseUtil.GetFloat(xmld["spritesheet"].GetElementsByTagName("width").Count > 0
+                            UIController.instance.encounter.EnabledEnemies[bubbleID].bubbleWidth = ParseUtil.GetFloat(xmld["spritesheet"].GetElementsByTagName("width").Count > 0
                                 ? xmld["spritesheet"].GetElementsByTagName("width")[0].InnerText
                                 : xmld["spritesheet"].GetElementsByTagName("wideness")[0].InnerText);
                 } else
-                    UIController.instance.encounter.EnabledEnemies[bubbleID].bubbleWideness = 0;
+                    UIController.instance.encounter.EnabledEnemies[bubbleID].bubbleWidth = 0;
             }
         } catch (Exception) {
-            UIController.instance.encounter.EnabledEnemies[bubbleID].bubbleWideness = 0;
+            UIController.instance.encounter.EnabledEnemies[bubbleID].bubbleWidth = 0;
         }
         Sprite newSprite = SpriteRegistry.Get(filename);
         if (newSprite == null) {

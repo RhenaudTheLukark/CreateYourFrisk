@@ -2,41 +2,36 @@
 using MoonSharp.Interpreter;
 
 public class TextMessage {
-    public TextMessage(string text, bool formatted, bool showImmediate, bool actualText = true, DynValue mugshot = null) {
-        Setup(text, formatted, showImmediate, actualText, mugshot);
+    public TextMessage(string text, bool decorated, bool showImmediate, bool actualText = true, DynValue mugshot = null) {
+        Setup(text, decorated, showImmediate, actualText, mugshot);
     }
 
-    public TextMessage(string text, bool formatted, bool showImmediate, DynValue mugshot, bool actualText = true) {
-        Setup(text, formatted, showImmediate, actualText, mugshot);
+    public TextMessage(string text, bool decorated, bool showImmediate, DynValue mugshot, bool actualText = true) {
+        Setup(text, decorated, showImmediate, actualText, mugshot);
     }
     
     public string Text { get; set; }
-    public bool Formatted { get; private set; }
+    public bool Decorated { get; private set; }
     public bool ShowImmediate { get; private set; }
     public bool ActualText { get; private set; }
     public DynValue Mugshot { get; private set; }
 
     public void AddToText(string textToAdd) { Text += textToAdd; }
 
-    protected void Setup(string text, bool formatted, bool showImmediate, bool actualText, DynValue mugshot) {
-        if (text != "")
-            text = unescape(text); // compensate for unity inspector autoescaping control characters
-        if (formatted)
-            Text = formatText(text);
-        else
-            Text = text;
-        Formatted = formatted;
+    protected void Setup(string text, bool decorated, bool showImmediate, bool actualText, DynValue mugshot) {
+        text = Unescape(text); // compensate for unity inspector autoescaping control characters
+        Text = decorated ? DecorateText(text) : text;
+        Decorated = decorated;
         ShowImmediate = showImmediate;
         ActualText = actualText;
-        //Debug.Log(mugshot);
         Mugshot = mugshot;
     }
 
     protected void Setup(string text, bool formatted, bool showImmediate) { Setup(text, formatted, showImmediate, true, null); }
 
-    public void setText(string text) { this.Text = text; }
+    public void SetText(string text) { this.Text = text; }
 
-    private string formatText(string text) {
+    private string DecorateText(string text) {
         string newText = "* ", textNew = "";
         if (text == null)
             return text;
@@ -89,12 +84,8 @@ public class TextMessage {
         return newText;
     }
 
-    public static string unescape(string str) {
-        try {
-            str = str.Replace("\\n", "\n");
-            str = str.Replace("\\r", "\r");
-            str = str.Replace("\\t", "\t");
-            return str;
-        } catch { return str; }
+    private static string Unescape(string str) {
+        try { return str.Replace("\\n", "\n").Replace("\\r", "\r").Replace("\\t", "\t"); }
+        catch { return str; }
     }
 }
