@@ -125,7 +125,8 @@ public class UIController : MonoBehaviour {
         Inventory.RemoveAddedItems();
         GlobalControls.lastTitle = false;
         PlayerCharacter.instance.MaxHPShift = 0;
-        PlayerCharacter.instance.SetLevel(PlayerCharacter.instance.LV);
+        PlayerCharacter.instance.ATK = 8 + 2 * PlayerCharacter.instance.LV;
+        PlayerCharacter.instance.DEF = 10 + (int)Mathf.Floor((PlayerCharacter.instance.LV - 1) / 4);
         #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
             Misc.WindowName = GlobalControls.crate ? ControlPanel.instance.WinodwBsaisNmae : ControlPanel.instance.WindowBasisName;
         #endif
