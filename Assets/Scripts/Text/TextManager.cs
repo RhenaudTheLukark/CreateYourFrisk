@@ -1056,12 +1056,12 @@ public class TextManager : MonoBehaviour {
                 
                 for (int i = index; i < pos; i++) {
                     if (!skipFromPlayer) {
-                        if ((currentText.Substring(i)).Length >= 13 && currentText.Substring(i, 13) == "[instant:stop") {
+                        if ((currentText.Substring(i)).Length >= 13 && pos - i >= 13 && currentText.Substring(i, 13) == "[instant:stop") {
                             pos = i - 1;
                             break;
                         }
                     } else {
-                        if ((currentText.Substring(i)).Length >= 16 && currentText.Substring(i, 16) == "[instant:stopall") {
+                        if ((currentText.Substring(i)).Length >= 16 && pos - i >= 16 && currentText.Substring(i, 16) == "[instant:stopall") {
                             pos = i - 1;
                             break;
                         }
@@ -1072,8 +1072,8 @@ public class TextManager : MonoBehaviour {
                 
                 // Third:  Find all commands between the current position and the "end point"
                 for (int i = index; i < pos; i++)
-                    if (currentText[i] == '[' && currentText.Substring(i, 3) != "[w:" && currentText.Substring(i, 9) != "[waitfor:"
-                        && currentText.Substring(i, 8) != "[instant") {
+                    if (currentText[i] == '[' && (pos - i < 3 || currentText.Substring(i, 3) != "[w:") && (pos - i < 9 || currentText.Substring(i, 9) != "[waitfor:")
+                        && (pos - i < 8 || currentText.Substring(i, 8) != "[instant")) {
                         // Only execute the command if `instantCommand` is true
                         if (instantCommand)
                             try {
