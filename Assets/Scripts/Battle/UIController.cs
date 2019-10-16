@@ -361,16 +361,14 @@ public class UIController : MonoBehaviour {
 
             case UIState.ACTMENU:
                 string[] actions = new string[encounter.EnabledEnemies[selectedEnemy].ActCommands.Length];
-
                 if (actions.Length == 0)
                     throw new CYFException("Cannot enter state ACTMENU without commands.");
-                else {
-                    for (int i = 0; i < actions.Length; i++)
-                        actions[i] = encounter.EnabledEnemies[selectedEnemy].ActCommands[i];
+                for (int i = 0; i < actions.Length; i++)
+                    actions[i] = encounter.EnabledEnemies[selectedEnemy].ActCommands[i];
 
-                    SetPlayerOnSelection(0);
-                    textmgr.SetText(new SelectMessage(actions, false));
-                }
+                selectedAction = 0;
+                SetPlayerOnSelection(selectedAction);
+                textmgr.SetText(new SelectMessage(actions, false));
                 break;
 
             case UIState.ITEMMENU:
