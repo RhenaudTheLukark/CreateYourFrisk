@@ -533,7 +533,7 @@ public class TextManager : MonoBehaviour {
         string currentText = textQueue[currentLine].Text;
         letterReferences = new Image[currentText.Length];
         letterPositions = new Vector2[currentText.Length];
-        if (currentText.Length > 0 && !forceNoAutoLineBreak)
+        if (currentText.Length > 1 && !forceNoAutoLineBreak)
             if (!GlobalControls.isInFight || LuaEnemyEncounter.script.GetVar("autolinebreak").Boolean || GetType() == typeof(LuaTextManager))
                 SpawnTextSpaceTest(0, currentText, out currentText);
         
