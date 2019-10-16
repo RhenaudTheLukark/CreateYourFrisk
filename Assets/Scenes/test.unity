@@ -1246,10 +1246,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movementDirection: 0
-  beginAnim: NoAnim
+  beginAnim: StopDown
   specialHeader: 
   anims:
-  - name: NoAnim
+  - name: StopDown
     anims: empty, empty
     transitionTime: 60
   - name: Glitch
@@ -2442,8 +2442,8 @@ MonoBehaviour:
     anims: AsrielOW/Huggu/h7, AsrielOW/Huggu/h8
     transitionTime: 1
   - name: Huggu3
-    anims: 'AsrielOW/Huggu/h9, AsrielOW/Huggu/h7, AsrielOW/Huggu/h9, AsrielOW/Huggu/h7,
-      AsrielOW/Huggu/h9, '
+    anims: AsrielOW/Huggu/h9, AsrielOW/Huggu/h7, AsrielOW/Huggu/h9, AsrielOW/Huggu/h7,
+      AsrielOW/Huggu/h9
     transitionTime: 0.2
 --- !u!1001 &1908988710
 Prefab:

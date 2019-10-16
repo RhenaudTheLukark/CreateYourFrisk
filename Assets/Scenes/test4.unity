@@ -2085,7 +2085,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   movementDirection: 0
   beginAnim: StopDown
-  specialHeader: NoAnim
+  specialHeader: 
   anims:
   - name: Fall
     anims: MonsterKidOW/f0, MonsterKidOW/f1, MonsterKidOW/f0, MonsterKidOW/f1
@@ -2096,7 +2096,7 @@ MonoBehaviour:
   - name: Fallen2
     anims: 'MonsterKidOW/12, MonsterKidOW/13, MonsterKidOW/14, MonsterKidOW/15, '
     transitionTime: 0.1
-  - name: NoAnim
+  - name: StopDown
     anims: empty, empty
     transitionTime: 60
 --- !u!1 &2010831946

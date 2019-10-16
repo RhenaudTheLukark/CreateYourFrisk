@@ -518,7 +518,7 @@ public class UIController : MonoBehaviour {
                     monDialogues[i] = sbTextMan;
                     sbTextMan.SetCaller(encounter.EnabledEnemies[i].script);
                     Image speechBubImg = speechBub.GetComponent<Image>();
-                    if (sbTextMan.CharacterCount(msgs[0]) == 0) speechBubImg.color = new Color(speechBubImg.color.r, speechBubImg.color.g, speechBubImg.color.b, 0);
+                    if (sbTextMan.letterReferences.Length == 0) speechBubImg.color = new Color(speechBubImg.color.r, speechBubImg.color.g, speechBubImg.color.b, 0);
                     else                                        speechBubImg.color = new Color(speechBubImg.color.r, speechBubImg.color.g, speechBubImg.color.b, 1);
 
                     // error catcher
@@ -616,8 +616,8 @@ public class UIController : MonoBehaviour {
                 TextManager sbTextMan = speechBub.GetComponent<TextManager>();
                 readyToNextLine[i] = false;
                 Image speechBubImg = speechBub.GetComponent<Image>();
-                if (monDialogues[i].CharacterCount(msgs[monDialogues[i].currentLine]) == 0) speechBubImg.color = new Color(speechBubImg.color.r, speechBubImg.color.g, speechBubImg.color.b, 0);
-                else                                                                        speechBubImg.color = new Color(speechBubImg.color.r, speechBubImg.color.g, speechBubImg.color.b, 1);
+                if (monDialogues[i].letterReferences.Length == 0) speechBubImg.color = new Color(speechBubImg.color.r, speechBubImg.color.g, speechBubImg.color.b, 0);
+                else                                              speechBubImg.color = new Color(speechBubImg.color.r, speechBubImg.color.g, speechBubImg.color.b, 1);
 
                 SpriteUtil.SwapSpriteFromFile(speechBubImg, encounter.EnabledEnemies[i].DialogBubble, i);
                 Sprite speechBubSpr = speechBubImg.sprite;

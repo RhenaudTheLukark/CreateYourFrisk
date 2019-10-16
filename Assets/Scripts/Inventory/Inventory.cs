@@ -484,7 +484,7 @@ public static class Inventory {
                 }
                 if (amount != 0)
                     if (UnitaleUtil.IsOverworld) mess[0].SetText("[health:" + amount + ", killable]" + mess[0].Text);
-                    else                           PlayerController.instance.Hurt(-amount, 0);
+                    else                         PlayerController.instance.Hurt(-amount, 0);
                 break;
             case 1:
                 switch (name) {

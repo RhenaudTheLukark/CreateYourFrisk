@@ -343,7 +343,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 300307628}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 320, y: 221, z: 0}
+  m_LocalPosition: {x: 167, y: 280, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1441977566}
@@ -471,7 +471,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 655754369}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 167, y: 286, z: 0}
+  m_LocalPosition: {x: 90, y: 170, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1160652450}
@@ -868,7 +868,7 @@ BoxCollider2D:
   m_Offset: {x: 0, y: 0.15}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
+    pivot: {x: 0.5, y: 0}
     oldSize: {x: 0.4, y: 0.28}
     newSize: {x: 0.4, y: 0.28}
     adaptiveTilingThreshold: 0.5
@@ -1288,6 +1288,10 @@ Prefab:
       value: 
       objectReference: {fileID: 21300000, guid: 49257d0756bb14041b22743111edac9c,
         type: 3}
+    - target: {fileID: 4671881132980978, guid: a0add8308da8d24468328221253c3ec7, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 210
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a0add8308da8d24468328221253c3ec7, type: 2}
   m_IsPrefabAsset: 0
@@ -1362,7 +1366,7 @@ BoxCollider2D:
   m_Offset: {x: 0, y: 0.19}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
+    pivot: {x: 0.5, y: 0}
     oldSize: {x: 0.4, y: 0.38}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
@@ -1724,7 +1728,7 @@ Prefab:
     - target: {fileID: 114879940000294058, guid: a0add8308da8d24468328221253c3ec7,
         type: 2}
       propertyPath: scriptToLoad
-      value: Secret/PunderTest1
+      value: PunderTest
       objectReference: {fileID: 0}
     - target: {fileID: 212134501322781040, guid: a0add8308da8d24468328221253c3ec7,
         type: 2}
@@ -2264,11 +2268,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4671881132980978, guid: a0add8308da8d24468328221253c3ec7, type: 2}
       propertyPath: m_LocalPosition.x
-      value: 240
+      value: 214
       objectReference: {fileID: 0}
     - target: {fileID: 4671881132980978, guid: a0add8308da8d24468328221253c3ec7, type: 2}
       propertyPath: m_LocalPosition.y
-      value: 140
+      value: 96
       objectReference: {fileID: 0}
     - target: {fileID: 61614148327684554, guid: a0add8308da8d24468328221253c3ec7,
         type: 2}
@@ -2400,6 +2404,11 @@ Prefab:
       propertyPath: m_SizeDelta.x
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 61614148327684554, guid: a0add8308da8d24468328221253c3ec7,
+        type: 2}
+      propertyPath: m_SpriteTilingProperty.pivot.y
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 114980733475525374, guid: a0add8308da8d24468328221253c3ec7, type: 2}
   m_SourcePrefab: {fileID: 100100000, guid: a0add8308da8d24468328221253c3ec7, type: 2}
@@ -2500,7 +2509,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 846d0d1a9b9e1c14884c79473a1f1d14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scriptToLoad: Secret/CharacterSelector1
+  scriptToLoad: CharacterSelector
   actualPage: 1
   eventTriggers:
   - {x: 0, y: 0}

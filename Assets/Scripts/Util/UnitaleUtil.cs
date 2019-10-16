@@ -549,11 +549,11 @@ public static class UnitaleUtil {
     public static Dictionary<string, string> MapCorrespondanceList = new Dictionary<string, string>();
 
     public static void AddKeysToMapCorrespondanceList() {
-        MapCorrespondanceList.Add("test", "Snowdin - The test map");
-        MapCorrespondanceList.Add("test2", "Hotland - The test map");
+        MapCorrespondanceList.Add("test", "Snowdin - Big boy map");
+        MapCorrespondanceList.Add("test2", "Hotland - Crossroads");
         // MapCorrespondanceList.Add("test3", "The Core - The test map");
-        MapCorrespondanceList.Add("test4", "The Core - Parallel universe");
-        MapCorrespondanceList.Add("test5", "Snowdin - Parallax universe");
+        MapCorrespondanceList.Add("test4", "The Core - Bridge");
+        MapCorrespondanceList.Add("test5", "Snowdin - Cooler bridge");
         MapCorrespondanceList.Add("test-1", "How did you find this one?");
         MapCorrespondanceList.Add("Void", "The final map...?");
     }

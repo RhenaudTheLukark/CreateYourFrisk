@@ -3,16 +3,21 @@ local spriteTest
 local lastPosX
 local lastPosY
 
-function EventPage0() --First event function launched
-    Event.SetPage(Event.GetName(), 2)
-    spriteTest = Event.GetSprite(Event.GetName())
-    lastPosX = spriteTest.x
-    lastPosY = spriteTest.y
+function EventPage0() -- First event function launched
+    -- Chara player choice has been locked
+    if GetRealGlobal("CYFInternalCross2") then
+        Event.Remove(Event.GetName())
+    else
+        Event.SetPage(Event.GetName(), 2)
+        spriteTest = Event.GetSprite(Event.GetName())
+        lastPosX = spriteTest.x
+        lastPosY = spriteTest.y
+    end
 end
 
 function EventPage1()
     --Turn toward player
-    dir, diff = calcDirAndDiff(Event.GetPosition(Event.GetName()), Event.GetPosition("Player"))
+    dir = calcDir(Event.GetPosition(Event.GetName()), Event.GetPosition("Player"))
     Event.SetDirection(Event.GetName(), dir)
     General.SetDialog({"[voice:punderbolt]Where am I???"}, true, {"punderIntimidated"})
 end
@@ -22,7 +27,7 @@ function EventPage2() --Coroutine
     if lastPosX == spriteTest.x and lastPosY == spriteTest.y then
         beforeMovement = beforeMovement - 1
     end
-    lastPosX = spriteTest.x 
+    lastPosX = spriteTest.x
     lastPosY = spriteTest.y
     if beforeMovement == 0 then
         beforeMovement = math.random(60, 180)
@@ -34,7 +39,7 @@ function EventPage2() --Coroutine
 end
 
 --The name is pretty straightforward
-function calcDirAndDiff(vect1, vect2)
+function calcDir(vect1, vect2)
     local diff = { vect1[1] - vect2[1], vect1[2] - vect2[2] }
     local angle = (math.atan2(diff[1], diff[2]) + (math.pi*2)) % (math.pi*2)
     local dir = 2
@@ -42,5 +47,5 @@ function calcDirAndDiff(vect1, vect2)
     elseif angle > 3*math.pi/4 and angle <= 5*math.pi/4 then dir = 8
     elseif angle > 5*math.pi/4 and angle <= 7*math.pi/4 then dir = 6
     end
-    return dir, diff
+    return dir
 end
