@@ -30,15 +30,23 @@ public class LuaGeneralOW {
             PlayerOverworld.instance.UIPos = 0;
         
         if (EventManager.instance.coroutines.ContainsKey(appliedScript) && EventManager.instance.script != appliedScript) {
-            UnitaleUtil.DisplayLuaError(EventManager.instance.events[EventManager.instance.actualEventIndex].name, "General.SetDialog: You can't use that function in a coroutine.");
+            UnitaleUtil.DisplayLuaError(EventManager.instance.eventScripts[EventManager.instance.events[EventManager.instance.actualEventIndex]].scriptname, "General.SetDialog: You can't use that function in a coroutine.");
             return;
         } else if (EventManager.instance.LoadLaunched) {
-            UnitaleUtil.DisplayLuaError(EventManager.instance.events[EventManager.instance.actualEventIndex].name, "General.SetDialog: You can't use that function in a page 0 function.");
+            UnitaleUtil.DisplayLuaError(EventManager.instance.eventScripts[EventManager.instance.events[EventManager.instance.actualEventIndex]].scriptname, "General.SetDialog: You can't use that function in a page 0 function.");
             return;
         }
-        TextMessage[] textmsgs = new TextMessage[texts.Table.Length];
-        for (int i = 0; i < texts.Table.Length; i++)
-            textmsgs[i] = new TextMessage(texts.Table.Get(i + 1).String, formatted, false, mugshots != null ? mugshots.Type == DataType.Table ? mugshots.Table.Get(i+1) : mugshots : null);
+        TextMessage[] textmsgs = null;
+        if (texts.Type == DataType.String && texts.String.Length > 0)
+            textmsgs = new TextMessage[]{new TextMessage(texts.String, formatted, false, mugshots != null ? mugshots.Type == DataType.Table ? mugshots.Table.Get(0) : mugshots : null)};
+        else if (texts.Type == DataType.Table && texts.Table.Length > 0) {
+            textmsgs = new TextMessage[texts.Table.Length];
+            for (int i = 0; i < texts.Table.Length; i++)
+                textmsgs[i] = new TextMessage(texts.Table.Get(i + 1).String, formatted, false, mugshots != null ? mugshots.Type == DataType.Table ? mugshots.Table.Get(i+1) : mugshots : null);
+        } else {
+            UnitaleUtil.DisplayLuaError(EventManager.instance.eventScripts[EventManager.instance.events[EventManager.instance.actualEventIndex]].scriptname, "General.SetDialog: You need to input a non-empty array or string here.");
+            return;
+        }
         textmgr.SetTextQueue(textmsgs);
         textmgr.transform.parent.parent.SetAsLastSibling();
     }

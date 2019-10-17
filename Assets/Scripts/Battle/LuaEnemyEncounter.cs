@@ -363,7 +363,7 @@ internal class LuaEnemyEncounter : EnemyEncounter {
             TextMessage[] msgs = null;
             if (arg.Type == DataType.String)
                 msgs = new TextMessage[]{new RegularMessage(arg.String)};
-            else if (arg.Type == DataType.Table) {
+            else if (arg.Type == DataType.Table && arg.Table.Length > 0) {
                 msgs = new TextMessage[arg.Table.Length];
                 for (int i = 0; i < arg.Table.Length; i++)
                     msgs[i] = new RegularMessage(arg.Table.Get(i + 1).String);
