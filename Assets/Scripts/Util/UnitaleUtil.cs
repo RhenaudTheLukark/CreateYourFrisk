@@ -188,7 +188,7 @@ public static class UnitaleUtil {
                     
                     i--;
                     if (str.Split(':')[0] == "charspacing")
-                        hSpacing = ParseUtil.GetFloat(str.Split(':')[1]);
+                        hSpacing = str.Split(':')[1].ToLower() == "default" ? txtmgr.Charset.CharSpacing : ParseUtil.GetFloat(str.Split(':')[1]);
                     break;
                 case '\r':
                 case '\n':

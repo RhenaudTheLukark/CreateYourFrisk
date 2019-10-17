@@ -868,8 +868,16 @@ public class TextManager : MonoBehaviour {
                 if (cmds[1].Length == 2)
                     currentColor = new Color(currentColor.r, currentColor.g, currentColor.b, ParseUtil.GetByte(cmds[1]) / 255);
                 break;
-            case "charspacing": SetHorizontalSpacing(ParseUtil.GetFloat(cmds[1])); break;
-            case "linespacing": SetVerticalSpacing(ParseUtil.GetFloat(cmds[1]));   break;
+            case "charspacing":
+                if (cmds.Length > 1 && cmds[1].ToLower() == "default")
+                    SetHorizontalSpacing(Charset.CharSpacing);
+                else
+                    SetHorizontalSpacing(ParseUtil.GetFloat(cmds[1]));
+                break;
+            case "linespacing":
+                if (cmds.Length > 1)
+                    SetVerticalSpacing(ParseUtil.GetFloat(cmds[1]));
+                break;
 
             case "starcolor":
                 Color starColor = ParseUtil.GetColor(cmds[1]);
@@ -879,18 +887,6 @@ public class TextManager : MonoBehaviour {
                 break;
             
             case "instant":
-                /*
-                if (args.Length == 0 || (args.Length == 1 && cmds[1] == "allowcommand")) {
-                    if (args.Length == 1 && cmds[1] == "allowcommand") {
-                        instantCommand = true;
-                        Update();
-                        InUpdateControlCommand(DynValue.NewString("noskip"));
-                        break;
-                    }
-                    if (!skipFromPlayer)
-                        displayImmediate = true;
-                }
-                */
                 if (GlobalControls.retroMode)
                     instantActive = true;
                 else
