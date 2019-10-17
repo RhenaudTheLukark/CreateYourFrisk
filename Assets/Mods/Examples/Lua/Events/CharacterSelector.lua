@@ -28,7 +28,6 @@ function EventPage0()
         Event.Remove(Event.GetName())
     else
         SetRealGlobal("CYFInternalCharacterSelected", true)
-        Event.Remove("Tone")
         Event.SetSpeed("Player", 3)
         disabled = { GetRealGlobal("CYFInternalCross1"), GetRealGlobal("CYFInternalCross2"), GetRealGlobal("CYFInternalCross3"), GetRealGlobal("CYFInternalCross4"), GetRealGlobal("CYFInternalCross5") }
         disabled[6] = not (disabled[1] and disabled[2] and disabled[3] and disabled[4] and disabled[5])

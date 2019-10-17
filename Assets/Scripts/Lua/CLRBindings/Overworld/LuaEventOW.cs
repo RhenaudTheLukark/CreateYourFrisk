@@ -11,6 +11,16 @@ public class LuaEventOW {
     [MoonSharpHidden] public static event LoadedAction StCoroutine;
 
     /// <summary>
+    /// Checks if an event exists.
+    /// </summary>
+    /// <param name="name">Name of the event to check for.</param>
+    /// <returns>True if the event exists, false otherwise.</returns>
+    [CYFEventFunction] public bool Exists(string name) {
+        try { return GameObject.Find(name) != null; }
+        finally { appliedScript.Call("CYFEventNextCommand"); }
+    }
+
+    /// <summary>
     /// Permits to teleport an event.
     /// </summary>
     /// <param name="name"></param>
@@ -228,7 +238,7 @@ public class LuaEventOW {
             throw new CYFException("Event.SetPage: The given event doesn't exist.");
 
         GameObject go = GameObject.Find(eventName);
-        if (!EventManager.instance.autoDone.ContainsKey(go))
+        if (EventManager.instance.autoDone.ContainsKey(go))
             EventManager.instance.autoDone.Remove(go);
         go.GetComponent<EventOW>().actualPage = page;
         if (EventManager.instance.ScriptLaunched || EventManager.instance.coroutines.ContainsKey(EventManager.instance.luaevow.appliedScript))

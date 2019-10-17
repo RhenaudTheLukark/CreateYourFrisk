@@ -1,74 +1,126 @@
 function EventPage1()
-    Map.SetMusicKeptMap("test4", false)
-    Event.MoveToPoint("Player", 320, 400, false)
-    hp = Player.GetHP()
-    General.SetDialog({"Music kept = false\nErm[waitall:3]...[waitall:1][w:10] Why did you go here with your " ..hp .." HP?"}, true, {"papyrus_mugshot_2"})
-end
-
-function EventPage2()
-    General.SetDialog({"Here's an example of event that you can do!", "Please check the event once it is finished."}, true, {"papyrus_mugshot","papyrus_mugshot"})
-	Event.Teleport("Player", 113, 287)
-	General.SetDialog({"This is a good idea!", "Yeah, it is.", "Error! Or maybe not?"}, true, {"papyrus_mugshot", "rtl_happy", "papyrus_mugshot_2"})
-	General.SetChoice({"You can\ndo it", "Oh no you\ndon't"})
-	if lastChoice == 0 then
-	    General.SetDialog({"Yes you can!"}, true, {"rtlukark_determined"})
-	elseif lastChoice == 1 then
-		General.SetDialog({"Too bad that you can't!", "Here, I'll open a shop to help you!"}, true, {"rtlukark_pity", "rtlukark_determined"})
-        General.EnterShop("Dummy")
-	end
-    
-    for i = 1, 3 do
-        General.SetChoice({"Heck yeah!", "Heck no!"}, "Are you DETERMINED ?")
-        if lastChoice == 1 then
-            General.SetDialog({"I knew it!"}, true, {"rtlukark_=3"})
-            break
-        elseif lastChoice == 0 then
-            if i == 1 then
-                General.SetDialog({"Are you sure?"}, true, {"rtlukark_perv"})
-            elseif i == 2 then
-                General.SetDialog({"Are you [w:10][letters:6]REALLY[w:10] sure?"}, true, {"rtlukark_perv"})
-            elseif i == 3 then
-                General.SetBattle("#04 - Animation", true, true)
-            end
-        end
+    if Event.Exists("Punder") then
+        Event.MoveToPoint("Punder", 400, 240, true, false)
+    end
+    Event.MoveToPoint("Player", 430, 180, true)
+    Event.SetDirection("Player", 6)
+    local animHeader = Event.GetAnimHeader("Player")
+    if     animHeader == ""        then Event.SetPage(Event.GetName(), 10)     -- Frisk
+    elseif animHeader == "Chara"   then Event.SetPage(Event.GetName(), 14)     -- Chara
+    elseif animHeader == "MK"      then Event.SetPage(Event.GetName(), 2)      -- Monster Kid
+    elseif animHeader == "Booster" then Event.SetPage(Event.GetName(), 368395) -- Booster
+    elseif animHeader == "Asriel"  then Event.SetPage(Event.GetName(), 69)     -- Asriel
     end
 end
 
-function EventPage3()
-	if (GetRealGlobal("GoAway") == null) then	
-		SetRealGlobal("GoAway", 0)
-	else									
-		SetRealGlobal("GoAway", GetRealGlobal("GoAway") + 1)
-	end
-	if (GetRealGlobal("GoAway") == 0) then		General.SetDialog({"Nothing to see here![w:10] Just go away."}, true, {"rtlukark_determined"})
-	elseif (GetRealGlobal("GoAway") == 1) then	General.SetDialog({"Erm[waitall:3]...[waitall:1] [w:10]I told you to leave? [w:10]So please go."}, true, {"rtlukark_normal"})
-	elseif (GetRealGlobal("GoAway") == 2) then	General.SetDialog({"Please[waitall:3]...[waitall:1] [w:10]Just go[waitall:3]..."}, true, {"rtlukark_sorry"})
-	elseif (GetRealGlobal("GoAway") == 3) then	General.SetDialog({"..."}, true, {"rtlukark_pity"})
-	elseif (GetRealGlobal("GoAway") == 4) then
-		General.SetDialog({"So,[w:5] yeah.[w:10] There's one more thing I have to show you.", 
-						   "You know,[w:5] I was with some friends a few days ago,[w:5] and now[waitall:3]...[waitall:1][w:10] they all disappeared.",
-						   "The only memory I kept from them is this picture of us,[w:5] a few instants after exitting Mt Ebott.",
-						   "If I can show it to you?[w:10] [mugshot:rtlukark_pity]Yeah,[w:5] if you really want to[waitall:3]..."}, true, 
-						  {"rtlukark_pity", "rtlukark_pity", "rtlukark_pity", "rtlukark_surprised"})
-		Screen.SetTone(true, true, 0, 0, 0, 128)
-		Screen.DispImg("photo", 1, 320, 240, 224, 130, 40, 255)
-		General.WaitForInput()
-		Event.Rotate("Image1", 0, -90, 0)
-		Screen.DispImg("photoback", 1, 320, 240, 255, 255, 255, 255)
-		Event.Rotate("Image1", 0, 90, 0, false)
-		Event.Rotate("Image1", 0, 0, 0)
-		General.WaitForInput()
-		Screen.SupprImg(1)
-		Screen.SetTone(true, true, 0, 0, 0, 0)
-	elseif (GetRealGlobal("GoAway") < 8)   then	General.SetDialog({"There's no more to see here,[w:5] kiddo. You can go."}, true, {"rtlukark_normal"})
-	elseif (GetRealGlobal("GoAway") < 13)  then	General.SetDialog({"You're so patient,[w:5] I love this !"}, true, {"rtlukark_=3"})
-	elseif (GetRealGlobal("GoAway") == 13) then	General.SetDialog({"You're boring me right\nnow.[w:10] If you don't stop this,[w:5] I'll be forced to use my special attack."}, true, 
-													              {"rtlukark_normal","rtlukark_normal"})
-	elseif (GetRealGlobal("GoAway") == 14) then	General.SetDialog({"JUST. [w:10]STOP. [w:10]This is your final warning."}, true, {"rtlukark_angry"})
-	elseif (GetRealGlobal("GoAway") == 15) then	
-		General.SetDialog({"Ok,[w:5] here you go![w:10][next]"}, true, {"rtlukark_angry"})
-		General.GameOver({ "I told you!", "You should have stopped that." }, "mus_zz_megalovania")		
-	end
+endTexts = {
+    "Oh, I lost. I'll have to try again.",
+    "Ah, looks like I wasn't cut out for it this time.",
+    "Aw...I thought I was there...",
+    "He's not gone yet. I must try again.",
+    "I'm starting to lose my patience.",
+    "What is this dog's problem?!",
+    "Come on, let me through now!",
+    "MOVE. NOW.",
+    "My eyes. They hurt. Send help."
+}
+
+endFaceSprites = {
+    "glad",
+    "normal",
+    "sad",
+    "frustrated",
+    "serious",
+    "angry",
+    "mad",
+    "fury",
+    "woke"
+}
+
+function EventPage5()
+    local stareID = GetGlobal("CYFOWStare")
+    General.SetDialog(endTexts[stareID], true, "Frisk/" .. endFaceSprites[stareID])
+    Player.CanMove(true)
+    Event.SetPage(Event.GetName(), 1)
+end
+
+function EventPage10()
+    -- Stare at the dog
+    --W 1: Pundy leaves the screen for a bit / If dead, jump to 3
+    --R 2: Come back to his spot with sunglasses
+    --R 3: Dog bounces a couple of times then raises with long legs, tricking the player into thinking he's letting him past, then goes back to normal
+    --W 4: MK comes from bottom, looks at player for some time, then goes up
+    --W 5: Papyrus come from left, walks to Player, talks to him (standard Pap lines), then gets upset (stomp foot), "Music kept", backs out, then run to left and jump from cliff using window jump
+    --R 6: Chara chasing Booster, run in circles, go down, come from top, go down, Chara coming back alone from top, laugh.wav, go left
+    --R 7: Punderbolt & Asriel talk then play tag, then Asriel goes / Asriel enters room, look for something, sit & cry, then wipe tears & go
+    --W 8: Chara creepily approaching the player from behind, music slowly fades out, (play anticipation slow mo like in genocide?), then when Chara close to player, hug
+    General.SetDialog({ "There's a dog here and it's blocking the way.",
+                        "It doesn't look like it'll move any time soon...",
+                        "He's bound to go if I stay around for some time!" }, true,
+                      { "Frisk/normal", "Frisk/sad", "Frisk/happy" })
+    Event.SetPage("Stare", 2)
+    Event.SetPage(Event.GetName(), 1)
+end
+
+function EventPage14()
+    -- Slice + 3D rotation
+    General.SetDialog({ "There's a dog here and it's blocking the way.",
+                        "It doesn't look like it'll move any time soon...",
+                        "I know exactly how to force him to move!" }, true,
+                      { "Chara/normal", "Chara/sad", "Chara/creepy" })
+    Event.SetPage(Event.GetName(), 1)
+end
+
+function EventPage2()
+    -- Push + boing
+    General.SetDialog({ "There's a dog here and it's blocking the way.",
+                        "It doesn't look like it'll move any time soon...",
+                        "I should try pushing it away!" }, true,
+                      { "MK/normal", "MK/sad", "MK/determined" })
+    Event.SetPage(Event.GetName(), 1)
+end
+
+function EventPage368395()
+    -- Jump SM64
+    General.SetDialog({ "There's a dog here and it's blocking the way.",
+                        "It doesn't look like it'll move any time soon...",
+                        "I should try jumping over it!" }, true,
+                      { { "Booster/normal", "Booster/normalT", 0.2 },
+                        { "Booster/sad",    "Booster/sadT",    0.2 },
+                        { "Booster/happy",  "Booster/happyT",  0.2 } })
+    Event.SetPage(Event.GetName(), 1)
+end
+
+function EventPage69()
+    -- Actually works + Super Paper Mario spin
+    General.SetDialog({ "[voice:v_asriel]There's a dog here and it's blocking the way.",
+                        "[voice:v_asriel]It doesn't look like it'll move any time soon...",
+                        "[voice:v_asriel]Hmmm... Maybe I could try being nice to it...?",
+                        "[voice:v_asriel]Mister doggy, may you please let me through?" }, true,
+                      { { "Asriel/normal", "Asriel/normalT", 0.2 },
+                        { "Asriel/sad",    "Asriel/sadT",    0.2 },
+                        { "Asriel/normal", "Asriel/normalT", 0.2 },
+                        { "Asriel/happy",  "Asriel/happyT" , 0.2 } })
+    Event.SetPage(Event.GetName(), 1)
+end
+
+-- Auto page used with StareTest
+function EventPage4()
+    local lines = { }
+    local faceSprites = { }
+    while GetGlobal("CYFOWStareText" .. (#lines + 1)) do
+        local lineID = #lines + 1
+        lines[lineID] =       GetGlobal("CYFOWStareText" .. lineID)
+        faceSprites[lineID] = GetGlobal("CYFOWStareFace" .. lineID)
+        SetGlobal("CYFOWStareText" .. lineID, nil)
+        SetGlobal("CYFOWStareFace" .. lineID, nil)
+    end
+    General.SetDialog(lines, true, faceSprites)
+    Event.SetPage(Event.GetName(), 1)
+end
+
+--[[function EventPage1()
+    General.SetDialog({"Music kept = false\nErm[waitall:3]...[waitall:1][w:10] Why did you go here with your " .. hp .. " HP?"}, true, {"papyrus_mugshot_2"})
 end
 
 --This event page is a big mash-up test page.
@@ -79,7 +131,7 @@ function EventPage4()
 	--These following lines were used for Quaternion tests.
 	--You can activate them if you want to
     --/!\ Not usable anymore /!\
-	--[[SetTone(true, true, 0, 0, 0, 128)
+	SetTone(true, true, 0, 0, 0, 128)
 	DispImg("photo", 1, 320, 240, 436, 256, 224, 130, 40, 255)
 	WaitForInput()
 	RotateEvent("Image1", 360, 0, 0)
@@ -99,17 +151,6 @@ function EventPage4()
 	RotateEvent("Image1", 360, 360, 360)
 	WaitForInput()
 	SupprImg(1)
-	SetTone(true, true, 0, 0, 0, 0)]]
+	SetTone(true, true, 0, 0, 0, 0)
 	--General.GameOver({ "[voice:v_sans]Wazzup bro?", "[voice:v_sans]I love this music, don't you?" }, "mus_zz_megalovania")
-end
-
---[[function EventPage666()
-	Event.SetAnimSwitch("Player", "Chara")
-	if(GetGlobal("Chara") == false or GetGlobal("Chara") == nil) then
-		SetGlobal("Chara", true)
-		General.PlayBGM("mus_zzz_c", 1)
-	else
-		SetGlobal("Chara", false)
-		General.PlayBGM("mus_anothermedium", 1)
-	end
 end]]
