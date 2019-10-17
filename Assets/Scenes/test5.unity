@@ -210,6 +210,9 @@ MonoBehaviour:
   - name: StopDown
     anims: empty, empty
     transitionTime: 60
+  - name: StopLeft
+    anims: CharaOW/5, CharaOW/5
+    transitionTime: 60
 --- !u!224 &136174000
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1985,8 +1988,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movementDirection: 0
-  beginAnim: StopLeft
-  specialHeader: NoAnim
+  beginAnim: StopDown
+  specialHeader: 
   anims:
   - name: MovingLeft
     anims: BoosterOW/4, BoosterOW/5, BoosterOW/6, BoosterOW/7
@@ -1994,7 +1997,7 @@ MonoBehaviour:
   - name: StopLeft
     anims: BoosterOW/5, BoosterOW/5
     transitionTime: 60
-  - name: NoAnim
+  - name: StopDown
     anims: empty, empty
     transitionTime: 60
 --- !u!224 &1609085183

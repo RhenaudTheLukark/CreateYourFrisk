@@ -30,7 +30,7 @@ function EventPage2()
     punderSprite.xscale = -1
     Event.SetDirection(Event.GetName(), 6)
     General.Wait(30)
-    General.SetDialog({"[noskip][voice:punderbolt]Hello th[mugshot:Punder/intimidated][waitall:2]ere... [w:25][waitall:1]May I help you?"}, true, {"punderNormal"})
+    General.SetDialog({"[noskip][voice:punderbolt]Hello th[mugshot:Punder/intimidated][waitall:2]ere... [w:25][waitall:1]May I help you?"}, true, {"punder/normal"})
     for i = 1, 30 do
         Audio.Volume((30 - i) / 30)
         General.Wait(1)
@@ -40,7 +40,7 @@ function EventPage2()
     Event.MoveToPoint("Player", 1060, 680, true, false)
     General.Wait(3)
     Event.MoveToPoint(Event.GetName(), 1120, 680, true, false)
-    General.SetDialog({"[noskip][voice:punderbolt]Hey! [w:25]Back off!", "[noskip][voice:punderbolt]What are you doing?!"}, true, {"Punder/angrintimidated", "Punder/shocked"})
+    General.SetDialog({"[noskip][voice:punderbolt]Hey! [w:25]Back off!", "[noskip][voice:punderbolt]What are you doing?!"}, true, {"Punder/angryIntimidated", "Punder/shocked"})
     Event.SetSpeed("Player", 6)
     General.Wait(60)
     
@@ -116,7 +116,7 @@ function EventPage2()
     Event.IgnoreCollision(Event.GetName(), false)
     Event.IgnoreCollision(Event.GetName() .. " (1)", false)
     Event.SetAnimHeader(Event.GetName(), "")
-    Event.SetAnimHeader(Event.GetName() .. " (1)", "NoAnim")
+    Event.SetAnimHeader(Event.GetName() .. " (1)", "")
     SetRealGlobal("CYFInternalCross2", true)
     SetRealGlobal("CYFInternalCharacterSelected", false)
     Player.Teleport("test2", 320, 200, 2, false)
@@ -131,10 +131,10 @@ function EventPage1()
     local diff
     dir, diff = calcDirAndDiff(eventpos, playerpos)
     local text = ""
-    local mugshot = "punderNormal"
+    local mugshot = "Punder/normal"
     if Event.GetAnimHeader("Player") == "MK" then            
         text = "Hello there little buddy!"
-        mugshot = "punderVeryHappy"
+        mugshot = "Punder/veryHappy"
     elseif Event.GetAnimHeader("Player") == "Chara" then   --Impossible to reach  
         local tempPunderX = Event.GetPosition(Event.GetName())[1]
         Event.MoveToPoint(Event.GetName(), diff[1] > 0 and eventpos[1] + 60 or eventpos[1] - 60, eventpos[2])
@@ -144,14 +144,14 @@ function EventPage1()
         else 
             text = "Hey...[w:25]you look kinda menacing...[w:25]\nBe good, [w:15]alright?"
         end
-        mugshot = "punderIntimidated"
-    elseif Event.GetAnimHeader("Player") == "CharaTad" then  
-        text = "Are you alright? [w:25]\nYou seem lost..."
+        mugshot = "punder/intimidated"
+    --[[elseif Event.GetAnimHeader("Player") == "CharaTad" then  
+        text = "Are you alright? [w:25]\nYou seem lost..."]]
     elseif Event.GetAnimHeader("Player") == "Asriel" then    
         text = "Oh hi kid! [w:25]You're cute, [w:15]you know that?"
-        mugshot = "punderVeryHappy"
+        mugshot = "punder/veryHappy"
     else                                                     
-        text = "Hey, [w:15]how's going?"
+        text = "Hey, [w:15]how's it going?"
     end
     dir, diff = calcDirAndDiff(Event.GetPosition(Event.GetName()), Event.GetPosition("Player"))
     Event.SetDirection(Event.GetName(), dir)

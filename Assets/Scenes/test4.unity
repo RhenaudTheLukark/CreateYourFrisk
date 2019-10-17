@@ -2094,7 +2094,7 @@ MonoBehaviour:
     anims: MonsterKidOW/13, MonsterKidOW/13
     transitionTime: 60
   - name: Fallen2
-    anims: 'MonsterKidOW/12, MonsterKidOW/13, MonsterKidOW/14, MonsterKidOW/15, '
+    anims: MonsterKidOW/12, MonsterKidOW/13, MonsterKidOW/14, MonsterKidOW/15
     transitionTime: 0.1
   - name: StopDown
     anims: empty, empty

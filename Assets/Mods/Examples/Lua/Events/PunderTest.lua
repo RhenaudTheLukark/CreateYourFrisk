@@ -19,7 +19,7 @@ function EventPage1()
     --Turn toward player
     dir = calcDir(Event.GetPosition(Event.GetName()), Event.GetPosition("Player"))
     Event.SetDirection(Event.GetName(), dir)
-    General.SetDialog({"[voice:punderbolt]Where am I???"}, true, {"punderIntimidated"})
+    General.SetDialog({"[voice:punderbolt]Where am I???"}, true, {"Punder/intimidated"})
 end
 
 function EventPage2() --Coroutine

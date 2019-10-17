@@ -915,7 +915,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movementDirection: 0
-  beginAnim: NoAnim
+  beginAnim: StopDown
   specialHeader: 
   anims:
   - name: Fall
@@ -924,7 +924,7 @@ MonoBehaviour:
   - name: Reveal
     anims: FriskUT/Fall/f3, FriskUT/Fall/f4
     transitionTime: 0.16666667
-  - name: NoAnim
+  - name: StopDown
     anims: empty, empty
     transitionTime: 60
 --- !u!1001 &1053321142

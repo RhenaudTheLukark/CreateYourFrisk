@@ -75,10 +75,10 @@ public class CYFAnimator : MonoBehaviour {
             }
         }
 
+        lastPos = gameObject.transform.position;
         if (animName != beginAnim)
             ReplaceAnim(animName, (gameObject.name == "Player" ? specialPlayerHeader : specialHeader) != lastHeader);
         lastHeader = gameObject.name == "Player" ? specialPlayerHeader : specialHeader;
-        lastPos = gameObject.transform.position;
     }
 
     void ReplaceAnim(string animName, bool headerChanged) {
