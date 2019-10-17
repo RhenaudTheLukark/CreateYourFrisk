@@ -369,7 +369,7 @@ public class PlayerOverworld : MonoBehaviour {
 
         //If the GameObject is the player, check if the camera can follow him or not
         if (go == gameObject && !inBattleAnim && GameObject.Find("Background") != null) {
-            RectifyCameraPosition(new Vector2(transform.GetChild(0).position.x, transform.GetChild(0).position.y + PlayerPos.GetChild(0).GetComponent<SpriteRenderer>().sprite.texture.height / 2f));
+            RectifyCameraPosition(new Vector2(transform.GetChild(0).position.x, transform.GetChild(0).position.y + Mathf.Round(PlayerPos.GetChild(0).GetComponent<SpriteRenderer>().sprite.texture.height / 2f)));
             GameObject.Find("Canvas OW").transform.position = new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y, -10);
         }
 
