@@ -246,10 +246,7 @@ it's w3c valid, at least
                 <span class="number"></span> Text.yscale,<br></span>
                 Allows you to stretch and squish text objects, similarly to sprite objects.
                 <br><br>
-                <span style="color:#fff"> <b>Note:</b> Mainly designed for single-line text objects. Text that types out while a text object is already
-                scaled <b>will</b> appear strangely!</span><br><br>
-                To counteract this, set a text object's Scale back to <span class="term">(1, 1)</span> just before the text object advances to the next
-                line. Then you can set it back to whatever scale you want.
+                This works at any point: while the text has not yet started to type, is in the middle of typing, is paused, between lines, even if it's done typing.
             </p>
             <p>
                 <br><span class="function">Text.Scale(<span class="number"></span> xscale, <span class="number"></span> yscale)</span>
