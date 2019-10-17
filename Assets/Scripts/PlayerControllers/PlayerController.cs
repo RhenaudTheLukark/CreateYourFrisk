@@ -130,7 +130,6 @@ public class PlayerController : MonoBehaviour {
             }
         // set timer and play the hurt sound if player was actually hurt
         // TODO: factor in stats and what the actual damage should be
-        // TONOTDO: I don't care about stats, lvk :D
         
         // reset the hurt timer if the arguments passed are (0, 0)
         if (damage == 0 && invulnerabilitySeconds == 0) {
@@ -363,31 +362,23 @@ public class PlayerController : MonoBehaviour {
     /// Modifies the movement direction based on input. Broken up into single ifs so pressing opposing keys prevents you from moving.
     /// </summary>
     private void HandleInput() {
-        if (InputUtil.Held(GlobalControls.input.Up))
-            ModifyMovementDirection(Directions.UP);
-        if (InputUtil.Held(GlobalControls.input.Down))
-            ModifyMovementDirection(Directions.DOWN);
+        if (InputUtil.Held(GlobalControls.input.Up))    intendedShift += ModifyMovementDirection(Directions.UP);
+        if (InputUtil.Held(GlobalControls.input.Down))  intendedShift += ModifyMovementDirection(Directions.DOWN);
+        if (InputUtil.Held(GlobalControls.input.Left))  intendedShift += ModifyMovementDirection(Directions.LEFT);
+        if (InputUtil.Held(GlobalControls.input.Right)) intendedShift += ModifyMovementDirection(Directions.RIGHT);
 
-        if (InputUtil.Held(GlobalControls.input.Left))
-            ModifyMovementDirection(Directions.LEFT);
-        if (InputUtil.Held(GlobalControls.input.Right))
-            ModifyMovementDirection(Directions.RIGHT);
-
-        if (InputUtil.Pressed(GlobalControls.input.Cancel))
-            soul.setHalfSpeed(true);
-        else if (InputUtil.Released(GlobalControls.input.Cancel))
-            soul.setHalfSpeed(false);
+        if (InputUtil.Pressed(GlobalControls.input.Cancel))       soul.setHalfSpeed(true);
+        else if (InputUtil.Released(GlobalControls.input.Cancel)) soul.setHalfSpeed(false);
     }
 
     // given an input direction, let intendedShift carry 'directional' vector (non-unit: x is -1 OR 1 and y is -1 OR 1)
-    // TODO: make the return value matter instead of relying on an in-class variable, it looks stupid
-    private void ModifyMovementDirection(Directions d) {
+    private Vector2 ModifyMovementDirection(Directions d) {
         switch (d) {
-            case Directions.UP:     intendedShift += Vector2.up;     break;
-            case Directions.DOWN:   intendedShift += Vector2.down;   break;
-            case Directions.LEFT:   intendedShift += Vector2.left;   break;
-            case Directions.RIGHT:  intendedShift += Vector2.right;  break;
-            default:                intendedShift = Vector2.zero;    break;
+            case Directions.UP:     return Vector2.up;
+            case Directions.DOWN:   return Vector2.down;
+            case Directions.LEFT:   return Vector2.left;
+            case Directions.RIGHT:  return Vector2.right;
+            default:                return Vector2.zero;
         }
     }
 
@@ -398,10 +389,8 @@ public class PlayerController : MonoBehaviour {
         // if the position is the same, the player hasnt moved - by doing it like this we account
         // for things like being moved by external factors like being shoved by boundaries
         // TODO: account for external factors like being moved by other scripts (enemies e.a.)
-        if (xDelta == 0.0f && yDelta == 0.0f)
-            moving = false;
-        else
-            moving = true;
+        if (xDelta == 0.0f && yDelta == 0.0f) moving = false;
+        else                                  moving = true;
         soul.PostMovement(xDelta, yDelta);
     }
 

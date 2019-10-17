@@ -101,16 +101,14 @@ public class UIController : MonoBehaviour {
     public delegate void Message();
     public static event Message SendToStaticInits;
 
-    // TODO: Check the usefulness of the third argument
     public void ActionDialogResult(TextMessage msg, UIState afterDialogState, ScriptWrapper caller = null) {
         ActionDialogResult(new TextMessage[] { msg }, afterDialogState, caller);
     }
 
     public void ActionDialogResult(TextMessage[] msg, UIState afterDialogState, ScriptWrapper caller = null) {
         stateAfterDialogs = afterDialogState;
-        if (caller != null) {
+        if (caller != null)
             textmgr.SetCaller(caller);
-        }
         textmgr.SetTextQueue(msg);
         SwitchState(UIState.DIALOGRESULT);
     }

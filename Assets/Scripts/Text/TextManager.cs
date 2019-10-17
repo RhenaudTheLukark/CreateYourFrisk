@@ -551,57 +551,41 @@ public class TextManager : MonoBehaviour {
                     else {
                         // Work-around for [noskip], [instant] and [instant:allowcommand]
                         if (!GlobalControls.retroMode) {
-                            // TODO: Merge with second if
-                            if (command == "noskip") {
+                            // The goal of this is to allow for commands executed "just before" [instant] on the first frame
+                            // Example: "[func:test][instant]..."
+
+                            // Special case for "[noskip]", "[instant]" and "[instant:allowcommand]"
+                            if (command == "noskip" || command == "instant" || command == "instant:allowcommand") {
                                 // Copy all text before the command
                                 string precedingText = currentText.Substring(0, i - (command.Length + 1));
 
-                                // Remove all commands
-                                // TODO: Assumes no bracket is nested: "hi [text:[w:10]]" will stop at first closing bracket
-                                while (precedingText.IndexOf('[') > -1) {
-                                    int j = precedingText.IndexOf('[');
-                                    for (int k = 0; k < precedingText.Length; k++) {
-                                        if (precedingText[k] == ']') {
-                                            precedingText = precedingText.Replace(precedingText.Substring(j, (k - j) + 1), "");
-                                            break;
-                                        }
-                                    }
-                                }
-
-                                // Confirm that our command is at the beginning!
-                                if (precedingText.Length == 0)
-                                    PreCreateControlCommand(command);
-                            // Special case for "[instant]" and "[instant:allowcommand]"
-                            } else if (command == "instant" || command == "instant:allowcommand") {
-                                // The goal of this is to allow for commands executed "just before" [instant] on the first frame
-                                // Example: "[func:test][instant]..."
-
-                                // Copy all text before the command
-                                string precedingText = currentText.Substring(0, i - (command.Length + 1));
-
-                                // Remove all commands, store them for later
-                                List<string> commands = new List<string>();
+                                // Remove all commands, store them for later if using instant
+                                List<string> commands = command == "noskip" ? null : new List<string>();
 
                                 while (precedingText.IndexOf('[') > -1) {
                                     int j = precedingText.IndexOf('[');
                                     for (int k = 0; k < precedingText.Length; k++)
                                         if (precedingText[k] == ']') {
-                                            commands.Add(precedingText.Substring(j + 1, (k - j) - 1));
+                                            if (commands != null)
+                                                commands.Add(precedingText.Substring(j + 1, (k - j) - 1));
                                             precedingText = precedingText.Replace(precedingText.Substring(j, (k - j) + 1), "");
                                             break;
                                         }
                                 }
 
                                 // Confirm that our command is at the beginning!
-                                if (precedingText.Length == 0) {
-                                    // Execute all commands that came before [instant] through InUpdateControlCommand
-                                    foreach (string cmd in commands)
-                                        InUpdateControlCommand(DynValue.NewString(cmd));
+                                if (precedingText.Length == 0)
+                                    if (command == "noskip")
+                                        PreCreateControlCommand(command);
+                                    else {
+                                        // Execute all commands that came before [instant] through InUpdateControlCommand
+                                        foreach (string cmd in commands)
+                                            InUpdateControlCommand(DynValue.NewString(cmd));
 
-                                    skipImmediate = true;
-                                    skipCommand = command;
-                                    InUpdateControlCommand(DynValue.NewString(command), i);
-                                }
+                                        skipImmediate = true;
+                                        skipCommand = command;
+                                        InUpdateControlCommand(DynValue.NewString(command), i);
+                                    }
                             } else if (command.Length < 7 || command.Substring(0, 7) != "instant")
                                 PreCreateControlCommand(command);
                         } else
