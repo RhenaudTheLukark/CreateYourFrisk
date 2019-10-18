@@ -14,6 +14,8 @@ public class TransitionOverworld : MonoBehaviour {
         _FirstLevelToLoad = FirstLevelToLoad;
         bool isStart = false;
 
+        GlobalControls.overworldTimestamp = Time.time - (SaveLoad.savedGame != null ? SaveLoad.savedGame.playerTime : 0f);
+
         GameOverBehavior.gameOverContainerOw = GameObject.Find("GameOverContainer");
         GameOverBehavior.gameOverContainerOw.SetActive(false);
         if (GameObject.Find("GameOverContainer")) {

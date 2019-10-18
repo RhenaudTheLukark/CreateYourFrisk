@@ -10,6 +10,7 @@ using MoonSharp.Interpreter;
 /// </summary>
 public class GlobalControls : MonoBehaviour {
     public static int frame = 0;
+    public static float overworldTimestamp = 0f;
     public static PlayerOverworld po;
     public static UndertaleInput input = new KeyboardInput();
     public static LuaInputBinding luaInput = new LuaInputBinding(input);

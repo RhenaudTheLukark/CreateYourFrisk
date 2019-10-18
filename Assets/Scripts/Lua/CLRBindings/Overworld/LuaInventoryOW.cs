@@ -9,7 +9,7 @@ public class LuaInventoryOW {
 
     [MoonSharpHidden] public LuaInventoryOW() { }
     
-    public delegate void LoadedAction(string name, object args);
+    public delegate void LoadedAction(string coroName, object args, string evName);
     [MoonSharpHidden] public static event LoadedAction StCoroutine;
 
     [MoonSharpHidden] public void SetEquip(string itemName) {
@@ -39,5 +39,5 @@ public class LuaInventoryOW {
 
     [CYFEventFunction] public int GetItemCount() { try { return Inventory.inventory.Count; } finally { appliedScript.Call("CYFEventNextCommand"); } }
 
-    [CYFEventFunction] public void SpawnBoxMenu() { StCoroutine("ISpawnBoxMenu", new object[] { }); }
+    [CYFEventFunction] public void SpawnBoxMenu() { StCoroutine("ISpawnBoxMenu", new object[] { }, appliedScript.GetVar("_internalScriptName").String); }
 }

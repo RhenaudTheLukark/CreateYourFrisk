@@ -558,6 +558,12 @@ public static class UnitaleUtil {
         MapCorrespondanceList.Add("Void", "The final map...?");
     }
 
+    public static string TimeFormatter(float seconds) {
+        float minutes = Mathf.Floor((seconds / 60f) % 60f);
+        float hours = Mathf.Floor((seconds / 60f) / 60f);
+        return hours + ":" + String.Format("{0,2}", minutes).Replace(" ", "0");
+    }
+
     /*public static bool CheckAvailableDuster(out GameObject go) {
         go = null;
         ParticleSystem[] pss = GameObject.Find("psContainer").GetComponentsInChildren<ParticleSystem>(true);

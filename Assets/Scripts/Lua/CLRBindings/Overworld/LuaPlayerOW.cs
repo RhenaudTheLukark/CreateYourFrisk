@@ -4,9 +4,8 @@ using MoonSharp.Interpreter;
 public class LuaPlayerOW {
     public ScriptWrapper appliedScript;
 
-    public delegate void LoadedAction(string name, object args);
-    [MoonSharpHidden]
-    public static event LoadedAction StCoroutine;
+    public delegate void LoadedAction(string coroName, object args, string evName);
+    [MoonSharpHidden] public static event LoadedAction StCoroutine;
 
     [MoonSharpHidden] public LuaPlayerOW() { }
 

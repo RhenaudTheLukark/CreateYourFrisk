@@ -88,7 +88,7 @@ public class Title : MonoBehaviour {
                         GameObject.Find("TextManagerName").GetComponent<TextManager>().SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]" + PlayerCharacter.instance.Name, false, true) });
                         GameObject.Find("TextManagerLevel").GetComponent<TextManager>().SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]" + (GlobalControls.crate ? "VL" : "LV") +
                                                                                                                                          PlayerCharacter.instance.LV, false, true) });
-                        GameObject.Find("TextManagerTime").GetComponent<TextManager>().SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]0:00", false, true) });
+                        GameObject.Find("TextManagerTime").GetComponent<TextManager>().SetTextQueue(new TextMessage[] {new TextMessage("[noskipatall]" + UnitaleUtil.TimeFormatter(SaveLoad.savedGame.playerTime), false, true) });
                         GameObject.Find("TextManagerMap").GetComponent<TextManager>().SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]" + SaveLoad.savedGame.lastScene, false, true) });
                         tmName.SetTextQueue(new TextMessage[] { new TextMessage(PlayerCharacter.instance.Name, false, true) });
                         diff = calcTotalLength(tmName);

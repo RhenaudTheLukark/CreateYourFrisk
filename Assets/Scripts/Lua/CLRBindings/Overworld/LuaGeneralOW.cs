@@ -8,7 +8,7 @@ public class LuaGeneralOW {
     private TextManager textmgr;
     public ScriptWrapper appliedScript;
 
-    public delegate void LoadedAction(string name, object args);
+    public delegate void LoadedAction(string coroName, object args, string evName);
     [MoonSharpHidden] public static event LoadedAction StCoroutine;
 
     [MoonSharpHidden] public LuaGeneralOW(TextManager textmgr) { this.textmgr = textmgr; }
@@ -109,15 +109,15 @@ public class LuaGeneralOW {
         textmgr.SetText(textMsgChoice);
         textmgr.transform.parent.parent.SetAsLastSibling();
 
-        StCoroutine("ISetChoice", new object[] { question != "", oneLiners });
+        StCoroutine("ISetChoice", new object[] { question != "", oneLiners }, appliedScript.GetVar("_internalScriptName").String);
     }
 
-    [CYFEventFunction] public void Wait(int frames) { StCoroutine("IWait", frames); }
+    [CYFEventFunction] public void Wait(int frames) { StCoroutine("IWait", frames, appliedScript.GetVar("_internalScriptName").String); }
 
     /// <summary>
     /// Function that ends when the player press the button "Confirm"
     /// </summary>
-    [CYFEventFunction] public void WaitForInput() { StCoroutine("IWaitForInput", null); }
+    [CYFEventFunction] public void WaitForInput() { StCoroutine("IWaitForInput", null, appliedScript.GetVar("_internalScriptName").String); }
 
     /// <summary>
     /// Launch the GameOver screen
@@ -192,7 +192,7 @@ public class LuaGeneralOW {
             throw new CYFException("General.StopBGM: There is no current BGM.");
         else if (fadeFrames < 0)
             throw new CYFException("General.StopBGM: The fade time has to be positive or equal to 0.");
-        StCoroutine("IFadeBGM", new object[] { fadeFrames, waitEnd });
+        StCoroutine("IFadeBGM", new object[] { fadeFrames, waitEnd }, appliedScript.GetVar("_internalScriptName").String);
         if (!waitEnd)
             appliedScript.Call("CYFEventNextCommand");
     }
@@ -214,7 +214,7 @@ public class LuaGeneralOW {
     /// <summary>
     /// Saves the game. Pretty obvious, heh.
     /// </summary>
-    [CYFEventFunction] public void Save(bool forced = false) { StCoroutine("ISave", new object[] { forced }); }
+    [CYFEventFunction] public void Save(bool forced = false) { StCoroutine("ISave", new object[] { forced }, appliedScript.GetVar("_internalScriptName").String); }
 
     /// <summary>
     /// Sends the player back to the title screen, making him lose his progression
@@ -241,6 +241,6 @@ public class LuaGeneralOW {
 
     [CYFEventFunction] public void EnterShop(string scriptName) {
         ShopScript.scriptName = scriptName;
-        StCoroutine("IEnterShop", null);
+        StCoroutine("IEnterShop", null, appliedScript.GetVar("_internalScriptName").String);
     }
 }

@@ -24,6 +24,7 @@ public class GameState {
     public Dictionary<string, TempMapData> tempMapInfos = new Dictionary<string, TempMapData>();
     public List<string> inventory = new List<string>();
     public List<string> boxContents = new List<string>();
+    public float playerTime;
 
     [System.Serializable]
     public struct EventInfos {
@@ -94,6 +95,8 @@ public class GameState {
         boxContents.Clear();
         foreach (UnderItem item in ItemBox.items)
             boxContents.Add(item.Name);
+
+        playerTime = Time.time - GlobalControls.overworldTimestamp;
 
         try {
             foreach (string key in LuaScriptBinder.GetSavedDictionary().Keys) {

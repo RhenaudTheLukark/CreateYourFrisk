@@ -7,7 +7,7 @@ public class LuaEventOW {
     //private TextManager textmgr;
     public ScriptWrapper appliedScript;
     
-    public delegate void LoadedAction(string name, object args);
+    public delegate void LoadedAction(string coroName, object args, string evName);
     [MoonSharpHidden] public static event LoadedAction StCoroutine;
 
     /// <summary>
@@ -54,7 +54,7 @@ public class LuaEventOW {
     /// <param name="name"></param>
     /// <param name="dirX"></param>
     /// <param name="dirY"></param>
-    [CYFEventFunction] public void MoveToPoint(string name, float dirX, float dirY, bool wallPass = false, bool waitEnd = true) { StCoroutine("IMoveEventToPoint", new object[] { name, dirX, dirY, wallPass, waitEnd }); }
+    [CYFEventFunction] public void MoveToPoint(string name, float dirX, float dirY, bool wallPass = false, bool waitEnd = true) { StCoroutine("IMoveEventToPoint", new object[] { name, dirX, dirY, wallPass, waitEnd }, appliedScript.GetVar("_internalScriptName").String); }
 
     /// <summary>
     /// Function that permits to put an animation on an event
@@ -134,7 +134,7 @@ public class LuaEventOW {
     /// <param name="axisAnim"></param>
     [CYFEventFunction] public void Rotate(string name, float rotateX, float rotateY, float rotateZ, bool anim = true, bool waitEnd = true) {
         if (anim) {
-            StCoroutine("IRotateEvent", new object[] { name, rotateX, rotateY, rotateZ, true });
+            StCoroutine("IRotateEvent", new object[] { name, rotateX, rotateY, rotateZ, true }, appliedScript.GetVar("_internalScriptName").String);
         } else {
             for (int i = 0; i < EventManager.instance.events.Count || name == "Player"; i++) {
                 GameObject go = null;

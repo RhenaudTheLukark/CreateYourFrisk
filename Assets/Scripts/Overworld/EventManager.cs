@@ -14,6 +14,7 @@ public class EventManager : MonoBehaviour {
     public  List<string> Page0Done = new List<string>();
     public  ScriptWrapper script;           //The script we have to load
     public  Dictionary<GameObject, ScriptWrapper> eventScripts = new Dictionary<GameObject, ScriptWrapper>();
+    public  Dictionary<string, UnityEngine.Coroutine> cSharpCoroutines = new Dictionary<string, UnityEngine.Coroutine>();
     public  Dictionary<ScriptWrapper, int> coroutines = new Dictionary<ScriptWrapper, int>();
     public  List<GameObject> events = new List<GameObject>(); //This map's events
     public  Dictionary<string, LuaSpriteController> sprCtrls = new Dictionary<string, LuaSpriteController>();
@@ -1007,10 +1008,16 @@ public class EventManager : MonoBehaviour {
         script = null;
     }
 
-    public void StCoroutine(string name, object args) {
-        if (args == null)                 StartCoroutine(name);
-        else if (!args.GetType().IsArray) StartCoroutine(name, args);
-        else                              StartCoroutine(name, (object[])args);
+    public void StCoroutine(string coroName, object args, string evName) {
+        string key = evName + "." + coroName;
+        if (cSharpCoroutines.ContainsKey(key)) {
+            UnityEngine.Coroutine existingCoro;
+            cSharpCoroutines.TryGetValue(key, out existingCoro);
+            StopCoroutine(existingCoro);
+        }
+        if (args == null)                 StartCoroutine(coroName);
+        else if (!args.GetType().IsArray) StartCoroutine(coroName, args);
+        else                              StartCoroutine(coroName, (object[])args);
     }
 
     private IEnumerator SpecialAnnouncementEvent() {
@@ -1108,7 +1115,7 @@ public class EventManager : MonoBehaviour {
 
     IEnumerator IMoveEventToPoint(object[] args) { //NEED PARENTAL REMOVE
         ScriptWrapper scr = luaevow.appliedScript;
-        
+
         string name;
         float dirX, dirY;
         bool wallPass, waitEnd;
@@ -1139,12 +1146,12 @@ public class EventManager : MonoBehaviour {
                 target = target ?? go.transform; //oof
                 if (!waitEnd)
                     scr.Call("CYFEventNextCommand");
-                
+
                 Vector2 endPoint = new Vector2(dirX - target.position.x, dirY - target.position.y);//, endPointFromNow = endPoint;
-                
+
                 // store the event's initial position
                 Vector2 originalPosition = new Vector2(target.position.x, target.position.y);
-                
+
                 //The animation process is automatic, if you renamed the Animation's triggers and animations as the Player's
                 if (go.GetComponent<CYFAnimator>()) {
                     int direction = CheckDirection(endPoint);
@@ -1165,17 +1172,17 @@ public class EventManager : MonoBehaviour {
                     Vector2 clamped = Vector2.ClampMagnitude(endPoint, 1);
                     bool test2 = false;
                     Vector2 distanceFromStart = new Vector2(0, 0);
-                    
+
                     // silence the error that occurs when transitioning in the overworld
                     try {
                         test2 = PlayerOverworld.instance.AttemptMove(clamped.x, clamped.y, go, wallPass);
                         distanceFromStart = new Vector2(target.position.x - originalPosition.x, target.position.y - originalPosition.y);
                     } catch (MissingReferenceException) {}
-                
+
                     //If we have reached the destination, stop the function
                     if (distanceFromStart.magnitude >= endPoint.magnitude) {
                         // if this code is run, that means the player must have reached their destination
-                        
+
                         target.position = new Vector3(dirX, dirY, target.position.z);
                         yield return 0;
 
@@ -1438,7 +1445,7 @@ public class EventManager : MonoBehaviour {
 
             txtName.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]" + playerName, false, true) });
             txtLevel.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]LV" + playerLevel, false, true) });
-            txtTime.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]0:00", false, true) });
+            txtTime.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]" + UnitaleUtil.TimeFormatter(SaveLoad.savedGame.playerTime), false, true) });
             txtMap.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]" + SaveLoad.savedGame.lastScene, false, true) });
         } else {
             txtName.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]EMPTY", false, true) });
@@ -1475,7 +1482,7 @@ public class EventManager : MonoBehaviour {
                     PlayerOverworld.instance.utHeart.color = new Color(c.r, c.g, c.b, 0);
                     txtName.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]" + PlayerCharacter.instance.Name, false, true) });
                     txtLevel.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]LV" + PlayerCharacter.instance.LV, false, true) });
-                    txtTime.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]0:00", false, true) });
+                    txtTime.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]" + UnitaleUtil.TimeFormatter(SaveLoad.savedGame.playerTime), false, true) });
                     txtMap.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]" + SaveLoad.savedGame.lastScene, false, true) });
                     txtSave.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]File saved.", false, true) });
                     txtReturn.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]", false, true) });
