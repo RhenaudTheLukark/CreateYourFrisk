@@ -24,6 +24,7 @@ public class TextManager : MonoBehaviour {
     private int currentCharacter = 0;
     public int currentReferenceCharacter = 0;
     private bool currentSkippable = true;
+    private bool decoratedTextOffset = false;
     [MoonSharpHidden] public bool nextMonsterDialogueOnce = false, nmd2 = false, wasStated = false;
     private RectTransform self;
     [MoonSharpHidden] public Vector2 offset;
@@ -325,11 +326,21 @@ public class TextManager : MonoBehaviour {
                     }
 
                     // Move the text up a little if there are more than 3 lines so they can possibly fit in the arena
-                    if (!GlobalControls.retroMode && ((UnitaleUtil.IsOverworld && PlayerOverworld.instance && this == PlayerOverworld.instance.textmgr) ||
-                                                      (!UnitaleUtil.IsOverworld && UIController.instance && this == UIController.instance.textmgr))) {
+                    if (!GlobalControls.retroMode && !UnitaleUtil.IsOverworld && UIController.instance && this == UIController.instance.textmgr
+                                                  && (UIController.instance.state == UIController.UIState.ACTIONSELECT || UIController.instance.state == UIController.UIState.DIALOGRESULT)) {
                         int lines = textQueue[line].Text.Split('\n').Length > 3 ? 4 : 3;
                         Vector3 pos = self.localPosition;
-                        self.localPosition = new Vector3(pos.x, 22 + ((lines - 1) * Charset.LineSpacing / 2), pos.z);
+
+                        // remove the offset
+                        self.localPosition = new Vector3(pos.x, pos.y - (decoratedTextOffset ? 9 : 0), pos.z);
+                        pos = self.localPosition;
+                        decoratedTextOffset = false;
+
+                        // add the offset if necessary
+                        if (lines == 4) {
+                            decoratedTextOffset = true;
+                            self.localPosition = new Vector3(pos.x, pos.y + (decoratedTextOffset ? 9 : 0), pos.z);
+                        }
                     }
                 }
     }

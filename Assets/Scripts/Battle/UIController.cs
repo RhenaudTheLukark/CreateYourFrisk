@@ -109,8 +109,8 @@ public class UIController : MonoBehaviour {
         stateAfterDialogs = afterDialogState;
         if (caller != null)
             textmgr.SetCaller(caller);
-        textmgr.SetTextQueue(msg);
         SwitchState(UIState.DIALOGRESULT);
+        textmgr.SetTextQueue(msg);
     }
 
     public static void EndBattle(bool fromGameOver = false) {
