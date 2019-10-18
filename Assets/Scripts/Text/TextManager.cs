@@ -13,7 +13,7 @@ public class TextManager : MonoBehaviour {
 
     protected UnderFont default_charset = null;
     protected AudioClip default_voice = null;
-    public AudioSource letterSound = null;
+    [MoonSharpHidden] public AudioSource letterSound = null;
     protected TextEffect textEffect = null;
     private string letterEffect = "none";
     private string[] commandList = new string[] { "color", "alpha", "charspacing", "linespacing", "starcolor", "instant", "font", "effect", "noskip", "w", "waitall", "novoice",
@@ -24,9 +24,9 @@ public class TextManager : MonoBehaviour {
     private int currentCharacter = 0;
     public int currentReferenceCharacter = 0;
     private bool currentSkippable = true;
-    public bool nextMonsterDialogueOnce = false, nmd2 = false, wasStated = false;
+    [MoonSharpHidden] public bool nextMonsterDialogueOnce = false, nmd2 = false, wasStated = false;
     private RectTransform self;
-    public Vector2 offset;
+    [MoonSharpHidden] public Vector2 offset;
     private bool offsetSet = false;
     private float currentX;
     //private float _currentY;
@@ -38,11 +38,11 @@ public class TextManager : MonoBehaviour {
             _currentY = value;
         }
     }*/
-    
+
     // Variables that have to do with "[instant]"
     private bool instantActive  = false; // Will be true if "[instant]" or "[instant:allowcommand]" have been activated
     private bool instantCommand = false; // Will be true only if "[instant:allowcommand]" has been activated
-    
+
     private bool paused = false;
     private bool muted = false;
     private bool autoSkipThis = false;
@@ -69,20 +69,19 @@ public class TextManager : MonoBehaviour {
     private float timePerLetter;
     private float singleFrameTiming = 1.0f / 20;
 
-    public ScriptWrapper caller;
+    [MoonSharpHidden] public ScriptWrapper caller;
 
-    public UnderFont Charset { get; protected set; }
-    public TextMessage[] textQueue = null;
+    [MoonSharpHidden] public UnderFont Charset { get; protected set; }
+    [MoonSharpHidden] public TextMessage[] textQueue = null;
     //public string[] mugshotsPath;
     //public bool overworld;
-    public bool blockSkip = false;
-    public bool hidden = false;
-    public bool skipNowIfBlocked = false;
+    [MoonSharpHidden] public bool blockSkip = false;
+    [MoonSharpHidden] public bool skipNowIfBlocked = false;
     internal bool noSkip1stFrame = true;
-    
-    public bool LateStartWaiting = false; // Lua text objects will use a late start
 
-    public void SetCaller(ScriptWrapper s) { caller = s; }
+    [MoonSharpHidden] public bool LateStartWaiting = false; // Lua text objects will use a late start
+
+    [MoonSharpHidden] public void SetCaller(ScriptWrapper s) { caller = s; }
 
     public void SetFont(UnderFont font, bool firstTime = false) {
         Charset = font;
@@ -104,10 +103,10 @@ public class TextManager : MonoBehaviour {
         currentColor = defaultColor;
     }
 
-    public void SetHorizontalSpacing(float spacing = 3) { hSpacing = spacing; }
-    public void SetVerticalSpacing(float spacing = 0) { vSpacing = spacing; }
+    [MoonSharpHidden] public void SetHorizontalSpacing(float spacing = 3) { hSpacing = spacing; }
+    [MoonSharpHidden] public void SetVerticalSpacing(float spacing = 0) { vSpacing = spacing; }
 
-    public void ResetFont() {
+    [MoonSharpHidden] public void ResetFont() {
         if (Charset == null || default_charset == null)
             if (GetType() == typeof(LuaTextManager))
                 ((LuaTextManager)this).SetFont(SpriteFontRegistry.UI_MONSTERTEXT_NAME);
@@ -140,40 +139,40 @@ public class TextManager : MonoBehaviour {
 
     public bool IsPaused() { return this.paused; }
 
-    public bool IsFinished() {
+    [MoonSharpHidden] public bool IsFinished() {
         if (letterReferences == null)
             return false;
         return currentCharacter >= letterReferences.Length;
     }
 
-    public void SetMute(bool muted) { this.muted = muted; }
+    [MoonSharpHidden] public void SetMute(bool muted) { this.muted = muted; }
 
     public void SetText(TextMessage text) { SetTextQueue(new TextMessage[] { text }); }
 
-    public void SetTextQueue(TextMessage[] textQueue) {
+    [MoonSharpHidden] public void SetTextQueue(TextMessage[] textQueue) {
         if (UnitaleUtil.IsOverworld && (gameObject.name == "TextManager OW"))
             PlayerOverworld.AutoSetUIPos();
-        
+
         ResetFont();
         this.textQueue = textQueue;
         currentLine = 0;
         ShowLine(0);
     }
 
-    public void SetTextQueueAfterValue(int BeginText) {
+    [MoonSharpHidden] public void SetTextQueueAfterValue(int BeginText) {
         ResetFont();
         currentLine = BeginText;
         ShowLine(BeginText);
     }
 
-    public void ResetCurrentCharacter() {
+    [MoonSharpHidden] public void ResetCurrentCharacter() {
         currentCharacter = 0;
         currentReferenceCharacter = 0;
     }
 
-    public void AddToTextQueue(TextMessage text) { AddToTextQueue(new TextMessage[] { text }); }
+    [MoonSharpHidden] public void AddToTextQueue(TextMessage text) { AddToTextQueue(new TextMessage[] { text }); }
 
-    public void AddToTextQueue(TextMessage[] textQueueToAdd) {
+    [MoonSharpHidden] public void AddToTextQueue(TextMessage[] textQueueToAdd) {
         if (AllLinesComplete())
             SetTextQueue(textQueueToAdd);
         else {
@@ -185,11 +184,11 @@ public class TextManager : MonoBehaviour {
         }
     }
 
-    public bool CanSkip() { return currentSkippable; }
+    [MoonSharpHidden] public bool CanSkip() { return currentSkippable; }
 
-    public bool CanAutoSkip() { return autoSkip; }
-    public bool CanAutoSkipThis() { return autoSkipThis; }
-    public bool CanAutoSkipAll() { return autoSkipAll; }
+    [MoonSharpHidden] public bool CanAutoSkip() { return autoSkip; }
+    [MoonSharpHidden] public bool CanAutoSkipThis() { return autoSkipThis; }
+    [MoonSharpHidden] public bool CanAutoSkipAll() { return autoSkipAll; }
 
     public int LineCount() {
         if (textQueue == null)
@@ -197,7 +196,7 @@ public class TextManager : MonoBehaviour {
         return textQueue.Length;
     }
 
-    public void SetOffset(float xOff, float yOff) {
+    [MoonSharpHidden] public void SetOffset(float xOff, float yOff) {
         offset = new Vector2(xOff, yOff);
         offsetSet = true;
     }
@@ -208,7 +207,7 @@ public class TextManager : MonoBehaviour {
         return (instantActive || currentCharacter == letterReferences.Length);
     }
 
-    public bool AllLinesComplete() {
+    [MoonSharpHidden] public bool AllLinesComplete() {
         if (textQueue == null)  return true;
         else                    return currentLine == textQueue.Length - 1 && LineComplete();
     }
@@ -277,7 +276,7 @@ public class TextManager : MonoBehaviour {
             if (line < textQueue.Length)
                 if (textQueue[line] != null) {
                     SetMugshot(textQueue[line].Mugshot);
-                    
+
                     if (!offsetSet)
                         SetOffset(0, 0);
                     ResetFont();
@@ -290,7 +289,7 @@ public class TextManager : MonoBehaviour {
                     instantCommand = false;
                     skipFromPlayer = false;
                     firstChar = false;
-                    
+
                     timePerLetter = singleFrameTiming;
                     letterTimer = 0.0f;
                     this.DestroyChars();
@@ -335,7 +334,7 @@ public class TextManager : MonoBehaviour {
                 }
     }
 
-    public void SetTextFrameAlpha(float a) {
+    [MoonSharpHidden] public void SetTextFrameAlpha(float a) {
         Image[] imagesChild = null;
         Image[] images = null;
 
@@ -355,11 +354,11 @@ public class TextManager : MonoBehaviour {
             img.color = new Color(img.color.r, img.color.g, img.color.b, a);
     }
 
-    public bool HasNext() { return currentLine + 1 < LineCount(); }
+    [MoonSharpHidden] public bool HasNext() { return currentLine + 1 < LineCount(); }
 
-    public void NextLineText() { ShowLine(++currentLine); }
+    [MoonSharpHidden] public void NextLineText() { ShowLine(++currentLine); }
 
-    public void SkipText() {
+    [MoonSharpHidden] public void SkipText() {
         if (!noSkip1stFrame) {
             while (currentCharacter < letterReferences.Length) {
                 if (letterReferences[currentCharacter] != null && Charset.Letters.ContainsKey(textQueue[currentLine].Text[currentCharacter])) {
@@ -372,7 +371,7 @@ public class TextManager : MonoBehaviour {
         }
     }
 
-    public void DoSkipFromPlayer() {
+    [MoonSharpHidden] public void DoSkipFromPlayer() {
         skipFromPlayer = true;
 
         if (LuaEnemyEncounter.script.GetVar("playerskipdocommand").Boolean)
@@ -416,7 +415,7 @@ public class TextManager : MonoBehaviour {
 
     public void SetEffect(TextEffect effect) { textEffect = effect; }
 
-    public virtual void DestroyChars() {
+    [MoonSharpHidden] public virtual void DestroyChars() {
         foreach (Transform child in gameObject.transform)
             Destroy(child.gameObject);
     }
@@ -438,7 +437,7 @@ public class TextManager : MonoBehaviour {
 
         if (currentText[beginIndex] == '\n' || currentText[beginIndex] == '\r')                                   beginIndex++;
         if (currentText[finalIndex] == '\n' || currentText[finalIndex] == ' ' || currentText[finalIndex] == '\r') finalIndex--;
-        
+
         // Gets the text's length
         int limit = 0;
         if (SceneManager.GetActiveScene().name == "Intro")      limit = 400;
@@ -536,11 +535,11 @@ public class TextManager : MonoBehaviour {
         if (currentText.Length > 1 && !forceNoAutoLineBreak)
             if (!GlobalControls.isInFight || LuaEnemyEncounter.script.GetVar("autolinebreak").Boolean || GetType() == typeof(LuaTextManager))
                 SpawnTextSpaceTest(0, currentText, out currentText);
-        
+
         // Work-around for [instant] and [instant:allowcommand] at the beginning of a line of text
         bool skipImmediate = false;
         string skipCommand  = "";
-        
+
         for (int i = 0; i < currentText.Length; i++) {
             switch (currentText[i]) {
                 case '[':
@@ -619,11 +618,11 @@ public class TextManager : MonoBehaviour {
             CreateLetter(currentText, i);
             currentX += letterReferences[i].gameObject.GetComponent<RectTransform>().rect.width + hSpacing; // TODO remove hardcoded letter offset
         }
-        
+
         // Work-around for [instant] and [instant:allowcommand] at the beginning of a line of text
         if (skipImmediate)
             InUpdateControlCommand(DynValue.NewString(skipCommand));
-        
+
         if (UnitaleUtil.IsOverworld && SceneManager.GetActiveScene().name != "TitleScreen" && SceneManager.GetActiveScene().name != "EnterName" && !GlobalControls.isInShop)
             try {
                 if (mugshot.alpha == 0)
@@ -645,7 +644,7 @@ public class TextManager : MonoBehaviour {
 
                     //float lastLetterTimer = letterTimer; // kind of a dirty hack so we can at least release 0.2.0 sigh
                     //float lastTimePerLetter = timePerLetter; // i am so sorry
-                    
+
                     wasStated = false;
 
                     DynValue commandDV = DynValue.NewString(command);
@@ -662,7 +661,6 @@ public class TextManager : MonoBehaviour {
                     return true;
                 }
                 currentCharacter = currentChar;
-
             }
         return false;
     }
@@ -708,7 +706,7 @@ public class TextManager : MonoBehaviour {
             else
                 return;
         }
-        
+
         /*
         letterTimer += Time.deltaTime;
         if ((letterTimer > timePerLetter || firstChar) && !LineComplete()) {
@@ -726,20 +724,20 @@ public class TextManager : MonoBehaviour {
                     }
         }
         */
-        
+
         letterTimer += Time.deltaTime;
         if ((letterTimer >= timePerLetter || firstChar) && !LineComplete()) {
             int repeats = timePerLetter == 0f ? 1 : (int)Mathf.Floor(letterTimer / timePerLetter);
-            
+
             bool soundPlayed = false;
             int lastLetter = -1;
-            
+
             for (int i = 0; i < repeats; i++) {
                 if (!HandleShowLetter(ref soundPlayed, ref lastLetter)) {
                     HandleShowLettersOnce(ref soundPlayed, ref lastLetter);
                     return;
                 }
-                
+
                 if (!firstChar)
                     letterTimer -= timePerLetter;
                 else {
@@ -748,7 +746,7 @@ public class TextManager : MonoBehaviour {
                 }
             }
         }
-        
+
         noSkip1stFrame = false;
     }
 
@@ -791,18 +789,6 @@ public class TextManager : MonoBehaviour {
         currentReferenceCharacter++;
         currentCharacter++;
         return true;
-    }
-
-    private string OldParseCommandInline(string input, ref int currentChar) {
-        currentChar++; // skip past found bracket
-        CheckCharInBounds(currentChar, input.Length);
-        string control = "";
-        while (input[currentChar] != ']') {
-            control += input[currentChar];
-            currentChar++;
-            CheckCharInBounds(currentChar, input.Length);
-        }
-        return control;
     }
 
     private string ParseCommandInline(string input, ref int currentChar) {
@@ -869,14 +855,14 @@ public class TextManager : MonoBehaviour {
                 if (indexOfStar > -1)
                     letterReferences[indexOfStar].color = starColor;
                 break;
-            
+
             case "instant":
                 if (GlobalControls.retroMode)
                     instantActive = true;
                 else
                     InUpdateControlCommand(DynValue.NewString(command));
                 break;
-            
+
             case "noskip":
                 if (args.Length == 0)      currentSkippable = false;
                 break;
@@ -978,23 +964,23 @@ public class TextManager : MonoBehaviour {
                 if (cmds[1].ToLower() == "default")  letterSound.clip = SpriteFontRegistry.Get(SpriteFontRegistry.UI_DEFAULT_NAME).Sound;
                 else                                 letterSound.clip = AudioClipRegistry.GetVoice(cmds[1].ToLower());
                 break;
-                
+
             case "instant":
                 if (args.Length != 0 && (args.Length > 1 || args[0] != "allowcommand"))
                     break;
-                
+
                 instantActive = true;
-                
+
                 if (command.String == "instant:allowcommand")
                     instantCommand = true;
-                
+
                 // First:  Find the active line of text
                 string currentText = textQueue[currentLine].Text;
-                
+
                 // Second: Find the position to "end" at
                 // This will either be: [instant:stop], [instant:stopall] or the end of the string
                 int pos = currentText.Length;
-                
+
                 for (int i = index; i < pos; i++) {
                     if (!skipFromPlayer) {
                         if ((currentText.Substring(i)).Length >= 13 && pos - i >= 13 && currentText.Substring(i, 13) == "[instant:stop") {
@@ -1008,9 +994,7 @@ public class TextManager : MonoBehaviour {
                         }
                     }
                 }
-                
-                // pos--;
-                
+
                 // Third:  Find all commands between the current position and the "end point"
                 for (int i = index; i < pos; i++)
                     if (currentText[i] == '[' && (pos - i < 3 || currentText.Substring(i, 3) != "[w:") && (pos - i < 9 || currentText.Substring(i, 9) != "[waitfor:")
@@ -1021,26 +1005,22 @@ public class TextManager : MonoBehaviour {
                                 InUpdateControlCommand(DynValue.NewString(currentText.Substring(i + 1, currentText.IndexOf(']', i) - (i + 1))));
                             } catch {}
                     }
-                
+
                 // Fourth: Display the next set of actually-created letter sprites between `index` and `pos`
                 for (int i = index; i < pos; i++) {
                     if (letterReferences[i] != null)
                         letterReferences[i].enabled = true;
                 }
-                
+
                 // Fifth:  Update variables
                 if (pos < currentText.Length) {
                     instantActive  = false;
                     instantCommand = false;
                     letterTimer = timePerLetter;
-                    /*
-                    if (letterTimer >= timePerLetter * 2)
-                        letterTimer = timePerLetter + (letterTimer % timePerLetter);
-                    */
                 }
-                
+
                 skipFromPlayer = false;
-                
+
                 currentCharacter = pos;
                 currentReferenceCharacter = pos;
                 break;
@@ -1099,8 +1079,7 @@ public class TextManager : MonoBehaviour {
 
             case "sound":
                 //In a battle
-                if (GameObject.Find("player"))  GameObject.Find("player").GetComponent<AudioSource>().PlayOneShot(AudioClipRegistry.GetSound(args[0]));
-                else                            GameObject.Find("Player").GetComponent<AudioSource>().PlayOneShot(AudioClipRegistry.GetSound(args[0]));
+                GameObject.Find(GameObject.Find("player") != null ? "player" : "Player").GetComponent<AudioSource>().PlayOneShot(AudioClipRegistry.GetSound(args[0]));
                 break;
 
             case "health":

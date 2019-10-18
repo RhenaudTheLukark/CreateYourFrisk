@@ -20,7 +20,7 @@ public class LuaTextManager : TextManager {
     private Color textColor;
     private float xScale = 1;
     private float yScale = 1;
-    
+
     public bool isactive {
         get {
             return (container != null && containerBubble != null && speechThing != null && speechThingShadow != null);
@@ -155,7 +155,7 @@ public class LuaTextManager : TextManager {
             _bubbleHeight = value == -1 ? -1 : value < 40 ? 40 : value;
         }
     }
-    
+
     public float xscale {
         get { return xScale; }
         set {
@@ -163,7 +163,7 @@ public class LuaTextManager : TextManager {
             Scale(xScale, yScale);
         }
     }
-    
+
     public float yscale {
         get { return yScale; }
         set {
@@ -171,12 +171,12 @@ public class LuaTextManager : TextManager {
             Scale(xScale, yScale);
         }
     }
-    
+
     public void Scale(float xs, float ys) {
         CheckExists();
         xScale = xs;
         yScale = ys;
-        
+
         container.gameObject.GetComponent<RectTransform>().localScale = new Vector3(xs, ys, 1.0f);
     }
 
@@ -194,7 +194,7 @@ public class LuaTextManager : TextManager {
             catch { throw new CYFException("The layer \"" + value + "\" doesn't exist."); }
         }
     }
-    
+
     public void MoveBelow(LuaTextManager otherText) {
         CheckExists();
         if (otherText == null || !otherText.isactive)
@@ -206,7 +206,7 @@ public class LuaTextManager : TextManager {
             catch { throw new CYFException("Error while calling text.MoveBelow."); }
         }
     }
-    
+
     public void MoveAbove(LuaTextManager otherText) {
         CheckExists();
         if (otherText == null || !otherText.isactive)
@@ -219,9 +219,9 @@ public class LuaTextManager : TextManager {
         }
     }
 
-    public Color _color = Color.white;
-    public bool hasColorBeenSet = false;
-    public bool hasAlphaBeenSet = false;
+    [MoonSharpHidden] public Color _color = Color.white;
+    [MoonSharpHidden] public bool hasColorBeenSet = false;
+    [MoonSharpHidden] public bool hasAlphaBeenSet = false;
     // The color of the text. It uses an array of three floats between 0 and 1
     public float[] color {
         get { return new float[] { _color.r, _color.g, _color.b }; }
@@ -238,7 +238,7 @@ public class LuaTextManager : TextManager {
             foreach (Image i in letterReferences)
                 if (i != null && i.color == defaultColor) i.color = _color;
                 else                                      break; // Only because we can't go back to the default color
-            
+
             if (currentColor == defaultColor)
                 currentColor = _color;
             defaultColor = _color;
@@ -296,7 +296,7 @@ public class LuaTextManager : TextManager {
     public void SetText(DynValue text) {
         // disable late start if SetText is used on the same frame the text is created
         base.LateStartWaiting = false;
-        
+
         TextMessage[] msgs = null;
         if (text == null || (text.Type != DataType.Table && text.Type != DataType.String))
             throw new CYFException("Text.SetText: the text argument must be a non-empty array of strings or a simple string.");
@@ -313,39 +313,39 @@ public class LuaTextManager : TextManager {
         if (text.Table.Length != 0 && bubble)
             ResizeBubble();
     }
-    
-    public void LateStart() { StartCoroutine(LateStartSetText()); }
-    
+
+    [MoonSharpHidden] public void LateStart() { StartCoroutine(LateStartSetText()); }
+
     IEnumerator LateStartSetText() {
         yield return new WaitForEndOfFrame();
-        
+
         if (!isactive)
             yield break;
-        
+
         /*
         // manually do SetText, except without calling SetTextQueue
         TextMessage[] msgs = null;
         msgs = new TextMessage[text.Table.Length];
         for (int i = 0; i < text.Table.Length; i++)
             msgs[i] = new TextMessage(text.Table.Get(i + 1).String, false, false);
-        
+
         base.textQueue = msgs;
         */
-        
+
         if (default_voice != null) {
             letterSound.clip = default_voice;
         } else
             letterSound.clip = default_charset.Sound;
-        
+
         // only allow inline text commands and letter sounds on the second frame
         base.LateStartWaiting = false;
-        
+
         base.currentLine = 0;
         ShowLine(0, true);
         if (bubble)
             ResizeBubble();
     }
-    
+
     public void AddText(DynValue text) {
         CheckExists();
 
@@ -389,7 +389,7 @@ public class LuaTextManager : TextManager {
         UpdateBubble();
     }
 
-    public void UpdateBubble() {
+    [MoonSharpHidden] public void UpdateBubble() {
         containerBubble.GetComponent<RectTransform>().localPosition = new Vector2(-12, 24);
         // GetComponent<RectTransform>().localPosition = new Vector2(0, 16);
         GetComponent<RectTransform>().localPosition = new Vector2(0, 0);
@@ -423,9 +423,6 @@ public class LuaTextManager : TextManager {
                 throw new CYFException("The effect \"" + effect + "\" doesn't exist.\nYou can only choose between \"none\", \"twitch\", \"shake\" and \"rotate\".");
         }
     }
-
-    public bool IsTheLineFinished() {return lineComplete; }
-    public bool IsTheTextFinished() { return allLinesComplete; }
 
     public void ShowBubble(string side = null, DynValue position = null) {
         bubble = true;
@@ -513,7 +510,7 @@ public class LuaTextManager : TextManager {
         CheckExists();
         container.transform.position = new Vector3(x, y, container.transform.position.z);
     }
-    
+
     /*
     public void SetPivot(float x, float y) {
         CheckExists();
