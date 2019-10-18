@@ -25,6 +25,7 @@ public class GameState {
     public List<string> inventory = new List<string>();
     public List<string> boxContents = new List<string>();
     public float playerTime;
+    public string CYFversion;
 
     [System.Serializable]
     public struct EventInfos {
@@ -66,6 +67,8 @@ public class GameState {
     }
 
     public void SaveGameVariables() {
+        CYFversion = GlobalControls.CYFversion;
+
         try {
             LuaScriptBinder.Set(null, "PlayerPosX", DynValue.NewNumber(GameObject.Find("Player").transform.position.x));
             LuaScriptBinder.Set(null, "PlayerPosY", DynValue.NewNumber(GameObject.Find("Player").transform.position.y));
@@ -118,7 +121,7 @@ public class GameState {
     public void LoadGameVariables(bool loadGlobals = true) {
         GlobalControls.TempGameMapData = tempMapInfos;
         GlobalControls.GameMapData = mapInfos;
-        
+
         foreach (string key in playerVariablesNum.Keys) {
             if (loadGlobals || key.Contains("PlayerPos")) {
                 double a;
