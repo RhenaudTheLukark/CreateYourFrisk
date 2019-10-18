@@ -34,7 +34,7 @@ function EventPage2() --Coroutine
         x = math.random(-1, 1)
         y = math.random(-1, 1)
         local pos = Event.GetPosition(Event.GetName())
-        Event.MoveToPoint(Event.GetName(), pos[1] + 20 * x, pos[2] + 20 * y, false, false)
+        Event.MoveToPoint(Event.GetName(), math.min(math.max(pos[1] + 20 * x, 357), 457), math.min(math.max(pos[2] + 20 * y, 240), 340), false, false)
     end
 end
 
