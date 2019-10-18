@@ -1014,10 +1014,13 @@ public class EventManager : MonoBehaviour {
             UnityEngine.Coroutine existingCoro;
             cSharpCoroutines.TryGetValue(key, out existingCoro);
             StopCoroutine(existingCoro);
+            cSharpCoroutines.Remove(key);
         }
-        if (args == null)                 StartCoroutine(coroName);
-        else if (!args.GetType().IsArray) StartCoroutine(coroName, args);
-        else                              StartCoroutine(coroName, (object[])args);
+        UnityEngine.Coroutine newCoro;
+        if (args == null)                 newCoro = StartCoroutine(coroName);
+        else if (!args.GetType().IsArray) newCoro = StartCoroutine(coroName, args);
+        else                              newCoro = StartCoroutine(coroName, (object[])args);
+        cSharpCoroutines.Add(key, newCoro);
     }
 
     private IEnumerator SpecialAnnouncementEvent() {
