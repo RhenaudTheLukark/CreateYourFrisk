@@ -4,10 +4,9 @@ using System;
 using System.Collections.Generic;
 
 public class ScriptWrapper {
-    public static List<ScriptWrapper> instances = new List<ScriptWrapper>();
-    public Script script;
+    [MoonSharpHidden] public static List<ScriptWrapper> instances = new List<ScriptWrapper>();
+    [MoonSharpHidden] public Script script;
     public string scriptname = "???";
-    public string text = "";
 
     public DynValue this[string key] {
         get { return this.GetVar(key); }
@@ -18,7 +17,6 @@ public class ScriptWrapper {
         script = LuaScriptBinder.BoundScript(/*overworld*/);
         this.Bind("_getv", (Func<Script, string, DynValue>)this.GetVar);
         string toDoString = "setmetatable({}, {__index=function(t, name) return _getv(name) end}) ";
-        text = toDoString;
         script.DoString(toDoString, null, scriptname);
         instances.Add(this);
     }

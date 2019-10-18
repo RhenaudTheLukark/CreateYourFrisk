@@ -1,10 +1,11 @@
 ﻿using UnityEngine;
+using MoonSharp.Interpreter;
 using System.Collections;
 using System.Collections.Generic;
 
 public class NewMusicManager {
-    public static Hashtable audiolist = new Hashtable();
-    public static Dictionary<string, string> audioname = new Dictionary<string, string>();
+    [MoonSharpHidden] public static Hashtable audiolist = new Hashtable();
+    [MoonSharpHidden] public static Dictionary<string, string> audioname = new Dictionary<string, string>();
    
     public static void CreateChannel(string name) {
         if (name == null)
@@ -20,7 +21,7 @@ public class NewMusicManager {
             audioname.Add(name, "empty");
     }
 
-    public static AudioSource CreateChannelAndGetAudioSource(string name) {
+    [MoonSharpHidden] public static AudioSource CreateChannelAndGetAudioSource(string name) {
         if (audiolist.ContainsKey(name)) {
             Debug.LogWarning("The audio channel " + name + " already exists.");
             return GameObject.Find("AudioChannel" + audiolist.Count + ": " + name).GetComponent<AudioSource>();
@@ -211,7 +212,7 @@ public class NewMusicManager {
     }
     public static bool IsStopped(string name) { return isStopped(name); }
 
-    public static void OnLevelWasLoaded() {
+    [MoonSharpHidden] public static void OnLevelWasLoaded() {
         audiolist.Clear();
         audioname.Clear();
         audiolist.Add("src", MusicManager.src);

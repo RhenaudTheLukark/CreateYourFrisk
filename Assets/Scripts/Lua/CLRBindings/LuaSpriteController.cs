@@ -5,7 +5,7 @@ using MoonSharp.Interpreter;
 using UnityEngine.UI;
 
 public class LuaSpriteController {
-    public GameObject _img;  // The real image
+    [MoonSharpHidden] public GameObject _img;  // The real image
     internal GameObject img { // A image that returns the real image. We use this to be able to detect if the real image is null, and if it is, throw an exception
         get {
             if (_img == null)
@@ -18,16 +18,16 @@ public class LuaSpriteController {
     }
     private bool firstFrame = true;
     private Dictionary<string, DynValue> vars = new Dictionary<string, DynValue>();
-    public Vector2 nativeSizeDelta;                   // The native size of the image
+    [MoonSharpHidden] public Vector2 nativeSizeDelta;                   // The native size of the image
     private Vector3 internalRotation = Vector3.zero;  // The rotation of the sprite
     private float xScale = 1;                         // The X scale of the sprite
     private float yScale = 1;                         // The Y scale of the sprite
     private Sprite originalSprite;                    // The original sprite
-    public KeyframeCollection keyframes;              // This variable is used to store an animation
-    public string tag;                                // The tag of the sprite : "projectile", "enemy", "bubble" or "other"
+    [MoonSharpHidden] public KeyframeCollection keyframes;              // This variable is used to store an animation
+    [MoonSharpHidden] public string tag;                                // The tag of the sprite : "projectile", "enemy", "bubble" or "other"
     private KeyframeCollection.LoopMode loop = KeyframeCollection.LoopMode.LOOP;
-    public static MoonSharp.Interpreter.Interop.IUserDataDescriptor data = UserData.GetDescriptorForType<LuaSpriteController>(true);
-    
+    [MoonSharpHidden] public static MoonSharp.Interpreter.Interop.IUserDataDescriptor data = UserData.GetDescriptorForType<LuaSpriteController>(true);
+
     //The name of the sprite
     public string spritename {
         get {
@@ -461,25 +461,25 @@ public class LuaSpriteController {
             throw new CYFException("sprite.SetAnimation: An animation can not have negative speed!");
         else if (frametime == 0)
             throw new CYFException("sprite.SetAnimation: An animation can not play at 0 frames per second!");
-        
+
         if (prefix != "") {
             while (prefix.StartsWith("/"))
                 prefix = prefix.Substring(1);
-            
+
             if (!prefix.EndsWith("/"))
                 prefix += "/";
-            
+
             for (int i = 0; i < spriteNames.Length; i++)
                 spriteNames[i] = prefix + spriteNames[i];
         }
-        
+
         Vector2 pivot = img.GetComponent<RectTransform>().pivot;
         Keyframe[] kfArray = new Keyframe[spriteNames.Length];
         for (int i = 0; i < spriteNames.Length; i++) {
             // at least one sprite in the sequence was unable to be loaded
             if (SpriteRegistry.Get(spriteNames[i]) == null)
                 throw new CYFException("sprite.SetAnimation: Failed to load sprite with the name \"" + spriteNames[i] + "\". Are you sure it is spelled correctly?");
-            
+
             kfArray[i] = new Keyframe(SpriteRegistry.Get(spriteNames[i]), spriteNames[i].ToLower());
         }
         if (keyframes == null) {
@@ -512,7 +512,7 @@ public class LuaSpriteController {
             img.GetComponent<RectTransform>().pivot = pivot;
         }
     }
-    
+
     // Gets or sets the paused state of a sprite's animation.
     public DynValue animationpaused {
         get {
@@ -524,7 +524,7 @@ public class LuaSpriteController {
             if (img.GetComponent<Image>()) {
                 if (value.Type != DataType.Boolean)
                     throw new CYFException("sprite.paused can only be set to a boolean value.");
-                
+
                 if (keyframes != null)
                     keyframes.paused = value.Boolean;
                 else
@@ -532,7 +532,7 @@ public class LuaSpriteController {
             }
         }
     }
-    
+
     // Gets or sets the current frame of an animated sprite's animation.
     // Example: If a sprite's animation table is      {"sans_head_1", "sans_head_2", "sans_head_3", "sans_head"2},
     // then for each sprite in the table, this will be: ^ 1            ^ 2            ^ 3            ^ 4
@@ -559,7 +559,7 @@ public class LuaSpriteController {
             return 0;
         }
     }
-    
+
     // Gets or sets the current "play position" of a sprite's animation, in seconds.
     public float currenttime {
         set {
@@ -584,7 +584,7 @@ public class LuaSpriteController {
             return 0;
         }
     }
-    
+
     // Gets (read-only) the total time an animation will run for, in seconds.
     public float totaltime {
         get {
@@ -593,7 +593,7 @@ public class LuaSpriteController {
             return 0;
         }
     }
-    
+
     // Gets or sets the speed of an animated sprite's animation.
     public float animationspeed {
         set {

@@ -609,7 +609,6 @@ public class EventManager : MonoBehaviour {
                       "\nend";
         scr.script.Globals["CreateSprite"] = (Func<string, DynValue>)SpriteUtil.MakeIngameSpriteOW;
         scr.script.Globals["CreateText"] = (Func<Script, DynValue, DynValue, int, string, int, LuaTextManager>)CreateText;
-        scr.text = scriptText;
         /*StreamWriter sr = File.CreateText(Application.dataPath + "/test" + TEMP ++ + ".txt");
         sr.Write(scriptText);
         sr.Flush();

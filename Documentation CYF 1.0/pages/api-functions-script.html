@@ -82,7 +82,7 @@ it's w3c valid, at least
     <div class="tab-content col-md-10">
         <div class="tab-pane active text-style" id="api-functions-script">
             <p>
-                <br><span class="function">The Script object (and the Encounter object) [varies]</span>
+                <br><span class="function">The Script object (and the <span class="term">Encounter</span> variable) [varies]</span>
                 Script objects are a bit of a special case. They're used to refer to other scripts that were loaded by
                 the engine itself.
                 <br><br>
@@ -100,6 +100,7 @@ it's w3c valid, at least
                 <li><span class="term">script.Call(<span class="string"></span> function_name)</span> - runs <span class="term">function_name</span> from within the target script.</li><br>
                 <li><span class="term">script.Call(<span class="string"></span> function_name, argument)</span> - runs <span class="term">function_name</span>
                 from within the target script with one argument.</li><br>
+                <li><span class="CYF"></span> <span class="string"></span> <span class="term">script.scriptname</span> - this is equal to the file name of the script in question.</li><br>
                 <li><span class="CYF"></span> <span class="term">script.Call(<span class="string"></span> function_name, <span class="luatable">any types</span> arguments)</span> - runs <span class="term">function_name</span>
                 from within the target script with <font color="#fff">all arguments in <span class="term">arguments</span> as the arguments</font>.
                 <br><br>

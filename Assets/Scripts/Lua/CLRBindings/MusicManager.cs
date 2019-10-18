@@ -1,14 +1,15 @@
 ﻿using UnityEngine;
+using MoonSharp.Interpreter;
 using System.Collections;
 
 /// <summary>
 /// Lua binding to manipulate in-game music and play sounds.
 /// </summary>
 public class MusicManager {
-    public static MusicManager instance;
-    public static AudioSource src;
-    public static Hashtable hiddenDictionary = new Hashtable();
-    public static string filename = "empty";
+    [MoonSharpHidden] public static MusicManager instance;
+    [MoonSharpHidden] public static AudioSource src;
+    [MoonSharpHidden] public static Hashtable hiddenDictionary = new Hashtable();
+    [MoonSharpHidden] public static string filename = "empty";
 
     public static bool IsPlaying {
         get { return src.isPlaying; }
@@ -67,7 +68,7 @@ public class MusicManager {
         get { return src.clip.length; }
     }
     
-    public static bool IsStoppedOrNull(AudioSource audio) {
+    [MoonSharpHidden] public static bool IsStoppedOrNull(AudioSource audio) {
         if (audio != null) {
             if (audio.ToString().ToLower() == "null")  return true;
             if (!audio.isPlaying)                      return true;
