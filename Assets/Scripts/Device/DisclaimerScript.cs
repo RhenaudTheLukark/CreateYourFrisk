@@ -27,10 +27,17 @@ public class DisclaimerScript : MonoBehaviour {
                                                                            "OR TUBY FEX WILL BE ANGER!!! " +
                                                                            "U'LL HVAE A BED TMIE!!!";
             GameObject.Find("Description (2)").GetComponent<Text>().text = "SPACE OR KLIK TO\n<color='#ff0000'>PALY MODS!!!!!</color>";
-            GameObject.Find("Description (2)").GetComponent<RectTransform>().localPosition = new Vector2(-180, 0);
             GameObject.Find("Description (3)").GetComponent<Text>().text = "PRSES O TO\n<color='#ffff00'>OOVERWURL!!!!!</color>";
             GameObject.Find("Description (4)").GetComponent<Text>().text = "<b><color='red'>KNOW YUOR CODE</color> R U'LL HVAE A BED TMIE!!!</b>";
-        }
+            GameObject.Find("Version").GetComponent<Text>().text = "v" + UnityEngine.Random.Range(0,9) + "." + UnityEngine.Random.Range(0,9) + "." + UnityEngine.Random.Range(0,9);
+        } else
+            if (UnityEngine.Random.Range(0, 1000) == 021) {
+                GameObject.Find("Image").GetComponent<Image>().enabled = false;
+                GameObject.Find("Version").GetComponent<Transform>().localPosition = new Vector3(0f, 160f, 0f);
+                GameObject.Find("Version").GetComponent<Text>().color = new Color(1f, 1f, 1f, 1f);
+                GameObject.Find("Version").GetComponent<Text>().text = "Not Unitale v0.2.1a";
+            } else
+                GameObject.Find("Version").GetComponent<Text>().text = "v" + GlobalControls.CYFversion;
     }
 
     /// <summary>
