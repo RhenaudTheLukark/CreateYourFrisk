@@ -16,8 +16,8 @@ function EventPage1()
                        "[voice:v_asriel]Howdy! [w:25]Do you need any help?",
                        "..."}, true,
                       {"Asriel/normal",
-                       {"Asriel/happyT", "Asriel/happy", 0.2},
-                       "Asriel/frisknormal"})
+                      {"Asriel/happyT", "Asriel/happy", 0.2},
+                       "Frisk/sad"})
     General.SetChoice({"Help", "Don't help"})
     if lastChoice == 0 then
         NewAudio.CreateChannel("Appear")

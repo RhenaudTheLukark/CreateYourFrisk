@@ -83,6 +83,12 @@ it's w3c valid, at least
 		<div class="tab-pane active text-style" id="overworld-object-event">
             <h2><span class="CYF"></span>The Overworld: The Event Object</h2><br><br>
             <p>
+                <br><span class="function">Event.Exists(<span class="string"></span> name) returns <span class="boolean"></span></span>
+                Returns <span class="term">true</span> if an event with this name exists, <span class="term">false</span> otherwise.
+                <br><br>
+                Note that this refers to the name given to the GameObject in the Unity scene, rather than the name of the script attached to it.
+            </p>
+            <p>
                 <br><span class="function">Event.Teleport(<span class="string"></span> name, <span class="number"></span> dirX, 
                 <span class="number"></span> dirY)</span>
                 Teleports the given event to a given point in space. The position (dirX and dirY) is computed based off of the bottom left corner of the map.
@@ -103,7 +109,7 @@ it's w3c valid, at least
                 Read about how the <span class="term">Special Header</span> works in <span class="ref">How to animate an event</span>.
             </p>
             <p>
-                <br><span class="function">Event.GetAnimHeader(string name) returns <span class="string"></span></span>
+                <br><span class="function">Event.GetAnimHeader(<span class="string"></span> name) returns <span class="string"></span></span>
                 If the event given has a <span class="term">CYFAnimator</span> component, this will return its <span class="term">Special Header</span> 
                 value.
             </p>

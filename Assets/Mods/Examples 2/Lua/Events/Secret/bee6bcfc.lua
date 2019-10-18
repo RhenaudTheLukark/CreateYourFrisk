@@ -11,7 +11,9 @@ function EventPage0()
         Event.Remove(Event.GetName())
     elseif Event.GetAnimHeader("Player") ~= "Chara" then
         Event.SetPage(Event.GetName(), 1)
-        Event.Remove(Event.GetName() .. " (1)")
+        if Event.Exists(Event.GetName() .. " (1)") then
+            Event.Remove(Event.GetName() .. " (1)")
+        end
     else
         Event.SetPage(Event.GetName(), 2)
     end
