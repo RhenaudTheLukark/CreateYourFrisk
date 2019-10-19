@@ -14,7 +14,15 @@ public class TransitionOverworld : MonoBehaviour {
         _FirstLevelToLoad = FirstLevelToLoad;
         bool isStart = false;
 
+        // Set timestamp for Overworld to calculate total play time
         GlobalControls.overworldTimestamp = Time.time - (SaveLoad.savedGame != null ? SaveLoad.savedGame.playerTime : 0f);
+        // Forcefully disable retromode if it is on
+        if (GlobalControls.retroMode) {
+            GlobalControls.retroMode = false;
+            try {
+                LuaScriptBinder.SetAlMighty(null, "CYFRetroMode", DynValue.NewBoolean(false), true);
+            } catch {}
+        }
 
         GameOverBehavior.gameOverContainerOw = GameObject.Find("GameOverContainer");
         GameOverBehavior.gameOverContainerOw.SetActive(false);
