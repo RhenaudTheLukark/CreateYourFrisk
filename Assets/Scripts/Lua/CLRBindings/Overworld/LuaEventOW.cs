@@ -320,4 +320,19 @@ public class LuaEventOW {
         }
         throw new CYFException("Event.SetSpeed: The event \"" + name + "\" doesn't exist.");
     }
+
+    [CYFEventFunction] public float GetSpeed(string name) {
+        float speed;
+        for (int i = 0; (i < EventManager.instance.events.Count || name == "Player"); i++) {
+            if (name != "Player") {
+                if (EventManager.instance.events[i].gameObject == null || EventManager.instance.events[i].gameObject.name != name)
+                    continue;
+                speed = EventManager.instance.events[i].GetComponent<EventOW>().moveSpeed;
+            } else
+                speed = PlayerOverworld.instance.speed;
+            appliedScript.Call("CYFEventNextCommand");
+            return speed;
+        }
+        throw new CYFException("Event.GetSpeed: The event \"" + name + "\" doesn't exist.");
+    }
 }

@@ -1,6 +1,6 @@
 returnscene = "test"
-returnpos = {640, 480}
-returndir = 6music = "mus_shop"
+returnpos = {347, 769}
+returndir = 2music = "mus_shop"
 
 buylist = { 
     { "Butterscotch Pie", "The Locket", "Real Knife", "Testing Dog" }, 
@@ -10,9 +10,9 @@ buylist = {
 
 talklist = { { "Job", "Hobbies", "Threaten" },
            { {"Me?", "I'm just a shopkeeper." }, "Just a shopkeeper.", { "Threats? I'm not impressed, I'm just a shopkeeper." } } }
-maintalk = "Hello there! Glad\rto meet you, I'm\rjust a shopkeeper."
+maintalk = "Hello there![w:10]\rGlad to meet you,[w:5] I'm\rjust a shopkeeper who\rlives out of bounds."
 buytalk = "Want to look\nat my wares?\nI'm just a\nshopkeeper."
-selltalk = {"Sorry but we're not a pawn shop here, I'm just a shopkeeper.",
+selltalk = {"Sorry, but we're not a pawn shop here, I'm just a shopkeeper.",
             "If you want to sell items you can go to the Temmie Village, Temmies love to collect items.",
             "Where is it you say?",
             "[waitall:5]...[waitall:1]I don't know!"}

@@ -104,12 +104,17 @@ it's w3c valid, at least
                 <br><span class="function">Screen.SetTone(<span class="boolean"></span> anim, <span class="boolean"></span> waitEnd, 
                 <span class="number"></span> r = 255, <span class="number"></span> g = 255, <span class="number"></span> b = 255, 
                 <span class="number"></span> a = 128)</span>
-                Adds an image above all previous images that sets a selected tone (for instance, you can use this for a sepia tone).<br>
-				Set <span class="term">anim</span> to true to make it transition to the tone.<br>
+                Creates a solid color image over the whole screen with a given color (for instance, you can use this for a sepia tone).<br>
+				Set <span class="term">anim</span> to true to gradually transition to the tone.<br>
 				If <span class="term">anim</span> is set to true, you can also set <span class="term">waitEnd</span> to true to make the event's code 
 				pause until the transition is done. For the other values, they must be between 0 and 255.
-				<br><br><span style="color:#ff0000">NOTE: Make sure that <span class="term">a</span> is less than 255. 128 is recommended.<br>
-                If the <span class="term">a</span> value is great enough, your vision will be obscured in-game when this function is called!</span>
+                <br><br>
+                128 is the recommended value for <span class="term">a</span>.<br>
+                The <span class="term">a</span> value can go up to 255, which means fully opaque, but at that point the screen will be fully obscured.
+                <br><br><br>
+                <font color="ffffff">* NOTE: To undo the efffects of this function, after the image is done fading in, you must either call
+                <span class="term">Event.Remove("Tone")</span> or set <span class="term">a</span> to 0.<br>
+                In the first case, be sure to first check if it exists through <span class="term">Event.Exists</span> first!</font></span>
             </p>
             
             <p>

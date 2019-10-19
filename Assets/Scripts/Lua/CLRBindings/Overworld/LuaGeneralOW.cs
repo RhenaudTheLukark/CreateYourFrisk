@@ -30,10 +30,10 @@ public class LuaGeneralOW {
             PlayerOverworld.instance.UIPos = 0;
         
         if (EventManager.instance.coroutines.ContainsKey(appliedScript) && EventManager.instance.script != appliedScript) {
-            UnitaleUtil.DisplayLuaError(EventManager.instance.eventScripts[EventManager.instance.events[EventManager.instance.actualEventIndex]].scriptname, "General.SetDialog: You can't use that function in a coroutine.");
+            UnitaleUtil.DisplayLuaError(appliedScript.scriptname, "General.SetDialog: This function cannot be used in a coroutine.");
             return;
         } else if (EventManager.instance.LoadLaunched) {
-            UnitaleUtil.DisplayLuaError(EventManager.instance.eventScripts[EventManager.instance.events[EventManager.instance.actualEventIndex]].scriptname, "General.SetDialog: You can't use that function in a page 0 function.");
+            UnitaleUtil.DisplayLuaError(appliedScript.scriptname, "General.SetDialog: This function cannot be used in EventPage0.");
             return;
         }
         TextMessage[] textmsgs = null;
@@ -239,8 +239,8 @@ public class LuaGeneralOW {
     [CYFEventFunction] public void SetBattle(string encounterName, bool quickAnim = false, bool ForceNoFlee = false) { PlayerOverworld.instance.SetEncounterAnim(encounterName, quickAnim, ForceNoFlee); }
 
 
-    [CYFEventFunction] public void EnterShop(string scriptName) {
+    [CYFEventFunction] public void EnterShop(string scriptName, bool instant = false) {
         ShopScript.scriptName = scriptName;
-        StCoroutine("IEnterShop", null, appliedScript.GetVar("_internalScriptName").String);
+        StCoroutine("IEnterShop", instant, appliedScript.GetVar("_internalScriptName").String);
     }
 }

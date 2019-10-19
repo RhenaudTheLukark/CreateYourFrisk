@@ -93,6 +93,8 @@ public class LuaScreenOW {
         }
         if (!anim) {
             GameObject.Find("Tone").GetComponent<Image>().color = new Color32((byte)r, (byte)g, (byte)b, (byte)a);
+            if (a == 0)
+                EventManager.instance.luaevow.Remove("Tone");
             appliedScript.Call("CYFEventNextCommand");
         } else 
             StCoroutine("ISetTone", new object[] { waitEnd, r, g, b, a }, appliedScript.GetVar("_internalScriptName").String);

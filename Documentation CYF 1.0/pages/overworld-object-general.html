@@ -182,10 +182,14 @@ it's w3c valid, at least
             </p>
 			
 			<p>
-				<br><span class="function">General.EnterShop(<span class="string"></span> scriptName)</span>
-				Initializes the Shop menu, using the script given in <span class="term">scriptName</span>.<br>
+				<br><span class="function">General.EnterShop(<span class="string"></span> scriptName, <span class="boolean"></span> instant = false)</span>
+				Enters a Shop scene, using the shop .lua script given in <span class="term">scriptName</span>.<br>
                 The Shop script must be in <span class="term">YOURMOD/Lua/Shops/</span>.<br>
 				Check the <span class="ref">How to create a shop</span> section for more informations.
+                <br><br>
+                Set <span class="term">instant</span> to true to instantly warp to the shop. Otherwise, a short fade animation will play.
+                <br><br>
+                <font color="ffffff">* NOTE: Just like with <span class="term">General.SetBattle</span>, using this function will halt the rest of your event script.</font>
 			</p>
         </div>
 		

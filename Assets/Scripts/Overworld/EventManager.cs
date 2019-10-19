@@ -1075,10 +1075,10 @@ public class EventManager : MonoBehaviour {
         try { oneLiners = (bool[])args[1]; } catch { throw new CYFException("The argument \"oneLiners\" must be a boolean table."); }
 
         if (coroutines.ContainsKey(scr) && script != scr) {
-            UnitaleUtil.DisplayLuaError(scr.scriptname, "General.SetChoice: You can't use that function in a coroutine with waitEnd set to true.");
+            UnitaleUtil.DisplayLuaError(scr.scriptname, "General.SetChoice: This function cannot be used in a coroutine with \"waitEnd\" set to true.");
             yield break;
         } else if (LoadLaunched) {
-            UnitaleUtil.DisplayLuaError(scr.scriptname, "General.SetChoice: You can't use that function in a page 0 function with waitEnd set to true.");
+            UnitaleUtil.DisplayLuaError(scr.scriptname, "General.SetChoice: This function cannot be used in EventPage0 with \"waitEnd\" set to true.");
             yield break;
         }
 
@@ -1113,6 +1113,7 @@ public class EventManager : MonoBehaviour {
         script.script.Globals.Set(DynValue.NewString("lastChoice"), DynValue.NewNumber(actualChoice));
         //HEARTBROKEN
         Destroy(tempHeart);
+        yield return 0;
     }
 
     IEnumerator IMoveEventToPoint(object[] args) { //NEED PARENTAL REMOVE
@@ -1129,10 +1130,10 @@ public class EventManager : MonoBehaviour {
 
         if (waitEnd)
             if (coroutines.ContainsKey(scr) && script != scr) {
-                UnitaleUtil.DisplayLuaError(scr.scriptname, "Event.MoveToPoint: You can't use that function in a coroutine with waitEnd set to true.");
+                UnitaleUtil.DisplayLuaError(scr.scriptname, "Event.MoveToPoint: This function cannot be used in a coroutine with \"waitEnd\" set to true.");
                 yield break;
             } else if (LoadLaunched) {
-                UnitaleUtil.DisplayLuaError(scr.scriptname, "Event.MoveToPoint: You can't use that function in a page 0 function with waitEnd set to true.");
+                UnitaleUtil.DisplayLuaError(scr.scriptname, "Event.MoveToPoint: This function cannot be used in EventPage0 with \"waitEnd\" set to true.");
                 yield break;
             }
 
@@ -1212,10 +1213,10 @@ public class EventManager : MonoBehaviour {
     IEnumerator IWaitForInput() {
         ScriptWrapper scr = luagenow.appliedScript;
         if (coroutines.ContainsKey(scr) && script != scr) {
-            UnitaleUtil.DisplayLuaError(scr.scriptname, "General.WaitForInput: You can't use that function in a coroutine.");
+            UnitaleUtil.DisplayLuaError(scr.scriptname, "General.WaitForInput: This function cannot be used in a coroutine.");
             yield break;
         } else if (LoadLaunched) {
-            UnitaleUtil.DisplayLuaError(scr.scriptname, "General.WaitForInput: You can't use that function in a page 0 function.");
+            UnitaleUtil.DisplayLuaError(scr.scriptname, "General.WaitForInput: This function cannot be used in EventPage0.");
             yield break;
         }
 
@@ -1238,15 +1239,15 @@ public class EventManager : MonoBehaviour {
 
         if (waitEnd)
             if (coroutines.ContainsKey(scr) && script != scr) {
-                UnitaleUtil.DisplayLuaError(scr.scriptname, "Screen.SetTone: You can't use that function in a coroutine with waitEnd set to true.");
+                UnitaleUtil.DisplayLuaError(scr.scriptname, "Screen.SetTone: This function cannot be used in a coroutine with \"waitEnd\" set to true.");
                 yield break;
             } else if (LoadLaunched) {
-                UnitaleUtil.DisplayLuaError(scr.scriptname, "Screen.SetTone: You can't use that function in a page 0 function with waitEnd set to true.");
+                UnitaleUtil.DisplayLuaError(scr.scriptname, "Screen.SetTone: This function cannot be used in EventPage0 with \"waitEnd\" set to true.");
                 yield break;
             }
 
         Color c = GameObject.Find("Tone").GetComponent<Image>().color;
-        
+
         int[] currents = new int[] { (int)(c.r * 255), (int)(c.g * 255), (int)(c.b * 255), (int)(c.a * 255) };
         int[] lacks = new int[] { r - currents[0], g - currents[1], b - currents[2], a - currents[3] };
         int[] beginLacks = lacks;
@@ -1272,11 +1273,12 @@ public class EventManager : MonoBehaviour {
             highest -= 4;
             yield return 0;
         }
-        
+
         if (a == 0)
             luaevow.Remove("Tone");
         if (waitEnd)
             scr.Call("CYFEventNextCommand");
+        yield return 0;
     }
 
     IEnumerator IRotateEvent(object[] args) {
@@ -1293,10 +1295,10 @@ public class EventManager : MonoBehaviour {
 
         if (waitEnd)
             if (coroutines.ContainsKey(scr) && script != scr && script != scr) {
-                UnitaleUtil.DisplayLuaError(scr.scriptname, "Event.Rotate: You can't use that function in a coroutine with waitEnd set to true.");
+                UnitaleUtil.DisplayLuaError(scr.scriptname, "Event.Rotate: This function cannot be used in a coroutine with \"waitEnd\" set to true.");
                 yield break;
             } else if (LoadLaunched) {
-                UnitaleUtil.DisplayLuaError(scr.scriptname, "Event.Rotate: You can't use that function in a page 0 function with waitEnd set to true.");
+                UnitaleUtil.DisplayLuaError(scr.scriptname, "Event.Rotate: This function cannot be used in EventPage0 with \"waitEnd\" set to true.");
                 yield break;
             }
 
@@ -1336,6 +1338,7 @@ public class EventManager : MonoBehaviour {
         }
         UnitaleUtil.WriteInLogAndDebugger("Event.Rotate: The name you entered in the function isn't an event's name. Did you forget to add the 'Event' tag?");
         scr.Call("CYFEventNextCommand");
+        yield return 0;
     }
 
     IEnumerator IFadeBGM(object[] args) {
@@ -1347,10 +1350,10 @@ public class EventManager : MonoBehaviour {
 
         if (waitEnd) 
             if (coroutines.ContainsKey(scr) && script != scr) {
-                UnitaleUtil.DisplayLuaError(scr.scriptname, "General.StopBGM: You can't use that function in a coroutine with waitEnd set to true.");
+                UnitaleUtil.DisplayLuaError(scr.scriptname, "General.StopBGM: This function cannot be used in a coroutine with \"waitEnd\" set to true.");
                 yield break;
             } else if (LoadLaunched) {
-                UnitaleUtil.DisplayLuaError(scr.scriptname, "General.StopBGM: You can't use that function in a page 0 function with waitEnd set to true.");
+                UnitaleUtil.DisplayLuaError(scr.scriptname, "General.StopBGM: This function cannot be used in EventPage0 with \"waitEnd\" set to true.");
                 yield break;
             }
         
@@ -1365,6 +1368,7 @@ public class EventManager : MonoBehaviour {
         audio.Stop();
         audio.volume = 1;
         bgmCoroutine = false;
+        yield return 0;
     }
 
     IEnumerator IFlash(object[] args) {
@@ -1381,10 +1385,10 @@ public class EventManager : MonoBehaviour {
 
         if (waitEnd)
             if (coroutines.ContainsKey(scr) && script != scr) {
-                UnitaleUtil.DisplayLuaError(scr.scriptname, "Screen.Flash: You can't use that function in a coroutine with waitEnd set to true.");
+                UnitaleUtil.DisplayLuaError(scr.scriptname, "Screen.Flash: This function cannot be used in a coroutine with \"waitEnd\" set to true.");
                 yield break;
             } else if (LoadLaunched) {
-                UnitaleUtil.DisplayLuaError(scr.scriptname, "Screen.Flash: You can't use that function in a page 0 function with waitEnd set to true.");
+                UnitaleUtil.DisplayLuaError(scr.scriptname, "Screen.Flash: This function cannot be used in EventPage0 with \"waitEnd\" set to true.");
                 yield break;
             }
 
@@ -1402,6 +1406,7 @@ public class EventManager : MonoBehaviour {
         Destroy(flash);
         if (waitEnd)
             scr.Call("CYFEventNextCommand");
+        yield return 0;
     }
 
     IEnumerator ISave(object[] args) {
@@ -1414,10 +1419,10 @@ public class EventManager : MonoBehaviour {
             SaveLoad.Save();
             yield break;
         } else if (coroutines.ContainsKey(scr) && script != scr) {
-            UnitaleUtil.DisplayLuaError(scr.scriptname, "General.Save: You can't use that function in a coroutine.");
+            UnitaleUtil.DisplayLuaError(scr.scriptname, "General.Save: This function cannot be used in a coroutine.");
             yield break;
         } else if (LoadLaunched) {
-            UnitaleUtil.DisplayLuaError(scr.scriptname, "General.Save: You can't use that function in a page 0 function.");
+            UnitaleUtil.DisplayLuaError(scr.scriptname, "General.Save: This function cannot be used in EventPage0.");
             yield break;
         }
         bool save = true;
@@ -1457,7 +1462,7 @@ public class EventManager : MonoBehaviour {
         }
         txtSave.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]Save", false, true) });
         txtReturn.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]Return", false, true) });
-        
+
         GameObject.Find("Mugshot").GetComponent<Image>().color = new Color(1, 1, 1, 0);
         GameObject.Find("textframe_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 0);
         GameObject.Find("textframe_interior").GetComponent<Image>().color = new Color(0, 0, 0, 0);
@@ -1525,10 +1530,10 @@ public class EventManager : MonoBehaviour {
         try { info = (string)args[5];       } catch { throw new CYFException("The argument \"info\" must be a string."); }
 
         if (coroutines.ContainsKey(scr) && script != scr) {
-            UnitaleUtil.DisplayLuaError(instance.events[instance.actualEventIndex].name, info + ": You can't use that function in a coroutine with waitEnd set to true.");
+            UnitaleUtil.DisplayLuaError(instance.events[instance.actualEventIndex].name, info + ": This function cannot be used in a coroutine with \"waitEnd\" set to true.");
             yield break;
         } else if (LoadLaunched) {
-            UnitaleUtil.DisplayLuaError(instance.events[instance.actualEventIndex].name, info + ": You can't use that function in a page 0 function with waitEnd set to true.");
+            UnitaleUtil.DisplayLuaError(instance.events[instance.actualEventIndex].name, info + ": This function cannot be used in EventPage0 with \"waitEnd\" set to true.");
             yield break;
         }
 
@@ -1567,15 +1572,16 @@ public class EventManager : MonoBehaviour {
         }
         if (waitEnd)
             scr.Call("CYFEventNextCommand");
+        yield return 0;
     }
 
     public IEnumerator IWait(int frames) {
         ScriptWrapper scr = luagenow.appliedScript;
         if (coroutines.ContainsKey(scr) && script != scr) {
-            UnitaleUtil.DisplayLuaError(scr.scriptname, "General.Wait: You can't use that function in a coroutine.");
+            UnitaleUtil.DisplayLuaError(scr.scriptname, "General.Wait: This function cannot be used in a coroutine.");
             yield break;
         } else if (LoadLaunched) {
-            UnitaleUtil.DisplayLuaError(scr.scriptname, "General.Wait: You can't use that function in a page 0 function.");
+            UnitaleUtil.DisplayLuaError(scr.scriptname, "General.Wait: This function cannot be used in EventPage0.");
             yield break;
         }
         int curr = 0;
@@ -1585,28 +1591,32 @@ public class EventManager : MonoBehaviour {
         }
         if (scr.GetVar("CYFEventLastAction").String == "General.Wait")
             scr.Call("CYFEventNextCommand");
+        yield return 0;
     }
 
-    public IEnumerator IEnterShop() {
+    public IEnumerator IEnterShop(bool instant) {
         ScriptWrapper scr = luagenow.appliedScript;
         if (coroutines.ContainsKey(scr) && script != scr) {
-            UnitaleUtil.DisplayLuaError(scr.scriptname, "General.EnterShop: You can't use that function in a coroutine.");
+            UnitaleUtil.DisplayLuaError(scr.scriptname, "General.EnterShop: This function cannot be used in a coroutine.");
             yield break;
         } else if (LoadLaunched) {
-            UnitaleUtil.DisplayLuaError(scr.scriptname, "General.EnterShop: You can't use that function in a page 0 function.");
+            UnitaleUtil.DisplayLuaError(scr.scriptname, "General.EnterShop: This function cannot be used in EventPage0.");
             yield break;
         }
-        Fading fade = FindObjectOfType<Fading>();
-        float fadeTime = fade.BeginFade(1);
-        yield return new WaitForSeconds(fadeTime);
+        if (!instant) {
+            Fading fade = FindObjectOfType<Fading>();
+            float fadeTime = fade.BeginFade(1);
+            yield return new WaitForSeconds(fadeTime);
+        }
         EndEvent();
 
         PlayerOverworld.HideOverworld("Shop");
         GlobalControls.isInShop = true;
         SceneManager.LoadScene("Shop", LoadSceneMode.Additive);
+        yield return 0;
     }
 
-    IEnumerator ISpawnBoxMenu(object[] args) {
+    IEnumerator ISpawnBoxMenu() {
         ScriptWrapper scr = luainvow.appliedScript;
         GameObject.Find("itembox").AddComponent<ItemBoxUI>();
         PlayerOverworld.instance.PlayerNoMove = true; //Start box menu
@@ -1617,5 +1627,6 @@ public class EventManager : MonoBehaviour {
             yield return 0;
 
         scr.Call("CYFEventNextCommand");
+        yield return 0;
     }
 }

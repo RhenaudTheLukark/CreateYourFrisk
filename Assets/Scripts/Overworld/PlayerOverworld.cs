@@ -273,57 +273,6 @@ public class PlayerOverworld : MonoBehaviour {
                 else if (vertical > 0)   currentDirection = 8;
                 else if (vertical < 0)   currentDirection = 2;
             }
-
-            //Special keys
-
-            /*
-            if (PlayerPos.position.x < 40) {
-                string mapName;
-                if (UnitaleUtil.MapCorrespondanceList.ContainsKey(SceneManager.GetActiveScene().name))  mapName = UnitaleUtil.MapCorrespondanceList[SceneManager.GetActiveScene().name];
-                else                                                                                    mapName = SceneManager.GetActiveScene().name;
-                LuaScriptBinder.Set(null, "PlayerMap", DynValue.NewString(mapName));
-                LuaScriptBinder.Set(null, "PlayerPosX", DynValue.NewNumber(320));
-                LuaScriptBinder.Set(null, "PlayerPosY", DynValue.NewNumber(160));
-
-                //GameObject.Find("Main Camera OW").tag = "Untagged";
-                GlobalControls.Music = UnitaleUtil.GetCurrentOverworldAudio().clip;
-                EventManager.SetEventStates();
-                SceneManager.LoadScene("ModSelect");
-            }*/
-
-            /*if (Input.GetKeyDown("p")) {
-                SetDialog(new string[] { "[letters:3]DUN[w:4][letters:4] DUN[w:5][letters:6] DUN!",
-                                     "Did you see?[w:10][mugshot:rtlukark_determined:skipover] Yeah, it worked!",
-                                     "No[w:2].[w:2].[w:2].[w:2]?[w:10][mugshot:rtlukark_determined:skipover] I'll do it again.",
-                                     "Here's [letters:15]the first test and it [letters:14]looks like it works!",
-                                     "See? [w:10]It worked! [w:10]I'll give you the text of the first sentence...",
-                                     "(letters:3) DUN (w:4)(letters:4) DUN (w:5)(letters:6) DUN!",
-                                     "Hope you liked it!" },
-                          true, new string[] { "rtlukark_angry", "rtlukark_normal", "rtlukark_waitwhat", "rtlukark_angry", "rtlukark_determined", "rtlukark_perv", "rtlukark_determined" });
-            } else*/
-            if (SceneManager.GetActiveScene().name == "test2") {
-                if (Input.GetKeyDown("m"))
-                    GameObject.Find("Main Camera OW").GetComponent<AudioSource>().time = Random.value * GameObject.Find("Main Camera OW").GetComponent<AudioSource>().clip.length;
-                else if (Input.GetKeyDown("h") && SceneManager.GetActiveScene().name == "test2") {
-                    /*if (GameObject.Find("Event1").GetComponent<EventOW>().actualPage == 4)
-                        rolled++;
-                    if (GameObject.Find("Event1").GetComponent<EventOW>().actualPage == 666) {
-                        LuaEventOW.SetPage2("Event1", 1); 
-                        rolled++;
-                    } else*/
-                    LuaEventOW.SetPage2("Event1", (GameObject.Find("Event1").GetComponent<EventOW>().actualPage + 1) % 4);
-                    /*if (GameObject.Find("Event1").GetComponent<EventOW>().actualPage == 1 && rolled % 4 == 3)  LuaEventOW.SetPage2("Event1", 666);
-                    else*/
-                    if (GameObject.Find("Event1").GetComponent<EventOW>().actualPage == 0) LuaEventOW.SetPage2("Event1", 4);
-                    /*if (GameObject.Find("Event1").GetComponent<EventOW>().actualPage == 666)
-                        SetDialog(new string[] { "[color:ff0000]Event page = " + GameObject.Find("Event1").GetComponent<EventOW>().actualPage + " :)" }, true, new string[] { "rtlukark_determimed" });
-                    else*/
-                    SetDialog(new string[] { "Event page = " + GameObject.Find("Event1").GetComponent<EventOW>().actualPage + "." }, true, DynValue.NewString("rtlukark_determined"));
-                } else if (Input.GetKeyDown("t") && GameObject.Find("textframe_border_outer").GetComponent<Image>().color.a == 0)
-                    SetDialog(new string[] { "Your game is saved at\n" + Application.persistentDataPath + "/save.gd" }, true, null);
-                else if (Input.GetKeyDown("b"))
-                    SetEncounterAnim();
-            }
         }
 
         if (currentDirection != 0) animator.movementDirection = currentDirection;
