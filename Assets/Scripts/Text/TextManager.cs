@@ -341,6 +341,12 @@ public class TextManager : MonoBehaviour {
                             decoratedTextOffset = true;
                             self.localPosition = new Vector3(pos.x, pos.y + (decoratedTextOffset ? 9 : 0), pos.z);
                         }
+                    } else if (UnitaleUtil.IsOverworld) {
+                        int lines = textQueue[line].Text.Split('\n').Length;
+                        if (lines >= 4) lines = 4;
+                        else            lines = 3;
+                        Vector3 pos = GameObject.Find("TextManager OW").GetComponent<RectTransform>().localPosition;
+                        GameObject.Find("TextManager OW").GetComponent<RectTransform>().localPosition = new Vector3(pos.x, 22 + ((lines - 1) * Charset.LineSpacing / 2), pos.z);
                     }
                 }
     }
