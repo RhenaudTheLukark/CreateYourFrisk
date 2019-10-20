@@ -494,15 +494,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   letterSound: {fileID: 0}
-  letters: []
   currentLine: 0
+  _textMaxWidth: 0
   currentReferenceCharacter: 0
   nextMonsterDialogueOnce: 0
   nmd2: 0
   wasStated: 0
   offset: {x: 0, y: 0}
   blockSkip: 0
-  hidden: 0
   skipNowIfBlocked: 0
   LateStartWaiting: 0
 --- !u!224 &612950023
@@ -834,7 +833,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1053457372}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -9000}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1701512145}
@@ -1017,15 +1016,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   letterSound: {fileID: 0}
-  letters: []
   currentLine: 0
+  _textMaxWidth: 0
   currentReferenceCharacter: 0
   nextMonsterDialogueOnce: 0
   nmd2: 0
   wasStated: 0
   offset: {x: 0, y: 0}
   blockSkip: 0
-  hidden: 0
   skipNowIfBlocked: 0
   LateStartWaiting: 0
 --- !u!1 &1225570641
@@ -1356,7 +1354,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -70, y: 103}
+  m_AnchoredPosition: {x: -82, y: 103}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0, y: 1}
 --- !u!82 &1331393608
@@ -1468,15 +1466,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   letterSound: {fileID: 0}
-  letters: []
   currentLine: 0
+  _textMaxWidth: 164
   currentReferenceCharacter: 0
   nextMonsterDialogueOnce: 0
   nmd2: 0
   wasStated: 0
   offset: {x: 0, y: 0}
   blockSkip: 0
-  hidden: 0
   skipNowIfBlocked: 0
   LateStartWaiting: 0
 --- !u!1 &1372833084
@@ -1658,15 +1655,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   letterSound: {fileID: 0}
-  letters: []
   currentLine: 0
+  _textMaxWidth: 164
   currentReferenceCharacter: 0
   nextMonsterDialogueOnce: 0
   nmd2: 0
   wasStated: 0
   offset: {x: 0, y: 0}
   blockSkip: 0
-  hidden: 0
   skipNowIfBlocked: 0
   LateStartWaiting: 0
 --- !u!1 &1494352337
@@ -1815,15 +1811,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   letterSound: {fileID: 0}
-  letters: []
   currentLine: 0
+  _textMaxWidth: 364
   currentReferenceCharacter: 0
   nextMonsterDialogueOnce: 0
   nmd2: 0
   wasStated: 0
   offset: {x: 0, y: 0}
   blockSkip: 0
-  hidden: 0
   skipNowIfBlocked: 0
   LateStartWaiting: 0
 --- !u!1 &1541950371
@@ -2060,15 +2055,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   letterSound: {fileID: 0}
-  letters: []
   currentLine: 0
+  _textMaxWidth: 0
   currentReferenceCharacter: 0
   nextMonsterDialogueOnce: 0
   nmd2: 0
   wasStated: 0
   offset: {x: 0, y: 0}
   blockSkip: 0
-  hidden: 0
   skipNowIfBlocked: 0
   LateStartWaiting: 0
 --- !u!224 &1727654155

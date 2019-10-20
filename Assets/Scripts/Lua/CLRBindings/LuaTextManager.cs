@@ -13,7 +13,6 @@ public class LuaTextManager : TextManager {
     private bool bubble = true;
     private int framesWait = 60;
     private int countFrames = 0;
-    private int _textWidth;
     private int _bubbleHeight = -1;
     private BubbleSide bubbleSide = BubbleSide.NONE;
     private ProgressMode progress = ProgressMode.AUTO;
@@ -137,11 +136,11 @@ public class LuaTextManager : TextManager {
     public int textMaxWidth {
         get {
             CheckExists();
-            return _textWidth;
+            return _textMaxWidth;
         }
         set {
             CheckExists();
-            _textWidth = value < 16 ? 16 : value;
+            _textMaxWidth = value < 16 ? 16 : value;
         }
     }
 

@@ -21,6 +21,7 @@ public class TextManager : MonoBehaviour {
                                                   "music", "sound", "health", "lettereffect"};
     private float letterIntensity = 0.0f;
     public int currentLine = 0;
+    [MoonSharpHidden] public int _textMaxWidth = 0;
     private int currentCharacter = 0;
     public int currentReferenceCharacter = 0;
     private bool currentSkippable = true;
@@ -236,6 +237,8 @@ public class TextManager : MonoBehaviour {
                 mugshots.Add("mugshots/");
         } else
             mugshots.Add("mugshots/");
+
+        bool mugshotSet = false;
         if (mugshot != null && mugshot._img != null)
             if ((mugshots.Count > 1 || (mugshots[0] != "mugshots/" && mugshots[0] != "mugshots/null")) && text != null) {
                 if (mugshots.Count > 1) {
@@ -244,6 +247,7 @@ public class TextManager : MonoBehaviour {
                         finalMugshot = mugshots[mugshots.Count - 1];
                 } else
                     mugshot.Set(mugshots[0]);
+                mugshotSet = true;
                 mugshotTimer = time;
                 mugshotList = (string[])UnitaleUtil.ListToArray(mugshots);
                 mugshot.color = new float[] { 1, 1, 1, 1 };
@@ -255,6 +259,7 @@ public class TextManager : MonoBehaviour {
                 if (gameObject.name == "TextManager OW")
                     self.localPosition = new Vector3(-267, self.localPosition.y, self.localPosition.z);
             }
+        _textMaxWidth = mugshotSet ? 417 : 534;
     }
 
     protected void ShowLine(int line, bool forceNoAutoLineBreak = false) {
@@ -341,7 +346,7 @@ public class TextManager : MonoBehaviour {
                             decoratedTextOffset = true;
                             self.localPosition = new Vector3(pos.x, pos.y + (decoratedTextOffset ? 9 : 0), pos.z);
                         }
-                    } else if (UnitaleUtil.IsOverworld) {
+                    } else if (UnitaleUtil.IsOverworld && !GlobalControls.isInShop) {
                         int lines = textQueue[line].Text.Split('\n').Length;
                         if (lines >= 4) lines = 4;
                         else            lines = 3;
@@ -455,31 +460,13 @@ public class TextManager : MonoBehaviour {
         if (currentText[beginIndex] == '\n' || currentText[beginIndex] == '\r')                                   beginIndex++;
         if (currentText[finalIndex] == '\n' || currentText[finalIndex] == ' ' || currentText[finalIndex] == '\r') finalIndex--;
 
-        // Gets the text's length
-        int limit = 0;
-        if (SceneManager.GetActiveScene().name == "Intro")      limit = 400;
-        else if (UnitaleUtil.IsOverworld && mugshot != null) {
-            if (mugshot._img != null)
-                if (mugshot.alpha != 0)                         limit = 417;
-                else                                            limit = 534;
-            else                                                limit = 534;
-        } else if (GlobalControls.isInFight) {
-            //if (UIController.instance.inited) {
-            if (UIController.instance.encounter.gameOverStance) limit = 320;
-            else if (name == "DialogBubble(Clone)")             limit = (int)transform.parent.GetComponent<LuaEnemyController>().bubbleWidth;
-            else if (GetType() == typeof(LuaTextManager))       limit = gameObject.GetComponent<LuaTextManager>().textMaxWidth;
-            else                                                limit = 534;
-            //} else                                              limit = 534;
-        } else                                                  limit = 534;
-
-        if (UnitaleUtil.CalcTextWidth(this, beginIndex, finalIndex, true) > limit && limit > 0) {
+        if (UnitaleUtil.CalcTextWidth(this, beginIndex, finalIndex, true) > _textMaxWidth && _textMaxWidth > 0) {
             // If the line's too long, do something!
             int wordBeginIndex = currentText2[i] == ' ' ? i + 1 : i;
-            if (UnitaleUtil.CalcTextWidth(this, wordBeginIndex, finalIndex, false) > limit - decorationLength) {
+            if (UnitaleUtil.CalcTextWidth(this, wordBeginIndex, finalIndex, false) > _textMaxWidth - decorationLength) {
                 // Word is taking the entire line
-                int currentIndex = wordBeginIndex;
-                for (; currentIndex <= finalIndex; currentIndex++) {
-                    if (UnitaleUtil.CalcTextWidth(this, beginIndex, currentIndex, false) > limit) {
+                for (int currentIndex = wordBeginIndex; currentIndex <= finalIndex; currentIndex++) {
+                    if (UnitaleUtil.CalcTextWidth(this, beginIndex, currentIndex, false) > _textMaxWidth) {
                         currentText2 = currentText2.Substring(0, currentIndex) + "\n" + (decorated ? "  " : "") + currentText2.Substring(currentIndex, currentText2.Length - currentIndex);
                         textQueue[currentLine].Text = currentText2;
                         finalIndex += decorated ? 3 : 1;

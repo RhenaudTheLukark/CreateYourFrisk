@@ -514,6 +514,7 @@ public class UIController : MonoBehaviour {
                     TextManager sbTextMan = speechBub.GetComponent<TextManager>();
                     monDialogues[i] = sbTextMan;
                     sbTextMan.SetCaller(encounter.EnabledEnemies[i].script);
+                    sbTextMan._textMaxWidth = (int)encounter.EnabledEnemies[i].bubbleWidth;
                     Image speechBubImg = speechBub.GetComponent<Image>();
 
                     // error catcher

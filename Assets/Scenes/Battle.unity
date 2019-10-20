@@ -159,15 +159,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   letterSound: {fileID: 0}
-  letters: []
   currentLine: 0
+  _textMaxWidth: 320
   currentReferenceCharacter: 0
   nextMonsterDialogueOnce: 0
   nmd2: 0
   wasStated: 0
   offset: {x: 0, y: 0}
   blockSkip: 0
-  hidden: 0
   skipNowIfBlocked: 0
   LateStartWaiting: 0
 --- !u!1 &132697915
@@ -1062,6 +1061,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cd5272475a518749a954d77524c56f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  textmgr: {fileID: 0}
   forcedaction: 4
   psContainer: {fileID: 0}
   fightUI: {fileID: 0}
@@ -1417,15 +1417,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   letterSound: {fileID: 0}
-  letters: []
   currentLine: 0
+  _textMaxWidth: 0
   currentReferenceCharacter: 0
   nextMonsterDialogueOnce: 0
   nmd2: 0
   wasStated: 0
   offset: {x: 0, y: 0}
   blockSkip: 0
-  hidden: 0
   skipNowIfBlocked: 0
   LateStartWaiting: 0
 --- !u!1 &1007297935
@@ -2565,15 +2564,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   letterSound: {fileID: 0}
-  letters: []
   currentLine: 0
+  _textMaxWidth: 320
   currentReferenceCharacter: 0
   nextMonsterDialogueOnce: 0
   nmd2: 0
   wasStated: 0
   offset: {x: 0, y: 0}
   blockSkip: 0
-  hidden: 0
   skipNowIfBlocked: 0
   LateStartWaiting: 0
 --- !u!1 &1685655723
