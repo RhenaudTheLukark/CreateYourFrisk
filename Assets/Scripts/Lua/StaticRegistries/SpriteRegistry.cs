@@ -10,32 +10,38 @@ public static class SpriteRegistry {
     public static Sprite EMPTY_SPRITE;
     private static Dictionary<string, FileInfo> dictDefault = new Dictionary<string, FileInfo>();
     private static Dictionary<string, FileInfo> dictMod = new Dictionary<string, FileInfo>();
+    private static Dictionary<string, FileInfo> dictOW = new Dictionary<string, FileInfo>();
 
     public static void Start() {
         loadAllFrom(FileLoader.pathToDefaultFile("Sprites"));
     }
 
+    public static void Set(string key, Sprite value) { dict[(UnitaleUtil.IsOverworld ? "ow" : "b") + key.ToLower()] = value; }
+
     public static Sprite Get(string key) {
         key = key.ToLower();
-        if (dict.ContainsKey(key))  return dict[key];
-        else                        return tryLoad(key);
+        string dictKey = (UnitaleUtil.IsOverworld ? "ow" : "b") + key;
+        if (dict.ContainsKey(dictKey))  return dict[dictKey];
+        else                            return tryLoad(key);
         //return null;
     }
 
+    private static Sprite tryLoad(string key) {
+        string dictKey = (UnitaleUtil.IsOverworld ? "ow" : "b") + key;
+        if      (UnitaleUtil.IsOverworld && dictOW.ContainsKey(key))
+            dict[dictKey] = SpriteUtil.FromFile(dictOW[key].FullName);
+        else if (!UnitaleUtil.IsOverworld && dictMod.ContainsKey(key))
+            dict[dictKey] = SpriteUtil.FromFile(dictMod[key].FullName);
+        else if (dictDefault.ContainsKey(key))
+            dict[dictKey] = SpriteUtil.FromFile(dictDefault[key].FullName);
+        else
+            return null;
+        return dict[dictKey];
+    }
+
     public static Sprite GetMugshot(string key) {
-        key = key.ToLower();
-        key = "mugshots/" + key;
-        return Get(key);
+        return Get("mugshots/" + key.ToLower());
     }
-
-    public static Sprite tryLoad(string key) {
-        if      (dictMod.ContainsKey(key))      dict[key] = SpriteUtil.FromFile(dictMod[key].FullName);
-        else if (dictDefault.ContainsKey(key))  dict[key] = SpriteUtil.FromFile(dictDefault[key].FullName);
-        else                                    return null;
-        return dict[key];
-    }
-
-    public static void Set(string key, Sprite value) { dict[key.ToLower()] = value; }
 
     public static void init() {
         //dict.Clear();
@@ -69,9 +75,15 @@ public static class SpriteRegistry {
         fInfoTest = dInfo.GetFiles("*.png", SearchOption.AllDirectories);
 
         if (mod) {
-            dictMod.Clear();
-            foreach (FileInfo file in fInfoTest)
-                dictMod[FileLoader.getRelativePathWithoutExtension(directoryPath, file.FullName).ToLower()] = file;
+            if (!UnitaleUtil.IsOverworld) {
+                dictMod.Clear();
+                foreach (FileInfo file in fInfoTest)
+                    dictMod[FileLoader.getRelativePathWithoutExtension(directoryPath, file.FullName).ToLower()] = file;
+            } else {
+                dictOW.Clear();
+                foreach (FileInfo file in fInfoTest)
+                    dictOW[FileLoader.getRelativePathWithoutExtension(directoryPath, file.FullName).ToLower()] = file;
+            }
         } else {
             dictDefault.Clear();
             foreach (FileInfo file in fInfoTest)
