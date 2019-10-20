@@ -75,11 +75,10 @@ public static class SpriteRegistry {
         fInfoTest = dInfo.GetFiles("*.png", SearchOption.AllDirectories);
 
         if (mod) {
-            if (!UnitaleUtil.IsOverworld) {
-                dictMod.Clear();
-                foreach (FileInfo file in fInfoTest)
-                    dictMod[FileLoader.getRelativePathWithoutExtension(directoryPath, file.FullName).ToLower()] = file;
-            } else {
+            dictMod.Clear();
+            foreach (FileInfo file in fInfoTest)
+                dictMod[FileLoader.getRelativePathWithoutExtension(directoryPath, file.FullName).ToLower()] = file;
+            if (UnitaleUtil.IsOverworld) {
                 dictOW.Clear();
                 foreach (FileInfo file in fInfoTest)
                     dictOW[FileLoader.getRelativePathWithoutExtension(directoryPath, file.FullName).ToLower()] = file;
