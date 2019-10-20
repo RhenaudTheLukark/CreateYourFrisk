@@ -162,11 +162,15 @@ it's w3c valid, at least
                 Exits the current game and sends the player back to the title screen.
             </p>
             <p>
-                <br><span class="function">General.SetBattle(<span class="string"></span> encounterName, <span class="boolean"></span> quickAnim = false, 
+                <br><span class="function">General.SetBattle(<span class="string"></span> encounterName = "", <span class="string"></span> anim = "normal", 
                 <span class="boolean"></span> ForceNoFlee = false)</span>
-                Initiates a battle with a chosen encounter (leave out the <span class="term">.lua</span>).
+                Initiates a battle with a chosen encounter (leave out the <span class="term">.lua</span> in <span class="term">encounterName</span>).<br>
+                Set <span class="term">encounterName</span> to <span class="term">""</span> to choose a random encounter from the current map's set mod folder
+                (except for ones that have <span class="term">#</span> in their name).
                 <br><br>
-                If you want the battle's intro to be quick like Undyne's battle, set <span class="term">quickAnim</span> to true.<br>
+                If you want the battle's intro to be quick like Undyne's battle, set <span class="term">anim</span> to <span class="term">"fast"</span>.<br>
+                You can also set it to <span class="term">"instant"</span> to enter the battle immediately on the next frame.
+                <br><br>
                 Finally, <span class="term">ForceNoFlee</span> removes the flee option from the encounter - unless your encounter sets 
 				<span class="term">flee</span> to true.
                 <br><br>
@@ -178,7 +182,7 @@ it's w3c valid, at least
                 Calling <span class="term">General.SetBattle</span> will STOP the current Event sequence.<br>
                 This means that <b>code you place AFTER</b> <span class="term">General.SetBattle</span> <b>will NOT activate</b>!
                 <br><br>
-                However, <span class="term">EventPage0()</span> will automatically be called when the battle ends.<br>
+                However, all events' <span class="term">EventPage0()</span> functions will automatically be called when the battle ends.<br>
                 Use this, and possibly Real Globals, to your advantage to detect when a battle ends.
                 </font>
             </p>

@@ -390,7 +390,8 @@ public class UIController : MonoBehaviour {
                 if (LuaScriptBinder.Get(null, "ForceNoFlee") != null) {
                     LuaEnemyEncounter.script.SetVar("flee", DynValue.NewBoolean(false));
                     LuaScriptBinder.Remove("ForceNoFlee");
-                } else if (!LuaEnemyEncounter.script.GetVar("flee").Boolean && LuaEnemyEncounter.script.GetVar("flee").Type != DataType.Nil)
+                }
+                if (!LuaEnemyEncounter.script.GetVar("flee").Boolean && LuaEnemyEncounter.script.GetVar("flee").Type != DataType.Nil)
                     encounter.CanRun = false;
                 else
                     encounter.CanRun = true;

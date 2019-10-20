@@ -236,8 +236,17 @@ public class LuaGeneralOW {
     /// </summary>
     /// <param name="encounterName"></param>
     /// <param name="quickAnim"></param>
-    [CYFEventFunction] public void SetBattle(string encounterName, bool quickAnim = false, bool ForceNoFlee = false) { PlayerOverworld.instance.SetEncounterAnim(encounterName, quickAnim, ForceNoFlee); }
+    [CYFEventFunction] public void SetBattle(string encounterName = "", string anim = "normal", bool ForceNoFlee = false) {
+        try {
+            anim = anim.ToLower();
+            if (anim != "normal" && anim != "fast" && anim != "instant")
+                throw new System.Exception();
+        } catch {
+            UnitaleUtil.DisplayLuaError(appliedScript.scriptname, "General.SetBattle: Invalid animation \"" + anim.ToString() + "\".\nIt should be\"normal\", \"fast\" or \"instant\".");
+        }
 
+        PlayerOverworld.instance.SetEncounterAnim(encounterName, anim, ForceNoFlee);
+    }
 
     [CYFEventFunction] public void EnterShop(string scriptName, bool instant = false) {
         ShopScript.scriptName = scriptName;

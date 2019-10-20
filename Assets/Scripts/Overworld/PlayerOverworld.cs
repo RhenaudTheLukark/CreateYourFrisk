@@ -407,10 +407,13 @@ public class PlayerOverworld : MonoBehaviour {
     /// The encounter anim, that ends to a battle
     /// </summary>
     /// <param name="encounterName">The name of the encounter. If not set, the encounter will be random.</param>
-    public void SetEncounterAnim(string encounterName = null, bool quickAnim = false, bool ForceNoFlee = false) { StartCoroutine(AnimationBeforeBattle(encounterName, quickAnim, ForceNoFlee)); }
+    public void SetEncounterAnim(string encounterName = "", string anim = "normal", bool ForceNoFlee = false) { StartCoroutine(AnimationBeforeBattle(encounterName, anim, ForceNoFlee)); }
 
     //The function that creates the animation before the encounter
-    IEnumerator AnimationBeforeBattle(string encounterName = null, bool quickAnim = false, bool ForceNoFlee = false) {
+    IEnumerator AnimationBeforeBattle(string encounterName = "", string anim = "normal", bool ForceNoFlee = false) {
+        bool quickAnim = (anim ==    "fast");
+        bool instant   = (anim == "instant");
+
         PlayerNoMove = true; //Begin encounter
         inBattleAnim = true;
         //Here are the player's soul and a black sprite, we'll need to make them go up
@@ -429,7 +432,7 @@ public class PlayerOverworld : MonoBehaviour {
         utHeart.transform.SetAsLastSibling();
 
         //If you want a quick animation, we just keep the end of the anim
-        if (!quickAnim) {
+        if (!quickAnim && !instant) {
             uiAudio.PlayOneShot(AudioClipRegistry.GetSound("BeginBattle1"));
 
             //Shows the encounter bubble, the "!" on the player
@@ -453,13 +456,15 @@ public class PlayerOverworld : MonoBehaviour {
         PlayerPos.GetComponent<SpriteRenderer>().color = new Color(color.r, color.g, color.b, 0);
         playerMask.GetComponent<Image>().color = new Color(color.r, color.g, color.b, 1);
 
-        for (int i = 0; i < 2; i++) {
-            utHeart.color = new Color(utHeart.color.r, utHeart.color.g, utHeart.color.b, 1f);
-            uiAudio.PlayOneShot(AudioClipRegistry.GetSound("BeginBattle2"));
-            yield return new WaitForSeconds(0.075f);
+        if (!instant){
+            for (int i = 0; i < 2; i++) {
+                utHeart.color = new Color(utHeart.color.r, utHeart.color.g, utHeart.color.b, 1f);
+                uiAudio.PlayOneShot(AudioClipRegistry.GetSound("BeginBattle2"));
+                yield return new WaitForSeconds(0.075f);
 
-            utHeart.color = new Color(utHeart.color.r, utHeart.color.g, utHeart.color.b, 0f);
-            yield return new WaitForSeconds(0.075f);
+                utHeart.color = new Color(utHeart.color.r, utHeart.color.g, utHeart.color.b, 0f);
+                yield return new WaitForSeconds(0.075f);
+            }
         }
 
         playerMask.color = new Color(color.r, color.g, color.b, 0);
@@ -481,18 +486,31 @@ public class PlayerOverworld : MonoBehaviour {
             utHeart.transform.position = positionTemp;
         }
 
-        yield return new WaitForSeconds(1f);
+        if (!instant)
+            yield return new WaitForSeconds(1f);
 
         //Set the heart's position
         Vector3 positionTemp3 = new Vector3(positionCamera.x - 320 + 48, positionCamera.y - 240 + 25, -5100f);
         utHeart.transform.position = positionTemp3;
 
+        if (instant) {
+            color = PlayerPos.GetComponent<SpriteRenderer>().color;
+            GameObject.Find("PlayerEncounter").GetComponent<Image>().color = new Color(color.r, color.g, color.b, 0);
+            GameObject.Find("EncounterBubble").GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 0);
+            PlayerPos.GetComponent<SpriteRenderer>().color = new Color(color.r, color.g, color.b, 1);
+
+            GameObject.Find("black").GetComponent<Image>().color = new Color(0, 0, 0, 0);
+            GameObject.Find("utHeart").GetComponent<Image>().color = new Color(GameObject.Find("utHeart").GetComponent<Image>().color.r, GameObject.Find("utHeart").GetComponent<Image>().color.g,
+                                                                               GameObject.Find("utHeart").GetComponent<Image>().color.b, 0);
+        }
+
         //Launch the battle
         StartCoroutine(SetEncounter(encounterName, ForceNoFlee));
+        yield return 0;
     }
 
     //The function that is used to launch a battle
-    private IEnumerator SetEncounter(string encounterName = null, bool ForceNoFlee = false) {
+    private IEnumerator SetEncounter(string encounterName = "", bool ForceNoFlee = false, bool instant = false) {
         //Saves our last map and the position of our player, before the battle
         string mapName;
         if (UnitaleUtil.MapCorrespondanceList.ContainsKey(SceneManager.GetActiveScene().name)) mapName = UnitaleUtil.MapCorrespondanceList[SceneManager.GetActiveScene().name];
@@ -512,7 +530,7 @@ public class PlayerOverworld : MonoBehaviour {
         DirectoryInfo di = new DirectoryInfo(Path.Combine(FileLoader.DataRoot, "Mods/" + StaticInits.MODFOLDER + "/Lua/Encounters"));
         FileInfo[] encounterFiles = di.GetFiles();
 
-        if (encounterName == null) {
+        if (encounterName == null || encounterName == "") {
             ArrayList encounterNames = new ArrayList();
             foreach (FileInfo encounterFile in encounterFiles) {
                 if (!encounterFile.Name.EndsWith(".lua") || encounterFile.Name[0] == '#')
@@ -540,13 +558,8 @@ public class PlayerOverworld : MonoBehaviour {
 
         LuaScriptBinder.ClearBattleVar();
 
-        yield return new WaitForEndOfFrame();
-        /*int width = Screen.width;
-        int height = Screen.height;
-        Texture2D tex = new Texture2D(width, height, TextureFormat.RGB24, false);
-        tex.ReadPixels(new Rect(0, 0, width, height), 0, 0);
-        tex.Apply();
-        GlobalControls.texBeforeEncounter = tex;*/
+        if (!instant)
+            yield return new WaitForEndOfFrame();
         GameObject.FindObjectOfType<Fading>().FadeInstant(1);
 
         //Reset how many times the player has to move before encounter an enemy
@@ -558,6 +571,7 @@ public class PlayerOverworld : MonoBehaviour {
         //Now, we load our battle.
         GlobalControls.isInFight = true;
         SceneManager.LoadScene("Battle", LoadSceneMode.Additive);
+        yield return 0;
     }
 
     /// <summary>
