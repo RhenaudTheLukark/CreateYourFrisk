@@ -1413,7 +1413,6 @@ GameObject:
   - component: {fileID: 1441977564}
   - component: {fileID: 1441977563}
   - component: {fileID: 1441977562}
-  - component: {fileID: 1441977561}
   m_Layer: 21
   m_Name: Save
   m_TagString: Event
@@ -1421,22 +1420,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1441977561
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1441977560}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5b6761159c8f6224a8a895abea10dd25, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  SetNativeSize: 1
-  SpritePath: Overworld/Save1
-  Loop: 0
-  SoundPath: 
-  done: 0
 --- !u!114 &1441977562
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2784,7 +2767,6 @@ GameObject:
   - component: {fileID: 2106957595}
   - component: {fileID: 2106957594}
   - component: {fileID: 2106957593}
-  - component: {fileID: 2106957592}
   m_Layer: 21
   m_Name: CharacterSelector
   m_TagString: Event
@@ -2792,22 +2774,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &2106957592
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 2106957591}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5b6761159c8f6224a8a895abea10dd25, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  SetNativeSize: 0
-  SpritePath: empty
-  Loop: 0
-  SoundPath: 
-  done: 0
 --- !u!114 &2106957593
 MonoBehaviour:
   m_ObjectHideFlags: 0
