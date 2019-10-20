@@ -148,7 +148,7 @@ public static class Inventory {
     
     public static void AddItemsToDictionaries() {
         NametoDesc.Add("Testing Dog", "A dog that tests something.\rDon't ask me what, I don't know.");        NametoShortName.Add("Testing Dog", "TestDog");
-        NametoType.Add("Testing Dog", 3);                                                                      NametoPrice.Add("Testing Dog", 1);
+        NametoType.Add("Testing Dog", 3);                                                                      NametoPrice.Add("Testing Dog", 0);
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------------
 
