@@ -42,6 +42,7 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+/bin
 
 # External mods
 /Assets/Mods/*
@@ -63,7 +64,6 @@ sysinfo.txt
 !/Assets/Mods/@Title.meta
 
 # IDE Stuff and others
-
 /.vs/*
 /.vscode/*
 /.bin/*
