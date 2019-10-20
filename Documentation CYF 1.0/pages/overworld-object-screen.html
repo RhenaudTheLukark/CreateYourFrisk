@@ -112,9 +112,9 @@ it's w3c valid, at least
                 128 is the recommended value for <span class="term">a</span>.<br>
                 The <span class="term">a</span> value can go up to 255, which means fully opaque, but at that point the screen will be fully obscured.
                 <br><br><br>
-                <font color="ffffff">* NOTE: To undo the efffects of this function, after the image is done fading in, you must either call
-                <span class="term">Event.Remove("Tone")</span> or set <span class="term">a</span> to 0.<br>
-                In the first case, be sure to first check if it exists through <span class="term">Event.Exists</span> first!</font></span>
+                <font color="ffffff">* NOTE: To undo the efffects of this function, call <span class="term">SetTone</span> again
+                but with the argument <span class="term">a</span> as <span class="term">0</span>.<br>
+                You can remove it instantly as well if you set <span class="term">anim</span> to false!</font></span>
             </p>
             
             <p>

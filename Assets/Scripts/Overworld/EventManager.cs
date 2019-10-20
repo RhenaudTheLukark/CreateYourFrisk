@@ -1261,7 +1261,7 @@ public class EventManager : MonoBehaviour {
         if (!waitEnd)
             scr.Call("CYFEventNextCommand");
 
-        while (GameObject.Find("Tone").GetComponent<Image>().color != new Color32((byte)r, (byte)g, (byte)b, (byte)a)) {
+        while (GameObject.Find("Tone") != null && GameObject.Find("Tone").GetComponent<Image>().color != new Color32((byte)r, (byte)g, (byte)b, (byte)a)) {
             for (int i = 0; i < realLacks.Length; i++)
                 realLacks[i] -= beginLacks[i] * 4 / beginHighest;
             if (highest <= 4)
@@ -1274,7 +1274,7 @@ public class EventManager : MonoBehaviour {
             yield return 0;
         }
 
-        if (a == 0)
+        if (GameObject.Find("Tone") != null && a == 0)
             luaevow.Remove("Tone");
         if (waitEnd)
             scr.Call("CYFEventNextCommand");
