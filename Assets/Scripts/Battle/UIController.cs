@@ -514,7 +514,6 @@ public class UIController : MonoBehaviour {
                     TextManager sbTextMan = speechBub.GetComponent<TextManager>();
                     monDialogues[i] = sbTextMan;
                     sbTextMan.SetCaller(encounter.EnabledEnemies[i].script);
-                    sbTextMan._textMaxWidth = (int)encounter.EnabledEnemies[i].bubbleWidth;
                     Image speechBubImg = speechBub.GetComponent<Image>();
 
                     // error catcher
@@ -528,6 +527,7 @@ public class UIController : MonoBehaviour {
                                                         "This monster has no set dialogue bubble.");
                     }
 
+                    sbTextMan._textMaxWidth = (int)encounter.EnabledEnemies[i].bubbleWidth;
                     Sprite speechBubSpr = speechBubImg.sprite;
                     // TODO improve position setting/remove hardcoding of position setting
                     speechBub.transform.SetParent(encounter.EnabledEnemies[i].transform);
