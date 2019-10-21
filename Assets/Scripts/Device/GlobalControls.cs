@@ -36,7 +36,7 @@ public class GlobalControls : MonoBehaviour {
     private bool screenShaking = false;
     public static Vector2 beginPosition;
     //public static bool samariosNightmare = false;
-    public static string[] nonOWScenes = new string[] { "Battle", "Error", /*"EncounterSelect",*/ "ModSelect", "GameOver", "TitleScreen", "Disclaimer", "EnterName", "TransitionOverworld", "Intro" };
+    public static string[] nonOWScenes = new string[] { "Battle", "Error", "ModSelect", "Options", "GameOver", "TitleScreen", "Disclaimer", "EnterName", "TransitionOverworld", "Intro" };
     public static string[] canTransOW = new string[] { "Battle", "Error", "GameOver" };
     //Wow what's this
     public static Dictionary<string, GameState.MapData> GameMapData = new Dictionary<string, GameState.MapData>();

@@ -281,7 +281,7 @@ public class TextManager : MonoBehaviour {
         if (textQueue != null)
             if (line < textQueue.Length)
                 if (textQueue[line] != null) {
-                    if ((UnitaleUtil.IsOverworld && GameObject.Find("textframe_border_outer") && this == PlayerOverworld.instance.textmgr) || this == UIController.instance.textmgr)
+                    if ((UnitaleUtil.IsOverworld || GlobalControls.isInFight) && ((UIController.instance && this == UIController.instance.textmgr) || (GameObject.Find("textframe_border_outer") && this == PlayerOverworld.instance.textmgr)))
                         SetMugshot(textQueue[line].Mugshot);
 
                     if (!offsetSet)
