@@ -71,19 +71,9 @@ public class ScriptWrapper {
                             UnitaleUtil.DisplayLuaError(scriptname + ", calling the function " + function, "This is a " + ex.GetType() + " error. Contact the dev and show him this screen, this must be an engine-side error.\n\n" + ex.Message + "\n\n" + ex.StackTrace + "\n");
                     }
                 } else if (e.GetType() == typeof(InterpreterException) || e.GetType().BaseType == typeof(InterpreterException) || e.GetType().BaseType.BaseType == typeof(InterpreterException)) {
-                    bool success = false;
-                    try {
-                        if (((InterpreterException)e).DecoratedMessage != null && ((InterpreterException)e).DecoratedMessage.IndexOf(((InterpreterException)e).Message) > 5 && ((InterpreterException)e).Message.IndexOf("): ") > 3) {
-                            string source = ((InterpreterException)e).Message.Substring(0, ((InterpreterException)e).Message.IndexOf("): ") + 2);
-                            string left = ((InterpreterException)e).Message.Substring(source.Length, ((InterpreterException)e).Message.Length - source.Length);
-                            UnitaleUtil.DisplayLuaError(scriptname, UnitaleUtil.FormatErrorSource(source, "") + left);
-                            success = true;
-                        }
-                    } catch {}
-                    if (!success)
-                        UnitaleUtil.DisplayLuaError(scriptname, ((InterpreterException)e).DecoratedMessage == null ? 
-                                                                ((InterpreterException)e).Message : 
-                                                                UnitaleUtil.FormatErrorSource(((InterpreterException)e).DecoratedMessage, ((InterpreterException)e).Message) + ((InterpreterException)e).Message);
+                    UnitaleUtil.DisplayLuaError(scriptname, ((InterpreterException)e).DecoratedMessage == null ? 
+                                                            ((InterpreterException)e).Message : 
+                                                            UnitaleUtil.FormatErrorSource(((InterpreterException)e).DecoratedMessage, ((InterpreterException)e).Message) + ((InterpreterException)e).Message);
                 } else if (!GlobalControls.retroMode)
                     UnitaleUtil.DisplayLuaError(scriptname + ", calling the function " + function, "This is a " + e.GetType() + " error. Contact the dev and show him this screen, this must be an engine-side error.\n\n" + e.Message + "\n\n" + e.StackTrace + "\n");
             }
