@@ -51,11 +51,14 @@ public class NewMusicManager {
         return audiolist.ContainsKey(name);
     }
 
-    public static string GetAudioName(string name) {
+    public static string GetAudioName(string name, bool withPrefix = true) {
         if (name == null)
             throw new CYFException("NewAudio.GetAudioName: The first argument (the channel name) is nil.\n\nSee the documentation for proper usage.");
         if (!audiolist.ContainsKey(name)) throw new CYFException("The audio channel " + name + " doesn't exist.");
-        return audioname[name];
+        string toReturn = audioname[name];
+        if (!withPrefix && name != "empty")
+            return toReturn.Substring(6, toReturn.Length - 6);
+        return toReturn;
     }
 
     public static float GetTotalTime(string name) {

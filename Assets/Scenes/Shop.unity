@@ -1017,7 +1017,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   letterSound: {fileID: 0}
   currentLine: 0
-  _textMaxWidth: 0
+  _textMaxWidth: 574
   currentReferenceCharacter: 0
   nextMonsterDialogueOnce: 0
   nmd2: 0

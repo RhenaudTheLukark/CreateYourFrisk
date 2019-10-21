@@ -538,7 +538,7 @@ public class PlayerOverworld : MonoBehaviour {
                 encounterNames.Add(Path.GetFileNameWithoutExtension(encounterFile.Name));
             }
             if (encounterNames.Count == 0) {
-                UnitaleUtil.DisplayLuaError("Overworld System", "There's no valid encounter to launch.\nYou need to have at least 1 encounter\nthat doesn't have a '#' for first character!");
+                UnitaleUtil.DisplayLuaError("Overworld System", "There's no valid encounter to launch.\nYou need to have at least 1 encounter in your mod that doesn't have a '#' as its first character!");
                 yield break;
             } else {
                 if (encounterNames.Count == 1)
@@ -901,20 +901,20 @@ public class PlayerOverworld : MonoBehaviour {
         return true;
     }
 
-    private static Dictionary<string, string> overworldMusics = new Dictionary<string, string>();
+    private static List<string> overworldMusics = new List<string>();
 
     public static void HideOverworld(string callFrom = "Unknown") {
         overworldMusics.Clear();
         List<string> toDelete = new List<string>();
-        foreach (string str in NewMusicManager.audioname.Keys) {
+        foreach (string str in NewMusicManager.audiolist.Keys) {
             AudioSource audio = (AudioSource)NewMusicManager.audiolist[str];
             if (!audio) {
                 toDelete.Add(str);
                 continue;
             }
             if (!audio.name.Contains("StaticKeptAudio"))
-                if (audio.isPlaying) {
-                    overworldMusics.Add(audio.gameObject.name, NewMusicManager.audioname[str]);
+                if (audio.isPlaying && str != "src") {
+                    overworldMusics.Add(str);
                     NewMusicManager.Stop(str);
                 }
         }
@@ -972,11 +972,18 @@ public class PlayerOverworld : MonoBehaviour {
         }
 
         GameObject.FindObjectOfType<Fading>().fade.color = new Color(0, 0, 0, 1);
-        foreach (string str in overworldMusics.Keys)
+        foreach (string str in overworldMusics)
             try {
                 if (!NewMusicManager.Exists(str))
                     NewMusicManager.CreateChannel(str);
-                NewMusicManager.PlayMusic(str, overworldMusics[str]);
+                AudioSource channel = ((AudioSource)NewMusicManager.audiolist[str]);
+                string clipNameWithPrefix = NewMusicManager.GetAudioName(str);
+                if      (clipNameWithPrefix.StartsWith("music:"))
+                    NewMusicManager.PlayMusic(str, NewMusicManager.GetAudioName(str, false), channel.loop, channel.volume);
+                else if (clipNameWithPrefix.StartsWith("sound:"))
+                    NewMusicManager.PlaySound(str, NewMusicManager.GetAudioName(str, false), channel.loop, channel.volume);
+                else if (clipNameWithPrefix.StartsWith("voice:"))
+                    NewMusicManager.PlayVoice(str, NewMusicManager.GetAudioName(str, false), channel.loop, channel.volume);
             } catch { }
         overworldMusics.Clear();
         instance.OnDisable();

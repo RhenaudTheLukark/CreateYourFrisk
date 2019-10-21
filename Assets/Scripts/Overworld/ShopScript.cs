@@ -76,6 +76,7 @@ public class ShopScript : MonoBehaviour {
             tmInfo.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][novoice]", false, true) });
 
             Camera.main.GetComponent<AudioSource>().clip = AudioClipRegistry.GetMusic(script.GetVar("music").String);
+            Camera.main.GetComponent<AudioSource>().time = 0;
             Camera.main.GetComponent<AudioSource>().Play();
 
             SetPlayerOnSelection();
