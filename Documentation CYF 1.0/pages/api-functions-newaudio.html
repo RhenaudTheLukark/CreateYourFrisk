@@ -97,8 +97,15 @@ it's w3c valid, at least
                 <span class="term">name</span>.</li><br>
                 <li><span class="boolean"></span> <span class="term">NewAudio.Exists(<span class="string"></span> name)</span> - Checks if the audio channel
                 <span class="term">name</span> exists.</li><br>
-                <li><span class="string"></span> <span class="term">NewAudio.GetAudioName(<span class="string"></span> name)</span> - Gets the name and type of the audio clip currently playing in the channel 
-                <span class="term">name</span> as a string.<br>For example, playing the sound <span class="term">dogsecret</span> in an audio channel 
+                <li><span class="string"></span> <span class="term">NewAudio.GetAudioName(<span class="string"></span> name,
+                <span class="boolean"></span> withPrefix = true)</span> - Gets the name and type of the audio clip currently playing in the channel 
+                <span class="term">name</span> as a string.<br>
+                If no audio is playing in a channel, this function returns <span class="term">"empty"</span>.
+                <br><br>
+                If <span class="term">withPrefix</span> is true, the string returned by this function will begin with <span class="term">music:</span> for music clips,
+                <span class="term">sound:</span> for sound clips and <span class="term">voice:</span> for voice clips.
+                <br><br>
+                For example, playing the sound <span class="term">dogsecret</span> in an audio channel 
                 and using this function on that channel would return the string <span class="term">"sound:dogsecret"</span>.</li><br>
                 <li><span class="number"></span> <span class="term">NewAudio.GetTotalTime(<span class="string"></span> name)</span> - Gets the length of time in seconds that an audio channel <span class="term">name</span>'s most recently played audio lasts for.</li><br>
                 <li><span class="number"></span> <span class="term">NewAudio.GetPlayTime(<span class="string"></span> name)</span> or <span class="number"></span> <span class="term">NewAudio.GetCurrentTime(<span class="string"></span> name)</span> - Get the current play position of the current audio of this channel

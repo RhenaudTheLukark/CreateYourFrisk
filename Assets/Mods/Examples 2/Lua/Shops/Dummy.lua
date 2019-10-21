@@ -25,7 +25,7 @@ talklist = {
     }
 }
 
-maintalk = "Hello there![w:10]\nGlad to meet you,[w:5] I'm\rjust a shopkeeper who\rlives out of bounds."
+maintalk = "Hello there![w:10]\nGlad to meet you,[w:5] I'm just a shopkeeper who lives out of bounds."
 buytalk = "Want to look\nat my wares?\nI'm just a\nshopkeeper."
 selltalk = { "Sorry, but we're not a pawn shop here, I'm just a shopkeeper.",
              "If you want to sell items you can go to the Temmie Village, Temmies love to collect items.",
