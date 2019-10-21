@@ -117,6 +117,9 @@ public class TextManager : MonoBehaviour {
         Charset = default_charset;
         letterSound.clip = default_voice ?? default_charset.Sound;
         defaultColor = default_charset.DefaultColor;
+
+        if (gameObject.name == "TextManager OW")
+            default_voice = AudioClipRegistry.GetVoice("monsterfont");
     }
 
     protected virtual void Awake() {
@@ -281,7 +284,7 @@ public class TextManager : MonoBehaviour {
         if (textQueue != null)
             if (line < textQueue.Length)
                 if (textQueue[line] != null) {
-                    if ((UnitaleUtil.IsOverworld || GlobalControls.isInFight) && ((UIController.instance && this == UIController.instance.textmgr) || (GameObject.Find("textframe_border_outer") && this == PlayerOverworld.instance.textmgr)))
+                    if ((UnitaleUtil.IsOverworld || GlobalControls.isInFight) && ((UIController.instance && this == UIController.instance.textmgr) || gameObject.name == "TextManager OW"))
                         SetMugshot(textQueue[line].Mugshot);
 
                     if (!offsetSet)

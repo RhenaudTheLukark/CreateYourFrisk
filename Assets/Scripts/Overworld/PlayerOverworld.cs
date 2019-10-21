@@ -869,7 +869,7 @@ public class PlayerOverworld : MonoBehaviour {
                         if (GlobalControls.crate)
                             instance.textmgr.SetText(new TextMessage("NO CELPLHONE ALOLWDE!!!", true, false));
                         else
-                            instance.textmgr.SetText(new TextMessage("But you don't have a cellphone...[w:10]yet.", true, false));
+                            instance.textmgr.SetText(new TextMessage("But you don't have a cellphone... [w:10]yet.", true, false));
                         instance.textmgr.transform.parent.parent.SetAsLastSibling();
                     }
                 } else if (GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED)
