@@ -2984,6 +2984,14 @@ Prefab:
       propertyPath: anims.Array.data[0].anims
       value: FriskUT/0, FriskUT/1, FriskUT/2, FriskUT/3
       objectReference: {fileID: 0}
+    - target: {fileID: 465484, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 465484, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
   m_IsPrefabAsset: 0

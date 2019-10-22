@@ -365,8 +365,10 @@ public static class LuaScriptBinder {
             }
         }
         // Layers don't exist in the overworld, so we don't set it
-        if (!UnitaleUtil.IsOverworld)
+        if (!UnitaleUtil.IsOverworld || GlobalControls.isInShop)
             luatm.layer = layer;
+        else
+            go.transform.SetParent(GameObject.Find("Canvas OW").transform);
         luatm.textMaxWidth = textWidth;
         luatm.bubbleHeight = bubbleHeight;
         luatm.ShowBubble();
