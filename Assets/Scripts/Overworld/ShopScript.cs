@@ -149,7 +149,9 @@ public class ShopScript : MonoBehaviour {
                 currentItemIndex = selection;
                 selection = 1;
                 numberOfChoices = 2;
-                tmBigTalk.SetTextQueue(new TextMessage[] { new TextMessage("[linespacing:11][noskipatall][font:uidialoglilspace][novoice]          Sell for " + Inventory.NametoPrice[Inventory.inventory[currentItemIndex].Name] / 5 + "G?\n    Yes\tNo", false, true) });
+                tmBigTalk.SetTextQueue(new TextMessage[] { new TextMessage("[linespacing:11][noskipatall][font:uidialoglilspace][novoice]\n          Sell the " + Inventory.inventory[currentItemIndex].Name + " for " +
+                                                                           Inventory.NametoPrice[Inventory.inventory[currentItemIndex].Name] / 5 + "G?\n \n              Yes\tNo" +
+                                                                           "\n \n \t   [color:ffff00](" + PlayerCharacter.instance.Gold + "G)", false, true) });
                 break;
             case State.BUY:
                 TryCall("EnterBuy");
@@ -238,14 +240,14 @@ public class ShopScript : MonoBehaviour {
             default:
                 break;
         }
-        string[] text = tm.textQueue[0].Text.Replace("\n", " \n").Replace("\r", " \r").Replace("\t", " \t").Split(new char[] { '\n', '\r', '\t' });
+        string[] text = tm.textQueue[0].Text.Split(new char[] { '\n', '\r', '\t' });
         int selectionTemp = selection;
         if (currentState == State.SELL && selection == numberOfChoices - 1)
             selection = 8;
         else if (currentState == State.BUYCONFIRM)
             selection = selection + 3;
         else if (currentState == State.SELLCONFIRM)
-            selection = selection + 1;
+            selection = selection + 3;
         int beginLine = GetIndexFirstCharOfLineFromChild(tm);
         Vector3 v = tm.transform.GetChild(GetIndexFirstCharOfLineFromText(text[selection]) + beginLine).position;
         utHeart.transform.position = new Vector3(v.x - 16, v.y + 8, v.z);
@@ -255,7 +257,7 @@ public class ShopScript : MonoBehaviour {
                 infoActive = false;
             else {
                 infoActive = true;
-                string info = mainPrice[currentItemIndex] == 0 ? "SOLD OUT" : mainInfo[selection].String;
+                string info = mainPrice[selection] == 0 ? "SOLD OUT" : mainInfo[selection].String;
                 tmInfo.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][novoice][font:uidialoglilspace]" + info, false, true) });
             }
         }
@@ -270,8 +272,10 @@ public class ShopScript : MonoBehaviour {
                 if (tm.transform.GetChild(i).position.y <= y - 8 || tm.transform.GetChild(i).position.y >= y + 8 || Mathf.Round(tm.transform.GetChild(i).position.x) == 356) {
                     count++;
                     y = tm.transform.GetChild(i).position.y;
-                    if (count == selection)
+                    if (count == selection) {
                         beginLine = i;
+                        break;
+                    }
                 }
         }
         return beginLine;
@@ -306,9 +310,6 @@ public class ShopScript : MonoBehaviour {
             if (i < itemPrice.Length && itemPrice[i].Type != DataType.Number && itemPrice[i].Number % 1 != 0) throw new CYFException("The price table must contain integers.");
             if (!Inventory.NametoDesc.Keys.Contains(itemName[i].String))
                 throw new CYFException("The item \"" + itemName[i].String + "\" doesn't exist in the inventory database.");
-            //Aligns the hyphens 2nd part
-            /*for (int j = lengths[i]; j < maxLength; j++)
-                result += "  ";*/
             mainName[i] = itemName[i].String;
             mainInfo[i] = i >= itemInfo.Length ? DynValue.NewString(Inventory.NametoDesc[itemName[i].String]) : itemInfo[i];
             mainPrice[i] = i >= itemPrice.Length ? Inventory.NametoPrice[mainName[i]] : (int)itemPrice[i].Number;
@@ -385,7 +386,7 @@ public class ShopScript : MonoBehaviour {
                 else {
                     ChangeState(State.SELLCONFIRM, 0);
                     if (Inventory.NametoPrice[Inventory.inventory[currentItemIndex].Name] == 0) {
-                        UnitaleUtil.PlaySound("SeparateSound", "sellFail");
+                        UnitaleUtil.PlaySound("SeparateSound", "ShopFail");
                         TryCall("FailSell", DynValue.NewString("cantsell"));
                         HandleCancel();
                     }
@@ -403,6 +404,7 @@ public class ShopScript : MonoBehaviour {
                     else if (mainPrice[currentItemIndex] == 0)                       TryCall("FailBuy", DynValue.NewString("soldout"));
                     else {
                         TryCall("SuccessBuy", DynValue.NewString(mainName[currentItemIndex]));
+                        UnitaleUtil.PlaySound("SeparateSound", "ShopSuccess");
                         PlayerCharacter.instance.SetGold(PlayerCharacter.instance.Gold - mainPrice[currentItemIndex]);
                         Inventory.AddItem(mainName[currentItemIndex]);
                         tmGold.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][novoice]" + PlayerCharacter.instance.Gold + "G", false, true) });
@@ -418,6 +420,7 @@ public class ShopScript : MonoBehaviour {
                 if (selection == numberOfChoices - 1) TryCall("ReturnSell");
                 else {
                     TryCall("SuccessSell", DynValue.NewString(mainName[currentItemIndex]));
+                    UnitaleUtil.PlaySound("SeparateSound", "ShopSuccess");
                     PlayerCharacter.instance.SetGold(PlayerCharacter.instance.Gold + Inventory.NametoPrice[Inventory.inventory[currentItemIndex].Name] / 5);
                     Inventory.RemoveItem(currentItemIndex);
                     if (currentItemIndex == Inventory.inventory.Count && Inventory.inventory.Count != 1)
@@ -492,6 +495,8 @@ public class ShopScript : MonoBehaviour {
                     EnableBigText(false);
                     break;
                 case State.EXIT:
+                    if (tp != null)
+                        break;
                     if (script.GetVar("returnscene").Type != DataType.String)
                         throw new CYFException("The variable \"returnscene\" must be a string.");
                     if (script.GetVar("returnpos").Type != DataType.Table)
