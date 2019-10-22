@@ -22,7 +22,7 @@ public class EventManager : MonoBehaviour {
     public  int actualEventIndex = -1;      //ID of the actual event we're running
     public  bool readyToReLaunch = false;   //Used to prevent overworld GameOver errors
     public  bool bgmCoroutine = false;      //Check if the BGM is already fading
-    public  bool passPressOnce = false;     //Boolean used because events are boring
+    public bool passPressOnce = false;      //Boolean used because events are boring
     public  bool _scriptLaunched = false;
     public bool ScriptLaunched {             
         get { return _scriptLaunched || PlayerOverworld.instance.forceNoAction; }
@@ -169,7 +169,7 @@ public class EventManager : MonoBehaviour {
                 if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED && !passPressOnce) {
                     RaycastHit2D hit;
                     TestEventPress(PlayerOverworld.instance.lastMove.x, PlayerOverworld.instance.lastMove.y, out hit);
-                } else if (passPressOnce && GameObject.Find("textframe_border_outer").GetComponent<Image>().color.a == 0)
+                } else
                     passPressOnce = false;
 
                 if (events.Count != 0)
@@ -186,7 +186,8 @@ public class EventManager : MonoBehaviour {
                             return;
                         }
                     }
-            }
+            } else
+                passPressOnce = false;
             CheckEndEvent();
         } catch (InvalidOperationException e) { Debug.LogError(e.Message); }
     }
@@ -504,7 +505,7 @@ public class EventManager : MonoBehaviour {
             scriptText += "\n" + boundValueName[t] + " = { }";
             foreach (string member in members) {
                 string completeMember = boundValueName[t] + "." + member;
-                scriptText += "\n" + "function " + completeMember + "(p1,p2,p3,p4,p5,p6,p7,p8,p9,p10) return CYFEventForwarder(\"" + completeMember + "\",p1,p2,p3,p4,p5,p6,p7,p8,p9,p10) end";
+                scriptText += "\n" + "function " + completeMember + "(...) return CYFEventForwarder(\"" + completeMember + "\",...) end";
                 lameFunctionBinding += "\n    " + (once ? "elseif" : "if") + " func == '" + completeMember + "' then x = F" + completeMember;
                 once = true;
             }
@@ -523,11 +524,12 @@ CYFEventLastAction = """"
 local CYFEventCurrentFunction = nil
 local CYFEventAlreadyLaunched = false
 function CYFFormatError(err)
-    local filename = debug.getinfo(1, 'S').source:sub(2)
-    if err:startsWith(filename) then
-        local before = err:sub(0, err:find(':%(') and err:find(':%(') + 1 or err:find(':'))
+    local pattern = ':[%(%d%-%),]+:'
+    local code = err:match(pattern)
+    if code then
+        local before = err:sub(0, err:find(pattern) + (code:sub(0, 2) == ':(' and 1 or 0))
         local numbers = err:match('[%d,%-]+[):]'):sub(0, -2)
-        local after = err:sub(err:find(numbers:gsub('%-', '%%-')) + #numbers)
+        local after = err:sub(err:find(numbers:gsub('%-', '%%-'), #before) + #numbers)
         
         -- there are only 4 possible formats for error messages
         -- see Assets/Plugins/MoonSharp/Interpreter/Debugging/SourceRef.cs line 178
@@ -573,24 +575,15 @@ function CYFEventStartEvent(func)
     local ok, errorMsg = coroutine.resume(CYFEventCoroutine)
     if not ok then error(errorMsg, 0) end
 end
-function CYFEventForwarder(func, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10)
+function CYFEventForwarder(func, ...)
     CYFEventAlreadyLaunched = false
     CYFEventCheckRefresh = true
     FGeneral.HiddenReloadAppliedScript()
     CYFEventLastAction = func
     local x" + lameFunctionBinding + "\n"
-+ @"local result
-    if     arg1 == nil  then  result = x()
-    elseif arg2 == nil  then  result = x(arg1)
-    elseif arg3 == nil  then  result = x(arg1, arg2)
-    elseif arg4 == nil  then  result = x(arg1, arg2, arg3)
-    elseif arg5 == nil  then  result = x(arg1, arg2, arg3, arg4)
-    elseif arg6 == nil  then  result = x(arg1, arg2, arg3, arg4, arg5)
-    elseif arg7 == nil  then  result = x(arg1, arg2, arg3, arg4, arg5, arg6)
-    elseif arg8 == nil  then  result = x(arg1, arg2, arg3, arg4, arg5, arg6, arg7)
-    elseif arg9 == nil  then  result = x(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8)
-    elseif arg10 == nil then  result = x(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9)
-    else                      result = x(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10)
++ @"local ok, result = #({...}) > 0 and pcall(x, ...) or pcall(x)
+    if not ok then
+        error(CYFFormatError(result), 0)
     end
     if not CYFEventAlreadyLaunched then coroutine.yield() end
     return result
@@ -1405,6 +1398,7 @@ end";
 
         if (forced) {
             SaveLoad.Save();
+            script.Call("CYFEventNextCommand");
             yield break;
         } else if (coroutines.ContainsKey(scr) && script != scr) {
             UnitaleUtil.DisplayLuaError(scr.scriptname, "General.Save: This function cannot be used in a coroutine.");

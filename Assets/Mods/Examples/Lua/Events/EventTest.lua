@@ -1,8 +1,5 @@
 function EventPage1()
-    if Event.Exists("Punder") then
-        Event.MoveToPoint("Punder", 400, 240, true, false)
-    end
-    Event.MoveToPoint("Player", 430, 180, true)
+    Event.MoveToPoint("Player", 430, 174, true)
     Event.SetDirection("Player", 6)
     local animHeader = Event.GetAnimHeader("Player")
     if     animHeader == ""        then Event.SetPage(Event.GetName(), 10)     -- Frisk
@@ -97,10 +94,10 @@ function EventPage69()
                         "[voice:v_asriel]It doesn't look like it'll move any time soon...",
                         "[voice:v_asriel]Hmmm... Maybe I could try being nice to it...?",
                         "[voice:v_asriel]Mister doggy, may you please let me through?" }, true,
-                      { { "Asriel/normal", "Asriel/normalT", 0.2 },
-                        { "Asriel/sad",    "Asriel/sadT",    0.2 },
-                        { "Asriel/normal", "Asriel/normalT", 0.2 },
-                        { "Asriel/happy",  "Asriel/happyT" , 0.2 } })
+                      { { "Asriel/normalT", "Asriel/normal", 0.2 },
+                        { "Asriel/sadT",    "Asriel/sad",    0.2 },
+                        { "Asriel/normalT", "Asriel/normal", 0.2 },
+                        { "Asriel/happyT",  "Asriel/happy" , 0.2 } })
     Event.SetPage(Event.GetName(), 1)
 end
 

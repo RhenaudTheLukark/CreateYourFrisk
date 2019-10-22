@@ -244,12 +244,16 @@ public class TextManager : MonoBehaviour {
         bool mugshotSet = false;
         if (mugshot != null && mugshot._img != null)
             if ((mugshots.Count > 1 || (mugshots[0] != "mugshots/" && mugshots[0] != "mugshots/null")) && text != null) {
-                if (mugshots.Count > 1) {
-                    mugshot.SetAnimation((string[])UnitaleUtil.ListToArray(mugshots), time);
-                    if (finalMugshot == null)
-                        finalMugshot = mugshots[mugshots.Count - 1];
-                } else
-                    mugshot.Set(mugshots[0]);
+                try {
+                    if (mugshots.Count > 1) {
+                        mugshot.SetAnimation((string[])UnitaleUtil.ListToArray(mugshots), time);
+                        if (finalMugshot == null)
+                            finalMugshot = mugshots[mugshots.Count - 1];
+                    } else
+                        mugshot.Set(mugshots[0]);
+                } catch (CYFException e) {
+                    UnitaleUtil.DisplayLuaError("mugshot system", e.Message);
+                }
                 mugshotSet = true;
                 mugshotTimer = time;
                 mugshotList = (string[])UnitaleUtil.ListToArray(mugshots);

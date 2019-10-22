@@ -198,6 +198,7 @@ public class PlayerOverworld : MonoBehaviour {
         if (!textmgr.AllLinesComplete() && (textmgr.CanAutoSkipAll() || textmgr.LineComplete()))
             textmgr.NextLineText();
         else if ((textmgr.AllLinesComplete() || textmgr.CanAutoSkipAll()) && textmgr.LineCount() != 0) {
+            EventManager.instance.passPressOnce = true;
             textmgr.transform.parent.parent.SetAsFirstSibling();
             textmgr.SetTextQueue(null);
             textmgr.DestroyChars();
@@ -219,7 +220,7 @@ public class PlayerOverworld : MonoBehaviour {
                             NextText();
                         if (GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED && !textmgr.blockSkip && !textmgr.LineComplete() && textmgr.CanSkip())
                             textmgr.SkipLine();
-                        else if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED && !textmgr.blockSkip)
+                        else if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED && !textmgr.blockSkip && !EventManager.instance.passPressOnce)
                             NextText();
                     } catch { }
                 }
@@ -282,8 +283,7 @@ public class PlayerOverworld : MonoBehaviour {
         if (GlobalControls.input.Menu == UndertaleInput.ButtonState.PRESSED)
             if (menuRunning[2] && !menuRunning[4])
                 CloseMenu(true);
-        if (menuRunning[4])
-            menuRunning[4] = false;
+        menuRunning[4] = false;
     }
     
     //Moves the object
@@ -879,17 +879,18 @@ public class PlayerOverworld : MonoBehaviour {
         }
         while (instance.PlayerNoMove)
             yield return 0;
+        instance.menuRunning[2] = false;
         instance.menuRunning[3] = false;
     }
 
     private static bool CloseMenu(bool endOfInText = false) {
         foreach (Transform tf in GameObject.Find("MenuContainer").GetComponentsInChildren<Transform>()) {
-            if (tf.GetComponent<Image>()) tf.gameObject.GetComponent<Image>().color = new Color(tf.gameObject.GetComponent<Image>().color.a,
+            if (tf.GetComponent<Image>()) tf.gameObject.GetComponent<Image>().color = new Color(tf.gameObject.GetComponent<Image>().color.r,
                                                                                                 tf.gameObject.GetComponent<Image>().color.b,
                                                                                                 tf.gameObject.GetComponent<Image>().color.g, 0);
             if (tf.GetComponent<TextManager>()) tf.gameObject.GetComponent<TextManager>().DestroyChars();
         }
-        instance.menuRunning = new bool[] { false, false, false, true, true };
+        instance.menuRunning = new bool[] { false, false, !endOfInText, true, true };
         GameObject.Find("Mugshot").GetComponent<Image>().color = new Color(1, 1, 1, 0);
         GameObject.Find("textframe_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 0);
         GameObject.Find("textframe_interior").GetComponent<Image>().color = new Color(0, 0, 0, 0);
@@ -904,6 +905,7 @@ public class PlayerOverworld : MonoBehaviour {
     private static List<string> overworldMusics = new List<string>();
 
     public static void HideOverworld(string callFrom = "Unknown") {
+        Camera.main.GetComponent<FPSDisplay>().enabled = false;
         overworldMusics.Clear();
         List<string> toDelete = new List<string>();
         foreach (string str in NewMusicManager.audiolist.Keys) {
@@ -939,6 +941,7 @@ public class PlayerOverworld : MonoBehaviour {
     }
 
     public static void ShowOverworld(string callFrom = "Unknown") {
+        Camera.main.GetComponent<FPSDisplay>().enabled = false;
         Transform[] root = UnitaleUtil.GetFirstChildren(null, true);
         GameObject go = null;
         foreach (Transform tf in root)

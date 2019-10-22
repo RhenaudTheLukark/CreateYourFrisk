@@ -54,7 +54,7 @@ public class LuaEventOW {
     /// <param name="name"></param>
     /// <param name="dirX"></param>
     /// <param name="dirY"></param>
-    [CYFEventFunction] public void MoveToPoint(string name, float dirX, float dirY, bool wallPass = false, bool waitEnd = true) { StCoroutine("IMoveEventToPoint", new object[] { name, dirX, dirY, wallPass, waitEnd }, appliedScript.GetVar("_internalScriptName").String); }
+    [CYFEventFunction] public void MoveToPoint(string name, float dirX, float dirY, bool wallPass = false, bool waitEnd = true) { StCoroutine("IMoveEventToPoint", new object[] { name, dirX, dirY, wallPass, waitEnd }, name); }
 
     /// <summary>
     /// Function that permits to put an animation on an event
@@ -134,7 +134,7 @@ public class LuaEventOW {
     /// <param name="axisAnim"></param>
     [CYFEventFunction] public void Rotate(string name, float rotateX, float rotateY, float rotateZ, bool anim = true, bool waitEnd = true) {
         if (anim) {
-            StCoroutine("IRotateEvent", new object[] { name, rotateX, rotateY, rotateZ, true }, appliedScript.GetVar("_internalScriptName").String);
+            StCoroutine("IRotateEvent", new object[] { name, rotateX, rotateY, rotateZ, true }, name);
         } else {
             for (int i = 0; i < EventManager.instance.events.Count || name == "Player"; i++) {
                 GameObject go = null;

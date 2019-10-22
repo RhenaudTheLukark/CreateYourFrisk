@@ -10,7 +10,6 @@ public static class SpriteRegistry {
     public static Sprite EMPTY_SPRITE;
     private static Dictionary<string, FileInfo> dictDefault = new Dictionary<string, FileInfo>();
     private static Dictionary<string, FileInfo> dictMod = new Dictionary<string, FileInfo>();
-    private static Dictionary<string, FileInfo> dictOW = new Dictionary<string, FileInfo>();
 
     public static void Start() {
         loadAllFrom(FileLoader.pathToDefaultFile("Sprites"));
@@ -28,9 +27,7 @@ public static class SpriteRegistry {
 
     private static Sprite tryLoad(string key) {
         string dictKey = (UnitaleUtil.IsOverworld ? "ow" : "b") + key;
-        if      (UnitaleUtil.IsOverworld && dictOW.ContainsKey(key))
-            dict[dictKey] = SpriteUtil.FromFile(dictOW[key].FullName);
-        else if (!UnitaleUtil.IsOverworld && dictMod.ContainsKey(key))
+        if      (dictMod.ContainsKey(key))
             dict[dictKey] = SpriteUtil.FromFile(dictMod[key].FullName);
         else if (dictDefault.ContainsKey(key))
             dict[dictKey] = SpriteUtil.FromFile(dictDefault[key].FullName);
@@ -78,11 +75,6 @@ public static class SpriteRegistry {
             dictMod.Clear();
             foreach (FileInfo file in fInfoTest)
                 dictMod[FileLoader.getRelativePathWithoutExtension(directoryPath, file.FullName).ToLower()] = file;
-            if (UnitaleUtil.IsOverworld) {
-                dictOW.Clear();
-                foreach (FileInfo file in fInfoTest)
-                    dictOW[FileLoader.getRelativePathWithoutExtension(directoryPath, file.FullName).ToLower()] = file;
-            }
         } else {
             dictDefault.Clear();
             foreach (FileInfo file in fInfoTest)

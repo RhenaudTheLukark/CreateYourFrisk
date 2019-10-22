@@ -607,7 +607,7 @@ GameObject:
   - component: {fileID: 674305609}
   - component: {fileID: 674305608}
   m_Layer: 0
-  m_Name: Tree
+  m_Name: SpritePivot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1360,7 +1360,7 @@ GameObject:
   - component: {fileID: 1446132281}
   - component: {fileID: 1446132280}
   m_Layer: 0
-  m_Name: Tree
+  m_Name: SpritePivot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2793,7 +2793,7 @@ GameObject:
   - component: {fileID: 1675059909}
   - component: {fileID: 1675059908}
   m_Layer: 0
-  m_Name: Tree
+  m_Name: SpritePivot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2886,7 +2886,7 @@ GameObject:
   - component: {fileID: 1731488817}
   - component: {fileID: 1731488816}
   m_Layer: 0
-  m_Name: Tree
+  m_Name: SpritePivot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
