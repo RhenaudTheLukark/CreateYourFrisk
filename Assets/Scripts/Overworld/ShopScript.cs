@@ -492,6 +492,8 @@ public class ShopScript : MonoBehaviour {
                     EnableBigText(false);
                     break;
                 case State.EXIT:
+                    if (tp != null)
+                        break;
                     if (script.GetVar("returnscene").Type != DataType.String)
                         throw new CYFException("The variable \"returnscene\" must be a string.");
                     if (script.GetVar("returnpos").Type != DataType.Table)
