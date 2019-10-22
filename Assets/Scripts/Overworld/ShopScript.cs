@@ -150,8 +150,8 @@ public class ShopScript : MonoBehaviour {
                 selection = 1;
                 numberOfChoices = 2;
                 tmBigTalk.SetTextQueue(new TextMessage[] { new TextMessage("[linespacing:11][noskipatall][font:uidialoglilspace][novoice]\n          Sell the " + Inventory.inventory[currentItemIndex].Name + " for " +
-                                                                           Inventory.NametoPrice[Inventory.inventory[currentItemIndex].Name] / 5 + "G?\n\n              Yes\tNo" +
-                                                                           "\n\n\t   [color:ffff00](" + PlayerCharacter.instance.Gold + "G)", false, true) });
+                                                                           Inventory.NametoPrice[Inventory.inventory[currentItemIndex].Name] / 5 + "G?\n \n              Yes\tNo" +
+                                                                           "\n \n \t   [color:ffff00](" + PlayerCharacter.instance.Gold + "G)", false, true) });
                 break;
             case State.BUY:
                 TryCall("EnterBuy");
@@ -240,15 +240,14 @@ public class ShopScript : MonoBehaviour {
             default:
                 break;
         }
-        // Add spaces so that newlines aren't lost: splitting "a\n\nb" would only give a table of 2 instead of 3.
-        string[] text = tm.textQueue[0].Text.Replace("\n", " \n").Replace("\r", " \r").Replace("\t", " \t").Split(new char[] { '\n', '\r', '\t' });
+        string[] text = tm.textQueue[0].Text.Split(new char[] { '\n', '\r', '\t' });
         int selectionTemp = selection;
         if (currentState == State.SELL && selection == numberOfChoices - 1)
             selection = 8;
         else if (currentState == State.BUYCONFIRM)
             selection = selection + 3;
         else if (currentState == State.SELLCONFIRM)
-            selection = selection + 1;
+            selection = selection + 3;
         int beginLine = GetIndexFirstCharOfLineFromChild(tm);
         Vector3 v = tm.transform.GetChild(GetIndexFirstCharOfLineFromText(text[selection]) + beginLine).position;
         utHeart.transform.position = new Vector3(v.x - 16, v.y + 8, v.z);
@@ -311,9 +310,6 @@ public class ShopScript : MonoBehaviour {
             if (i < itemPrice.Length && itemPrice[i].Type != DataType.Number && itemPrice[i].Number % 1 != 0) throw new CYFException("The price table must contain integers.");
             if (!Inventory.NametoDesc.Keys.Contains(itemName[i].String))
                 throw new CYFException("The item \"" + itemName[i].String + "\" doesn't exist in the inventory database.");
-            //Aligns the hyphens 2nd part
-            /*for (int j = lengths[i]; j < maxLength; j++)
-                result += "  ";*/
             mainName[i] = itemName[i].String;
             mainInfo[i] = i >= itemInfo.Length ? DynValue.NewString(Inventory.NametoDesc[itemName[i].String]) : itemInfo[i];
             mainPrice[i] = i >= itemPrice.Length ? Inventory.NametoPrice[mainName[i]] : (int)itemPrice[i].Number;
