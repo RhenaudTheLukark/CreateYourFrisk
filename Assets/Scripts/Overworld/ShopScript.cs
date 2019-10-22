@@ -385,7 +385,7 @@ public class ShopScript : MonoBehaviour {
                 else {
                     ChangeState(State.SELLCONFIRM, 0);
                     if (Inventory.NametoPrice[Inventory.inventory[currentItemIndex].Name] == 0) {
-                        UnitaleUtil.PlaySound("SeparateSound", "sellFail");
+                        UnitaleUtil.PlaySound("SeparateSound", "ShopFail");
                         TryCall("FailSell", DynValue.NewString("cantsell"));
                         HandleCancel();
                     }
@@ -403,6 +403,7 @@ public class ShopScript : MonoBehaviour {
                     else if (mainPrice[currentItemIndex] == 0)                       TryCall("FailBuy", DynValue.NewString("soldout"));
                     else {
                         TryCall("SuccessBuy", DynValue.NewString(mainName[currentItemIndex]));
+                        UnitaleUtil.PlaySound("SeparateSound", "ShopSuccess");
                         PlayerCharacter.instance.SetGold(PlayerCharacter.instance.Gold - mainPrice[currentItemIndex]);
                         Inventory.AddItem(mainName[currentItemIndex]);
                         tmGold.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][novoice]" + PlayerCharacter.instance.Gold + "G", false, true) });
@@ -418,6 +419,7 @@ public class ShopScript : MonoBehaviour {
                 if (selection == numberOfChoices - 1) TryCall("ReturnSell");
                 else {
                     TryCall("SuccessSell", DynValue.NewString(mainName[currentItemIndex]));
+                    UnitaleUtil.PlaySound("SeparateSound", "ShopSuccess");
                     PlayerCharacter.instance.SetGold(PlayerCharacter.instance.Gold + Inventory.NametoPrice[Inventory.inventory[currentItemIndex].Name] / 5);
                     Inventory.RemoveItem(currentItemIndex);
                     if (currentItemIndex == Inventory.inventory.Count && Inventory.inventory.Count != 1)
