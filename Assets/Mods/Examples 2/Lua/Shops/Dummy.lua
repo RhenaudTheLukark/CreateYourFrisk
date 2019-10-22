@@ -118,8 +118,8 @@ function SuccessTalk(action)
                           "[noskip]I think that you too can make it,[w:10] if you want to![w:30][next]",
                           "[noskip]I'll teach you the basics on how to become a shopkeeper![w:30][next]",
                           "[noskip]First of all,[w:10] you need to know about our currency,[w:10] G.[w:30][next]",
-                          "[noskip]Gold is the Und[func:Drowsy]erground's main currency![w:15] It's made of 89% of Gold,[w:10] 5% of aluminium,[w:10] 5% of zinc and 1% of tin.[w:30][next]",
-                          "[noskip]It can't be made of 100% of Gold,[w:10] otherwise it couldn't take the shape[novoice] of a coin...[w:120][next]",
+                          "[noskip]Gold is the Und[func:Drowsy]erground's main currency![w:15] It's made of 89% Gold,[w:10] 5% aluminium,[w:10] 5% zinc[w:10] and 1% tin.[w:30][next]",
+                          "[noskip]It can't be made of 100% Gold,[w:10] otherwise it couldn't take the shape [novoice]of a coin...[w:120][next]",
                           "[noskip][func:Undrowsy]And so I sold this mop to that kid, and now everyone calls[novoice] him \"Mop Kid\"! He was pretty happy about it...[w:120][next]",
                           "[noskip][func:Undrowsy2]And that's all for the basics![w:15] If you want to, I can teach you how to make profit![w:30][next]",
                           "[noskip]No?[w:15] Very well then, ask me if you want to learn how to be a shopkeeper later![w:30][next]"}
@@ -150,11 +150,12 @@ function Drowsy()
     eyeLidEffect.absy = 240
     eyeLidEffect.Scale(640, 480)
     eyeLidEffect.alpha = 0
-    maintext = CreateText({"[font:uidialoglilspace][novoice][noskip][waitall:2]You're feeling drowsy..."}, {360, 400}, 320, "Top", 100)
+    maintext = CreateText({"[font:uidialoglilspace][novoice][noskip][waitall:2]You're feeling drowsy..."}, {340, 440}, 320, "Top", 100)
     maintext.progressmode = "auto"
     maintext.SetAutoWaitTimeBetweenTexts(80)
     maintext.SetEffect("none", -1)
     maintext.HideBubble()
+    maintext.alpha = 0.5
 end
 
 function Undrowsy()
@@ -166,7 +167,7 @@ function Undrowsy2()
 end
 
 function Update()
-    if maintext and not maintext.allLinesComplete then
+    if maintext and maintext.allLinesComplete then
         if frame < 160 then
             eyeLidEffect.alpha = math.abs(.5 * math.sin(frame * math.pi / 80))
         elseif frame < 240 then
@@ -182,18 +183,27 @@ function Update()
             Audio.Pause()
         elseif frame >= 2000 and frame < 2010 then
             eyeLidBottom.absy = eyeLidBottom.absy - 15
-            Audio.Play()
+            if frame == 2000 then
+                NewAudio.SetVolume("src", 0.75)
+                Audio.Unpause()
+            end
         elseif frame >= 2120 and frame < 4000 and eyeLidBottom.absy < 120 then
             eyeLidBottom.absy = eyeLidBottom.absy + 2
         elseif frame >= 2120 and frame < 4000 and Audio.IsPlaying then
             Audio.Pause()
         elseif frame >= 4000 and eyeLidBottom.absy > -120 then
             eyeLidBottom.absy = eyeLidBottom.absy - 15
-            Audio.Play()
+            if frame == 4000 then
+                NewAudio.SetVolume("src", 0.75)
+                Audio.Unpause()
+            elseif eyeLidBottom.absy <= -120 then
+                maintext = nil
+            end
         end
         if frame >= 160 then
             eyeLidTop.absy = 480 - eyeLidBottom.absy
             eyeLidEffect.alpha = eyeLidBottom.absy / 180
+            NewAudio.SetVolume("src", math.min(0.75, 0.75 - ((600 - eyeLidTop.absy) / 330)))
         end
         frame = frame + 1
     end

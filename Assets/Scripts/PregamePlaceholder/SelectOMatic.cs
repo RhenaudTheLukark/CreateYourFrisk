@@ -471,7 +471,7 @@ public class SelectOMatic : MonoBehaviour {
                     modFolderMiniMenu();
                     encounterBox.transform.Find("ScrollCutoff/Content").GetChild(selectedItem).GetComponent<MenuButton>().StartAnimation(1);
                 // Open the encounter list or start the encounter (if there is only one encounter)
-                } else if (Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.Return))
+                } else if (Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.Return))
                     GameObject.Find("ModBackground").GetComponent<Button>().onClick.Invoke();
                     // encounterBox.transform.Find("ScrollCutoff/Content").GetChild(selectedItem).GetComponent<MenuButton>().StartAnimation(1);
             }
@@ -528,7 +528,7 @@ public class SelectOMatic : MonoBehaviour {
             if (Input.GetKeyDown(KeyCode.X) || Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift))
                 GameObject.Find("ModBackground").GetComponent<Button>().onClick.Invoke();
             // Select the mod or encounter
-            else if (Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.Return))
+            else if (Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.Return))
                 encounterBox.transform.Find("ScrollCutoff/Content").GetChild(selectedItem).gameObject.GetComponent<Button>().onClick.Invoke();
         }
     }

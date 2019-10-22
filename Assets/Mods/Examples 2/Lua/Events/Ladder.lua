@@ -10,11 +10,15 @@ function EventPage1()
 
     Screen.SetTone(true, false, 0, 0, 0, 255)
 
-    while Event.GetPosition("Player")[2] > 630 do
+    local pos = Event.GetPosition("Player")
+    while pos[2] > 630 do
         Misc.cameraY = 537
         General.Wait(1)
+        NewAudio.SetVolume("src", 0.75 * ((pos[2] - 630) / 139))
+        pos = Event.GetPosition("Player")
     end
 
+    NewAudio.SetVolume("src", 0.75)
     Event.SetSpeed("Player", speed)
     Screen.SetTone(false, false, 0, 0, 0, 0)
     General.EnterShop("Dummy", true)

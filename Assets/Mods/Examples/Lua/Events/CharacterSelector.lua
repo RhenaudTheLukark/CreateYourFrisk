@@ -1,4 +1,4 @@
---Oh hi! Welcome to CYF's 0.6's secret, part 1 and 2! It's a good thing you can't discover the 3rd part like that, though.
+--Oh hi! Welcome to CYF's 0.6's secret, part 1 and 2! It's a good thing you can't discover the 3rd part like this, though.
 local currentChar = 1
 local phase = 0
 local background = nil
@@ -29,7 +29,6 @@ function EventPage0()
     else
         SetRealGlobal("CYFInternalCharacterSelected", true)
         Screen.SetTone(false, false, 0, 0, 0, 0)
-        Event.SetSpeed("Player", 3)
         disabled = { GetRealGlobal("CYFInternalCross1"), GetRealGlobal("CYFInternalCross2"), GetRealGlobal("CYFInternalCross3"), GetRealGlobal("CYFInternalCross4"), GetRealGlobal("CYFInternalCross5") }
         disabled[6] = not (disabled[1] and disabled[2] and disabled[3] and disabled[4] and disabled[5])
         if not disabled[6] then
