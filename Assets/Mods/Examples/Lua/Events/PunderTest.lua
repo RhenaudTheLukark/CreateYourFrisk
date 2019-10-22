@@ -1,41 +1,47 @@
-local beforeMovement = math.random(60, 180)
-local spriteTest
-local lastPosX
-local lastPosY
+beforeMovement = math.random(60, 180)
+punderSprite = nil
+lastPosX = 0
+lastPosY = 0
+
+eventName = nil
 
 function EventPage0() -- First event function launched
+    eventName = Event.GetName()
     -- Chara player choice has been locked
     if GetRealGlobal("CYFInternalCross2") then
-        Event.Remove(Event.GetName())
+        Event.Remove(eventName)
     else
-        Event.SetPage(Event.GetName(), 2)
-        spriteTest = Event.GetSprite(Event.GetName())
-        lastPosX = spriteTest.x
-        lastPosY = spriteTest.y
+        Event.SetPage(eventName, 2)
+        punderSprite = Event.GetSprite(eventName)
+        lastPosX = punderSprite.x
+        lastPosY = punderSprite.y
     end
 end
 
 function EventPage1()
-    --Turn toward player
-    dir = calcDir(Event.GetPosition(Event.GetName()), Event.GetPosition("Player"))
-    Event.SetDirection(Event.GetName(), dir)
-    General.SetDialog({"[voice:punderbolt]Where am I???"}, true, {"Punder/intimidated"})
+    -- Turn toward player
+    dir = calcDir(Event.GetPosition(eventName), Event.GetPosition("Player"))
+    Event.SetDirection(eventName, dir)
+    local animHeader = Event.GetAnimHeader(eventName)
+    local text = animHeader == "" and "Where am I???" or "I still don't know where I am but I found cool sunglasses!"
+    local faceSprite = animHeader == "" and "Punder/intimidated" or "Punder/sun"
+    General.SetDialog("[voice:punderbolt]" .. text, true, faceSprite)
 end
 
-function EventPage2() --Coroutine
-    if Event.GetPage(Event.GetName()) == 2 then Event.SetPage(Event.GetName(), 1) end
-    if lastPosX == spriteTest.x and lastPosY == spriteTest.y then
+function EventPage2() -- Coroutine
+    if Event.GetPage(eventName) == 2 then Event.SetPage(eventName, 1) end
+    if lastPosX == punderSprite.x and lastPosY == punderSprite.y then
         beforeMovement = beforeMovement - 1
+        if beforeMovement == 0 then
+            beforeMovement = math.random(60, 180)
+            x = math.random(-1, 1)
+            y = math.random(-1, 1)
+            local pos = Event.GetPosition(eventName)
+            Event.MoveToPoint(eventName, math.min(math.max(pos[1] + 20 * x, 357), 457), math.min(math.max(pos[2] + 20 * y, 240), 340), false, false)
+        end
     end
-    lastPosX = spriteTest.x
-    lastPosY = spriteTest.y
-    if beforeMovement == 0 then
-        beforeMovement = math.random(60, 180)
-        x = math.random(-1, 1)
-        y = math.random(-1, 1)
-        local pos = Event.GetPosition(Event.GetName())
-        Event.MoveToPoint(Event.GetName(), math.min(math.max(pos[1] + 20 * x, 357), 457), math.min(math.max(pos[2] + 20 * y, 240), 340), false, false)
-    end
+    lastPosX = punderSprite.x
+    lastPosY = punderSprite.y
 end
 
 --The name is pretty straightforward

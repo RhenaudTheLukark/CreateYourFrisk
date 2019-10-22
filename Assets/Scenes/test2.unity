@@ -2021,6 +2021,33 @@ MonoBehaviour:
   - name: Knockout
     anims: Overworld/Punder/Secret/Knockout, Overworld/Punder/Secret/Knockout
     transitionTime: 60
+  - name: SunStopDown
+    anims: Overworld/Punder/sun/1, Overworld/Punder/sun/1
+    transitionTime: 60
+  - name: SunStopLeft
+    anims: Overworld/Punder/sun/5, Overworld/Punder/sun/5
+    transitionTime: 60
+  - name: SunStopRight
+    anims: Overworld/Punder/sun/9, Overworld/Punder/sun/9
+    transitionTime: 60
+  - name: SunStopUp
+    anims: Overworld/Punder/13, Overworld/Punder/13
+    transitionTime: 60
+  - name: SunMovingDown
+    anims: Overworld/Punder/sun/0, Overworld/Punder/sun/1, Overworld/Punder/sun/2,
+      Overworld/Punder/sun/3
+    transitionTime: 0.25
+  - name: SunMovingLeft
+    anims: Overworld/Punder/sun/4, Overworld/Punder/sun/5, Overworld/Punder/sun/6,
+      Overworld/Punder/sun/7
+    transitionTime: 0.25
+  - name: SunMovingRight
+    anims: Overworld/Punder/sun/8, Overworld/Punder/sun/9, Overworld/Punder/sun/10,
+      Overworld/Punder/sun/11
+    transitionTime: 0.25
+  - name: SunMovingUp
+    anims: Overworld/Punder/12, Overworld/Punder/13, Overworld/Punder/14, Overworld/Punder/15
+    transitionTime: 0.25
 --- !u!1 &1534585418
 GameObject:
   m_ObjectHideFlags: 0
