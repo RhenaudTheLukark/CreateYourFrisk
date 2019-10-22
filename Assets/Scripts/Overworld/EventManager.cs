@@ -449,7 +449,7 @@ public class EventManager : MonoBehaviour {
             scr.Call("CYFEventStartEvent", DynValue.NewString("EventPage" + (page == -1 ? go.GetComponent<EventOW>().actualPage : page)));
             //scr.Call("EventPage" + go.GetComponent<EventOW>().actualPage);
         } catch (InterpreterException ex) {
-            UnitaleUtil.DisplayLuaError(go.GetComponent<EventOW>().scriptToLoad, UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message);
+            UnitaleUtil.DisplayLuaError(go.GetComponent<EventOW>().scriptToLoad, ex.DecoratedMessage != null ? ex.DecoratedMessage : ex.Message);
             return false;
         } catch (Exception ex) {
             UnitaleUtil.DisplayLuaError(go.GetComponent<EventOW>().scriptToLoad, ex.Message);
@@ -516,68 +516,85 @@ public class EventManager : MonoBehaviour {
         }
         lameOverworldFunctionBinding += "\n    end";
         lameFunctionBinding += "\n    end";
-        scriptText += "\n\nCYFEventCoroutine = coroutine.create(DEBUG)" +
-                      "\nCYFEventCheckRefresh = true" +
-                      "\nCYFEventLastAction = \"\"" +
-                      "\nlocal CYFEventCurrentFunction = nil" +
-                      "\nlocal CYFEventAlreadyLaunched = false" +
-                      "\nfunction CYFEventMySplit(err, x)" +
-                      "\n    local output" +
-                      "\n    local filename = debug.getinfo(1, 'S').source:sub(2)" +
-                      "\n    if err:startsWith(filename) then" +
-                      "\n        local fileRemoved = err:sub(#filename)" +
-                      "\n        output = fileRemoved:sub(fileRemoved:find('): ') + 3)" +
-                      "\n    else" +
-                      "\n        output = err" +
-                      "\n    end" +
-                      "\n    return filename .. ':(function ' .. x .. \"): \" .. output" +
-                      "\nend" +
-                      "\nfunction CYFEventFuncToLaunch(x)" +
-                      "\n    if _internalScriptName == nil then" +
-                      "\n        _internalScriptName = \"" + ev.gameObject.name + "\"" +
-                      "\n    end" +
-                      "\n    local err" +
-                      "\n    if not xpcall(_G[x], function(err2) err = err2 end) then" +
-                      "\n        error(CYFEventMySplit(err, x), 0)" +
-                      "\n    end" +
-                      "\nend" +
-                      "\nfunction CYFEventNextCommand()" +
-                      "\n    CYFEventAlreadyLaunched = true" +
-                      "\n    if tostring(coroutine.status(CYFEventCoroutine)) == 'suspended' then" +
-                      "\n        local ok, errorMsg = coroutine.resume(CYFEventCoroutine)" +
-                      "\n        if not ok then error(errorMsg, 0) end" +
-                      "\n    end" +
-                      "\nend" +
-                      "\nfunction CYFEventStopCommand() coroutine.yield() end" + // currently unused
-                      "\nfunction CYFEventStartEvent(func)" +
-                      "\n    if _G[func] == nil then error('The function ' .. func .. \" doesn't exist in the Event script.\", 0) end" +
-                      "\n    CYFEventCoroutine = coroutine.create(function() CYFEventFuncToLaunch(func) end)" +
-                      "\n    local ok, errorMsg = coroutine.resume(CYFEventCoroutine)" +
-                      "\n    if not ok then error(errorMsg, 0) end" +
-                      "\nend" +
-                      "\nfunction CYFEventForwarder(func, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10)" +
-                      "\n    CYFEventAlreadyLaunched = false" +
-                      "\n    CYFEventCheckRefresh = true" +
-                      "\n    FGeneral.HiddenReloadAppliedScript()" +
-                      "\n    CYFEventLastAction = func" +
-                      "\n    local x" +
-                      lameFunctionBinding +
-                      "\n    local result" +
-                      "\n    if     arg1 == nil  then  result = x()" +
-                      "\n    elseif arg2 == nil  then  result = x(arg1)" +
-                      "\n    elseif arg3 == nil  then  result = x(arg1, arg2)" +
-                      "\n    elseif arg4 == nil  then  result = x(arg1, arg2, arg3)" +
-                      "\n    elseif arg5 == nil  then  result = x(arg1, arg2, arg3, arg4)" +
-                      "\n    elseif arg6 == nil  then  result = x(arg1, arg2, arg3, arg4, arg5)" +
-                      "\n    elseif arg7 == nil  then  result = x(arg1, arg2, arg3, arg4, arg5, arg6)" +
-                      "\n    elseif arg8 == nil  then  result = x(arg1, arg2, arg3, arg4, arg5, arg6, arg7)" +
-                      "\n    elseif arg9 == nil  then  result = x(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8)" +
-                      "\n    elseif arg10 == nil then  result = x(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9)" +
-                      "\n    else                      result = x(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10)" +
-                      "\n    end" +
-                      "\n    if not CYFEventAlreadyLaunched then coroutine.yield() end" +
-                      "\n    return result" +
-                      "\nend";
+        scriptText += "\n" + @"
+CYFEventCoroutine = coroutine.create(DEBUG)
+CYFEventCheckRefresh = true
+CYFEventLastAction = """"
+local CYFEventCurrentFunction = nil
+local CYFEventAlreadyLaunched = false
+function CYFFormatError(err)
+    local filename = debug.getinfo(1, 'S').source:sub(2)
+    if err:startsWith(filename) then
+        local before = err:sub(0, err:find(':%(') and err:find(':%(') + 1 or err:find(':'))
+        local numbers = err:match('[%d,%-]+[):]'):sub(0, -2)
+        local after = err:sub(err:find(numbers:gsub('%-', '%%-')) + #numbers)
+        
+        -- there are only 4 possible formats for error messages
+        -- see Assets/Plugins/MoonSharp/Interpreter/Debugging/SourceRef.cs line 178
+        local allNums = {}
+        for num in numbers:gmatch('%d+') do
+            table.insert(allNums, num)
+        end
+        if numbers == numbers:match('%d+') then
+            numbers = 'line ' .. numbers
+        elseif numbers == numbers:match('%d+,%d+') then
+            numbers = 'line ' .. allNums[1] .. ', char ' .. allNums[2]
+        elseif numbers == numbers:match('%d+,%d+%-%d+') then
+            numbers = 'line ' .. allNums[1] .. ', char ' .. allNums[2] .. '-' .. allNums[3]
+        elseif numbers == numbers:match('%d+,%d+%-%d+,%d+') then
+            numbers = 'line ' .. allNums[1] .. ', char ' .. allNums[2] .. '-line ' .. allNums[3] .. ', char ' .. allNums[4]
+        end
+        
+        return before .. numbers .. after
+    else
+        return err
+    end
+end
+function CYFEventFuncToLaunch(x)
+    if _internalScriptName == nil then
+        _internalScriptName = '" + ev.gameObject.name + @"'
+    end
+    local err
+    if not xpcall(x, function(err2) err = err2 end) then
+        error(CYFFormatError(err), 0)
+    end
+end
+function CYFEventNextCommand()
+    CYFEventAlreadyLaunched = true
+    if tostring(coroutine.status(CYFEventCoroutine)) == 'suspended' then
+        local ok, errorMsg = coroutine.resume(CYFEventCoroutine)
+        if not ok then error(errorMsg, 0) end
+    end
+end
+function CYFEventStopCommand() coroutine.yield() end -- currently unused
+function CYFEventStartEvent(func)
+    if _G[func] == nil then error('The function ' .. func .. "" doesn't exist in the Event script."", 0) end
+    CYFEventCoroutine = coroutine.create(function() CYFEventFuncToLaunch(_G[func]) end)
+    local ok, errorMsg = coroutine.resume(CYFEventCoroutine)
+    if not ok then error(errorMsg, 0) end
+end
+function CYFEventForwarder(func, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10)
+    CYFEventAlreadyLaunched = false
+    CYFEventCheckRefresh = true
+    FGeneral.HiddenReloadAppliedScript()
+    CYFEventLastAction = func
+    local x" + lameFunctionBinding + "\n"
++ @"local result
+    if     arg1 == nil  then  result = x()
+    elseif arg2 == nil  then  result = x(arg1)
+    elseif arg3 == nil  then  result = x(arg1, arg2)
+    elseif arg4 == nil  then  result = x(arg1, arg2, arg3)
+    elseif arg5 == nil  then  result = x(arg1, arg2, arg3, arg4)
+    elseif arg6 == nil  then  result = x(arg1, arg2, arg3, arg4, arg5)
+    elseif arg7 == nil  then  result = x(arg1, arg2, arg3, arg4, arg5, arg6)
+    elseif arg8 == nil  then  result = x(arg1, arg2, arg3, arg4, arg5, arg6, arg7)
+    elseif arg9 == nil  then  result = x(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8)
+    elseif arg10 == nil then  result = x(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9)
+    else                      result = x(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10)
+    end
+    if not CYFEventAlreadyLaunched then coroutine.yield() end
+    return result
+end";
         scr.script.Globals["CreateSprite"] = (Func<string, DynValue>)SpriteUtil.MakeIngameSpriteOW;
         scr.script.Globals["CreateText"] = (Func<Script, DynValue, DynValue, int, string, int, LuaTextManager>)CreateText;
         /*System.IO.StreamWriter sr = System.IO.File.CreateText(Application.dataPath + "/test" + TEMP ++ + ".lua");
