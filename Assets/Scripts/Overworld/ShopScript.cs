@@ -149,7 +149,9 @@ public class ShopScript : MonoBehaviour {
                 currentItemIndex = selection;
                 selection = 1;
                 numberOfChoices = 2;
-                tmBigTalk.SetTextQueue(new TextMessage[] { new TextMessage("[linespacing:11][noskipatall][font:uidialoglilspace][novoice]          Sell for " + Inventory.NametoPrice[Inventory.inventory[currentItemIndex].Name] / 5 + "G?\n    Yes\tNo", false, true) });
+                tmBigTalk.SetTextQueue(new TextMessage[] { new TextMessage("[linespacing:11][noskipatall][font:uidialoglilspace][novoice]\n          Sell the " + Inventory.inventory[currentItemIndex].Name + " for " +
+                                                                           Inventory.NametoPrice[Inventory.inventory[currentItemIndex].Name] / 5 + "G?\n\n              Yes\tNo" +
+                                                                           "\n\n\t   [color:ffff00](" + PlayerCharacter.instance.Gold + "G)", false, true) });
                 break;
             case State.BUY:
                 TryCall("EnterBuy");
@@ -238,6 +240,7 @@ public class ShopScript : MonoBehaviour {
             default:
                 break;
         }
+        // Add spaces so that newlines aren't lost: splitting "a\n\nb" would only give a table of 2 instead of 3.
         string[] text = tm.textQueue[0].Text.Replace("\n", " \n").Replace("\r", " \r").Replace("\t", " \t").Split(new char[] { '\n', '\r', '\t' });
         int selectionTemp = selection;
         if (currentState == State.SELL && selection == numberOfChoices - 1)
@@ -270,8 +273,10 @@ public class ShopScript : MonoBehaviour {
                 if (tm.transform.GetChild(i).position.y <= y - 8 || tm.transform.GetChild(i).position.y >= y + 8 || Mathf.Round(tm.transform.GetChild(i).position.x) == 356) {
                     count++;
                     y = tm.transform.GetChild(i).position.y;
-                    if (count == selection)
+                    if (count == selection) {
                         beginLine = i;
+                        break;
+                    }
                 }
         }
         return beginLine;
