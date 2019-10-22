@@ -255,7 +255,7 @@ public class ShopScript : MonoBehaviour {
                 infoActive = false;
             else {
                 infoActive = true;
-                string info = mainPrice[currentItemIndex] == 0 ? "SOLD OUT" : mainInfo[selection].String;
+                string info = mainPrice[selection] == 0 ? "SOLD OUT" : mainInfo[selection].String;
                 tmInfo.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][novoice][font:uidialoglilspace]" + info, false, true) });
             }
         }
