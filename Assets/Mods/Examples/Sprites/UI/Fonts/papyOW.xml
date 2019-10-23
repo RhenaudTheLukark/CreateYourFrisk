@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<font>
+<voice>v_papyrus</voice>
+<color>ffffff</color>
+<linespacing>33.0</linespacing>
+<spritesheet>
+    <sprite name="!">
+        <rect x="138" y="8" w="4" h="22"/>
+    </sprite>
+    <sprite name="'">
+        <rect x="162" y="4" w="4" h="22"/>
+    </sprite>
+    <sprite name="(">
+        <rect x="182" y="48" w="8" h="22"/>
+    </sprite>
+    <sprite name=")">
+        <rect x="194" y="48" w="8" h="22"/>
+    </sprite>
+    <sprite name=",">
+        <rect x="62" y="8" w="6" h="6"/>
+    </sprite>
+    <sprite name="-">
+        <rect x="206" y="46" w="10" h="22"/>
+    </sprite>
+    <sprite name="=">
+        <rect x="230" y="48" w="10" h="22"/>
+    </sprite>
+    <sprite name="A">
+        <rect x="36" y="224" w="24" h="22"/>
+    </sprite>
+    <sprite name="B">
+        <rect x="146" y="224" w="22" h="22"/>
+    </sprite>
+    <sprite name="C">
+        <rect x="198" y="224" w="22" h="22"/>
+    </sprite>
+    <sprite name="D">
+        <rect x="172" y="224" w="22" h="22"/>
+    </sprite>
+    <sprite name="E">
+        <rect x="120" y="222" w="20" h="24"/>
+    </sprite>
+    <sprite name="F">
+        <rect x="92" y="160" w="18" h="20"/>
+    </sprite>
+    <sprite name="G">
+        <rect x="30" y="190" w="22" h="22"/>
+    </sprite>
+    <sprite name="H">
+        <rect x="106" y="190" w="20" h="22"/>
+    </sprite>
+    <sprite name="I">
+        <rect x="106" y="8" w="4" h="22"/>
+    </sprite>
+    <sprite name="J">
+        <rect x="154" y="158" w="16" h="22"/>
+    </sprite>
+    <sprite name="K">
+        <rect x="178" y="190" w="18" h="22"/>
+    </sprite>
+    <sprite name="L">
+        <rect x="72" y="158" w="16" h="22"/>
+    </sprite>
+    <sprite name="M">
+        <rect x="56" y="190" w="22" h="20"/>
+    <border x="0" y="0" z="0" w="2"/>
+</sprite>
+    <sprite name="N">
+        <rect x="26" y="160" w="18" h="20"/>
+    </sprite>
+    <sprite name="O">
+        <rect x="64" y="224" w="24" h="22"/>
+    </sprite>
+    <sprite name="P">
+        <rect x="116" y="156" w="14" h="24"/>
+    </sprite>
+    <sprite name="Q">
+        <rect x="4" y="222" w="28" h="24"/>
+    <border x="0" y="2" z="0" w="0"/>
+</sprite>
+    <sprite name="R">
+        <rect x="134" y="158" w="16" h="20"/>
+    </sprite>
+    <sprite name="S">
+        <rect x="4" y="190" w="22" h="22"/>
+    </sprite>
+    <sprite name="T">
+        <rect x="226" y="226" w="18" h="18"/>
+    <border x="0" y="0" z="0" w="4"/>
+</sprite>
+    <sprite name="U">
+        <rect x="82" y="190" w="20" h="22"/>
+    </sprite>
+    <sprite name="V">
+        <rect x="4" y="158" w="18" h="20"/>
+    </sprite>
+    <sprite name="W">
+        <rect x="92" y="224" w="24" h="22"/>
+    </sprite>
+    <sprite name="X">
+        <rect x="202" y="190" w="18" h="22"/>
+    </sprite>
+    <sprite name="Y">
+        <rect x="154" y="190" w="20" h="22"/>
+    </sprite>
+    <sprite name="Z">
+        <rect x="132" y="190" w="16" h="20"/>
+    <border x="0" y="0" z="0" w="2"/>
+</sprite>
+    <sprite name="backslash">
+        <rect x="224" y="190" w="18" h="18"/>
+    </sprite>
+    <sprite name="colon">
+        <rect x="154" y="4" w="4" h="22"/>
+    </sprite>
+    <sprite name="dot">
+        <rect x="146" y="12" w="4" h="4"/>
+    </sprite>
+    <sprite name="questionmark">
+        <rect x="228" y="80" w="10" h="22"/>
+    </sprite>
+    <sprite name="slash">
+        <rect x="48" y="160" w="16" h="16"/>
+    </sprite>
+    <sprite name="space">
+        <rect x="180" y="10" w="16" h="22"/>
+    </sprite>
+    <sprite name="unnamed_2020_27">
+        <rect x="174" y="162" w="18" h="12"/>
+    </sprite>
+    <sprite name="unnamed_2020_28">
+        <rect x="196" y="156" w="14" h="14"/>
+    </sprite>
+    <sprite name="unnamed_2020_29">
+        <rect x="216" y="154" w="28" h="16"/>
+    </sprite>
+    <sprite name="unnamed_2020_30">
+        <rect x="4" y="116" w="12" h="16"/>
+    </sprite>
+    <sprite name="unnamed_2020_31">
+        <rect x="20" y="124" w="16" h="8"/>
+    </sprite>
+    <sprite name="unnamed_2020_32">
+        <rect x="42" y="122" w="12" h="14"/>
+    </sprite>
+    <sprite name="unnamed_2020_33">
+        <rect x="58" y="112" w="10" h="26"/>
+    </sprite>
+    <sprite name="unnamed_2020_34">
+        <rect x="72" y="120" w="12" h="16"/>
+    </sprite>
+    <sprite name="unnamed_2020_35">
+        <rect x="90" y="124" w="12" h="12"/>
+    </sprite>
+    <sprite name="unnamed_2020_36">
+        <rect x="106" y="124" w="14" h="12"/>
+    </sprite>
+    <sprite name="unnamed_2020_37">
+        <rect x="124" y="124" w="14" h="12"/>
+    </sprite>
+    <sprite name="unnamed_2020_38">
+        <rect x="142" y="124" w="14" h="12"/>
+    </sprite>
+    <sprite name="unnamed_2020_39">
+        <rect x="160" y="124" w="14" h="8"/>
+    </sprite>
+    <sprite name="unnamed_2020_40">
+        <rect x="178" y="124" w="14" h="12"/>
+    </sprite>
+    <sprite name="unnamed_2020_41">
+        <rect x="196" y="122" w="10" h="14"/>
+    </sprite>
+    <sprite name="unnamed_2020_42">
+        <rect x="212" y="116" w="10" h="16"/>
+    </sprite>
+    <sprite name="unnamed_2020_43">
+        <rect x="226" y="124" w="10" h="12"/>
+    </sprite>
+    <sprite name="unnamed_2020_44">
+        <rect x="4" y="52" w="10" h="8"/>
+    </sprite>
+    <sprite name="unnamed_2020_45">
+        <rect x="4" y="84" w="12" h="18"/>
+    </sprite>
+    <sprite name="unnamed_2020_46">
+        <rect x="18" y="52" w="10" h="8"/>
+    </sprite>
+    <sprite name="unnamed_2020_47">
+        <rect x="20" y="84" w="12" h="18"/>
+    </sprite>
+    <sprite name="unnamed_2020_48">
+        <rect x="32" y="52" w="10" h="12"/>
+    </sprite>
+    <sprite name="unnamed_2020_49">
+        <rect x="36" y="84" w="12" h="12"/>
+    </sprite>
+    <sprite name="unnamed_2020_50">
+        <rect x="46" y="52" w="10" h="18"/>
+    </sprite>
+    <sprite name="unnamed_2020_52">
+        <rect x="52" y="84" w="10" h="8"/>
+    </sprite>
+    <sprite name="unnamed_2020_53">
+        <rect x="60" y="52" w="10" h="12"/>
+    </sprite>
+    <sprite name="unnamed_2020_54">
+        <rect x="68" y="84" w="12" h="16"/>
+    </sprite>
+    <sprite name="unnamed_2020_55">
+        <rect x="74" y="52" w="10" h="18"/>
+    </sprite>
+    <sprite name="unnamed_2020_56">
+        <rect x="84" y="84" w="10" h="14"/>
+    </sprite>
+    <sprite name="unnamed_2020_57">
+        <rect x="100" y="84" w="12" h="8"/>
+    </sprite>
+    <sprite name="unnamed_2020_58">
+        <rect x="102" y="52" w="10" h="8"/>
+    </sprite>
+    <sprite name="unnamed_2020_60">
+        <rect x="116" y="52" w="10" h="8"/>
+    </sprite>
+    <sprite name="unnamed_2020_61">
+        <rect x="116" y="84" w="12" h="12"/>
+    </sprite>
+    <sprite name="unnamed_2020_62">
+        <rect x="132" y="84" w="12" h="8"/>
+    </sprite>
+    <sprite name="unnamed_2020_63">
+        <rect x="144" y="52" w="10" h="8"/>
+    </sprite>
+    <sprite name="unnamed_2020_66">
+        <rect x="166" y="80" w="10" h="16"/>
+    </sprite>
+    <sprite name="unnamed_2020_67">
+        <rect x="180" y="80" w="28" h="16"/>
+    </sprite>
+    <sprite name="unnamed_2020_70">
+        <rect x="212" y="86" w="12" h="10"/>
+    </sprite>
+    <sprite name="unnamed_2020_72">
+        <rect x="4" y="12" w="8" h="8"/>
+    </sprite>
+    <sprite name="unnamed_2020_73">
+        <rect x="16" y="6" w="32" h="24"/>
+    </sprite>
+    <sprite name="{">
+        <rect x="170" y="48" w="8" h="22"/>
+    </sprite>
+    <sprite name="}">
+        <rect x="158" y="48" w="8" h="22"/>
+    </sprite>
+</spritesheet>
+</font>

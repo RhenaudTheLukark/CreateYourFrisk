@@ -169,7 +169,7 @@ public class LuaEventOW {
         }
 
         if (EventManager.instance.coroutines.ContainsKey(scr)) EventManager.instance.coroutines.Remove(scr);
-        else                                                   Debug.LogError("Event.StopCoroutine: You tried to remove the coroutine of an event which hadn't one.");
+        else                                                   Debug.LogError("Event.StopCoroutine: You tried to remove the coroutine of an event which did not have one.");
         appliedScript.Call("CYFEventNextCommand");
     }
 

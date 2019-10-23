@@ -281,7 +281,7 @@ public class PlayerOverworld : MonoBehaviour {
         AttemptMove(horizontal, vertical);
 
         if (GlobalControls.input.Menu == UndertaleInput.ButtonState.PRESSED)
-            if (menuRunning[2] && !menuRunning[4])
+            if (menuRunning[2] && !menuRunning[3] && !menuRunning[4])
                 CloseMenu(true);
         menuRunning[4] = false;
     }
