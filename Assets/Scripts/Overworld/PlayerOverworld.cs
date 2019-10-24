@@ -957,7 +957,7 @@ public class PlayerOverworld : MonoBehaviour {
         foreach (Transform tf in children) {
             try {
                 tf.SetParent(null);
-                if (tf.name == "Canvas OW" || tf.name == "Main Camera OW" || tf.name == "GameOverContainer")
+                if (tf.name == "Canvas OW" || tf.name == "Canvas Two" || tf.name == "Main Camera OW" || tf.name == "GameOverContainer")
                     GameObject.DontDestroyOnLoad(tf.gameObject);
                 else if (tf.childCount > 0)
                     if (tf.GetChild(0).name == "Player")

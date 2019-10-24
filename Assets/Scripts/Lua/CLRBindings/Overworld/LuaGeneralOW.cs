@@ -223,6 +223,7 @@ public class LuaGeneralOW {
         NewMusicManager.DestroyChannel("StaticKeptAudio");
         GameObject.Destroy(GameObject.Find("Player"));
         GameObject.Destroy(GameObject.Find("Canvas OW"));
+        GameObject.Destroy(GameObject.Find("Canvas Two"));
         StaticInits.MODFOLDER = "@Title";
         StaticInits.Initialized = false;
         StaticInits.InitAll();

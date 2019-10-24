@@ -18,6 +18,7 @@ public class GameOverBehavior : MonoBehaviour {
     public static GameObject gameOverContainer;
     public static GameObject gameOverContainerOw;
     private GameObject canvasOW;
+    private GameObject canvasTwo;
     private string[] heartShardAnim = new string[] { "UI/Battle/heartshard_0", "UI/Battle/heartshard_1", "UI/Battle/heartshard_2", "UI/Battle/heartshard_3" };
     private TextManager gameOverTxt;
     private TextManager reviveText;
@@ -241,6 +242,8 @@ public class GameOverBehavior : MonoBehaviour {
                 utHeart.GetComponent<Image>().color = heartColor;
                 canvasOW = GameObject.Find("Canvas OW");
                 canvasOW.SetActive(false);
+                canvasTwo = GameObject.Find("Canvas Two");
+                canvasTwo.SetActive(false);
             } else if (!once) {
                 once = true;
                 gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(16, 16);
@@ -498,6 +501,7 @@ public class GameOverBehavior : MonoBehaviour {
         
         if (UnitaleUtil.IsOverworld) {
             canvasOW.SetActive(true);
+            canvasTwo.SetActive(true);
             PlayerOverworld.instance.enabled = true;
             PlayerOverworld.instance.RestartMusic();
             GetComponent<SpriteRenderer>().enabled = true;

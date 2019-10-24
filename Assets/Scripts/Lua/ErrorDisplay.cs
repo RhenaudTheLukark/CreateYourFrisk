@@ -11,6 +11,7 @@ public class ErrorDisplay : MonoBehaviour {
         if (GameObject.Find("Main Camera OW")) {
             Destroy(GameObject.Find("Main Camera OW"));
             Destroy(GameObject.Find("Canvas OW"));
+            Destroy(GameObject.Find("Canvas Two"));
             Destroy(GameObject.Find("Player"));
         }
         bool ow = !GlobalControls.modDev;

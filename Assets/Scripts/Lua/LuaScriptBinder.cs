@@ -368,7 +368,7 @@ public static class LuaScriptBinder {
         if (!UnitaleUtil.IsOverworld || GlobalControls.isInShop)
             luatm.layer = layer;
         else
-            go.transform.SetParent(GameObject.Find("Canvas OW").transform);
+            luatm.layer = (layer == "BelowPlayer" ? "Default" : layer);
         luatm.textMaxWidth = textWidth;
         luatm.bubbleHeight = bubbleHeight;
         luatm.ShowBubble();

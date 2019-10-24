@@ -588,8 +588,9 @@ function CYFEventForwarder(func, ...)
     if not CYFEventAlreadyLaunched then coroutine.yield() end
     return result
 end";
-        scr.script.Globals["CreateSprite"] = (Func<string, DynValue>)SpriteUtil.MakeIngameSpriteOW;
-        scr.script.Globals["CreateText"] = (Func<Script, DynValue, DynValue, int, string, int, LuaTextManager>)CreateText;
+        scr.script.Globals["CreateLayer"] = (Action<string, string, bool>)SpriteUtil.CreateLayer;
+        scr.script.Globals["CreateSprite"] = (Func<string, string, int, DynValue>)SpriteUtil.MakeIngameSprite;
+        scr.script.Globals["CreateText"] = (Func<Script, DynValue, DynValue, int, string, int, LuaTextManager>)LuaScriptBinder.CreateText;
         /*System.IO.StreamWriter sr = System.IO.File.CreateText(Application.dataPath + "/test" + TEMP ++ + ".lua");
         sr.Write(scriptText);
         sr.Flush();
@@ -606,10 +607,6 @@ end";
         }
 
         return scr;
-    }
-
-    public LuaTextManager CreateText(Script scr, DynValue text, DynValue position, int textWidth, string layer = "BelowPlayer", int bubbleHeight = -1) {
-        return LuaScriptBinder.CreateText(scr, text, position, textWidth, "Canvas OW", bubbleHeight);
     }
 
     private delegate TResult Func<T1, T2, T3, T4, T5, T6, TResult>(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg, T6 arg6);
@@ -1026,6 +1023,7 @@ end";
         SceneManager.LoadScene("SpecialAnnouncement");
         GameObject.Destroy(GameObject.Find("Player"));
         GameObject.Destroy(GameObject.Find("Canvas OW"));
+        GameObject.Destroy(GameObject.Find("Canvas Two"));
         GameObject.Destroy(GameObject.Find("Main Camera OW"));
     }
 

@@ -101,13 +101,13 @@ it's w3c valid, at least
                     <br>Used the same way as in <span class="term">BattleDialog</span>: <span class="term">{"Text 1", "Text 2"}</span>
                     <br>Can also just be a single line of text.</li><br>
                     <li><span class="term">position</span> - <b>Two numbers</b>: The x and y positions of the center of the object. Sorry if it may be hard to place it, but you'll be 
-                    able to use <span class="term">SetPivot</span> and <span class="term">MoveTo</span> to adjust it afterwards.
+                    able to use <span class="term">MoveTo</span> to adjust it afterwards.
                     <br>You only need two numbers, like this: 
                     <span class="term">{320, 240}</span></li><br>
                     <li><span class="term">textMaxWidth</span> - You'll always need this! The bubble's width will be 20px larger than the text's 
                     width. Also, bubbles have a minimum width of 40.<br>Example: <span class="term">150</span></li><br>
                     <li><span class="term">layer</span> - The sprite layer of the Text Object. If it doesn't exist, it returns an error. This argument is 
-                    optional. If it's not provided, the Text Object will be in the layer <span class="term">BelowPlayer</span>. 
+                    optional. If it's not provided, the Text Object will be in the layer <span class="term">BelowPlayer</span> (or <span class="term">Default</span> in the Overworld). 
                     <br>Example: <span class="term">"BelowPlayer"</span></li><br>
                     <li><span class="term">bubbleHeight</span> - You can enter a static bubble height here if you want to. By default, this will
                     be -1, which will auto compute the height of the bubble. However, bubbles have a minimum height of 40.
@@ -240,6 +240,9 @@ it's w3c valid, at least
             <p>
                 <br><span class="function">Text.SetParent(<span class="userdata">sprite</span> parent)</span>
                 Sets the text object's parent.<br>The text object will follow around the parent object as it moves.
+                <br><br>
+                <span class="CYF"></span> NOTE: If you are in the <i>Overworld</i>, you should NOT use this to parent text objects to Event objects' sprites.
+                Issues will happen, your text will likely stop rendering entirely. Only Event sprites should be parented to other Event sprites.
             </p>
             <p>
                 <br><span class="function"><span class="number"></span> Text.xscale,<br>
@@ -339,16 +342,6 @@ it's w3c valid, at least
                 <br><span class="function">Text.MoveToAbs(<span class="number"></span> x, <span class="number"></span> y)</span>
                 Moves the text to a new position, relative to the bottom left corner of the window.
             </p>
-            <!--
-            <p>
-                <br><span class="function">Text.SetPivot(<span class="number"></span> x, <span class="number"></span> y)</span>
-                Sets the pivot of the object. The pivot is the value where the text's position is set. The default value is 
-                <span class="term">{0.5, 0.5}</span>. If you set it to <span class="term">{0, 0}</span>, then each time you modify 
-                the object's position, the position will be based off of the bottom left corner of the object instead of its center.<br> 
-                <span class="term">{1, 1}</span> is the top right corner, <span class="term">{0, 1}</span> the top left corner and 
-                <span class="term">{1, 0}</span> is the bottom right corner.
-            </p>
-            -->
             <p>
                 <br><span class="function"><span class="number"></span> Text.GetTextWidth()</span>
                 Returns the width of the currently set text in pixels.

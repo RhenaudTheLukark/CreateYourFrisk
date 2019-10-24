@@ -139,7 +139,7 @@ it's w3c valid, at least
 			   is stable and easier to use, event programming may be as easy as creating a battle: all that you have to do is to follow 
 			   the documentation and know what you're doing.
             </p>
-            <br>
+            <hr>
             <p>The overworld has a debugger like battles' (and it's used the same way):
                 <span class="function">DEBUG(<span class="string"></span> value)</span>
                 <i>Prints one string value to the Overworld debugger.</i>
@@ -149,13 +149,16 @@ it's w3c valid, at least
 			    <span class="term">Input</span>, <span class="term">Misc</span> and <span class="term">Time</span> objects from  battles 
 				are usable in the overworld too, as well as <span class="term">RealGlobals</span> and <span class="term">AlMightyGlobals</span>. 
                 <br><br><br>
-                <span class="ref">The Sprite Object</span> and <span class="ref">The Text Object</span> are also usable here, except with these different functions:
-                <br><span class="function">CreateSprite(<span class="string"></span> spritename) returns <span class="userdata">sprite</span>  [E/M/W]</span>
-                (no argument for Layer)
-                <br><br><br>
-                <span class="function">CreateText(<span class="luatable"><span class="string"></span></span> / <span class="string"></span> text, 
-                <span class="luatable"><span class="number"></span>, <span class="number"></span></span> position, <span class="number"></span> textMaxWidth, <span class="string"></span> layer = "Ignored", <span class="number"></span>  bubbleHeight = -1) returns <span class="userdata">textObject</span> [E/M/W]</span>
-                (the Layer argument is completely ignored; it can be any value, but it must be a string)
+                <span class="ref">The Sprite Object</span> and <span class="ref">The Text Object</span> are also usable here!<br>
+                However, the same <i>Sprite Layers</i> you are used to are not present.<br>
+                There is only one by default: <span class="term">"Default"</span>.
+                <br><br>
+                <span class="term">CreateSprite</span> and <span class="term">CreateText</span> all work exactly the same,<br>
+                except that the default value for the "layer" argument is <span class="term">"Default"</span> instead of "BelowArena" or "BelowPlayer".<br>
+                <span class="term">CreateLayer</span> also works exactly the same as before.
+                <br><br>
+                However, <font size="4" color="ffffff">very important note!</font> Sprites and Text Objects created in the Overworld <b><u>will NOT be removed</u></b>
+                automatically upon changing maps! You must do this yourself, or you risk the objects persisting between scenes!
             </p>
             <br><br>
             <p>

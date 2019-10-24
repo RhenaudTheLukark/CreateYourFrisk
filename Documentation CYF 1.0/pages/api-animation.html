@@ -116,7 +116,8 @@ it's w3c valid, at least
                 <br><span class="function">CreateSprite(<span class="string"></span> spritename, 
                 <span class="CYF"></span> <span class="string"></span> layer = "BelowArena") returns <span class="userdata">sprite</span>  [E/M/W]</span>
                 Creates a sprite at the center of the screen (at 320, 240) that you can modify in many ways.<br>
-                <span class="CYF"></span> You can add a layer if you want - otherwise, the sprite will be below the arena.
+                <span class="CYF"></span> You can add a layer if you want - otherwise, the sprite will be below the arena.<br>
+                <span class="CYF"></span> From in the Overworld, the default value for <span class="term">layer</span> is <span class="term">"Default"</span> instead.
             </p>
 
             <hr>
@@ -148,11 +149,13 @@ it's w3c valid, at least
             
             <p>
                 <span class="function"><span class="CYF"></span> <span class="number"></span> sprite.z</span></span>
-                Layering position of sprite relative to the bottom left corner of the screen, measured from its pivot/anchor point (center by default).
+                Layering position of sprite <i>in the Overworld only</i>. A negative number brings it forward (closer to the camera), a positive
+                number sends it backwards (farther into the background).
+                <br><br>
+                Note that the only thing this will affect is how your sprite and its children appear in front of the Player and Event objects.<br>
+                This variable can NOT be used to circumvent the layering system for regular sprites.
                 <br><br>
                 If parented, z position is relative to the parent.
-                <br><br>
-                <i>Only applies to the overworld.</i> 
             </p><br>
             
             <p>
@@ -167,9 +170,11 @@ it's w3c valid, at least
             
             <p>
                 <span class="function"><span class="CYF"></span> <span class="number"></span> sprite.absz</span></span>
-                Layering position of sprite relative to the bottom left corner of the screen, ignoring its pivot/anchor point and all parents.
+                Layering position of sprite <i>in the Overworld only</i>. A negative number brings it forward (closer to the camera), a positive
+                number sends it backwards (farther into the background).
                 <br><br>
-                <i>Only applies to the overworld.</i> 
+                Same as <span class="term">sprite.z</span>, except that if this sprite has a parent, <span class="term">sprite.absz</span> will not
+                be relative to the z value of the parent.
             </p><br>
             
             <p>
@@ -366,6 +371,9 @@ it's w3c valid, at least
                 Parents <span class="term">sprite</span> to <span class="term">otherSpriteObject</span>.
                 <br><br>
                 This will make the original sprite move along with the object it's parented to.
+                <br><br>
+                <span class="CYF"></span> NOTE: If you are in the <i>Overworld</i>, you should NOT use this to parent sprites to Event objects' sprites,
+                and vice versa. Issues will happen, your sprite will likely stop rendering entirely. Only Event sprites should be parented to other Event sprites.
             </p><br>
             
             <p>
