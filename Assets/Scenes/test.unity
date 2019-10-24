@@ -2972,6 +2972,9 @@ MonoBehaviour:
     anims: AsrielOW/Huggu/h9, AsrielOW/Huggu/h7, AsrielOW/Huggu/h9, AsrielOW/Huggu/h7,
       AsrielOW/Huggu/h9
     transitionTime: 0.2
+  - name: StopDown
+    anims: empty, empty
+    transitionTime: 60
 --- !u!1001 &1908988710
 Prefab:
   m_ObjectHideFlags: 0
