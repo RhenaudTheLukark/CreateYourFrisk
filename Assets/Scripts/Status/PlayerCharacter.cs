@@ -55,7 +55,6 @@ using System.ComponentModel;
     public void Reset(bool resetName = true) {
         if (resetName)
             Name = ControlPanel.instance.BasisName;
-        CYFAnimator.specialPlayerHeader = "";
         SetLevel(1);
         SetEXP(0);
         SetGold(0);

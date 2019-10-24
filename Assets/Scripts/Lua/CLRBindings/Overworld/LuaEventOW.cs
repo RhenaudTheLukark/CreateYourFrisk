@@ -57,7 +57,8 @@ public class LuaEventOW {
     [CYFEventFunction] public void MoveToPoint(string name, float dirX, float dirY, bool wallPass = false, bool waitEnd = true) { StCoroutine("IMoveEventToPoint", new object[] { name, dirX, dirY, wallPass, waitEnd }, name); }
 
     /// <summary>
-    /// Function that permits to put an animation on an event
+    /// Function that sets an event's animation prefix.
+    /// If the header itself matches an animation this event has, it will play the animation instead of using it as a prefix.
     /// </summary>
     /// <param name="name"></param>
     /// <param name="anim"></param>
@@ -68,14 +69,16 @@ public class LuaEventOW {
             if (name == go.name || name == "Player") {
                 if (name == "Player")
                     go = GameObject.Find("Player");
-                try {
-                    if (go.name == "Player") CYFAnimator.specialPlayerHeader = anim;
-                    else                     go.GetComponent<CYFAnimator>().specialHeader = anim;
-                } catch {
-                    //If the GameObject's Animator component already exists
-                    if (go.GetComponent<CYFAnimator>()) throw new CYFException("Event.SetAnimHeader: The event given doesn't exist.");
-                    else                                throw new CYFException("Event.SetAnimHeader: The event given doesn't have a CYFAnimator component.");
-                }
+                if (go == null)
+                    throw new CYFException("Event.SetAnimHeader: The given event doesn't exist.");
+
+                CYFAnimator animator = go.GetComponent<CYFAnimator>();
+                if (animator == null)
+                    throw new CYFException("Event.SetAnimHeader: The given event doesn't have a CYFAnimator component.");
+
+                if (animator.AnimExists(animator.specialHeader))
+                    animator.movementDirection = 2;
+                go.GetComponent<CYFAnimator>().specialHeader = anim;
                 appliedScript.Call("CYFEventNextCommand");
                 return;
             }
@@ -87,7 +90,7 @@ public class LuaEventOW {
     [CYFEventFunction] public string GetAnimHeader(string name) {
         if (!GameObject.Find(name))                             throw new CYFException("Event.GetAnimHeader: The event given doesn't exist.");
         if (!GameObject.Find(name).GetComponent<CYFAnimator>()) throw new CYFException("Event.GetAnimHeader: The event given doesn't have a CYFAnimator component.");
-        try { return name == "Player" ? CYFAnimator.specialPlayerHeader : GameObject.Find(name).GetComponent<CYFAnimator>().specialHeader; } finally { appliedScript.Call("CYFEventNextCommand"); }
+        try { return GameObject.Find(name).GetComponent<CYFAnimator>().specialHeader; } finally { appliedScript.Call("CYFEventNextCommand"); }
     }
 
     [CYFEventFunction] public void SetDirection(string name, int dir) {
@@ -103,26 +106,6 @@ public class LuaEventOW {
         if (!GameObject.Find(name).GetComponent<CYFAnimator>()) throw new CYFException("Event.GetDirection: The event given doesn't have a CYFAnimator component.");
         try { return GameObject.Find(name).GetComponent<CYFAnimator>().movementDirection; } finally { appliedScript.Call("CYFEventNextCommand"); }
     }
-
-    /*/// <summary>
-    /// Set a return point for the program. If you have to use while iterations, use this instead, with GetReturnPoint
-    /// </summary>
-    /// <param name="index"></param>
-    [CYFEventFunction]
-    public void SetReturnPoint(int index) {
-        LuaScriptBinder.Set(null, "ReturnPoint" + index, DynValue.NewNumber(textmgr.currentLine));
-        appliedScript.Call("CYFEventNextCommand");
-    }
-
-    /// <summary>
-    /// Forces the program to go back to the return point of the chosen index. If you have to use while iterations, use this instead, with SetReturnPoint
-    /// </summary>
-    /// <param name="index"></param>
-    [CYFEventFunction]
-    public void GetReturnPoint(int index) {
-        textmgr.currentLine = (int)LuaScriptBinder.Get(null, "ReturnPoint" + index).Number;
-        appliedScript.Call("CYFEventNextCommand");
-    }*/
 
     /// <summary>
     /// Rotates the sprite of an event.

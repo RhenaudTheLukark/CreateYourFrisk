@@ -4,17 +4,15 @@ public class CYFAnimator : MonoBehaviour {
     public int movementDirection = 0;
     public string beginAnim = "StopDown";
     public string specialHeader = "";
-    public static string specialPlayerHeader = "";
     private int threeFramePass = 3;
     private LuaSpriteController sprctrl;
     private Vector3 lastPos;
     private bool waitingForLateStart = true;
-    private string lastHeader = "";
 
     void OnEnable()  { StaticInits.Loaded += LateStart; }
     void OnDisable() { StaticInits.Loaded -= LateStart; }
 
-    [System.Serializable] //Permits to be able to change the data of anims via the Editor
+    [System.Serializable] // Allows the edition of this data in the Unity Editor
     public struct Anim {
         public string name;
         public string anims;
@@ -28,6 +26,10 @@ public class CYFAnimator : MonoBehaviour {
         return new Anim();
     }
 
+    public bool AnimExists(string name) {
+        return GetAnimPerName(name).name == null;
+    }
+
     // Use this for initialization
     public void LateStart() {
         if (EventManager.instance.sprCtrls.ContainsKey(gameObject.name)) sprctrl = EventManager.instance.sprCtrls[gameObject.name];
@@ -39,7 +41,7 @@ public class CYFAnimator : MonoBehaviour {
         }
         lastPos = gameObject.transform.position;
         if (waitingForLateStart) {
-            ReplaceAnim(beginAnim, true);
+            ReplaceAnim(beginAnim);
             waitingForLateStart = false;
         }
     }
@@ -48,7 +50,7 @@ public class CYFAnimator : MonoBehaviour {
 	void Update () {
         if (waitingForLateStart)
             return;
-        string animName = gameObject.name == "Player" ? specialPlayerHeader : specialHeader;
+        string animName = specialHeader;
 
         if (GetAnimPerName(animName).name == null) {
             if (gameObject.transform.position != lastPos) {
@@ -77,17 +79,13 @@ public class CYFAnimator : MonoBehaviour {
 
         lastPos = gameObject.transform.position;
         if (animName != beginAnim)
-            ReplaceAnim(animName, (gameObject.name == "Player" ? specialPlayerHeader : specialHeader) != lastHeader);
-        lastHeader = gameObject.name == "Player" ? specialPlayerHeader : specialHeader;
+            ReplaceAnim(animName);
     }
 
-    void ReplaceAnim(string animName, bool headerChanged) {
+    private void ReplaceAnim(string animName) {
         Anim anim = GetAnimPerName(animName);
         try { sprctrl.SetAnimation(anim.anims.Replace(" ", "").Replace("{", "").Replace("}", "").Split(','), anim.transitionTime); } 
-        catch {
-            //if (headerChanged)
-                throw new CYFException("Bad animation for event \"" + gameObject.name + "\", animation \"" + animName + "\"");
-        }
+        catch { throw new CYFException("Bad animation for event \"" + gameObject.name + "\", animation \"" + animName + "\""); }
         beginAnim = animName;
     }
 }

@@ -554,7 +554,7 @@ public class PlayerOverworld : MonoBehaviour {
         StaticInits.ENCOUNTER = Encounter;
 
         //We save the state of the events.
-        EventManager.SetEventStates();
+        EventManager.instance.SetEventStates(true);
 
         LuaScriptBinder.ClearBattleVar();
 

@@ -15,7 +15,6 @@ public class GameState {
     public Hashtable soundDictionary;
     public ControlPanel controlpanel;
     public PlayerCharacter player;
-    public string playerHeader;
     public Dictionary<string, string> playerVariablesStr = new Dictionary<string, string>();
     public Dictionary<string, double> playerVariablesNum = new Dictionary<string, double>();
     public Dictionary<string, bool> playerVariablesBool = new Dictionary<string, bool>();
@@ -78,8 +77,6 @@ public class GameState {
             LuaScriptBinder.Set(null, "PlayerPosY", DynValue.NewNumber(SaveLoad.savedGame.playerVariablesNum["PlayerPosY"]));
             LuaScriptBinder.Set(null, "PlayerPosZ", DynValue.NewNumber(SaveLoad.savedGame.playerVariablesNum["PlayerPosZ"]));
         }
-
-        playerHeader = CYFAnimator.specialPlayerHeader;
 
         string mapName;
         if (UnitaleUtil.MapCorrespondanceList.ContainsKey(SceneManager.GetActiveScene().name))                        mapName = UnitaleUtil.MapCorrespondanceList[SceneManager.GetActiveScene().name];
@@ -161,7 +158,6 @@ public class GameState {
         GlobalControls.lastScene = mapName;
 
         LuaScriptBinder.Set(null, "PlayerMap", DynValue.NewString(mapName));
-        CYFAnimator.specialPlayerHeader = playerHeader;
     }
 }
 

@@ -739,7 +739,7 @@ end";
     }
 
     //Used to add event states before unloading the map
-    public static void SetEventStates() {
+    public void SetEventStates(bool addPlayer = false) {
         // int id = SceneManager.GetActiveScene().buildIndex;
         string id = SceneManager.GetActiveScene().name;
         EventOW[] events = (EventOW[])GameObject.FindObjectsOfType(typeof(EventOW));
@@ -760,6 +760,18 @@ end";
         Dictionary<string, GameState.EventInfos> eis = new Dictionary<string, GameState.EventInfos>();
         foreach (string str in GlobalControls.EventData.Keys)
             eis.Add(str, GlobalControls.EventData[str]);
+
+        // Add the Player to the current map
+        if (addPlayer) {
+            GameState.EventInfos eiPlayer = new GameState.EventInfos() {
+                CurrPage = 0,
+                CurrSpriteNameOrCYFAnim = GameObject.Find("Player").GetComponent<CYFAnimator>().specialHeader,
+                NoCollision = false,
+                Anchor = UnitaleUtil.VectorToVect(GameObject.Find("Player").GetComponent<RectTransform>().anchorMax),
+                Pivot = UnitaleUtil.VectorToVect(GameObject.Find("Player").GetComponent<RectTransform>().pivot)
+            };
+            eis.Add("Player", eiPlayer);
+        }
 
         foreach (EventOW ev in events) {
             if (ev.name.Contains("Image") || ev.name.Contains("Tone"))
@@ -949,25 +961,31 @@ end";
         //print("GetMapState: " + SceneManager.GetSceneByBuildIndex(id).name);
         foreach (string str in misave.EventInfo.Keys) {
             try {
-                if (!GameObject.Find(str))
+                GameObject go = GameObject.Find(str);
+                if (go == null)
                     continue;
-                EventOW ev = GameObject.Find(str).GetComponent<EventOW>();
-                if (!ev)
-                    continue;
+
                 GameState.EventInfos ei = misave.EventInfo[str];
-                ev.actualPage = ei.CurrPage;
-                if (ev.GetComponent<CYFAnimator>())                       ev.GetComponent<CYFAnimator>().specialHeader = ei.CurrSpriteNameOrCYFAnim;
+                if (str == "Player")
+                    go.GetComponent<CYFAnimator>().specialHeader = ei.CurrSpriteNameOrCYFAnim;
                 else {
-                    if (ev.GetComponent<AutoloadResourcesFromRegistry>()) ev.GetComponent<AutoloadResourcesFromRegistry>().SpritePath = ei.CurrSpriteNameOrCYFAnim;
-                    else if (ev.name != "4eab1af3ab6a932c23b3cdb8ef618b1af9c02088") {
-                        if (ev.GetComponent<Image>())                     ev.GetComponent<Image>().sprite = SpriteRegistry.Get(ei.CurrSpriteNameOrCYFAnim);
-                        else                                              ev.GetComponent<SpriteRenderer>().sprite = SpriteRegistry.Get(ei.CurrSpriteNameOrCYFAnim);
+                    EventOW ev = go.GetComponent<EventOW>();
+                    if (!ev)
+                        continue;
+                    ev.actualPage = ei.CurrPage;
+                    if (ev.GetComponent<CYFAnimator>())                       ev.GetComponent<CYFAnimator>().specialHeader = ei.CurrSpriteNameOrCYFAnim;
+                    else {
+                        if (ev.GetComponent<AutoloadResourcesFromRegistry>()) ev.GetComponent<AutoloadResourcesFromRegistry>().SpritePath = ei.CurrSpriteNameOrCYFAnim;
+                        else if (ev.name != "4eab1af3ab6a932c23b3cdb8ef618b1af9c02088") { // TODO: Remove this condition?
+                            if (ev.GetComponent<Image>())                     ev.GetComponent<Image>().sprite = SpriteRegistry.Get(ei.CurrSpriteNameOrCYFAnim);
+                            else                                              ev.GetComponent<SpriteRenderer>().sprite = SpriteRegistry.Get(ei.CurrSpriteNameOrCYFAnim);
+                        }
                     }
+                    ev.gameObject.layer = ei.NoCollision ? 0 : 21;
                 }
-                ev.gameObject.layer = ei.NoCollision ? 0 : 21;
-                ev.GetComponent<RectTransform>().anchorMax = UnitaleUtil.VectToVector(ei.Anchor);
-                ev.GetComponent<RectTransform>().anchorMin = UnitaleUtil.VectToVector(ei.Anchor);
-                ev.GetComponent<RectTransform>().pivot = UnitaleUtil.VectToVector(ei.Pivot);
+                go.GetComponent<RectTransform>().anchorMax = UnitaleUtil.VectToVector(ei.Anchor);
+                go.GetComponent<RectTransform>().anchorMin = UnitaleUtil.VectToVector(ei.Anchor);
+                go.GetComponent<RectTransform>().pivot = UnitaleUtil.VectToVector(ei.Pivot);
             } catch (Exception e) { Debug.LogError(e); }
         }
     }
@@ -1395,7 +1413,7 @@ end";
         try { forced = (bool)args[0]; } catch { throw new CYFException("The argument \"forced\" must be a boolean."); }
 
         if (forced) {
-            SaveLoad.Save();
+            SaveLoad.Save(true);
             script.Call("CYFEventNextCommand");
             yield break;
         } else if (coroutines.ContainsKey(scr) && script != scr) {
@@ -1465,7 +1483,7 @@ end";
                 yield break;
             } else if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED) {
                 if (save) {
-                    SaveLoad.Save();
+                    SaveLoad.Save(true);
                     PlayerOverworld.instance.utHeart.color = new Color(c.r, c.g, c.b, 0);
                     txtName.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]" + PlayerCharacter.instance.Name, false, true) });
                     txtLevel.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]LV" + PlayerCharacter.instance.LV, false, true) });
