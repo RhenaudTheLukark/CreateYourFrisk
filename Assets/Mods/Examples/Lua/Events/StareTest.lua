@@ -2,7 +2,7 @@ function EventPage1() end
 
 stareFrame = 0
 stareShift = 0
-eventFrequency = 300 -- 4500 -- 1m 15s
+eventFrequency = 4500 -- 1m 15s
 currEventDone = false
 inputted = false
 maxStares = 8
@@ -30,9 +30,17 @@ end
 function resetStareVars()
     stare1MovementUpDone = false
     stare2MovementDownDone = false
+    stare3DogOpen = false
+    stare3InputtedFrame = 0
+    stare3DogStartingY = 0
+    stare3DogLegsYScale = 0
+    stare3InputtedFirst = false
+    stare3Count = 0
+    stare3DogSpeed = 0
     stare4Count = 0
 end
 
+punderSprite = nil
 function Stare1(frame)
     -- run once
     if frame == 0 and not inputted then
@@ -43,7 +51,7 @@ function Stare1(frame)
         -- walk up-left to 320, 320
         Event.MoveToPoint("Punder", 320, 320, true, false)
     end
-    
+
     -- normal event behavior
     if not inputted then
         -- walk up to 320, 480
@@ -57,6 +65,7 @@ function Stare1(frame)
             stareFrame = eventFrequency * 2
             inputted = false
             Stare2(0)
+            Event.SetAnimHeader("Punder", "")
             inputted = true
         -- the player pressed a key early
         else
@@ -104,7 +113,155 @@ function Stare2(frame)
     return false
 end
 
-function Stare3(frame) DEBUG("Stare3: " .. frame) return true end
+dogSprite = nil
+dogPawsSprite = nil
+dogLegsSprite = nil
+-- Handles the dog's barking animation
+function Stare3Bark(frame, maxFrame)
+    if frame % 15 == 0 and frame < maxFrame then
+        dogSprite.Set("Overworld/Dog" .. (stare3DogOpen and "" or "Bark"))
+        stare3DogOpen = not stare3DogOpen
+        if stare3DogOpen then
+            Audio.PlaySound("Bark")
+        end
+    end
+end
+
+-- Handles the dog's (and his legs if handled) bouncing animation
+function Stare3Bounce(frame, handleLegs)
+    if frame % 30 <= 15 then
+        local scale = 1 + math.sin(frame * math.pi * 2 / 15) * .1
+        dogSprite.Scale(scale, 1 / scale)
+        if handleLegs then
+            dogSprite.absy = stare3DogStartingY - 3 * (1 / stare3DogLegsYScale - 1 / scale * stare3DogLegsYScale)
+            dogLegsSprite.Scale(scale, 1 / scale * stare3DogLegsYScale)
+            dogPawsSprite.Scale(scale, 1 / scale)
+        end
+    end
+end
+
+function Stare3(frame)
+    -- Init: Get the dog's sprite and set some useful variables
+    if frame == 0 and not inputted then
+        dogSprite = Event.GetSprite("Event1")
+        Event.SetSpeed("Event1", 1)
+        stare3DogStartingY = dogSprite.absy
+    end
+
+    -- Part 1: Dog barks and bounces twice
+    if frame <= 60 then
+        -- Stops the stare event instantly if the player presses a key during this part
+        if inputted then
+            dogSprite.Set("Overworld/Dog")
+            dogSprite.Scale(1, 1)
+            return true
+        end
+        -- Barking animation, sound and bouncing
+        Stare3Bark(frame, 60)
+        Stare3Bounce(frame, false)
+    -- Part 2: L E G S
+    -- If the Player hasn't pressed any key yet
+    elseif not inputted then
+        if frame >= 90 and frame < 170 then
+            -- Init: Creates the legs and paws sprites and move the dog up
+            if frame == 90 then
+                dogPawsSprite = CreateSprite("Overworld/DogPaws")
+                dogPawsSprite.SetPivot(.5, 0)
+                dogPawsSprite.MoveToAbs(dogSprite.absx, dogSprite.absy)
+
+                dogLegsSprite = CreateSprite("Overworld/DogLegs")
+                dogLegsSprite.SetPivot(.5, 0)
+                dogLegsSprite.MoveToAbs(dogSprite.absx, dogSprite.absy + 6)
+                Event.MoveToPoint("Event1", dogSprite.absx, dogSprite.absy + 80, true, false)
+            end
+            -- Scale the legs so that they seem attached to the dog
+            dogLegsSprite.yscale = dogLegsSprite.yscale + 1/3
+        elseif frame == 170 then
+            -- D O G   S U C C E S F U L L Y   R A I S E D
+            Audio.PlaySound("success")
+        -- Wait for several seconds...
+        elseif frame >= 450 and frame < 510 then
+            -- Dog barks twice again and bounces, but this time the legs bounce too!
+            -- Init: We store the dog's legs' scale
+            if frame == 450 then
+                stare3DogLegsYScale = dogLegsSprite.yscale
+            end
+            -- Barking animation, sound and bouncing
+            Stare3Bark(frame, 60)
+            Stare3Bounce(frame, true)
+        -- Lowers the dog back to normal
+        elseif frame >= 510 and frame < 590 then
+            if frame == 510 then
+                Event.MoveToPoint("Event1", dogSprite.absx, stare3DogStartingY, true, false)
+            end
+            dogLegsSprite.yscale = dogLegsSprite.yscale - 1/3
+        -- Remove the paw sprites and call it a day
+        elseif frame == 590 then
+            dogLegsSprite.Remove()
+            dogPawsSprite.Remove()
+            return true
+        elseif frame > 590 then
+            return true
+        end
+    -- If the Player pressed a key
+    else
+        -- If the dog was bouncing with his long legs, reset it back as if he wasn't bouncing
+        if frame >= 450 and frame <= 510 and stare3DogLegsYScale ~= 0 then
+            dogSprite.absy = stare3DogStartingY + 80
+            dogSprite.Scale(1, 1)
+            dogLegsSprite.Scale(1, stare3DogLegsYScale)
+            dogPawsSprite.Scale(1, 1)
+            stare3DogLegsYScale = 0
+        end
+        -- As long as the leg sprites exist, shorten the legs and keep the dog in midair
+        if dogLegsSprite.isactive then
+            -- Stop the dog's movement, barking and prepare the legs to be scaled down
+            if not stare3InputtedFirst then
+                Event.MoveToPoint("Event1", dogSprite.absx, dogSprite.absy, true, false)
+                dogSprite.Set("Overworld/Dog")
+                stare3DogOpen = false
+                dogLegsSprite.SetPivot(.5, 1)
+                dogLegsSprite.MoveToAbs(dogSprite.absx, dogSprite.absy + 6)
+                stare3InputtedFirst = true
+            end
+            -- Scale the legs down and raise the paws
+            dogLegsSprite.yscale = dogLegsSprite.yscale - 2
+            dogPawsSprite.Move(0, 6)
+            -- End condition: when the legs are no more, delete the sprites and prepare the dog to fall
+            if dogLegsSprite.yscale <= 0 then
+                dogLegsSprite.Remove()
+                dogPawsSprite.Remove()
+                Event.SetSpeed("Event1", 0)
+                Event.MoveToPoint("Event1", dogSprite.absx, stare3DogStartingY, true, false)
+            end
+        -- While the dog is falling...
+        elseif dogSprite.absy > stare3DogStartingY then
+            -- ...increase his falling speed and rotate him t the side a little
+            stare3DogSpeed = stare3DogSpeed + 0.05
+            Event.SetSpeed("Event1", stare3DogSpeed)
+            dogSprite.rotation = dogSprite.rotation - (dogSprite.rotation < 10 and .5 or dogSprite.rotation < 15 and .25 or .1)
+        -- When the dog is on the ground and still rotated, barking or bouncing
+        elseif (stare3Count <= 15 or dogSprite.rotation ~= 0 or dogSprite.xscale ~= 1 or stare3DogSpeed > 0) then
+            -- Reset the dog's rotation value to 0 over some frames
+            if dogSprite.rotation ~= 0 then
+                dogSprite.rotation = dogSprite.rotation - math.max(dogSprite.rotation, -2)
+            end
+            -- Make the dog bounce depending on his downward speed
+            local scale = dogSprite.xscale + stare3DogSpeed / 50
+            dogSprite.Scale(scale, 1 / scale)
+            stare3DogSpeed = (stare3DogSpeed < 0.25 and stare3DogSpeed > 0) and -stare3DogSpeed or (stare3DogSpeed - 0.25)
+            if stare3DogSpeed < 0 and dogSprite.xscale < 1 then
+                dogSprite.Scale(1, 1)
+            end
+            -- Make him bark one last time
+            Stare3Bark(stare3Count, 16)
+            stare3Count = stare3Count + 1
+        else
+            return true
+        end
+    end
+    return false
+end
 
 function Stare4(frame) -- requires at least 574 frames
     -- Create Monster Kid sprite
