@@ -114,6 +114,7 @@ public static class SpriteUtil {
 
     public static DynValue MakeIngameSprite(string filename, string tag = "BelowArena", int childNumber = -1) {
         string canvas = UnitaleUtil.IsOverworld ? "Canvas Two/" : "Canvas/";
+        tag = (UnitaleUtil.IsOverworld && tag == "BelowArena") ? "Default" : tag;
         if (ParseUtil.TestInt(tag) && childNumber == -1) {
             childNumber = ParseUtil.GetInt(tag);
             tag = UnitaleUtil.IsOverworld ? "Default" : "BelowArena";
