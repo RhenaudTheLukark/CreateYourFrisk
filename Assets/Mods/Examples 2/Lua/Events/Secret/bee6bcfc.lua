@@ -147,8 +147,6 @@ function EventPage1()
             text = "Hey...[w:25]you look kinda menacing...[w:25]\nBe good, [w:15]alright?"
         end
         mugshot = "punder/intimidated"
-    --[[elseif Event.GetAnimHeader("Player") == "CharaTad" then  
-        text = "Are you alright? [w:25]\nYou seem lost..."]]
     elseif Event.GetAnimHeader("Player") == "Asriel" then    
         text = "Oh hi kid! [w:25]You're cute, [w:15]you know that?"
         mugshot = "punder/veryHappy"

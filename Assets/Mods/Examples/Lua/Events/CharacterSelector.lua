@@ -113,10 +113,6 @@ function EventPage1()
                                                        "MonsterKidOW/f5", "MonsterKidOW/f5", "MonsterKidOW/f5",  "MonsterKidOW/f6",  "MonsterKidOW/f7",
                                                        "MonsterKidOW/f8", "MonsterKidOW/f9", "MonsterKidOW/f10", "MonsterKidOW/f11"                     }, 0.1)
         elseif currentChar == 4 then
-            --[[Event.SetAnimHeader("Player", "CharaTad")
-            chars[currentChar]["sprite"].SetAnimation({"CharaTadOW/a1", "CharaTadOW/a1", "CharaTadOW/a1", "CharaTadOW/1", "CharaTadOW/a2", "CharaTadOW/a2", "CharaTadOW/a2",
-                                                       "CharaTadOW/1", "CharaTadOW/1", "CharaTadOW/a3", "CharaTadOW/a3", "CharaTadOW/a3", "CharaTadOW/a4"}, 0.2)]]
-            --if not inProgress then
             if count == 0 then
                 inProgress = true
                 Event.SetAnimHeader("Player", "Booster")

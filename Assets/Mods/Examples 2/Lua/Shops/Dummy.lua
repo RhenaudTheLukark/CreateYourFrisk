@@ -43,7 +43,7 @@ canSell = false
 acted = false
 
 function Start()
-    background.Set("DummyBackground")
+    background.Set("Overworld/DummyBackground")
 end
 
 function EnterBuy()
