@@ -2363,6 +2363,38 @@ Prefab:
       propertyPath: m_WasSpriteAssigned
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 11456550, guid: d781acdb7c86dff4081250e8c5edd546, type: 2}
+      propertyPath: position.x
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 11456550, guid: d781acdb7c86dff4081250e8c5edd546, type: 2}
+      propertyPath: position.y
+      value: 160
+      objectReference: {fileID: 0}
+    - target: {fileID: 11456550, guid: d781acdb7c86dff4081250e8c5edd546, type: 2}
+      propertyPath: direction
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 11456550, guid: d781acdb7c86dff4081250e8c5edd546, type: 2}
+      propertyPath: sceneName
+      value: test5
+      objectReference: {fileID: 0}
+    - target: {fileID: 11494438, guid: d781acdb7c86dff4081250e8c5edd546, type: 2}
+      propertyPath: sceneName
+      value: test4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11494438, guid: d781acdb7c86dff4081250e8c5edd546, type: 2}
+      propertyPath: position.x
+      value: 1200
+      objectReference: {fileID: 0}
+    - target: {fileID: 11494438, guid: d781acdb7c86dff4081250e8c5edd546, type: 2}
+      propertyPath: position.y
+      value: 240
+      objectReference: {fileID: 0}
+    - target: {fileID: 11494438, guid: d781acdb7c86dff4081250e8c5edd546, type: 2}
+      propertyPath: direction
+      value: 4
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d781acdb7c86dff4081250e8c5edd546, type: 2}
   m_IsPrefabAsset: 0
