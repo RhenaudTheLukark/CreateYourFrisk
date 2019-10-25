@@ -43,6 +43,7 @@ function EventPage2()
     Event.MoveToPoint(Event.GetName(), 1120, 680, true, false)
     Event.SetDirection(Event.GetName(), 4)
     General.SetDialog({"[noskip][voice:punderbolt]Hey! [w:25]Back off!", "[noskip][voice:punderbolt]What are you doing?!"}, true, {"Punder/angryIntimidated", "Punder/shocked"})
+    playerSpeed = Event.GetSpeed("Player")
     Event.SetSpeed("Player", 6)
     General.Wait(60)
 
@@ -120,6 +121,8 @@ function EventPage2()
     Event.SetAnimHeader(Event.GetName(), "")
     SetRealGlobal("CYFInternalCross2", true)
     SetRealGlobal("CYFInternalCharacterSelected", false)
+    NewAudio.DestroyChannel("temp")
+    Event.SetSpeed("Player", playerSpeed)
     Player.Teleport("test2", 320, 200, 2, false)
 end
 

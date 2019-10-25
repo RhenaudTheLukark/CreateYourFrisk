@@ -86,6 +86,7 @@ public class SpecialAnnouncementScript : MonoBehaviour {
         MainSprite = ((LuaSpriteController)SpriteUtil.MakeIngameSprite("empty", "none", -1).UserData.Object);
         MainSprite.alpha = 0;
         MainSprite.SetPivot(.5f, 0);
+        MainSprite.absx = 320;
         MainSprite.absy = 260;
 
         Sprite[] sprs = Resources.LoadAll<Sprite>("Sprites/Punder");

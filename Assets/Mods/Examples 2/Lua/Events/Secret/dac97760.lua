@@ -64,5 +64,6 @@ function EventPage1()
     SetRealGlobal("CYFInternalCross1", true)
     SetRealGlobal("CYFInternalCharacterSelected", false)
     Event.SetAnimHeader("dac97760 (1)", "StopDown")
+    NewAudio.DestroyChannel("temp")
     Player.Teleport("test2", 320, 200, 2, false)
 end

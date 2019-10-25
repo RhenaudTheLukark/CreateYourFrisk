@@ -54,6 +54,7 @@ function EventPage1()
         SetRealGlobal("CYFInternalCharacterSelected", false)
         Event.SetAnimHeader("caf144b2 (1)", "StopDown")
         Event.SetAnimHeader("caf144b2 (2)", "StopDown")
+        NewAudio.DestroyChannel("temp")
         Player.Teleport("test2", 320, 200, 2, false)
     end
     Event.SetAnimHeader("caf144b2 (1)", "StopDown")

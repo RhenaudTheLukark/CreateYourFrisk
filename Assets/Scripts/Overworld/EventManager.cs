@@ -1008,7 +1008,8 @@ end";
         if (cSharpCoroutines.ContainsKey(key)) {
             UnityEngine.Coroutine existingCoro;
             cSharpCoroutines.TryGetValue(key, out existingCoro);
-            StopCoroutine(existingCoro);
+            if (existingCoro != null)
+                StopCoroutine(existingCoro);
             cSharpCoroutines.Remove(key);
         }
         UnityEngine.Coroutine newCoro;
@@ -1032,12 +1033,14 @@ end";
             Audios.Add(adc.name, adc);
         go.GetComponent<SpriteRenderer>().sprite = Sprites["mm2"];
         go.transform.position = new Vector3(go.transform.position.x, go.transform.position.y, -1);
-        AudioSource audio = ((AudioSource)NewMusicManager.audiolist["src"]);
+        NewMusicManager.StopAll();
+        AudioSource audio = NewMusicManager.CreateChannelAndGetAudioSource("4eab1af3ab6a932c23b3cdb8ef618b1af9c02088");
         audio.loop = false;
         audio.clip = Audios["sound"];
         audio.Play();
         while (audio.isPlaying)
             yield return 0;
+        NewMusicManager.DestroyChannel("4eab1af3ab6a932c23b3cdb8ef618b1af9c02088");
         SceneManager.LoadScene("SpecialAnnouncement");
         GameObject.Destroy(GameObject.Find("Player"));
         GameObject.Destroy(GameObject.Find("Canvas OW"));

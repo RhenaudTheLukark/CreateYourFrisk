@@ -82,9 +82,9 @@ function EventPage368395()
     General.SetDialog({ "There's a dog here and it's blocking the way.",
                         "It doesn't look like it'll move any time soon...",
                         "I should try jumping over it!" }, true,
-                      { { "Booster/normal", "Booster/normalT", 0.2 },
-                        { "Booster/sad",    "Booster/sadT",    0.2 },
-                        { "Booster/happy",  "Booster/happyT",  0.2 } })
+                      { { "Booster/normalT", "Booster/normal", 0.2 },
+                        { "Booster/sadT",    "Booster/sad",    0.2 },
+                        { "Booster/happyT",  "Booster/happy",  0.2 } })
     Event.SetPage(Event.GetName(), 1)
 end
 
