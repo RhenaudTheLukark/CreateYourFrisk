@@ -386,10 +386,11 @@ public class LuaSpriteController {
         if (tag == "bubble") {
             UnitaleUtil.WriteInLogAndDebugger("sprite.SetParent(): bubbles' parent can't be changed.");
             return;
-        }
+        } else if (parent != null && parent.img.transform != null && parent.img.transform.parent.name == "SpritePivot")
+            throw new CYFException("sprite.SetParent(): Can not use SetParent with an Overworld Event's sprite.");
         try {
             GetTarget().SetParent(parent.img.transform);
-        } catch { throw new CYFException("You tried to set a removed sprite/nil sprite as this sprite's parent."); }
+        } catch { throw new CYFException("sprite.SetParent(): You tried to set a removed sprite/nil sprite as this sprite's parent."); }
     }
 
     // Sets the pivot of a sprite (its rotation point)
@@ -644,7 +645,9 @@ public class LuaSpriteController {
 
     private int _masked = 0;
     public void Mask(string mode) {
-        if (mode == null)
+        if (GetTarget().name == "SpritePivot")
+            throw new CYFException("sprite.Mask: Can not be applied to Overworld Event sprites.");
+        else if (mode == null)
             throw new CYFException("sprite.Mask: No argument provided.");
 
         mode = mode.ToLower();

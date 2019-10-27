@@ -240,7 +240,7 @@ public class LuaEventOW {
                 if (key == name)
                     try { return UserData.Create(EventManager.instance.sprCtrls[name]); } finally { appliedScript.Call("CYFEventNextCommand"); }
         } catch { }
-        throw new CYFException("Event.GetSprite: The event " + name + " doesn't have a sprite.");
+        throw new CYFException("Event.GetSprite: The event \"" + name + "\" doesn't have a sprite.");
     }
 
     [CYFEventFunction] public void CenterOnCamera(string name, int speed = 5, bool straightLine = false, bool waitEnd = true, string info = "Event.CenterOnCamera") {

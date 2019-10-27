@@ -581,7 +581,13 @@ function CYFEventForwarder(func, ...)
     FGeneral.HiddenReloadAppliedScript()
     CYFEventLastAction = func
     local x" + lameFunctionBinding + "\n"
-+ @"local ok, result = #({...}) > 0 and pcall(x, ...) or pcall(x)
++ @"local ok
+    local result
+    if #({...}) > 0 then
+        ok, result = pcall(x, ...)
+    else
+        ok, result = pcall(x)
+    end
     if not ok then
         error(CYFFormatError(result), 0)
     end

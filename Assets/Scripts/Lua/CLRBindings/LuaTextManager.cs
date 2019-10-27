@@ -288,6 +288,8 @@ public class LuaTextManager : TextManager {
 
     public void SetParent(LuaSpriteController parent) {
         CheckExists();
+        if (parent != null && parent.img.transform != null && parent.img.transform.parent.name == "SpritePivot")
+            throw new CYFException("text.SetParent(): Can not use SetParent with an Overworld Event's sprite.");
         try { container.transform.SetParent(parent.img.transform); } 
         catch { throw new CYFException("You tried to set a removed sprite/nil sprite as this text object's parent."); }
     }
