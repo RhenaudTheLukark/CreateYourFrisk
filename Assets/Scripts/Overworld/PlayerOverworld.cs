@@ -443,14 +443,14 @@ public class PlayerOverworld : MonoBehaviour {
             yield return new WaitForSeconds(0.5f);
         }
         //Set the heart's position to the player's position
-        utHeart.transform.position = new Vector3(PlayerPos.position.x, PlayerPos.position.y + PlayerPos.GetComponent<RectTransform>().sizeDelta.y / 2, -5100);
+        utHeart.transform.position = new Vector3(PlayerPos.position.x, PlayerPos.position.y + (playerMask.sprite.texture.height / 3), -5100);
         positionCamera = Camera.main.transform.position;
         end = new Vector2(PlayerPos.position.x - (positionCamera.x - 320 + 48), PlayerPos.position.y + PlayerPos.GetComponent<RectTransform>().sizeDelta.y / 2 - (positionCamera.y - 240 + 25));
         blackFont.transform.position = new Vector3(positionCamera.x, positionCamera.y, blackFont.transform.position.z);
         blackFont.color = new Color(blackFont.color.r, blackFont.color.g, blackFont.color.b, 1f);
         playerMask.transform.position = new Vector3(PlayerPos.position.x, PlayerPos.position.y, -5040);
         playerMask.sprite = PlayerPos.GetComponent<SpriteRenderer>().sprite;
-        playerMask.rectTransform.sizeDelta = PlayerPos.GetComponent<RectTransform>().sizeDelta / 100;
+        playerMask.rectTransform.sizeDelta = PlayerPos.GetComponent<RectTransform>().sizeDelta;
         //playerMask.transform.localScale = new Vector3(PlayerPos.lossyScale.x / playerMask.transform.lossyScale.x, PlayerPos.lossyScale.y / playerMask.transform.lossyScale.y, 1);
         Color color = PlayerPos.GetComponent<SpriteRenderer>().color;
         PlayerPos.GetComponent<SpriteRenderer>().color = new Color(color.r, color.g, color.b, 0);
@@ -482,7 +482,7 @@ public class PlayerOverworld : MonoBehaviour {
 
         //Here we move the heart to the place it'll be on the beginning of the battle
         if (utHeart.transform.position != new Vector3(positionCamera.x - 320 + 48, positionCamera.y - 240 + 25, -5100)) {
-            Vector3 positionTemp = new Vector3(PlayerPos.position.x - (end.x * TimeIndicator), PlayerPos.position.y + PlayerPos.GetComponent<RectTransform>().sizeDelta.y / 2 - (end.y * TimeIndicator), 0);
+            Vector3 positionTemp = new Vector3(PlayerPos.position.x - (end.x * TimeIndicator), PlayerPos.position.y + (playerMask.sprite.texture.height / 3) - (end.y * TimeIndicator), 0);
             utHeart.transform.position = positionTemp;
         }
 
