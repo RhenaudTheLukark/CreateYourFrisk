@@ -802,14 +802,19 @@ public class PlayerOverworld : MonoBehaviour {
                                             instance.uiAudio.PlayOneShot(AudioClipRegistry.GetSound("menuconfirm"));
                                             yield return CloseMenu();
                                             switch (index2) {
-                                                case 0: Inventory.UseItem(index); break;
+                                                case 0:
+                                                    instance.textmgr.SetEffect(null);
+                                                    Inventory.UseItem(index);
+                                                    break;
                                                 case 1:
                                                     string str;
                                                     Inventory.NametoDesc.TryGetValue(Inventory.inventory[index].Name, out str);
+                                                    instance.textmgr.SetEffect(null);
                                                     instance.textmgr.SetText(new TextMessage("\"" + Inventory.inventory[index].Name + "\"\n" + str, true, false));
                                                     instance.textmgr.transform.parent.parent.SetAsLastSibling();
                                                     break;
                                                 case 2:
+                                                    instance.textmgr.SetEffect(null);
                                                     if (GlobalControls.crate)
                                                         instance.textmgr.SetText(new TextMessage("U DORPED TEH " + Inventory.inventory[index].Name + "!!!!!", true, false));
                                                     else
@@ -869,6 +874,7 @@ public class PlayerOverworld : MonoBehaviour {
                         }
                     } else { //CELL
                         yield return CloseMenu();
+                        instance.textmgr.SetEffect(null);
                         if (GlobalControls.crate)
                             instance.textmgr.SetText(new TextMessage("NO CELPLHONE ALOLWDE!!!", true, false));
                         else

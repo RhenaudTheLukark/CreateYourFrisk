@@ -162,6 +162,8 @@ h4 {
     width    : 100%;
     top      : 0px;
     z-index  : -1;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
 }
 
 .li-header{

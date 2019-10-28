@@ -246,6 +246,7 @@ public class TextManager : MonoBehaviour {
             if ((mugshots.Count > 1 || (mugshots[0] != "mugshots/" && mugshots[0] != "mugshots/null")) && text != null) {
                 try {
                     if (mugshots.Count > 1) {
+                        time = time > 0f ? time : 0.2f;
                         mugshot.SetAnimation((string[])UnitaleUtil.ListToArray(mugshots), time);
                         if (finalMugshot == null)
                             finalMugshot = mugshots[mugshots.Count - 1];

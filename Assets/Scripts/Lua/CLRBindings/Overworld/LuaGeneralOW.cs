@@ -47,6 +47,7 @@ public class LuaGeneralOW {
             UnitaleUtil.DisplayLuaError(EventManager.instance.eventScripts[EventManager.instance.events[EventManager.instance.actualEventIndex]].scriptname, "General.SetDialog: You need to input a non-empty array or string here.");
             return;
         }
+        textmgr.SetEffect(null);
         textmgr.SetTextQueue(textmsgs);
         textmgr.transform.parent.parent.SetAsLastSibling();
     }
@@ -106,6 +107,7 @@ public class LuaGeneralOW {
             if (finalText[i] != "\t")
                 textMsgChoice.AddToText(finalText[i] + ((i == finalText.Count - 1) ? "" : "\n"));
         }
+        textmgr.SetEffect(null);
         textmgr.SetText(textMsgChoice);
         textmgr.transform.parent.parent.SetAsLastSibling();
 

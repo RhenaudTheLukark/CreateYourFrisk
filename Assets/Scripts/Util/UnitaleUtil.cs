@@ -298,6 +298,17 @@ public static class UnitaleUtil {
                 currentValue += text[i];
         }
 
+        // Parse one final time for the end of the string
+        Type typey = CheckRealType(currentValue);
+        DynValue dynv;
+        if (typey == typeof(bool))       dynv = DynValue.NewBoolean(currentValue == "true");
+        else if (typey == typeof(float)) dynv = DynValue.NewNumber(ParseUtil.GetFloat(currentValue));
+        else                            dynv = DynValue.NewString(currentValue.Trim('"'));
+        if (valueName == null) t.Append(dynv);
+        else                   t.Set(valueName, dynv);
+        valueName = null;
+        currentValue = "";
+
         return t;
     }
 
