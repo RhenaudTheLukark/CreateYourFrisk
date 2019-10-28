@@ -183,7 +183,7 @@ public static class UnitaleUtil {
                     }
                     
                     // used to protect against unclosed open brackets
-                    if (failSafe)
+                    if (failSafe || i == txtmgr.textQueue[txtmgr.currentLine].Text.Length - 1)
                         break;
                     
                     i--;

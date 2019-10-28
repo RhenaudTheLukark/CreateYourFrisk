@@ -22,9 +22,9 @@ public class EventManager : MonoBehaviour {
     public  int actualEventIndex = -1;      //ID of the actual event we're running
     public  bool readyToReLaunch = false;   //Used to prevent overworld GameOver errors
     public  bool bgmCoroutine = false;      //Check if the BGM is already fading
-    public bool passPressOnce = false;      //Boolean used because events are boring
+    public  bool passPressOnce = false;      //Boolean used because events are boring
     public  bool _scriptLaunched = false;
-    public bool ScriptLaunched {             
+    public  bool ScriptLaunched {
         get { return _scriptLaunched || PlayerOverworld.instance.forceNoAction; }
         set { _scriptLaunched = value; }
     }
@@ -524,22 +524,20 @@ CYFEventLastAction = """"
 local CYFEventCurrentFunction = nil
 local CYFEventAlreadyLaunched = false
 function CYFFormatError(err)
-    local pattern = ':[%(%d%-%),]+:'
+    local pattern = ':%([%d%-,]+%):'
     local code = err:match(pattern)
     if code then
         local before = err:sub(0, err:find(pattern) + (code:sub(0, 2) == ':(' and 1 or 0))
-        local numbers = err:match('[%d,%-]+[):]'):sub(0, -2)
+        local numbers = err:match('[%d,%-]+%)'):sub(0, -2)
         local after = err:sub(err:find(numbers:gsub('%-', '%%-'), #before) + #numbers)
         
-        -- there are only 4 possible formats for error messages
+        -- there are only 3 possible formats for error messages
         -- see Assets/Plugins/MoonSharp/Interpreter/Debugging/SourceRef.cs line 178
         local allNums = {}
         for num in numbers:gmatch('%d+') do
             table.insert(allNums, num)
         end
-        if numbers == numbers:match('%d+') then
-            numbers = 'line ' .. numbers
-        elseif numbers == numbers:match('%d+,%d+') then
+        if numbers == numbers:match('%d+,%d+') then
             numbers = 'line ' .. allNums[1] .. ', char ' .. allNums[2]
         elseif numbers == numbers:match('%d+,%d+%-%d+') then
             numbers = 'line ' .. allNums[1] .. ', char ' .. allNums[2] .. '-' .. allNums[3]
@@ -583,9 +581,13 @@ function CYFEventForwarder(func, ...)
     local x" + lameFunctionBinding + "\n"
 + @"local ok
     local result
-    if #({...}) > 0 then
+    local hasArgs = false
+    for k, v in pairs(({...})) do
+        hasArgs = true
         ok, result = pcall(x, ...)
-    else
+        break
+    end
+    if not hasArgs then
         ok, result = pcall(x)
     end
     if not ok then

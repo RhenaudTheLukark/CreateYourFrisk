@@ -100,9 +100,6 @@ public class ScriptWrapper {
         }
     }
 
-    //Used for enemies
-    public LuaSpriteController monstersprite;
-
     internal void Bind(string key, object func) {
         script.Globals[key] = func;
         /*try {

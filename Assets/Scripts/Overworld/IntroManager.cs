@@ -133,25 +133,25 @@ public class IntroManager : MonoBehaviour {
         switch(e) {
             case Effect.SCROLLUP:
                 if (img.rectTransform.sizeDelta.y < (mask ? 220 : 480))
-                    UnitaleUtil.DisplayLuaError("IntroManager", "You can't apply a scroll down effect on an image which has a lowest y boundary than the screen's y boundary.");
+                    UnitaleUtil.DisplayLuaError("IntroManager", "You can't apply a scroll down effect on an image which has a lower y boundary than the screen's y boundary.");
                 img.rectTransform.pivot = new Vector2(0.5f, 1);
                 img.rectTransform.position = new Vector2(img.rectTransform.position.x, mask ? img.rectTransform.sizeDelta.y + 204 : img.rectTransform.sizeDelta.y);
                 break;
             case Effect.SCROLLDOWN:
                 if (img.rectTransform.sizeDelta.y < (mask ? 220 : 480))
-                    UnitaleUtil.DisplayLuaError("IntroManager", "You can't apply a scroll down effect on an image which has a lowest y boundary than the screen's y boundary.");
+                    UnitaleUtil.DisplayLuaError("IntroManager", "You can't apply a scroll down effect on an image which has a lower y boundary than the screen's y boundary.");
                 img.rectTransform.pivot = new Vector2(0.5f, 0);
                 img.rectTransform.position = new Vector2(img.rectTransform.position.x, mask ? 424 - img.rectTransform.sizeDelta.y : 480 - img.rectTransform.sizeDelta.y);
                 break;
             case Effect.SCROLLLEFT:
                 if (img.rectTransform.sizeDelta.x < (mask ? 400 : 640))
-                    UnitaleUtil.DisplayLuaError("IntroManager", "You can't apply a scroll down effect on an image which has a lowest x boundary than the screen's x boundary.");
+                    UnitaleUtil.DisplayLuaError("IntroManager", "You can't apply a scroll down effect on an image which has a lower x boundary than the screen's x boundary.");
                 img.rectTransform.pivot = new Vector2(0, 0.5f);
                 img.rectTransform.position = new Vector2(mask ? 520 - img.rectTransform.sizeDelta.x : 640 - img.rectTransform.sizeDelta.y, img.rectTransform.position.y);
                 break;
             case Effect.SCROLLRIGHT:
                 if (img.rectTransform.sizeDelta.x < (mask ? 400 : 640))
-                    UnitaleUtil.DisplayLuaError("IntroManager", "You can't apply a scroll down effect on an image which has a lowest x boundary than the screen's x boundary.");
+                    UnitaleUtil.DisplayLuaError("IntroManager", "You can't apply a scroll down effect on an image which has a lower x boundary than the screen's x boundary.");
                 img.rectTransform.pivot = new Vector2(1, 0.5f);
                 img.rectTransform.position = new Vector2(mask ? img.rectTransform.sizeDelta.x + 120 : img.rectTransform.sizeDelta.x, img.rectTransform.position.y);
                 break;
