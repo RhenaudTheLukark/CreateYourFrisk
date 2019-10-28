@@ -438,20 +438,23 @@ public class PlayerOverworld : MonoBehaviour {
             //Shows the encounter bubble, the "!" on the player
             SpriteRenderer EncounterBubble = GameObject.Find("EncounterBubble").GetComponent<SpriteRenderer>();
             EncounterBubble.color = new Color(EncounterBubble.color.r, EncounterBubble.color.g, EncounterBubble.color.b, 1f);
-            EncounterBubble.transform.position = new Vector3(EncounterBubble.transform.position.x, PlayerPos.position.y + playerMask.sprite.texture.height + EncounterBubble.sprite.texture.height - 6);
+            EncounterBubble.transform.position = new Vector3(EncounterBubble.transform.position.x, PlayerPos.position.y + playerMask.sprite.texture.height + 6);
 
             yield return new WaitForSeconds(0.5f);
         }
         //Set the heart's position to the player's position
-        utHeart.transform.position = new Vector3(PlayerPos.position.x, PlayerPos.position.y + (playerMask.sprite.texture.height / 3), -5100);
+        utHeart.transform.position = new Vector3(PlayerPos.position.x, PlayerPos.position.y + (playerMask.sprite.texture.height / 2.5f), -5100);
         positionCamera = Camera.main.transform.position;
         end = new Vector2(PlayerPos.position.x - (positionCamera.x - 320 + 48), PlayerPos.position.y + PlayerPos.GetComponent<RectTransform>().sizeDelta.y / 2 - (positionCamera.y - 240 + 25));
         blackFont.transform.position = new Vector3(positionCamera.x, positionCamera.y, blackFont.transform.position.z);
         blackFont.color = new Color(blackFont.color.r, blackFont.color.g, blackFont.color.b, 1f);
+
+        Vector2 nativeSizeDelta = new Vector2(PlayerPos.GetComponent<SpriteRenderer>().sprite.texture.width, PlayerPos.GetComponent<SpriteRenderer>().sprite.texture.height);
         playerMask.transform.position = new Vector3(PlayerPos.position.x, PlayerPos.position.y, -5040);
         playerMask.sprite = PlayerPos.GetComponent<SpriteRenderer>().sprite;
-        playerMask.rectTransform.sizeDelta = PlayerPos.GetComponent<RectTransform>().sizeDelta;
+        playerMask.rectTransform.sizeDelta = new Vector2(nativeSizeDelta.x * Mathf.Abs(sprctrl.xscale), nativeSizeDelta.y * Mathf.Abs(sprctrl.yscale)) / 100;
         //playerMask.transform.localScale = new Vector3(PlayerPos.lossyScale.x / playerMask.transform.lossyScale.x, PlayerPos.lossyScale.y / playerMask.transform.lossyScale.y, 1);
+
         Color color = PlayerPos.GetComponent<SpriteRenderer>().color;
         PlayerPos.GetComponent<SpriteRenderer>().color = new Color(color.r, color.g, color.b, 0);
         playerMask.GetComponent<Image>().color = new Color(color.r, color.g, color.b, 1);
@@ -482,7 +485,7 @@ public class PlayerOverworld : MonoBehaviour {
 
         //Here we move the heart to the place it'll be on the beginning of the battle
         if (utHeart.transform.position != new Vector3(positionCamera.x - 320 + 48, positionCamera.y - 240 + 25, -5100)) {
-            Vector3 positionTemp = new Vector3(PlayerPos.position.x - (end.x * TimeIndicator), PlayerPos.position.y + (playerMask.sprite.texture.height / 3) - (end.y * TimeIndicator), 0);
+            Vector3 positionTemp = new Vector3(PlayerPos.position.x - (end.x * TimeIndicator), PlayerPos.position.y + (playerMask.sprite.texture.height / 2.5f) - (end.y * TimeIndicator), 0);
             utHeart.transform.position = positionTemp;
         }
 

@@ -1423,7 +1423,8 @@ end";
 
         if (forced) {
             SaveLoad.Save(true);
-            script.Call("CYFEventNextCommand");
+            if (script == scr)
+                script.Call("CYFEventNextCommand");
             yield break;
         } else if (coroutines.ContainsKey(scr) && script != scr) {
             UnitaleUtil.DisplayLuaError(scr.scriptname, "General.Save: This function cannot be used in a coroutine.");
