@@ -569,6 +569,21 @@ public static class UnitaleUtil {
         MapCorrespondanceList.Add("Void", "The final map...?");
     }
 
+    public static void ResetOW(bool resetSave = false) {
+        EventManager.instance = null;
+        EventManager.inited = false;
+        GameState.current = null;
+        ItemBoxUI.active = false;
+        GlobalControls.po = null;
+        GlobalControls.realName = null;
+        PlayerOverworld.instance = null;
+        PlayerOverworld.audioCurrTime = 0;
+        PlayerOverworld.audioKept = null;
+        if (resetSave)
+            SaveLoad.Load();
+        ShopScript.scriptName = null;
+    }
+
     public static string TimeFormatter(float seconds) {
         float minutes = Mathf.Floor((seconds / 60f) % 60f);
         float hours = Mathf.Floor((seconds / 60f) / 60f);

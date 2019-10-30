@@ -7,11 +7,9 @@ using MoonSharp.Interpreter;
 
 public class TransitionOverworld : MonoBehaviour {
     public string FirstLevelToLoad;
-    public static string _FirstLevelToLoad;
     public Vector2 BeginningPosition;
     
     private void Start() {
-        _FirstLevelToLoad = FirstLevelToLoad;
         bool isStart = false;
 
         // Set timestamp for Overworld to calculate total play time
@@ -33,7 +31,11 @@ public class TransitionOverworld : MonoBehaviour {
         }
         GameObject.DontDestroyOnLoad(GameOverBehavior.gameOverContainerOw);
 
-        GlobalControls.beginPosition = BeginningPosition;
+        if (LuaScriptBinder.Get(null, "PlayerPosX") == null || LuaScriptBinder.Get(null, "PlayerPosY") == null || LuaScriptBinder.Get(null, "PlayerPosZ") == null) {
+            LuaScriptBinder.Set(null, "PlayerPosX", DynValue.NewNumber(BeginningPosition.x));
+            LuaScriptBinder.Set(null, "PlayerPosY", DynValue.NewNumber(BeginningPosition.y));
+            LuaScriptBinder.Set(null, "PlayerPosZ", DynValue.NewNumber(0));
+        }
         if (GameObject.Find("Main Camera"))
             GameObject.Destroy(GameObject.Find("Main Camera"));
         //Used only for the 1st scene

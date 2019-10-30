@@ -62,7 +62,7 @@ public class PlayerOverworld : MonoBehaviour {
             Vector2 temp = new Vector3((float)LuaScriptBinder.Get(null, "PlayerPosX").Number, (float)LuaScriptBinder.Get(null, "PlayerPosY").Number, (float)LuaScriptBinder.Get(null, "PlayerPosZ").Number);
             PlayerPos.position = temp;
         } else
-            PlayerPos.position = GlobalControls.beginPosition;
+            PlayerPos.position = Vector3.zero;
 
         //Get a component reference to the Player's animator component
         //animator = Player.GetComponent<Animator>();
@@ -422,7 +422,6 @@ public class PlayerOverworld : MonoBehaviour {
         Image blackFont = GameObject.Find("black").GetComponent<Image>();
 
         Vector2 positionCamera, end;
-        GlobalControls.Music = UnitaleUtil.GetCurrentOverworldAudio().clip;
         playerMask.GetComponent<Image>().sprite = PlayerPos.GetComponent<SpriteRenderer>().sprite;
         audioCurrTime = MusicManager.src.time;
         Camera.main.GetComponent<AudioSource>().Stop();

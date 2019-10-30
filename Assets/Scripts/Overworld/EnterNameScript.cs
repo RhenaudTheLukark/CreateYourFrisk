@@ -223,6 +223,7 @@ public class EnterNameScript : MonoBehaviour {
                 }
                 while (GameObject.Find("Main Camera").GetComponent<AudioSource>().isPlaying)
                     yield return 0;
+                UnitaleUtil.ResetOW();
                 SceneManager.LoadScene("TransitionOverworld");
             } else {
                 SaveLoad.Save();

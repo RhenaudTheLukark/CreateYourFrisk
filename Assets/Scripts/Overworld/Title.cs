@@ -170,6 +170,7 @@ public class Title : MonoBehaviour {
 
     IEnumerator LoadGame() {
         GameObject.DontDestroyOnLoad(gameObject);
+        UnitaleUtil.ResetOW();
         SceneManager.LoadScene("TransitionOverworld");
         yield return 0;
         //yield return Application.isLoadingLevel;
@@ -200,6 +201,7 @@ public class Title : MonoBehaviour {
         GlobalControls.GameMapData.Clear();
         Inventory.inventory.Clear();
         GameObject.DontDestroyOnLoad(gameObject);
+        UnitaleUtil.ResetOW();
         SceneManager.LoadScene("TransitionOverworld");
         yield return 0;
         //yield return Application.isLoadingLevel;

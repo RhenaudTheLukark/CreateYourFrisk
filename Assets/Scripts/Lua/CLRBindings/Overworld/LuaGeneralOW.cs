@@ -141,7 +141,6 @@ public class LuaGeneralOW {
                 throw new CYFException("General.GameOver: deathText needs to be a table or a string.");
         }
 
-        GlobalControls.Music = UnitaleUtil.GetCurrentOverworldAudio().clip;
         PlayerOverworld.instance.enabled = false;
         
         // Stop the "kept audio" if it is playing

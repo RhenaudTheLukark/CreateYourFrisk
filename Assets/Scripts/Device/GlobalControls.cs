@@ -16,7 +16,6 @@ public class GlobalControls : MonoBehaviour {
     public static PlayerOverworld po;
     public static UndertaleInput input = new KeyboardInput();
     public static LuaInputBinding luaInput = new LuaInputBinding(input);
-    public static AudioClip Music;
     // public static Texture2D texBeforeEncounter;
     public static string realName;
     public static string lastScene = "test2";
@@ -34,7 +33,6 @@ public class GlobalControls : MonoBehaviour {
     public static bool isInShop = false;
     public static bool allowWipeSave = false;
     private bool screenShaking = false;
-    public static Vector2 beginPosition;
     //public static bool samariosNightmare = false;
     public static string[] nonOWScenes = new string[] { "Battle", "Error", "ModSelect", "Options", "GameOver", "TitleScreen", "Disclaimer", "EnterName", "TransitionOverworld", "Intro" };
     public static string[] canTransOW = new string[] { "Battle", "Error", "GameOver" };
@@ -189,8 +187,35 @@ public class GlobalControls : MonoBehaviour {
         else if (Input.GetKeyDown(KeyCode.Escape) && (canTransOW.Contains(SceneManager.GetActiveScene().name) || isInFight)) {
             if (isInFight && LuaEnemyEncounter.script.GetVar("unescape").Boolean && SceneManager.GetActiveScene().name != "Error")
                 return;
-            if (SceneManager.GetActiveScene().name == "Error" && !modDev)
+            if (SceneManager.GetActiveScene().name == "Error" && !modDev) {
+                foreach (string str in NewMusicManager.audiolist.Keys)
+                    if (((AudioSource)NewMusicManager.audiolist[str]) != null)
+                    GameObject.Destroy(((AudioSource)NewMusicManager.audiolist[str]).gameObject);
+                NewMusicManager.audiolist.Clear();
+                NewMusicManager.audioname.Clear();
+                GameObject.Destroy(GameObject.Find("Player"));
+                GameObject.Destroy(GameObject.Find("Canvas OW"));
+                GameObject.Destroy(GameObject.Find("Canvas Two"));
+                if (GameOverBehavior.gameOverContainerOw)
+                    GameObject.Destroy(GameOverBehavior.gameOverContainerOw);
+                UnitaleUtil.ResetOW(true);
+                StaticInits.MODFOLDER = "@Title";
+                StaticInits.Initialized = false;
+                StaticInits.InitAll();
+                PlayerCharacter.instance.Reset();
+                Inventory.inventory.Clear();
+                Inventory.RemoveAddedItems();
+                ScriptWrapper.instances.Clear();
+                GlobalControls.isInFight = false;
+                GlobalControls.isInShop = false;
+                LuaScriptBinder.scriptlist.Clear();
+                LuaScriptBinder.ClearBattleVar();
+                LuaScriptBinder.Clear();
+                GameObject.Destroy(GameObject.Find("Main Camera OW"));
+                SceneManager.LoadScene("Disclaimer");
+                GameObject.Destroy(GameObject.Find("SpritePivot"));
                 return;
+            }
 
             if (GameOverBehavior.gameOverContainer)
                 if (GameOverBehavior.gameOverContainer.activeInHierarchy)

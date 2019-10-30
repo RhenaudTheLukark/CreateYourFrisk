@@ -31,7 +31,7 @@ public class EventManager : MonoBehaviour {
     public  bool onceReload = false;
     public  bool nextFadeTransition = true;
     public  bool LoadLaunched = false;
-    private static bool inited = false;
+    public  static bool inited = false;
     public  Dictionary<GameObject, bool> autoDone = new Dictionary<GameObject, bool>();
 
     public LuaPlayerOW luaplow;
@@ -1452,13 +1452,10 @@ end";
         //foreach (RectTransform t in GameObject.Find("save_interior").transform)
             //t.sizeDelta = new Vector2(t.sizeDelta.x, t.sizeDelta.y + 1);
 
-        string playerName = ""; double playerLevel = 0;//, playerTime = 0;
-        bool isAlreadySave = false;
-        if (SaveLoad.savedGame != null) isAlreadySave = true;
-        if (isAlreadySave) {
+        string playerName = ""; double playerLevel = 0;
+        if (SaveLoad.savedGame != null) {
             playerName = SaveLoad.savedGame.player.Name;
             playerLevel = SaveLoad.savedGame.player.LV;
-            //SaveLoad.savedGame.playerVariablesNum.TryGetValue("PlayerTime", out playerTime);
 
             txtName.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]" + playerName, false, true) });
             txtLevel.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]LV" + playerLevel, false, true) });

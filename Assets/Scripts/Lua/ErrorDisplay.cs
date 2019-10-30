@@ -14,11 +14,10 @@ public class ErrorDisplay : MonoBehaviour {
             Destroy(GameObject.Find("Canvas Two"));
             Destroy(GameObject.Find("Player"));
         }
-        bool ow = !GlobalControls.modDev;
         UnitaleUtil.firstErrorShown = false;
         string mess;
-        if (ow) mess = "\n\nRestart CYF to further debug this error.";
-        else    mess = "\n\nPress ESC to reload";
-        GetComponent<Text>().text = Message + mess;
+        if (!GlobalControls.modDev) mess = "restart CYF";
+        else                        mess = "reload";
+        GetComponent<Text>().text = Message + "\n\nPress ESC to " + mess;
 	}
 }
