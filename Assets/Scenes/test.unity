@@ -1448,6 +1448,10 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 1571043348}
     m_Modifications:
+    - target: {fileID: 11419924, guid: eadfbd6437c330a4e8538c4969ddbb0d, type: 2}
+      propertyPath: eventTriggers.Array.size
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 22460244, guid: eadfbd6437c330a4e8538c4969ddbb0d, type: 2}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -1531,6 +1535,14 @@ Prefab:
     - target: {fileID: 174636, guid: eadfbd6437c330a4e8538c4969ddbb0d, type: 2}
       propertyPath: m_Name
       value: Ladder
+      objectReference: {fileID: 0}
+    - target: {fileID: 11419924, guid: eadfbd6437c330a4e8538c4969ddbb0d, type: 2}
+      propertyPath: eventTriggers.Array.data[1].x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11419924, guid: eadfbd6437c330a4e8538c4969ddbb0d, type: 2}
+      propertyPath: eventTriggers.Array.data[0].x
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 21225924, guid: eadfbd6437c330a4e8538c4969ddbb0d, type: 2}

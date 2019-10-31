@@ -851,7 +851,6 @@ MonoBehaviour:
   actualPage: 1
   eventTriggers:
   - {x: 1, y: 0}
-  - {x: 2, y: 2}
   moveSpeed: 1
 --- !u!61 &1160652447
 BoxCollider2D:

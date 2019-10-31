@@ -1,5 +1,3 @@
-function EventPage0() end
-
 function EventPage1()
     local speed = Event.GetSpeed("Player")
 
