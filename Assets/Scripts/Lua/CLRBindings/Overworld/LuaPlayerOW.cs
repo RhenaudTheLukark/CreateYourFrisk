@@ -115,30 +115,12 @@ public class LuaPlayerOW {
     [MoonSharpHidden]
     public void setHP(float newhp, bool forced = false) {
         if (newhp <= 0) {
-            GameOverBehavior gob = GameObject.FindObjectOfType<GameOverBehavior>();
-            if (!MusicManager.IsStoppedOrNull(PlayerOverworld.audioKept)) {
-                gob.musicBefore = PlayerOverworld.audioKept;
-                gob.music = gob.musicBefore.clip;
-                gob.musicBefore.Stop();
-            } else if (!MusicManager.IsStoppedOrNull(Camera.main.GetComponent<AudioSource>())) {
-                gob.musicBefore = Camera.main.GetComponent<AudioSource>();
-                gob.music = gob.musicBefore.clip;
-                gob.musicBefore.Stop();
-            } else {
-                gob.musicBefore = null;
-                gob.music = null;
-            }
-            PlayerCharacter.instance.HP = 0;
-            gob.gameObject.transform.SetParent(null);
-            GameObject.DontDestroyOnLoad(gob.gameObject);
-            RectTransform rt = gob.gameObject.GetComponent<RectTransform>();
-            rt.position = new Vector3(rt.position.x, rt.position.y, -1000);
-            gob.gameObject.GetComponent<GameOverBehavior>().StartDeath();
+            EventManager.instance.luagenow.GameOver();
             return;
         }
         float CheckedHP = PlayerCharacter.instance.HP;
         if (CheckedHP - newhp >= 0) UnitaleUtil.PlaySound("CollisionSoundChannel", AudioClipRegistry.GetSound("hurtsound").name);
-        else                 UnitaleUtil.PlaySound("CollisionSoundChannel", AudioClipRegistry.GetSound("healsound").name);
+        else                        UnitaleUtil.PlaySound("CollisionSoundChannel", AudioClipRegistry.GetSound("healsound").name);
 
         newhp = Mathf.Round(newhp * Mathf.Pow(10, ControlPanel.instance.MaxDigitsAfterComma)) / Mathf.Pow(10, ControlPanel.instance.MaxDigitsAfterComma);
 

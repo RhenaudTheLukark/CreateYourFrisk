@@ -355,7 +355,7 @@ public class TextManager : MonoBehaviour {
                             decoratedTextOffset = true;
                             self.localPosition = new Vector3(pos.x, pos.y + (decoratedTextOffset ? 9 : 0), pos.z);
                         }
-                    } else if (UnitaleUtil.IsOverworld && !GlobalControls.isInShop) {
+                    } else if (UnitaleUtil.IsOverworld && !GlobalControls.isInShop && !GameOverBehavior.gameOverContainerOw.activeSelf) {
                         int lines = textQueue[line].Text.Split('\n').Length;
                         if (lines >= 4) lines = 4;
                         else            lines = 3;

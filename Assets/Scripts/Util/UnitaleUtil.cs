@@ -584,6 +584,33 @@ public static class UnitaleUtil {
         ShopScript.scriptName = null;
     }
 
+    public static void ExitOverworld(bool totalUnload = true) {
+        foreach (string str in NewMusicManager.audiolist.Keys)
+            if (((AudioSource)NewMusicManager.audiolist[str]) != null && str != "src")
+                GameObject.Destroy(((AudioSource)NewMusicManager.audiolist[str]).gameObject);
+        NewMusicManager.audiolist.Clear();
+        NewMusicManager.audioname.Clear();
+        GameObject.Destroy(GameObject.Find("Player"));
+        GameObject.Destroy(GameObject.Find("Canvas OW"));
+        GameObject.Destroy(GameObject.Find("Canvas Two"));
+        if (GameOverBehavior.gameOverContainerOw)
+            GameObject.Destroy(GameOverBehavior.gameOverContainerOw);
+        StaticInits.MODFOLDER = "@Title";
+        StaticInits.Initialized = false;
+        StaticInits.InitAll();
+        UnitaleUtil.ResetOW(true);
+        PlayerCharacter.instance.Reset();
+        Inventory.inventory.Clear();
+        Inventory.RemoveAddedItems();
+        ScriptWrapper.instances.Clear();
+        GlobalControls.isInFight = false;
+        GlobalControls.isInShop = false;
+        LuaScriptBinder.scriptlist.Clear();
+        LuaScriptBinder.ClearBattleVar();
+        LuaScriptBinder.Clear();
+        GameObject.Destroy(GameObject.Find("Main Camera OW"));
+    }
+
     public static string TimeFormatter(float seconds) {
         float minutes = Mathf.Floor((seconds / 60f) % 60f);
         float hours = Mathf.Floor((seconds / 60f) / 60f);

@@ -130,7 +130,7 @@ public class LuaGeneralOW {
         rt.position = new Vector3(rt.position.x, rt.position.y, -1000);*/
         string[] deathTable = null;
 
-        if (deathText != null) {
+        if (deathText != null && deathText.Type != DataType.Void) {
             if (deathText.Type == DataType.Table) {
                 deathTable = new string[deathText.Table.Length];
                 for (int i = 0; i < deathText.Table.Length; i++)
@@ -221,15 +221,9 @@ public class LuaGeneralOW {
     /// Sends the player back to the title screen, making him lose his progression
     /// </summary>
     [CYFEventFunction] public void TitleScreen() {
-        NewMusicManager.DestroyChannel("StaticKeptAudio");
-        GameObject.Destroy(GameObject.Find("Player"));
-        GameObject.Destroy(GameObject.Find("Canvas OW"));
-        GameObject.Destroy(GameObject.Find("Canvas Two"));
-        StaticInits.MODFOLDER = "@Title";
-        StaticInits.Initialized = false;
-        StaticInits.InitAll();
-        GameObject.Destroy(GameObject.Find("Main Camera OW"));
+        UnitaleUtil.ExitOverworld(false);
         SceneManager.LoadScene("TitleScreen");
+        GameObject.Destroy(GameObject.Find("SpritePivot"));
     }
 
     /// <summary>

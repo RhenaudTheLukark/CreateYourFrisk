@@ -188,30 +188,7 @@ public class GlobalControls : MonoBehaviour {
             if (isInFight && LuaEnemyEncounter.script.GetVar("unescape").Boolean && SceneManager.GetActiveScene().name != "Error")
                 return;
             if (SceneManager.GetActiveScene().name == "Error" && !modDev) {
-                foreach (string str in NewMusicManager.audiolist.Keys)
-                    if (((AudioSource)NewMusicManager.audiolist[str]) != null)
-                    GameObject.Destroy(((AudioSource)NewMusicManager.audiolist[str]).gameObject);
-                NewMusicManager.audiolist.Clear();
-                NewMusicManager.audioname.Clear();
-                GameObject.Destroy(GameObject.Find("Player"));
-                GameObject.Destroy(GameObject.Find("Canvas OW"));
-                GameObject.Destroy(GameObject.Find("Canvas Two"));
-                if (GameOverBehavior.gameOverContainerOw)
-                    GameObject.Destroy(GameOverBehavior.gameOverContainerOw);
-                UnitaleUtil.ResetOW(true);
-                StaticInits.MODFOLDER = "@Title";
-                StaticInits.Initialized = false;
-                StaticInits.InitAll();
-                PlayerCharacter.instance.Reset();
-                Inventory.inventory.Clear();
-                Inventory.RemoveAddedItems();
-                ScriptWrapper.instances.Clear();
-                GlobalControls.isInFight = false;
-                GlobalControls.isInShop = false;
-                LuaScriptBinder.scriptlist.Clear();
-                LuaScriptBinder.ClearBattleVar();
-                LuaScriptBinder.Clear();
-                GameObject.Destroy(GameObject.Find("Main Camera OW"));
+                UnitaleUtil.ExitOverworld();
                 SceneManager.LoadScene("Disclaimer");
                 GameObject.Destroy(GameObject.Find("SpritePivot"));
                 return;

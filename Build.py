@@ -48,6 +48,32 @@ buildTargets = [
 ]
 macTarget = ("CYF v" + CYFversion + " - Mac",      "-buildOSXUniversalPlayer",   "Create Your Frisk " + CYFversion + ".app")
 
+hidePaths = [
+    "Default\\Sprites\\AsrielOW\\Huggu",
+    "Default\\Sprites\\FriskUT\\Fall",
+    "Default\\Sprites\\FriskUT\\Glitch",
+    "Default\\Sprites\\UI\\Buttons\\catbt_0.png",
+    "Default\\Sprites\\UI\\Buttons\\catbt_1.png",
+    "Default\\Sprites\\UI\\Buttons\\gifhtbt_0.png",
+    "Default\\Sprites\\UI\\Buttons\\gifhtbt_1.png",
+    "Default\\Sprites\\UI\\Buttons\\mecrybt_0.png",
+    "Default\\Sprites\\UI\\Buttons\\mecrybt_1.png",
+    "Default\\Sprites\\UI\\Buttons\\tembt_0.png",
+    "Default\\Sprites\\UI\\Buttons\\tembt_1.png",
+    "Default\\Sprites\\UI\\Buttons\\tiembt_0.png",
+    "Mods\\@0.5.0_SEE_CRATE",
+    "Mods\\@OverWorld Test\\Sounds\\Secret",
+    "Mods\\@OverWorld Test\\Lua\\Events\\Secret",
+    "Mods\\Examples\\Sounds\\Laugh.wav",
+    "Mods\\Examples\\Sounds\\Secret",
+    "Mods\\Examples\\Sprites\\Overworld\\CharacterSelector\\Mystery",
+    "Mods\\Examples 2\\Lua\\Events\\Secret",
+    "Mods\\Examples 2\\Sounds\\Secret",
+    "Mods\\Examples 2\\Sprites\\Overworld\\Punder\\Secret"
+]
+for i in range(8):
+    hidePaths.append("Default\\Sounds\\meow" + str(i + 1) + ".wav")
+
 def buildWithUnity(folder, argument, target):
     print("")
     if len(folder) < 76:
@@ -80,39 +106,75 @@ def buildWithUnity(folder, argument, target):
     # Copy over the Default and Mods folders
     print("Copying Default folder...", end="")
     sys.stdout.flush()
-    shutil.copytree("Assets\\Default", buildPath + "\\" + folder + "\\Default")
-    print("Removing .meta files...", end="")
-    sys.stdout.flush()
-    for path,dirs,files in os.walk(buildPath + "\\" + folder + "\\Default"):
-        for file in files:
-            if file.endswith(".meta"):
-                os.remove(path + "\\" + file)
+    os.system("xcopy \"" + buildPath + "\\Default\" \"" + buildPath + "\\" + folder + "\\Default\" /e /h /i > nul")
     print("Done.")
     
     print("Copying Mods folder...", end="")
     sys.stdout.flush()
-    shutil.copytree("Assets\\Mods", buildPath + "\\" + folder + "\\Mods")
-    print("Removing .meta files...", end="")
-    sys.stdout.flush()
-    for path,dirs,files in os.walk(buildPath + "\\" + folder + "\\Mods"):
-        for file in files:
-            if file.endswith(".meta"):
-                os.remove(path + "\\" + file)
-    print("Hiding @0.5.0_SEE_CRATE...", end="")
-    sys.stdout.flush()
-    os.system("attrib +h +s \"bin\\" + folder + "\\Mods\\@0.5.0_SEE_CRATE\"")
-    print("Done.")
-    
-    print("Adding \"Mods starting with @ won't appear in CYF\"...", end="")
-    sys.stdout.flush()
-    open(buildPath + "\\" + folder + "\\Mods\\Mods starting with @ won't appear in CYF", "w").close()
+    os.system("xcopy \"" + buildPath + "\\Mods\" \"" + buildPath + "\\" + folder + "\\Mods\" /e /h /i > nul")
     print("Done.")
     
     if len(folder) < 76:
         print("╘" + ("═" * 74) + "╛")
     print("")
 
-# Let's do it!...Except for Mac
+# Make the ultimate Default folder which will be copied later
+print("\nSetting up \"Default\".")
+print("Copying Default folder...", end="")
+sys.stdout.flush()
+if "Default" in os.listdir("bin"):
+    print("Folder \"Default\" already exists, deleting...", end="")
+    sys.stdout.flush()
+    try:
+        shutil.rmtree(buildPath + "\\Default")
+        print("Done.")
+    except:
+        print("\n\nFatal error when attempting to delete \"Default\" folder. Exiting.\nYou should probably delete it manually.")
+        sys.exit()
+
+shutil.copytree("Assets\\Default", buildPath + "\\Default")
+print("Removing .meta files...", end="")
+sys.stdout.flush()
+for path,dirs,files in os.walk(buildPath + "\\Default"):
+    for file in files:
+        if file.endswith(".meta"):
+            os.remove(path + "\\" + file)
+print("Done.\n")
+
+# Make the ultimate Mods folder which will be copied later
+print("Setting up \"Mods\".")
+print("Copying Mods folder...", end="")
+sys.stdout.flush()
+if "Mods" in os.listdir("bin"):
+    print("Folder \"Mods\" already exists, deleting...", end="")
+    sys.stdout.flush()
+    try:
+        shutil.rmtree("bin\\Mods")
+        print("Done.")
+    except:
+        print("\n\nFatal error when attempting to delete \"Mods\" folder. Exiting.\nYou should probably delete it manually.")
+        sys.exit()
+
+shutil.copytree("Assets\\Mods", buildPath + "\\Mods")
+print("Removing .meta files...", end="")
+sys.stdout.flush()
+for path,dirs,files in os.walk(buildPath + "\\Mods"):
+    for file in files:
+        if file.endswith(".meta"):
+            os.remove(path + "\\" + file)
+print("Done.")
+print("Adding \"Mods starting with @ won't appear in CYF\"...", end="")
+sys.stdout.flush()
+open(buildPath + "\\Mods\\Mods starting with @ won't appear in CYF", "w").close()
+print("Done.\n")
+
+# Hide secret paths
+print("Hiding secrets...", end="")
+for path in hidePaths:
+    os.system("attrib +h +s \"bin\\" + path + "\"")
+print("Done.\n")
+
+# Last step before building executables
 print("Disabling allowFullscreenSwitch...", end="")
 sys.stdout.flush()
 psCurrent = open("ProjectSettings\\ProjectSettings.asset", "r")
@@ -124,6 +186,7 @@ ps.write(settings)
 ps.close()
 print("Done.\n")
 
+# Let's do it!...Except for Mac
 for target in buildTargets:
     buildWithUnity(target[0], target[1], buildPath + "\\" + target[0] + "\\" + target[2])
 
@@ -172,32 +235,12 @@ print("Done.")
 # Copy over the Default and Mods folders
 print("Copying Default folder...", end="")
 sys.stdout.flush()
-shutil.copytree("Assets\\Default", buildPath + "\\" + macTarget[0] + "\\" + macTarget[2] + "\\Default")
-print("Removing .meta files...", end="")
-sys.stdout.flush()
-for path,dirs,files in os.walk(buildPath + "\\" + macTarget[0] + "\\" + macTarget[2] + "\\Default"):
-    for file in files:
-        if file.endswith(".meta"):
-            os.remove(path + "\\" + file)
+os.system("xcopy \"" + buildPath + "\\Default\" \"" + buildPath + "\\" + macTarget[0] + "\\" + macTarget[2] + "\\Default\" /e /h /i > nul")
 print("Done.")
 
 print("Copying Mods folder...", end="")
 sys.stdout.flush()
-shutil.copytree("Assets\\Mods", buildPath + "\\" + macTarget[0] + "\\" + macTarget[2] + "\\Mods")
-print("Removing .meta files...", end="")
-sys.stdout.flush()
-for path,dirs,files in os.walk(buildPath + "\\" + macTarget[0] + "\\" + macTarget[2] + "\\Mods"):
-    for file in files:
-        if file.endswith(".meta"):
-            os.remove(path + "\\" + file)
-print("Hiding @0.5.0_SEE_CRATE...", end="")
-sys.stdout.flush()
-os.system("attrib +h +s \"bin\\" + macTarget[0] + "\\" + macTarget[2] + "\\Mods\\@0.5.0_SEE_CRATE\"")
-print("Done.")
-
-print("Adding \"Mods starting with @ won't appear in CYF\"...", end="")
-sys.stdout.flush()
-open(buildPath + "\\" + macTarget[0] + "\\" + macTarget[2] + "\\Mods\\Mods starting with @ won't appear in CYF", "w").close()
+os.system("xcopy \"" + buildPath + "\\Mods\" \"" + buildPath + "\\" + macTarget[0] + "\\" + macTarget[2] + "\\Mods\" /e /h /i > nul")
 print("Done.")
 
 # Copy over the warning .txt file
@@ -220,10 +263,20 @@ print("Done.")
 if len(macTarget[0]) < 76:
     print("╘" + ("═" * 74) + "╛")
 
+# Delete Default and Mods
+print("\nDeleting \"Default\" and \"Mods\"...", end="")
+sys.stdout.flush()
+try:
+    shutil.rmtree("bin\\Default")
+    shutil.rmtree("bin\\Mods")
+    print("Done.")
+except:
+    print("Failed to delete. You should do so manually before your next build.")
+
 if doPackage:
     print("\nBegin packaging all builds into archives through 7-zip.")
     binContents = os.listdir("bin")
-    for build in [x for x in binContents if os.path.isdir(os.path.join(os.path.abspath("bin"), x))]:
+    for build in [x for x in binContents if os.path.isdir(os.path.join(os.path.abspath("bin"), x)) and x not in ["Default", "Mods"]]:
         print("Creating \"" + build + ".zip\"...")
         sys.stdout.flush()
         subprocess.call([sevenZPath, "a", "-mx9", buildPath + "\\" + build + ".zip", buildPath + "\\" + build + "\\*", "-bso0", "-bsp0"])
