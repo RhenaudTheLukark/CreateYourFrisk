@@ -218,9 +218,12 @@ public class PlayerOverworld : MonoBehaviour {
                     try {
                         if (textmgr.CanAutoSkipAll())
                             NextText();
-                        if (GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED && !textmgr.blockSkip && !textmgr.LineComplete() && textmgr.CanSkip())
-                            textmgr.SkipLine();
-                        else if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED && !textmgr.blockSkip && !EventManager.instance.passPressOnce)
+                        if (GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED && !textmgr.blockSkip && !textmgr.LineComplete() && textmgr.CanSkip()) {
+                            if (EventManager.instance.script != null && EventManager.instance.script.GetVar("playerskipdocommand").Boolean)
+                                textmgr.DoSkipFromPlayer();
+                            else
+                                textmgr.SkipLine();
+                        } else if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED && !textmgr.blockSkip && !EventManager.instance.passPressOnce)
                             NextText();
                     } catch { }
                 }

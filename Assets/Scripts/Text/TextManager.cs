@@ -407,19 +407,13 @@ public class TextManager : MonoBehaviour {
     [MoonSharpHidden] public void DoSkipFromPlayer() {
         skipFromPlayer = true;
 
-        if (LuaEnemyEncounter.script.GetVar("playerskipdocommand").Boolean)
+        if ((GlobalControls.isInFight && LuaEnemyEncounter.script.GetVar("playerskipdocommand").Boolean) || !GlobalControls.isInFight)
             instantCommand = true;
 
-        // AudioClip temp = letterSound.clip;
-        // letterSound.clip = null;
         if (!GlobalControls.retroMode)
             InUpdateControlCommand(DynValue.NewString("instant"), currentCharacter);
         else
             SkipText();
-
-        // letterSound.clip = temp;
-
-        //SkipText();
     }
 
     public void SkipLine() {

@@ -163,12 +163,11 @@ it's w3c valid, at least
                     This table is composed of 3 other tables:
 						<ul>
 							<li>The first table contains the names of the items to be sold.<br>
-                            The items must be in the item database (<span class="term">
-							CYF/Scripts/Inventory/Inventory.cs</span>).</li>
-							<li>The second table contains the descriptions for each item.</li>
+                            The items must be in the item database (<span class="term">CYF/Scripts/Inventory/Inventory.cs</span>).</li><br>
+							<li>The second table contains the descriptions for each item.</li><br>
 							<li>The third table contains the prices of each item.<br>
-                            Use -1 to use the price set in the database (<span class="term">
-							CYF/Scripts/Inventory/Inventory.cs</span>).</li>
+                            Use -1 to use the price set in the database (<span class="term">CYF/Scripts/Inventory/Inventory.cs</span>).<br>
+                            Use 0 to make the item display as "--- SOLD OUT ---" like in Undertale. The player will not be able to buy it.</li>
 						</ul>
 					</li>
                     <br>
@@ -183,8 +182,17 @@ it's w3c valid, at least
                         Example setup:
                         <div class="code-container">
                         <pre class="brush: lua;">
-talklist = { { "Job", "Hobbies", "Threaten" },
-{ {"Me?", "I'm just a shopkeeper." }, "Just a shopkeeper.", { "Threats? I'm not impressed, I'm just a shopkeeper." } } }
+talklist = {
+    { "Job", "Hobbies", "Threaten", "Sell?" },
+    {
+        { "Me?", "I'm just a shopkeeper." },
+        "Just a shopkeeper.",
+        { "Threats? I'm not impressed, I'm just a shopkeeper." },
+        { "So you have items to sell?",
+          "I guess some of them could be useful to me...",
+          "Alright, I'll see what you have next time you want to sell something to me!" }
+    }
+}
                         </pre>
                         </div>
 					</li>
@@ -196,6 +204,10 @@ talklist = { { "Job", "Hobbies", "Threaten" },
 					<li><span class="string"></span> <span class="term">talktalk</span> - The text displayed when entering the Talk menu.</li>
                     <br>
 					<li><span class="string"></span> <span class="term">exittalk</span> - The text displayed when entering the Exit menu.</li>
+                    <br>
+                    <li><span class="boolean"></span> <span class="term">playerskipdocommand</span> - False by default. If this value is
+                    set to true, text commands will be called even if the player skips the text - except for <span class="term">[w]</span> and
+                    <span class="term">[letters]</span> commands, and commands with the tag "<span class="term">skipover</span>".</li>
 				</ul>
 			</p>
 			
@@ -234,12 +246,14 @@ talklist = { { "Job", "Hobbies", "Threaten" },
             </p>
 			
             <p>
-                <br><span class="function">FailBuy(<span class="string"></span>error)</span>
+                <br><span class="function">FailBuy(<span class="string"></span> error)</span>
 				Entered when the Player tries to buy an item, but can't. 
 				<br><span class="term">error</span> has two possible values:
 				<ul>
 					<li><span class="term">"gold"</span> - If the Player doesn't have enough Gold.</li>
 					<li><span class="term">"full"</span> - If the Player's inventory is full.</li>
+					<li><span class="term">"soldout"</span> - If the shop is sold out of this item.<br>
+                    See <span class="term">buylist</span> for how to accomplish this.</li>
 				</ul>
             </p>
 			
@@ -261,8 +275,14 @@ talklist = { { "Job", "Hobbies", "Threaten" },
             </p>
 			
             <p>
-                <br><span class="function">FailSell()</span>
-				Entered if the player's inventory is empty and they try to enter the Sell menu.
+                <br><span class="function">FailSell(<span class="string"></span> error)</span>
+				Entered when failing to enter or use the Sell menu.
+                <br><span class="term">error</span> has two possible values:
+				<ul>
+					<li><span class="term">"empty"</span> - If the Player's inventory is empty.</li>
+					<li><span class="term">"cantsell"</span> - If the Player tries to sell an item, but it is unsellable.<br>
+                    In order to accomplish this, set the item's sell price to 0 in the database (<span class="term">CYF/Scripts/Inventory/Inventory.cs</span>).</li>
+				</ul>
             </p>
 			
             <p>
