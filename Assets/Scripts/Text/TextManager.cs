@@ -250,8 +250,10 @@ public class TextManager : MonoBehaviour {
                         mugshot.SetAnimation((string[])UnitaleUtil.ListToArray(mugshots), time);
                         if (finalMugshot == null)
                             finalMugshot = mugshots[mugshots.Count - 1];
-                    } else
+                    } else {
+                        mugshot.StopAnimation();
                         mugshot.Set(mugshots[0]);
+                    }
                 } catch (CYFException e) {
                     UnitaleUtil.DisplayLuaError("mugshot system", e.Message);
                 }

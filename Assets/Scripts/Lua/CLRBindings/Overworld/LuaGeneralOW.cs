@@ -64,7 +64,7 @@ public class LuaGeneralOW {
             PlayerOverworld.instance.UIPos = forcePosition.Type == DataType.Boolean ? (forcePosition.Boolean == true ? 2 : 1) : 0;
         else
             PlayerOverworld.instance.UIPos = 0;
-        
+
         TextMessage textMsgChoice = new TextMessage("", false, false, true);
         textMsgChoice.AddToText("[mugshot:null]");
         List<string> finalText = new List<string>();
@@ -112,6 +112,44 @@ public class LuaGeneralOW {
         textmgr.transform.parent.parent.SetAsLastSibling();
 
         StCoroutine("ISetChoice", new object[] { question != "", oneLiners }, appliedScript.GetVar("_internalScriptName").String);
+    }
+
+    [CYFEventFunction] public void EndDialog() {
+        if (EventManager.instance.LoadLaunched) {
+            UnitaleUtil.DisplayLuaError(appliedScript.scriptname, "General.EndDialog: This function cannot be used in EventPage0.");
+            return;
+        } else if (EventManager.instance.script == appliedScript) {
+            UnitaleUtil.DisplayLuaError(appliedScript.scriptname, "General.EndDialog: This function can only be used in a coroutine.");
+            return;
+        }
+
+        if (GameObject.Find("textframe_border_outer") && GameObject.Find("textframe_border_outer").GetComponent<UnityEngine.UI.Image>().color.a != 0) {
+            // Clean up text manager
+            textmgr.SetTextFrameAlpha(0);
+            textmgr.textQueue = new TextMessage[] { };
+            textmgr.DestroyChars();
+
+            // Clean up SetChoice if applicable
+            if (EventManager.instance.script != null && EventManager.instance.script == textmgr.caller) {
+                string key = EventManager.instance.script.GetVar("_internalScriptName").String + ".ISetChoice";
+                if (EventManager.instance.cSharpCoroutines.ContainsKey(key)) {
+                    // Stop the ISetChoice coroutine
+                    EventManager.instance.ForceEndCoroutine(key);
+
+                    // Remove the "tempHeart" GameObject if it already exists
+                    if (GameObject.Find("Canvas OW/tempHeart"))
+                        GameObject.Destroy(GameObject.Find("Canvas OW/tempHeart"));
+                }
+            }
+
+            // End event
+            appliedScript.Call("CYFEventNextCommand");
+            if (EventManager.instance.script != null && EventManager.instance.script == textmgr.caller) // End text from event
+                textmgr.caller.Call("CYFEventNextCommand");
+            else
+                PlayerOverworld.instance.PlayerNoMove = false;  // End text no event
+        } else
+            appliedScript.Call("CYFEventNextCommand");
     }
 
     [CYFEventFunction] public void Wait(int frames) { StCoroutine("IWait", frames, appliedScript.GetVar("_internalScriptName").String); }

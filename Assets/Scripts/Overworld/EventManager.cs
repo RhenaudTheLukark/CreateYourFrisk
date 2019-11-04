@@ -1013,6 +1013,15 @@ end";
 
     public void StCoroutine(string coroName, object args, string evName) {
         string key = evName + "." + coroName;
+        ForceEndCoroutine(key);
+        UnityEngine.Coroutine newCoro;
+        if (args == null)                 newCoro = StartCoroutine(coroName);
+        else if (!args.GetType().IsArray) newCoro = StartCoroutine(coroName, args);
+        else                              newCoro = StartCoroutine(coroName, (object[])args);
+        cSharpCoroutines.Add(key, newCoro);
+    }
+
+    public void ForceEndCoroutine(string key) {
         if (cSharpCoroutines.ContainsKey(key)) {
             UnityEngine.Coroutine existingCoro;
             cSharpCoroutines.TryGetValue(key, out existingCoro);
@@ -1020,11 +1029,6 @@ end";
                 StopCoroutine(existingCoro);
             cSharpCoroutines.Remove(key);
         }
-        UnityEngine.Coroutine newCoro;
-        if (args == null)                 newCoro = StartCoroutine(coroName);
-        else if (!args.GetType().IsArray) newCoro = StartCoroutine(coroName, args);
-        else                              newCoro = StartCoroutine(coroName, (object[])args);
-        cSharpCoroutines.Add(key, newCoro);
     }
 
     private IEnumerator SpecialAnnouncementEvent() {

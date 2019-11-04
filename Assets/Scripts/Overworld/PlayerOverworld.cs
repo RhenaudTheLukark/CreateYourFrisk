@@ -949,7 +949,6 @@ public class PlayerOverworld : MonoBehaviour {
     }
 
     public static void ShowOverworld(string callFrom = "Unknown") {
-        Camera.main.GetComponent<FPSDisplay>().enabled = false;
         Transform[] root = UnitaleUtil.GetFirstChildren(null, true);
         GameObject go = null;
         foreach (Transform tf in root)
