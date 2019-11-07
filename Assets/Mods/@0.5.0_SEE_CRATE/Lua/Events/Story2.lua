@@ -1,6 +1,6 @@
 function EventPage1()
 	Event.SetPage("Story2", -1)
-	General.SetBattle("Story2", true, true)
+	General.SetBattle("Story2", "fast", true)
 end
 
 function EventPage2()
