@@ -15,8 +15,9 @@ public class LuaPlayerOW {
     [CYFEventFunction] public float GetHP() { try { return PlayerCharacter.instance.HP; } finally { appliedScript.Call("CYFEventNextCommand"); } }
     [CYFEventFunction] public void SetHP(float value) { setHP(value); appliedScript.Call("CYFEventNextCommand"); }
 
-    [CYFEventFunction] public int GetMaxHP() { try { return PlayerCharacter.instance.MaxHP; } finally { appliedScript.Call("CYFEventNextCommand"); } }
+    [CYFEventFunction] public int GetMaxHP() { try { return PlayerCharacter.instance.BasisMaxHP + PlayerCharacter.instance.MaxHP; } finally { appliedScript.Call("CYFEventNextCommand"); } }
     [CYFEventFunction] public void SetMaxHP(int value) { setMaxHP(value - PlayerCharacter.instance.BasisMaxHP); appliedScript.Call("CYFEventNextCommand"); }
+    [CYFEventFunction] public void ResetMaxHP() { setMaxHP(PlayerCharacter.instance.BasisMaxHP); appliedScript.Call("CYFEventNextCommand"); }
 
     [CYFEventFunction] public string GetName() { try { return PlayerCharacter.instance.Name; } finally { appliedScript.Call("CYFEventNextCommand"); } }
     [CYFEventFunction] public void SetName(string value) { PlayerCharacter.instance.Name = value; appliedScript.Call("CYFEventNextCommand"); }
@@ -141,10 +142,14 @@ public class LuaPlayerOW {
             setHP(0);
             return;
         }
+        UnityEngine.Debug.Log(PlayerCharacter.instance.HP);
+        UnityEngine.Debug.Log(PlayerCharacter.instance.MaxHP);
+        UnityEngine.Debug.Log(PlayerCharacter.instance.MaxHPShift);
+        UnityEngine.Debug.Log(value);
         if (value > ControlPanel.instance.HPLimit)
             value = ControlPanel.instance.HPLimit;
-        else if (value < PlayerCharacter.instance.MaxHP) 
-            PlayerCharacter.instance.HP -= (PlayerCharacter.instance.MaxHP - value);
+        else if (PlayerCharacter.instance.HP > value)
+            PlayerCharacter.instance.HP = value;
         else
             UnitaleUtil.PlaySound("CollisionSoundChannel", AudioClipRegistry.GetSound("healsound").name);
         PlayerCharacter.instance.MaxHPShift = value - PlayerCharacter.instance.BasisMaxHP;
