@@ -36,7 +36,7 @@ endFaceSprites = {
 
 function EventPage5()
     local stareID = GetGlobal("CYFOWStare")
-    General.SetDialog(endTexts[stareID], true, "Frisk/" .. endFaceSprites[stareID])
+    General.SetDialog("[instant:stopall]" .. endTexts[stareID], true, "Frisk/" .. endFaceSprites[stareID])
     Player.CanMove(true)
     Event.SetPage(Event.GetName(), 1)
 end
@@ -71,9 +71,109 @@ end
 function EventPage2()
     -- Push + boing
     General.SetDialog({ "There's a dog here and it's blocking the way.",
-                        "It doesn't look like it'll move any time soon...",
+                        "It doesn't look like it'll m-[w:5]move any time soon...",
                         "I should try pushing it away!" }, true,
                       { "MK/normal", "MK/sad", "MK/determined" })
+    Event.MoveToPoint("Player", 350, 174, false)
+    General.Wait(45)
+    Event.SetDirection("Player", 6)
+    General.Wait(45)
+    Event.MoveToPoint("Player", 450, 174, true)
+    Event.GetSprite("Player").alpha = 0
+    
+    -- enter the dog
+    local spr = CreateSprite("MonsterKidOW/9")
+    spr.MoveTo(Event.GetPosition("Player")[1] - 10, Event.GetPosition("Player")[2])
+    spr.xscale = -1
+    spr.rotation = -90
+    spr.SetPivot(1, 0)
+    spr.Move(16, -8)
+    
+    local dogSprite = Event.GetSprite("Event1")
+    Event.MoveToPoint("Player", 398, 174, true, false)
+    spr.Set("MonsterKidOW/f2")
+    Audio.PlaySound("Surprised Bark", 1)
+    dogSprite.Set("Overworld/DogBark")
+    
+    function lerp(a, b, t)
+        return a + ((b - a) * t)
+    end
+    
+    local startX = spr.x
+    local finalX = spr.x + 16
+    local doggyX = dogSprite.x
+    for i = 1, 60 do
+        spr.x = lerp(spr.x, finalX, 0.1)
+        dogSprite.xscale = 1 - (((spr.x - startX) - 6) / dogSprite.width)
+        dogSprite.x = doggyX - 3 + ((spr.x - startX) / 2)
+        
+        if i == 20 then
+            dogSprite.Set("Overworld/Dog")
+        end
+        
+        General.Wait(1)
+    end
+    General.Wait(60)
+    
+    -- struggle
+    spr.Set("MonsterKidOW/f3")
+    General.Wait(30)
+    spr.Set("MonsterKidOW/f4")
+    General.Wait(30)
+    spr.Set("MonsterKidOW/f5")
+    General.Wait(10)
+    
+    -- come out pt1
+    for i = 1, 45 do
+        spr.x = lerp(spr.x, finalX, -0.15)
+        
+        dogSprite.xscale = 1 - (((spr.x - startX) - 6) / dogSprite.width)
+        dogSprite.x = doggyX - 3 + ((spr.x - startX) / 2)
+        
+        General.Wait(1)
+    end
+    spr.x = startX
+    dogSprite.x = doggyX
+    dogSprite.xscale = 1
+    
+    -- come out pt2
+    spr.rotation = 0
+    spr.xpivot = 0.5
+    spr.y = spr.y + 8
+    spr.Set("MonsterKidOW/f6")
+    spr.x = spr.x - 16
+    spr.x = spr.x - 7
+    Audio.PlaySound("Bump", 1)
+    
+    local startX = spr.x
+    local finalX = spr.x - 32
+    
+    -- doggy vibrates after the impact
+    for i = 1, 60 do
+        local scale = 1 + math.sin(i * math.pi * 2 / 15) * ((5 - math.ceil(i / 15)) / 40)
+        dogSprite.Scale(scale, 1 / scale)
+        General.Wait(1)
+        
+        spr.x = lerp(spr.x, finalX, 0.075)
+        
+        if i%20 == 0 then
+            spr.Set("MonsterKidOW/f" .. (6 + (i/20)))
+        end
+    end
+    dogSprite.Scale(1, 1)
+    General.Wait(10)
+    spr.Set("MonsterKidOW/f10")
+    General.Wait(10)
+    spr.Set("MonsterKidOW/f11")
+    General.Wait(100)
+    
+    -- end event
+    spr.Remove()
+    dogSprite.xpivot = 0.5
+    Event.GetSprite("Player").alpha = 1
+    Event.SetDirection("Player", 4)
+    General.Wait(20)
+    General.SetDialog(({"Nope...", "Aww,[w:10] I thought I had it!", "M-[w:5]maybe I should try again?"})[math.random(3)], true, "MK/sad")
     Event.SetPage(Event.GetName(), 1)
 end
 
@@ -103,16 +203,16 @@ end
 
 -- Auto page used with StareTest
 function EventPage4()
-    local lines = { }
-    local faceSprites = { }
-    while GetGlobal("CYFOWStareText" .. (#lines + 1)) do
-        local lineID = #lines + 1
-        lines[lineID] =       GetGlobal("CYFOWStareText" .. lineID)
-        faceSprites[lineID] = GetGlobal("CYFOWStareFace" .. lineID)
-        SetGlobal("CYFOWStareText" .. lineID, nil)
-        SetGlobal("CYFOWStareFace" .. lineID, nil)
+    SetGlobal("CYFOWStareSetDialogActive", true)
+    General.SetDialog(load("return " .. GetGlobal("CYFOWStareSetDialog1"))(),
+                                        GetGlobal("CYFOWStareSetDialog2"),
+                      load("return " .. GetGlobal("CYFOWStareSetDialog3"))(),
+                                        GetGlobal("CYFOWStareSetDialog4"))
+    SetGlobal("CYFOWStareSetDialogActive", false)
+
+    for i = 1, 4 do
+        SetGlobal("CYFOWStareSetDialog" .. i, nil)
     end
-    General.SetDialog(lines, true, faceSprites)
     Event.SetPage(Event.GetName(), 1)
 end
 
