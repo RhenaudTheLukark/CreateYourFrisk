@@ -2136,7 +2136,7 @@ MonoBehaviour:
   lastHitMult: -1
   deathMusic: 
   deathText: []
-  deathEscape: 0
+  deathEscape: 1
 --- !u!114 &1509689746
 MonoBehaviour:
   m_ObjectHideFlags: 0

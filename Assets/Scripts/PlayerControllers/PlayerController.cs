@@ -112,7 +112,7 @@ public class PlayerController : MonoBehaviour {
 
     public string deathMusic = null;
     public string[] deathText = null;
-    public bool deathEscape = false;
+    public bool deathEscape = true;
     private int soundDelay = 0;
 
     /// <summary>
