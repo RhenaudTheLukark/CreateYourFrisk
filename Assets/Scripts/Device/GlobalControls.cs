@@ -203,8 +203,8 @@ public class GlobalControls : MonoBehaviour {
                 UIController.EndBattle();
             //StaticInits.Reset();
         // Open the Menu in the Overworld
-        } else if (input.Menu == UndertaleInput.ButtonState.PRESSED && !nonOWScenes.Contains(SceneManager.GetActiveScene().name) && !isInFight && !isInShop) {
-            if (!PlayerOverworld.instance.PlayerNoMove && EventManager.instance.script == null && !PlayerOverworld.instance.menuRunning[2] && !PlayerOverworld.instance.menuRunning[4] && EventManager.instance.script == null && GameObject.Find("FadingBlack").GetComponent<Fading>().alpha <= 0)
+        } else if (input.Menu == UndertaleInput.ButtonState.PRESSED && !nonOWScenes.Contains(SceneManager.GetActiveScene().name) && !isInFight && !isInShop && (!GameOverBehavior.gameOverContainerOw || !GameOverBehavior.gameOverContainerOw.activeInHierarchy)) {
+            if (!PlayerOverworld.instance.PlayerNoMove && EventManager.instance.script == null && !PlayerOverworld.instance.menuRunning[2] && !PlayerOverworld.instance.menuRunning[4] && (GameObject.Find("FadingBlack") == null || GameObject.Find("FadingBlack").GetComponent<Fading>().alpha <= 0))
                 StartCoroutine(PlayerOverworld.LaunchMenu());
         // Wipe save and close CYF in the Error scene if ControlPanel does not exist yet
         } else if (SceneManager.GetActiveScene().name == "Error" && allowWipeSave && Input.GetKeyDown(KeyCode.R)) {

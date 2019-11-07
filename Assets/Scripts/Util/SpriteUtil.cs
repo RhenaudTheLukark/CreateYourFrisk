@@ -12,9 +12,9 @@ public static class SpriteUtil {
     public static void SwapSpriteFromFile(Component target, string filename, int bubbleID = -1) {
         try {
             if (bubbleID != -1) {
-                FileInfo fi = new FileInfo(Path.ChangeExtension(FileLoader.pathToDefaultFile("Sprites/" + filename + ".png"), "xml"));
+                FileInfo fi = new FileInfo(Path.ChangeExtension(FileLoader.pathToModFile("Sprites/" + filename + ".png"), "xml"));
                 if (!fi.Exists)
-                    fi = new FileInfo(Path.ChangeExtension(FileLoader.pathToModFile("Sprites/" + filename + ".png"), "xml"));
+                    fi = new FileInfo(Path.ChangeExtension(FileLoader.pathToDefaultFile("Sprites/" + filename + ".png"), "xml"));
                 if (fi.Exists) {
                     XmlDocument xmld = new XmlDocument();
                     xmld.Load(fi.FullName);
@@ -130,15 +130,12 @@ public static class SpriteUtil {
             else
                 UnitaleUtil.DisplayLuaError("Creating a sprite", "The sprite layer " + tag + " doesn't exist.");
         else {
-            if (childNumber == -1)
-                if (tag == "none")
-                    i.transform.SetParent(GameObject.Find(canvas).transform, true);
-                else
-                    i.transform.SetParent(GameObject.Find(tag + "Layer").transform, true);
-            else {
+            if (tag == "none")
+                i.transform.SetParent(GameObject.Find(canvas).transform, true);
+            else
                 i.transform.SetParent(GameObject.Find(tag + "Layer").transform, true);
+            if (childNumber != -1)
                 i.transform.SetSiblingIndex(childNumber - 1);
-            }
         }
         return UserData.Create(new LuaSpriteController(i), LuaSpriteController.data);
     }

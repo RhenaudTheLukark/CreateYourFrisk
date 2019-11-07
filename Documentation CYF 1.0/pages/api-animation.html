@@ -114,10 +114,26 @@ it's w3c valid, at least
             
             <p>
                 <br><span class="function">CreateSprite(<span class="string"></span> spritename, 
-                <span class="CYF"></span> <span class="string"></span> layer = "BelowArena") returns <span class="userdata">sprite</span>  [E/M/W]</span>
-                Creates a sprite at the center of the screen (at 320, 240) that you can modify in many ways.<br>
+                <span class="CYF"></span> <span class="string"></span> layer = "BelowArena", <span class="number"></span> childNumber = -1) returns <span class="userdata">sprite</span> [E/M/W]</span>
+                Creates a sprite at the center of the screen (at 320, 240) that you can modify in many ways.
+                <br><br>
                 <span class="CYF"></span> You can add a layer if you want - otherwise, the sprite will be below the arena.<br>
-                <span class="CYF"></span> From in the Overworld, the default value for <span class="term">layer</span> is <span class="term">"Default"</span> instead.
+                From in the Overworld, the default value for <span class="term">layer</span> is <span class="term">"Default"</span> instead.<br>
+                Enter <span class="term">"none"</span> to spawn your sprite outside of any layers, in the same way that the player is by default
+                (although this doesn't have much use).
+                <br><br>
+                <span class="CYF"></span> In CYF, you can provide a number argument for <span class="term">childNumber</span> if you want.<br>
+                Leave it as <span class="term">-1</span> to have it move to the top of whatever layer it's placed on (default behavior), or
+                choose a numbered index you want it to appear in, with <span class="term">1</span> being the very bottom-most in the layer,
+                and higher numbers moving it above other elements in sequence.
+                <br><br>
+                The best way to see what order sprites come in in their respective layers is to download Unity, playtest your mod in it, and
+                look at the order of game objects in the Inspector.
+                <br><br>
+                <span class="function"><span class="CYF"></span> CreateSprite(<span class="string"></span> spritename, 
+                <span class="number"></span> childNumber = -1) returns <span class="userdata">sprite</span> [E/M/W]</span>
+                The same as <span class="term">CreateSprite</span> listed above, except you only need to provide a sprite name and child number.<br>
+                Uses the default layer <span class="term">"BelowArena"</span> in battles, or <span class="term">"Default"</span> in the Overworld.
             </p>
 
             <hr>
