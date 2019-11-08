@@ -154,8 +154,10 @@ public class TransitionOverworld : MonoBehaviour {
             }
         }
 
-        GameObject.Find("utHeart").GetComponent<Image>().color = new Color(GameObject.Find("utHeart").GetComponent<Image>().color.r, GameObject.Find("utHeart").GetComponent<Image>().color.g,
+        GameObject.Find("utHeart").GetComponent<Image>().color = new Color(GameObject.Find("utHeart").GetComponent<Image>().color.r,
+                                                                           GameObject.Find("utHeart").GetComponent<Image>().color.g,
                                                                            GameObject.Find("utHeart").GetComponent<Image>().color.b, 0);
+        PlayerOverworld.instance.cameraShift = Vector2.zero;
         if (call == "tphandler") {
             GameObject.Find("Player").transform.parent.position = (Vector2)neededArgs[0];
             PlayerOverworld.instance.gameObject.GetComponent<CYFAnimator>().movementDirection = ((TPHandler)neededArgs[1]).direction;

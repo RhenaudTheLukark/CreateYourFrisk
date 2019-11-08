@@ -257,37 +257,19 @@ public class GlobalControls : MonoBehaviour {
         Vector2 shift = new Vector2(0, 0), totalShift = new Vector2(0, 0);
         float frameCount = 0, intensityBasis = intensity;
         while (frameCount < frames) {
-            if (stopScreenShake) {
-                tf.position = new Vector3(tf.position.x - totalShift.x, tf.position.y - totalShift.y, tf.position.z);
-                UserDebugger.instance.transform.position = new Vector3(UserDebugger.instance.transform.position.x - totalShift.x,
-                                                                       UserDebugger.instance.transform.position.y - totalShift.y,
-                                                                       UserDebugger.instance.transform.position.z);
-                screenShaking = false;
-                yield break;
-            }
+            if (stopScreenShake)
+                break;
             if (fade)
                 intensity = intensityBasis * (1 - (frameCount / frames));
             shift = new Vector2((Random.value - 0.5f) * 2 * intensity, (Random.value - 0.5f) * 2 * intensity);
 
-            if (UnitaleUtil.IsOverworld)
-                PlayerOverworld.instance.cameraShift = new Vector2(PlayerOverworld.instance.cameraShift.x + shift.x - totalShift.x, PlayerOverworld.instance.cameraShift.y + shift.y - totalShift.y);
-            else {
-                tf.position = new Vector3(tf.position.x + shift.x - totalShift.x, tf.position.y + shift.y - totalShift.y, tf.position.z);
-                UserDebugger.instance.transform.position = new Vector3(UserDebugger.instance.transform.position.x + shift.x - totalShift.x,
-                                                                       UserDebugger.instance.transform.position.y + shift.y - totalShift.y,
-                                                                       UserDebugger.instance.transform.position.z);
-            }
-            //print(totalShift + " + " + shift + " = " + (totalShift + shift));
+            Misc.MoveCamera(shift.x - totalShift.x, shift.y - totalShift.y);
             totalShift = shift;
             frameCount++;
             yield return 0;
         }
+        Misc.MoveCamera(-totalShift.x, -totalShift.y);
         screenShaking = false;
-        tf.position = new Vector3(tf.position.x - totalShift.x, tf.position.y - totalShift.y, tf.position.z);
-        if (!UnitaleUtil.IsOverworld)
-            UserDebugger.instance.transform.position = new Vector3(UserDebugger.instance.transform.position.x - totalShift.x,
-                                                                   UserDebugger.instance.transform.position.y - totalShift.y,
-                                                                   UserDebugger.instance.transform.position.z);
     }
 
     public void ShakeScreen(float duration, float intensity, bool isIntensityDecreasing) {

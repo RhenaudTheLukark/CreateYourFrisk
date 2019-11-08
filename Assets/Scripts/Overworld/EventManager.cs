@@ -1540,7 +1540,7 @@ end";
         try { waitEnd = (bool)args[4];      } catch { throw new CYFException("The argument \"waitEnd\" must be a boolean."); }
         try { info = (string)args[5];       } catch { throw new CYFException("The argument \"info\" must be a string."); }
 
-        if (coroutines.ContainsKey(scr) && script != scr) {
+        if (coroutines.ContainsKey(scr) && script != scr && waitEnd) {
             UnitaleUtil.DisplayLuaError(instance.events[instance.actualEventIndex].name, info + ": This function cannot be used in a coroutine with \"waitEnd\" set to true.");
             yield break;
         } else if (LoadLaunched) {

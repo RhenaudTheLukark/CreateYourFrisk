@@ -142,10 +142,6 @@ public class LuaPlayerOW {
             setHP(0);
             return;
         }
-        UnityEngine.Debug.Log(PlayerCharacter.instance.HP);
-        UnityEngine.Debug.Log(PlayerCharacter.instance.MaxHP);
-        UnityEngine.Debug.Log(PlayerCharacter.instance.MaxHPShift);
-        UnityEngine.Debug.Log(value);
         if (value > ControlPanel.instance.HPLimit)
             value = ControlPanel.instance.HPLimit;
         else if (PlayerCharacter.instance.HP > value)
