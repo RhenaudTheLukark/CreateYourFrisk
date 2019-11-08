@@ -96,11 +96,19 @@ public class TransitionOverworld : MonoBehaviour {
     }
 
     public static IEnumerator GetIntoDaMap(string call, object[] neededArgs) {
-        //GlobalControls.fadeAuto = true;
         if (GameObject.Find("Main Camera OW")) {
             GameObject.Find("Main Camera OW").GetComponent<EventManager>().readyToReLaunch = true;
             GameObject.Find("Main Camera OW").tag = "MainCamera";
         }
+
+        //Clear any leftover Sprite and Text objects that are no longer connected to any scripts
+        foreach (Transform child in GameObject.Find("Canvas Two").transform)
+            if (!child.name.EndsWith("Layer"))
+                GameObject.Destroy(child.gameObject);
+            else {
+                foreach (Transform child2 in child)
+                    GameObject.Destroy(child2.gameObject);
+            }
 
         yield return 0;
 

@@ -18,7 +18,7 @@ public class PlayerOverworld : MonoBehaviour {
     public bool inBattleAnim = false;
     public bool PlayerNoMove {              //Is the player not able to move?
         get { return _playerNoMove || forceNoAction || inBattleAnim; }
-        set { _playerNoMove = value; }
+        set { _playerNoMove = value; isMoving = false; }
     }
     public bool forceNoAction = false;
     public bool[] menuRunning = new bool[] { false, false, false, false, false };
@@ -26,6 +26,8 @@ public class PlayerOverworld : MonoBehaviour {
     public Vector2 cameraShift = new Vector2();
     public Vector2 backgroundSize = new Vector3(640, 480);
     public Transform PlayerPos;             //The Transform component attached to this object
+    public bool isMoving   = false;
+    public bool isRotating = false;
     public Image utHeart;
     public static AudioSource audioKept;
     public LuaSpriteController sprctrl;
@@ -281,7 +283,12 @@ public class PlayerOverworld : MonoBehaviour {
 
         if (currentDirection != 0) animator.movementDirection = currentDirection;
 
-        AttemptMove(horizontal, vertical);
+        if (!PlayerNoMove) {
+            if (horizontal != 0 || vertical != 0)
+                isMoving = AttemptMove(horizontal, vertical);
+            else
+                isMoving = false;
+        }
 
         if (GlobalControls.input.Menu == UndertaleInput.ButtonState.PRESSED)
             if (menuRunning[2] && !menuRunning[3] && !menuRunning[4])

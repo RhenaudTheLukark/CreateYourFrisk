@@ -112,10 +112,15 @@ it's w3c valid, at least
                 <span class="term">MovingDown</span>,  <span class="term">MovingUp</span> and all the others in the screenshot.<br>
                 But if you set this variable, it'll act as a prefix for the animations.<br>
                 So, if this variable is set to "Frisk", the <span class="term">CYFAnimator</span> component will use 
-                <span class="term">FriskMovingDown</span>, <span class="term">FriskMovingUp</span>, ... instead of the others.<br>
-                <br>There is one exception to this scheme. If the special header is equal to an animation's name, this animation will be the only one used
-                while this variable has this value.</li>
-                <li><span class="term">Anims</span>: Your list of animations. Check the screenshot above to see how you should fill it.</li>
+                <span class="term">FriskMovingDown</span>, <span class="term">FriskMovingUp</span>, ... instead of the others.
+                <br><br>
+                There is one exception to this scheme. If the special header is equal to an animation's name, said animation will be the only one used
+                while the special header has this value.</li>
+                <li><span class="term">Anims</span>: Your list of animations. Check the screenshot above to see how you should fill it.
+                <br><br>
+                <b>NOTE:</b> While any mix of the above animations is fine, such as only having vertical animations if your event will only move up and down,
+                an animation named "StopDown" is <b>required</b> for every event with a CYFAnimator component. It is the default animation, and the absolute
+                bare minimum to include if you wish to have a CYFAnimator component.</li>
             </p>
             <hr>
             <p>

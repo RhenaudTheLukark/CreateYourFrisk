@@ -6,6 +6,8 @@ public class EventOW : MonoBehaviour {
     public int actualPage;
     public List<Vector2> eventTriggers = new List<Vector2>();
     public float moveSpeed;
+    [HideInInspector] public bool isMoving   = false;
+    [HideInInspector] public bool isRotating = false;
 
     public void OnTriggerEnter2D(Collider2D col) {
         //Debug.Log("Frame " + GlobalControls.frame + ": " + (!EventManager.instance.readyToReLaunch) + " && " + (EventManager.instance.script == null) + " && " + (!EventManager.instance.ScriptLaunched) + " && " + (!EventManager.instance.LoadLaunched) + " && " + (!PlayerOverworld.instance.inBattleAnim) + " && " + (!PlayerOverworld.instance.menuRunning[2]));
