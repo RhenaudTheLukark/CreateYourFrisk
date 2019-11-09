@@ -100,19 +100,19 @@ it's w3c valid, at least
                 <li><span class="number"></span> <span class="term">Player.absy</span> (readonly) - get the Y position of the <i>player's center</i> relative to the bottom
                     left corner of the screen.
                 </li><br>
-                <li><span class="userdata">sprite</span> <span class="term">Player.sprite</span> - the Player's soul sprite component. See the <span class="ref">Sprites &amp; Animation</span> 
-                    section for usage details.
+                <li><span class="userdata">sprite</span> <span class="term">Player.sprite</span> - the Player's soul sprite component.
+                    See the <span class="ref">Sprites &amp; Animation</span> section for usage details.
                 </li><br>
                 <li><span class="number"></span> <span class="term">Player.hp</span> - get or set the player's current HP. Can't exceed max HP. If set to 0, game over
                     triggers.<br>
-                    <span class="CYF"></span> * The hp value is now a float, but there can be some problems about accuracy of float values.
+                    <span class="CYF"></span> The hp value is now a float, but there can be some problems about accuracy of float values.
                 </li><br>
-                <li><span class="CYF"></span> <span class="number"></span> <span class="term">Player.maxhp</span> (readonly) - returns the player's MaxHP value. <br> 
-                    * The hp value is now a float, but there can be some problems about accuracy of float values.
+                <li><span class="CYF"></span> <span class="number"></span> <span class="term">Player.maxhp</span> - returns the player's MaxHP value. <br>
+                    Setting this is the same as calling <span class="term">Player.SetMaxHPShift(&lt;value&gt;, 0, true, false, false)</span>.<br>
+                    Max hp is not a float, but regular hp is.
                 </li><br>
-                <li><span class="CYF"></span> <span class="number"></span> <span class="term">Player.maxhpshift</span> (readonly) - returns the difference between the player's current Max HP and their normal, 
-                unmodified Max HP.
-                <br>* The hp value is now a float, but there can be some problems with the accuracy of float values.
+                <li><span class="CYF"></span> <span class="number"></span> <span class="term">Player.maxhpshift</span> (readonly) - returns the difference between the 
+                    player's current Max HP and their normal, unmodified Max HP.
                 </li><br>
                 <li><span class="CYF"></span> <span class="number"></span> <span class="term">Player.atk</span> - base attack of the player. Depends on the player's level.
                     <br><br>
@@ -190,13 +190,14 @@ it's w3c valid, at least
                 <span class="boolean"></span> canHeal = false, <span class="boolean"></span> playSound = true)</span> - Lets you set the Player's MaxHP, relative to their normal MaxHP. If the total MaxHP is negative or nil, it
                     causes a GameOver.<br>
                     Formula: Player's MaxHP = Basis MaxHP + MaxHP Shift
+                    <br><br>
                     <ul>
                         <li><span class="term">shift</span> = The value that will be added to the Max HP. If <span class="term">set</span> is true,
                         this will be the player's <i>new</i> Max HP.</li><br>
                         <li><span class="term">invulnerabilitySeconds</span> = The time for which the player will be invulnerable after this operation.
                         </li><br>
                         <li><span class="term">set</span> = true if you want to set the Player's MaxHP directly.</li><br>
-                        <li><span class="term">canHeal</span> = true if the player will be able to heal up to this new Max HP value.</li><br>
+                        <li><span class="term">canHeal</span> = true if the player will automatically gain any health added by this function as normal (yellow) health. Does not apply for losing health.</li><br>
                         <li><span class="term">playSound</span> = true if you want to play the heal/hurt sound when the operation is done.</li><br>
                     </ul>
                 </li><br>

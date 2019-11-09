@@ -66,14 +66,15 @@ public class LuaPlayerStatus {
     }
 
     /// <summary>
-    /// Player's Max Hp shift.
+    /// Player's Max HP.
     /// </summary>
     public int maxhp {
         get { return PlayerCharacter.instance.MaxHP; }
+        set { player.setMaxHPShift(value, 0f, true, false, false); }
     }
 
     /// <summary>
-    /// Player's Max Hp shift.
+    /// Player's Max HP shift.
     /// </summary>
     public int MaxHPShift {
         get { return PlayerCharacter.instance.MaxHPShift; }
