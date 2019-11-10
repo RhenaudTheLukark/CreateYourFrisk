@@ -349,6 +349,7 @@ public class UIController : MonoBehaviour {
                 textmgr.SetPause(ArenaManager.instance.isResizeInProgress());
                 textmgr.SetCaller(LuaEnemyEncounter.script); // probably not necessary due to ActionDialogResult changes
                 if (!GlobalControls.retroMode) {
+                    textmgr.SetEffect(new TwitchEffect(textmgr));
                     encounter.EncounterText = LuaEnemyEncounter.script.GetVar ("encountertext").String;
                 }
                 if (encounter.EncounterText == null) {
@@ -367,6 +368,8 @@ public class UIController : MonoBehaviour {
 
                 selectedAction = 0;
                 SetPlayerOnSelection(selectedAction);
+                if (!GlobalControls.retroMode)
+                    textmgr.SetEffect(new TwitchEffect(textmgr));
                 textmgr.SetText(new SelectMessage(actions, false));
                 break;
 
@@ -378,6 +381,8 @@ public class UIController : MonoBehaviour {
                 else {
                     string[] items = GetInventoryPage(0);
                     selectedItem = 0;
+                    if (!GlobalControls.retroMode)
+                        textmgr.SetEffect(new TwitchEffect(textmgr));
                     textmgr.SetText(new SelectMessage(items, false));
                     SetPlayerOnSelection(0);
                     /*ActionDialogResult(new TextMessage[] {
@@ -407,6 +412,8 @@ public class UIController : MonoBehaviour {
                 if (encounter.CanRun)
                     mercyopts[1] = "Flee";
                 SetPlayerOnSelection(0);
+                if (!GlobalControls.retroMode)
+                    textmgr.SetEffect(new TwitchEffect(textmgr));
                 textmgr.SetText(new SelectMessage(mercyopts, true));
                 break;
 
@@ -433,6 +440,8 @@ public class UIController : MonoBehaviour {
                 }
                 for (int i = 0; i < names.Length; i++)
                     names[i] += "[color:ffffff]";
+                if (!GlobalControls.retroMode)
+                    textmgr.SetEffect(new TwitchEffect(textmgr));
                 textmgr.SetText(new SelectMessage(names, true, colorPrefixes));
                 if (forcedaction != Actions.FIGHT && forcedaction != Actions.ACT)
                     forcedaction = action;
@@ -1239,7 +1248,6 @@ public class UIController : MonoBehaviour {
             case UIState.DIALOGRESULT:
                 if (textmgr.CanSkip() &&!textmgr.LineComplete())
                     textmgr.DoSkipFromPlayer();
-                    //textmgr.skipText();
                 break;
 
             case UIState.ENEMYDIALOGUE:
@@ -1259,7 +1267,6 @@ public class UIController : MonoBehaviour {
 
                 foreach (TextManager mgr in monDialogues)
                     mgr.DoSkipFromPlayer();
-                    //mgr.skipText();
                 break;
 
             case UIState.ACTMENU:

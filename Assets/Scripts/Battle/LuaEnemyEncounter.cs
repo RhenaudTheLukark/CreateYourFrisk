@@ -356,9 +356,9 @@ internal class LuaEnemyEncounter : EnemyEncounter {
     public new bool WaveInProgress() { return Time.time < waveTimer; }
 
     public static void BattleDialog(DynValue arg) {
-        if (UIController.instance == null) {
+        if (UIController.instance == null)
             UnitaleUtil.WriteInLogAndDebugger("[WARN]BattleDialog can only be used as early as EncounterStarting.");
-        } else {
+        else {
             UIController.instance.battleDialogued = true;
             TextMessage[] msgs = null;
             if (arg.Type == DataType.String)
@@ -370,6 +370,8 @@ internal class LuaEnemyEncounter : EnemyEncounter {
             } else if (!GlobalControls.retroMode)
                 UnitaleUtil.DisplayLuaError("BattleDialog", "You need to input a non-empty array or a string here." + 
                                                             "\n\nIf you're sure that you've entered what's needed, you may contact the dev.");
+            if (!GlobalControls.retroMode)
+                UIController.instance.textmgr.SetEffect(new TwitchEffect(UIController.instance.textmgr));
             UIController.instance.ActionDialogResult(msgs, UIController.UIState.ENEMYDIALOGUE);
         }
     }

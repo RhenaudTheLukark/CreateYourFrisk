@@ -81,7 +81,7 @@ public class TextManager : MonoBehaviour {
     [MoonSharpHidden] public bool skipNowIfBlocked = false;
     internal bool noSkip1stFrame = true;
 
-    [MoonSharpHidden] public bool LateStartWaiting = false; // Lua text objects will use a late start
+    [MoonSharpHidden] public bool lateStartWaiting = false; // Lua text objects will use a late start
 
     [MoonSharpHidden] public void SetCaller(ScriptWrapper s) { caller = s; }
 
@@ -118,6 +118,7 @@ public class TextManager : MonoBehaviour {
         letterSound.clip = default_voice ?? default_charset.Sound;
         defaultColor = default_charset.DefaultColor;
 
+        // Default voice in the overworld
         if (gameObject.name == "TextManager OW")
             default_voice = AudioClipRegistry.GetVoice("monsterfont");
     }
@@ -357,7 +358,7 @@ public class TextManager : MonoBehaviour {
                             decoratedTextOffset = true;
                             self.localPosition = new Vector3(pos.x, pos.y + (decoratedTextOffset ? 9 : 0), pos.z);
                         }
-                    } else if (UnitaleUtil.IsOverworld && !GlobalControls.isInShop && !GameOverBehavior.gameOverContainerOw.activeSelf) {
+                    } else if (gameObject.name == "TextManager OW") {
                         int lines = textQueue[line].Text.Split('\n').Length;
                         if (lines >= 4) lines = 4;
                         else            lines = 3;
@@ -416,7 +417,7 @@ public class TextManager : MonoBehaviour {
             SkipText();
     }
 
-    public void SkipLine() {
+    public virtual void SkipLine() {
         if (!noSkip1stFrame)
             while (currentCharacter < letterReferences.Length) {
                 if (letterReferences[currentCharacter] != null && Charset.Letters.ContainsKey(textQueue[currentLine].Text[currentCharacter])) {
@@ -442,7 +443,7 @@ public class TextManager : MonoBehaviour {
 
     public void SetEffect(TextEffect effect) { textEffect = effect; }
 
-    [MoonSharpHidden] public virtual void DestroyChars() {
+    [MoonSharpHidden] public void DestroyChars() {
         foreach (Transform child in gameObject.transform)
             Destroy(child.gameObject);
     }
@@ -554,7 +555,7 @@ public class TextManager : MonoBehaviour {
                 case '[':
                     int currentChar = i;
                     string command = ParseCommandInline(currentText, ref i);
-                    if (command == null || LateStartWaiting || !commandList.Contains(command.Split(':')[0]))
+                    if (command == null || lateStartWaiting || !commandList.Contains(command.Split(':')[0]))
                         i = currentChar;
                     else {
                         // Work-around for [noskip], [instant] and [instant:allowcommand]
@@ -696,7 +697,7 @@ public class TextManager : MonoBehaviour {
                     mugshot.SetAnimation(mugshotList, mugshotTimer);
             }
 
-        if (textQueue == null || textQueue.Length == 0 || paused || LateStartWaiting)
+        if (textQueue == null || textQueue.Length == 0 || paused || lateStartWaiting)
             return;
         /*if (currentLine >= lineCount() && overworld) {
             endTextEvent();

@@ -296,7 +296,7 @@ public class LuaTextManager : TextManager {
 
     public void SetText(DynValue text) {
         // disable late start if SetText is used on the same frame the text is created
-        base.LateStartWaiting = false;
+        base.lateStartWaiting = false;
 
         TextMessage[] msgs = null;
         if (text == null || (text.Type != DataType.Table && text.Type != DataType.String))
@@ -323,23 +323,13 @@ public class LuaTextManager : TextManager {
         if (!isactive)
             yield break;
 
-        /*
-        // manually do SetText, except without calling SetTextQueue
-        TextMessage[] msgs = null;
-        msgs = new TextMessage[text.Table.Length];
-        for (int i = 0; i < text.Table.Length; i++)
-            msgs[i] = new TextMessage(text.Table.Get(i + 1).String, false, false);
-
-        base.textQueue = msgs;
-        */
-
         if (default_voice != null) {
             letterSound.clip = default_voice;
         } else
             letterSound.clip = default_charset.Sound;
 
         // only allow inline text commands and letter sounds on the second frame
-        base.LateStartWaiting = false;
+        base.lateStartWaiting = false;
 
         base.currentLine = 0;
         ShowLine(0, true);
@@ -481,6 +471,16 @@ public class LuaTextManager : TextManager {
         containerBubble.SetActive(false);
     }
 
+    public override void SkipLine() {
+        if (!noSkip1stFrame)
+            if ((GlobalControls.isInFight && LuaEnemyEncounter.script.GetVar("playerskipdocommand").Boolean)
+             || (EventManager.instance.script != null && EventManager.instance.script.GetVar("playerskipdocommand").Boolean)
+             || (GlobalControls.isInShop && GameObject.Find("Canvas").GetComponent<ShopScript>().script.GetVar("playerskipdocommand").Boolean))
+                this.DoSkipFromPlayer();
+            else
+                base.SkipLine();
+    }
+
     public void NextLine() {
         CheckExists();
         if (AllLinesComplete()) {
@@ -511,13 +511,6 @@ public class LuaTextManager : TextManager {
         CheckExists();
         container.transform.position = new Vector3(x, y, container.transform.position.z);
     }
-
-    /*
-    public void SetPivot(float x, float y) {
-        CheckExists();
-        container.GetComponent<RectTransform>().pivot = new Vector2(x, y);
-    }
-    */
 
     public int GetTextWidth() {
         CheckExists();
