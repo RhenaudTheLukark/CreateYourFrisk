@@ -676,7 +676,7 @@ public class PlayerOverworld : MonoBehaviour {
     }
 
     public static IEnumerator LaunchMenu() {
-        instance.PlayerNoMove = true; instance.menuRunning[2] = true; instance.menuRunning[4] = true; //Start menu
+        instance.PlayerNoMove = true; instance.menuRunning[2] = true; instance.menuRunning[3] = false; instance.menuRunning[4] = true; //Start menu
         GameObject.Find("MenuContainer").transform.SetAsLastSibling();
         TextManager[] txtmgrs = GameObject.Find("MenuContainer").GetComponentsInChildren<TextManager>();
         instance.uiAudio.PlayOneShot(AudioClipRegistry.GetSound("menumove"));

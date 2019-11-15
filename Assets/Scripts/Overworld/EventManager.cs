@@ -1334,11 +1334,14 @@ end";
         for (int i = 0; i < events.Count || name == "Player"; i++) {
             GameObject go = events[i];
             if (name == go.name || name == "Player") {
-                if (name == "Player") {
-                    go = GameObject.Find("Player");
-                    go.GetComponent<PlayerOverworld>().isRotating = true;
+                if (waitEnd) {
+                    if (name == "Player") {
+                        go = GameObject.Find("Player");
+                        go.GetComponent<PlayerOverworld>().isRotating = true;
+                    } else
+                        go.GetComponent<EventOW>().isRotating         = true;
                 } else
-                    go.GetComponent<EventOW>().isRotating         = true;
+                    scr.Call("CYFEventNextCommand");
 
                 float lackX = rotateX - go.transform.rotation.eulerAngles.x;
                 float lackY = rotateY - go.transform.rotation.eulerAngles.y;
@@ -1368,7 +1371,8 @@ end";
                     go.GetComponent<PlayerOverworld>().isRotating = false;
                 else
                     go.GetComponent<EventOW>().isRotating         = false;
-                scr.Call("CYFEventNextCommand");
+                if (waitEnd)
+                    scr.Call("CYFEventNextCommand");
                 yield break;
             }
         }
