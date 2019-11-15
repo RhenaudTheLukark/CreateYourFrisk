@@ -9,14 +9,10 @@ public class LuaFile {
     private string[] content;
     private System.Text.Encoding _encoding = System.Text.Encoding.Unicode;
 
-    public int lineCount {
-        get { return content.Length; }
-    }
+    public int lineCount { get { return content.Length; } }
+    public string openMode { get { return mode; } }
+    public string filePath { get { return path; } }
 
-    public string openMode {
-        get { return mode; }
-    }
-    
     public string encoding {
         get {
             if (!mode.Contains("b"))
@@ -108,22 +104,26 @@ public class LuaFile {
         if (!File.Exists(path))
             File.Create(path).Close();
 
-        if (append) {
-            if (mode.Contains("b")) {
-                byte[] fileContents = File.ReadAllBytes(path);
-                byte[] dataContents = _encoding.GetBytes(data);
-                byte[] writeBytes   = new byte[fileContents.Length + dataContents.Length];
+        try {
+            if (append) {
+                if (mode.Contains("b")) {
+                    byte[] fileContents = File.ReadAllBytes(path);
+                    byte[] dataContents = _encoding.GetBytes(data);
+                    byte[] writeBytes   = new byte[fileContents.Length + dataContents.Length];
 
-                fileContents.CopyTo(writeBytes, 0);
-                dataContents.CopyTo(writeBytes, fileContents.Length);
-                File.WriteAllBytes(path, writeBytes);
-            } else
-                File.WriteAllText(path, File.ReadAllText(path) + data);
-        } else {
-            if (mode.Contains("b"))
-                File.WriteAllBytes(path, _encoding.GetBytes(data));
-            else
-                File.WriteAllText(path, data);
+                    fileContents.CopyTo(writeBytes, 0);
+                    dataContents.CopyTo(writeBytes, fileContents.Length);
+                    File.WriteAllBytes(path, writeBytes);
+                } else
+                    File.WriteAllText(path, File.ReadAllText(path) + data);
+            } else {
+                if (mode.Contains("b"))
+                    File.WriteAllBytes(path, _encoding.GetBytes(data));
+                else
+                    File.WriteAllText(path, data);
+            }
+        } catch (UnauthorizedAccessException) {
+            throw new CYFException("File.Write: Unauthorized access to file:\n\"" + path + "\"\n\nIt may be read-only, hidden or a folder.");
         }
 
         content = (mode.Contains("b") ? _encoding.GetString(File.ReadAllBytes(path)).Split('\n') : File.ReadAllText(path).Split('\n'));
@@ -162,6 +162,8 @@ public class LuaFile {
     public void DeleteLine(int line) {
         if (!mode.Contains("w"))
             throw new CYFException("This file has been opened in read-only mode, you can't write anything to it.");
+        if (!File.Exists(path))
+            throw new CYFException("The file at the path \"" + path + "\" doesn't exist, so you can't delete its lines.");
         if (line > content.Length || line < 1 || line % 1 != 0)
             throw new CYFException("The file only has " + content.Length + " lines yet you're trying to delete this file's line #" + line);
 
@@ -175,7 +177,11 @@ public class LuaFile {
         if (!mode.Contains("w"))
             throw new CYFException("This file has been opened in read-only mode, you can't write anything to it.");
         if (File.Exists(path))
-            File.Delete(path);
+            try {
+                File.Delete(path);
+            } catch (UnauthorizedAccessException) {
+                throw new CYFException("File.Delete: Unauthorized access to file:\n\"" + path + "\"\n\nIt may be read-only or hidden.");
+            }
     }
 
     public void Move(string relativePath) {
@@ -188,8 +194,35 @@ public class LuaFile {
         if (File.Exists(newPath))
             throw new CYFException("The file at the path \"" + newPath + "\" already exists.");
 
-        File.Move(path, newPath);
+        try {
+            File.Move(path, newPath);
+        } catch (DirectoryNotFoundException) {
+            throw new CYFException("File.Move: Could not find part or all of the path:\n\"" + newPath + "\"\n\nMake sure the path specified is valid, and its total length (" + newPath.Length + " characters) is not too long.");
+        } catch (PathTooLongException) {
+            throw new CYFException("File.Move: The destination path is too long:\n\"" + newPath + "\"");
+        }
 
         path = newPath;
+    }
+
+    public void Copy(string relativePath, bool overwrite = false) {
+        string newPath = (FileLoader.ModDataPath + "/" + relativePath).Replace('\\', '/');
+
+        if (!File.Exists(path))
+            throw new CYFException("The file at the path \"" + path + "\" doesn't exist, so you can't move it.");
+        if (newPath.Contains(".."))
+            throw new CYFException("You cannot move a file outside of a mod folder. The use of \"..\" is forbidden.");
+        if (File.Exists(newPath) && !overwrite)
+            throw new CYFException("The file at the path \"" + newPath + "\" already exists.");
+
+        try {
+            File.Copy(path, newPath, overwrite);
+        } catch (DirectoryNotFoundException) {
+            throw new CYFException("File.Copy: Could not find part or all of the path:\n\"" + newPath + "\"\n\nMake sure the path specified is valid, and its total length (" + newPath.Length + " characters) is not too long.");
+        } catch (PathTooLongException) {
+            throw new CYFException("File.Copy: The destination path is too long:\n\"" + newPath + "\"");
+        } catch (UnauthorizedAccessException) {
+            throw new CYFException("File.Copy: Unauthorized access to file:\n\"" + newPath + "\"\n\nIt may be read-only or hidden.");
+        }
     }
 }

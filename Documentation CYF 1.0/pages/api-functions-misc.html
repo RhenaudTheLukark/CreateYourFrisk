@@ -223,13 +223,20 @@ CreateProjectileAbs("bullet", 0 - widthOnEachSide, 240) -- creates a bullet at t
             <br><br>
             <ul>
                 <span class="function ref" style="display: inline;">All modes</span>
-                <br><Br>
+                <br><br>
                 <li><span class="string"></span> <span class="term">File.openMode</span> (read-only):
                     Returns the file mode being used by this File object.<br>
                     This is what you entered for <span class="term">mode</span> in <span class="term">Misc.OpenFile</span>.</li><br>
+                <li><span class="number"></span> <span class="term">File.lineCount</span> (read-only):
+                    The number of lines in the file.</li><br>
+                <li><span class="number"></span> <span class="term">File.filePath</span> (read-only):
+                    The full file path to the opened file.</li><br>
                 <li><span class="term">File.Move(<span class="string"></span> new_path)</span>:
                     Moves the opened file to the path <span class="term">new_path</span>.<br>
                     Can be used to rename a file.</li><br>
+                <li><span class="term">File.Copy(<span class="string"></span> new_path, <span class="boolean"></span> overwrite = false)</span>:
+                    Copies the opened file to the path <span class="term">new_path</span>.<br>
+                    If <span class="term">overwrite</span> is true, a file at the target path that already exists will be replaced with the opened file.</li><br>
                 <hr><br>
                 <span class="function ref" style="display: inline;">"r"</span>
                 <br><br>
@@ -237,9 +244,7 @@ CreateProjectileAbs("bullet", 0 - widthOnEachSide, 240) -- creates a bullet at t
                     Returns the contents of line #<span class="term">line</span> as a string.</li><br>
                 <li><span class="luatable"><span class="string"></span></span> <span class="term">File.ReadLines()</span>:
                     Returns every line in the file as a separate string, all within one table.<br>
-                    Same as using <span class="term">File.ReadLine</span> on every line.</li><br>
-                <li><span class="number"></span> <span class="term">File.lineCount</span>:
-                    The number of lines in the file.</li>
+                    Same as using <span class="term">File.ReadLine</span> on every line.</li>
                 <br><br>
                 <span class="function ref" style="display: inline;">"w"</span>
                 <br><br>
