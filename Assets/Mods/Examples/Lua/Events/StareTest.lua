@@ -61,6 +61,9 @@ function resetStareVars()
     stare5Count = 0
     stare5Phase = 0
     stare5Velocity = 0
+    Stare7 = Event.Exists("Punder") and Stare7Alive or Stare7Dead
+    stare7Count = 0
+    stare7Phase = 0
 end
 
 punderSprite = nil
@@ -514,7 +517,723 @@ function Stare5(frame)
 end
 
 function Stare6(frame) DEBUG("Stare6: " .. frame) return true end
-function Stare7(frame) DEBUG("Stare7: " .. frame) return true end
+
+punderSprite = nil
+function Stare7Alive(frame)
+    -- Create Asriel sprite and move Punder
+    if frame == 0 and not inputted then
+        asriel = CreateSprite("AsrielOW/13")
+        asriel.ypivot = 0
+        asriel.MoveToAbs(320, -56)
+        asriel.SetAnimation({12, 13, 14, 15}, 0.15, "AsrielOW")
+        asriel.z = -1 -- in front of Punder
+
+        -- move Punder into place
+        Event.StopCoroutine("Punder")
+        punderSprite = Event.GetSprite("Punder")
+        -- walk to start point
+        Event.MoveToPoint("Punder", 400, 260, true, false)
+    end
+
+    --[[
+    PLAN:
+        Phase 0:
+            Asriel runs up from bottom of screen to Punder's height; Punder is forced to move to 400, 260 and face right
+            - inputted action: Asriel runs straight down off screen
+        Phase 1:
+            Asriel turns right and immediately begins speaking to the right; Punder turns around and "talks" back by walking in place. Asriel turns left
+            - inputted action: Asriel runs straight up off screen
+        Phase 2:
+            Asriel gets chased by Punder in a counter-clockwise square around the level, for 3 rotations
+            - inputted action: they keep running until they pass by the North exit; Asriel runs North off screen and Punder just returns to his spot
+        Phase 3:
+            Asriel gets tagged
+            - inputted action: Asriel runs North off screen and Punder returns to his spot
+        Phase 4:
+            Repeat phase 2 but in reverse and Asriel's chasing Punder
+            - inputted action: keep running until pass by South exit; Asriel runs South off screen and Punder returns to his spot
+        Phase 5:
+            Punder slows down for a moment in front of the top exit and gets tagged, he then talks to Asriel a bit more
+            - inputted action (this and phase 6): skip straight to Asriel leaving and Punder returning to his spot
+        Phase 6:
+            Asriel exits the screen going up and Punder returns to his original spot
+    ]]--
+
+    if not inputted then
+        -- Phase 0: Walk up
+        if stare7Count < 120 then
+            asriel.absy = math.min(asriel.absy + 3, 260)
+        -- Phase 1: Look right and talk to Punder friend!
+        elseif stare7Count == 120 then
+            stare7Phase = 1
+            asriel.StopAnimation()
+            asriel.Set("Overworld/Asriel/16")
+        elseif stare7Count >= 154 and stare7Count%14 == 0 and stare7Count < 308 then
+            asriel.Set("Overworld/Asriel/1" .. (stare7Count%28 == 14 and 6 or 7))
+            if stare7Count == 238 then
+                Event.SetDirection("Punder", 4)
+            end
+        elseif stare7Count == 308 then
+            asriel.Set("AsrielOW/9")
+        elseif stare7Count == 340 then
+            Event.SetAnimHeader("Punder", "SunMovingLeft")
+        elseif stare7Count == 460 then
+            Event.SetAnimHeader("Punder", "Sun")
+            Event.SetDirection("Punder", 4)
+        elseif stare7Count == 530 then
+            asriel.Set("AsrielOW/5")
+        -- Phase 2: Play tag!
+        elseif stare7Count == 600 then
+            stare7Phase = 2
+            Audio.PlaySound("runaway")
+            asriel.SetAnimation({4, 5, 6, 5}, 0.15, "AsrielOW")
+            punderSpeed = Event.GetSpeed("Punder")
+            Event.SetSpeed("Punder", 3)
+            Event.MoveToPoint("Punder", 215, 260, true, false)
+        elseif stare7Count > 600 and stare7Count < 1220 then -- tag loop
+            -- asriel 
+            do
+                -- run left
+                if     asriel.absy == 260 and asriel.absx > 215 then
+                    asriel.absx = math.max(asriel.absx - 3, 215)
+
+                    -- go down next
+                    if asriel.absx == 215 then
+                        asriel.SetAnimation({0, 1, 2, 1}, 0.15, "AsrielOW")
+                        asriel.z = -1
+                    end
+                -- run down
+                elseif asriel.absx == 215 and asriel.absy > 140 then
+                    asriel.absy = math.max(asriel.absy - 3, 140)
+
+                    -- go right next
+                    if asriel.absy == 140 then
+                        asriel.SetAnimation({8, 9, 10, 9}, 0.15, "AsrielOW")
+                    end
+                -- run right
+                elseif asriel.absy == 140 and asriel.absx < 400 then
+                    asriel.absx = math.min(asriel.absx + 3, 400)
+
+                    -- go up next
+                    if asriel.absx == 400 then
+                        asriel.SetAnimation({12, 13, 14, 13}, 0.15, "AsrielOW")
+                        asriel.z = 0
+                    end
+                -- run up
+                elseif asriel.absx == 400 and asriel.absy < 260 then
+                    asriel.absy = math.min(asriel.absy + 3, 260)
+
+                    -- go left next
+                    if asriel.absy == 260 then
+                        asriel.SetAnimation({4, 5, 6, 5}, 0.15, "AsrielOW")
+                    end
+                end
+            end
+
+            -- punder
+            do
+                -- run down next
+                if     punderSprite.absy == 260 and punderSprite.absx == 215 then
+                    Event.MoveToPoint("Punder", 215, 140, true, false)
+                -- run right next
+                elseif punderSprite.absx == 215 and punderSprite.absy == 140 then
+                    Event.MoveToPoint("Punder", 400, 140, true, false)
+                -- run up next
+                elseif punderSprite.absy == 140 and punderSprite.absx == 400 then
+                    Event.MoveToPoint("Punder", 400, 260, true, false)
+                -- run left next
+                elseif punderSprite.absx == 400 and punderSprite.absy == 260 then
+                    Event.MoveToPoint("Punder", 215, 260, true, false)
+                end
+            end
+        elseif stare7Count == 1220 then
+            asriel.Set("AsrielOW/5")
+            asriel.StopAnimation()
+            Event.MoveToPoint("Punder", asriel.absx + punderSprite.width/2, asriel.absy, true, false)
+        -- Phase 3: Asriel got tagged!
+        elseif stare7Count == 1238 then
+            stare7Phase = 3
+            Audio.PlaySound("Bump") -- BeginBattle1
+            asriel.Set("Overworld/Asriel/16")
+            asriel.xscale = -1
+        elseif stare7Count > 1238 and stare7Count <= 1238 + 15 then
+            local i = stare7Count - 1238
+            local scale = 1 + math.sin(i * math.pi * 2 / 15) * 0.05
+            asriel.xscale = -1 / scale
+            asriel.yscale = scale
+        elseif stare7Count == 1254 then
+            asriel.Scale(-1, 1)
+        elseif stare7Count == 1320 then
+            asriel.Set("AsrielOW/9")
+            asriel.xscale = 1
+        elseif stare7Count == 1335 then
+            Event.MoveToPoint("Punder", asriel.absx + 80, 260, true, false)
+        -- Phase 4: Asriel's turn to chase!
+        elseif stare7Count == 1380 then
+            stare7Phase = 4
+            Audio.PlaySound("runaway")
+            asriel.SetAnimation({8, 9, 10, 9}, 0.15, "AsrielOW")
+            asriel.z = 0
+            Event.MoveToPoint("Punder", 400, 260, true, false)
+        elseif stare7Count > 1380 and stare7Count < 1980 then -- tag loop
+            -- asriel
+            do
+                -- run right
+                if     asriel.absy == 260 and asriel.absx < 400 then
+                    asriel.absx = math.min(asriel.absx + 3, 400)
+
+                    -- go down next
+                    if asriel.absx == 400 then
+                        asriel.SetAnimation({0, 1, 2, 1}, 0.15, "AsrielOW")
+                    end
+                -- run down
+                elseif asriel.absx == 400 and asriel.absy > 140 then
+                    asriel.absy = math.max(asriel.absy - 3, 140)
+
+                    -- go left next
+                    if asriel.absy == 140 then
+                        asriel.SetAnimation({4, 5, 6, 5}, 0.15, "AsrielOW")
+                        asriel.z = -1
+                    end
+                -- run left
+                elseif asriel.absy == 140 and asriel.absx > 215 then
+                    asriel.absx = math.max(asriel.absx - 3, 215)
+
+                    -- go up next
+                    if asriel.absx == 215 then
+                        asriel.SetAnimation({12, 13, 14, 13}, 0.15, "AsrielOW")
+                    end
+                -- run up
+                elseif asriel.absx == 215 and asriel.absy < 260 then
+                    asriel.absy = math.min(asriel.absy + 3, 260)
+
+                    -- go right next
+                    if asriel.absy == 260 then
+                        asriel.SetAnimation({8, 9, 10, 9}, 0.15, "AsrielOW")
+                        asriel.z = 0
+                    end
+                end
+            end
+
+            -- punder
+            do
+                -- run down next
+                if     punderSprite.absx == 400 and punderSprite.absy == 260 then
+                    Event.MoveToPoint("Punder", 400, 140, true, false)
+                -- run left next
+                elseif punderSprite.absx == 400 and punderSprite.absy == 140 then
+                    Event.MoveToPoint("Punder", 215, 140, true, false)
+                -- run up next
+                elseif punderSprite.absx == 215 and punderSprite.absy == 140 then
+                    Event.MoveToPoint("Punder", 215, 260, true, false)
+                -- run right next
+                elseif punderSprite.absx == 215 and punderSprite.absy == 260 then
+                    Event.MoveToPoint("Punder", 400, 260, true, false)
+                end
+            end
+        -- Phase 5: Punder got tagged!
+        elseif stare7Count == 1980 then
+            Event.MoveToPoint("Punder", punderSprite.absx, punderSprite.absy, true, false)
+            stare7Phase = 5
+        elseif stare7Count > 1980 and stare7Count < 1998 then
+            asriel.absx = asriel.absx + 3
+        elseif stare7Count == 1998 then
+            Audio.PlaySound("Bump")
+            asriel.StopAnimation()
+            asriel.Set("Overworld/Asriel/16")
+        elseif stare7Count > 1998 and stare7Count <= 1998 + 15 then
+            local i = stare7Count - 1998
+            local scale = 1 + math.sin(i * math.pi * 2 / 15) * 0.05
+            punderSprite.xscale = 1 / scale
+            punderSprite.yscale = scale
+        elseif stare7Count == 2013 then
+            punderSprite.Scale(1, 1)
+        elseif stare7Count == 2060 then
+            Event.SetDirection("Punder", 4)
+        elseif stare7Count == 2120 then
+            Event.SetAnimHeader("Punder", "SunMovingLeft")
+        elseif stare7Count == 2220 then
+            Event.SetAnimHeader("Punder", "Sun")
+            Event.SetDirection("Punder", 4)
+        elseif stare7Count >= 2300 and stare7Count%15 == 0 and stare7Count <= 2415 then
+            asriel.Set("Overworld/Asriel/1" .. (stare7Count%30 == 0 and 7 or 6))
+        elseif stare7Count == 2500 then
+            Event.SetSpeed("Punder", punderSpeed)
+            Event.MoveToPoint("Punder", 400, 260, true, false)
+        elseif stare7Count == 2540 then
+            asriel.Set("AsrielOW/13")
+        -- Phase 6: Bye-bye!
+        elseif stare7Count == 2590 then
+            stare7Phase = 6
+            asriel.SetAnimation({12, 13, 14, 15}, 0.1875, "AsrielOW")
+        elseif stare7Count > 2590 and stare7Count < 2701 then
+            asriel.absy = asriel.absy + 2
+        -- The end!!
+        elseif stare7Count >= 2701 then
+            if asriel then
+                asriel.Remove()
+                asriel = nil
+                Event.SetSpeed("Punder", punderSpeed)
+                Event.SetPage("Punder", 2)
+            end
+            return true
+        end
+    -- Player pressed a key
+    else
+        -- Asriel hasn't walked all the way up yet
+        if stare7Phase == 0 then
+            -- run once
+            if stare7Count < 120 then
+                stare7Count = 120
+                asriel.SetAnimation({0, 1, 2, 1}, 0.1875, "AsrielOW")
+            elseif stare7Count > 120 and asriel.absy > -56 then
+                asriel.absy = asriel.absy - 2
+            -- end of event
+            elseif stare7Count > 120 and asriel.absy <= -56 then
+                asriel.Remove()
+                asriel = nil
+                Event.SetPage("Punder", 2)
+                return true
+            end
+        -- Talking to Punder
+        elseif stare7Phase == 1 then
+            -- run once
+            if stare7Count < 600 then
+                stare7Count = 600
+                asriel.SetAnimation({12, 13, 14, 13}, 0.1875, "AsrielOW")
+                Event.SetAnimHeader("Punder", "Sun")
+                Event.SetPage("Punder", 2)
+            elseif stare7Count > 600 and asriel.absy < 480 then
+                asriel.absy = asriel.absy + 2
+            -- end of event
+            elseif stare7Count > 600 and asriel.absy >= 480 then
+                asriel.Remove()
+                asriel = nil
+                return true
+            end
+        -- Tag game CCW
+        elseif stare7Phase == 2 then
+            -- asriel
+            do
+                -- run left
+                if     asriel.absy == 260 and asriel.absx > 215 then
+                    if asriel.absx >= 298 then
+                        asriel.absx = math.max(asriel.absx - 3, 298)
+
+                        -- run north off-screen
+                        if asriel.absx == 298 then
+                            asriel.absy = asriel.absy + 1
+                            asriel.SetAnimation({12, 13, 14, 13}, 0.1875, "AsrielOW")
+                            asriel.z = 0
+                            Event.MoveToPoint("Punder", punderSprite.absx, punderSprite.absy, true, false)
+                            Event.SetSpeed("Punder", punderSpeed)
+                            Event.SetPage("Punder", 2)
+                        end
+                    else
+                        asriel.absx = math.max(asriel.absx - 3, 215)
+
+                        -- go down next
+                        if asriel.absx == 215 then
+                            asriel.SetAnimation({0, 1, 2, 1}, 0.15, "AsrielOW")
+                            asriel.z = -1
+                        end
+                    end
+                -- run down
+                elseif asriel.absx == 215 and asriel.absy > 140 then
+                    asriel.absy = math.max(asriel.absy - 3, 140)
+
+                    -- go right next
+                    if asriel.absy == 140 then
+                        asriel.SetAnimation({8, 9, 10, 9}, 0.15, "AsrielOW")
+                    end
+                -- run right
+                elseif asriel.absy == 140 and asriel.absx < 400 then
+                    asriel.absx = math.min(asriel.absx + 3, 400)
+
+                    -- go up next
+                    if asriel.absx == 400 then
+                        asriel.SetAnimation({12, 13, 14, 13}, 0.15, "AsrielOW")
+                        asriel.z = 0
+                    end
+                -- run up
+                elseif asriel.absx == 400 and asriel.absy < 260 then
+                    asriel.absy = math.min(asriel.absy + 3, 260)
+
+                    -- go left next
+                    if asriel.absy == 260 then
+                        asriel.SetAnimation({4, 5, 6, 5}, 0.15, "AsrielOW")
+                    end
+                -- run north off-screen
+                elseif asriel.absx == 298 and asriel.absy < 480 then
+                    asriel.absy = asriel.absy + 2
+
+                    -- end of event
+                    if asriel.absy >= 480 then
+                        asriel.Remove()
+                        asriel = nil
+                        Event.MoveToPoint("Punder", punderSprite.absx, punderSprite.absy, true, false)
+                        Event.SetPage("Punder", 2)
+                        return true
+                    end
+                end
+            end
+
+            -- punder
+            do
+                -- run down next
+                if     punderSprite.absy == 260 and punderSprite.absx == 215 then
+                    Event.MoveToPoint("Punder", 215, 140, true, false)
+                -- run right next
+                elseif punderSprite.absx == 215 and punderSprite.absy == 140 then
+                    Event.MoveToPoint("Punder", 400, 140, true, false)
+                -- run up next
+                elseif punderSprite.absy == 140 and punderSprite.absx == 400 then
+                    Event.MoveToPoint("Punder", 400, 260, true, false)
+                end
+            end
+        -- Asriel getting tagged
+        elseif stare7Phase == 3 then
+            -- run once
+            if stare7Count < 1380 then
+                stare7Count = 1380
+                asriel.SetAnimation({12, 13, 14, 13}, 0.1875, "AsrielOW")
+                asriel.Scale(1, 1)
+                Event.SetAnimHeader("Punder", "Sun")
+                Event.SetPage("Punder", 2)
+                Event.SetSpeed("Punder", punderSpeed)
+            elseif stare7Count > 1380 and asriel.absy < 480 then
+                asriel.absy = asriel.absy + 2
+            -- end of event
+            elseif stare7Count > 1380 and asriel.absy >= 480 then
+                asriel.Remove()
+                asriel = nil
+                return true
+            end
+        -- Tag game CW
+        elseif stare7Phase == 4 then
+            -- asriel
+            do
+                -- run right
+                if     asriel.absy == 260 and asriel.absx < 400 then
+                    asriel.absx = math.min(asriel.absx + 3, 400)
+
+                    -- go down next
+                    if asriel.absx == 400 then
+                        asriel.SetAnimation({0, 1, 2, 1}, 0.15, "AsrielOW")
+                    end
+                -- run down
+                elseif asriel.absx == 400 and asriel.absy > 140 then
+                    asriel.absy = math.max(asriel.absy - 3, 140)
+
+                    -- go left next
+                    if asriel.absy == 140 then
+                        asriel.SetAnimation({4, 5, 6, 5}, 0.15, "AsrielOW")
+                        asriel.z = -1
+                    end
+                -- run left
+                elseif asriel.absy == 140 and asriel.absx > 215 then
+                    if asriel.absx > 320 then
+                        asriel.absx = math.max(asriel.absx - 3, 320)
+
+                        -- run south off-screen
+                        if asriel.absx == 320 then
+                            asriel.absy = asriel.absy - 1
+                            asriel.SetAnimation({0, 1, 2, 1}, 0.1875, "AsrielOW")
+                            asriel.z = -1
+                            Event.MoveToPoint("Punder", punderSprite.absx, punderSprite.absy, true, false)
+                        end
+                    else
+                        asriel.absx = math.max(asriel.absx - 3, 215)
+
+                        -- go up next
+                        if asriel.absx == 215 then
+                            asriel.SetAnimation({12, 13, 14, 13}, 0.15, "AsrielOW")
+                        end
+                    end
+                -- run up
+                elseif asriel.absx == 215 and asriel.absy < 260 then
+                    asriel.absy = math.min(asriel.absy + 3, 260)
+
+                    -- go right next
+                    if asriel.absy == 260 then
+                        asriel.SetAnimation({8, 9, 10, 9}, 0.15, "AsrielOW")
+                        asriel.z = 0
+                    end
+                -- run south off-screen
+                elseif asriel.absx == 320 and asriel.absy < 140 and asriel.absy > -56 then
+                    asriel.absy = asriel.absy - 2
+
+                    -- end of event
+                    if asriel.absy <= -56 then
+                        asriel.Remove()
+                        asriel = nil
+                        Event.SetSpeed("Punder", punderSpeed)
+                        Event.SetPage("Punder", 2)
+                        return true
+                    end
+                end
+            end
+
+            -- punder
+            do
+                -- run down next
+                if     punderSprite.absx == 400 and punderSprite.absy == 260 then
+                    Event.MoveToPoint("Punder", 400, 140, true, false)
+                -- run up next
+                elseif punderSprite.absx == 215 and punderSprite.absy == 140 then
+                    Event.MoveToPoint("Punder", 215, 260, true, false)
+                -- run right next
+                elseif punderSprite.absx == 215 and punderSprite.absy == 260 then
+                    Event.MoveToPoint("Punder", 400, 260, true, false)
+                -- run left next
+                elseif punderSprite.absx == 400 and punderSprite.absy == 140 then
+                    Event.MoveToPoint("Punder", 320 - 78, 140, true, false)
+                end
+            end
+        -- Punder is talking to Asriel
+        elseif stare7Phase > 4 then
+            -- run once
+            if stare7Count < 2701 then
+                stare7Count = 2701
+                asriel.SetAnimation({12, 13, 14, 15}, 0.1875, "AsrielOW")
+                punderSprite.Scale(1, 1)
+                Event.SetSpeed("Punder", punderSpeed)
+                Event.SetPage("Punder", 2)
+            elseif stare7Count > 2701 and asriel.absy < 480 then
+                if asriel.absx ~= 320 then
+                    asriel.absx = asriel.absx + (math.min(math.abs(asriel.absx - 320), 1.5) * (asriel.absx > 320 and -1 or 1))
+                end
+                asriel.absy = asriel.absy + 2
+            -- end of event
+            elseif stare7Count > 2701 and asriel.absy >= 480 then
+                asriel.Remove()
+                asriel = nil
+                return true
+            end
+        end
+    end
+
+    stare7Count = stare7Count + 1
+end
+
+function Stare7Dead(frame)
+    -- Create Asriel sprite
+    if frame == 0 and not inputted then
+        asriel = CreateSprite("AsrielOW/13")
+        asriel.ypivot = 0
+        asriel.MoveToAbs(320, -56)
+        asriel.SetAnimation({12, 13, 14, 15}, 0.15, "AsrielOW")
+    end
+
+    --[[
+    PLAN:
+        Phase 0:
+            Asriel runs up from bottom of screen to height where Punder would be - if he were alive - and stops
+            - inputted action: Asriel pauses for a moment, then walks south off the screen
+        Phase 1:
+            Asriel turns right and begins *immediately* speaking to the right - again, same as if Punder were here - only to stop partway through as he realizes no one is there
+            - inputted action: walk straight up off-screen
+        Phase 2:
+            Asriel walks to where Punder would stand
+            - inputted action (all remaining ones): walk left sadly, then walk up off-screen
+        Phase 3:
+            Asriel looks up, left, right, down, etc. and stops on right. then he looks down sadly.
+        Phase 4:
+            Asriel turns towards the screen with a sad expression, lowers his head and begins crying.
+        Phase 5:
+            Asriel wipes off his tears and looks up.
+        Phase 6:
+            Asriel slowly walks left with a sad expression, then walks up off-screen
+    ]]--
+
+    if not inputted then
+        -- Phase 0: Walk up
+        if stare7Phase == 0 and asriel and asriel.absy < 260 then
+            asriel.absy = math.min(asriel.absy + 3, 260)
+        -- Phase 1: Look right and talk to Punder...but he's not there...
+        elseif stare7Count == 120 then
+            stare7Phase = 1
+            asriel.StopAnimation()
+            asriel.Set("Overworld/Asriel/16")
+        elseif stare7Count >= 154 and stare7Count%14 == 0 and stare7Count <= 308 then
+            asriel.Set("Overworld/Asriel/1" .. (stare7Count%28 == 14 and 6 or 7))
+        elseif stare7Count == 350 then
+            asriel.Set("Overworld/Asriel/15")
+            -- TODO: sound?
+        elseif stare7Count > 395 and stare7Count < 420 then
+            local i = stare7Count - 395
+            local scale = 1 + math.sin(i * math.pi * 2 / 15) * 0.05
+            asriel.xscale = 1 / scale
+            asriel.yscale = scale
+        elseif stare7Count == 420 then
+            asriel.Scale(1, 1)
+        elseif stare7Count == 500 then
+            asriel.Set("Overworld/Asriel/11")
+            asriel.xscale = -1
+        -- Phase 2: Walk to where Punder used to be
+        elseif stare7Count == 570 then
+            stare7Phase = 2
+            asriel.SetAnimation({12, 11, 13, 11}, 0.2, "Overworld/Asriel")
+        elseif stare7Count > 570 and stare7Count < 625 then
+            asriel.x = math.min(asriel.x + 1.5, 400)
+        elseif stare7Count == 625 then
+            asriel.StopAnimation()
+            asriel.Set("Overworld/Asriel/11")
+        -- Phase 3: Look around frantically for lost friend...
+        elseif stare7Count == 710 or stare7Count == 920 then
+            asriel.Set("Overworld/Asriel/11")   -- left
+            asriel.xscale = 1
+        elseif stare7Count == 750 or stare7Count == 880 then
+            asriel.Set("AsrielOW/13")           -- up
+            asriel.xscale = 1
+        elseif stare7Count == 840 then
+            asriel.Set("Overworld/Asriel/11")   -- right
+            asriel.xscale = -1
+        elseif stare7Count == 790 or stare7Count == 960 then
+            asriel.Set("Overworld/Asriel/2")    -- down
+            asriel.xscale = 1
+        elseif stare7Count == 1060 then
+            asriel.Set("Overworld/Asriel/11")
+            asriel.xscale = -1
+        elseif stare7Count == 1120 then
+            asriel.Set("Overworld/Asriel/14")
+            asriel.xscale = 1
+        -- Phase 4: Begin to cry :'(
+        elseif stare7Count == 1250 then
+            stare7Phase = 4
+            asriel.Set("Overworld/Asriel/2")
+        elseif stare7Count == 1325 then
+            asriel.Set("Overworld/Asriel/3")
+        elseif stare7Count == 1400 then
+            asriel.Set("Overworld/Asriel/4")
+        elseif stare7Count == 1500 then
+            asriel.Set("Overworld/Asriel/0")
+        elseif stare7Count > 1550 and stare7Count%30 == 0 and stare7Count < 1800 then
+            asriel.Set("Overworld/Asriel/" .. (stare7Count%60 == 0 and 0 or 1))
+        -- Phase 5: Stop crying...
+        elseif stare7Count >= 1800 and stare7Count%20 == 0 and stare7Count < 2060 then
+            stare7Phase = 5
+            asriel.Set("Overworld/Asriel/" .. (5 + ((stare7Count%80) / 20)))
+        elseif stare7Count == 2120 then
+            asriel.Set("Overworld/Asriel/9")
+        elseif stare7Count == 2200 then
+            asriel.Set("Overworld/Asriel/10")
+        elseif stare7Count == 2275 then
+            asriel.Set("Overworld/Asriel/2")
+        -- Phase 6: Leave :c
+        elseif stare7Count == 2400 then
+            stare7Phase = 6
+            asriel.Set("Overworld/Asriel/11")
+        elseif stare7Count == 2460 then
+            asriel.SetAnimation({12, 11, 13, 11}, 0.25, "Overworld/Asriel")
+        elseif stare7Count > 2460 and stare7Count < 2525 then
+            asriel.x = math.max(asriel.x - 1.25, 320)
+        elseif stare7Count == 2525 then
+            asriel.StopAnimation()
+            asriel.Set("Overworld/Asriel/11")
+        elseif stare7Count == 2575 then
+            asriel.SetAnimation({12, 13, 14, 13}, 0.25, "AsrielOW")
+        elseif stare7Count > 2575 and stare7Count < 2630 then
+            asriel.y = asriel.y + 1.5
+        elseif stare7Count == 2630 then
+            asriel.y = math.floor(asriel.y)
+            asriel.StopAnimation()
+            asriel.Set("AsrielOW/13")
+        elseif stare7Count == 2700 then
+            asriel.Set("Overworld/Asriel/11")
+            asriel.xscale = -1
+        elseif stare7Count == 2790 then
+            asriel.Set("AsrielOW/13")
+            asriel.xscale = 1
+        elseif stare7Count == 2830 then
+            asriel.SetAnimation({12, 13, 14, 13}, 0.1875, "AsrielOW")
+        elseif stare7Count >= 2830 and stare7Count < 2900 then
+            asriel.absy = asriel.absy + 2
+        -- The end!!
+        elseif stare7Count >= 2900 then
+            if asriel then
+                asriel.Remove()
+                asriel = nil
+            end
+            return true
+        end
+    -- Player pressed a key
+    else
+        -- Asriel hasn't walked all the way up yet
+        if stare7Phase == 0 then
+            -- run once
+            if stare7Count < 120 then
+                stare7Count = 120
+                asriel.StopAnimation()
+                asriel.Set("AsrielOW/13")
+                asriel.xscale = 1
+            elseif stare7Count == 150 then
+                asriel.Set("AsrielOW/5")
+            elseif stare7Count == 180 then
+                asriel.Set("AsrielOW/9")
+            elseif stare7Count == 210 then
+                asriel.Set("AsrielOW/1")
+            elseif stare7Count == 270 then
+                asriel.SetAnimation({0, 1, 2, 1}, 0.1875, "AsrielOW")
+                asriel.absy = math.floor(asriel.absy + 0.5)
+            elseif stare7Count > 270 and asriel.absy > -56 then
+                asriel.absy = asriel.absy - 2
+            -- end of event
+            elseif stare7Count > 270 and asriel.absy <= -56 then
+                asriel.Remove()
+                asriel = nil
+                return true
+            end
+        -- Asriel is trying to talk to Punder
+        elseif stare7Phase == 1 then
+            -- run once
+            if stare7Count < 570 then
+                stare7Count = 570
+                asriel.StopAnimation()
+                asriel.SetAnimation({12, 13, 14, 13}, 0.15, "AsrielOW")
+                asriel.Scale(1, 1)
+            elseif asriel.absy < 480 then
+                asriel.absy = asriel.absy + 2.5
+            -- end of event
+            elseif asriel.absy >= 480 then
+                asriel.Remove()
+                asriel = nil
+                return true
+            end
+        -- any point after asriel starts walking right
+        else
+            -- run once
+            if stare7Count < 2900 then
+                stare7Count = 2900
+                asriel.StopAnimation()
+                -- walk left or up
+                if asriel.absx > 320 then
+                    asriel.SetAnimation({12, 11, 13, 11}, 0.1875, "Overworld/Asriel")
+                else
+                    asriel.SetAnimation({12, 13, 14, 13}, 0.1875, "AsrielOW")
+                end
+                asriel.xscale = 1
+            elseif asriel.absx > 320 then
+                asriel.absx = math.max(asriel.absx - 2, 320)
+                
+                -- start walking up
+                if asriel.absx == 320 then
+                    asriel.SetAnimation({12, 13, 14, 13}, 0.1875, "AsrielOW")
+                end
+            elseif asriel.absy < 480 then
+                asriel.absy = asriel.absy + 2
+            -- end of event
+            elseif asriel.absy >= 480 then
+                asriel.Remove()
+                asriel = nil
+                return true
+            end
+        end
+    end
+
+    stare7Count = asriel and stare7Count + 1 or stare7Count
+end
+
 function Stare8(frame) DEBUG("Stare8: " .. frame) return true end
 
 -- Auto

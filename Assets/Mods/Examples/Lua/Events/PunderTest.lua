@@ -23,7 +23,7 @@ function EventPage1()
     dir = calcDir(Event.GetPosition(eventName), Event.GetPosition("Player"))
     Event.SetDirection(eventName, dir)
     local animHeader = Event.GetAnimHeader(eventName)
-    local text = animHeader == "" and "Where am I???" or "I still don't know where I am but I found cool sunglasses!"
+    local text = animHeader == "" and "Where am I???" or "I still don't know where I am,[w:10] but I found cool sunglasses!"
     local faceSprite = animHeader == "" and "Punder/intimidated" or "Punder/sun"
     General.SetDialog("[voice:punderbolt]" .. text, true, faceSprite)
 end
