@@ -323,7 +323,12 @@ public class LuaSpriteController {
             }
             Transform target = GetTarget();
             Transform parent = target.parent;
-            try { target.SetParent(GameObject.Find(value + "Layer").transform); } catch { target.SetParent(parent); }
+            try {
+                target.SetParent(GameObject.Find(value + "Layer").transform);
+                foreach (MaskImage ivi in img.GetComponentsInChildren<MaskImage>())
+                    ivi.inverted = false;
+                img.GetComponent<MaskImage>().inverted = false;
+            } catch { target.SetParent(parent); }
         }
     }
 
