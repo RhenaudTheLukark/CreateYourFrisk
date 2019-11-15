@@ -269,7 +269,7 @@ it's w3c valid, at least
             <p>
                 <span class="function"><span class="CYF"></span> <span class="number"></span> sprite.currentframe</span></span>
                 If a sprite has an active animation running, this represents the index of the active frame in the animation.<br>
-                Can both be read and set.
+                Otherwise, this will return <span class="term">0</span>.
                 <br><br>
                 For example: If this code is run:
                 <div class="code-container">
@@ -279,14 +279,8 @@ it's w3c valid, at least
                 </div>
                 Then this variable will be <span class="term">1</span> when the first image is shown, <span class="term">2</span> for the second, and so on, up to <span class="term">4</span> for the last one.
                 <br><br>
-                <font style="font-size: 18px; color: #f00;">NOTE: Will not reset a sprite's animation timer!</font><br>
-                If you call <span class="term">sprite.currentframe = 1</span> every frame, <font style="color:#fff;">the sprite will continue to animate!</font><br>
-                To reset the timer as well, use this code:
-                <div class="code-container">
-                <pre class="brush: lua;">
-                sprite.currenttime = (sprite.currentframe - 1) * sprite.animationspeed
-                </pre>
-                </div>
+                Likewise, setting <span class="term">sprite.currentframe = 3</span> with the above example will jump the animation to the first frame where
+                <span class="term">"sans_head3"</span> would be the currently shown image.
             </p><br>
             
             <p>
@@ -407,14 +401,23 @@ it's w3c valid, at least
                 Available modes are:
                 <ul>
                     <li><span class="term">off</span> - The default mode. Has no special properties.</li><br>
-                    <li><span class="term">box</span> - Any objects parented to this sprite are restricted to the bounding box of the sprite.</li><br>
+                    <li><span class="term">box</span> - Any objects parented to this sprite are restricted to the bounding box of the sprite. Recommended for masking
+                    bullets to the Arena and such things. Unfortunately doesn't seem to work well with rotated sprites, but this is still the recommended mode for
+                    performance.</li><br>
                     <li><span class="term">sprite</span> - Any objects parented to this sprite will be "cookie cuttered" to the current image of the sprite.</li><br>
                     <li><span class="term">stencil</span> - Same as <span class="term">sprite</span>, except that the parent sprite itself is not visible.</li><br>
+                    <li><span class="term">invertedsprite</span> - The reverse of <span class="term">sprite</span>; while the sprite itself is visible, any of its
+                    children will only display when not inside the bounds of the sprite.</li><br>
+                    <li><span class="term">invertedstencil</span> - Identical to <span class="term">invertedsprite</span> except that the parent sprite is not shown.</li><br>
                 </ul>
                 Anything parented to this sprite object through the use of <span class="term">SetParent</span> - including <b>Other Sprite Objects</b>,
                 <b>Projectiles</b>, and even <b>Text Objects</b> - will all be masked according to the mask mode entered here.
+                <br><br>
+                If using <span class="term">invertedsprite</span> or <span class="term">invertedstencil</span>, note that you may run into issues if children of
+                your sprite themselves also have sprite masks applied to them. We fear this is an unavoidable issue, as the two inverted mask modes rely on
+                directly setting the stencil compare mode of a child image, of which there can only be one value.
                 <br><br><br>
-                <b>NOTE:</b> This means that if you want to have a child that's not masked, you'll need to create a new invisible sprite (using the default
+                <b>NOTE:</b> If you want to have a child that's not masked, you'll need to create a new invisible sprite (using the default
                 sprite "empty" is recommended), parent both the intended parent and child sprite to the invisible sprite, and apply motion to the invisible
                 sprite rather than the parent sprite.
             </p><br>

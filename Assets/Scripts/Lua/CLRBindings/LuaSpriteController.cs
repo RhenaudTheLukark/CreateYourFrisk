@@ -381,7 +381,7 @@ public class LuaSpriteController {
             img.GetComponent<Projectile>().needUpdateTex = true;
     }
 
-    // Sets the parent of a sprite. Can't be used on an enemy
+    // Sets the parent of a sprite.
     public void SetParent(LuaSpriteController parent) {
         if (tag == "bubble") {
             UnitaleUtil.WriteInLogAndDebugger("sprite.SetParent(): bubbles' parent can't be changed.");
@@ -390,6 +390,8 @@ public class LuaSpriteController {
             throw new CYFException("sprite.SetParent(): Can not use SetParent with an Overworld Event's sprite.");
         try {
             GetTarget().SetParent(parent.img.transform);
+            if (img.GetComponent<MaskImage>())
+                img.GetComponent<MaskImage>().inverted = parent._masked > 3;
         } catch { throw new CYFException("sprite.SetParent(): You tried to set a removed sprite/nil sprite as this sprite's parent."); }
     }
 
@@ -643,7 +645,7 @@ public class LuaSpriteController {
         else                                                      GetTarget().SetSiblingIndex(sprite.GetTarget().GetSiblingIndex() + 1);
     }
 
-    private int _masked = 0;
+    [MoonSharpHidden] public int _masked = 0;
     public void Mask(string mode) {
         if (GetTarget().name == "SpritePivot")
             throw new CYFException("sprite.Mask: Can not be applied to Overworld Event sprites.");
@@ -651,26 +653,43 @@ public class LuaSpriteController {
             throw new CYFException("sprite.Mask: No argument provided.");
 
         mode = mode.ToLower();
-        if (mode != "box" && mode != "sprite" && mode != "stencil" && mode != "off")
+        var list = new Dictionary<string, int>() {
+            {"off",             0},
+            {"box",             1},
+            {"sprite",          2},
+            {"stencil",         3},
+            {"invertedsprite",  4},
+            {"invertedstencil", 5}
+        };
+        int masked = -1;
+        list.TryGetValue(mode, out masked);
+        if (masked == -1)
             throw new CYFException("sprite.Mask: Invalid mask mode \"" + mode.ToString() + "\".");
 
-        int masked = mode == "box" ? 1 : (mode == "sprite" ? 2 : (mode == "stencil" ? 3 : 0));
-
         if (masked != _masked) {
+            //If children need to have their "inverted" property updated, then do so
+            if ((_masked < 4 && masked > 3) || (_masked > 3 && masked < 4))
+                foreach (MaskImage ivi in img.GetComponentsInChildren<MaskImage>())
+                    ivi.inverted = masked > 3;
             RectMask2D box = img.GetComponent<RectMask2D>();
             Mask spr = img.GetComponent<Mask>();
 
+            //Box mask mode
             if (masked == 1) {
+                //Remove sprite mask if applicable
                 if (spr != null)
                     GameObject.Destroy(spr);
                 img.AddComponent<RectMask2D>();
             } else if (masked > 1) {
+                //The mask mode now can't possibly be box, so remove box mask if applicable
                 if (box != null)
                     GameObject.Destroy(box);
+                //If a sprite does not already exist, create one
                 if (_masked < 2)
                     img.AddComponent<Mask>();
-                if (masked == 3)
-                    img.GetComponent<Mask>().showMaskGraphic = false;
+                // Used to differentiate between "sprite" and "stencil"-like display modes
+                img.GetComponent<Mask>().showMaskGraphic = masked == 2 || masked == 4;
+            //Mask has been disabled
             } else if (masked == 0) {
                 if (spr != null)
                     GameObject.Destroy(spr);
@@ -731,7 +750,7 @@ public class LuaSpriteController {
     internal void UpdateAnimation() {
         if (!img)
             return;
-        if (keyframes == null)
+        if (keyframes == null || keyframes.paused)
             return;
         Keyframe k = keyframes.getCurrent();
         Sprite s = SpriteRegistry.GENERIC_SPRITE_PREFAB.sprite;

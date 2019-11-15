@@ -168,7 +168,7 @@ MonoBehaviour:
   offset: {x: 0, y: 0}
   blockSkip: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &132697915
 GameObject:
   m_ObjectHideFlags: 0
@@ -1426,7 +1426,7 @@ MonoBehaviour:
   offset: {x: 0, y: 0}
   blockSkip: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &1007297935
 GameObject:
   m_ObjectHideFlags: 0
@@ -2145,7 +2145,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1509689743}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: -765806418, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
+  m_Script: {fileID: 11500000, guid: c152f559704a98f488c1e63266ed7418, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
@@ -2164,6 +2164,7 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+  inverted: 0
 --- !u!222 &1509689747
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2573,7 +2574,7 @@ MonoBehaviour:
   offset: {x: 0, y: 0}
   blockSkip: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &1685655723
 GameObject:
   m_ObjectHideFlags: 0

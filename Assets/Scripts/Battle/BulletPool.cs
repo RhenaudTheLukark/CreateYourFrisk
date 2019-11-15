@@ -16,7 +16,7 @@ public class BulletPool : MonoBehaviour {
     /// </summary>
     private void Start() {
         instance = this;
-        bPrefab = Resources.Load<LuaProjectile>("Prefabs/LUAProjectile 1");
+        bPrefab = Resources.Load<LuaProjectile>("Prefabs/LUAProjectile 1_maskable");
         
         pool.Clear();
         for (int i = 0; i < POOLSIZE; i++)
