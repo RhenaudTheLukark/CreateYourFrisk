@@ -191,13 +191,14 @@ end
             </div>
             <p>
                 <br><span class="function">Update()</span>
-                This function runs for every frame for all of the encounter, even during waves. For advanced users: the
-                Update function is required to exist at the beginning of the encounter. If you define it at a later
-                point in time, it will not get executed.
+                This function runs for every frame (usually at 60FPS, depends on the player's framerate) for all of
+                the encounter, even during waves. This is an extremely powerful function, as it can run any code at
+                any time, no matter what. The only exception is the game over state - if the player dies, no code
+                from within this function will be run.
             </p>
             <br><br>
             <p>
-                <br><span class="function"><span class="CYF"></span>BeforeDeath()</span>
+                <br><span class="function"><span class="CYF"> </span>BeforeDeath()</span>
                 This function runs the moment the Player takes mortal damage (by any means, including bullet damage,
                 scripted damage, setting <span class="term">Player.hp</span> to 0, and even text commands),
                 just before activating the Game Over sequence. This is the perfect place to set Real and AlMighty Globals
@@ -226,20 +227,20 @@ end
                 screw up the battle UI.
             </p>
             <p>
-                <br><span class="function"><span class="CYF"></span>OnSpare()</span>
+                <br><span class="function"><span class="CYF"> </span>OnSpare()</span>
                 Happens after you successfully spared a monster. If you implement <span class="term">OnSpare()</span>, your monster will not be
                 spared automatically, and you will have to do it manually with the <span class="term">Spare()</span> function.
                 <span class="term">OnSpare()</span> will only happen through a monster spare that happened with the SPARE command - scripted <span class="term">Spare()</span> calls will 
                 not trigger it.
             </p>
             <p>
-                <br><span class="function"><span class="CYF"></span>BeforeDamageCalculation()</span>
+                <br><span class="function"><span class="CYF"> </span>BeforeDamageCalculation()</span>
                 Happens before the damage calculation after pressing Z when attacking. You can easily use <span class="term">SetDamage()</span>
                 in this function and lots of other animations and such.
                 <br><i>Previous name: <span class="term">OnAttack()</span></i>
             </p>
             <p>
-                <br><span class="function"><span class="CYF"></span>BeforeDamageValues()</span>
+                <br><span class="function"><span class="CYF"> </span>BeforeDamageValues()</span>
                 Happens before the damage ui is displayed on the monster (the life bar and the damage number) and before
                 the hp changing. You can still change the target with <span class="term">Player.changeTarget(targetNumber)</span> in this function.
             </p>
@@ -282,7 +283,7 @@ end
                 <span class="ref">API - Projectile Management</span> page.
             </p>
             <p>
-                <br><span class="function"><span class="CYF"></span>EndingWave()</span>
+                <br><span class="function"><span class="CYF"> </span>EndingWave()</span>
                 This function is called just before the wave ends. It allows you to easily reset some variables and other such things.
             </p>
             <p>

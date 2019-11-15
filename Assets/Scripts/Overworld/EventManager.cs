@@ -1183,20 +1183,22 @@ end";
                 } catch { yield break; }
                 */
                 while (test) {
+                    if (go == null) {
+                        scr.Call("CYFEventNextCommand");
+                        yield break;
+                    }
                     //Test is used to know if movement is possible or not
                     Vector2 clamped = Vector2.ClampMagnitude(endPoint, 1);
                     bool test2 = false;
                     Vector2 distanceFromStart = new Vector2(0, 0);
 
-                    // silence the error that occurs when transitioning in the overworld
-                    try {
-                        test2 = PlayerOverworld.instance.AttemptMove(clamped.x, clamped.y, go, wallPass);
-                        distanceFromStart = new Vector2(target.position.x - originalPosition.x, target.position.y - originalPosition.y);
-                    } catch (MissingReferenceException) {}
+                    test2 = PlayerOverworld.instance.AttemptMove(clamped.x, clamped.y, go, wallPass);
+                    distanceFromStart = new Vector2(target.position.x - originalPosition.x, target.position.y - originalPosition.y);
 
-                    if (name == "Player")
-                        go.GetComponent<PlayerOverworld>().isMoving = test2 || wallPass;
-                    else
+                    if (name == "Player") {
+                        go.GetComponent<PlayerOverworld>().isMoving     = test2 || wallPass;
+                        go.GetComponent<PlayerOverworld>().isBeingMoved = test2 || wallPass;
+                    } else
                         go.GetComponent<EventOW>().isMoving         = test2 || wallPass;
 
                     //If we have reached the destination, stop the function
@@ -1206,9 +1208,10 @@ end";
                         target.position = new Vector3(dirX, dirY, target.position.z);
                         yield return 0;
 
-                        if (name == "Player")
-                            go.GetComponent<PlayerOverworld>().isMoving = false;
-                        else
+                        if (name == "Player") {
+                            go.GetComponent<PlayerOverworld>().isMoving     = false;
+                            go.GetComponent<PlayerOverworld>().isBeingMoved = false;
+                        } else
                             go.GetComponent<EventOW>().isMoving         = false;
                         if (waitEnd)
                             scr.Call("CYFEventNextCommand");
@@ -1217,9 +1220,10 @@ end";
                     yield return 0;
 
                     if (!test2 && !wallPass) {
-                        if (name == "Player")
-                            go.GetComponent<PlayerOverworld>().isMoving = false;
-                        else
+                        if (name == "Player") {
+                            go.GetComponent<PlayerOverworld>().isMoving     = false;
+                            go.GetComponent<PlayerOverworld>().isBeingMoved = false;
+                        } else
                             go.GetComponent<EventOW>().isMoving         = false;
                         if (waitEnd)
                             scr.Call("CYFEventNextCommand");

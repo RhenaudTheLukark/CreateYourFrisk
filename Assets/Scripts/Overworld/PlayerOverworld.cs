@@ -26,8 +26,9 @@ public class PlayerOverworld : MonoBehaviour {
     public Vector2 cameraShift = new Vector2();
     public Vector2 backgroundSize = new Vector3(640, 480);
     public Transform PlayerPos;             //The Transform component attached to this object
-    public bool isMoving   = false;
-    public bool isRotating = false;
+    public bool isMoving     = false;
+    public bool isBeingMoved = false;
+    public bool isRotating   = false;
     public Image utHeart;
     public static AudioSource audioKept;
     public LuaSpriteController sprctrl;
@@ -283,12 +284,8 @@ public class PlayerOverworld : MonoBehaviour {
 
         if (currentDirection != 0) animator.movementDirection = currentDirection;
 
-        if (!PlayerNoMove) {
-            if (horizontal != 0 || vertical != 0)
-                isMoving = AttemptMove(horizontal, vertical);
-            else
-                isMoving = false;
-        }
+        if (!isBeingMoved)
+            isMoving = AttemptMove(horizontal, vertical);
 
         if (GlobalControls.input.Menu == UndertaleInput.ButtonState.PRESSED)
             if (menuRunning[2] && !menuRunning[3] && !menuRunning[4])
@@ -302,28 +299,22 @@ public class PlayerOverworld : MonoBehaviour {
         if (transform.parent != null)
             if (transform.parent.name == "SpritePivot")
                 transform = transform.parent;
-        //Rigidbody2D rb2Dgo = go.GetComponent<Rigidbody2D>();
 
-        //Creates the movement of our object
-        Vector2 end = new Vector2(xDir, yDir);
-        if (go == rb2D.gameObject) end *= speed;
-        else end *= go.GetComponent<EventOW>().moveSpeed;
-        //end = new Vector2(Mathf.Round(end.x * 1000) / 1000, Mathf.Round(end.y * 1000) / 1000);
-        //end += (Vector2)transform.position;
-        
-        transform.position += (Vector3)end;
+        //Don't calculate anything if no movement
+        if (xDir != 0 || yDir != 0) {
+            //Creates the movement of our object
+            Vector2 end = new Vector2(xDir, yDir);
+            if (go == rb2D.gameObject) end *= speed;
+            else                       end *= go.GetComponent<EventOW>().moveSpeed;
 
-        //Creates the new position of our object, depending on our current position
-        //Vector2 newPosition = Vector2.MoveTowards(rb2Dgo.position, end, Mathf.Infinity);
+            transform.position += (Vector3)end;
+        }
 
         //If the GameObject is the player, check if the camera can follow him or not
         if (go == gameObject && !inBattleAnim && GameObject.Find("Background") != null) {
             RectifyCameraPosition(new Vector2(transform.GetChild(0).position.x, transform.GetChild(0).position.y + Mathf.Round(PlayerPos.GetChild(0).GetComponent<SpriteRenderer>().sprite.texture.height / 2f)));
             GameObject.Find("Canvas OW").transform.position = new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y, -10);
         }
-
-        //Moves the GameObject to the position we created before
-        //rb2Dgo.MovePosition(newPosition);
 
         //Decrease battleWalkCount if the player is moving freely
         if ((xDir != 0 || yDir != 0) && !PlayerNoMove && EventManager.instance.script == null && go == gameObject)
@@ -382,9 +373,10 @@ public class PlayerOverworld : MonoBehaviour {
 
         //Check if nothing was hit by BoxCast
         //If nothing was hit, move normally
-        if (wallPass || go.layer == 0)
+        if (wallPass || go.layer == 0 || (xDir == 0 && yDir == 0)) {
+            canMove2 = !(xDir == 0 && yDir == 0);
             Move(xDir, yDir, go);
-        else {
+        } else {
             //Hit will store whatever our linecast hits when Move is called
             RaycastHit2D hit;
 

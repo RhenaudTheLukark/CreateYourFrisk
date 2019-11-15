@@ -53,7 +53,7 @@ public class SelectOMatic : MonoBehaviour {
                 break;
             }
             
-            if (/*modDir.Name != "0.5.0_SEE_CRATE" && modDir.Name != "Title" && */hasEncounters && (modDir.Attributes & FileAttributes.Hidden) != FileAttributes.Hidden && !modDir.Name.StartsWith("@"))
+            if (hasEncounters && (modDir.Attributes & FileAttributes.Hidden) != FileAttributes.Hidden && !modDir.Name.StartsWith("@"))
                 purged.Add(modDir);
         }
         modDirs = purged;
@@ -109,10 +109,6 @@ public class SelectOMatic : MonoBehaviour {
             GameObject.Find("BtnOptions").GetComponent<Button>().onClick.RemoveAllListeners();
             GameObject.Find("BtnOptions").GetComponent<Button>().onClick.AddListener(() => {SceneManager.LoadScene("Options");});
         }
-        
-        // just for testing, remove later.
-        // GlobalControls.crate = true;
-        // LuaScriptBinder.SetAlMighty(null, "CrateYourFrisk", DynValue.NewBoolean(true), true);
         
         // Crate Your Frisk initializer
         if (GlobalControls.crate) {
@@ -557,9 +553,7 @@ public class SelectOMatic : MonoBehaviour {
                 else
                     b.GetComponent<MenuButton>().Reset();
             }
-        } catch {
-            // do nothing
-        }
+        } catch {}
         // hide the encounter selection box
         encounterBox.SetActive(false);
     }
@@ -645,7 +639,6 @@ public class SelectOMatic : MonoBehaviour {
         back.GetComponent<Button>().onClick.AddListener(() => {
             // reset the encounter box's position
             modListScroll = 0.0f;
-            
             modFolderSelection();
             });
         
@@ -655,7 +648,6 @@ public class SelectOMatic : MonoBehaviour {
             if (animationDone) {
                 // store the encounter box's position so it can be remembered upon exiting a mod
                 modListScroll = content.GetComponent<RectTransform>().anchoredPosition.y;
-                
                 modFolderSelection();
             }
             });

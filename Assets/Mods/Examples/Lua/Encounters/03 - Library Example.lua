@@ -9,7 +9,6 @@ encountertext = "A library example that randomizes\ra monster's voice per letter
 nextwaves = {"bullettest_chaserorb"}
 wavetimer = 4.0
 arenasize = {155, 130}
-autolinebreak = true
 
 enemies = {
 "poseur"

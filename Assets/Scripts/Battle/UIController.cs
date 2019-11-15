@@ -531,7 +531,7 @@ public class UIController : MonoBehaviour {
                     catch {
                         if (encounter.EnabledEnemies[i].DialogBubble != "UI/SpeechBubbles/")
                             UnitaleUtil.DisplayLuaError(encounter.EnabledEnemies[i].scriptName + ": Creating a dialogue bubble",
-                                                        "The dialogue bubble " + encounter.EnabledEnemies[i].script.GetVar("dialogbubble").ToString() + " doesn't exist.");
+                                                        "The dialogue bubble \"" + encounter.EnabledEnemies[i].script.GetVar("dialogbubble").ToString() + "\" doesn't exist.");
                         else
                             UnitaleUtil.DisplayLuaError(encounter.EnabledEnemies[i].scriptName + ": Creating a dialogue bubble",
                                                         "This monster has no set dialogue bubble.");
@@ -622,6 +622,7 @@ public class UIController : MonoBehaviour {
                 }
                 GameObject speechBub = encounter.EnabledEnemies[i].transform.Find("DialogBubble(Clone)").gameObject;
                 TextManager sbTextMan = speechBub.GetComponent<TextManager>();
+                sbTextMan._textMaxWidth = (int)encounter.EnabledEnemies[i].bubbleWidth;
                 readyToNextLine[i] = false;
                 Image speechBubImg = speechBub.GetComponent<Image>();
                 if (sbTextMan.letterReferences.Count(ltr => ltr != null) == 0) speechBubImg.color = new Color(speechBubImg.color.r, speechBubImg.color.g, speechBubImg.color.b, 0);
@@ -687,11 +688,10 @@ public class UIController : MonoBehaviour {
             } else {
                 monDialogues[index].DestroyChars();
                 GameObject.Destroy(monDialogues[index].gameObject);
-            }
-            if (complete)
                 for (int i = 0; i < monDialogues.Length; i++)
                     if (monDialogues[i] != null)
                         complete = false;
+            }
         } else if (!singleLineAll)
             for (int i = 0; i < monDialogues.Length; i++) {
                 if (monDialogues[i] == null)
