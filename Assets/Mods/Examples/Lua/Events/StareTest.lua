@@ -38,6 +38,9 @@ function resetStareVars()
     stare3Count = 0
     stare3DogSpeed = 0
     stare4Count = 0
+    stare6Count = 0
+    stare6Sprites = nil
+    stare6Speeds = nil
 end
 
 punderSprite = nil
@@ -177,7 +180,7 @@ function Stare3(frame)
             -- Scale the legs so that they seem attached to the dog
             dogLegsSprite.yscale = dogLegsSprite.yscale + 1/3
         elseif frame == 170 then
-            -- D O G   S U C C E S F U L L Y   R A I S E D
+            -- D O G   S U C C E S S F U L L Y   R A I S E D
             Audio.PlaySound("success")
         -- Wait for several seconds...
         elseif frame >= 450 and frame < 510 then
@@ -236,7 +239,7 @@ function Stare3(frame)
             end
         -- While the dog is falling...
         elseif dogSprite.absy > stare3DogStartingY then
-            -- ...increase his falling speed and rotate him t the side a little
+            -- ...increase his falling speed and rotate him to the side a little
             stare3DogSpeed = stare3DogSpeed + 0.05
             Event.SetSpeed("Event1", stare3DogSpeed)
             dogSprite.rotation = dogSprite.rotation - (dogSprite.rotation < 10 and .5 or dogSprite.rotation < 15 and .25 or .1)
@@ -305,7 +308,174 @@ function Stare4(frame) -- requires at least 574 frames
 end
 
 function Stare5(frame) DEBUG("Stare5: " .. frame) return true end
-function Stare6(frame) DEBUG("Stare6: " .. frame) return true end
+
+boosterSprite = nil
+charaSprite = nil
+boosterTimestamps = {
+    -- Common
+    [0] =   { speed = 6,  isHorz = true  }, -- From left to top right loop
+    [70] =  { speed = -6, isHorz = false }, -- From top right loop to bottom right loop
+    [85] =  { speed = -6, isHorz = true  }, -- From bottom right loop to bottom left loop
+    [110] = { speed = 6,  isHorz = false }, -- From bottom left loop to top left loop
+    [125] = { speed = 6,  isHorz = true  }, -- From top left loop to top right loop
+    [150] = { speed = -6, isHorz = false }, -- From top right loop to bottom right loop
+    [165] = { speed = -6, isHorz = true  }, -- From bottom right loop to bottom left loop
+    [190] = { speed = 6,  isHorz = false }, -- From bottom left loop to top left loop
+    [205] = { speed = 6,  isHorz = true  }, -- From top left loop to top loop
+    [220] = { speed = 6,  isHorz = false }, -- From top loop to top
+    [260] = { speed = 0 },                  -- Waiting...
+    -- Booster-only
+    [350] = { speed = 6,  isHorz = true,  instaTP = { x = -40, y = 240 } }, -- From bottom to center
+    [410] = { speed = -6, isHorz = false },                                 -- From center to left
+    [460] = { speed = 0 },                                                  -- Waiting...
+    [520] = { speed = -6, isHorz = false, instaTP = { x = 320, y = 480 } }, -- From top to bottom
+    [610] = { speed = 0 },                                                  -- Waiting...
+    [700] = { speed = 6,  isHorz = false, instaTP = { x = 320, y = -60 } }, -- From bottom to top behind Chara
+    [790] = { speed = 0 },                                                  -- Waiting...
+    [830] = { speed = -6, isHorz = false, instaTP = { x = 320, y = 480 } }, -- From top to center
+    [860] = { speed = 0,  noSound = true, surprise = true },                -- Encounter bubble and wait
+    [895] = { speed = 6,  isHorz = false },                                 -- From center to top
+    [935] = { speed = 0 },                                                  -- Already dead
+}
+charaTimestamps = {
+    -- Chara-only
+    [420] =  { speed = -6, isHorz = false, instaTP = { x = 320, y = 480 } }, -- From top to bottom
+    [510] =  { speed = 0 },                                                  -- Waiting...
+    [550] =  { speed = 6,  isHorz = true,  instaTP = { x = -40, y = 240 } }, -- From left to center
+    [610] =  { speed = 6,  isHorz = false },                                 -- From center to top
+    [650] =  { speed = 0 },                                                  -- Waiting...
+    [690] =  { speed = 6,  isHorz = false, instaTP = { x = 320, y = -60 } }, -- From bottom to top
+    [780] =  { speed = 0 },                                                  -- Waiting...
+    [820] =  { speed = 6,  isHorz = false, instaTP = { x = 320, y = -60 } }, -- From bottom to center
+    [860] =  { speed = 0,  noSound = true, surprise = true },                -- Encounter bubble and wait
+    [895] =  { speed = 6,  isHorz = false },                                 -- From center to top
+    [945] =  { speed = 0 },                                                  -- Waiting...
+    [1060] = { speed = -3, isHorz = false, instaTP = { x = 320, y = 480 } }, -- From top to center
+    [1140] = { speed = 0,  laugh = true   },                                 -- Laughing animation
+    [1310] = { speed = -3, isHorz = true  },                                 -- From center to left
+    [1440] = { speed = 0,  noSound = true },                                 -- Never used
+}
+function Stare6(frame)
+    -- Create sprites
+    if frame == 0 and not inputted then
+        boosterSprite = CreateSprite("BoosterOW/8")
+        boosterSprite.ypivot = 0
+        boosterSprite.MoveToAbs(-40, 240)
+        boosterSprite["path"] = "BoosterOW"
+        boosterSprite["speed"] = 0
+        boosterSprite["isHorz"] = false
+        boosterSprite.z = -1
+        charaSprite = CreateSprite("CharaOW/8")
+        charaSprite.ypivot = 0
+        charaSprite.MoveToAbs(-40, 240)
+        charaSprite["path"] = "CharaOW"
+        charaSprite["speed"] = 0
+        charaSprite["isHorz"] = false
+        charaSprite.z = -1
+        stare6Sprites = { boosterSprite, charaSprite }
+        stare6Speeds = { boosterTimestamps, boosterTimestamps }
+    end
+
+    -- The sprites are only deleted when the animation is done
+    if not charaSprite then
+        return true
+    end
+
+    -- Handle movement for both sprites using the current count and their timestamp table
+    for k, v in pairs({ stare6Count, stare6Count <= 270 and stare6Count - 10 or stare6Count }) do
+        local sprite = stare6Sprites[k]
+        local speedObject = stare6Speeds[k][v]
+        -- If a timestamp has been found, then the sprite's behavior will change
+        if speedObject then
+            -- If the encounter bubble exists, delete it
+            if sprite["surprise"] then
+                sprite["surprise"].Remove()
+                sprite["surprise"] = nil
+            end
+            -- Replace the sprite's speed and isHorz values with the new ones
+            sprite["speed"] = speedObject.speed
+            sprite["isHorz"] = speedObject.isHorz
+            -- If there's a TP, teleport the sprite at the given coords
+            if speedObject.instaTP then
+                sprite.MoveToAbs(speedObject.instaTP.x, speedObject.instaTP.y)
+            end
+            -- Create encounter bubbles if needed
+            if speedObject.surprise then
+                -- Play the encounter bubble sound once
+                if k == 2 then
+                    Audio.PlaySound("BeginBattle1")
+                end
+                local spritename = sprite.spritename:sub(sprite.spritename:find("/[^/]*$") + 1)
+                sprite.StopAnimation()
+                sprite.Set(sprite["path"] .. "/" .. (math.floor(tonumber(spritename) / 4) * 4 + 1))
+                local surprise = CreateSprite("Overworld/EncounterBubble" .. (k == 2 and "Geno" or ""))
+                surprise.SetParent(sprite)
+                surprise.SetPivot(.5, 0)
+                surprise.SetAnchor(.5, 1)
+                surprise.MoveTo(0, 0)
+                sprite["surprise"] = surprise
+            end
+            -- If the sprite doesn't move in this behavior
+            if sprite["speed"] == 0 then
+                sprite.StopAnimation()
+                -- If the sprite needs a laughing animation, use it
+                if speedObject.laugh then
+                    sprite.SetAnimation({ "l1", "l2", "l3" }, 1 / 8, sprite["path"])
+                    NewAudio.CreateChannel("Stare")
+                    NewAudio.PlaySound("Stare", "Laugh")
+                -- If the sprite doesn't move, it plays the runaway sound: if noSound is true, it doesn't play it
+                elseif not speedObject.noSound then
+                    Audio.PlaySound("runaway")
+                end
+            else
+                -- Delete the audio channel Stare if it exists
+                if NewAudio.Exists("Stare") then
+                    NewAudio.DestroyChannel("Stare")
+                end
+                local start = sprite["speed"] > 0 and (sprite["isHorz"] and 8 or 12) or (sprite["isHorz"] and 4 or 0)
+                local tab = { }
+                for i = 0, 3 do table.insert(tab, start + i) end
+                sprite.SetAnimation(tab, 3 / 5 / math.abs(sprite["speed"]), sprite["path"])
+            end
+        end
+        -- Move the sprite using its speed and isHorz values
+        sprite.Move(sprite["isHorz"] and sprite["speed"] or 0, sprite["isHorz"] and 0 or sprite["speed"])
+    end
+
+    local canInput = true
+    for _, v in pairs(stare6Sprites) do
+        if v["speed"] ~= 0 or NewAudio.Exists("Stare") or boosterSprite["surprise"] then
+            canInput = false
+            break
+        end
+    end
+
+    -- If no sprite is moving, the audio channel Stare doesn't exist, no encounter bubble exists and player has pressed a key, stop the event
+    -- Deletes all the sprites and clean the animation up when it's done
+    if (inputted and canInput) or stare6Count == 1439 then
+        boosterSprite.Remove(); boosterSprite = nil
+        charaSprite.Remove();   charaSprite = nil
+        stare6Sprites = nil; stare6Speeds = nil
+        if NewAudio.Exists("Stare") then
+            NewAudio.DestroyChannel("Stare")
+        end
+    -- If a key is pressed while the laughing animation is ongoing, stop it
+    elseif NewAudio.Exists("Stare") and (inputted or NewAudio.IsStopped("Stare")) then
+        stare6Count = 1309
+    -- Replace the chara sprite's timestamp table with his own when the common part is finished
+    elseif stare6Count == 270 then
+        stare6Speeds[2] = charaTimestamps
+    -- Killing in progress
+    elseif stare6Count == 1000 then
+        Audio.PlaySound("hitSound")
+        Misc.ShakeScreen(3)
+    end
+
+    stare6Count = stare6Count + 1
+
+    return false
+end
+
 function Stare7(frame) DEBUG("Stare7: " .. frame) return true end
 function Stare8(frame) DEBUG("Stare8: " .. frame) return true end
 

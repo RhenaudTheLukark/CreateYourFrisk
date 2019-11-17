@@ -37,7 +37,7 @@ function EventPage2() -- Coroutine
             x = math.random(-1, 1)
             y = math.random(-1, 1)
             local pos = Event.GetPosition(eventName)
-            Event.MoveToPoint(eventName, math.min(math.max(pos[1] + 20 * x, 357), 457), math.min(math.max(pos[2] + 20 * y, 240), 340), false, false)
+            Event.MoveToPoint(eventName, math.min(math.max(pos[1] + 20 * x, 365), 455), math.min(math.max(pos[2] + 20 * y, 250), 340), false, false)
         end
     end
     lastPosX = punderSprite.x
