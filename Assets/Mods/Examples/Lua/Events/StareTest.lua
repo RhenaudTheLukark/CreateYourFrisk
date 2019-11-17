@@ -61,9 +61,12 @@ function resetStareVars()
     stare5Count = 0
     stare5Phase = 0
     stare5Velocity = 0
+    
     Stare7 = Event.Exists("Punder") and Stare7Alive or Stare7Dead
     stare7Count = 0
     stare7Phase = 0
+    stare8Count = 0
+    stare8Phase = 0
 end
 
 punderSprite = nil
@@ -535,30 +538,6 @@ function Stare7Alive(frame)
         Event.MoveToPoint("Punder", 400, 260, true, false)
     end
 
-    --[[
-    PLAN:
-        Phase 0:
-            Asriel runs up from bottom of screen to Punder's height; Punder is forced to move to 400, 260 and face right
-            - inputted action: Asriel runs straight down off screen
-        Phase 1:
-            Asriel turns right and immediately begins speaking to the right; Punder turns around and "talks" back by walking in place. Asriel turns left
-            - inputted action: Asriel runs straight up off screen
-        Phase 2:
-            Asriel gets chased by Punder in a counter-clockwise square around the level, for 3 rotations
-            - inputted action: they keep running until they pass by the North exit; Asriel runs North off screen and Punder just returns to his spot
-        Phase 3:
-            Asriel gets tagged
-            - inputted action: Asriel runs North off screen and Punder returns to his spot
-        Phase 4:
-            Repeat phase 2 but in reverse and Asriel's chasing Punder
-            - inputted action: keep running until pass by South exit; Asriel runs South off screen and Punder returns to his spot
-        Phase 5:
-            Punder slows down for a moment in front of the top exit and gets tagged, he then talks to Asriel a bit more
-            - inputted action (this and phase 6): skip straight to Asriel leaving and Punder returning to his spot
-        Phase 6:
-            Asriel exits the screen going up and Punder returns to his original spot
-    ]]--
-
     if not inputted then
         -- Phase 0: Walk up
         if stare7Count < 120 then
@@ -1025,27 +1004,6 @@ function Stare7Dead(frame)
         asriel.SetAnimation({12, 13, 14, 15}, 0.15, "AsrielOW")
     end
 
-    --[[
-    PLAN:
-        Phase 0:
-            Asriel runs up from bottom of screen to height where Punder would be - if he were alive - and stops
-            - inputted action: Asriel pauses for a moment, then walks south off the screen
-        Phase 1:
-            Asriel turns right and begins *immediately* speaking to the right - again, same as if Punder were here - only to stop partway through as he realizes no one is there
-            - inputted action: walk straight up off-screen
-        Phase 2:
-            Asriel walks to where Punder would stand
-            - inputted action (all remaining ones): walk left sadly, then walk up off-screen
-        Phase 3:
-            Asriel looks up, left, right, down, etc. and stops on right. then he looks down sadly.
-        Phase 4:
-            Asriel turns towards the screen with a sad expression, lowers his head and begins crying.
-        Phase 5:
-            Asriel wipes off his tears and looks up.
-        Phase 6:
-            Asriel slowly walks left with a sad expression, then walks up off-screen
-    ]]--
-
     if not inputted then
         -- Phase 0: Walk up
         if stare7Phase == 0 and asriel and asriel.absy < 260 then
@@ -1234,12 +1192,186 @@ function Stare7Dead(frame)
     stare7Count = asriel and stare7Count + 1 or stare7Count
 end
 
-function Stare8(frame) DEBUG("Stare8: " .. frame) return true end
+function Stare8(frame)
+   -- run once
+    if frame == 0 and not inputted then
+        chara = CreateSprite("Overworld/Chara/c0")
+        chara.z = -1
+        chara.ypivot = 0
+        chara.MoveToAbs(-22, 230)
+        
+        vignette = CreateSprite("Overworld/Chara/vignette")
+        vignette.alpha = 0
+        vignette.SetParent(chara)
+        vignette.MoveTo(0, 0)
+        
+        NewAudio.CreateChannel("zzz")
+        NewAudio.PlayMusic("zzz", "mus_zzz_c", true, 0)
+    end
+
+    -- standard operations
+    if stare8Phase > -1 then
+        if not inputted then
+            -- Phase 0: Slowly walk right with pauses
+            if stare8Phase == 0 and stare8Count < 330 then
+                if stare8Count % 110 == 0 then
+                    chara.Set("Overworld/Chara/c0")
+                elseif stare8Count % 110 == 45 then
+                    chara.Set("Overworld/Chara/c1")
+                end
+                
+                if stare8Count % 110 < 45 then
+                    chara.x = chara.x + 0.5
+                end
+            elseif stare8Phase == 0 and stare8Count == 370 then
+                stare8Phase = 1
+                chara.SetAnimation({"c0", "c1"}, 0.3, "Overworld/Chara")
+            -- Phase 1: Walk right normally but still slowly. then walk down
+            elseif stare8Phase == 1 and stare8Count < 800 then
+                chara.x = chara.x + 0.5
+            elseif stare8Phase == 1 and stare8Count >= 800 then
+                if stare8Count == 800 then
+                    chara.animationspeed = chara.animationspeed * 2.5
+                end
+                
+                chara.x = chara.x + 0.25
+                chara.y = math.max(chara.y - 0.1875, 174)
+                
+                if chara.y == 174 then
+                    stare8Phase = 2
+                    chara.animationspeed = 1
+                end
+            -- Phase 2: Walk right just a bit slower
+            elseif stare8Phase == 2 and stare8Count < 1300 then
+                chara.x = chara.x + 0.2
+            elseif stare8Count == 1300 then
+                chara.StopAnimation()
+                chara.Set("Overworld/Chara/c1")
+                stare8Phase = 3
+            -- Phase 3: Inch ever closer to Frisk
+            elseif stare8Phase == 3 and stare8Count >= 1360 and stare8Count < 2850 then
+                local timer = (stare8Count - 1360) % 140
+                
+                if timer == 0 then
+                    chara.Set("Overworld/Chara/c0")
+                elseif timer == 45 then
+                    chara.Set("Overworld/Chara/c1")
+                end
+                
+                if timer < 45 then
+                    chara.x = math.min(chara.x + 0.1, 424)
+                end
+            elseif stare8Count == 2850 then
+                stare8Phase = 4
+            -- Phase 4: Hug...?
+            elseif stare8Count == 2970 then
+                chara.Set("Overworld/Chara/c2")
+            elseif stare8Count == 3140 then
+                chara.Set("Overworld/Chara/c3")
+            elseif stare8Count == 3200 then
+                stare8Phase = 5
+            -- Phase 5: Fade out scary music
+            elseif stare8Count == 3360 then
+                chara.Set("Overworld/Chara/c4")
+            elseif stare8Count == 3405 then
+                chara.Set("Overworld/Chara/c5")
+            elseif stare8Count == 3490 then
+                chara.Set("CharaOW/9")
+            elseif stare8Count == 3560 then
+                stare8Phase = -1
+                stare8Count = 0
+                return false
+            end
+            
+            -- vignette alpha
+            if stare8Phase < 4 then -- TODO update this number
+                vignette.alpha = chara.x/450
+                NewAudio.SetVolume("zzz", math.min((chara.x/424) * 0.75, 0.75))
+                Audio.Volume((1 - (chara.x/334)) * 0.75)
+            elseif stare8Phase == 5 then
+                NewAudio.SetVolume("zzz", NewAudio.GetVolume("zzz") - 0.003)
+                vignette.alpha = vignette.alpha - 0.003
+            end
+        -- Player has pressed a key
+        else
+            -- Initial walk right
+            if stare8Phase == 0 then
+                -- run once
+                if chara.xscale == 1 then
+                    chara.xscale = -1
+                    chara.Set("Overworld/Chara/c1")
+                    chara.SetAnimation({"c1", "c0"}, 0.1875, "Overworld/Chara")
+                    vignette.xscale = 1
+                else
+                    chara.x = math.max(chara.x - 2, -22)
+                    
+                    NewAudio.SetVolume("zzz", NewAudio.GetVolume("zzz") - 0.003)
+                    vignette.alpha = vignette.alpha - 0.003
+                    
+                    if chara.x == -22 then
+                        NewAudio.SetVolume("src", math.min(NewAudio.GetVolume("src") + 0.01, 0.75))
+                        if NewAudio.GetVolume("src") == 0.75 and vignette.alpha == 0 then
+                            chara.Remove()
+                            chara = nil
+                            vignette.Remove()
+                            NewAudio.DestroyChannel("zzz")
+                            return true
+                        end
+                    end
+                end
+            else
+                stare8Phase = -1
+                stare8Count = -1
+            end
+        end
+    -- Make Chara run off
+    else
+        if stare8Count == 0 then
+            charaY = chara.absy
+            chara.Set("CharaOW/9")
+            chara.StopAnimation()
+            chara.ypivot = 0
+            chara.absy = charaY
+            Audio.PlaySound("BeginBattle1")
+            -- TODO: make ! sprite
+        elseif stare8Count <= 11 then
+            chara.y = chara.y + ( 6 - stare8Count)
+        elseif stare8Count == 12 then
+            chara.absy = charaY
+        elseif stare8Count == 30 then
+            Audio.PlaySound("runaway")
+            chara.SetAnimation({4, 5, 6, 5}, 0.1, "CharaOW")
+        elseif stare8Count > 30 then
+            if chara then
+                chara.x = math.max(chara.x - 4, -22)
+                chara.y = math.min(chara.y + 2, 230)
+                
+                if chara.x == -22 then
+                    NewAudio.SetVolume("src", math.min(NewAudio.GetVolume("src") + 0.01, 0.75))
+                    if NewAudio.GetVolume("src") == 0.75 and vignette.alpha == 0 then
+                        chara.Remove()
+                        chara = nil
+                        vignette.Remove()
+                        NewAudio.DestroyChannel("zzz")
+                        return true
+                    end
+                end
+            else
+                return true
+            end
+        end
+        
+        NewAudio.SetVolume("zzz", NewAudio.GetVolume("zzz") - 0.003)
+        vignette.alpha = vignette.alpha - 0.003
+    end
+
+    stare8Count = chara and stare8Count + 1 or stare8Count
+end
 
 -- Auto
 function EventPage2()
-    stareShift = Event.Exists("Punder") and 0 or 2
-    stareFrame = 0
+    stareShift = 7 -- Event.Exists("Punder") and 0 or 2
+    stareFrame = eventFrequency - 1 -- 0
     inputted = false
     currEventDone = true
     resetStareVars()
