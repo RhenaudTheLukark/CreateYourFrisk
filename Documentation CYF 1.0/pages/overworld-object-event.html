@@ -103,9 +103,20 @@ it's w3c valid, at least
 				to bypass this and continue the script instead.
             </p>
             <p>
+                <br><span class="function">Event.isMoving(<span class="string"></span> name)</span>
+                Returns <span class="term">true</span> if an event is currently moving by means of <span class="term">Event.MoveToPoint</span>,
+                <span class="term">false</span> otherwise.
+                <br><br>
+                Note: this will also return <span class="term">true</span> if being used with the Player, given the Player is walking around
+                manually with the arrow keys or WASD.
+            </p>
+            <p>
                 <br><span class="function">Event.SetAnimHeader(<span class="string"></span> name, <span class="string"></span> anim)</span>
                 If the event given has a <span class="term">CYFAnimator</span> component, this will set its <span class="term">Special Header</span> 
-                property to <span class="term">anim</span>.<br><br>
+                property to <span class="term">anim</span>.
+                <br><br>
+                Set <span class="term">anim</span> to <span class="term">""</span> to reset to the default animation, <span class="term">StopDown</span>.
+                <br><br>
                 Read about how the <span class="term">Special Header</span> works in <span class="ref">How to animate an event</span>.
             </p>
             <p>
@@ -128,12 +139,16 @@ it's w3c valid, at least
                 <br><span class="function">Event.Rotate(<span class="string"></span> name, <span class="number"></span> rotateX, 
                 <span class="number"></span> rotateY, <span class="number"></span> rotateZ, <span class="boolean"></span> anim = true, 
                 <span class="boolean"></span> waitEnd = true)</span>
-                This function rotates the event. The Z rotation is the rotation we normally use, while X and Y rotations are 3D rotations.
-                <br>To see some examples of rotation, remove the comment block of the function <span class="term">EventPage4</span> of  
-				<span class="term">Mods/Examples/Lua/Events/EventTest.lua</span>.<br>
+                This function rotates the event. The Z rotation is the rotation normally applied in battles, while the X and Y rotations
+                are 3D rotations.<br>
                 Set <span class="term">anim</span> to false to make the rotation instantaneous.<br><br>
                 By default, the script will pause until the event has stopped rotating. Set <span class="term">waitEnd</span> to false
 				to bypass this and continue the script instead.
+            </p>
+            <p>
+                <br><span class="function">Event.isRotating(<span class="string"></span> name)</span>
+                Returns <span class="term">true</span> if an event is currently being rotated by means of <span class="term">Event.Rotate</span>,
+                <span class="term">false</span> otherwise.
             </p>
             <p>
                 <br><span class="function">Event.Stop()</span>

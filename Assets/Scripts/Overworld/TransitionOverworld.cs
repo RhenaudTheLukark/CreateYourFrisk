@@ -96,11 +96,19 @@ public class TransitionOverworld : MonoBehaviour {
     }
 
     public static IEnumerator GetIntoDaMap(string call, object[] neededArgs) {
-        //GlobalControls.fadeAuto = true;
         if (GameObject.Find("Main Camera OW")) {
             GameObject.Find("Main Camera OW").GetComponent<EventManager>().readyToReLaunch = true;
             GameObject.Find("Main Camera OW").tag = "MainCamera";
         }
+
+        //Clear any leftover Sprite and Text objects that are no longer connected to any scripts
+        foreach (Transform child in GameObject.Find("Canvas Two").transform)
+            if (!child.name.EndsWith("Layer"))
+                GameObject.Destroy(child.gameObject);
+            else {
+                foreach (Transform child2 in child)
+                    GameObject.Destroy(child2.gameObject);
+            }
 
         yield return 0;
 
@@ -154,8 +162,10 @@ public class TransitionOverworld : MonoBehaviour {
             }
         }
 
-        GameObject.Find("utHeart").GetComponent<Image>().color = new Color(GameObject.Find("utHeart").GetComponent<Image>().color.r, GameObject.Find("utHeart").GetComponent<Image>().color.g,
+        GameObject.Find("utHeart").GetComponent<Image>().color = new Color(GameObject.Find("utHeart").GetComponent<Image>().color.r,
+                                                                           GameObject.Find("utHeart").GetComponent<Image>().color.g,
                                                                            GameObject.Find("utHeart").GetComponent<Image>().color.b, 0);
+        PlayerOverworld.instance.cameraShift = Vector2.zero;
         if (call == "tphandler") {
             GameObject.Find("Player").transform.parent.position = (Vector2)neededArgs[0];
             PlayerOverworld.instance.gameObject.GetComponent<CYFAnimator>().movementDirection = ((TPHandler)neededArgs[1]).direction;

@@ -57,6 +57,27 @@ public class LuaEventOW {
     [CYFEventFunction] public void MoveToPoint(string name, float dirX, float dirY, bool wallPass = false, bool waitEnd = true) { StCoroutine("IMoveEventToPoint", new object[] { name, dirX, dirY, wallPass, waitEnd }, name); }
 
     /// <summary>
+    /// Checks if an event is currently moving via Event.MoveToPoint.
+    /// </summary>
+    /// <param name="name">Name of the event to check for.</param>
+    /// <returns>True if the event is moving, false otherwise.</returns>
+    [CYFEventFunction] public bool isMoving(string name) {
+        bool ismoving;
+        for (int i = 0; (i < EventManager.instance.events.Count || name == "Player"); i++) {
+            if (name != "Player") {
+                if (EventManager.instance.events[i].gameObject == null || EventManager.instance.events[i].gameObject.name != name)
+                    continue;
+                ismoving = EventManager.instance.events[i].GetComponent<EventOW>().isMoving;
+            } else
+                ismoving = PlayerOverworld.instance.isMoving;
+            appliedScript.Call("CYFEventNextCommand");
+            return ismoving;
+        }
+        throw new CYFException("Event.isMoving: The event \"" + name + "\" doesn't exist.");
+    }
+    [CYFEventFunction] public bool IsMoving(string name) { return isMoving(name); }
+
+    /// <summary>
     /// Function that sets an event's animation prefix.
     /// If the header itself matches an animation this event has, it will play the animation instead of using it as a prefix.
     /// </summary>
@@ -116,9 +137,9 @@ public class LuaEventOW {
     /// <param name="rotateZ"></param>
     /// <param name="axisAnim"></param>
     [CYFEventFunction] public void Rotate(string name, float rotateX, float rotateY, float rotateZ, bool anim = true, bool waitEnd = true) {
-        if (anim) {
-            StCoroutine("IRotateEvent", new object[] { name, rotateX, rotateY, rotateZ, true }, name);
-        } else {
+        if (anim)
+            StCoroutine("IRotateEvent", new object[] { name, rotateX, rotateY, rotateZ, waitEnd }, name);
+        else {
             for (int i = 0; i < EventManager.instance.events.Count || name == "Player"; i++) {
                 GameObject go = null;
                 try { go = EventManager.instance.events[i]; } catch { }
@@ -133,6 +154,27 @@ public class LuaEventOW {
             throw new CYFException("Event.Rotate: The name you entered in the function isn't an event's name. Did you forget to add the 'Event' tag?");
         }
     }
+
+    /// <summary>
+    /// Checks if an event is currently moving via Event.Rotate.
+    /// </summary>
+    /// <param name="name">Name of the event to check for.</param>
+    /// <returns>True if the event is rotating, false otherwise.</returns>
+    [CYFEventFunction] public bool isRotating(string name) {
+        bool isrotating;
+        for (int i = 0; (i < EventManager.instance.events.Count || name == "Player"); i++) {
+            if (name != "Player") {
+                if (EventManager.instance.events[i].gameObject == null || EventManager.instance.events[i].gameObject.name != name)
+                    continue;
+                isrotating = EventManager.instance.events[i].GetComponent<EventOW>().isRotating;
+            } else
+                isrotating = PlayerOverworld.instance.isRotating;
+            appliedScript.Call("CYFEventNextCommand");
+            return isrotating;
+        }
+        throw new CYFException("Event.isRotating: The event \"" + name + "\" doesn't exist.");
+    }
+    [CYFEventFunction] public bool IsRotating(string name) { return isRotating(name); }
 
     [CYFEventFunction] public void Stop() {
         if (EventManager.instance.coroutines.ContainsKey(appliedScript)) StopCoroutine();

@@ -122,7 +122,8 @@ public class UIController : MonoBehaviour {
             Inventory.inventory.Clear();
         Inventory.RemoveAddedItems();
         GlobalControls.lastTitle = false;
-        PlayerCharacter.instance.MaxHPShift = 0;
+        if (GlobalControls.modDev)
+            PlayerCharacter.instance.MaxHPShift = 0;
         PlayerCharacter.instance.ATK = 8 + 2 * PlayerCharacter.instance.LV;
         PlayerCharacter.instance.DEF = 10 + (int)Mathf.Floor((PlayerCharacter.instance.LV - 1) / 4);
         #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN

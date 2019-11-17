@@ -18,7 +18,7 @@ public class PlayerOverworld : MonoBehaviour {
     public bool inBattleAnim = false;
     public bool PlayerNoMove {              //Is the player not able to move?
         get { return _playerNoMove || forceNoAction || inBattleAnim; }
-        set { _playerNoMove = value; }
+        set { _playerNoMove = value; isMoving = false; }
     }
     public bool forceNoAction = false;
     public bool[] menuRunning = new bool[] { false, false, false, false, false };
@@ -26,6 +26,8 @@ public class PlayerOverworld : MonoBehaviour {
     public Vector2 cameraShift = new Vector2();
     public Vector2 backgroundSize = new Vector3(640, 480);
     public Transform PlayerPos;             //The Transform component attached to this object
+    public bool isMoving   = false;
+    public bool isRotating = false;
     public Image utHeart;
     public static AudioSource audioKept;
     public LuaSpriteController sprctrl;
@@ -218,9 +220,12 @@ public class PlayerOverworld : MonoBehaviour {
                     try {
                         if (textmgr.CanAutoSkipAll())
                             NextText();
-                        if (GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED && !textmgr.blockSkip && !textmgr.LineComplete() && textmgr.CanSkip())
-                            textmgr.SkipLine();
-                        else if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED && !textmgr.blockSkip && !EventManager.instance.passPressOnce)
+                        if (GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED && !textmgr.blockSkip && !textmgr.LineComplete() && textmgr.CanSkip()) {
+                            if (EventManager.instance.script != null && EventManager.instance.script.GetVar("playerskipdocommand").Boolean)
+                                textmgr.DoSkipFromPlayer();
+                            else
+                                textmgr.SkipLine();
+                        } else if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED && !textmgr.blockSkip && !EventManager.instance.passPressOnce)
                             NextText();
                     } catch { }
                 }
@@ -278,7 +283,12 @@ public class PlayerOverworld : MonoBehaviour {
 
         if (currentDirection != 0) animator.movementDirection = currentDirection;
 
-        AttemptMove(horizontal, vertical);
+        if (!PlayerNoMove) {
+            if (horizontal != 0 || vertical != 0)
+                isMoving = AttemptMove(horizontal, vertical);
+            else
+                isMoving = false;
+        }
 
         if (GlobalControls.input.Menu == UndertaleInput.ButtonState.PRESSED)
             if (menuRunning[2] && !menuRunning[3] && !menuRunning[4])
@@ -949,7 +959,6 @@ public class PlayerOverworld : MonoBehaviour {
     }
 
     public static void ShowOverworld(string callFrom = "Unknown") {
-        Camera.main.GetComponent<FPSDisplay>().enabled = false;
         Transform[] root = UnitaleUtil.GetFirstChildren(null, true);
         GameObject go = null;
         foreach (Transform tf in root)

@@ -117,8 +117,8 @@ public class GameOverBehavior : MonoBehaviour {
         this.deathText = deathText;
         this.deathMusic = deathMusic;
         
-        // reset the battle camera's position
-        Misc.ResetCamera();
+        // reset the camera's position
+        Misc.MoveCameraTo(0, 0);
 
         playerZ = 130;
         if (UnitaleUtil.IsOverworld) {

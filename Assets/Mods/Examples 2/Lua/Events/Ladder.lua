@@ -1,9 +1,9 @@
 function EventPage1()
     local speed = Event.GetSpeed("Player")
 
-    Event.MoveToPoint("Player", 347, 769, false)
+    Event.MoveToPoint("Player", 350, 769, false)
     Event.SetSpeed("Player", 1.5)
-	Event.MoveToPoint("Player", 347, 630, true, false)
+	Event.MoveToPoint("Player", 350, 630, true, false)
     Event.SetDirection("Player", 8)
 
     Screen.SetTone(true, false, 0, 0, 0, 255)

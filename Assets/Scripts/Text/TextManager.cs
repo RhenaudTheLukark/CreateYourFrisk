@@ -250,8 +250,10 @@ public class TextManager : MonoBehaviour {
                         mugshot.SetAnimation((string[])UnitaleUtil.ListToArray(mugshots), time);
                         if (finalMugshot == null)
                             finalMugshot = mugshots[mugshots.Count - 1];
-                    } else
+                    } else {
+                        mugshot.StopAnimation();
                         mugshot.Set(mugshots[0]);
+                    }
                 } catch (CYFException e) {
                     UnitaleUtil.DisplayLuaError("mugshot system", e.Message);
                 }
@@ -405,19 +407,13 @@ public class TextManager : MonoBehaviour {
     [MoonSharpHidden] public void DoSkipFromPlayer() {
         skipFromPlayer = true;
 
-        if (LuaEnemyEncounter.script.GetVar("playerskipdocommand").Boolean)
+        if ((GlobalControls.isInFight && LuaEnemyEncounter.script.GetVar("playerskipdocommand").Boolean) || !GlobalControls.isInFight)
             instantCommand = true;
 
-        // AudioClip temp = letterSound.clip;
-        // letterSound.clip = null;
         if (!GlobalControls.retroMode)
             InUpdateControlCommand(DynValue.NewString("instant"), currentCharacter);
         else
             SkipText();
-
-        // letterSound.clip = temp;
-
-        //SkipText();
     }
 
     public void SkipLine() {

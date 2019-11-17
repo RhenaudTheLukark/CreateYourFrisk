@@ -166,7 +166,7 @@ public class EventManager : MonoBehaviour {
             RunCoroutines();
             if (script == null && !ScriptLaunched && !PlayerOverworld.instance.inBattleAnim && !PlayerOverworld.instance.menuRunning[2]) {
                 if (TestEventAuto()) return;
-                if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED && !passPressOnce) {
+                if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED && !passPressOnce && (GameObject.Find("FadingBlack") == null || GameObject.Find("FadingBlack").GetComponent<Fading>().alpha <= 0)) {
                     RaycastHit2D hit;
                     TestEventPress(PlayerOverworld.instance.lastMove.x, PlayerOverworld.instance.lastMove.y, out hit);
                 } else
@@ -1013,6 +1013,15 @@ end";
 
     public void StCoroutine(string coroName, object args, string evName) {
         string key = evName + "." + coroName;
+        ForceEndCoroutine(key);
+        UnityEngine.Coroutine newCoro;
+        if (args == null)                 newCoro = StartCoroutine(coroName);
+        else if (!args.GetType().IsArray) newCoro = StartCoroutine(coroName, args);
+        else                              newCoro = StartCoroutine(coroName, (object[])args);
+        cSharpCoroutines.Add(key, newCoro);
+    }
+
+    public void ForceEndCoroutine(string key) {
         if (cSharpCoroutines.ContainsKey(key)) {
             UnityEngine.Coroutine existingCoro;
             cSharpCoroutines.TryGetValue(key, out existingCoro);
@@ -1020,11 +1029,6 @@ end";
                 StopCoroutine(existingCoro);
             cSharpCoroutines.Remove(key);
         }
-        UnityEngine.Coroutine newCoro;
-        if (args == null)                 newCoro = StartCoroutine(coroName);
-        else if (!args.GetType().IsArray) newCoro = StartCoroutine(coroName, args);
-        else                              newCoro = StartCoroutine(coroName, (object[])args);
-        cSharpCoroutines.Add(key, newCoro);
     }
 
     private IEnumerator SpecialAnnouncementEvent() {
@@ -1190,6 +1194,11 @@ end";
                         distanceFromStart = new Vector2(target.position.x - originalPosition.x, target.position.y - originalPosition.y);
                     } catch (MissingReferenceException) {}
 
+                    if (name == "Player")
+                        go.GetComponent<PlayerOverworld>().isMoving = test2 || wallPass;
+                    else
+                        go.GetComponent<EventOW>().isMoving         = test2 || wallPass;
+
                     //If we have reached the destination, stop the function
                     if (distanceFromStart.magnitude >= endPoint.magnitude) {
                         // if this code is run, that means the player must have reached their destination
@@ -1197,6 +1206,10 @@ end";
                         target.position = new Vector3(dirX, dirY, target.position.z);
                         yield return 0;
 
+                        if (name == "Player")
+                            go.GetComponent<PlayerOverworld>().isMoving = false;
+                        else
+                            go.GetComponent<EventOW>().isMoving         = false;
                         if (waitEnd)
                             scr.Call("CYFEventNextCommand");
                         yield break;
@@ -1204,6 +1217,10 @@ end";
                     yield return 0;
 
                     if (!test2 && !wallPass) {
+                        if (name == "Player")
+                            go.GetComponent<PlayerOverworld>().isMoving = false;
+                        else
+                            go.GetComponent<EventOW>().isMoving         = false;
                         if (waitEnd)
                             scr.Call("CYFEventNextCommand");
                         yield break;
@@ -1302,7 +1319,7 @@ end";
         try { waitEnd = (bool)args[4]; } catch { throw new CYFException("The argument \"waitEnd\" must be a boolean."); }
 
         if (waitEnd)
-            if (coroutines.ContainsKey(scr) && script != scr && script != scr) {
+            if (coroutines.ContainsKey(scr) && script != scr) {
                 UnitaleUtil.DisplayLuaError(scr.scriptname, "Event.Rotate: This function cannot be used in a coroutine with \"waitEnd\" set to true.");
                 yield break;
             } else if (LoadLaunched) {
@@ -1313,8 +1330,11 @@ end";
         for (int i = 0; i < events.Count || name == "Player"; i++) {
             GameObject go = events[i];
             if (name == go.name || name == "Player") {
-                if (name == "Player")
+                if (name == "Player") {
                     go = GameObject.Find("Player");
+                    go.GetComponent<PlayerOverworld>().isRotating = true;
+                } else
+                    go.GetComponent<EventOW>().isRotating         = true;
 
                 float lackX = rotateX - go.transform.rotation.eulerAngles.x;
                 float lackY = rotateY - go.transform.rotation.eulerAngles.y;
@@ -1340,6 +1360,10 @@ end";
                     yield return 0;
                 }
                 go.GetComponent<RectTransform>().rotation = Quaternion.Euler(rotateX, rotateY, rotateZ);
+                if (name == "Player")
+                    go.GetComponent<PlayerOverworld>().isRotating = false;
+                else
+                    go.GetComponent<EventOW>().isRotating         = false;
                 scr.Call("CYFEventNextCommand");
                 yield break;
             }
@@ -1425,8 +1449,8 @@ end";
 
         if (forced) {
             SaveLoad.Save(true);
-            if (script == scr)
-                script.Call("CYFEventNextCommand");
+            if (scr != null)
+                scr.Call("CYFEventNextCommand");
             yield break;
         } else if (coroutines.ContainsKey(scr) && script != scr) {
             UnitaleUtil.DisplayLuaError(scr.scriptname, "General.Save: This function cannot be used in a coroutine.");
@@ -1536,7 +1560,7 @@ end";
         try { waitEnd = (bool)args[4];      } catch { throw new CYFException("The argument \"waitEnd\" must be a boolean."); }
         try { info = (string)args[5];       } catch { throw new CYFException("The argument \"info\" must be a string."); }
 
-        if (coroutines.ContainsKey(scr) && script != scr) {
+        if (coroutines.ContainsKey(scr) && script != scr && waitEnd) {
             UnitaleUtil.DisplayLuaError(instance.events[instance.actualEventIndex].name, info + ": This function cannot be used in a coroutine with \"waitEnd\" set to true.");
             yield break;
         } else if (LoadLaunched) {

@@ -112,7 +112,7 @@ public class PlayerController : MonoBehaviour {
 
     public string deathMusic = null;
     public string[] deathText = null;
-    public bool deathEscape = false;
+    public bool deathEscape = true;
     private int soundDelay = 0;
 
     /// <summary>
@@ -225,44 +225,44 @@ public class PlayerController : MonoBehaviour {
         if ((PlayerCharacter.instance.MaxHP + shift <= 0 &&!set) || (shift <= 0 && set)) {
             shift = 0;
             set = true;
-            canHeal = true;
         } 
         if (set) {
-            if (shift == 0)
+            if (shift == 0) {
                 setHP(0);
-            else {
+                return;
+            } else {
                 if (shift > 999)
                     shift = 999;
                 if (shift == PlayerCharacter.instance.MaxHP)
                     return;
-                else if (shift < PlayerCharacter.instance.MaxHP) {
+                int oldMHP = PlayerCharacter.instance.MaxHP;
+                PlayerCharacter.instance.MaxHPShift = shift - PlayerCharacter.instance.BasisMaxHP;
+                if (shift < oldMHP) {
                     if (sound) {
                         playerAudio.clip = AudioClipRegistry.GetSound("hurtsound");
                         playerAudio.Play();
                     }
-                    setHP(PlayerCharacter.instance.HP - (PlayerCharacter.instance.MaxHP - shift));
                 } else {
                     if (sound) {
                         playerAudio.clip = AudioClipRegistry.GetSound("healsound");
                         playerAudio.Play();
                     }
-                    if (canHeal)
-                        setHP(PlayerCharacter.instance.HP - (PlayerCharacter.instance.MaxHP - shift));
+                    if (canHeal && oldMHP < shift) {
+                        setHP(PlayerCharacter.instance.HP + (shift - oldMHP));
+                    }
                 }
-                PlayerCharacter.instance.MaxHPShift = shift - PlayerCharacter.instance.BasisMaxHP;
-                UIStats.instance.setMaxHP();
             }
         } else {
             if (shift + PlayerCharacter.instance.MaxHP > 999)
                 shift = 999 - PlayerCharacter.instance.MaxHP;
             if (shift == 0)
                 return;
-            else if (shift < 0) {
+            PlayerCharacter.instance.MaxHPShift += shift;
+            if (shift < 0) {
                 if (sound) {
                     playerAudio.clip = AudioClipRegistry.GetSound("hurtsound");
                     playerAudio.Play();
                 }
-                setHP(PlayerCharacter.instance.HP + shift);
             } else {
                 if (sound) {
                     playerAudio.clip = AudioClipRegistry.GetSound("healsound");
@@ -271,9 +271,10 @@ public class PlayerController : MonoBehaviour {
                 if (canHeal)
                     setHP(PlayerCharacter.instance.HP + shift);
             }
-            PlayerCharacter.instance.MaxHPShift += shift;
-            UIStats.instance.setMaxHP();
         }
+        if (PlayerCharacter.instance.HP > PlayerCharacter.instance.MaxHP)
+            setHP(PlayerCharacter.instance.MaxHP);
+        UIStats.instance.setMaxHP();
     }
 
     public bool isHurting() { return invulTimer > 0; }

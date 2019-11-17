@@ -6,6 +6,17 @@ Welcome to the CYF build script!
 This is a specialized script to build CYF releases completely automatically.
 The only requirements are Unity 2018.2.13f1, and 7-zip if you wish to auto-package the builds too.
 Just set up the options below in "Script Vars" to your liking and run the script!
+
+Alternatively, you may run this script from the command line:
+
+> Build.py [--single <target>] [--nozip]
+
+Type `--single` followed by a number from 1 - 5 to build for a given target system listed on lines 54-60.
+If not provided, the script will build for every possible build target defined in the script below.
+
+You may also type `--nozip` either before or after `--single <target>`, or by itself, to prevent the script
+from automatically zipping up your build(s) with 7-zip.
+If not provided, the script will automatically use 7-zip to package all of your CYF builds into .zip files.
 '''
 
 ### Script Vars ###
@@ -186,82 +197,118 @@ ps.write(settings)
 ps.close()
 print("Done.\n")
 
-# Let's do it!...Except for Mac
-for target in buildTargets:
-    buildWithUnity(target[0], target[1], buildPath + "\\" + target[0] + "\\" + target[2])
+### Time to actually build CYF! ###
 
-# Now, the special behavior for Mac
-print("")
-if len(macTarget[0]) < 76:
-    print("╒" + ("═" * math.floor((74 - len(macTarget[0])) / 2)) + macTarget[0] + ("═" * math.ceil((74 - len(macTarget[0])) / 2)) + "╕")
-else:
-    print(macTarget[0])
+def buildForMac():
+    # Now, the special behavior for Mac
+    print("")
+    if len(macTarget[0]) < 76:
+        print("╒" + ("═" * math.floor((74 - len(macTarget[0])) / 2)) + macTarget[0] + ("═" * math.ceil((74 - len(macTarget[0])) / 2)) + "╕")
+    else:
+        print(macTarget[0])
 
-print("Enabling allowFullscreenSwitch...", end="")
-sys.stdout.flush()
-psCurrent = open("ProjectSettings\\ProjectSettings.asset", "r")
-settingsCurrent = psCurrent.read()
-psCurrent.close()
-ps = open("ProjectSettings\\ProjectSettings.asset", "w")
-settings = settingsCurrent.replace("allowFullscreenSwitch: 0", "allowFullscreenSwitch: 1")
-ps.write(settings)
-ps.close()
-print("Done.")
-
-# Make sure destination folder doesn't exist
-if macTarget[0] in os.listdir("bin"):
-    print("Folder " + macTarget[0] + " already exists, deleting...", end="")
+    print("Enabling allowFullscreenSwitch...", end="")
     sys.stdout.flush()
+    psCurrent = open("ProjectSettings\\ProjectSettings.asset", "r")
+    settingsCurrent = psCurrent.read()
+    psCurrent.close()
+    ps = open("ProjectSettings\\ProjectSettings.asset", "w")
+    settings = settingsCurrent.replace("allowFullscreenSwitch: 0", "allowFullscreenSwitch: 1")
+    ps.write(settings)
+    ps.close()
+    print("Done.")
+
+    # Make sure destination folder doesn't exist
+    if macTarget[0] in os.listdir("bin"):
+        print("Folder " + macTarget[0] + " already exists, deleting...", end="")
+        sys.stdout.flush()
+        try:
+            shutil.rmtree("bin\\" + macTarget[0])
+            print("Done.")
+        except:
+            print("\n\nFatal error when attempting to delete \"bin\\" + macTarget[0] + "\" folder. Exiting.\nYou should probably delete it manually.")
+            sys.exit()
+
+    # Build the Unity executable
+    print("", end="")
+    print("Begin Unity build for " + macTarget[0] + "...", end="")
+    sys.stdout.flush()
+    subprocess.call([unityPath, "-batchmode", "-logFile " + buildPath + "\\output_mac.txt", macTarget[1], buildPath + "\\" + macTarget[0] + "\\" + macTarget[2], "-quit"])
+    print("Done.")
+
+    # Copy over the Documentation
+    print("Copying Documentation...", end="")
+    sys.stdout.flush()
+    shutil.copytree("Documentation CYF 1.0", buildPath + "\\" + macTarget[0] + "\\Documentation CYF " + CYFversion)
+    print("Done.")
+
+    # Copy over the Default and Mods folders
+    print("Copying Default folder...", end="")
+    sys.stdout.flush()
+    os.system("xcopy \"" + buildPath + "\\Default\" \"" + buildPath + "\\" + macTarget[0] + "\\" + macTarget[2] + "\\Default\" /e /h /i > nul")
+    print("Done.")
+
+    print("Copying Mods folder...", end="")
+    sys.stdout.flush()
+    os.system("xcopy \"" + buildPath + "\\Mods\" \"" + buildPath + "\\" + macTarget[0] + "\\" + macTarget[2] + "\\Mods\" /e /h /i > nul")
+    print("Done.")
+
+    # Copy over the warning .txt file
+    print("Copying \"How to add mods to CYF (Mac).txt\"...", end="")
+    sys.stdout.flush()
+    shutil.copyfile("How to add mods to CYF (Mac).txt", buildPath + "\\" + macTarget[0] + "\\How to add mods to CYF (Mac).txt")
+    print("Done.")
+
+    print("Disabling allowFullscreenSwitch...", end="")
+    sys.stdout.flush()
+    psCurrent = open("ProjectSettings\\ProjectSettings.asset", "r")
+    settingsCurrent = psCurrent.read()
+    psCurrent.close()
+    ps = open("ProjectSettings\\ProjectSettings.asset", "w")
+    settings = settingsCurrent.replace("allowFullscreenSwitch: 1", "allowFullscreenSwitch: 0")
+    ps.write(settings)
+    ps.close()
+    print("Done.")
+
+    if len(macTarget[0]) < 76:
+        print("╘" + ("═" * 74) + "╛")
+
+### Command line parser ###
+
+if len(sys.argv) > 1:
     try:
-        shutil.rmtree("bin\\" + macTarget[0])
-        print("Done.")
+        # `--nozip` to make the program not auto-zip all outputted builds with 7-zip (enabled by default)
+        if sys.argv[1] == "--nozip":
+            doPackage = sys.argv[1] != "--nozip"
+        elif len(sys.argv) > 3 and sys.argv[3] == "--nozip":
+            doPackage = sys.argv[3] != "--nozip"
+        
+        # provide `--single` as the first or second argument, followed by one number or "mac", to choose one specific build target (builds all if not provided)
+        target = None
+        if sys.argv[1] == "--single":
+            target = sys.argv[2] == "5" and "mac" or buildTargets[int(sys.argv[2]) - 1]
+        elif len(sys.argv) > 2 and sys.argv[2] == "--single":
+            target = sys.argv[2] == "5" and "mac" or buildTargets[int(sys.argv[3]) - 1]
+        
+        # build target
+        if target == "mac":
+            buildForMac()
+        elif target != None:
+            buildWithUnity(target[0], target[1], buildPath + "\\" + target[0] + "\\" + target[2])
+        else:
+            # Copy of below code...
+            for target in buildTargets:
+                buildWithUnity(target[0], target[1], buildPath + "\\" + target[0] + "\\" + target[2])
+            buildForMac()
     except:
-        print("\n\nFatal error when attempting to delete \"bin\\" + macTarget[0] + "\" folder. Exiting.\nYou should probably delete it manually.")
-        sys.exit()
+        print("Failed to parse launch options. Try again.")
+else:
+    # Let's do it!
+    for target in buildTargets:
+        buildWithUnity(target[0], target[1], buildPath + "\\" + target[0] + "\\" + target[2])
+    buildForMac()
 
-# Build the Unity executable
-print("", end="")
-print("Begin Unity build for " + macTarget[0] + "...", end="")
-sys.stdout.flush()
-subprocess.call([unityPath, "-batchmode", "-logFile " + buildPath + "\\output.txt", macTarget[1], buildPath + "\\" + macTarget[0] + "\\" + macTarget[2], "-quit"])
-print("Done.")
-
-# Copy over the Documentation
-print("Copying Documentation...", end="")
-sys.stdout.flush()
-shutil.copytree("Documentation CYF 1.0", buildPath + "\\" + macTarget[0] + "\\Documentation CYF " + CYFversion)
-print("Done.")
-
-# Copy over the Default and Mods folders
-print("Copying Default folder...", end="")
-sys.stdout.flush()
-os.system("xcopy \"" + buildPath + "\\Default\" \"" + buildPath + "\\" + macTarget[0] + "\\" + macTarget[2] + "\\Default\" /e /h /i > nul")
-print("Done.")
-
-print("Copying Mods folder...", end="")
-sys.stdout.flush()
-os.system("xcopy \"" + buildPath + "\\Mods\" \"" + buildPath + "\\" + macTarget[0] + "\\" + macTarget[2] + "\\Mods\" /e /h /i > nul")
-print("Done.")
-
-# Copy over the warning .txt file
-print("Copying \"How to add mods to CYF (Mac).txt\"...", end="")
-sys.stdout.flush()
-shutil.copyfile("How to add mods to CYF (Mac).txt", buildPath + "\\" + macTarget[0] + "\\How to add mods to CYF (Mac).txt")
-print("Done.")
-
-print("Disabling allowFullscreenSwitch...", end="")
-sys.stdout.flush()
-psCurrent = open("ProjectSettings\\ProjectSettings.asset", "r")
-settingsCurrent = psCurrent.read()
-psCurrent.close()
-ps = open("ProjectSettings\\ProjectSettings.asset", "w")
-settings = settingsCurrent.replace("allowFullscreenSwitch: 1", "allowFullscreenSwitch: 0")
-ps.write(settings)
-ps.close()
-print("Done.")
-
-if len(macTarget[0]) < 76:
-    print("╘" + ("═" * 74) + "╛")
+### Post-build actions ###
 
 # Delete Default and Mods
 print("\nDeleting \"Default\" and \"Mods\"...", end="")
@@ -273,6 +320,7 @@ try:
 except:
     print("Failed to delete. You should do so manually before your next build.")
 
+# Auto-package all builds
 if doPackage:
     print("\nBegin packaging all builds into archives through 7-zip.")
     binContents = os.listdir("bin")
@@ -282,6 +330,7 @@ if doPackage:
         subprocess.call([sevenZPath, "a", "-mx9", buildPath + "\\" + build + ".zip", buildPath + "\\" + build + "\\*", "-bso0", "-bsp0"])
         print("Done.")
 
+# Congratulations :)
 print("\n\n\nAll done!")
 print("Now, you must test all Create Your Frisk builds before release and clean up their Mods folders if applicable!")
 print("Have fun mooving boolet.\n")

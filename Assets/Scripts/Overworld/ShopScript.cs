@@ -177,7 +177,7 @@ public class ShopScript : MonoBehaviour {
                     numberOfChoices = Inventory.inventory.Count + 1;
                     tmBigTalk.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][novoice][font:uidialoglilspace][linespacing:11]" + text, false, true) });
                     if (Inventory.inventory.Count == 0) {
-                        TryCall("FailSell");
+                        TryCall("FailSell", DynValue.NewString("empty"));
                         if (!interrupted)
                             HandleCancel();
                     }
@@ -483,9 +483,12 @@ public class ShopScript : MonoBehaviour {
 }
 
     void TextInputManager() {
-        if (GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED && !tmBigTalk.blockSkip && !tmBigTalk.LineComplete() && tmBigTalk.CanSkip())
-            tmBigTalk.SkipLine();
-        else if ((GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED || tmBigTalk.CanAutoSkipAll()) && tmBigTalk.LineComplete() && !tmBigTalk.AllLinesComplete())
+        if (GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED && !tmBigTalk.blockSkip && !tmBigTalk.LineComplete() && tmBigTalk.CanSkip()) {
+            if (script.GetVar("playerskipdocommand").Boolean)
+                tmBigTalk.DoSkipFromPlayer();
+            else
+                tmBigTalk.SkipLine();
+        } else if ((GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED || tmBigTalk.CanAutoSkipAll()) && tmBigTalk.LineComplete() && !tmBigTalk.AllLinesComplete())
             tmBigTalk.NextLineText();
         else if ((GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED || tmBigTalk.CanAutoSkipAll()) && tmBigTalk.AllLinesComplete()) {
             switch (currentState) {

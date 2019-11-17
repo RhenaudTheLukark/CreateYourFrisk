@@ -1396,6 +1396,16 @@ Prefab:
       propertyPath: m_LocalPosition.x
       value: 490
       objectReference: {fileID: 0}
+    - target: {fileID: 114879940000294058, guid: a0add8308da8d24468328221253c3ec7,
+        type: 2}
+      propertyPath: eventTriggers.Array.data[8].x
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 114879940000294058, guid: a0add8308da8d24468328221253c3ec7,
+        type: 2}
+      propertyPath: eventTriggers.Array.data[8].y
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a0add8308da8d24468328221253c3ec7, type: 2}
   m_IsPrefabAsset: 0

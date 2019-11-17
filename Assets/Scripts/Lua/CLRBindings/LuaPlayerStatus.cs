@@ -66,14 +66,15 @@ public class LuaPlayerStatus {
     }
 
     /// <summary>
-    /// Player's Max Hp shift.
+    /// Player's Max HP.
     /// </summary>
     public int maxhp {
         get { return PlayerCharacter.instance.MaxHP; }
+        set { player.setMaxHPShift(value, 0f, true, false, false); }
     }
 
     /// <summary>
-    /// Player's Max Hp shift.
+    /// Player's Max HP shift.
     /// </summary>
     public int MaxHPShift {
         get { return PlayerCharacter.instance.MaxHPShift; }
@@ -135,11 +136,8 @@ public class LuaPlayerStatus {
             if (value == null)
                 throw new CYFException("Player.name: Attempt to set the player's name to a nil value.\n\nPlease double-check your code.");
             
-            string shortName = value;
-            if (shortName.Length > 9)
-                shortName = value.Substring(0, 9);
-            PlayerCharacter.instance.Name = shortName;
-            UIStats.instance.setPlayerInfo(shortName, PlayerCharacter.instance.LV);
+            PlayerCharacter.instance.Name = value;
+            UIStats.instance.setPlayerInfo(PlayerCharacter.instance.Name, PlayerCharacter.instance.LV);
         }
     }
 

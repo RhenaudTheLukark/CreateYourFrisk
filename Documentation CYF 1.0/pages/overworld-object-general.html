@@ -123,6 +123,18 @@ it's w3c valid, at least
                 <span style="color:#ff0000">WARNING: If you want to use this argument, <span class="term">question</span> must not be <span class="term">nil</span>!! Set it to <span class="term">""</span> instead.</span>
             </p>
             <p>
+                <br><span class="function">General.EndDialog()</span>
+                Forcefully closes the Overworld text box and continues the event that opened the textbox if applicable.<br>
+                Applies to <span class="term">General.SetDialog</span>, <span class="term">General.SetChoice</span>, and text sequences started from
+                the pause menu, such as dropping an item or using the cell phone).
+                <br><br>
+                Can only be run from a <b>Parallel Process</b> event page (also called a coroutine).
+                <br><br>
+                If used with <span class="term">General.SetChoice</span>, <span class="term">lastChoice</span> will NOT be set, so be careful.
+                <br><br>
+                If the Overworld text box is not open, does nothing.
+            </p>
+            <p>
                 <br><span class="function">General.Wait(<span class="number"></span> frames)</span>
                 Pauses code execution for a given amount of frames.
             </p>
