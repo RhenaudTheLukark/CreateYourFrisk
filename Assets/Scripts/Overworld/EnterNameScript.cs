@@ -26,11 +26,11 @@ public class EnterNameScript : MonoBehaviour {
         uiAudio = GameObject.Find("TextManager Instructions").GetComponent<AudioSource>();
         try { GameObject.Find("textframe_border_outer").SetActive(false); } catch { }
         tmInstr = GameObject.Find("TextManager Instructions").GetComponent<TextManager>();
-        tmInstr.SetHorizontalSpacing(2);
         if (GlobalControls.crate)
             tmInstr.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]GIV HMI A NAME!!!", false, true) });
         else 
             tmInstr.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]Name the fallen human.", false, true) });
+        tmInstr.SetHorizontalSpacing(2);
         tmName = GameObject.Find("TextManager Name").GetComponent<TextManager>();
         tmName.SetHorizontalSpacing(2);
         GameObject firstCamera = GameObject.Find("Main Camera");
@@ -246,14 +246,6 @@ public class EnterNameScript : MonoBehaviour {
         return totalWidth;
     }
 
-    bool isInDict(string test) {
-        test = test.ToLower();
-        foreach (string key in specialNameDict.Keys)
-            if (key.ToLower() == test)
-                return true;
-        return false;
-    }
-
     void AddToDict() {
         specialNameDict.Add("lukark",    "Hey, that's my name!\nDon't copy me.");
         specialNameDict.Add("rtl",       "Still my name, dude.");
@@ -267,7 +259,7 @@ public class EnterNameScript : MonoBehaviour {
         specialNameDict.Add("four",      "4");
         
         specialNameDict.Add("outbounds", "Go behind that dog!");
-        specialNameDict.Add("soulless",  "They shall fall, the one\nafter the other.");
+        specialNameDict.Add("soulless",  "They shall fall, one\nafter another.");
         
         specialNameDict.Add("notfound",  "404");
         specialNameDict.Add("404",       "Name not found.");
@@ -283,8 +275,8 @@ public class EnterNameScript : MonoBehaviour {
         specialNameDict.Add("alphys",    "Chances to see\nher: 0%.");
         specialNameDict.Add("asgore",    "Goatdad can't kill\nyou here.");
         specialNameDict.Add("toriel",    "Goatmom can't help\nyou here.");
-        specialNameDict.Add("papyrus",   "[font:papyrus]Having more than\n6 characters helps!");
-        specialNameDict.Add("sans",      "[font:sans]no bad time for\nya.");
+        specialNameDict.Add("papyrus",   "HAVING MORE THAN\n6 CHARACTERS HELPS!");
+        specialNameDict.Add("sans",      "no bad time for ya.");
         specialNameDict.Add("asriel",    "If that's your\nchoice...");
         specialNameDict.Add("flowey",    "You sadist.");
     }
