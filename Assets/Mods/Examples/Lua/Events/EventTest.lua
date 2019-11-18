@@ -11,15 +11,15 @@ function EventPage1()
 end
 
 endTexts = {
-    "Oh, I lost. I'll have to try again.",
-    "Ah, looks like I wasn't cut out for it this time.",
-    "Aw...I thought I was there...",
-    "He's not gone yet. I must try again.",
+    "Oh,[w:5] I lost.[w:10] I'll have to try again.",
+    "Ah,[w:5] looks like I wasn't cut out for it this time.",
+    "Aw...[w:10]I thought I was there...",
+    "He's not gone yet.[w:10]\nI must try again.",
     "I'm starting to lose my patience.",
     "What is this dog's problem?!",
-    "Come on, let me through now!",
-    "MOVE. NOW.",
-    "My eyes. They hurt. Send help."
+    "Come on,[w:5] let me through now!",
+    "MOVE.[w:10] NOW.",
+    "My eyes.[w:10]\nThey hurt.[w:15]\nSend help."
 }
 
 endFaceSprites = {
@@ -34,13 +34,6 @@ endFaceSprites = {
     "woke"
 }
 
-function EventPage5()
-    local stareID = GetGlobal("CYFOWStare")
-    General.SetDialog("[instant:stopall]" .. endTexts[stareID], true, "Frisk/" .. endFaceSprites[stareID])
-    Player.CanMove(true)
-    Event.SetPage(Event.GetName(), 1)
-end
-
 function EventPage10()
     -- Stare at the dog
     --W 1: Pundy leaves the screen for a bit / If dead, jump to 3
@@ -53,9 +46,32 @@ function EventPage10()
     --W 8: Chara creepily approaching the player from behind, music slowly fades out, (play anticipation slow mo like in genocide?), then when Chara close to player, hug
     General.SetDialog({ "There's a dog here and it's blocking the way.",
                         "It doesn't look like it'll move any time soon...",
-                        "He's bound to go if I stay around for some time!" }, true,
+                        "It's bound to go if I stay around for some time!" }, true,
                       { "Frisk/normal", "Frisk/sad", "Frisk/happy" })
     Event.SetPage("Stare", 2)
+    Event.SetPage(Event.GetName(), 1)
+end
+
+-- Auto page used with EventPage10
+function EventPage4()
+    SetGlobal("CYFOWStareSetDialogActive", true)
+    General.SetDialog(load("return " .. GetGlobal("CYFOWStareSetDialog1"))(),
+                                        GetGlobal("CYFOWStareSetDialog2"),
+                      load("return " .. GetGlobal("CYFOWStareSetDialog3"))(),
+                                        GetGlobal("CYFOWStareSetDialog4"))
+    SetGlobal("CYFOWStareSetDialogActive", false)
+
+    for i = 1, 4 do
+        SetGlobal("CYFOWStareSetDialog" .. i, nil)
+    end
+    Event.SetPage(Event.GetName(), 1)
+end
+
+-- Auto page used with EventPage10
+function EventPage5()
+    local stareID = GetGlobal("CYFOWStare")
+    General.SetDialog("[instant:stopall]" .. endTexts[stareID], true, "Frisk/" .. endFaceSprites[stareID])
+    Player.CanMove(true)
     Event.SetPage(Event.GetName(), 1)
 end
 
@@ -63,8 +79,74 @@ function EventPage14()
     -- Slice + 3D rotation
     General.SetDialog({ "There's a dog here and it's blocking the way.",
                         "It doesn't look like it'll move any time soon...",
-                        "I know exactly how to force him to move!" }, true,
+                        "But I know EXACTLY how to force it to!" }, true,
                       { "Chara/normal", "Chara/sad", "Chara/creepy" })
+    
+    -- Replace Player with a sprite version of themselves
+    Event.GetSprite("Player").alpha = 0
+    local pla = CreateSprite("CharaOW/9")
+    pla.ypivot = 0
+    pla.MoveToAbs(430, 174)
+    pla.loopmode = "ONESHOT"
+    
+    -- Replace dog with a sprite version
+    Event.GetSprite(Event.GetName()).alpha = 0
+    local dog = CreateSprite("Overworld/Dog")
+    dog.ypivot = 0
+    dog.MoveToAbs(490, 170)
+    
+    -- Attack!
+    General.Wait(20)
+    
+    local slice = function(speed, angle, x, y)
+        Audio.PlaySound("slice")
+        pla.SetAnimation({8, 9}, speed / 20, "CharaOW")
+        
+        local slice = CreateSprite("Overworld/Chara/bigslice/0")
+        slice.rotation = angle
+        slice.MoveToAbs(pla.absx + x, pla.absy + y)
+        dog.SetParent(slice)
+        slice.Mask("invertedstencil")
+        slice.loopmode = "ONESHOT"
+        slice.SetAnimation({0, 1, 2, 3, 4, 5}, speed/60, "Overworld/Chara/bigslice")
+        
+        local slice2 = CreateSprite("UI/Battle/spr_slice_o_0")
+        slice2.rotation = angle
+        slice2.MoveToAbs(pla.absx + x, pla.absy + y)
+        slice2.loopmode = "ONESHOT"
+        slice2.SetAnimation({"spr_slice_o_0", "spr_slice_o_1", "spr_slice_o_2", "spr_slice_o_3", "spr_slice_o_4", "spr_slice_o_5"}, speed/60, "UI/Battle")
+        General.Wait(10)
+        
+        -- animate slice
+        while not slice.animcomplete do
+            General.Wait(1)
+        end
+        
+        dog.layer = "Default"
+        slice.Remove()
+        slice2.Remove()
+    end
+    
+    slice(14, 0, 60, 30)
+    General.Wait(20)
+    General.SetDialog({ "[noskip]what[w:20][next]" }, true, "Chara/angry")
+    for i = 0, 19 do
+        slice(5 - math.floor(i / 4), math.random() * 360, 60, 30)
+    end
+    
+    -- Restore player
+    General.Wait(40)
+    pla.Remove()
+    Event.GetSprite("Player").alpha = 1
+    
+    -- Restore dog
+    General.Wait(10)
+    dog.Remove()
+    Event.GetSprite(Event.GetName()).alpha = 1
+    
+    -- End of event
+    General.Wait(60)
+    General.SetDialog({ "..." }, true, "Chara/angry")
     Event.SetPage(Event.GetName(), 1)
 end
 
@@ -289,58 +371,7 @@ function EventPage69()
     Event.SetPage(Event.GetName(), -1)
 end
 
--- Auto page used with StareTest
-function EventPage4()
-    SetGlobal("CYFOWStareSetDialogActive", true)
-    General.SetDialog(load("return " .. GetGlobal("CYFOWStareSetDialog1"))(),
-                                        GetGlobal("CYFOWStareSetDialog2"),
-                      load("return " .. GetGlobal("CYFOWStareSetDialog3"))(),
-                                        GetGlobal("CYFOWStareSetDialog4"))
-    SetGlobal("CYFOWStareSetDialogActive", false)
-
-    for i = 1, 4 do
-        SetGlobal("CYFOWStareSetDialog" .. i, nil)
-    end
-    Event.SetPage(Event.GetName(), 1)
-end
-
 -- General math function used with EventPage2 and EventPage69
 function lerp(a, b, t)
     return a + ((b - a) * t)
 end
-
---[[function EventPage1()
-    General.SetDialog({"Music kept = false\nErm[waitall:3]...[waitall:1][w:10] Why did you go here with your " .. hp .. " HP?"}, true, {"papyrus_mugshot_2"})
-end
-
---This event page is a big mash-up test page.
-function EventPage4()
-	Misc.ShakeScreen(3, 3, true)
-    General.Wait(180)
-	Screen.Flash(60, 255, 0, 0, 255)
-	--These following lines were used for Quaternion tests.
-	--You can activate them if you want to
-    --/!\ Not usable anymore /!\
-	SetTone(true, true, 0, 0, 0, 128)
-	DispImg("photo", 1, 320, 240, 436, 256, 224, 130, 40, 255)
-	WaitForInput()
-	RotateEvent("Image1", 360, 0, 0)
-	WaitForInput()
-	RotateEvent("Image1", 0, 360, 0)
-	WaitForInput()
-	RotateEvent("Image1", 0, 0, 360)
-	WaitForInput()
-	RotateEvent("Image1", 360, 360, 360)
-	WaitForInput()
-	RotateEvent("Image1", 180, 360, 0)
-	WaitForInput()
-	RotateEvent("Image1", 0, 180, 360)
-	WaitForInput()
-	RotateEvent("Image1", 360, 0, 180)
-	WaitForInput()
-	RotateEvent("Image1", 360, 360, 360)
-	WaitForInput()
-	SupprImg(1)
-	SetTone(true, true, 0, 0, 0, 0)
-	--General.GameOver({ "[voice:v_sans]Wazzup bro?", "[voice:v_sans]I love this music, don't you?" }, "mus_zz_megalovania")
-end]]

@@ -1414,7 +1414,7 @@ function Stare8(frame)
                 chara.Set("Overworld/Chara/c1")
                 stare8Phase = 3
             -- Phase 3: Inch ever closer to Frisk
-            elseif stare8Phase == 3 and stare8Count >= 1360 and stare8Count < 2850 then
+            elseif stare8Phase == 3 and stare8Count >= 1360 and stare8Count < 2710 then
                 local timer = (stare8Count - 1360) % 140
                 
                 if timer == 0 then
@@ -1424,25 +1424,25 @@ function Stare8(frame)
                 end
                 
                 if timer < 45 then
-                    chara.x = math.min(chara.x + 0.1, 424)
+                    chara.x = math.min(chara.x + 0.1, 420)
                 end
-            elseif stare8Count == 2850 then
+            elseif stare8Count == 2710 then
                 stare8Phase = 4
             -- Phase 4: Hug...?
-            elseif stare8Count == 2970 then
+            elseif stare8Count == 2830 then
                 chara.Set("Overworld/Chara/c2")
-            elseif stare8Count == 3140 then
+            elseif stare8Count == 3000 then
                 chara.Set("Overworld/Chara/c3")
-            elseif stare8Count == 3200 then
+            elseif stare8Count == 3060 then
                 stare8Phase = 5
             -- Phase 5: Fade out scary music
-            elseif stare8Count == 3360 then
+            elseif stare8Count == 3220 then
                 chara.Set("Overworld/Chara/c4")
-            elseif stare8Count == 3405 then
+            elseif stare8Count == 3265 then
                 chara.Set("Overworld/Chara/c5")
-            elseif stare8Count == 3490 then
+            elseif stare8Count == 3350 then
                 chara.Set("CharaOW/9")
-            elseif stare8Count == 3560 then
+            elseif stare8Count == 3420 then
                 stare8Phase = -1
                 stare8Count = 0
                 return false
@@ -1451,7 +1451,7 @@ function Stare8(frame)
             -- vignette alpha
             if stare8Phase < 4 then -- TODO update this number
                 vignette.alpha = chara.x/450
-                NewAudio.SetVolume("zzz", math.min((chara.x/424) * 0.75, 0.75))
+                NewAudio.SetVolume("zzz", math.min((chara.x/420) * 0.75, 0.75))
                 Audio.Volume((1 - (chara.x/334)) * 0.75)
             elseif stare8Phase == 5 then
                 NewAudio.SetVolume("zzz", NewAudio.GetVolume("zzz") - 0.003)
@@ -1497,13 +1497,20 @@ function Stare8(frame)
             chara.StopAnimation()
             chara.ypivot = 0
             chara.absy = charaY
+            
+            -- make bubble
             Audio.PlaySound("BeginBattle1")
-            -- TODO: make ! sprite
+            bubble = CreateSprite("Overworld/EncounterBubble")
+            bubble.ypivot = 0
+            bubble.SetParent(chara)
+            bubble.SetAnchor(0.5, 0)
+            bubble.MoveTo(0, chara.height + 6)
         elseif stare8Count <= 11 then
             chara.y = chara.y + ( 6 - stare8Count)
         elseif stare8Count == 12 then
             chara.absy = charaY
         elseif stare8Count == 30 then
+            bubble.Remove()
             Audio.PlaySound("runaway")
             chara.SetAnimation({4, 5, 6, 5}, 0.1, "CharaOW")
         elseif stare8Count > 30 then
@@ -1535,8 +1542,8 @@ end
 
 -- Auto
 function EventPage2()
-    stareShift = 7 -- Event.Exists("Punder") and 0 or 2
-    stareFrame = eventFrequency - 1 -- 0
+    stareShift = Event.Exists("Punder") and 0 or 2
+    stareFrame = 0
     inputted = false
     currEventDone = true
     resetStareVars()
