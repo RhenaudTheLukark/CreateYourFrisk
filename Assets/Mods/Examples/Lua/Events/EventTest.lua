@@ -263,6 +263,192 @@ function EventPage368395()
                       { { "Booster/normalT", "Booster/normal", 0.2 },
                         { "Booster/sadT",    "Booster/sad",    0.2 },
                         { "Booster/happyT",  "Booster/happy",  0.2 } })
+    
+    
+    -- Replace Player with a sprite version of themselves
+    local player = Event.GetSprite("Player")
+    player.alpha = 0
+    local pla = CreateSprite("BoosterOW/9")
+    pla.ypivot = 0
+    pla.MoveToAbs(430, 174)
+    pla.z = -1
+    
+    -- Replace Dog with a sprite version
+    local dogSprite = Event.GetSprite(Event.GetName())
+    dogSprite.alpha = 0
+    
+    -- Set up its 3 parts
+    do
+        dogButt = CreateSprite("Overworld/DogButt")
+        dogButt.SetPivot(1, 0)
+        dogButt.MoveTo(dogSprite.absx + dogSprite.width/2, dogSprite.absy)
+        
+        dogStretch = CreateSprite("Overworld/DogStretch")
+        dogStretch.xpivot = 1
+        dogStretch.SetParent(dogButt)
+        dogStretch.SetAnchor(0, 0.5)
+        dogStretch.MoveTo(0, 0)
+        dogStretch.xscale = 0
+        
+        dogHead = CreateSprite("Overworld/DogHead")
+        dogHead.xpivot = 1
+        dogHead.SetParent(dogStretch)
+        dogHead.SetAnchor(0, 0.5)
+        dogHead.MoveTo(12, 0)
+        
+        dogButt.Scale(-1, -1)
+        dogButt.rotation = 180
+        pla.SendToTop()
+    end
+    
+    General.Wait(40)
+    
+    -- walk left
+    for i = 0, 188 do
+        pla.x = pla.x - 0.75
+        
+        -- change sprite
+        if i % 16 == 0 then
+            pla.Set("BoosterOW/" .. (8 + ((i % 64) / 16)))
+        end
+        
+        -- play step sound
+        if i % 32 == 0 then
+            Audio.PlaySound("step-floor")
+        end
+        
+        General.Wait(1)
+    end
+    
+    -- jump one
+    General.Wait(80)
+    pla.Set("Overworld/Booster/j")
+    Audio.PlaySound("step-floor")
+    for i = 500, 553 do
+        pla.x = i < 525 and pla.x or pla.x + 1.5
+        pla.y = 174 + (math.sin(math.rad((i - 500) / (26/90))) * 50)
+        
+        General.Wait(1)
+    end
+    pla.y = 174
+    pla.Set("BoosterOW/10")
+    Audio.PlaySound("step-floor")
+    
+    -- backup
+    --[[
+    -- jump two
+    General.Wait(10)
+    pla.Set("Overworld/Booster/j")
+    Audio.PlaySound("step-floor")
+    for i = 590, 643 do
+        pla.x = pla.x + 1.5
+        pla.y = 174 + (math.sin(math.rad((i - 590) / (26/90))) * 110)
+        
+        General.Wait(1)
+    end
+    pla.y = 174
+    pla.Set("BoosterOW/10")
+    Audio.PlaySound("step-floor")
+    
+    -- jump three
+    General.Wait(6)
+    pla.Set("Overworld/Booster/j")
+    Audio.PlaySound("step-floor")
+    for i = 676, 698 do
+        pla.x = pla.x + 1.5
+        pla.y = 174 + (math.sin(math.rad((i - 676) / (33/90))) * 150)
+        pla.rotation = pla.rotation - 4.5
+        
+        General.Wait(1)
+    end
+    pla.Set("Overworld/Booster/p")
+    pla.rotation = 0
+    pla.Move(pla.height/2, -pla.height/3)
+    Audio.PlaySound("sm64_impact")
+    Audio.PlaySound("mario-pain")
+    Misc.ShakeScreen(6, 30)
+    ]]--
+    
+    -- jump two
+    General.Wait(10)
+    pla.Set("Overworld/Booster/j")
+    Audio.PlaySound("step-floor")
+    for i = 590, 643 do
+        pla.x = pla.x + 1.5
+        pla.y = 174 + (math.sin(math.rad((i - 590) / (26/90))) * 110)
+        
+        if i > 643 - 25 then
+            dogButt.x = lerp(dogButt.x, dogSprite.x - (dogSprite.width/3), 0.2)
+            dogButt.rotation = lerp(dogButt.rotation, 90, 0.2)
+        end
+        
+        General.Wait(1)
+    end
+    pla.y = 174
+    pla.Set("BoosterOW/10")
+    Audio.PlaySound("step-floor")
+    
+    dogButt.x = dogSprite.x - (dogSprite.width/3)
+    dogButt.rotation = 90
+    dogStretch.rotation = 270
+    
+    -- jump three
+    General.Wait(6)
+    pla.Set("Overworld/Booster/j")
+    Audio.PlaySound("step-floor")
+    for i = 676, 698 do
+        pla.x = pla.x + 1.5
+        pla.y = 174 + (math.sin(math.rad((i - 676) / (33/90))) * 150)
+        pla.rotation = pla.rotation - 4.5
+        
+        dogStretch.xscale = lerp(dogStretch.xscale, 150, 0.075)
+        General.Wait(1)
+    end
+    pla.Set("Overworld/Booster/p")
+    pla.rotation = 0
+    pla.Move(pla.height/2, -pla.height/3)
+    Audio.PlaySound("sm64_impact")
+    Audio.PlaySound("mario-pain")
+    Misc.ShakeScreen(6, 30)
+    
+    if Player.GetHP() > 1 then
+        Player.SetHP(math.max(Player.GetHP() - 2, 1))
+    end
+    
+    -- fall
+    for i = 1, 52 do
+        pla.Move(-1, -(i * 2)/25)
+        pla.rotation = pla.rotation + 0.75
+        
+        General.Wait(1)
+    end
+    General.Wait(44)
+    for i = 1, 35 do
+        pla.rotation = pla.rotation - 1
+        General.Wait(1)
+    end
+    
+    -- end of event
+    player.MoveToAbs(pla.absx, pla.absy)
+    player.alpha = 1
+    pla.Remove()
+    General.Wait(50)
+    General.SetDialog({"Ooowwww..."}, true, {{"Booster/shockT", "Booster/shock", 0.2}})
+    
+    -- move dog back
+    for i = 1, 23 do
+        dogStretch.xscale = lerp(dogStretch.xscale, 0, 0.1)
+        General.Wait(1)
+    end
+    dogStretch.xscale = 0
+    for i = 1, 25 do
+        dogButt.x = lerp(dogButt.x, dogSprite.absx + dogSprite.width/2, 0.2)
+        dogButt.rotation = lerp(dogButt.rotation, 180, 0.2)
+        General.Wait(1)
+    end
+    dogButt.Remove()
+    dogSprite.alpha = 1
+    
     Event.SetPage(Event.GetName(), 1)
 end
 
@@ -371,7 +557,7 @@ function EventPage69()
     Event.SetPage(Event.GetName(), -1)
 end
 
--- General math function used with EventPage2 and EventPage69
+-- General math function used with EventPage2, EventPage69, and EventPage368395
 function lerp(a, b, t)
     return a + ((b - a) * t)
 end
