@@ -308,7 +308,6 @@ public class GameOverBehavior : MonoBehaviour {
             }
 
             if (internalTimer > fluffybunsAfter) {
-                gameOverTxt.SetHorizontalSpacing(7);
                 if (deathText != null) {
                     List<TextMessage> text = new List<TextMessage>();
                     foreach (string str in deathText)
@@ -364,7 +363,6 @@ public class GameOverBehavior : MonoBehaviour {
                 exiting = true;
             } else if (internalTimerRevive >= 5.0f && !reviveTextSet && breakHeartReviveAfter) {
                 if (deathText != null) {
-                    reviveText.SetHorizontalSpacing(7);
                     List<TextMessage> text = new List<TextMessage>();
                     foreach (string str in deathText)
                         text.Add(new TextMessage(str, false, false));

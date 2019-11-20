@@ -493,8 +493,9 @@ public class EventManager : MonoBehaviour {
             scriptname = name
         };
         string scriptText = name == "4eab1af3ab6a932c23b3cdb8ef618b1af9c02088" ? CYFReleaseScript : ScriptRegistry.Get(ScriptRegistry.EVENT_PREFIX + name);
+        string codeToAdd = string.Empty;
         if (scriptText == null) {
-            UnitaleUtil.DisplayLuaError("Launching an event", "The event " + name + " doesn't exist.");
+            UnitaleUtil.DisplayLuaError("Launching an event", "The event \"" + name + "\" doesn't exist.");
             return null;
         }
         string lameOverworldFunctionBinding = string.Empty;
@@ -502,10 +503,10 @@ public class EventManager : MonoBehaviour {
         bool once = false;
         foreach (Type t in boundValueName.Keys) {
             List<string> members = CreateBindListMember(t);
-            scriptText += "\n" + boundValueName[t] + " = { }";
+            codeToAdd += "\n" + boundValueName[t] + " = { }";
             foreach (string member in members) {
                 string completeMember = boundValueName[t] + "." + member;
-                scriptText += "\n" + "function " + completeMember + "(...) return CYFEventForwarder(\"" + completeMember + "\",...) end";
+                codeToAdd += "\n" + "function " + completeMember + "(...) return CYFEventForwarder(\"" + completeMember + "\",...) end";
                 lameFunctionBinding += "\n    " + (once ? "elseif" : "if") + " func == '" + completeMember + "' then x = F" + completeMember;
                 once = true;
             }
@@ -517,7 +518,7 @@ public class EventManager : MonoBehaviour {
         }
         lameOverworldFunctionBinding += "\n    end";
         lameFunctionBinding += "\n    end";
-        scriptText += "\n" + @"
+        codeToAdd += @"
 CYFEventCoroutine = coroutine.create(DEBUG)
 CYFEventCheckRefresh = true
 CYFEventLastAction = """"
@@ -531,8 +532,8 @@ function CYFFormatError(err)
         local numbers = err:match('[%d,%-]+%)'):sub(0, -2)
         local after = err:sub(err:find(numbers:gsub('%-', '%%-'), #before) + #numbers)
         
-        -- there are only 3 possible formats for error messages
-        -- see Assets/Plugins/MoonSharp/Interpreter/Debugging/SourceRef.cs line 178
+        -- There are only 3 possible formats for error messages
+        -- See Assets/Plugins/MoonSharp/Interpreter/Debugging/SourceRef.cs line 178
         local allNums = {}
         for num in numbers:gmatch('%d+') do
             table.insert(allNums, num)
@@ -566,7 +567,7 @@ function CYFEventNextCommand()
         if not ok then error(errorMsg, 0) end
     end
 end
-function CYFEventStopCommand() coroutine.yield() end -- currently unused
+function CYFEventStopCommand() coroutine.yield() end --currently unused
 function CYFEventStartEvent(func)
     if _G[func] == nil then error('The function ' .. func .. "" doesn't exist in the Event script."", 0) end
     CYFEventCoroutine = coroutine.create(function() CYFEventFuncToLaunch(_G[func]) end)
@@ -596,10 +597,18 @@ function CYFEventForwarder(func, ...)
     if not CYFEventAlreadyLaunched then coroutine.yield() end
     return result
 end";
+        try { scr.script.DoString(codeToAdd, null, "CYF internal event code (please report!)"); } 
+        catch (InterpreterException ex) {
+            UnitaleUtil.DisplayLuaError(name, UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message);
+            return null;
+        } catch (Exception ex) {
+            UnitaleUtil.DisplayLuaError(name, ex.Message);
+            return null;
+        }
         scr.script.Globals["CreateLayer"] = (Action<string, string, bool>)SpriteUtil.CreateLayer;
         scr.script.Globals["CreateSprite"] = (Func<string, string, int, DynValue>)SpriteUtil.MakeIngameSprite;
         scr.script.Globals["CreateText"] = (Func<Script, DynValue, DynValue, int, string, int, LuaTextManager>)LuaScriptBinder.CreateText;
-        /*System.IO.StreamWriter sr = System.IO.File.CreateText(Application.dataPath + "/test" + TEMP ++ + ".lua");
+        /*System.IO.StreamWriter sr = System.IO.File.CreateText(Application.dataPath + "/test" + name + ".lua");
         sr.Write(scriptText);
         sr.Flush();
         sr.Close();
