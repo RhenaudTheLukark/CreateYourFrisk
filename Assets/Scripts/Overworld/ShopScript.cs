@@ -143,15 +143,15 @@ public class ShopScript : MonoBehaviour {
                 currentItemIndex = selection;
                 selection = 1;
                 numberOfChoices = 2;
-                tmChoice.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][font:uidialoglilspace][linespacing:0][novoice]Buy for\n" + mainPrice[currentItemIndex] + "G?\n \n    Yes\n    No", false, true) });
+                tmChoice.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][font:uidialoglilspace][linespacing:0][novoice]Buy for\n" + mainPrice[currentItemIndex] + "G?\n\n    Yes\n    No", false, true) });
                 break;
             case State.SELLCONFIRM:
                 currentItemIndex = selection;
                 selection = 1;
                 numberOfChoices = 2;
-                tmBigTalk.SetTextQueue(new TextMessage[] { new TextMessage("[linespacing:11][noskipatall][font:uidialoglilspace][novoice]\n          Sell the " + Inventory.inventory[currentItemIndex].Name + " for " +
-                                                                           Inventory.NametoPrice[Inventory.inventory[currentItemIndex].Name] / 5 + "G?\n \n              Yes\tNo" +
-                                                                           "\n \n \t   [color:ffff00](" + PlayerCharacter.instance.Gold + "G)", false, true) });
+                tmBigTalk.SetTextQueue(new TextMessage[] { new TextMessage("\n[linespacing:11][noskipatall][font:uidialoglilspace][novoice]          Sell the " + Inventory.inventory[currentItemIndex].Name + " for " +
+                                                                           Inventory.NametoPrice[Inventory.inventory[currentItemIndex].Name] / 5 + "G?\n\n              Yes\tNo" +
+                                                                           "\n\n\t   [color:ffff00](" + PlayerCharacter.instance.Gold + "G)", false, true) });
                 break;
             case State.BUY:
                 TryCall("EnterBuy");
@@ -240,14 +240,14 @@ public class ShopScript : MonoBehaviour {
             default:
                 break;
         }
-        string[] text = tm.textQueue[0].Text.Split(new char[] { '\n', '\r', '\t' });
+        string[] text = tm.textQueue[0].Text.Split(new char[] { '\n', '\r', '\t' }, StringSplitOptions.RemoveEmptyEntries);
         int selectionTemp = selection;
         if (currentState == State.SELL && selection == numberOfChoices - 1)
             selection = 8;
         else if (currentState == State.BUYCONFIRM)
-            selection = selection + 3;
+            selection = selection + 2;
         else if (currentState == State.SELLCONFIRM)
-            selection = selection + 3;
+            selection = selection + 1;
         int beginLine = GetIndexFirstCharOfLineFromChild(tm);
         Vector3 v = tm.transform.GetChild(GetIndexFirstCharOfLineFromText(text[selection]) + beginLine).position;
         utHeart.transform.position = new Vector3(v.x - 16, v.y + 8, v.z);
