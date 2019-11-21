@@ -118,7 +118,7 @@ public class UIController : MonoBehaviour {
         if (GameObject.Find("TopLayer"))
             spr.layer = "Top";
         spr.Scale(640, 480);
-        if (GlobalControls.modDev) // empty the inventory if not in the overworld
+        if (GlobalControls.modDev) //Empty the inventory if not in the overworld
             Inventory.inventory.Clear();
         Inventory.RemoveAddedItems();
         GlobalControls.lastTitle = false;
@@ -130,15 +130,24 @@ public class UIController : MonoBehaviour {
             Misc.WindowName = GlobalControls.crate ? ControlPanel.instance.WinodwBsaisNmae : ControlPanel.instance.WindowBasisName;
         #endif
 
-        // stop encounter storage for good!
-        ScriptWrapper.instances.Clear();
+        //Stop encounter storage for good!
+        foreach (LuaEnemyController enemy in instance.encounter.enemies) {
+            ScriptWrapper.instances.Remove(enemy.script);
+            LuaScriptBinder.scriptlist.Remove(enemy.script.script);
+        }
+        Table t = LuaEnemyEncounter.script["Wave"].Table;
+        foreach (object obj in t.Keys) {
+            try {
+                ScriptWrapper.instances.Remove(((ScriptWrapper)t[obj]));
+                LuaScriptBinder.scriptlist.Remove(((ScriptWrapper)t[obj]).script);
+            } catch {}
+        }
+        ScriptWrapper.instances.Remove(LuaEnemyEncounter.script);
+        LuaScriptBinder.scriptlist.Remove(LuaEnemyEncounter.script.script);
 
-        // properly set "isInFight" to false, as it shouldn't be true anymore
+        //Properly set "isInFight" to false, as it shouldn't be true anymore
         GlobalControls.isInFight = false;
 
-        for (int i = 0; i < LuaScriptBinder.scriptlist.Count; i++)
-            LuaScriptBinder.scriptlist[i] = null;
-        LuaScriptBinder.scriptlist.Clear();
         LuaScriptBinder.ClearBattleVar();
         GlobalControls.stopScreenShake = true;
         MusicManager.hiddenDictionary.Clear();

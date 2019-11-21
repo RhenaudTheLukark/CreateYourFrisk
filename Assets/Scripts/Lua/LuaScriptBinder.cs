@@ -19,6 +19,7 @@ public static class LuaScriptBinder {
     /// Registers C# types with MoonSharp so we can bind them to Lua scripts later.
     /// </summary>
     static LuaScriptBinder() {
+        //Battle
         UserData.RegisterType<MusicManager>();              // TODO: fix functions with return values that shouldn't return anything anyway
         UserData.RegisterType<NewMusicManager>();           // TONOTFIX: I don't know what you mean here
         UserData.RegisterType<ProjectileController>();
@@ -33,7 +34,7 @@ public static class LuaScriptBinder {
         UserData.RegisterType<Misc>();
         UserData.RegisterType<LuaTextManager>();
         UserData.RegisterType<LuaFile>();
-        //UserData.RegisterType<Windows>();
+
         //Overworld
         UserData.RegisterType<LuaEventOW>();
         UserData.RegisterType<LuaPlayerOW>();
@@ -90,22 +91,16 @@ public static class LuaScriptBinder {
             try {
                 DynValue PlayerOW = UserData.Create(EventManager.instance.luaplow);
                 script.Globals.Set("FPlayer", PlayerOW);
-                //script.Globals.Set("Player", PlayerOW);
                 DynValue EventOW = UserData.Create(EventManager.instance.luaevow);
                 script.Globals.Set("FEvent", EventOW);
-                //script.Globals.Set("Event", EventOW);
                 DynValue GeneralOW = UserData.Create(EventManager.instance.luagenow);
                 script.Globals.Set("FGeneral", GeneralOW);
-                //script.Globals.Set("General", GeneralOW);
                 DynValue InventoryOW = UserData.Create(EventManager.instance.luainvow);
                 script.Globals.Set("FInventory", InventoryOW);
-                //script.Globals.Set("Inventory", InventoryOW);
                 DynValue ScreenOW = UserData.Create(EventManager.instance.luascrow);
                 script.Globals.Set("FScreen", ScreenOW);
-                //script.Globals.Set("Screen", ScreenOW);
                 DynValue MapOW = UserData.Create(EventManager.instance.luamapow);
                 script.Globals.Set("FMap", MapOW);
-                //script.Globals.Set("Map", MapOW);
             } catch { }
         }
         script.Globals["DEBUG"] = (Action<string>)UnitaleUtil.WriteInLogAndDebugger;

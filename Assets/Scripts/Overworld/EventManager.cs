@@ -20,9 +20,11 @@ public class EventManager : MonoBehaviour {
     public  Dictionary<string, LuaSpriteController> sprCtrls = new Dictionary<string, LuaSpriteController>();
     private TextManager textmgr;            //The current TextManager
     public  int actualEventIndex = -1;      //ID of the actual event we're running
+    private string eventCodeFirst;          //The internal Lua code loaded into event scripts (first part)
+    private string eventCodeLast;           //The internal Lua code loaded into event scripts (last part)
     public  bool readyToReLaunch = false;   //Used to prevent overworld GameOver errors
     public  bool bgmCoroutine = false;      //Check if the BGM is already fading
-    public  bool passPressOnce = false;      //Boolean used because events are boring
+    public  bool passPressOnce = false;     //Boolean used because events are boring
     public  bool _scriptLaunched = false;
     public  bool ScriptLaunched {
         get { return _scriptLaunched || PlayerOverworld.instance.forceNoAction; }
@@ -369,8 +371,11 @@ public class EventManager : MonoBehaviour {
         events.Clear();
         autoDone.Clear();
         sprCtrls.Clear();
-        if (resetScripts)
+        if (resetScripts) {
             eventScripts.Clear();
+            ScriptWrapper.instances.Clear();
+            LuaScriptBinder.scriptlist.Clear();
+        }
         PlayerOverworld.instance.parallaxes.Clear();
         foreach (GameObject go in GameObject.FindGameObjectsWithTag("Event")) {
             events.Add(go);
@@ -484,45 +489,36 @@ public class EventManager : MonoBehaviour {
     }
 
     /// <summary>
-    /// Function that permits to initialize the event script to be used later
+    /// Generates the internal Lua code used by CYF events one time, and one time only
     /// </summary>
-    /// <param name="name"></param>
-    /// <returns>Returns true if no error were encountered.</returns>
-    private ScriptWrapper InitScript(string name, EventOW ev) {
-        ScriptWrapper scr = new ScriptWrapper() {
-            scriptname = name
-        };
-        string scriptText = name == "4eab1af3ab6a932c23b3cdb8ef618b1af9c02088" ? CYFReleaseScript : ScriptRegistry.Get(ScriptRegistry.EVENT_PREFIX + name);
-        string codeToAdd = string.Empty;
-        if (scriptText == null) {
-            UnitaleUtil.DisplayLuaError("Launching an event", "The event \"" + name + "\" doesn't exist.");
-            return null;
-        }
-        string lameOverworldFunctionBinding = string.Empty;
+    private void GenerateEventCode() {
+        eventCodeFirst = string.Empty;
         string lameFunctionBinding = string.Empty;
         bool once = false;
         foreach (Type t in boundValueName.Keys) {
             List<string> members = CreateBindListMember(t);
-            codeToAdd += "\n" + boundValueName[t] + " = { }";
+            eventCodeFirst += "\n" + boundValueName[t] + " = { }";
             foreach (string member in members) {
                 string completeMember = boundValueName[t] + "." + member;
-                codeToAdd += "\n" + "function " + completeMember + "(...) return CYFEventForwarder(\"" + completeMember + "\",...) end";
+                eventCodeFirst += "\n" + "function " + completeMember + "(...) return CYFEventForwarder(\"" + completeMember + "\",...) end";
                 lameFunctionBinding += "\n    " + (once ? "elseif" : "if") + " func == '" + completeMember + "' then x = F" + completeMember;
                 once = true;
             }
+            eventCodeFirst += "\nsetmetatable(" + boundValueName[t] + @", {
+    __index = function(t, k)
+        error(""cannot access field "" .. tostring(k) .. "" of userdata <" + t.ToString() + @">"", 2)
+    end,
+    __newindex = function(t, k)
+        error(""cannot access field "" .. tostring(k) .. "" of userdata <" + t.ToString() + @">"", 2)
+    end
+})";
         }
         once = false;
-        foreach (Vector2 v in ev.eventTriggers) {
-            lameOverworldFunctionBinding += "\n    " + (once ? "elseif" : "if") + " func == 'EventPage" + v.x + "' then CYFEventCurrentFunction = 'EventPage" + v.x + "' x = EventPage" + v.x;
-            once = true;
-        }
-        lameOverworldFunctionBinding += "\n    end";
         lameFunctionBinding += "\n    end";
-        codeToAdd += @"
+        eventCodeFirst += @"
 CYFEventCoroutine = coroutine.create(DEBUG)
 CYFEventCheckRefresh = true
 CYFEventLastAction = """"
-local CYFEventCurrentFunction = nil
 local CYFEventAlreadyLaunched = false
 function CYFFormatError(err)
     local pattern = ':%([%d%-,]+%):'
@@ -553,7 +549,8 @@ function CYFFormatError(err)
 end
 function CYFEventFuncToLaunch(x)
     if _internalScriptName == nil then
-        _internalScriptName = '" + ev.gameObject.name + @"'
+        _internalScriptName = '";
+        eventCodeLast = @"'
     end
     local err
     if not xpcall(x, function(err2) err = err2 end) then
@@ -597,7 +594,25 @@ function CYFEventForwarder(func, ...)
     if not CYFEventAlreadyLaunched then coroutine.yield() end
     return result
 end";
-        try { scr.script.DoString(codeToAdd, null, "CYF internal event code (please report!)"); } 
+    }
+
+    /// <summary>
+    /// Function that permits to initialize the event script to be used later
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns>Returns true if no error were encountered.</returns>
+    private ScriptWrapper InitScript(string name, EventOW ev) {
+        ScriptWrapper scr = new ScriptWrapper() { scriptname = name };
+        string scriptText = name == "4eab1af3ab6a932c23b3cdb8ef618b1af9c02088" ? CYFReleaseScript : ScriptRegistry.Get(ScriptRegistry.EVENT_PREFIX + name);
+        if (scriptText == null) {
+            UnitaleUtil.DisplayLuaError("Launching an event", "The event \"" + name + "\" doesn't exist.");
+            return null;
+        }
+
+        //Run engine-provided Lua code for Event scripts (generate it if needed)
+        if (eventCodeFirst == null)
+            GenerateEventCode();
+        try { scr.script.DoString(eventCodeFirst + ev.gameObject.name + eventCodeLast, null, "CYF internal event code (please report!)"); } 
         catch (InterpreterException ex) {
             UnitaleUtil.DisplayLuaError(name, UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message);
             return null;
@@ -605,14 +620,15 @@ end";
             UnitaleUtil.DisplayLuaError(name, ex.Message);
             return null;
         }
+        /*System.IO.StreamWriter sr = System.IO.File.CreateText(Application.dataPath + "/test" + name + ".lua");
+        sr.Write(eventCodeFirst + ev.gameObject.name + eventCodeLast);
+        sr.Flush();
+        sr.Close();
+        Debug.Log(eventCodeFirst + ev.gameObject.name + eventCodeLast);*/
+
         scr.script.Globals["CreateLayer"] = (Action<string, string, bool>)SpriteUtil.CreateLayer;
         scr.script.Globals["CreateSprite"] = (Func<string, string, int, DynValue>)SpriteUtil.MakeIngameSprite;
         scr.script.Globals["CreateText"] = (Func<Script, DynValue, DynValue, int, string, int, LuaTextManager>)LuaScriptBinder.CreateText;
-        /*System.IO.StreamWriter sr = System.IO.File.CreateText(Application.dataPath + "/test" + name + ".lua");
-        sr.Write(scriptText);
-        sr.Flush();
-        sr.Close();
-        Debug.Log(scriptText);*/
 
         try { scr.DoString(scriptText); } 
         catch (InterpreterException ex) {
