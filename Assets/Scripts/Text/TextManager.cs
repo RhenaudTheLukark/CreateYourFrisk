@@ -297,7 +297,8 @@ public class TextManager : MonoBehaviour {
 
                     if (!offsetSet)
                         SetOffset(0, 0);
-                    ResetFont();
+                    if (GetType() != typeof(LuaTextManager))
+                        ResetFont();
                     currentColor = defaultColor;
                     colorSet = false;
                     currentSkippable = true;

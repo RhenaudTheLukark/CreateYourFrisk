@@ -423,8 +423,6 @@ public static class LuaScriptBinder {
         /////////// INITIAL FONT SETTER //////////
         //////////////////////////////////////////
 
-        luatm.ResetFont();
-
         // If the first line of text has [font] at the beginning, use it initially!
         if (firstLine.IndexOf("[font:") > -1 && firstLine.IndexOf(']') > firstLine.IndexOf("[font:")) {
             // grab all of the text that comes before the matched command
@@ -449,8 +447,10 @@ public static class LuaScriptBinder {
                     throw new CYFException("The font \"" + fontPartTwo + "\" doesn't exist.\nYou should check if you made a typo, or if the font really is in your mod.");
                 luatm.SetFont(font, true);
                 luatm.UpdateBubble();
-            }
-        }
+            } else
+                luatm.ResetFont();
+        } else
+            luatm.ResetFont();
 
         if (enableLateStart)
             luatm.lateStartWaiting = true;

@@ -3,5 +3,5 @@
     <sprite name="rightshort">
         <border x="19" y="9" z="7" w="8"/>
     </sprite>
-    <width>74</width>
+    <width>73</width>
 </spritesheet>
