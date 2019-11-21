@@ -88,7 +88,8 @@ it's w3c valid, at least
                 <b>Audio Channels</b> can play up to one sound at a time, and will stop any currently playing sounds if you add a new sound to the channel.
                 <br><br>
                 <font size="3" style="color:#fff;">NOTE! The default audio channel used by the Audio object (not this one) is called <span class="term">"src"</span>.</font><br>
-                It exists at the start of the encounter, and, by default, all music and sounds will be played there.
+                It exists at the start of the encounter, and, by default, all music and sounds will be played there.<br>
+                You may use it as the argument <span class="term">"name"</span> in all of the below functions.
             </p>
             <ul>
                 <li><span class="term">NewAudio.CreateChannel(<span class="string"></span> name)</span> - Creates the audio channel
@@ -111,27 +112,34 @@ it's w3c valid, at least
                 <li><span class="number"></span> <span class="term">NewAudio.GetPlayTime(<span class="string"></span> name)</span> or <span class="number"></span> <span class="term">NewAudio.GetCurrentTime(<span class="string"></span> name)</span> - Get the current play position of the current audio of this channel
                 in seconds.</li><br>
                 <li><span class="term">NewAudio.PlayMusic(<span class="string"></span> name, <span class="string"></span> music, 
-                <span class="boolean"></span> loop = false, <span class="number"></span> volume = 1)</span> - Plays the music 
-                <span class="term">music</span> on the channel <span class="term">name</span>.<br>
-                <span class="term">loop</span> tells the engine if it should loop the music or not; 
+                <span class="boolean"></span> loop = false, <span class="number"></span> volume = 1) returns <span class="boolean"></span></span> - Plays the music 
+                <span class="term">music</span> on the channel <span class="term">name</span>.
+                <br><br>
+                <span class="term">loop</span> tells the engine if it should loop the music or not;<br>
                 <span class="term">volume</span> is the volume of the music.
-                <br><br>Songs played are loaded from your mod's <span class="term">Audio</span> folder, as ogg or wav files.</li><br>
+                <br><br>
+                Songs played are loaded from your mod's <span class="term">Audio</span> folder, as .ogg or .wav files.<br>
+                This function returns a <span class="boolean"></span> representing whether the music file was successfully loaded or not.</li><br>
                 
                 <li><span class="term">NewAudio.PlaySound(<span class="string"></span> name, <span class="string"></span> sound, 
-                <span class="boolean"></span> loop = false, <span class="number"></span> volume = 0.65)</span> - Plays the sound 
-                <span class="term">sound</span> on the channel <span class="term">name</span>.<br>
-                <span class="term">loop</span> tells the engine if it should loop the sound or not; 
-                <span class="term">volume</span> is the volume of the sound.<br><br>
-                The default volume of sounds is <span class="term">0.65</span>.
-                <br><br>Sounds played are loaded from your mod's <span class="term">Sounds</span> folder, as ogg or wav files.</li><br>
+                <span class="boolean"></span> loop = false, <span class="number"></span> volume = 0.65) returns <span class="boolean"></span></span> - Plays the sound 
+                <span class="term">sound</span> on the channel <span class="term">name</span>.
+                <br><br>
+                <span class="term">loop</span> tells the engine if it should loop the sound or not;<br>
+                <span class="term">volume</span> is the volume of the sound.
+                <br><br>
+                Sounds played are loaded from your mod's <span class="term">Sounds</span> folder, as .ogg or .wav files.<br>
+                This function returns a <span class="boolean"></span> representing whether the sound file was successfully loaded or not.</li><br>
                 
                 <li><span class="term">NewAudio.PlayVoice(<span class="string"></span> name, <span class="string"></span> voice, 
-                <span class="boolean"></span> loop = false, <span class="number"></span> volume = 0.65)</span> - Plays the voice 
-                <span class="term">voice</span> on the channel <span class="term">name</span>.<br>
-                <span class="term">loop</span> tells the engine if it should loop the voice or not; 
-                <span class="term">volume</span> is the volume of the voice.<br><br>
-                The default volume of voices is <span class="term">0.65</span>.
-                <br><br>Voices played are loaded from your mod's <span class="term">Sounds/Voices</span> folder, as ogg or wav files.</li><br>
+                <span class="boolean"></span> loop = false, <span class="number"></span> volume = 0.65) returns <span class="boolean"></span></span> - Plays the voice 
+                <span class="term">voice</span> on the channel <span class="term">name</span>.
+                <br><br>
+                <span class="term">loop</span> tells the engine if it should loop the voice or not;<br>
+                <span class="term">volume</span> is the volume of the voice.
+                <br><br>
+                Voices played are loaded from your mod's <span class="term">Sounds/Voices</span> folder, as .ogg or .wav files.<br>
+                This function returns a <span class="boolean"></span> representing whether the voice file was successfully loaded or not.</li><br>
                 
                 <li><span class="term">NewAudio.SetPitch(<span class="string"></span> name, <span class="number"></span> value)</span> - Sets the pitch (and speed) of the audio channel <span class="term">name</span>.
                 <br>1.0 is normal pitch/speed.</li><br>

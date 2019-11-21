@@ -35,28 +35,32 @@ public class MusicManager {
         src.pitch = value;
     }
 
-    public static void LoadFile(string name) {
+    public static bool LoadFile(string name) {
         if (name == null) {
             UnitaleUtil.WriteInLogAndDebugger("[WARN]Attempted to load a nil value as an Audio file.");
-            return;
+            return false;
         }
         
         src.Stop();
-        src.clip = AudioClipRegistry.GetMusic(name);
+        src.clip = AudioClipRegistry.GetMusic(name, GlobalControls.retroMode);
         filename = "music:" + name.ToLower();
         NewMusicManager.audioname["src"] = filename;
         src.loop = true;
         src.Play();
+        return (src.clip != null);
     }
 
-    public static void PlaySound(string name, float volume = 0.65f) {
+    public static bool PlaySound(string name, float volume = 0.65f) {
         if (name == null) {
             UnitaleUtil.WriteInLogAndDebugger("[WARN]Attempted to load a nil value as a sound.");
-            return;
+            return false;
         }
         
-        try { UnitaleUtil.PlaySound("MusicPlaySound", AudioClipRegistry.GetSound(name), volume); }
-        catch {  }
+        try {
+            UnitaleUtil.PlaySound("MusicPlaySound", AudioClipRegistry.GetSound(name, GlobalControls.retroMode), volume);
+            return true;
+        }
+        catch { return false; }
     }
 
     public static float playtime {
