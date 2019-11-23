@@ -1,4 +1,4 @@
-if not GetRealGlobal("ow") then error("You really should try to access these encounters the normal way... Here is a clue: you need to move the dog in the map test2 using an event. Now good luck!") end
+if not GetRealGlobal("ow") then error("You really should try to access these encounters the normal way...\n\nHere is a clue: You should try talking to the dog.\n\nNow good luck!", 0) end
 
 encountertext = "Poseur strikes a pose!" --Modify as necessary. It will only be read out in the action select screen.
 nextwaves = {"bullettest_chaserorb"}
@@ -25,15 +25,15 @@ function EncounterStarting()
 	fade.y = 240
 	fade.Scale(640, 480)
 	fade.alpha = 1
-    enemies[2]["currentdialogue"] = {"[noskip][func:LaunchFade, true][w:60][next]",
-	                                 "[noskip]But,[w:15] after some time playing around with the engine,[w:15] he found out that lots of features were missing.[w:60][next]",
-									 "[noskip]First of all,[w:15] there was no overworld:[w:20] to make an AU with his friends,[w:15] RhenaudTheLukark needed one.[w:60][next]",
-									 "[noskip]Thus, after contacting with lvkuln,[w:15] he got access to the sources a bit before the official release of the open-source version.[w:60][next]",
-									 "[noskip]Having been a complete beginner in Unity,[w:15] he first tried to fix the bugs related to the open-source version of the engine...[w:20] and succeeded.[w:60][next]",}
+    enemies[2]["currentdialogue"] = {"[noskip][func:LaunchFade, true][w:30][next]",
+	                                 "[noskip][effect:none]But,[w:10] after some time playing around with the engine,[w:10] he found out that lots of features were missing.[w:30][next]",
+									 "[noskip][effect:none]First of all,[w:10] there was no overworld.[w:15] To make an AU with his friends,[w:10] Rhenaud needed one.[w:30][next]",
+									 "[noskip][effect:none]Thus,[w:10] after contacting lvkuln,[w:10] he got access to the Unitale sources a bit before the release of its open-source version.[w:30][next]",
+									 "[noskip][effect:none]Having been a complete beginner in Unity,[w:10] he first tried to fix the bugs related to the open-source version of the engine...[w:15] and succeeded.[w:30][next]",}
     enemies[1]["currentdialogue"] = {"", "", "", "", "", 
-	                            	 "[noskip]After fixing these bugs,[w:15] he felt something new,[w:15] as if he did something extraordinary:[w:20] it was at this moment he knew he'd have to resume lvkuln's work.[w:60][next]",
-									 "[noskip]He then tried to contact the original developer,[w:15] but in vain:[w:20] it was already too late.[w:20] IRL stuff took the latter away from the project.[w:60][next]",
-									 "[noskip]Thus,[w:15] he tried to create something on his own,[w:15] even if he had never followed any tutorials on using Unity or even C#.[w:60][next]",
+	                            	 "[noskip][effect:none]After fixing these bugs,[w:10] he felt something new,[w:10] as if he had done something extraordinary.[w:15] At this moment,[w:10] he knew he would have to resume lvkuln's work.[w:30][next]",
+									 "[noskip][effect:none]He then tried to contact the original developer,[w:10] but in vain:[w:15] it was already too late.[w:15] IRL matters took lvkuln away from the project.[w:30][next]",
+									 "[noskip][effect:none]Thus,[w:10] he tried to create something on his own,[w:10] even if he had never followed any tutorials on using Unity or even C#.[w:30][next]",
 									 "[noskip][func:LaunchFade, false][w:35][func:State,DONE]"}
     require "Waves/bullettest_touhou"
 	State("ENEMYDIALOGUE")

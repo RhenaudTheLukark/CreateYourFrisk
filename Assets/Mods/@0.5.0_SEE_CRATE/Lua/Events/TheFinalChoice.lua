@@ -5,7 +5,7 @@ function EventPage1()
     local sprite = Event.GetSprite("TheFinalChoice")
 	sprite.Set("Punderbolt/PunderLeft1")
     General.Wait(30)
-	General.SetDialog({"[voice:punderbolt]Oh! There you are!"}, true, {"Punder/normal"})
+	General.SetDialog({"[voice:punderbolt]Oh![w:10] There you are!"}, true, {"Punder/normal"})
 	Event.SetPage("TheFinalChoice", -1)
 	General.SetBattle("TheFinalChoice", "fast", true)
 end

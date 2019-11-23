@@ -1,4 +1,4 @@
-if not GetRealGlobal("ow") then error("You really should try to access these encounters the normal way... Here is a clue: you need to move the dog in the map test2 using an event. Now good luck!") end
+if not GetRealGlobal("ow") then error("You really should try to access these encounters the normal way...\n\nHere is a clue: You should try talking to the dog.\n\nNow good luck!", 0) end
 
 encountertext = "Poseur strikes a pose!" --Modify as necessary. It will only be read out in the action select screen.
 nextwaves = {"bullettest_chaserorb"}
@@ -25,23 +25,22 @@ function EncounterStarting()
 	fade.y = 240
 	fade.Scale(640, 480)
 	fade.alpha = 1
-    require "Animations/lukark_anim" 
-    enemies[1]["currentdialogue"] = {"[noskip][func:LaunchFade, true][w:60][next]",
-                                	 "[noskip][func:Animate,smile]But in the end, it's not that important.[w:60][next]",
-									 "[noskip]Now, we're close to 1.0's release.[w:60][next]",
-									 "[noskip][func:Animate,normal]There's not much left to do, now.[w:60][next]",
-									 "[noskip]We're close to the end.[w:60][next]",
-									 "[noskip][func:Animate,sad]I could have abandoned this a lot of times...[w:60][next]",
-									 "[noskip]I could have stopped everything and quit as lvk\ndid...[w:60][next]",
-									 "[noskip][func:Animate,normal]But I'm still here.[w:60][next]",
-									 "[noskip][func:Animate,smile]Thanks to my friends.[w:60][next]",
-									 "[noskip]Thanks to my testers.[w:60][next]",
-									 "[noskip][func:Animate,happy]Thanks to you all.[w:60][next]",
-									 "[noskip][func:Animate,smile]Without all of you, I'd have stopped a long time ago, and I'm very proud about giving you this new version of Create Your Frisk.[w:60][next]",
-									 "[noskip][func:Animate,normal]For you, this message may not be very much...[w:60][next]",
-									 "[noskip]But for me...[w:60][next]",
-									 "[noskip][func:Animate,happy]It's everything.[w:60][next]",
-									 "[noskip][func:LaunchFade, false][w:35][func:State,DONE]"}
+    require "Animations/lukark_anim"
+    enemies[1]["currentdialogue"] = {"[noskip][func:LaunchFade, true][w:30][next]",
+                                     "[noskip][effect:none]Time has flown by.[w:15] Mentalities have changed.[w:30][next]",
+                                     "[noskip][effect:none]Back then,[w:10] when I first wrote this message,[w:10] I thought I was close to the end.[w:30][next]",
+                                     "[noskip][effect:none]But now,[w:10] after more than 3 years of work on this engine,[w:10][func:Animate,sad] I realize that it won't ever happen.[w:30][next]",
+                                     "[noskip][effect:none]Even if this engine will never be completely finished,[w:10] completely perfect...[w:30][next]",
+                                     "[noskip][effect:none][func:Animate,smile]I still hope you'll have a great time with it.[w:30][next]",
+                                     "[noskip][effect:none][func:Animate,normal]I could have stopped everything and quit as Unitale's creator did...[w:30][next]",
+                                     "[noskip][effect:none][func:Animate,happy]But I am still here.[w:30][next]",
+                                     "[noskip][effect:none]And it's all thanks to everyone around me.[w:15][func:Animate,smile] Including YOU,[w:10] who is currently running this engine.[w:30][next]",
+                                     "[noskip][effect:none][func:Animate,normal]Without all of you,[w:10] I'd have stopped a long time ago,[w:10][func:Animate,smile] and I'm very proud about giving you this new version of Create Your Frisk.[w:30][next]",
+                                     "[noskip][effect:none][func:Animate,normal]Maybe this message might be a little bit...[w:15][func:Animate,sad]odd[w:5] for you.[w:30][next]",
+                                     "[noskip][effect:none]But...[w:15]it's my way to[w:5][func:Animate,smile] express my gratitude.[w:15] For making this engine an experience that lived much longer than I hoped it would.[w:30][next]",
+                                     "[noskip][effect:none][func:Animate,normal]So,[w:10] all in all...[w:30][next]",
+                                     "[noskip][effect:none][func:Animate,happy]Thank you.[w:30][next]",
+                                     "[noskip][func:LaunchFade, false][w:35][func:State,DONE]"}
     require "Waves/bullettest_touhou"
 	State("ENEMYDIALOGUE")
 end

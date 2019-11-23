@@ -1,4 +1,4 @@
-if not GetRealGlobal("ow") then error("You really should try to access these encounters the normal way... Here is a clue: you need to move the dog in the map test2 using an event. Now good luck!") end
+if not GetRealGlobal("ow") then error("You really should try to access these encounters the normal way...\n\nHere is a clue: You should try talking to the dog.\n\nNow good luck!", 0) end
 
 encountertext = "Poseur strikes a pose!" --Modify as necessary. It will only be read out in the action select screen.
 nextwaves = {"bullettest_chaserorb"}
@@ -26,12 +26,12 @@ function EncounterStarting()
 	fade.Scale(640, 480)
 	fade.alpha = 1
     require "Animations/cereb_anim" 
-    enemies[1]["currentdialogue"] = {"[noskip][func:LaunchFade, true][w:60][next]",
-									 "[noskip]After two months of hard work,[w:15] RhenaudTheLukark released CYF 0.1.[w:60][next]",
-									 "[noskip]He did everything he could to keep the upcoming engine a secret,[w:15] but was too excited about showing it to the world.[w:60][next]",
-									 "[noskip]This new engine wasn't very well known,[w:15] as the official Unitale 0.2.1a version was still used by a good part of the community.[w:60][next]",
-									 "[noskip]The only new thing was the overworld system,[w:15] but it was unusable without giving away the sources.[w:60][next]",
-									 "[noskip]Then,[w:15] the developer decided to extend his engine to make it more useful for the community.[w:60][next]",
+    enemies[1]["currentdialogue"] = {"[noskip][func:LaunchFade, true][w:30][next]",
+									 "[noskip][effect:none]After two months of hard work,[w:10] RhenaudTheLukark released CYF 0.1.[w:30][next]",
+									 "[noskip][effect:none]He did everything he could to keep the upcoming engine a secret,[w:10] but was too excited about showing it to the world.[w:30][next]",
+									 "[noskip][effect:none]This new engine wasn't very well known,[w:10] as the official Unitale 0.2.1a version was still used by a good part of the community.[w:30][next]",
+									 "[noskip][effect:none]The only new thing was the overworld system,[w:10] but it was unusable without giving away the sources.[w:30][next]",
+									 "[noskip][effect:none]Then,[w:10] the developer decided to extend his engine to make it more useful for the community.[w:30][next]",
 									 "[noskip][func:LaunchFade, false][w:35][func:State,DONE]"}
     require "Waves/bullettest_touhou"
 	State("ENEMYDIALOGUE")

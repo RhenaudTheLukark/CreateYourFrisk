@@ -1,4 +1,4 @@
-if not GetRealGlobal("ow") then error("You really should try to access these encounters the normal way... Here is a clue: you need to move the dog in the map test2 using an event. Now good luck!") end
+if not GetRealGlobal("ow") then error("You really should try to access these encounters the normal way...\n\nHere is a clue: You should try talking to the dog.\n\nNow good luck!", 0) end
 
 encountertext = "Poseur strikes a pose!" --Modify as necessary. It will only be read out in the action select screen.
 nextwaves = {"bullettest_chaserorb"}
@@ -25,12 +25,12 @@ function EncounterStarting()
 	fade.y = 240
 	fade.Scale(640, 480)
 	require "Animations/exrumia_anim" 
-	enemies[1]["currentdialogue"] = {"[noskip][func:LaunchFade, true][w:60][next]",
-	                                 "[noskip]If you came here,[w:20] it must be for a good reason.[w:60][next]",
-									 "[noskip]We'll tell you the story of Create Your Frisk.[w:60][next]",
-									 "[noskip]In February 2016,[w:15] \nRhenaudTheLukark,[w:15] the creator of Create Your Frisk decided,[w:15] with some of their friends,[w:15] to create their own AU.[w:60][next]",
-									 "[noskip]They concluded that Unitale was the easiest way to do it.[w:60][next]",
-									 "[noskip]If we had told him what would have happened,[w:15] he'd have laughed at it.[w:60][next]",
+	enemies[1]["currentdialogue"] = {"[noskip][func:LaunchFade, true][w:30][next]",
+	                                 "[noskip]If you came here,[w:10] it must be for a good reason.[w:30][next]",
+									 "[noskip]We'll tell you the story of Create Your Frisk.[w:30][next]",
+									 "[noskip]In February 2016,[w:10] RhenaudTheLukark,[w:10] the creator of Create Your Frisk decided,[w:10] with some of their friends,[w:10] to create their own AU.[w:30][next]",
+									 "[noskip]They concluded that Unitale was the easiest way to do it.[w:30][next]",
+									 "[noskip]If we had told him what would have happened,[w:10] he'd have laughed at it.[w:30][next]",
 									 "[noskip][func:LaunchFade, false][w:35][func:State,DONE]"}
 	require "Waves/bullettest_touhou"
     State("ENEMYDIALOGUE")

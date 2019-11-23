@@ -131,19 +131,24 @@ public class UIController : MonoBehaviour {
         #endif
 
         //Stop encounter storage for good!
-        foreach (LuaEnemyController enemy in instance.encounter.enemies) {
-            ScriptWrapper.instances.Remove(enemy.script);
-            LuaScriptBinder.scriptlist.Remove(enemy.script.script);
+        if (GlobalControls.modDev) {
+            ScriptWrapper.instances.Clear();
+            LuaScriptBinder.scriptlist.Clear();
+        } else {
+            foreach (LuaEnemyController enemy in instance.encounter.enemies) {
+                ScriptWrapper.instances.Remove(enemy.script);
+                LuaScriptBinder.scriptlist.Remove(enemy.script.script);
+            }
+            Table t = LuaEnemyEncounter.script["Wave"].Table;
+            foreach (object obj in t.Keys) {
+                try {
+                    ScriptWrapper.instances.Remove(((ScriptWrapper)t[obj]));
+                    LuaScriptBinder.scriptlist.Remove(((ScriptWrapper)t[obj]).script);
+                } catch {}
+            }
+            ScriptWrapper.instances.Remove(LuaEnemyEncounter.script);
+            LuaScriptBinder.scriptlist.Remove(LuaEnemyEncounter.script.script);
         }
-        Table t = LuaEnemyEncounter.script["Wave"].Table;
-        foreach (object obj in t.Keys) {
-            try {
-                ScriptWrapper.instances.Remove(((ScriptWrapper)t[obj]));
-                LuaScriptBinder.scriptlist.Remove(((ScriptWrapper)t[obj]).script);
-            } catch {}
-        }
-        ScriptWrapper.instances.Remove(LuaEnemyEncounter.script);
-        LuaScriptBinder.scriptlist.Remove(LuaEnemyEncounter.script.script);
 
         //Properly set "isInFight" to false, as it shouldn't be true anymore
         GlobalControls.isInFight = false;
