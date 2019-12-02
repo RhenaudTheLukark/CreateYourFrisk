@@ -25,7 +25,7 @@ function EncounterStarting()
 	fade.y = 240
 	fade.Scale(640, 480)
 	fade.alpha = 1
-    require "Animations/cereb_anim" 
+    require "Animations/cereb_anim"
     enemies[1]["currentdialogue"] = {"[noskip][func:LaunchFade, true][w:30][next]",
 									 "[noskip][effect:none]After two months of hard work,[w:10] RhenaudTheLukark released CYF 0.1.[w:30][next]",
 									 "[noskip][effect:none]He did everything he could to keep the upcoming engine a secret,[w:10] but was too excited about showing it to the world.[w:30][next]",
@@ -38,10 +38,10 @@ function EncounterStarting()
 end
 
 function LaunchFade(begin)
-    if begin then  
+    if begin then
 	    beginfade = true
 	    fade.alpha = 1
-	else           
+	else
 	    endfade = true
 	    fade.alpha = 0
     end
@@ -57,7 +57,7 @@ function Update()
 		else  		     fade.alpha = fade.alpha - Time.dt
 		end
 	end
-	if (fade.alpha * 1000) % 1000 != 1000 and (fade.alpha * 1000) % 1000 != 0 then
+	if (fade.alpha * 1000) % 1000 ~= 1000 and (fade.alpha * 1000) % 1000 ~= 0 then
 		if alphaup then  fade.alpha = fade.alpha + Time.dt
 		else  		     fade.alpha = fade.alpha - Time.dt
 		end

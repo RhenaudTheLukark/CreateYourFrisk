@@ -50,10 +50,10 @@ function EncounterStarting()
                                      "[noskip][func:Animate, happy]That's true,[w:10] and now you're an official member of the team![w:30][next]",
                                      "[noskip][func:Animate, lookbottomrightsmile]Anyway,[w:10] thank you.[w:15] Go join the others,[w:10] I'll be back in a minute.[w:30][next]",
 									 "[func:GetFurther]",
-                                     "[noskip][func:Animate, smile]What was I saying again?[w:15] Ah,[w:10] yes.[w:30][next]",	
+                                     "[noskip][func:Animate, smile]What was I saying again?[w:15] Ah,[w:10] yes.[w:30][next]",
 									 "[noskip][func:Animate, normal][func:Unpause]It's your choice,[w:10] now.[w:30][next]",
 									 "[func:State, DEFENDING][next]"}
-    enemies[3]["currentdialogue"] = {"", "", "", "", "", "", "", "", 
+    enemies[3]["currentdialogue"] = {"", "", "", "", "", "", "", "",
 	                                 "[noskip][func:Animate, A2]Who?[w:15] Me?[w:30][func:SetBubble, top][next]",
                                      "", "[noskip] [next]",
 									 "[noskip][func:Animate, A3]Yeah![w:15][func:GetCloser2] Here I come![w:40][func:SetBubble, rightwide][next]",
@@ -74,10 +74,10 @@ function LaunchFade(begin, whitee)
     if whitee == nil then whitee = false end
     white = whitee
     if whitee then fade.Set("white") end
-    if begin then  
+    if begin then
 	    beginfade = true
 	    fade.alpha = 1
-	else           
+	else
 	    endfade = true
 	    fade.alpha = 0
     end
@@ -85,13 +85,13 @@ end
 
 function Update()
     if getcloser1 then
-	    if enemies[3]["monstersprite"].absx != 579 then  enemies[3]["monstersprite"].absx = enemies[3]["monstersprite"].absx - 1
-		else                      		                 getcloser1 = false
+	    if enemies[3]["monstersprite"].absx ~= 579 then enemies[3]["monstersprite"].absx = enemies[3]["monstersprite"].absx - 1
+		else                      		                getcloser1 = false
 		end
 	end
     if getcloser2 then
-	    if enemies[3]["monstersprite"].absx != 363 then  enemies[3]["monstersprite"].absx = enemies[3]["monstersprite"].absx - 2
-		else		                                     getcloser2 = false
+	    if enemies[3]["monstersprite"].absx ~= 363 then enemies[3]["monstersprite"].absx = enemies[3]["monstersprite"].absx - 2
+		else		                                    getcloser2 = false
 		end
 	end
     if getfurther then
@@ -107,7 +107,7 @@ function Update()
 		else  		     fade.alpha = fade.alpha - Time.dt
 		end
 	end
-	if (fade.alpha * 1000) % 1000 != 1000 and (fade.alpha * 1000) % 1000 != 0 then
+	if (fade.alpha * 1000) % 1000 ~= 1000 and (fade.alpha * 1000) % 1000 ~= 0 then
 		if alphaup then  fade.alpha = fade.alpha + Time.dt
 		else  		     fade.alpha = fade.alpha - Time.dt
 		end

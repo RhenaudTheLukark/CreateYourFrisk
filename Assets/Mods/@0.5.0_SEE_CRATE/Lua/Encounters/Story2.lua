@@ -30,7 +30,7 @@ function EncounterStarting()
 									 "[noskip][effect:none]First of all,[w:10] there was no overworld.[w:15] To make an AU with his friends,[w:10] Rhenaud needed one.[w:30][next]",
 									 "[noskip][effect:none]Thus,[w:10] after contacting lvkuln,[w:10] he got access to the Unitale sources a bit before the release of its open-source version.[w:30][next]",
 									 "[noskip][effect:none]Having been a complete beginner in Unity,[w:10] he first tried to fix the bugs related to the open-source version of the engine...[w:15] and succeeded.[w:30][next]",}
-    enemies[1]["currentdialogue"] = {"", "", "", "", "", 
+    enemies[1]["currentdialogue"] = {"", "", "", "", "",
 	                            	 "[noskip][effect:none]After fixing these bugs,[w:10] he felt something new,[w:10] as if he had done something extraordinary.[w:15] At this moment,[w:10] he knew he would have to resume lvkuln's work.[w:30][next]",
 									 "[noskip][effect:none]He then tried to contact the original developer,[w:10] but in vain:[w:15] it was already too late.[w:15] IRL matters took lvkuln away from the project.[w:30][next]",
 									 "[noskip][effect:none]Thus,[w:10] he tried to create something on his own,[w:10] even if he had never followed any tutorials on using Unity or even C#.[w:30][next]",
@@ -40,10 +40,10 @@ function EncounterStarting()
 end
 
 function LaunchFade(begin)
-    if begin then  
+    if begin then
 	    beginfade = true
 	    fade.alpha = 1
-	else           
+	else
 	    endfade = true
 	    fade.alpha = 0
     end
@@ -58,7 +58,7 @@ function Update()
 		else  		     fade.alpha = fade.alpha - Time.dt
 		end
 	end
-	if (fade.alpha * 1000) % 1000 != 1000 and (fade.alpha * 1000) % 1000 != 0 then
+	if (fade.alpha * 1000) % 1000 ~= 1000 and (fade.alpha * 1000) % 1000 ~= 0 then
 		if alphaup then  fade.alpha = fade.alpha + Time.dt
 		else  		     fade.alpha = fade.alpha - Time.dt
 		end

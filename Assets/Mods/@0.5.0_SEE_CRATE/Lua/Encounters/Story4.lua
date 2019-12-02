@@ -39,10 +39,10 @@ function EncounterStarting()
 end
 
 function LaunchFade(begin)
-    if begin then  
+    if begin then
 	    beginfade = true
 	    fade.alpha = 1
-	else           
+	else
 	    endfade = true
 	    fade.alpha = 0
     end
@@ -58,7 +58,7 @@ function Update()
 		else  		     fade.alpha = fade.alpha - Time.dt
 		end
 	end
-	if (fade.alpha * 1000) % 1000 != 1000 and (fade.alpha * 1000) % 1000 != 0 then
+	if (fade.alpha * 1000) % 1000 ~= 1000 and (fade.alpha * 1000) % 1000 ~= 0 then
 		if alphaup then  fade.alpha = fade.alpha + Time.dt
 		else  		     fade.alpha = fade.alpha - Time.dt
 		end
