@@ -1,15 +1,7 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine.UI;
 using MoonSharp.Interpreter;
 
-public class LuaScreenOW {
-    public ScriptWrapper appliedScript;
-
-    [MoonSharpHidden] public LuaScreenOW() { }
-
-    public delegate void LoadedAction(string coroName, object args, string evName);
-    [MoonSharpHidden] public static event LoadedAction StCoroutine;
-    
+public class LuaScreenOW : LuaObjectOW {
     //I know, there's WAY too much parameters in here, but I don't have the choice right now.
     //If I find a way to get the Table's text from DynValues, I'll gladly reduce the number of
     //parameters of this, but right now, even if it is very painful to enter directly 6 or 10 parameters,

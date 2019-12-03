@@ -1,15 +1,10 @@
-﻿using System.Collections;
+﻿using MoonSharp.Interpreter;
+using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using UnityEngine.SceneManagement;
-using MoonSharp.Interpreter;
 
-public class LuaGeneralOW {
+public class LuaGeneralOW : LuaObjectOW {
     private TextManager textmgr;
-    public ScriptWrapper appliedScript;
-
-    public delegate void LoadedAction(string coroName, object args, string evName);
-    [MoonSharpHidden] public static event LoadedAction StCoroutine;
 
     [MoonSharpHidden] public LuaGeneralOW(TextManager textmgr) { this.textmgr = textmgr; }
 

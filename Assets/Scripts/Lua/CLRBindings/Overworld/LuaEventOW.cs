@@ -1,15 +1,8 @@
-﻿using System.Linq;
-using MoonSharp.Interpreter;
-using UnityEngine;
+﻿using MoonSharp.Interpreter;
+using System.Linq;
 using UnityEngine.UI;
 
-public class LuaEventOW {
-    //private TextManager textmgr;
-    public ScriptWrapper appliedScript;
-    
-    public delegate void LoadedAction(string coroName, object args, string evName);
-    [MoonSharpHidden] public static event LoadedAction StCoroutine;
-
+public class LuaEventOW : LuaObjectOW {
     /// <summary>
     /// Checks if an event exists.
     /// </summary>

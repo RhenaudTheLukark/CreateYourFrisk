@@ -14,7 +14,7 @@ public class EventManager : MonoBehaviour {
     public  List<string> Page0Done = new List<string>();
     public  ScriptWrapper script;           //The script we have to load
     public  Dictionary<GameObject, ScriptWrapper> eventScripts = new Dictionary<GameObject, ScriptWrapper>();
-    public  Dictionary<string, UnityEngine.Coroutine> cSharpCoroutines = new Dictionary<string, UnityEngine.Coroutine>();
+    public  Dictionary<string, Tuple<UnityEngine.Coroutine, ScriptWrapper>> cSharpCoroutines = new Dictionary<string, Tuple<UnityEngine.Coroutine, ScriptWrapper>>();
     public  Dictionary<ScriptWrapper, int> coroutines = new Dictionary<ScriptWrapper, int>();
     public  List<GameObject> events = new List<GameObject>(); //This map's events
     public  Dictionary<string, LuaSpriteController> sprCtrls = new Dictionary<string, LuaSpriteController>();
@@ -1036,22 +1036,24 @@ end";
         script = null;
     }
 
-    public void StCoroutine(string coroName, object args, string evName) {
+    public void StCoroutine(string coroName, object args, string evName, LuaObjectOW luaobjow) {
         string key = evName + "." + coroName;
         ForceEndCoroutine(key);
         UnityEngine.Coroutine newCoro;
         if (args == null)                 newCoro = StartCoroutine(coroName);
         else if (!args.GetType().IsArray) newCoro = StartCoroutine(coroName, args);
         else                              newCoro = StartCoroutine(coroName, (object[])args);
-        cSharpCoroutines.Add(key, newCoro);
+        cSharpCoroutines.Add(key, new Tuple<UnityEngine.Coroutine, ScriptWrapper>(newCoro, luaobjow.appliedScript));
     }
 
     public void ForceEndCoroutine(string key) {
         if (cSharpCoroutines.ContainsKey(key)) {
-            UnityEngine.Coroutine existingCoro;
+            Tuple<UnityEngine.Coroutine, ScriptWrapper> existingCoro;
             cSharpCoroutines.TryGetValue(key, out existingCoro);
-            if (existingCoro != null)
-                StopCoroutine(existingCoro);
+            if (existingCoro.Item1 != null) {
+                StopCoroutine(existingCoro.Item1);
+                existingCoro.Item2.Call("CYFEventNextCommand");
+            }
             cSharpCoroutines.Remove(key);
         }
     }

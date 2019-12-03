@@ -1,17 +1,9 @@
-﻿using System.Collections;
+﻿using MoonSharp.Interpreter;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
-using MoonSharp.Interpreter;
 
-public class LuaInventoryOW {
-    public ScriptWrapper appliedScript;
-
-    [MoonSharpHidden] public LuaInventoryOW() { }
-    
-    public delegate void LoadedAction(string coroName, object args, string evName);
-    [MoonSharpHidden] public static event LoadedAction StCoroutine;
-
+public class LuaInventoryOW : LuaObjectOW {
     [MoonSharpHidden] public void SetEquip(string itemName) {
         if (!Inventory.ItemExists(itemName)) 
             throw new CYFException("The item \"" + itemName + "\" doesn't exist in the item list.");
