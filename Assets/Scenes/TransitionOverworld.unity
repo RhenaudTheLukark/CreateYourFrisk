@@ -268,7 +268,7 @@ MonoBehaviour:
   offset: {x: 0, y: 0}
   blockSkip: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &37236981
 GameObject:
   m_ObjectHideFlags: 0
@@ -424,7 +424,7 @@ MonoBehaviour:
   offset: {x: 0, y: 0}
   blockSkip: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1001 &43590226
 Prefab:
   m_ObjectHideFlags: 0
@@ -711,7 +711,7 @@ MonoBehaviour:
   offset: {x: 0, y: 0}
   blockSkip: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &147928540
 GameObject:
   m_ObjectHideFlags: 0
@@ -973,7 +973,7 @@ MonoBehaviour:
   offset: {x: 0, y: 0}
   blockSkip: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &247211483
 GameObject:
   m_ObjectHideFlags: 0
@@ -1202,7 +1202,7 @@ MonoBehaviour:
   offset: {x: 0, y: 0}
   blockSkip: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &260230355
 GameObject:
   m_ObjectHideFlags: 0
@@ -1358,7 +1358,7 @@ MonoBehaviour:
   offset: {x: 0, y: 0}
   blockSkip: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &268140599
 GameObject:
   m_ObjectHideFlags: 0
@@ -1514,7 +1514,7 @@ MonoBehaviour:
   offset: {x: 0, y: 0}
   blockSkip: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &373771159
 GameObject:
   m_ObjectHideFlags: 0
@@ -1670,7 +1670,7 @@ MonoBehaviour:
   offset: {x: 0, y: 0}
   blockSkip: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &424356986
 GameObject:
   m_ObjectHideFlags: 0
@@ -1900,7 +1900,7 @@ MonoBehaviour:
   offset: {x: 0, y: 0}
   blockSkip: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &495211062
 GameObject:
   m_ObjectHideFlags: 0
@@ -2150,7 +2150,7 @@ MonoBehaviour:
   offset: {x: 0, y: 0}
   blockSkip: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &566465743
 GameObject:
   m_ObjectHideFlags: 0
@@ -2306,7 +2306,7 @@ MonoBehaviour:
   offset: {x: 0, y: 0}
   blockSkip: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &573195106
 GameObject:
   m_ObjectHideFlags: 0
@@ -2462,7 +2462,7 @@ MonoBehaviour:
   offset: {x: 0, y: 0}
   blockSkip: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1001 &586924196
 Prefab:
   m_ObjectHideFlags: 0
@@ -2563,6 +2563,22 @@ Prefab:
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a606ee4e085f7114e8a4bb167d4e644b, type: 2}
   m_IsPrefabAsset: 0
+--- !u!1 &586924197 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 132834, guid: a606ee4e085f7114e8a4bb167d4e644b,
+    type: 2}
+  m_PrefabInternal: {fileID: 586924196}
+--- !u!114 &586924198
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 586924197}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8878ece470744f94a83f648c5292290d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &619600879
 Prefab:
   m_ObjectHideFlags: 0
@@ -3140,7 +3156,7 @@ MonoBehaviour:
   offset: {x: 0, y: 0}
   blockSkip: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &634136909
 GameObject:
   m_ObjectHideFlags: 0
@@ -3479,7 +3495,7 @@ MonoBehaviour:
   offset: {x: 0, y: 0}
   blockSkip: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &738094585
 GameObject:
   m_ObjectHideFlags: 0
@@ -3635,7 +3651,7 @@ MonoBehaviour:
   offset: {x: 0, y: 0}
   blockSkip: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &743800823
 GameObject:
   m_ObjectHideFlags: 0
@@ -3865,7 +3881,7 @@ MonoBehaviour:
   offset: {x: 0, y: 0}
   blockSkip: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &770504841
 GameObject:
   m_ObjectHideFlags: 0
@@ -4094,7 +4110,7 @@ MonoBehaviour:
   offset: {x: 0, y: 0}
   blockSkip: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &820532155
 GameObject:
   m_ObjectHideFlags: 0
@@ -4250,7 +4266,7 @@ MonoBehaviour:
   offset: {x: 0, y: 0}
   blockSkip: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &835577667
 GameObject:
   m_ObjectHideFlags: 0
@@ -4485,7 +4501,7 @@ MonoBehaviour:
   offset: {x: 0, y: 0}
   blockSkip: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &891869946
 GameObject:
   m_ObjectHideFlags: 0
@@ -4641,7 +4657,7 @@ MonoBehaviour:
   offset: {x: 0, y: 0}
   blockSkip: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &920785481
 GameObject:
   m_ObjectHideFlags: 0
@@ -4797,7 +4813,7 @@ MonoBehaviour:
   offset: {x: 0, y: 0}
   blockSkip: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &952942991
 GameObject:
   m_ObjectHideFlags: 0
@@ -5027,7 +5043,7 @@ MonoBehaviour:
   offset: {x: 0, y: 0}
   blockSkip: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &1024388664
 GameObject:
   m_ObjectHideFlags: 0
@@ -5180,7 +5196,7 @@ MonoBehaviour:
   offset: {x: 0, y: 0}
   blockSkip: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &1101770078
 GameObject:
   m_ObjectHideFlags: 0
@@ -5336,7 +5352,7 @@ MonoBehaviour:
   offset: {x: 0, y: 0}
   blockSkip: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &1117834468
 GameObject:
   m_ObjectHideFlags: 0
@@ -5634,7 +5650,7 @@ MonoBehaviour:
   offset: {x: 0, y: 0}
   blockSkip: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &1168944911
 GameObject:
   m_ObjectHideFlags: 0
@@ -5948,7 +5964,7 @@ MonoBehaviour:
   offset: {x: 0, y: 0}
   blockSkip: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &1369875159
 GameObject:
   m_ObjectHideFlags: 0
@@ -6414,7 +6430,7 @@ MonoBehaviour:
   offset: {x: 0, y: 0}
   blockSkip: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!224 &1779322336
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6597,7 +6613,7 @@ MonoBehaviour:
   offset: {x: 0, y: 0}
   blockSkip: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &1805120651
 GameObject:
   m_ObjectHideFlags: 0
@@ -6909,7 +6925,7 @@ MonoBehaviour:
   offset: {x: 0, y: 0}
   blockSkip: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &1901620771
 GameObject:
   m_ObjectHideFlags: 0
@@ -7127,7 +7143,7 @@ MonoBehaviour:
   offset: {x: 0, y: 0}
   blockSkip: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &1942351437
 GameObject:
   m_ObjectHideFlags: 0
@@ -7329,7 +7345,7 @@ MonoBehaviour:
   offset: {x: 0, y: 0}
   blockSkip: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &1977618864
 GameObject:
   m_ObjectHideFlags: 0
@@ -7485,7 +7501,7 @@ MonoBehaviour:
   offset: {x: 0, y: 0}
   blockSkip: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &2006300309
 GameObject:
   m_ObjectHideFlags: 0
@@ -7641,7 +7657,7 @@ MonoBehaviour:
   offset: {x: 0, y: 0}
   blockSkip: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &2020485660
 GameObject:
   m_ObjectHideFlags: 0
@@ -8074,7 +8090,7 @@ MonoBehaviour:
   offset: {x: 0, y: 0}
   blockSkip: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &2064810220
 GameObject:
   m_ObjectHideFlags: 0
@@ -8230,7 +8246,7 @@ MonoBehaviour:
   offset: {x: 0, y: 0}
   blockSkip: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &2078350986
 GameObject:
   m_ObjectHideFlags: 0
@@ -8460,7 +8476,7 @@ MonoBehaviour:
   offset: {x: 0, y: 0}
   blockSkip: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &2105879891
 GameObject:
   m_ObjectHideFlags: 0
@@ -8616,4 +8632,4 @@ MonoBehaviour:
   offset: {x: 0, y: 0}
   blockSkip: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0

@@ -1,5 +1,6 @@
 ﻿using MoonSharp.Interpreter;
 using UnityEngine.SceneManagement;
+using UnityEngine;
 
 public class LuaMapOW : LuaObjectOW {
     [CYFEventFunction] public string GetMusic() { try { return Object.FindObjectOfType<MapInfos>().music; } finally { appliedScript.Call("CYFEventNextCommand"); } }

@@ -31,5 +31,5 @@ public class LuaInventoryOW : LuaObjectOW {
 
     [CYFEventFunction] public int GetItemCount() { try { return Inventory.inventory.Count; } finally { appliedScript.Call("CYFEventNextCommand"); } }
 
-    [CYFEventFunction] public void SpawnBoxMenu() { StCoroutine("ISpawnBoxMenu", null, appliedScript.GetVar("_internalScriptName").String); }
+    [CYFEventFunction] public void SpawnBoxMenu() { OnStCoroutine("ISpawnBoxMenu", null, appliedScript.GetVar("_internalScriptName").String, this); }
 }

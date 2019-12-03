@@ -1,4 +1,5 @@
 ﻿using MoonSharp.Interpreter;
+using UnityEngine;
 
 public class LuaPlayerOW : LuaObjectOW {
     [CYFEventFunction] public int GetLevel() { try { return PlayerCharacter.instance.LV; } finally { appliedScript.Call("CYFEventNextCommand"); } }

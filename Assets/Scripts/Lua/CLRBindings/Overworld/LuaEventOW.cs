@@ -1,6 +1,7 @@
 ﻿using MoonSharp.Interpreter;
 using System.Linq;
 using UnityEngine.UI;
+using UnityEngine;
 
 public class LuaEventOW : LuaObjectOW {
     /// <summary>
@@ -47,7 +48,7 @@ public class LuaEventOW : LuaObjectOW {
     /// <param name="name"></param>
     /// <param name="dirX"></param>
     /// <param name="dirY"></param>
-    [CYFEventFunction] public void MoveToPoint(string name, float dirX, float dirY, bool wallPass = false, bool waitEnd = true) { StCoroutine("IMoveEventToPoint", new object[] { name, dirX, dirY, wallPass, waitEnd }, name); }
+    [CYFEventFunction] public void MoveToPoint(string name, float dirX, float dirY, bool wallPass = false, bool waitEnd = true) { OnStCoroutine("IMoveEventToPoint", new object[] { name, dirX, dirY, wallPass, waitEnd }, name, this); }
 
     /// <summary>
     /// Checks if an event is currently moving via Event.MoveToPoint.
@@ -131,7 +132,7 @@ public class LuaEventOW : LuaObjectOW {
     /// <param name="axisAnim"></param>
     [CYFEventFunction] public void Rotate(string name, float rotateX, float rotateY, float rotateZ, bool anim = true, bool waitEnd = true) {
         if (anim)
-            StCoroutine("IRotateEvent", new object[] { name, rotateX, rotateY, rotateZ, waitEnd }, name);
+            OnStCoroutine("IRotateEvent", new object[] { name, rotateX, rotateY, rotateZ, waitEnd }, name, this);
         else {
             for (int i = 0; i < EventManager.instance.events.Count || name == "Player"; i++) {
                 GameObject go = null;
@@ -259,8 +260,8 @@ public class LuaEventOW : LuaObjectOW {
         if (EventManager.instance.autoDone.ContainsKey(go))
             EventManager.instance.autoDone.Remove(go);
         go.GetComponent<EventOW>().actualPage = page;
-        if (EventManager.instance.ScriptLaunched || EventManager.instance.coroutines.ContainsKey(EventManager.instance.luaevow.appliedScript))
-            EventManager.instance.luaevow.appliedScript.Call("CYFEventNextCommand");
+        if (EventManager.instance.ScriptLaunched || EventManager.instance.coroutines.ContainsKey(LuaObjectOW.appliedScript))
+            LuaObjectOW.appliedScript.Call("CYFEventNextCommand");
     }
 
     [CYFEventFunction] public DynValue GetSprite(string name) {
