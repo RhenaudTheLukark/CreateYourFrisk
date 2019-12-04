@@ -235,9 +235,8 @@ public class LuaTextManager : TextManager {
             hasAlphaBeenSet = value.Length == 4;
 
             foreach (Image i in letterReferences)
-                if (i != null)
-                    if (i.color == defaultColor) i.color = _color;
-                    else                         break; // Only because we can't go back to the default color
+                if (i != null && i.color == defaultColor) i.color = _color;
+                else                                      break; // Only because we can't go back to the default color
 
             if (currentColor == defaultColor)
                 currentColor = _color;

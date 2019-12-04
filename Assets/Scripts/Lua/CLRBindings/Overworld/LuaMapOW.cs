@@ -1,8 +1,15 @@
-﻿using MoonSharp.Interpreter;
+﻿using UnityEngine;
+using MoonSharp.Interpreter;
 using UnityEngine.SceneManagement;
-using UnityEngine;
 
-public class LuaMapOW : LuaObjectOW {
+public class LuaMapOW {
+    public ScriptWrapper appliedScript;
+
+    [MoonSharpHidden] public LuaMapOW() { }
+
+    public delegate void LoadedAction(string coroName, object args, string evName);
+    [MoonSharpHidden] public static event LoadedAction StCoroutine;
+
     [CYFEventFunction] public string GetMusic() { try { return Object.FindObjectOfType<MapInfos>().music; } finally { appliedScript.Call("CYFEventNextCommand"); } }
     [CYFEventFunction] public void SetMusic(string value) { Object.FindObjectOfType<MapInfos>().music = value; appliedScript.Call("CYFEventNextCommand"); }
 

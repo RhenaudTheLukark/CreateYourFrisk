@@ -169,7 +169,7 @@ public class GlobalControls : MonoBehaviour {
         #endif
 
         stopScreenShake = false;
-        if (isInFight || UnitaleUtil.IsOverworld)
+        if (isInFight)
             frame ++;
         if (SceneManager.GetActiveScene().name == "ModSelect")        lastSceneUnitale = true;
         else                                                          lastSceneUnitale = false;

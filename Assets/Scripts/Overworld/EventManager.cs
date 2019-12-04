@@ -9,21 +9,12 @@ using MoonSharp.Interpreter;
 using System.Reflection;
 
 public class EventManager : MonoBehaviour {
-    public struct CorAndScript {
-        public Task cor;
-        public ScriptWrapper script;
-        public CorAndScript(Task cor, ScriptWrapper script) {
-            this.cor = cor;
-            this.script = script;
-        }
-    }
-
     public  static EventManager instance;
     private int EventLayer;                 //The id of the Event Layer
     public  List<string> Page0Done = new List<string>();
     public  ScriptWrapper script;           //The script we have to load
     public  Dictionary<GameObject, ScriptWrapper> eventScripts = new Dictionary<GameObject, ScriptWrapper>();
-    public  Dictionary<string, CorAndScript> cSharpCoroutines = new Dictionary<string, CorAndScript>();
+    public  Dictionary<string, UnityEngine.Coroutine> cSharpCoroutines = new Dictionary<string, UnityEngine.Coroutine>();
     public  Dictionary<ScriptWrapper, int> coroutines = new Dictionary<ScriptWrapper, int>();
     public  List<GameObject> events = new List<GameObject>(); //This map's events
     public  Dictionary<string, LuaSpriteController> sprCtrls = new Dictionary<string, LuaSpriteController>();
@@ -77,11 +68,21 @@ public class EventManager : MonoBehaviour {
     }
 
     void OnEnable() {
-        LuaObjectOW.StCoroutine += StCoroutine;
+        LuaEventOW.StCoroutine += StCoroutine;
+        LuaPlayerOW.StCoroutine += StCoroutine;
+        LuaGeneralOW.StCoroutine += StCoroutine;
+        LuaInventoryOW.StCoroutine += StCoroutine;
+        LuaScreenOW.StCoroutine += StCoroutine;
+        LuaMapOW.StCoroutine += StCoroutine;
         StaticInits.Loaded += AfterLoad;
     }
     void OnDisable() {
-        LuaObjectOW.StCoroutine -= StCoroutine;
+        LuaEventOW.StCoroutine -= StCoroutine;
+        LuaPlayerOW.StCoroutine -= StCoroutine;
+        LuaGeneralOW.StCoroutine -= StCoroutine;
+        LuaInventoryOW.StCoroutine -= StCoroutine;
+        LuaScreenOW.StCoroutine -= StCoroutine;
+        LuaMapOW.StCoroutine -= StCoroutine;
         StaticInits.Loaded -= AfterLoad;
     }
 
@@ -143,7 +144,12 @@ public class EventManager : MonoBehaviour {
     }
 
     void SetCurrentScript(ScriptWrapper scr) {
-        LuaObjectOW.appliedScript = scr;
+        luaevow.appliedScript = scr;
+        luagenow.appliedScript = scr;
+        luainvow.appliedScript = scr;
+        luaplow.appliedScript = scr;
+        luascrow.appliedScript = scr;
+        luamapow.appliedScript = scr;
     }
 
     // Update is called once per frame
@@ -1030,41 +1036,22 @@ end";
         script = null;
     }
 
-    public void StCoroutine(string coroName, object args, string evName, LuaObjectOW luaobjow) {
+    public void StCoroutine(string coroName, object args, string evName) {
         string key = evName + "." + coroName;
         ForceEndCoroutine(key);
-
-
-        // Reflection: Get method, count how many args are needed, fill in missing args with Type.Missing, then finally use the array
-        // TODO: URGENT!!!!!!!! Check if function is badly called (missing arguments, too many arguments...) and handle these error cases
-        Task task;
-        IEnumerator newCoro;
-        MethodInfo method = typeof(EventManager).GetMethod(coroName);
-        int paramNumber = method.GetParameters().ToArray().Length;
-        int argNumber = args == null ? 0 : !args.GetType().IsArray ? 1 : ((object[]) args).Length;
-        if (paramNumber > argNumber) {
-            List<object> argList = argNumber < 2 ? new List<object> { args } : new List<object>((object[]) args);
-            for (; argNumber < paramNumber; argNumber++) {
-                argList.Add(Type.Missing);
-            }
-            args = argList.ToArray();
-        }
-
-        if (args == null) newCoro = (IEnumerator) method.Invoke(this, null);
-        else              newCoro = (IEnumerator) method.Invoke(this, (object[]) args);
-
-        task = new Task(newCoro);
-        cSharpCoroutines.Add(key, new CorAndScript(task, LuaObjectOW.appliedScript));
+        UnityEngine.Coroutine newCoro;
+        if (args == null)                 newCoro = StartCoroutine(coroName);
+        else if (!args.GetType().IsArray) newCoro = StartCoroutine(coroName, args);
+        else                              newCoro = StartCoroutine(coroName, (object[])args);
+        cSharpCoroutines.Add(key, newCoro);
     }
 
     public void ForceEndCoroutine(string key) {
         if (cSharpCoroutines.ContainsKey(key)) {
-            CorAndScript corAndScript;
-            cSharpCoroutines.TryGetValue(key, out corAndScript);
-            if (corAndScript.cor.Running) {
-                corAndScript.cor.Stop();
-                corAndScript.script.Call("CYFEventNextCommand");
-            }
+            UnityEngine.Coroutine existingCoro;
+            cSharpCoroutines.TryGetValue(key, out existingCoro);
+            if (existingCoro != null)
+                StopCoroutine(existingCoro);
             cSharpCoroutines.Remove(key);
         }
     }
@@ -1116,8 +1103,13 @@ end";
     //                             bad person and you'll go to hell. Don't ask why tho.
     //-----------------------------------------------------------------------------------------------------------
 
-    public IEnumerator ISetChoice(bool question, bool[] oneLiners) {
-        ScriptWrapper scr = LuaObjectOW.appliedScript;
+    IEnumerator ISetChoice(object[] args) {
+        ScriptWrapper scr = luagenow.appliedScript;
+
+        bool question;
+        bool[] oneLiners;
+        try { question = (bool)args[0]; }   catch { throw new CYFException("The argument \"question\" must be a boolean."); }
+        try { oneLiners = (bool[])args[1]; } catch { throw new CYFException("The argument \"oneLiners\" must be a boolean table."); }
 
         if (coroutines.ContainsKey(scr) && script != scr) {
             UnitaleUtil.DisplayLuaError(scr.scriptname, "General.SetChoice: This function cannot be used in a coroutine with \"waitEnd\" set to true.");
@@ -1161,8 +1153,17 @@ end";
         yield return 0;
     }
 
-    public IEnumerator IMoveEventToPoint(string name, float dirX, float dirY, bool wallPass, bool waitEnd) { //NEED PARENTAL REMOVE
-        ScriptWrapper scr = LuaObjectOW.appliedScript;
+    IEnumerator IMoveEventToPoint(object[] args) { //NEED PARENTAL REMOVE
+        ScriptWrapper scr = luaevow.appliedScript;
+
+        string name;
+        float dirX, dirY;
+        bool wallPass, waitEnd;
+        try { name = (string)args[0];   } catch { throw new CYFException("The argument \"name\" must be a string."); }
+        try { dirX = (float)args[1];    } catch { throw new CYFException("The argument \"dirX\" must be a number."); }
+        try { dirY = (float)args[2];    } catch { throw new CYFException("The argument \"dirY\" must be a number."); }
+        try { wallPass = (bool)args[3]; } catch { throw new CYFException("The argument \"wallPass\" must be a boolean."); }
+        try { waitEnd = (bool)args[4];  } catch { throw new CYFException("The argument \"waitEnd\" must be a boolean."); }
 
         if (waitEnd)
             if (coroutines.ContainsKey(scr) && script != scr) {
@@ -1263,8 +1264,8 @@ end";
         scr.Call("CYFEventNextCommand");
     }
 
-    public IEnumerator IWaitForInput() {
-        ScriptWrapper scr = LuaObjectOW.appliedScript;
+    IEnumerator IWaitForInput() {
+        ScriptWrapper scr = luagenow.appliedScript;
         if (coroutines.ContainsKey(scr) && script != scr) {
             UnitaleUtil.DisplayLuaError(scr.scriptname, "General.WaitForInput: This function cannot be used in a coroutine.");
             yield break;
@@ -1279,8 +1280,16 @@ end";
         scr.Call("CYFEventNextCommand");
     }
 
-    public IEnumerator ISetTone(bool waitEnd, int r, int g, int b, int a) {
-        ScriptWrapper scr = LuaObjectOW.appliedScript;
+    IEnumerator ISetTone(object[] args) {
+        ScriptWrapper scr = luascrow.appliedScript;
+        //REAL ARGS
+        bool waitEnd;
+        int r, g, b, a;
+        try { waitEnd = (bool)args[0]; } catch { throw new CYFException("The argument \"waitEnd\" must be a boolean."); }
+        try { r = (int)args[1];        } catch { throw new CYFException("The argument \"r\" must be a number."); }
+        try { g = (int)args[2];        } catch { throw new CYFException("The argument \"g\" must be a number."); }
+        try { b = (int)args[3];        } catch { throw new CYFException("The argument \"b\" must be a number."); }
+        try { a = (int)args[4];        } catch { throw new CYFException("The argument \"a\" must be a number."); }
 
         if (waitEnd)
             if (coroutines.ContainsKey(scr) && script != scr) {
@@ -1326,8 +1335,17 @@ end";
         yield return 0;
     }
 
-    public IEnumerator IRotateEvent(string name, float rotateX, float rotateY, float rotateZ, bool waitEnd) {
-        ScriptWrapper scr = LuaObjectOW.appliedScript;
+    IEnumerator IRotateEvent(object[] args) {
+        ScriptWrapper scr = luaevow.appliedScript;
+        //REAL ARGS
+        string name;
+        float rotateX, rotateY, rotateZ;
+        bool waitEnd;
+        try { name = (string)args[0];   } catch { throw new CYFException("The argument \"name\" must be a string."); }
+        try { rotateX = (float)args[1]; } catch { throw new CYFException("The argument \"rotateX\" must be a number."); }
+        try { rotateY = (float)args[2]; } catch { throw new CYFException("The argument \"rotateY\" must be a number."); }
+        try { rotateZ = (float)args[3]; } catch { throw new CYFException("The argument \"rotateZ\" must be a number."); }
+        try { waitEnd = (bool)args[4]; } catch { throw new CYFException("The argument \"waitEnd\" must be a boolean."); }
 
         if (waitEnd)
             if (coroutines.ContainsKey(scr) && script != scr) {
@@ -1388,8 +1406,12 @@ end";
         yield return 0;
     }
 
-    public IEnumerator IFadeBGM(int fadeFrames, bool waitEnd) {
-        ScriptWrapper scr = LuaObjectOW.appliedScript;
+    IEnumerator IFadeBGM(object[] args) {
+        ScriptWrapper scr = luascrow.appliedScript;
+        int fadeFrames;
+        bool waitEnd;
+        try { fadeFrames = (int)args[0]; } catch { throw new CYFException("The argument \"fadeFrames\" must be an integer."); }
+        try { waitEnd = (bool)args[1]; } catch { throw new CYFException("The argument \"waitEnd\" must be a boolean."); }
 
         if (waitEnd) 
             if (coroutines.ContainsKey(scr) && script != scr) {
@@ -1414,8 +1436,17 @@ end";
         yield return 0;
     }
 
-    public IEnumerator IFlash(int frames, int colorR, int colorG, int colorB, int colorA, bool waitEnd) {
-        ScriptWrapper scr = LuaObjectOW.appliedScript;
+    IEnumerator IFlash(object[] args) {
+        ScriptWrapper scr = luascrow.appliedScript;
+        //REAL ARGS
+        int frames, colorR, colorG, colorB, colorA;
+        bool waitEnd;
+        try { frames = (int)args[0]; } catch { throw new CYFException("The argument \"frames\" must be a number."); }
+        try { colorR = (int)args[1]; } catch { throw new CYFException("The argument \"colorR\" must be a number."); }
+        try { colorG = (int)args[2]; } catch { throw new CYFException("The argument \"colorG\" must be a number."); }
+        try { colorB = (int)args[3]; } catch { throw new CYFException("The argument \"colorB\" must be a number."); }
+        try { colorA = (int)args[4]; } catch { throw new CYFException("The argument \"colorA\" must be a number."); }
+        try { waitEnd = (bool)args[5]; } catch { throw new CYFException("The argument \"waitEnd\" must be a boolean."); }
 
         if (waitEnd)
             if (coroutines.ContainsKey(scr) && script != scr) {
@@ -1443,11 +1474,11 @@ end";
         yield return 0;
     }
 
-    public IEnumerator ISave(bool forced) {
-        ScriptWrapper scr = LuaObjectOW.appliedScript;
-
-        // TODO: URGENT!!!!!!! Find why scr is PunderTest here when trying to save!
-        Debug.Log(script.scriptname + " != " + scr.scriptname);
+    IEnumerator ISave(object[] args) {
+        ScriptWrapper scr = luagenow.appliedScript;
+        //REAL ARGS
+        bool forced;
+        try { forced = (bool)args[0]; } catch { throw new CYFException("The argument \"forced\" must be a boolean."); }
 
         if (forced) {
             SaveLoad.Save(true);
@@ -1549,8 +1580,18 @@ end";
         }
     }
 
-    public IEnumerator IMoveCamera(int pixX, int pixY, int speed, bool straightLine, bool waitEnd, string info) {
-        ScriptWrapper scr = LuaObjectOW.appliedScript;
+    public IEnumerator IMoveCamera(object[] args) {
+        ScriptWrapper scr = luascrow.appliedScript;
+        //REAL ARGS
+        int pixX, pixY, speed;
+        bool straightLine, waitEnd;
+        string info;
+        try { pixX = (int)args[0];          } catch { throw new CYFException("The argument \"pixX\" must be a number."); }
+        try { pixY = (int)args[1];          } catch { throw new CYFException("The argument \"pixY\" must be a number."); }
+        try { speed = (int)args[2];         } catch { throw new CYFException("The argument \"speed\" must be a number."); }
+        try { straightLine = (bool)args[3]; } catch { throw new CYFException("The argument \"straightLine\" must be a boolean."); }
+        try { waitEnd = (bool)args[4];      } catch { throw new CYFException("The argument \"waitEnd\" must be a boolean."); }
+        try { info = (string)args[5];       } catch { throw new CYFException("The argument \"info\" must be a string."); }
 
         if (coroutines.ContainsKey(scr) && script != scr && waitEnd) {
             UnitaleUtil.DisplayLuaError(instance.events[instance.actualEventIndex].name, info + ": This function cannot be used in a coroutine with \"waitEnd\" set to true.");
@@ -1599,7 +1640,7 @@ end";
     }
 
     public IEnumerator IWait(int frames) {
-        ScriptWrapper scr = LuaObjectOW.appliedScript;
+        ScriptWrapper scr = luagenow.appliedScript;
         if (coroutines.ContainsKey(scr) && script != scr) {
             UnitaleUtil.DisplayLuaError(scr.scriptname, "General.Wait: This function cannot be used in a coroutine.");
             yield break;
@@ -1618,7 +1659,7 @@ end";
     }
 
     public IEnumerator IEnterShop(bool instant) {
-        ScriptWrapper scr = LuaObjectOW.appliedScript;
+        ScriptWrapper scr = luagenow.appliedScript;
         if (coroutines.ContainsKey(scr) && script != scr) {
             UnitaleUtil.DisplayLuaError(scr.scriptname, "General.EnterShop: This function cannot be used in a coroutine.");
             yield break;
@@ -1639,8 +1680,8 @@ end";
         yield return 0;
     }
 
-    public IEnumerator ISpawnBoxMenu() {
-        ScriptWrapper scr = LuaObjectOW.appliedScript;
+    IEnumerator ISpawnBoxMenu() {
+        ScriptWrapper scr = luainvow.appliedScript;
         GameObject.Find("itembox").AddComponent<ItemBoxUI>();
         PlayerOverworld.instance.PlayerNoMove = true; //Start box menu
 

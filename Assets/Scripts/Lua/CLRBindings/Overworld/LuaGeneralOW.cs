@@ -1,11 +1,15 @@
-﻿using MoonSharp.Interpreter;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using MoonSharp.Interpreter;
 
-public class LuaGeneralOW : LuaObjectOW {
+public class LuaGeneralOW {
     private TextManager textmgr;
+    public ScriptWrapper appliedScript;
+
+    public delegate void LoadedAction(string coroName, object args, string evName);
+    [MoonSharpHidden] public static event LoadedAction StCoroutine;
 
     [MoonSharpHidden] public LuaGeneralOW(TextManager textmgr) { this.textmgr = textmgr; }
 
@@ -107,7 +111,7 @@ public class LuaGeneralOW : LuaObjectOW {
         textmgr.SetText(textMsgChoice);
         textmgr.transform.parent.parent.SetAsLastSibling();
 
-        OnStCoroutine("ISetChoice", new object[] { question != "", oneLiners }, appliedScript.GetVar("_internalScriptName").String, this);
+        StCoroutine("ISetChoice", new object[] { question != "", oneLiners }, appliedScript.GetVar("_internalScriptName").String);
     }
 
     [CYFEventFunction] public void EndDialog() {
@@ -148,12 +152,12 @@ public class LuaGeneralOW : LuaObjectOW {
             appliedScript.Call("CYFEventNextCommand");
     }
 
-    [CYFEventFunction] public void Wait(int frames) { OnStCoroutine("IWait", frames, appliedScript.GetVar("_internalScriptName").String, this); }
+    [CYFEventFunction] public void Wait(int frames) { StCoroutine("IWait", frames, appliedScript.GetVar("_internalScriptName").String); }
 
     /// <summary>
     /// Function that ends when the player press the button "Confirm"
     /// </summary>
-    [CYFEventFunction] public void WaitForInput() { OnStCoroutine("IWaitForInput", null, appliedScript.GetVar("_internalScriptName").String, this); }
+    [CYFEventFunction] public void WaitForInput() { StCoroutine("IWaitForInput", null, appliedScript.GetVar("_internalScriptName").String); }
 
     /// <summary>
     /// Launch the GameOver screen
@@ -227,7 +231,7 @@ public class LuaGeneralOW : LuaObjectOW {
             throw new CYFException("General.StopBGM: There is no current BGM.");
         else if (fadeFrames < 0)
             throw new CYFException("General.StopBGM: The fade time has to be positive or equal to 0.");
-        OnStCoroutine("IFadeBGM", new object[] { fadeFrames, waitEnd }, appliedScript.GetVar("_internalScriptName").String, this);
+        StCoroutine("IFadeBGM", new object[] { fadeFrames, waitEnd }, appliedScript.GetVar("_internalScriptName").String);
         if (!waitEnd)
             appliedScript.Call("CYFEventNextCommand");
     }
@@ -249,7 +253,7 @@ public class LuaGeneralOW : LuaObjectOW {
     /// <summary>
     /// Saves the game. Pretty obvious, heh.
     /// </summary>
-    [CYFEventFunction] public void Save(bool forced = false) { OnStCoroutine("ISave", new object[] { forced }, appliedScript.GetVar("_internalScriptName").String, this); }
+    [CYFEventFunction] public void Save(bool forced = false) { StCoroutine("ISave", new object[] { forced }, appliedScript.GetVar("_internalScriptName").String); }
 
     /// <summary>
     /// Sends the player back to the title screen, making him lose his progression
@@ -280,6 +284,6 @@ public class LuaGeneralOW : LuaObjectOW {
 
     [CYFEventFunction] public void EnterShop(string scriptName, bool instant = false) {
         ShopScript.scriptName = scriptName;
-        OnStCoroutine("IEnterShop", instant, appliedScript.GetVar("_internalScriptName").String, this);
+        StCoroutine("IEnterShop", instant, appliedScript.GetVar("_internalScriptName").String);
     }
 }

@@ -1,9 +1,17 @@
-﻿using MoonSharp.Interpreter;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
+using MoonSharp.Interpreter;
 
-public class LuaInventoryOW : LuaObjectOW {
+public class LuaInventoryOW {
+    public ScriptWrapper appliedScript;
+
+    [MoonSharpHidden] public LuaInventoryOW() { }
+    
+    public delegate void LoadedAction(string coroName, object args, string evName);
+    [MoonSharpHidden] public static event LoadedAction StCoroutine;
+
     [MoonSharpHidden] public void SetEquip(string itemName) {
         if (!Inventory.ItemExists(itemName)) 
             throw new CYFException("The item \"" + itemName + "\" doesn't exist in the item list.");
@@ -31,5 +39,5 @@ public class LuaInventoryOW : LuaObjectOW {
 
     [CYFEventFunction] public int GetItemCount() { try { return Inventory.inventory.Count; } finally { appliedScript.Call("CYFEventNextCommand"); } }
 
-    [CYFEventFunction] public void SpawnBoxMenu() { OnStCoroutine("ISpawnBoxMenu", null, appliedScript.GetVar("_internalScriptName").String, this); }
+    [CYFEventFunction] public void SpawnBoxMenu() { StCoroutine("ISpawnBoxMenu", null, appliedScript.GetVar("_internalScriptName").String); }
 }

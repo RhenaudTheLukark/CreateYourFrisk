@@ -1,7 +1,14 @@
-﻿using MoonSharp.Interpreter;
-using UnityEngine;
+﻿using UnityEngine;
+using MoonSharp.Interpreter;
 
-public class LuaPlayerOW : LuaObjectOW {
+public class LuaPlayerOW {
+    public ScriptWrapper appliedScript;
+
+    public delegate void LoadedAction(string coroName, object args, string evName);
+    [MoonSharpHidden] public static event LoadedAction StCoroutine;
+
+    [MoonSharpHidden] public LuaPlayerOW() { }
+
     [CYFEventFunction] public int GetLevel() { try { return PlayerCharacter.instance.LV; } finally { appliedScript.Call("CYFEventNextCommand"); } }
     [CYFEventFunction] public void SetLevel(int value) { PlayerCharacter.instance.SetLevel(value); appliedScript.Call("CYFEventNextCommand"); }
 
