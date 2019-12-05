@@ -54,7 +54,7 @@ public class LuaEventOW {
     /// <param name="name"></param>
     /// <param name="dirX"></param>
     /// <param name="dirY"></param>
-    [CYFEventFunction] public void MoveToPoint(string name, float dirX, float dirY, bool wallPass = false, bool waitEnd = true) { StCoroutine("IMoveEventToPoint", new object[] { name, dirX, dirY, wallPass, waitEnd }, name); }
+    [CYFEventFunction] public void MoveToPoint(string name, float dirX, float dirY, bool wallPass = false, bool waitEnd = true) { StCoroutine("IMoveEventToPoint", new object[] { appliedScript, name, dirX, dirY, wallPass, waitEnd }, name); }
 
     /// <summary>
     /// Checks if an event is currently moving via Event.MoveToPoint.
@@ -67,7 +67,7 @@ public class LuaEventOW {
             if (name != "Player") {
                 if (EventManager.instance.events[i].gameObject == null || EventManager.instance.events[i].gameObject.name != name)
                     continue;
-                ismoving = EventManager.instance.events[i].GetComponent<EventOW>().isMoving;
+                ismoving = (EventManager.instance.events[i].GetComponent<EventOW>().isMovingSource != null);
             } else
                 ismoving = PlayerOverworld.instance.isMoving;
             appliedScript.Call("CYFEventNextCommand");
@@ -138,7 +138,7 @@ public class LuaEventOW {
     /// <param name="axisAnim"></param>
     [CYFEventFunction] public void Rotate(string name, float rotateX, float rotateY, float rotateZ, bool anim = true, bool waitEnd = true) {
         if (anim)
-            StCoroutine("IRotateEvent", new object[] { name, rotateX, rotateY, rotateZ, waitEnd }, name);
+            StCoroutine("IRotateEvent", new object[] { appliedScript, name, rotateX, rotateY, rotateZ, waitEnd }, name);
         else {
             for (int i = 0; i < EventManager.instance.events.Count || name == "Player"; i++) {
                 GameObject go = null;
@@ -147,7 +147,7 @@ public class LuaEventOW {
                     if (name == "Player")
                         go = GameObject.Find("Player");
                     go.GetComponent<RectTransform>().rotation = Quaternion.Euler(rotateX, rotateY, rotateZ);
-                    appliedScript.Call("CYFEventNextCommand");
+                    StCoroutine("IRotateEvent", new object[] { appliedScript, name, rotateX, rotateY, rotateZ, waitEnd }, name);
                     return;
                 }
             }
@@ -166,9 +166,9 @@ public class LuaEventOW {
             if (name != "Player") {
                 if (EventManager.instance.events[i].gameObject == null || EventManager.instance.events[i].gameObject.name != name)
                     continue;
-                isrotating = EventManager.instance.events[i].GetComponent<EventOW>().isRotating;
+                isrotating = (EventManager.instance.events[i].GetComponent<EventOW>().isRotatingSource != null);
             } else
-                isrotating = PlayerOverworld.instance.isRotating;
+                isrotating = (PlayerOverworld.instance.isRotatingSource != null);
             appliedScript.Call("CYFEventNextCommand");
             return isrotating;
         }

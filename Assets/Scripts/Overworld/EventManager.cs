@@ -1154,16 +1154,16 @@ end";
     }
 
     IEnumerator IMoveEventToPoint(object[] args) { //NEED PARENTAL REMOVE
-        ScriptWrapper scr = luaevow.appliedScript;
+        ScriptWrapper scr = (ScriptWrapper)args[0];
 
         string name;
         float dirX, dirY;
         bool wallPass, waitEnd;
-        try { name = (string)args[0];   } catch { throw new CYFException("The argument \"name\" must be a string."); }
-        try { dirX = (float)args[1];    } catch { throw new CYFException("The argument \"dirX\" must be a number."); }
-        try { dirY = (float)args[2];    } catch { throw new CYFException("The argument \"dirY\" must be a number."); }
-        try { wallPass = (bool)args[3]; } catch { throw new CYFException("The argument \"wallPass\" must be a boolean."); }
-        try { waitEnd = (bool)args[4];  } catch { throw new CYFException("The argument \"waitEnd\" must be a boolean."); }
+        try { name = (string)args[1];   } catch { throw new CYFException("The argument \"name\" must be a string."); }
+        try { dirX = (float)args[2];    } catch { throw new CYFException("The argument \"dirX\" must be a number."); }
+        try { dirY = (float)args[3];    } catch { throw new CYFException("The argument \"dirY\" must be a number."); }
+        try { wallPass = (bool)args[4]; } catch { throw new CYFException("The argument \"wallPass\" must be a boolean."); }
+        try { waitEnd = (bool)args[5];  } catch { throw new CYFException("The argument \"waitEnd\" must be a boolean."); }
 
         if (waitEnd)
             if (coroutines.ContainsKey(scr) && script != scr) {
@@ -1184,6 +1184,20 @@ end";
                     if (go.transform.parent.name == "SpritePivot")
                         target = go.transform.parent;
                 target = target ?? go.transform; //oof
+
+                //Check if target is already in the middle of IMoveEventToPoint
+                if (name == "Player") {
+                    if (go.GetComponent<PlayerOverworld>().isMovingSource != null && go.GetComponent<PlayerOverworld>().isMovingSource != scr && go.GetComponent<PlayerOverworld>().isMovingWaitEnd)
+                        go.GetComponent<PlayerOverworld>().isMovingSource.Call("CYFEventNextCommand");
+                    go.GetComponent<PlayerOverworld>().isMovingSource  = null;
+                    go.GetComponent<PlayerOverworld>().isMovingWaitEnd = waitEnd;
+                } else {
+                    if (go.GetComponent<EventOW>().isMovingSource != null && go.GetComponent<EventOW>().isMovingSource != scr && go.GetComponent<EventOW>().isMovingWaitEnd)
+                        go.GetComponent<EventOW>().isMovingSource.Call("CYFEventNextCommand");
+                    go.GetComponent<EventOW>().isMovingSource  = null;
+                    go.GetComponent<EventOW>().isMovingWaitEnd = waitEnd;
+                }
+
                 if (!waitEnd)
                     scr.Call("CYFEventNextCommand");
 
@@ -1221,10 +1235,14 @@ end";
                     distanceFromStart = new Vector2(target.position.x - originalPosition.x, target.position.y - originalPosition.y);
 
                     if (name == "Player") {
-                        go.GetComponent<PlayerOverworld>().isMoving     = test2 || wallPass;
-                        go.GetComponent<PlayerOverworld>().isBeingMoved = test2 || wallPass;
-                    } else
-                        go.GetComponent<EventOW>().isMoving         = test2 || wallPass;
+                        go.GetComponent<PlayerOverworld>().isBeingMoved    = test2 || wallPass;
+                        go.GetComponent<PlayerOverworld>().isMoving        = test2 || wallPass;
+                        go.GetComponent<PlayerOverworld>().isMovingSource  = scr;
+                        go.GetComponent<PlayerOverworld>().isMovingWaitEnd = waitEnd;
+                    } else {
+                        go.GetComponent<EventOW>().isMovingSource  = scr;
+                        go.GetComponent<EventOW>().isMovingWaitEnd = waitEnd;
+                    }
 
                     //If we have reached the destination, stop the function
                     if (distanceFromStart.magnitude >= endPoint.magnitude) {
@@ -1234,10 +1252,14 @@ end";
                         yield return 0;
 
                         if (name == "Player") {
-                            go.GetComponent<PlayerOverworld>().isMoving     = false;
-                            go.GetComponent<PlayerOverworld>().isBeingMoved = false;
-                        } else
-                            go.GetComponent<EventOW>().isMoving         = false;
+                            go.GetComponent<PlayerOverworld>().isBeingMoved    = false;
+                            go.GetComponent<PlayerOverworld>().isMoving        = false;
+                            go.GetComponent<PlayerOverworld>().isMovingSource  = null;
+                            go.GetComponent<PlayerOverworld>().isMovingWaitEnd = false;
+                        } else {
+                            go.GetComponent<EventOW>().isMovingSource  = null;
+                            go.GetComponent<EventOW>().isMovingWaitEnd = false;
+                        }
                         if (waitEnd)
                             scr.Call("CYFEventNextCommand");
                         yield break;
@@ -1246,10 +1268,14 @@ end";
 
                     if (!test2 && !wallPass) {
                         if (name == "Player") {
-                            go.GetComponent<PlayerOverworld>().isMoving     = false;
-                            go.GetComponent<PlayerOverworld>().isBeingMoved = false;
-                        } else
-                            go.GetComponent<EventOW>().isMoving         = false;
+                            go.GetComponent<PlayerOverworld>().isBeingMoved    = false;
+                            go.GetComponent<PlayerOverworld>().isMoving        = false;
+                            go.GetComponent<PlayerOverworld>().isMovingSource  = null;
+                            go.GetComponent<PlayerOverworld>().isMovingWaitEnd = false;
+                        } else {
+                            go.GetComponent<EventOW>().isMovingSource  = null;
+                            go.GetComponent<EventOW>().isMovingWaitEnd = false;
+                        }
                         if (waitEnd)
                             scr.Call("CYFEventNextCommand");
                         yield break;
@@ -1336,16 +1362,16 @@ end";
     }
 
     IEnumerator IRotateEvent(object[] args) {
-        ScriptWrapper scr = luaevow.appliedScript;
-        //REAL ARGS
+        ScriptWrapper scr = (ScriptWrapper)args[0];
+
         string name;
         float rotateX, rotateY, rotateZ;
         bool waitEnd;
-        try { name = (string)args[0];   } catch { throw new CYFException("The argument \"name\" must be a string."); }
-        try { rotateX = (float)args[1]; } catch { throw new CYFException("The argument \"rotateX\" must be a number."); }
-        try { rotateY = (float)args[2]; } catch { throw new CYFException("The argument \"rotateY\" must be a number."); }
-        try { rotateZ = (float)args[3]; } catch { throw new CYFException("The argument \"rotateZ\" must be a number."); }
-        try { waitEnd = (bool)args[4]; } catch { throw new CYFException("The argument \"waitEnd\" must be a boolean."); }
+        try { name = (string)args[1];   } catch { throw new CYFException("The argument \"name\" must be a string."); }
+        try { rotateX = (float)args[2]; } catch { throw new CYFException("The argument \"rotateX\" must be a number."); }
+        try { rotateY = (float)args[3]; } catch { throw new CYFException("The argument \"rotateY\" must be a number."); }
+        try { rotateZ = (float)args[4]; } catch { throw new CYFException("The argument \"rotateZ\" must be a number."); }
+        try { waitEnd = (bool)args[5]; } catch { throw new CYFException("The argument \"waitEnd\" must be a boolean."); }
 
         if (waitEnd)
             if (coroutines.ContainsKey(scr) && script != scr) {
@@ -1359,13 +1385,30 @@ end";
         for (int i = 0; i < events.Count || name == "Player"; i++) {
             GameObject go = events[i];
             if (name == go.name || name == "Player") {
-                if (waitEnd) {
-                    if (name == "Player") {
-                        go = GameObject.Find("Player");
-                        go.GetComponent<PlayerOverworld>().isRotating = true;
-                    } else
-                        go.GetComponent<EventOW>().isRotating         = true;
-                } else
+                if (name == "Player")
+                    go = GameObject.Find("Player");
+
+                //Check if target is already in the middle of IRotateEvent
+                if (name == "Player") {
+                    if (go.GetComponent<PlayerOverworld>().isRotatingSource != null && go.GetComponent<PlayerOverworld>().isRotatingSource != scr && go.GetComponent<PlayerOverworld>().isRotatingWaitEnd)
+                        go.GetComponent<PlayerOverworld>().isRotatingSource.Call("CYFEventNextCommand");
+                    go.GetComponent<PlayerOverworld>().isRotatingSource  = null;
+                    go.GetComponent<PlayerOverworld>().isRotatingWaitEnd = false;
+                } else {
+                    if (go.GetComponent<EventOW>().isRotatingSource != null && go.GetComponent<EventOW>().isRotatingSource != scr && go.GetComponent<EventOW>().isRotatingWaitEnd)
+                        go.GetComponent<EventOW>().isRotatingSource.Call("CYFEventNextCommand");
+                    go.GetComponent<EventOW>().isRotatingSource  = null;
+                    go.GetComponent<EventOW>().isRotatingWaitEnd = false;
+                }
+
+                if (name == "Player") {
+                    go.GetComponent<PlayerOverworld>().isRotatingSource  = scr;
+                    go.GetComponent<PlayerOverworld>().isRotatingWaitEnd = waitEnd;
+                } else {
+                    go.GetComponent<EventOW>().isRotatingSource  = scr;
+                    go.GetComponent<EventOW>().isRotatingWaitEnd = waitEnd;
+                }
+                if (!waitEnd)
                     scr.Call("CYFEventNextCommand");
 
                 float lackX = rotateX - go.transform.rotation.eulerAngles.x;
@@ -1392,12 +1435,17 @@ end";
                     yield return 0;
                 }
                 go.GetComponent<RectTransform>().rotation = Quaternion.Euler(rotateX, rotateY, rotateZ);
-                if (name == "Player")
-                    go.GetComponent<PlayerOverworld>().isRotating = false;
-                else
-                    go.GetComponent<EventOW>().isRotating         = false;
+
+                if (name == "Player") {
+                    go.GetComponent<PlayerOverworld>().isRotatingSource  = null;
+                    go.GetComponent<PlayerOverworld>().isRotatingWaitEnd = false;
+                } else {
+                    go.GetComponent<EventOW>().isRotatingSource  = null;
+                    go.GetComponent<EventOW>().isRotatingWaitEnd = false;
+                }
                 if (waitEnd)
                     scr.Call("CYFEventNextCommand");
+
                 yield break;
             }
         }

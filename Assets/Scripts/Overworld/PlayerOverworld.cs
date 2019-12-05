@@ -26,14 +26,18 @@ public class PlayerOverworld : MonoBehaviour {
     public Vector2 cameraShift = new Vector2();
     public Vector2 backgroundSize = new Vector3(640, 480);
     public Transform PlayerPos;             //The Transform component attached to this object
-    public bool isMoving     = false;
-    public bool isBeingMoved = false;
-    public bool isRotating   = false;
     public Image utHeart;
     public static AudioSource audioKept;
     public LuaSpriteController sprctrl;
     public TextManager textmgr;             //The map's text manager
     public List<Transform> parallaxes = new List<Transform>();
+
+    public bool isMoving          = false;
+    public bool isMovingWaitEnd   = false;
+    public ScriptWrapper isMovingSource;
+    public bool isBeingMoved      = false;
+    public ScriptWrapper isRotatingSource;
+    public bool isRotatingWaitEnd = false;
 
     private bool _playerNoMove = false;
     private int battleWalkCount;            //Will be used to check the battle appearance
