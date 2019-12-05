@@ -248,15 +248,14 @@ public class PlayerOverworld : MonoBehaviour {
             if (TimeIndicator > 1)
                 TimeIndicator = 1;
 
-            Vector2 positionCamera = Camera.main.transform.position;
-            Vector2 end = new Vector2(PlayerPos.position.x - (positionCamera.x - 320 + 48), PlayerPos.position.y + PlayerPos.GetComponent<RectTransform>().sizeDelta.y / 2 - (positionCamera.y - 240 + 25));
             Image utHeart = GameObject.Find("utHeart").GetComponent<Image>();
+            Image playerMask = GameObject.Find("PlayerEncounter").GetComponent<Image>();
+            Vector2 positionCamera = Camera.main.transform.position;
+            Vector2 end = new Vector2(PlayerPos.position.x - (positionCamera.x - 320 + 48), PlayerPos.position.y + (playerMask.sprite.texture.height / 2.5f) - (positionCamera.y - 240 + 25));
 
             //Here we move the heart to the place it'll be on the beginning of the battle
-            if (utHeart.transform.position != new Vector3(positionCamera.x - 320 + 48, positionCamera.y - 240 + 25, -1f)) {
-                Vector3 positionTemp = new Vector3(PlayerPos.position.x - (end.x * TimeIndicator), PlayerPos.position.y + PlayerPos.GetComponent<RectTransform>().sizeDelta.y / 2 - (end.y * TimeIndicator), 0);
-                utHeart.transform.position = positionTemp;
-            }
+            if ((Vector2)utHeart.transform.position != end)
+                utHeart.transform.position = new Vector3(PlayerPos.position.x - (end.x * TimeIndicator), (PlayerPos.position.y + (playerMask.sprite.texture.height / 2.5f)) - (end.y * TimeIndicator), 0);
         }
 
         int horizontal = 0;     //Used to store the horizontal move direction
@@ -488,18 +487,16 @@ public class PlayerOverworld : MonoBehaviour {
         if (TimeIndicator > 1)
             TimeIndicator = 1;
 
+        Vector3 finalPosition = new Vector3(positionCamera.x - 320 + 48, positionCamera.y - 240 + 25, -5100f);
         //Here we move the heart to the place it'll be on the beginning of the battle
-        if (utHeart.transform.position != new Vector3(positionCamera.x - 320 + 48, positionCamera.y - 240 + 25, -5100)) {
-            Vector3 positionTemp = new Vector3(PlayerPos.position.x - (end.x * TimeIndicator), PlayerPos.position.y + (playerMask.sprite.texture.height / 2.5f) - (end.y * TimeIndicator), 0);
-            utHeart.transform.position = positionTemp;
-        }
+        if (utHeart.transform.position != finalPosition)
+            utHeart.transform.position = new Vector3(PlayerPos.position.x - (end.x * TimeIndicator), (PlayerPos.position.y + (playerMask.sprite.texture.height / 2.5f)) - (end.y * TimeIndicator), 0);
 
         if (!instant)
             yield return new WaitForSeconds(1f);
 
         //Set the heart's position
-        Vector3 positionTemp3 = new Vector3(positionCamera.x - 320 + 48, positionCamera.y - 240 + 25, -5100f);
-        utHeart.transform.position = positionTemp3;
+        utHeart.transform.position = finalPosition;
 
         if (instant) {
             color = PlayerPos.GetComponent<SpriteRenderer>().color;
