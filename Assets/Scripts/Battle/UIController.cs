@@ -257,8 +257,6 @@ public class UIController : MonoBehaviour {
             frozenPlayerVisibility = PlayerController.instance.selfImg.enabled;
             PlayerController.instance.selfImg.enabled = true;
 
-            // Debug.Log("<b><color='blue'>Freezing state " + frozenState.ToString() + "</color></b>");
-
             return;
         //else if (state != UIState.NONE && this.state == UIState.NONE && frozenState != UIState.NONE) {
         } else if (state == frozenState && frozenState != UIState.PAUSE) {
@@ -289,8 +287,6 @@ public class UIController : MonoBehaviour {
                         fightUI.line.keyframes.paused = false;
                     break;
             }
-
-            // Debug.Log("<b><color='blue'>Unfreezing state " + frozenState.ToString() + "</color></b>");
 
             PlayerController.instance.selfImg.enabled = frozenPlayerVisibility;
 

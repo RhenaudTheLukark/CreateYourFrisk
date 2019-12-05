@@ -8,53 +8,55 @@ public static class Temmify {
     public static string Convert(string sentence, bool random = false) {
         if (!random)
             Random.InitState(0);
-        
+
         // a list of every character that can be swapped
         string swappableCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         // uncomment this line to allow numbers to be swapped:
         // swappableCharacters += "0123456789";
-        
+
         // a list of characters that should be multiplied like crazy!!!!!
         string multiplyCharacters = "!?";
-        
+
         string[] words = sentence.Split(new char[] {' '}, System.StringSplitOptions.RemoveEmptyEntries);
-        
+
         // separate words by items in multiplyCharacters
         List<string> newWords = new List<string>();
-        
+
         for (int i = 0; i < words.Length; i++) {
             bool separated = false;
-            
+
             for (int j = 0; j < words[i].Length; j++) {
                 if (multiplyCharacters.Contains(words[i].Substring(j, 1))) {
                     string before = words[i].Substring(0, j);
                     string after  = words[i].Substring(j);
-                    
-                    newWords.Add(before);
-                    newWords.Add(after);
-                    
+
+                    if (before.Length > 0)
+                        newWords.Add(before);
+                    if (after.Length > 0)
+                        newWords.Add(after);
+
                     separated = true;
                     break;
                 }
             }
-            
+
             if (!separated)
                 newWords.Add(words[i]);
         }
-        
+
         words = newWords.ToArray();
-        
+
         for (int i = 0; i < words.Length; i++) {
             // capitalize every word
             words[i] = words[i].ToUpper();
-            
+
             if (words[i].Length < 4 && !multiplyCharacters.Contains(words[i].Substring(0, 1)))
                 continue;
             else {
                 // only words with at least 5% of their letters moved will be allowed
                 List<int> changesMade = new List<int>();
                 bool hasAnyEditableCharacters = false;
-                
+
                 do {
                     for (int j = 0; j < words[i].Length; j++) {
                         // special for the first character
@@ -65,11 +67,11 @@ public static class Temmify {
                                      + words[i].Substring(2);
                             changesMade.Add(j + 1);
                         } else {*/
-                        
+
                         /*
                         DEBUGGER
                         string spaces = "";
-                        
+
                         for (int k = 0; k < words[i].Length; k++)
                             if (k == j)
                                 spaces += "^";
@@ -77,11 +79,11 @@ public static class Temmify {
                                 spaces += words[i].Substring(k, 1);
                             else
                                 spaces += " ";
-                        
+
                         Debug.Log(words[i] + "\n" + spaces);
                         */
-                        
-                        
+
+
                         if (((j > 0 && j < words[i].Length - 2) || multiplyCharacters.Contains(words[i].Substring(j, 1))) && !changesMade.Contains(j)) {
                             // if character is swappable, see if it can be swapped
                             if (swappableCharacters.Contains(words[i].Substring(j, 1))
@@ -98,16 +100,16 @@ public static class Temmify {
                                 }
                             } else if (multiplyCharacters.Contains(words[i].Substring(j, 1)) && !changesMade.Contains(j)) {
                                 hasAnyEditableCharacters = true;
-                                
+
                                 int randomAddition = Random.Range(2, 5);
-                                
+
                                 string toAdd = words[i].Substring(j, 1);
                                 for (int k = 0; k < randomAddition; k++) {
                                     toAdd += words[i].Substring(j, 1);
                                     changesMade.Add(j + k);
                                 }
                                 changesMade.Add(j + randomAddition);
-                                
+
                                 words[i] = words[i].Substring(0, j > 0 ? j : 0)
                                          + toAdd
                                          + words[i].Substring(j + 1);
@@ -135,9 +137,9 @@ public static class Temmify {
                 changesMade.Clear();
             }
         }
-        
+
         sentence = "";
-        
+
         for (int i = 0; i < words.Length; i++) {
             if (i < words.Length - 1 && multiplyCharacters.Contains(words[i + 1].Substring(0, 1)))
                 sentence += words[i];
@@ -145,7 +147,7 @@ public static class Temmify {
                 sentence += words[i] + " ";
         }
         sentence = sentence.Substring(0, sentence.Length - 1);
-        
+
         return sentence;
     }
 }

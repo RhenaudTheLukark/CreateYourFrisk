@@ -1187,13 +1187,23 @@ end";
 
                 //Check if target is already in the middle of IMoveEventToPoint
                 if (name == "Player") {
-                    if (go.GetComponent<PlayerOverworld>().isMovingSource != null && go.GetComponent<PlayerOverworld>().isMovingSource != scr && go.GetComponent<PlayerOverworld>().isMovingWaitEnd)
-                        go.GetComponent<PlayerOverworld>().isMovingSource.Call("CYFEventNextCommand");
+                    ScriptWrapper isMovingSource = go.GetComponent<PlayerOverworld>().isMovingSource;
+                    Vector2 roundedPos = new Vector2(Mathf.Round(target.position.x * 1000) / 1000, Mathf.Round(target.position.y * 1000) / 1000);
+                    Vector2 roundedEnd = new Vector2(Mathf.Round(dirX              * 1000) / 1000, Mathf.Round(dirY              * 1000) / 1000);
+                    if (roundedPos == roundedEnd)
+                        go.GetComponent<PlayerOverworld>().isMovingSource = null;
+                    if (isMovingSource != null && isMovingSource != scr && go.GetComponent<PlayerOverworld>().isMovingWaitEnd)
+                        isMovingSource.Call("CYFEventNextCommand");
                     go.GetComponent<PlayerOverworld>().isMovingSource  = null;
                     go.GetComponent<PlayerOverworld>().isMovingWaitEnd = waitEnd;
                 } else {
-                    if (go.GetComponent<EventOW>().isMovingSource != null && go.GetComponent<EventOW>().isMovingSource != scr && go.GetComponent<EventOW>().isMovingWaitEnd)
-                        go.GetComponent<EventOW>().isMovingSource.Call("CYFEventNextCommand");
+                    ScriptWrapper isMovingSource = go.GetComponent<EventOW>().isMovingSource;
+                    Vector2 roundedPos = new Vector2(Mathf.Round(target.position.x * 1000) / 1000, Mathf.Round(target.position.y * 1000) / 1000);
+                    Vector2 roundedEnd = new Vector2(Mathf.Round(dirX              * 1000) / 1000, Mathf.Round(dirY              * 1000) / 1000);
+                    if (roundedPos == roundedEnd)
+                        go.GetComponent<EventOW>().isMovingSource = null;
+                    if (isMovingSource != null && isMovingSource != scr && go.GetComponent<EventOW>().isMovingWaitEnd)
+                        isMovingSource.Call("CYFEventNextCommand");
                     go.GetComponent<EventOW>().isMovingSource  = null;
                     go.GetComponent<EventOW>().isMovingWaitEnd = waitEnd;
                 }
@@ -1212,16 +1222,13 @@ end";
                     go.GetComponent<CYFAnimator>().movementDirection = direction;
                 }
 
-                //While the current position is different from the one we want our player to have
-                bool test = true;
-                try { test = (Vector2)target.position != endPoint; } catch (MissingReferenceException) { }
                 /*
                 float speed;
                 try {
                     speed = go != GameObject.Find("Player").transform.gameObject ? go.GetComponent<EventOW>().moveSpeed : PlayerOverworld.instance.speed;
                 } catch { yield break; }
                 */
-                while (test) {
+                while (true) {
                     if (go == null) {
                         scr.Call("CYFEventNextCommand");
                         yield break;
@@ -1235,12 +1242,12 @@ end";
                     distanceFromStart = new Vector2(target.position.x - originalPosition.x, target.position.y - originalPosition.y);
 
                     if (name == "Player") {
-                        go.GetComponent<PlayerOverworld>().isBeingMoved    = test2 || wallPass;
-                        go.GetComponent<PlayerOverworld>().isMoving        = test2 || wallPass;
+                        go.GetComponent<PlayerOverworld>().isBeingMoved    = (test2 || wallPass) && distanceFromStart.magnitude > 0;
+                        go.GetComponent<PlayerOverworld>().isMoving        = (test2 || wallPass) && distanceFromStart.magnitude > 0;
                         go.GetComponent<PlayerOverworld>().isMovingSource  = scr;
                         go.GetComponent<PlayerOverworld>().isMovingWaitEnd = waitEnd;
                     } else {
-                        go.GetComponent<EventOW>().isMovingSource  = scr;
+                        go.GetComponent<EventOW>().isMovingSource  = ((test2 || wallPass) && distanceFromStart.magnitude > 0) ? scr : null;
                         go.GetComponent<EventOW>().isMovingWaitEnd = waitEnd;
                     }
 
@@ -1280,10 +1287,6 @@ end";
                             scr.Call("CYFEventNextCommand");
                         yield break;
                     }
-                    try {
-                        //endPointFromNow = new Vector2(dirX - target.position.x, dirY - target.position.y);
-                        test = (Vector2)target.position != endPoint;
-                    } catch (MissingReferenceException) { }
                 }
             }
         UnitaleUtil.WriteInLogAndDebugger("Event.MoveToPoint: The name you entered in the function doesn't exist. Did you forget to add the 'Event' tag?");
@@ -1390,14 +1393,20 @@ end";
 
                 //Check if target is already in the middle of IRotateEvent
                 if (name == "Player") {
-                    if (go.GetComponent<PlayerOverworld>().isRotatingSource != null && go.GetComponent<PlayerOverworld>().isRotatingSource != scr && go.GetComponent<PlayerOverworld>().isRotatingWaitEnd)
-                        go.GetComponent<PlayerOverworld>().isRotatingSource.Call("CYFEventNextCommand");
-                    go.GetComponent<PlayerOverworld>().isRotatingSource  = null;
+                    ScriptWrapper isRotatingSource = go.GetComponent<PlayerOverworld>().isRotatingSource;
+                    if (go.transform.rotation.eulerAngles.x == rotateX && go.transform.rotation.eulerAngles.y == rotateY && go.transform.rotation.eulerAngles.z == rotateZ)
+                        go.GetComponent<PlayerOverworld>().isRotatingSource = null;
+                    if (isRotatingSource != null && isRotatingSource != scr && go.GetComponent<PlayerOverworld>().isRotatingWaitEnd)
+                        isRotatingSource.Call("CYFEventNextCommand");
+                    go.GetComponent<PlayerOverworld>().isRotatingSource = null;
                     go.GetComponent<PlayerOverworld>().isRotatingWaitEnd = false;
                 } else {
-                    if (go.GetComponent<EventOW>().isRotatingSource != null && go.GetComponent<EventOW>().isRotatingSource != scr && go.GetComponent<EventOW>().isRotatingWaitEnd)
-                        go.GetComponent<EventOW>().isRotatingSource.Call("CYFEventNextCommand");
-                    go.GetComponent<EventOW>().isRotatingSource  = null;
+                    ScriptWrapper isRotatingSource = go.GetComponent<EventOW>().isRotatingSource;
+                    if (go.transform.rotation.eulerAngles.x == rotateX && go.transform.rotation.eulerAngles.y == rotateY && go.transform.rotation.eulerAngles.z == rotateZ)
+                        go.GetComponent<EventOW>().isRotatingSource = null;
+                    if (isRotatingSource != null && isRotatingSource != scr && go.GetComponent<EventOW>().isRotatingWaitEnd)
+                        isRotatingSource.Call("CYFEventNextCommand");
+                    go.GetComponent<EventOW>().isRotatingSource = null;
                     go.GetComponent<EventOW>().isRotatingWaitEnd = false;
                 }
 
