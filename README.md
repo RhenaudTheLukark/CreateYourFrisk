@@ -1,6 +1,6 @@
 # Create Your Frisk - Lua moddable Undertale engine
 
-Welcome to the Git repository for Create Your Frisk!
+Welcome to the Git repository for **Create Your Frisk**, a fork of [**Unitale**](https://github.com/lvk/Unitale/) by lvk!
 
 When testing, you'll want to load the Disclaimer scene from the Scenes folder.
 
@@ -16,7 +16,7 @@ To download the engine, go to [**the releases page**](https://github.com/Rhenaud
 
 ## Unity Version
 
-CYF's latest version is **v0.6.2.2**. It was built using **Unity Personal 2018.2.13f1**.
+CYF's latest version is **v0.6.4**. It was built using **Unity Personal 2018.2.13f1**.
 
 To get this version of Unity, either:
 
