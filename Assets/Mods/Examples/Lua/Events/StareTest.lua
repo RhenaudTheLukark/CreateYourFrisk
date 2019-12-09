@@ -1,8 +1,8 @@
 function EventPage1() end
 
-stareFrame = 0
+stareFrame = 1800
 stareShift = 0
-eventFrequency = 4500 -- 1m 15s
+eventFrequency = 3600 -- 1m
 currEventDone = false
 inputted = false
 maxStares = 8
@@ -412,7 +412,7 @@ function Stare5(frame)
             papy.Set("Overworld/Papyrus/18")
             stare5Phase = 9
             stare5Velocity = 4
-            -- TODO: play sound?
+            Audio.PlaySound("Jump")
         elseif stare5Phase == 9 and stare5Count <= 2360 then
             papy.x = papy.x - 0.25
             papy.y = papy.y + stare5Velocity
@@ -735,7 +735,7 @@ function Stare7Alive(frame)
             Event.SetSpeed("Punder", 3)
             Event.MoveToPoint("Punder", 215, 260, true, false)
         elseif stare7Count > 600 and stare7Count < 1220 then -- tag loop
-            -- asriel 
+            -- asriel
             do
                 -- run left
                 if     asriel.absy == 260 and asriel.absx > 215 then
@@ -1182,7 +1182,8 @@ function Stare7Dead(frame)
             asriel.Set("Overworld/Asriel/1" .. (stare7Count%28 == 14 and 6 or 7))
         elseif stare7Count == 350 then
             asriel.Set("Overworld/Asriel/15")
-            -- TODO: sound?
+        elseif stare7Count == 395 then
+            Audio.PlaySound("Squeak")
         elseif stare7Count > 395 and stare7Count < 420 then
             local i = stare7Count - 395
             local scale = 1 + math.sin(i * math.pi * 2 / 15) * 0.05
@@ -1338,7 +1339,7 @@ function Stare7Dead(frame)
                 asriel.xscale = 1
             elseif asriel.absx > 320 then
                 asriel.absx = math.max(asriel.absx - 2, 320)
-                
+
                 -- start walking up
                 if asriel.absx == 320 then
                     asriel.SetAnimation({12, 13, 14, 13}, 0.1875, "AsrielOW")
@@ -1364,12 +1365,12 @@ function Stare8(frame)
         chara.z = -1
         chara.ypivot = 0
         chara.MoveToAbs(-22, 230)
-        
+
         vignette = CreateSprite("Overworld/Chara/vignette")
         vignette.alpha = 0
         vignette.SetParent(chara)
         vignette.MoveTo(0, 0)
-        
+
         NewAudio.CreateChannel("zzz")
         NewAudio.PlayMusic("zzz", "mus_zzz_c", true, 0)
     end
@@ -1384,7 +1385,7 @@ function Stare8(frame)
                 elseif stare8Count % 110 == 45 then
                     chara.Set("Overworld/Chara/c1")
                 end
-                
+
                 if stare8Count % 110 < 45 then
                     chara.x = chara.x + 0.5
                 end
@@ -1398,10 +1399,10 @@ function Stare8(frame)
                 if stare8Count == 800 then
                     chara.animationspeed = chara.animationspeed * 2.5
                 end
-                
+
                 chara.x = chara.x + 0.25
                 chara.y = math.max(chara.y - 0.1875, 174)
-                
+
                 if chara.y == 174 then
                     stare8Phase = 2
                     chara.animationspeed = 1
@@ -1416,13 +1417,13 @@ function Stare8(frame)
             -- Phase 3: Inch ever closer to Frisk
             elseif stare8Phase == 3 and stare8Count >= 1360 and stare8Count < 2710 then
                 local timer = (stare8Count - 1360) % 140
-                
+
                 if timer == 0 then
                     chara.Set("Overworld/Chara/c0")
                 elseif timer == 45 then
                     chara.Set("Overworld/Chara/c1")
                 end
-                
+
                 if timer < 45 then
                     chara.x = math.min(chara.x + 0.1, 420)
                 end
@@ -1447,9 +1448,9 @@ function Stare8(frame)
                 stare8Count = 0
                 return false
             end
-            
+
             -- vignette alpha
-            if stare8Phase < 4 then -- TODO update this number
+            if stare8Phase < 4 then
                 vignette.alpha = chara.x/450
                 NewAudio.SetVolume("zzz", math.min((chara.x/420) * 0.75, 0.75))
                 Audio.Volume((1 - (chara.x/334)) * 0.75)
@@ -1469,10 +1470,10 @@ function Stare8(frame)
                     vignette.xscale = 1
                 else
                     chara.x = math.max(chara.x - 2, -22)
-                    
+
                     NewAudio.SetVolume("zzz", NewAudio.GetVolume("zzz") - 0.003)
                     vignette.alpha = vignette.alpha - 0.003
-                    
+
                     if chara.x == -22 then
                         NewAudio.SetVolume("src", math.min(NewAudio.GetVolume("src") + 0.01, 0.75))
                         if NewAudio.GetVolume("src") == 0.75 and vignette.alpha == 0 then
@@ -1497,7 +1498,7 @@ function Stare8(frame)
             chara.StopAnimation()
             chara.ypivot = 0
             chara.absy = charaY
-            
+
             -- make bubble
             Audio.PlaySound("BeginBattle1")
             bubble = CreateSprite("Overworld/EncounterBubble")
@@ -1517,7 +1518,7 @@ function Stare8(frame)
             if chara then
                 chara.x = math.max(chara.x - 4, -22)
                 chara.y = math.min(chara.y + 2, 230)
-                
+
                 if chara.x == -22 then
                     NewAudio.SetVolume("src", math.min(NewAudio.GetVolume("src") + 0.01, 0.75))
                     if NewAudio.GetVolume("src") == 0.75 and vignette.alpha == 0 then
@@ -1532,7 +1533,7 @@ function Stare8(frame)
                 return true
             end
         end
-        
+
         NewAudio.SetVolume("zzz", NewAudio.GetVolume("zzz") - 0.003)
         vignette.alpha = vignette.alpha - 0.003
     end
@@ -1543,7 +1544,7 @@ end
 -- Auto
 function EventPage2()
     stareShift = Event.Exists("Punder") and 0 or 2
-    stareFrame = 0
+    stareFrame = 1800
     inputted = false
     currEventDone = true
     resetStareVars()
@@ -1553,9 +1554,9 @@ end
 -- Parallel process
 function EventPage3()
     local stareID = math.floor(stareFrame / eventFrequency)
-    local realStareID = stareID + stareShift
-    if stareID > 0 and realStareID <= maxStares then
-        currEventDone = _G["Stare" .. realStareID](stareFrame % eventFrequency)
+    local realStareID = math.min(stareID + stareShift, maxStares)
+    if stareID > 0 then
+        currEventDone = _G["Stare" .. realStareID](stareFrame - realStareID * eventFrequency)
     end
 
     if not inputted then
