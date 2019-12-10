@@ -19,9 +19,9 @@ public static class LuaScriptBinder {
     /// Registers C# types with MoonSharp so we can bind them to Lua scripts later.
     /// </summary>
     static LuaScriptBinder() {
-        //Battle
-        UserData.RegisterType<MusicManager>();              // TODO: fix functions with return values that shouldn't return anything anyway
-        UserData.RegisterType<NewMusicManager>();           // TONOTFIX: I don't know what you mean here
+        // Battle bindings
+        UserData.RegisterType<MusicManager>();
+        UserData.RegisterType<NewMusicManager>();
         UserData.RegisterType<ProjectileController>();
         UserData.RegisterType<LuaArenaStatus>();
         UserData.RegisterType<LuaPlayerStatus>();
@@ -35,7 +35,7 @@ public static class LuaScriptBinder {
         UserData.RegisterType<LuaTextManager>();
         UserData.RegisterType<LuaFile>();
 
-        //Overworld
+        // Overworld bindings
         UserData.RegisterType<LuaEventOW>();
         UserData.RegisterType<LuaPlayerOW>();
         UserData.RegisterType<LuaGeneralOW>();
@@ -81,10 +81,12 @@ public static class LuaScriptBinder {
             script.Globals["GetCurrentState"] = (Func<string>)GetState;
             script.Globals["BattleDialog"] = (Action<DynValue>)LuaEnemyEncounter.BattleDialog;
             script.Globals["BattleDialogue"] = (Action<DynValue>)LuaEnemyEncounter.BattleDialog;
-            if (LuaEnemyEncounter.doNotGivePreviousEncounterToSelf)
+
+            if (LuaEnemyEncounter.doNotGivePreviousEncounterToSelf) // TODO: Why keep "else" part?
                 LuaEnemyEncounter.doNotGivePreviousEncounterToSelf = false;
             else
                 script.Globals["Encounter"] = LuaEnemyEncounter.script_ref;
+
             DynValue PlayerStatus = UserData.Create(PlayerController.luaStatus);
             script.Globals.Set("Player", PlayerStatus);
         } else if (!GlobalControls.isInShop) {

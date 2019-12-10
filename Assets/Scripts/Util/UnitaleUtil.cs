@@ -617,6 +617,10 @@ public static class UnitaleUtil {
         return hours + ":" + String.Format("{0,2}", minutes).Replace(" ", "0");
     }
 
+    public static bool IsSpecialAnnouncement(string str) {
+        return str == "4eab1af3ab6a932c23b3cdb8ef618b1af9c02088";
+    }
+
     /*public static bool CheckAvailableDuster(out GameObject go) {
         go = null;
         ParticleSystem[] pss = GameObject.Find("psContainer").GetComponentsInChildren<ParticleSystem>(true);

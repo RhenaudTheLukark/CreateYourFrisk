@@ -14,17 +14,6 @@ internal class LuaEnemyEncounter : EnemyEncounter {
 
     public override Vector2 ArenaSize {
         get {
-            /*
-            if (script.GetVar("arenasize") != null) {
-                //Table size = new Table(155, 130); //script.GetVar("arenasize").Table;
-                Vector2 size = new Vector2(155, 130);
-                //if (size == null)
-                //    return base.ArenaSize;
-                if (size.x < 16 || size.y < 16) // TODO remove hardcoding (but player never changes size so nobody cares
-                    return new Vector2(size.x > 16 ? (int)size.x : 16,  size.y > 16 ? (int)size.y : 16);
-                return new Vector2((int)size.x, (int)size.y);
-            }
-            return base.ArenaSize;*/
             if (script.GetVar("arenasize") != null) {
                 Table size = script.GetVar("arenasize").Table;
                 if (size == null)

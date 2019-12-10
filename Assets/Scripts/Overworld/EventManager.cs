@@ -232,12 +232,8 @@ public class EventManager : MonoBehaviour {
         return false;
     }
 
-    //TODO: Fix the array problem, forcing arrays to be printed "(Table)" in the text.
-    //WHY: WAY less arguments on few functions like DispImg
-    //Yeah, I need more Action delegates. Why are you looking me that way ? 
-    //If you have a better idea than passing 10 thousands arguments, just tell me how I can 
-    //fix my Table to string problem, then we'll be able to talk about these...things :/
-    //(Yeah, I'm a bit aggressive in here, but just forget about that xD)
+    // TODO: Fix the array problem, forcing arrays to be printed "(Table)" in the text.
+    // WHY: WAY less arguments on few functions like DispImg
     private delegate void Action<T1, T2, T3, T4, T5>(T1 arg, T2 arg2, T3 arg3, T4 arg4, T5 arg5);
     private delegate void Action<T1, T2, T3, T4, T5, T6>(T1 arg, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6);
     private delegate void Action<T1, T2, T3, T4, T5, T6, T7>(T1 arg, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7);
@@ -432,7 +428,7 @@ public class EventManager : MonoBehaviour {
                 UnitaleUtil.DisplayLuaError("Overworld engine", "Whoops! There is an error with event indexing.");
             return false;
         }
-        if (go.name == "4eab1af3ab6a932c23b3cdb8ef618b1af9c02088" && page != 0) {
+        if (UnitaleUtil.IsSpecialAnnouncement(go.name) && page != 0) {
             StartCoroutine(SpecialAnnouncementEvent());
             return true;
         }
@@ -445,12 +441,12 @@ public class EventManager : MonoBehaviour {
         }
         try {
             ScriptWrapper scr;
-            if (go.name == "4eab1af3ab6a932c23b3cdb8ef618b1af9c02088") scr = InitScript(go.name, go.GetComponent<EventOW>());
-            else                                                       scr = eventScripts[go];
-            if (isCoroutine && !coroutines.ContainsKey(scr))
-                coroutines.Add(scr, go.GetComponent<EventOW>().actualPage);
-            else if (!isCoroutine)
-                script = scr;
+            if (UnitaleUtil.IsSpecialAnnouncement(go.name)) scr = InitScript(go.name, go.GetComponent<EventOW>());
+            else                                            scr = eventScripts[go];
+
+            if (isCoroutine && !coroutines.ContainsKey(scr)) coroutines.Add(scr, go.GetComponent<EventOW>().actualPage);
+            else if (!isCoroutine)                           script = scr;
+
             SetCurrentScript(scr);
             scr.Call("CYFEventStartEvent", DynValue.NewString("EventPage" + (page == -1 ? go.GetComponent<EventOW>().actualPage : page)));
             //scr.Call("EventPage" + go.GetComponent<EventOW>().actualPage);
@@ -603,7 +599,7 @@ end";
     /// <returns>Returns true if no error were encountered.</returns>
     private ScriptWrapper InitScript(string name, EventOW ev) {
         ScriptWrapper scr = new ScriptWrapper() { scriptname = name };
-        string scriptText = name == "4eab1af3ab6a932c23b3cdb8ef618b1af9c02088" ? CYFReleaseScript : ScriptRegistry.Get(ScriptRegistry.EVENT_PREFIX + name);
+        string scriptText = UnitaleUtil.IsSpecialAnnouncement(name) ? CYFReleaseScript : ScriptRegistry.Get(ScriptRegistry.EVENT_PREFIX + name);
         if (scriptText == null) {
             UnitaleUtil.DisplayLuaError("Launching an event", "The event \"" + name + "\" doesn't exist.");
             return null;
@@ -620,11 +616,6 @@ end";
             UnitaleUtil.DisplayLuaError(name, ex.Message);
             return null;
         }
-        /*System.IO.StreamWriter sr = System.IO.File.CreateText(Application.dataPath + "/test" + name + ".lua");
-        sr.Write(eventCodeFirst + ev.gameObject.name + eventCodeLast);
-        sr.Flush();
-        sr.Close();
-        Debug.Log(eventCodeFirst + ev.gameObject.name + eventCodeLast);*/
 
         scr.script.Globals["CreateLayer"] = (Action<string, string, bool>)SpriteUtil.CreateLayer;
         scr.script.Globals["CreateSprite"] = (Func<string, string, int, DynValue>)SpriteUtil.MakeIngameSprite;
@@ -1009,7 +1000,7 @@ end";
                     if (ev.GetComponent<CYFAnimator>())                       ev.GetComponent<CYFAnimator>().specialHeader = ei.CurrSpriteNameOrCYFAnim;
                     else {
                         if (ev.GetComponent<AutoloadResourcesFromRegistry>()) ev.GetComponent<AutoloadResourcesFromRegistry>().SpritePath = ei.CurrSpriteNameOrCYFAnim;
-                        else if (ev.name != "4eab1af3ab6a932c23b3cdb8ef618b1af9c02088") { // TODO: Remove this condition?
+                        else if (UnitaleUtil.IsSpecialAnnouncement(ev.name)) { // TODO: Remove this condition?
                             if (ev.GetComponent<Image>())                     ev.GetComponent<Image>().sprite = SpriteRegistry.Get(ei.CurrSpriteNameOrCYFAnim);
                             else                                              ev.GetComponent<SpriteRenderer>().sprite = SpriteRegistry.Get(ei.CurrSpriteNameOrCYFAnim);
                         }
