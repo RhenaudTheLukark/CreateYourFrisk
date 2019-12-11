@@ -312,15 +312,13 @@ public class LuaSpriteController {
         // You can't get or set the layer on an enemy sprite
         get {
             Transform target = GetTarget();
-            if (tag == "bubble")                                              return "none";
+            if (tag == "bubble" || tag == "event")                            return "none";
             if (tag == "projectile" && !target.parent.name.Contains("Layer")) return "BulletPool";
             if (tag == "enemy" && !target.parent.name.Contains("Layer"))      return "specialEnemyLayer";
             return target.parent.name.Substring(0, target.parent.name.Length - 5);
         } set {
-            if (tag == "bubble") {
-                UnitaleUtil.WriteInLogAndDebugger("sprite.layer: bubbles' layer can't be changed.");
-                return;
-            }
+            if      (tag == "event")  throw new CYFException("sprite.layer: Overworld events' layer can't be changed.");
+            else if (tag == "bubble") throw new CYFException("sprite.layer: Bubbles' layer can't be changed.");
             Transform target = GetTarget();
             Transform parent = target.parent;
             try {
@@ -358,11 +356,7 @@ public class LuaSpriteController {
         img = i.gameObject;
         originalSprite = i.sprite;
         nativeSizeDelta = new Vector2(100, 100);
-        if (img.GetComponent<Projectile>())                            tag = "projectile";
-        else if (img.GetComponent<LuaEnemyController>())               tag = "enemy";
-        else if (i.transform.parent != null)
-            if (i.transform.parent.GetComponent<LuaEnemyController>()) tag = "bubble";
-            else                                                       tag = "other";
+        tag = "event";
     }
 
     // Changes the sprite of this instance
@@ -391,7 +385,7 @@ public class LuaSpriteController {
         if (tag == "bubble") {
             UnitaleUtil.WriteInLogAndDebugger("sprite.SetParent(): bubbles' parent can't be changed.");
             return;
-        } else if (parent != null && parent.img.transform != null && parent.img.transform.parent.name == "SpritePivot")
+        } else if (tag == "event" || parent.tag == "event")
             throw new CYFException("sprite.SetParent(): Can not use SetParent with an Overworld Event's sprite.");
         try {
             GetTarget().SetParent(parent.img.transform);
@@ -652,7 +646,7 @@ public class LuaSpriteController {
 
     [MoonSharpHidden] public int _masked = 0;
     public void Mask(string mode) {
-        if (GetTarget().name == "SpritePivot")
+        if (tag == "event")
             throw new CYFException("sprite.Mask: Can not be applied to Overworld Event sprites.");
         else if (mode == null)
             throw new CYFException("sprite.Mask: No argument provided.");

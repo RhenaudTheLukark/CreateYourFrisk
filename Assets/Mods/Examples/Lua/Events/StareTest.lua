@@ -195,10 +195,12 @@ function Stare3(frame)
             -- Init: Creates the legs and paws sprites and move the dog up
             if frame == 90 then
                 dogPawsSprite = CreateSprite("Overworld/DogPaws")
+                dogPawsSprite.z = -1
                 dogPawsSprite.SetPivot(.5, 0)
                 dogPawsSprite.MoveToAbs(dogSprite.absx, dogSprite.absy)
 
                 dogLegsSprite = CreateSprite("Overworld/DogLegs")
+                dogLegsSprite.z = -1
                 dogLegsSprite.SetPivot(.5, 0)
                 dogLegsSprite.MoveToAbs(dogSprite.absx, dogSprite.absy + 6)
                 Event.MoveToPoint("Event1", dogSprite.absx, dogSprite.absy + 80, true, false)
@@ -1556,7 +1558,7 @@ function EventPage3()
     local stareID = math.floor(stareFrame / eventFrequency)
     local realStareID = math.min(stareID + stareShift, maxStares)
     if stareID > 0 then
-        currEventDone = _G["Stare" .. realStareID](stareFrame - realStareID * eventFrequency)
+        currEventDone = _G["Stare" .. realStareID]((stareFrame + (stareShift * eventFrequency)) - realStareID * eventFrequency)
     end
 
     if not inputted then

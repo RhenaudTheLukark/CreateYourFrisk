@@ -20,8 +20,8 @@ public class EventManager : MonoBehaviour {
     public  Dictionary<string, LuaSpriteController> sprCtrls = new Dictionary<string, LuaSpriteController>();
     private TextManager textmgr;            //The current TextManager
     public  int actualEventIndex = -1;      //ID of the actual event we're running
-    private string eventCodeFirst;          //The internal Lua code loaded into event scripts (first part)
-    private string eventCodeLast;           //The internal Lua code loaded into event scripts (last part)
+    private static string eventCodeFirst;   //The internal Lua code loaded into event scripts (first part)
+    private static string eventCodeLast;    //The internal Lua code loaded into event scripts (last part)
     public  bool readyToReLaunch = false;   //Used to prevent overworld GameOver errors
     public  bool bgmCoroutine = false;      //Check if the BGM is already fading
     public  bool passPressOnce = false;     //Boolean used because events are boring
