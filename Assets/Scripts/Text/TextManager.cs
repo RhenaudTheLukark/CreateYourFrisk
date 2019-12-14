@@ -850,10 +850,8 @@ public class TextManager : MonoBehaviour {
                     currentColor = new Color(currentColor.r, currentColor.g, currentColor.b, ParseUtil.GetByte(cmds[1]) / 255);
                 break;
             case "charspacing":
-                if (cmds.Length > 1 && cmds[1].ToLower() == "default")
-                    SetHorizontalSpacing(Charset.CharSpacing);
-                else
-                    SetHorizontalSpacing(ParseUtil.GetFloat(cmds[1]));
+                if (cmds.Length > 1 && cmds[1].ToLower() == "default") SetHorizontalSpacing(Charset.CharSpacing);
+                else                                                   SetHorizontalSpacing(ParseUtil.GetFloat(cmds[1]));
                 break;
             case "linespacing":
                 if (cmds.Length > 1)

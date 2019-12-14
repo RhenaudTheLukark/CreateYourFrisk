@@ -612,9 +612,9 @@ public static class UnitaleUtil {
     }
 
     public static string TimeFormatter(float seconds) {
-        float minutes = Mathf.Floor((seconds / 60f) % 60f);
+        float minutes = Mathf.Floor(Mathf.Round(seconds) / 60f);
         //float hours = Mathf.Floor((seconds / 60f) / 60f);
-        return minutes + ":" + String.Format("{0,2}", Mathf.Round(seconds)).Replace(" ", "0");
+        return minutes + ":" + String.Format("{0,2}", Mathf.Round(seconds) % 60).Replace(" ", "0");
     }
 
     public static bool IsSpecialAnnouncement(string str) {
