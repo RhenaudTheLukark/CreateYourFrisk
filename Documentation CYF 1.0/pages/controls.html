@@ -81,17 +81,28 @@ it's w3c valid, at least
     <!--tabs'n'shit-->
     <div class="tab-content col-md-10">
         <div class="tab-pane active text-style" id="controls">
-            <h2>Controls</h2><br><br>
-            <p><span class="term">Arrow keys, Z (or Enter), X (or left/right Shift)</span> - The same as in Undertale.
-            </p>
-            <p><span class="term">Esc</span> - Resets to the Mod Selection screen to assist in quickly testing mods.
-                Will not work on the disclaimer screen. <span class="CYF"></span>: disabled if the encounter has "<span class="term">unescape</span>" set 
-                to true</p>
-            <p><span class="term">F9</span> - Toggles the debug console. You can write text to this with
+            <h2>Controls</h2>
+            <br><br>
+            <h4>In battle</h4>
+            <p><span class="term">Arrow keys, Z (or Enter), X (or left/right Shift)</span> - The same as in Undertale.</p>
+            <p><span class="term">Esc</span> - Exit to the Mod Selection screen to assist in quickly testing mods.
+                <br><span class="CYF"></span> Disabled if the encounter has <span class="term">unescape</span> set to true.</p>
+            <p><span class="term">F9</span> - Toggle the debug console. You can write text to this with
                 <span class="term">DEBUG("your text here")</span> in your scripts.</p>
-            <p><span class="term">Alt+Enter</span> - Fullscreens the game. <span class="term">F4</span> works too, but not on the disclaimer/Game
-                Over screens.</p>
-            <p><span class="CYF"></span> <span class="term">H</span> - In a battle, this shows the hitboxes of the bullets and the player.</p>
+            <p><span class="term">F4, Alt+Enter</span> - Toggle fullscreen mode.
+                <br><span class="CYF"></span> You can change how fullscreen displays with the option
+                "blurless fullscreen" in the Options menu, found in the Mod Selection screen.</p>
+            <p><span class="CYF"></span> <span class="term">H</span> with debugger open (<span class="term">F9</span>) - Show or hide hitboxes of bullets and
+                the player.</p><br>
+            <h4><span class="CYF"></span> Mod Selection screen (main)</h4>
+            <p><span class="term">Z, Enter, or Mouse Click</span> - Start an encounter, or open an encounter list for a mod if it has multiple. (see below)</p>
+            <p><span class="term">X or left/right Shift</span> - Return to the disclaimer (title) screen.</p>
+            <p><span class="term">Up or C</span> - Opens the mod list, used to jump to any mods you have installed. (see below)</p>
+            <p><span class="term">Left or Right arrows</span> - Scroll through your installed mods.</p><br>
+            <h4><span class="CYF"></span> Mod Selection screen (mod or encounter list)</h4>
+            <p><span class="term">Z, Enter, or Mouse Click</span> - Jump to a mod you have installed (mod list), or start a selected encounter (encounter list).</p>
+            <p><span class="term">X or left/right Shift</span> - Close the list.</p>
+            <p><span class="term">Up and Down, Mouse Scroll, Click and Drag</span> - Move up and down through the list.</p>
         </div>
 
         <div class="tab-pane text-style" id="mercy">
