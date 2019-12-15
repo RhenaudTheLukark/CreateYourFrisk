@@ -353,16 +353,12 @@ public class UIController : MonoBehaviour {
 
             case UIState.ACTMENU:
                 string[] actions = new string[encounter.EnabledEnemies[selectedEnemy].ActCommands.Length];
+                for (int i = 0; i < actions.Length; i++)
+                    actions[i] = encounter.EnabledEnemies[selectedEnemy].ActCommands[i];
 
-                if (actions.Length == 0)
-                    throw new CYFException("Cannot enter state ACTMENU without commands.");
-                else {
-                    for (int i = 0; i < actions.Length; i++)
-                        actions[i] = encounter.EnabledEnemies[selectedEnemy].ActCommands[i];
-
-                    SetPlayerOnSelection(0);
-                    textmgr.SetText(new SelectMessage(actions, false));
-                }
+                selectedAction = 0;
+                SetPlayerOnSelection(selectedAction);
+                textmgr.SetText(new SelectMessage(actions, false));
                 break;
 
             case UIState.ITEMMENU:
@@ -533,10 +529,11 @@ public class UIController : MonoBehaviour {
                     sbTextMan.SetOffset(speechBubSpr.border.x, -speechBubSpr.border.w);
                     //sbTextMan.setFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_MONSTERTEXT_NAME));
                     sbTextMan.SetFont(SpriteFontRegistry.Get(encounter.EnabledEnemies[i].Font));
+                    sbTextMan.SetEffect(new RotatingEffect(sbTextMan));
 
                     MonsterMessage[] monMsgs = new MonsterMessage[msgs.Length];
                     for (int j = 0; j < monMsgs.Length; j++)
-                        monMsgs[j] = new MonsterMessage(encounter.EnabledEnemies[i].DialoguePrefix + msgs[j]);
+                        monMsgs[j] = new MonsterMessage(msgs[j]);
 
                     sbTextMan.SetTextQueue(monMsgs);
                     speechBub.GetComponent<Image>().enabled = true;
@@ -925,8 +922,7 @@ public class UIController : MonoBehaviour {
                             break;
 
                         case Actions.ACT:
-                            if (encounter.EnabledEnemies[selectedEnemy].ActCommands.Length != 0)
-                                SwitchState(UIState.ACTMENU);
+                            SwitchState(UIState.ACTMENU);
                             break;
                     }
                     PlaySound(AudioClipRegistry.GetSound("menuconfirm"));

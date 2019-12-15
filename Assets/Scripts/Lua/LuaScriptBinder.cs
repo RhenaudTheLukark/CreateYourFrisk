@@ -34,6 +34,7 @@ public static class LuaScriptBinder {
         UserData.RegisterType<Misc>();
         UserData.RegisterType<LuaTextManager>();
         UserData.RegisterType<LuaFile>();
+        UserData.RegisterType<LuaVideoController>();
         //UserData.RegisterType<Windows>();
         //Overworld
         UserData.RegisterType<LuaEventOW>();
@@ -82,6 +83,7 @@ public static class LuaScriptBinder {
             script.Globals["GetCurrentState"] = (Func<string>)GetState;
             script.Globals["BattleDialog"] = (Action<DynValue>)LuaEnemyEncounter.BattleDialog;
             script.Globals["BattleDialogue"] = (Action<DynValue>)LuaEnemyEncounter.BattleDialog;
+            script.Globals["CreateVideoPlayer"] = (Func<string, bool, DynValue>)VideoUtil.MakeVideoPlayer;
             if (LuaEnemyEncounter.doNotGivePreviousEncounterToSelf)
                 LuaEnemyEncounter.doNotGivePreviousEncounterToSelf = false;
             else

@@ -264,22 +264,11 @@ public class LuaPlayerStatus {
             def = 10 + (int)UnityEngine.Mathf.Floor((lv - 1) / 4);
     }
 
-    public void SetAttackAnim(string[] anim, float frequency = 1 / 6f, string prefix = "") {
+    public void SetAttackAnim(string[] anim, float frequency = 1 / 6f) {
         if (anim.Length == 0) {
             UIController.instance.fightUI.sliceAnim = new string[] { "empty" };
             UIController.instance.fightUI.sliceAnimFrequency = 1 / 30f;
         } else {
-            if (prefix != "") {
-                while (prefix.StartsWith("/"))
-                    prefix = prefix.Substring(1);
-
-                if (!prefix.EndsWith("/"))
-                    prefix += "/";
-
-                for (int i = 0; i < anim.Length; i++)
-                    anim[i] = prefix + anim[i];
-            }
-
             UIController.instance.fightUI.sliceAnim = anim;
             UIController.instance.fightUI.sliceAnimFrequency = frequency;
         }

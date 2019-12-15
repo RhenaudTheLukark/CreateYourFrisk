@@ -18,7 +18,37 @@ enemypositions = {
 possible_attacks = {"bullettest_bouncy", "bullettest_chaserorb", "bullettest_touhou"}
 
 function EncounterStarting()
+	Audio.Stop()
+	--vid = CreateVideoPlayer("Test/Pirouette+", true)
+	vid = CreateVideoPlayer("Test/Second_Dream_MV")
+	vid.Prepare()
+	vid.Play()
+	vid.islooping = false
+
+	DEBUG(vid.isinfront)
+	DEBUG(vid.aspectratio)
+	vid.aspectratio = "FitOutside"
     -- If you want to change the game state immediately, this is the place.
+end
+
+timer = 0
+function Update()
+	timer = timer + 1
+	--DEBUG(vid.currentframe)
+	--vid.alpha = math.sin(math.rad(timer*3))*0.5 + 0.5
+	if (Input.GetKey("W") == 1) then
+		vid.currentframe = 1000
+	end
+	if (Input.GetKey("P") == 1) then
+		vid.Play()
+	end
+	if (Input.GetKey("D") == 1) then
+		if (vid.isactive) then
+			vid.Remove()
+			DEBUG("Removed!")
+		end
+	end
+	NewAudio.SetVolume("src", 0.2)
 end
 
 function EnemyDialogueStarting()

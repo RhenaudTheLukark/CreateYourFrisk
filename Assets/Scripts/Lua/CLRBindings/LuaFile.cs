@@ -111,19 +111,4 @@ public class LuaFile {
         if (File.Exists(path))
             File.Delete(path);
     }
-
-    public void Move(string relativePath) {
-        string newPath = (FileLoader.ModDataPath + "/" + relativePath).Replace('\\', '/');
-
-        if (!File.Exists(path))
-            throw new CYFException("The file at the path \"" + path + "\" doesn't exist, so you can't move it.");
-        if (newPath.Contains(".."))
-            throw new CYFException("You cannot move a file outside of a mod folder. The use of \"..\" is forbidden.");
-        if (File.Exists(newPath))
-            throw new CYFException("The file at the path \"" + newPath + "\" already exists.");
-
-        File.Move(path, newPath);
-
-        path = newPath;
-    }
 }
