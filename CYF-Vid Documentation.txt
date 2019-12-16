@@ -1,0 +1,77 @@
+
+!WARNING: INCOMPLETE!
+
+Video Objects
+
+LuaVideoController video = CreateVideoPlayer(string file_name, boolean infront = true)
+	Creates a Video Object, which plays the video file_name in the Assets/Resources/Videos folder.
+	If infront is false, the camera will play behind everything, even under the background, otherwise it will play above everything else (even the debugger).
+	Videos player are always full-screen.
+
+bool video.isinfront
+	If video.infront is false, the camera will play behind everything, even under the background, otherwise it will play above everything else (even the debugger).
+
+bool video.isprepared
+	Wether the video is plrepared or not.
+
+bool video.isactive
+	Is the video active or not? Recommended to check this before doing any action with a video object that might not exist!
+
+bool video.playonawake
+	Should the video play as soon as it can? 
+	False by default.
+	This is the equivalent of initializing a video player and calling it's video.Play() function right away.
+
+float video.alpha
+	How transparent is the video? 1.0 is fully visible, while 0.0 is completely invisible.
+	Maximum: 1. Minimum: 0.
+
+long video.currentframe
+	The frame the video is currently on. (Kinda like seconds)
+
+bool video.islooping
+	Should the video play again every time it ends or not?
+
+float video.speed
+	How fast should the playback be? 1.0 is normaal speed, 2.0 is twice as fast, 0.5 is half as fast.
+	Maximum: 3. Minimum: -3.
+
+string video.aspectratio
+	How should the video be stretched on the screen?
+	Valid values:
+		"NoScaling"
+        	"FitVertically"
+        	"FitHorizontally"
+        	"FitInside"
+        	"FitOutside"
+        	"Stretch"
+
+void video.Play()
+	Plays/Unpauses the video.
+
+void video.Pause()
+	Pauses video playback.
+
+void video.Prepare()
+	Pre-loads the video. Recommended to run before you decide to play the video. This is automatically done before playing a video if you didn't do it beforehand, causing a delay between calling video.Play() and the video actually playing!
+
+void video.Remove()
+	Removes the video player.
+
+
+
+Misc. Object Additions
+
+float Misc.screenrotation
+	Specifies the rotation of the camera. The camera always rotates around the centre of the screen by default.
+
+void Misc.RotateScreenAdvanced(float x, float y, float z)
+	Rotates the camera around in 3D space.
+	! Causes weird visuals. Use with caution !
+	Normal rotation is the z angle.
+
+void Misc.ScaleScreen(float x_scale, float y_scale)
+	Scales the screen around it's centre point. Good for confusing battles.
+
+void Misc.ResetCamera()
+	Now it resets all kinds of rotation and scaling in addition to movement.
