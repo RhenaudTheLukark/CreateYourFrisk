@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<font>
+<linespacing>12</linespacing>
+<spritesheet>
+    <sprite name=".">
+        <rect x="10" y="2" w="3" h="3"/>
+    </sprite>
+    <sprite name="!">
+        <rect x="44" y="88" w="12" h="15"/>
+    </sprite>
+    <sprite name="0">
+        <rect x="30" y="48" w="12" h="15"/>
+    </sprite>
+    <sprite name="1">
+        <rect x="136" y="22" w="9" h="15"/>
+    </sprite>
+    <sprite name="2">
+        <rect x="172" y="108" w="12" h="15"/>
+    </sprite>
+    <sprite name="3">
+        <rect x="44" y="68" w="12" h="15"/>
+    </sprite>
+    <sprite name="4">
+        <rect x="226" y="88" w="12" h="15"/>
+    </sprite>
+    <sprite name="5">
+        <rect x="240" y="88" w="12" h="15"/>
+    </sprite>
+    <sprite name="6">
+        <rect x="114" y="68" w="12" h="15"/>
+    </sprite>
+    <sprite name="7">
+        <rect x="170" y="88" w="12" h="15"/>
+    </sprite>
+    <sprite name="8">
+        <rect x="226" y="68" w="12" h="15"/>
+    </sprite>
+    <sprite name="9">
+        <rect x="72" y="48" w="12" h="15"/>
+    </sprite>
+    <sprite name="=">
+        <rect x="72" y="22" w="12" h="15"/>
+    </sprite>
+    <sprite name="A">
+        <rect x="198" y="68" w="12" h="15"/>
+    </sprite>
+    <sprite name="B">
+        <rect x="128" y="68" w="12" h="15"/>
+    </sprite>
+    <sprite name="C">
+        <rect x="58" y="88" w="12" h="15"/>
+    </sprite>
+    <sprite name="D">
+        <rect x="2" y="22" w="12" h="15"/>
+    </sprite>
+    <sprite name="E">
+        <rect x="30" y="88" w="13" h="15"/>
+    </sprite>
+    <sprite name="F">
+        <rect x="30" y="68" w="12" h="15"/>
+    </sprite>
+    <sprite name="G">
+        <rect x="86" y="68" w="12" h="15"/>
+    </sprite>
+    <sprite name="H">
+        <rect x="214" y="108" w="12" h="15"/>
+    </sprite>
+    <sprite name="I">
+        <rect x="128" y="88" w="12" h="15"/>
+    </sprite>
+    <sprite name="J">
+        <rect x="142" y="88" w="12" h="15"/>
+    </sprite>
+    <sprite name="K">
+        <rect x="170" y="68" w="12" h="15"/>
+    </sprite>
+    <sprite name="L">
+        <rect x="72" y="68" w="12" h="15"/>
+    </sprite>
+    <sprite name="M">
+        <rect x="104" y="108" w="15" h="15"/>
+    </sprite>
+    <sprite name="N">
+        <rect x="198" y="88" w="12" h="15"/>
+    </sprite>
+    <sprite name="O">
+        <rect x="100" y="88" w="12" h="15"/>
+    </sprite>
+    <sprite name="P">
+        <rect x="139" y="48" w="12" h="15"/>
+    </sprite>
+    <sprite name="Q">
+        <rect x="212" y="88" w="12" h="15"/>
+    </sprite>
+    <sprite name="R">
+        <rect x="44" y="48" w="12" h="15"/>
+    </sprite>
+    <sprite name="S">
+        <rect x="195" y="48" w="12" h="15"/>
+    </sprite>
+    <sprite name="T">
+        <rect x="58" y="68" w="12" h="15"/>
+    </sprite>
+    <sprite name="U">
+        <rect x="212" y="68" w="12" h="15"/>
+    </sprite>
+    <sprite name="V">
+        <rect x="153" y="48" w="12" h="15"/>
+    </sprite>
+    <sprite name="W">
+        <rect x="87" y="108" w="15" h="15"/>
+    </sprite>
+    <sprite name="X">
+        <rect x="72" y="88" w="12" h="15"/>
+    </sprite>
+    <sprite name="Y">
+        <rect x="228" y="108" w="12" h="15"/>
+    </sprite>
+    <sprite name="Z">
+        <rect x="184" y="68" w="12" h="15"/>
+    </sprite>
+    <sprite name="questionmark">
+        <rect x="167" y="48" w="12" h="15"/>
+    </sprite>
+    <sprite name="slash">
+        <rect x="16" y="48" w="12" h="12"/>
+    </sprite>
+    <sprite name="space">
+        <rect x="210" y="22" w="11" h="15"/>
+    </sprite>
+    <sprite name="unnamed_2018_0">
+        <rect x="2" y="108" w="15" h="15"/>
+    </sprite>
+    <sprite name="unnamed_2018_1">
+        <rect x="19" y="108" w="15" h="18"/>
+    </sprite>
+    <sprite name="unnamed_2018_11">
+        <rect x="186" y="108" w="12" h="15"/>
+    </sprite>
+    <sprite name="unnamed_2018_12">
+        <rect x="200" y="108" w="12" h="15"/>
+    </sprite>
+    <sprite name="unnamed_2018_15">
+        <rect x="2" y="88" w="12" h="15"/>
+    </sprite>
+    <sprite name="unnamed_2018_16">
+        <rect x="16" y="88" w="12" h="15"/>
+    </sprite>
+    <sprite name="unnamed_2018_2">
+        <rect x="36" y="108" w="15" h="15"/>
+    </sprite>
+    <sprite name="unnamed_2018_21">
+        <rect x="86" y="88" w="12" h="15"/>
+    </sprite>
+    <sprite name="unnamed_2018_23">
+        <rect x="114" y="88" w="12" h="15"/>
+    </sprite>
+    <sprite name="unnamed_2018_26">
+        <rect x="156" y="88" w="12" h="15"/>
+    </sprite>
+    <sprite name="unnamed_2018_28">
+        <rect x="184" y="88" w="12" h="15"/>
+    </sprite>
+    <sprite name="unnamed_2018_3">
+        <rect x="53" y="108" w="15" h="15"/>
+    </sprite>
+    <sprite name="unnamed_2018_33">
+        <rect x="2" y="68" w="12" h="15"/>
+    </sprite>
+    <sprite name="unnamed_2018_34">
+        <rect x="16" y="68" w="12" h="15"/>
+    </sprite>
+    <sprite name="unnamed_2018_4">
+        <rect x="70" y="108" w="15" h="15"/>
+    </sprite>
+    <sprite name="unnamed_2018_42">
+        <rect x="142" y="68" w="12" h="15"/>
+    </sprite>
+    <sprite name="unnamed_2018_43">
+        <rect x="156" y="68" w="12" h="15"/>
+    </sprite>
+    <sprite name="unnamed_2018_49">
+        <rect x="240" y="68" w="12" h="15"/>
+    </sprite>
+    <sprite name="unnamed_2018_50">
+        <rect x="2" y="48" w="12" h="15"/>
+    </sprite>
+    <sprite name="unnamed_2018_54">
+        <rect x="58" y="48" w="12" h="15"/>
+    </sprite>
+    <sprite name="unnamed_2018_56">
+        <rect x="86" y="48" w="12" h="15"/>
+    </sprite>
+    <sprite name="unnamed_2018_57">
+        <rect x="111" y="48" w="12" h="15"/>
+    </sprite>
+    <sprite name="unnamed_2018_58">
+        <rect x="125" y="48" w="12" h="12"/>
+    </sprite>
+    <sprite name="unnamed_2018_62">
+        <rect x="181" y="48" w="12" h="15"/>
+    </sprite>
+    <sprite name="unnamed_2018_64">
+        <rect x="209" y="48" w="12" h="15"/>
+    </sprite>
+    <sprite name="unnamed_2018_65">
+        <rect x="223" y="48" w="12" h="15"/>
+    </sprite>
+    <sprite name="unnamed_2018_66">
+        <rect x="237" y="48" w="12" h="15"/>
+    </sprite>
+    <sprite name="unnamed_2018_67">
+        <rect x="2" y="2" w="37" h="15"/>
+    </sprite>
+    <sprite name="unnamed_2018_69">
+        <rect x="16" y="22" w="12" h="15"/>
+    </sprite>
+    <sprite name="unnamed_2018_7">
+        <rect x="121" y="108" w="15" h="15"/>
+    </sprite>
+    <sprite name="unnamed_2018_70">
+        <rect x="44" y="22" w="12" h="12"/>
+    </sprite>
+    <sprite name="unnamed_2018_72">
+        <rect x="86" y="28" w="15" h="9"/>
+    </sprite>
+    <sprite name="unnamed_2018_73">
+        <rect x="103" y="22" w="9" h="15"/>
+    </sprite>
+    <sprite name="unnamed_2018_74">
+        <rect x="114" y="22" w="9" h="15"/>
+    </sprite>
+    <sprite name="unnamed_2018_75">
+        <rect x="125" y="22" w="9" h="15"/>
+    </sprite>
+    <sprite name="unnamed_2018_77">
+        <rect x="147" y="22" w="9" h="15"/>
+    </sprite>
+    <sprite name="unnamed_2018_78">
+        <rect x="158" y="22" w="9" h="15"/>
+    </sprite>
+    <sprite name="unnamed_2018_79">
+        <rect x="169" y="22" w="9" h="15"/>
+    </sprite>
+    <sprite name="unnamed_2018_8">
+        <rect x="138" y="108" w="15" h="15"/>
+    </sprite>
+    <sprite name="unnamed_2018_80">
+        <rect x="180" y="22" w="9" h="15"/>
+    </sprite>
+    <sprite name="unnamed_2018_81">
+        <rect x="191" y="22" w="9" h="15"/>
+    </sprite>
+    <sprite name="unnamed_2018_82">
+        <rect x="224" y="31" w="23" h="6"/>
+    </sprite>
+    <sprite name="unnamed_2018_83">
+        <rect x="202" y="22" w="6" h="6"/>
+    </sprite>
+    <sprite name="unnamed_2018_9">
+        <rect x="155" y="108" w="15" h="15"/>
+    </sprite>
+    <sprite name="z">
+        <rect x="58" y="22" w="12" h="15"/>
+    </sprite>
+</spritesheet>
+</font>

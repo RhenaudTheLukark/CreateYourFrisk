@@ -28,16 +28,26 @@ function EncounterStarting()
 	DEBUG(vid.isinfront)
 	DEBUG(vid.aspectratio)
 	vid.aspectratio = "FitOutside"
+
+	--Misc.ScaleScreen(1, -1)
     -- If you want to change the game state immediately, this is the place.
 end
 
 timer = 0
 function Update()
 	timer = timer + 1
+	--Misc.screenrotation = Misc.screenrotation + 5
+	if (timer % 3 == 0) then
+		--Misc.RotateScreenAdvanced(math.random(-70, 70), math.random(-70, 70), math.random(-180, 180))
+	end
+	if (timer < 30 and (not vid.isactive)) then
+		DEBUG("Flipped Da Screen")
+		Misc.ScaleScreen(1, -timer/15 + 1)
+	end
 	--DEBUG(vid.currentframe)
 	--vid.alpha = math.sin(math.rad(timer*3))*0.5 + 0.5
 	if (Input.GetKey("W") == 1) then
-		vid.currentframe = 1000
+		vid.currentframe = 10
 	end
 	if (Input.GetKey("P") == 1) then
 		vid.Play()
@@ -45,6 +55,7 @@ function Update()
 	if (Input.GetKey("D") == 1) then
 		if (vid.isactive) then
 			vid.Remove()
+			timer = 0
 			DEBUG("Removed!")
 		end
 	end

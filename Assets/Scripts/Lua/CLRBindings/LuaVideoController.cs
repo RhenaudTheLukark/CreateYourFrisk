@@ -150,7 +150,7 @@ public class LuaVideoController : MonoBehaviour {
 
     public bool isactive {
         get {
-            return vid.gameObject.activeInHierarchy;
+            return _vid != null;
         }
     }
 

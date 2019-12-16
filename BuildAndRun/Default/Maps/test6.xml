@@ -1,0 +1,28 @@
+<map prefabName="test5" modToLoad="Examples 2" noRandomEncounter="false" isMusicKeptBetweenBattles="false"> 
+    <element name="Background" type="mapLayer" zPos=0/> <!--The Background layer is needed in all maps, at zPos=0-->
+    
+    <element name="Save" type="event" sprite="savepoint1">
+        <PositionData x=1800 y=301 z=0 shiftX=0 shiftY=0 shiftZ=0/>
+        <Collider width=40 height=38 shiftX=0 shiftY=0 interactible="true"/>
+        <EventData scriptName="SaveTest" actualPage=1 moveSpeed=1>
+            <trigger eventPage=0 triggerType=0/>
+            <trigger eventPage=1 triggerType=0/>
+        </EventData>
+        <CYFAnimator>
+            <animation name="Idle" sprites="savepoint1, savepoint2" frequency=0.25/>
+        </CYFAnimator>
+    </element>
+
+    <element name="TP Left" type="tp">
+        <PositionData x=40 y=301 z=0/>
+        <Collider width=40 height=38/>
+        <TPData rotation=90 tpMap="test" tpPosX=1480 tpPosY=280 tpDir=4/> 
+        <!--
+            rotation=0 => horizontal
+            rotation=90 => vertical
+            rotation is counter-clockwise
+        -->
+    </element>
+
+    <element name="Parallax1" type="parallax" sprite="Snow 2-2" zPos=1000/>
+</map>

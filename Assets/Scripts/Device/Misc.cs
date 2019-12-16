@@ -4,6 +4,7 @@ using System.Text;
 using System.IO;
 
 public class Misc {
+
     public string MachineName {
         get { return System.Environment.UserName; }
     }
@@ -61,8 +62,81 @@ public class Misc {
         cameraY = y;
     }
 
+    private static Vector3 _rotation;
+    public static float screenrotation {
+        get {
+            return Camera.main.transform.eulerAngles.z;
+        }
+        set {
+            _rotation = Camera.main.transform.eulerAngles;
+            /*
+            if (value > 180) {
+                _rotation.z = value - 360;
+            } else if (value < -180) {
+                _rotation.z = value + 360;
+            } else { 
+                _rotation.z = value;
+            }*/
+            _rotation.z = value;
+            Camera.main.transform.eulerAngles = _rotation;
+        }
+    }
+
+    public static void RotateScreenAdvanced(float x, float y, float z) {
+        _rotation = Camera.main.transform.eulerAngles;
+        _rotation.x = x;
+        _rotation.y = y;
+        _rotation.z = z;
+        Camera.main.transform.eulerAngles = _rotation;
+    }
+
+    /*
+    private static Matrix4x4 originalProjection;
+    public static void FlipScreen(float _flip_x, float _flip_y) {
+        float flip_x = (_flip_x > 1 ? 1 : (_flip_x < -1 ? -1 : _flip_x));
+        float flip_y = (_flip_y > 1 ? 1 : (_flip_y < -1 ? -1 : _flip_y));
+        if (originalProjection == null) {
+            originalProjection = Camera.main.projectionMatrix;
+        }
+        GL.invertCulling = (flip_x != 1) || (flip_y != 1);
+        Camera.main.ResetWorldToCameraMatrix();
+        Camera.main.ResetProjectionMatrix();
+        Debug.Log(Camera.main.projectionMatrix);
+        Vector3 scale = new Vector3(flip_x, flip_y);
+        Camera.main.projectionMatrix = originalProjection * Matrix4x4.Scale(scale);
+        GL.invertCulling = false;
+    }*/
+
+    public static float screen_xscale {
+        get {
+            return ScreenFlipper.xscale;
+        }
+        set {
+            ScreenFlipper.xscale = value;
+        }
+    }
+
+    public static float screen_yscale {
+        get {
+            return ScreenFlipper.yscale;
+        }
+        set {
+            ScreenFlipper.yscale = value;
+        }
+    }
+
+    public static void ScaleScreen(float _flip_x, float _flip_y) {
+        //float flip_x = (_flip_x > 1 ? 1 : (_flip_x < -1 ? -1 : _flip_x));
+        //float flip_y = (_flip_y > 1 ? 1 : (_flip_y < -1 ? -1 : _flip_y));
+        //GameObject.Find("Canvas").transform.localScale = new Vector3(_flip_x, _flip_y, 1);
+        screen_xscale = _flip_x;
+        screen_yscale = _flip_y;
+    }
+
     public static void ResetCamera() {
         MoveCameraTo(0f, 0f);
+        RotateScreenAdvanced(0, 0, 0);
+        ScaleScreen(1, 1);
     }
 
     public static void DestroyWindow() { Application.Quit(); }

@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<font>
+<voice>monsterfont</voice>
+<color>000000</color>
+<linespacing>18</linespacing>
+<spritesheet>
+    <sprite name="!">
+        <rect x="96" y="32" w="2" h="12"/>
+    </sprite>
+    <sprite name="#">
+        <rect x="13" y="132" w="9" h="12"/>
+    </sprite>
+    <sprite name="$">
+        <rect x="75" y="131" w="8" h="15"/>
+    </sprite>
+    <sprite name="%">
+        <rect x="32" y="114" w="8" h="12"/>
+    </sprite>
+    <sprite name="'">
+        <rect x="122" y="32" w="2" h="12"/>
+    </sprite>
+    <sprite name="(">
+        <rect x="9" y="31" w="5" h="14"/>
+    </sprite>
+    <sprite name=")">
+        <rect x="16" y="31" w="5" h="14"/>
+    </sprite>
+    <sprite name="+">
+        <rect x="63" y="49" w="8" h="12"/>
+    </sprite>
+    <sprite name=",">
+        <rect x="63" y="31" w="3" h="12"/>
+    </sprite>
+    <sprite name="-">
+        <rect x="23" y="32" w="8" h="12"/>
+    </sprite>
+    <sprite name="0">
+        <rect x="112" y="98" w="8" h="12"/>
+    </sprite>
+    <sprite name="1">
+        <rect x="57" y="32" w="4" h="12"/>
+    </sprite>
+    <sprite name="2">
+        <rect x="92" y="65" w="7" h="12"/>
+    </sprite>
+    <sprite name="3">
+        <rect x="74" y="65" w="7" h="12"/>
+    </sprite>
+    <sprite name="4">
+        <rect x="82" y="114" w="8" h="12"/>
+    </sprite>
+    <sprite name="5">
+        <rect x="11" y="65" w="7" h="12"/>
+    </sprite>
+    <sprite name="6">
+        <rect x="83" y="65" w="7" h="12"/>
+    </sprite>
+    <sprite name="7">
+        <rect x="29" y="65" w="7" h="12"/>
+    </sprite>
+    <sprite name="8">
+        <rect x="38" y="65" w="7" h="12"/>
+    </sprite>
+    <sprite name="9">
+        <rect x="20" y="49" w="7" h="12"/>
+    </sprite>
+    <sprite name=";">
+        <rect x="68" y="31" w="4" h="12"/>
+    </sprite>
+    <sprite name="=">
+        <rect x="109" y="49" w="8" h="12"/>
+    </sprite>
+    <sprite name="@">
+        <rect x="12" y="114" w="8" h="12"/>
+    </sprite>
+    <sprite name="A">
+        <rect x="102" y="114" w="8" h="12"/>
+    </sprite>
+    <sprite name="B">
+        <rect x="72" y="114" w="8" h="12"/>
+    </sprite>
+    <sprite name="C">
+        <rect x="52" y="98" w="8" h="12"/>
+    </sprite>
+    <sprite name="D">
+        <rect x="72" y="82" w="8" h="12"/>
+    </sprite>
+    <sprite name="E">
+        <rect x="42" y="114" w="8" h="12"/>
+    </sprite>
+    <sprite name="F">
+        <rect x="62" y="114" w="8" h="12"/>
+    </sprite>
+    <sprite name="G">
+        <rect x="2" y="98" w="8" h="12"/>
+    </sprite>
+    <sprite name="H">
+        <rect x="62" y="82" w="8" h="12"/>
+    </sprite>
+    <sprite name="I">
+        <rect x="100" y="32" w="2" h="12"/>
+    </sprite>
+    <sprite name="J">
+        <rect x="101" y="49" w="6" h="12"/>
+    </sprite>
+    <sprite name="K">
+        <rect x="32" y="82" w="8" h="12"/>
+    </sprite>
+    <sprite name="L">
+        <rect x="11" y="49" w="7" h="12"/>
+    </sprite>
+    <sprite name="M">
+        <rect x="42" y="82" w="8" h="12"/>
+    </sprite>
+    <sprite name="N">
+        <rect x="42" y="98" w="8" h="12"/>
+    </sprite>
+    <sprite name="O">
+        <rect x="82" y="98" w="8" h="12"/>
+    </sprite>
+    <sprite name="P">
+        <rect x="2" y="82" w="8" h="12"/>
+    </sprite>
+    <sprite name="Q">
+        <rect x="55" y="131" w="8" h="13"/>
+    <border x="0" y="1" z="0" w="0"/>
+</sprite>
+    <sprite name="R">
+        <rect x="92" y="98" w="8" h="12"/>
+    </sprite>
+    <sprite name="S">
+        <rect x="2" y="114" w="8" h="12"/>
+    </sprite>
+    <sprite name="T">
+        <rect x="92" y="114" w="8" h="12"/>
+    </sprite>
+    <sprite name="U">
+        <rect x="12" y="82" w="8" h="12"/>
+    </sprite>
+    <sprite name="V">
+        <rect x="22" y="114" w="8" h="12"/>
+    </sprite>
+    <sprite name="W">
+        <rect x="22" y="82" w="8" h="12"/>
+    </sprite>
+    <sprite name="Wcopyorsomethingidk">
+        <rect x="24" y="132" w="9" h="12"/>
+    </sprite>
+    <sprite name="X">
+        <rect x="22" y="98" w="8" h="12"/>
+    </sprite>
+    <sprite name="Y">
+        <rect x="95" y="132" w="8" h="12"/>
+    </sprite>
+    <sprite name="Z">
+        <rect x="56" y="65" w="7" h="12"/>
+    </sprite>
+    <sprite name="[">
+        <rect x="2" y="31" w="5" h="14"/>
+    </sprite>
+    <sprite name="]">
+        <rect x="119" y="48" w="5" h="14"/>
+    </sprite>
+    <sprite name="^">
+        <rect x="104" y="33" w="6" h="12"/>
+    </sprite>
+    <sprite name="_">
+        <rect x="85" y="131" w="8" h="12"/>
+    </sprite>
+    <sprite name="`">
+        <rect x="116" y="33" w="4" h="12"/>
+    </sprite>
+    <sprite name="a">
+        <rect x="102" y="98" w="8" h="8"/>
+    </sprite>
+    <sprite name="ampersand">
+        <rect x="92" y="82" w="8" h="12"/>
+    </sprite>
+    <sprite name="asterisk">
+        <rect x="43" y="32" w="6" h="12"/>
+    </sprite>
+    <sprite name="b">
+        <rect x="52" y="82" w="8" h="12"/>
+    </sprite>
+    <sprite name="c">
+        <rect x="32" y="98" w="8" h="8"/>
+    </sprite>
+    <sprite name="colon">
+        <rect x="112" y="32" w="2" h="12"/>
+    </sprite>
+    <sprite name="d">
+        <rect x="82" y="82" w="8" h="12"/>
+    </sprite>
+    <sprite name="dot">
+        <rect x="84" y="32" w="2" h="12"/>
+    </sprite>
+    <sprite name="doublequote">
+        <rect x="77" y="32" w="5" h="12"/>
+    </sprite>
+    <sprite name="e">
+        <rect x="12" y="98" w="8" h="8"/>
+    </sprite>
+    <sprite name="f">
+        <rect x="110" y="65" w="7" h="12"/>
+    </sprite>
+    <sprite name="g">
+        <rect x="102" y="81" w="7" h="9"/>
+    <border x="0" y="1" z="0" w="0"/>
+</sprite>
+    <sprite name="h">
+        <rect x="2" y="49" w="7" h="12"/>
+    </sprite>
+    <sprite name="i">
+        <rect x="88" y="32" w="2" h="12"/>
+    </sprite>
+    <sprite name="j">
+        <rect x="51" y="31" w="4" h="13"/>
+    <border x="0" y="2" z="0" w="0"/>
+</sprite>
+    <sprite name="k">
+        <rect x="101" y="65" w="7" h="12"/>
+    </sprite>
+    <sprite name="l">
+        <rect x="92" y="32" w="2" h="12"/>
+    </sprite>
+    <sprite name="m">
+        <rect x="72" y="98" w="8" h="8"/>
+    </sprite>
+    <sprite name="n">
+        <rect x="2" y="65" w="7" h="8"/>
+    </sprite>
+    <sprite name="o">
+        <rect x="115" y="132" w="8" h="8"/>
+    </sprite>
+    <sprite name="p">
+        <rect x="35" y="131" w="8" h="9"/>
+    <border x="0" y="1" z="0" w="0"/>
+</sprite>
+    <sprite name="pipe">
+        <rect x="73" y="31" w="2" h="14"/>
+    </sprite>
+    <sprite name="q">
+        <rect x="65" y="131" w="8" h="9"/>
+    <border x="0" y="1" z="0" w="0"/>
+</sprite>
+    <sprite name="questionmark">
+        <rect x="52" y="114" w="8" h="12"/>
+    </sprite>
+    <sprite name="r">
+        <rect x="93" y="49" w="6" h="8"/>
+    </sprite>
+    <sprite name="s">
+        <rect x="20" y="65" w="7" h="8"/>
+    </sprite>
+    <sprite name="slash">
+        <rect x="38" y="50" w="7" h="12"/>
+    </sprite>
+    <sprite name="space">
+        <rect x="0" y="0" w="6" h="12"/>
+    </sprite>
+    <sprite name="t">
+        <rect x="65" y="65" w="7" h="12"/>
+    </sprite>
+    <sprite name="u">
+        <rect x="47" y="65" w="7" h="8"/>
+    </sprite>
+    <sprite name="unnamed_2015_45">
+        <rect x="111" y="82" w="7" h="11"/>
+    </sprite>
+    <sprite name="unnamed_2015_lt">
+        <rect x="73" y="52" w="8" h="7"/>
+    </sprite>
+    <sprite name="unnamed_2015_rt">
+        <rect x="83" y="52" w="8" h="7"/>
+    </sprite>
+    <sprite name="v">
+        <rect x="62" y="98" w="8" h="8"/>
+    </sprite>
+    <sprite name="w">
+        <rect x="112" y="114" w="8" h="8"/>
+    </sprite>
+    <sprite name="x">
+        <rect x="105" y="132" w="8" h="8"/>
+    </sprite>
+    <sprite name="y">
+        <rect x="45" y="131" w="8" h="9"/>
+    <border x="0" y="1" z="0" w="0"/>
+</sprite>
+    <sprite name="z">
+        <rect x="29" y="49" w="7" h="8"/>
+    </sprite>
+    <sprite name="{">
+        <rect x="47" y="48" w="6" h="14"/>
+    </sprite>
+    <sprite name="}">
+        <rect x="55" y="48" w="6" h="14"/>
+    </sprite>
+    <sprite name="~">
+        <rect x="33" y="32" w="8" h="12"/>
+    </sprite>
+    <sprite name="à">
+        <rect x="2" y="15" w="8" h="11"/>
+    </sprite>
+    <sprite name="â">
+        <rect x="12" y="15" w="8" h="11"/>
+    </sprite>
+    <sprite name="é">
+        <rect x="22" y="15" w="8" h="11"/>
+    </sprite>
+    <sprite name="è">
+        <rect x="32" y="15" w="8" h="11"/>
+    </sprite>
+    <sprite name="ê">
+        <rect x="42" y="15" w="8" h="11"/>
+    </sprite>
+    <sprite name="ë">
+        <rect x="52" y="15" w="8" h="11"/>
+    </sprite>
+    <sprite name="ï">
+        <rect x="62" y="15" w="4" h="11"/>
+    </sprite>
+    <sprite name="î">
+        <rect x="68" y="15" w="4" h="11"/>
+    </sprite>
+    <sprite name="ò">
+        <rect x="74" y="15" w="8" h="11"/>
+    </sprite>
+    <sprite name="ô">
+        <rect x="84" y="15" w="8" h="11"/>
+    </sprite>
+    <sprite name="ù">
+        <rect x="94" y="15" w="7" h="11"/>
+    </sprite>
+</spritesheet>
+</font>
