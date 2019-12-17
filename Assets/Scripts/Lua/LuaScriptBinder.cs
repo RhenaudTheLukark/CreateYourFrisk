@@ -82,7 +82,7 @@ public static class LuaScriptBinder {
             script.Globals["BattleDialog"] = (Action<DynValue>)LuaEnemyEncounter.BattleDialog;
             script.Globals["BattleDialogue"] = (Action<DynValue>)LuaEnemyEncounter.BattleDialog;
 
-            if (LuaEnemyEncounter.doNotGivePreviousEncounterToSelf) // TODO: Why keep "else" part?
+            if (LuaEnemyEncounter.doNotGivePreviousEncounterToSelf)
                 LuaEnemyEncounter.doNotGivePreviousEncounterToSelf = false;
             else
                 script.Globals["Encounter"] = LuaEnemyEncounter.script_ref;

@@ -259,7 +259,6 @@ public class SpecialAnnouncementScript : MonoBehaviour {
                         if (subAudio.time != 0) misriHalek.transform.localPosition = new Vector2(MHPos.x + (float)(UnityEngine.Random.value - .5) * 10, MHPos.y + (float)(UnityEngine.Random.value - .5) * 10);
                         else                    misriHalek.transform.localPosition = MHPos;
                     }
-                    phase++;
                     break;
                 case 2:
                     if (mainAudio.time >= 73) {

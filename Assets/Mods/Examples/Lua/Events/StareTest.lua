@@ -1551,6 +1551,9 @@ function EventPage2()
     currEventDone = true
     resetStareVars()
     Event.SetPage(Event.GetName(), 3)
+    Player.CanMove(false)
+    Event.MoveToPoint("Player", 430, 174, true)
+    Event.SetDirection("Player", 6)
 end
 
 -- Parallel process

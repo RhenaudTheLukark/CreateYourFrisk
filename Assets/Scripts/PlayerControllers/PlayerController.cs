@@ -129,7 +129,6 @@ public class PlayerController : MonoBehaviour {
                     damage = 1;
             }
         // set timer and play the hurt sound if player was actually hurt
-        // TODO: factor in stats and what the actual damage should be
         
         // reset the hurt timer if the arguments passed are (0, 0)
         if (damage == 0 && invulnerabilitySeconds == 0) {

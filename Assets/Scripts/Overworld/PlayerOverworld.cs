@@ -636,10 +636,9 @@ public class PlayerOverworld : MonoBehaviour {
     
     public static void AutoSetUIPos() {
         if (instance.UIPos == 0) {
-            // If the Player's position is <= <TODO>, flip the position of the menu
             float cameraOffset = (GameObject.Find("Main Camera OW").GetComponent<RectTransform>().position.y - 240);
             float playerPos = Mathf.Ceil(instance.gameObject.GetComponent<RectTransform>().position.y - cameraOffset);
-            
+
             SetUIPos(playerPos < 230);
         } else
             SetUIPos(instance.UIPos == 2 ? true : false);
@@ -648,7 +647,7 @@ public class PlayerOverworld : MonoBehaviour {
     public static void SetUIPos(bool top = false) {
         instance.UIPos = top ? 2 : 1;
         float cameraOffset = (GameObject.Find("Main Camera OW").GetComponent<RectTransform>().position.y - 240);
-        
+
         // Inverted position
         if (top) {
             // Text box

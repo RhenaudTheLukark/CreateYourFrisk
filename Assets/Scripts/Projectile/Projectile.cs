@@ -20,7 +20,7 @@ public abstract class Projectile : MonoBehaviour {
     private static float zIndexCurrent = Z_INDEX_INITIAL;
      */
 
-    internal Script owner; //TODO convert to ScriptWrapper, observe performance influence
+    internal Script owner;
     protected internal RectTransform self; // RectTransform of this projectile
     protected internal ProjectileController ctrl;
     protected internal Color32[] texture;
