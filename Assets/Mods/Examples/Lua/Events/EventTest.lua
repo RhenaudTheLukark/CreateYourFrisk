@@ -334,41 +334,6 @@ function EventPage368395()
     pla.Set("BoosterOW/10")
     Audio.PlaySound("step-floor")
     
-    -- backup
-    --[[
-    -- jump two
-    General.Wait(10)
-    pla.Set("Overworld/Booster/j")
-    Audio.PlaySound("step-floor")
-    for i = 590, 643 do
-        pla.x = pla.x + 1.5
-        pla.y = 174 + (math.sin(math.rad((i - 590) / (26/90))) * 110)
-        
-        General.Wait(1)
-    end
-    pla.y = 174
-    pla.Set("BoosterOW/10")
-    Audio.PlaySound("step-floor")
-    
-    -- jump three
-    General.Wait(6)
-    pla.Set("Overworld/Booster/j")
-    Audio.PlaySound("step-floor")
-    for i = 676, 698 do
-        pla.x = pla.x + 1.5
-        pla.y = 174 + (math.sin(math.rad((i - 676) / (33/90))) * 150)
-        pla.rotation = pla.rotation - 4.5
-        
-        General.Wait(1)
-    end
-    pla.Set("Overworld/Booster/p")
-    pla.rotation = 0
-    pla.Move(pla.height/2, -pla.height/3)
-    Audio.PlaySound("sm64_impact")
-    Audio.PlaySound("mario-pain")
-    Misc.ShakeScreen(6, 30)
-    ]]--
-    
     -- jump two
     General.Wait(10)
     pla.Set("Overworld/Booster/j")
@@ -396,6 +361,7 @@ function EventPage368395()
     General.Wait(6)
     pla.Set("Overworld/Booster/j")
     Audio.PlaySound("step-floor")
+    Audio.PlaySound("Jump")
     for i = 676, 698 do
         pla.x = pla.x + 1.5
         pla.y = 174 + (math.sin(math.rad((i - 676) / (33/90))) * 150)

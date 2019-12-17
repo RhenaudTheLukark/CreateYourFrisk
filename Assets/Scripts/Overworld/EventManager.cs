@@ -20,8 +20,8 @@ public class EventManager : MonoBehaviour {
     public  Dictionary<string, LuaSpriteController> sprCtrls = new Dictionary<string, LuaSpriteController>();
     private TextManager textmgr;            //The current TextManager
     public  int actualEventIndex = -1;      //ID of the actual event we're running
-    private string eventCodeFirst;          //The internal Lua code loaded into event scripts (first part)
-    private string eventCodeLast;           //The internal Lua code loaded into event scripts (last part)
+    private static string eventCodeFirst;   //The internal Lua code loaded into event scripts (first part)
+    private static string eventCodeLast;    //The internal Lua code loaded into event scripts (last part)
     public  bool readyToReLaunch = false;   //Used to prevent overworld GameOver errors
     public  bool bgmCoroutine = false;      //Check if the BGM is already fading
     public  bool passPressOnce = false;     //Boolean used because events are boring
@@ -1542,7 +1542,7 @@ end";
         }
         bool save = true;
         Color c = PlayerOverworld.instance.utHeart.color;
-        PlayerOverworld.instance.utHeart.transform.position = new Vector3(151 + Camera.main.transform.position.x - 320, 233 + Camera.main.transform.position.y - 240,
+        PlayerOverworld.instance.utHeart.transform.position = new Vector3(151 + Camera.main.transform.position.x - 320, 224 + Camera.main.transform.position.y - 240,
                                                                           PlayerOverworld.instance.utHeart.transform.position.z);
         PlayerOverworld.instance.utHeart.color = new Color(c.r, c.g, c.b, 1);
         GameObject.Find("save_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 1);
@@ -1552,8 +1552,6 @@ end";
         TextManager txtLevel = GameObject.Find("TextManagerLevel").GetComponent<TextManager>(), txtTime = GameObject.Find("TextManagerTime").GetComponent<TextManager>(),
                     txtMap = GameObject.Find("TextManagerMap").GetComponent<TextManager>(), txtName = GameObject.Find("TextManagerName").GetComponent<TextManager>(),
                     txtSave = GameObject.Find("TextManagerSave").GetComponent<TextManager>(), txtReturn = GameObject.Find("TextManagerReturn").GetComponent<TextManager>();
-        txtLevel.SetHorizontalSpacing(2); txtTime.SetHorizontalSpacing(2); txtMap.SetHorizontalSpacing(2);
-        txtName.SetHorizontalSpacing(2); txtSave.SetHorizontalSpacing(2); txtReturn.SetHorizontalSpacing(2);
         //foreach (RectTransform t in GameObject.Find("save_interior").transform)
             //t.sizeDelta = new Vector2(t.sizeDelta.x, t.sizeDelta.y + 1);
 
@@ -1562,18 +1560,20 @@ end";
             playerName = SaveLoad.savedGame.player.Name;
             playerLevel = SaveLoad.savedGame.player.LV;
 
-            txtName.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]" + playerName, false, true) });
-            txtLevel.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]LV" + playerLevel, false, true) });
-            txtTime.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]" + UnitaleUtil.TimeFormatter(SaveLoad.savedGame.playerTime), false, true) });
-            txtMap.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]" + SaveLoad.savedGame.lastScene, false, true) });
+            txtName.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][charspacing:2]" + playerName, false, true) });
+            txtLevel.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][charspacing:2]LV" + playerLevel, false, true) });
+            txtTime.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][charspacing:2]" + UnitaleUtil.TimeFormatter(SaveLoad.savedGame.playerTime), false, true) });
+            GameObject.Find("TextManagerTime").transform.localPosition = new Vector3(180f - UnitaleUtil.CalcTextWidth(txtTime), 68, 0f);
+            txtMap.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][charspacing:2]" + SaveLoad.savedGame.lastScene, false, true) });
         } else {
-            txtName.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]EMPTY", false, true) });
-            txtLevel.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]LV0", false, true) });
-            txtTime.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]0:00", false, true) });
-            txtMap.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]--", false, true) });
+            txtName.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][charspacing:2]EMPTY", false, true) });
+            txtLevel.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][charspacing:2]LV0", false, true) });
+            txtTime.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][charspacing:2]0:00", false, true) });
+            GameObject.Find("TextManagerTime").transform.localPosition = new Vector3(130f, 68, 0f);
+            txtMap.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][charspacing:2]--", false, true) });
         }
-        txtSave.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]Save", false, true) });
-        txtReturn.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]Return", false, true) });
+        txtSave.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][charspacing:2]Save", false, true) });
+        txtReturn.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][charspacing:2]Return", false, true) });
 
         GameObject.Find("Mugshot").GetComponent<Image>().color = new Color(1, 1, 1, 0);
         GameObject.Find("textframe_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 0);
@@ -1599,12 +1599,13 @@ end";
                 if (save) {
                     SaveLoad.Save(true);
                     PlayerOverworld.instance.utHeart.color = new Color(c.r, c.g, c.b, 0);
-                    txtName.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]" + PlayerCharacter.instance.Name, false, true) });
-                    txtLevel.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]LV" + PlayerCharacter.instance.LV, false, true) });
-                    txtTime.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]" + UnitaleUtil.TimeFormatter(SaveLoad.savedGame.playerTime), false, true) });
-                    txtMap.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]" + SaveLoad.savedGame.lastScene, false, true) });
-                    txtSave.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]File saved.", false, true) });
-                    txtReturn.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]", false, true) });
+                    txtName.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][charspacing:2]" + PlayerCharacter.instance.Name, false, true) });
+                    txtLevel.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][charspacing:2]LV" + PlayerCharacter.instance.LV, false, true) });
+                    txtTime.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][charspacing:2]" + UnitaleUtil.TimeFormatter(SaveLoad.savedGame.playerTime), false, true) });
+                    GameObject.Find("TextManagerTime").transform.localPosition = new Vector3(180f - UnitaleUtil.CalcTextWidth(txtTime), 68, 0f);
+                    txtMap.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][charspacing:2]" + SaveLoad.savedGame.lastScene, false, true) });
+                    txtSave.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][charspacing:2]File saved.", false, true) });
+                    txtReturn.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][charspacing:2]", false, true) });
                     foreach (Image img in GameObject.Find("save_interior").transform.GetComponentsInChildren<Image>())
                         img.color = new Color(1, 1, 0, 1);
                     GameObject.Find("save_interior").GetComponent<Image>().color = new Color(0, 0, 0, 1);

@@ -425,20 +425,19 @@ public class SelectOMatic : MonoBehaviour {
 
         // Controls:
 
-        ////////////////////// Main: ////////////////////////////////////
-        //    Z, W, or Return: Start encounter (if mod has only one    //
-        //                     encounter), or open encounter list      //
-        //         Shift or X: Return to Disclaimer screen             //
-        //            Up or C: Open the mod list                       //
-        //               Left: Scroll left                             //
-        //              Right: Scroll right                            //
-        //                                                             //
-        ////////////////////// Encounter or Mod list: ///////////////////
-        //    Z, W, or Return: Start an encounter, or select a mod     //
-        //         Shift or X: Exit                                    //
-        //                 Up: Move up                                 //
-        //               Down: Move down                               //
-        /////////////////////////////////////////////////////////////////
+        ////////////////// Main: ////////////////////////////////////
+        //    Z or Return: Start encounter (if mod has only one    //
+        //                 encounter), or open encounter list      //
+        //     Shift or X: Return to Disclaimer screen             //
+        //        Up or C: Open the mod list                       //
+        //           Left: Scroll left                             //
+        //          Right: Scroll right                            //
+        ////////////////// Encounter or Mod list: ///////////////////
+        //    Z or Return: Start an encounter, or select a mod     //
+        //     Shift or X: Exit                                    //
+        //             Up: Move up                                 //
+        //           Down: Move down                               //
+        /////////////////////////////////////////////////////////////
 
         // Main controls:
         if (!GameObject.Find("ScrollWin")) {

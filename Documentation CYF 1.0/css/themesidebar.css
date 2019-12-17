@@ -103,7 +103,6 @@ span.unitale::before{
 }
 
 span.new::before {
-    /* content: url("../img/new.png"); */
     content: "..";
     color: transparent;
     
@@ -126,12 +125,15 @@ span.new::before {
     z-index: 1;
 }
 .nav-sidebar li.li-indent.new::before {
-    left: -20px;
+    left: 0px;
 }
 .nav-sidebar li.new.active::before {
     margin-top: 0px;
-    left: -25px;
+    left: -20px;
     opacity: 0.25;
+}
+.nav-sidebar li.li-indent.new.active::before {
+    left: -25px;
 }
 
 h4::before {
