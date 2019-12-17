@@ -92,7 +92,7 @@ public static class SpriteUtil {
     }
 
     public static Sprite FromFile(string filename) {
-        Texture2D SpriteTexture = new Texture2D(1, 1);
+        Texture2D SpriteTexture = new Texture2D(1, 1, TextureFormat.RGBA32, false);
         SpriteTexture.LoadImage(FileLoader.getBytesFrom(filename));
         SpriteTexture.filterMode = FilterMode.Point;
         SpriteTexture.wrapMode = TextureWrapMode.Clamp;
