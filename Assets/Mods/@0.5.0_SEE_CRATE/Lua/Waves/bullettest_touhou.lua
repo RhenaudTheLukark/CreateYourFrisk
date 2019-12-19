@@ -11,7 +11,7 @@ if enemies[1]["name"] ~= "Punderbolt" then
 	local namecover = CreateSprite("UI/sq_white", "BelowArena")
 	namecover.SetPivot(0,0.5)
 	namecover.Scale((#Player.name*13)/4 + ((#Player.name*2)/4),16/4)
-	namecover.MoveTo(30,70)
+	namecover.MoveTo(30,71)
 	namecover.color = {0,0,0}
 	nextwaves = {"bullettest_chaserorb"}
 	State("DEFENDING")
