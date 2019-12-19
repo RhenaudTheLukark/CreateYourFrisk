@@ -50,6 +50,7 @@ end
 function resetStareVars()
     stare1MovementUpDone = false
     stare2MovementDownDone = false
+    stare2Ended = false
     stare3DogOpen = false
     stare3InputtedFrame = 0
     stare3DogStartingY = 0
@@ -130,7 +131,9 @@ function Stare1(frame)
 end
 
 function Stare2(frame)
-    if frame == 0 and not inputted then
+    if stare2Ended then
+        return true
+    elseif frame == 0 and not inputted then
         Event.Teleport("Punder", 320, 480)
         Event.SetAnimHeader("Punder", "Sun")
         Event.MoveToPoint("Punder", 320, 320, true, false)
@@ -139,6 +142,7 @@ function Stare2(frame)
         Event.MoveToPoint("Punder", 400, 260, true, false)
     elseif punderSprite.absx == 400 and punderSprite.absy == 260 then
         Event.SetPage("Punder", 2)
+        stare2Ended = true
         return true
     end
     return false
