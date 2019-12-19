@@ -173,12 +173,12 @@ public class UIController : MonoBehaviour {
             PlayerOverworld.ShowOverworld("Battle");
         }
 
-        // reset to 4:3
-        if (Screen.fullScreen && GlobalControls.wideFullscreen) {
-            GlobalControls.wideFullscreen = false;
-            GlobalControls.SetFullScreen(true, 0);
+        //Reset to 4:3
+        if (Screen.fullScreen && ScreenResolution.wideFullscreen) {
+            ScreenResolution.wideFullscreen = false;
+            ScreenResolution.SetFullScreen(true, 0);
         }
-        GlobalControls.wideFullscreen = false;
+        ScreenResolution.wideFullscreen = false;
     }
 
     public void ShowError(TextMessage msg) { ActionDialogResult(msg, UIState.ACTIONSELECT);  }

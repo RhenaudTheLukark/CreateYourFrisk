@@ -61,7 +61,7 @@ public class GlobalControls : MonoBehaviour {
 
             UnitaleUtil.AddKeysToMapCorrespondanceList();
 
-            // use AlMightyGlobals to load Crate Your Frisk, Safe Mode, Retromode and Fullscreen mode preferences
+            //Use AlMightyGlobals to load Crate Your Frisk, Safe Mode, Retromode and Fullscreen mode preferences
 
             if (LuaScriptBinder.GetAlMighty(null, "CrateYourFrisk") != null && LuaScriptBinder.GetAlMighty(null, "CrateYourFrisk").Boolean)
                 crate = true;
@@ -69,37 +69,31 @@ public class GlobalControls : MonoBehaviour {
                 Misc.WindowName = crate ? ControlPanel.instance.WinodwBsaisNmae : ControlPanel.instance.WindowBasisName;
             #endif
 
-            // check if safe mode has a stored preference that is a boolean
+            //Check if safe mode has a stored preference that is a boolean
             if (LuaScriptBinder.GetAlMighty(null, "CYFSafeMode") != null
              && LuaScriptBinder.GetAlMighty(null, "CYFSafeMode").Type == DataType.Boolean)
                 ControlPanel.instance.Safe = LuaScriptBinder.GetAlMighty(null, "CYFSafeMode").Boolean;
 
-            // check if retro mode has a stored preference that is a boolean
+            //Check if retro mode has a stored preference that is a boolean
             if (LuaScriptBinder.GetAlMighty(null, "CYFRetroMode") != null
              && LuaScriptBinder.GetAlMighty(null, "CYFRetroMode").Type == DataType.Boolean)
                 retroMode = LuaScriptBinder.GetAlMighty(null, "CYFRetroMode").Boolean;
 
-            // check if fullscreen mode has a stored preference that is a boolean
+            //Check if fullscreen mode has a stored preference that is a boolean
             if (LuaScriptBinder.GetAlMighty(null, "CYFPerfectFullscreen") != null
              && LuaScriptBinder.GetAlMighty(null, "CYFPerfectFullscreen").Type == DataType.Boolean)
-                perfectFullscreen = LuaScriptBinder.GetAlMighty(null, "CYFPerfectFullscreen").Boolean;
+                ScreenResolution.perfectFullscreen = LuaScriptBinder.GetAlMighty(null, "CYFPerfectFullscreen").Boolean;
 
-            // check if window scale has a stored preference that is a number
+            //Check if window scale has a stored preference that is a number
             if (LuaScriptBinder.GetAlMighty(null, "CYFWindowScale") != null
              && LuaScriptBinder.GetAlMighty(null, "CYFWindowScale").Type == DataType.Number)
-                windowScale = (int)LuaScriptBinder.GetAlMighty(null, "CYFWindowScale").Number;
+                ScreenResolution.windowScale = (int)LuaScriptBinder.GetAlMighty(null, "CYFWindowScale").Number;
 
             awakened = true;
         }
     }
 
-    // resolution variables
-    public static bool perfectFullscreen = true;
-    public static int  fullscreenSwitch = 0;
-    public static int  windowScale = 1;
-    public static bool wideFullscreen = false;
-    public static int  lastMonitorWidth = 640;
-    public static int  lastMonitorHeight = 480;
+    public static int fullscreenSwitch = 0;
 
     #if UNITY_STANDALONE_WIN
         static IEnumerator RepositionWindow() {
@@ -115,47 +109,10 @@ public class GlobalControls : MonoBehaviour {
         yield return new WaitForEndOfFrame();
 
         try {
-            lastMonitorWidth = Screen.currentResolution.width;
-            lastMonitorHeight = Screen.currentResolution.height;
+            ScreenResolution.lastMonitorWidth = Screen.currentResolution.width;
+            ScreenResolution.lastMonitorHeight = Screen.currentResolution.height;
         } catch {}
     }
-
-    public static void SetFullScreen(bool fullscreen, int fswitch = 1) {
-        if (!wideFullscreen || ((float)lastMonitorWidth / (float)lastMonitorHeight) < 1.333334) {
-            if (perfectFullscreen) {
-                if (!fullscreen)
-                    Screen.SetResolution(640 * windowScale, 480 * windowScale, false, 0);
-                else {
-                    double ScreenWidth  = (lastMonitorHeight / (double)3) * (double)4; // 1066
-                    double ScreenHeight = (lastMonitorWidth / (double)4) * (double)3; // 960
-                    Screen.SetResolution(System.Math.Min((int)RoundToNearestEven(ScreenWidth), lastMonitorWidth), System.Math.Min((int)RoundToNearestEven(ScreenHeight), lastMonitorHeight), true, 0);
-                }
-            } else
-                Screen.SetResolution(640 * windowScale, 480 * windowScale, fullscreen, 0);
-        } else {
-            if (perfectFullscreen) {
-                if (!fullscreen)
-                    Screen.SetResolution(640 * windowScale, 480 * windowScale, false, 0);
-                else
-                    Screen.SetResolution(lastMonitorWidth, lastMonitorHeight, true, 0);
-            } else {
-                if (!fullscreen)
-                    Screen.SetResolution(640 * windowScale, 480 * windowScale, false, 0);
-                else {
-                    double ScreenWidth  = ((double)480 / lastMonitorHeight) * lastMonitorWidth;
-                    Screen.SetResolution(System.Math.Min((int)RoundToNearestEven(ScreenWidth), lastMonitorWidth), 480, true, 0);
-                }
-            }
-        }
-
-        #if UNITY_STANDALONE_WIN
-            fullscreenSwitch = fswitch;
-        #endif
-	}
-
-	private static double RoundToNearestEven(double value) {
-		return System.Math.Truncate(value) + (System.Math.Truncate(value) % 2);
-	}
 
     /// <summary>
     /// Control checking, and way more.
@@ -202,18 +159,16 @@ public class GlobalControls : MonoBehaviour {
             else
                 UIController.EndBattle();
             //StaticInits.Reset();
-        // Open the Menu in the Overworld
+        //Open the Menu in the Overworld
         } else if (input.Menu == UndertaleInput.ButtonState.PRESSED && !nonOWScenes.Contains(SceneManager.GetActiveScene().name) && !isInFight && !isInShop && (!GameOverBehavior.gameOverContainerOw || !GameOverBehavior.gameOverContainerOw.activeInHierarchy)) {
             if (!PlayerOverworld.instance.PlayerNoMove && EventManager.instance.script == null && !PlayerOverworld.instance.menuRunning[2] && !PlayerOverworld.instance.menuRunning[4] && (GameObject.Find("FadingBlack") == null || GameObject.Find("FadingBlack").GetComponent<Fading>().alpha <= 0))
                 StartCoroutine(PlayerOverworld.LaunchMenu());
-        // Wipe save and close CYF in the Error scene if ControlPanel does not exist yet
+        //Wipe save and close CYF in the Error scene if save failed to load
         } else if (SceneManager.GetActiveScene().name == "Error" && allowWipeSave && Input.GetKeyDown(KeyCode.R)) {
             System.IO.File.Delete(Application.persistentDataPath + "/save.gd");
             Application.Quit();
         }
 
-        //else if (Input.GetKeyDown(KeyCode.L))
-        //    MyFirstComponentClass.SpriteAnalyser();
         if (isInFight)
             switch (fleeIndex) {
                 case 0:
@@ -235,14 +190,15 @@ public class GlobalControls : MonoBehaviour {
                     else if (Input.anyKeyDown)       fleeIndex = 0;
                     break;
             }
-        if  (Input.GetKeyDown(KeyCode.F4)        // F4
-          || (Input.GetKeyDown(KeyCode.Return)
-          &&(Input.GetKey(KeyCode.LeftAlt)       // LAlt  + Enter
-          || Input.GetKey(KeyCode.RightAlt)))) { // RAlt  + Enter
-			SetFullScreen(!Screen.fullScreen);
-            if (!Screen.fullScreen)
-                StartCoroutine(UpdateMonitorSize());
-          }
+        if (ScreenResolution.hasInitialized)
+            if  (Input.GetKeyDown(KeyCode.F4)        // F4
+              || (Input.GetKeyDown(KeyCode.Return)
+              &&(Input.GetKey(KeyCode.LeftAlt)       // LAlt  + Enter
+              || Input.GetKey(KeyCode.RightAlt)))) { // RAlt  + Enter
+                ScreenResolution.SetFullScreen(!Screen.fullScreen);
+                if (!Screen.fullScreen)
+                    StartCoroutine(UpdateMonitorSize());
+              }
     }
 
     private IEnumerator IShakeScreen(object[] args) {

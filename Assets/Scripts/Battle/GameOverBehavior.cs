@@ -165,6 +165,7 @@ public class GameOverBehavior : MonoBehaviour {
             gameOverContainerOw.SetActive(true);
         else
             gameOverContainer.SetActive(true);
+        ScreenResolution.BoxCameras(Screen.fullScreen);
 
         Camera.main.GetComponent<AudioSource>().clip = AudioClipRegistry.GetMusic("mus_gameover");
         GameObject.Find("GameOver").GetComponent<Image>().sprite = SpriteRegistry.Get("UI/spr_gameoverbg_0");
