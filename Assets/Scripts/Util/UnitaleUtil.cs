@@ -154,6 +154,27 @@ public static class UnitaleUtil {
         return table;
     }
 
+    public static string ParseCommandInline(string input, ref int currentChar, bool onlyAcceptExistingCommands = true) {
+        int start = currentChar;
+        currentChar++;
+        string control = ""; int count = 1;
+        for (; currentChar < input.Length; currentChar++) {
+            if (input[currentChar] == '[')
+                count++;
+            else if (input[currentChar] == ']') {
+                count--;
+                if (count == 0) {
+                    if (onlyAcceptExistingCommands && !TextManager.commandList.Contains(control.Split(':')[0]))
+                        break;
+                    return control;
+                }
+            }
+            control += input[currentChar];
+        }
+        currentChar = start;
+        return null;
+    }
+
     public static float CalcTextWidth(TextManager txtmgr, int fromLetter = -1, int toLetter = -1, bool countEOLSpace = false, bool getLastSpace = false) {
         float totalWidth = 0, totalWidthSpaceTest = 0, totalMaxWidth = 0, hSpacing = txtmgr.Charset.CharSpacing;
         if (fromLetter == -1)                                                                                       fromLetter = 0;
@@ -161,33 +182,15 @@ public static class UnitaleUtil {
         if (txtmgr.textQueue[txtmgr.currentLine] == null)                                                           return 0;
         if (toLetter == -1)                                                                                         toLetter = txtmgr.textQueue[txtmgr.currentLine].Text.Length - 1;
         if (fromLetter > toLetter || fromLetter < 0 || toLetter > txtmgr.textQueue[txtmgr.currentLine].Text.Length) return -1;
-        if (fromLetter == toLetter)                                                                                 return 0;
 
         for (int i = fromLetter; i <= toLetter; i++) {
             switch (txtmgr.textQueue[txtmgr.currentLine].Text[i]) {
                 case '[':
-                    string str = "";
-                    bool failSafe = false;
-                    for (int j = i + 1; j < txtmgr.textQueue[txtmgr.currentLine].Text.Length; j++) {
-                        if (txtmgr.textQueue[txtmgr.currentLine].Text[j] == ']') {
-                            i = j + 1;
-                            break;
-                        }
-                        str += txtmgr.textQueue[txtmgr.currentLine].Text[j];
-                        
-                        // unclosed [ has been detected
-                        if (j == txtmgr.textQueue[txtmgr.currentLine].Text.Length - 1) {
-                            failSafe = true;
-                            break;
-                        }
-                    }
-                    
-                    // used to protect against unclosed open brackets
-                    if (failSafe || i == txtmgr.textQueue[txtmgr.currentLine].Text.Length - 1)
-                        break;
-                    
-                    i--;
-                    if (str.Split(':')[0] == "charspacing")
+
+                    string str = ParseCommandInline(txtmgr.textQueue[txtmgr.currentLine].Text, ref i);
+                    if (str == null)
+                        totalWidth += txtmgr.Charset.Letters[txtmgr.textQueue[txtmgr.currentLine].Text[i]].textureRect.size.x + hSpacing;
+                    else if (str.Split(':')[0] == "charspacing")
                         hSpacing = str.Split(':')[1].ToLower() == "default" ? txtmgr.Charset.CharSpacing : ParseUtil.GetFloat(str.Split(':')[1]);
                     break;
                 case '\r':
@@ -200,7 +203,7 @@ public static class UnitaleUtil {
                 default:
                     if (txtmgr.Charset.Letters.ContainsKey(txtmgr.textQueue[txtmgr.currentLine].Text[i])) {
                         totalWidth += txtmgr.Charset.Letters[txtmgr.textQueue[txtmgr.currentLine].Text[i]].textureRect.size.x + hSpacing;
-                        //Do not count end of line spaces
+                        // Do not count end of line spaces
                         if (txtmgr.textQueue[txtmgr.currentLine].Text[i] != ' ' || countEOLSpace)
                             totalWidthSpaceTest = totalWidth;
                     }

@@ -45,7 +45,7 @@ public class TextMessage {
                 if (lines[i].Length != 0)
                     while (lines[i][index] == '[') {
                         if (!(lines[i].Length >= 10 + index && (lines[i].Substring(index, 10) == "[starcolor" || lines[i].Substring(index, 8) == "[letters"))) {
-                            if (lines[i][index] == '[') {
+                            if (lines[i][index] == '[') { // TODO: Somehow apply UnitaleUtil.ParseCommandInLine here maybe?
                                 bool command = false;
                                 for (int j = index; j < lines[i].Length; j++)
                                     if (lines[i][j] == ']') {

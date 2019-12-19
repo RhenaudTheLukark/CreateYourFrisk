@@ -403,12 +403,9 @@ public static class LuaScriptBinder {
 
             // remove all commands other than the matched command from this variable
             while (precedingText.IndexOf('[') > -1) {
-                for (var i = 0; i < precedingText.Length; i++) {
-                    if (precedingText[i] == ']') {
-                        precedingText = precedingText.Replace(precedingText.Substring(0, i + 1), "");
-                        break;
-                    }
-                }
+                int i = 0;
+                if (UnitaleUtil.ParseCommandInline(precedingText, ref i) == null) break;
+                else                                                              precedingText = precedingText.Replace(precedingText.Substring(0, i + 1), "");
             }
 
             // if the length of the remaining string is 0, then disable late start!
@@ -427,27 +424,26 @@ public static class LuaScriptBinder {
 
             // remove all commands other than the matched command from this variable
             while (precedingText.IndexOf('[') > -1) {
-                for (var i = 0; i < precedingText.Length; i++) {
-                    if (precedingText[i] == ']') {
-                        precedingText = precedingText.Replace(precedingText.Substring(0, i + 1), "");
-                        break;
-                    }
-                }
+                int i = 0;
+                if (UnitaleUtil.ParseCommandInline(precedingText, ref i) == null) break;
+                else                                                              precedingText = precedingText.Replace(precedingText.Substring(0, i + 1), "");
             }
 
             // if the length of the remaining string is 0, then set the font!
             if (precedingText.Length == 0) {
-                string fontPartOne = firstLine.Substring(firstLine.IndexOf("[font:") + 6);
-                string fontPartTwo = fontPartOne.Substring(0, fontPartOne.IndexOf("]") - 0);
-                UnderFont font = SpriteFontRegistry.Get(fontPartTwo);
-                if (font == null)
-                    throw new CYFException("The font \"" + fontPartTwo + "\" doesn't exist.\nYou should check if you made a typo, or if the font really is in your mod.");
-                luatm.SetFont(font, true);
-                luatm.UpdateBubble();
-            } else
-                luatm.ResetFont();
-        } else
-            luatm.ResetFont();
+                int startCommand = firstLine.IndexOf("[font:");
+                string command = UnitaleUtil.ParseCommandInline(precedingText, ref startCommand);
+                if (command != null) {
+                    string fontPartOne = command.Substring(6);
+                    string fontPartTwo = fontPartOne.Substring(0, fontPartOne.IndexOf("]"));
+                    UnderFont font = SpriteFontRegistry.Get(fontPartTwo);
+                    if (font == null)
+                        throw new CYFException("The font \"" + fontPartTwo + "\" doesn't exist.\nYou should check if you made a typo, or if the font really is in your mod.");
+                    luatm.SetFont(font, true);
+                    luatm.UpdateBubble();
+                } else luatm.ResetFont();
+            } else     luatm.ResetFont();
+        } else         luatm.ResetFont();
 
         if (enableLateStart)
             luatm.lateStartWaiting = true;

@@ -16,9 +16,9 @@ public class TextManager : MonoBehaviour {
     [MoonSharpHidden] public AudioSource letterSound = null;
     protected TextEffect textEffect = null;
     private string letterEffect = "none";
-    private string[] commandList = new string[] { "color", "alpha", "charspacing", "linespacing", "starcolor", "instant", "font", "effect", "noskip", "w", "waitall", "novoice",
-                                                  "next", "finished", "nextthisnow", "noskipatall", "waitfor", "speed", "letters", "voice", "func", "mugshot", "name",
-                                                  "music", "sound", "health", "lettereffect"};
+    public static string[] commandList = new string[] { "color", "alpha", "charspacing", "linespacing", "starcolor", "instant", "font", "effect", "noskip", "w", "waitall", "novoice",
+                                                        "next", "finished", "nextthisnow", "noskipatall", "waitfor", "speed", "letters", "voice", "func", "mugshot", "name",
+                                                        "music", "sound", "health", "lettereffect"};
     private float letterIntensity = 0.0f;
     public int currentLine = 0;
     [MoonSharpHidden] public int _textMaxWidth = 0;
@@ -555,8 +555,8 @@ public class TextManager : MonoBehaviour {
             switch (currentText[i]) {
                 case '[':
                     int currentChar = i;
-                    string command = ParseCommandInline(currentText, ref i);
-                    if (command == null || lateStartWaiting || !commandList.Contains(command.Split(':')[0]))
+                    string command = UnitaleUtil.ParseCommandInline(currentText, ref i);
+                    if (command == null || lateStartWaiting)
                         i = currentChar;
                     else {
                         // Work-around for [noskip], [instant] and [instant:allowcommand]
@@ -573,14 +573,13 @@ public class TextManager : MonoBehaviour {
                                 List<string> commands = command == "noskip" ? null : new List<string>();
 
                                 while (precedingText.IndexOf('[') > -1) {
-                                    int j = precedingText.IndexOf('[');
-                                    for (int k = 0; k < precedingText.Length; k++)
-                                        if (precedingText[k] == ']') {
-                                            if (commands != null)
-                                                commands.Add(precedingText.Substring(j + 1, (k - j) - 1));
-                                            precedingText = precedingText.Replace(precedingText.Substring(j, (k - j) + 1), "");
-                                            break;
-                                        }
+                                    int j = precedingText.IndexOf('['), k = j;
+                                    if (UnitaleUtil.ParseCommandInline(precedingText, ref k) == null) break;
+                                    else {
+                                        if (commands != null)
+                                            commands.Add(precedingText.Substring(j + 1, (k - j) - 1));
+                                        precedingText = precedingText.Replace(precedingText.Substring(j, (k - j) + 1), "");
+                                    }
                                 }
 
                                 // Confirm that our command is at the beginning!
@@ -649,7 +648,7 @@ public class TextManager : MonoBehaviour {
         if (currentCharacter < textQueue[currentLine].Text.Length)
             if (textQueue[currentLine].Text[currentCharacter] == '[') {
                 int currentChar = currentCharacter;
-                string command = ParseCommandInline(textQueue[currentLine].Text, ref currentCharacter);
+                string command = UnitaleUtil.ParseCommandInline(textQueue[currentLine].Text, ref currentCharacter);
                 if (command != null) {
                     currentCharacter++; // we're not in a continuable loop so move to the character after the ] manually
 
@@ -659,12 +658,8 @@ public class TextManager : MonoBehaviour {
                     wasStated = false;
 
                     DynValue commandDV = DynValue.NewString(command);
-                    if (commandList.Contains(commandDV.String.Split(':')[0]))
-                        InUpdateControlCommand(commandDV, currentCharacter);
-                    else {
-                        currentCharacter = currentChar;
-                        return false;
-                    }
+                    InUpdateControlCommand(commandDV, currentCharacter);
+
                     //if (lastLetterTimer != letterTimer || lastTimePerLetter != timePerLetter)
                     //if (currentCharacter >= textQueue[currentLine].Text.Length)
                     //    return true;
@@ -800,35 +795,6 @@ public class TextManager : MonoBehaviour {
         currentReferenceCharacter++;
         currentCharacter++;
         return true;
-    }
-
-    private string ParseCommandInline(string input, ref int currentChar) {
-        currentChar++; // skip past found bracket
-        if (CheckCharInBounds(currentChar, input.Length))
-            return null;
-        string control = ""; int count = 1;
-        while (true) {
-            if (input[currentChar] == '[')
-                count++;
-            else if (input[currentChar] == ']') {
-                count--;
-                if (count == 0)
-                    break;
-            }
-            control += input[currentChar];
-            currentChar++;
-            if (CheckCharInBounds(currentChar, input.Length))
-                return null;
-        }
-        return control;
-    }
-
-    private bool CheckCharInBounds(int i, int length) {
-        if (i >= length) {
-            Debug.LogWarning("Went out of bounds looking for arguments after control character.");
-            return true;
-        } else
-            return false;
     }
 
     private void PreCreateControlCommand(string command) {

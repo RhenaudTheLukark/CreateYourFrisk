@@ -20,7 +20,7 @@ public class SelectMessage : TextMessage {
             string intermedPrefix = "";
             string intermedSuffix = "";
             // If the option isn't null, has an existing color and this color isn't null or empty, we'll add the color as a prefix and put a white color tag as a suffix
-            if (colorPrefixes != null && i < colorPrefixes.Length &&!String.IsNullOrEmpty(colorPrefixes[i])) {
+            if (colorPrefixes != null && i < colorPrefixes.Length && !string.IsNullOrEmpty(colorPrefixes[i])) {
                 intermedPrefix = colorPrefixes[i];
                 intermedSuffix = "[color:ffffff]";
             }
@@ -33,7 +33,7 @@ public class SelectMessage : TextMessage {
                     while (options[i][index] == '[') {
                         if (!(i == 0 && options[i].Length >= 10 + index && (options[i].Substring(index, 10) == "[starcolor" || options[i].Substring(index, 8) == "[letters"))) {
                             for (int j = index; j < options[i].Length; j++)
-                                if (options[i][j] == ']') {
+                                if (options[i][j] == ']') { // TODO: Somehow apply UnitaleUtil.ParseCommandInLine here maybe?
                                     commands += options[i].Substring(index, j + 1);
                                     options[i] = options[i].Substring(index + j + 1, options[i].Length - index - j - 1);
                                     gotIt = true;
