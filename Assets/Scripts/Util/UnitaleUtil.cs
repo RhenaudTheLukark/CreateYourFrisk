@@ -84,12 +84,7 @@ public static class UnitaleUtil {
         else
             SceneManager.LoadScene("Error");
         Debug.Log("It's a Lua error! : " + ErrorDisplay.Message);
-        //Reset to 4:3
-        if (Screen.fullScreen && ScreenResolution.wideFullscreen) {
-            ScreenResolution.wideFullscreen = false;
-            ScreenResolution.SetFullScreen(true, 0);
-        }
-        ScreenResolution.wideFullscreen = false;
+        ScreenResolution.wideFullscreen = true;
     }
 
     public static string FormatErrorSource(string DecoratedMessage, string message) {

@@ -940,7 +940,7 @@ public class PlayerOverworld : MonoBehaviour {
         go.name = "GameObject";
         Transform[] root = UnitaleUtil.GetFirstChildren(null, true);
         for (int i = 0; i < root.Length; i++)
-            if (root[i] != go && !root[i].name.Contains("AudioChannel"))
+            if (root[i] != go && !root[i].name.Contains("AudioChannel") && root[i].name != "BGCamera")
                 if (callFrom == "Shop" && root[i].name == "Main Camera OW") {
                     root[i].GetComponent<EventManager>().enabled = false;
                     root[i].GetComponent<TransitionOverworld>().enabled = false;
@@ -966,7 +966,7 @@ public class PlayerOverworld : MonoBehaviour {
         foreach (Transform tf in children) {
             try {
                 tf.SetParent(null);
-                if (tf.name == "Canvas OW" || tf.name == "Canvas Two" || tf.name == "Main Camera OW" || tf.name == "GameOverContainer")
+                if (tf.name == "Canvas OW" || tf.name == "Canvas Two" || tf.name == "Main Camera OW" || tf.name == "GameOverContainer" || tf.name == "BGCamera")
                     GameObject.DontDestroyOnLoad(tf.gameObject);
                 else if (tf.childCount > 0)
                     if (tf.GetChild(0).name == "Player")
