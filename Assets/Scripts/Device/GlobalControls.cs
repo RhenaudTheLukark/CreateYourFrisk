@@ -34,8 +34,8 @@ public class GlobalControls : MonoBehaviour {
     public static bool allowWipeSave = false;
     private bool screenShaking = false;
     //public static bool samariosNightmare = false;
-    public static string[] nonOWScenes = new string[] { "Battle", "Error", "ModSelect", "Options", "GameOver", "TitleScreen", "Disclaimer", "EnterName", "TransitionOverworld", "Intro" };
-    public static string[] canTransOW = new string[] { "Battle", "Error", "GameOver" };
+    public static string[] nonOWScenes = new string[] { "Battle", "Error", "ModSelect", "Options", "TitleScreen", "Disclaimer", "EnterName", "TransitionOverworld", "Intro" };
+    public static string[] canTransOW = new string[] { "Battle", "Error" };
     //Wow what's this
     public static Dictionary<string, GameState.MapData> GameMapData = new Dictionary<string, GameState.MapData>();
     public static Dictionary<string, GameState.EventInfos> EventData = new Dictionary<string, GameState.EventInfos>();
@@ -128,8 +128,11 @@ public class GlobalControls : MonoBehaviour {
         stopScreenShake = false;
         if (isInFight || UnitaleUtil.IsOverworld)
             frame ++;
-        if (SceneManager.GetActiveScene().name == "ModSelect")        lastSceneUnitale = true;
-        else                                                          lastSceneUnitale = false;
+
+        string sceneName = SceneManager.GetActiveScene().name;
+
+        if (sceneName == "ModSelect") lastSceneUnitale = true;
+        else                          lastSceneUnitale = false;
 
         // Activate Debugger
         if (UserDebugger.instance && Input.GetKeyDown(KeyCode.F9)) {
@@ -138,13 +141,13 @@ public class GlobalControls : MonoBehaviour {
             UserDebugger.instance.gameObject.SetActive(!UserDebugger.instance.gameObject.activeSelf);
             Camera.main.GetComponent<FPSDisplay>().enabled = UserDebugger.instance.gameObject.activeSelf;
         // Activate Hitbox Debugger
-        } else if (isInFight && Input.GetKeyDown(KeyCode.H) && SceneManager.GetActiveScene().name != "Error" && UserDebugger.instance.gameObject.activeSelf)
+        } else if (isInFight && Input.GetKeyDown(KeyCode.H) && sceneName != "Error" && UserDebugger.instance.gameObject.activeSelf)
             GameObject.Find("Main Camera").GetComponent<ProjectileHitboxRenderer>().enabled = !GameObject.Find("Main Camera").GetComponent<ProjectileHitboxRenderer>().enabled;
         // Exit a battle or the Error scene
-        else if (Input.GetKeyDown(KeyCode.Escape) && (canTransOW.Contains(SceneManager.GetActiveScene().name) || isInFight)) {
-            if (isInFight && LuaEnemyEncounter.script.GetVar("unescape").Boolean && SceneManager.GetActiveScene().name != "Error")
+        else if (Input.GetKeyDown(KeyCode.Escape) && (canTransOW.Contains(sceneName) || isInFight)) {
+            if (isInFight && LuaEnemyEncounter.script.GetVar("unescape").Boolean && sceneName != "Error")
                 return;
-            if (SceneManager.GetActiveScene().name == "Error" && !modDev) {
+            if (sceneName == "Error" && !modDev) {
                 UnitaleUtil.ExitOverworld();
                 SceneManager.LoadScene("Disclaimer");
                 GameObject.Destroy(GameObject.Find("SpritePivot"));
@@ -160,11 +163,11 @@ public class GlobalControls : MonoBehaviour {
                 UIController.EndBattle();
             //StaticInits.Reset();
         //Open the Menu in the Overworld
-        } else if (input.Menu == UndertaleInput.ButtonState.PRESSED && !nonOWScenes.Contains(SceneManager.GetActiveScene().name) && !isInFight && !isInShop && (!GameOverBehavior.gameOverContainerOw || !GameOverBehavior.gameOverContainerOw.activeInHierarchy)) {
+        } else if (input.Menu == UndertaleInput.ButtonState.PRESSED && !nonOWScenes.Contains(sceneName) && !isInFight && !isInShop && (!GameOverBehavior.gameOverContainerOw || !GameOverBehavior.gameOverContainerOw.activeInHierarchy)) {
             if (!PlayerOverworld.instance.PlayerNoMove && EventManager.instance.script == null && !PlayerOverworld.instance.menuRunning[2] && !PlayerOverworld.instance.menuRunning[4] && (GameObject.Find("FadingBlack") == null || GameObject.Find("FadingBlack").GetComponent<Fading>().alpha <= 0))
                 StartCoroutine(PlayerOverworld.LaunchMenu());
         //Wipe save and close CYF in the Error scene if save failed to load
-        } else if (SceneManager.GetActiveScene().name == "Error" && allowWipeSave && Input.GetKeyDown(KeyCode.R)) {
+        } else if (sceneName == "Error" && allowWipeSave && Input.GetKeyDown(KeyCode.R)) {
             System.IO.File.Delete(Application.persistentDataPath + "/save.gd");
             Application.Quit();
         }

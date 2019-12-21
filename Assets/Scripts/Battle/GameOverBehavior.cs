@@ -216,13 +216,7 @@ public class GameOverBehavior : MonoBehaviour {
     }
 
     void Awake() {
-        //GameObject.Destroy(GameObject.Find("Canvas OW"));
-        //GameObject.Destroy(GameObject.Find("Player"));
-        //SceneManager.LoadScene("GameOver");
-        //if (GameObject.Find("Canvas OW") != null)
-        //    overworld = true;
-        //if (overworld)
-        //    GameObject.Destroy(GameObject.Find("Main Camera OW"));
+        
     }
 
 	// Update is called once per frame
