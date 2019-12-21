@@ -418,7 +418,7 @@ public static class LuaScriptBinder {
         //////////////////////////////////////////
 
         // If the first line of text has [font] at the beginning, use it initially!
-        if (firstLine.IndexOf("[font:") > -1 && firstLine.IndexOf(']') > firstLine.IndexOf("[font:")) {
+        if (firstLine.IndexOf("[font:") > -1 && firstLine.Substring(0, firstLine.IndexOf("[font:")).IndexOf(']') > -1) {
             // grab all of the text that comes before the matched command
             string precedingText = firstLine.Substring(0, firstLine.IndexOf("[font:"));
 

@@ -843,22 +843,12 @@ public class TextManager : MonoBehaviour {
                 break;
 
             case "font":
-                AudioClip oldClip = letterSound.clip;
-                float oldLineThing = Charset.LineSpacing;
-
                 UnderFont uf = SpriteFontRegistry.Get(cmds[1]);
                 if (uf == null)
                     throw new CYFException("The font \"" + cmds[1] + "\" doesn't exist.\nYou should check if you made a typo, or if the font really is in your mod.");
-
                 SetFont(uf);
                 if (GetType() == typeof(LuaTextManager))
                     ((LuaTextManager) this).UpdateBubble();
-
-                letterSound.clip = oldClip;
-                //foreach (Letter l in letters)
-                //    l.transform.position = new Vector2(l.transform.position.x, l.transform.position.y + (oldLineThing - Charset.LineSpacing));
-                //print("currentY from font change (" + textQueue[currentLine].Text + ") = " + currentY + " + " + oldLineThing + " - " + Charset.LineSpacing + " = " + (currentY + (oldLineThing - Charset.LineSpacing)));
-                //currentY += (oldLineThing - Charset.LineSpacing);
                 break;
 
             case "effect":
