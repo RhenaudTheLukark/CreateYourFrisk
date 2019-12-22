@@ -74,11 +74,12 @@ public static class UnitaleUtil {
     /// </summary>
     /// <param name="source">Name of the script that caused the error.</param>
     /// <param name="decoratedMessage">Error that was thrown. In MoonSharp's case, this is the DecoratedMessage property from its InterpreterExceptions.</param>
-    public static void DisplayLuaError(string source, string decoratedMessage) {
+    /// <param name="DoNotDecorateMessage">Set to true to hide "error in script x" at the top. This arg is true when using error(..., 0).</param>
+    public static void DisplayLuaError(string source, string decoratedMessage, bool DoNotDecorateMessage = false) {
         if (firstErrorShown)
             return;
         firstErrorShown = true;
-        ErrorDisplay.Message = "error in script " + source + "\n\n" + decoratedMessage;
+        ErrorDisplay.Message = (!DoNotDecorateMessage ? ("error in script " + source + "\n\n") : "") + decoratedMessage;
         if (Application.isEditor)
             SceneManager.LoadSceneAsync("Error"); // prevents editor from crashing
         else
@@ -89,14 +90,14 @@ public static class UnitaleUtil {
 
     public static string FormatErrorSource(string DecoratedMessage, string message) {
         string source = DecoratedMessage.Substring(0, DecoratedMessage.Length - message.Length);
-        Regex validator = new Regex(@"\(\d+,\d+(-[\d,]+)?\)"); // finds `(13,9-16)` or `(13,9-14,10)` or `(20,0)`
+        Regex validator = new Regex(@"\(\d+,\d+(-[\d,]+)?\)"); //Finds `(13,9-16)` or `(13,9-14,10)` or `(20,0)`
         Match scanned = validator.Match(source);
         if (scanned.Success) {
             string stacktrace = scanned.Value;
-            validator = new Regex(@"(\d+),(\d+)"); // finds `13,9`
+            validator = new Regex(@"(\d+),(\d+)"); //Finds `13,9`
             MatchCollection matches = validator.Matches(stacktrace);
 
-            // add "line " and "char " before some numbers
+            //Add "line " and "char " before some numbers
             foreach (Match match in matches)
                 source = source.Replace(match.Value, "line " + match.Groups[1].Value + ", char " + match.Groups[2].Value);
         }

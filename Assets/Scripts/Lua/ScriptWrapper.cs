@@ -65,15 +65,17 @@ public class ScriptWrapper {
                     try { d = script.Call(script.Globals[function], argsNew); } 
                     catch (InterpreterException ex) { UnitaleUtil.DisplayLuaError(scriptname, ex.DecoratedMessage == null ? 
                                                                                                   ex.Message : 
-                                                                                                  UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message); } 
+                                                                                                  UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message,
+                                                                                              ex.DoNotDecorateMessage); } 
                     catch (Exception ex) {
                         if (!GlobalControls.retroMode)
-                            UnitaleUtil.DisplayLuaError(scriptname + ", calling the function " + function, "This is a " + ex.GetType() + " error. Contact the dev and show him this screen, this must be an engine-side error.\n\n" + ex.Message + "\n\n" + ex.StackTrace + "\n");
+                            UnitaleUtil.DisplayLuaError(scriptname + ", calling the function " + function, "This is a " + ex.GetType() + " error. Contact a developer and show them this screen, this must be an engine-side error.\n\n" + ex.Message + "\n\n" + ex.StackTrace + "\n");
                     }
                 } else if (e.GetType() == typeof(InterpreterException) || e.GetType().BaseType == typeof(InterpreterException) || e.GetType().BaseType.BaseType == typeof(InterpreterException)) {
                     UnitaleUtil.DisplayLuaError(scriptname, ((InterpreterException)e).DecoratedMessage == null ? 
                                                             ((InterpreterException)e).Message : 
-                                                            UnitaleUtil.FormatErrorSource(((InterpreterException)e).DecoratedMessage, ((InterpreterException)e).Message) + ((InterpreterException)e).Message);
+                                                            UnitaleUtil.FormatErrorSource(((InterpreterException)e).DecoratedMessage, ((InterpreterException)e).Message) + ((InterpreterException)e).Message,
+                                                            ((InterpreterException)e).DoNotDecorateMessage);
                 } else if (!GlobalControls.retroMode)
                     UnitaleUtil.DisplayLuaError(scriptname + ", calling the function " + function, "This is a " + e.GetType() + " error. Contact the dev and show him this screen, this must be an engine-side error.\n\n" + e.Message + "\n\n" + e.StackTrace + "\n");
             }
@@ -84,12 +86,13 @@ public class ScriptWrapper {
             catch (InterpreterException ex) {
                 UnitaleUtil.DisplayLuaError(scriptname, ex.DecoratedMessage == null ? 
                                                             ex.Message : 
-                                                            UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message);
+                                                            UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message,
+                                                        ex.DoNotDecorateMessage);
             } catch (Exception ex) {
                 if (!GlobalControls.retroMode)
                     // Special case for infinite loop...
                     if (ex.GetType().ToString() == "System.IndexOutOfRangeException" && ex.StackTrace.StartsWith("  at (wrapper stelemref) object:stelemref (object,intptr,object)"
-                      + "\r\n  at MoonSharp.Interpreter.DataStructs.FastStack`1[MoonSharp.Interpreter.DynValue].Push (MoonSharp.Interpreter.DynValue item) [0x00001] in"))
+                      + "\r\n  at MoonSharp.Interpreter.DataStructs.FastStack`1[MoonSharp.Interpreter.DynValue].Push"))
                         UnitaleUtil.DisplayLuaError(scriptname + ", calling the function " + function, "<b>Possible infinite loop</b>\n\nThis is a " + ex.GetType() + " error.\n\n"
                           + "You almost definitely have an infinite loop in your code. A function tried to call itself infinitely. It could be a normal function or a metatable function."
                           + "\n\n\nFull stracktrace (see CYF output log at <b>" + Application.persistentDataPath + "/output_log.txt</b>):\n\n" + ex.StackTrace);
