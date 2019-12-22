@@ -33,6 +33,7 @@ public class ScreenResolution : MonoBehaviour {
         QualitySettings.vSyncCount = 0;
         Application.targetFrameRate = 60;
 
+        GameObject.Find("Version").GetComponent<UnityEngine.UI.Text>().text = Screen.currentResolution.width + ", " + Screen.currentResolution.height + "\n" + Screen.width + ", " + Screen.height;
         SetFullScreen(false, Screen.fullScreen ? 2 : 0);
         StartCoroutine(TwoFrameDelay());
     }
@@ -47,6 +48,7 @@ public class ScreenResolution : MonoBehaviour {
         displayedSize         = new Vector3(Screen.width, Screen.height, 0);
         userAspectRatio       = (float)lastMonitorWidth / (float)lastMonitorHeight;
         userDisplayWidth      = System.Math.Min((int)RoundToNearestEven((lastMonitorHeight / (double)3) * (double)4), lastMonitorWidth);
+        ProjectileHitboxRenderer.fsScreenWidth = System.Math.Min((int)RoundToNearestEven((double)(aspectHeight / (float)lastMonitorHeight) * lastMonitorWidth), lastMonitorWidth);
 
         //Calculate a cropping camera rect to apply to cameras when entering fullscreen
         if (userAspectRatio > aspectRatio) {
@@ -83,7 +85,6 @@ public class ScreenResolution : MonoBehaviour {
         } else {
             //Blurless FS
             if (perfectFullscreen) {
-                //Try to shave off anything outside of 4:3
                 Screen.SetResolution(lastMonitorWidth, lastMonitorHeight, true, 0);
                 displayedSize = new Vector3(userDisplayWidth, lastMonitorHeight, (lastMonitorWidth - userDisplayWidth) / 2);
             //Blurry FS
@@ -97,6 +98,8 @@ public class ScreenResolution : MonoBehaviour {
 
         #if UNITY_STANDALONE_WIN
             GlobalControls.fullscreenSwitch = fswitch;
+        #elif UNITY_EDITOR
+            displayedSize.z = 0;
         #endif
 	}
 
