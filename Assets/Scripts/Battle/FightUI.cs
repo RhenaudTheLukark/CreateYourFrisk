@@ -155,8 +155,9 @@ public class FightUI : MonoBehaviour {
                 }
                 else if (Damage > 0) damageTextStr = "[color:ff0000]" + Damage;
                 else damageTextStr = "[color:00ff00]" + Damage;
+                damageTextRt.localPosition = new Vector3(0, 0, 0);
                 damageText.SetText(new TextMessage(damageTextStr, false, true));
-                damageTextRt.localPosition = new Vector2(-UnitaleUtil.CalcTextWidth(damageText)/2, 40 + enemy.offsets[2].y);
+                damageTextRt.localPosition = new Vector3(-UnitaleUtil.CalcTextWidth(damageText)/2 + enemy.offsets[2].x, 40 + enemy.offsets[2].y);
 
                 // initiate lifebar and set lerp to its new health value
                 if (Damage != 0) {
