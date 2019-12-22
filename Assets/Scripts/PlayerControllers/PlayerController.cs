@@ -162,18 +162,6 @@ public class PlayerController : MonoBehaviour {
             return;
 
         if (newhp <= 0) {
-            if (!MusicManager.IsStoppedOrNull(PlayerOverworld.audioKept)) {
-                GetComponent<GameOverBehavior>().musicBefore = PlayerOverworld.audioKept;
-                GetComponent<GameOverBehavior>().music = GetComponent<GameOverBehavior>().musicBefore.clip;
-                GetComponent<GameOverBehavior>().musicBefore.Stop();
-            } else if (!MusicManager.IsStoppedOrNull(Camera.main.GetComponent<AudioSource>())) {
-                GetComponent<GameOverBehavior>().musicBefore = Camera.main.GetComponent<AudioSource>();
-                GetComponent<GameOverBehavior>().music = GetComponent<GameOverBehavior>().musicBefore.clip;
-                GetComponent<GameOverBehavior>().musicBefore.Stop();
-            } else {
-                GetComponent<GameOverBehavior>().musicBefore = null;
-                GetComponent<GameOverBehavior>().music = null;
-            }
             deathEscape = false;
             if (GlobalControls.isInFight) {
                 UIController.instance.encounter.TryCall("BeforeDeath");
@@ -192,6 +180,18 @@ public class PlayerController : MonoBehaviour {
                 deathMusic = LuaEnemyEncounter.script.GetVar("deathmusic").String;
                 if (deathMusic == "")
                     deathMusic = null;
+            }
+            if (!MusicManager.IsStoppedOrNull(PlayerOverworld.audioKept)) {
+                GetComponent<GameOverBehavior>().musicBefore = PlayerOverworld.audioKept;
+                GetComponent<GameOverBehavior>().music = GetComponent<GameOverBehavior>().musicBefore.clip;
+                GetComponent<GameOverBehavior>().musicBefore.Stop();
+            } else if (!MusicManager.IsStoppedOrNull(Camera.main.GetComponent<AudioSource>())) {
+                GetComponent<GameOverBehavior>().musicBefore = Camera.main.GetComponent<AudioSource>();
+                GetComponent<GameOverBehavior>().music = GetComponent<GameOverBehavior>().musicBefore.clip;
+                GetComponent<GameOverBehavior>().musicBefore.Stop();
+            } else {
+                GetComponent<GameOverBehavior>().musicBefore = null;
+                GetComponent<GameOverBehavior>().music = null;
             }
             HP = 0;
             invulTimer = 0;
