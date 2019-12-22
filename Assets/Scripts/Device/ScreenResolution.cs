@@ -33,7 +33,6 @@ public class ScreenResolution : MonoBehaviour {
         QualitySettings.vSyncCount = 0;
         Application.targetFrameRate = 60;
 
-        GameObject.Find("Version").GetComponent<UnityEngine.UI.Text>().text = Screen.currentResolution.width + ", " + Screen.currentResolution.height + "\n" + Screen.width + ", " + Screen.height;
         SetFullScreen(false, Screen.fullScreen ? 2 : 0);
         StartCoroutine(TwoFrameDelay());
     }
