@@ -1549,7 +1549,7 @@ end
 
 -- Auto
 function EventPage2()
-    stareShift = Event.Exists("Punder") and 0 or 2
+    stareShift = (Event.Exists("Punder") and Event.GetAnimHeader("Punder") == "") and 0 or 2
     stareFrame = 1800
     inputted = false
     currEventDone = true
