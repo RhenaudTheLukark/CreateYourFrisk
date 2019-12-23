@@ -33,17 +33,9 @@ public class ScreenResolution : MonoBehaviour {
         QualitySettings.vSyncCount = 0;
         Application.targetFrameRate = 60;
 
-        SetFullScreen(false, Screen.fullScreen ? 2 : 0);
-        StartCoroutine(TwoFrameDelay());
-    }
-
-    private static IEnumerator TwoFrameDelay() {
-        yield return new WaitForEndOfFrame();
-        yield return new WaitForEndOfFrame();
-
         //Grab the user's monitor resolution, and calculate some things early
-        lastMonitorWidth      = Screen.currentResolution.width;
-        lastMonitorHeight     = Screen.currentResolution.height;
+        lastMonitorWidth      = Display.main.systemWidth;
+        lastMonitorHeight     = Display.main.systemHeight;
         displayedSize         = new Vector3(Screen.width, Screen.height, 0);
         userAspectRatio       = (float)lastMonitorWidth / (float)lastMonitorHeight;
         userDisplayWidth      = System.Math.Min((int)RoundToNearestEven((lastMonitorHeight / (double)3) * (double)4), lastMonitorWidth);
@@ -64,9 +56,6 @@ public class ScreenResolution : MonoBehaviour {
         GameObject BGCamera = Instantiate(Resources.Load<GameObject>("Prefabs/BGCamera"));
         BGCamera.name = "BGCamera";
         GameObject.DontDestroyOnLoad(BGCamera);
-
-        //Display collected monitor width and height to make sure it was collected properly
-        //GameObject.Find("Version").GetComponent<UnityEngine.UI.Text>().text = Screen.currentResolution.width + ", " + Screen.currentResolution.height;
 
         hasInitialized = true;
     }
