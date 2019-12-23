@@ -32,14 +32,14 @@ public static class SaveLoad {
                 Debug.Log("There's no save at all.");
         } catch(CYFException c) {
             GlobalControls.allowWipeSave = true;
-            UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, c.Message);
+            UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, c.Message, true);
         } catch {
             GlobalControls.allowWipeSave = true;
             UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, "Have you saved on a previous or newer version of CYF? Your save isn't compatible with this version.\n\n"
            + "To fix this, you must delete your save file. It can be found here: \n<b>"
            + Application.persistentDataPath + "/save.gd</b>\n\n"
            + "Or, you can <b>Press R now</b> to delete your save and close CYF.\n\n\n"
-           + "Tell me if you have any more problems, and thanks for following my fork! ^^\n\n");
+           + "Tell me if you have any more problems, and thanks for following my fork! ^^\n\n", true);
         }
     }
 

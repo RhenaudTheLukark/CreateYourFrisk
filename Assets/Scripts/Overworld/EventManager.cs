@@ -538,7 +538,7 @@ function CYFFormatError(err)
             numbers = 'line ' .. allNums[1] .. ', char ' .. allNums[2] .. '-line ' .. allNums[3] .. ', char ' .. allNums[4]
         end
         
-        return before .. numbers .. after
+        return ""error in script "" .. _internalScriptName .. ""\n\n"" .. before .. numbers .. after
     else
         return err
     end
@@ -562,7 +562,7 @@ function CYFEventNextCommand()
 end
 function CYFEventStopCommand() coroutine.yield() end --currently unused
 function CYFEventStartEvent(func)
-    if _G[func] == nil then error('The function ' .. func .. "" doesn't exist in the Event script."", 0) end
+    if _G[func] == nil then error(""error in script "" .. _internalScriptName .. ""\n\nThe function "" .. func .. "" doesn't exist in the Event script."", 0) end
     CYFEventCoroutine = coroutine.create(function() CYFEventFuncToLaunch(_G[func]) end)
     local ok, errorMsg = coroutine.resume(CYFEventCoroutine)
     if not ok then error(errorMsg, 0) end
