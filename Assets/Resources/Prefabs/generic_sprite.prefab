@@ -25,7 +25,7 @@ GameObject:
   - component: {fileID: 114139757390083642}
   - component: {fileID: 114833082201626112}
   m_Layer: 5
-  m_Name: generic_sprite_maskable
+  m_Name: generic_sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

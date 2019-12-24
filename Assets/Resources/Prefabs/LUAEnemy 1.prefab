@@ -26,7 +26,7 @@ GameObject:
   - component: {fileID: 114942698246119972}
   - component: {fileID: 114548722136434830}
   m_Layer: 8
-  m_Name: LUAEnemy 1_maskable
+  m_Name: LUAEnemy 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
