@@ -7,7 +7,15 @@ using System.Collections;
 /// </summary>
 public class MusicManager {
     [MoonSharpHidden] public static MusicManager instance;
-    [MoonSharpHidden] public static AudioSource src;
+    private static AudioSource _src;
+    [MoonSharpHidden] public static AudioSource src {
+        set { _src = value; }
+        get {
+            if (_src == null)
+                throw new CYFException("The Audio object has not been initialized yet.\n\nPlease wait until at least EncounterStarting() to run this code.");
+            return _src;
+        }
+    }
     [MoonSharpHidden] public static Hashtable hiddenDictionary = new Hashtable();
     [MoonSharpHidden] public static string filename = "empty";
 
