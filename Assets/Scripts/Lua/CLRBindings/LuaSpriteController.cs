@@ -323,8 +323,8 @@ public class LuaSpriteController {
             Transform parent = target.parent;
             try {
                 target.SetParent(GameObject.Find(value + "Layer").transform);
-                foreach (MaskImage ivi in img.GetComponentsInChildren<MaskImage>())
-                    ivi.inverted = false;
+                // foreach (MaskImage ivi in img.GetComponentsInChildren<MaskImage>())
+                    // ivi.inverted = false;
                 img.GetComponent<MaskImage>().inverted = false;
             } catch { target.SetParent(parent); }
         }
@@ -651,8 +651,7 @@ public class LuaSpriteController {
             {"invertedstencil", 5}
         };
         int masked = -1;
-        list.TryGetValue(mode, out masked);
-        if (masked == -1)
+        if (!list.TryGetValue(mode, out masked))
             throw new CYFException("sprite.Mask: Invalid mask mode \"" + mode.ToString() + "\".");
 
         if (masked != _masked) {
@@ -666,24 +665,18 @@ public class LuaSpriteController {
             //Box mask mode
             if (masked == 1) {
                 //Remove sprite mask if applicable
-                if (spr != null)
-                    GameObject.Destroy(spr);
-                img.AddComponent<RectMask2D>();
+                spr.enabled = false;
+                box.enabled = true;
             } else if (masked > 1) {
                 //The mask mode now can't possibly be box, so remove box mask if applicable
-                if (box != null)
-                    GameObject.Destroy(box);
-                //If a sprite does not already exist, create one
-                if (_masked < 2)
-                    img.AddComponent<Mask>();
+                spr.enabled = true;
+                box.enabled = false;
                 // Used to differentiate between "sprite" and "stencil"-like display modes
-                img.GetComponent<Mask>().showMaskGraphic = masked == 2 || masked == 4;
+                spr.showMaskGraphic = masked == 2 || masked == 4;
             //Mask has been disabled
             } else if (masked == 0) {
-                if (spr != null)
-                    GameObject.Destroy(spr);
-                else
-                    GameObject.Destroy(box);
+                spr.enabled = false;
+                box.enabled = false;
             }
         }
 

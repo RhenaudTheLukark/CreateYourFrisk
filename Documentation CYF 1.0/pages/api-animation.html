@@ -415,9 +415,9 @@ it's w3c valid, at least
                 Anything parented to this sprite object through the use of <span class="term">SetParent</span> - including <b>Other Sprite Objects</b>,
                 <b>Projectiles</b>, and even <b>Text Objects</b> - will all be masked according to the mask mode entered here.
                 <br><br>
-                If using <span class="term">invertedsprite</span> or <span class="term">invertedstencil</span>, note that you may run into issues if children of
-                your sprite themselves also have sprite masks applied to them. We fear this is an unavoidable issue, as the two inverted mask modes rely on
-                directly setting the stencil compare mode of a child image, of which there can only be one value.
+                If using <span class="term">invertedsprite</span> or <span class="term">invertedstencil</span>, you may be unable to change the mask mode
+                back to a normal mode afterwards (other than "off"). We fear this issue is unavoidable and unfixable - as these inverted mask modes work by directly
+                altering Unity's image display code.
                 <br><br><br>
                 <b>NOTE:</b> If you want to have a child that's not masked, you'll need to create a new invisible sprite (using the default
                 sprite "empty" is recommended), parent both the intended parent and child sprite to the invisible sprite, and apply motion to the invisible

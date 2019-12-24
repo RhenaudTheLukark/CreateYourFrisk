@@ -42,7 +42,7 @@ public static class SpriteRegistry {
 
     public static void init() {
         //dict.Clear();
-        GENERIC_SPRITE_PREFAB = Resources.Load<Image>("Prefabs/generic_sprite_maskable");
+        GENERIC_SPRITE_PREFAB = Resources.Load<Image>("Prefabs/generic_sprite");
         Texture2D tex = new Texture2D(1, 1);
         tex.SetPixel(0, 0, new Color(0, 0, 0, 0));
         tex.Apply();

@@ -189,7 +189,11 @@ public class LuaTextManager : TextManager {
         set {
             CheckExists();
             Transform parent = container.transform.parent;
-            try { container.transform.SetParent(GameObject.Find(value + "Layer").transform); } 
+            try {
+                container.transform.SetParent(GameObject.Find(value + "Layer").transform);
+                foreach (MaskImage ivi in container.GetComponentsInChildren<MaskImage>())
+                    ivi.inverted = false;
+            }
             catch { throw new CYFException("The layer \"" + value + "\" doesn't exist."); }
         }
     }
@@ -291,7 +295,11 @@ public class LuaTextManager : TextManager {
         CheckExists();
         if (parent != null && parent.img.transform != null && parent.img.transform.parent.name == "SpritePivot")
             throw new CYFException("text.SetParent(): Can not use SetParent with an Overworld Event's sprite.");
-        try { container.transform.SetParent(parent.img.transform); } 
+        try {
+            container.transform.SetParent(parent.img.transform);
+            foreach (MaskImage ivi in container.GetComponentsInChildren<MaskImage>())
+                ivi.inverted = parent._masked > 3;
+        }
         catch { throw new CYFException("You tried to set a removed sprite/nil sprite as this text object's parent."); }
     }
 

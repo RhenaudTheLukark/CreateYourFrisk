@@ -191,7 +191,7 @@ public class GameOverBehavior : MonoBehaviour {
         }
         brokenHeartPrefab = Resources.Load<GameObject>("Prefabs/heart_broken");
         if (SpriteRegistry.GENERIC_SPRITE_PREFAB == null)
-            SpriteRegistry.GENERIC_SPRITE_PREFAB = Resources.Load<Image>("Prefabs/generic_sprite_maskable");
+            SpriteRegistry.GENERIC_SPRITE_PREFAB = Resources.Load<Image>("Prefabs/generic_sprite");
         heartShardPrefab = SpriteRegistry.GENERIC_SPRITE_PREFAB.gameObject;
         reviveText = GameObject.Find("ReviveText").GetComponent<TextManager>();
         reviveText.SetCaller(LuaEnemyEncounter.script);
