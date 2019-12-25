@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
 /// <summary>
 /// Utility class for the Unitale engine.
@@ -73,16 +74,35 @@ public static class UnitaleUtil {
     /// </summary>
     /// <param name="source">Name of the script that caused the error.</param>
     /// <param name="decoratedMessage">Error that was thrown. In MoonSharp's case, this is the DecoratedMessage property from its InterpreterExceptions.</param>
-    public static void DisplayLuaError(string source, string decoratedMessage) {
+    /// <param name="DoNotDecorateMessage">Set to true to hide "error in script x" at the top. This arg is true when using error(..., 0).</param>
+    public static void DisplayLuaError(string source, string decoratedMessage, bool DoNotDecorateMessage = false) {
         if (firstErrorShown)
             return;
         firstErrorShown = true;
-        ErrorDisplay.Message = "error in script " + source + "\n\n" + decoratedMessage;
+        ErrorDisplay.Message = (!DoNotDecorateMessage ? ("error in script " + source + "\n\n") : "") + decoratedMessage;
         if (Application.isEditor)
             SceneManager.LoadSceneAsync("Error"); // prevents editor from crashing
         else
             SceneManager.LoadScene("Error");
         Debug.Log("It's a Lua error! : " + ErrorDisplay.Message);
+        ScreenResolution.wideFullscreen = true;
+    }
+
+    public static string FormatErrorSource(string DecoratedMessage, string message) {
+        string source = DecoratedMessage.Substring(0, DecoratedMessage.Length - message.Length);
+        Regex validator = new Regex(@"\(\d+,\d+(-[\d,]+)?\)"); //Finds `(13,9-16)` or `(13,9-14,10)` or `(20,0)`
+        Match scanned = validator.Match(source);
+        if (scanned.Success) {
+            string stacktrace = scanned.Value;
+            validator = new Regex(@"(\d+),(\d+)"); //Finds `13,9`
+            MatchCollection matches = validator.Matches(stacktrace);
+
+            //Add "line " and "char " before some numbers
+            foreach (Match match in matches)
+                source = source.Replace(match.Value, "line " + match.Groups[1].Value + ", char " + match.Groups[2].Value);
+        }
+
+        return source;
     }
 
     public static AudioSource GetCurrentOverworldAudio() {
@@ -130,41 +150,44 @@ public static class UnitaleUtil {
         return table;
     }
 
-    public static float CalcTextWidth(TextManager txtmgr, int fromLetter = -1, int toLetter = -1) {
+    public static string ParseCommandInline(string input, ref int currentChar, bool onlyAcceptExistingCommands = true) {
+        int start = currentChar;
+        currentChar++;
+        string control = ""; int count = 1;
+        for (; currentChar < input.Length; currentChar++) {
+            if (input[currentChar] == '[')
+                count++;
+            else if (input[currentChar] == ']') {
+                count--;
+                if (count == 0) {
+                    if (onlyAcceptExistingCommands && !TextManager.commandList.Contains(control.Split(':')[0]))
+                        break;
+                    return control;
+                }
+            }
+            control += input[currentChar];
+        }
+        currentChar = start;
+        return null;
+    }
+
+    public static float CalcTextWidth(TextManager txtmgr, int fromLetter = -1, int toLetter = -1, bool countEOLSpace = false, bool getLastSpace = false) {
         float totalWidth = 0, totalWidthSpaceTest = 0, totalMaxWidth = 0, hSpacing = txtmgr.Charset.CharSpacing;
         if (fromLetter == -1)                                                                                       fromLetter = 0;
         if (txtmgr.textQueue == null)                                                                               return 0;
         if (txtmgr.textQueue[txtmgr.currentLine] == null)                                                           return 0;
-        if (toLetter == -1)                                                                                         toLetter = txtmgr.textQueue[txtmgr.currentLine].Text.Length;
+        if (toLetter == -1)                                                                                         toLetter = txtmgr.textQueue[txtmgr.currentLine].Text.Length - 1;
         if (fromLetter > toLetter || fromLetter < 0 || toLetter > txtmgr.textQueue[txtmgr.currentLine].Text.Length) return -1;
-        if (fromLetter == toLetter)                                                                                 return 0;
 
-        for (int i = fromLetter; i < toLetter; i++) {
+        for (int i = fromLetter; i <= toLetter; i++) {
             switch (txtmgr.textQueue[txtmgr.currentLine].Text[i]) {
                 case '[':
-                    string str = "";
-                    bool failSafe = false;
-                    for (int j = i + 1; j < txtmgr.textQueue[txtmgr.currentLine].Text.Length; j++) {
-                        if (txtmgr.textQueue[txtmgr.currentLine].Text[j] == ']') {
-                            i = j + 1;
-                            break;
-                        }
-                        str += txtmgr.textQueue[txtmgr.currentLine].Text[j];
-                        
-                        // unclosed [ has been detected
-                        if (j == txtmgr.textQueue[txtmgr.currentLine].Text.Length - 1) {
-                            failSafe = true;
-                            break;
-                        }
-                    }
-                    
-                    // used to protect against unclosed open brackets
-                    if (failSafe)
-                        break;
-                    
-                    i--;
-                    if (str.Split(':')[0] == "charspacing")
-                        hSpacing = ParseUtil.GetFloat(str.Split(':')[1]);
+
+                    string str = ParseCommandInline(txtmgr.textQueue[txtmgr.currentLine].Text, ref i);
+                    if (str == null)
+                        totalWidth += txtmgr.Charset.Letters[txtmgr.textQueue[txtmgr.currentLine].Text[i]].textureRect.size.x + hSpacing;
+                    else if (str.Split(':')[0] == "charspacing")
+                        hSpacing = str.Split(':')[1].ToLower() == "default" ? txtmgr.Charset.CharSpacing : ParseUtil.GetFloat(str.Split(':')[1]);
                     break;
                 case '\r':
                 case '\n':
@@ -176,8 +199,8 @@ public static class UnitaleUtil {
                 default:
                     if (txtmgr.Charset.Letters.ContainsKey(txtmgr.textQueue[txtmgr.currentLine].Text[i])) {
                         totalWidth += txtmgr.Charset.Letters[txtmgr.textQueue[txtmgr.currentLine].Text[i]].textureRect.size.x + hSpacing;
-                        //Do not count end of line spaces
-                        if (txtmgr.textQueue[txtmgr.currentLine].Text[i] != ' ')
+                        // Do not count end of line spaces
+                        if (txtmgr.textQueue[txtmgr.currentLine].Text[i] != ' ' || countEOLSpace)
                             totalWidthSpaceTest = totalWidth;
                     }
                     break;
@@ -185,7 +208,7 @@ public static class UnitaleUtil {
         }
         if (totalMaxWidth < totalWidthSpaceTest - hSpacing)
             totalMaxWidth = totalWidthSpaceTest - hSpacing;
-        return totalMaxWidth;
+        return totalMaxWidth + (getLastSpace ? hSpacing : 0);
     }
 
     public static float CalcTextHeight(TextManager txtmgr, int fromLetter = -1, int toLetter = -1) {
@@ -273,6 +296,17 @@ public static class UnitaleUtil {
             } else
                 currentValue += text[i];
         }
+
+        // Parse one final time for the end of the string
+        Type typey = CheckRealType(currentValue);
+        DynValue dynv;
+        if (typey == typeof(bool))       dynv = DynValue.NewBoolean(currentValue == "true");
+        else if (typey == typeof(float)) dynv = DynValue.NewNumber(ParseUtil.GetFloat(currentValue));
+        else                            dynv = DynValue.NewString(currentValue.Trim('"'));
+        if (valueName == null) t.Append(dynv);
+        else                   t.Set(valueName, dynv);
+        valueName = null;
+        currentValue = "";
 
         return t;
     }
@@ -525,13 +559,65 @@ public static class UnitaleUtil {
     public static Dictionary<string, string> MapCorrespondanceList = new Dictionary<string, string>();
 
     public static void AddKeysToMapCorrespondanceList() {
-        MapCorrespondanceList.Add("test", "Snowdin - The test map");
-        MapCorrespondanceList.Add("test2", "Hotland - The test map");
+        MapCorrespondanceList.Add("test", "Snowdin - Big boy map");
+        MapCorrespondanceList.Add("test2", "Hotland - Crossroads");
         // MapCorrespondanceList.Add("test3", "The Core - The test map");
-        MapCorrespondanceList.Add("test4", "The Core - Parallel universe");
-        MapCorrespondanceList.Add("test5", "Snowdin - Parallax universe");
+        MapCorrespondanceList.Add("test4", "The Core - Bridge");
+        MapCorrespondanceList.Add("test5", "Snowdin - Cooler bridge");
         MapCorrespondanceList.Add("test-1", "How did you find this one?");
         MapCorrespondanceList.Add("Void", "The final map...?");
+    }
+
+    public static void ResetOW(bool resetSave = false) {
+        EventManager.instance = null;
+        EventManager.inited = false;
+        GameState.current = null;
+        ItemBoxUI.active = false;
+        GlobalControls.po = null;
+        GlobalControls.realName = null;
+        PlayerOverworld.instance = null;
+        PlayerOverworld.audioCurrTime = 0;
+        PlayerOverworld.audioKept = null;
+        if (resetSave)
+            SaveLoad.Load();
+        ShopScript.scriptName = null;
+    }
+
+    public static void ExitOverworld(bool totalUnload = true) {
+        foreach (string str in NewMusicManager.audiolist.Keys)
+            if (((AudioSource)NewMusicManager.audiolist[str]) != null && str != "src")
+                GameObject.Destroy(((AudioSource)NewMusicManager.audiolist[str]).gameObject);
+        NewMusicManager.audiolist.Clear();
+        NewMusicManager.audioname.Clear();
+        GameObject.Destroy(GameObject.Find("Player"));
+        GameObject.Destroy(GameObject.Find("Canvas OW"));
+        GameObject.Destroy(GameObject.Find("Canvas Two"));
+        if (GameOverBehavior.gameOverContainerOw)
+            GameObject.Destroy(GameOverBehavior.gameOverContainerOw);
+        StaticInits.MODFOLDER = "@Title";
+        StaticInits.Initialized = false;
+        StaticInits.InitAll();
+        UnitaleUtil.ResetOW(true);
+        PlayerCharacter.instance.Reset();
+        Inventory.inventory.Clear();
+        Inventory.RemoveAddedItems();
+        ScriptWrapper.instances.Clear();
+        GlobalControls.isInFight = false;
+        GlobalControls.isInShop = false;
+        LuaScriptBinder.scriptlist.Clear();
+        LuaScriptBinder.ClearBattleVar();
+        LuaScriptBinder.Clear();
+        GameObject.Destroy(GameObject.Find("Main Camera OW"));
+    }
+
+    public static string TimeFormatter(float seconds) {
+        float minutes = Mathf.Floor(Mathf.Round(seconds) / 60f);
+        //float hours = Mathf.Floor((seconds / 60f) / 60f);
+        return minutes + ":" + String.Format("{0,2}", Mathf.Round(seconds) % 60).Replace(" ", "0");
+    }
+
+    public static bool IsSpecialAnnouncement(string str) {
+        return str == "4eab1af3ab6a932c23b3cdb8ef618b1af9c02088";
     }
 
     /*public static bool CheckAvailableDuster(out GameObject go) {

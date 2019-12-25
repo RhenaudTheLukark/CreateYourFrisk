@@ -8,7 +8,7 @@ public class LuaGeneralOW {
     private TextManager textmgr;
     public ScriptWrapper appliedScript;
 
-    public delegate void LoadedAction(string name, object args);
+    public delegate void LoadedAction(string coroName, object args, string evName);
     [MoonSharpHidden] public static event LoadedAction StCoroutine;
 
     [MoonSharpHidden] public LuaGeneralOW(TextManager textmgr) { this.textmgr = textmgr; }
@@ -30,15 +30,24 @@ public class LuaGeneralOW {
             PlayerOverworld.instance.UIPos = 0;
         
         if (EventManager.instance.coroutines.ContainsKey(appliedScript) && EventManager.instance.script != appliedScript) {
-            UnitaleUtil.DisplayLuaError(EventManager.instance.events[EventManager.instance.actualEventIndex].name, "General.SetDialog: You can't use that function in a coroutine.");
+            UnitaleUtil.DisplayLuaError(appliedScript.scriptname, "General.SetDialog: This function cannot be used in a coroutine.");
             return;
         } else if (EventManager.instance.LoadLaunched) {
-            UnitaleUtil.DisplayLuaError(EventManager.instance.events[EventManager.instance.actualEventIndex].name, "General.SetDialog: You can't use that function in a page 0 function.");
+            UnitaleUtil.DisplayLuaError(appliedScript.scriptname, "General.SetDialog: This function cannot be used in EventPage0.");
             return;
         }
-        TextMessage[] textmsgs = new TextMessage[texts.Table.Length];
-        for (int i = 0; i < texts.Table.Length; i++)
-            textmsgs[i] = new TextMessage(texts.Table.Get(i + 1).String, formatted, false, mugshots != null ? mugshots.Type == DataType.Table ? mugshots.Table.Get(i+1) : mugshots : null);
+        TextMessage[] textmsgs = null;
+        if (texts.Type == DataType.String && texts.String.Length > 0)
+            textmsgs = new TextMessage[]{new TextMessage(texts.String, formatted, false, mugshots != null ? mugshots.Type == DataType.Table ? mugshots.Table.Get(0) : mugshots : null)};
+        else if (texts.Type == DataType.Table && texts.Table.Length > 0) {
+            textmsgs = new TextMessage[texts.Table.Length];
+            for (int i = 0; i < texts.Table.Length; i++)
+                textmsgs[i] = new TextMessage(texts.Table.Get(i + 1).String, formatted, false, mugshots != null ? mugshots.Type == DataType.Table ? mugshots.Table.Get(i+1) : mugshots : null);
+        } else {
+            UnitaleUtil.DisplayLuaError(EventManager.instance.eventScripts[EventManager.instance.events[EventManager.instance.actualEventIndex]].scriptname, "General.SetDialog: You need to input a non-empty array or string here.");
+            return;
+        }
+        textmgr.SetEffect(null);
         textmgr.SetTextQueue(textmsgs);
         textmgr.transform.parent.parent.SetAsLastSibling();
     }
@@ -55,7 +64,7 @@ public class LuaGeneralOW {
             PlayerOverworld.instance.UIPos = forcePosition.Type == DataType.Boolean ? (forcePosition.Boolean == true ? 2 : 1) : 0;
         else
             PlayerOverworld.instance.UIPos = 0;
-        
+
         TextMessage textMsgChoice = new TextMessage("", false, false, true);
         textMsgChoice.AddToText("[mugshot:null]");
         List<string> finalText = new List<string>();
@@ -89,7 +98,7 @@ public class LuaGeneralOW {
             for (int j = 0; j < (threeLiner ? 3 : 2); j++) {
                 if (j == finalText.Count)
                     finalText.Add("");
-                finalText[j] += "[charspacing:8] [charspacing:2]" + (j >= preText.Length ? "" : preText[j]) + (i == 0 ? "\t" : "");
+                finalText[j] += "[charspacing:8] [charspacing:2]" + (j >= preText.Length ? "" : preText[j]) + (i == 0 ? "\t" : "") + "[charspacing:default]";
             }
         }
 
@@ -98,18 +107,57 @@ public class LuaGeneralOW {
             if (finalText[i] != "\t")
                 textMsgChoice.AddToText(finalText[i] + ((i == finalText.Count - 1) ? "" : "\n"));
         }
+        textmgr.SetEffect(null);
         textmgr.SetText(textMsgChoice);
         textmgr.transform.parent.parent.SetAsLastSibling();
 
-        StCoroutine("ISetChoice", new object[] { question != "", oneLiners });
+        StCoroutine("ISetChoice", new object[] { question != "", oneLiners }, appliedScript.GetVar("_internalScriptName").String);
     }
 
-    [CYFEventFunction] public void Wait(int frames) { StCoroutine("IWait", frames); }
+    [CYFEventFunction] public void EndDialog() {
+        if (EventManager.instance.LoadLaunched) {
+            UnitaleUtil.DisplayLuaError(appliedScript.scriptname, "General.EndDialog: This function cannot be used in EventPage0.");
+            return;
+        } else if (EventManager.instance.script == appliedScript) {
+            UnitaleUtil.DisplayLuaError(appliedScript.scriptname, "General.EndDialog: This function can only be used in a coroutine.");
+            return;
+        }
+
+        if (GameObject.Find("textframe_border_outer") && GameObject.Find("textframe_border_outer").GetComponent<UnityEngine.UI.Image>().color.a != 0) {
+            // Clean up text manager
+            textmgr.SetTextFrameAlpha(0);
+            textmgr.textQueue = new TextMessage[] { };
+            textmgr.DestroyChars();
+
+            // Clean up SetChoice if applicable
+            if (EventManager.instance.script != null && EventManager.instance.script == textmgr.caller) {
+                string key = EventManager.instance.script.GetVar("_internalScriptName").String + ".ISetChoice";
+                if (EventManager.instance.cSharpCoroutines.ContainsKey(key)) {
+                    // Stop the ISetChoice coroutine
+                    EventManager.instance.ForceEndCoroutine(key);
+
+                    // Remove the "tempHeart" GameObject if it already exists
+                    if (GameObject.Find("Canvas OW/tempHeart"))
+                        GameObject.Destroy(GameObject.Find("Canvas OW/tempHeart"));
+                }
+            }
+
+            // End event
+            appliedScript.Call("CYFEventNextCommand");
+            if (EventManager.instance.script != null && EventManager.instance.script == textmgr.caller) // End text from event
+                textmgr.caller.Call("CYFEventNextCommand");
+            else
+                PlayerOverworld.instance.PlayerNoMove = false;  // End text no event
+        } else
+            appliedScript.Call("CYFEventNextCommand");
+    }
+
+    [CYFEventFunction] public void Wait(int frames) { StCoroutine("IWait", frames, appliedScript.GetVar("_internalScriptName").String); }
 
     /// <summary>
     /// Function that ends when the player press the button "Confirm"
     /// </summary>
-    [CYFEventFunction] public void WaitForInput() { StCoroutine("IWaitForInput", null); }
+    [CYFEventFunction] public void WaitForInput() { StCoroutine("IWaitForInput", null, appliedScript.GetVar("_internalScriptName").String); }
 
     /// <summary>
     /// Launch the GameOver screen
@@ -120,7 +168,7 @@ public class LuaGeneralOW {
         rt.position = new Vector3(rt.position.x, rt.position.y, -1000);*/
         string[] deathTable = null;
 
-        if (deathText != null) {
+        if (deathText != null && deathText.Type != DataType.Void) {
             if (deathText.Type == DataType.Table) {
                 deathTable = new string[deathText.Table.Length];
                 for (int i = 0; i < deathText.Table.Length; i++)
@@ -131,7 +179,6 @@ public class LuaGeneralOW {
                 throw new CYFException("General.GameOver: deathText needs to be a table or a string.");
         }
 
-        GlobalControls.Music = UnitaleUtil.GetCurrentOverworldAudio().clip;
         PlayerOverworld.instance.enabled = false;
         
         // Stop the "kept audio" if it is playing
@@ -184,7 +231,7 @@ public class LuaGeneralOW {
             throw new CYFException("General.StopBGM: There is no current BGM.");
         else if (fadeFrames < 0)
             throw new CYFException("General.StopBGM: The fade time has to be positive or equal to 0.");
-        StCoroutine("IFadeBGM", new object[] { fadeFrames, waitEnd });
+        StCoroutine("IFadeBGM", new object[] { fadeFrames, waitEnd }, appliedScript.GetVar("_internalScriptName").String);
         if (!waitEnd)
             appliedScript.Call("CYFEventNextCommand");
     }
@@ -206,20 +253,15 @@ public class LuaGeneralOW {
     /// <summary>
     /// Saves the game. Pretty obvious, heh.
     /// </summary>
-    [CYFEventFunction] public void Save(bool forced = false) { StCoroutine("ISave", new object[] { forced }); }
+    [CYFEventFunction] public void Save(bool forced = false) { StCoroutine("ISave", new object[] { forced }, appliedScript.GetVar("_internalScriptName").String); }
 
     /// <summary>
     /// Sends the player back to the title screen, making him lose his progression
     /// </summary>
     [CYFEventFunction] public void TitleScreen() {
-        NewMusicManager.DestroyChannel("StaticKeptAudio");
-        GameObject.Destroy(GameObject.Find("Player"));
-        GameObject.Destroy(GameObject.Find("Canvas OW"));
-        StaticInits.MODFOLDER = "@Title";
-        StaticInits.Initialized = false;
-        StaticInits.InitAll();
-        GameObject.Destroy(GameObject.Find("Main Camera OW"));
+        UnitaleUtil.ExitOverworld(false);
         SceneManager.LoadScene("TitleScreen");
+        GameObject.Destroy(GameObject.Find("SpritePivot"));
     }
 
     /// <summary>
@@ -228,11 +270,20 @@ public class LuaGeneralOW {
     /// </summary>
     /// <param name="encounterName"></param>
     /// <param name="quickAnim"></param>
-    [CYFEventFunction] public void SetBattle(string encounterName, bool quickAnim = false, bool ForceNoFlee = false) { PlayerOverworld.instance.SetEncounterAnim(encounterName, quickAnim, ForceNoFlee); }
+    [CYFEventFunction] public void SetBattle(string encounterName = "", string anim = "normal", bool ForceNoFlee = false) {
+        try {
+            anim = anim.ToLower();
+            if (anim != "normal" && anim != "fast" && anim != "instant")
+                throw new System.Exception();
+        } catch {
+            UnitaleUtil.DisplayLuaError(appliedScript.scriptname, "General.SetBattle: Invalid animation \"" + anim.ToString() + "\".\nIt should be\"normal\", \"fast\" or \"instant\".");
+        }
 
+        PlayerOverworld.instance.SetEncounterAnim(encounterName, anim, ForceNoFlee);
+    }
 
-    [CYFEventFunction] public void EnterShop(string scriptName) {
+    [CYFEventFunction] public void EnterShop(string scriptName, bool instant = false) {
         ShopScript.scriptName = scriptName;
-        StCoroutine("IEnterShop", null);
+        StCoroutine("IEnterShop", instant, appliedScript.GetVar("_internalScriptName").String);
     }
 }

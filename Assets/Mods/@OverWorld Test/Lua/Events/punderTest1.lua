@@ -13,10 +13,10 @@ function EventPage1()
     local diff
     dir, diff = calcDirAndDiff(eventpos, playerpos)
     local text = ""
-    local mugshot = "punderNormal"
+    local mugshot = "Punder/normal"
     if Event.GetAnimHeader("Player") == "MK" then            
         text = "Hello there little buddy!"
-        mugshot = "punderVeryHappy"
+        mugshot = "Punder/veryHappy"
     elseif Event.GetAnimHeader("Player") == "Chara" then    
         local tempPunderX = Event.GetPosition(Event.GetName())[1]
         Event.MoveToPoint(Event.GetName(), diff[1] > 0 and eventpos[1] + 60 or eventpos[1] - 60, eventpos[2])
@@ -26,14 +26,12 @@ function EventPage1()
         else 
             text = "Hey...[w:25]you look kinda menacing...[w:25]\nBe good, [w:15]alright?"
         end
-        mugshot = "punderIntimidated"
-    elseif Event.GetAnimHeader("Player") == "CharaTad" then  
-        text = "Are you alright? [w:25]\nYou seem lost..."
+        mugshot = "Punder/intimidated"
     elseif Event.GetAnimHeader("Player") == "Asriel" then    
         text = "Oh hi kid! [w:25]You're cute, [w:15]you know that?"
-        mugshot = "punderVeryHappy"
+        mugshot = "Punder/veryHappy"
     else                                                     
-        text = "Hey, [w:15]how's going?"
+        text = "Hey, [w:15]how's it going?"
     end
     dir, diff = calcDirAndDiff(Event.GetPosition(Event.GetName()), Event.GetPosition("Player"))
     Event.SetDirection(Event.GetName(), dir)

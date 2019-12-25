@@ -28,10 +28,6 @@ public class UserDebugger : MonoBehaviour{
         }
     }
 
-    public static void Warn(string line){
-        instance.WriteLine("[Warn] " + line);
-    }
-
     public void UserWriteLine(string line, bool debug = true) {
         line = line ?? "nil";
         foreach (string str in line.Split('\n'))

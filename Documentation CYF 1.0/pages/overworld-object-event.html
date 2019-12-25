@@ -38,39 +38,38 @@ it's w3c valid, at least
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                     <li><a href="controls.html">Controls</a></li>
                     <li><a href="basic.html">Basic setup</a></li>
-                    <li><a href="variables.html">Special Variables</a></li>
+                    <li class="new"><a href="variables.html">Special Variables</a></li>
                     <li><a href="terms.html">Terminology</a></li>
                 <li class="li-header">API</li>
-                    <li><a href="api-text.html">Text commands</a></li>
-                    <li><a href="api-events.html">Game events</a></li>
+                    <li class="new"><a href="api-text.html">Text commands</a></li>
+                    <li class="new"><a href="api-events.html">Game events</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                     <li class="li-indent">Functions &amp; Objects:</li>
-                        <li class="li-indent"><a href="api-functions-main.html">Misc. Functions</a></li>
-                        <li class="li-indent"><a href="api-functions-player.html">The Player Object</a></li>
-                        <li class="li-indent"><a href="api-functions-script.html">The Script Object</a></li>
-                        <li class="li-indent"><a href="api-functions-audio.html">The Audio Object</a></li>
-                        <li class="li-indent"><a href="api-functions-newaudio.html"><span class="CYF"></span> The NewAudio Object</a></li>
-                        <li class="li-indent"><a href="api-functions-input.html">The Input Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-main.html">Misc. Functions</a></li>
+                        <li class="li-indent new"><a href="api-functions-player.html">The Player Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-script.html">The Script Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-audio.html">The Audio Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-newaudio.html"><span class="CYF"></span> The NewAudio Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-input.html">The Input Object</a></li>
 						<li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
-                        <li class="li-indent"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
-                        <li class="li-indent"><a href="api-functions-waves.html">Wave Scripts</a></li>
+                        <li class="li-indent"><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
+                        <li class="li-indent"><a href="api-functions-waves.html">The Arena Object</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                     <li><a href="api-projectile.html">Projectile management</a></li>
-                    <li><a href="api-animation.html">Sprites &amp; Animation</a></li>
-                    <li><a href="api-keys.html"><span class="CYF"></span> Key List</a></li>
-                <li class="li-header">Create Your Frisk's new features</li>
-                    <li><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory System</a></li>
                     <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
-                    <li><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
+                    <li class="new"><a href="api-animation.html">Sprites &amp; Animation</a></li>
+                    <li class="new"><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
+                    <li><a href="api-keys.html"><span class="CYF"></span> Key List</a></li>
                 <li class="li-header">Overworld</li>
-                    <li><a href="overworld.html"><span class="CYF"></span> Basics</a></li>
+                    <li class="new"><a href="overworld.html"><span class="CYF"></span> Basics</a></li>
                     <li><a href="overworld-howto-map.html"><span class="CYF"></span> How to create a map</a></li>
                     <li><a href="overworld-howto-event.html"><span class="CYF"></span> How to create an event</a></li>
                     <li><a href="overworld-howto-animevent.html"><span class="CYF"></span> How to animate an event</a></li>
-                    <li><a href="overworld-howto-shop.html"><span class="CYF"></span> How to create a shop</a></li>
-                    <li><a href="overworld-object-general.html"> <span class="CYF"></span> The General Object</a></li>
-                    <li class="active" style="margin-left:5px;">> <span class="CYF"></span> The Event Object <</li>
-                    <li><a href="overworld-object-player.html"><span class="CYF"></span> The Player Object</a></li>
+                    <li class="new"><a href="overworld-howto-shop.html"><span class="CYF"></span> How to create a shop</a></li>
+                    <li class="new"><a href="overworld-object-general.html"><span class="CYF"></span> The General Object</a></li>
+                    <li class="active new" style="margin-left:5px;">> <span class="CYF"></span> The Event Object <</li>
+                    <li class="new"><a href="overworld-object-player.html"><span class="CYF"></span> The Player Object</a></li>
                     <li><a href="overworld-object-screen.html"><span class="CYF"></span> The Screen Object</a></li>
                     <li><a href="overworld-object-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
                     <li><a href="overworld-object-map.html"><span class="CYF"></span> The Map Object</a></li>
@@ -83,6 +82,14 @@ it's w3c valid, at least
     <div class="tab-content col-md-10">
 		<div class="tab-pane active text-style" id="overworld-object-event">
             <h2><span class="CYF"></span>The Overworld: The Event Object</h2><br><br>
+            NOTE: You can provide <span class="term">"Player"</span> as the <span class="term">name</span> argument for any of these functions to
+            instead apply them to the actual Player.
+            <p>
+                <br><span class="function new">Event.Exists(<span class="string"></span> name) returns <span class="boolean"></span></span>
+                Returns <span class="term">true</span> if an event with this name exists, <span class="term">false</span> otherwise.
+                <br><br>
+                Note that this refers to the name given to the GameObject in the Unity scene, rather than the name of the script attached to it.
+            </p>
             <p>
                 <br><span class="function">Event.Teleport(<span class="string"></span> name, <span class="number"></span> dirX, 
                 <span class="number"></span> dirY)</span>
@@ -96,15 +103,30 @@ it's w3c valid, at least
 				Set <span class="term">wallPass</span> to true to ignore any obstacles that the event may encounter while moving.<br><br>
                 By default, the script will pause until the event has stopped moving. Set <span class="term">waitEnd</span> to false
 				to bypass this and continue the script instead.
+                <br><br>
+                <span class="new"></span>By calling this function on an Event that is already moving, the event's current movement will be cancelled,
+                and will start over moving towards the newly provided target destination. This also means you can provide the Event's current position
+                when interrupting movement to force the Event to stop moving instantly.
+            </p>
+            <p>
+                <br><span class="function new">Event.isMoving(<span class="string"></span> name)</span>
+                Returns <span class="term">true</span> if an event is currently moving by means of <span class="term">Event.MoveToPoint</span>,
+                <span class="term">false</span> otherwise.
+                <br><br>
+                Note: this will also return <span class="term">true</span> if being used with the Player, given the Player is walking around
+                manually with the arrow keys or WASD.
             </p>
             <p>
                 <br><span class="function">Event.SetAnimHeader(<span class="string"></span> name, <span class="string"></span> anim)</span>
                 If the event given has a <span class="term">CYFAnimator</span> component, this will set its <span class="term">Special Header</span> 
-                property to <span class="term">anim</span>.<br><br>
+                property to <span class="term">anim</span>.
+                <br><br>
+                Set <span class="term">anim</span> to <span class="term">""</span> to reset to the default animation, <span class="term">StopDown</span>.
+                <br><br>
                 Read about how the <span class="term">Special Header</span> works in <span class="ref">How to animate an event</span>.
             </p>
             <p>
-                <br><span class="function">Event.GetAnimHeader(string name) returns <span class="string"></span></span>
+                <br><span class="function">Event.GetAnimHeader(<span class="string"></span> name) returns <span class="string"></span></span>
                 If the event given has a <span class="term">CYFAnimator</span> component, this will return its <span class="term">Special Header</span> 
                 value.
             </p>
@@ -123,12 +145,19 @@ it's w3c valid, at least
                 <br><span class="function">Event.Rotate(<span class="string"></span> name, <span class="number"></span> rotateX, 
                 <span class="number"></span> rotateY, <span class="number"></span> rotateZ, <span class="boolean"></span> anim = true, 
                 <span class="boolean"></span> waitEnd = true)</span>
-                This function rotates the event. The Z rotation is the rotation we normally use, while X and Y rotations are 3D rotations.
-                <br>To see some examples of rotation, remove the comment block of the function <span class="term">EventPage4</span> of  
-				<span class="term">Mods/Examples/Lua/Events/EventTest.lua</span>.<br>
+                This function rotates the event. The Z rotation is the rotation normally applied in battles, while the X and Y rotations
+                are 3D rotations.<br>
                 Set <span class="term">anim</span> to false to make the rotation instantaneous.<br><br>
                 By default, the script will pause until the event has stopped rotating. Set <span class="term">waitEnd</span> to false
 				to bypass this and continue the script instead.
+                <br><br>
+                <span class="new"></span>By calling this function on an Event that is already rotating, the event's current rotation will be cancelled,
+                and will start over moving towards the newly provided target angles.
+            </p>
+            <p>
+                <br><span class="function new">Event.isRotating(<span class="string"></span> name)</span>
+                Returns <span class="term">true</span> if an event is currently being rotated by means of <span class="term">Event.Rotate</span>,
+                <span class="term">false</span> otherwise.
             </p>
             <p>
                 <br><span class="function">Event.Stop()</span>
@@ -157,7 +186,7 @@ it's w3c valid, at least
 				Returns the current page of the given event.
             </p>
             <p>
-                <br><span class="function">Event.GetSprite(<span class="string"></span> name) returns <span class="string"></span></span>
+                <br><span class="function">Event.GetSprite(<span class="string"></span> name) returns <span class="userdata">sprite</span></span>
 				Returns the sprite object of the given event.
             </p>
             <p>
@@ -189,7 +218,11 @@ it's w3c valid, at least
             </p>
             <p>
                 <br><span class="function">Event.SetSpeed(<span class="string"></span> name, <span class="number"></span> speed)</span>
-                Sets the speed of an event.
+                Sets the set movement speed of an event.
+            </p>
+            <p>
+                <br><span class="function new">Event.GetSpeed(<span class="string"></span> name) returns <span class="number"></span></span>
+                Gets the set movement speed of an event.
             </p>
         </div>
 		

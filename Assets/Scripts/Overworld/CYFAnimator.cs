@@ -4,17 +4,15 @@ public class CYFAnimator : MonoBehaviour {
     public int movementDirection = 0;
     public string beginAnim = "StopDown";
     public string specialHeader = "";
-    public static string specialPlayerHeader = "";
-    private int threeFramePass = 0;
-    private bool waitForStart = true;
+    private int threeFramePass = 3;
     private LuaSpriteController sprctrl;
-    private Vector2 lastPos;
-    private bool firstCall = true;
+    private Vector3 lastPos;
+    private bool waitingForLateStart = true;
 
     void OnEnable()  { StaticInits.Loaded += LateStart; }
     void OnDisable() { StaticInits.Loaded -= LateStart; }
 
-    [System.Serializable] //Permits to be able to change the data of anims via the Editor
+    [System.Serializable] // Allows the edition of this data in the Unity Editor
     public struct Anim {
         public string name;
         public string anims;
@@ -28,6 +26,10 @@ public class CYFAnimator : MonoBehaviour {
         return new Anim();
     }
 
+    public bool AnimExists(string name) {
+        return GetAnimPerName(name).name == null;
+    }
+
     // Use this for initialization
     public void LateStart() {
         if (EventManager.instance.sprCtrls.ContainsKey(gameObject.name)) sprctrl = EventManager.instance.sprCtrls[gameObject.name];
@@ -38,22 +40,20 @@ public class CYFAnimator : MonoBehaviour {
                 throw new CYFException("A CYFAnimator component must be tied to an event, however the GameObject " + gameObject.name + " doesn't seem to have one.");
         }
         lastPos = gameObject.transform.position;
-        waitForStart = false;
-        if (firstCall) {
-            Anim anim = GetAnimPerName(beginAnim);
-            try { sprctrl.SetAnimation(anim.anims.Replace(" ", "").Replace("{", "").Replace("}", "").Split(','), anim.transitionTime); } catch { }
-            firstCall = false;
+        if (waitingForLateStart) {
+            ReplaceAnim(beginAnim);
+            waitingForLateStart = false;
         }
     }
 	
 	// Update is called once per frame
 	void Update () {
-        if (waitForStart)
+        if (waitingForLateStart)
             return;
-        string animName = gameObject.name == "Player" ? specialPlayerHeader : specialHeader;
+        string animName = specialHeader;
 
         if (GetAnimPerName(animName).name == null) {
-            if ((Vector2)gameObject.transform.position != lastPos) {
+            if (gameObject.transform.position != lastPos) {
                 animName += "Moving";
                 threeFramePass = 0;
             } else if (threeFramePass < 3) {
@@ -77,14 +77,15 @@ public class CYFAnimator : MonoBehaviour {
             }
         }
 
+        lastPos = gameObject.transform.position;
         if (animName != beginAnim)
             ReplaceAnim(animName);
-        lastPos = gameObject.transform.position;
     }
 
-    void ReplaceAnim(string animName) {
+    private void ReplaceAnim(string animName) {
         Anim anim = GetAnimPerName(animName);
-        try { sprctrl.SetAnimation(anim.anims.Replace(" ", "").Replace("{", "").Replace("}", "").Split(','), anim.transitionTime); } catch { }
+        try { sprctrl.SetAnimation(anim.anims.Replace(" ", "").Replace("{", "").Replace("}", "").Split(','), anim.transitionTime); } 
+        catch { throw new CYFException("Bad animation for event \"" + gameObject.name + "\", animation \"" + animName + "\""); }
         beginAnim = animName;
     }
 }

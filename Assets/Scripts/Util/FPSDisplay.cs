@@ -11,7 +11,12 @@ public class FPSDisplay : MonoBehaviour {
 
         GUIStyle style = new GUIStyle();
 
-        Rect rect = new Rect(0, 0, Screen.width, Screen.height / 20);
+        Rect rect;
+        #if !UNITY_EDITOR
+            rect = new Rect(ScreenResolution.displayedSize.z, 0, ScreenResolution.displayedSize.x, Screen.height / 20);
+        #else
+            rect = new Rect(0, 0, Screen.width, Screen.height / 20);
+        #endif
         style.alignment = TextAnchor.UpperLeft;
         style.fontSize = Screen.height / 20;
         style.normal.textColor = new Color(1, 1, 1, 1);

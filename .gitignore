@@ -31,6 +31,7 @@ ExportedObj/
 *.pidb
 *.booproj
 *.svd
+UpgradeLog.htm
 
 # Unity3D generated meta files
 *.pidb.meta
@@ -41,6 +42,7 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+/bin
 
 # External mods
 /Assets/Mods/*
@@ -62,8 +64,11 @@ sysinfo.txt
 !/Assets/Mods/@Title.meta
 
 # IDE Stuff and others
-
 /.vs/*
 /.vscode/*
 /.bin/*
 /.github
+
+# GIMP project files
+*.xcf
+*.xcf.meta

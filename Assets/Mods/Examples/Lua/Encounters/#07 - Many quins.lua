@@ -1,7 +1,7 @@
 -- A basic encounter script skeleton you can copy and modify for your own creations.
 
 -- music = "shine_on_you_crazy_diamond" --Always OGG. Extension is added automatically. Remove the first two lines for custom music.
-encountertext = "The path is blocked by\nmany quins!" --Modify as necessary. It will only be read out in the action select screen.
+encountertext = "The path is blocked by\rmany quins!" --Modify as necessary. It will only be read out in the action select screen.
 if not isCYF then
     error("You better use this mod on CYF!\nHere nothing will work.")
 end

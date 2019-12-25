@@ -12,20 +12,22 @@ public static class SpriteUtil {
     public static void SwapSpriteFromFile(Component target, string filename, int bubbleID = -1) {
         try {
             if (bubbleID != -1) {
-                FileInfo fi = new FileInfo(Path.ChangeExtension(FileLoader.pathToDefaultFile("Sprites/" + filename + ".png"), "xml"));
+                FileInfo fi = new FileInfo(Path.ChangeExtension(FileLoader.pathToModFile("Sprites/" + filename + ".png"), "xml"));
                 if (!fi.Exists)
-                    fi = new FileInfo(Path.ChangeExtension(FileLoader.pathToModFile("Sprites/" + filename + ".png"), "xml"));
+                    fi = new FileInfo(Path.ChangeExtension(FileLoader.pathToDefaultFile("Sprites/" + filename + ".png"), "xml"));
                 if (fi.Exists) {
                     XmlDocument xmld = new XmlDocument();
                     xmld.Load(fi.FullName);
                     if (xmld["spritesheet"] != null && "single".Equals(xmld["spritesheet"].GetAttribute("type")))
                         if (!UnitaleUtil.IsOverworld)
-                            UIController.instance.encounter.EnabledEnemies[bubbleID].bubbleWideness = ParseUtil.GetFloat(xmld["spritesheet"].GetElementsByTagName("wideness")[0].InnerText);
+                            UIController.instance.encounter.EnabledEnemies[bubbleID].bubbleWidth = ParseUtil.GetFloat(xmld["spritesheet"].GetElementsByTagName("width").Count > 0
+                                ? xmld["spritesheet"].GetElementsByTagName("width")[0].InnerText
+                                : xmld["spritesheet"].GetElementsByTagName("wideness")[0].InnerText);
                 } else
-                    UIController.instance.encounter.EnabledEnemies[bubbleID].bubbleWideness = 0;
+                    UIController.instance.encounter.EnabledEnemies[bubbleID].bubbleWidth = 0;
             }
         } catch (Exception) {
-            UIController.instance.encounter.EnabledEnemies[bubbleID].bubbleWideness = 0;
+            UIController.instance.encounter.EnabledEnemies[bubbleID].bubbleWidth = 0;
         }
         Sprite newSprite = SpriteRegistry.Get(filename);
         if (newSprite == null) {
@@ -90,7 +92,7 @@ public static class SpriteUtil {
     }
 
     public static Sprite FromFile(string filename) {
-        Texture2D SpriteTexture = new Texture2D(1, 1);
+        Texture2D SpriteTexture = new Texture2D(1, 1, TextureFormat.RGBA32, false);
         SpriteTexture.LoadImage(FileLoader.getBytesFrom(filename));
         SpriteTexture.filterMode = FilterMode.Point;
         SpriteTexture.wrapMode = TextureWrapMode.Clamp;
@@ -111,9 +113,11 @@ public static class SpriteUtil {
     public static DynValue MakeIngameSprite(string filename, int childNumber = -1) { return MakeIngameSprite(filename, "BelowArena", childNumber); }
 
     public static DynValue MakeIngameSprite(string filename, string tag = "BelowArena", int childNumber = -1) {
+        string canvas = UnitaleUtil.IsOverworld ? "Canvas Two/" : "Canvas/";
+        tag = (UnitaleUtil.IsOverworld && tag == "BelowArena") ? "Default" : tag;
         if (ParseUtil.TestInt(tag) && childNumber == -1) {
             childNumber = ParseUtil.GetInt(tag);
-            tag = "BelowArena";
+            tag = UnitaleUtil.IsOverworld ? "Default" : "BelowArena";
         }
         Image i = GameObject.Instantiate<Image>(SpriteRegistry.GENERIC_SPRITE_PREFAB);
         if (!string.IsNullOrEmpty(filename))
@@ -121,63 +125,49 @@ public static class SpriteUtil {
         else
             throw new CYFException("You can't create a sprite object with a nil sprite!");
         if (!GameObject.Find(tag + "Layer") && tag != "none")
-            if (tag == "BelowArena")
-                i.transform.SetParent(GameObject.Find("Canvas").transform);
+            if ((!UnitaleUtil.IsOverworld && tag == "BelowArena") || (UnitaleUtil.IsOverworld && tag == "Default"))
+                i.transform.SetParent(GameObject.Find(canvas).transform);
             else
                 UnitaleUtil.DisplayLuaError("Creating a sprite", "The sprite layer " + tag + " doesn't exist.");
         else {
-            if (childNumber == -1)
-                if (tag == "none")
-                    i.transform.SetParent(GameObject.Find("Canvas").transform, true);
-                else
-                    i.transform.SetParent(GameObject.Find(tag + "Layer").transform, true);
-            else {
+            if (tag == "none")
+                i.transform.SetParent(GameObject.Find(canvas).transform, true);
+            else
                 i.transform.SetParent(GameObject.Find(tag + "Layer").transform, true);
+            if (childNumber != -1)
                 i.transform.SetSiblingIndex(childNumber - 1);
-            }
         }
         return UserData.Create(new LuaSpriteController(i), LuaSpriteController.data);
     }
 
-    public static DynValue MakeIngameSpriteOW(string filename) {
-        Image i = GameObject.Instantiate<Image>(SpriteRegistry.GENERIC_SPRITE_PREFAB);
-        if (!string.IsNullOrEmpty(filename))
-            SwapSpriteFromFile(i, filename);
-        else
-            throw new CYFException("You can't create a sprite object with a nil sprite!");
-        i.transform.SetParent(GameObject.Find("Canvas OW").transform);
-        return UserData.Create(new LuaSpriteController(i), LuaSpriteController.data);
-    }
-
     public static void CreateLayer(string name, string relatedTag = "BasisNewest", bool before = false) {
-        if (name == null)
+        string canvas = UnitaleUtil.IsOverworld ? "Canvas Two/" : "Canvas/";
+        if (name == null || GameObject.Find(canvas + name + "Layer") != null)
             return;
-        else if (GameObject.Find("Canvas/" + name + "Layer") != null)
-            throw new CYFException("CreateLayer: The layer \"" + name + "\" already exists. Please use a different name.");
-        else if (relatedTag != "VeryHighest" && relatedTag != "VeryLowest" && relatedTag != "BasisNewest" && GameObject.Find("Canvas/" + relatedTag + "Layer") == null)
+        else if (relatedTag != "VeryHighest" && relatedTag != "VeryLowest" && relatedTag != "BasisNewest" && GameObject.Find(canvas + relatedTag + "Layer") == null)
             throw new CYFException("CreateLayer: Tried to make a new layer " + (before ? "below" : "above") + " the layer \"" + relatedTag + "\", but it didn't exist.");
-        
+
         GameObject go = new GameObject(name + "Layer", typeof(RectTransform));
         string testName = relatedTag + "Layer";
-        Transform[] rts = UnitaleUtil.GetFirstChildren(GameObject.Find("Canvas").transform);
+        Transform[] rts = UnitaleUtil.GetFirstChildren(GameObject.Find(canvas).transform);
         if (relatedTag != "VeryHighest" && relatedTag != "VeryLowest") {
             if (relatedTag == "BasisNewest")
                 testName = "BelowArenaLayer";
             for (int j = 0; j < rts.Length; j++) {
                 if (rts[j].name == testName) {
-                    go.transform.SetParent(GameObject.Find("Canvas").transform, true);
+                    go.transform.SetParent(GameObject.Find(canvas).transform, true);
                     go.transform.SetSiblingIndex(j + (before ? 0 : 1));
                     break;
                 }
             }
         } else {
-            go.transform.SetParent(GameObject.Find("Canvas").transform, true);
+            go.transform.SetParent(GameObject.Find(canvas).transform, true);
             if (relatedTag == "VeryHighest")
                 go.transform.SetAsLastSibling();
             else if (relatedTag == "VeryLowest")
                 go.transform.SetAsFirstSibling();
         }
-        
+
         go.GetComponent<RectTransform>().anchorMax = new Vector2(0, 0);
         go.GetComponent<RectTransform>().anchorMin = new Vector2(0, 0);
         go.GetComponent<RectTransform>().sizeDelta = new Vector2(1, 1);

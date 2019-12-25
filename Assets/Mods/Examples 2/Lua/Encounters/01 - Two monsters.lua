@@ -35,7 +35,7 @@ function DefenseEnding() --This built-in function fires after the defense round 
 end
 
 function HandleSpare()
-     State("ENEMYDIALOGUE")
+    State("ENEMYDIALOGUE")
 end
 
 function HandleItem(ItemID)

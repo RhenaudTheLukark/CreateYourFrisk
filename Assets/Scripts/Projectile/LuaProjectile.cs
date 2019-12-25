@@ -29,7 +29,7 @@ public class LuaProjectile : Projectile {
         if (owner.Globals["OnHit"] != null && owner.Globals.Get("OnHit") != null)
             try { owner.Call(owner.Globals["OnHit"], this.ctrl); } 
             catch (ScriptRuntimeException ex) {
-                UnitaleUtil.DisplayLuaError((owner.Globals["wavename"] != null) ? (string)owner.Globals["wavename"] : "[wave script filename here]\n(should be a filename, sorry! missing feature)", ex.DecoratedMessage);
+                UnitaleUtil.DisplayLuaError((owner.Globals["wavename"] != null) ? (string)owner.Globals["wavename"] : "[wave script filename here]\n(should be a filename, sorry! missing feature)", UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message);
             }
         else
             PlayerController.instance.Hurt(3);

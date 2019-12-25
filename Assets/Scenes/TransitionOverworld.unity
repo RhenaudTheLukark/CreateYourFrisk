@@ -113,79 +113,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &6223977
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 142508, guid: 65ee94c713ee95942a47240fb8f2ae5c,
-    type: 2}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 6223978}
-  - component: {fileID: 6223980}
-  - component: {fileID: 6223979}
-  m_Layer: 5
-  m_Name: ImageSave
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!224 &6223978
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 22420856, guid: 65ee94c713ee95942a47240fb8f2ae5c,
-    type: 2}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 6223977}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 1779322336}
-  m_RootOrder: 5
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 640, y: 480}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &6223979
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 11446620, guid: 65ee94c713ee95942a47240fb8f2ae5c,
-    type: 2}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 6223977}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -765806418, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
-      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 8a39555772df911439800cbc8001c10d, type: 3}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
---- !u!222 &6223980
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 22211202, guid: 65ee94c713ee95942a47240fb8f2ae5c,
-    type: 2}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 6223977}
-  m_CullTransparentMesh: 0
 --- !u!1 &12034619
 GameObject:
   m_ObjectHideFlags: 0
@@ -332,17 +259,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   letterSound: {fileID: 0}
-  letters: []
   currentLine: 0
+  _textMaxWidth: 0
   currentReferenceCharacter: 0
   nextMonsterDialogueOnce: 0
   nmd2: 0
   wasStated: 0
   offset: {x: 0, y: 0}
   blockSkip: 0
-  hidden: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &37236981
 GameObject:
   m_ObjectHideFlags: 0
@@ -377,7 +303,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 69.5}
+  m_AnchoredPosition: {x: 0, y: 68}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0, y: 1}
 --- !u!82 &37236983
@@ -489,17 +415,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   letterSound: {fileID: 0}
-  letters: []
   currentLine: 0
+  _textMaxWidth: 0
   currentReferenceCharacter: 0
   nextMonsterDialogueOnce: 0
   nmd2: 0
   wasStated: 0
   offset: {x: 0, y: 0}
   blockSkip: 0
-  hidden: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1001 &43590226
 Prefab:
   m_ObjectHideFlags: 0
@@ -537,7 +462,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22465858, guid: 1ccc044534d366d4abebb5047dfda396, type: 2}
       propertyPath: m_RootOrder
-      value: 9
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 22465858, guid: 1ccc044534d366d4abebb5047dfda396, type: 2}
       propertyPath: m_AnchoredPosition.x
@@ -777,17 +702,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   letterSound: {fileID: 0}
-  letters: []
   currentLine: 0
+  _textMaxWidth: 0
   currentReferenceCharacter: 0
   nextMonsterDialogueOnce: 0
   nmd2: 0
   wasStated: 0
   offset: {x: 0, y: 0}
   blockSkip: 0
-  hidden: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &147928540
 GameObject:
   m_ObjectHideFlags: 0
@@ -861,6 +785,39 @@ CanvasRenderer:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 147928540}
   m_CullTransparentMesh: 0
+--- !u!1 &189985682
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 189985683}
+  m_Layer: 0
+  m_Name: DefaultLayer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &189985683
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 189985682}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 495211066}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 1, y: 1}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &212244439
 GameObject:
   m_ObjectHideFlags: 0
@@ -895,7 +852,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 30, y: -20.5}
+  m_AnchoredPosition: {x: 30, y: -32}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0, y: 1}
 --- !u!82 &212244441
@@ -1007,17 +964,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   letterSound: {fileID: 0}
-  letters: []
   currentLine: 0
+  _textMaxWidth: 0
   currentReferenceCharacter: 0
   nextMonsterDialogueOnce: 0
   nmd2: 0
   wasStated: 0
   offset: {x: 0, y: 0}
   blockSkip: 0
-  hidden: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &247211483
 GameObject:
   m_ObjectHideFlags: 0
@@ -1237,17 +1193,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   letterSound: {fileID: 0}
-  letters: []
   currentLine: 0
+  _textMaxWidth: 0
   currentReferenceCharacter: 0
   nextMonsterDialogueOnce: 0
   nmd2: 0
   wasStated: 0
   offset: {x: 0, y: 0}
   blockSkip: 0
-  hidden: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &260230355
 GameObject:
   m_ObjectHideFlags: 0
@@ -1394,17 +1349,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   letterSound: {fileID: 0}
-  letters: []
   currentLine: 0
+  _textMaxWidth: 0
   currentReferenceCharacter: 0
   nextMonsterDialogueOnce: 0
   nmd2: 0
   wasStated: 0
   offset: {x: 0, y: 0}
   blockSkip: 0
-  hidden: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &268140599
 GameObject:
   m_ObjectHideFlags: 0
@@ -1551,17 +1505,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   letterSound: {fileID: 0}
-  letters: []
   currentLine: 0
+  _textMaxWidth: 0
   currentReferenceCharacter: 0
   nextMonsterDialogueOnce: 0
   nmd2: 0
   wasStated: 0
   offset: {x: 0, y: 0}
   blockSkip: 0
-  hidden: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &373771159
 GameObject:
   m_ObjectHideFlags: 0
@@ -1708,90 +1661,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   letterSound: {fileID: 0}
-  letters: []
   currentLine: 0
+  _textMaxWidth: 0
   currentReferenceCharacter: 0
   nextMonsterDialogueOnce: 0
   nmd2: 0
   wasStated: 0
   offset: {x: 0, y: 0}
   blockSkip: 0
-  hidden: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
---- !u!1 &401348074
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 182928, guid: 65ee94c713ee95942a47240fb8f2ae5c,
-    type: 2}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 401348075}
-  - component: {fileID: 401348077}
-  - component: {fileID: 401348076}
-  m_Layer: 5
-  m_Name: ImageStat
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!224 &401348075
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 22493804, guid: 65ee94c713ee95942a47240fb8f2ae5c,
-    type: 2}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 401348074}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 1779322336}
-  m_RootOrder: 7
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 640, y: 480}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &401348076
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 11492236, guid: 65ee94c713ee95942a47240fb8f2ae5c,
-    type: 2}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 401348074}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -765806418, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
-      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 9b6b54dd26986d7448a76ce2c65e9511, type: 3}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
---- !u!222 &401348077
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 22237590, guid: 65ee94c713ee95942a47240fb8f2ae5c,
-    type: 2}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 401348074}
-  m_CullTransparentMesh: 0
+  lateStartWaiting: 0
 --- !u!1 &424356986
 GameObject:
   m_ObjectHideFlags: 0
@@ -2012,17 +1891,110 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   letterSound: {fileID: 0}
-  letters: []
   currentLine: 0
+  _textMaxWidth: 0
   currentReferenceCharacter: 0
   nextMonsterDialogueOnce: 0
   nmd2: 0
   wasStated: 0
   offset: {x: 0, y: 0}
   blockSkip: 0
-  hidden: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
+--- !u!1 &495211062
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 495211066}
+  - component: {fileID: 495211065}
+  - component: {fileID: 495211064}
+  - component: {fileID: 495211063}
+  m_Layer: 5
+  m_Name: Canvas Two
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &495211063
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 495211062}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1301386320, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreReversedGraphics: 1
+  m_BlockingObjects: 0
+  m_BlockingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+--- !u!114 &495211064
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 495211062}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1980459831, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_UiScaleMode: 0
+  m_ReferencePixelsPerUnit: 100
+  m_ScaleFactor: 1
+  m_ReferenceResolution: {x: 800, y: 600}
+  m_ScreenMatchMode: 0
+  m_MatchWidthOrHeight: 0
+  m_PhysicalUnit: 3
+  m_FallbackScreenDPI: 96
+  m_DefaultSpriteDPI: 96
+  m_DynamicPixelsPerUnit: 1
+--- !u!223 &495211065
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 495211062}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 0
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_AdditionalShaderChannelsFlag: 25
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  m_TargetDisplay: 0
+--- !u!224 &495211066
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 495211062}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 189985683}
+  m_Father: {fileID: 0}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 640, y: 480}
+  m_Pivot: {x: 0, y: 0}
 --- !u!1 &557343004
 GameObject:
   m_ObjectHideFlags: 0
@@ -2169,17 +2141,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   letterSound: {fileID: 0}
-  letters: []
   currentLine: 0
+  _textMaxWidth: 0
   currentReferenceCharacter: 0
   nextMonsterDialogueOnce: 0
   nmd2: 0
   wasStated: 0
   offset: {x: 0, y: 0}
   blockSkip: 0
-  hidden: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &566465743
 GameObject:
   m_ObjectHideFlags: 0
@@ -2326,17 +2297,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   letterSound: {fileID: 0}
-  letters: []
   currentLine: 0
+  _textMaxWidth: 0
   currentReferenceCharacter: 0
   nextMonsterDialogueOnce: 0
   nmd2: 0
   wasStated: 0
   offset: {x: 0, y: 0}
   blockSkip: 0
-  hidden: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &573195106
 GameObject:
   m_ObjectHideFlags: 0
@@ -2483,17 +2453,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   letterSound: {fileID: 0}
-  letters: []
   currentLine: 0
+  _textMaxWidth: 0
   currentReferenceCharacter: 0
   nextMonsterDialogueOnce: 0
   nmd2: 0
   wasStated: 0
   offset: {x: 0, y: 0}
   blockSkip: 0
-  hidden: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1001 &586924196
 Prefab:
   m_ObjectHideFlags: 0
@@ -2681,7 +2650,7 @@ Prefab:
     - target: {fileID: 21207398, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: d08cd68d61715c04fad61659b15f08cd,
+      objectReference: {fileID: 21300000, guid: ba3bc926f01aa7e4782aa6b0faf2a3d8,
         type: 3}
     - target: {fileID: 21207398, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
       propertyPath: m_Size.x
@@ -2991,6 +2960,23 @@ Prefab:
       propertyPath: anims.Array.data[35].transitionTime
       value: 0.1875
       objectReference: {fileID: 0}
+    - target: {fileID: 114937843077718580, guid: e40c2f31a47b71446a21f2839cf50317,
+        type: 2}
+      propertyPath: anims.Array.data[0].anims
+      value: FriskUT/0, FriskUT/1, FriskUT/2, FriskUT/3
+      objectReference: {fileID: 0}
+    - target: {fileID: 465484, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 465484, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 21207398, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
+      propertyPath: m_WasSpriteAssigned
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e40c2f31a47b71446a21f2839cf50317, type: 2}
   m_IsPrefabAsset: 0
@@ -3145,17 +3131,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   letterSound: {fileID: 0}
-  letters: []
   currentLine: 0
+  _textMaxWidth: 0
   currentReferenceCharacter: 0
   nextMonsterDialogueOnce: 0
   nmd2: 0
   wasStated: 0
   offset: {x: 0, y: 0}
   blockSkip: 0
-  hidden: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &634136909
 GameObject:
   m_ObjectHideFlags: 0
@@ -3184,7 +3169,7 @@ Transform:
   - {fileID: 2043428502}
   - {fileID: 1024388665}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &670959143
 GameObject:
@@ -3485,17 +3470,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   letterSound: {fileID: 0}
-  letters: []
   currentLine: 0
+  _textMaxWidth: 0
   currentReferenceCharacter: 0
   nextMonsterDialogueOnce: 0
   nmd2: 0
   wasStated: 0
   offset: {x: 0, y: 0}
   blockSkip: 0
-  hidden: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &738094585
 GameObject:
   m_ObjectHideFlags: 0
@@ -3642,17 +3626,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   letterSound: {fileID: 0}
-  letters: []
   currentLine: 0
+  _textMaxWidth: 0
   currentReferenceCharacter: 0
   nextMonsterDialogueOnce: 0
   nmd2: 0
   wasStated: 0
   offset: {x: 0, y: 0}
   blockSkip: 0
-  hidden: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &743800823
 GameObject:
   m_ObjectHideFlags: 0
@@ -3873,17 +3856,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   letterSound: {fileID: 0}
-  letters: []
   currentLine: 0
+  _textMaxWidth: 0
   currentReferenceCharacter: 0
   nextMonsterDialogueOnce: 0
   nmd2: 0
   wasStated: 0
   offset: {x: 0, y: 0}
   blockSkip: 0
-  hidden: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &770504841
 GameObject:
   m_ObjectHideFlags: 0
@@ -4103,17 +4085,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   letterSound: {fileID: 0}
-  letters: []
   currentLine: 0
+  _textMaxWidth: 0
   currentReferenceCharacter: 0
   nextMonsterDialogueOnce: 0
   nmd2: 0
   wasStated: 0
   offset: {x: 0, y: 0}
   blockSkip: 0
-  hidden: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &820532155
 GameObject:
   m_ObjectHideFlags: 0
@@ -4260,17 +4241,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   letterSound: {fileID: 0}
-  letters: []
   currentLine: 0
+  _textMaxWidth: 0
   currentReferenceCharacter: 0
   nextMonsterDialogueOnce: 0
   nmd2: 0
   wasStated: 0
   offset: {x: 0, y: 0}
   blockSkip: 0
-  hidden: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &835577667
 GameObject:
   m_ObjectHideFlags: 0
@@ -4496,17 +4476,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   letterSound: {fileID: 0}
-  letters: []
   currentLine: 0
+  _textMaxWidth: 0
   currentReferenceCharacter: 0
   nextMonsterDialogueOnce: 0
   nmd2: 0
   wasStated: 0
   offset: {x: 0, y: 0}
   blockSkip: 0
-  hidden: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &891869946
 GameObject:
   m_ObjectHideFlags: 0
@@ -4653,17 +4632,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   letterSound: {fileID: 0}
-  letters: []
   currentLine: 0
+  _textMaxWidth: 0
   currentReferenceCharacter: 0
   nextMonsterDialogueOnce: 0
   nmd2: 0
   wasStated: 0
   offset: {x: 0, y: 0}
   blockSkip: 0
-  hidden: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &920785481
 GameObject:
   m_ObjectHideFlags: 0
@@ -4810,17 +4788,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   letterSound: {fileID: 0}
-  letters: []
   currentLine: 0
+  _textMaxWidth: 0
   currentReferenceCharacter: 0
   nextMonsterDialogueOnce: 0
   nmd2: 0
   wasStated: 0
   offset: {x: 0, y: 0}
   blockSkip: 0
-  hidden: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &952942991
 GameObject:
   m_ObjectHideFlags: 0
@@ -4929,7 +4906,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 130, y: 69.5}
+  m_AnchoredPosition: {x: 130, y: 68}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0, y: 1}
 --- !u!82 &983044192
@@ -5041,17 +5018,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   letterSound: {fileID: 0}
-  letters: []
   currentLine: 0
+  _textMaxWidth: 0
   currentReferenceCharacter: 0
   nextMonsterDialogueOnce: 0
   nmd2: 0
   wasStated: 0
   offset: {x: 0, y: 0}
   blockSkip: 0
-  hidden: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &1024388664
 GameObject:
   m_ObjectHideFlags: 0
@@ -5195,17 +5171,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   letterSound: {fileID: 0}
-  letters: []
   currentLine: 0
+  _textMaxWidth: 320
   currentReferenceCharacter: 0
   nextMonsterDialogueOnce: 0
   nmd2: 0
   wasStated: 0
   offset: {x: 0, y: 0}
   blockSkip: 0
-  hidden: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &1101770078
 GameObject:
   m_ObjectHideFlags: 0
@@ -5352,17 +5327,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   letterSound: {fileID: 0}
-  letters: []
   currentLine: 0
+  _textMaxWidth: 0
   currentReferenceCharacter: 0
   nextMonsterDialogueOnce: 0
   nmd2: 0
   wasStated: 0
   offset: {x: 0, y: 0}
   blockSkip: 0
-  hidden: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &1117834468
 GameObject:
   m_ObjectHideFlags: 0
@@ -5651,17 +5625,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   letterSound: {fileID: 0}
-  letters: []
   currentLine: 0
+  _textMaxWidth: 0
   currentReferenceCharacter: 0
   nextMonsterDialogueOnce: 0
   nmd2: 0
   wasStated: 0
   offset: {x: 0, y: 0}
   blockSkip: 0
-  hidden: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &1168944911
 GameObject:
   m_ObjectHideFlags: 0
@@ -5854,7 +5827,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -180, y: 29.5}
+  m_AnchoredPosition: {x: -180, y: 28}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0, y: 1}
 --- !u!82 &1299325995
@@ -5966,17 +5939,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   letterSound: {fileID: 0}
-  letters: []
   currentLine: 0
+  _textMaxWidth: 0
   currentReferenceCharacter: 0
   nextMonsterDialogueOnce: 0
   nmd2: 0
   wasStated: 0
   offset: {x: 0, y: 0}
   blockSkip: 0
-  hidden: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &1369875159
 GameObject:
   m_ObjectHideFlags: 0
@@ -6239,7 +6211,7 @@ Transform:
   m_Children:
   - {fileID: 619600880}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!224 &1706295054 stripped
 RectTransform:
@@ -6280,7 +6252,7 @@ RectTransform:
   - {fileID: 1957097253}
   - {fileID: 1117834469}
   m_Father: {fileID: 1779322336}
-  m_RootOrder: 8
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -6433,17 +6405,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   letterSound: {fileID: 0}
-  letters: []
   currentLine: 0
+  _textMaxWidth: 0
   currentReferenceCharacter: 0
   nextMonsterDialogueOnce: 0
   nmd2: 0
   wasStated: 0
   offset: {x: 0, y: 0}
   blockSkip: 0
-  hidden: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!224 &1779322336
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6460,12 +6431,9 @@ RectTransform:
   - {fileID: 1942351438}
   - {fileID: 147928541}
   - {fileID: 1269631941}
-  - {fileID: 6223978}
-  - {fileID: 1941482971}
-  - {fileID: 401348075}
   - {fileID: 1731033919}
-  - {fileID: 1706295054}
   - {fileID: 1805120652}
+  - {fileID: 1706295054}
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -6620,17 +6588,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   letterSound: {fileID: 0}
-  letters: []
   currentLine: 0
+  _textMaxWidth: 0
   currentReferenceCharacter: 0
   nextMonsterDialogueOnce: 0
   nmd2: 0
   wasStated: 0
   offset: {x: 0, y: 0}
   blockSkip: 0
-  hidden: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &1805120651
 GameObject:
   m_ObjectHideFlags: 0
@@ -6661,7 +6628,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1779322336}
-  m_RootOrder: 10
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -6821,7 +6788,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -180, y: 69.5}
+  m_AnchoredPosition: {x: -180, y: 68}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0, y: 1}
 --- !u!82 &1841481152
@@ -6933,17 +6900,78 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   letterSound: {fileID: 0}
-  letters: []
   currentLine: 0
+  _textMaxWidth: 0
   currentReferenceCharacter: 0
   nextMonsterDialogueOnce: 0
   nmd2: 0
   wasStated: 0
   offset: {x: 0, y: 0}
   blockSkip: 0
-  hidden: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
+--- !u!1 &1901620771
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1901620774}
+  - component: {fileID: 1901620773}
+  - component: {fileID: 1901620772}
+  m_Layer: 0
+  m_Name: EventSystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1901620772
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1901620771}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1077351063, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_HorizontalAxis: Horizontal
+  m_VerticalAxis: Vertical
+  m_SubmitButton: Submit
+  m_CancelButton: Cancel
+  m_InputActionsPerSecond: 10
+  m_RepeatDelay: 0.5
+  m_ForceModuleActive: 0
+--- !u!114 &1901620773
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1901620771}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -619905303, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_FirstSelected: {fileID: 0}
+  m_sendNavigationEvents: 1
+  m_DragThreshold: 10
+--- !u!4 &1901620774
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1901620771}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1928767901
 GameObject:
   m_ObjectHideFlags: 0
@@ -7090,90 +7118,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   letterSound: {fileID: 0}
-  letters: []
   currentLine: 0
+  _textMaxWidth: 0
   currentReferenceCharacter: 0
   nextMonsterDialogueOnce: 0
   nmd2: 0
   wasStated: 0
   offset: {x: 0, y: 0}
   blockSkip: 0
-  hidden: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
---- !u!1 &1941482970
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 135510, guid: 65ee94c713ee95942a47240fb8f2ae5c,
-    type: 2}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1941482971}
-  - component: {fileID: 1941482973}
-  - component: {fileID: 1941482972}
-  m_Layer: 5
-  m_Name: ImageMenu
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!224 &1941482971
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 22453944, guid: 65ee94c713ee95942a47240fb8f2ae5c,
-    type: 2}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1941482970}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 1779322336}
-  m_RootOrder: 6
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 640, y: 480}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1941482972
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 11451918, guid: 65ee94c713ee95942a47240fb8f2ae5c,
-    type: 2}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1941482970}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -765806418, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
-      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: cea9b419c7cb25c47ae0454fdb9a0b7c, type: 3}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
---- !u!222 &1941482973
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 22203174, guid: 65ee94c713ee95942a47240fb8f2ae5c,
-    type: 2}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1941482970}
-  m_CullTransparentMesh: 0
+  lateStartWaiting: 0
 --- !u!1 &1942351437
 GameObject:
   m_ObjectHideFlags: 0
@@ -7351,7 +7305,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 160, y: -340}
+  m_AnchoredPosition: {x: 160, y: -368}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1977298766
@@ -7366,17 +7320,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   letterSound: {fileID: 0}
-  letters: []
   currentLine: 0
+  _textMaxWidth: 320
   currentReferenceCharacter: 0
   nextMonsterDialogueOnce: 0
   nmd2: 0
   wasStated: 0
   offset: {x: 0, y: 0}
   blockSkip: 0
-  hidden: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &1977618864
 GameObject:
   m_ObjectHideFlags: 0
@@ -7523,17 +7476,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   letterSound: {fileID: 0}
-  letters: []
   currentLine: 0
+  _textMaxWidth: 0
   currentReferenceCharacter: 0
   nextMonsterDialogueOnce: 0
   nmd2: 0
   wasStated: 0
   offset: {x: 0, y: 0}
   blockSkip: 0
-  hidden: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &2006300309
 GameObject:
   m_ObjectHideFlags: 0
@@ -7680,17 +7632,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   letterSound: {fileID: 0}
-  letters: []
   currentLine: 0
+  _textMaxWidth: 0
   currentReferenceCharacter: 0
   nextMonsterDialogueOnce: 0
   nmd2: 0
   wasStated: 0
   offset: {x: 0, y: 0}
   blockSkip: 0
-  hidden: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &2020485660
 GameObject:
   m_ObjectHideFlags: 0
@@ -8114,17 +8065,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   letterSound: {fileID: 0}
-  letters: []
   currentLine: 0
+  _textMaxWidth: 0
   currentReferenceCharacter: 0
   nextMonsterDialogueOnce: 0
   nmd2: 0
   wasStated: 0
   offset: {x: 0, y: 0}
   blockSkip: 0
-  hidden: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &2064810220
 GameObject:
   m_ObjectHideFlags: 0
@@ -8159,7 +8109,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -150, y: -20.5}
+  m_AnchoredPosition: {x: -150, y: -32}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0, y: 1}
 --- !u!82 &2064810222
@@ -8271,17 +8221,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   letterSound: {fileID: 0}
-  letters: []
   currentLine: 0
+  _textMaxWidth: 0
   currentReferenceCharacter: 0
   nextMonsterDialogueOnce: 0
   nmd2: 0
   wasStated: 0
   offset: {x: 0, y: 0}
   blockSkip: 0
-  hidden: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &2078350986
 GameObject:
   m_ObjectHideFlags: 0
@@ -8502,17 +8451,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   letterSound: {fileID: 0}
-  letters: []
   currentLine: 0
+  _textMaxWidth: 0
   currentReferenceCharacter: 0
   nextMonsterDialogueOnce: 0
   nmd2: 0
   wasStated: 0
   offset: {x: 0, y: 0}
   blockSkip: 0
-  hidden: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0
 --- !u!1 &2105879891
 GameObject:
   m_ObjectHideFlags: 0
@@ -8659,14 +8607,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   letterSound: {fileID: 0}
-  letters: []
   currentLine: 0
+  _textMaxWidth: 0
   currentReferenceCharacter: 0
   nextMonsterDialogueOnce: 0
   nmd2: 0
   wasStated: 0
   offset: {x: 0, y: 0}
   blockSkip: 0
-  hidden: 0
   skipNowIfBlocked: 0
-  LateStartWaiting: 0
+  lateStartWaiting: 0

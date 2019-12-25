@@ -97,7 +97,7 @@ public static class Inventory {
                 else                LuaEnemyEncounter.script.Call(func);
                 return true;
             } catch (InterpreterException ex) {
-                UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, ex.DecoratedMessage);
+                UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message);
                 return true;
             }
         else
@@ -148,7 +148,7 @@ public static class Inventory {
     
     public static void AddItemsToDictionaries() {
         NametoDesc.Add("Testing Dog", "A dog that tests something.\rDon't ask me what, I don't know.");        NametoShortName.Add("Testing Dog", "TestDog");
-        NametoType.Add("Testing Dog", 3);                                                                      NametoPrice.Add("Testing Dog", 1);
+        NametoType.Add("Testing Dog", 3);                                                                      NametoPrice.Add("Testing Dog", 0);
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -483,8 +483,8 @@ public static class Inventory {
                         break;
                 }
                 if (amount != 0)
-                    if (UnitaleUtil.IsOverworld) mess[0].setText("[health:" + amount + ", killable]" + mess[0].Text);
-                    else                           PlayerController.instance.Hurt(-amount, 0);
+                    if (UnitaleUtil.IsOverworld) mess[0].SetText("[health:" + amount + ", killable]" + mess[0].Text);
+                    else                         PlayerController.instance.Hurt(-amount, 0);
                 break;
             case 1:
                 switch (name) {

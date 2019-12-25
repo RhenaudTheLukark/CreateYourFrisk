@@ -1,4 +1,4 @@
-function EventPage0() 
+function EventPage0()
     if Event.GetAnimHeader("Player") ~= "MK" then
         Event.Remove(Event.GetName() .. " (1)")
         Event.Remove(Event.GetName())
@@ -9,7 +9,7 @@ function EventPage1()
     local playerSprite = Event.GetSprite("Player")
     local charaSprite = Event.GetSprite("8ba3f2c2 (1)")
     local maskSprite = Event.GetSprite("8ba3f2c2 (2)")
-    
+
     Event.MoveToPoint("Player", 380, 200, true)
     Event.SetDirection("Player", 2)
     General.SetDialog({"[noskip]Man, the Core is a nice place... [w:25][mugshot:MK/sad]but I'm very far away from home...",
@@ -20,7 +20,7 @@ function EventPage1()
     local playerPos = Event.GetPosition("Player")
     Event.Teleport("8ba3f2c2 (2)", playerPos[1] + 14, playerPos[2])
     maskSprite.loopmode = "ONESHOT"
-    maskSprite.Scale(-100, 100)
+    maskSprite.Scale(-1, 1)
     Event.SetAnimHeader("8ba3f2c2 (2)", "Fall")
     playerSprite.alpha = 0
     General.Wait(1)
@@ -37,12 +37,13 @@ function EventPage1()
     Event.SetAnimHeader("8ba3f2c2 (1)", "")
     Event.Teleport("8ba3f2c2 (1)", 0, 240)
     Event.MoveToPoint("8ba3f2c2 (1)", 400, 240, true)
+    General.Wait(3)
     Event.SetDirection("8ba3f2c2 (1)", 2)
     General.Wait(30)
     Event.SetAnimHeader("8ba3f2c2 (2)", "Fallen2")
     General.SetDialog({"[noskip]Y-Yo![w:25]\nP-Please, [w:15]help m-me!", "[noskip]I...[w:25]\nI'm slipping!"}, true, {"MK/horrified", "MK/horrified2"})
     General.Wait(30)
-    
+
     Event.MoveToPoint("8ba3f2c2 (2)", 420, 0, true, false)
     local maskPos
     repeat
@@ -54,7 +55,7 @@ function EventPage1()
     until maskPos[2] == 0
     NewAudio.Stop("StaticKeptAudio")
     NewAudio.SetVolume("StaticKeptAudio", 1)
-    
+
     General.Wait(60)
     NewAudio.CreateChannel("temp")
     NewAudio.PlaySound("temp", "Secret/noise")
@@ -71,7 +72,7 @@ function EventPage1()
     NewAudio.DestroyChannel("temp")
     SetRealGlobal("CYFInternalCross3", true)
     SetRealGlobal("CYFInternalCharacterSelected", false)
-    Event.SetAnimHeader("8ba3f2c2 (1)", "NoAnim")
-    Event.SetAnimHeader("8ba3f2c2 (2)", "NoAnim")
+    Event.SetAnimHeader("8ba3f2c2 (1)", "StopDown")
+    Event.SetAnimHeader("8ba3f2c2 (2)", "StopDown")
     Player.Teleport("test2", 320, 200, 2, false)
 end

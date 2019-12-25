@@ -1,4 +1,4 @@
-if not GetRealGlobal("ow") then error("You really should try to access these encounters the normal way... Here is a clue: you need to move the dog in the map test2 using an event. Now good luck!") end
+if not GetRealGlobal("ow") then error("You really should try to access these encounters the normal way...\n\nHere is a clue: You should try talking to the dog.\n\nNow good luck!", 0) end
 
 encountertext = "Poseur strikes a pose!" --Modify as necessary. It will only be read out in the action select screen.
 nextwaves = {"bullettest_chaserorb"}
@@ -24,13 +24,13 @@ function EncounterStarting()
 	fade.x = 320
 	fade.y = 240
 	fade.Scale(640, 480)
-	require "Animations/exrumia_anim" 
-	enemies[1]["currentdialogue"] = {"[noskip][func:LaunchFade, true][w:60][next]",
-	                                 "[noskip]If you came here,[w:20] it must be for a good reason.[w:60][next]",
-									 "[noskip]We'll tell you the story of Create Your Frisk.[w:60][next]",
-									 "[noskip]In February 2016,[w:15] \nRhenaudTheLukark,[w:15] the creator of Create Your Frisk decided,[w:15] with some of their friends,[w:15] to create their own AU.[w:60][next]",
-									 "[noskip]They concluded that Unitale was the easiest way to do it.[w:60][next]",
-									 "[noskip]If we had told him what would have happened,[w:15] he'd have laughed at it.[w:60][next]",
+	require "Animations/exrumia_anim"
+	enemies[1]["currentdialogue"] = {"[noskip][func:LaunchFade, true][w:30][next]",
+	                                 "[noskip]If you came here,[w:10] it must be for a good reason.[w:30][next]",
+									 "[noskip]We'll tell you the story of Create Your Frisk.[w:30][next]",
+									 "[noskip]In February 2016,[w:10] RhenaudTheLukark,[w:10] the creator of Create Your Frisk decided,[w:10] with some of their friends,[w:10] to create their own AU.[w:30][next]",
+									 "[noskip]They concluded that Unitale was the easiest way to do it.[w:30][next]",
+									 "[noskip]If we had told him what would have happened,[w:10] he'd have laughed at it.[w:30][next]",
 									 "[noskip][func:LaunchFade, false][w:35][func:State,DONE]"}
 	require "Waves/bullettest_touhou"
     State("ENEMYDIALOGUE")
@@ -49,7 +49,7 @@ end
 	~~~~~~~~~~
 	After fixing these bugs, he felt something new, as if he did something extraordinary: this was at this moment he knew he'd have to resume lvkuln's work.
 	fade.alpha = 1
-    require "Animations/exrumia_anim" 
+    require "Animations/exrumia_anim"
     enemies[1]["currentdialogue"] = {"[noskip][func:LaunchFade, true][w:60][next]",
 	                                 "[noskip]If you came here,[w:20] it is for a good reason.[w:60][next]",
 	He then tried to contact the original developer, but in vain: it was already too late. IRL stuff took the latter away from the project.
@@ -83,10 +83,10 @@ end
 	]]
 
 function LaunchFade(begin)
-    if begin then  
+    if begin then
 	    beginfade = true
 	    fade.alpha = 1
-	else           
+	else
 	    endfade = true
 	    fade.alpha = 0
     end
@@ -102,7 +102,7 @@ function Update()
 		else  		     fade.alpha = fade.alpha - Time.dt
 		end
 	end
-	if (fade.alpha * 1000) % 1000 != 1000 and (fade.alpha * 1000) % 1000 != 0 then
+	if (fade.alpha * 1000) % 1000 ~= 1000 and (fade.alpha * 1000) % 1000 ~= 0 then
 		if alphaup then  fade.alpha = fade.alpha + Time.dt
 		else  		     fade.alpha = fade.alpha - Time.dt
 		end

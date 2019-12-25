@@ -1,0 +1,10 @@
+These sound effects belong to Nintendo.
+
+Super Paper Mario:
+    SE1_EVT_LINE_DRAW1
+    SE1_EVT_LINE_TURN2
+
+Super Mario 64:
+    mario-pain
+    sm64_impact
+    step-floor

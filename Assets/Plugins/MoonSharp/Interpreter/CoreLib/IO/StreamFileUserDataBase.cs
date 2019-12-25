@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using UnityEngine;
 
 namespace MoonSharp.Interpreter.CoreLib.IO
 {
@@ -48,7 +47,6 @@ namespace MoonSharp.Interpreter.CoreLib.IO
 		protected override string ReadToEnd()
 		{
 			CheckFileIsNotClosed();
-            Debug.Log(m_Reader.ToString());
 			return m_Reader.ReadToEnd();
 		}
 
@@ -99,7 +97,7 @@ namespace MoonSharp.Interpreter.CoreLib.IO
 			return true;
 		}
 
-		public override long seek(string whence, long offset)
+		public override long seek(string whence, long offset = 0)
 		{
 			CheckFileIsNotClosed();
 			if (whence != null)

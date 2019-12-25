@@ -19,6 +19,7 @@ public class ProjectileHitboxRenderer : MonoBehaviour {
     private Material mat;
 
     public static Rect player = new Rect();
+    public static int fsScreenWidth = 0;
 
     private void Start() {
         root = GameObject.Find("Canvas");
@@ -30,19 +31,27 @@ public class ProjectileHitboxRenderer : MonoBehaviour {
         yield return new WaitForEndOfFrame(); // need to wait for UI to finish drawing first, or it'll appear under the UI
         // note: it kinda still appears under the UI due to its rendering settings
         projectiles = root.GetComponentsInChildren<Projectile>();
+        Vector2 cameraOffset = new Vector2(Misc.cameraX, Misc.cameraY);
+        float screenWidth  = !Screen.fullScreen ? 640 : fsScreenWidth;
+        float borderOffset = !Screen.fullScreen ?   0 : (fsScreenWidth - 640) / 2;
+        #if UNITY_EDITOR
+            screenWidth = 640;
+            borderOffset = 0;
+        #endif
         for (int i = 0; i < projectiles.Length; i ++) {
             GameObject go = projectiles[i].gameObject;
 
-            bottomRight = go.GetComponent<Projectile>().selfAbs.center - new Vector2(Misc.cameraX, Misc.cameraY);
+            bottomRight = go.GetComponent<Projectile>().selfAbs.center - cameraOffset;
+            bottomRight.x += borderOffset;
             topLeft.Set    (bottomRight.x - go.GetComponent<Projectile>().selfAbs.width / 2, bottomRight.y + go.GetComponent<Projectile>().selfAbs.height / 2, zIndex);
             topRight.Set   (bottomRight.x + go.GetComponent<Projectile>().selfAbs.width / 2, bottomRight.y + go.GetComponent<Projectile>().selfAbs.height / 2, zIndex);
             bottomLeft.Set (bottomRight.x - go.GetComponent<Projectile>().selfAbs.width / 2, bottomRight.y - go.GetComponent<Projectile>().selfAbs.height / 2, zIndex);
             bottomRight.Set(bottomRight.x + go.GetComponent<Projectile>().selfAbs.width / 2, bottomRight.y - go.GetComponent<Projectile>().selfAbs.height / 2, zIndex);
 
-            topLeft.Set(topLeft.x / 640, topLeft.y / 480, zIndex);
-            topRight.Set(topRight.x / 640, topRight.y / 480, zIndex);
-            bottomLeft.Set(bottomLeft.x / 640, bottomLeft.y / 480, zIndex);
-            bottomRight.Set(bottomRight.x / 640, bottomRight.y / 480, zIndex);
+            topLeft.Set(topLeft.x / screenWidth, topLeft.y / 480, zIndex);
+            topRight.Set(topRight.x / screenWidth, topRight.y / 480, zIndex);
+            bottomLeft.Set(bottomLeft.x / screenWidth, bottomLeft.y / 480, zIndex);
+            bottomRight.Set(bottomRight.x / screenWidth, bottomRight.y / 480, zIndex);
 
             // draw boxes
             GL.PushMatrix();
@@ -60,9 +69,9 @@ public class ProjectileHitboxRenderer : MonoBehaviour {
             GL.End();
             GL.PopMatrix();
         }
-        
-        player = new Rect(PlayerController.instance.playerAbs.x / 640, PlayerController.instance.playerAbs.y / 480,
-                          PlayerController.instance.playerAbs.width / 640, PlayerController.instance.playerAbs.height / 480);
+
+        player = new Rect((PlayerController.instance.playerAbs.x + borderOffset) / screenWidth, PlayerController.instance.playerAbs.y / 480,
+                          PlayerController.instance.playerAbs.width / screenWidth, PlayerController.instance.playerAbs.height / 480);
 
         GL.PushMatrix();
         mat.SetPass(0);

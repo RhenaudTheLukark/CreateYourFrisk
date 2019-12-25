@@ -16,7 +16,7 @@ public class ShakeEffectLetter : TextEffectLetter {
         float xWig = Mathf.Sin(random) * intensity;
         float yWig = Mathf.Cos(random) * intensity;
         RectTransform rt = letter.GetComponent<RectTransform>();
-        rt.position = new Vector2(rt.position.x + xWig, rt.position.y + yWig);
+        rt.position = new Vector2(letter.basisPos.x + xWig, letter.basisPos.y + yWig);
         skipNextFrame = true;
     }
 }

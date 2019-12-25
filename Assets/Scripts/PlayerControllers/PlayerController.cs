@@ -112,7 +112,7 @@ public class PlayerController : MonoBehaviour {
 
     public string deathMusic = null;
     public string[] deathText = null;
-    public bool deathEscape = false;
+    public bool deathEscape = true;
     private int soundDelay = 0;
 
     /// <summary>
@@ -129,8 +129,6 @@ public class PlayerController : MonoBehaviour {
                     damage = 1;
             }
         // set timer and play the hurt sound if player was actually hurt
-        // TODO: factor in stats and what the actual damage should be
-        // TONOTDO: I don't care about stats, lvk :D
         
         // reset the hurt timer if the arguments passed are (0, 0)
         if (damage == 0 && invulnerabilitySeconds == 0) {
@@ -145,8 +143,8 @@ public class PlayerController : MonoBehaviour {
                 PlaySound(AudioClipRegistry.GetSound("hurtsound"));
             }
 
-            if (HP - damage > 0 && invulnerabilitySeconds >= 0) invulTimer = invulnerabilitySeconds;
-            if (damage != 0)                                    setHP(HP - damage, false);
+            if (invulnerabilitySeconds >= 0) invulTimer = invulnerabilitySeconds;
+            if (damage != 0)                 setHP(HP - damage, false);
         } else if (damage < 0) {
             PlaySound(AudioClipRegistry.GetSound("healsound"));
             setHP(HP - damage);
@@ -155,24 +153,15 @@ public class PlayerController : MonoBehaviour {
 
     public void setHP(float newhp, bool actualDamage = true) {
         newhp = Mathf.Round(newhp * Mathf.Pow(10, ControlPanel.instance.MaxDigitsAfterComma)) / Mathf.Pow(10, ControlPanel.instance.MaxDigitsAfterComma);
-        
+
         // Retromode: Make Player.hp act as an integer
         if (GlobalControls.retroMode)
             newhp = Mathf.Floor(newhp);
-        
+
+        if (newhp <= 0 && !deathEscape)
+            return;
+
         if (newhp <= 0) {
-            if (!MusicManager.IsStoppedOrNull(PlayerOverworld.audioKept)) {
-                GetComponent<GameOverBehavior>().musicBefore = PlayerOverworld.audioKept;
-                GetComponent<GameOverBehavior>().music = GetComponent<GameOverBehavior>().musicBefore.clip;
-                GetComponent<GameOverBehavior>().musicBefore.Stop();
-            } else if (!MusicManager.IsStoppedOrNull(Camera.main.GetComponent<AudioSource>())) {
-                GetComponent<GameOverBehavior>().musicBefore = Camera.main.GetComponent<AudioSource>();
-                GetComponent<GameOverBehavior>().music = GetComponent<GameOverBehavior>().musicBefore.clip;
-                GetComponent<GameOverBehavior>().musicBefore.Stop();
-            } else {
-                GetComponent<GameOverBehavior>().musicBefore = null;
-                GetComponent<GameOverBehavior>().music = null;
-            }
             deathEscape = false;
             if (GlobalControls.isInFight) {
                 UIController.instance.encounter.TryCall("BeforeDeath");
@@ -192,8 +181,21 @@ public class PlayerController : MonoBehaviour {
                 if (deathMusic == "")
                     deathMusic = null;
             }
+            if (!MusicManager.IsStoppedOrNull(PlayerOverworld.audioKept)) {
+                GetComponent<GameOverBehavior>().musicBefore = PlayerOverworld.audioKept;
+                GetComponent<GameOverBehavior>().music = GetComponent<GameOverBehavior>().musicBefore.clip;
+                GetComponent<GameOverBehavior>().musicBefore.Stop();
+            } else if (!MusicManager.IsStoppedOrNull(Camera.main.GetComponent<AudioSource>())) {
+                GetComponent<GameOverBehavior>().musicBefore = Camera.main.GetComponent<AudioSource>();
+                GetComponent<GameOverBehavior>().music = GetComponent<GameOverBehavior>().musicBefore.clip;
+                GetComponent<GameOverBehavior>().musicBefore.Stop();
+            } else {
+                GetComponent<GameOverBehavior>().musicBefore = null;
+                GetComponent<GameOverBehavior>().music = null;
+            }
             HP = 0;
             invulTimer = 0;
+            selfImg.enabled = true;
             setControlOverride(true);
             RectTransform rt = gameObject.GetComponent<RectTransform>();
             Vector2 pos = rt.position;
@@ -222,44 +224,44 @@ public class PlayerController : MonoBehaviour {
         if ((PlayerCharacter.instance.MaxHP + shift <= 0 &&!set) || (shift <= 0 && set)) {
             shift = 0;
             set = true;
-            canHeal = true;
         } 
         if (set) {
-            if (shift == 0)
+            if (shift == 0) {
                 setHP(0);
-            else {
+                return;
+            } else {
                 if (shift > 999)
                     shift = 999;
                 if (shift == PlayerCharacter.instance.MaxHP)
                     return;
-                else if (shift < PlayerCharacter.instance.MaxHP) {
+                int oldMHP = PlayerCharacter.instance.MaxHP;
+                PlayerCharacter.instance.MaxHPShift = shift - PlayerCharacter.instance.BasisMaxHP;
+                if (shift < oldMHP) {
                     if (sound) {
                         playerAudio.clip = AudioClipRegistry.GetSound("hurtsound");
                         playerAudio.Play();
                     }
-                    setHP(PlayerCharacter.instance.HP - (PlayerCharacter.instance.MaxHP - shift));
                 } else {
                     if (sound) {
                         playerAudio.clip = AudioClipRegistry.GetSound("healsound");
                         playerAudio.Play();
                     }
-                    if (canHeal)
-                        setHP(PlayerCharacter.instance.HP - (PlayerCharacter.instance.MaxHP - shift));
+                    if (canHeal && oldMHP < shift) {
+                        setHP(PlayerCharacter.instance.HP + (shift - oldMHP));
+                    }
                 }
-                PlayerCharacter.instance.MaxHPShift = shift - PlayerCharacter.instance.BasisMaxHP;
-                UIStats.instance.setMaxHP();
             }
         } else {
             if (shift + PlayerCharacter.instance.MaxHP > 999)
                 shift = 999 - PlayerCharacter.instance.MaxHP;
             if (shift == 0)
                 return;
-            else if (shift < 0) {
+            PlayerCharacter.instance.MaxHPShift += shift;
+            if (shift < 0) {
                 if (sound) {
                     playerAudio.clip = AudioClipRegistry.GetSound("hurtsound");
                     playerAudio.Play();
                 }
-                setHP(PlayerCharacter.instance.HP + shift);
             } else {
                 if (sound) {
                     playerAudio.clip = AudioClipRegistry.GetSound("healsound");
@@ -268,9 +270,10 @@ public class PlayerController : MonoBehaviour {
                 if (canHeal)
                     setHP(PlayerCharacter.instance.HP + shift);
             }
-            PlayerCharacter.instance.MaxHPShift += shift;
-            UIStats.instance.setMaxHP();
         }
+        if (PlayerCharacter.instance.HP > PlayerCharacter.instance.MaxHP)
+            setHP(PlayerCharacter.instance.MaxHP);
+        UIStats.instance.setMaxHP();
     }
 
     public bool isHurting() { return invulTimer > 0; }
@@ -359,31 +362,23 @@ public class PlayerController : MonoBehaviour {
     /// Modifies the movement direction based on input. Broken up into single ifs so pressing opposing keys prevents you from moving.
     /// </summary>
     private void HandleInput() {
-        if (InputUtil.Held(GlobalControls.input.Up))
-            ModifyMovementDirection(Directions.UP);
-        if (InputUtil.Held(GlobalControls.input.Down))
-            ModifyMovementDirection(Directions.DOWN);
+        if (InputUtil.Held(GlobalControls.input.Up))    intendedShift += ModifyMovementDirection(Directions.UP);
+        if (InputUtil.Held(GlobalControls.input.Down))  intendedShift += ModifyMovementDirection(Directions.DOWN);
+        if (InputUtil.Held(GlobalControls.input.Left))  intendedShift += ModifyMovementDirection(Directions.LEFT);
+        if (InputUtil.Held(GlobalControls.input.Right)) intendedShift += ModifyMovementDirection(Directions.RIGHT);
 
-        if (InputUtil.Held(GlobalControls.input.Left))
-            ModifyMovementDirection(Directions.LEFT);
-        if (InputUtil.Held(GlobalControls.input.Right))
-            ModifyMovementDirection(Directions.RIGHT);
-
-        if (InputUtil.Pressed(GlobalControls.input.Cancel))
-            soul.setHalfSpeed(true);
-        else if (InputUtil.Released(GlobalControls.input.Cancel))
-            soul.setHalfSpeed(false);
+        if (InputUtil.Pressed(GlobalControls.input.Cancel))       soul.setHalfSpeed(true);
+        else if (InputUtil.Released(GlobalControls.input.Cancel)) soul.setHalfSpeed(false);
     }
 
     // given an input direction, let intendedShift carry 'directional' vector (non-unit: x is -1 OR 1 and y is -1 OR 1)
-    // TODO: make the return value matter instead of relying on an in-class variable, it looks stupid
-    private void ModifyMovementDirection(Directions d) {
+    private Vector2 ModifyMovementDirection(Directions d) {
         switch (d) {
-            case Directions.UP:     intendedShift += Vector2.up;     break;
-            case Directions.DOWN:   intendedShift += Vector2.down;   break;
-            case Directions.LEFT:   intendedShift += Vector2.left;   break;
-            case Directions.RIGHT:  intendedShift += Vector2.right;  break;
-            default:                intendedShift = Vector2.zero;    break;
+            case Directions.UP:     return Vector2.up;
+            case Directions.DOWN:   return Vector2.down;
+            case Directions.LEFT:   return Vector2.left;
+            case Directions.RIGHT:  return Vector2.right;
+            default:                return Vector2.zero;
         }
     }
 
@@ -394,10 +389,8 @@ public class PlayerController : MonoBehaviour {
         // if the position is the same, the player hasnt moved - by doing it like this we account
         // for things like being moved by external factors like being shoved by boundaries
         // TODO: account for external factors like being moved by other scripts (enemies e.a.)
-        if (xDelta == 0.0f && yDelta == 0.0f)
-            moving = false;
-        else
-            moving = true;
+        if (xDelta == 0.0f && yDelta == 0.0f) moving = false;
+        else                                  moving = true;
         soul.PostMovement(xDelta, yDelta);
     }
 

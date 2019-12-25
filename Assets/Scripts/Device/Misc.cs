@@ -20,34 +20,57 @@ public class Misc {
         get { return Screen.fullScreen; }
         set {
             Screen.fullScreen = value;
-
-            GlobalControls.SetFullScreen(value, 2);
+            ScreenResolution.SetFullScreen(value, 2);
         }
+    }
+
+    public static int ScreenWidth {
+        get { return (Screen.fullScreen && !ScreenResolution.wideFullscreen) ? (int)ScreenResolution.displayedSize.x : Screen.currentResolution.width; }
     }
 
     public static int ScreenHeight {
         get { return Screen.currentResolution.height; }
     }
 
-    public static int ScreenWidth {
-        get { return Screen.currentResolution.width; }
+    public static int MonitorWidth {
+        get { return ScreenResolution.lastMonitorWidth; }
+    }
+
+    public static int MonitorHeight {
+        get { return ScreenResolution.lastMonitorHeight; }
+    }
+
+    public void SetWideFullscreen(bool borderless) {
+        if (!GlobalControls.isInFight)
+            throw new CYFException("SetWideFullscreen is only usable from within battles.");
+        ScreenResolution.wideFullscreen = borderless;
+        if (Screen.fullScreen)
+            ScreenResolution.SetFullScreen(true, 0);
     }
 
     public static float cameraX {
         get { return Camera.main.transform.position.x - 320; }
         set {
-            Camera.main.transform.position = new Vector3(value + 320, Camera.main.transform.position.y, Camera.main.transform.position.z);
-            if (!UnitaleUtil.IsOverworld && UserDebugger.instance)
-                UserDebugger.instance.transform.position = new Vector3(value + 620, UserDebugger.instance.transform.position.y, UserDebugger.instance.transform.position.z);
+            if (UnitaleUtil.IsOverworld && !GlobalControls.isInShop)
+                PlayerOverworld.instance.cameraShift.x += value - (Camera.main.transform.position.x - 320);
+            else {
+                Camera.main.transform.position = new Vector3(value + 320, Camera.main.transform.position.y, Camera.main.transform.position.z);
+                if (UserDebugger.instance)
+                    UserDebugger.instance.transform.position = new Vector3(value + 620, UserDebugger.instance.transform.position.y, UserDebugger.instance.transform.position.z);
+            }
         }
     }
 
     public static float cameraY {
         get { return Camera.main.transform.position.y - 240; }
         set {
-            Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, value + 240, Camera.main.transform.position.z);
-            if (!UnitaleUtil.IsOverworld && UserDebugger.instance)
-                UserDebugger.instance.transform.position = new Vector3(UserDebugger.instance.transform.position.x, value + 480, UserDebugger.instance.transform.position.z);
+            if (UnitaleUtil.IsOverworld && !GlobalControls.isInShop)
+                PlayerOverworld.instance.cameraShift.y += value - (Camera.main.transform.position.y - 240);
+            else {
+                Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, value + 240, Camera.main.transform.position.z);
+                if (UserDebugger.instance)
+                    UserDebugger.instance.transform.position = new Vector3(UserDebugger.instance.transform.position.x, value + 480, UserDebugger.instance.transform.position.z);
+            }
         }
     }
 
@@ -62,12 +85,15 @@ public class Misc {
     }
 
     public static void ResetCamera() {
-        MoveCameraTo(0f, 0f);
+        if (UnitaleUtil.IsOverworld && !GlobalControls.isInShop)
+            PlayerOverworld.instance.cameraShift = Vector2.zero;
+        else
+            MoveCameraTo(0f, 0f);
     }
 
     public static void DestroyWindow() { Application.Quit(); }
 
-    public static LuaFile OpenFile(string path, string mode = "rw") {
+    public static LuaFile OpenFile(string path, string mode = "rw") { // TODO: When OW is reworked, add 3rd argument to open a file in any of "mod", "map" or "default" locations
         return new LuaFile(path, mode);
     }
 
@@ -75,6 +101,45 @@ public class Misc {
         if (path.Contains(".."))
             throw new CYFException("You cannot check for a file outside of a mod folder. The use of \"..\" is forbidden.");
         return File.Exists((FileLoader.ModDataPath + "/" + path).Replace('\\', '/'));
+    }
+
+    public bool DirExists(string path) {
+        if (path.Contains(".."))
+            throw new CYFException("You cannot check for a directory outside of a mod folder. The use of \"..\" is forbidden.");
+        return Directory.Exists((FileLoader.ModDataPath + "/" + path).Replace('\\', '/'));
+    }
+
+    public bool CreateDir(string path) {
+        if (path.Contains(".."))
+            throw new CYFException("You cannot create a directory outside of a mod folder. The use of \"..\" is forbidden.");
+
+        if (!Directory.Exists((FileLoader.ModDataPath + "/" + path).Replace('\\', '/'))) {
+            Directory.CreateDirectory((FileLoader.ModDataPath + "/" + path));
+            return true;
+        }
+        return false;
+    }
+
+    private bool PathValid(string path) { return (path != " " && path != "" && path != "/" && path != "\\" && path != "." && path != "./" && path != ".\\"); }
+
+    public bool MoveDir(string path, string newPath) {
+        if (path.Contains("..") || newPath.Contains(".."))
+            throw new CYFException("You cannot move a directory outside of a mod folder. The use of \"..\" is forbidden.");
+
+        if (DirExists(path) && !DirExists(newPath) && PathValid(path)) {
+            Directory.Move(FileLoader.ModDataPath + "/" + path, FileLoader.ModDataPath + "/" + newPath);
+            return true;
+        }
+        return false;
+    }
+
+    public bool RemoveDir(string path, bool force = false) {
+        if (path.Contains(".."))
+            throw new CYFException("You cannot remove a directory outside of a mod folder. The use of \"..\" is forbidden.");
+
+        if (Directory.Exists((FileLoader.ModDataPath + "/" + path).Replace('\\', '/')))
+            try { Directory.Delete((FileLoader.ModDataPath + "/" + path), force); } catch {}
+        return false;
     }
 
     public string[] ListDir(string path, bool getFolders = false) {

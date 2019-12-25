@@ -149,16 +149,15 @@ public class FightUI : MonoBehaviour {
                 }
                 // set damage numbers and positioning
                 string damageTextStr = "";
-                if (Damage == 0) damageTextStr = "[color:c0c0c0]MISS";
+                if (Damage == 0) {
+                    if (enemy.DefenseMissText == null) damageTextStr = "[color:c0c0c0]MISS";
+                    else                               damageTextStr = "[color:c0c0c0]" + enemy.DefenseMissText;
+                }
                 else if (Damage > 0) damageTextStr = "[color:ff0000]" + Damage;
                 else damageTextStr = "[color:00ff00]" + Damage;
-                // the -14 is to compensate for the 14 characters that [color:rrggbb] is worth until commands no longer count for text length. soon
-                int damageTextWidth = (damageTextStr.Length - 14) * 29 + (damageTextStr.Length - 1 - 14) * 3; // lol hardcoded offsets
-                foreach (char c in damageTextStr)
-                    if (c == '1')
-                        damageTextWidth -= 12; // lol hardcoded offsets
-                damageTextRt.localPosition = new Vector2(- 0.5f * damageTextWidth + enemy.offsets[2].x, 40 + enemy.offsets[2].y);
+                damageTextRt.localPosition = new Vector3(0, 0, 0);
                 damageText.SetText(new TextMessage(damageTextStr, false, true));
+                damageTextRt.localPosition = new Vector3(-UnitaleUtil.CalcTextWidth(damageText)/2 + enemy.offsets[2].x, 40 + enemy.offsets[2].y);
 
                 // initiate lifebar and set lerp to its new health value
                 if (Damage != 0) {

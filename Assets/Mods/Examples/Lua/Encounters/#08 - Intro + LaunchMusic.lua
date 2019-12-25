@@ -24,7 +24,7 @@ function EncounterStarting()
     Audio.Pause()
     -- Intro text!
     enemies[1]["currentdialogue"] = {"Hoo boy!", "Time for you to die!", "[noskip][func:LaunchMusic][func:State, ACTIONSELECT][next]"}
-	-- Starts the battle with a text
+	-- Starts the battle with set text
     State("ENEMYDIALOGUE")
 end
 
@@ -43,7 +43,7 @@ function DefenseEnding() --This built-in function fires after the defense round 
 end
 
 function HandleSpare()
-     State("ENEMYDIALOGUE")
+    State("ENEMYDIALOGUE")
 end
 
 function HandleItem(ItemID)

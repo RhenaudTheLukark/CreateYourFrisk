@@ -115,8 +115,8 @@ namespace MoonSharp.Interpreter.Platforms
 #if PCL || ENABLE_DOTNET
 			return new LimitedPlatformAccessor();
 #else
-			/*if (IsRunningOnUnity)
-				return new LimitedPlatformAccessor();*/
+			if (IsRunningOnUnity)
+				return new LimitedPlatformAccessor();
 
 #if DOTNET_CORE
 			return new DotNetCorePlatformAccessor();

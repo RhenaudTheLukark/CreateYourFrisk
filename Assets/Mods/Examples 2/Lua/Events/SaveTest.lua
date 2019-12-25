@@ -4,7 +4,7 @@ function EventPage0()
 end
 
 function EventPage1()
-	General.SetDialog({"[health:Max]This large stretch of snow is so beautiful to the eye...", 
+    General.SetDialog({"[health:Max]This large stretch of snow is so beautiful to the eye...", 
                        "[waitall:5]...[waitall:1][w:40]Seeing that the background is finally here fills you with determination."}, true)
     General.Save()
 end

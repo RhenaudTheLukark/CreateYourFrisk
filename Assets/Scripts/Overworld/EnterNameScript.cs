@@ -14,7 +14,7 @@ public class EnterNameScript : MonoBehaviour {
     private string choiceLetter = "A", playerName = "";
     private TextManager tmInstr, tmName, tmLettersMaj, tmLettersMin;
     private Dictionary<string, string> specialNameDict = new Dictionary<string, string>();
-    private string[] ForbiddenNames = new string[] { "lukark", "rtl", "rhenaud", "rtlgeno", "rtlukark", "hacker" };
+    private string[] ForbiddenNames = new string[] { "lukark", "rtl", "rhenaud" };
     private string confirmText = null;
 	GameObject textObjFolder;
 
@@ -26,11 +26,11 @@ public class EnterNameScript : MonoBehaviour {
         uiAudio = GameObject.Find("TextManager Instructions").GetComponent<AudioSource>();
         try { GameObject.Find("textframe_border_outer").SetActive(false); } catch { }
         tmInstr = GameObject.Find("TextManager Instructions").GetComponent<TextManager>();
-        tmInstr.SetHorizontalSpacing(2);
         if (GlobalControls.crate)
             tmInstr.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]GIV HMI A NAME!!!", false, true) });
         else 
             tmInstr.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]Name the fallen human.", false, true) });
+        tmInstr.SetHorizontalSpacing(2);
         tmName = GameObject.Find("TextManager Name").GetComponent<TextManager>();
         tmName.SetHorizontalSpacing(2);
         GameObject firstCamera = GameObject.Find("Main Camera");
@@ -46,14 +46,10 @@ public class EnterNameScript : MonoBehaviour {
         }
         tmName.SetTextQueue(new TextMessage[] { new TextMessage(playerName, false, true) });
         tmLettersMaj = GameObject.Find("TextManager LettersMaj").GetComponent<TextManager>();
-        tmLettersMaj.SetHorizontalSpacing(52.2f);
-        tmLettersMaj.SetVerticalSpacing(-1);
-        tmLettersMaj.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]ABCDEFG\nHIJKLMN\nOPQRSTU\nVWXYZ", false, true) });
+        tmLettersMaj.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][charspacing:52.2][linespacing:-1]ABCDEFG\nHIJKLMN\nOPQRSTU\nVWXYZ", false, true) });
         tmLettersMaj.SetEffect(new ShakeEffect(tmLettersMaj));
         tmLettersMin = GameObject.Find("TextManager LettersMin").GetComponent<TextManager>();
-        tmLettersMin.SetHorizontalSpacing(52.2f);
-        tmLettersMin.SetVerticalSpacing(-1);
-        tmLettersMin.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]abcdefg\nhijklmn\nopqrstu\nvwxyz", false, true) });
+        tmLettersMin.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][charspacing:52.2][linespacing:-1]abcdefg\nhijklmn\nopqrstu\nvwxyz", false, true) });
         tmLettersMin.SetEffect(new ShakeEffect(tmLettersMin));
         for (int i = 0; i < GameObject.Find("TextManager LettersMaj").GetComponentsInChildren<Image>().Length; i ++)
             GameObject.Find("TextManager LettersMaj").GetComponentsInChildren<Image>()[i].name = GameObject.Find("TextManager LettersMaj").GetComponentsInChildren<Image>()[i].sprite.name;
@@ -227,6 +223,7 @@ public class EnterNameScript : MonoBehaviour {
                 }
                 while (GameObject.Find("Main Camera").GetComponent<AudioSource>().isPlaying)
                     yield return 0;
+                UnitaleUtil.ResetOW();
                 SceneManager.LoadScene("TransitionOverworld");
             } else {
                 SaveLoad.Save();
@@ -249,58 +246,38 @@ public class EnterNameScript : MonoBehaviour {
         return totalWidth;
     }
 
-    bool isInDict(string test) {
-        test = test.ToLower();
-        foreach (string key in specialNameDict.Keys)
-            if (key.ToLower() == test)
-                return true;
-        return false;
-    }
-
     void AddToDict() {
-        specialNameDict.Add("lukark",    "Hey, that's my name!\nDon't copy me.");                              
+        specialNameDict.Add("lukark",    "Hey, that's my name!\nDon't copy me.");
         specialNameDict.Add("rtl",       "Still my name, dude.");
         specialNameDict.Add("rhenao",    "The basis name.");
         specialNameDict.Add("rhenaud",   "My real name.");
-        specialNameDict.Add("uduu",      "The path to victory. Go to\nthe 2nd map. Real name: UDUUL");
-        specialNameDict.Add("thefail",   "DO 3 BARREL ROLLS!!!");
-        specialNameDict.Add("exception", "It's me.");
-        specialNameDict.Add("fugitive",  "*flees*\n/me flees");
+        
+        specialNameDict.Add("uduu",      "(Broken) The path to victory. Go to\nthe 2nd map. Real name: UDUUL");
+        specialNameDict.Add("thefail",   "(Broken) DO 3 BARREL ROLLS!!!");
+        specialNameDict.Add("exception", "(Broken) It's me.");
+        specialNameDict.Add("fugitive",  "(Broken) *flees*\n/me flees");
+        specialNameDict.Add("four",      "4");
+        
         specialNameDict.Add("outbounds", "Go behind that dog!");
-        specialNameDict.Add("soulless",  "They shall fall, the one\nafter the other.");
+        specialNameDict.Add("soulless",  "They shall fall, one\nafter another.");
+        
         specialNameDict.Add("notfound",  "404");
-        specialNameDict.Add("frisk",     "That'll do nothing here.");
-        specialNameDict.Add("cyka",      "CYKA BLYAT RUSH B");
+        specialNameDict.Add("404",       "Name not found.");
         specialNameDict.Add("cyf",       "The true name.\nCreate Your Frisk FTW!");
         specialNameDict.Add("credits",   "RhenaudTheLukark and lvkuln.\nThat's it, I think.");
-        specialNameDict.Add("mionn",     "No HANDZ");
-        specialNameDict.Add("handz",     "RIP Mionn");
-        specialNameDict.Add("campfire",  "These guys helped me too.\nDon't tell anyone! ;)");
-        specialNameDict.Add("morsay",    "CLIQUEZ SALOPES! Hi Kaiser :D");
-        specialNameDict.Add("rtlgeno",   "You nosy little thing.");
-        specialNameDict.Add("rtlukark",  "You can't.");
-        specialNameDict.Add("chara",     "Classic af. Your \"The true name.\"\nis in another castle.");
-        specialNameDict.Add("ytp",       "Heehee, you know me, don't you ;P");
-        specialNameDict.Add("unity",     "Yup, that's the right engine.");
-        specialNameDict.Add("unitale",   "Good work! You know the\nname of the project!");
-        specialNameDict.Add("csharp",    "That's the language.");
-        specialNameDict.Add("js",        "I hate you.");
-        specialNameDict.Add("hacker",    "OH NO YOU DON'T.");
         specialNameDict.Add("mmmmmmmmm", "You just want to watch\nthe engine burn.");
         specialNameDict.Add("wwwwwwwww", "You just want to watch\nthe engine burn.");
         specialNameDict.Add("undertale", "Without this game,\nthis wouldn't exist.");
-        specialNameDict.Add("gamemaker", "...Bleh.");
-        specialNameDict.Add("punder",    "ARR PEE TIME!");
-        specialNameDict.Add("rptale",    "Thanks a lot,\nBanzy <3");
+        
+        specialNameDict.Add("frisk",     "That'll do nothing here.");
+        specialNameDict.Add("chara",     "Classic af. Your \"The true name.\"\nis in another castle.");
         specialNameDict.Add("undyne",    "It's not like you'll\nfind her, anyway.");
         specialNameDict.Add("alphys",    "Chances to see\nher: 0%.");
         specialNameDict.Add("asgore",    "Goatdad can't kill\nyou here.");
         specialNameDict.Add("toriel",    "Goatmom can't help\nyou here.");
-        specialNameDict.Add("papyrus",   "[font:papyrus]Having more than\n6 characters helps!");
-        specialNameDict.Add("sans",      "[font:sans]no bad time for\nya.");
+        specialNameDict.Add("papyrus",   "HAVING MORE THAN\n6 CHARACTERS HELPS!");
+        specialNameDict.Add("sans",      "no bad time for ya.");
         specialNameDict.Add("asriel",    "If that's your\nchoice...");
         specialNameDict.Add("flowey",    "You sadist.");
-        specialNameDict.Add("four",      "4");
-        specialNameDict.Add("sendnudes", "(.)(.)");
     }
 }

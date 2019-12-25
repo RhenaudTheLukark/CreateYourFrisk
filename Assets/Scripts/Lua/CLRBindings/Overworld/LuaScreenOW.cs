@@ -7,7 +7,7 @@ public class LuaScreenOW {
 
     [MoonSharpHidden] public LuaScreenOW() { }
 
-    public delegate void LoadedAction(string name, object args);
+    public delegate void LoadedAction(string coroName, object args, string evName);
     [MoonSharpHidden] public static event LoadedAction StCoroutine;
     
     //I know, there's WAY too much parameters in here, but I don't have the choice right now.
@@ -67,7 +67,7 @@ public class LuaScreenOW {
         if (GameObject.Find("Image" + id))
             EventManager.instance.luaevow.Remove("Image" + id);
         else
-            Debug.LogWarning("The image n°" + id + " doesn't exist.");
+            Debug.LogWarning("The image #" + id + " doesn't exist.");
         appliedScript.Call("CYFEventNextCommand");
     }
 
@@ -93,9 +93,11 @@ public class LuaScreenOW {
         }
         if (!anim) {
             GameObject.Find("Tone").GetComponent<Image>().color = new Color32((byte)r, (byte)g, (byte)b, (byte)a);
+            if (a == 0)
+                EventManager.instance.luaevow.Remove("Tone");
             appliedScript.Call("CYFEventNextCommand");
         } else 
-            StCoroutine("ISetTone", new object[] { waitEnd, r, g, b, a });
+            StCoroutine("ISetTone", new object[] { waitEnd, r, g, b, a }, appliedScript.GetVar("_internalScriptName").String);
     }
 
     /*/// <summary>
@@ -104,7 +106,7 @@ public class LuaScreenOW {
     /// <param name="seconds"></param>
     /// <param name="intensity"></param>
     [CYFEventFunction]
-    public void Rumble(float frames, float intensity = 3, bool fade = false) { StCoroutine("IRumble", new object[] { frames, intensity, fade }); }*/
+    public void Rumble(float frames, float intensity = 3, bool fade = false) { StCoroutine("IRumble", new object[] { frames, intensity, fade }, appliedScript.GetVar("_internalScriptName").String); }*/
 
     /// <summary>
     /// Rumbles the screen.
@@ -112,7 +114,7 @@ public class LuaScreenOW {
     /// <param name="secondsOrFrames"></param>
     /// <param name="intensity"></param>
     [CYFEventFunction] public void Flash(int frames, int colorR = 255, int colorG = 255, int colorB = 255, int colorA = 255, bool waitEnd = true) {
-        StCoroutine("IFlash", new object[] { frames, colorR, colorG, colorB, colorA, waitEnd });
+        StCoroutine("IFlash", new object[] { frames, colorR, colorG, colorB, colorA, waitEnd }, appliedScript.GetVar("_internalScriptName").String);
     }
 
     [CYFEventFunction] public void CenterEventOnCamera(string name, int speed = 5, bool straightLine = false, bool waitEnd = true, string info = "Screen.CenterEventOnCamera") {
@@ -124,14 +126,14 @@ public class LuaScreenOW {
 
         StCoroutine("IMoveCamera", new object[] { (int)(GameObject.Find(name).transform.position.x - PlayerOverworld.instance.transform.position.x),
                                                   (int)(GameObject.Find(name).transform.position.y - PlayerOverworld.instance.transform.position.y),
-                                                  speed, straightLine, waitEnd, info });
+                                                  speed, straightLine, waitEnd, info }, appliedScript.GetVar("_internalScriptName").String);
     }
 
     [CYFEventFunction] public void MoveCamera(int pixX, int pixY, int speed = 5, bool straightLine = false, bool waitEnd = true) {
-        StCoroutine("IMoveCamera", new object[] { pixX, pixY, speed, straightLine, waitEnd, "Screen.MoveCamera" });
+        StCoroutine("IMoveCamera", new object[] { pixX, pixY, speed, straightLine, waitEnd, "Screen.MoveCamera" }, appliedScript.GetVar("_internalScriptName").String);
     }
 
     [CYFEventFunction] public void ResetCameraPosition(int speed = 5, bool straightLine = false, bool waitEnd = true) {
-        StCoroutine("IMoveCamera", new object[] { 0, 0, speed, straightLine, waitEnd, "Screen.ResetCameraPosition" });
+        StCoroutine("IMoveCamera", new object[] { 0, 0, speed, straightLine, waitEnd, "Screen.ResetCameraPosition" }, appliedScript.GetVar("_internalScriptName").String);
     }
 }

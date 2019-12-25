@@ -26,7 +26,18 @@ using System.ComponentModel;
         }
     }
     public int MaxHP = 20;
-    public string Name = ControlPanel.instance.BasisName;
+    private string _Name = ControlPanel.instance.BasisName;
+    public string Name {
+        get {
+            return _Name;
+        }
+        set {
+            string shortName = value;
+            if (shortName.Length > 9)
+                shortName = value.Substring(0, 9);
+            _Name = shortName;
+        }
+    }
     public int WeaponATK = 0;
     public int ArmorDEF = 0;
     public int ATK = 10;      // internally, ATK is what Undertale's menu shows + 10
@@ -55,7 +66,6 @@ using System.ComponentModel;
     public void Reset(bool resetName = true) {
         if (resetName)
             Name = ControlPanel.instance.BasisName;
-        CYFAnimator.specialPlayerHeader = "";
         SetLevel(1);
         SetEXP(0);
         SetGold(0);

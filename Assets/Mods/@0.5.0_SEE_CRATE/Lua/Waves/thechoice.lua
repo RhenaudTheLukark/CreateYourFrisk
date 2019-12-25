@@ -7,7 +7,7 @@ inButton = false
 
 function Update()
     if not bullet1.isColliding() and not bullet2.isColliding() then inButton = false end
-	if bullet1.isColliding() then  
+	if bullet1.isColliding() then
 	    bullet1.sprite.Set("UI/Buttons/fightbt_1")
 		if not inButton then
 		    inButton = true
@@ -16,7 +16,7 @@ function Update()
 		if Input.Confirm == 1 then
 			Audio.PlaySound("menuconfirm")
 		    Encounter["enemies"][2]["currentdialogue"] = {"[noskip][func:Animate,happy]Goo...[func:Animate,surprised]what?![w:10][next]",
-			                                              "[noskip][func:forceattack,1," .. 54302+math.random(32592) .. "][w:80][next]",
+			                                              "[noskip][func:Animate,bracing][func:forceattack,1," .. 54302+math.random(32592) .. "][w:80][next]",
 														  "[noskip][func:Animate,death2]I[waitall:5]...[w:20][waitall:1]I am this engine's creator and you just killed me[waitall:5]...?[w:40][next]",
 														  "[noskip][func:Animate,deathangry]What kind of psycho are you?![w:40][next]",
 														  "[noskip][func:Animate,deatheyesclosed][waitall:5]...[w:20][waitall:1][func:Animate,deathsmile]heh.[w:40][next]",
@@ -34,7 +34,7 @@ function Update()
 		end
 	else bullet1.sprite.Set("UI/Buttons/fightbt_0")
 	end
-	if bullet2.isColliding() and not finish then  
+	if bullet2.isColliding() and not finish then
 	    bullet2.sprite.Set("UI/Buttons/mercybt_1")
 		if not inButton then
 		    inButton = true

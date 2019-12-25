@@ -251,6 +251,10 @@ Prefab:
       propertyPath: m_Name
       value: TextManager
       objectReference: {fileID: 0}
+    - target: {fileID: 11440668, guid: 3a23d2c086616ee478252340c1f504ff, type: 2}
+      propertyPath: _textMaxWidth
+      value: 400
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 11454028, guid: 3a23d2c086616ee478252340c1f504ff, type: 2}
   m_SourcePrefab: {fileID: 100100000, guid: 3a23d2c086616ee478252340c1f504ff, type: 2}

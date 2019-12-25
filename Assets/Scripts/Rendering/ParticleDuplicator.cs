@@ -28,7 +28,7 @@ public class ParticleDuplicator : MonoBehaviour {
         RectTransform rt = GetComponent<RectTransform>();
         //Vector2 bottomLeft = new Vector2((rt.position.x - rt.rect.width / 2) / (float)Screen.width, (rt.position.y) / (float)Screen.height);
         //Vector2 topRight = new Vector2((rt.position.x + rt.rect.width / 2) / (float)Screen.width, (rt.position.y + rt.rect.height) / (float)Screen.height);
-        Vector2 bottomLeft = new Vector2(rt.position.x - rt.anchorMin.x * rt.sizeDelta.x, rt.position.y - rt.anchorMin.y * rt.sizeDelta.y);
+        Vector2 bottomLeft = new Vector2(rt.position.x - rt.pivot.x * rt.sizeDelta.x, rt.position.y - rt.pivot.y * rt.sizeDelta.y);
         //Vector2 topRight = new Vector2(rt.position.x + (1 - rt.anchorMin.x) * rt.sizeDelta.x, rt.position.y + (1 - rt.anchorMin.x) * rt.sizeDelta.y);
         //Vector2 vpbl = Camera.main.ViewportToWorldPoint(bottomLeft);
         //Vector2 vptr = Camera.main.ViewportToWorldPoint(topRight);

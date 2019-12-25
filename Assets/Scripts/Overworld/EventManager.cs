@@ -14,23 +14,26 @@ public class EventManager : MonoBehaviour {
     public  List<string> Page0Done = new List<string>();
     public  ScriptWrapper script;           //The script we have to load
     public  Dictionary<GameObject, ScriptWrapper> eventScripts = new Dictionary<GameObject, ScriptWrapper>();
+    public  Dictionary<string, UnityEngine.Coroutine> cSharpCoroutines = new Dictionary<string, UnityEngine.Coroutine>();
     public  Dictionary<ScriptWrapper, int> coroutines = new Dictionary<ScriptWrapper, int>();
     public  List<GameObject> events = new List<GameObject>(); //This map's events
     public  Dictionary<string, LuaSpriteController> sprCtrls = new Dictionary<string, LuaSpriteController>();
     private TextManager textmgr;            //The current TextManager
     public  int actualEventIndex = -1;      //ID of the actual event we're running
+    private static string eventCodeFirst;   //The internal Lua code loaded into event scripts (first part)
+    private static string eventCodeLast;    //The internal Lua code loaded into event scripts (last part)
     public  bool readyToReLaunch = false;   //Used to prevent overworld GameOver errors
     public  bool bgmCoroutine = false;      //Check if the BGM is already fading
     public  bool passPressOnce = false;     //Boolean used because events are boring
     public  bool _scriptLaunched = false;
-    public bool ScriptLaunched {             
+    public  bool ScriptLaunched {
         get { return _scriptLaunched || PlayerOverworld.instance.forceNoAction; }
         set { _scriptLaunched = value; }
     }
     public  bool onceReload = false;
     public  bool nextFadeTransition = true;
     public  bool LoadLaunched = false;
-    private static bool inited = false;
+    public  static bool inited = false;
     public  Dictionary<GameObject, bool> autoDone = new Dictionary<GameObject, bool>();
 
     public LuaPlayerOW luaplow;
@@ -165,10 +168,10 @@ public class EventManager : MonoBehaviour {
             RunCoroutines();
             if (script == null && !ScriptLaunched && !PlayerOverworld.instance.inBattleAnim && !PlayerOverworld.instance.menuRunning[2]) {
                 if (TestEventAuto()) return;
-                if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED && !passPressOnce) {
+                if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED && !passPressOnce && (GameObject.Find("FadingBlack") == null || GameObject.Find("FadingBlack").GetComponent<Fading>().alpha <= 0)) {
                     RaycastHit2D hit;
                     TestEventPress(PlayerOverworld.instance.lastMove.x, PlayerOverworld.instance.lastMove.y, out hit);
-                } else if (passPressOnce && GameObject.Find("textframe_border_outer").GetComponent<Image>().color.a == 0)
+                } else
                     passPressOnce = false;
 
                 if (events.Count != 0)
@@ -181,11 +184,12 @@ public class EventManager : MonoBehaviour {
                             i--;
                             Destroy(go);
                         } else if (!TestContainsListVector2(ev.eventTriggers, ev.actualPage) && ev.eventTriggers.Count != 0) {
-                            UnitaleUtil.DisplayLuaError(ev.name, "The trigger of the page n°" + ev.actualPage + " doesn't exist.\nYou'll need to add it via Unity, on this event's EventOW Component.");
+                            UnitaleUtil.DisplayLuaError(ev.name, "The trigger of the page #" + ev.actualPage + " doesn't exist.\nYou'll need to add it via Unity, on this event's EventOW Component.");
                             return;
                         }
                     }
-            }
+            } else
+                passPressOnce = false;
             CheckEndEvent();
         } catch (InvalidOperationException e) { Debug.LogError(e.Message); }
     }
@@ -228,12 +232,8 @@ public class EventManager : MonoBehaviour {
         return false;
     }
 
-    //TODO: Fix the array problem, forcing arrays to be printed "(Table)" in the text.
-    //WHY: WAY less arguments on few functions like DispImg
-    //Yeah, I need more Action delegates. Why are you looking me that way ? 
-    //If you have a better idea than passing 10 thousands arguments, just tell me how I can 
-    //fix my Table to string problem, then we'll be able to talk about these...things :/
-    //(Yeah, I'm a bit aggressive in here, but just forget about that xD)
+    // TODO: Fix the array problem, forcing arrays to be printed "(Table)" in the text.
+    // WHY: WAY less arguments on few functions like DispImg
     private delegate void Action<T1, T2, T3, T4, T5>(T1 arg, T2 arg2, T3 arg3, T4 arg4, T5 arg5);
     private delegate void Action<T1, T2, T3, T4, T5, T6>(T1 arg, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6);
     private delegate void Action<T1, T2, T3, T4, T5, T6, T7>(T1 arg, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7);
@@ -305,9 +305,9 @@ public class EventManager : MonoBehaviour {
                     }
             }
         } catch (InterpreterException e) {
-            UnitaleUtil.DisplayLuaError(gameobject.name + ", page n°" + gameobject.GetComponent<EventOW>().actualPage, e.DecoratedMessage);
+            UnitaleUtil.DisplayLuaError(gameobject.name + ", page #" + gameobject.GetComponent<EventOW>().actualPage, UnitaleUtil.FormatErrorSource(e.DecoratedMessage, e.Message) + e.Message);
         } catch (Exception e) {
-            UnitaleUtil.DisplayLuaError(gameobject.name + ", page n°" + gameobject.GetComponent<EventOW>().actualPage,
+            UnitaleUtil.DisplayLuaError(gameobject.name + ", page #" + gameobject.GetComponent<EventOW>().actualPage,
                                         "Unknown error of type " + e.GetType() + ". Please send this to the main dev.\n\n" + e.Message + "\n\n" + e.StackTrace);
         }
         return false;
@@ -343,9 +343,9 @@ public class EventManager : MonoBehaviour {
                     ExecuteEvent(events[i], -1, true);
                 }
             }
-        } catch (InterpreterException e) { UnitaleUtil.DisplayLuaError(gameobject.name + ", page n°" + gameobject.GetComponent<EventOW>().actualPage, e.DecoratedMessage); } 
+        } catch (InterpreterException e) { UnitaleUtil.DisplayLuaError(gameobject.name + ", page #" + gameobject.GetComponent<EventOW>().actualPage, e.DecoratedMessage); } 
         catch (Exception e) {
-            UnitaleUtil.DisplayLuaError(gameobject.name + ", page n°" + gameobject.GetComponent<EventOW>().actualPage,
+            UnitaleUtil.DisplayLuaError(gameobject.name + ", page #" + gameobject.GetComponent<EventOW>().actualPage,
                                         "Unknown error of type " + e.GetType() + ". Please send this to the main dev.\n\n" + e.Message + "\n\n" + e.StackTrace);
         }
     }
@@ -367,8 +367,11 @@ public class EventManager : MonoBehaviour {
         events.Clear();
         autoDone.Clear();
         sprCtrls.Clear();
-        if (resetScripts)
+        if (resetScripts) {
             eventScripts.Clear();
+            ScriptWrapper.instances.Clear();
+            LuaScriptBinder.scriptlist.Clear();
+        }
         PlayerOverworld.instance.parallaxes.Clear();
         foreach (GameObject go in GameObject.FindGameObjectsWithTag("Event")) {
             events.Add(go);
@@ -425,7 +428,7 @@ public class EventManager : MonoBehaviour {
                 UnitaleUtil.DisplayLuaError("Overworld engine", "Whoops! There is an error with event indexing.");
             return false;
         }
-        if (go.name == "4eab1af3ab6a932c23b3cdb8ef618b1af9c02088" && page != 0) {
+        if (UnitaleUtil.IsSpecialAnnouncement(go.name) && page != 0) {
             StartCoroutine(SpecialAnnouncementEvent());
             return true;
         }
@@ -438,17 +441,17 @@ public class EventManager : MonoBehaviour {
         }
         try {
             ScriptWrapper scr;
-            if (go.name == "4eab1af3ab6a932c23b3cdb8ef618b1af9c02088") scr = InitScript(go.name, go.GetComponent<EventOW>());
-            else                                                       scr = eventScripts[go];
-            if (isCoroutine && !coroutines.ContainsKey(scr))
-                coroutines.Add(scr, go.GetComponent<EventOW>().actualPage);
-            else if (!isCoroutine)
-                script = scr;
+            if (UnitaleUtil.IsSpecialAnnouncement(go.name)) scr = InitScript(go.name, go.GetComponent<EventOW>());
+            else                                            scr = eventScripts[go];
+
+            if (isCoroutine && !coroutines.ContainsKey(scr)) coroutines.Add(scr, go.GetComponent<EventOW>().actualPage);
+            else if (!isCoroutine)                           script = scr;
+
             SetCurrentScript(scr);
             scr.Call("CYFEventStartEvent", DynValue.NewString("EventPage" + (page == -1 ? go.GetComponent<EventOW>().actualPage : page)));
             //scr.Call("EventPage" + go.GetComponent<EventOW>().actualPage);
         } catch (InterpreterException ex) {
-            UnitaleUtil.DisplayLuaError(go.GetComponent<EventOW>().scriptToLoad, ex.DecoratedMessage);
+            UnitaleUtil.DisplayLuaError(go.GetComponent<EventOW>().scriptToLoad, ex.DecoratedMessage != null ? ex.DecoratedMessage : ex.Message);
             return false;
         } catch (Exception ex) {
             UnitaleUtil.DisplayLuaError(go.GetComponent<EventOW>().scriptToLoad, ex.Message);
@@ -482,141 +485,145 @@ public class EventManager : MonoBehaviour {
     }
 
     /// <summary>
+    /// Generates the internal Lua code used by CYF events one time, and one time only
+    /// </summary>
+    private void GenerateEventCode() {
+        eventCodeFirst = string.Empty;
+        string lameFunctionBinding = string.Empty;
+        bool once = false;
+        foreach (Type t in boundValueName.Keys) {
+            List<string> members = CreateBindListMember(t);
+            eventCodeFirst += "\n" + boundValueName[t] + " = { }";
+            foreach (string member in members) {
+                string completeMember = boundValueName[t] + "." + member;
+                eventCodeFirst += "\n" + "function " + completeMember + "(...) return CYFEventForwarder(\"" + completeMember + "\",...) end";
+                lameFunctionBinding += "\n    " + (once ? "elseif" : "if") + " func == '" + completeMember + "' then x = F" + completeMember;
+                once = true;
+            }
+            eventCodeFirst += "\nsetmetatable(" + boundValueName[t] + @", {
+    __index = function(t, k)
+        error(""cannot access field "" .. tostring(k) .. "" of userdata <" + t.ToString() + @">"", 2)
+    end,
+    __newindex = function(t, k)
+        error(""cannot access field "" .. tostring(k) .. "" of userdata <" + t.ToString() + @">"", 2)
+    end
+})";
+        }
+        once = false;
+        lameFunctionBinding += "\n    end";
+        eventCodeFirst += @"
+CYFEventCoroutine = coroutine.create(DEBUG)
+CYFEventCheckRefresh = true
+CYFEventLastAction = """"
+local CYFEventAlreadyLaunched = false
+function CYFFormatError(err)
+    local pattern = ':%([%d%-,]+%):'
+    local code = err:match(pattern)
+    if code then
+        local before = err:sub(0, err:find(pattern) + (code:sub(0, 2) == ':(' and 1 or 0))
+        local numbers = err:match('[%d,%-]+%)'):sub(0, -2)
+        local after = err:sub(err:find(numbers:gsub('%-', '%%-'), #before) + #numbers)
+        
+        -- There are only 3 possible formats for error messages
+        -- See Assets/Plugins/MoonSharp/Interpreter/Debugging/SourceRef.cs line 178
+        local allNums = {}
+        for num in numbers:gmatch('%d+') do
+            table.insert(allNums, num)
+        end
+        if numbers == numbers:match('%d+,%d+') then
+            numbers = 'line ' .. allNums[1] .. ', char ' .. allNums[2]
+        elseif numbers == numbers:match('%d+,%d+%-%d+') then
+            numbers = 'line ' .. allNums[1] .. ', char ' .. allNums[2] .. '-' .. allNums[3]
+        elseif numbers == numbers:match('%d+,%d+%-%d+,%d+') then
+            numbers = 'line ' .. allNums[1] .. ', char ' .. allNums[2] .. '-line ' .. allNums[3] .. ', char ' .. allNums[4]
+        end
+        
+        return ""error in script "" .. _internalScriptName .. ""\n\n"" .. before .. numbers .. after
+    else
+        return err
+    end
+end
+function CYFEventFuncToLaunch(x)
+    if _internalScriptName == nil then
+        _internalScriptName = '";
+        eventCodeLast = @"'
+    end
+    local err
+    if not xpcall(x, function(err2) err = err2 end) then
+        error(CYFFormatError(err), 0)
+    end
+end
+function CYFEventNextCommand()
+    CYFEventAlreadyLaunched = true
+    if tostring(coroutine.status(CYFEventCoroutine)) == 'suspended' then
+        local ok, errorMsg = coroutine.resume(CYFEventCoroutine)
+        if not ok then error(errorMsg, 0) end
+    end
+end
+function CYFEventStopCommand() coroutine.yield() end --currently unused
+function CYFEventStartEvent(func)
+    if _G[func] == nil then error(""error in script "" .. _internalScriptName .. ""\n\nThe function "" .. func .. "" doesn't exist in the Event script."", 0) end
+    CYFEventCoroutine = coroutine.create(function() CYFEventFuncToLaunch(_G[func]) end)
+    local ok, errorMsg = coroutine.resume(CYFEventCoroutine)
+    if not ok then error(errorMsg, 0) end
+end
+function CYFEventForwarder(func, ...)
+    CYFEventAlreadyLaunched = false
+    CYFEventCheckRefresh = true
+    FGeneral.HiddenReloadAppliedScript()
+    CYFEventLastAction = func
+    local x" + lameFunctionBinding + "\n"
++ @"local ok
+    local result
+    local hasArgs = false
+    for k, v in pairs(({...})) do
+        hasArgs = true
+        ok, result = pcall(x, ...)
+        break
+    end
+    if not hasArgs then
+        ok, result = pcall(x)
+    end
+    if not ok then
+        error(CYFFormatError(result), 0)
+    end
+    if not CYFEventAlreadyLaunched then coroutine.yield() end
+    return result
+end";
+    }
+
+    /// <summary>
     /// Function that permits to initialize the event script to be used later
     /// </summary>
     /// <param name="name"></param>
     /// <returns>Returns true if no error were encountered.</returns>
     private ScriptWrapper InitScript(string name, EventOW ev) {
-        ScriptWrapper scr = new ScriptWrapper() {
-            scriptname = name
-        };
-        string scriptText = name == "4eab1af3ab6a932c23b3cdb8ef618b1af9c02088" ? CYFReleaseScript : ScriptRegistry.Get(ScriptRegistry.EVENT_PREFIX + name);
+        ScriptWrapper scr = new ScriptWrapper() { scriptname = name };
+        string scriptText = UnitaleUtil.IsSpecialAnnouncement(name) ? CYFReleaseScript : ScriptRegistry.Get(ScriptRegistry.EVENT_PREFIX + name);
         if (scriptText == null) {
-            UnitaleUtil.DisplayLuaError("Launching an event", "The event " + name + " doesn't exist.");
+            UnitaleUtil.DisplayLuaError("Launching an event", "The event \"" + name + "\" doesn't exist.");
             return null;
         }
-        string lameOverworldFunctionBinding = string.Empty;
-        string lameFunctionBinding = string.Empty;
-        bool once = false;
-        foreach (Type t in boundValueName.Keys) {
-            List<string> members = CreateBindListMember(t);
-            scriptText += "\n" + boundValueName[t] + " = { }";
-            foreach (string member in members) {
-                string completeMember = boundValueName[t] + "." + member;
-                scriptText += "\n" + "function " + completeMember + "(p1,p2,p3,p4,p5,p6,p7,p8,p9,p10) return CYFEventForwarder(\"" + completeMember + "\",p1,p2,p3,p4,p5,p6,p7,p8,p9,p10) end";
-                lameFunctionBinding += "\n    " + (once ? "elseif" : "if") + " func == '" + completeMember + "' then x = F" + completeMember;
-                once = true;
-            }
+
+        //Run engine-provided Lua code for Event scripts (generate it if needed)
+        if (eventCodeFirst == null)
+            GenerateEventCode();
+        try { scr.script.DoString(eventCodeFirst + ev.gameObject.name + eventCodeLast, null, "CYF internal event code (please report!)"); } 
+        catch (InterpreterException ex) {
+            UnitaleUtil.DisplayLuaError(name, UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message);
+            return null;
+        } catch (Exception ex) {
+            UnitaleUtil.DisplayLuaError(name, ex.Message);
+            return null;
         }
-        once = false;
-        foreach (Vector2 v in ev.eventTriggers) {
-            lameOverworldFunctionBinding += "\n    " + (once ? "elseif" : "if") + " func == 'EventPage" + v.x + "' then CYFEventCurrentFunction = 'EventPage" + v.x + "' x = EventPage" + v.x;
-            once = true;
-        }
-        lameOverworldFunctionBinding += "\n    end";
-        lameFunctionBinding += "\n    end";
-        scriptText += "\n\nCYFEventCoroutine = coroutine.create(DEBUG) " +
-                      "\nCYFEventCheckRefresh = true" +
-                      "\nCYFEventLastAction = \"\"" +
-                      "\nlocal CYFEventLameErrorContainer = nil" +
-                      "\nlocal CYFEventLameErrorContainerSave = nil" +
-                      "\nlocal CYFEventCurrentFunction = nil" +
-                      "\nlocal CYFEventAlreadyLaunched = false " +
-                      "\nfunction CYFEventMySplit(str, sep)" +
-                      "\n    local tab = {} " +
-                      "\n    local i = 1" +
-                      "\n    for word in string.gmatch(str, '([^'..sep..']+)') do" +
-                      "\n        tab[i] = word" +
-                      "\n        i = i + 1" +
-                      "\n    end" +
-                      "\n    return tab" +
-                      "\nend" +
-                      "\nfunction CYFEventFuncToLaunch(x)" +
-                      "\n    if _internalScriptName == nil then" +
-                      "\n        _internalScriptName = \"" + ev.gameObject.name + "\"" +
-                      "\n    end" +
-                      "\n    local err = nil" +
-                      "\n    local stack = nil" +
-                      "\n    xpcall(x, function(err2) err = err2 stack = debug.traceback() end)" +
-                      "\n    if err != nil then " +
-                      "\n        if string.match(stack, 'CYFEventForwarder') != nil then" +
-                      "\n            local line = ''" +
-                      "\n            local tab = CYFEventMySplit(stack, '\\n')" +
-                      "\n            for i = 1, #tab do if string.match(tab[i], 'EventPage') != nil then line = tab[i] break end end" +
-                      "\n            if string.match(line, '[clr]') then" +
-                      "\n                stack = CYFEventLameErrorContainerSave" +
-                      "\n                tab = CYFEventMySplit(stack, '\\n')" +
-                      "\n                for i = 1, #tab do if string.match(tab[i], 'EventPage') != nil then line = tab[i] break end end" +
-                      "\n            end" +
-                      "\n            if string.match(line, '[clr]') then" +
-                      "\n                CYFEventLameErrorContainer = \"Couldn't get the number of the line, sorry!\\n\".. err" +
-                      "\n            else" +
-                      "\n                while string.match(line, 'chunk') do line = string.sub(line, 2) end" +
-                      "\n                for word in string.gmatch('c' .. line, '([^ ]+)') do CYFEventLameErrorContainer = word break end" +
-                      "\n                if string.match(err, '(chunk_2:.+:)') and string.match(CYFEventLameErrorContainer, '(chunk_2:.+:)') then err = string.sub(err, string.len(string.match(err, '(chunk_2:.+:)')) + 2) end" +
-                      "\n                CYFEventLameErrorContainer = CYFEventLameErrorContainer .. ' ' .. err" +
-                      "\n            end" +
-                      "\n        else" +
-                      "\n            CYFEventLameErrorContainer = err " +
-                      "\n        end" +
-                      "\n    end" +
-                      "\nend " +
-                      "\nfunction CYFEventNextCommand() " +
-                      "\n    CYFEventAlreadyLaunched = true " +
-                      "\n    if tostring(coroutine.status(CYFEventCoroutine)) == 'suspended' then " +
-                      "\n        local ok, errorMsg = coroutine.resume(CYFEventCoroutine) " +
-                      "\n        if CYFEventLameErrorContainer != nil then error(CYFEventLameErrorContainer) end " +
-                      "\n    end " +
-                      "\nend " +
-                      "\nfunction CYFEventStopCommand() coroutine.yield() end " +
-                      "\nfunction CYFEventStartEvent(func) " +
-                      //"\n    local x = 'error' " +
-                      //"\n    DEBUG(assert(loadstring('return '..x..'(...)'))(25)) " +
-                      //lameOverworldFunctionBinding +
-                      "\n    if _G[func] == nil then error('The function ' .. func .. \" doesn't exist in the Event script.\") end" +
-                      //"\n    if x == 'error' then error('The overworld function ' .. func .. \" doesn't exist in the function list. Did you forgot to add this function in the event's trigger list?\") end " +
-                      "\n    CYFEventCoroutine = coroutine.create(function() CYFEventFuncToLaunch(_G[func]) end)" +
-                      "\n    local ok, errorMsg = coroutine.resume(CYFEventCoroutine) " +
-                      "\n    if CYFEventLameErrorContainer != nil then error(CYFEventLameErrorContainer) end " +
-                      "\nend " +
-                      "\nfunction CYFEventForwarder(func, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10) " +
-                      "\n    CYFEventLameErrorContainerSave = debug.traceback()" + 
-                      "\n    CYFEventAlreadyLaunched = false" +
-                      "\n    CYFEventCheckRefresh = true" +
-                      "\n    FGeneral.HiddenReloadAppliedScript()" +
-                      "\n    CYFEventLastAction = func" +
-                      //"\n    local tab = CYFEventMySplit(func, '.')" +
-                      //"\n    DEBUG(tostring(_G['F' .. tab[1] .. \"'\"]))" + 
-                      //"\n    DEBUG('_G[\"F' .. tab[1] .. '\"].' .. tab[2])" +
-                      "\n    local x" +
-                      lameFunctionBinding +
-                      "\n    local result " +
-                      "\n    if     arg1 == nil  then  result = x() " +
-                      "\n    elseif arg2 == nil  then  result = x(arg1) " +
-                      "\n    elseif arg3 == nil  then  result = x(arg1, arg2) " +
-                      "\n    elseif arg4 == nil  then  result = x(arg1, arg2, arg3) " +
-                      "\n    elseif arg5 == nil  then  result = x(arg1, arg2, arg3, arg4) " +
-                      "\n    elseif arg6 == nil  then  result = x(arg1, arg2, arg3, arg4, arg5) " +
-                      "\n    elseif arg7 == nil  then  result = x(arg1, arg2, arg3, arg4, arg5, arg6) " +
-                      "\n    elseif arg8 == nil  then  result = x(arg1, arg2, arg3, arg4, arg5, arg6, arg7) " +
-                      "\n    elseif arg9 == nil  then  result = x(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8) " +
-                      "\n    elseif arg10 == nil then  result = x(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9) " +
-                      "\n    else                      result = x(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10) " +
-                      "\n    end " +
-                      "\n    if not CYFEventAlreadyLaunched then coroutine.yield() end" +
-                      "\n    return result" +
-                      "\nend";
-        scr.script.Globals["CreateText"] = (Func<Script, DynValue, DynValue, int, string, int, LuaTextManager>)CreateText;
-        scr.text = scriptText;
-        /*StreamWriter sr = File.CreateText(Application.dataPath + "/test" + TEMP ++ + ".txt");
-        sr.Write(scriptText);
-        sr.Flush();
-        sr.Close();
-        Debug.Log(scriptText);*/
+
+        scr.script.Globals["CreateLayer"] = (Action<string, string, bool>)SpriteUtil.CreateLayer;
+        scr.script.Globals["CreateSprite"] = (Func<string, string, int, DynValue>)SpriteUtil.MakeIngameSprite;
+        scr.script.Globals["CreateText"] = (Func<Script, DynValue, DynValue, int, string, int, LuaTextManager>)LuaScriptBinder.CreateText;
 
         try { scr.DoString(scriptText); } 
         catch (InterpreterException ex) {
-            UnitaleUtil.DisplayLuaError(name, ex.DecoratedMessage);
+            UnitaleUtil.DisplayLuaError(name, UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message);
             return null;
         } catch (Exception ex) {
             UnitaleUtil.DisplayLuaError(name, ex.Message);
@@ -624,10 +631,6 @@ public class EventManager : MonoBehaviour {
         }
 
         return scr;
-    }
-
-    public LuaTextManager CreateText(Script scr, DynValue text, DynValue position, int textWidth, string layer = "BelowPlayer", int bubbleHeight = -1) {
-        return LuaScriptBinder.CreateText(scr, text, position, textWidth, "Canvas OW", bubbleHeight);
     }
 
     private delegate TResult Func<T1, T2, T3, T4, T5, T6, TResult>(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg, T6 arg6);
@@ -760,7 +763,7 @@ public class EventManager : MonoBehaviour {
     }
 
     //Used to add event states before unloading the map
-    public static void SetEventStates() {
+    public void SetEventStates(bool addPlayer = false) {
         // int id = SceneManager.GetActiveScene().buildIndex;
         string id = SceneManager.GetActiveScene().name;
         EventOW[] events = (EventOW[])GameObject.FindObjectsOfType(typeof(EventOW));
@@ -781,6 +784,18 @@ public class EventManager : MonoBehaviour {
         Dictionary<string, GameState.EventInfos> eis = new Dictionary<string, GameState.EventInfos>();
         foreach (string str in GlobalControls.EventData.Keys)
             eis.Add(str, GlobalControls.EventData[str]);
+
+        // Add the Player to the current map
+        if (addPlayer) {
+            GameState.EventInfos eiPlayer = new GameState.EventInfos() {
+                CurrPage = 0,
+                CurrSpriteNameOrCYFAnim = GameObject.Find("Player").GetComponent<CYFAnimator>().specialHeader,
+                NoCollision = false,
+                Anchor = UnitaleUtil.VectorToVect(GameObject.Find("Player").GetComponent<RectTransform>().anchorMax),
+                Pivot = UnitaleUtil.VectorToVect(GameObject.Find("Player").GetComponent<RectTransform>().pivot)
+            };
+            eis.Add("Player", eiPlayer);
+        }
 
         foreach (EventOW ev in events) {
             if (ev.name.Contains("Image") || ev.name.Contains("Tone"))
@@ -970,25 +985,31 @@ public class EventManager : MonoBehaviour {
         //print("GetMapState: " + SceneManager.GetSceneByBuildIndex(id).name);
         foreach (string str in misave.EventInfo.Keys) {
             try {
-                if (!GameObject.Find(str))
+                GameObject go = GameObject.Find(str);
+                if (go == null)
                     continue;
-                EventOW ev = GameObject.Find(str).GetComponent<EventOW>();
-                if (!ev)
-                    continue;
+
                 GameState.EventInfos ei = misave.EventInfo[str];
-                ev.actualPage = ei.CurrPage;
-                if (ev.GetComponent<CYFAnimator>())                       ev.GetComponent<CYFAnimator>().specialHeader = ei.CurrSpriteNameOrCYFAnim;
+                if (str == "Player")
+                    go.GetComponent<CYFAnimator>().specialHeader = ei.CurrSpriteNameOrCYFAnim;
                 else {
-                    if (ev.GetComponent<AutoloadResourcesFromRegistry>()) ev.GetComponent<AutoloadResourcesFromRegistry>().SpritePath = ei.CurrSpriteNameOrCYFAnim;
-                    else if (ev.name != "4eab1af3ab6a932c23b3cdb8ef618b1af9c02088") {
-                        if (ev.GetComponent<Image>())                     ev.GetComponent<Image>().sprite = SpriteRegistry.Get(ei.CurrSpriteNameOrCYFAnim);
-                        else                                              ev.GetComponent<SpriteRenderer>().sprite = SpriteRegistry.Get(ei.CurrSpriteNameOrCYFAnim);
+                    EventOW ev = go.GetComponent<EventOW>();
+                    if (!ev)
+                        continue;
+                    ev.actualPage = ei.CurrPage;
+                    if (ev.GetComponent<CYFAnimator>())                       ev.GetComponent<CYFAnimator>().specialHeader = ei.CurrSpriteNameOrCYFAnim;
+                    else {
+                        if (ev.GetComponent<AutoloadResourcesFromRegistry>()) ev.GetComponent<AutoloadResourcesFromRegistry>().SpritePath = ei.CurrSpriteNameOrCYFAnim;
+                        else if (UnitaleUtil.IsSpecialAnnouncement(ev.name)) { // TODO: Remove this condition?
+                            if (ev.GetComponent<Image>())                     ev.GetComponent<Image>().sprite = SpriteRegistry.Get(ei.CurrSpriteNameOrCYFAnim);
+                            else                                              ev.GetComponent<SpriteRenderer>().sprite = SpriteRegistry.Get(ei.CurrSpriteNameOrCYFAnim);
+                        }
                     }
+                    ev.gameObject.layer = ei.NoCollision ? 0 : 21;
                 }
-                ev.gameObject.layer = ei.NoCollision ? 0 : 21;
-                ev.GetComponent<RectTransform>().anchorMax = UnitaleUtil.VectToVector(ei.Anchor);
-                ev.GetComponent<RectTransform>().anchorMin = UnitaleUtil.VectToVector(ei.Anchor);
-                ev.GetComponent<RectTransform>().pivot = UnitaleUtil.VectToVector(ei.Pivot);
+                go.GetComponent<RectTransform>().anchorMax = UnitaleUtil.VectToVector(ei.Anchor);
+                go.GetComponent<RectTransform>().anchorMin = UnitaleUtil.VectToVector(ei.Anchor);
+                go.GetComponent<RectTransform>().pivot = UnitaleUtil.VectToVector(ei.Pivot);
             } catch (Exception e) { Debug.LogError(e); }
         }
     }
@@ -999,17 +1020,31 @@ public class EventManager : MonoBehaviour {
     public void EndEvent() {
         PlayerOverworld.instance.textmgr.SetTextFrameAlpha(0);
         PlayerOverworld.instance.textmgr.textQueue = new TextMessage[] { };
-        PlayerOverworld.instance.textmgr.DestroyText();
+        PlayerOverworld.instance.textmgr.DestroyChars();
         PlayerOverworld.instance.PlayerNoMove = false; //Event finished
         PlayerOverworld.instance.UIPos = 0;
         ScriptLaunched = false;
         script = null;
     }
 
-    public void StCoroutine(string name, object args) {
-        if (args == null)                 StartCoroutine(name);
-        else if (!args.GetType().IsArray) StartCoroutine(name, args);
-        else                              StartCoroutine(name, (object[])args);
+    public void StCoroutine(string coroName, object args, string evName) {
+        string key = evName + "." + coroName;
+        ForceEndCoroutine(key);
+        UnityEngine.Coroutine newCoro;
+        if (args == null)                 newCoro = StartCoroutine(coroName);
+        else if (!args.GetType().IsArray) newCoro = StartCoroutine(coroName, args);
+        else                              newCoro = StartCoroutine(coroName, (object[])args);
+        cSharpCoroutines.Add(key, newCoro);
+    }
+
+    public void ForceEndCoroutine(string key) {
+        if (cSharpCoroutines.ContainsKey(key)) {
+            UnityEngine.Coroutine existingCoro;
+            cSharpCoroutines.TryGetValue(key, out existingCoro);
+            if (existingCoro != null)
+                StopCoroutine(existingCoro);
+            cSharpCoroutines.Remove(key);
+        }
     }
 
     private IEnumerator SpecialAnnouncementEvent() {
@@ -1026,15 +1061,18 @@ public class EventManager : MonoBehaviour {
             Audios.Add(adc.name, adc);
         go.GetComponent<SpriteRenderer>().sprite = Sprites["mm2"];
         go.transform.position = new Vector3(go.transform.position.x, go.transform.position.y, -1);
-        AudioSource audio = ((AudioSource)NewMusicManager.audiolist["src"]);
+        NewMusicManager.StopAll();
+        AudioSource audio = NewMusicManager.CreateChannelAndGetAudioSource("4eab1af3ab6a932c23b3cdb8ef618b1af9c02088");
         audio.loop = false;
         audio.clip = Audios["sound"];
         audio.Play();
         while (audio.isPlaying)
             yield return 0;
+        NewMusicManager.DestroyChannel("4eab1af3ab6a932c23b3cdb8ef618b1af9c02088");
         SceneManager.LoadScene("SpecialAnnouncement");
         GameObject.Destroy(GameObject.Find("Player"));
         GameObject.Destroy(GameObject.Find("Canvas OW"));
+        GameObject.Destroy(GameObject.Find("Canvas Two"));
         GameObject.Destroy(GameObject.Find("Main Camera OW"));
     }
 
@@ -1065,10 +1103,10 @@ public class EventManager : MonoBehaviour {
         try { oneLiners = (bool[])args[1]; } catch { throw new CYFException("The argument \"oneLiners\" must be a boolean table."); }
 
         if (coroutines.ContainsKey(scr) && script != scr) {
-            UnitaleUtil.DisplayLuaError(scr.scriptname, "General.SetChoice: You can't use that function in a coroutine with waitEnd set to true.");
+            UnitaleUtil.DisplayLuaError(scr.scriptname, "General.SetChoice: This function cannot be used in a coroutine with \"waitEnd\" set to true.");
             yield break;
         } else if (LoadLaunched) {
-            UnitaleUtil.DisplayLuaError(scr.scriptname, "General.SetChoice: You can't use that function in a page 0 function with waitEnd set to true.");
+            UnitaleUtil.DisplayLuaError(scr.scriptname, "General.SetChoice: This function cannot be used in EventPage0 with \"waitEnd\" set to true.");
             yield break;
         }
 
@@ -1103,26 +1141,27 @@ public class EventManager : MonoBehaviour {
         script.script.Globals.Set(DynValue.NewString("lastChoice"), DynValue.NewNumber(actualChoice));
         //HEARTBROKEN
         Destroy(tempHeart);
+        yield return 0;
     }
 
     IEnumerator IMoveEventToPoint(object[] args) { //NEED PARENTAL REMOVE
-        ScriptWrapper scr = luaevow.appliedScript;
-        
+        ScriptWrapper scr = (ScriptWrapper)args[0];
+
         string name;
         float dirX, dirY;
         bool wallPass, waitEnd;
-        try { name = (string)args[0];   } catch { throw new CYFException("The argument \"name\" must be a string."); }
-        try { dirX = (float)args[1];    } catch { throw new CYFException("The argument \"dirX\" must be a number."); }
-        try { dirY = (float)args[2];    } catch { throw new CYFException("The argument \"dirY\" must be a number."); }
-        try { wallPass = (bool)args[3]; } catch { throw new CYFException("The argument \"wallPass\" must be a boolean."); }
-        try { waitEnd = (bool)args[4];  } catch { throw new CYFException("The argument \"waitEnd\" must be a boolean."); }
+        try { name = (string)args[1];   } catch { throw new CYFException("The argument \"name\" must be a string."); }
+        try { dirX = (float)args[2];    } catch { throw new CYFException("The argument \"dirX\" must be a number."); }
+        try { dirY = (float)args[3];    } catch { throw new CYFException("The argument \"dirY\" must be a number."); }
+        try { wallPass = (bool)args[4]; } catch { throw new CYFException("The argument \"wallPass\" must be a boolean."); }
+        try { waitEnd = (bool)args[5];  } catch { throw new CYFException("The argument \"waitEnd\" must be a boolean."); }
 
         if (waitEnd)
             if (coroutines.ContainsKey(scr) && script != scr) {
-                UnitaleUtil.DisplayLuaError(scr.scriptname, "Event.MoveToPoint: You can't use that function in a coroutine with waitEnd set to true.");
+                UnitaleUtil.DisplayLuaError(scr.scriptname, "Event.MoveToPoint: This function cannot be used in a coroutine with \"waitEnd\" set to true.");
                 yield break;
             } else if (LoadLaunched) {
-                UnitaleUtil.DisplayLuaError(scr.scriptname, "Event.MoveToPoint: You can't use that function in a page 0 function with waitEnd set to true.");
+                UnitaleUtil.DisplayLuaError(scr.scriptname, "Event.MoveToPoint: This function cannot be used in EventPage0 with \"waitEnd\" set to true.");
                 yield break;
             }
 
@@ -1136,48 +1175,89 @@ public class EventManager : MonoBehaviour {
                     if (go.transform.parent.name == "SpritePivot")
                         target = go.transform.parent;
                 target = target ?? go.transform; //oof
+
+                //Check if target is already in the middle of IMoveEventToPoint
+                if (name == "Player") {
+                    ScriptWrapper isMovingSource = go.GetComponent<PlayerOverworld>().isMovingSource;
+                    Vector2 roundedPos = new Vector2(Mathf.Round(target.position.x * 1000) / 1000, Mathf.Round(target.position.y * 1000) / 1000);
+                    Vector2 roundedEnd = new Vector2(Mathf.Round(dirX              * 1000) / 1000, Mathf.Round(dirY              * 1000) / 1000);
+                    if (roundedPos == roundedEnd)
+                        go.GetComponent<PlayerOverworld>().isMovingSource = null;
+                    if (isMovingSource != null && isMovingSource != scr && go.GetComponent<PlayerOverworld>().isMovingWaitEnd)
+                        isMovingSource.Call("CYFEventNextCommand");
+                    go.GetComponent<PlayerOverworld>().isMovingSource  = null;
+                    go.GetComponent<PlayerOverworld>().isMovingWaitEnd = waitEnd;
+                } else {
+                    ScriptWrapper isMovingSource = go.GetComponent<EventOW>().isMovingSource;
+                    Vector2 roundedPos = new Vector2(Mathf.Round(target.position.x * 1000) / 1000, Mathf.Round(target.position.y * 1000) / 1000);
+                    Vector2 roundedEnd = new Vector2(Mathf.Round(dirX              * 1000) / 1000, Mathf.Round(dirY              * 1000) / 1000);
+                    if (roundedPos == roundedEnd)
+                        go.GetComponent<EventOW>().isMovingSource = null;
+                    if (isMovingSource != null && isMovingSource != scr && go.GetComponent<EventOW>().isMovingWaitEnd)
+                        isMovingSource.Call("CYFEventNextCommand");
+                    go.GetComponent<EventOW>().isMovingSource  = null;
+                    go.GetComponent<EventOW>().isMovingWaitEnd = waitEnd;
+                }
+
                 if (!waitEnd)
                     scr.Call("CYFEventNextCommand");
-                
+
                 Vector2 endPoint = new Vector2(dirX - target.position.x, dirY - target.position.y);//, endPointFromNow = endPoint;
-                
+
                 // store the event's initial position
                 Vector2 originalPosition = new Vector2(target.position.x, target.position.y);
-                
+
                 //The animation process is automatic, if you renamed the Animation's triggers and animations as the Player's
                 if (go.GetComponent<CYFAnimator>()) {
                     int direction = CheckDirection(endPoint);
                     go.GetComponent<CYFAnimator>().movementDirection = direction;
                 }
 
-                //While the current position is different from the one we want our player to have
-                bool test = true;
-                try { test = (Vector2)target.position != endPoint; } catch (MissingReferenceException) { }
                 /*
                 float speed;
                 try {
                     speed = go != GameObject.Find("Player").transform.gameObject ? go.GetComponent<EventOW>().moveSpeed : PlayerOverworld.instance.speed;
                 } catch { yield break; }
                 */
-                while (test) {
+                while (true) {
+                    if (go == null) {
+                        scr.Call("CYFEventNextCommand");
+                        yield break;
+                    }
                     //Test is used to know if movement is possible or not
                     Vector2 clamped = Vector2.ClampMagnitude(endPoint, 1);
                     bool test2 = false;
                     Vector2 distanceFromStart = new Vector2(0, 0);
-                    
-                    // silence the error that occurs when transitioning in the overworld
-                    try {
-                        test2 = PlayerOverworld.instance.AttemptMove(clamped.x, clamped.y, go, wallPass);
-                        distanceFromStart = new Vector2(target.position.x - originalPosition.x, target.position.y - originalPosition.y);
-                    } catch (MissingReferenceException) {}
-                
+
+                    test2 = PlayerOverworld.instance.AttemptMove(clamped.x, clamped.y, go, wallPass);
+                    distanceFromStart = new Vector2(target.position.x - originalPosition.x, target.position.y - originalPosition.y);
+
+                    if (name == "Player") {
+                        go.GetComponent<PlayerOverworld>().isBeingMoved    = (test2 || wallPass) && distanceFromStart.magnitude > 0;
+                        go.GetComponent<PlayerOverworld>().isMoving        = (test2 || wallPass) && distanceFromStart.magnitude > 0;
+                        go.GetComponent<PlayerOverworld>().isMovingSource  = scr;
+                        go.GetComponent<PlayerOverworld>().isMovingWaitEnd = waitEnd;
+                    } else {
+                        go.GetComponent<EventOW>().isMovingSource  = ((test2 || wallPass) && distanceFromStart.magnitude > 0) ? scr : null;
+                        go.GetComponent<EventOW>().isMovingWaitEnd = waitEnd;
+                    }
+
                     //If we have reached the destination, stop the function
                     if (distanceFromStart.magnitude >= endPoint.magnitude) {
                         // if this code is run, that means the player must have reached their destination
-                        
+
                         target.position = new Vector3(dirX, dirY, target.position.z);
                         yield return 0;
 
+                        if (name == "Player") {
+                            go.GetComponent<PlayerOverworld>().isBeingMoved    = false;
+                            go.GetComponent<PlayerOverworld>().isMoving        = false;
+                            go.GetComponent<PlayerOverworld>().isMovingSource  = null;
+                            go.GetComponent<PlayerOverworld>().isMovingWaitEnd = false;
+                        } else {
+                            go.GetComponent<EventOW>().isMovingSource  = null;
+                            go.GetComponent<EventOW>().isMovingWaitEnd = false;
+                        }
                         if (waitEnd)
                             scr.Call("CYFEventNextCommand");
                         yield break;
@@ -1185,14 +1265,19 @@ public class EventManager : MonoBehaviour {
                     yield return 0;
 
                     if (!test2 && !wallPass) {
+                        if (name == "Player") {
+                            go.GetComponent<PlayerOverworld>().isBeingMoved    = false;
+                            go.GetComponent<PlayerOverworld>().isMoving        = false;
+                            go.GetComponent<PlayerOverworld>().isMovingSource  = null;
+                            go.GetComponent<PlayerOverworld>().isMovingWaitEnd = false;
+                        } else {
+                            go.GetComponent<EventOW>().isMovingSource  = null;
+                            go.GetComponent<EventOW>().isMovingWaitEnd = false;
+                        }
                         if (waitEnd)
                             scr.Call("CYFEventNextCommand");
                         yield break;
                     }
-                    try {
-                        //endPointFromNow = new Vector2(dirX - target.position.x, dirY - target.position.y);
-                        test = (Vector2)target.position != endPoint;
-                    } catch (MissingReferenceException) { }
                 }
             }
         UnitaleUtil.WriteInLogAndDebugger("Event.MoveToPoint: The name you entered in the function doesn't exist. Did you forget to add the 'Event' tag?");
@@ -1202,10 +1287,10 @@ public class EventManager : MonoBehaviour {
     IEnumerator IWaitForInput() {
         ScriptWrapper scr = luagenow.appliedScript;
         if (coroutines.ContainsKey(scr) && script != scr) {
-            UnitaleUtil.DisplayLuaError(scr.scriptname, "General.WaitForInput: You can't use that function in a coroutine.");
+            UnitaleUtil.DisplayLuaError(scr.scriptname, "General.WaitForInput: This function cannot be used in a coroutine.");
             yield break;
         } else if (LoadLaunched) {
-            UnitaleUtil.DisplayLuaError(scr.scriptname, "General.WaitForInput: You can't use that function in a page 0 function.");
+            UnitaleUtil.DisplayLuaError(scr.scriptname, "General.WaitForInput: This function cannot be used in EventPage0.");
             yield break;
         }
 
@@ -1228,15 +1313,15 @@ public class EventManager : MonoBehaviour {
 
         if (waitEnd)
             if (coroutines.ContainsKey(scr) && script != scr) {
-                UnitaleUtil.DisplayLuaError(scr.scriptname, "Screen.SetTone: You can't use that function in a coroutine with waitEnd set to true.");
+                UnitaleUtil.DisplayLuaError(scr.scriptname, "Screen.SetTone: This function cannot be used in a coroutine with \"waitEnd\" set to true.");
                 yield break;
             } else if (LoadLaunched) {
-                UnitaleUtil.DisplayLuaError(scr.scriptname, "Screen.SetTone: You can't use that function in a page 0 function with waitEnd set to true.");
+                UnitaleUtil.DisplayLuaError(scr.scriptname, "Screen.SetTone: This function cannot be used in EventPage0 with \"waitEnd\" set to true.");
                 yield break;
             }
 
         Color c = GameObject.Find("Tone").GetComponent<Image>().color;
-        
+
         int[] currents = new int[] { (int)(c.r * 255), (int)(c.g * 255), (int)(c.b * 255), (int)(c.a * 255) };
         int[] lacks = new int[] { r - currents[0], g - currents[1], b - currents[2], a - currents[3] };
         int[] beginLacks = lacks;
@@ -1250,7 +1335,7 @@ public class EventManager : MonoBehaviour {
         if (!waitEnd)
             scr.Call("CYFEventNextCommand");
 
-        while (GameObject.Find("Tone").GetComponent<Image>().color != new Color32((byte)r, (byte)g, (byte)b, (byte)a)) {
+        while (GameObject.Find("Tone") != null && GameObject.Find("Tone").GetComponent<Image>().color != new Color32((byte)r, (byte)g, (byte)b, (byte)a)) {
             for (int i = 0; i < realLacks.Length; i++)
                 realLacks[i] -= beginLacks[i] * 4 / beginHighest;
             if (highest <= 4)
@@ -1262,31 +1347,32 @@ public class EventManager : MonoBehaviour {
             highest -= 4;
             yield return 0;
         }
-        
-        if (a == 0)
+
+        if (GameObject.Find("Tone") != null && a == 0)
             luaevow.Remove("Tone");
         if (waitEnd)
             scr.Call("CYFEventNextCommand");
+        yield return 0;
     }
 
     IEnumerator IRotateEvent(object[] args) {
-        ScriptWrapper scr = luaevow.appliedScript;
-        //REAL ARGS
+        ScriptWrapper scr = (ScriptWrapper)args[0];
+
         string name;
         float rotateX, rotateY, rotateZ;
         bool waitEnd;
-        try { name = (string)args[0];   } catch { throw new CYFException("The argument \"name\" must be a string."); }
-        try { rotateX = (float)args[1]; } catch { throw new CYFException("The argument \"rotateX\" must be a number."); }
-        try { rotateY = (float)args[2]; } catch { throw new CYFException("The argument \"rotateY\" must be a number."); }
-        try { rotateZ = (float)args[3]; } catch { throw new CYFException("The argument \"rotateZ\" must be a number."); }
-        try { waitEnd = (bool)args[4]; } catch { throw new CYFException("The argument \"waitEnd\" must be a boolean."); }
+        try { name = (string)args[1];   } catch { throw new CYFException("The argument \"name\" must be a string."); }
+        try { rotateX = (float)args[2]; } catch { throw new CYFException("The argument \"rotateX\" must be a number."); }
+        try { rotateY = (float)args[3]; } catch { throw new CYFException("The argument \"rotateY\" must be a number."); }
+        try { rotateZ = (float)args[4]; } catch { throw new CYFException("The argument \"rotateZ\" must be a number."); }
+        try { waitEnd = (bool)args[5]; } catch { throw new CYFException("The argument \"waitEnd\" must be a boolean."); }
 
         if (waitEnd)
-            if (coroutines.ContainsKey(scr) && script != scr && script != scr) {
-                UnitaleUtil.DisplayLuaError(scr.scriptname, "Event.Rotate: You can't use that function in a coroutine with waitEnd set to true.");
+            if (coroutines.ContainsKey(scr) && script != scr) {
+                UnitaleUtil.DisplayLuaError(scr.scriptname, "Event.Rotate: This function cannot be used in a coroutine with \"waitEnd\" set to true.");
                 yield break;
             } else if (LoadLaunched) {
-                UnitaleUtil.DisplayLuaError(scr.scriptname, "Event.Rotate: You can't use that function in a page 0 function with waitEnd set to true.");
+                UnitaleUtil.DisplayLuaError(scr.scriptname, "Event.Rotate: This function cannot be used in EventPage0 with \"waitEnd\" set to true.");
                 yield break;
             }
 
@@ -1295,6 +1381,35 @@ public class EventManager : MonoBehaviour {
             if (name == go.name || name == "Player") {
                 if (name == "Player")
                     go = GameObject.Find("Player");
+
+                //Check if target is already in the middle of IRotateEvent
+                if (name == "Player") {
+                    ScriptWrapper isRotatingSource = go.GetComponent<PlayerOverworld>().isRotatingSource;
+                    if (go.transform.rotation.eulerAngles.x == rotateX && go.transform.rotation.eulerAngles.y == rotateY && go.transform.rotation.eulerAngles.z == rotateZ)
+                        go.GetComponent<PlayerOverworld>().isRotatingSource = null;
+                    if (isRotatingSource != null && isRotatingSource != scr && go.GetComponent<PlayerOverworld>().isRotatingWaitEnd)
+                        isRotatingSource.Call("CYFEventNextCommand");
+                    go.GetComponent<PlayerOverworld>().isRotatingSource = null;
+                    go.GetComponent<PlayerOverworld>().isRotatingWaitEnd = false;
+                } else {
+                    ScriptWrapper isRotatingSource = go.GetComponent<EventOW>().isRotatingSource;
+                    if (go.transform.rotation.eulerAngles.x == rotateX && go.transform.rotation.eulerAngles.y == rotateY && go.transform.rotation.eulerAngles.z == rotateZ)
+                        go.GetComponent<EventOW>().isRotatingSource = null;
+                    if (isRotatingSource != null && isRotatingSource != scr && go.GetComponent<EventOW>().isRotatingWaitEnd)
+                        isRotatingSource.Call("CYFEventNextCommand");
+                    go.GetComponent<EventOW>().isRotatingSource = null;
+                    go.GetComponent<EventOW>().isRotatingWaitEnd = false;
+                }
+
+                if (name == "Player") {
+                    go.GetComponent<PlayerOverworld>().isRotatingSource  = scr;
+                    go.GetComponent<PlayerOverworld>().isRotatingWaitEnd = waitEnd;
+                } else {
+                    go.GetComponent<EventOW>().isRotatingSource  = scr;
+                    go.GetComponent<EventOW>().isRotatingWaitEnd = waitEnd;
+                }
+                if (!waitEnd)
+                    scr.Call("CYFEventNextCommand");
 
                 float lackX = rotateX - go.transform.rotation.eulerAngles.x;
                 float lackY = rotateY - go.transform.rotation.eulerAngles.y;
@@ -1320,12 +1435,23 @@ public class EventManager : MonoBehaviour {
                     yield return 0;
                 }
                 go.GetComponent<RectTransform>().rotation = Quaternion.Euler(rotateX, rotateY, rotateZ);
-                scr.Call("CYFEventNextCommand");
+
+                if (name == "Player") {
+                    go.GetComponent<PlayerOverworld>().isRotatingSource  = null;
+                    go.GetComponent<PlayerOverworld>().isRotatingWaitEnd = false;
+                } else {
+                    go.GetComponent<EventOW>().isRotatingSource  = null;
+                    go.GetComponent<EventOW>().isRotatingWaitEnd = false;
+                }
+                if (waitEnd)
+                    scr.Call("CYFEventNextCommand");
+
                 yield break;
             }
         }
         UnitaleUtil.WriteInLogAndDebugger("Event.Rotate: The name you entered in the function isn't an event's name. Did you forget to add the 'Event' tag?");
         scr.Call("CYFEventNextCommand");
+        yield return 0;
     }
 
     IEnumerator IFadeBGM(object[] args) {
@@ -1337,10 +1463,10 @@ public class EventManager : MonoBehaviour {
 
         if (waitEnd) 
             if (coroutines.ContainsKey(scr) && script != scr) {
-                UnitaleUtil.DisplayLuaError(scr.scriptname, "General.StopBGM: You can't use that function in a coroutine with waitEnd set to true.");
+                UnitaleUtil.DisplayLuaError(scr.scriptname, "General.StopBGM: This function cannot be used in a coroutine with \"waitEnd\" set to true.");
                 yield break;
             } else if (LoadLaunched) {
-                UnitaleUtil.DisplayLuaError(scr.scriptname, "General.StopBGM: You can't use that function in a page 0 function with waitEnd set to true.");
+                UnitaleUtil.DisplayLuaError(scr.scriptname, "General.StopBGM: This function cannot be used in EventPage0 with \"waitEnd\" set to true.");
                 yield break;
             }
         
@@ -1355,6 +1481,7 @@ public class EventManager : MonoBehaviour {
         audio.Stop();
         audio.volume = 1;
         bgmCoroutine = false;
+        yield return 0;
     }
 
     IEnumerator IFlash(object[] args) {
@@ -1371,10 +1498,10 @@ public class EventManager : MonoBehaviour {
 
         if (waitEnd)
             if (coroutines.ContainsKey(scr) && script != scr) {
-                UnitaleUtil.DisplayLuaError(scr.scriptname, "Screen.Flash: You can't use that function in a coroutine with waitEnd set to true.");
+                UnitaleUtil.DisplayLuaError(scr.scriptname, "Screen.Flash: This function cannot be used in a coroutine with \"waitEnd\" set to true.");
                 yield break;
             } else if (LoadLaunched) {
-                UnitaleUtil.DisplayLuaError(scr.scriptname, "Screen.Flash: You can't use that function in a page 0 function with waitEnd set to true.");
+                UnitaleUtil.DisplayLuaError(scr.scriptname, "Screen.Flash: This function cannot be used in EventPage0 with \"waitEnd\" set to true.");
                 yield break;
             }
 
@@ -1392,6 +1519,7 @@ public class EventManager : MonoBehaviour {
         Destroy(flash);
         if (waitEnd)
             scr.Call("CYFEventNextCommand");
+        yield return 0;
     }
 
     IEnumerator ISave(object[] args) {
@@ -1401,18 +1529,20 @@ public class EventManager : MonoBehaviour {
         try { forced = (bool)args[0]; } catch { throw new CYFException("The argument \"forced\" must be a boolean."); }
 
         if (forced) {
-            SaveLoad.Save();
+            SaveLoad.Save(true);
+            if (scr != null)
+                scr.Call("CYFEventNextCommand");
             yield break;
         } else if (coroutines.ContainsKey(scr) && script != scr) {
-            UnitaleUtil.DisplayLuaError(scr.scriptname, "General.Save: You can't use that function in a coroutine.");
+            UnitaleUtil.DisplayLuaError(scr.scriptname, "General.Save: This function cannot be used in a coroutine.");
             yield break;
         } else if (LoadLaunched) {
-            UnitaleUtil.DisplayLuaError(scr.scriptname, "General.Save: You can't use that function in a page 0 function.");
+            UnitaleUtil.DisplayLuaError(scr.scriptname, "General.Save: This function cannot be used in EventPage0.");
             yield break;
         }
         bool save = true;
         Color c = PlayerOverworld.instance.utHeart.color;
-        PlayerOverworld.instance.utHeart.transform.position = new Vector3(151 + Camera.main.transform.position.x - 320, 233 + Camera.main.transform.position.y - 240,
+        PlayerOverworld.instance.utHeart.transform.position = new Vector3(151 + Camera.main.transform.position.x - 320, 224 + Camera.main.transform.position.y - 240,
                                                                           PlayerOverworld.instance.utHeart.transform.position.z);
         PlayerOverworld.instance.utHeart.color = new Color(c.r, c.g, c.b, 1);
         GameObject.Find("save_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 1);
@@ -1422,32 +1552,29 @@ public class EventManager : MonoBehaviour {
         TextManager txtLevel = GameObject.Find("TextManagerLevel").GetComponent<TextManager>(), txtTime = GameObject.Find("TextManagerTime").GetComponent<TextManager>(),
                     txtMap = GameObject.Find("TextManagerMap").GetComponent<TextManager>(), txtName = GameObject.Find("TextManagerName").GetComponent<TextManager>(),
                     txtSave = GameObject.Find("TextManagerSave").GetComponent<TextManager>(), txtReturn = GameObject.Find("TextManagerReturn").GetComponent<TextManager>();
-        txtLevel.SetHorizontalSpacing(2); txtTime.SetHorizontalSpacing(2); txtMap.SetHorizontalSpacing(2);
-        txtName.SetHorizontalSpacing(2); txtSave.SetHorizontalSpacing(2); txtReturn.SetHorizontalSpacing(2);
         //foreach (RectTransform t in GameObject.Find("save_interior").transform)
             //t.sizeDelta = new Vector2(t.sizeDelta.x, t.sizeDelta.y + 1);
 
-        string playerName = ""; double playerLevel = 0;//, playerTime = 0;
-        bool isAlreadySave = false;
-        if (SaveLoad.savedGame != null) isAlreadySave = true;
-        if (isAlreadySave) {
+        string playerName = ""; double playerLevel = 0;
+        if (SaveLoad.savedGame != null) {
             playerName = SaveLoad.savedGame.player.Name;
             playerLevel = SaveLoad.savedGame.player.LV;
-            //SaveLoad.savedGame.playerVariablesNum.TryGetValue("PlayerTime", out playerTime);
 
-            txtName.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]" + playerName, false, true) });
-            txtLevel.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]LV" + playerLevel, false, true) });
-            txtTime.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]0:00", false, true) });
-            txtMap.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]" + SaveLoad.savedGame.lastScene, false, true) });
+            txtName.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][charspacing:2]" + playerName, false, true) });
+            txtLevel.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][charspacing:2]LV" + playerLevel, false, true) });
+            txtTime.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][charspacing:2]" + UnitaleUtil.TimeFormatter(SaveLoad.savedGame.playerTime), false, true) });
+            GameObject.Find("TextManagerTime").transform.localPosition = new Vector3(180f - UnitaleUtil.CalcTextWidth(txtTime), 68, 0f);
+            txtMap.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][charspacing:2]" + SaveLoad.savedGame.lastScene, false, true) });
         } else {
-            txtName.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]EMPTY", false, true) });
-            txtLevel.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]LV0", false, true) });
-            txtTime.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]0:00", false, true) });
-            txtMap.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]--", false, true) });
+            txtName.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][charspacing:2]EMPTY", false, true) });
+            txtLevel.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][charspacing:2]LV0", false, true) });
+            txtTime.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][charspacing:2]0:00", false, true) });
+            GameObject.Find("TextManagerTime").transform.localPosition = new Vector3(130f, 68, 0f);
+            txtMap.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][charspacing:2]--", false, true) });
         }
-        txtSave.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]Save", false, true) });
-        txtReturn.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]Return", false, true) });
-        
+        txtSave.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][charspacing:2]Save", false, true) });
+        txtReturn.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][charspacing:2]Return", false, true) });
+
         GameObject.Find("Mugshot").GetComponent<Image>().color = new Color(1, 1, 1, 0);
         GameObject.Find("textframe_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 0);
         GameObject.Find("textframe_interior").GetComponent<Image>().color = new Color(0, 0, 0, 0);
@@ -1463,21 +1590,22 @@ public class EventManager : MonoBehaviour {
                 save = !save;
             } else if (GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED) {
                 PlayerOverworld.instance.utHeart.color = new Color(c.r, c.g, c.b, 0);
-                txtName.DestroyText(); txtLevel.DestroyText(); txtTime.DestroyText(); txtMap.DestroyText(); txtSave.DestroyText(); txtReturn.DestroyText();
+                txtName.DestroyChars(); txtLevel.DestroyChars(); txtTime.DestroyChars(); txtMap.DestroyChars(); txtSave.DestroyChars(); txtReturn.DestroyChars();
                 GameObject.Find("save_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 0);
                 GameObject.Find("save_interior").GetComponent<Image>().color = new Color(0, 0, 0, 0);
                 script.Call("CYFEventNextCommand");
                 yield break;
             } else if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED) {
                 if (save) {
-                    SaveLoad.Save();
+                    SaveLoad.Save(true);
                     PlayerOverworld.instance.utHeart.color = new Color(c.r, c.g, c.b, 0);
-                    txtName.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]" + PlayerCharacter.instance.Name, false, true) });
-                    txtLevel.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]LV" + PlayerCharacter.instance.LV, false, true) });
-                    txtTime.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]0:00", false, true) });
-                    txtMap.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]" + SaveLoad.savedGame.lastScene, false, true) });
-                    txtSave.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]File saved.", false, true) });
-                    txtReturn.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]", false, true) });
+                    txtName.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][charspacing:2]" + PlayerCharacter.instance.Name, false, true) });
+                    txtLevel.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][charspacing:2]LV" + PlayerCharacter.instance.LV, false, true) });
+                    txtTime.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][charspacing:2]" + UnitaleUtil.TimeFormatter(SaveLoad.savedGame.playerTime), false, true) });
+                    GameObject.Find("TextManagerTime").transform.localPosition = new Vector3(180f - UnitaleUtil.CalcTextWidth(txtTime), 68, 0f);
+                    txtMap.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][charspacing:2]" + SaveLoad.savedGame.lastScene, false, true) });
+                    txtSave.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][charspacing:2]File saved.", false, true) });
+                    txtReturn.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][charspacing:2]", false, true) });
                     foreach (Image img in GameObject.Find("save_interior").transform.GetComponentsInChildren<Image>())
                         img.color = new Color(1, 1, 0, 1);
                     GameObject.Find("save_interior").GetComponent<Image>().color = new Color(0, 0, 0, 1);
@@ -1491,7 +1619,7 @@ public class EventManager : MonoBehaviour {
                     } while (GlobalControls.input.Confirm != UndertaleInput.ButtonState.PRESSED);
                 }
                 PlayerOverworld.instance.utHeart.color = new Color(c.r, c.g, c.b, 0);
-                txtName.DestroyText(); txtLevel.DestroyText(); txtTime.DestroyText(); txtMap.DestroyText(); txtSave.DestroyText(); txtReturn.DestroyText();
+                txtName.DestroyChars(); txtLevel.DestroyChars(); txtTime.DestroyChars(); txtMap.DestroyChars(); txtSave.DestroyChars(); txtReturn.DestroyChars();
                 GameObject.Find("save_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 0);
                 GameObject.Find("save_interior").GetComponent<Image>().color = new Color(0, 0, 0, 0);
                 script.Call("CYFEventNextCommand");
@@ -1514,11 +1642,11 @@ public class EventManager : MonoBehaviour {
         try { waitEnd = (bool)args[4];      } catch { throw new CYFException("The argument \"waitEnd\" must be a boolean."); }
         try { info = (string)args[5];       } catch { throw new CYFException("The argument \"info\" must be a string."); }
 
-        if (coroutines.ContainsKey(scr) && script != scr) {
-            UnitaleUtil.DisplayLuaError(instance.events[instance.actualEventIndex].name, info + ": You can't use that function in a coroutine with waitEnd set to true.");
+        if (coroutines.ContainsKey(scr) && script != scr && waitEnd) {
+            UnitaleUtil.DisplayLuaError(instance.events[instance.actualEventIndex].name, info + ": This function cannot be used in a coroutine with \"waitEnd\" set to true.");
             yield break;
         } else if (LoadLaunched) {
-            UnitaleUtil.DisplayLuaError(instance.events[instance.actualEventIndex].name, info + ": You can't use that function in a page 0 function with waitEnd set to true.");
+            UnitaleUtil.DisplayLuaError(instance.events[instance.actualEventIndex].name, info + ": This function cannot be used in EventPage0 with \"waitEnd\" set to true.");
             yield break;
         }
 
@@ -1557,15 +1685,16 @@ public class EventManager : MonoBehaviour {
         }
         if (waitEnd)
             scr.Call("CYFEventNextCommand");
+        yield return 0;
     }
 
     public IEnumerator IWait(int frames) {
         ScriptWrapper scr = luagenow.appliedScript;
         if (coroutines.ContainsKey(scr) && script != scr) {
-            UnitaleUtil.DisplayLuaError(scr.scriptname, "General.Wait: You can't use that function in a coroutine.");
+            UnitaleUtil.DisplayLuaError(scr.scriptname, "General.Wait: This function cannot be used in a coroutine.");
             yield break;
         } else if (LoadLaunched) {
-            UnitaleUtil.DisplayLuaError(scr.scriptname, "General.Wait: You can't use that function in a page 0 function.");
+            UnitaleUtil.DisplayLuaError(scr.scriptname, "General.Wait: This function cannot be used in EventPage0.");
             yield break;
         }
         int curr = 0;
@@ -1575,28 +1704,32 @@ public class EventManager : MonoBehaviour {
         }
         if (scr.GetVar("CYFEventLastAction").String == "General.Wait")
             scr.Call("CYFEventNextCommand");
+        yield return 0;
     }
 
-    public IEnumerator IEnterShop() {
+    public IEnumerator IEnterShop(bool instant) {
         ScriptWrapper scr = luagenow.appliedScript;
         if (coroutines.ContainsKey(scr) && script != scr) {
-            UnitaleUtil.DisplayLuaError(scr.scriptname, "General.EnterShop: You can't use that function in a coroutine.");
+            UnitaleUtil.DisplayLuaError(scr.scriptname, "General.EnterShop: This function cannot be used in a coroutine.");
             yield break;
         } else if (LoadLaunched) {
-            UnitaleUtil.DisplayLuaError(scr.scriptname, "General.EnterShop: You can't use that function in a page 0 function.");
+            UnitaleUtil.DisplayLuaError(scr.scriptname, "General.EnterShop: This function cannot be used in EventPage0.");
             yield break;
         }
-        Fading fade = FindObjectOfType<Fading>();
-        float fadeTime = fade.BeginFade(1);
-        yield return new WaitForSeconds(fadeTime);
+        if (!instant) {
+            Fading fade = FindObjectOfType<Fading>();
+            float fadeTime = fade.BeginFade(1);
+            yield return new WaitForSeconds(fadeTime);
+        }
         EndEvent();
 
         PlayerOverworld.HideOverworld("Shop");
         GlobalControls.isInShop = true;
         SceneManager.LoadScene("Shop", LoadSceneMode.Additive);
+        yield return 0;
     }
 
-    IEnumerator ISpawnBoxMenu(object[] args) {
+    IEnumerator ISpawnBoxMenu() {
         ScriptWrapper scr = luainvow.appliedScript;
         GameObject.Find("itembox").AddComponent<ItemBoxUI>();
         PlayerOverworld.instance.PlayerNoMove = true; //Start box menu
@@ -1607,5 +1740,6 @@ public class EventManager : MonoBehaviour {
             yield return 0;
 
         scr.Call("CYFEventNextCommand");
+        yield return 0;
     }
 }
