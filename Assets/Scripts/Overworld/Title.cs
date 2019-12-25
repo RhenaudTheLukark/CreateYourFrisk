@@ -88,25 +88,26 @@ public class Title : MonoBehaviour {
                         GameObject.Find("TextManagerName").GetComponent<TextManager>().SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]" + PlayerCharacter.instance.Name, false, true) });
                         GameObject.Find("TextManagerLevel").GetComponent<TextManager>().SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]" + (GlobalControls.crate ? "VL" : "LV") +
                                                                                                                                          PlayerCharacter.instance.LV, false, true) });
-                        GameObject.Find("TextManagerTime").GetComponent<TextManager>().SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]0:00", false, true) });
+                        GameObject.Find("TextManagerTime").GetComponent<TextManager>().SetTextQueue(new TextMessage[] {new TextMessage("[noskipatall]" + UnitaleUtil.TimeFormatter(SaveLoad.savedGame.playerTime), false, true) });
                         GameObject.Find("TextManagerMap").GetComponent<TextManager>().SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]" + SaveLoad.savedGame.lastScene, false, true) });
                         tmName.SetTextQueue(new TextMessage[] { new TextMessage(PlayerCharacter.instance.Name, false, true) });
                         diff = calcTotalLength(tmName);
                         tmName.SetEffect(new ShakeEffect(tmName));
                     }
                 } catch {
+                    GlobalControls.allowWipeSave = true;
                     if (GlobalControls.crate)
-                        UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, "U USED AN ODL VERSOIN OF CFY? IT ISN'T RERTOCOMAPTIBEL.\n\n"
+                        UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, "U USED AN ODL VERSOIN OF CFY? IT ISN'T COMAPTIBEL.\n\n"
                                                                          + "DELEET UR SAVE OT NOT HVAE DA ERRRO AGAIN. HREE: <b>\n"
-                                                                         + Application.persistentDataPath + "/save.gd</b>\n"
-                                                                         + "IF MOAR PORBLMES, TELL EM! :D\n\n"
-                                                                         + "SP : NO ESPACE HERE!!!!!!");
+                                                                         + Application.persistentDataPath + "/save.gd</b>\n\n"
+                                                                         + "OR <b>PERS R NWO</b> TO DELEET SAV N CLOSE YCF.\n\n\n"
+                                                                         + "IF MOAR PORBLMES, TELL EM! :D\n\n");
                     else
-                        UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, "Have you saved on a previous version of CYF? Your save isn't compatible with this version.\n\n"
+                        UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, "Have you saved on a previous or newer version of CYF? Your save isn't compatible with this version.\n\n"
                                                                          + "To fix this, you must delete your save file. It can be found here: \n<b>"
-                                                                         + Application.persistentDataPath + "/save.gd</b>\n"
-                                                                         + "Tell me if you have any more problems, and thanks for following my fork! ^^\n\n"
-                                                                         + "PS: Don't try to press ESCAPE, or bad things can happen ;)");
+                                                                         + Application.persistentDataPath + "/save.gd</b>\n\n"
+                                                                         + "Or, you can <b>Press R now</b> to delete your save and close CYF.\n\n\n"
+                                                                         + "Tell me if you have any more problems, and thanks for following my fork! ^^\n\n");
                 }
             } else {
                 if (GlobalControls.input.Right == UndertaleInput.ButtonState.PRESSED || GlobalControls.input.Left == UndertaleInput.ButtonState.PRESSED)
@@ -169,6 +170,7 @@ public class Title : MonoBehaviour {
 
     IEnumerator LoadGame() {
         GameObject.DontDestroyOnLoad(gameObject);
+        UnitaleUtil.ResetOW();
         SceneManager.LoadScene("TransitionOverworld");
         yield return 0;
         //yield return Application.isLoadingLevel;
@@ -199,6 +201,7 @@ public class Title : MonoBehaviour {
         GlobalControls.GameMapData.Clear();
         Inventory.inventory.Clear();
         GameObject.DontDestroyOnLoad(gameObject);
+        UnitaleUtil.ResetOW();
         SceneManager.LoadScene("TransitionOverworld");
         yield return 0;
         //yield return Application.isLoadingLevel;

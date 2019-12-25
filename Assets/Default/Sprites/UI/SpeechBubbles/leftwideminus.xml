@@ -3,5 +3,5 @@
     <sprite name="left">
         <border x="9" y="8" z="21" w="7"/>
     </sprite>
-    <wideness>140</wideness>
+    <width>140</width>
 </spritesheet>

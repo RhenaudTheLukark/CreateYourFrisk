@@ -38,39 +38,38 @@ it's w3c valid, at least
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                     <li><a href="controls.html">Controls</a></li>
                     <li><a href="basic.html">Basic setup</a></li>
-                    <li><a href="variables.html">Special Variables</a></li>
+                    <li class="new"><a href="variables.html">Special Variables</a></li>
                     <li><a href="terms.html">Terminology</a></li>
                 <li class="li-header">API</li>
-                    <li><a href="api-text.html">Text commands</a></li>
-                    <li class="active" style="margin-left:5px;">> Game events <</li>
+                    <li class="new"><a href="api-text.html">Text commands</a></li>
+                    <li class="active new" style="margin-left:5px;">> Game events <</li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                     <li class="li-indent">Functions &amp; Objects:</li>
-                        <li class="li-indent"><a href="api-functions-main.html">Misc. Functions</a></li>
-                        <li class="li-indent"><a href="api-functions-player.html">The Player Object</a></li>
-                        <li class="li-indent"><a href="api-functions-script.html">The Script Object</a></li>
-                        <li class="li-indent"><a href="api-functions-audio.html">The Audio Object</a></li>
-                        <li class="li-indent"><a href="api-functions-newaudio.html"><span class="CYF"></span> The NewAudio Object</a></li>
-                        <li class="li-indent"><a href="api-functions-input.html">The Input Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-main.html">Misc. Functions</a></li>
+                        <li class="li-indent new"><a href="api-functions-player.html">The Player Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-script.html">The Script Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-audio.html">The Audio Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-newaudio.html"><span class="CYF"></span> The NewAudio Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-input.html">The Input Object</a></li>
                         <li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
-                        <li class="li-indent"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
-                        <li class="li-indent"><a href="api-functions-waves.html">Wave Scripts</a></li>
+                        <li class="li-indent"><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
+                        <li class="li-indent"><a href="api-functions-waves.html">The Arena Object</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                     <li><a href="api-projectile.html">Projectile management</a></li>
-                    <li><a href="api-animation.html">Sprites &amp; Animation</a></li>
-                    <li><a href="api-keys.html"><span class="CYF"></span> Key List</a></li>
-                <li class="li-header">Create Your Frisk's new features</li>     
-                    <li><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory System</a></li>
                     <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
-                    <li><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
+                    <li class="new"><a href="api-animation.html">Sprites &amp; Animation</a></li>
+                    <li class="new"><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
+                    <li><a href="api-keys.html"><span class="CYF"></span> Key List</a></li>
                 <li class="li-header">Overworld</li>
-                    <li><a href="overworld.html"><span class="CYF"></span> Basics</a></li>
+                    <li class="new"><a href="overworld.html"><span class="CYF"></span> Basics</a></li>
                     <li><a href="overworld-howto-map.html"><span class="CYF"></span> How to create a map</a></li>
                     <li><a href="overworld-howto-event.html"><span class="CYF"></span> How to create an event</a></li>
                     <li><a href="overworld-howto-animevent.html"><span class="CYF"></span> How to animate an event</a></li>
-                    <li><a href="overworld-howto-shop.html"><span class="CYF"></span> How to create a shop</a></li>
-                    <li><a href="overworld-object-general.html"><span class="CYF"></span> The General Object</a></li>
-                    <li><a href="overworld-object-event.html"><span class="CYF"></span> The Event Object</a></li>
-                    <li><a href="overworld-object-player.html"><span class="CYF"></span> The Player Object</a></li>
+                    <li class="new"><a href="overworld-howto-shop.html"><span class="CYF"></span> How to create a shop</a></li>
+                    <li class="new"><a href="overworld-object-general.html"><span class="CYF"></span> The General Object</a></li>
+                    <li class="new"><a href="overworld-object-event.html"><span class="CYF"></span> The Event Object</a></li>
+                    <li class="new"><a href="overworld-object-player.html"><span class="CYF"></span> The Player Object</a></li>
                     <li><a href="overworld-object-screen.html"><span class="CYF"></span> The Screen Object</a></li>
                     <li><a href="overworld-object-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
                     <li><a href="overworld-object-map.html"><span class="CYF"></span> The Map Object</a></li>
@@ -192,9 +191,20 @@ end
             </div>
             <p>
                 <br><span class="function">Update()</span>
-                This function runs for every frame for all of the encounter, even during waves. For advanced users: the
-                Update function is required to exist at the beginning of the encounter. If you define it at a later
-                point in time, it will not get executed.
+                This function runs for every frame (usually at 60FPS, depends on the player's framerate) for all of
+                the encounter, even during waves. This is an extremely powerful function, as it can run any code at
+                any time, no matter what. The only exception is the game over state - if the player dies, no code
+                from within this function will be run.
+            </p>
+            <p>
+                <br><span class="function new"><span class="CYF"> </span>BeforeDeath()</span>
+                This function runs the moment the Player takes mortal damage (by any means, including bullet damage,
+                scripted damage, setting <span class="term">Player.hp</span> to <span class="term">0</span>, and even
+                text commands), just before activating the Game Over sequence. This is the perfect place to set Real
+                and AlMighty Globals you want set when the player dies<br>(see <span class="ref">Misc. Functions</span>).
+                <br><br>
+                If you use <span class="term">Player.hp</span> or <span class="term">Player.Heal</span> here to bring the
+                Player's hp back to greater than 0, they will live and the Game Over sequence will be cancelled.
             </p>
             <br><br>
             <hr>
@@ -216,20 +226,20 @@ end
                 screw up the battle UI.
             </p>
             <p>
-                <br><span class="function"><span class="CYF"></span>OnSpare()</span>
+                <br><span class="function"><span class="CYF"> </span>OnSpare()</span>
                 Happens after you successfully spared a monster. If you implement <span class="term">OnSpare()</span>, your monster will not be
                 spared automatically, and you will have to do it manually with the <span class="term">Spare()</span> function.
                 <span class="term">OnSpare()</span> will only happen through a monster spare that happened with the SPARE command - scripted <span class="term">Spare()</span> calls will 
                 not trigger it.
             </p>
             <p>
-                <br><span class="function"><span class="CYF"></span>BeforeDamageCalculation()</span>
+                <br><span class="function"><span class="CYF"> </span>BeforeDamageCalculation()</span>
                 Happens before the damage calculation after pressing Z when attacking. You can easily use <span class="term">SetDamage()</span>
                 in this function and lots of other animations and such.
                 <br><i>Previous name: <span class="term">OnAttack()</span></i>
             </p>
             <p>
-                <br><span class="function"><span class="CYF"></span>BeforeDamageValues()</span>
+                <br><span class="function"><span class="CYF"> </span>BeforeDamageValues()</span>
                 Happens before the damage ui is displayed on the monster (the life bar and the damage number) and before
                 the hp changing. You can still change the target with <span class="term">Player.changeTarget(targetNumber)</span> in this function.
             </p>
@@ -272,7 +282,7 @@ end
                 <span class="ref">API - Projectile Management</span> page.
             </p>
             <p>
-                <br><span class="function"><span class="CYF"></span>EndingWave()</span>
+                <br><span class="function"><span class="CYF"> </span>EndingWave()</span>
                 This function is called just before the wave ends. It allows you to easily reset some variables and other such things.
             </p>
             <p>

@@ -1,4 +1,4 @@
-if not GetRealGlobal("ow") then error("You really should try to access these encounters the normal way... Here is a clue: you need to move the dog in the map test2 using an event. Now good luck!") end
+if not GetRealGlobal("ow") then error("You really should try to access these encounters the normal way...\n\nHere is a clue: You should try talking to the dog.\n\nNow good luck!", 0) end
 
 encountertext = "Poseur strikes a pose!" --Modify as necessary. It will only be read out in the action select screen.
 nextwaves = {"bullettest_chaserorb"}
@@ -25,22 +25,24 @@ function EncounterStarting()
 	fade.y = 240
 	fade.Scale(640, 480)
 	fade.alpha = 1
-    enemies[1]["currentdialogue"] = {"[noskip][func:LaunchFade, true][w:60][next]",
-	                                 "[noskip][effect:none][func:Animate]However,[w:15] the next releases of Create Your Frisk weren't very successful,[w:15] despite a lot of new features,[w:15] tweaks and functions.[w:60][next]",
-									 "[noskip][effect:none][func:SetSprite,Mionn/sad]The problem was that all the versions had at least one bug that greatly reduced the appeal of the engine.[w:60][next]",
-									 "[noskip][effect:none]Even today,[w:15] in 0.5.1,[w:15] though RTL said that 0.4.4.4 was stable,[w:15] it wasn't.[w:60][next]",
-									 "[noskip][effect:none][func:SetSprite,Mionn/transit_to_fight4]Besides,[w:15] there will always be a bug somewhere.[w:15] That's how coding is.[w:60][next]",
-									 "[noskip][effect:none][func:SetSprite,Mionn/sad]He had a lot of problems with this,[w:15] and felt sorry for himself because he couldn't make a good, stable engine for people to use freely...[w:60][next]",
+    enemies[1]["currentdialogue"] = {"[noskip][func:LaunchFade, true][w:30][next]",
+	                                 "[noskip][effect:none][func:Animate]However,[w:10] the next releases of Create Your Frisk weren't very successful,[w:10] despite a lot of new features,[w:10] tweaks and functions.[w:30][next]",
+									 "[noskip][effect:none][func:SetSprite,Mionn/sad]The problem was that all the versions had at least one bug that greatly reduced the appeal of the engine.[w:30][next]",
+									 "[noskip][effect:none]Up to CYF v0.6.1.2,[w:10] though RTL said that a lot of versions were stable,[w:10] they weren't.[w:30][next]",
+									 "[noskip][effect:none][func:SetSprite,Mionn/transit_to_fight4]Besides,[w:10] there will always be a bug somewhere.[w:10] That's how coding is.[w:30][next]",
+									 "[noskip][effect:none][func:SetSprite,Mionn/sad]He had a lot of problems with this,[w:10] and felt sorry for himself because he couldn't make a good,[w:10] stable engine for people to use freely...[w:30][next]",
+									 "[noskip][effect:none][func:SetSprite,Mionn/happy]Thankfully,[w:10] since CYF v0.6.2,[w:10] the engine is much more stable.[w:30][next]",
+									 "[noskip][effect:none]Other developers took part in the project,[w:10] and their new additions made it better than ever before.[w:30][next]",
 									 "[noskip][func:LaunchFade, false][w:35][func:State,DONE]"}
     require "Waves/bullettest_touhou"
 	State("ENEMYDIALOGUE")
 end
 
 function LaunchFade(begin)
-    if begin then  
+    if begin then
 	    beginfade = true
 	    fade.alpha = 1
-	else           
+	else
 	    endfade = true
 	    fade.alpha = 0
     end
@@ -56,7 +58,7 @@ function Update()
 		else  		     fade.alpha = fade.alpha - Time.dt
 		end
 	end
-	if (fade.alpha * 1000) % 1000 != 1000 and (fade.alpha * 1000) % 1000 != 0 then
+	if (fade.alpha * 1000) % 1000 ~= 1000 and (fade.alpha * 1000) % 1000 ~= 0 then
 		if alphaup then  fade.alpha = fade.alpha + Time.dt
 		else  		     fade.alpha = fade.alpha - Time.dt
 		end

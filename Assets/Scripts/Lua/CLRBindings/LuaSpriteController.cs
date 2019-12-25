@@ -5,7 +5,7 @@ using MoonSharp.Interpreter;
 using UnityEngine.UI;
 
 public class LuaSpriteController {
-    public GameObject _img;  // The real image
+    [MoonSharpHidden] public GameObject _img;  // The real image
     internal GameObject img { // A image that returns the real image. We use this to be able to detect if the real image is null, and if it is, throw an exception
         get {
             if (_img == null)
@@ -18,16 +18,16 @@ public class LuaSpriteController {
     }
     private bool firstFrame = true;
     private Dictionary<string, DynValue> vars = new Dictionary<string, DynValue>();
-    public Vector2 nativeSizeDelta;                   // The native size of the image
+    [MoonSharpHidden] public Vector2 nativeSizeDelta;                   // The native size of the image
     private Vector3 internalRotation = Vector3.zero;  // The rotation of the sprite
     private float xScale = 1;                         // The X scale of the sprite
     private float yScale = 1;                         // The Y scale of the sprite
     private Sprite originalSprite;                    // The original sprite
-    public KeyframeCollection keyframes;              // This variable is used to store an animation
-    public string tag;                                // The tag of the sprite : "projectile", "enemy", "bubble" or "other"
+    [MoonSharpHidden] public KeyframeCollection keyframes;              // This variable is used to store an animation
+    [MoonSharpHidden] public string tag;                                // The tag of the sprite : "projectile", "enemy", "bubble" or "other"
     private KeyframeCollection.LoopMode loop = KeyframeCollection.LoopMode.LOOP;
-    public static MoonSharp.Interpreter.Interop.IUserDataDescriptor data = UserData.GetDescriptorForType<LuaSpriteController>(true);
-    
+    [MoonSharpHidden] public static MoonSharp.Interpreter.Interop.IUserDataDescriptor data = UserData.GetDescriptorForType<LuaSpriteController>(true);
+
     //The name of the sprite
     public string spritename {
         get {
@@ -312,18 +312,21 @@ public class LuaSpriteController {
         // You can't get or set the layer on an enemy sprite
         get {
             Transform target = GetTarget();
-            if (tag == "bubble")                                              return "none";
+            if (tag == "bubble" || tag == "event")                            return "none";
             if (tag == "projectile" && !target.parent.name.Contains("Layer")) return "BulletPool";
             if (tag == "enemy" && !target.parent.name.Contains("Layer"))      return "specialEnemyLayer";
             return target.parent.name.Substring(0, target.parent.name.Length - 5);
         } set {
-            if (tag == "bubble") {
-                UnitaleUtil.WriteInLogAndDebugger("sprite.layer: bubbles' layer can't be changed.");
-                return;
-            }
+            if      (tag == "event")  throw new CYFException("sprite.layer: Overworld events' layer can't be changed.");
+            else if (tag == "bubble") throw new CYFException("sprite.layer: Bubbles' layer can't be changed.");
             Transform target = GetTarget();
             Transform parent = target.parent;
-            try { target.SetParent(GameObject.Find(value + "Layer").transform); } catch { target.SetParent(parent); }
+            try {
+                target.SetParent(GameObject.Find(value + "Layer").transform);
+                // foreach (MaskImage ivi in img.GetComponentsInChildren<MaskImage>())
+                    // ivi.inverted = false;
+                img.GetComponent<MaskImage>().inverted = false;
+            } catch { target.SetParent(parent); }
         }
     }
 
@@ -353,11 +356,7 @@ public class LuaSpriteController {
         img = i.gameObject;
         originalSprite = i.sprite;
         nativeSizeDelta = new Vector2(100, 100);
-        if (img.GetComponent<Projectile>())                            tag = "projectile";
-        else if (img.GetComponent<LuaEnemyController>())               tag = "enemy";
-        else if (i.transform.parent != null)
-            if (i.transform.parent.GetComponent<LuaEnemyController>()) tag = "bubble";
-            else                                                       tag = "other";
+        tag = "event";
     }
 
     // Changes the sprite of this instance
@@ -381,15 +380,18 @@ public class LuaSpriteController {
             img.GetComponent<Projectile>().needUpdateTex = true;
     }
 
-    // Sets the parent of a sprite. Can't be used on an enemy
+    // Sets the parent of a sprite.
     public void SetParent(LuaSpriteController parent) {
         if (tag == "bubble") {
             UnitaleUtil.WriteInLogAndDebugger("sprite.SetParent(): bubbles' parent can't be changed.");
             return;
-        }
+        } else if (tag == "event" || (parent != null && parent.tag == "event"))
+            throw new CYFException("sprite.SetParent(): Can not use SetParent with an Overworld Event's sprite.");
         try {
             GetTarget().SetParent(parent.img.transform);
-        } catch { throw new CYFException("You tried to set a removed sprite/nil sprite as this sprite's parent."); }
+            if (img.GetComponent<MaskImage>())
+                img.GetComponent<MaskImage>().inverted = parent._masked > 3;
+        } catch { throw new CYFException("sprite.SetParent(): You tried to set a removed sprite/nil sprite as this sprite's parent."); }
     }
 
     // Sets the pivot of a sprite (its rotation point)
@@ -429,9 +431,14 @@ public class LuaSpriteController {
             img.GetComponent<Projectile>().needSizeRefresh = true;
         xScale = xs;
         yScale = ys;
-        if (img.GetComponent<Image>()) nativeSizeDelta = new Vector2(img.GetComponent<Image>().sprite.texture.width, img.GetComponent<Image>().sprite.texture.height);
-        else                           nativeSizeDelta = new Vector2(img.GetComponent<SpriteRenderer>().sprite.texture.width, img.GetComponent<SpriteRenderer>().sprite.texture.height);
-        img.GetComponent<RectTransform>().sizeDelta = new Vector2(nativeSizeDelta.x * Mathf.Abs(xScale), nativeSizeDelta.y * Mathf.Abs(yScale));
+        if (img.GetComponent<Image>()) { // In battle
+            nativeSizeDelta = new Vector2(img.GetComponent<Image>().sprite.texture.width, img.GetComponent<Image>().sprite.texture.height);
+            img.GetComponent<RectTransform>().sizeDelta = new Vector2(nativeSizeDelta.x * Mathf.Abs(xScale), nativeSizeDelta.y * Mathf.Abs(yScale));
+            // img.GetComponent<RectTransform>().localScale = new Vector3(xs < 0 ? -1 : 1, ys < 0 ? -1 : 1, 1);
+        } else { // In overworld
+            nativeSizeDelta = new Vector2(img.GetComponent<SpriteRenderer>().sprite.texture.width, img.GetComponent<SpriteRenderer>().sprite.texture.height);
+            img.GetComponent<RectTransform>().localScale = new Vector3(100 * Mathf.Abs(xScale), 100 * Mathf.Abs(yScale), 1);
+        }
         internalRotation = new Vector3(ys < 0 ? 180 : 0, xs < 0 ? 180 : 0, internalRotation.z);
         img.GetComponent<RectTransform>().eulerAngles = internalRotation;
     }
@@ -447,25 +454,25 @@ public class LuaSpriteController {
             throw new CYFException("sprite.SetAnimation: An animation can not have negative speed!");
         else if (frametime == 0)
             throw new CYFException("sprite.SetAnimation: An animation can not play at 0 frames per second!");
-        
+
         if (prefix != "") {
             while (prefix.StartsWith("/"))
                 prefix = prefix.Substring(1);
-            
+
             if (!prefix.EndsWith("/"))
                 prefix += "/";
-            
+
             for (int i = 0; i < spriteNames.Length; i++)
                 spriteNames[i] = prefix + spriteNames[i];
         }
-        
+
         Vector2 pivot = img.GetComponent<RectTransform>().pivot;
         Keyframe[] kfArray = new Keyframe[spriteNames.Length];
         for (int i = 0; i < spriteNames.Length; i++) {
             // at least one sprite in the sequence was unable to be loaded
             if (SpriteRegistry.Get(spriteNames[i]) == null)
                 throw new CYFException("sprite.SetAnimation: Failed to load sprite with the name \"" + spriteNames[i] + "\". Are you sure it is spelled correctly?");
-            
+
             kfArray[i] = new Keyframe(SpriteRegistry.Get(spriteNames[i]), spriteNames[i].ToLower());
         }
         if (keyframes == null) {
@@ -498,7 +505,7 @@ public class LuaSpriteController {
             img.GetComponent<RectTransform>().pivot = pivot;
         }
     }
-    
+
     // Gets or sets the paused state of a sprite's animation.
     public DynValue animationpaused {
         get {
@@ -510,7 +517,7 @@ public class LuaSpriteController {
             if (img.GetComponent<Image>()) {
                 if (value.Type != DataType.Boolean)
                     throw new CYFException("sprite.paused can only be set to a boolean value.");
-                
+
                 if (keyframes != null)
                     keyframes.paused = value.Boolean;
                 else
@@ -518,7 +525,7 @@ public class LuaSpriteController {
             }
         }
     }
-    
+
     // Gets or sets the current frame of an animated sprite's animation.
     // Example: If a sprite's animation table is      {"sans_head_1", "sans_head_2", "sans_head_3", "sans_head"2},
     // then for each sprite in the table, this will be: ^ 1            ^ 2            ^ 3            ^ 4
@@ -545,7 +552,7 @@ public class LuaSpriteController {
             return 0;
         }
     }
-    
+
     // Gets or sets the current "play position" of a sprite's animation, in seconds.
     public float currenttime {
         set {
@@ -570,7 +577,7 @@ public class LuaSpriteController {
             return 0;
         }
     }
-    
+
     // Gets (read-only) the total time an animation will run for, in seconds.
     public float totaltime {
         get {
@@ -579,7 +586,7 @@ public class LuaSpriteController {
             return 0;
         }
     }
-    
+
     // Gets or sets the speed of an animated sprite's animation.
     public float animationspeed {
         set {
@@ -625,6 +632,55 @@ public class LuaSpriteController {
         if (sprite == null)                                       throw new CYFException("sprite.MoveAbove: The sprite passed as an argument is nil.");
         else if (sprite.GetTarget().parent != GetTarget().parent) UnitaleUtil.WriteInLogAndDebugger("[WARN]You can't change the order of two sprites without the same parent.");
         else                                                      GetTarget().SetSiblingIndex(sprite.GetTarget().GetSiblingIndex() + 1);
+    }
+
+    [MoonSharpHidden] public int _masked = 0;
+    public void Mask(string mode) {
+        if (tag == "event")
+            throw new CYFException("sprite.Mask: Can not be applied to Overworld Event sprites.");
+        else if (mode == null)
+            throw new CYFException("sprite.Mask: No argument provided.");
+
+        mode = mode.ToLower();
+        var list = new Dictionary<string, int>() {
+            {"off",             0},
+            {"box",             1},
+            {"sprite",          2},
+            {"stencil",         3},
+            {"invertedsprite",  4},
+            {"invertedstencil", 5}
+        };
+        int masked = -1;
+        if (!list.TryGetValue(mode, out masked))
+            throw new CYFException("sprite.Mask: Invalid mask mode \"" + mode.ToString() + "\".");
+
+        if (masked != _masked) {
+            //If children need to have their "inverted" property updated, then do so
+            if ((_masked < 4 && masked > 3) || (_masked > 3 && masked < 4))
+                foreach (MaskImage ivi in img.GetComponentsInChildren<MaskImage>())
+                    ivi.inverted = masked > 3;
+            RectMask2D box = img.GetComponent<RectMask2D>();
+            Mask spr = img.GetComponent<Mask>();
+
+            //Box mask mode
+            if (masked == 1) {
+                //Remove sprite mask if applicable
+                spr.enabled = false;
+                box.enabled = true;
+            } else if (masked > 1) {
+                //The mask mode now can't possibly be box, so remove box mask if applicable
+                spr.enabled = true;
+                box.enabled = false;
+                // Used to differentiate between "sprite" and "stencil"-like display modes
+                spr.showMaskGraphic = masked == 2 || masked == 4;
+            //Mask has been disabled
+            } else if (masked == 0) {
+                spr.enabled = false;
+                box.enabled = false;
+            }
+        }
+
+        _masked = masked;
     }
 
     public void Remove() {
@@ -676,7 +732,7 @@ public class LuaSpriteController {
     internal void UpdateAnimation() {
         if (!img)
             return;
-        if (keyframes == null)
+        if (keyframes == null || keyframes.paused)
             return;
         Keyframe k = keyframes.getCurrent();
         Sprite s = SpriteRegistry.GENERIC_SPRITE_PREFAB.sprite;

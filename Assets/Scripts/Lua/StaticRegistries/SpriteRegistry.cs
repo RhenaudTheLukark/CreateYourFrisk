@@ -15,27 +15,30 @@ public static class SpriteRegistry {
         loadAllFrom(FileLoader.pathToDefaultFile("Sprites"));
     }
 
+    public static void Set(string key, Sprite value) { dict[(UnitaleUtil.IsOverworld ? "ow" : "b") + key.ToLower()] = value; }
+
     public static Sprite Get(string key) {
         key = key.ToLower();
-        if (dict.ContainsKey(key))  return dict[key];
-        else                        return tryLoad(key);
+        string dictKey = (UnitaleUtil.IsOverworld ? "ow" : "b") + key;
+        if (dict.ContainsKey(dictKey))  return dict[dictKey];
+        else                            return tryLoad(key);
         //return null;
     }
 
+    private static Sprite tryLoad(string key) {
+        string dictKey = (UnitaleUtil.IsOverworld ? "ow" : "b") + key;
+        if      (dictMod.ContainsKey(key))
+            dict[dictKey] = SpriteUtil.FromFile(dictMod[key].FullName);
+        else if (dictDefault.ContainsKey(key))
+            dict[dictKey] = SpriteUtil.FromFile(dictDefault[key].FullName);
+        else
+            return null;
+        return dict[dictKey];
+    }
+
     public static Sprite GetMugshot(string key) {
-        key = key.ToLower();
-        key = "mugshots/" + key;
-        return Get(key);
+        return Get("mugshots/" + key.ToLower());
     }
-
-    public static Sprite tryLoad(string key) {
-        if      (dictMod.ContainsKey(key))      dict[key] = SpriteUtil.FromFile(dictMod[key].FullName);
-        else if (dictDefault.ContainsKey(key))  dict[key] = SpriteUtil.FromFile(dictDefault[key].FullName);
-        else                                    return null;
-        return dict[key];
-    }
-
-    public static void Set(string key, Sprite value) { dict[key.ToLower()] = value; }
 
     public static void init() {
         //dict.Clear();
@@ -63,6 +66,7 @@ public static class SpriteRegistry {
 
         if (!dInfo.Exists) {
             UnitaleUtil.DisplayLuaError("mod loading", "You tried to load the mod \"" + StaticInits.MODFOLDER + "\" but it can't be found, or at least its \"Sprites\" folder can't be found.\nAre you sure it exists?");
+            throw new CYFException("mod loading");
         }
 
         fInfoTest = dInfo.GetFiles("*.png", SearchOption.AllDirectories);

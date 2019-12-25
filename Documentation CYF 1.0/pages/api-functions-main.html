@@ -38,39 +38,38 @@ it's w3c valid, at least
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                     <li><a href="controls.html">Controls</a></li>
                     <li><a href="basic.html">Basic setup</a></li>
-                    <li><a href="variables.html">Special Variables</a></li>
+                    <li class="new"><a href="variables.html">Special Variables</a></li>
                     <li><a href="terms.html">Terminology</a></li>
                 <li class="li-header">API</li>
-                    <li><a href="api-text.html">Text commands</a></li>
-                    <li><a href="api-events.html">Game events</a></li>
+                    <li class="new"><a href="api-text.html">Text commands</a></li>
+                    <li class="new"><a href="api-events.html">Game events</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                     <li class="li-indent">Functions &amp; Objects:</li>
-                        <li class="li-indent active" style="margin-left:5px;">> Misc. <br>Functions <</li>
-                        <li class="li-indent"><a href="api-functions-player.html">The Player Object</a></li>
-                        <li class="li-indent"><a href="api-functions-script.html">The Script Object</a></li>
-                        <li class="li-indent"><a href="api-functions-audio.html">The Audio Object</a></li>
-                        <li class="li-indent"><a href="api-functions-newaudio.html"><span class="CYF"></span> The NewAudio Object</a></li>
-                        <li class="li-indent"><a href="api-functions-input.html">The Input Object</a></li>
+                        <li class="li-indent active new" style="margin-left:5px;">> Misc. <br>Functions <</li>
+                        <li class="li-indent new"><a href="api-functions-player.html">The Player Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-script.html">The Script Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-audio.html">The Audio Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-newaudio.html"><span class="CYF"></span> The NewAudio Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-input.html">The Input Object</a></li>
                         <li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
-                        <li class="li-indent"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
-                        <li class="li-indent"><a href="api-functions-waves.html">Wave Scripts</a></li>
+                        <li class="li-indent"><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
+                        <li class="li-indent"><a href="api-functions-waves.html">The Arena Object</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                     <li><a href="api-projectile.html">Projectile management</a></li>
-                    <li><a href="api-animation.html">Sprites &amp; Animation</a></li>
-                    <li><a href="api-keys.html"><span class="CYF"></span> Key List</a></li>
-                <li class="li-header">Create Your Frisk's new features</li>     
-                    <li><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory System</a></li>
                     <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
-                    <li><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
+                    <li class="new"><a href="api-animation.html">Sprites &amp; Animation</a></li>
+                    <li class="new"><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
+                    <li><a href="api-keys.html"><span class="CYF"></span> Key List</a></li>
                 <li class="li-header">Overworld</li>
-                    <li><a href="overworld.html"><span class="CYF"></span> Basics</a></li>
+                    <li class="new"><a href="overworld.html"><span class="CYF"></span> Basics</a></li>
                     <li><a href="overworld-howto-map.html"><span class="CYF"></span> How to create a map</a></li>
                     <li><a href="overworld-howto-event.html"><span class="CYF"></span> How to create an event</a></li>
                     <li><a href="overworld-howto-animevent.html"><span class="CYF"></span> How to animate an event</a></li>
-                    <li><a href="overworld-howto-shop.html"><span class="CYF"></span> How to create a shop</a></li>
-                    <li><a href="overworld-object-general.html"><span class="CYF"></span> The General Object</a></li>
-                    <li><a href="overworld-object-event.html"><span class="CYF"></span> The Event Object</a></li>
-                    <li><a href="overworld-object-player.html"><span class="CYF"></span> The Player Object</a></li>
+                    <li class="new"><a href="overworld-howto-shop.html"><span class="CYF"></span> How to create a shop</a></li>
+                    <li class="new"><a href="overworld-object-general.html"><span class="CYF"></span> The General Object</a></li>
+                    <li class="new"><a href="overworld-object-event.html"><span class="CYF"></span> The Event Object</a></li>
+                    <li class="new"><a href="overworld-object-player.html"><span class="CYF"></span> The Player Object</a></li>
                     <li><a href="overworld-object-screen.html"><span class="CYF"></span> The Screen Object</a></li>
                     <li><a href="overworld-object-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
                     <li><a href="overworld-object-map.html"><span class="CYF"></span> The Map Object</a></li>
@@ -101,14 +100,14 @@ it's w3c valid, at least
 
             <p>
                 <br><span class="function">SetGlobal(<span class="string"></span> your_variable_name, value) [E/M/W]</span>
-                OUTDATED, as you can set variables in the Encounter script, which can be accessed from anywhere.
+                An alternative to setting variables in the Encounter script to be accessed from anywhere (see <span class="ref">The Script Object</span>).
                 <br><br>Sets a global variable. After setting, you can retrieve it from all your scripts at any time with
                 <span class="term">GetGlobal(variable_name)</span>.
             </p>
 
             <p>
                 <br><span class="function">GetGlobal(<span class="string"></span> your_variable_name) returns variable [E/M/W]</span>
-                OUTDATED, as you can set variables in the Encounter script, which can be accessed from anywhere.
+                An alternative to setting variables in the Encounter script to be accessed from anywhere (see <span class="ref">The Script Object</span>).
                 <br><br>Gets a Global Variable that you previously set using <span class="term">SetGlobal()</span>.
             </p>
 
@@ -162,9 +161,12 @@ it's w3c valid, at least
             </p>
 
             <p>
-                <br><span class="function"><span class="CYF"></span> SetAction(<span class="string"></span> "FIGHT" or "ACT") [E/M/W]</span>
-                Used alongside <span class="term">EnteringState</span> to force the player to choose FIGHT or ACT. Does nothing outside of 
-                <span class="term">EnteringState</span>.
+                <br><span class="function"><span class="CYF"></span> SetAction(<span class="string"></span> "FIGHT", "ACT", "ITEM" or "MERCY") [E/M/W]</span>
+                Used alongside <span class="term">State("ENEMYSELECT")</span> (or <span class="term">EnteringState</span> when entering the same state) to
+                force the player to choose FIGHT or ACT. This controls whether you'll see the enemy's health bar in the menu and whether the next state upon
+                pressing Z is <span class="term">ATTACKING</span> or <span class="term">ACTMENU</span>.
+                <br><br>
+                <span class="new"></span>If used in the state <span class="term">ACTIONSELECT</span>, this function will move the player over the specified button.
             </p>
            
             <p>         
@@ -188,6 +190,9 @@ it's w3c valid, at least
                 them, you will automatically go to the monster dialogue step by default. Below is a working example of
                 how you could use it for a Vegetoid encounter.
                 <br><br>
+                <span class="new"></span> As of CYF v0.6.4, if you end up with 4 or more lines of battle dialog displayed at once, the text will move up
+                (9 pixels, one time) to compensate and try to fit your text inside the box.
+                <br><br>
                 * You can use <span class="term">\n</span> to create a new line <b>with a star</b> (*), and <span class="term">\r</span> to create
                 a new line <b>without</b> a star.
             </p>
@@ -203,7 +208,6 @@ it's w3c valid, at least
     end
 end
 </pre>
-                <p>(For the Lua specialists; it is indeed a table of strings rather than a list of strings.)</p>
             </div>
 
             <p>
@@ -284,7 +288,7 @@ end
                 <br><br>
                 * <span style="color:#fff">Only the <span class="term">Update</span> function of the Encounter script will remain active here.
                 <br><br>
-                * To unfreeze a state, you must use <span class="term">State</span> to switch to the last active state.</span> <span class="term">GetCurrentState()</span> will tell you the name of the frozen state.
+                * To unfreeze a state, you must use <span class="term">State</span> to switch to another state, preferably the last active state.</span> <span class="term">GetCurrentState()</span> will tell you the name of the frozen state.
                 <br><br>
             </p>
             
@@ -349,28 +353,33 @@ end</pre>
 
             <p>
                 <br><span class="function">Kill() [M]</span>
-                Kills the monster immediately. If this was the last monster, the battle ends.
+                Kills the monster immediately. If this was the last monster, the battle ends.<br>
+                Does NOT call the <span class="ref">Game Event</span> <span class="term">OnDeath</span>.
             </p>
 
             <p>
                 <br><span class="function">Spare() [M]</span>
-                Spares the monster immediately. Similar to <span class="term">Kill()</span>, if this was the last monster, the battle ends.
+                Spares the monster immediately. Similar to <span class="term">Kill()</span>, if this was the last monster, the battle ends.<br>
+                Does NOT call the <span class="ref">Game Event</span> <span class="term">OnDeath</span>.
             </p>
 
             <p>
                 <br><span class="function"><span class="CYF"></span> Move(<span class="number"></span> x, <span class="number"></span> y) [M]</span>
-                Moves the enemy's sprite from its current position.
+                Moves the enemy's sprite relative to its current position.
             </p>
             
             <p>
                 <br><span class="function"><span class="CYF"></span> MoveTo(<span class="number"></span> x, <span class="number"></span> y) [M]</span>
-                Moves the enemy's sprite relative to the bottom left corner.
+                Moves the enemy's sprite relative to the bottom left corner of the screen.<br>
+                This is effectively the same as setting <span class="term">enemypositions</span> again, except <span class="term">x</span> is 320px left and <span class="term">y</span> is 231px down.
             </p>
             
             <p>
                 <br><span class="function"><span class="CYF"></span> BindToArena(<span class="boolean"></span> bind, <span class="boolean"></span> isUnderArena = false) [M]</span>
-                Controls whether the enemy's sprite will follow the Arena's movements.<br>
-                <span class="term">isUnderArena</span>: will the enemy's sprite be under the arena?
+                Controls whether the enemy's sprite will follow the Arena's movements.
+                <br><br>
+                If <span class="term">bind</span> is true, the enemy will be parented to the Arena and follow all of its movements.<br>
+                <u>Otherwise</u>, it will be either behind or in front of the arena, depending on the value of <span class="term">isUnderArena</span>.
             </p>
             
             <p>
@@ -380,7 +389,7 @@ end</pre>
             </p>
             
             <p>
-                <br><span class="function"><span class="CYF"></span> SetDamageUIOffset(<span class="number"></span> x, <span class="number"></span>y) [M]</span>
+                <br><span class="function"><span class="CYF"></span> SetDamageUIOffset(<span class="number"></span> x, <span class="number"></span> y) [M]</span>
                 Changes the offset of the enemy's damage UI (the enemy's health bar and the red numbers). Note that the damage UI is on a layer
                 above that of the arena.
             </p>
@@ -388,6 +397,14 @@ end</pre>
             <p>
                 <br><span class="function"><span class="CYF"></span> SetSliceAnimOffset(<span class="number"></span> x, <span class="number"></span> y) [M]</span>
                 Changes the offset of the attack animation (the red slice by default) for when the player attacks this monster.
+            </p>
+            
+            <hr>
+            <h4>Wave script functions</h4>
+            
+            <p>
+                <br><span class="function">EndWave() [W]</span>
+                Ends this wave immediately. You can only call this function from the Update function.
             </p>
         </div>
 

@@ -7,7 +7,7 @@ public class LuaMapOW {
 
     [MoonSharpHidden] public LuaMapOW() { }
 
-    public delegate void LoadedAction(string name, object args);
+    public delegate void LoadedAction(string coroName, object args, string evName);
     [MoonSharpHidden] public static event LoadedAction StCoroutine;
 
     [CYFEventFunction] public string GetMusic() { try { return Object.FindObjectOfType<MapInfos>().music; } finally { appliedScript.Call("CYFEventNextCommand"); } }

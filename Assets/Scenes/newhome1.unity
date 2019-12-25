@@ -207,6 +207,8 @@ MonoBehaviour:
   - {x: 1, y: 1}
   - {x: 2, y: 2}
   moveSpeed: 1
+  isMoving: 0
+  isRotating: 0
 --- !u!61 &382517130
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -632,8 +634,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneName: test2
-  position: {x: 320, y: 200}
-  direction: 2
+  position: {x: 600, y: 200}
+  direction: 4
   activated: 0
   noFadeIn: 0
   noFadeOut: 0
@@ -770,6 +772,8 @@ MonoBehaviour:
   - {x: 1, y: 1}
   - {x: 2, y: 2}
   moveSpeed: 1
+  isMoving: 0
+  isRotating: 0
 --- !u!61 &1414454723
 BoxCollider2D:
   m_ObjectHideFlags: 0

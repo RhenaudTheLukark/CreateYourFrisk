@@ -44,7 +44,6 @@ namespace MoonSharp.Interpreter.Tree.Fast_Interface
 		internal static int LoadChunk(Script script, SourceCode source, ByteCode bytecode, Processor processor)
 		{
 			ScriptLoadingContext lcontext = CreateLoadingContext(script, source);
-
 			try
 			{
 				Statement stat;
@@ -55,7 +54,6 @@ namespace MoonSharp.Interpreter.Tree.Fast_Interface
 				int beginIp = -1;
 
 				//var srcref = new SourceRef(source.SourceID);
-
 
 				using (script.PerformanceStats.StartStopwatch(Diagnostics.PerformanceCounter.Compilation))
 				using (bytecode.EnterSource(null))
@@ -72,7 +70,7 @@ namespace MoonSharp.Interpreter.Tree.Fast_Interface
 			}
 			catch (SyntaxErrorException ex)
 			{
-				Instruction i = new Instruction(lcontext.Lexer.Current.GetSourceRef()) { OpCode = OpCode.Nop, Name = "none" };
+                Instruction i = new Instruction(lcontext.Lexer.Current.GetSourceRef()) { OpCode = OpCode.Nop, Name = "none" };
 				processor.m_doFileRequireHack = i;
 				ex.DecorateMessage(script, lcontext.Lexer.Current.GetSourceRef());
 				ex.Rethrow();

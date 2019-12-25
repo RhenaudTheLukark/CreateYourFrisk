@@ -38,39 +38,38 @@ it's w3c valid, at least
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                     <li><a href="controls.html">Controls</a></li>
                     <li><a href="basic.html">Basic setup</a></li>
-                    <li><a href="variables.html">Special Variables</a></li>
+                    <li class="new"><a href="variables.html">Special Variables</a></li>
                     <li><a href="terms.html">Terminology</a></li>
                 <li class="li-header">API</li>
-                    <li><a href="api-text.html">Text commands</a></li>
-                    <li><a href="api-events.html">Game events</a></li>
+                    <li class="new"><a href="api-text.html">Text commands</a></li>
+                    <li class="new"><a href="api-events.html">Game events</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                     <li class="li-indent">Functions &amp; Objects:</li>
-                        <li class="li-indent"><a href="api-functions-main.html">Misc. Functions</a></li>
-                        <li class="li-indent"><a href="api-functions-player.html">The Player Object</a></li>
-                        <li class="li-indent"><a href="api-functions-script.html">The Script Object</a></li>
-                        <li class="li-indent"><a href="api-functions-audio.html">The Audio Object</a></li>
-                        <li class="li-indent"><a href="api-functions-newaudio.html"><span class="CYF"></span> The NewAudio Object</a></li>
-                        <li class="li-indent"><a href="api-functions-input.html">The Input Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-main.html">Misc. Functions</a></li>
+                        <li class="li-indent new"><a href="api-functions-player.html">The Player Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-script.html">The Script Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-audio.html">The Audio Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-newaudio.html"><span class="CYF"></span> The NewAudio Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-input.html">The Input Object</a></li>
 						<li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
-                        <li class="li-indent"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
-                        <li class="li-indent"><a href="api-functions-waves.html">Wave Scripts</a></li>
+                        <li class="li-indent"><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
+                        <li class="li-indent"><a href="api-functions-waves.html">The Arena Object</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                     <li><a href="api-projectile.html">Projectile management</a></li>
-                    <li style="margin-left:5px;">> Sprites &amp; Animation <</li>
-                    <li><a href="api-keys.html"><span class="CYF"></span> Key List</a></li>
-                <li class="li-header">Create Your Frisk's new features</li>     
-                    <li><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory System</a></li>
                     <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
-                    <li><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
+                    <li class="active new" style="margin-left:5px;">> Sprites &amp; Animation <</li>
+                    <li class="new"><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
+                    <li><a href="api-keys.html"><span class="CYF"></span> Key List</a></li>
                 <li class="li-header">Overworld</li>
-                    <li><a href="overworld.html"><span class="CYF"></span> Basics</a></li>
+                    <li class="new"><a href="overworld.html"><span class="CYF"></span> Basics</a></li>
                     <li><a href="overworld-howto-map.html"><span class="CYF"></span> How to create a map</a></li>
                     <li><a href="overworld-howto-event.html"><span class="CYF"></span> How to create an event</a></li>
                     <li><a href="overworld-howto-animevent.html"><span class="CYF"></span> How to animate an event</a></li>
-                    <li><a href="overworld-howto-shop.html"><span class="CYF"></span> How to create a shop</a></li>
-                    <li><a href="overworld-object-general.html"><span class="CYF"></span> The General Object</a></li>
-                    <li><a href="overworld-object-event.html"><span class="CYF"></span> The Event Object</a></li>
-                    <li><a href="overworld-object-player.html"><span class="CYF"></span> The Player Object</a></li>
+                    <li class="new"><a href="overworld-howto-shop.html"><span class="CYF"></span> How to create a shop</a></li>
+                    <li class="new"><a href="overworld-object-general.html"><span class="CYF"></span> The General Object</a></li>
+                    <li class="new"><a href="overworld-object-event.html"><span class="CYF"></span> The Event Object</a></li>
+                    <li class="new"><a href="overworld-object-player.html"><span class="CYF"></span> The Player Object</a></li>
                     <li><a href="overworld-object-screen.html"><span class="CYF"></span> The Screen Object</a></li>
                     <li><a href="overworld-object-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
                     <li><a href="overworld-object-map.html"><span class="CYF"></span> The Map Object</a></li>
@@ -115,9 +114,26 @@ it's w3c valid, at least
             
             <p>
                 <br><span class="function">CreateSprite(<span class="string"></span> spritename, 
-                <span class="CYF"></span> <span class="string"></span> layer = "BelowArena") returns <span class="userdata">sprite</span>  [E/M/W]</span>
-                Creates a sprite in the far bottom left of the screen (at 0, 0) that you can modify in many ways.<br>
-                <span class="CYF"></span> You can add a layer if you want - otherwise, the sprite will be below the arena.
+                <span class="CYF"></span> <span class="string"></span> layer = "BelowArena", <span class="number"></span> childNumber = -1) returns <span class="userdata">sprite</span> [E/M/W]</span>
+                Creates a sprite at the center of the screen (at 320, 240) that you can modify in many ways.
+                <br><br>
+                <span class="new"></span><span class="CYF"></span> You can add a layer if you want - otherwise, the sprite will be below the arena.<br>
+                From in the Overworld, the default value for <span class="term">layer</span> is <span class="term">"Default"</span> instead.<br>
+                Enter <span class="term">"none"</span> to spawn your sprite outside of any layers, in the same way that the player is by default
+                (although this doesn't have much use).
+                <br><br>
+                <span class="new"></span><span class="CYF"></span> In CYF, you can provide a number argument for <span class="term">childNumber</span> if you want.<br>
+                Leave it as <span class="term">-1</span> to have it move to the top of whatever layer it's placed on (default behavior), or
+                choose a numbered index you want it to appear in, with <span class="term">1</span> being the very bottom-most in the layer,
+                and higher numbers moving it above other elements in sequence.
+                <br><br>
+                The best way to see what order sprites come in in their respective layers is to download Unity, playtest your mod in it, and
+                look at the order of game objects in the Inspector.
+                <br><br>
+                <span class="function new"><span class="CYF"></span> CreateSprite(<span class="string"></span> spritename, 
+                <span class="number"></span> childNumber = -1) returns <span class="userdata">sprite</span> [E/M/W]</span>
+                The same as <span class="term">CreateSprite</span> listed above, except you only need to provide a sprite name and child number.<br>
+                Uses the default layer <span class="term">"BelowArena"</span> in battles, or <span class="term">"Default"</span> in the Overworld.
             </p>
 
             <hr>
@@ -149,11 +165,13 @@ it's w3c valid, at least
             
             <p>
                 <span class="function"><span class="CYF"></span> <span class="number"></span> sprite.z</span></span>
-                Layering position of sprite relative to the bottom left corner of the screen, measured from its pivot/anchor point (center by default).
+                Layering position of sprite <i>in the Overworld only</i>. A negative number brings it forward (closer to the camera), a positive
+                number sends it backwards (farther into the background).
+                <br><br>
+                Note that the only thing this will affect is how your sprite and its children appear in front of the Player and Event objects.<br>
+                This variable can NOT be used to circumvent the layering system for regular sprites.
                 <br><br>
                 If parented, z position is relative to the parent.
-                <br><br>
-                <i>Only applies to the overworld.</i> 
             </p><br>
             
             <p>
@@ -168,21 +186,31 @@ it's w3c valid, at least
             
             <p>
                 <span class="function"><span class="CYF"></span> <span class="number"></span> sprite.absz</span></span>
-                Layering position of sprite relative to the bottom left corner of the screen, ignoring its pivot/anchor point and all parents.
+                Layering position of sprite <i>in the Overworld only</i>. A negative number brings it forward (closer to the camera), a positive
+                number sends it backwards (farther into the background).
                 <br><br>
-                <i>Only applies to the overworld.</i> 
+                Same as <span class="term">sprite.z</span>, except that if this sprite has a parent, <span class="term">sprite.absz</span> will not
+                be relative to the z value of the parent.
             </p><br>
             
             <p>
                 <span class="function"><span class="number"></span> sprite.xscale</span></span>
                 Horizontal scaling of sprite (<span class="term">1.0</span> by default).
                 <span class="term">2.0</span> is twice as large, <span class="term">0.5</span> is half as large.
+                <br><br>
+                Scaling applies based on the sprite's pivot point - see <span class="term">SetPivot</span>,
+                <span class="CYF"></span><span class="term">xpivot</span> and <span class="term">ypivot</span>.<br>
+                <span class="CYF"></span> However, in the Overworld, Event object sprites ignore pivot when scaling.
             </p><br>
             
             <p>
                 <span class="function"><span class="number"></span> sprite.yscale</span></span>
                 Vertical scaling of sprite (<span class="term">1.0</span> by default).
                 <span class="term">2.0</span> is twice as large, <span class="term">0.5</span> is half as large.
+                <br><br>
+                Scaling applies based on the sprite's pivot point - see <span class="term">SetPivot</span>,
+                <span class="CYF"></span><span class="term">xpivot</span> and <span class="term">ypivot</span>.<br>
+                <span class="CYF"></span> However, in the Overworld, Event object sprites ignore pivot when scaling.
             </p><br>
             
             <p>
@@ -211,7 +239,7 @@ it's w3c valid, at least
             </p><br>
             
             <p>
-                <span class="function"><span class="number"></span> sprite.xpivot</span></span>
+                <span class="function"><span class="CYF"></span> <span class="number"></span> sprite.xpivot</span></span>
                 Horizontal pivot point of the sprite. <span class="term">0</span> is the left side, and <span class="term">1</span> is the right side.<br>
                 Can be any number inside or outside of this range.
                 <br><br>
@@ -221,7 +249,7 @@ it's w3c valid, at least
             </p><br>
             
             <p>
-                <span class="function"><span class="number"></span> sprite.ypivot</span></span>
+                <span class="function"><span class="CYF"></span> <span class="number"></span> sprite.ypivot</span></span>
                 Vertical pivot point of the sprite. <span class="term">0</span> is the bottom side, and <span class="term">1</span> is the top side.<br>
                 Can be any number inside or outside of this range.
                 <br><br>
@@ -241,7 +269,7 @@ it's w3c valid, at least
             <p>
                 <span class="function"><span class="CYF"></span> <span class="number"></span> sprite.currentframe</span></span>
                 If a sprite has an active animation running, this represents the index of the active frame in the animation.<br>
-                Can both be read and set.
+                Otherwise, this will return <span class="term">0</span>.
                 <br><br>
                 For example: If this code is run:
                 <div class="code-container">
@@ -251,14 +279,8 @@ it's w3c valid, at least
                 </div>
                 Then this variable will be <span class="term">1</span> when the first image is shown, <span class="term">2</span> for the second, and so on, up to <span class="term">4</span> for the last one.
                 <br><br>
-                <font style="font-size: 18px; color: #f00;">NOTE: Will not reset a sprite's animation timer!</font><br>
-                If you call <span class="term">sprite.currentframe = 1</span> every frame, <font style="color:#fff;">the sprite will continue to animate!</font><br>
-                To reset the timer as well, use this code:
-                <div class="code-container">
-                <pre class="brush: lua;">
-                sprite.currenttime = (sprite.currentframe - 1) * sprite.animationspeed
-                </pre>
-                </div>
+                Likewise, setting <span class="term">sprite.currentframe = 3</span> with the above example will jump the animation to the first frame where
+                <span class="term">"sans_head3"</span> would be the currently shown image.
             </p><br>
             
             <p>
@@ -352,7 +374,9 @@ it's w3c valid, at least
                 <span class="function"><span class="CYF"></span> <span class="string"></span> sprite.layer</span></span>
                 Gets or sets the current layer a sprite is on. Does nothing if you set it to a layer that doesn't exist.
                 <br><br>
-                Default value: <span class="term">"BelowArena"</span>
+                Default value: <span class="term">"BelowArena"</span> (or <span class="term">"Default"</span> in the Overworld)
+                <br><br>
+                Overworld Event sprites can not have their layer set.
             </p><br>
             
             <p>
@@ -367,6 +391,37 @@ it's w3c valid, at least
                 Parents <span class="term">sprite</span> to <span class="term">otherSpriteObject</span>.
                 <br><br>
                 This will make the original sprite move along with the object it's parented to.
+                <br><br>
+                <span class="CYF"></span> NOTE: If you are in the <i>Overworld</i>, you can NOT use this to parent sprites to Event objects' sprites,
+                or vice versa.
+            </p><br>
+            
+            <p>
+                <span class="function new"><span class="CYF"></span> sprite.Mask(<span class="string"></span> mode)</span></span>
+                Sets the masking mode of this sprite object. Does not function for Overworld Event sprites!
+                <br><br>
+                Available modes are:
+                <ul>
+                    <li><span class="term">off</span> - The default mode. Has no special properties.</li><br>
+                    <li><span class="term">box</span> - Any objects parented to this sprite are restricted to the bounding box of the sprite. Recommended for masking
+                    bullets to the Arena and such things. Unfortunately doesn't seem to work well with rotated sprites, but this is still the recommended mode for
+                    performance.</li><br>
+                    <li><span class="term">sprite</span> - Any objects parented to this sprite will be "cookie cuttered" to the current image of the sprite.</li><br>
+                    <li><span class="term">stencil</span> - Same as <span class="term">sprite</span>, except that the parent sprite itself is not visible.</li><br>
+                    <li><span class="term">invertedsprite</span> - The reverse of <span class="term">sprite</span>; while the sprite itself is visible, any of its
+                    children will only display when not inside the bounds of the sprite.</li><br>
+                    <li><span class="term">invertedstencil</span> - Identical to <span class="term">invertedsprite</span> except that the parent sprite is not shown.</li><br>
+                </ul>
+                Anything parented to this sprite object through the use of <span class="term">SetParent</span> - including <b>Other Sprite Objects</b>,
+                <b>Projectiles</b>, and even <b>Text Objects</b> - will all be masked according to the mask mode entered here.
+                <br><br>
+                If using <span class="term">invertedsprite</span> or <span class="term">invertedstencil</span>, you may be unable to change the mask mode
+                back to a normal mode afterwards (other than "off"). We fear this issue is unavoidable and unfixable - as these inverted mask modes work by directly
+                altering Unity's image display code.
+                <br><br><br>
+                <b>NOTE:</b> If you want to have a child that's not masked, you'll need to create a new invisible sprite (using the default
+                sprite "empty" is recommended), parent both the intended parent and child sprite to the invisible sprite, and apply motion to the invisible
+                sprite rather than the parent sprite.
             </p><br>
             
             <p>
@@ -432,8 +487,8 @@ it's w3c valid, at least
             
             <p>
                 <span class="function">sprite.StopAnimation()</span></span>
-                Stops a frame-by-frame animation if it was running. Also changes back to
-                the sprite it had before the animation, or whenever you last called <span class="term">sprite.Set()</span>.
+                Stops a frame-by-frame animation if it was running.<br>
+                Does NOT reset your sprite's image back to its previous one! Instead, use <span class="term">sprite.Set()</span> just after this function.
             </p><br>
             
             <p>

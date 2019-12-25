@@ -4,9 +4,8 @@ using MoonSharp.Interpreter;
 public class LuaPlayerOW {
     public ScriptWrapper appliedScript;
 
-    public delegate void LoadedAction(string name, object args);
-    [MoonSharpHidden]
-    public static event LoadedAction StCoroutine;
+    public delegate void LoadedAction(string coroName, object args, string evName);
+    [MoonSharpHidden] public static event LoadedAction StCoroutine;
 
     [MoonSharpHidden] public LuaPlayerOW() { }
 
@@ -16,8 +15,9 @@ public class LuaPlayerOW {
     [CYFEventFunction] public float GetHP() { try { return PlayerCharacter.instance.HP; } finally { appliedScript.Call("CYFEventNextCommand"); } }
     [CYFEventFunction] public void SetHP(float value) { setHP(value); appliedScript.Call("CYFEventNextCommand"); }
 
-    [CYFEventFunction] public int GetMaxHP() { try { return PlayerCharacter.instance.MaxHP; } finally { appliedScript.Call("CYFEventNextCommand"); } }
+    [CYFEventFunction] public int GetMaxHP() { try { return PlayerCharacter.instance.BasisMaxHP + PlayerCharacter.instance.MaxHP; } finally { appliedScript.Call("CYFEventNextCommand"); } }
     [CYFEventFunction] public void SetMaxHP(int value) { setMaxHP(value - PlayerCharacter.instance.BasisMaxHP); appliedScript.Call("CYFEventNextCommand"); }
+    [CYFEventFunction] public void ResetMaxHP() { setMaxHP(PlayerCharacter.instance.BasisMaxHP); appliedScript.Call("CYFEventNextCommand"); }
 
     [CYFEventFunction] public string GetName() { try { return PlayerCharacter.instance.Name; } finally { appliedScript.Call("CYFEventNextCommand"); } }
     [CYFEventFunction] public void SetName(string value) { PlayerCharacter.instance.Name = value; appliedScript.Call("CYFEventNextCommand"); }
@@ -116,30 +116,12 @@ public class LuaPlayerOW {
     [MoonSharpHidden]
     public void setHP(float newhp, bool forced = false) {
         if (newhp <= 0) {
-            GameOverBehavior gob = GameObject.FindObjectOfType<GameOverBehavior>();
-            if (!MusicManager.IsStoppedOrNull(PlayerOverworld.audioKept)) {
-                gob.musicBefore = PlayerOverworld.audioKept;
-                gob.music = gob.musicBefore.clip;
-                gob.musicBefore.Stop();
-            } else if (!MusicManager.IsStoppedOrNull(Camera.main.GetComponent<AudioSource>())) {
-                gob.musicBefore = Camera.main.GetComponent<AudioSource>();
-                gob.music = gob.musicBefore.clip;
-                gob.musicBefore.Stop();
-            } else {
-                gob.musicBefore = null;
-                gob.music = null;
-            }
-            PlayerCharacter.instance.HP = 0;
-            gob.gameObject.transform.SetParent(null);
-            GameObject.DontDestroyOnLoad(gob.gameObject);
-            RectTransform rt = gob.gameObject.GetComponent<RectTransform>();
-            rt.position = new Vector3(rt.position.x, rt.position.y, -1000);
-            gob.gameObject.GetComponent<GameOverBehavior>().StartDeath();
+            EventManager.instance.luagenow.GameOver();
             return;
         }
         float CheckedHP = PlayerCharacter.instance.HP;
         if (CheckedHP - newhp >= 0) UnitaleUtil.PlaySound("CollisionSoundChannel", AudioClipRegistry.GetSound("hurtsound").name);
-        else                 UnitaleUtil.PlaySound("CollisionSoundChannel", AudioClipRegistry.GetSound("healsound").name);
+        else                        UnitaleUtil.PlaySound("CollisionSoundChannel", AudioClipRegistry.GetSound("healsound").name);
 
         newhp = Mathf.Round(newhp * Mathf.Pow(10, ControlPanel.instance.MaxDigitsAfterComma)) / Mathf.Pow(10, ControlPanel.instance.MaxDigitsAfterComma);
 
@@ -162,8 +144,8 @@ public class LuaPlayerOW {
         }
         if (value > ControlPanel.instance.HPLimit)
             value = ControlPanel.instance.HPLimit;
-        else if (value < PlayerCharacter.instance.MaxHP) 
-            PlayerCharacter.instance.HP -= (PlayerCharacter.instance.MaxHP - value);
+        else if (PlayerCharacter.instance.HP > value)
+            PlayerCharacter.instance.HP = value;
         else
             UnitaleUtil.PlaySound("CollisionSoundChannel", AudioClipRegistry.GetSound("healsound").name);
         PlayerCharacter.instance.MaxHPShift = value - PlayerCharacter.instance.BasisMaxHP;

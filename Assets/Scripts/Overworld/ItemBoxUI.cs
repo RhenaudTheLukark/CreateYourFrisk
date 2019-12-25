@@ -22,7 +22,7 @@ public class ItemBoxUI : MonoBehaviour {
             string[] words = new string[] { "effort", "time", "feeling" };
 
             Table text = new Table(EventManager.instance.luainvow.appliedScript.script);
-            text.Set(DynValue.NewNumber(1), DynValue.NewString("You have no items.\nYou put a little " + words[rnd.Next(0, 3)] + "\rinto the box."));
+            text.Set(DynValue.NewNumber(1), DynValue.NewString("You have no items.[w:10]\nYou put a little " + words[rnd.Next(0, 3)] + "\rinto the box."));
 
             EventManager.instance.luagenow.SetDialog(DynValue.NewTable(text));
             Destroy(this);
@@ -46,7 +46,7 @@ public class ItemBoxUI : MonoBehaviour {
             tm.transform.position = new Vector3(80, 410 - (i * 32));
             inventory.Add(tm);
 
-            LuaSpriteController sprite = (LuaSpriteController) (SpriteUtil.MakeIngameSpriteOW("px").UserData.Object);
+            LuaSpriteController sprite = (LuaSpriteController) (SpriteUtil.MakeIngameSprite("px", -1).UserData.Object);
             sprite._img.transform.SetParent(transform);
             sprite.SetPivot(0, 0.5f);
             sprite.MoveToAbs(92, 386 - (i * 32));
@@ -64,7 +64,7 @@ public class ItemBoxUI : MonoBehaviour {
             tm.transform.position = new Vector3(372, 410 - (i * 32));
             boxContents.Add(tm);
 
-            LuaSpriteController sprite = (LuaSpriteController) (SpriteUtil.MakeIngameSpriteOW("px").UserData.Object);
+            LuaSpriteController sprite = (LuaSpriteController) (SpriteUtil.MakeIngameSprite("px", -1).UserData.Object);
             sprite._img.transform.SetParent(transform);
             sprite.SetPivot(0, 0.5f);
             sprite.MoveToAbs(384, 386 - (i * 32));
@@ -150,18 +150,20 @@ public class ItemBoxUI : MonoBehaviour {
 
     void DestroySelf() {
         while (inventory.Count > 0) {
-            inventory[0].DestroyText();
+            inventory[0].DestroyChars();
+            Destroy(inventory[0].gameObject);
             inventory.RemoveAt(0);
             inventorySprites[0].Remove();
             inventorySprites.RemoveAt(0);
         }
         while (boxContents.Count > 0) {
-            boxContents[0].DestroyText();
+            boxContents[0].DestroyChars();
+            Destroy(boxContents[0].gameObject);
             boxContents.RemoveAt(0);
             boxContentsSprites[0].Remove();
             boxContentsSprites.RemoveAt(0);
         }
-        
+
         Color c = player.GetComponent<Image>().color;
         player.GetComponent<Image>().color = new Color(c.r, c.g, c.b, 0);
 

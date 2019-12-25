@@ -74,7 +74,7 @@ public class TPHandler : MonoBehaviour {
             PlayerOverworld.ShowOverworld("Shop");
             GlobalControls.isInShop = false;
         }
-        EventManager.SetEventStates();
+        EventManager.instance.SetEventStates();
         GlobalControls.EventData.Clear();
         if (uduu) {
             uduu = false;

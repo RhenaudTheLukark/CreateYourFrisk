@@ -20,7 +20,7 @@ namespace MoonSharp.Interpreter
 		/// <returns></returns>
 		public static Table RegisterCoreModules(this Table table, CoreModules modules)
 		{
-			//modules = Script.GlobalOptions.Platform.FilterSupportedCoreModules(modules);
+			modules = Script.GlobalOptions.Platform.FilterSupportedCoreModules(modules);
 
 			if (modules.Has(CoreModules.GlobalConsts)) RegisterConstants(table);
 			if (modules.Has(CoreModules.TableIterators)) RegisterModuleType<TableIteratorsModule>(table);
@@ -37,7 +37,7 @@ namespace MoonSharp.Interpreter
 			if (modules.Has(CoreModules.Dynamic)) RegisterModuleType<DynamicModule>(table);
 			if (modules.Has(CoreModules.OS_System)) RegisterModuleType<OsSystemModule>(table);
 			if (modules.Has(CoreModules.OS_Time)) RegisterModuleType<OsTimeModule>(table);
-            if (modules.Has(CoreModules.IO)) RegisterModuleType<IoModule>(table);
+			if (modules.Has(CoreModules.IO)) RegisterModuleType<IoModule>(table);
 			if (modules.Has(CoreModules.Debug)) RegisterModuleType<DebugModule>(table);
 			if (modules.Has(CoreModules.Json)) RegisterModuleType<JsonModule>(table);
 

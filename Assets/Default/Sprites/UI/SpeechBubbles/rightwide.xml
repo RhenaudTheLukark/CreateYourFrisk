@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <spritesheet type="single">
     <sprite name="rightwide">
-        <border x="36" y="12" z="12" w="11"/>
+        <border x="34" y="12" z="12" w="10"/>
     </sprite>
-    <wideness>188</wideness>
+    <width>194</width>
 </spritesheet>

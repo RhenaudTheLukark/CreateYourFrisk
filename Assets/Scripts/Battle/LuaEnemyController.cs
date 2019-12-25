@@ -14,7 +14,7 @@ public class LuaEnemyController : EnemyController {
     public int presetDmg = -1826643; // You'll not be able to deal exactly -1 826 643 dmg with this technique.
     public float xFightAnimShift = 0;
     public LuaSpriteController sprite;
-    public float bubbleWideness = 0;
+    public float bubbleWidth = 0;
     public int index = -1;
     public Vector2[] offsets = new Vector2[] { new Vector2(0, 0), new Vector2(0, 0), new Vector2(0, 0) };
                                              //SliceAnimOffset    BubbleOffset       DamageUIOffset
@@ -129,6 +129,16 @@ public class LuaEnemyController : EnemyController {
         set { script.SetVar("gold", DynValue.NewNumber(value)); }
     }
 
+    public string DefenseMissText {
+        get { return script.GetVar("defensemisstext").String; }
+        set { script.SetVar("defensemisstext", DynValue.NewString(value)); }
+    }
+    
+    public string NoAttackMissText {
+        get { return script.GetVar("noattackmisstext").String; }
+        set { script.SetVar("noattackmisstext", DynValue.NewString(value)); }
+    }
+
     public override string DialogBubble {
         get {
             if (script.GetVar("dialogbubble") == null)
@@ -224,7 +234,6 @@ public class LuaEnemyController : EnemyController {
             script.Bind("SetBubbleOffset", (Action<int, int>)SetBubbleOffset);
             script.Bind("SetDamageUIOffset", (Action<int, int>)SetDamageUIOffset);
             script.Bind("SetSliceAnimOffset", (Action<int, int>)SetSliceAnimOffset);
-            script.Bind("GetLetters", (Func<Letter[]>)GetLetters);
             script.Bind("State", (Action<Script, string>)UIController.SwitchStateOnString);
             script.SetVar("canmove", DynValue.NewBoolean(false));
             sprite = new LuaSpriteController(GetComponent<Image>());
@@ -246,7 +255,7 @@ public class LuaEnemyController : EnemyController {
             /*if (script.GetVar("canspare") == null) CanSpare = false;
             if (script.GetVar("cancheck") == null) CanCheck = true;*/
         }
-        catch (InterpreterException ex) { UnitaleUtil.DisplayLuaError(scriptName, ex.DecoratedMessage != null ? ex.DecoratedMessage : ex.Message); }
+        catch (InterpreterException ex) { UnitaleUtil.DisplayLuaError(scriptName, ex.DecoratedMessage != null ? UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message : ex.Message); }
         catch (Exception ex)            { UnitaleUtil.DisplayLuaError(scriptName, "Unknown error. Usually means you're missing a sprite.\nSee documentation for details.\nStacktrace below in case you wanna notify a dev.\n\nError: " + ex.Message + "\n\n" + ex.StackTrace); }
     }
 
@@ -290,7 +299,7 @@ public class LuaEnemyController : EnemyController {
             else                                           script.Call(func);
             return true;
         }
-        catch (InterpreterException ex) { UnitaleUtil.DisplayLuaError(scriptName, ex.DecoratedMessage); }
+        catch (InterpreterException ex) { UnitaleUtil.DisplayLuaError(scriptName, UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message); }
         return true;
     }
 
@@ -405,11 +414,6 @@ public class LuaEnemyController : EnemyController {
     public void SetBubbleOffset(int x, int y) { offsets[1] = new Vector2(x, y); }
 
     public void SetDamageUIOffset(int x, int y) { offsets[2] = new Vector2(x, y); }
-
-    public Letter[] GetLetters() {
-        if (UIController.instance.state != UIController.UIState.ENEMYDIALOGUE)  return null;
-        else                                                                    return gameObject.GetComponentsInChildren<Letter>();
-    }
 
     public bool InFight() { return inFight; }
 }

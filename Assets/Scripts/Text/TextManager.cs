@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.Diagnostics;
 using MoonSharp.Interpreter;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,21 +13,22 @@ public class TextManager : MonoBehaviour {
 
     protected UnderFont default_charset = null;
     protected AudioClip default_voice = null;
-    public AudioSource letterSound = null;
+    [MoonSharpHidden] public AudioSource letterSound = null;
     protected TextEffect textEffect = null;
-    public List<Letter> letters = new List<Letter>();
     private string letterEffect = "none";
-    private string[] commandList = new string[] { "color", "alpha", "charspacing", "linespacing", "starcolor", "instant", "font", "effect", "noskip", "w", "waitall", "novoice",
-                                                  "next", "finished", "nextthisnow", "noskipatall", "waitfor", "speed", "letters", "voice", "func", "mugshot", "name",
-                                                  "music", "sound", "health", "lettereffect"};
+    public static string[] commandList = new string[] { "color", "alpha", "charspacing", "linespacing", "starcolor", "instant", "font", "effect", "noskip", "w", "waitall", "novoice",
+                                                        "next", "finished", "nextthisnow", "noskipatall", "waitfor", "speed", "letters", "voice", "func", "mugshot", "name",
+                                                        "music", "sound", "health", "lettereffect"};
     private float letterIntensity = 0.0f;
     public int currentLine = 0;
+    [MoonSharpHidden] public int _textMaxWidth = 0;
     private int currentCharacter = 0;
     public int currentReferenceCharacter = 0;
     private bool currentSkippable = true;
-    public bool nextMonsterDialogueOnce = false, nmd2 = false, wasStated = false;
+    private bool decoratedTextOffset = false;
+    [MoonSharpHidden] public bool nextMonsterDialogueOnce = false, nmd2 = false, wasStated = false;
     private RectTransform self;
-    public Vector2 offset;
+    [MoonSharpHidden] public Vector2 offset;
     private bool offsetSet = false;
     private float currentX;
     //private float _currentY;
@@ -40,11 +40,11 @@ public class TextManager : MonoBehaviour {
             _currentY = value;
         }
     }*/
-    
+
     // Variables that have to do with "[instant]"
     private bool instantActive  = false; // Will be true if "[instant]" or "[instant:allowcommand]" have been activated
     private bool instantCommand = false; // Will be true only if "[instant:allowcommand]" has been activated
-    
+
     private bool paused = false;
     private bool muted = false;
     private bool autoSkipThis = false;
@@ -71,20 +71,19 @@ public class TextManager : MonoBehaviour {
     private float timePerLetter;
     private float singleFrameTiming = 1.0f / 20;
 
-    public ScriptWrapper caller;
+    [MoonSharpHidden] public ScriptWrapper caller;
 
-    public UnderFont Charset { get; protected set; }
-    public TextMessage[] textQueue = null;
+    [MoonSharpHidden] public UnderFont Charset { get; protected set; }
+    [MoonSharpHidden] public TextMessage[] textQueue = null;
     //public string[] mugshotsPath;
     //public bool overworld;
-    public bool blockSkip = false;
-    public bool hidden = false;
-    public bool skipNowIfBlocked = false;
+    [MoonSharpHidden] public bool blockSkip = false;
+    [MoonSharpHidden] public bool skipNowIfBlocked = false;
     internal bool noSkip1stFrame = true;
-    
-    public bool LateStartWaiting = false; // Lua text objects will use a late start
 
-    public void SetCaller(ScriptWrapper s) { caller = s; }
+    [MoonSharpHidden] public bool lateStartWaiting = false; // Lua text objects will use a late start
+
+    [MoonSharpHidden] public void SetCaller(ScriptWrapper s) { caller = s; }
 
     public void SetFont(UnderFont font, bool firstTime = false) {
         Charset = font;
@@ -93,51 +92,35 @@ public class TextManager : MonoBehaviour {
         if (firstTime) {
             if (letterSound == null && font.Sound != null)
                 letterSound.clip = font.Sound;
-            if (currentColor == Color.white) {
-                // TODO: DO NOT OVERRIDE font.XXX!!!
-                defaultColor = Charset.DefaultColor;
-                if (GetType() == typeof(LuaTextManager)) {
-                    if (((LuaTextManager)this).hasColorBeenSet) {
-                        defaultColor = ((LuaTextManager)this)._color;
-                    } else if (((LuaTextManager)this).hasAlphaBeenSet) {
-                        defaultColor = new Color(font.DefaultColor.r, font.DefaultColor.g, font.DefaultColor.b, ((LuaTextManager)this).alpha);
-                    }
-                }
-                currentColor = defaultColor;
-            }
-            if (hSpacing == 3)
-                hSpacing = font.CharSpacing;
-        } else {
-            if (font.Sound != null)
-                letterSound.clip = font.Sound;
-            defaultColor = Charset.DefaultColor;
-            if (GetType() == typeof(LuaTextManager)) {
-                if (((LuaTextManager)this).hasColorBeenSet) {
-                    defaultColor = ((LuaTextManager)this)._color;
-                } else if (((LuaTextManager)this).hasAlphaBeenSet) {
-                    defaultColor = new Color(font.DefaultColor.r, font.DefaultColor.g, font.DefaultColor.b, ((LuaTextManager)this).alpha);
-                }
-            }
-            currentColor = defaultColor;
-            hSpacing = font.CharSpacing;
+        } else if (font.Sound != null)
+            letterSound.clip = font.Sound;
+
+        vSpacing = 0;
+        hSpacing = font.CharSpacing;
+        defaultColor = font.DefaultColor;
+        if (GetType() == typeof(LuaTextManager)) {
+            if (((LuaTextManager) this).hasColorBeenSet) defaultColor = ((LuaTextManager) this)._color;
+            if (((LuaTextManager) this).hasAlphaBeenSet) defaultColor.a = ((LuaTextManager) this).alpha;
         }
+        currentColor = defaultColor;
     }
 
-    public void SetHorizontalSpacing(float spacing = 3) { hSpacing = spacing; }
+    [MoonSharpHidden] public void SetHorizontalSpacing(float spacing = 3) { hSpacing = spacing; }
+    [MoonSharpHidden] public void SetVerticalSpacing(float spacing = 0) { vSpacing = spacing; }
 
-    public void SetVerticalSpacing(float spacing = 0) { this.vSpacing = spacing; }
-
-    public void ResetFont() {
+    [MoonSharpHidden] public void ResetFont() {
         if (Charset == null || default_charset == null)
             if (GetType() == typeof(LuaTextManager))
                 ((LuaTextManager)this).SetFont(SpriteFontRegistry.UI_MONSTERTEXT_NAME);
             else
                 SetFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_DEFAULT_NAME), true);
         Charset = default_charset;
-        if (default_voice != null)
-            letterSound.clip = default_voice;
-        else
-            letterSound.clip = default_charset.Sound;
+        letterSound.clip = default_voice ?? default_charset.Sound;
+        defaultColor = default_charset.DefaultColor;
+
+        // Default voice in the overworld
+        if (gameObject.name == "TextManager OW")
+            default_voice = AudioClipRegistry.GetVoice("monsterfont");
     }
 
     protected virtual void Awake() {
@@ -162,40 +145,40 @@ public class TextManager : MonoBehaviour {
 
     public bool IsPaused() { return this.paused; }
 
-    public bool IsFinished() {
+    [MoonSharpHidden] public bool IsFinished() {
         if (letterReferences == null)
             return false;
         return currentCharacter >= letterReferences.Length;
     }
 
-    public void SetMute(bool muted) { this.muted = muted; }
+    [MoonSharpHidden] public void SetMute(bool muted) { this.muted = muted; }
 
     public void SetText(TextMessage text) { SetTextQueue(new TextMessage[] { text }); }
 
-    public void SetTextQueue(TextMessage[] textQueue) {
+    [MoonSharpHidden] public void SetTextQueue(TextMessage[] textQueue) {
         if (UnitaleUtil.IsOverworld && (gameObject.name == "TextManager OW"))
             PlayerOverworld.AutoSetUIPos();
-        
+
         ResetFont();
         this.textQueue = textQueue;
         currentLine = 0;
         ShowLine(0);
     }
 
-    public void SetTextQueueAfterValue(int BeginText) {
+    [MoonSharpHidden] public void SetTextQueueAfterValue(int BeginText) {
         ResetFont();
         currentLine = BeginText;
         ShowLine(BeginText);
     }
 
-    public void ResetCurrentCharacter() {
+    [MoonSharpHidden] public void ResetCurrentCharacter() {
         currentCharacter = 0;
         currentReferenceCharacter = 0;
     }
 
-    public void AddToTextQueue(TextMessage text) { AddToTextQueue(new TextMessage[] { text }); }
+    [MoonSharpHidden] public void AddToTextQueue(TextMessage text) { AddToTextQueue(new TextMessage[] { text }); }
 
-    public void AddToTextQueue(TextMessage[] textQueueToAdd) {
+    [MoonSharpHidden] public void AddToTextQueue(TextMessage[] textQueueToAdd) {
         if (AllLinesComplete())
             SetTextQueue(textQueueToAdd);
         else {
@@ -207,11 +190,11 @@ public class TextManager : MonoBehaviour {
         }
     }
 
-    public bool CanSkip() { return currentSkippable; }
+    [MoonSharpHidden] public bool CanSkip() { return currentSkippable; }
 
-    public bool CanAutoSkip() { return autoSkip; }
-    public bool CanAutoSkipThis() { return autoSkipThis; }
-    public bool CanAutoSkipAll() { return autoSkipAll; }
+    [MoonSharpHidden] public bool CanAutoSkip() { return autoSkip; }
+    [MoonSharpHidden] public bool CanAutoSkipThis() { return autoSkipThis; }
+    [MoonSharpHidden] public bool CanAutoSkipAll() { return autoSkipAll; }
 
     public int LineCount() {
         if (textQueue == null)
@@ -219,7 +202,7 @@ public class TextManager : MonoBehaviour {
         return textQueue.Length;
     }
 
-    public void SetOffset(float xOff, float yOff) {
+    [MoonSharpHidden] public void SetOffset(float xOff, float yOff) {
         offset = new Vector2(xOff, yOff);
         offsetSet = true;
     }
@@ -230,7 +213,7 @@ public class TextManager : MonoBehaviour {
         return (instantActive || currentCharacter == letterReferences.Length);
     }
 
-    public bool AllLinesComplete() {
+    [MoonSharpHidden] public bool AllLinesComplete() {
         if (textQueue == null)  return true;
         else                    return currentLine == textQueue.Length - 1 && LineComplete();
     }
@@ -258,14 +241,24 @@ public class TextManager : MonoBehaviour {
                 mugshots.Add("mugshots/");
         } else
             mugshots.Add("mugshots/");
+
+        bool mugshotSet = false;
         if (mugshot != null && mugshot._img != null)
             if ((mugshots.Count > 1 || (mugshots[0] != "mugshots/" && mugshots[0] != "mugshots/null")) && text != null) {
-                if (mugshots.Count > 1) {
-                    mugshot.SetAnimation((string[])UnitaleUtil.ListToArray(mugshots), time);
-                    if (finalMugshot == null)
-                        finalMugshot = mugshots[mugshots.Count - 1];
-                } else
-                    mugshot.Set(mugshots[0]);
+                try {
+                    if (mugshots.Count > 1) {
+                        time = time > 0f ? time : 0.2f;
+                        mugshot.SetAnimation((string[])UnitaleUtil.ListToArray(mugshots), time);
+                        if (finalMugshot == null)
+                            finalMugshot = mugshots[mugshots.Count - 1];
+                    } else {
+                        mugshot.StopAnimation();
+                        mugshot.Set(mugshots[0]);
+                    }
+                } catch (CYFException e) {
+                    UnitaleUtil.DisplayLuaError("mugshot system", e.Message);
+                }
+                mugshotSet = true;
                 mugshotTimer = time;
                 mugshotList = (string[])UnitaleUtil.ListToArray(mugshots);
                 mugshot.color = new float[] { 1, 1, 1, 1 };
@@ -277,9 +270,10 @@ public class TextManager : MonoBehaviour {
                 if (gameObject.name == "TextManager OW")
                     self.localPosition = new Vector3(-267, self.localPosition.y, self.localPosition.z);
             }
+        _textMaxWidth = mugshotSet ? 417 : 534;
     }
 
-    protected void ShowLine(int line) {
+    protected void ShowLine(int line, bool forceNoAutoLineBreak = false) {
         /*if (overworld) {
             if (mugshotsPath != null)
                 if (mugshotsPath[line] != null || mugshotsPath[line] != "")
@@ -298,10 +292,13 @@ public class TextManager : MonoBehaviour {
         if (textQueue != null)
             if (line < textQueue.Length)
                 if (textQueue[line] != null) {
-                    SetMugshot(textQueue[line].Mugshot);
-                    
+                    if ((UnitaleUtil.IsOverworld || GlobalControls.isInFight) && ((UIController.instance && this == UIController.instance.textmgr) || gameObject.name == "TextManager OW"))
+                        SetMugshot(textQueue[line].Mugshot);
+
                     if (!offsetSet)
                         SetOffset(0, 0);
+                    if (GetType() != typeof(LuaTextManager))
+                        ResetFont();
                     currentColor = defaultColor;
                     colorSet = false;
                     currentSkippable = true;
@@ -311,13 +308,10 @@ public class TextManager : MonoBehaviour {
                     instantCommand = false;
                     skipFromPlayer = false;
                     firstChar = false;
-                    
-                    if (Charset.Sound != null)
-                        letterSound.clip = Charset.Sound;
-                    
+
                     timePerLetter = singleFrameTiming;
                     letterTimer = 0.0f;
-                    DestroyText();
+                    this.DestroyChars();
                     currentLine = line;
                     currentX = self.position.x + offset.x;
                     currentY = self.position.y + offset.y;
@@ -333,7 +327,7 @@ public class TextManager : MonoBehaviour {
                     letterIntensity = 0;*/
                     // letterSpeed = 1;
                     instantActive = textQueue[line].ShowImmediate;
-                    SpawnText();
+                    SpawnText(forceNoAutoLineBreak);
                     //if (!overworld)
                     //    UIController.instance.encounter.CallOnSelfOrChildren("AfterText");
                     if (UnitaleUtil.IsOverworld && GameObject.Find("textframe_border_outer") && this == PlayerOverworld.instance.textmgr) {
@@ -345,8 +339,27 @@ public class TextManager : MonoBehaviour {
                             if ((GameObject.Find("textframe_border_outer").GetComponent<Image>().color.a == 1))
                                 SetTextFrameAlpha(0);
                             blockSkip = true;
-                            DestroyText();
+                            this.DestroyChars();
                         }
+                    }
+
+                    // Move the text up a little if there are more than 3 lines so they can possibly fit in the arena
+                    if (!GlobalControls.retroMode && !UnitaleUtil.IsOverworld && UIController.instance && this == UIController.instance.textmgr
+                                                  && (UIController.instance.state == UIController.UIState.ACTIONSELECT || UIController.instance.state == UIController.UIState.DIALOGRESULT)) {
+                        int lines = textQueue[line].Text.Split('\n').Length > 3 ? 4 : 3;
+                        Vector3 pos = self.localPosition;
+
+                        // remove the offset
+                        self.localPosition = new Vector3(pos.x, pos.y - (decoratedTextOffset ? 9 : 0), pos.z);
+                        pos = self.localPosition;
+                        decoratedTextOffset = false;
+
+                        // add the offset if necessary
+                        if (lines == 4) {
+                            decoratedTextOffset = true;
+                            self.localPosition = new Vector3(pos.x, pos.y + (decoratedTextOffset ? 9 : 0), pos.z);
+                        }
+                    } else if (gameObject.name == "TextManager OW") {
                         int lines = textQueue[line].Text.Split('\n').Length;
                         if (lines >= 4) lines = 4;
                         else            lines = 3;
@@ -356,7 +369,7 @@ public class TextManager : MonoBehaviour {
                 }
     }
 
-    public void SetTextFrameAlpha(float a) {
+    [MoonSharpHidden] public void SetTextFrameAlpha(float a) {
         Image[] imagesChild = null;
         Image[] images = null;
 
@@ -376,11 +389,11 @@ public class TextManager : MonoBehaviour {
             img.color = new Color(img.color.r, img.color.g, img.color.b, a);
     }
 
-    public bool HasNext() { return currentLine + 1 < LineCount(); }
+    [MoonSharpHidden] public bool HasNext() { return currentLine + 1 < LineCount(); }
 
-    public void NextLineText() { ShowLine(++currentLine); }
+    [MoonSharpHidden] public void NextLineText() { ShowLine(++currentLine); }
 
-    public void SkipText() {
+    [MoonSharpHidden] public void SkipText() {
         if (!noSkip1stFrame) {
             while (currentCharacter < letterReferences.Length) {
                 if (letterReferences[currentCharacter] != null && Charset.Letters.ContainsKey(textQueue[currentLine].Text[currentCharacter])) {
@@ -393,25 +406,19 @@ public class TextManager : MonoBehaviour {
         }
     }
 
-    public void DoSkipFromPlayer() {
+    [MoonSharpHidden] public void DoSkipFromPlayer() {
         skipFromPlayer = true;
 
-        if (LuaEnemyEncounter.script.GetVar("playerskipdocommand").Boolean)
+        if ((GlobalControls.isInFight && LuaEnemyEncounter.script.GetVar("playerskipdocommand").Boolean) || !GlobalControls.isInFight)
             instantCommand = true;
 
-        // AudioClip temp = letterSound.clip;
-        // letterSound.clip = null;
         if (!GlobalControls.retroMode)
             InUpdateControlCommand(DynValue.NewString("instant"), currentCharacter);
         else
             SkipText();
-
-        // letterSound.clip = temp;
-
-        //SkipText();
     }
 
-    public void SkipLine() {
+    public virtual void SkipLine() {
         if (!noSkip1stFrame)
             while (currentCharacter < letterReferences.Length) {
                 if (letterReferences[currentCharacter] != null && Charset.Letters.ContainsKey(textQueue[currentLine].Text[currentCharacter])) {
@@ -435,64 +442,19 @@ public class TextManager : MonoBehaviour {
             }
     }
 
-    public int CharacterCount(string str) {
-        int count = 0;
-        int bracketCount = 0;
-        int currentChar = -1;
-        //string commandTest = "";
-        //bool resetted = false;
-        //do {
-        for (int i = 0; i < str.Length; i++) {
-            /*if (resetted) {
-                i = currentChar + 1;
-                count ++;
-                resetted = false;
-                bracketCount --;
-            }*/
-            if (str[i] == '[' && currentChar != i) {
-                if (bracketCount == 0)
-                    currentChar = i;
-                bracketCount ++;
-            } /*else if (str[i] == '[' && bracketCount == 0 && currentChar == i)
-                currentChar = -1;*/
-            if (bracketCount == 0)
-                count++;
-            //else if (bracketCount == 1 && (str[i] != '[' && str[i] != ']'))
-            //    commandTest += str[i];
-            if (str[i] == ']') {
-                bracketCount = bracketCount == 0 ? 0 : bracketCount - 1;
-                if (bracketCount == 0)
-                    currentChar = -1;
-                /*if (bracketCount == 0 && currentChar != -1)
-                    if (!commandList.Contains(commandTest.Split(':')[0])) {
-                        i = currentChar - 1;
-                        commandTest = "";
-                    }*/
-            }
-        }
-        if (bracketCount > 0)
-            count += str.Length - currentChar;
-        //resetted = true;
-        //} while (bracketCount > 0);
-        
-        return count;
-    }
-
     public void SetEffect(TextEffect effect) { textEffect = effect; }
 
-    public void DestroyText(bool force = false) {
+    [MoonSharpHidden] public void DestroyChars() {
         foreach (Transform child in gameObject.transform)
             Destroy(child.gameObject);
-        
-        // the following code is activated if DestroyText is called from an actual CYF mod, on the Lua side,
-        // or if the text is done typing out.
-        // hopefully we will never have to use any lambda functions on Lua Text Managers...
-        if (force || (GetType() == typeof(LuaTextManager)&&
-            (new StackFrame(1).GetMethod().Name == "lambda_method" || new StackFrame(1).GetMethod().Name == "NextLine")))
-            GameObject.Destroy(this.transform.parent.gameObject);
     }
 
     private void SpawnTextSpaceTest(int i, string currentText, out string currentText2) {
+        currentText2 = currentText;
+        bool decorated = textQueue[currentLine].Decorated;
+        float decorationLength = decorated ? UnitaleUtil.CalcTextWidth(this, 0, 1, true, true) : 0;
+
+        // Gets the first character of the line and the last character after the current space
         int finalIndex = i + 1, beginIndex = i;
 
         for (; beginIndex > 0; beginIndex--)
@@ -502,281 +464,182 @@ public class TextManager : MonoBehaviour {
             if (currentText[finalIndex] == ' ' || currentText[finalIndex] == '\n' || currentText[finalIndex] == '\r')
                 break;
 
-        if (currentText[beginIndex] == '\n' || currentText[beginIndex] == ' ' || currentText[beginIndex] == '\r' ) beginIndex++;
-        if (currentText[finalIndex] == '\n' || currentText[finalIndex] == ' ' || currentText[finalIndex] == '\r')  finalIndex--;
-        
-        int limit = 0;
-        if (SceneManager.GetActiveScene().name == "Intro")          limit = 400;
-        else if (UnitaleUtil.IsOverworld && mugshot != null) {
-            if (mugshot._img != null)
-                if (mugshot.alpha != 0)                             limit = 417;
-                else                                                limit = 534;
-            else                                                    limit = 534;
-        } else if (GlobalControls.isInFight) {
-            //if (UIController.instance.inited) {
-            if (UIController.instance.encounter.gameOverStance) limit = 320;
-            else if (name == "DialogBubble(Clone)")             limit = (int)transform.parent.GetComponent<LuaEnemyController>().bubbleWideness;
-            else if (GetType() == typeof(LuaTextManager))       limit = gameObject.GetComponent<LuaTextManager>().textMaxWidth;
-            else                                                limit = 534;
-            //} else                                                  limit = 534;
-        } else                                                      limit = 534;
-        if (UnitaleUtil.CalcTextWidth(this, beginIndex, finalIndex) > limit && limit > 0) {
-            int realBeginIndex = beginIndex, realFinalIndex = finalIndex;
-            beginIndex = finalIndex - 1;
-            while (textQueue[currentLine].Text[beginIndex] != ' ' && textQueue[currentLine].Text[beginIndex] != '\n' && textQueue[currentLine].Text[beginIndex] != '\r' && beginIndex > 0)
-                beginIndex--;
-            if (textQueue[currentLine].Text[beginIndex] == ' ' || textQueue[currentLine].Text[beginIndex] == '\n' || textQueue[currentLine].Text[beginIndex] == '\r' || beginIndex < 0)
-                beginIndex++;
-            if (UnitaleUtil.CalcTextWidth(this, beginIndex, finalIndex) > limit) {
-                finalIndex = beginIndex;
-                int testFinal = finalIndex;
-                beginIndex = realBeginIndex;
-                string currentText3 = currentText;
-                int addedChars = 1;
-                for (; finalIndex <= realFinalIndex && finalIndex < currentText3.Length; finalIndex++)
-                    if (UnitaleUtil.CalcTextWidth(this, beginIndex, finalIndex) > limit) {
-                        if (finalIndex == testFinal) {
-                            currentX = self.position.x + offset.x;
-                            /*if (GetType() == typeof(LuaTextManager))
-                                print("currentY from \\n (" + textQueue[currentLine].Text + ") = " + currentY + " - " + vSpacing + " - " + Charset.LineSpacing + " = " + (currentY - vSpacing - Charset.LineSpacing));*/
-                            currentY = currentY - vSpacing - Charset.LineSpacing;
-                            if (!UnitaleUtil.IsOverworld) {
-                                if (SceneManager.GetActiveScene().name == "Intro")
-                                    currentText3 = currentText3.Substring(0, finalIndex - 1) + "\n" + currentText3.Substring(finalIndex, currentText.Length - finalIndex);
-                                else if (name == "DialogBubble(Clone)" || UIController.instance.encounter.gameOverStance || GetType() == typeof(LuaTextManager))
-                                    currentText3 = currentText3.Substring(0, finalIndex - 1) + "\n" + currentText3.Substring(finalIndex, currentText.Length - finalIndex);
-                                else
-                                    currentText3 = currentText3.Substring(0, finalIndex - 1) + "\n  " + currentText3.Substring(finalIndex, currentText.Length - finalIndex);
-                            } else {
-                                currentText3 = currentText3.Substring(0, finalIndex - 1) + "\n  " + currentText3.Substring(finalIndex, currentText.Length - finalIndex);
-                                realFinalIndex += 2;
-                            }
-                        } else {
-                            if (!UnitaleUtil.IsOverworld) {
-                                if (SceneManager.GetActiveScene().name == "Intro") {
-                                    currentText3 = currentText3.Substring(0, finalIndex - 1) + "\n" + currentText3.Substring(finalIndex - 1, currentText.Length - finalIndex + addedChars);
-                                    realFinalIndex++;
-                                    addedChars++;
-                                } else if (name == "DialogBubble(Clone)" || UIController.instance.encounter.gameOverStance || GetType() == typeof(LuaTextManager)) {
-                                    currentText3 = currentText3.Substring(0, finalIndex - 1) + "\n" + currentText3.Substring(finalIndex - 1, currentText.Length - finalIndex + addedChars);
-                                    realFinalIndex++;
-                                    addedChars++;
-                                } else {
-                                    currentText3 = currentText3.Substring(0, finalIndex - 1) + "\n  " + currentText3.Substring(finalIndex - 1, currentText.Length - finalIndex + addedChars);
-                                    realFinalIndex += 3;
-                                    addedChars += 3;
-                                }
-                            } else {
-                                currentText3 = currentText3.Substring(0, finalIndex - 1) + "\n  " + currentText3.Substring(finalIndex - 1, currentText.Length - finalIndex + addedChars);
-                                realFinalIndex += 3;
-                                addedChars += 3;
-                            }
-                        }
-                        Array.Resize(ref letterReferences, currentText3.Length);
-                        Array.Resize(ref letterPositions, currentText3.Length);
-                        beginIndex = finalIndex;
+        if (currentText[beginIndex] == '\n' || currentText[beginIndex] == '\r')                                   beginIndex++;
+        if (currentText[finalIndex] == '\n' || currentText[finalIndex] == ' ' || currentText[finalIndex] == '\r') finalIndex--;
+
+        if (UnitaleUtil.CalcTextWidth(this, beginIndex, finalIndex, true) > _textMaxWidth && _textMaxWidth > 0) {
+            // If the line's too long, do something!
+            int wordBeginIndex = currentText2[i] == ' ' ? i + 1 : i;
+            if (UnitaleUtil.CalcTextWidth(this, wordBeginIndex, finalIndex, false) > _textMaxWidth - decorationLength) {
+                // Word is taking the entire line
+                for (int currentIndex = wordBeginIndex; currentIndex <= finalIndex; currentIndex++) {
+                    if (UnitaleUtil.CalcTextWidth(this, beginIndex, currentIndex, false) > _textMaxWidth) {
+                        currentText2 = currentText2.Substring(0, currentIndex) + "\n" + (decorated ? "  " : "") + currentText2.Substring(currentIndex, currentText2.Length - currentIndex);
+                        textQueue[currentLine].Text = currentText2;
+                        finalIndex += decorated ? 3 : 1;
+                        beginIndex = currentIndex;
                     }
-                currentText2 = currentText3;
-                return;
-            }
-            beginIndex--;
-            if (!UnitaleUtil.IsOverworld) {
-                if (SceneManager.GetActiveScene().name == "Intro")
-                    currentText2 = currentText.Substring(0, beginIndex) + "\n" + currentText.Substring(beginIndex + 1, currentText.Length - beginIndex - 1);
-                else if (name == "DialogBubble(Clone)" || UIController.instance.encounter.gameOverStance || GetType() == typeof(LuaTextManager))
-                    currentText2 = currentText.Substring(0, beginIndex) + "\n" + currentText.Substring(beginIndex + 1, currentText.Length - beginIndex - 1);
-                else {
-                    currentText2 = currentText.Substring(0, beginIndex) + "\n  " + currentText.Substring(beginIndex + 1, currentText.Length - beginIndex - 1);
-                    Array.Resize(ref letterReferences, currentText2.Length);
-                    Array.Resize(ref letterPositions, currentText2.Length);
                 }
-            } else {
-                currentText2 = currentText.Substring(0, beginIndex) + "\n  " + currentText.Substring(beginIndex + 1, currentText.Length - beginIndex - 1);
-                Array.Resize(ref letterReferences, currentText2.Length);
-                Array.Resize(ref letterPositions, currentText2.Length);
-            }
-            currentX = self.position.x + offset.x;
-            /*if (GetType() == typeof(LuaTextManager))
-                print("currentY from \\n (" + textQueue[currentLine].Text + ") = " + currentY + " - " + vSpacing + " - " + Charset.LineSpacing + " = " + (currentY - vSpacing - Charset.LineSpacing));*/
-            currentY = currentY - vSpacing - Charset.LineSpacing;
-        } else
-            currentText2 = currentText;
+            } else
+                // Line is too long
+                currentText2 = currentText2.Substring(0, wordBeginIndex - 1) + "\n" + (decorated ? "  " : "") + currentText2.Substring(wordBeginIndex, currentText.Length - wordBeginIndex);
+
+            Array.Resize(ref letterReferences, currentText2.Length);
+            Array.Resize(ref letterPositions, currentText2.Length);
+        }
+        textQueue[currentLine].Text = currentText2;
     }
 
-    private void SpawnText() {
-        letters.Clear();
+    private void CreateLetter(string currentText, int index, bool insert = false) {
+        if (insert)
+            for (int i = letterReferences.Length - 2; i >= index; i--) {
+                letterPositions[i + 1] = letterPositions[i];
+                letterReferences[i + 1] = letterReferences[i];
+            }
+
+        GameObject singleLtr = Instantiate(SpriteFontRegistry.LETTER_OBJECT);
+        RectTransform ltrRect = singleLtr.GetComponent<RectTransform>();
+
+        bool isLua = GetType() == typeof(LuaTextManager);
+        LuaTextManager luaThis = isLua ? ((LuaTextManager) this) : null;
+
+        ltrRect.localScale = new Vector3((isLua ? luaThis.xscale : 1f) + 0.001f, (isLua ? luaThis.yscale : 1f) + 0.001f, ltrRect.localScale.z);
+
+        Image ltrImg = singleLtr.GetComponent<Image>();
+        ltrRect.SetParent(gameObject.transform);
+        ltrImg.sprite = Charset.Letters[currentText[index]];
+
+        letterReferences[index] = ltrImg;
+
+        MoveLetter(currentText, index, ltrRect);
+
+        ltrImg.SetNativeSize();
+        if (isLua) {
+            Color luaColor = luaThis._color;
+            if (!colorSet) {
+                if (luaThis.hasColorBeenSet) ltrImg.color = luaColor;
+                else                         ltrImg.color = currentColor;
+                if (luaThis.hasAlphaBeenSet) ltrImg.color = new Color(ltrImg.color.r, ltrImg.color.g, ltrImg.color.b, luaColor.a);
+            } else                           ltrImg.color = currentColor;
+        } else                               ltrImg.color = currentColor;
+        ltrImg.GetComponent<Letter>().colorFromText = currentColor;
+        ltrImg.enabled = textQueue[currentLine].ShowImmediate || (GlobalControls.retroMode && instantActive);
+    }
+
+    private void MoveLetter(string currentText, int index, RectTransform ltrRect) {
+        if (GetType() == typeof(LuaTextManager) || this.gameObject.name == "TextParent" || this.gameObject.name == "ReviveText") {
+            // Allow Game Over fonts to enjoy the fixed text positioning, too!
+            float diff = (Charset.Letters[currentText[index]].border.w - Charset.Letters[currentText[index]].border.y);
+            ltrRect.localPosition = new Vector3(currentX - self.position.x - .9f, (currentY - self.position.y) + diff + .1f, 0);
+        } else
+            // Keep what we already have for all text boxes that are not Text Objects in an encounter
+            ltrRect.position = new Vector3(currentX + .1f, (currentY + Charset.Letters[currentText[index]].border.w - Charset.Letters[currentText[index]].border.y + 2) + .1f, 0);
+
+        letterPositions[index] = ltrRect.anchoredPosition;
+    }
+
+    private void SpawnText(bool forceNoAutoLineBreak = false) {
         noSkip1stFrame = true;
         string currentText = textQueue[currentLine].Text;
         letterReferences = new Image[currentText.Length];
         letterPositions = new Vector2[currentText.Length];
-        if (currentText.Length > 1)
-            if (currentText[1] != ' ')
-                if (!GlobalControls.isInFight) {
-                    string currentText2;
-                    SpawnTextSpaceTest(0, currentText, out currentText2);
-                    if (currentText != currentText2)
-                        textQueue[currentLine].Text = currentText = currentText2;
-                } else if (LuaEnemyEncounter.script.GetVar("autolinebreak").Boolean || GetType() == typeof(LuaTextManager)) {
-                    string currentText2;
-                    SpawnTextSpaceTest(0, currentText, out currentText2);
-                    if (currentText != currentText2)
-                        textQueue[currentLine].Text = currentText = currentText2;
-                }
-        
+        if (currentText.Length > 1 && !forceNoAutoLineBreak)
+            if (!GlobalControls.isInFight || LuaEnemyEncounter.script.GetVar("autolinebreak").Boolean || GetType() == typeof(LuaTextManager))
+                SpawnTextSpaceTest(0, currentText, out currentText);
+
         // Work-around for [instant] and [instant:allowcommand] at the beginning of a line of text
-        bool  skipImmediate = false;
+        bool skipImmediate = false;
         string skipCommand  = "";
-        
+
         for (int i = 0; i < currentText.Length; i++) {
             switch (currentText[i]) {
                 case '[':
                     int currentChar = i;
-                    string command = ParseCommandInline(currentText, ref i);
-                    if (command != null && !LateStartWaiting) {
-                        if (commandList.Contains(command.Split(':')[0])) {
-                            // Work-around for [noskip], [instant] and [instant:allowcommand]
-                            if (!GlobalControls.retroMode) {
-                                if (command == "noskip") {
-                                    // Copy all text before the command
-                                    string precedingText = currentText.Substring(0, i - (command.Length + 1));
-                                    
-                                    // Remove all commands
-                                    while (precedingText.IndexOf('[') > -1) {
-                                        int j = precedingText.IndexOf('[');
-                                        for (int k = 0; k < precedingText.Length; k++) {
-                                            if (precedingText[k] == ']') {
-                                                precedingText = precedingText.Replace(precedingText.Substring(j, (k - j) + 1), "");
-                                                break;
-                                            }
-                                        }
+                    string command = UnitaleUtil.ParseCommandInline(currentText, ref i);
+                    if (command == null || lateStartWaiting)
+                        i = currentChar;
+                    else {
+                        // Work-around for [noskip], [instant] and [instant:allowcommand]
+                        if (!GlobalControls.retroMode) {
+                            // The goal of this is to allow for commands executed "just before" [instant] on the first frame
+                            // Example: "[func:test][instant]..."
+
+                            // Special case for "[noskip]", "[instant]" and "[instant:allowcommand]"
+                            if (command == "noskip" || command == "instant" || command == "instant:allowcommand") {
+                                // Copy all text before the command
+                                string precedingText = currentText.Substring(0, i - (command.Length + 1));
+
+                                // Remove all commands, store them for later if using instant
+                                List<string> commands = command == "noskip" ? null : new List<string>();
+
+                                while (precedingText.IndexOf('[') > -1) {
+                                    int j = precedingText.IndexOf('['), k = j;
+                                    if (UnitaleUtil.ParseCommandInline(precedingText, ref k) == null) break;
+                                    else {
+                                        if (commands != null)
+                                            commands.Add(precedingText.Substring(j + 1, (k - j) - 1));
+                                        precedingText = precedingText.Replace(precedingText.Substring(j, (k - j) + 1), "");
                                     }
-                                    
-                                    // Confirm that our command is at the beginning!
-                                    if (precedingText.Length == 0)
+                                }
+
+                                // Confirm that our command is at the beginning!
+                                if (precedingText.Length == 0)
+                                    if (command == "noskip")
                                         PreCreateControlCommand(command);
-                                // Special case for "[instant]" and "[instant:allowcommand]"
-                                } else if (command == "instant" || command == "instant:allowcommand") {
-                                    // The goal of this is to allow for commands executed "just before" [instant] on the first frame
-                                    // Example: "[func:test][instant]..."
-                                    
-                                    // Copy all text before the command
-                                    string precedingText = currentText.Substring(0, i - (command.Length + 1));
-                                    
-                                    // Remove all commands, store them for later
-                                    List<string> commands = new List<string>();
-                                    
-                                    while (precedingText.IndexOf('[') > -1) {
-                                        int j = precedingText.IndexOf('[');
-                                        for (int k = 0; k < precedingText.Length; k++) {
-                                            if (precedingText[k] == ']') {
-                                                commands.Add(precedingText.Substring(j + 1, (k - j) - 1));
-                                                precedingText = precedingText.Replace(precedingText.Substring(j, (k - j) + 1), "");
-                                                break;
-                                            }
-                                        }
-                                    }
-                                    
-                                    // Confirm that our command is at the beginning!
-                                    if (precedingText.Length == 0) {
+                                    else {
                                         // Execute all commands that came before [instant] through InUpdateControlCommand
                                         foreach (string cmd in commands)
                                             InUpdateControlCommand(DynValue.NewString(cmd));
-                                        
+
                                         skipImmediate = true;
                                         skipCommand = command;
                                         InUpdateControlCommand(DynValue.NewString(command), i);
                                     }
-                                } else if (command.Length < 7 || command.Substring(0, 7) != "instant")
-                                    PreCreateControlCommand(command);
-                            } else
+                            } else if (command.Length < 7 || command.Substring(0, 7) != "instant")
                                 PreCreateControlCommand(command);
-                            
-                            continue;
                         } else
-                            i = currentChar;
-                    } else
-                        i = currentChar;
+                            PreCreateControlCommand(command);
+                        continue;
+                    }
                     break;
                 case '\n':
                     currentX = self.position.x + offset.x;
-                    /*if (GetType() == typeof(LuaTextManager))
-                        print("currentY from \\n = (" + textQueue[currentLine].Text + ") " + currentY + " - " + vSpacing + " - " + Charset.LineSpacing + " = " + (currentY - vSpacing - Charset.LineSpacing));*/
                     currentY = currentY - vSpacing - Charset.LineSpacing;
                     break;
                 case '\t':
-                    currentX = 356 + Camera.main.transform.position.x - 320; // HACK: bad tab usage
+                    currentX = !GlobalControls.isInFight ? (356 + Camera.main.transform.position.x - 320) : 356; // HACK: bad tab usage
                     break;
                 case ' ':
-                    if (i + 1 == currentText.Length)
+                    if (i + 1 == currentText.Length || currentText[i + 1] == ' ' || forceNoAutoLineBreak)
                         break;
-                    if (currentText[i + 1] == ' ' )
-                        break;
-                    if (!GlobalControls.isInFight) {
-                        string currentText2;
-                        SpawnTextSpaceTest(i, currentText, out currentText2);
-                        if (currentText != currentText2)
-                            textQueue[currentLine].Text = currentText = currentText2;
-                    } else if (LuaEnemyEncounter.script.GetVar("autolinebreak").Boolean || GetType() == typeof(LuaTextManager)) {
-                        string currentText2;
-                        SpawnTextSpaceTest(i, currentText, out currentText2);
-                        if (currentText != currentText2)
-                            textQueue[currentLine].Text = currentText = currentText2;
+                    if (!GlobalControls.isInFight || LuaEnemyEncounter.script.GetVar("autolinebreak").Boolean || GetType() == typeof(LuaTextManager)) {
+                        SpawnTextSpaceTest(i, currentText, out currentText);
+                        if (currentText[i] != ' ') {
+                            i--;
+                            continue;
+                        }
                     }
                     break;
             }
 
             if (!Charset.Letters.ContainsKey(currentText[i]))
                 continue;
-            
-            GameObject singleLtr = Instantiate(SpriteFontRegistry.LETTER_OBJECT);
-            RectTransform ltrRect = singleLtr.GetComponent<RectTransform>();
-            ltrRect.localScale = new Vector3(1.001f, 1.001f, ltrRect.localScale.z);
 
-            Image ltrImg = singleLtr.GetComponent<Image>();
-            ltrRect.SetParent(gameObject.transform);
-            ltrImg.sprite = Charset.Letters[currentText[i]];
-
-            letterReferences[i] = ltrImg;
-            
-            // allow Game Over fonts to enjoy the fixed text positioning, too!
-            if (GetType() == typeof(LuaTextManager) || this.gameObject.name == "TextParent" || this.gameObject.name == "ReviveText") {
-                float diff = (Charset.Letters[currentText[i]].border.w - Charset.Letters[currentText[i]].border.y);
-                // diff += Charset.LineSpacing;
-                ltrRect.localPosition = new Vector3(currentX - self.position.x - .9f, (currentY - self.position.y) + diff + .1f, 0);
-            // keep what we already have for all text boxes that are not Text Objects in an encounter
-            } else
-                ltrRect.position = new Vector3(currentX + .1f, (currentY + Charset.Letters[currentText[i]].border.w - Charset.Letters[currentText[i]].border.y + 2) + .1f, 0);
-            
-            /*if (GetType() == typeof(LuaTextManager))
-                print("currentY from SpawnText (" + textQueue[currentLine].Text + ") = " + currentY + " + " + Charset.Letters[currentText[i]].border.w + " - " + Charset.Letters[currentText[i]].border.y + " + 2 = " + (currentY + Charset.Letters[currentText[i]].border.w - Charset.Letters[currentText[i]].border.y + 2)); */
-
-            letterPositions[i] = ltrRect.anchoredPosition;
-            ltrImg.SetNativeSize();
-            if (GetType() == typeof(LuaTextManager)) {
-                Color luaColor = ((LuaTextManager)this)._color;
-                if (!colorSet) {
-                    if (((LuaTextManager)this).hasColorBeenSet) ltrImg.color = luaColor;
-                    else                                        ltrImg.color = currentColor;
-                    if (((LuaTextManager)this).hasAlphaBeenSet) ltrImg.color = new Color(ltrImg.color.r, ltrImg.color.g, ltrImg.color.b, luaColor.a);
-                } else                                          ltrImg.color = currentColor;
-            } else                                              ltrImg.color = currentColor;
-            ltrImg.GetComponent<Letter>().colorFromText = currentColor;
-            ltrImg.enabled = textQueue[currentLine].ShowImmediate || (GlobalControls.retroMode && instantActive);
-            letters.Add(singleLtr.GetComponent<Letter>());
-
-            currentX += ltrRect.rect.width + hSpacing; // TODO remove hardcoded letter offset
+            CreateLetter(currentText, i);
+            currentX += letterReferences[i].gameObject.GetComponent<RectTransform>().rect.width + hSpacing; // TODO remove hardcoded letter offset
         }
-        
+
         // Work-around for [instant] and [instant:allowcommand] at the beginning of a line of text
         if (skipImmediate)
             InUpdateControlCommand(DynValue.NewString(skipCommand));
-        
+
         if (UnitaleUtil.IsOverworld && SceneManager.GetActiveScene().name != "TitleScreen" && SceneManager.GetActiveScene().name != "EnterName" && !GlobalControls.isInShop)
             try {
                 if (mugshot.alpha == 0)
                     mugshot.color = new float[] { 1, 1, 1 };
             } catch { }
-        Update();
+        if (!instantActive)
+            Update();
     }
 
     private bool CheckCommand() {
@@ -785,22 +648,18 @@ public class TextManager : MonoBehaviour {
         if (currentCharacter < textQueue[currentLine].Text.Length)
             if (textQueue[currentLine].Text[currentCharacter] == '[') {
                 int currentChar = currentCharacter;
-                string command = ParseCommandInline(textQueue[currentLine].Text, ref currentCharacter);
+                string command = UnitaleUtil.ParseCommandInline(textQueue[currentLine].Text, ref currentCharacter);
                 if (command != null) {
                     currentCharacter++; // we're not in a continuable loop so move to the character after the ] manually
 
                     //float lastLetterTimer = letterTimer; // kind of a dirty hack so we can at least release 0.2.0 sigh
                     //float lastTimePerLetter = timePerLetter; // i am so sorry
-                    
+
                     wasStated = false;
 
                     DynValue commandDV = DynValue.NewString(command);
-                    if (commandList.Contains(commandDV.String.Split(':')[0]))
-                        InUpdateControlCommand(commandDV, currentCharacter);
-                    else {
-                        currentCharacter = currentChar;
-                        return false;
-                    }
+                    InUpdateControlCommand(commandDV, currentCharacter);
+
                     //if (lastLetterTimer != letterTimer || lastTimePerLetter != timePerLetter)
                     //if (currentCharacter >= textQueue[currentLine].Text.Length)
                     //    return true;
@@ -808,7 +667,6 @@ public class TextManager : MonoBehaviour {
                     return true;
                 }
                 currentCharacter = currentChar;
-
             }
         return false;
     }
@@ -835,11 +693,7 @@ public class TextManager : MonoBehaviour {
                     mugshot.SetAnimation(mugshotList, mugshotTimer);
             }
 
-        if (textQueue == null || textQueue.Length == 0)
-            return;
-        if (paused)
-            return;
-        if (LateStartWaiting)
+        if (textQueue == null || textQueue.Length == 0 || paused || lateStartWaiting)
             return;
         /*if (currentLine >= lineCount() && overworld) {
             endTextEvent();
@@ -849,10 +703,7 @@ public class TextManager : MonoBehaviour {
         if (textEffect != null)
             textEffect.UpdateEffects();
 
-        if (GlobalControls.retroMode && instantActive)
-            return;
-
-        if (currentCharacter >= letterReferences.Length)
+        if (GlobalControls.retroMode && instantActive || currentCharacter >= letterReferences.Length)
             return;
 
         if (waitingChar != KeyCode.None) {
@@ -861,7 +712,7 @@ public class TextManager : MonoBehaviour {
             else
                 return;
         }
-        
+
         /*
         letterTimer += Time.deltaTime;
         if ((letterTimer > timePerLetter || firstChar) && !LineComplete()) {
@@ -879,20 +730,20 @@ public class TextManager : MonoBehaviour {
                     }
         }
         */
-        
+
         letterTimer += Time.deltaTime;
-        if (((letterTimer >= timePerLetter) || firstChar) && !LineComplete() && timePerLetter > 0f) {
-            int repeats = (int)Mathf.Floor(letterTimer / timePerLetter);
-            
+        if ((letterTimer >= timePerLetter || firstChar) && !LineComplete()) {
+            int repeats = timePerLetter == 0f ? 1 : (int)Mathf.Floor(letterTimer / timePerLetter);
+
             bool soundPlayed = false;
             int lastLetter = -1;
-            
+
             for (int i = 0; i < repeats; i++) {
                 if (!HandleShowLetter(ref soundPlayed, ref lastLetter)) {
                     HandleShowLettersOnce(ref soundPlayed, ref lastLetter);
                     return;
                 }
-                
+
                 if (!firstChar)
                     letterTimer -= timePerLetter;
                 else {
@@ -901,7 +752,7 @@ public class TextManager : MonoBehaviour {
                 }
             }
         }
-        
+
         noSkip1stFrame = false;
     }
 
@@ -909,9 +760,8 @@ public class TextManager : MonoBehaviour {
         bool wentIn = false;
         while (letterOnceValue != 0 && !instantCommand) {
             wentIn = true;
-            if (!HandleShowLetter(ref soundPlayed, ref lastLetter)) {
+            if (!HandleShowLetter(ref soundPlayed, ref lastLetter))
                 return false;
-            }
             letterOnceValue--;
         }
         return wentIn;
@@ -922,10 +772,9 @@ public class TextManager : MonoBehaviour {
             float oldLetterTimer = letterTimer;
             int oldLetterOnceValue = letterOnceValue;
             lastLetter = currentCharacter;
-            while (CheckCommand()) {
-                if ((GlobalControls.retroMode && instantActive) || letterTimer != oldLetterTimer || waitingChar != KeyCode.None || letterOnceValue != oldLetterOnceValue)
+            while (CheckCommand())
+                if ((GlobalControls.retroMode && instantActive) || letterTimer != oldLetterTimer || waitingChar != KeyCode.None || letterOnceValue != oldLetterOnceValue || this.paused)
                     return false;
-            }
             if (currentCharacter >= letterReferences.Length)
                 return false;
         }
@@ -948,47 +797,6 @@ public class TextManager : MonoBehaviour {
         return true;
     }
 
-    private string OldParseCommandInline(string input, ref int currentChar) {
-        currentChar++; // skip past found bracket
-        CheckCharInBounds(currentChar, input.Length);
-        string control = "";
-        while (input[currentChar] != ']') {
-            control += input[currentChar];
-            currentChar++;
-            CheckCharInBounds(currentChar, input.Length);
-        }
-        return control;
-    }
-
-    private string ParseCommandInline(string input, ref int currentChar) {
-        currentChar++; // skip past found bracket
-        if (CheckCharInBounds(currentChar, input.Length))
-            return null;
-        string control = ""; int count = 1;
-        while (true) {
-            if (input[currentChar] == '[')
-                count++;
-            else if (input[currentChar] == ']') {
-                count--;
-                if (count == 0)
-                    break;
-            }
-            control += input[currentChar];
-            currentChar++;
-            if (CheckCharInBounds(currentChar, input.Length))
-                return null;
-        }
-        return control;
-    }
-
-    private bool CheckCharInBounds(int i, int length) {
-        if (i >= length) {
-            UnityEngine.Debug.LogWarning("Went out of bounds looking for arguments after control character.");
-            return true;
-        } else
-            return false;
-    }
-
     private void PreCreateControlCommand(string command) {
         string[] cmds = UnitaleUtil.SpecialSplit(':', command);
         string[] args = new string[0];
@@ -1004,14 +812,17 @@ public class TextManager : MonoBehaviour {
                 colorSet = true;
                 break;
             case "alpha":
-                if (cmds[1].Length == 2) {
+                if (cmds[1].Length == 2)
                     currentColor = new Color(currentColor.r, currentColor.g, currentColor.b, ParseUtil.GetByte(cmds[1]) / 255);
-                    if (GetType() == typeof(LuaTextManager))
-                        ((LuaTextManager)this)._color = new Color(((LuaTextManager)this)._color.r, ((LuaTextManager)this)._color.g, ((LuaTextManager)this)._color.b, currentColor.a);
-                }
                 break;
-            case "charspacing": SetHorizontalSpacing(ParseUtil.GetFloat(cmds[1])); break;
-            case "linespacing": SetVerticalSpacing(ParseUtil.GetFloat(cmds[1]));   break;
+            case "charspacing":
+                if (cmds.Length > 1 && cmds[1].ToLower() == "default") SetHorizontalSpacing(Charset.CharSpacing);
+                else                                                   SetHorizontalSpacing(ParseUtil.GetFloat(cmds[1]));
+                break;
+            case "linespacing":
+                if (cmds.Length > 1)
+                    SetVerticalSpacing(ParseUtil.GetFloat(cmds[1]));
+                break;
 
             case "starcolor":
                 Color starColor = ParseUtil.GetColor(cmds[1]);
@@ -1019,42 +830,25 @@ public class TextManager : MonoBehaviour {
                 if (indexOfStar > -1)
                     letterReferences[indexOfStar].color = starColor;
                 break;
-            
+
             case "instant":
-                /*
-                if (args.Length == 0 || (args.Length == 1 && cmds[1] == "allowcommand")) {
-                    if (args.Length == 1 && cmds[1] == "allowcommand") {
-                        instantCommand = true;
-                        Update();
-                        InUpdateControlCommand(DynValue.NewString("noskip"));
-                        break;
-                    }
-                    if (!skipFromPlayer)
-                        displayImmediate = true;
-                }
-                */
                 if (GlobalControls.retroMode)
                     instantActive = true;
                 else
                     InUpdateControlCommand(DynValue.NewString(command));
                 break;
-            
+
             case "noskip":
                 if (args.Length == 0)      currentSkippable = false;
                 break;
 
             case "font":
-                AudioClip oldClip = letterSound.clip;
-                float oldLineThing = Charset.LineSpacing;
+                UnderFont uf = SpriteFontRegistry.Get(cmds[1]);
+                if (uf == null)
+                    throw new CYFException("The font \"" + cmds[1] + "\" doesn't exist.\nYou should check if you made a typo, or if the font really is in your mod.");
+                SetFont(uf);
                 if (GetType() == typeof(LuaTextManager))
-                    ((LuaTextManager)this).SetFont(cmds[1]);
-                else
-                    SetFont(SpriteFontRegistry.Get(cmds[1]));
-                letterSound.clip = oldClip;
-                //foreach (Letter l in letters)
-                //    l.transform.position = new Vector2(l.transform.position.x, l.transform.position.y + (oldLineThing - Charset.LineSpacing));
-                //print("currentY from font change (" + textQueue[currentLine].Text + ") = " + currentY + " + " + oldLineThing + " - " + Charset.LineSpacing + " = " + (currentY + (oldLineThing - Charset.LineSpacing)));
-                //currentY += (oldLineThing - Charset.LineSpacing);
+                    ((LuaTextManager) this).UpdateBubble();
                 break;
 
             case "effect":
@@ -1135,69 +929,63 @@ public class TextManager : MonoBehaviour {
                 if (cmds[1].ToLower() == "default")  letterSound.clip = SpriteFontRegistry.Get(SpriteFontRegistry.UI_DEFAULT_NAME).Sound;
                 else                                 letterSound.clip = AudioClipRegistry.GetVoice(cmds[1].ToLower());
                 break;
-                
+
             case "instant":
                 if (args.Length != 0 && (args.Length > 1 || args[0] != "allowcommand"))
                     break;
-                
+
                 instantActive = true;
-                
+
                 if (command.String == "instant:allowcommand")
                     instantCommand = true;
-                
+
                 // First:  Find the active line of text
                 string currentText = textQueue[currentLine].Text;
-                
+
                 // Second: Find the position to "end" at
                 // This will either be: [instant:stop], [instant:stopall] or the end of the string
                 int pos = currentText.Length;
-                
+
                 for (int i = index; i < pos; i++) {
                     if (!skipFromPlayer) {
-                        if ((currentText.Substring(i)).Length >= 13 && currentText.Substring(i, 13) == "[instant:stop") {
+                        if ((currentText.Substring(i)).Length >= 13 && pos - i >= 13 && currentText.Substring(i, 13) == "[instant:stop") {
                             pos = i - 1;
                             break;
                         }
                     } else {
-                        if ((currentText.Substring(i)).Length >= 16 && currentText.Substring(i, 16) == "[instant:stopall") {
+                        if ((currentText.Substring(i)).Length >= 16 && pos - i >= 16 && currentText.Substring(i, 16) == "[instant:stopall") {
                             pos = i - 1;
                             break;
                         }
                     }
                 }
-                
-                // pos--;
-                
+
                 // Third:  Find all commands between the current position and the "end point"
                 for (int i = index; i < pos; i++)
-                    if (currentText[i] == '[' && currentText.Substring(i, 3) != "[w:" && currentText.Substring(i, 9) != "[waitfor:"
-                        && currentText.Substring(i, 8) != "[instant") {
+                    if (currentText[i] == '[' && (pos - i < 3 || currentText.Substring(i, 3) != "[w:") && (pos - i < 9 || currentText.Substring(i, 9) != "[waitfor:")
+                        && (pos - i < 8 || currentText.Substring(i, 8) != "[instant")) {
                         // Only execute the command if `instantCommand` is true
                         if (instantCommand)
                             try {
                                 InUpdateControlCommand(DynValue.NewString(currentText.Substring(i + 1, currentText.IndexOf(']', i) - (i + 1))));
                             } catch {}
                     }
-                
+
                 // Fourth: Display the next set of actually-created letter sprites between `index` and `pos`
                 for (int i = index; i < pos; i++) {
                     if (letterReferences[i] != null)
                         letterReferences[i].enabled = true;
                 }
-                
+
                 // Fifth:  Update variables
                 if (pos < currentText.Length) {
                     instantActive  = false;
                     instantCommand = false;
                     letterTimer = timePerLetter;
-                    /*
-                    if (letterTimer >= timePerLetter * 2)
-                        letterTimer = timePerLetter + (letterTimer % timePerLetter);
-                    */
                 }
-                
+
                 skipFromPlayer = false;
-                
+
                 currentCharacter = pos;
                 currentReferenceCharacter = pos;
                 break;
@@ -1227,7 +1015,7 @@ public class TextManager : MonoBehaviour {
                         caller.Call(cmds[1], null, true);
                     if (cmds[1] == "State")
                         wasStated = true;
-                } catch (InterpreterException ex) { UnitaleUtil.DisplayLuaError(caller.scriptname, ex.DecoratedMessage); }
+                } catch (InterpreterException ex) { UnitaleUtil.DisplayLuaError(caller.scriptname, UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message); }
                 break;
 
             case "mugshot":
@@ -1241,7 +1029,7 @@ public class TextManager : MonoBehaviour {
             case "name":
                 string text = textQueue[currentLine].Text;
                 string textEnd = text.Substring(0, currentCharacter - 1) + PlayerCharacter.instance.Name + text.Substring(currentCharacter, text.Length - 1);
-                textQueue[currentLine].setText(textEnd);
+                textQueue[currentLine].SetText(textEnd);
                 break;
 
             case "music":
@@ -1256,8 +1044,7 @@ public class TextManager : MonoBehaviour {
 
             case "sound":
                 //In a battle
-                if (GameObject.Find("player"))  GameObject.Find("player").GetComponent<AudioSource>().PlayOneShot(AudioClipRegistry.GetSound(args[0]));
-                else                            GameObject.Find("Player").GetComponent<AudioSource>().PlayOneShot(AudioClipRegistry.GetSound(args[0]));
+                GameObject.Find(GameObject.Find("player") != null ? "player" : "Player").GetComponent<AudioSource>().PlayOneShot(AudioClipRegistry.GetSound(args[0]));
                 break;
 
             case "health":
@@ -1336,8 +1123,8 @@ public class TextManager : MonoBehaviour {
                 gob.music = null;
             }
             PlayerCharacter.instance.HP = 0;
-            gameObject.transform.SetParent(null);
-            GameObject.DontDestroyOnLoad(this.gameObject);
+            // gameObject.transform.SetParent(null);
+            // GameObject.DontDestroyOnLoad(this.gameObject);
             RectTransform rt = gameObject.GetComponent<RectTransform>();
             rt.position = new Vector3(rt.position.x, rt.position.y, -1000);
             gob.StartDeath();

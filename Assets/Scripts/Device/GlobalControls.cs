@@ -9,11 +9,13 @@ using MoonSharp.Interpreter;
 /// Controls that should be active on all screens. Pretty much a hack to allow people to reset. Now it's more useful.
 /// </summary>
 public class GlobalControls : MonoBehaviour {
+    public static string CYFversion       = "0.6.4";
+    public static string OverworldVersion = "0.6.4";
     public static int frame = 0;
+    public static float overworldTimestamp = 0f;
     public static PlayerOverworld po;
     public static UndertaleInput input = new KeyboardInput();
     public static LuaInputBinding luaInput = new LuaInputBinding(input);
-    public static AudioClip Music;
     // public static Texture2D texBeforeEncounter;
     public static string realName;
     public static string lastScene = "test2";
@@ -29,11 +31,11 @@ public class GlobalControls : MonoBehaviour {
     public static bool stopScreenShake = false;
     public static bool isInFight = false;
     public static bool isInShop = false;
+    public static bool allowWipeSave = false;
     private bool screenShaking = false;
-    public static Vector2 beginPosition;
     //public static bool samariosNightmare = false;
-    public static string[] nonOWScenes = new string[] { "Battle", "Error", /*"EncounterSelect",*/ "ModSelect", "GameOver", "TitleScreen", "Disclaimer", "EnterName", "TransitionOverworld", "Intro" };
-    public static string[] canTransOW = new string[] { "Battle", "Error", "GameOver" };
+    public static string[] nonOWScenes = new string[] { "Battle", "Error", "ModSelect", "Options", "TitleScreen", "Disclaimer", "EnterName", "TransitionOverworld", "Intro" };
+    public static string[] canTransOW = new string[] { "Battle", "Error" };
     //Wow what's this
     public static Dictionary<string, GameState.MapData> GameMapData = new Dictionary<string, GameState.MapData>();
     public static Dictionary<string, GameState.EventInfos> EventData = new Dictionary<string, GameState.EventInfos>();
@@ -44,129 +46,132 @@ public class GlobalControls : MonoBehaviour {
         else if (window == null
             misc = new Misc();
     }*/
-    
-    // used to only call Awake once
-    private bool awakened = false;
-    
-    void Awake() {
+
+    // used to only run Awake once
+    private static bool awakened = false;
+
+    public void Awake() {
         if (!awakened) {
-            SceneManager.sceneLoaded += LoadScene;
-            
-            // use AlMightyGlobals to load Safe Mode, Retromode and Fullscreen mode preferences
-            
-            // check if safe mode has a stored preference that is a boolean
+            StaticInits.Start();
+            SaveLoad.Start();
+            new ControlPanel();
+            new PlayerCharacter();
+            SaveLoad.LoadAlMighty();
+            LuaScriptBinder.Set(null, "ModFolder", DynValue.NewString("@Title"));
+
+            UnitaleUtil.AddKeysToMapCorrespondanceList();
+
+            //Use AlMightyGlobals to load Crate Your Frisk, Safe Mode, Retromode and Fullscreen mode preferences
+
+            if (LuaScriptBinder.GetAlMighty(null, "CrateYourFrisk") != null && LuaScriptBinder.GetAlMighty(null, "CrateYourFrisk").Boolean)
+                crate = true;
+            #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
+                Misc.WindowName = crate ? ControlPanel.instance.WinodwBsaisNmae : ControlPanel.instance.WindowBasisName;
+            #endif
+
+            //Check if safe mode has a stored preference that is a boolean
             if (LuaScriptBinder.GetAlMighty(null, "CYFSafeMode") != null
              && LuaScriptBinder.GetAlMighty(null, "CYFSafeMode").Type == DataType.Boolean)
                 ControlPanel.instance.Safe = LuaScriptBinder.GetAlMighty(null, "CYFSafeMode").Boolean;
-            
-            // check if retro mode has a stored preference that is a boolean
+
+            //Check if retro mode has a stored preference that is a boolean
             if (LuaScriptBinder.GetAlMighty(null, "CYFRetroMode") != null
              && LuaScriptBinder.GetAlMighty(null, "CYFRetroMode").Type == DataType.Boolean)
                 retroMode = LuaScriptBinder.GetAlMighty(null, "CYFRetroMode").Boolean;
-            
-            // check if fullscreen mode has a stored preference that is a boolean
+
+            //Check if fullscreen mode has a stored preference that is a boolean
             if (LuaScriptBinder.GetAlMighty(null, "CYFPerfectFullscreen") != null
              && LuaScriptBinder.GetAlMighty(null, "CYFPerfectFullscreen").Type == DataType.Boolean)
-                perfectFullscreen = LuaScriptBinder.GetAlMighty(null, "CYFPerfectFullscreen").Boolean;
-            
-            // check if window scale has a stored preference that is a number
+                ScreenResolution.perfectFullscreen = LuaScriptBinder.GetAlMighty(null, "CYFPerfectFullscreen").Boolean;
+
+            //Check if window scale has a stored preference that is a number
             if (LuaScriptBinder.GetAlMighty(null, "CYFWindowScale") != null
              && LuaScriptBinder.GetAlMighty(null, "CYFWindowScale").Type == DataType.Number)
-                windowScale = (int)LuaScriptBinder.GetAlMighty(null, "CYFWindowScale").Number;
-            
+                ScreenResolution.windowScale = (int)LuaScriptBinder.GetAlMighty(null, "CYFWindowScale").Number;
+
             awakened = true;
         }
     }
-    
-    // resolution variables
-    public static bool perfectFullscreen = true;
+
     public static int fullscreenSwitch = 0;
-    
-    public static int windowScale = 1;
-    
+
     #if UNITY_STANDALONE_WIN
         static IEnumerator RepositionWindow() {
             yield return new WaitForEndOfFrame();
-            
+
             try {
                 Misc.MoveWindowTo((int)(Screen.currentResolution.width/2 - (Screen.width/2)), (int)(Screen.currentResolution.height/2 - (Screen.height/2)));
             } catch {}
         }
     #endif
-    
-    public static void SetFullScreen(bool fullscreen, int newSwitch = 1) {
-        if (perfectFullscreen) {
-            if (!fullscreen)
-                Screen.SetResolution(640 * windowScale, 480 * windowScale, false, 0);
-            else
-                Screen.SetResolution(Screen.currentResolution.width, Screen.currentResolution.height, true, 0);
-        } else
-            Screen.SetResolution(640 * windowScale, 480 * windowScale, fullscreen, 0);
-        
-        fullscreenSwitch = newSwitch;
-	}
 
-	private static double RoundToNearestEven(double value) {
-		return System.Math.Truncate(value) + (System.Math.Truncate(value) % 2);
-	}
+    public static IEnumerator UpdateMonitorSize() {
+        yield return new WaitForEndOfFrame();
 
-	static IEnumerator ChangeAspectRatio() {
-        yield return new WaitForFixedUpdate();
-        
-		if (!Application.isEditor) {
-			double ScreenWidth = (Screen.height / (double)3) * (double)4;
-			Screen.SetResolution((int)RoundToNearestEven(ScreenWidth), Screen.height, Screen.fullScreen, 0);
-		}
-	}
+        try {
+            ScreenResolution.lastMonitorWidth = Screen.currentResolution.width;
+            ScreenResolution.lastMonitorHeight = Screen.currentResolution.height;
+        } catch {}
+    }
 
     /// <summary>
     /// Control checking, and way more.
     /// </summary>
     void Update () {
-        if (fullscreenSwitch != 0) {
-            StartCoroutine(ChangeAspectRatio());
-            
-            #if UNITY_STANDALONE_WIN
-                if (!Screen.fullScreen && fullscreenSwitch == 1)
-                    StartCoroutine(RepositionWindow());
-            #endif
-            
-            fullscreenSwitch--;
-        }
-        
+        #if UNITY_STANDALONE_WIN
+            if (fullscreenSwitch == 1)
+                StartCoroutine(RepositionWindow());
+            if (fullscreenSwitch > 0)
+                fullscreenSwitch--;
+        #endif
+
         stopScreenShake = false;
-        if (isInFight)
+        if (isInFight || UnitaleUtil.IsOverworld)
             frame ++;
-        if (SceneManager.GetActiveScene().name == "ModSelect")        lastSceneUnitale = true;
-        else                                                          lastSceneUnitale = false;
+
+        string sceneName = SceneManager.GetActiveScene().name;
+
+        if (sceneName == "ModSelect") lastSceneUnitale = true;
+        else                          lastSceneUnitale = false;
+
+        // Activate Debugger
         if (UserDebugger.instance && Input.GetKeyDown(KeyCode.F9)) {
             if (UserDebugger.instance.gameObject.activeSelf)
                 GameObject.Find("Text").transform.SetParent(UserDebugger.instance.gameObject.transform);
             UserDebugger.instance.gameObject.SetActive(!UserDebugger.instance.gameObject.activeSelf);
-            Camera.main.GetComponent<FPSDisplay>().enabled = !Camera.main.GetComponent<FPSDisplay>().enabled;
-        } else if (isInFight && Input.GetKeyDown(KeyCode.H) && SceneManager.GetActiveScene().name != "Error" && UserDebugger.instance.gameObject.activeSelf)
+            Camera.main.GetComponent<FPSDisplay>().enabled = UserDebugger.instance.gameObject.activeSelf;
+        // Activate Hitbox Debugger
+        } else if (isInFight && Input.GetKeyDown(KeyCode.H) && sceneName != "Error" && UserDebugger.instance.gameObject.activeSelf)
             GameObject.Find("Main Camera").GetComponent<ProjectileHitboxRenderer>().enabled = !GameObject.Find("Main Camera").GetComponent<ProjectileHitboxRenderer>().enabled;
-        else if (Input.GetKeyDown(KeyCode.Escape) && (canTransOW.Contains(SceneManager.GetActiveScene().name) || isInFight)) {
-            if (isInFight && LuaEnemyEncounter.script.GetVar("unescape").Boolean && SceneManager.GetActiveScene().name != "Error")
+        // Exit a battle or the Error scene
+        else if (Input.GetKeyDown(KeyCode.Escape) && (canTransOW.Contains(sceneName) || isInFight)) {
+            if (isInFight && LuaEnemyEncounter.script.GetVar("unescape").Boolean && sceneName != "Error")
                 return;
-            if (SceneManager.GetActiveScene().name == "Error" && !modDev)
+            if (sceneName == "Error" && !modDev) {
+                UnitaleUtil.ExitOverworld();
+                SceneManager.LoadScene("Disclaimer");
+                GameObject.Destroy(GameObject.Find("SpritePivot"));
                 return;
+            }
 
             if (GameOverBehavior.gameOverContainer)
                 if (GameOverBehavior.gameOverContainer.activeInHierarchy)
                     GameObject.FindObjectOfType<GameOverBehavior>().EndGameOver();
                 else
                     UIController.EndBattle();
-            else {
+            else
                 UIController.EndBattle();
-            }
             //StaticInits.Reset();
-        } else if (input.Menu == UndertaleInput.ButtonState.PRESSED && !nonOWScenes.Contains(SceneManager.GetActiveScene().name) && !isInFight)
-            if (!PlayerOverworld.instance.PlayerNoMove && EventManager.instance.script == null && !PlayerOverworld.instance.menuRunning[2] && !PlayerOverworld.instance.menuRunning[4] && EventManager.instance.script == null && GameObject.Find("FadingBlack").GetComponent<Fading>().alpha <= 0)
+        //Open the Menu in the Overworld
+        } else if (input.Menu == UndertaleInput.ButtonState.PRESSED && !nonOWScenes.Contains(sceneName) && !isInFight && !isInShop && (!GameOverBehavior.gameOverContainerOw || !GameOverBehavior.gameOverContainerOw.activeInHierarchy)) {
+            if (!PlayerOverworld.instance.PlayerNoMove && EventManager.instance.script == null && !PlayerOverworld.instance.menuRunning[2] && !PlayerOverworld.instance.menuRunning[4] && (GameObject.Find("FadingBlack") == null || GameObject.Find("FadingBlack").GetComponent<Fading>().alpha <= 0))
                 StartCoroutine(PlayerOverworld.LaunchMenu());
-        
-        //else if (Input.GetKeyDown(KeyCode.L))
-        //    MyFirstComponentClass.SpriteAnalyser();
+        //Wipe save and close CYF in the Error scene if save failed to load
+        } else if (sceneName == "Error" && allowWipeSave && Input.GetKeyDown(KeyCode.R)) {
+            System.IO.File.Delete(Application.persistentDataPath + "/save.gd");
+            Application.Quit();
+        }
+
         if (isInFight)
             switch (fleeIndex) {
                 case 0:
@@ -188,16 +193,15 @@ public class GlobalControls : MonoBehaviour {
                     else if (Input.anyKeyDown)       fleeIndex = 0;
                     break;
             }
-        if  (Input.GetKeyDown(KeyCode.F4)        // F4
-          || (Input.GetKeyDown(KeyCode.Return)
-          &&(Input.GetKey(KeyCode.LeftAlt)       // LAlt  + Enter
-          || Input.GetKey(KeyCode.RightAlt))))   // RAlt  + Enter
-			SetFullScreen(!Screen.fullScreen);
-    }
-
-    void LoadScene(Scene scene, LoadSceneMode mode) {
-        if (LuaScriptBinder.GetAlMighty(null, "CrateYourFrisk") != null)  crate = LuaScriptBinder.GetAlMighty(null, "CrateYourFrisk").Boolean;
-        else                                                              crate = false;
+        if (ScreenResolution.hasInitialized)
+            if  (Input.GetKeyDown(KeyCode.F4)        // F4
+              || (Input.GetKeyDown(KeyCode.Return)
+              &&(Input.GetKey(KeyCode.LeftAlt)       // LAlt  + Enter
+              || Input.GetKey(KeyCode.RightAlt)))) { // RAlt  + Enter
+                ScreenResolution.SetFullScreen(!Screen.fullScreen);
+                if (!Screen.fullScreen)
+                    StartCoroutine(UpdateMonitorSize());
+              }
     }
 
     private IEnumerator IShakeScreen(object[] args) {
@@ -212,37 +216,19 @@ public class GlobalControls : MonoBehaviour {
         Vector2 shift = new Vector2(0, 0), totalShift = new Vector2(0, 0);
         float frameCount = 0, intensityBasis = intensity;
         while (frameCount < frames) {
-            if (stopScreenShake) {
-                tf.position = new Vector3(tf.position.x - totalShift.x, tf.position.y - totalShift.y, tf.position.z);
-                UserDebugger.instance.transform.position = new Vector3(UserDebugger.instance.transform.position.x - totalShift.x,
-                                                                       UserDebugger.instance.transform.position.y - totalShift.y,
-                                                                       UserDebugger.instance.transform.position.z);
-                screenShaking = false;
-                yield break;
-            }
+            if (stopScreenShake)
+                break;
             if (fade)
                 intensity = intensityBasis * (1 - (frameCount / frames));
             shift = new Vector2((Random.value - 0.5f) * 2 * intensity, (Random.value - 0.5f) * 2 * intensity);
 
-            if (UnitaleUtil.IsOverworld)
-                PlayerOverworld.instance.cameraShift = new Vector2(PlayerOverworld.instance.cameraShift.x + shift.x - totalShift.x, PlayerOverworld.instance.cameraShift.y + shift.y - totalShift.y);
-            else {
-                tf.position = new Vector3(tf.position.x + shift.x - totalShift.x, tf.position.y + shift.y - totalShift.y, tf.position.z);
-                UserDebugger.instance.transform.position = new Vector3(UserDebugger.instance.transform.position.x + shift.x - totalShift.x,
-                                                                       UserDebugger.instance.transform.position.y + shift.y - totalShift.y,
-                                                                       UserDebugger.instance.transform.position.z);
-            }
-            //print(totalShift + " + " + shift + " = " + (totalShift + shift));
+            Misc.MoveCamera(shift.x - totalShift.x, shift.y - totalShift.y);
             totalShift = shift;
             frameCount++;
             yield return 0;
         }
+        Misc.MoveCamera(-totalShift.x, -totalShift.y);
         screenShaking = false;
-        tf.position = new Vector3(tf.position.x - totalShift.x, tf.position.y - totalShift.y, tf.position.z);
-        if (!UnitaleUtil.IsOverworld)
-            UserDebugger.instance.transform.position = new Vector3(UserDebugger.instance.transform.position.x - totalShift.x,
-                                                                   UserDebugger.instance.transform.position.y - totalShift.y,
-                                                                   UserDebugger.instance.transform.position.z);
     }
 
     public void ShakeScreen(float duration, float intensity, bool isIntensityDecreasing) {

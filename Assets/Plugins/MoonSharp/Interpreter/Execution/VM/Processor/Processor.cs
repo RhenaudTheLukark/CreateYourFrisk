@@ -105,7 +105,7 @@ namespace MoonSharp.Interpreter.Execution.VM
 				ClosureScope = function.Function.ClosureContext,
 				CallingSourceRef = SourceRef.GetClrLocation(),
 				Flags = flags,
-				Function = function.Function
+                Function = function.Function
 			});
 
 			return function.Function.EntryPointByteCodeLocation;

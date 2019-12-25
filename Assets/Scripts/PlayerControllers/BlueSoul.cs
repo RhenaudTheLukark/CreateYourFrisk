@@ -44,7 +44,6 @@ public class BlueSoul : AbstractSoul {
         }
 
         // turning point
-        // TODO moving off platforms, but there are no platforms yet
         if (ySpeed <= 0) {
             jumping = false;
             falling = true;

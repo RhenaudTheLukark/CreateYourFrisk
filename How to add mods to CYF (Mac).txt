@@ -1,0 +1,9 @@
+=============================
+HOW TO ADD MODS TO CYF ON MAC
+=============================
+
+1: Click on Create Your Frisk
+2: Click on the Gear icon in Finder
+3: Click on "Show package contents"
+4: Open "Mods"
+5: Place all downloaded mods here!

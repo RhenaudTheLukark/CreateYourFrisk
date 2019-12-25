@@ -2,9 +2,9 @@
 
 Welcome to this little project of mine!
 
-I made this thing mostly for playing videos, however I plan to add more stuff! (Including actual docs.)
+I made this thing mostly for playing videos, however I plan to add more stuff! 
 
-When testing, you'll want to load the Disclaimer scene from the Scenes folder.
+When testing, you'll want to load the Disclaimer or the QuickLoad scene from the Scenes folder.
 
 Editing the Overworld requires **Unity** (see **Unity Version** below).
 
@@ -43,7 +43,7 @@ To download the engine, go to [**the releases page**](https://github.com/Rhenaud
 
 ## Unity Version
 
-CYF's latest version is **v0.6.2.2**. It was built using **Unity Personal 2018.2.13f1**.
+CYF's latest version is **v0.6.4**. It was built using **Unity Personal 2018.2.13f1**.
 
 To get this version of Unity, either:
 

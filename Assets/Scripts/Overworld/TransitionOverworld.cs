@@ -7,12 +7,20 @@ using MoonSharp.Interpreter;
 
 public class TransitionOverworld : MonoBehaviour {
     public string FirstLevelToLoad;
-    public static string _FirstLevelToLoad;
     public Vector2 BeginningPosition;
     
     private void Start() {
-        _FirstLevelToLoad = FirstLevelToLoad;
         bool isStart = false;
+
+        // Set timestamp for Overworld to calculate total play time
+        GlobalControls.overworldTimestamp = Time.time - (SaveLoad.savedGame != null ? SaveLoad.savedGame.playerTime : 0f);
+        // Forcefully disable retromode if it is on
+        if (GlobalControls.retroMode) {
+            GlobalControls.retroMode = false;
+            try {
+                LuaScriptBinder.SetAlMighty(null, "CYFRetroMode", DynValue.NewBoolean(false), true);
+            } catch {}
+        }
 
         GameOverBehavior.gameOverContainerOw = GameObject.Find("GameOverContainer");
         GameOverBehavior.gameOverContainerOw.SetActive(false);
@@ -23,7 +31,11 @@ public class TransitionOverworld : MonoBehaviour {
         }
         GameObject.DontDestroyOnLoad(GameOverBehavior.gameOverContainerOw);
 
-        GlobalControls.beginPosition = BeginningPosition;
+        if (LuaScriptBinder.Get(null, "PlayerPosX") == null || LuaScriptBinder.Get(null, "PlayerPosY") == null || LuaScriptBinder.Get(null, "PlayerPosZ") == null) {
+            LuaScriptBinder.Set(null, "PlayerPosX", DynValue.NewNumber(BeginningPosition.x));
+            LuaScriptBinder.Set(null, "PlayerPosY", DynValue.NewNumber(BeginningPosition.y));
+            LuaScriptBinder.Set(null, "PlayerPosZ", DynValue.NewNumber(0));
+        }
         if (GameObject.Find("Main Camera"))
             GameObject.Destroy(GameObject.Find("Main Camera"));
         //Used only for the 1st scene
@@ -57,6 +69,7 @@ public class TransitionOverworld : MonoBehaviour {
         //GameObject.Destroy(gameObject);
 
         GameObject.DontDestroyOnLoad(GameObject.Find("Canvas OW"));
+        GameObject.DontDestroyOnLoad(GameObject.Find("Canvas Two"));
         GameObject.DontDestroyOnLoad(GameObject.Find("Player").transform.parent.gameObject);
         GameObject.DontDestroyOnLoad(GameObject.Find("Main Camera OW"));
         string mapName;
@@ -83,11 +96,19 @@ public class TransitionOverworld : MonoBehaviour {
     }
 
     public static IEnumerator GetIntoDaMap(string call, object[] neededArgs) {
-        //GlobalControls.fadeAuto = true;
         if (GameObject.Find("Main Camera OW")) {
             GameObject.Find("Main Camera OW").GetComponent<EventManager>().readyToReLaunch = true;
             GameObject.Find("Main Camera OW").tag = "MainCamera";
         }
+
+        //Clear any leftover Sprite and Text objects that are no longer connected to any scripts
+        foreach (Transform child in GameObject.Find("Canvas Two").transform)
+            if (!child.name.EndsWith("Layer"))
+                GameObject.Destroy(child.gameObject);
+            else {
+                foreach (Transform child2 in child)
+                    GameObject.Destroy(child2.gameObject);
+            }
 
         yield return 0;
 
@@ -141,8 +162,10 @@ public class TransitionOverworld : MonoBehaviour {
             }
         }
 
-        GameObject.Find("utHeart").GetComponent<Image>().color = new Color(GameObject.Find("utHeart").GetComponent<Image>().color.r, GameObject.Find("utHeart").GetComponent<Image>().color.g,
+        GameObject.Find("utHeart").GetComponent<Image>().color = new Color(GameObject.Find("utHeart").GetComponent<Image>().color.r,
+                                                                           GameObject.Find("utHeart").GetComponent<Image>().color.g,
                                                                            GameObject.Find("utHeart").GetComponent<Image>().color.b, 0);
+        PlayerOverworld.instance.cameraShift = Vector2.zero;
         if (call == "tphandler") {
             GameObject.Find("Player").transform.parent.position = (Vector2)neededArgs[0];
             PlayerOverworld.instance.gameObject.GetComponent<CYFAnimator>().movementDirection = ((TPHandler)neededArgs[1]).direction;

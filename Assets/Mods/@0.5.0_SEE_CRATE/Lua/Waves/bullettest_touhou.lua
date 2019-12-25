@@ -10,8 +10,8 @@ if enemies[1]["name"] ~= "Punderbolt" then
 	buttoncover.color = {0,0,0}
 	local namecover = CreateSprite("UI/sq_white", "BelowArena")
 	namecover.SetPivot(0,0.5)
-	namecover.Scale((#Player.name*13)/4 + ((#Player.name*2)/4),15/4)
-	namecover.MoveTo(30,70)
+	namecover.Scale((#Player.name*13)/4 + ((#Player.name*2)/4),16/4)
+	namecover.MoveTo(30,71)
 	namecover.color = {0,0,0}
 	nextwaves = {"bullettest_chaserorb"}
 	State("DEFENDING")
@@ -25,7 +25,7 @@ if enemies[1]["name"] ~= "Punderbolt" then
 	end
 else
 	cover = CreateSprite("UI/sq_white", "Top")
-	cover.Scale(640/4, 459/4)
+	cover.Scale(640/4, 460/4)
 	cover.MoveTo(320,0)
 	cover.color = {0,0,0}
 end

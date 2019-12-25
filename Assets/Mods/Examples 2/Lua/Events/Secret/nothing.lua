@@ -1,7 +1,7 @@
 function EventPage0() end
 function EventPage1() end
 
---That's quite literally nothing.
+--This is quite literally nothing.
 --Nothing important here.
 --However, if you keep looking at hidden files, I have one message for you:
 

@@ -2085,7 +2085,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   movementDirection: 0
   beginAnim: StopDown
-  specialHeader: NoAnim
+  specialHeader: 
   anims:
   - name: Fall
     anims: MonsterKidOW/f0, MonsterKidOW/f1, MonsterKidOW/f0, MonsterKidOW/f1
@@ -2094,9 +2094,9 @@ MonoBehaviour:
     anims: MonsterKidOW/13, MonsterKidOW/13
     transitionTime: 60
   - name: Fallen2
-    anims: 'MonsterKidOW/12, MonsterKidOW/13, MonsterKidOW/14, MonsterKidOW/15, '
+    anims: MonsterKidOW/12, MonsterKidOW/13, MonsterKidOW/14, MonsterKidOW/15
     transitionTime: 0.1
-  - name: NoAnim
+  - name: StopDown
     anims: empty, empty
     transitionTime: 60
 --- !u!1 &2010831946
@@ -2342,7 +2342,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 11419924, guid: eadfbd6437c330a4e8538c4969ddbb0d, type: 2}
       propertyPath: scriptToLoad
-      value: Secret/SaveTest1
+      value: SaveTest
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: eadfbd6437c330a4e8538c4969ddbb0d, type: 2}

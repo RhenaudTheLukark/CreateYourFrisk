@@ -18,6 +18,7 @@ public class GameOverBehavior : MonoBehaviour {
     public static GameObject gameOverContainer;
     public static GameObject gameOverContainerOw;
     private GameObject canvasOW;
+    private GameObject canvasTwo;
     private string[] heartShardAnim = new string[] { "UI/Battle/heartshard_0", "UI/Battle/heartshard_1", "UI/Battle/heartshard_2", "UI/Battle/heartshard_3" };
     private TextManager gameOverTxt;
     private TextManager reviveText;
@@ -116,8 +117,8 @@ public class GameOverBehavior : MonoBehaviour {
         this.deathText = deathText;
         this.deathMusic = deathMusic;
         
-        // reset the battle camera's position
-        Misc.ResetCamera();
+        // reset the camera's position
+        Misc.MoveCameraTo(0, 0);
 
         playerZ = 130;
         if (UnitaleUtil.IsOverworld) {
@@ -164,6 +165,7 @@ public class GameOverBehavior : MonoBehaviour {
             gameOverContainerOw.SetActive(true);
         else
             gameOverContainer.SetActive(true);
+        ScreenResolution.BoxCameras(Screen.fullScreen);
 
         Camera.main.GetComponent<AudioSource>().clip = AudioClipRegistry.GetMusic("mus_gameover");
         GameObject.Find("GameOver").GetComponent<Image>().sprite = SpriteRegistry.Get("UI/spr_gameoverbg_0");
@@ -214,13 +216,7 @@ public class GameOverBehavior : MonoBehaviour {
     }
 
     void Awake() {
-        //GameObject.Destroy(GameObject.Find("Canvas OW"));
-        //GameObject.Destroy(GameObject.Find("Player"));
-        //SceneManager.LoadScene("GameOver");
-        //if (GameObject.Find("Canvas OW") != null)
-        //    overworld = true;
-        //if (overworld)
-        //    GameObject.Destroy(GameObject.Find("Main Camera OW"));
+        
     }
 
 	// Update is called once per frame
@@ -241,6 +237,8 @@ public class GameOverBehavior : MonoBehaviour {
                 utHeart.GetComponent<Image>().color = heartColor;
                 canvasOW = GameObject.Find("Canvas OW");
                 canvasOW.SetActive(false);
+                canvasTwo = GameObject.Find("Canvas Two");
+                canvasTwo.SetActive(false);
             } else if (!once) {
                 once = true;
                 gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(16, 16);
@@ -305,7 +303,6 @@ public class GameOverBehavior : MonoBehaviour {
             }
 
             if (internalTimer > fluffybunsAfter) {
-                gameOverTxt.SetHorizontalSpacing(7);
                 if (deathText != null) {
                     List<TextMessage> text = new List<TextMessage>();
                     foreach (string str in deathText)
@@ -361,7 +358,6 @@ public class GameOverBehavior : MonoBehaviour {
                 exiting = true;
             } else if (internalTimerRevive >= 5.0f && !reviveTextSet && breakHeartReviveAfter) {
                 if (deathText != null) {
-                    reviveText.SetHorizontalSpacing(7);
                     List<TextMessage> text = new List<TextMessage>();
                     foreach (string str in deathText)
                         text.Add(new TextMessage(str, false, false));
@@ -498,6 +494,7 @@ public class GameOverBehavior : MonoBehaviour {
         
         if (UnitaleUtil.IsOverworld) {
             canvasOW.SetActive(true);
+            canvasTwo.SetActive(true);
             PlayerOverworld.instance.enabled = true;
             PlayerOverworld.instance.RestartMusic();
             GetComponent<SpriteRenderer>().enabled = true;
