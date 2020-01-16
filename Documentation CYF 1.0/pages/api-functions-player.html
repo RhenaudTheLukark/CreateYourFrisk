@@ -154,10 +154,12 @@ it's w3c valid, at least
                 </li><br>
                 <li><span class="term">Player.Hurt(<span class="number"></span> damage, <span class="number"></span> invul_time = 1.7, <span class="boolean"></span> ignoreDef = false)</span> 
                 - deals damage to the player, and makes them invincible for <span class="term">invul_time</span> seconds.
+                <br>Can not hurt the player again if they are already hurting (flashing).
                 <br><br>
-                Set <span class="term">ignoreDef</span> to true, and if the encounter variable <span clas="term">allowPlayerDef</span> is true, the damage dealt here will ignore the player's defense.
+                Set <span class="term">ignoreDef</span> to true, and if the encounter variable <span class="term">allowPlayerDef</span> is true, the damage dealt here will ignore the player's defense.
                 <br><br>
-                <span class="CYF"></span> Call <span class="term">Player.Hurt(0, 0)</span> to reset the player's hurt timer without making a sound.
+                <span class="CYF"></span> Set <span class="term">damage</span> to <span class="term">0</span>, and no sound will be played - but the player can still be given invincibility for <span class="term">invul_time</span> seconds if they are not already hurting.
+                <br>Call <span class="term">Player.Hurt(0, 0)</span> to stop and reset the player's hurt timer without making a sound.
                 </li><br>
                 <li><span class="term">Player.Heal(<span class="number"></span> value)</span> - heals the player for this amount. This is exactly the same as
                     Player.Hurt(-value, 0). It also plays the healing sound.

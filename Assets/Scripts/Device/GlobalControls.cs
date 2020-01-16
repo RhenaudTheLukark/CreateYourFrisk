@@ -9,7 +9,7 @@ using MoonSharp.Interpreter;
 /// Controls that should be active on all screens. Pretty much a hack to allow people to reset. Now it's more useful.
 /// </summary>
 public class GlobalControls : MonoBehaviour {
-    public static string CYFversion       = "0.6.4";
+    public static string CYFversion       = "0.6.4.1";
     public static string OverworldVersion = "0.6.4";
     public static int frame = 0;
     public static float overworldTimestamp = 0f;
@@ -125,7 +125,6 @@ public class GlobalControls : MonoBehaviour {
                 fullscreenSwitch--;
         #endif
 
-        stopScreenShake = false;
         if (isInFight || UnitaleUtil.IsOverworld)
             frame ++;
 
@@ -234,6 +233,7 @@ public class GlobalControls : MonoBehaviour {
     public void ShakeScreen(float duration, float intensity, bool isIntensityDecreasing) {
         if (!screenShaking) {
             screenShaking = true;
+            stopScreenShake = false;
             StartCoroutine("IShakeScreen", new object[] { duration, intensity, isIntensityDecreasing });
         }
     }

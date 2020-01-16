@@ -138,13 +138,15 @@ public class PlayerController : MonoBehaviour {
         }
         
         if (damage >= 0 && (invulTimer <= 0 || invulnerabilitySeconds < 0)) {
-            if (soundDelay < 0) {
-                soundDelay = 2;
-                PlaySound(AudioClipRegistry.GetSound("hurtsound"));
+            if (invulnerabilitySeconds >= 0)
+                invulTimer = invulnerabilitySeconds;
+            if (damage != 0) {
+                if (soundDelay < 0) {
+                    soundDelay = 2;
+                    PlaySound(AudioClipRegistry.GetSound("hurtsound"));
+                }
+                setHP(HP - damage, false);
             }
-
-            if (invulnerabilitySeconds >= 0) invulTimer = invulnerabilitySeconds;
-            if (damage != 0)                 setHP(HP - damage, false);
         } else if (damage < 0) {
             PlaySound(AudioClipRegistry.GetSound("healsound"));
             setHP(HP - damage);

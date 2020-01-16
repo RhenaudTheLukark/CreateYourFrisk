@@ -483,8 +483,8 @@ public class LuaTextManager : TextManager {
     public override void SkipLine() {
         if (!noSkip1stFrame)
             if ((GlobalControls.isInFight && LuaEnemyEncounter.script.GetVar("playerskipdocommand").Boolean)
-             || (EventManager.instance.script != null && EventManager.instance.script.GetVar("playerskipdocommand").Boolean)
-             || (GlobalControls.isInShop && GameObject.Find("Canvas").GetComponent<ShopScript>().script.GetVar("playerskipdocommand").Boolean))
+             || UnitaleUtil.IsOverworld && ((EventManager.instance.script != null && EventManager.instance.script.GetVar("playerskipdocommand").Boolean)
+             || (GlobalControls.isInShop && GameObject.Find("Canvas").GetComponent<ShopScript>().script.GetVar("playerskipdocommand").Boolean)))
                 this.DoSkipFromPlayer();
             else
                 base.SkipLine();

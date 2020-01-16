@@ -111,13 +111,14 @@ public class GameOverBehavior : MonoBehaviour {
             UIController.instance.encounter.EndWave(true);
             autolinebreakstate = LuaEnemyEncounter.script.GetVar("autolinebreak").Boolean;
             LuaEnemyEncounter.script.SetVar("autolinebreak", MoonSharp.Interpreter.DynValue.NewBoolean(true));
+            transform.position = new Vector3(transform.position.x - Misc.cameraX, transform.position.y - Misc.cameraY, transform.position.z);
         } else
             autolinebreakstate = true;
 
         this.deathText = deathText;
         this.deathMusic = deathMusic;
         
-        // reset the camera's position
+        //Reset the camera's position
         Misc.MoveCameraTo(0, 0);
 
         playerZ = 130;
