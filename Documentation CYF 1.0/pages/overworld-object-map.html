@@ -72,7 +72,7 @@ it's w3c valid, at least
                     <li class="new"><a href="overworld-object-player.html"><span class="CYF"></span> The Player Object</a></li>
                     <li><a href="overworld-object-screen.html"><span class="CYF"></span> The Screen Object</a></li>
                     <li><a href="overworld-object-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
-                    <li class="active" style="margin-left:5px;">> <span class="CYF"></span> The Map Object <</li>
+                    <li class="active new" style="margin-left:5px;">> <span class="CYF"></span> The Map Object <</li>
                 <li class="li-header">Resources</li>
                     <li><a href="../media/dialogoptions.png">Dialog bubble names</a></li>
             </ul>
@@ -88,6 +88,19 @@ it's w3c valid, at least
 				<br>Listed below are functions mainly used to access these variables.
 			</p>
             
+            <p>
+                <br><span class="function new">Map.GetName() returns <span class="string"></span></span>
+                Returns a string representing the name of the active scene. This is a valid name you may pass to the other functions here.
+            </p>
+            <p>
+                <br><span class="function new">Map.GetSaveName(<span class="string"></span> mapName) returns <span class="string"></span></span>
+                Returns a string representing the text displayed in the save screen when the player has saved on the scene <span class="term">mapName</span>.<br>
+                If there is no scene named <span class="term">mapName</span>, or <span class="term">mapName</span> does not have save point text set,
+                this function will return <span class="term">nil</span>.
+                <br><br>
+                You can change these values by changing the function <span class="term">AddKeysToMapCorrespondanceList</span> in the file
+                <span class="term">Assets/Scripts/Util/UnitaleUtil.cs</span>.
+            </p>
             <p>
                 <br><span class="function">Map.HasPlayerBeenInMap(<span class="string"></span> mapName) returns <span class="boolean"></span></span>
                 Returns a boolean specifying whether the player has been in the map <span class="term">mapName</span> before or not.<br>

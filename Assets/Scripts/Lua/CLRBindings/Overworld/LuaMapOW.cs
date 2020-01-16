@@ -38,6 +38,18 @@ public class LuaMapOW {
         appliedScript.Call("CYFEventNextCommand");
     }
 
+    [CYFEventFunction] public string GetName() {
+        try { return SceneManager.GetActiveScene().name; } 
+        finally { appliedScript.Call("CYFEventNextCommand"); }
+    }
+    [CYFEventFunction] public string GetSaveName(string mapName) {
+        try {
+            string result;
+            UnitaleUtil.MapCorrespondanceList.TryGetValue(mapName, out result);
+            return result;
+        } 
+        finally { appliedScript.Call("CYFEventNextCommand"); }
+    }
     [CYFEventFunction] public string GetMusicMap(string mapName) {
         if (SceneManager.GetActiveScene().name == mapName) return GetMusic();
         else
