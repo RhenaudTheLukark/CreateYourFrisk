@@ -198,10 +198,8 @@ public class ProjectileController {
             lastAbsY = absy;
             if (p.gameObject.GetComponent<KeyframeCollection>() != null)
                 GameObject.Destroy(p.gameObject.GetComponent<KeyframeCollection>());
-            if (p.gameObject.GetComponent<Mask>() != null)
-                GameObject.Destroy(p.gameObject.GetComponent<Mask>());
-            else if (p.gameObject.GetComponent<RectMask2D>() != null)
-                GameObject.Destroy(p.gameObject.GetComponent<RectMask2D>());
+            p.gameObject.GetComponent<Mask>().enabled = false;
+            p.gameObject.GetComponent<RectMask2D>().enabled = false;
             spr.StopAnimation();
             BulletPool.instance.Requeue(p);
             p = null;
