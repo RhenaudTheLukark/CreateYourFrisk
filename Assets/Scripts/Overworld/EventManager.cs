@@ -1247,7 +1247,6 @@ end";
                         // if this code is run, that means the player must have reached their destination
 
                         target.position = new Vector3(dirX, dirY, target.position.z);
-                        yield return 0;
 
                         if (name == "Player") {
                             go.GetComponent<PlayerOverworld>().isBeingMoved    = false;
