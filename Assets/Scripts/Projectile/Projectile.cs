@@ -179,6 +179,8 @@ public abstract class Projectile : MonoBehaviour {
     /// <returns>true if there's a collision, otherwise false</returns>
     public bool HitTestPP() {
         if (selfAbs.Overlaps(PlayerController.instance.playerAbs)) {
+            // TODO: Store a table of textures instead of a single texture and replace it when it's not on anymore?
+            // Ex: animated bullets will often need to reload their sprite
             if (needUpdateTex) {
                 texture = ((Texture2D)img.mainTexture).GetPixels32();
                 needUpdateTex = false;
