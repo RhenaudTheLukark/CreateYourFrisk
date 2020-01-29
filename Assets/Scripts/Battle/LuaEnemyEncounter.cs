@@ -39,7 +39,7 @@ internal class LuaEnemyEncounter : EnemyEncounter {
             string scriptText = ScriptRegistry.Get(ScriptRegistry.ENCOUNTER_PREFIX + StaticInits.ENCOUNTER);
             try { script.DoString(scriptText); } 
             catch (InterpreterException ex) {
-                UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message);
+                UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message, ex.DoNotDecorateMessage);
                 return false;
             }
             script.Bind("State", (Action<Script, string>)UIController.SwitchStateOnString);
