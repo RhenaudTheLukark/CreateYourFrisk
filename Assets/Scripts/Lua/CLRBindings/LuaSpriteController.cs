@@ -511,12 +511,12 @@ public class LuaSpriteController {
     // Gets or sets the paused state of a sprite's animation.
     public DynValue animationpaused {
         get {
-            if (img.GetComponent<Image>() && keyframes != null)
+            if (img && keyframes != null)
                 return DynValue.NewBoolean(keyframes.paused);
             return DynValue.NewNil();
         }
         set {
-            if (img.GetComponent<Image>()) {
+            if (img) {
                 if (value.Type != DataType.Boolean)
                     throw new CYFException("sprite.paused can only be set to a boolean value.");
 
@@ -533,7 +533,7 @@ public class LuaSpriteController {
     // then for each sprite in the table, this will be: ^ 1            ^ 2            ^ 3            ^ 4
     public int currentframe {
         set {
-            if (img.GetComponent<Image>()) {
+            if (img) {
                 if (keyframes != null && keyframes.enabled) {
                     if (value < 1 || value > keyframes.keyframes.Length)
                         throw new CYFException("sprite.currentframe: New value " + value + " is out of bounds.");
@@ -549,7 +549,7 @@ public class LuaSpriteController {
             }
         }
         get {
-            if (img.GetComponent<Image>() && keyframes != null)
+            if (img && keyframes != null)
                 return keyframes.getIndex();
             return 0;
         }
@@ -558,7 +558,7 @@ public class LuaSpriteController {
     // Gets or sets the current "play position" of a sprite's animation, in seconds.
     public float currenttime {
         set {
-            if (img.GetComponent<Image>()) {
+            if (img) {
                 if (keyframes != null && keyframes.enabled) {
                     if (value < 0 || value > keyframes.totalTime)
                         throw new CYFException("sprite.currenttime: New value " + value + " is out of bounds.");
@@ -569,7 +569,7 @@ public class LuaSpriteController {
             }
         }
         get {
-            if (img.GetComponent<Image>() && keyframes != null) {
+            if (img && keyframes != null) {
                 if (keyframes.enabled) {
                     if (!keyframes.animationComplete())
                         return keyframes.currTime % keyframes.totalTime;
@@ -583,7 +583,7 @@ public class LuaSpriteController {
     // Gets (read-only) the total time an animation will run for, in seconds.
     public float totaltime {
         get {
-            if (img.GetComponent<Image>() && keyframes != null)
+            if (img && keyframes != null)
                 return keyframes.totalTime;
             return 0;
         }
@@ -592,7 +592,7 @@ public class LuaSpriteController {
     // Gets or sets the speed of an animated sprite's animation.
     public float animationspeed {
         set {
-            if (img.GetComponent<Image>()) {
+            if (img) {
                 if (keyframes != null) {
                     if (value < 0)
                         throw new CYFException("sprite.animationspeed: An animation can not have negative speed!");
@@ -610,7 +610,7 @@ public class LuaSpriteController {
             }
         }
         get {
-            if (img.GetComponent<Image>()&& keyframes != null)
+            if (img && keyframes != null)
                 return keyframes.timePerFrame;
             return 0;
         }

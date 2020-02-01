@@ -246,6 +246,16 @@ it's w3c valid, at least
                 NOTE: If you are in the <i>Overworld</i>, you can NOT use this to parent text objects to Event objects' sprites.
             </p>
             <p>
+                <br><span class="new function">Text.SetAnchor(<span class="number"></span> x, <span class="number"></span> y)</span>
+                If this text object has a parent set via <span class="term">Text.SetParent</span>, this will control its anchor point
+                (the relative point on the parent sprite that the text object will follow if the parent sprite gets scaled).
+                <br><br>
+                <span class="term">x</span> and <span class="term">y</span> should usually both be between <span class="term">0</span> and <span class="term">1</span>.
+                However, you are free to use numbers outside of this range as well.
+                <br><br>
+                Works exactly the same as <span class="term">sprite.SetAnchor</span> (see <span class="ref">Sprites &amp; Animation</span>).
+            </p>
+            <p>
                 <br><span class="function"><span class="number"></span> Text.xscale,<br>
                 <span class="number"></span> Text.yscale,<br></span>
                 Allows you to stretch and squish text objects, similarly to sprite objects.

@@ -178,12 +178,14 @@ it's w3c valid, at least
                       layer of all objects simultaneously!</li>
                 <li>Finally, modify the data in the object <span class="term">Background</span>, in the <span class="term">Map Info</span> Component.
                   <ul>
-                      <li><span class="term">ID</span> = ID of the map. Used in the database to register event states. Must be unique.</li>
                       <li><span class="term">Music</span> = Name of the BGM played on the map. The BGM must be in the <span class="term">Audio</span>
                       folder of the mod or the <span class="term">Default</span> folder.</li>
                       <li><span class="term">Mod To Load</span> = Name of the mod loaded by the map.</li>
-                      <li><span class="term">Beginning Position</span> = Position of the player in the first map, from the bottom-left corner 
-                        of the map.</li>
+                      <li><span class="term">Is Music Kept Between Battles</span> = Makes the Overworld music keep playing during battles
+                      (like the CORE in Undertale). If unsure, leave unchecked.</li>
+                      <li><span class="term">No Random Encounter</span> = Check to disable random encounters on your map. If left unchecked, random
+                      encounters will occur, by randomly choosing an encounter .lua file from the mod set in <span class="term">Mod To Load</span>.
+                      Will exclude any encounters whose names start with <span class="term">#</span>.</li>
                   </ul></li>
                 <li>When everything is ready, remove the <span class="term">Main Camera OW</span> object and save the map.</li>
             </p>
@@ -201,7 +203,8 @@ it's w3c valid, at least
                   <li>Go to the component <span class="term">Transition Overworld</span> and change the values.</li>
 				  <ul>
                   <li><span class="term">First Level To Load</span>: Name of the first scene to load.</li>
-                  <li><span class="term">First Mod Folder</span>: Name of the mod folder of the first scene to load.</li>
+                  <li><span class="term">Beginning Position</span> = Position of the player in the first map, from the bottom-left corner 
+                        of the map.</li>
 				  </ul>
 			  </li>
               <li>Load the scene <span class="term">Disclaimer.unity</span> and launch the game.<br>

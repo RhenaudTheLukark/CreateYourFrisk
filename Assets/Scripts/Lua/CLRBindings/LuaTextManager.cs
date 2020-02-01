@@ -521,6 +521,12 @@ public class LuaTextManager : TextManager {
         container.transform.position = new Vector3(x, y, container.transform.position.z);
     }
 
+    public void SetAnchor(float x, float y) {
+        CheckExists();
+        container.GetComponent<RectTransform>().anchorMin = new Vector2(x, y);
+        container.GetComponent<RectTransform>().anchorMax = new Vector2(x, y);
+    }
+
     public int GetTextWidth() {
         CheckExists();
         return (int)UnitaleUtil.CalcTextWidth(this);
