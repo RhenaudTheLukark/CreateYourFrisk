@@ -149,24 +149,27 @@ it's w3c valid, at least
                 <li><span class="boolean"></span> <span class="term">Player.ishurting</span> (readonly) - true if the player's currently blinking due to being hurt, false
                     otherwise.
                 </li><br>
-                <li><span class="boolean"></span> <span class="term">Player.ismoving</span> (readonly) - true if the player is currently moving in battle, false otherwise. Will
-                    always be false while not in a wave script. NOTE: This only will change with the default control scheme (see below).
+                <li><span class="boolean"></span> <span class="term">Player.ismoving</span> (readonly) - true if the player is currently moving in battle, false otherwise. 
+                Will always be false while not in a wave script.
+                <br>NOTE: This only will change with the default control scheme (see <span class="term">Player.SetControlOverride</span> below).
                 </li><br>
-                <li><span class="term">Player.Hurt(<span class="number"></span> damage, <span class="number"></span> invul_time = 1.7, <span class="boolean"></span> ignoreDef = false)</span> 
+                <li><span class="term">Player.Hurt(<span class="number"></span> damage, <span class="number"></span> invul_time = 1.7, <span class="boolean"></span> ignoreDef = false, <span class="boolean"></span> playSound = true)</span> 
                 - deals damage to the player, and makes them invincible for <span class="term">invul_time</span> seconds.
                 <br>Can not hurt the player again if they are already hurting (flashing).
                 <br><br>
                 Set <span class="term">ignoreDef</span> to true, and if the encounter variable <span class="term">allowPlayerDef</span> is true, the damage dealt here will ignore the player's defense.
                 <br><br>
-                <span class="CYF"></span> Set <span class="term">damage</span> to <span class="term">0</span>, and no sound will be played - but the player can still be given invincibility for <span class="term">invul_time</span> seconds if they are not already hurting.
-                <br>Call <span class="term">Player.Hurt(0, 0)</span> to stop and reset the player's hurt timer without making a sound.
+                <span class="CYF"></span> Call <span class="term">Player.Hurt(0, 0)</span> to stop the player's invincibility frames without making a sound.
+                <br><span class="new"></span>Set <span class="term">playSound</span> to <span class="term">false</span>, and no sound will be played whatsoever.
                 </li><br>
                 <li><span class="term">Player.Heal(<span class="number"></span> value)</span> - heals the player for this amount. This is exactly the same as
                     Player.Hurt(-value, 0). It also plays the healing sound.
                 </li><br>
-                <li><span class="term">Player.SetControlOverride(<span class="boolean"></span> boolean)</span> - either true or false. Only useable in waves. If true, this will
-                    prevent the player soul from doing its regular movement/keyboard control for the rest of the wave.
-                    Use this if you want to implement your own controls in a wave.
+                <li><span class="term">Player.SetControlOverride(<span class="boolean"></span> boolean)</span> - either true or false. Only useable in waves.
+                If true, this will prevent the player soul from doing its regular movement/keyboard control for the rest of the wave
+                (in other words, it disables the red soul functionality).
+                <br><br>
+                Use this if you want to implement your own controls in a wave (i.e. a custom soul mode, like the blue or purple soul).
                 </li><br>
                 <li><span class="CYF"></span> <span class="term">Player.Move(<span class="number"></span> x, <span class="number"></span> y, <span class="boolean"></span> ignoreWalls = false)</span> - Moves the player soul based on its last position.
                     If <span class="term">ignoreWalls</span> is false, it will make sure the player doesn't go outside of the arena;

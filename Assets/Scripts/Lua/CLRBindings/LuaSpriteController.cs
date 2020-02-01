@@ -450,6 +450,8 @@ public class LuaSpriteController {
     public void SetAnimation(string[] spriteNames, float frametime, string prefix = "") {
         if (spriteNames == null)
             throw new CYFException("sprite.SetAnimation: The first argument (list of images) is nil.\n\nSee the documentation for proper usage.");
+        else if (spriteNames.Length == 0)
+            throw new CYFException("sprite.SetAnimation: No sequence of animations was provided (animation table is empty).");
         if (frametime < 0)
             throw new CYFException("sprite.SetAnimation: An animation can not have negative speed!");
         else if (frametime == 0)

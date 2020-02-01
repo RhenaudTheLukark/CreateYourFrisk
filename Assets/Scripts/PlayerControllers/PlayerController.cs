@@ -120,8 +120,10 @@ public class PlayerController : MonoBehaviour {
     /// </summary>
     /// <param name="damage">Damage to deal to the player</param>
     /// <param name="invulnerabilitySeconds">Optional invulnerability time for the player, in seconds.</param>
+    /// <param name="isDefIgnored">If false, will use Undertale's damage formula.</param>
+    /// <param name="playSound">If false, this function will not play any sound clips.</param>
     /// <returns></returns>
-    public virtual void Hurt(float damage = 3, float invulnerabilitySeconds = 1.7f, bool isDefIgnored = false) {
+    public virtual void Hurt(float damage = 3, float invulnerabilitySeconds = 1.7f, bool isDefIgnored = false, bool playSound = true) {
         if (!isDefIgnored) 
             if (GlobalControls.allowplayerdef && damage > 0) {
                 damage = damage + 2 - Mathf.FloorToInt((PlayerCharacter.instance.DEF + PlayerCharacter.instance.ArmorDEF) / 5);
@@ -138,17 +140,16 @@ public class PlayerController : MonoBehaviour {
         }
         
         if (damage >= 0 && (invulTimer <= 0 || invulnerabilitySeconds < 0)) {
-            if (invulnerabilitySeconds >= 0)
-                invulTimer = invulnerabilitySeconds;
-            if (damage != 0) {
-                if (soundDelay < 0) {
-                    soundDelay = 2;
-                    PlaySound(AudioClipRegistry.GetSound("hurtsound"));
-                }
-                setHP(HP - damage, false);
+            if (soundDelay < 0 && playSound) {
+                soundDelay = 2;
+                PlaySound(AudioClipRegistry.GetSound("hurtsound"));
             }
+            
+            if (invulnerabilitySeconds >= 0) invulTimer = invulnerabilitySeconds;
+            if (damage != 0)                 setHP(HP - damage, false);
         } else if (damage < 0) {
-            PlaySound(AudioClipRegistry.GetSound("healsound"));
+            if (playSound)
+                PlaySound(AudioClipRegistry.GetSound("healsound"));
             setHP(HP - damage);
         }
     }
