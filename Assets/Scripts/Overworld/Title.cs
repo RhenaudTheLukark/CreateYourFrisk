@@ -204,6 +204,7 @@ public class Title : MonoBehaviour {
         UnitaleUtil.ResetOW();
         SceneManager.LoadScene("TransitionOverworld");
         yield return 0;
+        GlobalControls.overworldTimestamp += (SaveLoad.savedGame != null ? SaveLoad.savedGame.playerTime : 0f);
         //yield return Application.isLoadingLevel;
         if (GameObject.Find("Main Camera"))
             GameObject.Destroy(GameObject.Find("Main Camera"));
