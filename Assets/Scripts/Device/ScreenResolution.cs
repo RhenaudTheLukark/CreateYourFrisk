@@ -57,6 +57,11 @@ public class ScreenResolution : MonoBehaviour {
         BGCamera.name = "BGCamera";
         GameObject.DontDestroyOnLoad(BGCamera);
 
+        //If this is the user's first time EVER opening the engine, force 640x480 windowed
+        if (!PlayerPrefs.HasKey("once")) {
+            SetFullScreen(false, 2);
+            PlayerPrefs.SetInt("once", 1);
+        }
         hasInitialized = true;
     }
 
