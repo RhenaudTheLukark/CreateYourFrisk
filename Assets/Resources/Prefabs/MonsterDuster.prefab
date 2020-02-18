@@ -38,6 +38,7 @@ ParticleSystem:
   m_GameObject: {fileID: 191580}
   serializedVersion: 2
   lengthInSec: 5
+  stopAction: 2
   startDelay:
     scalar: 0
     maxCurve:

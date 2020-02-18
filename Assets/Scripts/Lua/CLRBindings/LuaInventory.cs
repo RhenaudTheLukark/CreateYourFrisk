@@ -67,6 +67,8 @@ public class LuaInventory {
             throw new CYFException("Inventory.AddCustomItems: The first argument (list of item names) is nil.\n\nSee the documentation for proper usage.");
         else if (types == null)
             throw new CYFException("Inventory.AddCustomItems: The second argument (list of item types) is nil.\n\nSee the documentation for proper usage.");
+        else if (names.Length != types.Length)
+            throw new CYFException("Inventory.AddCustomItems: The second argument (list of item types) is not the same length as the first argument (list of item names).\n\nSee the documentation for proper usage.");
         Inventory.addedItems.AddRange(names);
         Inventory.addedItemsTypes.AddRange(types);
     }

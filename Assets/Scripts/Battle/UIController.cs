@@ -905,9 +905,9 @@ public class UIController : MonoBehaviour {
                         case Actions.MERCY:
                             if (GlobalControls.crate) {
                                 switch (mecry) {
-                                    case 0: ActionDialogResult(new TextMessage("You know... Seeing the engine like\rthis... It makes me want to cry.", true, false), UIState.ENEMYDIALOGUE); break;
+                                    case 0: ActionDialogResult(new TextMessage("You know...\rSeeing the engine like this...\rIt makes me want to cry.", true, false), UIState.ENEMYDIALOGUE); break;
                                     case 1: ActionDialogResult(new TextMessage("All these typos...\rCrate Your Frisk is bad.\nWe must destroy it.", true, false), UIState.ENEMYDIALOGUE); break;
-                                    case 2: ActionDialogResult(new TextMessage("We have two solutions here:\rdownload the engine again...", true, false), UIState.ENEMYDIALOGUE); break;
+                                    case 2: ActionDialogResult(new TextMessage("We have two solutions here:\nDownload the engine again...", true, false), UIState.ENEMYDIALOGUE); break;
                                     case 3: ActionDialogResult(new TextMessage("...Or another way. Though, I'll\rneed some time to find out\rhow to do this...", true, false), UIState.ENEMYDIALOGUE); break;
                                     case 4: ActionDialogResult(new TextMessage("*sniffles* I can barely stand\rthe view... This is so\rdisgusting...", true, false), UIState.ENEMYDIALOGUE); break;
                                     case 5: ActionDialogResult(new TextMessage("I feel like I'm getting there,\rkeep up the good work!", true, false), UIState.ENEMYDIALOGUE); break;
@@ -915,7 +915,7 @@ public class UIController : MonoBehaviour {
                                     case 7: ActionDialogResult(new TextMessage("...No, I don't have it.\nStupid dog!\nPlease give me more time!", true, false), UIState.ENEMYDIALOGUE); break;
                                     case 8: ActionDialogResult(new TextMessage("I want to puke...\nEven the engine is a\rplace of shitposts and memes.", true, false), UIState.ENEMYDIALOGUE); break;
                                     case 9: ActionDialogResult(new TextMessage("Will there one day be a place\rwhere shitposts and memes\rwill not appear?", true, false), UIState.ENEMYDIALOGUE); break;
-                                    case 10: ActionDialogResult(new TextMessage("I hope so... My eyes are bleeding.", true, false), UIState.ENEMYDIALOGUE); break;
+                                    case 10: ActionDialogResult(new TextMessage("I hope so...\rMy eyes are bleeding.", true, false), UIState.ENEMYDIALOGUE); break;
                                     case 11: ActionDialogResult(new TextMessage("Hm? Oh! Look! I have it!", true, false), UIState.ENEMYDIALOGUE); break;
                                     case 12: ActionDialogResult(new TextMessage("Let me read:", true, false), UIState.ENEMYDIALOGUE); break;
                                     case 13: ActionDialogResult(new TextMessage("\"To remove the big engine\rtypo bug...\"", true, false), UIState.ENEMYDIALOGUE); break;
@@ -923,7 +923,7 @@ public class UIController : MonoBehaviour {
                                         ActionDialogResult(new RegularMessage[]{
                                             new RegularMessage("\"...erase the AlMighty Globals.\""),
                                             new RegularMessage("Is that all? Come on, all\rthis time lost for such\ran easy response..."),
-                                            new RegularMessage("...Sorry for the wait.\rDo whatever you want now! :D"),
+                                            new RegularMessage("...Sorry for the wait.\nDo whatever you want now! :D"),
                                             new RegularMessage("But please..."),
                                             new RegularMessage("For GOD's sake..."),
                                             new RegularMessage("Remove Crate Your Frisk."),

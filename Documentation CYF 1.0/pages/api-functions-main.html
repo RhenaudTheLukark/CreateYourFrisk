@@ -158,6 +158,10 @@ it's w3c valid, at least
                 <br><span class="function"><span class="CYF"></span> SetFrameBasedMovement(<span class="boolean"></span> bool) [E/M/W]</span>
                 Set to <span class="term">true</span> if you want frame-based player movement (2px/frame) instead of time based player movement (120px/s).
                 <br>Set it to <span class="term">false</span> if you already are in frame-based movement and you want to go back to the time based movement.
+                <br><br>
+                By default, time-based movement is used (same as if <span class="term">SetFrameBasedMovement(false)</span> were called).
+                <br>Note that this function only controls the player's movement with the default control scheme (see <span class="term">Player.SetControlOverride</span>
+                in <span class="ref">The Player Object</span>).
             </p>
 
             <p>
@@ -332,8 +336,8 @@ end</pre>
             
             <p>
                 <br><span class="function">SetSprite(<span class="string"></span> filename) [M]</span>
-                Sets the monster's sprite from the Sprites folder to <span class="term">filename.png</span>. Can be used with <span class="term">[func]
-                </span> to change sprites mid-dialogue.
+                Sets the monster's sprite from the Sprites folder to <span class="term">filename.png</span>.
+                Can be used with <span class="term">[func]</span> to change sprites mid-dialogue.
             </p>
             
             <p>
@@ -346,8 +350,11 @@ end</pre>
 
             <p>
                 <br><span class="function"><span class="CYF"></span> SetDamage(amount) [M]</span>
-                Set the amount of damage the monster will take the next time it is attacked. Can be negative.<br><br>
-                <b><span style="color:#ff0000">THIS MUST ONLY BE USED IN A FUNCTION!</span></b>
+                Set the amount of damage the monster will take the next time it is attacked. Can be negative.
+                <br>Set <span class="term">amount</span> to the amount of damage the monster will take, or <span class="term">0</span> to make the attack miss.
+                <br><br>
+                This function can only be used within the <span class="ref">Game Event</span> <span class="term">BeforeDamageCalculation</span>, or just before
+                using the function <span class="term">Player.ChangeTarget</span>.
                 <br>You also don't want to use it with a monster who's been disabled with <span class="term">SetActive(false)</span>.
             </p>
 
