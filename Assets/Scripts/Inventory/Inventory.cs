@@ -140,8 +140,10 @@ public static class Inventory {
         if (!UnitaleUtil.IsOverworld) {
             if (!UIController.instance.battleDialogued && mess.Length != 0)
                 UIController.instance.ActionDialogResult(mess, UIController.UIState.ENEMYDIALOGUE);
-        } else
+        } else {
             GameObject.Find("TextManager OW").GetComponent<TextManager>().SetTextQueue(mess);
+            GameObject.Find("TextManager OW").transform.parent.parent.SetAsLastSibling();
+        }
        
         return;
     }
