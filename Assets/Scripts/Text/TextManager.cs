@@ -1137,6 +1137,8 @@ public class TextManager : MonoBehaviour {
         else                                                                                    HP = newhp;
         if (HP > ControlPanel.instance.HPLimit)                                                 HP = ControlPanel.instance.HPLimit;
         PlayerCharacter.instance.HP = HP;
+        if (!UnitaleUtil.IsOverworld)
+            UIStats.instance.setHP(HP);
     }
 
     private float CreateNumber(string str) {
