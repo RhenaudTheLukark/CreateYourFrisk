@@ -6,7 +6,7 @@ When testing, you'll want to load the Disclaimer scene from the Scenes folder.
 
 Editing the Overworld requires **Unity** (see **Unity Version** below).
 
-We also have a [**Discord server**](https://discord.gg/GFJ5277)! Feel free to check it out if you want to be in touch with Unitale and Crate Your Frisk's community!
+We also have a [**Discord server**](https://discord.gg/GFJ5277)! Feel free to check it out if you want to be in touch with Unitale and Create Your Frisk's community!
 
 ***
 
