@@ -46,7 +46,7 @@ using System.ComponentModel;
     public int Gold = 0;
     public string Weapon = "Stick";
     public string Armor = "Bandage";
-    private int[] LevelUpTable = new int[] { 10, 30, 70, 120, 200, 300, 500, 800, 1200, 1700, 2500, 3500, 5000, 7000, 10000, 15000, 25000, 50000, 99999 };
+    private int[] LevelUpTable = new int[] { 10, 30, 70, 120, 200, 300, 500, 800, 1200, 1700, 2500, 3500, 5000, 7000, 10000, 15000, 25000, 50000, 99999, 100000 };
 
     /*private string[] names = new string[]{
         "Chara",  "Dai",    "Dog",   "MTT",    "Papyru",
