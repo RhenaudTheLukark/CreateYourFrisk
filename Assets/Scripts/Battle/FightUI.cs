@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using MoonSharp.Interpreter;
+using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 
@@ -141,7 +142,7 @@ public class FightUI : MonoBehaviour {
                 wait1frame = true;
                 slice.StopAnimation();
                 slice.Set("empty");
-                enemy.TryCall("BeforeDamageValues");
+                enemy.TryCall("BeforeDamageValues", new DynValue[] { DynValue.NewNumber(Damage) });
                 if (Damage > 0) {
                     AudioSource aSrc = GetComponent<AudioSource>();
                     aSrc.clip = AudioClipRegistry.GetSound("hitsound");

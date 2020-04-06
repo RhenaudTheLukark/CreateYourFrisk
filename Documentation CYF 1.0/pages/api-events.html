@@ -239,9 +239,13 @@ end
                 <br><i>Previous name: <span class="term">OnAttack()</span></i>
             </p>
             <p>
-                <br><span class="function"><span class="CYF"> </span>BeforeDamageValues()</span>
-                Happens before the damage ui is displayed on the monster (the life bar and the damage number) and before
-                the hp changing. You can still change the target with <span class="term">Player.changeTarget(targetNumber)</span> in this function.
+                <br><span class="function"><span class="CYF"> </span>BeforeDamageValues(<span class="new"></span><span class="number"></span> damage)</span>
+                Happens before the damage UI is displayed on the monster (the life bar and the damage number) and before
+                the hp changing. You can still change the target with <span class="term">Player.ChangeTarget(targetNumber)</span> in this function,
+                but you <i>can not</i> use <span class="term">SetDamage</span> here.
+                <br><br>
+                <span class="new"></span> The argument <span class="term">damage</span> is equal to the incoming damage the enemy is about to take.
+                <br>Note that this damage has <u>not</u> been applied yet, unlike in <span class="term">HandleAttack</span>.
             </p>
             <p>
                 <br><span class="function">HandleCustomCommand(<span class="string"></span> command)</span>
