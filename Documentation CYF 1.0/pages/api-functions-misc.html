@@ -103,6 +103,12 @@ it's w3c valid, at least
                 <li><span class="number"></span> <span class="term">Misc.cameraX</span> - Gets or sets the current x position of the bottom-left corner of the camera.</li><br>
                 <li><span class="number"></span> <span class="term">Misc.cameraY</span> - Gets or sets the current y position of the bottom-left corner of the camera.</li><br>
                 <li><span class="boolean"></span> <span class="term">Misc.FullScreen</span> - Gets or sets whether the user is in fullscreen mode.</li><br>
+                <li><span class="new"></span><span class="number"></span> <span class="term">Misc.WindowWidth</span> (read-only) - Returns the width of the game window if it were running in windowed mode (even in fullscreen). If in wide fullscreen with <span class="term">Misc.SetWideFullscreen</span>, this includes the extra displayed pixels.</li><br>
+                <li>
+                    <span class="new"></span><span class="number"></span> <span class="term">Misc.WindowHeight</span> (read-only) - Returns the height of the game window if it were running in windowed mode (even in fullscreen).
+                    <br><br>
+                    Use <span class="term">Misc.WindowHeight/480</span> to calculate the scale at which CYF is being drawn to your window (or your screen, if in fullscreen).
+                </li><br>
                 <li><span class="number"></span> <span class="term">Misc.ScreenWidth</span> (read-only) - Returns the width of the user's screen in windowed mode, or the number of displayed pixel columns when in fullscreen.</li><br>
                 <li><span class="number"></span> <span class="term">Misc.ScreenHeight</span> (read-only) - Returns the height of the user's screen in windowed mode, or the number of displayed pixel rows when in fullscreen.</li><br>
                 <li><span class="new"></span><span class="number"></span> <span class="term">Misc.MonitorWidth</span> (read-only) - Returns the width of the user's monitor, regardless of the user's settings or if <span class="term">Misc.SetWideFullscreen</span> has been used.</li><br>
@@ -140,8 +146,6 @@ CreateProjectileAbs("bullet", 0 - widthOnEachSide, 240) -- creates a bullet at t
                 <li><span class="term">Misc.MoveWindow(<span class="number"></span> X, <span class="number"></span>  Y)</span> - Moves the window X pixels horizontally and Y pixels vertically.</li><br>
                 <li><span class="term">Misc.MoveWindowTo(<span class="number"></span> X, <span class="number"></span> Y)</span> - Moves the bottom left corner of the window to the given coordinates.
                 </li><br>
-                <li><span class="number"></span> <span class="term">Misc.WindowWidth</span> (readonly) - The width of the game window.</li><br>
-                <li><span class="number"></span> <span class="term">Misc.WindowHeight</span> (readonly) - The height of the game window.</li>
             </ul>
             <hr>
             <h3>File Functions</h3>

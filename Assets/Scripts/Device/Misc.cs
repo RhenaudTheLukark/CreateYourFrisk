@@ -24,6 +24,14 @@ public class Misc {
         }
     }
 
+    public static int WindowWidth {
+        get { return (Screen.fullScreen && ScreenResolution.wideFullscreen) ? Screen.currentResolution.width : (int)ScreenResolution.displayedSize.x; }
+    }
+
+    public static int WindowHeight {
+        get { return (Screen.fullScreen && ScreenResolution.wideFullscreen) ? Screen.currentResolution.height : (int)ScreenResolution.displayedSize.y; }
+    }
+
     public static int ScreenWidth {
         get { return (Screen.fullScreen && !ScreenResolution.wideFullscreen) ? (int)ScreenResolution.displayedSize.x : Screen.currentResolution.width; }
     }
@@ -244,20 +252,6 @@ public class Misc {
             GetWindowRect(window, out r);
             return new Rect(r.Left, r.Top, Mathf.Abs(r.Right - r.Left), Mathf.Abs(r.Top - r.Bottom));
         }
-
-        public static int WindowWidth {
-            get {
-                Rect size = GetWindowRect();
-                return (int)size.width;
-            }
-        }
-
-        public static int WindowHeight {
-            get {
-                Rect size = GetWindowRect();
-                return (int)size.height;
-            }
-        }
 #else
         public static string WindowName {
             get {
@@ -296,20 +290,6 @@ public class Misc {
         public static Rect GetWindowRect() {
             UnitaleUtil.DisplayLuaError("Windows-only function", "This feature is Windows-only! Sorry, but you can't use it here.");
             return new Rect();
-        }
-
-        public static int WindowWidth {
-            get {
-                UnitaleUtil.DisplayLuaError("Windows-only function", "This feature is Windows-only! Sorry, but you can't use it here.");
-                return 0;
-            }
-        }
-
-        public static int WindowHeight {
-            get {
-                UnitaleUtil.DisplayLuaError("Windows-only function", "This feature is Windows-only! Sorry, but you can't use it here.");
-                return 0;
-            }
         }
 #endif
 }
