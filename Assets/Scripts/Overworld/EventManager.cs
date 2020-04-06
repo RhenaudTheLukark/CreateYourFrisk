@@ -617,7 +617,7 @@ end";
             return null;
         }
 
-        scr.script.Globals["CreateLayer"] = (Action<string, string, bool>)SpriteUtil.CreateLayer;
+        scr.script.Globals["CreateLayer"] = (Func<string, string, bool, bool>)SpriteUtil.CreateLayer;
         scr.script.Globals["CreateSprite"] = (Func<string, string, int, DynValue>)SpriteUtil.MakeIngameSprite;
         scr.script.Globals["CreateText"] = (Func<Script, DynValue, DynValue, int, string, int, LuaTextManager>)LuaScriptBinder.CreateText;
 

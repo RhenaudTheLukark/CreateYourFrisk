@@ -60,7 +60,7 @@ public class ShopScript : MonoBehaviour {
             script.SetVar("background", UserData.Create(new LuaSpriteController(GameObject.Find("Background").GetComponent<Image>())));
             script.script.Globals["Interrupt"] = ((Action<DynValue, string>) Interrupt);
             script.script.Globals["CreateSprite"] = (Func<string, string, int, DynValue>) SpriteUtil.MakeIngameSprite;
-            script.script.Globals["CreateLayer"] = (Action<string, string, bool>) SpriteUtil.CreateLayer;
+            script.script.Globals["CreateLayer"] = (Func<string, string, bool, bool>) SpriteUtil.CreateLayer;
             script.script.Globals["CreateText"] = (Func<Script, DynValue, DynValue, int, string, int, LuaTextManager>) LuaScriptBinder.CreateText;
             TryCall("Start");
 
@@ -88,8 +88,8 @@ public class ShopScript : MonoBehaviour {
 
     private delegate TResult Func<T1, T2, T3, T4, T5, T6, TResult>(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg, T6 arg6);
 
-    void CreateLayer(string name, string relatedTag = "BelowUI", bool before = false) { SpriteUtil.CreateLayer(name, relatedTag, before); }
-    DynValue CreateSprite(string filename, string tag = "BelowUI", int childNumber = -1) { return SpriteUtil.MakeIngameSprite(filename, tag, childNumber); }
+    // void CreateLayer(string name, string relatedTag = "BelowUI", bool before = false) { SpriteUtil.CreateLayer(name, relatedTag, before); }
+    // DynValue CreateSprite(string filename, string tag = "BelowUI", int childNumber = -1) { return SpriteUtil.MakeIngameSprite(filename, tag, childNumber); }
 
     TextMessage[] BuildTextFromTable(DynValue text, string beforeText) {
         TextMessage[] msgs = new TextMessage[text.Type == DataType.Table ? text.Table.Length : 1];

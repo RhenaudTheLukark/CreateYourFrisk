@@ -71,7 +71,7 @@ public static class LuaScriptBinder {
         script.Globals["CYFversion"] = GlobalControls.CYFversion;
         if (!UnitaleUtil.IsOverworld) {
             script.Globals["CreateSprite"] = (Func<string, string, int, DynValue>)SpriteUtil.MakeIngameSprite;
-            script.Globals["CreateLayer"] = (Action<string, string, bool>)SpriteUtil.CreateLayer;
+            script.Globals["CreateLayer"] = (Func<string, string, bool, bool>)SpriteUtil.CreateLayer;
             script.Globals["CreateProjectileLayer"] = (Action<string, string, bool>)SpriteUtil.CreateProjectileLayer;
             script.Globals["SetFrameBasedMovement"] = (Action<bool>)SetFrameBasedMovement;
             script.Globals["SetAction"] = (Action<string>)SetAction;
