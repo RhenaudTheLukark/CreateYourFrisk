@@ -20,9 +20,10 @@ public class LuaTextManager : TextManager {
     private float xScale = 1;
     private float yScale = 1;
 
+    private bool autoDestroyed = false;
     public bool isactive {
         get {
-            return (container != null && containerBubble != null && speechThing != null && speechThingShadow != null);
+            return (container != null && containerBubble != null && speechThing != null && speechThingShadow != null && !autoDestroyed);
         }
     }
 
@@ -46,17 +47,17 @@ public class LuaTextManager : TextManager {
         if (isactive) {
             if (progress == ProgressMode.MANUAL) {
                 if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED && LineComplete())
-                    NextLine();
+                    Advance();
             } else if (progress == ProgressMode.AUTO) {
                 if (LineComplete())
                     if (countFrames == framesWait) {
-                        NextLine();
+                        Advance();
                         countFrames = 0;
                     } else
                         countFrames++;
             }
             if (base.CanAutoSkipAll() || base.CanAutoSkipThis())
-                NextLine();
+                Advance();
             if (CanSkip() && !LineComplete() && GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED)
                 DoSkipFromPlayer();
         }
@@ -249,6 +250,21 @@ public class LuaTextManager : TextManager {
         }
     }
 
+    public DynValue letters {
+        get {
+            Table table = new Table(null);
+            int key = 0;
+            foreach (Image i in letterReferences)
+                if (i != null) {
+                    key++;
+                    LuaSpriteController letter = new LuaSpriteController(i);
+                    letter.tag = "letter";
+                    table.Set(key, UserData.Create(letter, LuaSpriteController.data));
+                };
+            return DynValue.NewTable(table);
+        }
+    }
+
     // The color of the text on a 32 bits format. It uses an array of three or four floats between 0 and 255
     public float[] color32 {
         // We need first to convert the Color into a Color32, and then get the values.
@@ -340,8 +356,8 @@ public class LuaTextManager : TextManager {
         // only allow inline text commands and letter sounds on the second frame
         base.lateStartWaiting = false;
 
-        base.currentLine = 0;
-        ShowLine(0, true);
+        base.currentLine = -1;
+        Advance();
         if (bubble)
             ResizeBubble();
     }
@@ -490,12 +506,22 @@ public class LuaTextManager : TextManager {
                 base.SkipLine();
     }
 
+    private void Advance() {
+        NextLine();
+        if (caller.script.Globals["OnTextAdvance"] != null && caller.script.Globals.Get("OnTextAdvance") != null)
+            try {caller.script.Call(caller.script.Globals["OnTextAdvance"], this, autoDestroyed); }
+            catch (ScriptRuntimeException ex) {
+                UnitaleUtil.DisplayLuaError(caller.scriptname, UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message, ex.DoNotDecorateMessage);
+            }
+    }
+
     public void NextLine() {
         CheckExists();
         if (AllLinesComplete()) {
             if (bubble)
                 containerBubble.SetActive(false);
             DestroyText();
+            autoDestroyed = true;
         } else {
             ShowLine(++currentLine); 
             if (bubble)

@@ -113,6 +113,9 @@ it's w3c valid, at least
                     be -1, which will auto compute the height of the bubble. However, bubbles have a minimum height of 40.
                     <br>Example: <span class="term">150</span></li><br>
                 </ul>
+                NOTE: To allow for using properties such as <span clas="term">Text.SetFont</span> and <span clas="term">Text.color</span> on the same frame as creating the text object, a one-frame delay is implemented by default: The text object will not create its letters or start typing until one frame after you call <span class="term">CreateText</span>. As a consequence, expect a few properties such as <span class="term">Text.color</span> and <span class="term">Text.letters</span> to run into issues if you run them on the same frame you use <span class="term">CreateText</span>.
+                <br><br>
+                If you need to disable the one-frame delay, start your first line of text with the <span class="ref">Text Command</span> <span class="term">[instant]</span>. And if you need to disable <i>that</i> too, follow it up with <span class="term">[instant:stop]</span>.
             </p>
             <p>
                 <br><span class="function">Text.Remove()</span>
@@ -206,6 +209,45 @@ it's w3c valid, at least
                 <br><span class="function"><span class="number"></span> Text.currentLine</span>
                 Returns the number of the line (page) that the text is currently on, starting from 0.
                 <br><br>So, if your text object's text table is <span class="term">{"Text 1", "Text 2"}</span>, then <span class="term">"Text 1"</span> is line 0, and <span class="term">"Text 2"</span> is line 1.
+            </p>
+            <p>
+                <br><span class="new function"><span class="luatable"><span class="userdata">sprite</span></span> Text.letters</span>
+                <b>Read-only.</b><br>
+                Returns a table containing sprite objects representing every letter to be displayed in the text object's current line of text. Note that even if a text object has not finished typing yet, all characters it will type are still accessible this way.
+                <br>Letter sprite objects can not have their layer changed, and can only be parented to other letter sprites.
+                <br><br>
+                NOTE: Accessing this table generates the table anew every time. To save on resources, store this table to a local variable before doing any operations on it. Even code such as <span class="term">for i = 1, #text.letters do</span> is a bad idea.
+                <br><br>
+                It is recommended to use this property in coordination with the <span class="ref">Game Event</span> <span class="term">OnTextAdvance</span>. You may also have some difficulty if you use this on the same frame as creating the text - read the note under <span class="term">CreateText</span> for more information.
+                <br><br><br>
+                Here is an example of using <span class="term">Text.letters</span> to apply offset and rotation to every letter.
+                <br><div class="code-container"><pre class="brush: lua">local t = CreateText({"Some example text for testing!"}, {40, 400}, 560, "Top")
+t.HideBubble()
+t.progressmode = "none"
+
+function OnTextAdvance(text, final)
+    if text == t and final == false then -- optional if you only have one text object
+        local letters = t.letters
+        
+        for i = 1, #letters do
+            letters[i].y = math.sin(i) * 3
+            letters[i].rotation = math.sin(i * 1.5) * 6
+        end
+    end
+end
+            </pre></div>
+            Alternatively, if you want it all done on the first frame, it's much more compact:
+            <br><div class="code-container"><pre class="brush: lua">local t = CreateText({"[instant]Some example text for testing!"}, {40, 400}, 560, "Top")
+t.HideBubble()
+t.progressmode = "none"
+
+local letters = t.letters
+
+for i = 1, #letters do
+    letters[i].y = math.sin(i) * 3
+    letters[i].rotation = math.sin(i * 1.5) * 6
+end
+            </pre></div>
             </p>
             <p>
                 <br><span class="function">Text.SkipLine()</span>

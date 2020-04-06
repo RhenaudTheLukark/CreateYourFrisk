@@ -312,13 +312,14 @@ public class LuaSpriteController {
         // You can't get or set the layer on an enemy sprite
         get {
             Transform target = GetTarget();
-            if (tag == "bubble" || tag == "event")                            return "none";
+            if (tag == "bubble" || tag == "event" || tag == "letter")          return "none";
             if (tag == "projectile" && !target.parent.name.Contains("Layer")) return "BulletPool";
             if (tag == "enemy" && !target.parent.name.Contains("Layer"))      return "specialEnemyLayer";
             return target.parent.name.Substring(0, target.parent.name.Length - 5);
         } set {
-            if      (tag == "event")  throw new CYFException("sprite.layer: Overworld events' layer can't be changed.");
-            else if (tag == "bubble") throw new CYFException("sprite.layer: Bubbles' layer can't be changed.");
+            if      (tag == "event")  throw new CYFException("sprite.layer: Overworld events' layers can't be changed.");
+            else if (tag == "bubble") throw new CYFException("sprite.layer: Bubbles' layers can't be changed.");
+            else if (tag == "letter") throw new CYFException("sprite.layer: Letters' layers can't be changed.");
             Transform target = GetTarget();
             Transform parent = target.parent;
             try {
@@ -382,11 +383,9 @@ public class LuaSpriteController {
 
     // Sets the parent of a sprite.
     public void SetParent(LuaSpriteController parent) {
-        if (tag == "bubble") {
-            UnitaleUtil.WriteInLogAndDebugger("sprite.SetParent(): bubbles' parent can't be changed.");
-            return;
-        } else if (tag == "event" || (parent != null && parent.tag == "event"))
-            throw new CYFException("sprite.SetParent(): Can not use SetParent with an Overworld Event's sprite.");
+        if      (tag == "bubble")                                              throw new CYFException("sprite.SetParent() can not be used with bubbles.");
+        else if (tag == "event" || (parent != null && parent.tag == "event"))  throw new CYFException("sprite.SetParent() can not be used with an Overworld Event's sprite.");
+        else if (tag == "letter" ^ (parent != null && parent.tag == "letter")) throw new CYFException("sprite.SetParent() can not be used between letter sprites and other sprites.");
         try {
             GetTarget().SetParent(parent.img.transform);
             if (img.GetComponent<MaskImage>())
