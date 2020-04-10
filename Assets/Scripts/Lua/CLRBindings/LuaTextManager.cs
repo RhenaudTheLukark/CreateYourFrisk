@@ -90,8 +90,8 @@ public class LuaTextManager : TextManager {
             return progress.ToString();
         }
         set {
+            CheckExists();
             try {
-                CheckExists();
                 progress = (ProgressMode)Enum.Parse(typeof(ProgressMode), value.ToUpper());
             } catch {
                 if (value != null)
