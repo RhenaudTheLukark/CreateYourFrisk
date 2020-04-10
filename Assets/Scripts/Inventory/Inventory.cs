@@ -126,7 +126,7 @@ public static class Inventory {
                     return;
                 }
         }
-        ItemLibrary(Name, type, out mess, out amount);
+        ItemLibrary(Name, type, out mess, out amount, out replacement);
         if (type == 1 || type == 2) {
             tempAmount = (int)amount;
             mess = ChangeEquipment(ID, mess);
@@ -144,7 +144,7 @@ public static class Inventory {
             GameObject.Find("TextManager OW").GetComponent<TextManager>().SetTextQueue(mess);
             GameObject.Find("TextManager OW").transform.parent.parent.SetAsLastSibling();
         }
-       
+        
         return;
     }
     
@@ -301,15 +301,15 @@ public static class Inventory {
     }
 
     public static void UpdateEquipBonuses() {
-        TextMessage[] mess = new TextMessage[] { }; float amount;
-        ItemLibrary(PlayerCharacter.instance.Weapon, 1, out mess, out amount);
+        TextMessage[] mess = new TextMessage[] { }; float amount; string replacement;
+        ItemLibrary(PlayerCharacter.instance.Weapon, 1, out mess, out amount, out replacement);
         PlayerCharacter.instance.WeaponATK = (int)amount;
-        ItemLibrary(PlayerCharacter.instance.Armor, 2, out mess, out amount);
+        ItemLibrary(PlayerCharacter.instance.Armor, 2, out mess, out amount, out replacement);
         PlayerCharacter.instance.ArmorDEF = (int)amount;
     }
 
-    public static void ItemLibrary(string name, int type, out TextMessage[] mess, out float amount) {
-        mess = new TextMessage[] { }; amount = 0;
+    public static void ItemLibrary(string name, int type, out TextMessage[] mess, out float amount, out string replacement) {
+        mess = new TextMessage[] { }; amount = 0; replacement = null;
         switch (type) {
             case 0:
                 switch (name) {
@@ -358,6 +358,7 @@ public static class Inventory {
                         mess = new TextMessage[] { new TextMessage(sentenceCream, true, false) }; break;
                     case "Bisicle":
                         amount = 11;
+						replacement = "Unisicle";
                         mess = new TextMessage[] { new TextMessage("You ate one half of\rthe Bisicle.[w:10]\nYou recovered 11 HP!", true, false) };
                         break;
                     case "Unisicle":
@@ -595,8 +596,8 @@ public static class Inventory {
                 PlayerCharacter.instance.Weapon = "Stick";
                 PlayerCharacter.instance.WeaponATK = 0;
             } else if (str == PlayerCharacter.instance.Weapon && PlayerCharacter.instance.Weapon != "Stick" && NametoDesc.ContainsValue(str)) {
-                TextMessage[] mess; float amount;
-                ItemLibrary(str, 1, out mess, out amount);
+                TextMessage[] mess; float amount; string replacement;
+                ItemLibrary(str, 1, out mess, out amount, out replacement);
                 PlayerCharacter.instance.WeaponATK = (int)amount;
             }
 
@@ -608,8 +609,8 @@ public static class Inventory {
                     }
                 PlayerCharacter.instance.Armor = "Bandage";
             } else if (str == PlayerCharacter.instance.Armor && PlayerCharacter.instance.Armor != "Bandage" && NametoDesc.ContainsValue(str)) {
-                TextMessage[] mess; float amount;
-                ItemLibrary(str, 2, out mess,  out amount);
+                TextMessage[] mess; float amount; string replacement;
+                ItemLibrary(str, 2, out mess,  out amount, out replacement);
                 PlayerCharacter.instance.ArmorDEF = (int)amount;
             }
         }
