@@ -231,6 +231,8 @@ public class LuaTextManager : TextManager {
         get { return new float[] { _color.r, _color.g, _color.b }; }
         set {
             CheckExists();
+            if (value == null)
+                throw new CYFException("text.color can not be set to a nil value.");
             // If we don't have three floats, we throw an error
             if (value.Length == 3)      _color = new Color(value[0], value[1], value[2], alpha);
             else if (value.Length == 4) _color = new Color(value[0], value[1], value[2], value[3]);
@@ -250,27 +252,16 @@ public class LuaTextManager : TextManager {
         }
     }
 
-    public DynValue letters {
-        get {
-            Table table = new Table(null);
-            int key = 0;
-            foreach (Image i in letterReferences)
-                if (i != null) {
-                    key++;
-                    LuaSpriteController letter = new LuaSpriteController(i);
-                    letter.tag = "letter";
-                    table.Set(key, UserData.Create(letter, LuaSpriteController.data));
-                };
-            return DynValue.NewTable(table);
-        }
-    }
-
     // The color of the text on a 32 bits format. It uses an array of three or four floats between 0 and 255
     public float[] color32 {
         // We need first to convert the Color into a Color32, and then get the values.
         get { return new float[] { ((Color32)_color).r, ((Color32)_color).g, ((Color32)_color).b }; }
         set {
             CheckExists();
+            if (value == null)
+                throw new CYFException("text.color32 can not be set to a nil value.");
+            else if (value.Length != 3 && value.Length != 4)
+                throw new CYFException("You need 3 or 4 numeric values when setting a text's color.");
             color = new float[] { value[0] / 255, value[1] / 255, value[2] / 255, value.Length == 3 ? alpha : value[3] / 255 };
         }
     }
@@ -292,6 +283,19 @@ public class LuaTextManager : TextManager {
             CheckExists();
             alpha = value / 255;
         }
+    }
+
+    public DynValue GetLetters() {
+        Table table = new Table(null);
+        int key = 0;
+        foreach (Image i in letterReferences)
+            if (i != null) {
+                key++;
+                LuaSpriteController letter = new LuaSpriteController(i);
+                letter.tag = "letter";
+                table.Set(key, UserData.Create(letter, LuaSpriteController.data));
+            };
+        return DynValue.NewTable(table);
     }
 
     public bool lineComplete {
