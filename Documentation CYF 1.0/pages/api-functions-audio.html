@@ -108,15 +108,15 @@ it's w3c valid, at least
                 </li><br>
                 <li><span class="term">Audio.LoadFile(<span class="string"></span> filename) <span class="CYF"></span> returns <span class="boolean"></span></span> - Load music from the Audio folder titled <span class="term">filename.ogg</span>
                 or <span class="term">filename.wav</span> and play it immediately. If you don't want immediate playback,
-                call <span class="term">Audio.Stop()</span> after this.
+                call <span class="term">Audio.Stop()</span> after this. Don't include the file extension.
                 <br><br>
                 <span class="new"></span><span class="CYF"></span> In CYF, this function will NOT show a warning or error message if the target audio file doesn't exist. Instead, it will return
                 a <span class="boolean"></span>, representing whether the file was successfully loaded or not.<br>
                 You can easily use this to determine if a given file exists in the <span class="term">Audio</span> folder.<br>
                 However, if a file doesn't exist, using this function will still stop the playing audio track, so be careful.
                 </li><br>
-                <li><span class="term">Audio.PlaySound(<span class="string"></span> filename, <span class="CYF"></span> <span class="number"></span> volume = 0.65) <span clas="CYF"></span> returns <span class="boolean"></span></span> - Play the sound from the Sounds folder titled
-                <span class="term">filename.ogg</span> or <span class="term">filename.wav</span>.
+                <li><span class="term">Audio.PlaySound(<span class="string"></span> filename, <span class="CYF"></span> <span class="number"></span> volume = 0.65) <span class="CYF"></span> returns <span class="boolean"></span></span> - Play the sound from the Sounds folder titled
+                <span class="term">filename.ogg</span> or <span class="term">filename.wav</span>. Don't include the file extension.
                 <br><br>
                 <span class="new"></span><span class="CYF"></span> In CYF, this function will NOT show a warning or error message if the target audio file doesn't exist. Instead, it will return
                 a <span class="boolean"></span>, representing whether the file was successfully loaded or not.<br>
