@@ -354,7 +354,7 @@ it's w3c valid, at least
                     original color, so if you want full control over the color, make sure your sprite is white. <i>Black areas are not affected by 
                     coloration.</i>
                     <br><br>
-                    <span class="CYF"></span>: You can provide a 4th value, which sets the alpha (transparency) of the sprite.
+                    You can provide a 4th value, which sets the alpha (transparency) of the sprite.
             </p><br>
             
             <p>
@@ -380,7 +380,7 @@ it's w3c valid, at least
                 <br><br>
                 Default value: <span class="term">"BelowArena"</span> (or <span class="term">"Default"</span> in the Overworld)
                 <br><br>
-                Overworld Event sprites can not have their layer set.
+                Overworld Event sprites and Text Objects letter sprites can not have their layers set.
             </p><br>
             
             <p>
@@ -397,12 +397,13 @@ it's w3c valid, at least
                 This will make the original sprite move along with the object it's parented to.
                 <br><br>
                 <span class="CYF"></span> NOTE: If you are in the <i>Overworld</i>, you can NOT use this to parent sprites to Event objects' sprites,
-                or vice versa.
+                or vice versa.<br>
+                Text Object letter sprites can <i>only</i> be parented to other Text Object letter sprites.
             </p><br>
             
             <p>
                 <span class="function new"><span class="CYF"></span> sprite.Mask(<span class="string"></span> mode)</span></span>
-                Sets the masking mode of this sprite object. Does not function for Overworld Event sprites!
+                Sets the masking mode of this sprite object. Does not function for Overworld Event sprites or Text Object letter sprites!
                 <br><br>
                 Available modes are:
                 <ul>

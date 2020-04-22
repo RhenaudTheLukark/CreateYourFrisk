@@ -134,16 +134,18 @@ public class LuaSpriteController {
     // The original width of the sprite
     public float width {
         get {
-            if (img.GetComponent<Image>()) return img.GetComponent<Image>().mainTexture.width;
-            else                           return img.GetComponent<SpriteRenderer>().sprite.texture.width;
+            if (tag == "letter")                return img.GetComponent<Image>().sprite.rect.width;
+            else if (img.GetComponent<Image>()) return img.GetComponent<Image>().mainTexture.width;
+            else                                return img.GetComponent<SpriteRenderer>().sprite.texture.width;
         }
     }
 
     // The original height of the sprite
     public float height {
         get {
-            if (img.GetComponent<Image>()) return img.GetComponent<Image>().mainTexture.height;
-            else                           return img.GetComponent<SpriteRenderer>().sprite.texture.height;
+            if (tag == "letter")                return img.GetComponent<Image>().sprite.rect.height;
+            else if (img.GetComponent<Image>()) return img.GetComponent<Image>().mainTexture.height;
+            else                                return img.GetComponent<SpriteRenderer>().sprite.texture.height;
         }
     }
 
@@ -312,7 +314,7 @@ public class LuaSpriteController {
         // You can't get or set the layer on an enemy sprite
         get {
             Transform target = GetTarget();
-            if (tag == "bubble" || tag == "event" || tag == "letter")          return "none";
+            if (tag == "bubble" || tag == "event" || tag == "letter")         return "none";
             if (tag == "projectile" && !target.parent.name.Contains("Layer")) return "BulletPool";
             if (tag == "enemy" && !target.parent.name.Contains("Layer"))      return "specialEnemyLayer";
             return target.parent.name.Substring(0, target.parent.name.Length - 5);
@@ -430,7 +432,10 @@ public class LuaSpriteController {
             img.GetComponent<Projectile>().needSizeRefresh = true;
         xScale = xs;
         yScale = ys;
-        if (img.GetComponent<Image>()) { // In battle
+        if (tag == "letter") {
+            nativeSizeDelta = new Vector2(img.GetComponent<Image>().sprite.rect.width, img.GetComponent<Image>().sprite.rect.height);
+            img.GetComponent<RectTransform>().sizeDelta = new Vector2(nativeSizeDelta.x * Mathf.Abs(xScale), nativeSizeDelta.y * Mathf.Abs(yScale));
+        } else if (img.GetComponent<Image>()) { // In battle
             nativeSizeDelta = new Vector2(img.GetComponent<Image>().sprite.texture.width, img.GetComponent<Image>().sprite.texture.height);
             img.GetComponent<RectTransform>().sizeDelta = new Vector2(nativeSizeDelta.x * Mathf.Abs(xScale), nativeSizeDelta.y * Mathf.Abs(yScale));
             // img.GetComponent<RectTransform>().localScale = new Vector3(xs < 0 ? -1 : 1, ys < 0 ? -1 : 1, 1);
@@ -639,6 +644,8 @@ public class LuaSpriteController {
     public void Mask(string mode) {
         if (tag == "event")
             throw new CYFException("sprite.Mask: Can not be applied to Overworld Event sprites.");
+        else if (tag == "letter")
+            throw new CYFException("sprite.Mask: Can not be applied to Letter sprites.");
         else if (mode == null)
             throw new CYFException("sprite.Mask: No argument provided.");
 
