@@ -7,54 +7,10 @@ public class LuaFile {
     private string path;
     private string mode;
     private string[] content;
-    private System.Text.Encoding _encoding = System.Text.Encoding.Unicode;
 
     public int lineCount { get { return content.Length; } }
     public string openMode { get { return mode; } }
     public string filePath { get { return path; } }
-
-    public string encoding {
-        get {
-            if (!mode.Contains("b"))
-                throw new CYFException("Cannot access file.encoding unless the file is opened in byte mode.");
-            var list = new System.Collections.Generic.Dictionary<System.Text.Encoding, string>() {
-                {System.Text.Encoding.Default,             "Default"},
-                {System.Text.Encoding.Unicode,             "Unicode"},
-                {System.Text.Encoding.BigEndianUnicode,    "BigEndianUnicode"},
-                {System.Text.Encoding.ASCII,               "ASCII"},
-                {System.Text.Encoding.UTF7,                "UTF7"},
-                {System.Text.Encoding.UTF8,                "UTF8"},
-                {System.Text.Encoding.UTF32,               "UTF32"}
-            };
-
-            string outValue;
-            list.TryGetValue(_encoding, out outValue);
-            return outValue;
-        }
-        set {
-            if (!mode.Contains("b"))
-                throw new CYFException("Cannot access file.encoding unless the file is opened in byte mode.");
-
-            var list = new System.Collections.Generic.Dictionary<string, System.Text.Encoding>() {
-                {"Default",             System.Text.Encoding.Default},
-                {"Unicode",             System.Text.Encoding.Unicode},
-                {"BigEndianUnicode",    System.Text.Encoding.BigEndianUnicode},
-                {"ASCII",               System.Text.Encoding.ASCII},
-                {"UTF7",                System.Text.Encoding.UTF7},
-                {"UTF8",                System.Text.Encoding.UTF8},
-                {"UTF32",               System.Text.Encoding.UTF32}
-            };
-
-            System.Text.Encoding newValue = null;
-            list.TryGetValue(value, out newValue);
-
-            if (newValue != null) {
-                _encoding = newValue;
-                content = File.Exists(path) ? _encoding.GetString(File.ReadAllBytes(path)).Split('\n') : null;
-            } else
-                throw new CYFException("file.encoding: \"" + value.ToString() + "\" is not a valid encoding type.");
-        }
-    }
 
     public LuaFile(string path, string mode = "rw") {
         if (path == null)
@@ -63,9 +19,8 @@ public class LuaFile {
             throw new CYFException("You cannot open a file outside of a mod folder. The use of \"..\" is forbidden.");
         path = (FileLoader.ModDataPath + "/" + path).Replace('\\', '/');
 
-        Regex validator = new Regex(@"^[rwb*]+$");
-        if (!validator.IsMatch(mode))
-            throw new CYFException("A file's open mode must have one or both of the characters \"r\" (read) and \"w\" (write), optionally followed by \"b\" (byte mode).");
+        if (mode != "r" && mode != "w" && mode != "rw" && mode != "wr")
+            throw new CYFException("A file's open mode can only be \"r\" (read), \"w\" (write) or \"rw\" (read + write).");
         if (mode.Contains("r") && !File.Exists(path))
             throw new CYFException("You can't open a file that doesn't exist in read-only mode.");
         if (!Directory.Exists(path.Substring(0, path.Length - Path.GetFileName(path).Length)))
@@ -74,7 +29,23 @@ public class LuaFile {
         this.path = path;
         this.mode = mode;
 
-        content = File.Exists(path) ? (mode.Contains("b") ? _encoding.GetString(File.ReadAllBytes(path)).Split('\n') : File.ReadAllText(path).Split('\n')) : null;
+        content = File.Exists(path) ? File.ReadAllText(path).Split('\n') : null;
+    }
+
+    public byte[] ReadBytes() {
+        if (!mode.Contains("r"))
+            throw new CYFException("This file has been opened in write-only mode, you can't read anything from it.");
+        if (!File.Exists(path))
+            throw new CYFException("The file at the path \"" + path + "\" doesn't exist, so you can't read from it.");
+        return File.ReadAllBytes(path);
+    }
+
+    public void WriteBytes(byte[] data) {
+        if (!mode.Contains("w"))
+            throw new CYFException("This file has been opened in read-only mode, you can't write anything to it.");
+        if (data == null)
+            throw new CYFException("You can't write nil to a file! If you want to empty the file, use an empty table instead.");
+        File.WriteAllBytes(path, data);
     }
 
     public string ReadLine(int line) {
@@ -106,27 +77,15 @@ public class LuaFile {
 
         try {
             if (append) {
-                if (mode.Contains("b")) {
-                    byte[] fileContents = File.ReadAllBytes(path);
-                    byte[] dataContents = _encoding.GetBytes(data);
-                    byte[] writeBytes   = new byte[fileContents.Length + dataContents.Length];
-
-                    fileContents.CopyTo(writeBytes, 0);
-                    dataContents.CopyTo(writeBytes, fileContents.Length);
-                    File.WriteAllBytes(path, writeBytes);
-                } else
-                    File.WriteAllText(path, File.ReadAllText(path) + data);
+                File.WriteAllText(path, File.ReadAllText(path) + data);
             } else {
-                if (mode.Contains("b"))
-                    File.WriteAllBytes(path, _encoding.GetBytes(data));
-                else
-                    File.WriteAllText(path, data);
+                File.WriteAllText(path, data);
             }
         } catch (UnauthorizedAccessException) {
             throw new CYFException("File.Write: Unauthorized access to file:\n\"" + path + "\"\n\nIt may be read-only, hidden or a folder.");
         }
 
-        content = (mode.Contains("b") ? _encoding.GetString(File.ReadAllBytes(path)).Split('\n') : File.ReadAllText(path).Split('\n'));
+        content = File.ReadAllText(path).Split('\n');
     }
 
     public void ReplaceLine(int line, string data) {
@@ -153,10 +112,7 @@ public class LuaFile {
         } else
             content[line - 1] = data;
 
-        if (mode.Contains("b")) {
-            File.WriteAllBytes(path, _encoding.GetBytes(string.Join("\n", content)));
-        } else
-            File.WriteAllText(path, string.Join("\n", content));
+        File.WriteAllText(path, string.Join("\n", content));
     }
 
     public void DeleteLine(int line) {
