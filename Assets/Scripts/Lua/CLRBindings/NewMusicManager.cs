@@ -69,7 +69,7 @@ public class NewMusicManager {
         return 0;
     }
 
-    public static bool PlayMusic(string name, string music, bool loop = false, float volume = 1) {
+    public static void PlayMusic(string name, string music, bool loop = false, float volume = 1) {
         if (name == null)
             throw new CYFException("NewAudio.PlayMusic: The first argument (the channel name) is nil.\n\nSee the documentation for proper usage.");
         else if (music == null)
@@ -78,16 +78,15 @@ public class NewMusicManager {
         ((AudioSource)audiolist[name]).Stop();
         ((AudioSource)audiolist[name]).loop = loop;
         ((AudioSource)audiolist[name]).volume = volume;
-        ((AudioSource)audiolist[name]).clip = AudioClipRegistry.GetMusic(music, GlobalControls.retroMode);
+        ((AudioSource)audiolist[name]).clip = AudioClipRegistry.GetMusic(music);
         audiolist[name] = ((AudioSource)audiolist[name]);
         audioname[name] = "music:" + music.ToLower();
         if (name == "src")
             MusicManager.filename = "music:" + music.ToLower();
         ((AudioSource)audiolist[name]).Play();
-        return (((AudioSource)audiolist[name]).clip != null);
     }
 
-    public static bool PlaySound(string name, string sound, bool loop = false, float volume = 0.65f) {
+    public static void PlaySound(string name, string sound, bool loop = false, float volume = 0.65f) {
         if (name == null)
             throw new CYFException("NewAudio.PlaySound: The first argument (the channel name) is nil.\n\nSee the documentation for proper usage.");
         else if (sound == null)
@@ -96,16 +95,15 @@ public class NewMusicManager {
         ((AudioSource)audiolist[name]).Stop();
         ((AudioSource)audiolist[name]).loop = loop;
         ((AudioSource)audiolist[name]).volume = volume;
-        ((AudioSource)audiolist[name]).clip = AudioClipRegistry.GetSound(sound, GlobalControls.retroMode);
+        ((AudioSource)audiolist[name]).clip = AudioClipRegistry.GetSound(sound);
         audiolist[name] = ((AudioSource)audiolist[name]);
         audioname[name] = "sound:" + sound.ToLower();
         if (name == "src")
             MusicManager.filename = "sound:" + sound.ToLower();
         ((AudioSource)audiolist[name]).Play();
-        return (((AudioSource)audiolist[name]).clip != null);
     }
 
-    public static bool PlayVoice(string name, string voice, bool loop = false, float volume = 0.65f) {
+    public static void PlayVoice(string name, string voice, bool loop = false, float volume = 0.65f) {
         if (name == null)
             throw new CYFException("NewAudio.PlayVoice: The first argument (the channel name) is nil.\n\nSee the documentation for proper usage.");
         else if (voice == null)
@@ -114,13 +112,12 @@ public class NewMusicManager {
         ((AudioSource)audiolist[name]).Stop();
         ((AudioSource)audiolist[name]).loop = loop;
         ((AudioSource)audiolist[name]).volume = volume;
-        ((AudioSource)audiolist[name]).clip = AudioClipRegistry.GetVoice(voice, GlobalControls.retroMode);
+        ((AudioSource)audiolist[name]).clip = AudioClipRegistry.GetVoice(voice);
         audiolist[name] = ((AudioSource)audiolist[name]);
         audioname[name] = "voice:" + voice.ToLower();
         if (name == "src")
             MusicManager.filename = "voice:" + voice.ToLower();
         ((AudioSource)audiolist[name]).Play();
-        return (((AudioSource)audiolist[name]).clip != null);
     }
 
     public static void SetPitch(string name, float value) {
