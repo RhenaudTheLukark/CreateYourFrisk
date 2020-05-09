@@ -324,8 +324,8 @@ public class TextManager : MonoBehaviour {
                         print("currentY from ShowLine (" + textQueue[currentLine].Text + ") = " + self.position.y + " + " + offset.y + " - " + Charset.LineSpacing + " = " + currentY);*/
                     currentCharacter = 0;
                     currentReferenceCharacter = 0;
-                    /*letterEffect = "none";
-                    textEffect = null;
+                    letterEffect = "none";
+                    /*textEffect = null;
                     letterIntensity = 0;*/
                     // letterSpeed = 1;
                     instantActive = textQueue[line].ShowImmediate;
