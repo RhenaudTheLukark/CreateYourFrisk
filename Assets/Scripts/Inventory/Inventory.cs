@@ -486,7 +486,7 @@ public static class Inventory {
                         break;
                 }
                 if (amount != 0)
-                    if (UnitaleUtil.IsOverworld) mess[0].SetText("[health:" + amount + ", killable]" + mess[0].Text);
+                    if (UnitaleUtil.IsOverworld) EventManager.instance.luaplow.setHP(PlayerController.instance.HP + amount);
                     else                         PlayerController.instance.Hurt(-amount, 0);
                 break;
             case 1:

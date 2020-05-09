@@ -803,11 +803,32 @@ public class PlayerOverworld : MonoBehaviour {
                                             instance.menuRunning[1] = false;
                                         } else if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED) {
                                             instance.uiAudio.PlayOneShot(AudioClipRegistry.GetSound("menuconfirm"));
-                                            yield return CloseMenu();
+                                            for (int i = 7; i <= 17; i++) txtmgrs[i].DestroyChars();
+                                            GameObject.Find("item_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 0);
+                                            GameObject.Find("item_interior").GetComponent<Image>().color = new Color(0, 0, 0, 0);
+                                            GameObject.Find("utHeartMenu").GetComponent<Image>().color = new Color(c.r, c.g, c.b, 0);
+                                            instance.menuRunning[3] = true;
                                             switch (index2) {
                                                 case 0:
                                                     instance.textmgr.SetEffect(null);
                                                     Inventory.UseItem(index);
+                                                    //Update the stat text managers again, which means you can see the item's effects immediately
+                                                    txtmgrs[0].SetText(new TextMessage("[noskipatall]" + PlayerCharacter.instance.Name, false, true));
+                                                    if (GlobalControls.crate) {
+                                                        txtmgrs[1].SetText(new TextMessage("[noskipatall][font:menu]LV " + PlayerCharacter.instance.LV, false, true));
+                                                        txtmgrs[2].SetText(new TextMessage("[noskipatall][font:menu]PH " + (int)PlayerCharacter.instance.HP + "/" + PlayerCharacter.instance.MaxHP, false, true));
+                                                        txtmgrs[3].SetText(new TextMessage("[noskipatall][font:menu]G  " + PlayerCharacter.instance.Gold, false, true));
+                                                        txtmgrs[4].SetText(new TextMessage("[noskipatall]" + (Inventory.inventory.Count > 0 ? "" : "[color:808080]") + "TEM", false, true));
+                                                        txtmgrs[5].SetText(new TextMessage("[noskipatall]TAST", false, true));
+                                                        txtmgrs[6].SetText(new TextMessage("[noskipatall]LECL", false, true));
+                                                    } else {
+                                                        txtmgrs[1].SetText(new TextMessage("[noskipatall][font:menu]LV " + PlayerCharacter.instance.LV, false, true));
+                                                        txtmgrs[2].SetText(new TextMessage("[noskipatall][font:menu]HP " + (int)PlayerCharacter.instance.HP + "/" + PlayerCharacter.instance.MaxHP, false, true));
+                                                        txtmgrs[3].SetText(new TextMessage("[noskipatall][font:menu]G  " + PlayerCharacter.instance.Gold, false, true));
+                                                        txtmgrs[4].SetText(new TextMessage("[noskipatall]" + (Inventory.inventory.Count > 0 ? "" : "[color:808080]") + "ITEM", false, true));
+                                                        txtmgrs[5].SetText(new TextMessage("[noskipatall]STAT", false, true));
+                                                        txtmgrs[6].SetText(new TextMessage("[noskipatall]CELL", false, true));
+                                                    }
                                                     break;
                                                 case 1:
                                                     string str;
@@ -826,6 +847,9 @@ public class PlayerOverworld : MonoBehaviour {
                                                     Inventory.RemoveItem(index);
                                                     break;
                                             }
+                                            while (instance.PlayerNoMove)
+                                                yield return 0;
+                                            yield return CloseMenu(true);
                                         }
                                         yield return 0;
                                     }
