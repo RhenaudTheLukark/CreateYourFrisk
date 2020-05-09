@@ -204,22 +204,24 @@ it's w3c valid, at least
 
             <p class="exblock">
                 <br><span class="function"><span class="CYF"></span> [charspacing:number] or <span class="new"></span> [charspacing:default]</span>
-                Number of pixels that separate characters on the same line.<br>
+                Sets the number of pixels that separate characters on the same line.<br>
                 Negative = less space between characters, Positive = more space between characters
                 <br><br>
                 The default value is <span class="term">3</span>.<br>
-                Note that fonts can specify a <span class="term">&lt;charspacing&gt;</span> tag that <i>sets</i> this value.
+                Fonts can specify a <span class="term">&lt;charspacing&gt;</span> tag that <i>sets</i> this value.
                 <br><br>
                 Enter <span class="term">[charspacing:default]</span> to reset this value to the value provided by the font (or the default value of 3).
             </p>
 
             <p class="exblock">
                 <br><span class="function"><span class="CYF"></span> [linespacing:number]</span>
-                Number of pixels that separate different lines.<br>
+                Number of pixels that separate different lines. The number you enter here gets <i>added on</i> to the active font's regular line spacing.<br>
                 Negative = less space between lines, Positive = more space between lines
                 <br><br>
-                The default value is <span class="term">0</span>.<br>
-                Note that fonts can specify a <span class="term">&lt;linespacing&gt;</span> tag that <i>adds on to</i> this value.
+                By default, the amount of pixels between lines is <span class="term">1.5 *</span> the height of the font's "space" character.<br>
+                If the font has a <span class="term">&lt;linespacing&gt;</span> tag, its number value will be the amount of pixels between lines instead.
+                <br><br>
+                Enter <span class="term">[linespacing:0]</span> to reset the line spacing to its original value.
             </p>
 
             <h3>Inline commands</h3><br>

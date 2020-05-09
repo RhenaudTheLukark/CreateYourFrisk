@@ -209,6 +209,8 @@ public class PlayerOverworld : MonoBehaviour {
             textmgr.transform.parent.parent.SetAsFirstSibling();
             textmgr.SetTextQueue(null);
             textmgr.DestroyChars();
+            textmgr.SetHorizontalSpacing(textmgr.Charset.CharSpacing);
+            textmgr.SetVerticalSpacing(0);
             textmgr.SetTextFrameAlpha(0);
             if (EventManager.instance.script != null)
                 EventManager.instance.script.Call("CYFEventNextCommand");
@@ -665,7 +667,7 @@ public class PlayerOverworld : MonoBehaviour {
             // Text box
             GameObject.Find("textframe_border_outer").GetComponent<RectTransform>().position = new Vector3(
                         GameObject.Find("textframe_border_outer").GetComponent<RectTransform>().position.x,
-                        20 + cameraOffset,
+                        8 + cameraOffset,
                         GameObject.Find("textframe_border_outer").GetComponent<RectTransform>().position.z);
             // Stat box
             GameObject.Find("menustat_border_outer").GetComponent<RectTransform>().localPosition = new Vector3(
