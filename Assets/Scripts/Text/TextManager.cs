@@ -243,7 +243,8 @@ public class TextManager : MonoBehaviour {
             mugshots.Add("mugshots/");
 
         bool mugshotSet = false;
-        if (mugshot != null && mugshot._img != null)
+        if (mugshot != null && mugshot._img != null) {
+            mugshot.StopAnimation();
             if ((mugshots.Count > 1 || (mugshots[0] != "mugshots/" && mugshots[0] != "mugshots/null")) && text != null) {
                 try {
                     if (mugshots.Count > 1) {
@@ -270,6 +271,7 @@ public class TextManager : MonoBehaviour {
                 if (gameObject.name == "TextManager OW")
                     self.localPosition = new Vector3(-267, self.localPosition.y, self.localPosition.z);
             }
+        }
         _textMaxWidth = mugshotSet ? 417 : 534;
     }
 
