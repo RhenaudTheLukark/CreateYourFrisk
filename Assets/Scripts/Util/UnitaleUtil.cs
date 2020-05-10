@@ -37,6 +37,15 @@ public static class UnitaleUtil {
         }
     }
 
+    public static void Warn(string line, bool show = true) {
+        line = "[WARN]" + line;
+        if (!GlobalControls.retroMode && show) {
+            WriteInLogAndDebugger(line);
+            return;
+        }
+        try { UserDebugger.instance.Warn(line); } catch { printDebuggerBeforeInit += (printDebuggerBeforeInit == "" ? "" : "\n") + line; }
+    }
+
     /*/// <summary>
     /// This was previously used to create error messages for display in the UI controller, but is now obsolete as this is displayed in a separate scene.
     /// </summary>

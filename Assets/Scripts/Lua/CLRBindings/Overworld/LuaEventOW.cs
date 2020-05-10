@@ -201,7 +201,7 @@ public class LuaEventOW {
     [CYFEventFunction] public void Remove(string eventName) {
         GameObject go = GameObject.Find(eventName);
         if (!go)
-            Debug.LogWarning("Event.Remove: The event " + eventName + " doesn't exist but you tried to remove it.");
+            UnitaleUtil.Warn("Event.Remove: The event " + eventName + " doesn't exist but you tried to remove it.", false);
         else {
             EventOW ev = go.GetComponent<EventOW>();
             if (ev != null)

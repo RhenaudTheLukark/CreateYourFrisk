@@ -67,7 +67,7 @@ public class LuaScreenOW {
         if (GameObject.Find("Image" + id))
             EventManager.instance.luaevow.Remove("Image" + id);
         else
-            Debug.LogWarning("The image #" + id + " doesn't exist.");
+            UnitaleUtil.Warn("The image #" + id + " doesn't exist.", false);
         appliedScript.Call("CYFEventNextCommand");
     }
 

@@ -630,13 +630,13 @@ public class LuaSpriteController {
 
     public void MoveBelow(LuaSpriteController sprite) {
         if (sprite == null)                                       throw new CYFException("sprite.MoveBelow: The sprite passed as an argument is nil.");
-        else if (sprite.GetTarget().parent != GetTarget().parent) UnitaleUtil.WriteInLogAndDebugger("[WARN]You can't change the order of two sprites without the same parent.");
+        else if (sprite.GetTarget().parent != GetTarget().parent) UnitaleUtil.Warn("You can't change the order of two sprites without the same parent.");
         else                                                      GetTarget().SetSiblingIndex(sprite.GetTarget().GetSiblingIndex());
     }
 
     public void MoveAbove(LuaSpriteController sprite) {
         if (sprite == null)                                       throw new CYFException("sprite.MoveAbove: The sprite passed as an argument is nil.");
-        else if (sprite.GetTarget().parent != GetTarget().parent) UnitaleUtil.WriteInLogAndDebugger("[WARN]You can't change the order of two sprites without the same parent.");
+        else if (sprite.GetTarget().parent != GetTarget().parent) UnitaleUtil.Warn("You can't change the order of two sprites without the same parent.");
         else                                                      GetTarget().SetSiblingIndex(sprite.GetTarget().GetSiblingIndex() + 1);
     }
 

@@ -204,7 +204,7 @@ public class LuaTextManager : TextManager {
         if (otherText == null || !otherText.isactive)
             throw new CYFException("The text object passed as an argument is nil or inactive.");
         else if (this.transform.parent.parent != otherText.transform.parent.parent)
-            UnitaleUtil.WriteInLogAndDebugger("[WARN]You can't change the order of two text objects without the same parent.");
+            UnitaleUtil.Warn("You can't change the order of two text objects without the same parent.");
         else {
             try { this.transform.parent.SetSiblingIndex(otherText.transform.parent.GetSiblingIndex()); }
             catch { throw new CYFException("Error while calling text.MoveBelow."); }
@@ -216,7 +216,7 @@ public class LuaTextManager : TextManager {
         if (otherText == null || !otherText.isactive)
             throw new CYFException("The text object passed as an argument is nil or inactive.");
         else if (this.transform.parent.parent != otherText.transform.parent.parent)
-            UnitaleUtil.WriteInLogAndDebugger("[WARN]You can't change the order of two text objects without the same parent.");
+            UnitaleUtil.Warn("You can't change the order of two text objects without the same parent.");
         else {
             try { this.transform.parent.SetSiblingIndex(otherText.transform.parent.GetSiblingIndex() + 1); }
             catch { throw new CYFException("Error while calling text.MoveAbove."); }

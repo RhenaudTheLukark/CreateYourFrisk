@@ -292,12 +292,10 @@ public class GameOverBehavior : MonoBehaviour {
             if (internalTimer > gameOverAfter) {
                 AudioClip originMusic = gameOverMusic.clip;
                 if (deathMusic != null) {
-                    gameOverMusic.clip = AudioClipRegistry.GetMusic(deathMusic);
-                    if (gameOverMusic.clip == null) {
-                        UnitaleUtil.WriteInLogAndDebugger("[WARN]The specified death music doesn't exist. (" + deathMusic + ")");
-
+                    try { gameOverMusic.clip = AudioClipRegistry.GetMusic(deathMusic); }
+                    catch { UnitaleUtil.DisplayLuaError("game over screen", "The specified death music doesn't exist. (\"" + deathMusic + "\")"); }
+                    if (gameOverMusic.clip == null)
                         gameOverMusic.clip = originMusic;
-                    }
                 }
                 gameOverMusic.Play();
                 gameOverAfter = 999.0f;

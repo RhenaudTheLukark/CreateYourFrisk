@@ -168,7 +168,7 @@ internal class LuaEnemyEncounter : EnemyEncounter {
                     AudioClip music = AudioClipRegistry.GetMusic(musicFile);
                     musicSource.clip = music;
                     MusicManager.filename = "music:" + musicFile.ToLower();
-                } catch (Exception) { UnitaleUtil.WriteInLogAndDebugger("[WARN]Loading custom music failed."); }
+                } catch (Exception) { UnitaleUtil.Warn("Loading custom music failed."); }
             } else {
                 musicSource.clip = AudioClipRegistry.GetMusic("mus_battle1");
                 musicSource.volume = .6f;
@@ -346,7 +346,7 @@ internal class LuaEnemyEncounter : EnemyEncounter {
 
     public static void BattleDialog(DynValue arg) {
         if (UIController.instance == null)
-            UnitaleUtil.WriteInLogAndDebugger("[WARN]BattleDialog can only be used as early as EncounterStarting.");
+            UnitaleUtil.Warn("BattleDialog can only be used as early as EncounterStarting.");
         else {
             UIController.instance.battleDialogued = true;
             TextMessage[] msgs = null;

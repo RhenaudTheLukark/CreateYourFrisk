@@ -364,7 +364,7 @@ public class UIController : MonoBehaviour {
                 }
                 if (encounter.EncounterText == null) {
                     encounter.EncounterText = "";
-                    UnitaleUtil.WriteInLogAndDebugger("[WARN]There is no encounter text!");
+                    UnitaleUtil.Warn("There is no encounter text!");
                 }
                 textmgr.SetText(new RegularMessage(encounter.EncounterText));
                 break;
@@ -525,7 +525,7 @@ public class UIController : MonoBehaviour {
                     this.msgs.Add(i, encounter.EnabledEnemies[i].GetDefenseDialog());
                     string[] msgs = this.msgs[i];
                     if (msgs == null) {
-                        UnitaleUtil.WriteInLogAndDebugger("[WARN]Entered ENEMYDIALOGUE, but no current/random dialogue was set for " + encounter.EnabledEnemies[i].Name);
+                        UnitaleUtil.Warn("Entered ENEMYDIALOGUE, but no current/random dialogue was set for " + encounter.EnabledEnemies[i].Name);
                         SwitchState(UIState.DEFENDING);
                         break;
                     }

@@ -25,15 +25,16 @@ public static class Inventory {
             string outString = "";
             int outInt       =  0;
             if (!addedItems.Contains(item) && !NametoDesc.TryGetValue(item, out outString) && !NametoShortName.TryGetValue(item, out outString) && !NametoType.TryGetValue(item, out outInt) && !NametoPrice.TryGetValue(item, out outInt))
-                throw new CYFException("Inventory.SetInventory: The item \"" + item + "\" was not found.\n\nAre you sure you called Inventory.AddCustomItems first?");
+                throw new CYFException("Inventory.SetInventory: The item \"" + item + "\" was not found." + (UnitaleUtil.IsOverworld ? "" : "\n\nAre you sure you called Inventory.AddCustomItems first?"));
         }
         
         inventory = new List<UnderItem>(new UnderItem[] { });
         if (items != null)
             for (int i = 0; i < items.Length; i++) {
-                if (i == inventorySize)
-                    UnitaleUtil.WriteInLogAndDebugger("[WARN]The inventory can only contain " + inventorySize + " items, yet you tried to add the item \"" + items[i] + "\" as item number " + (i + 1) + ".");
-                else {
+                if (i == inventorySize) {
+                    UnitaleUtil.Warn("The inventory can only contain " + inventorySize + " items, yet you tried to add the item \"" + items[i] + "\" as item number " + (i + 1) + ".");
+                    break;
+                } else {
                     // Search through addedItemsTypes to find the type of the new item
                     int type = 0;
                     
@@ -61,7 +62,7 @@ public static class Inventory {
         int outInt       =  0;
         if (!addedItems.Contains(Name) && !NametoDesc.TryGetValue(Name, out outString) && !NametoShortName.TryGetValue(Name, out outString) &&
             !NametoType.TryGetValue(Name, out outInt) && !NametoPrice.TryGetValue(Name, out outInt))
-            throw new CYFException("Inventory.AddItem: The item \"" + Name + "\" was not found.\n\nAre you sure you called Inventory.AddCustomItems first?");
+            throw new CYFException("Inventory.AddItem: The item \"" + Name + "\" was not found." + (UnitaleUtil.IsOverworld ? "" : "\n\nAre you sure you called Inventory.AddCustomItems first?"));
         inventory.Add(new UnderItem(Name));
         return true;
     }
@@ -482,7 +483,7 @@ public static class Inventory {
                         mess = new TextMessage[] { new TextMessage("Through DETERMINATION,\rthe dream became true.[w:10]\nYou recovered 17 HP!", true, false) };
                         break;
                     default:
-                        UnitaleUtil.WriteInLogAndDebugger("[WARN]The item doesn't exist in this pool.");
+                        UnitaleUtil.Warn("The item doesn't exist in this pool.");
                         break;
                 }
                 if (amount != 0)
@@ -499,7 +500,7 @@ public static class Inventory {
                     case "Empty Gun": amount = 12; break;
                     case "Worn Dagger": amount = 15; break;
                     case "Real Knife": amount = 99; break;
-                    default: UnitaleUtil.WriteInLogAndDebugger("[WARN]The item doesn't exist in this pool."); break;
+                    default: UnitaleUtil.Warn("The item doesn't exist in this pool."); break;
                 }
                 break;
             case 2:
@@ -512,14 +513,14 @@ public static class Inventory {
                     case "Cowboy Hat": amount = 12; break;
                     case "Heart Locket": amount = 15; break;
                     case "The Locket": amount = 99; break;
-                    default: UnitaleUtil.WriteInLogAndDebugger("[WARN]The item doesn't exist in this pool."); break;
+                    default: UnitaleUtil.Warn("The item doesn't exist in this pool."); break;
                 }
                 break;
             default:
                 switch (name) {
                     case "Testing Dog": mess = new TextMessage[] { new TextMessage("This dog is testing something.", true, false), new TextMessage("I must leave it alone.", true, false) }; break;
                     case "Stick": mess = new TextMessage[] { new TextMessage("You throw the stick.[w:10]\nNothing happens.", true, false) }; break;
-                    default: UnitaleUtil.WriteInLogAndDebugger("[WARN]The item doesn't exist in this pool."); break;
+                    default: UnitaleUtil.Warn("The item doesn't exist in this pool."); break;
                 }
                 break;
         }

@@ -30,7 +30,7 @@ public class AudioClipRegistry {
             dict[key] = FileLoader.getAudioClip(currentPath, dictDefault[key].FullName);
         else {
             if (GlobalControls.retroMode)
-                UnitaleUtil.WriteInLogAndDebugger("[WARN]The audio file \"" + k + "\" doesn't exist.");
+                UnitaleUtil.Warn("The audio file \"" + k + "\" doesn't exist.");
             else
                 throw new CYFException("Attempted to load the audio file \"" + k + "\" from either a mod or default directory, but it was missing in both.");
             return null;

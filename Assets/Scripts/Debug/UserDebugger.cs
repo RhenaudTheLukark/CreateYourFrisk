@@ -14,6 +14,11 @@ public class UserDebugger : MonoBehaviour{
     private bool firstActive = false;
     private string originalText = null;
 
+    public void Warn(string line) {
+        Debug.LogWarning("Frame " + GlobalControls.frame + ": " + line);
+        WriteLine(line);
+    }
+
     public void Start() {
         instance = this;
         if (originalText == null)
@@ -23,12 +28,12 @@ public class UserDebugger : MonoBehaviour{
         gameObject.SetActive(false);
         firstActive = false;
         if (UnitaleUtil.printDebuggerBeforeInit != "") {
-            UserWriteLine(UnitaleUtil.printDebuggerBeforeInit, false);
+            UserWriteLine(UnitaleUtil.printDebuggerBeforeInit);
             UnitaleUtil.printDebuggerBeforeInit = "";
         }
     }
 
-    public void UserWriteLine(string line, bool debug = true) {
+    public void UserWriteLine(string line) {
         line = line ?? "nil";
         foreach (string str in line.Split('\n'))
             WriteLine(str);

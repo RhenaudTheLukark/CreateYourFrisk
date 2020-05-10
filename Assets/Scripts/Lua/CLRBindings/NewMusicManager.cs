@@ -10,10 +10,8 @@ public class NewMusicManager {
     public static void CreateChannel(string name) {
         if (name == null)
             throw new CYFException("NewAudio.CreateChannel: The first argument (the channel name) is nil.\n\nSee the documentation for proper usage.");
-        if (audiolist.ContainsKey(name)) {
-            Debug.LogWarning("The audio channel " + name + " already exists.");
+        if (audiolist.ContainsKey(name))
             return;
-        }
         GameObject go = new GameObject("AudioChannel" + audiolist.Count + ": " + name, typeof(AudioSource));
         GameObject.DontDestroyOnLoad(go);
         audiolist.Add(name, go.GetComponent<AudioSource>());
@@ -22,10 +20,8 @@ public class NewMusicManager {
     }
 
     [MoonSharpHidden] public static AudioSource CreateChannelAndGetAudioSource(string name) {
-        if (audiolist.ContainsKey(name)) {
-            Debug.LogWarning("The audio channel " + name + " already exists.");
+        if (audiolist.ContainsKey(name))
             return GameObject.Find("AudioChannel" + audiolist.Count + ": " + name).GetComponent<AudioSource>();
-        }
         GameObject go = new GameObject("AudioChannel" + audiolist.Count + ": " + name, typeof(AudioSource));
         audiolist.Add(name, go.GetComponent<AudioSource>());
         if (!audioname.ContainsKey(name))
