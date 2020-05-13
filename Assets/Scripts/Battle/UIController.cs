@@ -1003,7 +1003,7 @@ public class UIController : MonoBehaviour {
 
                     } else if (selectedMercy == 1) {
                         if (!GlobalControls.retroMode) {
-                            if ((LuaEnemyEncounter.script.GetVar("fleesuccess").Type != DataType.Boolean && Math.RandomRange(0, 2) == 0)
+                            if ((LuaEnemyEncounter.script.GetVar("fleesuccess").Type != DataType.Boolean && (Math.RandomRange(0, 9) + encounter.turnCount) > 4)
                               || LuaEnemyEncounter.script.GetVar("fleesuccess").Boolean)
                                 StartCoroutine(ISuperFlee());
                             else
@@ -1507,27 +1507,26 @@ public class UIController : MonoBehaviour {
         AudioClip yay = AudioClipRegistry.GetSound("runaway");
         UnitaleUtil.PlaySound("Mercy", yay, 0.65f);
 
-        string[] fleeTexts;
+        List<string> fleeTexts = new List<string>();
         DynValue tempFleeTexts = LuaEnemyEncounter.script.GetVar("fleetexts");
-        if (tempFleeTexts.Type == DataType.Table) {
-            fleeTexts = new string[tempFleeTexts.Table.Length];
+        if (tempFleeTexts.Type == DataType.Table)
             for (int i = 0; i < tempFleeTexts.Table.Length; i++)
-                fleeTexts[i] = tempFleeTexts.Table.Get(i + 1).String;
-        } else if (ControlPanel.instance.Safe)
-            fleeTexts = new string[] { "I'm outta here.",  "I've got better things to do.", "Don't waste my time.",
-                                       "Nah, I don't like you.", "I just wanted to walk\ra bit. Leave me alone.", "You're cute, I won't kill you :3",
-                                       "Better safe than sorry.", "Do as if you've never saw\rthem and walk away.", "I'll kill you last.",
-                                       "Nope. [w:5]Nope. Nope. Nope. Nope.", "Wait for me, Rhenaud!", "Flee like sissy!" };
-        else
-            fleeTexts = new string[] { "I'm outta here.", "I've got shit to do.", "I've got better things to do.", "Don't waste my time.", "Fuck this shit I'm out.",
-                                       "Nah, I don't like you.", "I just wanted to walk\ra bit. Leave me alone.", "You're cute, I won't kill you :3",
-                                       "Better safe than sorry.", "Do as if you've never saw\rthem and walk away.", "I'll kill you last.",
-                                       "Nope. [w:5]Nope. Nope. Nope. Nope.", "Wait for me, Rhenaud!", "Flee like sissy!" };
+                fleeTexts.Add(tempFleeTexts.Table.Get(i + 1).String);
+        else {
+            fleeTexts = new List<string> { "I'm outta here.",  "I've got better things to do.", "Don't waste my time.",
+                                           "Nah, I don't like you.", "I just wanted to walk\ra bit. Leave me alone.", "You're cute, I won't kill you :3",
+                                           "Better safe than sorry.", "Do as if you never saw\rthem and walk away.", "I'll kill you last.",
+                                           "Nope. [w:5]Nope. Nope. Nope. Nope.", "Wait for me, Rhenaud!", "Flee like sissy!" };
+            if (!ControlPanel.instance.Safe) {
+                fleeTexts.Add("I've got shit to do.");
+                fleeTexts.Add("Fuck this shit I'm out.");
+            }
+        }
 
         /*string[] text = { "See mom, I can flee!", "LEGZ!", "It looks more like a\nreal flee.", "/me flees", "*flees*", "To infinity and beyond!",
                             "Yeah, that's the secret.\nI hope you liked it!"};*/
 
-        ActionDialogResult(new TextMessage[] { new RegularMessage(fleeTexts[Math.RandomRange(0, fleeTexts.Length)]) }, UIState.ENEMYDIALOGUE);
+        ActionDialogResult(new TextMessage[] { new RegularMessage(fleeTexts[Math.RandomRange(0, fleeTexts.Count)]) }, UIState.ENEMYDIALOGUE);
         fleeSwitch = true;
 
         Camera.main.GetComponent<AudioSource>().Pause();

@@ -197,8 +197,9 @@ deathtext = {
             <br><p><span class="CYF"></span> <span class="boolean"></span> <span class="term">flee</span> - True by default. If this value is set to false, 
             the Flee option will not appear in the Mercy menu.</p>
             <br><p><span class="CYF"></span> <span class="boolean"></span> <span class="term">fleesuccess</span> - <span class="term">nil</span> by default.
-            Set this to <span class="term">true</span> or <span class="term">false</span> to force the Flee option to succeed or fail.
-            Otherwise, it's a 50% chance, like in Undertale.</p>
+            Set this to <span class="term">true</span> or <span class="term">false</span> to force the Flee option to succeed or fail, respectively.
+            Otherwise, Undertale's formula is used, which starts at a 50% chance to flee on the first turn, and increases by 10% every turn after that
+            (regardless of if those turns were spent trying to flee as well).</p>
             <br><p><span class="CYF"></span> <span class="luatable"><span class="string"></span></span> <span class="term">fleetexts</span> - If you set this
             to a table filled with strings, a random one of your strings will be displayed whenever the player flees the battle (if that's enabled).</p>
             <br><p><span class="CYF"></span> <span class="boolean"></span> <span class="term">revive</span> - If this variable is set to true, the player 
