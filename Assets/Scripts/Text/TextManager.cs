@@ -424,6 +424,12 @@ public class TextManager : MonoBehaviour {
             while (currentCharacter < letterReferences.Length) {
                 if (letterReferences[currentCharacter] != null && Charset.Letters.ContainsKey(textQueue[currentLine].Text[currentCharacter])) {
                     letterReferences[currentCharacter].enabled = true;
+                    switch (letterEffect.ToLower()) {
+                        case "twitch": letterReferences[currentCharacter].GetComponent<Letter>().effect = new TwitchEffectLetter(letterReferences[currentCharacter].GetComponent<Letter>(), letterIntensity);   break;
+                        case "rotate": letterReferences[currentCharacter].GetComponent<Letter>().effect = new RotatingEffectLetter(letterReferences[currentCharacter].GetComponent<Letter>(), letterIntensity); break;
+                        case "shake":  letterReferences[currentCharacter].GetComponent<Letter>().effect = new ShakeEffectLetter(letterReferences[currentCharacter].GetComponent<Letter>(), letterIntensity);    break;
+                        default:       letterReferences[currentCharacter].GetComponent<Letter>().effect = null;                                                                                                 break;
+                    }
                     currentReferenceCharacter++;
                     if (textQueue[currentLine].Text[currentCharacter] == '\t') {
                         float indice = currentX / 320f;
@@ -594,7 +600,7 @@ public class TextManager : MonoBehaviour {
 
                                         skipImmediate = true;
                                         skipCommand = command;
-                                        InUpdateControlCommand(DynValue.NewString(command), i);
+                                        // InUpdateControlCommand(DynValue.NewString(command), i);
                                     }
                             } else if (command.Length < 7 || command.Substring(0, 7) != "instant")
                                 PreCreateControlCommand(command);
@@ -961,24 +967,22 @@ public class TextManager : MonoBehaviour {
                     }
                 }
 
-                // Third:  Find all commands between the current position and the "end point"
-                for (int i = index; i < pos; i++)
-                    if (currentText[i] == '[' && (pos - i < 3 || currentText.Substring(i, 3) != "[w:") && (pos - i < 9 || currentText.Substring(i, 9) != "[waitfor:")
-                        && (pos - i < 8 || currentText.Substring(i, 8) != "[instant")) {
-                        // Only execute the command if `instantCommand` is true
-                        if (instantCommand)
-                            try {
-                                InUpdateControlCommand(DynValue.NewString(currentText.Substring(i + 1, currentText.IndexOf(']', i) - (i + 1))));
-                            } catch {}
-                    }
+                // Third: Show all letters (and execute all commands, if applicable) between `index` and `pos`
+                bool soundPlayed = true;
+                int lastLetter = -1;
+                int destination = System.Math.Min(pos, letterReferences.Length);
+                while (currentCharacter < destination)
+                    HandleShowLetter(ref soundPlayed, ref lastLetter);
 
-                // Fourth: Display the next set of actually-created letter sprites between `index` and `pos`
+                // This is a catch-all.
+                // If a line of text starts with [instant], the above code will not display the letters it passes over,
+                // due to how HandleShowLetter is coded.
                 for (int i = index; i < pos; i++) {
                     if (letterReferences[i] != null)
                         letterReferences[i].enabled = true;
                 }
 
-                // Fifth:  Update variables
+                // Fourth:  Update variables
                 if (pos < currentText.Length) {
                     instantActive  = false;
                     instantCommand = false;

@@ -181,8 +181,10 @@ it's w3c valid, at least
             <p class="exblock">
                 <br><span class="function new"><span class="CYF"></span> [lettereffect:x] or [lettereffect:x,intensity]</span>
                 This works the same as <span class="term">[effect:x]</span> / <span class="term">[effect:x,intensity]</span>, but it works <b>inline</b>.
-                <br><br>
                 This means you can have <i>multiple</i> different text effects in a single line!
+                <br><br>
+                Keep in mind that, like all other inline text commands, this command will not execute if the player skips over it with X -
+                unless you set <span class="term">playerskipdocommand</span> to <span class="term">true</span>, first.
             </ul>
 
             <p class="exblock">
