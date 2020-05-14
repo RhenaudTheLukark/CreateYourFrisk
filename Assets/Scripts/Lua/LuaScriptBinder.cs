@@ -106,6 +106,7 @@ public static class LuaScriptBinder {
             } catch { }
         }
         script.Globals["DEBUG"] = (Action<string>)UnitaleUtil.WriteInLogAndDebugger;
+        script.Globals["EnableDebugger"] = (Action<bool>)EnableDebugger;
         // clr bindings
         DynValue MusicMgr = UserData.Create(mgr);
         script.Globals.Set("Audio", MusicMgr);
@@ -474,6 +475,17 @@ public static class LuaScriptBinder {
         catch {
             obj1.transform.SetParent(parent1);
             obj2.transform.SetParent(parent2);
+        }
+    }
+
+    public static void EnableDebugger(bool state) {
+        if (UserDebugger.instance == null)
+            return;
+
+        UserDebugger.instance.canShow = state;
+        if (!state && UserDebugger.instance.gameObject.activeSelf) {
+            UserDebugger.instance.gameObject.SetActive(false);
+            Camera.main.GetComponent<FPSDisplay>().enabled = false;
         }
     }
 }

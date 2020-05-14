@@ -134,9 +134,7 @@ public class GlobalControls : MonoBehaviour {
         else                          lastSceneUnitale = false;
 
         // Activate Debugger
-        if (UserDebugger.instance && Input.GetKeyDown(KeyCode.F9)) {
-            if (UserDebugger.instance.gameObject.activeSelf)
-                GameObject.Find("Text").transform.SetParent(UserDebugger.instance.gameObject.transform);
+        if (UserDebugger.instance && Input.GetKeyDown(KeyCode.F9) && UserDebugger.instance.canShow) {
             UserDebugger.instance.gameObject.SetActive(!UserDebugger.instance.gameObject.activeSelf);
             Camera.main.GetComponent<FPSDisplay>().enabled = UserDebugger.instance.gameObject.activeSelf;
         // Activate Hitbox Debugger

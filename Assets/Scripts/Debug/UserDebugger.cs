@@ -11,6 +11,7 @@ public class UserDebugger : MonoBehaviour{
     public Text text;
     public int maxLines = 7;
     public Queue<string> dbgContent = new Queue<string>();
+    public bool canShow = true;
     private bool firstActive = false;
     private string originalText = null;
 
@@ -39,12 +40,11 @@ public class UserDebugger : MonoBehaviour{
             WriteLine(str);
         Debug.Log("Frame " + GlobalControls.frame + ": " + line);
         // activation of the debug window if you're printing to it for the first time
-        if (!firstActive) {
+        if (!firstActive && canShow) {
             gameObject.SetActive(true);
             try {
                 Camera.main.GetComponent<FPSDisplay>().enabled = true;
             } catch { }
-            GameObject.Find("Text").transform.SetParent(transform);
             firstActive = true;
         }
         transform.SetAsLastSibling();

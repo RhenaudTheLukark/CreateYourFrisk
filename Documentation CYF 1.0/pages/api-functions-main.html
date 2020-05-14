@@ -102,6 +102,16 @@ it's w3c valid, at least
             </p>
 
             <p>
+                <br><span class="function new"><span class="CYF"></span> EnableDebugger(<span class="boolean"></span> bool) [E/M/W]</span>
+                Forcefully allows and disallows the showing of the debugger. If you enter <span class="term">false</span>, the debugger will be
+                immediately hidden if it is open, and will no longer show itself for any reason. If you then enter <span class="term">true</span>,
+                the debugger will <u>not</u> appear again immediately, but can be re-opened if the user presses F9.
+                <br><br>
+                The debugger is enabled by default.<br>
+                Note: The state of the debugger also applies to the state of the FPS display.
+            </p>
+
+            <p>
                 <br><span class="function">SetGlobal(<span class="string"></span> your_variable_name, value) [E/M/W]</span>
                 An alternative to setting variables in the Encounter script to be accessed from anywhere (see <span class="ref">The Script Object</span>).
                 <br><br>Sets a global variable. After setting, you can retrieve it from all your scripts at any time with
