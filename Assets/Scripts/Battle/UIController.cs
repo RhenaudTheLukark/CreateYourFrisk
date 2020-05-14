@@ -129,6 +129,8 @@ public class UIController : MonoBehaviour {
         #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
             Misc.WindowName = GlobalControls.crate ? ControlPanel.instance.WinodwBsaisNmae : ControlPanel.instance.WindowBasisName;
         #endif
+        if (instance.psContainer != null)
+            instance.psContainer.SetActive(false);
 
         //Stop encounter storage for good!
         if (GlobalControls.modDev) {

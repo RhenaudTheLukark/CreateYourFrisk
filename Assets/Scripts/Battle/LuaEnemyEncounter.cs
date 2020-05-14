@@ -330,16 +330,8 @@ internal class LuaEnemyEncounter : EnemyEncounter {
         if (GlobalControls.retroMode) {
             EncounterText = script.GetVar("encountertext").String;
         }
-        EraseDust();
         script.SetVar("Wave", DynValue.NewTable(new Table(null)));
         // Projectile.Z_INDEX_NEXT = Projectile.Z_INDEX_INITIAL; // doesn't work yet
-    }
-
-    private void EraseDust() {
-        ParticleSystem[] pss = GameObject.Find("psContainer").GetComponentsInChildren<ParticleSystem>(true);
-        foreach (ParticleSystem ps in pss)
-            if (!ps.gameObject.activeSelf)
-                Destroy(ps.gameObject);
     }
 
     public new bool WaveInProgress() { return Time.time < waveTimer; }
