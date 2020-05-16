@@ -110,6 +110,10 @@ public class TransitionOverworld : MonoBehaviour {
                     GameObject.Destroy(child2.gameObject);
             }
 
+        //Reset the player's shader between rooms. The player should realistically be the only sprite object carried between scenes.
+        if (PlayerOverworld.instance && PlayerOverworld.instance.sprctrl != null)
+            PlayerOverworld.instance.sprctrl.shader.Revert();
+
         yield return 0;
 
         Camera.main.transparencySortMode = TransparencySortMode.CustomAxis;
@@ -124,7 +128,7 @@ public class TransitionOverworld : MonoBehaviour {
         if (StaticInits.MODFOLDER != mi.modToLoad) {
             StaticInits.MODFOLDER = mi.modToLoad;
             StaticInits.Initialized = false;
-            StaticInits.InitAll();
+            StaticInits.InitAll(true);
             LuaScriptBinder.Set(null, "ModFolder", DynValue.NewString(StaticInits.MODFOLDER));
             if (call == "transitionoverworld") {
                 EventManager.instance.ScriptLaunched = false;

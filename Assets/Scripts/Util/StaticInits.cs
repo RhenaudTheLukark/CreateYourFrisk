@@ -22,6 +22,7 @@ public static class StaticInits {
             SpriteRegistry.Start();
             AudioClipRegistry.Start();
             SpriteFontRegistry.Start();
+            ShaderRegistry.Start();
         }
         if (MODFOLDER == null || MODFOLDER == "")
             MODFOLDER = EDITOR_MODFOLDER;
@@ -30,7 +31,7 @@ public static class StaticInits {
         Initialized = true;
     }
 
-    public static void InitAll() {
+    public static void InitAll(bool shaders = false) {
         if (!Initialized && (!GlobalControls.isInFight || GlobalControls.lastSceneUnitale)) {
             //UnitaleUtil.createFile();
             if (GlobalControls.lastSceneUnitale)
@@ -59,7 +60,15 @@ public static class StaticInits {
             sw.Stop();
             UnityEngine.Debug.Log("Sprite font registry loading time: " + sw.ElapsedMilliseconds + "ms");
             sw.Reset();
-        } else 
+
+            if (shaders) {
+                sw.Start();
+                ShaderRegistry.init();
+                sw.Stop();
+                UnityEngine.Debug.Log("Shader registry loading time: " + sw.ElapsedMilliseconds + "ms");
+                sw.Reset();
+            }
+        } else
             Initialized = true;
         LateUpdater.Init(); // must be last; lateupdater's initialization is for classes that depend on the above registries
         MusicManager.src = Camera.main.GetComponent<AudioSource>();

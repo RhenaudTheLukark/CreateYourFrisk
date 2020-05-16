@@ -199,7 +199,7 @@ public class SelectOMatic : MonoBehaviour {
         yield return new WaitForEndOfFrame();
         StaticInits.Initialized = false;
         try {
-            StaticInits.InitAll();
+            StaticInits.InitAll(true);
             Debug.Log("Loading " + StaticInits.ENCOUNTER);
             GlobalControls.isInFight = true;
             SceneManager.LoadScene("Battle");

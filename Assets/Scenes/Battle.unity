@@ -1143,6 +1143,7 @@ MonoBehaviour:
   - {fileID: 11490680, guid: abc6ac7c8c097dc40812d63eb4e8a40a, type: 2}
   enemyPositions:
   - {x: 0, y: 0}
+  turnCount: 0
   waveBeginTime: 0
   gameOverStance: 0
 --- !u!1 &930260304
@@ -2306,7 +2307,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerIndex: -1
-  luaEncounterIndex: -1
   playerZ: -1
   autolinebreakstate: 0
   revived: 0
@@ -2661,6 +2661,7 @@ GameObject:
   - component: {fileID: 1727881053}
   - component: {fileID: 1727881054}
   - component: {fileID: 1727881056}
+  - component: {fileID: 1727881052}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -2846,6 +2847,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4aa500e896f56ea4291706c581edeb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1727881052
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1727881044}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7283c6f35cfc2a40b16bb214a8d4f62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &1727881053

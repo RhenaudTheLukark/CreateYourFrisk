@@ -16,6 +16,7 @@ public class LuaSpriteController {
         }
         set { _img = value; }
     }
+    public LuaSpriteShader shader;
     private bool firstFrame = true;
     private Dictionary<string, DynValue> vars = new Dictionary<string, DynValue>();
     [MoonSharpHidden] public Vector2 nativeSizeDelta;                   // The native size of the image
@@ -353,6 +354,7 @@ public class LuaSpriteController {
         else if (i.transform.parent != null)
             if (i.transform.parent.GetComponent<LuaEnemyController>()) tag = "bubble";
             else                                                       tag = "other";
+        shader = new LuaSpriteShader("sprite", img);
     }
 
     public LuaSpriteController(SpriteRenderer i) {
@@ -360,6 +362,7 @@ public class LuaSpriteController {
         originalSprite = i.sprite;
         nativeSizeDelta = new Vector2(100, 100);
         tag = "event";
+        shader = new LuaSpriteShader("event", img);
     }
 
     // Changes the sprite of this instance
@@ -760,6 +763,7 @@ public class LuaSpriteController {
                     imgtemp.sprite = s;
                     originalSprite = imgtemp.sprite;
                     nativeSizeDelta = new Vector2(imgtemp.sprite.texture.width, imgtemp.sprite.texture.height);
+                    shader.UpdateTexture(imgtemp.sprite.texture);
                     Scale(xScale, yScale);
                     if (tag == "projectile")
                         img.GetComponent<Projectile>().needUpdateTex = true;
@@ -771,6 +775,7 @@ public class LuaSpriteController {
                     imgtemp.sprite = s;
                     originalSprite = imgtemp.sprite;
                     nativeSizeDelta = new Vector2(imgtemp.sprite.texture.width, imgtemp.sprite.texture.height);
+                    shader.UpdateTexture(imgtemp.sprite.texture);
                     Scale(xScale, yScale);
                     img.transform.rotation = rot;
                 }

@@ -34,6 +34,8 @@ public static class LuaScriptBinder {
         UserData.RegisterType<Misc>();
         UserData.RegisterType<LuaTextManager>();
         UserData.RegisterType<LuaFile>();
+        UserData.RegisterType<LuaSpriteShader>();
+        UserData.RegisterType<LuaSpriteShader.MatrixFourByFour>();
 
         // Overworld bindings
         UserData.RegisterType<LuaEventOW>();

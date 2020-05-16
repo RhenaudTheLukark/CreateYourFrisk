@@ -99,6 +99,10 @@ public class Misc {
             MoveCameraTo(0f, 0f);
     }
 
+    public LuaSpriteShader ScreenShader {
+        get { return CameraShader.luashader; }
+    }
+
     public static void DestroyWindow() { Application.Quit(); }
 
     public static LuaFile OpenFile(string path, string mode = "rw") { // TODO: When OW is reworked, add 3rd argument to open a file in any of "mod", "map" or "default" locations

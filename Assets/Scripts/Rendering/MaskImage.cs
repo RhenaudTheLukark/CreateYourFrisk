@@ -3,13 +3,14 @@
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
- 
+
 public class MaskImage : Image {
     public bool inverted = false;
     public override Material materialForRendering {
         get {
             Material result = base.materialForRendering;
-            result.SetInt("_StencilComp", inverted ? 6 : result.GetInt("_StencilComp"));
+            if (result.HasProperty("_StencilComp"))
+                result.SetInt("_StencilComp", inverted ? 6 : result.GetInt("_StencilComp"));
             return result;
         }
     }
