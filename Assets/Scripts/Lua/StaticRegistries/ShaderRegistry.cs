@@ -56,7 +56,7 @@ public static class ShaderRegistry {
     public static void init() {
         materialsMod.Clear();
         loadAllFrom(FileLoader.pathToModFile("Shaders"), true);
-        if (CameraShader.luashader != null)
+        if (Camera.main.GetComponent<CameraShader>() && CameraShader.luashader != null)
             CameraShader.luashader.Revert();
     }
 
