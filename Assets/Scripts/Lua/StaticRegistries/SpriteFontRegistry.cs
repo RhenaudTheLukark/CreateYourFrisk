@@ -31,7 +31,7 @@ public static class SpriteFontRegistry {
         //return null;
     }
 
-    public static void Init() {
+    public static void init() {
         dict.Clear();
         /*if (initialized)
             return;*/

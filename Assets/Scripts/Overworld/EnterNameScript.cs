@@ -10,28 +10,25 @@ public class EnterNameScript : MonoBehaviour {
     private bool isNewGame = true;
     private bool confirm = false;
     private bool hackFirstString = false;
-    private AudioSource uiAudio;
     private string choiceLetter = "A", playerName = "";
-    private TextManager tmInstr, tmName, tmLettersMaj, tmLettersMin;
     private Dictionary<string, string> specialNameDict = new Dictionary<string, string>();
     private string[] ForbiddenNames = new string[] { "lukark", "rtl", "rhenaud" };
     private string confirmText = null;
-	GameObject textObjFolder;
+
+    public GameObject textObjFolder;
+    public AudioSource uiAudio;
+    public TextManager tmInstr, tmName, tmLettersMaj, tmLettersMin;
 
 	// Use this for initialization
 	void Start () {
-		textObjFolder = GameObject.Find("NameText");
 		AddToDict();
         isNewGame = SaveLoad.savedGame == null;
-        uiAudio = GameObject.Find("TextManager Instructions").GetComponent<AudioSource>();
         try { GameObject.Find("textframe_border_outer").SetActive(false); } catch { }
-        tmInstr = GameObject.Find("TextManager Instructions").GetComponent<TextManager>();
         if (GlobalControls.crate)
             tmInstr.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]GIV HMI A NAME!!!", false, true) });
-        else 
+        else
             tmInstr.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]Name the fallen human.", false, true) });
         tmInstr.SetHorizontalSpacing(2);
-        tmName = GameObject.Find("TextManager Name").GetComponent<TextManager>();
         tmName.SetHorizontalSpacing(2);
         GameObject firstCamera = GameObject.Find("Main Camera");
         firstCamera.name = "temp";
@@ -45,16 +42,14 @@ public class EnterNameScript : MonoBehaviour {
             Camera.main.GetComponent<AudioSource>().Play();
         }
         tmName.SetTextQueue(new TextMessage[] { new TextMessage(playerName, false, true) });
-        tmLettersMaj = GameObject.Find("TextManager LettersMaj").GetComponent<TextManager>();
         tmLettersMaj.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][charspacing:52.2][linespacing:-1]ABCDEFG\nHIJKLMN\nOPQRSTU\nVWXYZ", false, true) });
         tmLettersMaj.SetEffect(new ShakeEffect(tmLettersMaj));
-        tmLettersMin = GameObject.Find("TextManager LettersMin").GetComponent<TextManager>();
         tmLettersMin.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][charspacing:52.2][linespacing:-1]abcdefg\nhijklmn\nopqrstu\nvwxyz", false, true) });
         tmLettersMin.SetEffect(new ShakeEffect(tmLettersMin));
-        for (int i = 0; i < GameObject.Find("TextManager LettersMaj").GetComponentsInChildren<Image>().Length; i ++)
-            GameObject.Find("TextManager LettersMaj").GetComponentsInChildren<Image>()[i].name = GameObject.Find("TextManager LettersMaj").GetComponentsInChildren<Image>()[i].sprite.name;
-        for (int i = 0; i < GameObject.Find("TextManager LettersMin").GetComponentsInChildren<Image>().Length; i ++)
-            GameObject.Find("TextManager LettersMin").GetComponentsInChildren<Image>()[i].name = GameObject.Find("TextManager LettersMaj").GetComponentsInChildren<Image>()[i].sprite.name.ToLower();
+        for (int i = 0; i < tmLettersMaj.GetComponentsInChildren<Image>().Length; i ++)
+            tmLettersMaj.GetComponentsInChildren<Image>()[i].name = tmLettersMaj.GetComponentsInChildren<Image>()[i].sprite.name;
+        for (int i = 0; i < tmLettersMin.GetComponentsInChildren<Image>().Length; i ++)
+            tmLettersMin.GetComponentsInChildren<Image>()[i].name = tmLettersMaj.GetComponentsInChildren<Image>()[i].sprite.name.ToLower();
         GameObject.Find("A").GetComponent<Image>().color = new Color(1, 1, 0, 1);
     }
 	
@@ -65,7 +60,7 @@ public class EnterNameScript : MonoBehaviour {
                 hackFirstString = true;
                 tmName.SetTextQueue(new TextMessage[] { new TextMessage(playerName, false, true) });
                 tmName.transform.localPosition = new Vector3(-calcTotalLength(tmName) / 2, tmName.transform.localPosition.y, tmName.transform.localPosition.z);
-            } 
+            }
             if (GlobalControls.input.Down == UndertaleInput.ButtonState.PRESSED) {
                 if (choiceLetter == "Quit")                                                                                                 setColor("A");
                 else if (choiceLetter == "Backspace")                                                                                       setColor("D");
@@ -179,7 +174,7 @@ public class EnterNameScript : MonoBehaviour {
         while (GlobalControls.input.Confirm != UndertaleInput.ButtonState.PRESSED) {
             if (tmName.transform.localScale.x < 3) {
                 tmName.transform.localScale = new Vector3(tmName.transform.localScale.x + 0.01f, tmName.transform.localScale.y + 0.01f, 1);
-                tmName.transform.localPosition = new Vector3(actualX - (((tmName.transform.localScale.x - 1) * diff) / 2), 
+                tmName.transform.localPosition = new Vector3(actualX - (((tmName.transform.localScale.x - 1) * diff) / 2),
                                                              actualY - (((tmName.transform.localScale.x - 1) * diff) / 6), tmName.transform.localPosition.z);
             }
             if ((GlobalControls.input.Left == UndertaleInput.ButtonState.PRESSED || GlobalControls.input.Right == UndertaleInput.ButtonState.PRESSED)
@@ -251,16 +246,16 @@ public class EnterNameScript : MonoBehaviour {
         specialNameDict.Add("rtl",       "Still my name, dude.");
         specialNameDict.Add("rhenao",    "The basis name.");
         specialNameDict.Add("rhenaud",   "My real name.");
-        
+
         specialNameDict.Add("uduu",      "(Broken) The path to victory. Go to\nthe 2nd map. Real name: UDUUL");
         specialNameDict.Add("thefail",   "(Broken) DO 3 BARREL ROLLS!!!");
         specialNameDict.Add("exception", "(Broken) It's me.");
         specialNameDict.Add("fugitive",  "(Broken) *flees*\n/me flees");
         specialNameDict.Add("four",      "4");
-        
+
         specialNameDict.Add("outbounds", "Go behind that dog!");
         specialNameDict.Add("soulless",  "They shall fall, one\nafter another.");
-        
+
         specialNameDict.Add("notfound",  "404");
         specialNameDict.Add("404",       "Name not found.");
         specialNameDict.Add("cyf",       "The true name.\nCreate Your Frisk FTW!");
@@ -268,7 +263,7 @@ public class EnterNameScript : MonoBehaviour {
         specialNameDict.Add("mmmmmmmmm", "You just want to watch\nthe engine burn.");
         specialNameDict.Add("wwwwwwwww", "You just want to watch\nthe engine burn.");
         specialNameDict.Add("undertale", "Without this game,\nthis wouldn't exist.");
-        
+
         specialNameDict.Add("frisk",     "That'll do nothing here.");
         specialNameDict.Add("chara",     "Classic af. Your \"The true name.\"\nis in another castle.");
         specialNameDict.Add("undyne",    "It's not like you'll\nfind her, anyway.");

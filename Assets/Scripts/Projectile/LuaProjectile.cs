@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class LuaProjectile : Projectile {    
+public class LuaProjectile : Projectile {
     public override void OnStart() {
         self.sizeDelta = GetComponent<Image>().sprite.rect.size;
         ctrl.sprite.nativeSizeDelta = self.sizeDelta;
@@ -27,7 +27,7 @@ public class LuaProjectile : Projectile {
 
     public override void OnProjectileHit() {
         if (owner.Globals["OnHit"] != null && owner.Globals.Get("OnHit") != null)
-            try { owner.Call(owner.Globals["OnHit"], this.ctrl); } 
+            try { owner.Call(owner.Globals["OnHit"], this.ctrl); }
             catch (ScriptRuntimeException ex) {
                 UnitaleUtil.DisplayLuaError((owner.Globals["wavename"] != null) ? (string)owner.Globals["wavename"] : "[wave script filename here]\n(should be a filename, sorry! missing feature)", UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message, ex.DoNotDecorateMessage);
             }

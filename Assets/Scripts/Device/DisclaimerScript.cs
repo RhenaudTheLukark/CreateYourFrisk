@@ -9,26 +9,26 @@ using System.Collections;
 /// Attached to the disclaimer screen so you can skip it.
 /// </summary>
 public class DisclaimerScript : MonoBehaviour {
+    public GameObject Logo, LogoCrate, Desc1, Desc2, Desc3, Desc4, Desc5, Version;
+
     private void Start() {
         if (GlobalControls.crate) {
-            GameObject.Find("Image").GetComponent<Image>().enabled = false;
-            GameObject.Find("Image (1)").GetComponent<Image>().enabled = true;
-            GameObject.Find("Description").GetComponent<Text>().text = "GO TO /R/UNITLAE. FOR UPDTAES!!!!!";
-            GameObject.Find("Description (1)").GetComponent<Text>().text = "NO RELESLING HERE!!! IT'S RFEE!!! " +
-                                                                           "OR TUBY FEX WILL BE ANGER!!! " +
-                                                                           "U'LL HVAE A BED TMIE!!!";
-            GameObject.Find("Description (2)").GetComponent<Text>().text = "SPACE OR KLIK TO\n<color='#ff0000'>PALY MODS!!!!!</color>";
-            GameObject.Find("Description (3)").GetComponent<Text>().text = "PRSES O TO\n<color='#ffff00'>OOVERWURL!!!!!</color>";
-            GameObject.Find("Description (4)").GetComponent<Text>().text = "<b><color='red'>KNOW YUOR CODE</color> R U'LL HVAE A BED TMIE!!!</b>";
-            GameObject.Find("Version").GetComponent<Text>().text = "v" + UnityEngine.Random.Range(0,9) + "." + UnityEngine.Random.Range(0,9) + "." + UnityEngine.Random.Range(0,9);
+            Logo.GetComponent<Image>().enabled = false;
+            LogoCrate.GetComponent<Image>().enabled = true;
+            Desc1.GetComponent<Text>().text = "GO TO /R/UNITLAE. FOR UPDTAES!!!!!";
+            Desc2.GetComponent<Text>().text = "NO RELESLING HERE!!! IT'S RFEE!!! OR TUBY FEX WILL BE ANGER!!! U'LL HVAE A BED TMIE!!!";
+            Desc3.GetComponent<Text>().text = "SPACE OR KLIK TO\n<color='#ff0000'>PALY MODS!!!!!</color>";
+            Desc4.GetComponent<Text>().text = "PRSES O TO\n<color='#ffff00'>OOVERWURL!!!!!</color>";
+            Desc5.GetComponent<Text>().text = "<b><color='red'>KNOW YUOR CODE</color> R U'LL HVAE A BED TMIE!!!</b>";
+            Version.GetComponent<Text>().text = "v" + UnityEngine.Random.Range(0,9) + "." + UnityEngine.Random.Range(0,9) + "." + UnityEngine.Random.Range(0,9);
         } else
             if (UnityEngine.Random.Range(0, 1000) == 021) {
-                GameObject.Find("Image").GetComponent<Image>().enabled = false;
-                GameObject.Find("Version").GetComponent<Transform>().localPosition = new Vector3(0f, 160f, 0f);
-                GameObject.Find("Version").GetComponent<Text>().color = new Color(1f, 1f, 1f, 1f);
-                GameObject.Find("Version").GetComponent<Text>().text = "Not Unitale v0.2.1a";
+                Logo.GetComponent<Image>().enabled = false;
+                Version.GetComponent<Transform>().localPosition = new Vector3(0f, 160f, 0f);
+                Version.GetComponent<Text>().color = new Color(1f, 1f, 1f, 1f);
+                Version.GetComponent<Text>().text = "Not Unitale v0.2.1a";
             } else
-                GameObject.Find("Version").GetComponent<Text>().text = "v" + GlobalControls.CYFversion;
+                Version.GetComponent<Text>().text = "v" + GlobalControls.CYFversion;
     }
 
     /// <summary>
@@ -64,9 +64,9 @@ public class DisclaimerScript : MonoBehaviour {
     IEnumerator ModSelect() {
         // if (LuaScriptBinder.GetAlMighty(null, "CrateYourFrisk") != null && LuaScriptBinder.GetAlMighty(null, "CrateYourFrisk").Boolean)
         if (GlobalControls.crate)
-            GameObject.Find("Description (4)").GetComponent<Text>().text = "LAODING MODS!!!!!";
+            Desc5.GetComponent<Text>().text = "LAODING MODS!!!!!";
         else
-            GameObject.Find("Description (4)").GetComponent<Text>().text = "Loading mods...";
+            Desc5.GetComponent<Text>().text = "Loading mods...";
         yield return new WaitForEndOfFrame();
         GlobalControls.modDev = true;
         SceneManager.LoadScene("ModSelect");

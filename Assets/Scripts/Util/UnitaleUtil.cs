@@ -395,7 +395,7 @@ public static class UnitaleUtil {
                     something = true;
             } else {
                 if (Mathf.Floor(number) == 0 )      { zerocount++;   ninecount = 0; }
-                else if (Mathf.Floor(number) == 9 ) { ninecount++;   zerocount = 0; } 
+                else if (Mathf.Floor(number) == 9 ) { ninecount++;   zerocount = 0; }
                 else                                { ninecount = 0; zerocount = 0; }
             }
             dec++;
@@ -552,7 +552,7 @@ public static class UnitaleUtil {
                 if (currentHeight < coords.w) coords.w = currentHeight; //minVert
             }
         Vector2 offset = new Vector2((coords.x + coords.y) / 2 - width / 2, (coords.z + coords.w) / 2 - height / 2);
-        Rect maxDist = new Rect (tf.position.x - Mathf.Ceil((coords.x - coords.y + 1) / 2) + offset.x, 
+        Rect maxDist = new Rect (tf.position.x - Mathf.Ceil((coords.x - coords.y + 1) / 2) + offset.x,
                                  tf.position.y - Mathf.Ceil((coords.z - coords.w + 1) / 2) + offset.y, coords.x - coords.y + 1, coords.z - coords.w + 1);
         //Rect maxDist = new Rect (tf.position.x, tf.position.y, coords.y - coords.x, coords.w - coords.z);
         //Debug.Log(maxDist);
@@ -676,7 +676,7 @@ public static class UnitaleUtil {
     }*/
 
     // ******************************************************************************
-    // *** Warning: Complex System.Reflexion stuff below! Enter at your own risk! *** 
+    // *** Warning: Complex System.Reflexion stuff below! Enter at your own risk! ***
     // ******************************************************************************
 
     /*/// <summary>

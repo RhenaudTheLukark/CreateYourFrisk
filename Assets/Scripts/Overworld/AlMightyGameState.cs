@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using MoonSharp.Interpreter;
 
 /// <summary>
-/// Class used as a database that is saved and loaded during the game. 
+/// Class used as a database that is saved and loaded during the game.
 /// Is used as the savefile in SaveLoad.
 /// </summary>
 [System.Serializable] public class AlMightyGameState {

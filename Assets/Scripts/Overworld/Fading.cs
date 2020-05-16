@@ -8,7 +8,7 @@ public class Fading : MonoBehaviour {
     [HideInInspector]
     public float fadeSpeed = 3f;       // The fading speed
     public float alpha = 1.0f;         // The texture's alpha between 0 and 1
-    
+
     private int fadeDir = 1;          // The direction to fade : in = -1 or out = 1
     private bool eventSent = false;
 
@@ -61,7 +61,7 @@ public class Fading : MonoBehaviour {
     }
 
     // LoadScene is called when a level is loaded. It takes loaded level index (int) as a parameter so you can limit the fade in to certain scenes
-    /*public void LoadScene(Scene scene, LoadSceneMode mode) {   
+    /*public void LoadScene(Scene scene, LoadSceneMode mode) {
         string index = SceneManager.GetActiveScene().name;
         if (!GlobalControls.nonOWScenes.Contains(index)) {
             BeginFade(-1);          // Call the fade in function

@@ -10,13 +10,13 @@ using UnityEngine.SceneManagement;
 public static class FileLoader {
     public static void calcDataRoot() {
         DirectoryInfo rootInfo = new DirectoryInfo(Application.dataPath);
-        
+
         // Mac compatibility
         if (Application.platform == RuntimePlatform.OSXPlayer)
             rootInfo = rootInfo.Parent;
-        
+
         string SysDepDataRoot = rootInfo.FullName;
-        
+
         while (true) {
             DirectoryInfo[] dfs = rootInfo.GetDirectories();
 
@@ -26,7 +26,7 @@ public static class FileLoader {
                     return;
                 }
 
-            try { rootInfo = new DirectoryInfo(rootInfo.Parent.FullName); } 
+            try { rootInfo = new DirectoryInfo(rootInfo.Parent.FullName); }
             catch {
                 UnitaleUtil.DisplayLuaError("CYF's Startup", "The engine detected no Mods folder in your files: are you sure it exists?");
                 return;
@@ -126,12 +126,12 @@ public static class FileLoader {
 
 
 
-    public static AudioClip getAudioClipFromMod(string relPath, string clipName) 
+    public static AudioClip getAudioClipFromMod(string relPath, string clipName)
         { return getAudioClip(pathToModFile(relPath), pathToModFile(relPath + Path.DirectorySeparatorChar + clipName)); }
 
-    public static AudioClip getAudioClipFromDefault(string relPath, string clipName) 
+    public static AudioClip getAudioClipFromDefault(string relPath, string clipName)
         { return getAudioClip(pathToDefaultFile(relPath), pathToDefaultFile(relPath + Path.DirectorySeparatorChar + clipName)); }
-    
+
     /// <summary>
     /// Get an AudioClip at the given full path. Attempts to retrieve it from the AudioClipRegistry first by using folderRoot to extract the clip's name, otherwise attempts to load from disk.
     /// </summary>
@@ -148,12 +148,12 @@ public static class FileLoader {
         if (musicFilePath.EndsWith(".ogg"))       type = AudioType.OGGVORBIS;
         else if (musicFilePath.EndsWith(".wav"))  type = AudioType.WAV;
         else                                      return null;
-            
+
         AudioClip music;
         music = www.GetAudioClip(false, false, type);
         music.name = "File at " + musicFilePath;
         music.LoadAudioData();
-        
+
         AudioClipRegistry.Set(clipName, music);
         return music;
     }

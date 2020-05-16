@@ -20,7 +20,7 @@ public static class ParseUtil {
         if (float.TryParse(s, NumberStyles.Any, CultureInfo.InvariantCulture, out f))  return f;
         else                                                                           throw new CYFException("Float parse failed : \"" + s + "\"");
     }
-    
+
     public static float GetByte(string s) {
         byte f;
         if (byte.TryParse(s, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out f))  return f;

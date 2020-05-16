@@ -6,8 +6,8 @@ using UnityEngine.UI;
 
 public class SpecialAnnouncementScript : MonoBehaviour {
     // Globally used variables
-    private Text        mainText,  subText;  // Text objects used for the old CYF v0.6 secret and the new part of the secret
-    private AudioSource mainAudio, subAudio; // Audio objects, first one used for the two vocal messages, the second one used for Goat Sound
+    public  Text        mainText,  subText;  // Text objects used for the old CYF v0.6 secret and the new part of the secret
+    public  AudioSource mainAudio, subAudio; // Audio objects, first one used for the two vocal messages, the second one used for Goat Sound
     private LuaSpriteController mainSprite, subSprite, fadeSprite, pauseSprite; // Sprites used for both animated characters, the fade effect and the pause button
     private int phase = 0; // Current speech phase
     private float punderTime = 0; // Used to store the current time when switching to the old text to the new one
@@ -17,7 +17,7 @@ public class SpecialAnnouncementScript : MonoBehaviour {
     private Dictionary<string, AudioClip> audioFiles = new Dictionary<string, AudioClip>(); // Dictionary storing all of the project's files
 
     // MisriHalek reference variables
-    private Image misriHalek;
+    public  Image misriHalek;
     private Vector2 MHPos;
     private bool MHStarted = false;
     private bool MHJustStarted = false;
@@ -99,13 +99,6 @@ public class SpecialAnnouncementScript : MonoBehaviour {
         #endif
         // Load CYF's AlMighty save file
         SaveLoad.LoadAlMighty();
-
-        // Store useful scene objects
-        misriHalek = GameObject.Find("MisriHalek").GetComponent<Image>();
-        mainText = GameObject.Find("MainText").GetComponent<Text>();
-        subText = GameObject.Find("SubText").GetComponent<Text>();
-        mainAudio = Camera.main.GetComponent<AudioSource>();
-        subAudio = GameObject.Find("SubAudio").GetComponent<AudioSource>();
 
         // Load all resources needed for this animation to play
         Sprite[] punderSprs = Resources.LoadAll<Sprite>("Sprites/Punder");

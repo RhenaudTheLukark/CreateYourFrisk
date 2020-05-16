@@ -29,7 +29,11 @@ public class LuaFile {
         this.path = path;
         this.mode = mode;
 
-        content = File.Exists(path) ? File.ReadAllText(path).Split('\n') : null;
+        try {
+            content = File.Exists(path) ? File.ReadAllText(path).Split('\n') : null;
+        } catch (System.IO.IOException e) {
+            throw new CYFException(e.GetType().ToString() + " error:\n\n" + e.Message);
+        }
     }
 
     public byte[] ReadBytes() {
@@ -85,7 +89,11 @@ public class LuaFile {
             throw new CYFException("File.Write: Unauthorized access to file:\n\"" + path + "\"\n\nIt may be read-only, hidden or a folder.");
         }
 
-        content = File.ReadAllText(path).Split('\n');
+        try {
+            content = File.ReadAllText(path).Split('\n');
+        } catch (System.IO.IOException e) {
+            throw new CYFException(e.GetType().ToString() + " error:\n\n" + e.Message);
+        }
     }
 
     public void ReplaceLine(int line, string data) {

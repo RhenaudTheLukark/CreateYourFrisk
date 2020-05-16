@@ -54,6 +54,7 @@ public class TextManager : MonoBehaviour {
     private bool firstChar = false;
     internal float hSpacing = 3;
     internal float vSpacing = 0;
+    private GameObject textframe;
     private LuaSpriteController mugshot;
     private string[] mugshotList = null;
     private string finalMugshot;
@@ -130,8 +131,10 @@ public class TextManager : MonoBehaviour {
         // SetFont(SpriteFontRegistry.F_UI_DIALOGFONT);
         timePerLetter = singleFrameTiming;
 
-        if (UnitaleUtil.IsOverworld && GameObject.Find("textframe_border_outer"))
+        if (UnitaleUtil.IsOverworld && GameObject.Find("textframe_border_outer")) {
+            textframe = GameObject.Find("textframe_border_outer");
             mugshot = new LuaSpriteController(GameObject.Find("Mugshot").GetComponent<Image>());
+        }
     }
 
     private void Start() {
@@ -332,13 +335,13 @@ public class TextManager : MonoBehaviour {
                     SpawnText(forceNoAutoLineBreak);
                     //if (!overworld)
                     //    UIController.instance.encounter.CallOnSelfOrChildren("AfterText");
-                    if (UnitaleUtil.IsOverworld && GameObject.Find("textframe_border_outer") && this == PlayerOverworld.instance.textmgr) {
+                    if (UnitaleUtil.IsOverworld && textframe != null && this == PlayerOverworld.instance.textmgr) {
                         if (textQueue[line].ActualText) {
-                            if (GameObject.Find("textframe_border_outer").GetComponent<Image>().color.a == 0)
+                            if (textframe.GetComponent<Image>().color.a == 0)
                                 SetTextFrameAlpha(1);
                             blockSkip = false;
                         } else {
-                            if ((GameObject.Find("textframe_border_outer").GetComponent<Image>().color.a == 1))
+                            if ((textframe.GetComponent<Image>().color.a == 1))
                                 SetTextFrameAlpha(0);
                             blockSkip = true;
                             this.DestroyChars();
@@ -364,8 +367,8 @@ public class TextManager : MonoBehaviour {
                         int lines = textQueue[line].Text.Split('\n').Length;
                         if (lines >= 4) lines = 4;
                         else            lines = 3;
-                        Vector3 pos = GameObject.Find("TextManager OW").GetComponent<RectTransform>().localPosition;
-                        GameObject.Find("TextManager OW").GetComponent<RectTransform>().localPosition = new Vector3(pos.x, 22 + ((lines - 1) * Charset.LineSpacing / 2), pos.z);
+                        Vector3 pos = gameObject.GetComponent<RectTransform>().localPosition;
+                        gameObject.GetComponent<RectTransform>().localPosition = new Vector3(pos.x, 22 + ((lines - 1) * Charset.LineSpacing / 2), pos.z);
                     }
                 }
     }
@@ -375,9 +378,9 @@ public class TextManager : MonoBehaviour {
         Image[] images = null;
 
         if (UnitaleUtil.IsOverworld) {
-            imagesChild = GameObject.Find("textframe_border_outer").GetComponentsInChildren<Image>();
+            imagesChild = textframe.GetComponentsInChildren<Image>();
             images = new Image[imagesChild.Length + 1];
-            images[0] = GameObject.Find("textframe_border_outer").GetComponent<Image>();
+            images[0] = textframe.GetComponent<Image>();
         } else {
             imagesChild = GameObject.Find("arena_border_outer").GetComponentsInChildren<Image>();
             images = new Image[imagesChild.Length + 1];

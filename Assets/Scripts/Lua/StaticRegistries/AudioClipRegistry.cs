@@ -19,7 +19,7 @@ public class AudioClipRegistry {
             return dict[key];
         else
             return tryLoad(k);
-    }        
+    }
 
     public static AudioClip tryLoad(string key) {
         string k = key;
@@ -92,7 +92,7 @@ public class AudioClipRegistry {
     private static void loadAllFrom(string directoryPath, bool mod = false) {
         DirectoryInfo dInfo = new DirectoryInfo(directoryPath);
         FileInfo[] fInfo;
-        
+
         if (!dInfo.Exists) {
             UnitaleUtil.DisplayLuaError("mod loading", "You tried to load the mod \"" + StaticInits.MODFOLDER + "\" but it can't be found.\nAre you sure it exists?");
             throw new CYFException("mod loading");

@@ -135,7 +135,7 @@ public class LuaPlayerStatus {
         set {
             if (value == null)
                 throw new CYFException("Player.name: Attempt to set the player's name to a nil value.\n\nPlease double-check your code.");
-            
+
             PlayerCharacter.instance.Name = value;
             UIStats.instance.setPlayerInfo(PlayerCharacter.instance.Name, PlayerCharacter.instance.LV);
         }
@@ -337,7 +337,7 @@ public class LuaPlayerStatus {
         }
         if (damage != null)
             if (damage.Length != 1 && damage.Length != targets.Length)
-                UnitaleUtil.DisplayLuaError("Multi Target", "You may have as many numbers of damage values as the number of enemies if you're using forced damage," 
+                UnitaleUtil.DisplayLuaError("Multi Target", "You may have as many numbers of damage values as the number of enemies if you're using forced damage,"
                                                           + " or 1 for all enemies at the same time.");
 
         UIController.instance.fightUI.targetIDs = targets;

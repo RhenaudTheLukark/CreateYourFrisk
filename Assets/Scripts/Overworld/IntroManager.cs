@@ -50,7 +50,7 @@ public class IntroManager : MonoBehaviour {
         img.sprite = SpriteRegistry.Get("Intro/" + imagePaths[0]);
         img.SetNativeSize();
         if (specialEffects[0] != string.Empty)
-            try { ApplyEffect((Effect)Enum.Parse(typeof(Effect), specialEffects[currentIndex].ToUpper())); } 
+            try { ApplyEffect((Effect)Enum.Parse(typeof(Effect), specialEffects[currentIndex].ToUpper())); }
             catch { UnitaleUtil.DisplayLuaError("IntroManager", "The effect " + specialEffects[currentIndex] + " doesn't exist."); }
         if (goToNextDirect[0] == "Y")
             timer = 0.5f;
@@ -91,7 +91,7 @@ public class IntroManager : MonoBehaviour {
                     img.rectTransform.position = new Vector2(320, 240);
                     timerEffect = 0.0f;
                     if (specialEffects[currentIndex] != string.Empty)
-                        try { ApplyEffect((Effect)Enum.Parse(typeof(Effect), specialEffects[currentIndex])); } 
+                        try { ApplyEffect((Effect)Enum.Parse(typeof(Effect), specialEffects[currentIndex])); }
                         catch { UnitaleUtil.DisplayLuaError("IntroManager", "The effect " + specialEffects[currentIndex] + " doesn't exist."); }
                     text.NextLineText();
                     start = true;

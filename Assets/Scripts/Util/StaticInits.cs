@@ -9,7 +9,7 @@ public static class StaticInits {
     private static bool firstInit = false;
 
     public static bool Initialized { get; set; }
-    
+
     public delegate void LoadedAction();
     public static event LoadedAction Loaded;
 
@@ -56,7 +56,7 @@ public static class StaticInits {
             sw.Reset();
 
             sw.Start();
-            SpriteFontRegistry.Init();
+            SpriteFontRegistry.init();
             sw.Stop();
             UnityEngine.Debug.Log("Sprite font registry loading time: " + sw.ElapsedMilliseconds + "ms");
             sw.Reset();

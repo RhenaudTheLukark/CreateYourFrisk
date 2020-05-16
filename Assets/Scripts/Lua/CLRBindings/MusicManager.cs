@@ -70,7 +70,7 @@ public class MusicManager {
     public static float totaltime {
         get { return src.clip.length; }
     }
-    
+
     [MoonSharpHidden] public static bool IsStoppedOrNull(AudioSource audio) {
         if (audio != null) {
             if (audio.ToString().ToLower() == "null")  return true;

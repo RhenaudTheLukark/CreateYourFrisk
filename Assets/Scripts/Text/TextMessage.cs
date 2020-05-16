@@ -9,7 +9,7 @@ public class TextMessage {
     public TextMessage(string text, bool decorated, bool showImmediate, DynValue mugshot, bool actualText = true) {
         Setup(text, decorated, showImmediate, actualText, mugshot);
     }
-    
+
     public string Text { get; set; }
     public bool Decorated { get; private set; }
     public bool ShowImmediate { get; private set; }

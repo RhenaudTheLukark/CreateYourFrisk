@@ -2641,6 +2641,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2ea8601668b5c64488fed0712837d69, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ResetRG: {fileID: 1091755616}
+  ResetAG: {fileID: 916737235}
+  ClearSave: {fileID: 1483033491}
+  Safe: {fileID: 1631460679}
+  Retro: {fileID: 132251294}
+  Fullscreen: {fileID: 645751916}
+  Scale: {fileID: 1342957224}
+  Exit: {fileID: 107375589}
+  Description: {fileID: 666042083}
 --- !u!1 &2103507659
 GameObject:
   m_ObjectHideFlags: 0

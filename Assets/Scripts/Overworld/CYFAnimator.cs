@@ -84,7 +84,7 @@ public class CYFAnimator : MonoBehaviour {
 
     private void ReplaceAnim(string animName) {
         Anim anim = GetAnimPerName(animName);
-        try { sprctrl.SetAnimation(anim.anims.Replace(" ", "").Replace("{", "").Replace("}", "").Split(','), anim.transitionTime); } 
+        try { sprctrl.SetAnimation(anim.anims.Replace(" ", "").Replace("{", "").Replace("}", "").Split(','), anim.transitionTime); }
         catch { throw new CYFException("Bad animation for event \"" + gameObject.name + "\", animation \"" + animName + "\""); }
         beginAnim = animName;
     }

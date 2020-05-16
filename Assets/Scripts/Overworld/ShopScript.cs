@@ -24,24 +24,16 @@ public class ShopScript : MonoBehaviour {
     enum State { MENU, BUY, BUYCONFIRM, SELL, SELLCONFIRM, TALK, TALKINPROGRESS, EXIT, INTERRUPT };
     State currentState = State.MENU;
     State interruptState = State.MENU;
-    TextManager tmMain, tmChoice, tmInfo, tmBigTalk, tmGold, tmItem;
     TPHandler tp = null;
-    GameObject tmInfoParent, utHeart;
+    public TextManager tmMain, tmChoice, tmInfo, tmBigTalk, tmGold, tmItem;
+    public GameObject tmInfoParent, utHeart;
     public ScriptWrapper script;
 
 	// Use this for initialization
 	void Start () {
         FindObjectOfType<Fading>().BeginFade(-1);
 
-        tmMain = GameObject.Find("TextManager Main").GetComponent<TextManager>();
-        tmChoice = GameObject.Find("TextManager Choice").GetComponent<TextManager>();
-        tmInfo = GameObject.Find("TextManager Info").GetComponent<TextManager>();
-        tmBigTalk = GameObject.Find("TextManager BigTalk").GetComponent<TextManager>();
-        tmGold = GameObject.Find("TextManager Gold").GetComponent<TextManager>();
-        tmItem = GameObject.Find("TextManager Item").GetComponent<TextManager>();
-        tmInfoParent = tmInfo.transform.parent.parent.gameObject;
         tmBigTalk.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][novoice]", false, true) });
-        utHeart = GameObject.Find("utHeart");
         EnableBigText(false);
 
         if (scriptName == null)

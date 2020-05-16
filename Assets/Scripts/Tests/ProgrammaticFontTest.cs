@@ -33,7 +33,7 @@ public class ProgrammaticFontTest : MonoBehaviour
             if (name.Length == 1) {
                 letters.Add(name[0], s);
                 continue;
-            } else 
+            } else
                 switch (name) {
                     case "slash":        letters.Add('/', s);  break;
                     case "dot":          letters.Add('.', s);  break;

@@ -27,7 +27,7 @@ public static class Inventory {
             if (!addedItems.Contains(item) && !NametoDesc.TryGetValue(item, out outString) && !NametoShortName.TryGetValue(item, out outString) && !NametoType.TryGetValue(item, out outInt) && !NametoPrice.TryGetValue(item, out outInt))
                 throw new CYFException("Inventory.SetInventory: The item \"" + item + "\" was not found." + (UnitaleUtil.IsOverworld ? "" : "\n\nAre you sure you called Inventory.AddCustomItems first?"));
         }
-        
+
         inventory = new List<UnderItem>(new UnderItem[] { });
         if (items != null)
             for (int i = 0; i < items.Length; i++) {
@@ -37,7 +37,7 @@ public static class Inventory {
                 } else {
                     // Search through addedItemsTypes to find the type of the new item
                     int type = 0;
-                    
+
                     // Get the index of the new item in addedItems
                     for (int j = 0; j < addedItems.Count; j++) {
                         if (addedItems[j] == items[i])
@@ -87,10 +87,7 @@ public static class Inventory {
     }
 
     public static bool TryCall(string func, DynValue[] param = null) {
-        bool overworld = false;
-        if (GameObject.Find("Main Camera OW"))
-            overworld = true;
-        if (!overworld)
+        if (!UnitaleUtil.IsOverworld)
             try {
                 if (LuaEnemyEncounter.script.GetVar(func) == null)
                     return false;
@@ -145,10 +142,10 @@ public static class Inventory {
             GameObject.Find("TextManager OW").GetComponent<TextManager>().SetTextQueue(mess);
             GameObject.Find("TextManager OW").transform.parent.parent.SetAsLastSibling();
         }
-        
+
         return;
     }
-    
+
     public static void AddItemsToDictionaries() {
         NametoDesc.Add("Testing Dog", "A dog that tests something.\rDon't ask me what, I don't know.");        NametoShortName.Add("Testing Dog", "TestDog");
         NametoType.Add("Testing Dog", 3);                                                                      NametoPrice.Add("Testing Dog", 0);
@@ -285,7 +282,7 @@ public static class Inventory {
         NametoDesc.Add("Cloudy Glasses", "Glasses marred with wear.\rIncreases INV by 9.");                    NametoShortName.Add("Cloudy Glasses", "ClodGlass");
         NametoType.Add("Cloudy Glasses", 2);                                                                   NametoPrice.Add("Cloudy Glasses", 35);
 
-        NametoDesc.Add("Temmie Armor", "The things you can do with a\rcollege education! Raises ATTACK when\rworn. Recovers HP every other\rturn. INV up slightly."); 
+        NametoDesc.Add("Temmie Armor", "The things you can do with a\rcollege education! Raises ATTACK when\rworn. Recovers HP every other\rturn. INV up slightly.");
         NametoShortName.Add("Temmie Armor", "Temmie AR");       NametoType.Add("Temmie Armor", 2);             NametoPrice.Add("Temmie Armor", 9999);
 
         NametoDesc.Add("Stained Apron", "Heals 1 HP every other turn.");                                       NametoShortName.Add("Stained Apron", "StainApro");
@@ -297,7 +294,7 @@ public static class Inventory {
         NametoDesc.Add("Heart Locket", "It says \"Best Friends Forever.\"");                                   NametoShortName.Add("Heart Locket", "<--Locket");
         NametoType.Add("Heart Locket", 2);                                                                     NametoPrice.Add("Heart Locket", 500);
 
-        NametoDesc.Add("The Locket", "You can feel it beating.");                                              NametoShortName.Add("The Locket", "TheLocket");         
+        NametoDesc.Add("The Locket", "You can feel it beating.");                                              NametoShortName.Add("The Locket", "TheLocket");
         NametoType.Add("The Locket", 2);                                                                       NametoPrice.Add("The Locket", 99999);
     }
 

@@ -21,9 +21,9 @@ public class ScreenResolution : MonoBehaviour {
     private static Rect    FSBorderRect = new Rect(0f, 0f, 1f, 1f); //Rect to apply to cameras in fullscreen (with pillarboxing).
     private static Rect    NoBorderRect = new Rect(0f, 0f, 1f, 1f); //Rect to apply to cameras in windowed (or wide fullscreen).
 
-    const int   aspectWidth  = 640;
-    const int   aspectHeight = 480;
-    const float aspectRatio  = 1.333334f;
+    const int   ASPECT_WIDTH  = 640;
+    const int   ASPECT_HEIGHT = 480;
+    const float ASPECT_RATIO  = 1.333334f;
 
     private void Start() {
         if (hasInitialized) {
@@ -39,11 +39,11 @@ public class ScreenResolution : MonoBehaviour {
         displayedSize         = new Vector3(Screen.width, Screen.height, 0);
         userAspectRatio       = (float)lastMonitorWidth / (float)lastMonitorHeight;
         userDisplayWidth      = System.Math.Min((int)RoundToNearestEven((lastMonitorHeight / (double)3) * (double)4), lastMonitorWidth);
-        ProjectileHitboxRenderer.fsScreenWidth = System.Math.Min((int)RoundToNearestEven((double)(aspectHeight / (float)lastMonitorHeight) * lastMonitorWidth), lastMonitorWidth);
+        ProjectileHitboxRenderer.fsScreenWidth = System.Math.Min((int)RoundToNearestEven((double)(ASPECT_HEIGHT / (float)lastMonitorHeight) * lastMonitorWidth), lastMonitorWidth);
 
         //Calculate a cropping camera rect to apply to cameras when entering fullscreen
-        if (userAspectRatio > aspectRatio) {
-            float inset = 1f - (aspectRatio/userAspectRatio);
+        if (userAspectRatio > ASPECT_RATIO) {
+            float inset = 1f - (ASPECT_RATIO/userAspectRatio);
             FSBorderRect = new Rect(inset/2, 0f, 1f-inset, 1f);
         }
 
@@ -72,8 +72,8 @@ public class ScreenResolution : MonoBehaviour {
     public static void SetFullScreen(bool fullscreen, int fswitch = 1) {
         //Regular FS and windowed operations
         if (!fullscreen) {
-            Screen.SetResolution(aspectWidth * windowScale, aspectHeight * windowScale, false, 0);
-            displayedSize = new Vector3(aspectWidth * windowScale, aspectHeight * windowScale, 0);
+            Screen.SetResolution(ASPECT_WIDTH * windowScale, ASPECT_HEIGHT * windowScale, false, 0);
+            displayedSize = new Vector3(ASPECT_WIDTH * windowScale, ASPECT_HEIGHT * windowScale, 0);
         //Enter FS
         } else {
             //Blurless FS
@@ -82,9 +82,9 @@ public class ScreenResolution : MonoBehaviour {
                 displayedSize = new Vector3(userDisplayWidth, lastMonitorHeight, (lastMonitorWidth - userDisplayWidth) / 2);
             //Blurry FS
             } else {
-                int downscaledAspectWidth = (int)System.Math.Min((int)RoundToNearestEven(((double)(aspectHeight * windowScale) / lastMonitorHeight) * lastMonitorWidth), lastMonitorWidth);
-                Screen.SetResolution(downscaledAspectWidth, aspectHeight * windowScale, true, 0);
-                displayedSize = new Vector3(aspectWidth * windowScale, aspectHeight * windowScale, (downscaledAspectWidth - (aspectWidth * windowScale)) / 2);
+                int downscaledAspectWidth = (int)System.Math.Min((int)RoundToNearestEven(((double)(ASPECT_HEIGHT * windowScale) / lastMonitorHeight) * lastMonitorWidth), lastMonitorWidth);
+                Screen.SetResolution(downscaledAspectWidth, ASPECT_HEIGHT * windowScale, true, 0);
+                displayedSize = new Vector3(ASPECT_WIDTH * windowScale, ASPECT_HEIGHT * windowScale, (downscaledAspectWidth - (ASPECT_WIDTH * windowScale)) / 2);
             }
         }
         BoxCameras(fullscreen);
@@ -126,7 +126,7 @@ public class ScreenResolution : MonoBehaviour {
             cam = Camera.main;
 
         //Set displayed rect
-        if (fullscreen && !wideFullscreen && ((perfectFullscreen && userAspectRatio > aspectRatio) || Screen.currentResolution.width > (aspectWidth * windowScale)) && lastScene != "Options")
+        if (fullscreen && !wideFullscreen && ((perfectFullscreen && userAspectRatio > ASPECT_RATIO) || Screen.currentResolution.width > (ASPECT_WIDTH * windowScale)) && lastScene != "Options")
             cam.rect = FSBorderRect;
         else
             cam.rect = NoBorderRect;

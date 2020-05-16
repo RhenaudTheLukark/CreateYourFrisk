@@ -8,7 +8,7 @@ public class FightUI : MonoBehaviour {
     public LifeBarController lifeBar;
     public TextManager damageText;
     private RectTransform damageTextRt;
-    
+
     public bool shakeInProgress = false;
     private int[] shakeX = new int[] { 12, -12, 7, -7, 3, -3, 1, -1, 0 };
     //private int[] shakeX = new int[] { 24, 0, 0, 0, 0, -48, 0, 0, 0, 0, 38, 0, 0, 0, 0, -28, 0, 0, 0, 0, 20, 0, 0, 0, 0, -12, 0, 0, 0, 0, 8, 0, 0, 0, 0, -2, 0, 0, 0, 0};
@@ -51,7 +51,7 @@ public class FightUI : MonoBehaviour {
         damageText.SetFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_DAMAGETEXT_NAME));
         damageText.SetMute(true);
     }
-    
+
     public void Init(int enemyIndex) {
         Start();
         Damage = -478294;
@@ -114,7 +114,7 @@ public class FightUI : MonoBehaviour {
         // do not update the attack UI if the ATTACKING state is frozen
         if (UIController.instance.frozenState != UIController.UIState.PAUSE)
             return;
-        
+
         if (shakeInProgress) {
             int shakeidx = (int)Mathf.Floor(shakeTimer * shakeX.Length / totalShakeTime);
             bool wentIn = false;

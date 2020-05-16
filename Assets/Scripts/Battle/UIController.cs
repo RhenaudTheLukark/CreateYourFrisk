@@ -1445,8 +1445,10 @@ public class UIController : MonoBehaviour {
         }
 
         StaticInits.SendLoaded();
-        // GameObject.Destroy(GameObject.Find("HideEncounter"));
         psContainer = new GameObject("psContainer");
+        // The following is a trick to make psContainer spawn within the battle scene, rather than the overworld scene, if in the overworld
+        psContainer.transform.SetParent(textmgr.transform);
+        psContainer.transform.SetParent(null);
         psContainer.transform.SetAsFirstSibling();
 
         //Play that funky music
@@ -1550,21 +1552,6 @@ public class UIController : MonoBehaviour {
             return;
         if (encounterHasUpdate)
             encounter.TryCall("Update");
-
-        ParticleSystem[] pss = GameObject.FindObjectsOfType<ParticleSystem>();
-        //while (pss.Length > psList.Count)
-        //    psList.Add(true);
-        int a = pss.Length;
-        for (int i = 0; i < a; i++) {
-            //if (pss[i].IsAlive() &&!psList[i])
-            //    psList[i] = true;
-            if (!pss[i].IsAlive() && pss[i].gameObject.name.Contains("MonsterDuster(Clone)")) {
-                pss[i].gameObject.SetActive(false);
-                //psList.RemoveAt(i);
-                //Debug.Log(i);
-                i--; a--;
-            }
-        }
 
         if (frozenState != UIState.PAUSE)
             return;

@@ -124,27 +124,27 @@ public class PlayerController : MonoBehaviour {
     /// <param name="playSound">If false, this function will not play any sound clips.</param>
     /// <returns></returns>
     public virtual void Hurt(float damage = 3, float invulnerabilitySeconds = 1.7f, bool isDefIgnored = false, bool playSound = true) {
-        if (!isDefIgnored) 
+        if (!isDefIgnored)
             if (GlobalControls.allowplayerdef && damage > 0) {
                 damage = damage + 2 - Mathf.FloorToInt((PlayerCharacter.instance.DEF + PlayerCharacter.instance.ArmorDEF) / 5);
                 if (damage <= 0)
                     damage = 1;
             }
         // set timer and play the hurt sound if player was actually hurt
-        
+
         // reset the hurt timer if the arguments passed are (0, 0)
         if (damage == 0 && invulnerabilitySeconds == 0) {
             invulTimer = 0;
             selfImg.enabled = true;
             return;
         }
-        
+
         if (damage >= 0 && (invulTimer <= 0 || invulnerabilitySeconds < 0)) {
             if (soundDelay < 0 && playSound) {
                 soundDelay = 2;
                 PlaySound(AudioClipRegistry.GetSound("hurtsound"));
             }
-            
+
             if (invulnerabilitySeconds >= 0) invulTimer = invulnerabilitySeconds;
             if (damage != 0)                 setHP(HP - damage, false);
         } else if (damage < 0) {
@@ -227,7 +227,7 @@ public class PlayerController : MonoBehaviour {
         if ((PlayerCharacter.instance.MaxHP + shift <= 0 &&!set) || (shift <= 0 && set)) {
             shift = 0;
             set = true;
-        } 
+        }
         if (set) {
             if (shift == 0) {
                 setHP(0);
@@ -413,11 +413,11 @@ public class PlayerController : MonoBehaviour {
             tempQueue = new Vector2(-5000, -5000);
         }
         */
-        
+
         // prevent player actions from working and the timer from decreasing, if the game is paused
         if (UIController.instance.frozenState != UIController.UIState.PAUSE)
             return;
-        
+
         // handle input and movement, unless control is overridden by the UI controller, for instance
         if (!overrideControl) {
             intendedShift = Vector2.zero; // reset direction we are going in
@@ -436,7 +436,7 @@ public class PlayerController : MonoBehaviour {
             if (invulTimer <= 0.0f)
                 selfImg.enabled = true;
         }
-        
+
         // constantly update the hitbox to match the position of the sprite itself
         if (!GlobalControls.retroMode) {
             playerAbs.x = luaStatus.sprite.absx - hitboxInset;

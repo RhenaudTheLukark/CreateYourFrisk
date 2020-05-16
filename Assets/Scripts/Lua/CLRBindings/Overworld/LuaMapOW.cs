@@ -33,13 +33,13 @@ public class LuaMapOW {
                 newAs.Play();
                 newAs.time = oldAs.time;
                 oldAs.Stop();
-            }  
+            }
         }
         appliedScript.Call("CYFEventNextCommand");
     }
 
     [CYFEventFunction] public string GetName() {
-        try { return SceneManager.GetActiveScene().name; } 
+        try { return SceneManager.GetActiveScene().name; }
         finally { appliedScript.Call("CYFEventNextCommand"); }
     }
     [CYFEventFunction] public string GetSaveName(string mapName) {
@@ -47,13 +47,13 @@ public class LuaMapOW {
             string result;
             UnitaleUtil.MapCorrespondanceList.TryGetValue(mapName, out result);
             return result;
-        } 
+        }
         finally { appliedScript.Call("CYFEventNextCommand"); }
     }
     [CYFEventFunction] public string GetMusicMap(string mapName) {
         if (SceneManager.GetActiveScene().name == mapName) return GetMusic();
         else
-            try { return (string)EventManager.TryGetMapValue(mapName, "Music"); } 
+            try { return (string)EventManager.TryGetMapValue(mapName, "Music"); }
             finally { appliedScript.Call("CYFEventNextCommand"); }
     }
     [CYFEventFunction] public void SetMusicMap(string mapName, string value) {

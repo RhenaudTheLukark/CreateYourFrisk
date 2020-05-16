@@ -11,7 +11,7 @@ public class ShakeEffectLetter : TextEffectLetter {
             skipNextFrame = false;
             return;
         }
-        
+
         float random = Random.value * 2.0f * Mathf.PI;
         float xWig = Mathf.Sin(random) * intensity;
         float yWig = Mathf.Cos(random) * intensity;

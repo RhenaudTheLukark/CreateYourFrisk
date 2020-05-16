@@ -25,7 +25,7 @@ public class TPHandler : MonoBehaviour {
             playerC2D = GameObject.Find("Player").GetComponent<Collider2D>();
         }
     }
-    
+
     void OnTriggerEnter2D(Collider2D col) {
         if (!activated && col == playerC2D && !PlayerOverworld.instance.PlayerNoMove && EventManager.instance.script == null) {
             activated = true;

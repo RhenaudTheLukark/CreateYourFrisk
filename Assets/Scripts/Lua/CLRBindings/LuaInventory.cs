@@ -8,7 +8,7 @@ public class LuaInventory {
         }
         return Inventory.inventory[index-1].Name;
     }
-    
+
     public int GetType(int index) {
         if (index > Inventory.inventory.Count) {
             UnitaleUtil.DisplayLuaError("Getting an item", "Out of bounds. You tried to access item number " + index + 1 + " in your inventory, but you only have " + Inventory.inventory.Count + " items.");
@@ -27,7 +27,7 @@ public class LuaInventory {
         else if (index > 0 && Inventory.inventory.Count < Inventory.inventorySize) {
             if (index > Inventory.inventory.Count + 1)
                 index = Inventory.inventory.Count + 1;
-            
+
             List<UnderItem> inv = new List<UnderItem>();
             bool result = false;
             for (var i = 0; i <= Inventory.inventory.Count; i++) {
@@ -51,14 +51,14 @@ public class LuaInventory {
         }
         return false;
     }
-    
+
     public void RemoveItem(int index) {
         if (Inventory.inventory.Count > 0 && (index < 1 || index > Inventory.inventory.Count))
             UnitaleUtil.DisplayLuaError("Removing an item", "Cannot remove item number " + index + " from an Inventory with " + Inventory.inventory.Count
                 + " items.\nRemember that the first item in the inventory is #1.");
         else if (Inventory.inventory.Count == 0)
             UnitaleUtil.DisplayLuaError("Removing an item", "Cannot remove an item when the inventory is empty.");
-        
+
         Inventory.inventory.RemoveAt(index-1);
     }
 

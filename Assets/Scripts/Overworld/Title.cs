@@ -6,11 +6,14 @@ public class Title : MonoBehaviour {
     public int phase = 0;
     public int indexChoice = 0;
     float diff, actualX, actualY;
-    TextManager tmName;
     private bool initPhase = false;
     private int choiceLetter = 0;
     private string[] firstPhaseEventNames = new string[] { "Continue", "Reset", "ChangeName" };
     private string[] secondPhaseEventNames = new string[] { "No", "Yes" };
+
+    public TextManager tmName, TextManagerName, TextManagerLevel, TextManagerTime, TextManagerMap;
+    public GameObject Logo, LogoCrate;
+    public SpriteRenderer PressEnterOrZ;
 
     // Use this for initialization
     void Start () {
@@ -33,15 +36,14 @@ public class Title : MonoBehaviour {
             GameObject.Destroy(firstCamera);
         else
             firstCamera.SetActive(true);
-        tmName = GameObject.Find("TextManagerResetName").GetComponent<TextManager>();
         tmName.SetHorizontalSpacing(2);
         tmName.SetFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_DEFAULT_NAME));
         diff = calcTotalLength(tmName);
         actualX = tmName.transform.localPosition.x;
         actualY = tmName.transform.localPosition.y;
         if (GlobalControls.crate) {
-            GameObject.Find("Title").GetComponent<SpriteRenderer>().enabled = false;
-            GameObject.Find("Title (1)").GetComponent<SpriteRenderer>().enabled = true;
+            Logo.GetComponent<SpriteRenderer>().enabled = false;
+            LogoCrate.GetComponent<SpriteRenderer>().enabled = true;
         }
         GameObject.DontDestroyOnLoad(Camera.main.gameObject);
         StartCoroutine(TitlePhase1());
@@ -49,13 +51,13 @@ public class Title : MonoBehaviour {
 
     IEnumerator TitlePhase1() {
         Camera.main.GetComponent<AudioSource>().PlayOneShot(AudioClipRegistry.GetSound("intro_noise"));
-        while (Camera.main.GetComponent<AudioSource>().isPlaying) 
+        while (Camera.main.GetComponent<AudioSource>().isPlaying)
             yield return 0;
         while (phase == 0) {
-            if (GameObject.Find("PressEnterOrZ").GetComponent<SpriteRenderer>().color.a == 1)
-                GameObject.Find("PressEnterOrZ").GetComponent<SpriteRenderer>().color = new Color(255, 255, 255, 0);
+            if (PressEnterOrZ.color.a == 1)
+                PressEnterOrZ.color = new Color(255, 255, 255, 0);
             else
-                GameObject.Find("PressEnterOrZ").GetComponent<SpriteRenderer>().color = new Color(255, 255, 255, 1);
+                PressEnterOrZ.color = new Color(255, 255, 255, 1);
             yield return new WaitForSeconds(1);
         }
     }
@@ -77,19 +79,19 @@ public class Title : MonoBehaviour {
                     if (!SaveLoad.Load()) {
                         SceneManager.LoadScene("EnterName");
                     } else {
-                        GameObject.Find("PressEnterOrZ").SetActive(false);
-                        GameObject.Find("Title").SetActive(false);
-                        GameObject.Find("Title (1)").SetActive(false);
+                        PressEnterOrZ.gameObject.SetActive(false);
+                        Logo.SetActive(false);
+                        LogoCrate.SetActive(false);
                         GameObject.Find("Back1").SetActive(false);
-                        GameObject.Find("TextManagerName").GetComponent<TextManager>().SetHorizontalSpacing(2);
-                        GameObject.Find("TextManagerLevel").GetComponent<TextManager>().SetHorizontalSpacing(2);
-                        GameObject.Find("TextManagerTime").GetComponent<TextManager>().SetHorizontalSpacing(2);
-                        GameObject.Find("TextManagerMap").GetComponent<TextManager>().SetHorizontalSpacing(2);
-                        GameObject.Find("TextManagerName").GetComponent<TextManager>().SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]" + PlayerCharacter.instance.Name, false, true) });
-                        GameObject.Find("TextManagerLevel").GetComponent<TextManager>().SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]" + (GlobalControls.crate ? "VL" : "LV") +
+                        TextManagerName.SetHorizontalSpacing(2);
+                        TextManagerLevel.SetHorizontalSpacing(2);
+                        TextManagerTime.SetHorizontalSpacing(2);
+                        TextManagerMap.SetHorizontalSpacing(2);
+                        TextManagerName.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]" + PlayerCharacter.instance.Name, false, true) });
+                        TextManagerLevel.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]" + (GlobalControls.crate ? "VL" : "LV") +
                                                                                                                                          PlayerCharacter.instance.LV, false, true) });
-                        GameObject.Find("TextManagerTime").GetComponent<TextManager>().SetTextQueue(new TextMessage[] {new TextMessage("[noskipatall]" + UnitaleUtil.TimeFormatter(SaveLoad.savedGame.playerTime), false, true) });
-                        GameObject.Find("TextManagerMap").GetComponent<TextManager>().SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]" + SaveLoad.savedGame.lastScene, false, true) });
+                        TextManagerTime.SetTextQueue(new TextMessage[] {new TextMessage("[noskipatall]" + UnitaleUtil.TimeFormatter(SaveLoad.savedGame.playerTime), false, true) });
+                        TextManagerMap.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall]" + SaveLoad.savedGame.lastScene, false, true) });
                         tmName.SetTextQueue(new TextMessage[] { new TextMessage(PlayerCharacter.instance.Name, false, true) });
                         diff = calcTotalLength(tmName);
                         tmName.SetEffect(new ShakeEffect(tmName));
@@ -121,7 +123,7 @@ public class Title : MonoBehaviour {
                             StartCoroutine(LoadGame());
                             break;
                         case 1:
-                            phase = 2; 
+                            phase = 2;
                             GameObject.Find(firstPhaseEventNames[choiceLetter]).GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 1);
                             GameObject.Find("CanvasReset").transform.position = new Vector3(320, 240, -500);
                             setColor(0, 2);
@@ -134,7 +136,7 @@ public class Title : MonoBehaviour {
         } else if (phase == 2) {
             if (tmName.transform.localScale.x < 3) {
                 tmName.transform.localScale = new Vector3(tmName.transform.localScale.x + 0.01f, tmName.transform.localScale.y + 0.01f, 1);
-                tmName.transform.localPosition = new Vector3(actualX - (((tmName.transform.localScale.x - 1) * diff) / 2), 
+                tmName.transform.localPosition = new Vector3(actualX - (((tmName.transform.localScale.x - 1) * diff) / 2),
                                                              actualY - (((tmName.transform.localScale.x - 1) * diff) / 6), tmName.transform.localPosition.z);
             }
             if (GlobalControls.input.Right == UndertaleInput.ButtonState.PRESSED || GlobalControls.input.Left == UndertaleInput.ButtonState.PRESSED)
@@ -188,7 +190,7 @@ public class Title : MonoBehaviour {
         while (blank.color.a <= 1) {
             if (tmName.transform.localScale.x < 3) {
                 tmName.transform.localScale = new Vector3(tmName.transform.localScale.x + 0.01f, tmName.transform.localScale.y + 0.01f, 1);
-                tmName.transform.localPosition = new Vector3(actualX - (((tmName.transform.localScale.x - 1) * diff) / 2), 
+                tmName.transform.localPosition = new Vector3(actualX - (((tmName.transform.localScale.x - 1) * diff) / 2),
                                                              actualY - (((tmName.transform.localScale.x - 1) * diff) / 6), tmName.transform.localPosition.z);
             }
             blank.color = new Color(blank.color.r, blank.color.g, blank.color.b, blank.color.a + 0.003f);

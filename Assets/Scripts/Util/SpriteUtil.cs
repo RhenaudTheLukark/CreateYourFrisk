@@ -8,7 +8,7 @@ using MoonSharp.Interpreter;
 
 public static class SpriteUtil {
     public const float PIXELS_PER_UNIT = 100.0f;
-    
+
     public static void SwapSpriteFromFile(Component target, string filename, int bubbleID = -1) {
         try {
             if (bubbleID != -1) {
@@ -55,7 +55,7 @@ public static class SpriteUtil {
             img.rectTransform.sizeDelta = new Vector2(newSprite.texture.width, newSprite.texture.height);
             img.rectTransform.pivot = pivot;
         }
-        
+
     }
 
     public static Sprite SpriteWithXml(XmlNode spriteNode, Sprite source) {

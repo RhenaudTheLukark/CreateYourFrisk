@@ -9,14 +9,14 @@ public class UIStats : MonoBehaviour {
     private TextManager hpTextMan;
     private LifeBarController lifebar;
     private RectTransform lifebarRt;
+    private GameObject hpRect;
 
     private bool initialized = false;
 
     void Awake() { instance = this; }
 
     private void Start() {
-        GameObject statsObj = GameObject.Find("Stats");
-        lifebar = statsObj.GetComponentInChildren<LifeBarController>();
+        lifebar = gameObject.GetComponentInChildren<LifeBarController>();
         lifebarRt = lifebar.GetComponent<RectTransform>();
 
         nameLevelTextManParent = GameObject.Find("NameLv");
@@ -26,6 +26,7 @@ public class UIStats : MonoBehaviour {
 
         nameLevelTextMan = nameLevelTextManParent.AddComponent<TextManager>();
         hpTextMan = hpTextManParent.AddComponent<TextManager>();
+        hpRect = GameObject.Find("HPRect");
 
         hpTextMan.SetFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_SMALLTEXT_NAME));
         initialized = true;
@@ -39,11 +40,9 @@ public class UIStats : MonoBehaviour {
             nameLevelTextMan.SetFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_SMALLTEXT_NAME));
             nameLevelTextMan.SetText(new TextMessage(name.ToUpper() + "  LV " + lv, false, true));
             if (PlayerCharacter.instance.Name.Length > 6)
-                GameObject.Find("HPRect").transform.position = new Vector3(GameObject.Find("HPRect").transform.parent.position.x + 286.1f, 
-                                                                           GameObject.Find("HPRect").transform.position.y, GameObject.Find("HPRect").transform.position.z);
+                hpRect.transform.position = new Vector3(hpRect.transform.parent.position.x + 286.1f, hpRect.transform.position.y, hpRect.transform.position.z);
             else
-                GameObject.Find("HPRect").transform.position = new Vector3(GameObject.Find("HPRect").transform.parent.position.x + 215.1f,
-                                                                           GameObject.Find("HPRect").transform.position.y, GameObject.Find("HPRect").transform.position.z);
+                hpRect.transform.position = new Vector3(hpRect.transform.parent.position.x + 215.1f, hpRect.transform.position.y, hpRect.transform.position.z);
 
             nameLevelTextMan.enabled = false;
         }

@@ -1,7 +1,7 @@
 ﻿/// <summary>
 /// Class for ingame items. Used to create TestDog# items. But now...
 /// </summary>
-public class UnderItem { 
+public class UnderItem {
     //private static int dogNumber = 1;
 
     public UnderItem(string Name) {

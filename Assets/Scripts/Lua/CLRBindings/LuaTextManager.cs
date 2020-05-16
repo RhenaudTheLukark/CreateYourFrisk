@@ -456,13 +456,13 @@ public class LuaTextManager : TextManager {
     public void SetSpeechThingPositionAndSide(string side, DynValue position) {
         CheckExists();
         bubbleLastVar = position;
-        try { bubbleSide = side != null ? (BubbleSide)Enum.Parse(typeof(BubbleSide), side.ToUpper()) : BubbleSide.NONE; } 
+        try { bubbleSide = side != null ? (BubbleSide)Enum.Parse(typeof(BubbleSide), side.ToUpper()) : BubbleSide.NONE; }
         catch { throw new CYFException("The speech thing (tail) can only take \"RIGHT\", \"DOWN\" ,\"LEFT\" ,\"UP\" or \"NONE\" as a positional value, but you entered \"" + side.ToUpper() + "\"."); }
 
         if (bubbleSide != BubbleSide.NONE) {
             speechThing.gameObject.SetActive(true);
             speechThingShadow.gameObject.SetActive(true);
-            speechThing.anchorMin = speechThing.anchorMax = speechThingShadow.anchorMin = speechThingShadow.anchorMax = 
+            speechThing.anchorMin = speechThing.anchorMax = speechThingShadow.anchorMin = speechThingShadow.anchorMax =
                 new Vector2(bubbleSide == BubbleSide.LEFT ? 0 : bubbleSide == BubbleSide.RIGHT ? 1 : 0.5f,
                             bubbleSide == BubbleSide.DOWN ? 0 : bubbleSide == BubbleSide.UP ? 1 : 0.5f);
             speechThing.rotation = speechThingShadow.rotation = Quaternion.Euler(0, 0, (int)bubbleSide);
@@ -527,7 +527,7 @@ public class LuaTextManager : TextManager {
             DestroyText();
             autoDestroyed = true;
         } else {
-            ShowLine(++currentLine); 
+            ShowLine(++currentLine);
             if (bubble)
                 ResizeBubble();
         }

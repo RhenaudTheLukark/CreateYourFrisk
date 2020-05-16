@@ -25,7 +25,7 @@ public class LuaSpriteController {
     private float yScale = 1;                         // The Y scale of the sprite
     private Sprite originalSprite;                    // The original sprite
     [MoonSharpHidden] public KeyframeCollection keyframes;              // This variable is used to store an animation
-    [MoonSharpHidden] public string tag;                                // The tag of the sprite : "projectile", "enemy", "bubble" or "other"
+    [MoonSharpHidden] public string tag;                                // The tag of the sprite : "projectile", "enemy", "bubble", "letter" or "other"
     private KeyframeCollection.LoopMode loop = KeyframeCollection.LoopMode.LOOP;
     [MoonSharpHidden] public static MoonSharp.Interpreter.Interop.IUserDataDescriptor data = UserData.GetDescriptorForType<LuaSpriteController>(true);
 
@@ -118,7 +118,7 @@ public class LuaSpriteController {
         }
     }
 
-    // The y scale of the sprite. 
+    // The y scale of the sprite.
     public float yscale {
         get { return yScale; }
         set {
@@ -429,7 +429,7 @@ public class LuaSpriteController {
         GetTarget().position = new Vector3(x, y, GetTarget().position.z);
     }
 
-    // Sets both xScale and yScale of a sprite 
+    // Sets both xScale and yScale of a sprite
     public void Scale(float xs, float ys) {
         if (img.GetComponent<Projectile>())
             img.GetComponent<Projectile>().needSizeRefresh = true;
@@ -605,7 +605,7 @@ public class LuaSpriteController {
                         throw new CYFException("sprite.animationspeed: An animation can not have negative speed!");
                     else if (value == 0)
                         throw new CYFException("sprite.animationspeed: An animation can not play at 0 frames per second!");
-                    
+
                     float percentCompletion = keyframes.currTime / (keyframes.keyframes.Length * keyframes.timePerFrame);
                     // Calls keyframes.totalTime = keyframes.timePerFrame * keyframes.Length;
                     keyframes.Set(keyframes.keyframes, value);
@@ -643,6 +643,14 @@ public class LuaSpriteController {
         else                                                      GetTarget().SetSiblingIndex(sprite.GetTarget().GetSiblingIndex() + 1);
     }
 
+    private Dictionary<string, int> maskTypes = new Dictionary<string, int>() {
+        {"off",             0},
+        {"box",             1},
+        {"sprite",          2},
+        {"stencil",         3},
+        {"invertedsprite",  4},
+        {"invertedstencil", 5}
+    };
     [MoonSharpHidden] public int _masked = 0;
     public void Mask(string mode) {
         if (tag == "event")
@@ -653,16 +661,8 @@ public class LuaSpriteController {
             throw new CYFException("sprite.Mask: No argument provided.");
 
         mode = mode.ToLower();
-        var list = new Dictionary<string, int>() {
-            {"off",             0},
-            {"box",             1},
-            {"sprite",          2},
-            {"stencil",         3},
-            {"invertedsprite",  4},
-            {"invertedstencil", 5}
-        };
         int masked = -1;
-        if (!list.TryGetValue(mode, out masked))
+        if (!maskTypes.TryGetValue(mode, out masked))
             throw new CYFException("sprite.Mask: Invalid mask mode \"" + mode.ToString() + "\".");
 
         if (masked != _masked) {
@@ -753,7 +753,7 @@ public class LuaSpriteController {
             StopAnimation();
             return;
         }
-        
+
         if (k.sprite != null) {
             Quaternion rot = img.transform.rotation;
             Vector2 pivot = img.GetComponent<RectTransform>().pivot;
@@ -790,7 +790,7 @@ public class LuaSpriteController {
             return;
         Keyframe k = keyframes.getCurrent();
         Sprite s = SpriteRegistry.GENERIC_SPRITE_PREFAB.sprite;
-        
+
         if (k != null)
             s = k.sprite;
 

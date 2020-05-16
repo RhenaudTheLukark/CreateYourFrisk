@@ -355,6 +355,12 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 133404, guid: 3a23d2c086616ee478252340c1f504ff,
     type: 2}
   m_PrefabInternal: {fileID: 304832592}
+--- !u!114 &304832594 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 11440668, guid: 3a23d2c086616ee478252340c1f504ff,
+    type: 2}
+  m_PrefabInternal: {fileID: 304832592}
+  m_Script: {fileID: 11500000, guid: 96dc5aa61b3446942acd3e628a7d73d0, type: 3}
 --- !u!224 &348456391 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 22415740, guid: 3a23d2c086616ee478252340c1f504ff,
@@ -657,6 +663,12 @@ Prefab:
     - {fileID: 11454028, guid: 3a23d2c086616ee478252340c1f504ff, type: 2}
   m_SourcePrefab: {fileID: 100100000, guid: 3a23d2c086616ee478252340c1f504ff, type: 2}
   m_IsPrefabAsset: 0
+--- !u!114 &1505499047 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 11440668, guid: 3a23d2c086616ee478252340c1f504ff,
+    type: 2}
+  m_PrefabInternal: {fileID: 1505499046}
+  m_Script: {fileID: 11500000, guid: 96dc5aa61b3446942acd3e628a7d73d0, type: 3}
 --- !u!1 &1567966282
 GameObject:
   m_ObjectHideFlags: 0
@@ -956,6 +968,12 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 133404, guid: 3a23d2c086616ee478252340c1f504ff,
     type: 2}
   m_PrefabInternal: {fileID: 1961211225}
+--- !u!114 &1961211227 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 11440668, guid: 3a23d2c086616ee478252340c1f504ff,
+    type: 2}
+  m_PrefabInternal: {fileID: 1961211225}
+  m_Script: {fileID: 11500000, guid: 96dc5aa61b3446942acd3e628a7d73d0, type: 3}
 --- !u!1001 &1989317943
 Prefab:
   m_ObjectHideFlags: 0
@@ -1047,9 +1065,44 @@ Prefab:
       propertyPath: objLettersMin
       value: 
       objectReference: {fileID: 1961211226}
+    - target: {fileID: 11454028, guid: 3a23d2c086616ee478252340c1f504ff, type: 2}
+      propertyPath: textObjFolder
+      value: 
+      objectReference: {fileID: 617734218}
+    - target: {fileID: 11454028, guid: 3a23d2c086616ee478252340c1f504ff, type: 2}
+      propertyPath: tmInstr
+      value: 
+      objectReference: {fileID: 1989317945}
+    - target: {fileID: 11454028, guid: 3a23d2c086616ee478252340c1f504ff, type: 2}
+      propertyPath: uiAudio
+      value: 
+      objectReference: {fileID: 1989317944}
+    - target: {fileID: 11454028, guid: 3a23d2c086616ee478252340c1f504ff, type: 2}
+      propertyPath: tmName
+      value: 
+      objectReference: {fileID: 1505499047}
+    - target: {fileID: 11454028, guid: 3a23d2c086616ee478252340c1f504ff, type: 2}
+      propertyPath: tmLettersMaj
+      value: 
+      objectReference: {fileID: 304832594}
+    - target: {fileID: 11454028, guid: 3a23d2c086616ee478252340c1f504ff, type: 2}
+      propertyPath: tmLettersMin
+      value: 
+      objectReference: {fileID: 1961211227}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3a23d2c086616ee478252340c1f504ff, type: 2}
   m_IsPrefabAsset: 0
+--- !u!82 &1989317944 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: 8254258, guid: 3a23d2c086616ee478252340c1f504ff,
+    type: 2}
+  m_PrefabInternal: {fileID: 1989317943}
+--- !u!114 &1989317945 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 11440668, guid: 3a23d2c086616ee478252340c1f504ff,
+    type: 2}
+  m_PrefabInternal: {fileID: 1989317943}
+  m_Script: {fileID: 11500000, guid: 96dc5aa61b3446942acd3e628a7d73d0, type: 3}
 --- !u!224 &2098505797 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 22415740, guid: 3a23d2c086616ee478252340c1f504ff,

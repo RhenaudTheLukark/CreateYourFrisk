@@ -28,7 +28,7 @@ public class LuaGeneralOW {
             PlayerOverworld.instance.UIPos = forcePosition.Type == DataType.Boolean ? (forcePosition.Boolean == true ? 2 : 1) : 0;
         else
             PlayerOverworld.instance.UIPos = 0;
-        
+
         if (EventManager.instance.coroutines.ContainsKey(appliedScript) && EventManager.instance.script != appliedScript) {
             UnitaleUtil.DisplayLuaError(appliedScript.scriptname, "General.SetDialog: This function cannot be used in a coroutine.");
             return;
@@ -51,7 +51,7 @@ public class LuaGeneralOW {
         textmgr.SetTextQueue(textmsgs);
         textmgr.transform.parent.parent.SetAsLastSibling();
     }
-    
+
     /// <summary>
     /// Makes a choice, like when you have to choose between cinnamon and butterscotch
     /// </summary>
@@ -180,27 +180,27 @@ public class LuaGeneralOW {
         }
 
         PlayerOverworld.instance.enabled = false;
-        
+
         // Stop the "kept audio" if it is playing
         if (PlayerOverworld.audioKept == UnitaleUtil.GetCurrentOverworldAudio()) {
             PlayerOverworld.audioKept.Stop();
             PlayerOverworld.audioKept.clip = null;
             PlayerOverworld.audioKept.time = 0;
         }
-        
+
         //Saves our most recent map and position to control where the player respawns
         string mapName;
         if (UnitaleUtil.MapCorrespondanceList.ContainsKey(SceneManager.GetActiveScene().name)) mapName = UnitaleUtil.MapCorrespondanceList[SceneManager.GetActiveScene().name];
         else mapName = SceneManager.GetActiveScene().name;
         LuaScriptBinder.Set(null, "PlayerMap", DynValue.NewString(mapName));
-        
+
         Transform tf = GameObject.Find("Player").transform;
         LuaScriptBinder.Set(null, "PlayerPosX", DynValue.NewNumber(tf.position.x));
         LuaScriptBinder.Set(null, "PlayerPosY", DynValue.NewNumber(tf.position.y));
         LuaScriptBinder.Set(null, "PlayerPosZ", DynValue.NewNumber(tf.position.z));
-        
+
         GameObject.FindObjectOfType<GameOverBehavior>().StartDeath(deathTable, deathMusic);
-        
+
         appliedScript.Call("CYFEventNextCommand");
     }
 
@@ -271,13 +271,9 @@ public class LuaGeneralOW {
     /// <param name="encounterName"></param>
     /// <param name="quickAnim"></param>
     [CYFEventFunction] public void SetBattle(string encounterName = "", string anim = "normal", bool ForceNoFlee = false) {
-        try {
-            anim = anim.ToLower();
-            if (anim != "normal" && anim != "fast" && anim != "instant")
-                throw new System.Exception();
-        } catch {
-            UnitaleUtil.DisplayLuaError(appliedScript.scriptname, "General.SetBattle: Invalid animation \"" + anim.ToString() + "\".\nIt should be\"normal\", \"fast\" or \"instant\".");
-        }
+        anim = anim.ToLower();
+        if (anim != "normal" && anim != "fast" && anim != "instant")
+            throw new CYFException("General.SetBattle: Invalid animation \"" + anim.ToString() + "\".\nIt should be\"normal\", \"fast\" or \"instant\".");
 
         PlayerOverworld.instance.SetEncounterAnim(encounterName, anim, ForceNoFlee);
     }

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using MoonSharp.Interpreter;
 
 /// <summary>
-/// Class used as a database that is saved and loaded during the game. 
+/// Class used as a database that is saved and loaded during the game.
 /// Is used as the savefile in SaveLoad.
 /// </summary>
 [System.Serializable]
@@ -69,9 +69,10 @@ public class GameState {
         CYFversion = GlobalControls.CYFversion;
 
         try {
-            LuaScriptBinder.Set(null, "PlayerPosX", DynValue.NewNumber(GameObject.Find("Player").transform.position.x));
-            LuaScriptBinder.Set(null, "PlayerPosY", DynValue.NewNumber(GameObject.Find("Player").transform.position.y));
-            LuaScriptBinder.Set(null, "PlayerPosZ", DynValue.NewNumber(GameObject.Find("Player").transform.position.z));
+            GameObject Player = GameObject.Find("Player");
+            LuaScriptBinder.Set(null, "PlayerPosX", DynValue.NewNumber(Player.transform.position.x));
+            LuaScriptBinder.Set(null, "PlayerPosY", DynValue.NewNumber(Player.transform.position.y));
+            LuaScriptBinder.Set(null, "PlayerPosZ", DynValue.NewNumber(Player.transform.position.z));
         } catch {
             LuaScriptBinder.Set(null, "PlayerPosX", DynValue.NewNumber(SaveLoad.savedGame.playerVariablesNum["PlayerPosX"]));
             LuaScriptBinder.Set(null, "PlayerPosY", DynValue.NewNumber(SaveLoad.savedGame.playerVariablesNum["PlayerPosY"]));

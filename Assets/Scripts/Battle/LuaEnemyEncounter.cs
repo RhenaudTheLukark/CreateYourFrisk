@@ -37,7 +37,7 @@ internal class LuaEnemyEncounter : EnemyEncounter {
             doNotGivePreviousEncounterToSelf = true;
             script = new ScriptWrapper() { scriptname = StaticInits.ENCOUNTER };
             string scriptText = ScriptRegistry.Get(ScriptRegistry.ENCOUNTER_PREFIX + StaticInits.ENCOUNTER);
-            try { script.DoString(scriptText); } 
+            try { script.DoString(scriptText); }
             catch (InterpreterException ex) {
                 UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message, ex.DoNotDecorateMessage);
                 return false;
@@ -59,16 +59,16 @@ internal class LuaEnemyEncounter : EnemyEncounter {
         SpriteUtil.SwapSpriteFromFile(projectile, sprite);
         projectile.name = sprite;
         projectile.owner = s;
-        projectile.gameObject.SetActive(true); 
+        projectile.gameObject.SetActive(true);
         projectile.ctrl.MoveToAbs(xpos, ypos);
         //projectile.ctrl.z = Projectile.Z_INDEX_NEXT; //doesn't work yet, thanks unity UI
         projectile.transform.SetAsLastSibling();
         //projectile.ctrl.UpdatePosition();
         projectile.ctrl.sprite.Set(sprite);
         if (layerName != "")
-            try { projectile.transform.SetParent(GameObject.Find(layerName + "Bullet").transform); } 
+            try { projectile.transform.SetParent(GameObject.Find(layerName + "Bullet").transform); }
             catch {
-                try { projectile.transform.SetParent(GameObject.Find(layerName + "Layer").transform); } 
+                try { projectile.transform.SetParent(GameObject.Find(layerName + "Layer").transform); }
                 catch { }
             }
         DynValue projectileController = UserData.Create(projectile.ctrl);
@@ -142,7 +142,7 @@ internal class LuaEnemyEncounter : EnemyEncounter {
         DynValue enemyPositionsLua = script.GetVar("enemypositions");
         string musicFile = script.GetVar("music").String;
 
-        try { enemies = new LuaEnemyController[enemyScriptsLua.Table.Length]; /*dangerously assumes enemies is defined*/ } 
+        try { enemies = new LuaEnemyController[enemyScriptsLua.Table.Length]; /*dangerously assumes enemies is defined*/ }
         catch (Exception) {
             UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, "There's no enemies table in your encounter. Is this a pre-0.1.2 encounter? It's easy to fix!\n\n"
                 + "1. Create a Monsters folder in the mod's Lua folder\n"
@@ -239,7 +239,7 @@ internal class LuaEnemyEncounter : EnemyEncounter {
                         calledOne = true;
             }
             return calledOne;
-        } 
+        }
         return true;
     }
 
@@ -278,7 +278,7 @@ internal class LuaEnemyEncounter : EnemyEncounter {
         try {
             for (int i = 0; i < waves.Length; i++) {
                 currentScript = waveNames[i];
-                try { waves[i].script.Call(waves[i].script.Globals["Update"]); } 
+                try { waves[i].script.Call(waves[i].script.Globals["Update"]); }
                 catch (InterpreterException ex) {
                     UnitaleUtil.DisplayLuaError(currentScript, UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message);
                     return;
@@ -349,7 +349,7 @@ internal class LuaEnemyEncounter : EnemyEncounter {
                 for (int i = 0; i < arg.Table.Length; i++)
                     msgs[i] = new RegularMessage(arg.Table.Get(i + 1).String);
             } else if (!GlobalControls.retroMode)
-                UnitaleUtil.DisplayLuaError("BattleDialog", "You need to input a non-empty array or a string here." + 
+                UnitaleUtil.DisplayLuaError("BattleDialog", "You need to input a non-empty array or a string here." +
                                                             "\n\nIf you're sure that you've entered what's needed, you may contact the dev.");
             if (!GlobalControls.retroMode)
                 UIController.instance.textmgr.SetEffect(new TwitchEffect(UIController.instance.textmgr));

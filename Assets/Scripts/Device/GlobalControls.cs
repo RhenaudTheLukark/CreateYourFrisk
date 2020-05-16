@@ -9,7 +9,7 @@ using MoonSharp.Interpreter;
 /// Controls that should be active on all screens. Pretty much a hack to allow people to reset. Now it's more useful.
 /// </summary>
 public class GlobalControls : MonoBehaviour {
-    public static string CYFversion       = "0.6.4.1";
+    public static string CYFversion       = "0.6.5";
     public static string OverworldVersion = "0.6.4";
     public static int frame = 0;
     public static float overworldTimestamp = 0f;
@@ -139,7 +139,7 @@ public class GlobalControls : MonoBehaviour {
             Camera.main.GetComponent<FPSDisplay>().enabled = UserDebugger.instance.gameObject.activeSelf;
         // Activate Hitbox Debugger
         } else if (isInFight && Input.GetKeyDown(KeyCode.H) && sceneName != "Error" && UserDebugger.instance.gameObject.activeSelf)
-            GameObject.Find("Main Camera").GetComponent<ProjectileHitboxRenderer>().enabled = !GameObject.Find("Main Camera").GetComponent<ProjectileHitboxRenderer>().enabled;
+            gameObject.GetComponent<ProjectileHitboxRenderer>().enabled = !gameObject.GetComponent<ProjectileHitboxRenderer>().enabled;
         // Exit a battle or the Error scene
         else if (Input.GetKeyDown(KeyCode.Escape) && (canTransOW.Contains(sceneName) || isInFight)) {
             if (isInFight && LuaEnemyEncounter.script.GetVar("unescape").Boolean && sceneName != "Error")

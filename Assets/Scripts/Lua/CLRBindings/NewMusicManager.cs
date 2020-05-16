@@ -6,7 +6,7 @@ using System.Collections.Generic;
 public class NewMusicManager {
     [MoonSharpHidden] public static Hashtable audiolist = new Hashtable();
     [MoonSharpHidden] public static Dictionary<string, string> audioname = new Dictionary<string, string>();
-   
+
     public static void CreateChannel(string name) {
         if (name == null)
             throw new CYFException("NewAudio.CreateChannel: The first argument (the channel name) is nil.\n\nSee the documentation for proper usage.");
@@ -36,9 +36,9 @@ public class NewMusicManager {
         if (!audiolist.ContainsKey(name)) throw new CYFException("The audio channel " + name + " doesn't exist.");
         try {
             GameObject.Destroy(((AudioSource)audiolist[name]).gameObject);
-        } catch { }        
+        } catch { }
         audiolist.Remove(name);
-        audioname.Remove(name);        
+        audioname.Remove(name);
     }
 
     public static bool Exists(string name) {
