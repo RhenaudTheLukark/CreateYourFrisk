@@ -21,7 +21,7 @@ public class BackgroundLoader : MonoBehaviour {
             }
         } catch {
             // Background failed loading, no need to do anything.
-            UnitaleUtil.WriteInLogAndDebugger("[WARN]No background file found. Using empty background.");
+            UnitaleUtil.Warn("No background file found. Using empty background.");
         }
     }
 }

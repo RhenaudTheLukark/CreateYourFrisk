@@ -135,7 +135,7 @@ public class LuaPlayerStatus {
         set {
             if (value == null)
                 throw new CYFException("Player.name: Attempt to set the player's name to a nil value.\n\nPlease double-check your code.");
-            
+
             PlayerCharacter.instance.Name = value;
             UIStats.instance.setPlayerInfo(PlayerCharacter.instance.Name, PlayerCharacter.instance.LV);
         }
@@ -262,11 +262,22 @@ public class LuaPlayerStatus {
             def = 10 + (int)UnityEngine.Mathf.Floor((lv - 1) / 4);
     }
 
-    public void SetAttackAnim(string[] anim, float frequency = 1 / 6f) {
+    public void SetAttackAnim(string[] anim, float frequency = 1 / 6f, string prefix = "") {
         if (anim.Length == 0) {
             UIController.instance.fightUI.sliceAnim = new string[] { "empty" };
             UIController.instance.fightUI.sliceAnimFrequency = 1 / 30f;
         } else {
+            if (prefix != "") {
+                while (prefix.StartsWith("/"))
+                    prefix = prefix.Substring(1);
+
+                if (!prefix.EndsWith("/"))
+                    prefix += "/";
+
+                for (int i = 0; i < anim.Length; i++)
+                    anim[i] = prefix + anim[i];
+            }
+
             UIController.instance.fightUI.sliceAnim = anim;
             UIController.instance.fightUI.sliceAnimFrequency = frequency;
         }
@@ -326,7 +337,7 @@ public class LuaPlayerStatus {
         }
         if (damage != null)
             if (damage.Length != 1 && damage.Length != targets.Length)
-                UnitaleUtil.DisplayLuaError("Multi Target", "You may have as many numbers of damage values as the number of enemies if you're using forced damage," 
+                UnitaleUtil.DisplayLuaError("Multi Target", "You may have as many numbers of damage values as the number of enemies if you're using forced damage,"
                                                           + " or 1 for all enemies at the same time.");
 
         UIController.instance.fightUI.targetIDs = targets;

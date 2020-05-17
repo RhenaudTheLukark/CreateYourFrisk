@@ -352,6 +352,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68da3a59a7fef2545a932ae833649006, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mainText: {fileID: 680331696}
+  subText: {fileID: 1141650572}
+  mainAudio: {fileID: 1068206066}
+  subAudio: {fileID: 1915116489}
+  misriHalek: {fileID: 290530036}
+--- !u!82 &1068206066 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: 8273166, guid: 9c0c29340fc4a6347aa18ffb6f5a7eea,
+    type: 2}
+  m_PrefabInternal: {fileID: 1068206063}
 --- !u!1 &1141650570
 GameObject:
   m_ObjectHideFlags: 0

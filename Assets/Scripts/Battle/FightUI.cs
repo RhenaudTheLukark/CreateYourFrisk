@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using MoonSharp.Interpreter;
+using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 
@@ -7,7 +8,7 @@ public class FightUI : MonoBehaviour {
     public LifeBarController lifeBar;
     public TextManager damageText;
     private RectTransform damageTextRt;
-    
+
     public bool shakeInProgress = false;
     private int[] shakeX = new int[] { 12, -12, 7, -7, 3, -3, 1, -1, 0 };
     //private int[] shakeX = new int[] { 24, 0, 0, 0, 0, -48, 0, 0, 0, 0, 38, 0, 0, 0, 0, -28, 0, 0, 0, 0, 20, 0, 0, 0, 0, -12, 0, 0, 0, 0, 8, 0, 0, 0, 0, -2, 0, 0, 0, 0};
@@ -50,7 +51,7 @@ public class FightUI : MonoBehaviour {
         damageText.SetFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_DAMAGETEXT_NAME));
         damageText.SetMute(true);
     }
-    
+
     public void Init(int enemyIndex) {
         Start();
         Damage = -478294;
@@ -63,8 +64,6 @@ public class FightUI : MonoBehaviour {
         enePos = enemy.GetComponent<RectTransform>().position;
         eneSize = enemy.GetComponent<RectTransform>().sizeDelta;
         shakeTimer = 0;
-        Vector3 slicePos = new Vector3(enemy.offsets[0].x, eneSize.y / 2 + enemy.offsets[0].y - 55, 0);
-        slice.img.GetComponent<RectTransform>().localPosition = slicePos;
     }
 
     public void quickInit(int enemyIndex, LuaEnemyController target, int damage = -478294) {
@@ -93,8 +92,6 @@ public class FightUI : MonoBehaviour {
         slice.img.transform.SetParent(enemy.transform);
         /*Vector3 slicePos = new Vector3(enemy.GetComponent<RectTransform>().position.x + enemy.offsets[0].x,
                                        enemy.GetComponent<RectTransform>().position.y + eneSize.y / 2 + enemy.offsets[0].y - 55, enemy.GetComponent<RectTransform>().position.z);*/
-        Vector3 slicePos = new Vector3(enemy.offsets[0].x, eneSize.y / 2 + enemy.offsets[0].y - 55, 0);
-        slice.img.GetComponent<RectTransform>().localPosition = slicePos;
     }
 
     public void StopAction(float atkMult) {
@@ -106,6 +103,7 @@ public class FightUI : MonoBehaviour {
         enemy.TryCall("BeforeDamageCalculation");
         if (!damagePredefined)
             Damage = FightUIController.instance.getDamage(enemy, atkMult);
+        UpdateSlicePos();
         //slice.StopAnimation();
         slice.SetAnimation(sliceAnim, sliceAnimFrequency);
         slice.loopmode = "ONESHOT";
@@ -116,7 +114,7 @@ public class FightUI : MonoBehaviour {
         // do not update the attack UI if the ATTACKING state is frozen
         if (UIController.instance.frozenState != UIController.UIState.PAUSE)
             return;
-        
+
         if (shakeInProgress) {
             int shakeidx = (int)Mathf.Floor(shakeTimer * shakeX.Length / totalShakeTime);
             bool wentIn = false;
@@ -144,7 +142,7 @@ public class FightUI : MonoBehaviour {
                 wait1frame = true;
                 slice.StopAnimation();
                 slice.Set("empty");
-                enemy.TryCall("BeforeDamageValues");
+                enemy.TryCall("BeforeDamageValues", new DynValue[] { DynValue.NewNumber(Damage) });
                 if (Damage > 0) {
                     AudioSource aSrc = GetComponent<AudioSource>();
                     aSrc.clip = AudioClipRegistry.GetSound("hitsound");
@@ -186,5 +184,13 @@ public class FightUI : MonoBehaviour {
             }
         } else if (!slice.animcomplete)
             slice.img.gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(slice.img.GetComponent<Image>().sprite.rect.width, slice.img.GetComponent<Image>().sprite.rect.height);
+    }
+
+    Vector3 CalculateSlicePos() {
+        return new Vector3(enemy.offsets[0].x, eneSize.y / 2 + enemy.offsets[0].y - 55, 0);
+    }
+
+    void UpdateSlicePos() {
+        slice.img.GetComponent<RectTransform>().localPosition = CalculateSlicePos();
     }
 }

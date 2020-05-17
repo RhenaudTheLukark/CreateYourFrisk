@@ -34,10 +34,9 @@ public static class LuaScriptBinder {
         UserData.RegisterType<Misc>();
         UserData.RegisterType<LuaTextManager>();
         UserData.RegisterType<LuaFile>();
-        UserData.RegisterType<LuaVideoController>();
-		// Discord
+        UserData.RegisterType<LuaSpriteShader>();
+        UserData.RegisterType<LuaSpriteShader.MatrixFourByFour>();
 		UserData.RegisterType<LuaDiscord>();
-        //UserData.RegisterType<Windows>();
 
         // Overworld bindings
         UserData.RegisterType<LuaEventOW>();
@@ -75,7 +74,7 @@ public static class LuaScriptBinder {
         script.Globals["CYFversion"] = GlobalControls.CYFversion;
         if (!UnitaleUtil.IsOverworld) {
             script.Globals["CreateSprite"] = (Func<string, string, int, DynValue>)SpriteUtil.MakeIngameSprite;
-            script.Globals["CreateLayer"] = (Action<string, string, bool>)SpriteUtil.CreateLayer;
+            script.Globals["CreateLayer"] = (Func<string, string, bool, bool>)SpriteUtil.CreateLayer;
             script.Globals["CreateProjectileLayer"] = (Action<string, string, bool>)SpriteUtil.CreateProjectileLayer;
             script.Globals["SetFrameBasedMovement"] = (Action<bool>)SetFrameBasedMovement;
             script.Globals["SetAction"] = (Action<string>)SetAction;
@@ -85,7 +84,6 @@ public static class LuaScriptBinder {
             script.Globals["GetCurrentState"] = (Func<string>)GetState;
             script.Globals["BattleDialog"] = (Action<DynValue>)LuaEnemyEncounter.BattleDialog;
             script.Globals["BattleDialogue"] = (Action<DynValue>)LuaEnemyEncounter.BattleDialog;
-            script.Globals["CreateVideoPlayer"] = (Func<string, bool, DynValue>)VideoUtil.MakeVideoPlayer;
 
             if (LuaEnemyEncounter.doNotGivePreviousEncounterToSelf)
                 LuaEnemyEncounter.doNotGivePreviousEncounterToSelf = false;
@@ -111,6 +109,7 @@ public static class LuaScriptBinder {
             } catch { }
         }
         script.Globals["DEBUG"] = (Action<string>)UnitaleUtil.WriteInLogAndDebugger;
+        script.Globals["EnableDebugger"] = (Action<bool>)EnableDebugger;
         // clr bindings
         DynValue MusicMgr = UserData.Create(mgr);
         script.Globals.Set("Audio", MusicMgr);
@@ -132,7 +131,6 @@ public static class LuaScriptBinder {
         script.Globals.Set("Misc", Win);
         DynValue TimeInfo = UserData.Create(new LuaUnityTime());
         script.Globals.Set("Time", TimeInfo);
-		// Discord
 		DynValue DiscordMgr = UserData.Create(new LuaDiscord());
 		script.Globals.Set("Discord", DiscordMgr);
         scriptlist.Add(script);
@@ -482,6 +480,17 @@ public static class LuaScriptBinder {
         catch {
             obj1.transform.SetParent(parent1);
             obj2.transform.SetParent(parent2);
+        }
+    }
+
+    public static void EnableDebugger(bool state) {
+        if (UserDebugger.instance == null)
+            return;
+
+        UserDebugger.instance.canShow = state;
+        if (!state && UserDebugger.instance.gameObject.activeSelf) {
+            UserDebugger.instance.gameObject.SetActive(false);
+            Camera.main.GetComponent<FPSDisplay>().enabled = false;
         }
     }
 }

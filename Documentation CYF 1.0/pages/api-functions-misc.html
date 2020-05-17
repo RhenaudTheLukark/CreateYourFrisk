@@ -48,7 +48,7 @@ it's w3c valid, at least
                         <li class="li-indent new"><a href="api-functions-main.html">Misc. Functions</a></li>
                         <li class="li-indent new"><a href="api-functions-player.html">The Player Object</a></li>
                         <li class="li-indent new"><a href="api-functions-script.html">The Script Object</a></li>
-                        <li class="li-indent new"><a href="api-functions-audio.html">The Audio Object</a></li>
+                        <li class="li-indent"><a href="api-functions-audio.html">The Audio Object</a></li>
                         <li class="li-indent new"><a href="api-functions-newaudio.html"><span class="CYF"></span> The NewAudio Object</a></li>
                         <li class="li-indent new"><a href="api-functions-input.html">The Input Object</a></li>
 						<li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
@@ -60,21 +60,24 @@ it's w3c valid, at least
                     <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
                     <li class="new"><a href="api-animation.html">Sprites &amp; Animation</a></li>
                     <li class="new"><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
-                    <li><a href="api-keys.html"><span class="CYF"></span> Key List</a></li>
                 <li class="li-header">Overworld</li>
                     <li class="new"><a href="overworld.html"><span class="CYF"></span> Basics</a></li>
                     <li><a href="overworld-howto-map.html"><span class="CYF"></span> How to create a map</a></li>
                     <li><a href="overworld-howto-event.html"><span class="CYF"></span> How to create an event</a></li>
                     <li><a href="overworld-howto-animevent.html"><span class="CYF"></span> How to animate an event</a></li>
                     <li class="new"><a href="overworld-howto-shop.html"><span class="CYF"></span> How to create a shop</a></li>
-                    <li class="new"><a href="overworld-object-general.html"><span class="CYF"></span> The General Object</a></li>
-                    <li class="new"><a href="overworld-object-event.html"><span class="CYF"></span> The Event Object</a></li>
-                    <li class="new"><a href="overworld-object-player.html"><span class="CYF"></span> The Player Object</a></li>
-                    <li><a href="overworld-object-screen.html"><span class="CYF"></span> The Screen Object</a></li>
-                    <li><a href="overworld-object-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
-                    <li><a href="overworld-object-map.html"><span class="CYF"></span> The Map Object</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li class="li-indent">Overworld Objects:</li>
+                        <li class="li-indent new"><a href="overworld-object-general.html"><span class="CYF"></span> The General Object</a></li>
+                        <li class="li-indent new"><a href="overworld-object-event.html"><span class="CYF"></span> The Event Object</a></li>
+                        <li class="li-indent new"><a href="overworld-object-player.html"><span class="CYF"></span> The Player Object</a></li>
+                        <li class="li-indent"><a href="overworld-object-screen.html"><span class="CYF"></span> The Screen Object</a></li>
+                        <li class="li-indent"><a href="overworld-object-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
+                        <li class="li-indent new"><a href="overworld-object-map.html"><span class="CYF"></span> The Map Object</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                 <li class="li-header">Resources</li>
                     <li><a href="../media/dialogoptions.png">Dialog bubble names</a></li>
+                    <li><a href="api-keys.html"><span class="CYF"></span> Key List</a></li>
             </ul>
         </nav>
     </div>
@@ -103,6 +106,12 @@ it's w3c valid, at least
                 <li><span class="number"></span> <span class="term">Misc.cameraX</span> - Gets or sets the current x position of the bottom-left corner of the camera.</li><br>
                 <li><span class="number"></span> <span class="term">Misc.cameraY</span> - Gets or sets the current y position of the bottom-left corner of the camera.</li><br>
                 <li><span class="boolean"></span> <span class="term">Misc.FullScreen</span> - Gets or sets whether the user is in fullscreen mode.</li><br>
+                <li><span class="new"></span><span class="number"></span> <span class="term">Misc.WindowWidth</span> (read-only) - Returns the width of the game window if it were running in windowed mode (even in fullscreen). If in wide fullscreen with <span class="term">Misc.SetWideFullscreen</span>, this includes the extra displayed pixels.</li><br>
+                <li>
+                    <span class="new"></span><span class="number"></span> <span class="term">Misc.WindowHeight</span> (read-only) - Returns the height of the game window if it were running in windowed mode (even in fullscreen).
+                    <br><br>
+                    Use <span class="term">Misc.WindowHeight/480</span> to calculate the scale at which CYF is being drawn to your window (or your screen, if in fullscreen).
+                </li><br>
                 <li><span class="number"></span> <span class="term">Misc.ScreenWidth</span> (read-only) - Returns the width of the user's screen in windowed mode, or the number of displayed pixel columns when in fullscreen.</li><br>
                 <li><span class="number"></span> <span class="term">Misc.ScreenHeight</span> (read-only) - Returns the height of the user's screen in windowed mode, or the number of displayed pixel rows when in fullscreen.</li><br>
                 <li><span class="new"></span><span class="number"></span> <span class="term">Misc.MonitorWidth</span> (read-only) - Returns the width of the user's monitor, regardless of the user's settings or if <span class="term">Misc.SetWideFullscreen</span> has been used.</li><br>
@@ -140,8 +149,6 @@ CreateProjectileAbs("bullet", 0 - widthOnEachSide, 240) -- creates a bullet at t
                 <li><span class="term">Misc.MoveWindow(<span class="number"></span> X, <span class="number"></span>  Y)</span> - Moves the window X pixels horizontally and Y pixels vertically.</li><br>
                 <li><span class="term">Misc.MoveWindowTo(<span class="number"></span> X, <span class="number"></span> Y)</span> - Moves the bottom left corner of the window to the given coordinates.
                 </li><br>
-                <li><span class="number"></span> <span class="term">Misc.WindowWidth</span> (readonly) - The width of the game window.</li><br>
-                <li><span class="number"></span> <span class="term">Misc.WindowHeight</span> (readonly) - The height of the game window.</li>
             </ul>
             <hr>
             <h3>File Functions</h3>
@@ -210,8 +217,6 @@ CreateProjectileAbs("bullet", 0 - widthOnEachSide, 240) -- creates a bullet at t
                         <li><span class="term">r</span>: The file can only be <u>read</u> from.</li><br>
                         <li><span class="term">w</span>: The file can only be <u>written</u> to.</li><br>
                         <li><span class="term">rw</span>: The file can be read from <u>AND</u> written to.</li><br>
-                        <li><span class="new"></span><span class="term">b</span>: The file's data is read from and written to using bytes rather than characters.
-                            <br>Must be used along with <span class="term">r</span> or <span class="term">w</span>.</li><br>
                     </ul>
                     Files can be <u>created</u> through use of <span class="term">File.Write</span> (see below).
                 </li>
@@ -244,7 +249,11 @@ CreateProjectileAbs("bullet", 0 - widthOnEachSide, 240) -- creates a bullet at t
                     Returns the contents of line #<span class="term">line</span> as a string.</li><br>
                 <li><span class="luatable"><span class="string"></span></span> <span class="term">File.ReadLines()</span>:
                     Returns every line in the file as a separate string, all within one table.<br>
-                    Same as using <span class="term">File.ReadLine</span> on every line.</li>
+                    Same as using <span class="term">File.ReadLine</span> on every line.</li><br>
+                <li><span class="new"></span><span class="luatable"><span class="number"></span></span> <span class="term">File.ReadBytes()</span>:
+                    Returns a table containing every individual byte in the file, start to finish, represented as a number.
+                    <br><br>
+                    Be prepared for a lag spike as soon as you use this function. Depending on the size of the file, the resulting table can be very large.</li>
                 <br><br>
                 <span class="function ref" style="display: inline;">"w"</span>
                 <br><br>
@@ -261,30 +270,12 @@ CreateProjectileAbs("bullet", 0 - widthOnEachSide, 240) -- creates a bullet at t
                 <li><span class="term">File.DeleteLine(<span class="number"></span> line)</span>:
                     Removes line #<span class="term">line</span> from the file.<br>
                     The line that came after it previously is now line #<span class="term">line</span>.</li><br>
+                <li><span class="new"></span><span class="term">File.WriteBytes(<span class="luatable"><span class="number"></span></span> data)</span>:
+                    Writes a series of bytes to a file. This will <u>replace</u> all contents of the file.</li><br>
                 <li><span class="term">File.Delete()</span> <span class="ref">(w)</span>:
                     Deletes the file.<br>
                     If using <span class="term">"w"</span> or <span class="term">"rw"</span> mode, you can use <span class="term">File.Write</span> to create the file again.</li><br>
                 <br>
-                <span class="function ref" style="display: inline;">"b"</span>
-                <br><br>
-                <li><span class="new"></span><span class="term">File.encoding = "Unicode"</span>:
-                    Lets you choose the encoding method used to read from and write to your file.
-                    <br><br>
-                    Valid values:
-                    <ul>
-                        <li><span class="term">Default</span></li>
-                        <li><span class="term">Unicode</span></li>
-                        <li><span class="term">BigEndianUnicode</span></li>
-                        <li><span class="term">ASCII</span></li>
-                        <li><span class="term">UTF7</span></li>
-                        <li><span class="term">UTF8</span></li>
-                        <li><span class="term">UTF32</span></li>
-                    </ul>
-                    <br><br>
-                    Note that this <u>only</u> applies if you created your file with <span class="term">"b"</span> in your file opening mode.
-                    <br><br>
-                    <a href="https://docs.microsoft.com/en-us/dotnet/api/system.text.encoding">See here for more information on encoding.</a>
-                    </li><br>
             </ul>
         </div>
 		

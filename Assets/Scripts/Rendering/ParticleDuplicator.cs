@@ -48,7 +48,7 @@ public class ParticleDuplicator : MonoBehaviour {
                 if (c.a == 0.0f || (c.r + c.b + c.g) == 0.0f)
                     continue;
                 //particles[particleCount].position = new Vector3(vpbl.x + x * pxWidth, vpbl.y + y * pxHeight, -5.0f);
-                particles[particleCount].position = new Vector3(bottomLeft.x + Mathf.RoundToInt(REALX * sprctrl.xscale) + (xIncrement ? 0 : xLength), 
+                particles[particleCount].position = new Vector3(bottomLeft.x + Mathf.RoundToInt(REALX * sprctrl.xscale) + (xIncrement ? 0 : xLength),
                                                                 bottomLeft.y + Mathf.RoundToInt(REALY * sprctrl.yscale) + (yIncrement ? 0 : yLength), -5.0f);
                 particles[particleCount].startColor = c;
                 particles[particleCount].startSize = 1; // we have to assume a square aspect ratio for pixels here

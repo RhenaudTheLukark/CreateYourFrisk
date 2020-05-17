@@ -51,7 +51,7 @@ public class SelectMessage : TextMessage {
                             }
                         if (needExit)
                             break;
-                    } 
+                    }
             // If the option is null, empty or equal to "\tPAGE 1" (used for enemy pages), there will not be any prefix
             if (options[i] == null || options[i] == "" || options[i].Contains("PAGE "))
                 prefix = "";

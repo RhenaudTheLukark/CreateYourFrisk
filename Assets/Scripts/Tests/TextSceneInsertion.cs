@@ -3,7 +3,7 @@
 public class TextSceneInsertion : MonoBehaviour {
     // Use this for initialization
     private void Start() {
-        SpriteFontRegistry.Init();
+        SpriteFontRegistry.init();
         TextManager tm = FindObjectOfType<TextManager>();
         tm.SetFont(SpriteFontRegistry.Get("wingdings"));
         //tm.setText(new TextMessage("the quick brown fox jumps over\rthe lazy dog.\nTHE QUICK BROWN FOX JUMPS OVER\rTHE LAZY DOG.\nJerry.", true, false));

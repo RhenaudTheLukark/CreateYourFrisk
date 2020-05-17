@@ -3,10 +3,10 @@
 public class KeyboardInput : UndertaleInput {
     KeyCode KC_CONFIRM = KeyCode.Z, KC_CONFIRM_ALT = KeyCode.Return,
             KC_CANCEL = KeyCode.X,  KC_CANCEL_ALT = KeyCode.LeftShift, KC_CANCEL_ALT2 = KeyCode.RightShift,
-            KC_MENU = KeyCode.C,    KC_MENU_ALT = KeyCode.LeftControl, 
+            KC_MENU = KeyCode.C,    KC_MENU_ALT = KeyCode.LeftControl,
             KC_UP = KeyCode.W,      KC_UP_ALT = KeyCode.UpArrow,
-            KC_DOWN = KeyCode.S,    KC_DOWN_ALT = KeyCode.DownArrow, 
-            KC_LEFT = KeyCode.A,    KC_LEFT_ALT = KeyCode.LeftArrow, 
+            KC_DOWN = KeyCode.S,    KC_DOWN_ALT = KeyCode.DownArrow,
+            KC_LEFT = KeyCode.A,    KC_LEFT_ALT = KeyCode.LeftArrow,
             KC_RIGHT = KeyCode.D,   KC_RIGHT_ALT = KeyCode.RightArrow;
 
     public override ButtonState Confirm { get { return stateFor(KC_CONFIRM, KC_CONFIRM_ALT); } }

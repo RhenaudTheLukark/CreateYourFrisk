@@ -8,6 +8,8 @@ public class DiscordControls {
     static string rpName = "";
     static string rpDetails = "";
     static int rpTime = 0;
+	
+	static System.DateTime epochStart = new System.DateTime(1970, 1, 1, 0, 0, 0, System.DateTimeKind.Utc);
 
     // Use this for initialization
     public static void Start () {
@@ -31,7 +33,7 @@ public class DiscordControls {
         SetPresence(getPlayingName(name), "", 1);
     }
 
-    public static void SetPresence(string name = "", string details = "", int time = -1) {
+    public static void SetPresence(string name = "", string details = "", int time = 0, bool remaining = false) {
 
         if (name != "") {
             rpName = name;
@@ -41,9 +43,12 @@ public class DiscordControls {
             rpDetails = details;
         }
 		
-		if (time >= 0) {
-			rpTime = time;
+		if (time != 0) {
+			rpTime = ((int)(System.DateTime.UtcNow - epochStart).TotalSeconds) + time;
+		} else {
+			rpTime = 0;
 		}
+		
 		
 		var activityManager = discord.GetActivityManager();
 
@@ -52,7 +57,8 @@ public class DiscordControls {
             State = rpDetails,
             Details = rpName,
             Timestamps = {
-                Start = rpTime
+                Start = (remaining ? 0 : rpTime),
+				End = (remaining ? rpTime : 0)
             }
         };
 

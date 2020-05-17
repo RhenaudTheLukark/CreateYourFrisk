@@ -48,7 +48,7 @@ it's w3c valid, at least
                         <li class="li-indent new"><a href="api-functions-main.html">Misc. Functions</a></li>
                         <li class="li-indent new"><a href="api-functions-player.html">The Player Object</a></li>
                         <li class="li-indent new"><a href="api-functions-script.html">The Script Object</a></li>
-                        <li class="li-indent active new" style="margin-left:5px;">> The Audio<br>Object <</li>
+                        <li class="li-indent active" style="margin-left:5px;">> The Audio<br>Object <</li>
                         <li class="li-indent new"><a href="api-functions-newaudio.html"><span class="CYF"></span> The NewAudio Object</a></li>
                         <li class="li-indent new"><a href="api-functions-input.html">The Input Object</a></li>
                         <li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
@@ -60,21 +60,24 @@ it's w3c valid, at least
                     <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
                     <li class="new"><a href="api-animation.html">Sprites &amp; Animation</a></li>
                     <li class="new"><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
-                    <li><a href="api-keys.html"><span class="CYF"></span> Key List</a></li>
                 <li class="li-header">Overworld</li>
                     <li class="new"><a href="overworld.html"><span class="CYF"></span> Basics</a></li>
                     <li><a href="overworld-howto-map.html"><span class="CYF"></span> How to create a map</a></li>
                     <li><a href="overworld-howto-event.html"><span class="CYF"></span> How to create an event</a></li>
                     <li><a href="overworld-howto-animevent.html"><span class="CYF"></span> How to animate an event</a></li>
                     <li class="new"><a href="overworld-howto-shop.html"><span class="CYF"></span> How to create a shop</a></li>
-                    <li class="new"><a href="overworld-object-general.html"><span class="CYF"></span> The General Object</a></li>
-                    <li class="new"><a href="overworld-object-event.html"><span class="CYF"></span> The Event Object</a></li>
-                    <li class="new"><a href="overworld-object-player.html"><span class="CYF"></span> The Player Object</a></li>
-                    <li><a href="overworld-object-screen.html"><span class="CYF"></span> The Screen Object</a></li>
-                    <li><a href="overworld-object-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
-                    <li><a href="overworld-object-map.html"><span class="CYF"></span> The Map Object</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li class="li-indent">Overworld Objects:</li>
+                        <li class="li-indent new"><a href="overworld-object-general.html"><span class="CYF"></span> The General Object</a></li>
+                        <li class="li-indent new"><a href="overworld-object-event.html"><span class="CYF"></span> The Event Object</a></li>
+                        <li class="li-indent new"><a href="overworld-object-player.html"><span class="CYF"></span> The Player Object</a></li>
+                        <li class="li-indent"><a href="overworld-object-screen.html"><span class="CYF"></span> The Screen Object</a></li>
+                        <li class="li-indent"><a href="overworld-object-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
+                        <li class="li-indent new"><a href="overworld-object-map.html"><span class="CYF"></span> The Map Object</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                 <li class="li-header">Resources</li>
                     <li><a href="../media/dialogoptions.png">Dialog bubble names</a></li>
+                    <li><a href="api-keys.html"><span class="CYF"></span> Key List</a></li>
             </ul>
         </nav>
     </div>
@@ -103,22 +106,11 @@ it's w3c valid, at least
                 is default, <span class="term">2.0</span> is twice the regular speed.
                 Negative values play the music backwards. <span class="term">value</span> may be between <span class="term">-3.0</span> and <span class="term">3.0</span>.
                 </li><br>
-                <li><span class="term">Audio.LoadFile(<span class="string"></span> filename) <span class="CYF"></span> returns <span class="boolean"></span></span> - Load music from the Audio folder titled <span class="term">filename.ogg</span>
+                <li><span class="term">Audio.LoadFile(<span class="string"></span> filename)</span> - Load music from the Audio folder titled <span class="term">filename.ogg</span>
                 or <span class="term">filename.wav</span> and play it immediately. If you don't want immediate playback,
-                call <span class="term">Audio.Stop()</span> after this.
-                <br><br>
-                <span class="new"></span><span class="CYF"></span> In CYF, this function will NOT show a warning or error message if the target audio file doesn't exist. Instead, it will return
-                a <span class="boolean"></span>, representing whether the file was successfully loaded or not.<br>
-                You can easily use this to determine if a given file exists in the <span class="term">Audio</span> folder.<br>
-                However, if a file doesn't exist, using this function will still stop the playing audio track, so be careful.
-                </li><br>
-                <li><span class="term">Audio.PlaySound(<span class="string"></span> filename, <span class="CYF"></span> <span class="number"></span> volume = 0.65) <span clas="CYF"></span> returns <span class="boolean"></span></span> - Play the sound from the Sounds folder titled
-                <span class="term">filename.ogg</span> or <span class="term">filename.wav</span>.
-                <br><br>
-                <span class="new"></span><span class="CYF"></span> In CYF, this function will NOT show a warning or error message if the target audio file doesn't exist. Instead, it will return
-                a <span class="boolean"></span>, representing whether the file was successfully loaded or not.<br>
-                You can easily use this to determine if a given file exists in the <span class="term">Sounds</span> folder.<br>
-                </li><br>
+                call <span class="term">Audio.Stop()</span> after this. Don't include the file extension.</li><br>
+                <li><span class="term">Audio.PlaySound(<span class="string"></span> filename, <span class="CYF"></span> <span class="number"></span> volume = 0.65)</span> - Play the sound from the Sounds folder titled
+                <span class="term">filename.ogg</span> or <span class="term">filename.wav</span>. Don't include the file extension.</li><br>
                 <li><span class="CYF"></span> <span class="boolean"></span> <span class="term">Audio.isPlaying</span> - Returns true if the music is playing, or false if the music is stopped or paused.</li><br>
                 <li><span class="CYF"></span> <span class="term">Audio.StopAll()</span> - Stops all playing audio.</li><br>
                 <li><span class="CYF"></span> <span class="term">Audio.PauseAll()</span> - Pauses all the audio sources.</li><br>

@@ -81,7 +81,7 @@ public class ArenaManager : MonoBehaviour {
     /// <param name="newWidth">Desired width of the arena</param>
     /// <param name="newHeight">Desired height of the arena</param>
     public void Resize(float newWidth, float newHeight) {
-        this.newWidth = newWidth; 
+        this.newWidth = newWidth;
         this.newHeight = newHeight;
     }
 
@@ -204,7 +204,7 @@ public class ArenaManager : MonoBehaviour {
         currentHeight = this.newHeight;
         applyChanges(currentX, currentY, currentWidth, currentHeight);
     }
-    
+
     /// <summary>
     /// Makes the arena invisible, but it will stay active.
     /// </summary>
@@ -218,7 +218,7 @@ public class ArenaManager : MonoBehaviour {
                                                       outer.GetComponent<Image>().color.b,
                                                       0f);
     }
-    
+
     /// <summary>
     /// Makes the arena visible, if it was previously set invisible with Hide().
     /// </summary>
@@ -266,7 +266,7 @@ public class ArenaManager : MonoBehaviour {
             if (!falseInit) {
                 Vector2[] enemyPositions = GameObject.FindObjectOfType<EnemyEncounter>().enemyPositions;
                 EnemyController[] rts = GameObject.FindObjectsOfType<EnemyController>();
-                
+
                 bool nope = false;
                 for (int i = 0; i < rts.Length; i++)
                     if (rts[i].GetComponent<RectTransform>().position.y != 231 + enemyPositions[rts.Length - i - 1].y)
@@ -280,11 +280,11 @@ public class ArenaManager : MonoBehaviour {
         }
         //if (UIController.instance.state != UIController.UIState.DEFENDING && UIController.instance.state != UIController.UIState.ENEMYDIALOGUE)
         //    outer.position = new Vector3(320, 90, outer.position.z);
-        
+
         // do not resize the arena if the state is frozen with PAUSE
         if (UIController.instance.frozenState != UIController.UIState.PAUSE)
             return;
-        
+
         if (currentWidth == newWidth && currentHeight == newHeight && currentX == newX && currentY == newY)
             return;
         if (currentWidth < newWidth) {

@@ -48,7 +48,7 @@ it's w3c valid, at least
                         <li class="li-indent new"><a href="api-functions-main.html">Misc. Functions</a></li>
                         <li class="li-indent active new" style="margin-left:5px;">> The Player Object <</li>
                         <li class="li-indent new"><a href="api-functions-script.html">The Script Object</a></li>
-                        <li class="li-indent new"><a href="api-functions-audio.html">The Audio Object</a></li>
+                        <li class="li-indent"><a href="api-functions-audio.html">The Audio Object</a></li>
                         <li class="li-indent new"><a href="api-functions-newaudio.html"><span class="CYF"></span> The NewAudio Object</a></li>
                         <li class="li-indent new"><a href="api-functions-input.html">The Input Object</a></li>
                         <li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
@@ -60,21 +60,24 @@ it's w3c valid, at least
                     <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
                     <li class="new"><a href="api-animation.html">Sprites &amp; Animation</a></li>
                     <li class="new"><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
-                    <li><a href="api-keys.html"><span class="CYF"></span> Key List</a></li>
                 <li class="li-header">Overworld</li>
                     <li class="new"><a href="overworld.html"><span class="CYF"></span> Basics</a></li>
                     <li><a href="overworld-howto-map.html"><span class="CYF"></span> How to create a map</a></li>
                     <li><a href="overworld-howto-event.html"><span class="CYF"></span> How to create an event</a></li>
                     <li><a href="overworld-howto-animevent.html"><span class="CYF"></span> How to animate an event</a></li>
                     <li class="new"><a href="overworld-howto-shop.html"><span class="CYF"></span> How to create a shop</a></li>
-                    <li class="new"><a href="overworld-object-general.html"><span class="CYF"></span> The General Object</a></li>
-                    <li class="new"><a href="overworld-object-event.html"><span class="CYF"></span> The Event Object</a></li>
-                    <li class="new"><a href="overworld-object-player.html"><span class="CYF"></span> The Player Object</a></li>
-                    <li><a href="overworld-object-screen.html"><span class="CYF"></span> The Screen Object</a></li>
-                    <li><a href="overworld-object-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
-                    <li><a href="overworld-object-map.html"><span class="CYF"></span> The Map Object</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li class="li-indent">Overworld Objects:</li>
+                        <li class="li-indent new"><a href="overworld-object-general.html"><span class="CYF"></span> The General Object</a></li>
+                        <li class="li-indent new"><a href="overworld-object-event.html"><span class="CYF"></span> The Event Object</a></li>
+                        <li class="li-indent new"><a href="overworld-object-player.html"><span class="CYF"></span> The Player Object</a></li>
+                        <li class="li-indent"><a href="overworld-object-screen.html"><span class="CYF"></span> The Screen Object</a></li>
+                        <li class="li-indent"><a href="overworld-object-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
+                        <li class="li-indent new"><a href="overworld-object-map.html"><span class="CYF"></span> The Map Object</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                 <li class="li-header">Resources</li>
                     <li><a href="../media/dialogoptions.png">Dialog bubble names</a></li>
+                    <li><a href="api-keys.html"><span class="CYF"></span> Key List</a></li>
             </ul>
         </nav>
     </div>
@@ -134,8 +137,8 @@ it's w3c valid, at least
                 <li><span class="string"></span> <span class="term">Player.name</span> - get or set the player's current name. <br>
                     <span class="unitale"></span> 6 letters max. By default, it is a name randomly chosen from a small list of pre-set names.<br>
                     <span class="CYF"></span> 9 letters max. "Rhenao" by default.</li><br>
-                <li><span class="number"></span> <span class="term">Player.lv</span> - use this to get or set the player's current level. It can be between 1 and 20. It's 1 by default. 
-                <span class="CYF"></span> 99 max - Player starts with 20HP / 10 ATK and gets 4 HP / 2 ATK per level.
+                <li><span class="number"></span> <span class="term">Player.lv</span> - use this to get or set the player's current level. It can be between 1 and 20 (99 in <span class="CYF"></span>). It's 1 by default. 
+                Player starts with 20HP / 10 ATK and gets 4 HP / 2 ATK per level.
                 <br><br>
                 Leveling up the player through code doesn't automatically heal them; you'll have to do this manually.
                 </li><br>
@@ -149,22 +152,27 @@ it's w3c valid, at least
                 <li><span class="boolean"></span> <span class="term">Player.ishurting</span> (readonly) - true if the player's currently blinking due to being hurt, false
                     otherwise.
                 </li><br>
-                <li><span class="boolean"></span> <span class="term">Player.ismoving</span> (readonly) - true if the player is currently moving in battle, false otherwise. Will
-                    always be false while not in a wave script. NOTE: This only will change with the default control scheme (see below).
+                <li><span class="boolean"></span> <span class="term">Player.ismoving</span> (readonly) - true if the player is currently moving in battle, false otherwise. 
+                Will always be false while not in a wave script.
+                <br>NOTE: This only will change with the default control scheme (see <span class="term">Player.SetControlOverride</span> below).
                 </li><br>
-                <li><span class="term">Player.Hurt(<span class="number"></span> damage, <span class="number"></span> invul_time = 1.7, <span class="boolean"></span> ignoreDef = false)</span> 
+                <li><span class="term">Player.Hurt(<span class="number"></span> damage, <span class="number"></span> invul_time = 1.7, <span class="boolean"></span> ignoreDef = false, <span class="boolean"></span> playSound = true)</span> 
                 - deals damage to the player, and makes them invincible for <span class="term">invul_time</span> seconds.
+                <br>Can not hurt the player again if they are already hurting (flashing).
                 <br><br>
-                Set <span class="term">ignoreDef</span> to true, and if the encounter variable <span clas="term">allowPlayerDef</span> is true, the damage dealt here will ignore the player's defense.
+                Set <span class="term">ignoreDef</span> to true, and if the encounter variable <span class="term">allowPlayerDef</span> is true, the damage dealt here will ignore the player's defense.
                 <br><br>
-                <span class="CYF"></span> Call <span class="term">Player.Hurt(0, 0)</span> to reset the player's hurt timer without making a sound.
+                <span class="CYF"></span> Call <span class="term">Player.Hurt(0, 0)</span> to stop the player's invincibility frames without making a sound.
+                <br><span class="new"></span>Set <span class="term">playSound</span> to <span class="term">false</span>, and no sound will be played whatsoever.
                 </li><br>
                 <li><span class="term">Player.Heal(<span class="number"></span> value)</span> - heals the player for this amount. This is exactly the same as
                     Player.Hurt(-value, 0). It also plays the healing sound.
                 </li><br>
-                <li><span class="term">Player.SetControlOverride(<span class="boolean"></span> boolean)</span> - either true or false. Only useable in waves. If true, this will
-                    prevent the player soul from doing its regular movement/keyboard control for the rest of the wave.
-                    Use this if you want to implement your own controls in a wave.
+                <li><span class="term">Player.SetControlOverride(<span class="boolean"></span> boolean)</span> - either true or false. Only useable in waves.
+                If true, this will prevent the player soul from doing its regular movement/keyboard control for the rest of the wave
+                (in other words, it disables the red soul functionality).
+                <br><br>
+                Use this if you want to implement your own controls in a wave (i.e. a custom soul mode, like the blue or purple soul).
                 </li><br>
                 <li><span class="CYF"></span> <span class="term">Player.Move(<span class="number"></span> x, <span class="number"></span> y, <span class="boolean"></span> ignoreWalls = false)</span> - Moves the player soul based on its last position.
                     If <span class="term">ignoreWalls</span> is false, it will make sure the player doesn't go outside of the arena;

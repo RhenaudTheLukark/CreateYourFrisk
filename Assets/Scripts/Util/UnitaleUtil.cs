@@ -37,6 +37,15 @@ public static class UnitaleUtil {
         }
     }
 
+    public static void Warn(string line, bool show = true) {
+        line = "[WARN]" + line;
+        if (!GlobalControls.retroMode && show) {
+            WriteInLogAndDebugger(line);
+            return;
+        }
+        try { UserDebugger.instance.Warn(line); } catch { printDebuggerBeforeInit += (printDebuggerBeforeInit == "" ? "" : "\n") + line; }
+    }
+
     /*/// <summary>
     /// This was previously used to create error messages for display in the UI controller, but is now obsolete as this is displayed in a separate scene.
     /// </summary>
@@ -184,9 +193,10 @@ public static class UnitaleUtil {
                 case '[':
 
                     string str = ParseCommandInline(txtmgr.textQueue[txtmgr.currentLine].Text, ref i);
-                    if (str == null)
-                        totalWidth += txtmgr.Charset.Letters[txtmgr.textQueue[txtmgr.currentLine].Text[i]].textureRect.size.x + hSpacing;
-                    else if (str.Split(':')[0] == "charspacing")
+                    if (str == null) {
+                        if (txtmgr.Charset.Letters.ContainsKey(txtmgr.textQueue[txtmgr.currentLine].Text[i]))
+                            totalWidth += txtmgr.Charset.Letters[txtmgr.textQueue[txtmgr.currentLine].Text[i]].textureRect.size.x + hSpacing;
+                    } else if (str.Split(':')[0] == "charspacing")
                         hSpacing = str.Split(':')[1].ToLower() == "default" ? txtmgr.Charset.CharSpacing : ParseUtil.GetFloat(str.Split(':')[1]);
                     break;
                 case '\r':
@@ -385,7 +395,7 @@ public static class UnitaleUtil {
                     something = true;
             } else {
                 if (Mathf.Floor(number) == 0 )      { zerocount++;   ninecount = 0; }
-                else if (Mathf.Floor(number) == 9 ) { ninecount++;   zerocount = 0; } 
+                else if (Mathf.Floor(number) == 9 ) { ninecount++;   zerocount = 0; }
                 else                                { ninecount = 0; zerocount = 0; }
             }
             dec++;
@@ -420,39 +430,69 @@ public static class UnitaleUtil {
 
     public static void PlaySound(string basis, AudioClip sound, float volume = 0.65f) { PlaySound(basis, sound.name, volume); }
 
-    public static bool TestPP(Color32[] playerMatrix, Color32[] bulletMatrix, float rotation, int playerHeight, int bulletHeight, Vector2 scale, Vector2 fromCenterProjectile, float spriteAlpha) {
+    /// <summary>
+    /// Checks if the Player and a given bullet collide.
+    /// TODO: Extend this function so it can handle two different random objects, instead of forcing one of them to be the Player.
+    /// </summary>
+    /// <param name="playerMatrix">List of pixels depicting the Player's hitbox. Currently is 8x8 with no transparent pixel.</param>
+    /// <param name="bulletMatrix">List of pixels depicting the bullet's sprite.</param>
+    /// <param name="rotation">Difference between the bullet's rotation and the Player's rotation.</param>
+    /// <param name="playerHeight">Height of the Player's hitbox. Currently always 8.</param>
+    /// <param name="bulletHeight">Height of the bullet's sprite.</param>
+    /// <param name="scale">Scale difference between the bullet and the Player.</param>
+    /// <param name="fromCenterProjectile">Position difference between the two objects.</param>
+    /// <returns>True if the two objects collide, false otherwise.</returns>
+    public static bool TestPP(Color32[] playerMatrix, Color32[] bulletMatrix, float rotation, int playerHeight, int bulletHeight, Vector2 scale, Vector2 fromCenterProjectile) {
+        // Get the bullet's and Player's widths
         int bulletWidth = bulletMatrix.Length / bulletHeight, playerWidth = playerMatrix.Length / playerHeight;
+        // As rotation is given in degrees, transform it into a value in radians
         rotation *= Mathf.Deg2Rad;
-        Vector2 start = new Vector2();
-        Vector2 xDiff = new Vector2();
-        Vector2 yDiff = new Vector2();
+        // Setup vectors to store the starting point and vertical and horizontal distance between the bullet's pixels
+        Vector2 start = new Vector2(), xDiff = new Vector2(), yDiff = new Vector2();
+
+        // For each pixel in the Player's hitbox...
         for (int currentHeight = 0; currentHeight < playerHeight && currentHeight >= 0; currentHeight ++)
             for (int currentWidth = 0; currentWidth < playerWidth && currentWidth >= 0; currentWidth ++) {
-                int totalValX, totalValY;
-                if (currentWidth > 1 || currentHeight > 1 || (currentWidth != 0 && currentHeight != 0)) {
-                    totalValX = Mathf.RoundToInt(start.x + xDiff.x * currentWidth + yDiff.x * currentHeight);
-                    totalValY = Mathf.RoundToInt(start.y + xDiff.y * currentWidth + yDiff.y * currentHeight);
-                } else {
+                int roundedValX, roundedValY;
+
+                // Three times: (0, 0), (1, 0) and (0, 1)
+                if ((currentWidth == 0 && currentHeight < 2) || (currentWidth < 2 && currentHeight == 0)) {
+                    // Compute the horizontal and vertical distance between the two objects
                     float dx = currentWidth + fromCenterProjectile.x,
                           dy = currentHeight + fromCenterProjectile.y;
                     if (scale.x < 0) dx = -dx;
                     if (scale.y < 0) dy = -dy;
 
+                    // Compute the distance between the center of the two objects
                     float DFromCenter = Mathf.Sqrt(Mathf.Pow(dx, 2) + Mathf.Pow(dy, 2)),
+                    // Compute the angle between the two objects
                           angle = Mathf.Atan2(dy, dx) - rotation,
+                    // Compute the real coordinates of the bullet's pixel relative to the Player's hitbox
                           fullValX = bulletWidth  / 2 + (Mathf.Cos(angle) * DFromCenter) / Mathf.Abs(scale.x),
                           fullValY = bulletHeight / 2 + (Mathf.Sin(angle) * DFromCenter) / Mathf.Abs(scale.y);
-                    totalValX = Mathf.RoundToInt(fullValX);
-                    totalValY = Mathf.RoundToInt(fullValY);
+                    // Get a rounded value for table checks
+                    roundedValX = Mathf.RoundToInt(fullValX);
+                    roundedValY = Mathf.RoundToInt(fullValY);
 
-                    if (currentWidth == 0 && currentHeight == 0)      start = new Vector2(fullValX, fullValY);
-                    else if (currentWidth == 1 && currentHeight == 0) xDiff = new Vector2(fullValX - start.x, fullValY - start.y);
-                    else if (currentWidth == 0 && currentHeight == 1) yDiff = new Vector2(fullValX - start.x, fullValY - start.y);
+                    // Compute the starting point for (0, 0)
+                    if (currentWidth == 0 && currentHeight == 0) start = new Vector2(fullValX, fullValY);
+                    // Compute the distance between two horizontal pixels for (1, 0)
+                    else if (currentHeight == 0)                 xDiff = new Vector2(fullValX - start.x, fullValY - start.y);
+                    // Compute the distance between two vertical pixels for (0, 1)
+                    else                                         yDiff = new Vector2(fullValX - start.x, fullValY - start.y);
+                // Use the distance and starting point we computed above to compute where the current pixel is
+                } else {
+                    roundedValX = Mathf.RoundToInt(start.x + xDiff.x * currentWidth + yDiff.x * currentHeight);
+                    roundedValY = Mathf.RoundToInt(start.y + xDiff.y * currentWidth + yDiff.y * currentHeight);
                 }
-                if (totalValY >= 0 && totalValY < bulletHeight && totalValX >= 0 && totalValX < bulletWidth)
-                    if (bulletMatrix[Mathf.RoundToInt(totalValY * bulletWidth + totalValX)].a != 0)
+                // If the bullet's pixel's alpha is 0, continue to the next pixel
+                if (bulletMatrix[Mathf.RoundToInt(roundedValY * bulletWidth + roundedValX)].a != 0)
+                    // If the bullet's pixel is not inside the Player's hitbox, continue to the next pixel
+                    if (roundedValY >= 0 && roundedValY < bulletHeight && roundedValX >= 0 && roundedValX < bulletWidth)
+                        // All checks are passed: the two objects collide
                         return true;
             }
+        // After checking all pixels in the Player's hitbox, if we haven't found a colliding pixel, then the two objects don't collide
         return false;
     }
 
@@ -512,7 +552,7 @@ public static class UnitaleUtil {
                 if (currentHeight < coords.w) coords.w = currentHeight; //minVert
             }
         Vector2 offset = new Vector2((coords.x + coords.y) / 2 - width / 2, (coords.z + coords.w) / 2 - height / 2);
-        Rect maxDist = new Rect (tf.position.x - Mathf.Ceil((coords.x - coords.y + 1) / 2) + offset.x, 
+        Rect maxDist = new Rect (tf.position.x - Mathf.Ceil((coords.x - coords.y + 1) / 2) + offset.x,
                                  tf.position.y - Mathf.Ceil((coords.z - coords.w + 1) / 2) + offset.y, coords.x - coords.y + 1, coords.z - coords.w + 1);
         //Rect maxDist = new Rect (tf.position.x, tf.position.y, coords.y - coords.x, coords.w - coords.z);
         //Debug.Log(maxDist);
@@ -636,7 +676,7 @@ public static class UnitaleUtil {
     }*/
 
     // ******************************************************************************
-    // *** Warning: Complex System.Reflexion stuff below! Enter at your own risk! *** 
+    // *** Warning: Complex System.Reflexion stuff below! Enter at your own risk! ***
     // ******************************************************************************
 
     /*/// <summary>

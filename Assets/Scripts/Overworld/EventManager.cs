@@ -96,7 +96,7 @@ public class EventManager : MonoBehaviour {
             }
             try { PlayerOverworld.instance.utHeart = GameObject.Find("utHeart").GetComponent<Image>(); }
             catch { return; }
-            for (int i = 0; i < events.Count; i++) 
+            for (int i = 0; i < events.Count; i++)
                 if (events[i] != null) {
                     if (TestContainsListVector2(events[i].GetComponent<EventOW>().eventTriggers, 0) && !Page0Done.Contains(events[i].name)) {
                         Page0Done.Add(events[i].name);
@@ -178,7 +178,7 @@ public class EventManager : MonoBehaviour {
                     for (int i = 0; i < events.Count; i ++) {
                         GameObject go = events[i];
                         EventOW ev = go.GetComponent<EventOW>();
-                        if (ev.actualPage < -1) { }                             
+                        if (ev.actualPage < -1) { }
                         else if (ev.actualPage == -1) {
                             events.Remove(go);
                             i--;
@@ -270,8 +270,8 @@ public class EventManager : MonoBehaviour {
         }
 
         //Cast a box from start point to end point checking collision on blockingLayer
-        //hit = Physics2D.BoxCast(start, size, 0, dir, Mathf.Sqrt(Mathf.Pow(xDir * PlayerOverworld.instance.speed, 2) + 
-        //                                                        Mathf.Pow(yDir * PlayerOverworld.instance.speed, 2)), EventLayer);          
+        //hit = Physics2D.BoxCast(start, size, 0, dir, Mathf.Sqrt(Mathf.Pow(xDir * PlayerOverworld.instance.speed, 2) +
+        //                                                        Mathf.Pow(yDir * PlayerOverworld.instance.speed, 2)), EventLayer);
         hit = Physics2D.BoxCast(start, size, 0, dir, Mathf.Sqrt(Mathf.Pow(boxCollider.size.x * PlayerOverworld.instance.transform.localScale.x * xDir, 2) +
                                                                 Mathf.Pow(boxCollider.size.y * PlayerOverworld.instance.transform.localScale.x * yDir, 2)), EventLayer);
 
@@ -343,7 +343,7 @@ public class EventManager : MonoBehaviour {
                     ExecuteEvent(events[i], -1, true);
                 }
             }
-        } catch (InterpreterException e) { UnitaleUtil.DisplayLuaError(gameobject.name + ", page #" + gameobject.GetComponent<EventOW>().actualPage, e.DecoratedMessage); } 
+        } catch (InterpreterException e) { UnitaleUtil.DisplayLuaError(gameobject.name + ", page #" + gameobject.GetComponent<EventOW>().actualPage, e.DecoratedMessage); }
         catch (Exception e) {
             UnitaleUtil.DisplayLuaError(gameobject.name + ", page #" + gameobject.GetComponent<EventOW>().actualPage,
                                         "Unknown error of type " + e.GetType() + ". Please send this to the main dev.\n\n" + e.Message + "\n\n" + e.StackTrace);
@@ -432,7 +432,7 @@ public class EventManager : MonoBehaviour {
             StartCoroutine(SpecialAnnouncementEvent());
             return true;
         }
-            
+
         //If the script we have to load exists, let's initialize it and then execute it
         if (!isCoroutine) {
             this.actualEventIndex = actualEventIndex;
@@ -456,7 +456,7 @@ public class EventManager : MonoBehaviour {
         } catch (Exception ex) {
             UnitaleUtil.DisplayLuaError(go.GetComponent<EventOW>().scriptToLoad, ex.Message);
             return false;
-        } 
+        }
         if (!isCoroutine) {
             textmgr.SetCaller(script);
             textmgr.transform.parent.parent.SetAsLastSibling();
@@ -523,7 +523,7 @@ function CYFFormatError(err)
         local before = err:sub(0, err:find(pattern) + (code:sub(0, 2) == ':(' and 1 or 0))
         local numbers = err:match('[%d,%-]+%)'):sub(0, -2)
         local after = err:sub(err:find(numbers:gsub('%-', '%%-'), #before) + #numbers)
-        
+
         -- There are only 3 possible formats for error messages
         -- See Assets/Plugins/MoonSharp/Interpreter/Debugging/SourceRef.cs line 178
         local allNums = {}
@@ -537,7 +537,7 @@ function CYFFormatError(err)
         elseif numbers == numbers:match('%d+,%d+%-%d+,%d+') then
             numbers = 'line ' .. allNums[1] .. ', char ' .. allNums[2] .. '-line ' .. allNums[3] .. ', char ' .. allNums[4]
         end
-        
+
         return ""error in script "" .. _internalScriptName .. ""\n\n"" .. before .. numbers .. after
     else
         return err
@@ -608,7 +608,7 @@ end";
         //Run engine-provided Lua code for Event scripts (generate it if needed)
         if (eventCodeFirst == null)
             GenerateEventCode();
-        try { scr.script.DoString(eventCodeFirst + ev.gameObject.name + eventCodeLast, null, "CYF internal event code (please report!)"); } 
+        try { scr.script.DoString(eventCodeFirst + ev.gameObject.name + eventCodeLast, null, "CYF internal event code (please report!)"); }
         catch (InterpreterException ex) {
             UnitaleUtil.DisplayLuaError(name, UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message);
             return null;
@@ -617,11 +617,11 @@ end";
             return null;
         }
 
-        scr.script.Globals["CreateLayer"] = (Action<string, string, bool>)SpriteUtil.CreateLayer;
+        scr.script.Globals["CreateLayer"] = (Func<string, string, bool, bool>)SpriteUtil.CreateLayer;
         scr.script.Globals["CreateSprite"] = (Func<string, string, int, DynValue>)SpriteUtil.MakeIngameSprite;
         scr.script.Globals["CreateText"] = (Func<Script, DynValue, DynValue, int, string, int, LuaTextManager>)LuaScriptBinder.CreateText;
 
-        try { scr.DoString(scriptText); } 
+        try { scr.DoString(scriptText); }
         catch (InterpreterException ex) {
             UnitaleUtil.DisplayLuaError(name, UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message);
             return null;
@@ -638,7 +638,7 @@ end";
     /// <summary>
     /// Only used for identification
     /// </summary>
-    public void FunctionLauncher(DynValue parameter1, DynValue parameter2, DynValue parameter3, DynValue parameter4, DynValue parameter5, 
+    public void FunctionLauncher(DynValue parameter1, DynValue parameter2, DynValue parameter3, DynValue parameter4, DynValue parameter5,
                                  DynValue parameter6, DynValue parameter7, DynValue parameter8, DynValue parameter9, DynValue parameter10) { }
 
     /*/// <summary>
@@ -683,7 +683,7 @@ end";
                 UnitaleUtil.displayLuaError("Overworld : SetChoice", "You need an index to register the result of the choice !");
                 return;
             }
-                
+
             for (int i = 0; i < parameters.Length; i ++) {
                 //If there's no text, just don't print it
                 if (i == 2 && question)
@@ -703,7 +703,7 @@ end";
                     if (text[k] != "")
                         if (k == 0)  text[k] = "* " + text[k];
                         else         text[k] = "  " + text[k];
-                                
+
                     finalText[k] += text[k] + '\t';
                     if (k == text.Length - 1)
                         break;
@@ -728,7 +728,7 @@ end";
             if (threeLines)  selection += 2;
             else             selection += 4;
         }
-        Vector2 upperLeft = new Vector2(61 + Camera.main.transform.position.x - 320, 
+        Vector2 upperLeft = new Vector2(61 + Camera.main.transform.position.x - 320,
                                         GameObject.Find("letter(Clone)").GetComponent<RectTransform>().position.y + (GameObject.Find("letter(Clone)").GetComponent<RectTransform>().sizeDelta.y / 2) - 1);
         int xMv = selection % 2; // remainder safe again, selection is never negative
         int yMv = selection / 2;
@@ -827,7 +827,7 @@ end";
         var = var.ToLower();
         if (var != "music" && var != "modtoload" && var != "musickept" && var != "norandomencounter")
             throw new CYFException("You tried to change a map's \"" + var + "\" value but it doesn't exist.\nYou can only choose between \"Music\", \"ModToLoad\", \"MusicKept\" and \"NoRandomEncounter\".");
-        if (var == "musickept" || var == "norandomencounter") {                
+        if (var == "musickept" || var == "norandomencounter") {
             if (val.ToString().ToLower() == "true")       val = true;
             else if (val.ToString().ToLower() == "false") val = false;
             else                                          throw new CYFException("\"MusicKept\" and \"NoRandomEncounter\" are boolean values. You can only enter \"true\" or \"false\".");
@@ -1131,7 +1131,7 @@ end";
             } else if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED)
                 if (!textmgr.blockSkip && !textmgr.LineComplete() && textmgr.CanSkip())
                     textmgr.SkipLine();
-                else 
+                else
                     break;
             yield return 0;
         }
@@ -1247,7 +1247,6 @@ end";
                         // if this code is run, that means the player must have reached their destination
 
                         target.position = new Vector3(dirX, dirY, target.position.z);
-                        yield return 0;
 
                         if (name == "Player") {
                             go.GetComponent<PlayerOverworld>().isBeingMoved    = false;
@@ -1461,7 +1460,7 @@ end";
         try { fadeFrames = (int)args[0]; } catch { throw new CYFException("The argument \"fadeFrames\" must be an integer."); }
         try { waitEnd = (bool)args[1]; } catch { throw new CYFException("The argument \"waitEnd\" must be a boolean."); }
 
-        if (waitEnd) 
+        if (waitEnd)
             if (coroutines.ContainsKey(scr) && script != scr) {
                 UnitaleUtil.DisplayLuaError(scr.scriptname, "General.StopBGM: This function cannot be used in a coroutine with \"waitEnd\" set to true.");
                 yield break;
@@ -1469,7 +1468,7 @@ end";
                 UnitaleUtil.DisplayLuaError(scr.scriptname, "General.StopBGM: This function cannot be used in EventPage0 with \"waitEnd\" set to true.");
                 yield break;
             }
-        
+
         bgmCoroutine = true;
         AudioSource audio = UnitaleUtil.GetCurrentOverworldAudio();
         float frames = 0, startVolume = audio.volume;
@@ -1672,7 +1671,7 @@ end";
                     currentX = pixX;
                     PlayerOverworld.instance.cameraShift.x = pixX;
                 }
-                
+
             if (currentY != pixY)
                 if (Mathf.Abs(ySpeed) < Mathf.Abs(pixY - currentY)) {
                     currentY += ySpeed;

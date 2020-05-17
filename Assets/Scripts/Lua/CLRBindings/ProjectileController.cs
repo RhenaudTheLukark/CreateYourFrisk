@@ -65,7 +65,7 @@ public class ProjectileController {
     // The y position of the sprite, relative to the bottom left corner of the screen.
     public float absy {
         get {
-            if (p == null) 
+            if (p == null)
                 return lastAbsY;
             else
                 return p.self.position.y;
@@ -147,7 +147,7 @@ public class ProjectileController {
     public bool isactive {
         get { return p != null; }
     }
-    
+
     public bool isPersistent = false;
 
     public string layer {
@@ -190,7 +190,7 @@ public class ProjectileController {
         if (isactive) {
             Transform[] pcs = UnitaleUtil.GetFirstChildren(p.transform);
             for (int i = 1; i < pcs.Length; i++)
-                try { pcs[i].GetComponent<Projectile>().ctrl.Remove(); } 
+                try { pcs[i].GetComponent<Projectile>().ctrl.Remove(); }
                 catch { new LuaSpriteController(pcs[i].GetComponent<Image>()).Remove(); }
             lastX = x;
             lastY = y;
@@ -198,10 +198,8 @@ public class ProjectileController {
             lastAbsY = absy;
             if (p.gameObject.GetComponent<KeyframeCollection>() != null)
                 GameObject.Destroy(p.gameObject.GetComponent<KeyframeCollection>());
-            if (p.gameObject.GetComponent<Mask>() != null)
-                GameObject.Destroy(p.gameObject.GetComponent<Mask>());
-            else if (p.gameObject.GetComponent<RectMask2D>() != null)
-                GameObject.Destroy(p.gameObject.GetComponent<RectMask2D>());
+            p.gameObject.GetComponent<Mask>().enabled = false;
+            p.gameObject.GetComponent<RectMask2D>().enabled = false;
             spr.StopAnimation();
             BulletPool.instance.Requeue(p);
             p = null;
@@ -219,7 +217,7 @@ public class ProjectileController {
             else
                 throw new CYFException("Attempted to move a removed bullet. You can use a bullet's isactive property to check if it has been removed.");
         }
-        
+
         if (GlobalControls.retroMode)
             p.self.anchoredPosition = new Vector2(x, y);
         else

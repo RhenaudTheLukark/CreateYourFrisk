@@ -8,7 +8,7 @@ using MoonSharp.Interpreter;
 
 public static class SpriteUtil {
     public const float PIXELS_PER_UNIT = 100.0f;
-    
+
     public static void SwapSpriteFromFile(Component target, string filename, int bubbleID = -1) {
         try {
             if (bubbleID != -1) {
@@ -55,7 +55,7 @@ public static class SpriteUtil {
             img.rectTransform.sizeDelta = new Vector2(newSprite.texture.width, newSprite.texture.height);
             img.rectTransform.pivot = pivot;
         }
-        
+
     }
 
     public static Sprite SpriteWithXml(XmlNode spriteNode, Sprite source) {
@@ -140,12 +140,12 @@ public static class SpriteUtil {
         return UserData.Create(new LuaSpriteController(i), LuaSpriteController.data);
     }
 
-    public static void CreateLayer(string name, string relatedTag = "BasisNewest", bool before = false) {
+    public static bool CreateLayer(string name, string relatedTag = "BasisNewest", bool before = false) {
         string canvas = UnitaleUtil.IsOverworld ? "Canvas Two/" : "Canvas/";
         if (name == null || GameObject.Find(canvas + name + "Layer") != null)
-            return;
+            return false;
         else if (relatedTag != "VeryHighest" && relatedTag != "VeryLowest" && relatedTag != "BasisNewest" && GameObject.Find(canvas + relatedTag + "Layer") == null)
-            throw new CYFException("CreateLayer: Tried to make a new layer " + (before ? "below" : "above") + " the layer \"" + relatedTag + "\", but it didn't exist.");
+            return false; // throw new CYFException("CreateLayer: Tried to make a new layer " + (before ? "below" : "above") + " the layer \"" + relatedTag + "\", but it didn't exist.");
 
         GameObject go = new GameObject(name + "Layer", typeof(RectTransform));
         string testName = relatedTag + "Layer";
@@ -172,6 +172,7 @@ public static class SpriteUtil {
         go.GetComponent<RectTransform>().anchorMin = new Vector2(0, 0);
         go.GetComponent<RectTransform>().sizeDelta = new Vector2(1, 1);
         go.transform.position = new Vector2(0, 0);
+        return true;
     }
 
     public static void CreateProjectileLayer(string name, string relatedTag = "", bool before = false) {

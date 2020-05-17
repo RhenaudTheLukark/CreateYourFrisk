@@ -22,8 +22,8 @@ public class LuaDiscord {
 		DiscordControls.SetPresence("", details, -1);
 	}
 	
-	public void SetElapsedTime(int time) {
-		DiscordControls.SetPresence("", "", time);
+	public void SetTime(int time, bool remaining = false) {
+		DiscordControls.SetPresence("", "", time, remaining);
 	}
 	
 }

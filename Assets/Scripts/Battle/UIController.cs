@@ -129,6 +129,8 @@ public class UIController : MonoBehaviour {
         #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
             Misc.WindowName = GlobalControls.crate ? ControlPanel.instance.WinodwBsaisNmae : ControlPanel.instance.WindowBasisName;
         #endif
+        if (instance.psContainer != null)
+            instance.psContainer.SetActive(false);
 
         //Stop encounter storage for good!
         if (GlobalControls.modDev) {
@@ -366,7 +368,7 @@ public class UIController : MonoBehaviour {
                 }
                 if (encounter.EncounterText == null) {
                     encounter.EncounterText = "";
-                    UnitaleUtil.WriteInLogAndDebugger("[WARN]There is no encounter text!");
+                    UnitaleUtil.Warn("There is no encounter text!");
                 }
                 textmgr.SetText(new RegularMessage(encounter.EncounterText));
                 break;
@@ -527,7 +529,7 @@ public class UIController : MonoBehaviour {
                     this.msgs.Add(i, encounter.EnabledEnemies[i].GetDefenseDialog());
                     string[] msgs = this.msgs[i];
                     if (msgs == null) {
-                        UnitaleUtil.WriteInLogAndDebugger("[WARN]Entered ENEMYDIALOGUE, but no current/random dialogue was set for " + encounter.EnabledEnemies[i].Name);
+                        UnitaleUtil.Warn("Entered ENEMYDIALOGUE, but no current/random dialogue was set for " + encounter.EnabledEnemies[i].Name);
                         SwitchState(UIState.DEFENDING);
                         break;
                     }
@@ -559,11 +561,10 @@ public class UIController : MonoBehaviour {
                     sbTextMan.SetOffset(speechBubSpr.border.x, -speechBubSpr.border.w);
                     //sbTextMan.setFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_MONSTERTEXT_NAME));
                     sbTextMan.SetFont(SpriteFontRegistry.Get(encounter.EnabledEnemies[i].Font));
-                    sbTextMan.SetEffect(new RotatingEffect(sbTextMan));
 
                     MonsterMessage[] monMsgs = new MonsterMessage[msgs.Length];
                     for (int j = 0; j < monMsgs.Length; j++)
-                        monMsgs[j] = new MonsterMessage(msgs[j]);
+                        monMsgs[j] = new MonsterMessage(encounter.EnabledEnemies[i].DialoguePrefix + msgs[j]);
 
                     sbTextMan.SetTextQueue(monMsgs);
                     if (sbTextMan.letterReferences.Count(ltr => ltr != null) == 0) speechBubImg.color = new Color(speechBubImg.color.r, speechBubImg.color.g, speechBubImg.color.b, 0);
@@ -908,9 +909,9 @@ public class UIController : MonoBehaviour {
                         case Actions.MERCY:
                             if (GlobalControls.crate) {
                                 switch (mecry) {
-                                    case 0: ActionDialogResult(new TextMessage("You know... Seeing the engine like\rthis... It makes me want to cry.", true, false), UIState.ENEMYDIALOGUE); break;
+                                    case 0: ActionDialogResult(new TextMessage("You know...\rSeeing the engine like this...\rIt makes me want to cry.", true, false), UIState.ENEMYDIALOGUE); break;
                                     case 1: ActionDialogResult(new TextMessage("All these typos...\rCrate Your Frisk is bad.\nWe must destroy it.", true, false), UIState.ENEMYDIALOGUE); break;
-                                    case 2: ActionDialogResult(new TextMessage("We have two solutions here:\rdownload the engine again...", true, false), UIState.ENEMYDIALOGUE); break;
+                                    case 2: ActionDialogResult(new TextMessage("We have two solutions here:\nDownload the engine again...", true, false), UIState.ENEMYDIALOGUE); break;
                                     case 3: ActionDialogResult(new TextMessage("...Or another way. Though, I'll\rneed some time to find out\rhow to do this...", true, false), UIState.ENEMYDIALOGUE); break;
                                     case 4: ActionDialogResult(new TextMessage("*sniffles* I can barely stand\rthe view... This is so\rdisgusting...", true, false), UIState.ENEMYDIALOGUE); break;
                                     case 5: ActionDialogResult(new TextMessage("I feel like I'm getting there,\rkeep up the good work!", true, false), UIState.ENEMYDIALOGUE); break;
@@ -918,7 +919,7 @@ public class UIController : MonoBehaviour {
                                     case 7: ActionDialogResult(new TextMessage("...No, I don't have it.\nStupid dog!\nPlease give me more time!", true, false), UIState.ENEMYDIALOGUE); break;
                                     case 8: ActionDialogResult(new TextMessage("I want to puke...\nEven the engine is a\rplace of shitposts and memes.", true, false), UIState.ENEMYDIALOGUE); break;
                                     case 9: ActionDialogResult(new TextMessage("Will there one day be a place\rwhere shitposts and memes\rwill not appear?", true, false), UIState.ENEMYDIALOGUE); break;
-                                    case 10: ActionDialogResult(new TextMessage("I hope so... My eyes are bleeding.", true, false), UIState.ENEMYDIALOGUE); break;
+                                    case 10: ActionDialogResult(new TextMessage("I hope so...\rMy eyes are bleeding.", true, false), UIState.ENEMYDIALOGUE); break;
                                     case 11: ActionDialogResult(new TextMessage("Hm? Oh! Look! I have it!", true, false), UIState.ENEMYDIALOGUE); break;
                                     case 12: ActionDialogResult(new TextMessage("Let me read:", true, false), UIState.ENEMYDIALOGUE); break;
                                     case 13: ActionDialogResult(new TextMessage("\"To remove the big engine\rtypo bug...\"", true, false), UIState.ENEMYDIALOGUE); break;
@@ -926,7 +927,7 @@ public class UIController : MonoBehaviour {
                                         ActionDialogResult(new RegularMessage[]{
                                             new RegularMessage("\"...erase the AlMighty Globals.\""),
                                             new RegularMessage("Is that all? Come on, all\rthis time lost for such\ran easy response..."),
-                                            new RegularMessage("...Sorry for the wait.\rDo whatever you want now! :D"),
+                                            new RegularMessage("...Sorry for the wait.\nDo whatever you want now! :D"),
                                             new RegularMessage("But please..."),
                                             new RegularMessage("For GOD's sake..."),
                                             new RegularMessage("Remove Crate Your Frisk."),
@@ -953,7 +954,8 @@ public class UIController : MonoBehaviour {
                             break;
 
                         case Actions.ACT:
-                            SwitchState(UIState.ACTMENU);
+                            if (encounter.EnabledEnemies[selectedEnemy].ActCommands.Length != 0)
+                                SwitchState(UIState.ACTMENU);
                             break;
                     }
                     PlaySound(AudioClipRegistry.GetSound("menuconfirm"));
@@ -1005,7 +1007,7 @@ public class UIController : MonoBehaviour {
 
                     } else if (selectedMercy == 1) {
                         if (!GlobalControls.retroMode) {
-                            if ((LuaEnemyEncounter.script.GetVar("fleesuccess").Type != DataType.Boolean && Math.RandomRange(0, 2) == 0)
+                            if ((LuaEnemyEncounter.script.GetVar("fleesuccess").Type != DataType.Boolean && (Math.RandomRange(0, 9) + encounter.turnCount) > 4)
                               || LuaEnemyEncounter.script.GetVar("fleesuccess").Boolean)
                                 StartCoroutine(ISuperFlee());
                             else
@@ -1445,8 +1447,10 @@ public class UIController : MonoBehaviour {
         }
 
         StaticInits.SendLoaded();
-        // GameObject.Destroy(GameObject.Find("HideEncounter"));
         psContainer = new GameObject("psContainer");
+        // The following is a trick to make psContainer spawn within the battle scene, rather than the overworld scene, if in the overworld
+        psContainer.transform.SetParent(textmgr.transform);
+        psContainer.transform.SetParent(null);
         psContainer.transform.SetAsFirstSibling();
 
         //Play that funky music
@@ -1472,10 +1476,7 @@ public class UIController : MonoBehaviour {
         fightUI.gameObject.SetActive(false);
 
         encounter.CallOnSelfOrChildren("EncounterStarting");
-        if (GameObject.Find("Text")) {
-            GameObject.Find("Text").transform.SetParent(UserDebugger.instance.transform);
-            UserDebugger.instance.transform.SetAsLastSibling();
-        }
+        UserDebugger.instance.transform.SetAsLastSibling();
 
         if (!stated)
             SwitchState(UIState.ACTIONSELECT, true);
@@ -1509,27 +1510,26 @@ public class UIController : MonoBehaviour {
         AudioClip yay = AudioClipRegistry.GetSound("runaway");
         UnitaleUtil.PlaySound("Mercy", yay, 0.65f);
 
-        string[] fleeTexts;
+        List<string> fleeTexts = new List<string>();
         DynValue tempFleeTexts = LuaEnemyEncounter.script.GetVar("fleetexts");
-        if (tempFleeTexts.Type == DataType.Table) {
-            fleeTexts = new string[tempFleeTexts.Table.Length];
+        if (tempFleeTexts.Type == DataType.Table)
             for (int i = 0; i < tempFleeTexts.Table.Length; i++)
-                fleeTexts[i] = tempFleeTexts.Table.Get(i + 1).String;
-        } else if (ControlPanel.instance.Safe)
-            fleeTexts = new string[] { "I'm outta here.",  "I've got better things to do.", "Don't waste my time.",
-                                       "Nah, I don't like you.", "I just wanted to walk\ra bit. Leave me alone.", "You're cute, I won't kill you :3",
-                                       "Better safe than sorry.", "Do as if you've never saw\rthem and walk away.", "I'll kill you last.",
-                                       "Nope. [w:5]Nope. Nope. Nope. Nope.", "Wait for me, Rhenaud!", "Flee like sissy!" };
-        else
-            fleeTexts = new string[] { "I'm outta here.", "I've got shit to do.", "I've got better things to do.", "Don't waste my time.", "Fuck this shit I'm out.",
-                                       "Nah, I don't like you.", "I just wanted to walk\ra bit. Leave me alone.", "You're cute, I won't kill you :3",
-                                       "Better safe than sorry.", "Do as if you've never saw\rthem and walk away.", "I'll kill you last.",
-                                       "Nope. [w:5]Nope. Nope. Nope. Nope.", "Wait for me, Rhenaud!", "Flee like sissy!" };
+                fleeTexts.Add(tempFleeTexts.Table.Get(i + 1).String);
+        else {
+            fleeTexts = new List<string> { "I'm outta here.",  "I've got better things to do.", "Don't waste my time.",
+                                           "Nah, I don't like you.", "I just wanted to walk\ra bit. Leave me alone.", "You're cute, I won't kill you :3",
+                                           "Better safe than sorry.", "Do as if you never saw\rthem and walk away.", "I'll kill you last.",
+                                           "Nope. [w:5]Nope. Nope. Nope. Nope.", "Wait for me, Rhenaud!", "Flee like sissy!" };
+            if (!ControlPanel.instance.Safe) {
+                fleeTexts.Add("I've got shit to do.");
+                fleeTexts.Add("Fuck this shit I'm out.");
+            }
+        }
 
         /*string[] text = { "See mom, I can flee!", "LEGZ!", "It looks more like a\nreal flee.", "/me flees", "*flees*", "To infinity and beyond!",
                             "Yeah, that's the secret.\nI hope you liked it!"};*/
 
-        ActionDialogResult(new TextMessage[] { new RegularMessage(fleeTexts[Math.RandomRange(0, fleeTexts.Length)]) }, UIState.ENEMYDIALOGUE);
+        ActionDialogResult(new TextMessage[] { new RegularMessage(fleeTexts[Math.RandomRange(0, fleeTexts.Count)]) }, UIState.ENEMYDIALOGUE);
         fleeSwitch = true;
 
         Camera.main.GetComponent<AudioSource>().Pause();
@@ -1554,21 +1554,6 @@ public class UIController : MonoBehaviour {
             return;
         if (encounterHasUpdate)
             encounter.TryCall("Update");
-
-        ParticleSystem[] pss = GameObject.FindObjectsOfType<ParticleSystem>();
-        //while (pss.Length > psList.Count)
-        //    psList.Add(true);
-        int a = pss.Length;
-        for (int i = 0; i < a; i++) {
-            //if (pss[i].IsAlive() &&!psList[i])
-            //    psList[i] = true;
-            if (!pss[i].IsAlive() && pss[i].gameObject.name.Contains("MonsterDuster(Clone)")) {
-                pss[i].gameObject.SetActive(false);
-                //psList.RemoveAt(i);
-                //Debug.Log(i);
-                i--; a--;
-            }
-        }
 
         if (frozenState != UIState.PAUSE)
             return;

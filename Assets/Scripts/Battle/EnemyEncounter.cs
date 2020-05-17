@@ -7,7 +7,7 @@ public class EnemyEncounter : MonoBehaviour {
     public LuaEnemyController[] enemies;
     public Vector2[] enemyPositions;
     internal float waveTimer;
-    protected int turnCount = 0;
+    public int turnCount = 0;
     protected GameObject[] enemyInstances;
 
     public string EncounterText { get; set; }

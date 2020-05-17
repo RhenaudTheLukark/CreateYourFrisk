@@ -17,7 +17,7 @@ public class BulletPool : MonoBehaviour {
     private void Start() {
         instance = this;
         bPrefab = Resources.Load<LuaProjectile>("Prefabs/LUAProjectile 1");
-        
+
         pool.Clear();
         for (int i = 0; i < POOLSIZE; i++)
             createPooledBullet();
@@ -51,8 +51,8 @@ public class BulletPool : MonoBehaviour {
     /// </summary>
     /// <param name="p">Projectile to return</param>
     public void Requeue(Projectile p) {
-        if (p.transform.parent != GameObject.Find("BulletPool").transform)
-            p.transform.SetParent(GameObject.Find("BulletPool").transform);
+        if (p.transform.parent != gameObject.transform)
+            p.transform.SetParent(gameObject.transform);
         p.GetComponent<RectTransform>().position = new Vector2(-999, -999);
         p.gameObject.SetActive(false);
         pool.Enqueue(p);

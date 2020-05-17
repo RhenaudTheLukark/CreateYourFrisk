@@ -133,7 +133,7 @@ public class LuaEnemyController : EnemyController {
         get { return script.GetVar("defensemisstext").String; }
         set { script.SetVar("defensemisstext", DynValue.NewString(value)); }
     }
-    
+
     public string NoAttackMissText {
         get { return script.GetVar("noattackmisstext").String; }
         set { script.SetVar("noattackmisstext", DynValue.NewString(value)); }
@@ -171,6 +171,17 @@ public class LuaEnemyController : EnemyController {
         set { script.SetVar("cancheck", DynValue.NewBoolean(value)); }
     }
 
+    public override string DialoguePrefix {
+        get {
+            DynValue dialoguePrefix = script.GetVar("dialogueprefix");
+            if (dialoguePrefix == null || dialoguePrefix.Type == DataType.Nil)
+                return "[effect:rotate]";
+            return dialoguePrefix.String;
+        }
+
+        set { script.SetVar("dialogueprefix", DynValue.NewString(value)); }
+    }
+
     public override bool Unkillable {
         get {
             DynValue checkVal = script.GetVar("unkillable");
@@ -200,7 +211,7 @@ public class LuaEnemyController : EnemyController {
                 return "";
             return voiceVal.String;
         }
-     
+
         set { script.SetVar("voice", DynValue.NewString(value)); }
     }
 
@@ -314,7 +325,7 @@ public class LuaEnemyController : EnemyController {
     }
 
     /// <summary>
-    /// Call function to grey out enemy and pop the smoke particles, and mark it as spared. 
+    /// Call function to grey out enemy and pop the smoke particles, and mark it as spared.
     /// </summary>
     public void DoSpare() {
         if (!inFight)
@@ -330,6 +341,7 @@ public class LuaEnemyController : EnemyController {
         for (int i = 0; i < particles.Length; i++)
             particles[i].position = particlePos + particles[i].velocity.normalized * 5;
         spareSmoke.SetParticles(particles, particles.Length);
+        spareSmoke.gameObject.transform.SetParent(UIController.instance.psContainer.transform);
 
         // The actually relevant part of sparing code.
         GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.4f);
@@ -388,7 +400,7 @@ public class LuaEnemyController : EnemyController {
             transform.SetParent(GameObject.Find("LuaEnemyEncounterGO").transform, true);
         } else {
             foreach (LuaEnemyController luaec in GameObject.FindObjectsOfType<LuaEnemyController>())
-                if (luaec.transform.parent.name == "arena_container" && luaec.index <= index && 
+                if (luaec.transform.parent.name == "arena_container" && luaec.index <= index &&
                     ((isUnderArena && luaec.transform.GetSiblingIndex() < GameObject.Find("arena_border_outer").transform.GetSiblingIndex()) ||!isUnderArena))  count++;
             if (!isUnderArena) count++;
             transform.SetParent(GameObject.Find("arena_container").transform, true);

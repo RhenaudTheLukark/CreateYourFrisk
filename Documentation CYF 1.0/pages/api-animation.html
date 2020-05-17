@@ -48,7 +48,7 @@ it's w3c valid, at least
                         <li class="li-indent new"><a href="api-functions-main.html">Misc. Functions</a></li>
                         <li class="li-indent new"><a href="api-functions-player.html">The Player Object</a></li>
                         <li class="li-indent new"><a href="api-functions-script.html">The Script Object</a></li>
-                        <li class="li-indent new"><a href="api-functions-audio.html">The Audio Object</a></li>
+                        <li class="li-indent"><a href="api-functions-audio.html">The Audio Object</a></li>
                         <li class="li-indent new"><a href="api-functions-newaudio.html"><span class="CYF"></span> The NewAudio Object</a></li>
                         <li class="li-indent new"><a href="api-functions-input.html">The Input Object</a></li>
 						<li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
@@ -60,21 +60,24 @@ it's w3c valid, at least
                     <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
                     <li class="active new" style="margin-left:5px;">> Sprites &amp; Animation <</li>
                     <li class="new"><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
-                    <li><a href="api-keys.html"><span class="CYF"></span> Key List</a></li>
                 <li class="li-header">Overworld</li>
                     <li class="new"><a href="overworld.html"><span class="CYF"></span> Basics</a></li>
                     <li><a href="overworld-howto-map.html"><span class="CYF"></span> How to create a map</a></li>
                     <li><a href="overworld-howto-event.html"><span class="CYF"></span> How to create an event</a></li>
                     <li><a href="overworld-howto-animevent.html"><span class="CYF"></span> How to animate an event</a></li>
                     <li class="new"><a href="overworld-howto-shop.html"><span class="CYF"></span> How to create a shop</a></li>
-                    <li class="new"><a href="overworld-object-general.html"><span class="CYF"></span> The General Object</a></li>
-                    <li class="new"><a href="overworld-object-event.html"><span class="CYF"></span> The Event Object</a></li>
-                    <li class="new"><a href="overworld-object-player.html"><span class="CYF"></span> The Player Object</a></li>
-                    <li><a href="overworld-object-screen.html"><span class="CYF"></span> The Screen Object</a></li>
-                    <li><a href="overworld-object-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
-                    <li><a href="overworld-object-map.html"><span class="CYF"></span> The Map Object</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li class="li-indent">Overworld Objects:</li>
+                        <li class="li-indent new"><a href="overworld-object-general.html"><span class="CYF"></span> The General Object</a></li>
+                        <li class="li-indent new"><a href="overworld-object-event.html"><span class="CYF"></span> The Event Object</a></li>
+                        <li class="li-indent new"><a href="overworld-object-player.html"><span class="CYF"></span> The Player Object</a></li>
+                        <li class="li-indent"><a href="overworld-object-screen.html"><span class="CYF"></span> The Screen Object</a></li>
+                        <li class="li-indent"><a href="overworld-object-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
+                        <li class="li-indent new"><a href="overworld-object-map.html"><span class="CYF"></span> The Map Object</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                 <li class="li-header">Resources</li>
                     <li><a href="../media/dialogoptions.png">Dialog bubble names</a></li>
+                    <li><a href="api-keys.html"><span class="CYF"></span> Key List</a></li>
             </ul>
         </nav>
     </div>
@@ -86,8 +89,8 @@ it's w3c valid, at least
                 a result it is now in its own section.</p>
             <p>
                 <br><span class="function"><span class="CYF"></span> CreateLayer(<span class="string"></span> name, 
-                <span class="string"></span> position = "BelowArenaLayer", <span class="boolean"></span> below = false) [E/M/W]</span>
-                Creates a layer named <span class="term">name</span> that sprites can be placed in. To create your new sprite layer, you'll need to choose a pre-existing layer.
+                <span class="string"></span> position = "BelowArena", <span class="boolean"></span> below = false) returns <span class="boolean"></span> [E/M/W]</span>
+                Creates a layer named <span class="term">name</span> that sprites can be placed in. To create your new sprite layer, you'll need to choose a pre-existing layer. <span class="new"></span> Returns <span class="term">true</span> if the layer was successfully created, <span class="term">false</span> otherwise.
                 <br><br>
                 <span class="term">position</span> can be one of three values:
                 <ul>
@@ -128,7 +131,8 @@ it's w3c valid, at least
                 and higher numbers moving it above other elements in sequence.
                 <br><br>
                 The best way to see what order sprites come in in their respective layers is to download Unity, playtest your mod in it, and
-                look at the order of game objects in the Inspector.
+                look at the order of game objects in the Inspector. See <span class="ref">Overworld - Basics</span> for instructions on this (even
+                if you don't plan to use the Overworld).
                 <br><br>
                 <span class="function new"><span class="CYF"></span> CreateSprite(<span class="string"></span> spritename, 
                 <span class="number"></span> childNumber = -1) returns <span class="userdata">sprite</span> [E/M/W]</span>
@@ -350,7 +354,7 @@ it's w3c valid, at least
                     original color, so if you want full control over the color, make sure your sprite is white. <i>Black areas are not affected by 
                     coloration.</i>
                     <br><br>
-                    <span class="CYF"></span>: You can provide a 4th value, which sets the alpha (transparency) of the sprite.
+                    You can provide a 4th value, which sets the alpha (transparency) of the sprite.
             </p><br>
             
             <p>
@@ -376,7 +380,7 @@ it's w3c valid, at least
                 <br><br>
                 Default value: <span class="term">"BelowArena"</span> (or <span class="term">"Default"</span> in the Overworld)
                 <br><br>
-                Overworld Event sprites can not have their layer set.
+                Overworld Event sprites and Text Objects letter sprites can not have their layers set.
             </p><br>
             
             <p>
@@ -393,12 +397,13 @@ it's w3c valid, at least
                 This will make the original sprite move along with the object it's parented to.
                 <br><br>
                 <span class="CYF"></span> NOTE: If you are in the <i>Overworld</i>, you can NOT use this to parent sprites to Event objects' sprites,
-                or vice versa.
+                or vice versa.<br>
+                Text Object letter sprites can <i>only</i> be parented to other Text Object letter sprites.
             </p><br>
             
             <p>
                 <span class="function new"><span class="CYF"></span> sprite.Mask(<span class="string"></span> mode)</span></span>
-                Sets the masking mode of this sprite object. Does not function for Overworld Event sprites!
+                Sets the masking mode of this sprite object. Does not function for Overworld Event sprites or Text Object letter sprites!
                 <br><br>
                 Available modes are:
                 <ul>

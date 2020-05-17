@@ -9,7 +9,7 @@ public class LuaScreenOW {
 
     public delegate void LoadedAction(string coroName, object args, string evName);
     [MoonSharpHidden] public static event LoadedAction StCoroutine;
-    
+
     //I know, there's WAY too much parameters in here, but I don't have the choice right now.
     //If I find a way to get the Table's text from DynValues, I'll gladly reduce the number of
     //parameters of this, but right now, even if it is very painful to enter directly 6 or 10 parameters,
@@ -67,7 +67,7 @@ public class LuaScreenOW {
         if (GameObject.Find("Image" + id))
             EventManager.instance.luaevow.Remove("Image" + id);
         else
-            Debug.LogWarning("The image #" + id + " doesn't exist.");
+            UnitaleUtil.Warn("The image #" + id + " doesn't exist.", false);
         appliedScript.Call("CYFEventNextCommand");
     }
 
@@ -96,7 +96,7 @@ public class LuaScreenOW {
             if (a == 0)
                 EventManager.instance.luaevow.Remove("Tone");
             appliedScript.Call("CYFEventNextCommand");
-        } else 
+        } else
             StCoroutine("ISetTone", new object[] { waitEnd, r, g, b, a }, appliedScript.GetVar("_internalScriptName").String);
     }
 

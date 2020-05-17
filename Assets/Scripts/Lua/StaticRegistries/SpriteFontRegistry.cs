@@ -31,7 +31,7 @@ public static class SpriteFontRegistry {
         //return null;
     }
 
-    public static void Init() {
+    public static void init() {
         dict.Clear();
         /*if (initialized)
             return;*/
@@ -91,7 +91,11 @@ public static class SpriteFontRegistry {
         string xmlPath = FileLoader.requireFile("Sprites/UI/Fonts/" + fontName + ".xml", false);
         if (xmlPath == null)
             return null;
-        xml.Load(xmlPath);
+        try { xml.Load(xmlPath); }
+        catch (XmlException ex) {
+            UnitaleUtil.DisplayLuaError("Instanciating a font", "An error was encountered while loading the font \"" + fontName + "\":\n\n" + ex.Message);
+            return null;
+        }
         Dictionary<char, Sprite> fontMap = LoadBuiltInFont(xml["font"]["spritesheet"], fontPath);
 
         UnderFont underfont = null;

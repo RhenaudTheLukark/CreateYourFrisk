@@ -43,13 +43,13 @@ public class ItemBoxUI : MonoBehaviour {
             go.AddComponent<TextManager>();
             TextManager tm = go.GetComponent<TextManager>();
             tm.transform.SetParent(transform);
-            tm.transform.position = new Vector3(80, 410 - (i * 32));
+            tm.transform.localPosition = new Vector3(80, 410 - (i * 32));
             inventory.Add(tm);
 
             LuaSpriteController sprite = (LuaSpriteController) (SpriteUtil.MakeIngameSprite("px", -1).UserData.Object);
             sprite._img.transform.SetParent(transform);
             sprite.SetPivot(0, 0.5f);
-            sprite.MoveToAbs(92, 386 - (i * 32));
+            sprite.MoveToAbs(Misc.cameraX + 92, Misc.cameraY + 386 - (i * 32));
             sprite.xscale = 190;
             sprite.color = new float[] { 1f, 0f, 0f };
             inventorySprites.Add(sprite);
@@ -61,13 +61,13 @@ public class ItemBoxUI : MonoBehaviour {
             go.AddComponent<TextManager>();
             TextManager tm = go.GetComponent<TextManager>();
             tm.transform.SetParent(transform);
-            tm.transform.position = new Vector3(372, 410 - (i * 32));
+            tm.transform.localPosition = new Vector3(372, 410 - (i * 32));
             boxContents.Add(tm);
 
             LuaSpriteController sprite = (LuaSpriteController) (SpriteUtil.MakeIngameSprite("px", -1).UserData.Object);
             sprite._img.transform.SetParent(transform);
             sprite.SetPivot(0, 0.5f);
-            sprite.MoveToAbs(384, 386 - (i * 32));
+            sprite.MoveToAbs(Misc.cameraX + 384, Misc.cameraY + 386 - (i * 32));
             sprite.xscale = 190;
             sprite.color = new float[] { 1f, 0f, 0f };
             boxContentsSprites.Add(sprite);
@@ -127,7 +127,7 @@ public class ItemBoxUI : MonoBehaviour {
     }
 
     void RefreshDisplay() {
-        player.transform.position = new Vector3(inventoryColumn ? 58 : 350, 390 - (lineIndex * 32), GameObject.Find("utHeartMenu").transform.position.z);
+        player.transform.position = new Vector3(Misc.cameraX + (inventoryColumn ? 58 : 350), Misc.cameraY + 390 - (lineIndex * 32), GameObject.Find("utHeartMenu").transform.position.z);
 
         for (int i = 0; i < Inventory.inventorySize; i++) {
             TextManager tm = inventory[i];

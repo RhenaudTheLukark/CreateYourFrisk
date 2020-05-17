@@ -9,7 +9,7 @@ public class TwitchEffectLetter : TextEffectLetter {
 
     public TwitchEffectLetter(Letter letter, float intensity = 2.0f) : base(letter) {
         this.intensity = intensity != 0 ? intensity : 2.0f;
-        nextWigInFrames += (int)(wigFrameVariety * UnityEngine.Random.value);
+        nextWigInFrames = (int)(wigFrameVariety * UnityEngine.Random.value);
     }
 
     protected override void UpdateInternal() {

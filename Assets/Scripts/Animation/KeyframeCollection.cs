@@ -8,7 +8,7 @@ public class KeyframeCollection : MonoBehaviour {
     internal LoopMode loop = LoopMode.LOOP;
     public float totalTime;
     public Keyframe EMPTY_KEYFRAME = new Keyframe(SpriteRegistry.EMPTY_SPRITE);
-    
+
     public bool paused = false;
 
     public enum LoopMode { ONESHOT, ONESHOTEMPTY, LOOP }
@@ -40,7 +40,7 @@ public class KeyframeCollection : MonoBehaviour {
             return keyframes[index];
         }
     }
-    
+
     // Gets the index of the current sprite.
     public int getIndex() {
         int index;
@@ -48,7 +48,7 @@ public class KeyframeCollection : MonoBehaviour {
             index = (int)((currTime % totalTime) / timePerFrame);
         else
             index = (int)(currTime / timePerFrame);
-        
+
         return index + 1;
     }
 

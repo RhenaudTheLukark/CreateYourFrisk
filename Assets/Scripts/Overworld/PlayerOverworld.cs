@@ -47,7 +47,7 @@ public class PlayerOverworld : MonoBehaviour {
     private CYFAnimator animator;
 
     //private bool lockedCamera = false;    //Used to stop the camera's position refresh
-    
+
     public int UIPos = 0; // 0: Auto-decide UI position; 1: Bottom; 2: Top
 
     //Start overrides the Start function of MovingObject
@@ -124,8 +124,8 @@ public class PlayerOverworld : MonoBehaviour {
         PlayerPos.GetComponent<SpriteRenderer>().color = new Color(color.r, color.g, color.b, 1);
 
         GameObject.Find("black").GetComponent<Image>().color = new Color(0, 0, 0, 0);
-        GameObject.Find("utHeart").GetComponent<Image>().color = new Color(GameObject.Find("utHeart").GetComponent<Image>().color.r, GameObject.Find("utHeart").GetComponent<Image>().color.g,
-                                                                           GameObject.Find("utHeart").GetComponent<Image>().color.b, 0);
+        Image utHeart = GameObject.Find("utHeart").GetComponent<Image>();
+        utHeart.color = new Color(utHeart.color.r, utHeart.color.g, utHeart.color.b, 0);
 
         StartCoroutine(TextCoroutine());
     }
@@ -209,6 +209,8 @@ public class PlayerOverworld : MonoBehaviour {
             textmgr.transform.parent.parent.SetAsFirstSibling();
             textmgr.SetTextQueue(null);
             textmgr.DestroyChars();
+            textmgr.SetHorizontalSpacing(textmgr.Charset.CharSpacing);
+            textmgr.SetVerticalSpacing(0);
             textmgr.SetTextFrameAlpha(0);
             if (EventManager.instance.script != null)
                 EventManager.instance.script.Call("CYFEventNextCommand");
@@ -259,7 +261,7 @@ public class PlayerOverworld : MonoBehaviour {
         }
 
         int horizontal = 0;     //Used to store the horizontal move direction
-        int vertical = 0;       //Used to store the vertical move direction        
+        int vertical = 0;       //Used to store the vertical move direction
         int currentDirection = 0;
         //If you locked the player, do nothing
         if (!PlayerNoMove) {
@@ -295,7 +297,7 @@ public class PlayerOverworld : MonoBehaviour {
                 CloseMenu(true);
         menuRunning[4] = false;
     }
-    
+
     //Moves the object
     public void Move(float xDir, float yDir, GameObject go) {
         Transform transform = go.transform;
@@ -505,8 +507,7 @@ public class PlayerOverworld : MonoBehaviour {
             PlayerPos.GetComponent<SpriteRenderer>().color = new Color(color.r, color.g, color.b, 1);
 
             GameObject.Find("black").GetComponent<Image>().color = new Color(0, 0, 0, 0);
-            GameObject.Find("utHeart").GetComponent<Image>().color = new Color(GameObject.Find("utHeart").GetComponent<Image>().color.r, GameObject.Find("utHeart").GetComponent<Image>().color.g,
-                                                                               GameObject.Find("utHeart").GetComponent<Image>().color.b, 0);
+            utHeart.color = new Color(utHeart.color.r, utHeart.color.g, utHeart.color.b, 0);
         }
 
         //Launch the battle
@@ -633,7 +634,7 @@ public class PlayerOverworld : MonoBehaviour {
                                      Mathf.Round(dimPlx.y) > 480 ? (dimPlx.y / 2 + (backgroundSize.y - dimPlx.y) * ((pos.y - 240) / (backgroundSize.y - 480))) : t.position.y, t.position.z);
         }
     }
-    
+
     public static void AutoSetUIPos() {
         if (instance.UIPos == 0) {
             float cameraOffset = (GameObject.Find("Main Camera OW").GetComponent<RectTransform>().position.y - 240);
@@ -643,35 +644,26 @@ public class PlayerOverworld : MonoBehaviour {
         } else
             SetUIPos(instance.UIPos == 2 ? true : false);
     }
-    
+
     public static void SetUIPos(bool top = false) {
         instance.UIPos = top ? 2 : 1;
         float cameraOffset = (GameObject.Find("Main Camera OW").GetComponent<RectTransform>().position.y - 240);
 
+        RectTransform textframe = GameObject.Find("textframe_border_outer").GetComponent<RectTransform>();
+        RectTransform menustat = GameObject.Find("menustat_border_outer").GetComponent<RectTransform>();
+
         // Inverted position
         if (top) {
             // Text box
-            GameObject.Find("textframe_border_outer").GetComponent<RectTransform>().position = new Vector3(
-                        GameObject.Find("textframe_border_outer").GetComponent<RectTransform>().position.x,
-                        318 + cameraOffset,
-                        GameObject.Find("textframe_border_outer").GetComponent<RectTransform>().position.z);
+            textframe.position = new Vector3(textframe.position.x, 318 + cameraOffset, textframe.position.z);
             // Stat box
-            GameObject.Find("menustat_border_outer").GetComponent<RectTransform>().localPosition = new Vector3(
-                        GameObject.Find("menustat_border_outer").GetComponent<RectTransform>().localPosition.x,
-                        -192,
-                        GameObject.Find("menustat_border_outer").GetComponent<RectTransform>().localPosition.z);
+            menustat.localPosition = new Vector3(menustat.localPosition.x, -192, menustat.localPosition.z);
         // Normal position
         } else {
             // Text box
-            GameObject.Find("textframe_border_outer").GetComponent<RectTransform>().position = new Vector3(
-                        GameObject.Find("textframe_border_outer").GetComponent<RectTransform>().position.x,
-                        20 + cameraOffset,
-                        GameObject.Find("textframe_border_outer").GetComponent<RectTransform>().position.z);
+            textframe.position = new Vector3(textframe.position.x, 8 + cameraOffset, textframe.position.z);
             // Stat box
-            GameObject.Find("menustat_border_outer").GetComponent<RectTransform>().localPosition = new Vector3(
-                        GameObject.Find("menustat_border_outer").GetComponent<RectTransform>().localPosition.x,
-                        78,
-                        GameObject.Find("menustat_border_outer").GetComponent<RectTransform>().localPosition.z);
+            menustat.localPosition = new Vector3(menustat.localPosition.x, 78, menustat.localPosition.z);
         }
     }
 
@@ -685,10 +677,10 @@ public class PlayerOverworld : MonoBehaviour {
            18-27 : Stat */
         foreach (TextManager txt in txtmgrs)
             txt.SetHorizontalSpacing(2);
-        
+
         instance.UIPos = 0;
         AutoSetUIPos();
-        
+
         GameObject.Find("TextManager OW").GetComponent<TextManager>().SetText(new TextMessage("[noskipatall]", false, false));
         GameObject.Find("menustat_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 1);
         GameObject.Find("menuchoice_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 1);
@@ -801,11 +793,32 @@ public class PlayerOverworld : MonoBehaviour {
                                             instance.menuRunning[1] = false;
                                         } else if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED) {
                                             instance.uiAudio.PlayOneShot(AudioClipRegistry.GetSound("menuconfirm"));
-                                            yield return CloseMenu();
+                                            for (int i = 7; i <= 17; i++) txtmgrs[i].DestroyChars();
+                                            GameObject.Find("item_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 0);
+                                            GameObject.Find("item_interior").GetComponent<Image>().color = new Color(0, 0, 0, 0);
+                                            GameObject.Find("utHeartMenu").GetComponent<Image>().color = new Color(c.r, c.g, c.b, 0);
+                                            instance.menuRunning[3] = true;
                                             switch (index2) {
                                                 case 0:
                                                     instance.textmgr.SetEffect(null);
                                                     Inventory.UseItem(index);
+                                                    //Update the stat text managers again, which means you can see the item's effects immediately
+                                                    txtmgrs[0].SetText(new TextMessage("[noskipatall]" + PlayerCharacter.instance.Name, false, true));
+                                                    if (GlobalControls.crate) {
+                                                        txtmgrs[1].SetText(new TextMessage("[noskipatall][font:menu]LV " + PlayerCharacter.instance.LV, false, true));
+                                                        txtmgrs[2].SetText(new TextMessage("[noskipatall][font:menu]PH " + (int)PlayerCharacter.instance.HP + "/" + PlayerCharacter.instance.MaxHP, false, true));
+                                                        txtmgrs[3].SetText(new TextMessage("[noskipatall][font:menu]G  " + PlayerCharacter.instance.Gold, false, true));
+                                                        txtmgrs[4].SetText(new TextMessage("[noskipatall]" + (Inventory.inventory.Count > 0 ? "" : "[color:808080]") + "TEM", false, true));
+                                                        txtmgrs[5].SetText(new TextMessage("[noskipatall]TAST", false, true));
+                                                        txtmgrs[6].SetText(new TextMessage("[noskipatall]LECL", false, true));
+                                                    } else {
+                                                        txtmgrs[1].SetText(new TextMessage("[noskipatall][font:menu]LV " + PlayerCharacter.instance.LV, false, true));
+                                                        txtmgrs[2].SetText(new TextMessage("[noskipatall][font:menu]HP " + (int)PlayerCharacter.instance.HP + "/" + PlayerCharacter.instance.MaxHP, false, true));
+                                                        txtmgrs[3].SetText(new TextMessage("[noskipatall][font:menu]G  " + PlayerCharacter.instance.Gold, false, true));
+                                                        txtmgrs[4].SetText(new TextMessage("[noskipatall]" + (Inventory.inventory.Count > 0 ? "" : "[color:808080]") + "ITEM", false, true));
+                                                        txtmgrs[5].SetText(new TextMessage("[noskipatall]STAT", false, true));
+                                                        txtmgrs[6].SetText(new TextMessage("[noskipatall]CELL", false, true));
+                                                    }
                                                     break;
                                                 case 1:
                                                     string str;
@@ -824,6 +837,9 @@ public class PlayerOverworld : MonoBehaviour {
                                                     Inventory.RemoveItem(index);
                                                     break;
                                             }
+                                            while (instance.PlayerNoMove)
+                                                yield return 0;
+                                            yield return CloseMenu(true);
                                         }
                                         yield return 0;
                                     }

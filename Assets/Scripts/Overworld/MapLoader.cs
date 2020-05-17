@@ -55,7 +55,7 @@ public static class MapLoader {
                 }
         }
         return letters;
-    } 
+    }
 
     public static Sprite[] AtlasFromXml(XmlNode sheetNode, Sprite source) {
         try {

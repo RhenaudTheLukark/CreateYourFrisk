@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class LuaEventOW {
     //private TextManager textmgr;
     public ScriptWrapper appliedScript;
-    
+
     public delegate void LoadedAction(string coroName, object args, string evName);
     [MoonSharpHidden] public static event LoadedAction StCoroutine;
 
@@ -178,7 +178,7 @@ public class LuaEventOW {
 
     [CYFEventFunction] public void Stop() {
         if (EventManager.instance.coroutines.ContainsKey(appliedScript)) StopCoroutine();
-        else                                                             EventManager.instance.EndEvent();                                                         
+        else                                                             EventManager.instance.EndEvent();
     }
 
     [CYFEventFunction] public void StopCoroutine(string eventName = "thisevent") {
@@ -201,7 +201,7 @@ public class LuaEventOW {
     [CYFEventFunction] public void Remove(string eventName) {
         GameObject go = GameObject.Find(eventName);
         if (!go)
-            Debug.LogWarning("Event.Remove: The event " + eventName + " doesn't exist but you tried to remove it.");
+            UnitaleUtil.Warn("Event.Remove: The event " + eventName + " doesn't exist but you tried to remove it.", false);
         else {
             EventOW ev = go.GetComponent<EventOW>();
             if (ev != null)

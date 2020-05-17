@@ -48,7 +48,7 @@ it's w3c valid, at least
                         <li class="li-indent new"><a href="api-functions-main.html">Misc. Functions</a></li>
                         <li class="li-indent new"><a href="api-functions-player.html">The Player Object</a></li>
                         <li class="li-indent new"><a href="api-functions-script.html">The Script Object</a></li>
-                        <li class="li-indent new"><a href="api-functions-audio.html">The Audio Object</a></li>
+                        <li class="li-indent"><a href="api-functions-audio.html">The Audio Object</a></li>
                         <li class="li-indent new"><a href="api-functions-newaudio.html"><span class="CYF"></span> The NewAudio Object</a></li>
                         <li class="li-indent new"><a href="api-functions-input.html">The Input Object</a></li>
 						<li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
@@ -60,21 +60,24 @@ it's w3c valid, at least
                     <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
                     <li class="new"><a href="api-animation.html">Sprites &amp; Animation</a></li>
                     <li class="active new" style="margin-left:5px;">> <span class="CYF"></span> The Text Object <</li>
-                    <li><a href="api-keys.html"><span class="CYF"></span> Key List</a></li>
                 <li class="li-header">Overworld</li>
                     <li class="new"><a href="overworld.html"><span class="CYF"></span> Basics</a></li>
                     <li><a href="overworld-howto-map.html"><span class="CYF"></span> How to create a map</a></li>
                     <li><a href="overworld-howto-event.html"><span class="CYF"></span> How to create an event</a></li>
                     <li><a href="overworld-howto-animevent.html"><span class="CYF"></span> How to animate an event</a></li>
                     <li class="new"><a href="overworld-howto-shop.html"><span class="CYF"></span> How to create a shop</a></li>
-                    <li class="new"><a href="overworld-object-general.html"><span class="CYF"></span> The General Object</a></li>
-                    <li class="new"><a href="overworld-object-event.html"><span class="CYF"></span> The Event Object</a></li>
-                    <li class="new"><a href="overworld-object-player.html"><span class="CYF"></span> The Player Object</a></li>
-                    <li><a href="overworld-object-screen.html"><span class="CYF"></span> The Screen Object</a></li>
-                    <li><a href="overworld-object-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
-                    <li><a href="overworld-object-map.html"><span class="CYF"></span> The Map Object</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li class="li-indent">Overworld Objects:</li>
+                        <li class="li-indent new"><a href="overworld-object-general.html"><span class="CYF"></span> The General Object</a></li>
+                        <li class="li-indent new"><a href="overworld-object-event.html"><span class="CYF"></span> The Event Object</a></li>
+                        <li class="li-indent new"><a href="overworld-object-player.html"><span class="CYF"></span> The Player Object</a></li>
+                        <li class="li-indent"><a href="overworld-object-screen.html"><span class="CYF"></span> The Screen Object</a></li>
+                        <li class="li-indent"><a href="overworld-object-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
+                        <li class="li-indent new"><a href="overworld-object-map.html"><span class="CYF"></span> The Map Object</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                 <li class="li-header">Resources</li>
                     <li><a href="../media/dialogoptions.png">Dialog bubble names</a></li>
+                    <li><a href="api-keys.html"><span class="CYF"></span> Key List</a></li>
             </ul>
         </nav>
     </div>
@@ -113,6 +116,9 @@ it's w3c valid, at least
                     be -1, which will auto compute the height of the bubble. However, bubbles have a minimum height of 40.
                     <br>Example: <span class="term">150</span></li><br>
                 </ul>
+                NOTE: To allow for using properties such as <span class="term">Text.SetFont</span> and <span class="term">Text.color</span> on the same frame as creating the text object, a one-frame delay is implemented by default: The text object will not create its letters or start typing until one frame after you call <span class="term">CreateText</span>. As a consequence, expect a few properties such as <span class="term">Text.color</span> and <span class="term">Text.Getletters</span> to run into issues if you run them on the same frame you use <span class="term">CreateText</span>.
+                <br><br>
+                If you need to disable the one-frame delay, start your first line of text with the <span class="ref">Text Command</span> <span class="term">[instant]</span>. And if you need to disable <i>that</i> too, follow it up with <span class="term">[instant:stop]</span>.
             </p>
             <p>
                 <br><span class="function">Text.Remove()</span>
@@ -208,6 +214,43 @@ it's w3c valid, at least
                 <br><br>So, if your text object's text table is <span class="term">{"Text 1", "Text 2"}</span>, then <span class="term">"Text 1"</span> is line 0, and <span class="term">"Text 2"</span> is line 1.
             </p>
             <p>
+                <br><span class="new function"><span class="luatable"><span class="userdata">sprite</span></span> Text.GetLetters()</span>
+                Returns a table containing sprite objects representing every letter to be displayed in the text object's current line of text. Note that even if a text object has not finished typing yet, all characters it will type are still accessible this way.
+                <h4>Letter sprite objects can not have their layer changed, can not run <span class="term">sprite.Mask</span>, and can only be parented to other letter sprites.</h4>
+                <br>NOTE: Accessing this table generates the table anew every time. To save on resources, store this table to a local variable before doing any operations on it. Even code such as <span class="term">for i = 1, #text.GetLetters() do</span> is a bad idea.
+                <br><br>
+                It is recommended to use this property in coordination with the <span class="ref">Game Event</span> <span class="term">OnTextAdvance</span>. You may also have some difficulty if you use this on the same frame as creating the text - read the note under <span class="term">CreateText</span> for more information.
+                <br><br><br>
+                Here is an example of using <span class="term">Text.GetLetters</span> to apply offset and rotation to every letter.
+                <br><div class="code-container"><pre class="brush: lua">local t = CreateText({"Some example text for testing!"}, {40, 400}, 560, "Top")
+t.HideBubble()
+t.progressmode = "none"
+
+function OnTextAdvance(text, final)
+    if text == t and final == false then -- optional if you only have one text object
+        local letters = t.GetLetters()
+        
+        for i = 1, #letters do
+            letters[i].y = math.sin(i) * 3
+            letters[i].rotation = math.sin(i * 1.5) * 6
+        end
+    end
+end
+            </pre></div>
+            Alternatively, if you want it all done on the first frame, it's much more compact:
+            <br><div class="code-container"><pre class="brush: lua">local t = CreateText({"[instant]Some example text for testing!"}, {40, 400}, 560, "Top")
+t.HideBubble()
+t.progressmode = "none"
+
+local letters = t.GetLetters()
+
+for i = 1, #letters do
+    letters[i].y = math.sin(i) * 3
+    letters[i].rotation = math.sin(i * 1.5) * 6
+end
+            </pre></div>
+            </p>
+            <p>
                 <br><span class="function">Text.SkipLine()</span>
                 This function skips to the end of the text object's current text, as if using the text command <span class="term">[instant]</span>.<br>
                 <span class="new"></span>If <span class="term">playerskipdocommand</span> is true, this function will behave the same as a player skip.
@@ -244,6 +287,16 @@ it's w3c valid, at least
                 Sets the text object's parent.<br>The text object will follow around the parent object as it moves.
                 <br><br>
                 NOTE: If you are in the <i>Overworld</i>, you can NOT use this to parent text objects to Event objects' sprites.
+            </p>
+            <p>
+                <br><span class="new function">Text.SetAnchor(<span class="number"></span> x, <span class="number"></span> y)</span>
+                If this text object has a parent set via <span class="term">Text.SetParent</span>, this will control its anchor point
+                (the relative point on the parent sprite that the text object will follow if the parent sprite gets scaled).
+                <br><br>
+                <span class="term">x</span> and <span class="term">y</span> should usually both be between <span class="term">0</span> and <span class="term">1</span>.
+                However, you are free to use numbers outside of this range as well.
+                <br><br>
+                Works exactly the same as <span class="term">sprite.SetAnchor</span> (see <span class="ref">Sprites &amp; Animation</span>).
             </p>
             <p>
                 <br><span class="function"><span class="number"></span> Text.xscale,<br>

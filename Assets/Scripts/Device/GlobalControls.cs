@@ -9,7 +9,7 @@ using MoonSharp.Interpreter;
 /// Controls that should be active on all screens. Pretty much a hack to allow people to reset. Now it's more useful.
 /// </summary>
 public class GlobalControls : MonoBehaviour {
-    public static string CYFversion       = "0.6.4";
+    public static string CYFversion       = "0.6.5";
     public static string OverworldVersion = "0.6.4";
     public static int frame = 0;
     public static float overworldTimestamp = 0f;
@@ -119,7 +119,7 @@ public class GlobalControls : MonoBehaviour {
     /// Control checking, and way more.
     /// </summary>
     void Update () {
-        DiscordControls.Update();
+		DiscordControls.Update();
         #if UNITY_STANDALONE_WIN
             if (fullscreenSwitch == 1)
                 StartCoroutine(RepositionWindow());
@@ -127,7 +127,6 @@ public class GlobalControls : MonoBehaviour {
                 fullscreenSwitch--;
         #endif
 
-        stopScreenShake = false;
         if (isInFight || UnitaleUtil.IsOverworld)
             frame ++;
 
@@ -137,14 +136,12 @@ public class GlobalControls : MonoBehaviour {
         else                          lastSceneUnitale = false;
 
         // Activate Debugger
-        if (UserDebugger.instance && Input.GetKeyDown(KeyCode.F9)) {
-            if (UserDebugger.instance.gameObject.activeSelf)
-                GameObject.Find("Text").transform.SetParent(UserDebugger.instance.gameObject.transform);
+        if (UserDebugger.instance && Input.GetKeyDown(KeyCode.F9) && UserDebugger.instance.canShow) {
             UserDebugger.instance.gameObject.SetActive(!UserDebugger.instance.gameObject.activeSelf);
             Camera.main.GetComponent<FPSDisplay>().enabled = UserDebugger.instance.gameObject.activeSelf;
         // Activate Hitbox Debugger
         } else if (isInFight && Input.GetKeyDown(KeyCode.H) && sceneName != "Error" && UserDebugger.instance.gameObject.activeSelf)
-            GameObject.Find("Main Camera").GetComponent<ProjectileHitboxRenderer>().enabled = !GameObject.Find("Main Camera").GetComponent<ProjectileHitboxRenderer>().enabled;
+            gameObject.GetComponent<ProjectileHitboxRenderer>().enabled = !gameObject.GetComponent<ProjectileHitboxRenderer>().enabled;
         // Exit a battle or the Error scene
         else if (Input.GetKeyDown(KeyCode.Escape) && (canTransOW.Contains(sceneName) || isInFight)) {
             if (isInFight && LuaEnemyEncounter.script.GetVar("unescape").Boolean && sceneName != "Error")
@@ -236,6 +233,7 @@ public class GlobalControls : MonoBehaviour {
     public void ShakeScreen(float duration, float intensity, bool isIntensityDecreasing) {
         if (!screenShaking) {
             screenShaking = true;
+            stopScreenShake = false;
             StartCoroutine("IShakeScreen", new object[] { duration, intensity, isIntensityDecreasing });
         }
     }

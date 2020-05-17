@@ -43,6 +43,7 @@ sysinfo.txt
 *.apk
 *.unitypackage
 /bin
+/Assets/Editor/Output
 
 # External mods
 /Assets/Mods/*

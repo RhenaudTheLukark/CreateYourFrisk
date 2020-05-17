@@ -54,6 +54,7 @@ public class TextManager : MonoBehaviour {
     private bool firstChar = false;
     internal float hSpacing = 3;
     internal float vSpacing = 0;
+    private GameObject textframe;
     private LuaSpriteController mugshot;
     private string[] mugshotList = null;
     private string finalMugshot;
@@ -130,8 +131,10 @@ public class TextManager : MonoBehaviour {
         // SetFont(SpriteFontRegistry.F_UI_DIALOGFONT);
         timePerLetter = singleFrameTiming;
 
-        if (UnitaleUtil.IsOverworld && GameObject.Find("textframe_border_outer"))
+        if (UnitaleUtil.IsOverworld && GameObject.Find("textframe_border_outer")) {
+            textframe = GameObject.Find("textframe_border_outer");
             mugshot = new LuaSpriteController(GameObject.Find("Mugshot").GetComponent<Image>());
+        }
     }
 
     private void Start() {
@@ -243,7 +246,8 @@ public class TextManager : MonoBehaviour {
             mugshots.Add("mugshots/");
 
         bool mugshotSet = false;
-        if (mugshot != null && mugshot._img != null)
+        if (mugshot != null && mugshot._img != null) {
+            mugshot.StopAnimation();
             if ((mugshots.Count > 1 || (mugshots[0] != "mugshots/" && mugshots[0] != "mugshots/null")) && text != null) {
                 try {
                     if (mugshots.Count > 1) {
@@ -270,6 +274,7 @@ public class TextManager : MonoBehaviour {
                 if (gameObject.name == "TextManager OW")
                     self.localPosition = new Vector3(-267, self.localPosition.y, self.localPosition.z);
             }
+        }
         _textMaxWidth = mugshotSet ? 417 : 534;
     }
 
@@ -322,21 +327,21 @@ public class TextManager : MonoBehaviour {
                         print("currentY from ShowLine (" + textQueue[currentLine].Text + ") = " + self.position.y + " + " + offset.y + " - " + Charset.LineSpacing + " = " + currentY);*/
                     currentCharacter = 0;
                     currentReferenceCharacter = 0;
-                    /*letterEffect = "none";
-                    textEffect = null;
+                    letterEffect = "none";
+                    /*textEffect = null;
                     letterIntensity = 0;*/
                     // letterSpeed = 1;
                     instantActive = textQueue[line].ShowImmediate;
                     SpawnText(forceNoAutoLineBreak);
                     //if (!overworld)
                     //    UIController.instance.encounter.CallOnSelfOrChildren("AfterText");
-                    if (UnitaleUtil.IsOverworld && GameObject.Find("textframe_border_outer") && this == PlayerOverworld.instance.textmgr) {
+                    if (UnitaleUtil.IsOverworld && textframe != null && this == PlayerOverworld.instance.textmgr) {
                         if (textQueue[line].ActualText) {
-                            if (GameObject.Find("textframe_border_outer").GetComponent<Image>().color.a == 0)
+                            if (textframe.GetComponent<Image>().color.a == 0)
                                 SetTextFrameAlpha(1);
                             blockSkip = false;
                         } else {
-                            if ((GameObject.Find("textframe_border_outer").GetComponent<Image>().color.a == 1))
+                            if ((textframe.GetComponent<Image>().color.a == 1))
                                 SetTextFrameAlpha(0);
                             blockSkip = true;
                             this.DestroyChars();
@@ -344,9 +349,8 @@ public class TextManager : MonoBehaviour {
                     }
 
                     // Move the text up a little if there are more than 3 lines so they can possibly fit in the arena
-                    if (!GlobalControls.retroMode && !UnitaleUtil.IsOverworld && UIController.instance && this == UIController.instance.textmgr
-                                                  && (UIController.instance.state == UIController.UIState.ACTIONSELECT || UIController.instance.state == UIController.UIState.DIALOGRESULT)) {
-                        int lines = textQueue[line].Text.Split('\n').Length > 3 ? 4 : 3;
+                    if (!GlobalControls.retroMode && !UnitaleUtil.IsOverworld && UIController.instance && this == UIController.instance.textmgr) {
+                        int lines = (textQueue[line].Text.Split('\n').Length > 3 && (UIController.instance.state == UIController.UIState.ACTIONSELECT || UIController.instance.state == UIController.UIState.DIALOGRESULT)) ? 4 : 3;
                         Vector3 pos = self.localPosition;
 
                         // remove the offset
@@ -363,8 +367,8 @@ public class TextManager : MonoBehaviour {
                         int lines = textQueue[line].Text.Split('\n').Length;
                         if (lines >= 4) lines = 4;
                         else            lines = 3;
-                        Vector3 pos = GameObject.Find("TextManager OW").GetComponent<RectTransform>().localPosition;
-                        GameObject.Find("TextManager OW").GetComponent<RectTransform>().localPosition = new Vector3(pos.x, 22 + ((lines - 1) * Charset.LineSpacing / 2), pos.z);
+                        Vector3 pos = gameObject.GetComponent<RectTransform>().localPosition;
+                        gameObject.GetComponent<RectTransform>().localPosition = new Vector3(pos.x, 22 + ((lines - 1) * Charset.LineSpacing / 2), pos.z);
                     }
                 }
     }
@@ -374,9 +378,9 @@ public class TextManager : MonoBehaviour {
         Image[] images = null;
 
         if (UnitaleUtil.IsOverworld) {
-            imagesChild = GameObject.Find("textframe_border_outer").GetComponentsInChildren<Image>();
+            imagesChild = textframe.GetComponentsInChildren<Image>();
             images = new Image[imagesChild.Length + 1];
-            images[0] = GameObject.Find("textframe_border_outer").GetComponent<Image>();
+            images[0] = textframe.GetComponent<Image>();
         } else {
             imagesChild = GameObject.Find("arena_border_outer").GetComponentsInChildren<Image>();
             images = new Image[imagesChild.Length + 1];
@@ -423,6 +427,12 @@ public class TextManager : MonoBehaviour {
             while (currentCharacter < letterReferences.Length) {
                 if (letterReferences[currentCharacter] != null && Charset.Letters.ContainsKey(textQueue[currentLine].Text[currentCharacter])) {
                     letterReferences[currentCharacter].enabled = true;
+                    switch (letterEffect.ToLower()) {
+                        case "twitch": letterReferences[currentCharacter].GetComponent<Letter>().effect = new TwitchEffectLetter(letterReferences[currentCharacter].GetComponent<Letter>(), letterIntensity);   break;
+                        case "rotate": letterReferences[currentCharacter].GetComponent<Letter>().effect = new RotatingEffectLetter(letterReferences[currentCharacter].GetComponent<Letter>(), letterIntensity); break;
+                        case "shake":  letterReferences[currentCharacter].GetComponent<Letter>().effect = new ShakeEffectLetter(letterReferences[currentCharacter].GetComponent<Letter>(), letterIntensity);    break;
+                        default:       letterReferences[currentCharacter].GetComponent<Letter>().effect = null;                                                                                                 break;
+                    }
                     currentReferenceCharacter++;
                     if (textQueue[currentLine].Text[currentCharacter] == '\t') {
                         float indice = currentX / 320f;
@@ -593,7 +603,7 @@ public class TextManager : MonoBehaviour {
 
                                         skipImmediate = true;
                                         skipCommand = command;
-                                        InUpdateControlCommand(DynValue.NewString(command), i);
+                                        // InUpdateControlCommand(DynValue.NewString(command), i);
                                     }
                             } else if (command.Length < 7 || command.Substring(0, 7) != "instant")
                                 PreCreateControlCommand(command);
@@ -845,7 +855,7 @@ public class TextManager : MonoBehaviour {
             case "font":
                 UnderFont uf = SpriteFontRegistry.Get(cmds[1]);
                 if (uf == null)
-                    throw new CYFException("The font \"" + cmds[1] + "\" doesn't exist.\nYou should check if you made a typo, or if the font really is in your mod.");
+                    UnitaleUtil.DisplayLuaError("[font:x] usage", "The font \"" + cmds[1] + "\" doesn't exist.\nYou should check if you made a typo, or if the font really is in your mod.");
                 SetFont(uf);
                 if (GetType() == typeof(LuaTextManager))
                     ((LuaTextManager) this).UpdateBubble();
@@ -960,24 +970,22 @@ public class TextManager : MonoBehaviour {
                     }
                 }
 
-                // Third:  Find all commands between the current position and the "end point"
-                for (int i = index; i < pos; i++)
-                    if (currentText[i] == '[' && (pos - i < 3 || currentText.Substring(i, 3) != "[w:") && (pos - i < 9 || currentText.Substring(i, 9) != "[waitfor:")
-                        && (pos - i < 8 || currentText.Substring(i, 8) != "[instant")) {
-                        // Only execute the command if `instantCommand` is true
-                        if (instantCommand)
-                            try {
-                                InUpdateControlCommand(DynValue.NewString(currentText.Substring(i + 1, currentText.IndexOf(']', i) - (i + 1))));
-                            } catch {}
-                    }
+                // Third: Show all letters (and execute all commands, if applicable) between `index` and `pos`
+                bool soundPlayed = true;
+                int lastLetter = -1;
+                int destination = System.Math.Min(pos, letterReferences.Length);
+                while (currentCharacter < destination)
+                    HandleShowLetter(ref soundPlayed, ref lastLetter);
 
-                // Fourth: Display the next set of actually-created letter sprites between `index` and `pos`
+                // This is a catch-all.
+                // If a line of text starts with [instant], the above code will not display the letters it passes over,
+                // due to how HandleShowLetter is coded.
                 for (int i = index; i < pos; i++) {
                     if (letterReferences[i] != null)
                         letterReferences[i].enabled = true;
                 }
 
-                // Fifth:  Update variables
+                // Fourth:  Update variables
                 if (pos < currentText.Length) {
                     instantActive  = false;
                     instantCommand = false;
@@ -1138,6 +1146,8 @@ public class TextManager : MonoBehaviour {
         else                                                                                    HP = newhp;
         if (HP > ControlPanel.instance.HPLimit)                                                 HP = ControlPanel.instance.HPLimit;
         PlayerCharacter.instance.HP = HP;
+        if (!UnitaleUtil.IsOverworld)
+            UIStats.instance.setHP(HP);
     }
 
     private float CreateNumber(string str) {

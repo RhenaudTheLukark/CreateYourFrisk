@@ -186,7 +186,7 @@ public class FightUIController : MonoBehaviour {
         // do not update the attack UI if the ATTACKING state is frozen
         if (UIController.instance.frozenState != UIController.UIState.PAUSE)
             return;
-        
+
         if (!ArenaManager.instance.firstTurn) {
             for (int i = 0; i < allFightUiInstances.Count; i++)
                 if (!boundFightUiInstances.Contains(allFightUiInstances[i]))

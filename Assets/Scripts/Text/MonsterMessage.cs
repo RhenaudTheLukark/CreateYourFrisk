@@ -1,3 +1,3 @@
 ﻿public class MonsterMessage : TextMessage {
-    public MonsterMessage(string text) : base("[effect:rotate]" + text, false, false) { }
+    public MonsterMessage(string text) : base(text, false, false) { }
 }

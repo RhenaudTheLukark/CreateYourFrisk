@@ -25,18 +25,19 @@ public static class Inventory {
             string outString = "";
             int outInt       =  0;
             if (!addedItems.Contains(item) && !NametoDesc.TryGetValue(item, out outString) && !NametoShortName.TryGetValue(item, out outString) && !NametoType.TryGetValue(item, out outInt) && !NametoPrice.TryGetValue(item, out outInt))
-                throw new CYFException("Inventory.SetInventory: The item \"" + item + "\" was not found.\n\nAre you sure you called Inventory.AddCustomItems first?");
+                throw new CYFException("Inventory.SetInventory: The item \"" + item + "\" was not found." + (UnitaleUtil.IsOverworld ? "" : "\n\nAre you sure you called Inventory.AddCustomItems first?"));
         }
-        
+
         inventory = new List<UnderItem>(new UnderItem[] { });
         if (items != null)
             for (int i = 0; i < items.Length; i++) {
-                if (i == inventorySize)
-                    UnitaleUtil.WriteInLogAndDebugger("[WARN]The inventory can only contain " + inventorySize + " items, yet you tried to add the item \"" + items[i] + "\" as item number " + (i + 1) + ".");
-                else {
+                if (i == inventorySize) {
+                    UnitaleUtil.Warn("The inventory can only contain " + inventorySize + " items, yet you tried to add the item \"" + items[i] + "\" as item number " + (i + 1) + ".");
+                    break;
+                } else {
                     // Search through addedItemsTypes to find the type of the new item
                     int type = 0;
-                    
+
                     // Get the index of the new item in addedItems
                     for (int j = 0; j < addedItems.Count; j++) {
                         if (addedItems[j] == items[i])
@@ -61,7 +62,7 @@ public static class Inventory {
         int outInt       =  0;
         if (!addedItems.Contains(Name) && !NametoDesc.TryGetValue(Name, out outString) && !NametoShortName.TryGetValue(Name, out outString) &&
             !NametoType.TryGetValue(Name, out outInt) && !NametoPrice.TryGetValue(Name, out outInt))
-            throw new CYFException("Inventory.AddItem: The item \"" + Name + "\" was not found.\n\nAre you sure you called Inventory.AddCustomItems first?");
+            throw new CYFException("Inventory.AddItem: The item \"" + Name + "\" was not found." + (UnitaleUtil.IsOverworld ? "" : "\n\nAre you sure you called Inventory.AddCustomItems first?"));
         inventory.Add(new UnderItem(Name));
         return true;
     }
@@ -86,10 +87,7 @@ public static class Inventory {
     }
 
     public static bool TryCall(string func, DynValue[] param = null) {
-        bool overworld = false;
-        if (GameObject.Find("Main Camera OW"))
-            overworld = true;
-        if (!overworld)
+        if (!UnitaleUtil.IsOverworld)
             try {
                 if (LuaEnemyEncounter.script.GetVar(func) == null)
                     return false;
@@ -126,7 +124,7 @@ public static class Inventory {
                     return;
                 }
         }
-        ItemLibrary(Name, type, out mess, out amount);
+        ItemLibrary(Name, type, out mess, out amount, out replacement);
         if (type == 1 || type == 2) {
             tempAmount = (int)amount;
             mess = ChangeEquipment(ID, mess);
@@ -140,12 +138,14 @@ public static class Inventory {
         if (!UnitaleUtil.IsOverworld) {
             if (!UIController.instance.battleDialogued && mess.Length != 0)
                 UIController.instance.ActionDialogResult(mess, UIController.UIState.ENEMYDIALOGUE);
-        } else
+        } else {
             GameObject.Find("TextManager OW").GetComponent<TextManager>().SetTextQueue(mess);
-       
+            GameObject.Find("TextManager OW").transform.parent.parent.SetAsLastSibling();
+        }
+
         return;
     }
-    
+
     public static void AddItemsToDictionaries() {
         NametoDesc.Add("Testing Dog", "A dog that tests something.\rDon't ask me what, I don't know.");        NametoShortName.Add("Testing Dog", "TestDog");
         NametoType.Add("Testing Dog", 3);                                                                      NametoPrice.Add("Testing Dog", 0);
@@ -282,7 +282,7 @@ public static class Inventory {
         NametoDesc.Add("Cloudy Glasses", "Glasses marred with wear.\rIncreases INV by 9.");                    NametoShortName.Add("Cloudy Glasses", "ClodGlass");
         NametoType.Add("Cloudy Glasses", 2);                                                                   NametoPrice.Add("Cloudy Glasses", 35);
 
-        NametoDesc.Add("Temmie Armor", "The things you can do with a\rcollege education! Raises ATTACK when\rworn. Recovers HP every other\rturn. INV up slightly."); 
+        NametoDesc.Add("Temmie Armor", "The things you can do with a\rcollege education! Raises ATTACK when\rworn. Recovers HP every other\rturn. INV up slightly.");
         NametoShortName.Add("Temmie Armor", "Temmie AR");       NametoType.Add("Temmie Armor", 2);             NametoPrice.Add("Temmie Armor", 9999);
 
         NametoDesc.Add("Stained Apron", "Heals 1 HP every other turn.");                                       NametoShortName.Add("Stained Apron", "StainApro");
@@ -294,20 +294,20 @@ public static class Inventory {
         NametoDesc.Add("Heart Locket", "It says \"Best Friends Forever.\"");                                   NametoShortName.Add("Heart Locket", "<--Locket");
         NametoType.Add("Heart Locket", 2);                                                                     NametoPrice.Add("Heart Locket", 500);
 
-        NametoDesc.Add("The Locket", "You can feel it beating.");                                              NametoShortName.Add("The Locket", "TheLocket");         
+        NametoDesc.Add("The Locket", "You can feel it beating.");                                              NametoShortName.Add("The Locket", "TheLocket");
         NametoType.Add("The Locket", 2);                                                                       NametoPrice.Add("The Locket", 99999);
     }
 
     public static void UpdateEquipBonuses() {
-        TextMessage[] mess = new TextMessage[] { }; float amount;
-        ItemLibrary(PlayerCharacter.instance.Weapon, 1, out mess, out amount);
+        TextMessage[] mess = new TextMessage[] { }; float amount; string replacement;
+        ItemLibrary(PlayerCharacter.instance.Weapon, 1, out mess, out amount, out replacement);
         PlayerCharacter.instance.WeaponATK = (int)amount;
-        ItemLibrary(PlayerCharacter.instance.Armor, 2, out mess, out amount);
+        ItemLibrary(PlayerCharacter.instance.Armor, 2, out mess, out amount, out replacement);
         PlayerCharacter.instance.ArmorDEF = (int)amount;
     }
 
-    public static void ItemLibrary(string name, int type, out TextMessage[] mess, out float amount) {
-        mess = new TextMessage[] { }; amount = 0;
+    public static void ItemLibrary(string name, int type, out TextMessage[] mess, out float amount, out string replacement) {
+        mess = new TextMessage[] { }; amount = 0; replacement = null;
         switch (type) {
             case 0:
                 switch (name) {
@@ -356,6 +356,7 @@ public static class Inventory {
                         mess = new TextMessage[] { new TextMessage(sentenceCream, true, false) }; break;
                     case "Bisicle":
                         amount = 11;
+						replacement = "Unisicle";
                         mess = new TextMessage[] { new TextMessage("You ate one half of\rthe Bisicle.[w:10]\nYou recovered 11 HP!", true, false) };
                         break;
                     case "Unisicle":
@@ -479,11 +480,11 @@ public static class Inventory {
                         mess = new TextMessage[] { new TextMessage("Through DETERMINATION,\rthe dream became true.[w:10]\nYou recovered 17 HP!", true, false) };
                         break;
                     default:
-                        UnitaleUtil.WriteInLogAndDebugger("[WARN]The item doesn't exist in this pool.");
+                        UnitaleUtil.Warn("The item doesn't exist in this pool.");
                         break;
                 }
                 if (amount != 0)
-                    if (UnitaleUtil.IsOverworld) mess[0].SetText("[health:" + amount + ", killable]" + mess[0].Text);
+                    if (UnitaleUtil.IsOverworld) EventManager.instance.luaplow.setHP(PlayerController.instance.HP + amount);
                     else                         PlayerController.instance.Hurt(-amount, 0);
                 break;
             case 1:
@@ -496,7 +497,7 @@ public static class Inventory {
                     case "Empty Gun": amount = 12; break;
                     case "Worn Dagger": amount = 15; break;
                     case "Real Knife": amount = 99; break;
-                    default: UnitaleUtil.WriteInLogAndDebugger("[WARN]The item doesn't exist in this pool."); break;
+                    default: UnitaleUtil.Warn("The item doesn't exist in this pool."); break;
                 }
                 break;
             case 2:
@@ -509,14 +510,14 @@ public static class Inventory {
                     case "Cowboy Hat": amount = 12; break;
                     case "Heart Locket": amount = 15; break;
                     case "The Locket": amount = 99; break;
-                    default: UnitaleUtil.WriteInLogAndDebugger("[WARN]The item doesn't exist in this pool."); break;
+                    default: UnitaleUtil.Warn("The item doesn't exist in this pool."); break;
                 }
                 break;
             default:
                 switch (name) {
                     case "Testing Dog": mess = new TextMessage[] { new TextMessage("This dog is testing something.", true, false), new TextMessage("I must leave it alone.", true, false) }; break;
                     case "Stick": mess = new TextMessage[] { new TextMessage("You throw the stick.[w:10]\nNothing happens.", true, false) }; break;
-                    default: UnitaleUtil.WriteInLogAndDebugger("[WARN]The item doesn't exist in this pool."); break;
+                    default: UnitaleUtil.Warn("The item doesn't exist in this pool."); break;
                 }
                 break;
         }
@@ -593,8 +594,8 @@ public static class Inventory {
                 PlayerCharacter.instance.Weapon = "Stick";
                 PlayerCharacter.instance.WeaponATK = 0;
             } else if (str == PlayerCharacter.instance.Weapon && PlayerCharacter.instance.Weapon != "Stick" && NametoDesc.ContainsValue(str)) {
-                TextMessage[] mess; float amount;
-                ItemLibrary(str, 1, out mess, out amount);
+                TextMessage[] mess; float amount; string replacement;
+                ItemLibrary(str, 1, out mess, out amount, out replacement);
                 PlayerCharacter.instance.WeaponATK = (int)amount;
             }
 
@@ -606,8 +607,8 @@ public static class Inventory {
                     }
                 PlayerCharacter.instance.Armor = "Bandage";
             } else if (str == PlayerCharacter.instance.Armor && PlayerCharacter.instance.Armor != "Bandage" && NametoDesc.ContainsValue(str)) {
-                TextMessage[] mess; float amount;
-                ItemLibrary(str, 2, out mess,  out amount);
+                TextMessage[] mess; float amount; string replacement;
+                ItemLibrary(str, 2, out mess,  out amount, out replacement);
                 PlayerCharacter.instance.ArmorDEF = (int)amount;
             }
         }

@@ -113,8 +113,13 @@ span.new::before {
     background-position: center;
     background-size: 10px 22px;
     
-    image-rendering: -moz-crisp-edges;
-    image-rendering: crisp-edges;
+    image-rendering: optimizeSpeed;             /*                     */
+    image-rendering: -moz-crisp-edges;          /* Firefox             */
+    image-rendering: -o-crisp-edges;            /* Opera               */
+    image-rendering: -webkit-optimize-contrast; /* Chrome (and Safari) */
+    image-rendering: pixelated;                 /* Chrome as of 2019   */
+    image-rendering: optimize-contrast;         /* CSS3 Proposed       */
+    -ms-interpolation-mode: nearest-neighbor;   /* IE8+                */
 }
 
 .nav-sidebar li.new::before {
@@ -196,8 +201,14 @@ h4 {
     width    : 100%;
     top      : 0px;
     z-index  : -1;
-    image-rendering: -moz-crisp-edges;
-    image-rendering: crisp-edges;
+    
+    image-rendering: optimizeSpeed;             /*                     */
+    image-rendering: -moz-crisp-edges;          /* Firefox             */
+    image-rendering: -o-crisp-edges;            /* Opera               */
+    image-rendering: -webkit-optimize-contrast; /* Chrome (and Safari) */
+    image-rendering: pixelated;                 /* Chrome as of 2019   */
+    image-rendering: optimize-contrast;         /* CSS3 Proposed       */
+    -ms-interpolation-mode: nearest-neighbor;   /* IE8+                */
 }
 
 .li-header{

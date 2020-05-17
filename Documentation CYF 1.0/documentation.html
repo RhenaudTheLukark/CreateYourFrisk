@@ -48,7 +48,7 @@ it's w3c valid, at least
                         <li class="li-indent new"><a href="pages/api-functions-main.html">Misc. Functions</a></li>
                         <li class="li-indent new"><a href="pages/api-functions-player.html">The Player Object</a></li>
                         <li class="li-indent new"><a href="pages/api-functions-script.html">The Script Object</a></li>
-                        <li class="li-indent new"><a href="pages/api-functions-audio.html">The Audio Object</a></li>
+                        <li class="li-indent"><a href="pages/api-functions-audio.html">The Audio Object</a></li>
                         <li class="li-indent new"><a href="pages/api-functions-newaudio.html"><span class="CYF"></span> The NewAudio Object</a></li>
                         <li class="li-indent new"><a href="pages/api-functions-input.html">The Input Object</a></li>
                         <li class="li-indent"><a href="pages/api-functions-time.html">The Time Object</a></li>
@@ -60,21 +60,24 @@ it's w3c valid, at least
                     <li><a href="pages/cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
                     <li class="new"><a href="pages/api-animation.html">Sprites &amp; Animation</a></li>
                     <li class="new"><a href="pages/cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
-                    <li><a href="pages/api-keys.html"><span class="CYF"></span> Key List</a></li>
                 <li class="li-header">Overworld</li>
                     <li class="new"><a href="pages/overworld.html"><span class="CYF"></span> Basics</a></li>
                     <li><a href="pages/overworld-howto-map.html"><span class="CYF"></span> How to create a map</a></li>
                     <li><a href="pages/overworld-howto-event.html"><span class="CYF"></span> How to create an event</a></li>
                     <li><a href="pages/overworld-howto-animevent.html"><span class="CYF"></span> How to animate an event</a></li>
                     <li class="new"><a href="pages/overworld-howto-shop.html"><span class="CYF"></span> How to create a shop</a></li>
-                    <li class="new"><a href="pages/overworld-object-general.html"><span class="CYF"></span> The General Object</a></li>
-                    <li class="new"><a href="pages/overworld-object-event.html"><span class="CYF"></span> The Event Object</a></li>
-                    <li class="new"><a href="pages/overworld-object-player.html"><span class="CYF"></span> The Player Object</a></li>
-                    <li><a href="pages/overworld-object-screen.html"><span class="CYF"></span> The Screen Object</a></li>
-                    <li><a href="pages/overworld-object-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
-                    <li><a href="pages/overworld-object-map.html"><span class="CYF"></span> The Map Object</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li class="li-indent">Overworld Objects:</li>
+                        <li class="li-indent new"><a href="pages/overworld-object-general.html"><span class="CYF"></span> The General Object</a></li>
+                        <li class="li-indent new"><a href="pages/overworld-object-event.html"><span class="CYF"></span> The Event Object</a></li>
+                        <li class="li-indent new"><a href="pages/overworld-object-player.html"><span class="CYF"></span> The Player Object</a></li>
+                        <li class="li-indent"><a href="pages/overworld-object-screen.html"><span class="CYF"></span> The Screen Object</a></li>
+                        <li class="li-indent"><a href="pages/overworld-object-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
+                        <li class="li-indent new"><a href="pages/overworld-object-map.html"><span class="CYF"></span> The Map Object</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                 <li class="li-header">Resources</li>
                     <li><a href="media/dialogoptions.png">Dialog bubble names</a></li>
+                    <li><a href="pages/api-keys.html"><span class="CYF"></span> Key List</a></li>
             </ul>
         </nav>
     </div>
@@ -95,72 +98,99 @@ it's w3c valid, at least
                 <span style="color:#ff0000"><u>FOR BACKWARDS COMPATIBILITY:</u></span> You can enable <b>retrocompatibility mode</b>
                 from the options screen, and it should make all Unitale mods compatible with CYF!
                 <br><br>
-                <h4>Note: Create Your Frisk v0.6.4 was built using
+                <h4>Note: Create Your Frisk v0.6.4.1 was built using
                 <b><u><a href="https://netstorage.unity3d.com/unity/83fbdcd35118/UnityDownloadAssistant-2018.2.13f1.exe">
                 Unity Personal 2018.2.13f1</a></u></b>.
                 <br>See the GitHub page
                 <b><u><a href="https://github.com/RhenaudTheLukark/CreateYourFrisk">here</a></u></b>.</h4><br>
-                <span class="new">Indicates content <u>new or changed content</u> in v0.6.4.</span>
-                <hr><br>
+                <span class="new">Indicates content <u>new or changed content</u> in v0.6.4 and its sub-versions.</span>
+                <hr>
+                <h4>Basics</h4><br>
                 <i><u>Controls</u></i><br>
-                A short little page that tells you about the controls used in Unitale and Create Your Frisk.<br>
-                <br>
+                A short little page that tells you about the controls used in Unitale and Create Your Frisk.
+                <br><br>
                 <i><u>Basic setup</u></i><br>
                 Details folder structure of mods, how the game reads folders and expects files, that kind of stuff.
-                Recommended to start with.<br>
-                <br>                
+                Recommended to start with.
+                <br><br>                
                 <i><u>Special Variables</u></i><br>
-                This section talks about the unique variables that are read from a mod's scripts and how to use these variables.<br>
-                <br>
+                This section talks about the unique variables that are read from a mod's scripts and how to use these variables.
+                <br><br>
                 <i><u>Terminology</u></i><br>
                 This is a short page on what things are called in the documentation. For instance, the white box
                 that the bullet dodging occurs in is referred to as the &quot;arena&quot;. Recommended read so you don't
-                get lost in later parts of the documentation.<br>
-                <br>
-                <i><u>API - Text commands</u></i><br>
+                get lost in later parts of the documentation.
+                <hr>
+                <h4>API</h4><br>
+                <i><u>Text commands</u></i><br>
                 This is where all the special commands are that you can use in your dialogue boxes. Text effects,
                 colours, character voices, automatic skipping, you name it. You can even add commands to run Lua
-                code!<br>
-                <br>
-                <i><u>API - Game events</u></i><br>
+                code!
+                <br><br>
+                <i><u>Game events</u></i><br>
                 If you want to get your hands dirty with Lua, these are the functions the game will use from your
                 script, and at what point they're used. Useful for if you want to have certain events occur during
                 specific times, such as before/after using an act command or item, or just before the fight starts. A
-                must-read for interactive fights.<br>
-                <br>
-                <i><u>API - Functions &amp; Objects</u></i><br>
+                must-read for interactive fights.
+                <br><br>
+                <i><u>Functions &amp; Objects</u></i><br>
                 These are most custom functions and objects that you can use in your scripts, detailing how to use them
                 and what they do. Want to control the music, check for game events or handle keyboard input? Global
                 variables so you can communicate between scripts? Need to know how much HP the player has, damage them,
                 heal them? This is where to go! Projectile management and sprite management are split off into separate
-                sections below.<br>
-                <br>
-                <i><u>API - Projectile management</u></i><br>
+                sections below.
+                <br><br>
+                <i><u>Projectile management</u></i><br>
                 This is where you can read details about how to create projectiles, what you can do with them and some
-                short examples.<br>
-                <br>
-                <i><u>API - Sprites &amp; Animation</u></i><br>
-                This section is about creating sprites and how to control them. By combining sprite functions, you can
-                create animations.<br>
-                <br>
-                <span class="CYF"></span> <i><u>API - Key List</u></i><br>
-                This section shows you the list of keys available for <span class="term">Input.GetKey(key)</span> and <span class="term">[waitfor:key]</span>.
-                <br>
-                <br>
-                <!--
-                <span class="CYF"></span> <i><u>Create Your Frisk's new features</u></i><br>
-                Pretty exhaustive list of things that I added in CYF. However, you know me: some things may be forgotten.<br>
-                <br>
-                -->
-                <span class="CYF"></span> <i><u>The Inventory Object</u></i><br>
-                This section shows you how CYF's Inventory System works. Get rid of the dogtests!<br>
-                <br>
+                short examples.
+                <br><br>
                 <span class="CYF"></span> <i><u>The Pixel-Perfect Collision System</u></i><br>
                 This section shows you how CYF's Pixel-Perfect Collision System works. Why would you use square hitboxes when
-                you have a system like this?<br><br>
+                you have a system like this?
+                <br><br>
+                <i><u>Sprites &amp; Animation</u></i><br>
+                This section is about creating sprites and how to control them. By combining sprite functions, you can
+                create animations.
+                <br><br>
                 <span class="CYF"></span> <i><u>The Text Object</u></i><br>
                 This section details the usage of CYF's Text Object. You can use it to create text anywhere at all, with any
                 font, with or without a bubble, and more!
+                <hr>
+                <h4>Overworld</h4><br>
+                <span class="CYF"></span> <i><u>Basics</u></i><br>
+                This section covers how to set up CYF on your computer with Unity, and describes in general how the Overworld
+                is set up. Read this first if you are making an overworld.
+                <br><br>
+                <span class="CYF"></span> <i><u>How to create a map</u></i><br>
+                This is where you can learn how to make a map in CYF's Overworld, with Tiled2Unity in mind.
+                <br><br>
+                <span class="CYF"></span> <i><u>How to create an event</u></i><br>
+                Events are all the different objects, interactables, and cutscenes that you can add to your map. This page
+                explains how to set them up in the Unity editor.
+                <br><br>
+                <span class="CYF"></span> <i><u>How to animate an event</u></i><br>
+                This smaller tutorial explains the CYFAnimator system in the Overworld, which removes the need to use coding
+                to set up animations on your events.
+                <br><br>
+                <span class="CYF"></span> <i><u>How to create a shop</u></i><br>
+                This page fully documents everything accessible within Shops you can set up in the Overworld.
+                <br><br>
+                <span class="CYF"></span> <i><u>Overworld Objects</u></i><br>
+                These are all the different objects you can control from within your Event scripts, and how to use them. Want
+                to show dialogue, save the game, move characters around, control the player's stats, mess with the screen,
+                and so on? These are the pages to see!
+                <br><br>
+                A few things like the Audio object are carried over here from encounters. To see
+                a list of all of them, see <span class="ref">Overworld - Basics</span>.
+                <hr>
+                <h4>Resources</h4><br>
+                <i><u>Dialog bubble names</u></i><br>
+                A list of every dialogue bubble name you can use with <span class="term">dialogbubble</span> in your monster
+                scripts, and what they look like.
+                <br><br>
+                <span class="CYF"></span> <i><u>Key List</u></i><br>
+                This section shows you the list of keys available for <span class="term">Input.GetKey(key)</span> and
+                <span class="term">[waitfor:key]</span>.
             </p>
         </div>
 		

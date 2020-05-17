@@ -8,7 +8,7 @@ using MoonSharp.Interpreter;
 public class TransitionOverworld : MonoBehaviour {
     public string FirstLevelToLoad;
     public Vector2 BeginningPosition;
-    
+
     private void Start() {
         bool isStart = false;
 
@@ -81,7 +81,7 @@ public class TransitionOverworld : MonoBehaviour {
             } catch { mapName = LuaScriptBinder.Get(null, "PlayerMap").String; }
         else
             mapName = FirstLevelToLoad;
-        
+
         if (!FileLoader.SceneExists(mapName)) {
             UnitaleUtil.DisplayLuaError("TransitionOverworld", "The map named \"" + mapName + "\" doesn't exist.");
             return;
@@ -110,12 +110,16 @@ public class TransitionOverworld : MonoBehaviour {
                     GameObject.Destroy(child2.gameObject);
             }
 
+        //Reset the player's shader between rooms. The player should realistically be the only sprite object carried between scenes.
+        if (PlayerOverworld.instance && PlayerOverworld.instance.sprctrl != null)
+            PlayerOverworld.instance.sprctrl.shader.Revert();
+
         yield return 0;
 
         Camera.main.transparencySortMode = TransparencySortMode.CustomAxis;
         Camera.main.transparencySortAxis = new Vector3(0.0f, 1.0f, 1000000.0f);
 
-        try { PlayerOverworld.instance.backgroundSize = GameObject.Find("Background").GetComponent<RectTransform>().sizeDelta * GameObject.Find("Background").GetComponent<RectTransform>().localScale.x; } 
+        try { PlayerOverworld.instance.backgroundSize = GameObject.Find("Background").GetComponent<RectTransform>().sizeDelta * GameObject.Find("Background").GetComponent<RectTransform>().localScale.x; }
         catch { UnitaleUtil.WriteInLogAndDebugger("RectifyCameraPosition: The 'Background' GameObject is missing."); }
 
         EventManager.instance.onceReload = false;
@@ -124,7 +128,7 @@ public class TransitionOverworld : MonoBehaviour {
         if (StaticInits.MODFOLDER != mi.modToLoad) {
             StaticInits.MODFOLDER = mi.modToLoad;
             StaticInits.Initialized = false;
-            StaticInits.InitAll();
+            StaticInits.InitAll(true);
             LuaScriptBinder.Set(null, "ModFolder", DynValue.NewString(StaticInits.MODFOLDER));
             if (call == "transitionoverworld") {
                 EventManager.instance.ScriptLaunched = false;
@@ -162,9 +166,8 @@ public class TransitionOverworld : MonoBehaviour {
             }
         }
 
-        GameObject.Find("utHeart").GetComponent<Image>().color = new Color(GameObject.Find("utHeart").GetComponent<Image>().color.r,
-                                                                           GameObject.Find("utHeart").GetComponent<Image>().color.g,
-                                                                           GameObject.Find("utHeart").GetComponent<Image>().color.b, 0);
+        Image utHeart = GameObject.Find("utHeart").GetComponent<Image>();
+        utHeart.color = new Color(utHeart.color.r, utHeart.color.g, utHeart.color.b, 0);
         PlayerOverworld.instance.cameraShift = Vector2.zero;
         if (call == "tphandler") {
             GameObject.Find("Player").transform.parent.position = (Vector2)neededArgs[0];

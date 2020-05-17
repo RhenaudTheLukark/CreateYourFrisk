@@ -1,11 +1,6 @@
 {
   "dependencies": {
     "com.unity.package-manager-ui": "1.9.11",
-    "com.unity.render-pipelines.core": "3.0.0-preview",
-    "com.unity.render-pipelines.high-definition": "3.0.0-preview",
-    "com.unity.render-pipelines.lightweight": "3.0.0-preview",
-    "com.unity.scriptablebuildpipeline": "1.2.1-preview",
-    "com.unity.shadergraph": "3.0.0-preview",
     "com.unity.textmeshpro": "1.2.4",
     "com.unity.modules.ai": "1.0.0",
     "com.unity.modules.animation": "1.0.0",

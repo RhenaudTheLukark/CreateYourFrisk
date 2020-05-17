@@ -8,7 +8,7 @@ public abstract class AbstractSoul {
     public AbstractSoul(PlayerController player) { speed = ControlPanel.instance.PlayerMovementPerSec; }
 
     public abstract Color color { get; }
-    
+
     public void setHalfSpeed(bool isHalfSpeed) {
         if (isHalfSpeed) speed = ControlPanel.instance.PlayerMovementHalvedPerSec;
         else             speed = ControlPanel.instance.PlayerMovementPerSec;

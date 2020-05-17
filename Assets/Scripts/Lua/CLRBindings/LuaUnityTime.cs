@@ -25,4 +25,5 @@ public class LuaUnityTime {
             else                                                               return Time.time - UIController.instance.encounter.waveBeginTime;
         }
     }
+	
 }
