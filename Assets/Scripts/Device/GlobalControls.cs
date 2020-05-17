@@ -58,6 +58,7 @@ public class GlobalControls : MonoBehaviour {
             new PlayerCharacter();
             SaveLoad.LoadAlMighty();
             LuaScriptBinder.Set(null, "ModFolder", DynValue.NewString("@Title"));
+			DiscordControls.Start();
 
             UnitaleUtil.AddKeysToMapCorrespondanceList();
 
@@ -118,6 +119,7 @@ public class GlobalControls : MonoBehaviour {
     /// Control checking, and way more.
     /// </summary>
     void Update () {
+		DiscordControls.Update();
         #if UNITY_STANDALONE_WIN
             if (fullscreenSwitch == 1)
                 StartCoroutine(RepositionWindow());

@@ -125,7 +125,8 @@ public class OptionsScript : MonoBehaviour {
         Scale.GetComponent<Button>().onClick.Invoke();
 
         // exit
-        Exit.GetComponent<Button>().onClick.AddListener(() => {SceneManager.LoadScene("ModSelect");});
+		// Discord Rich Presence
+        Exit.GetComponent<Button>().onClick.AddListener(() => {DiscordControls.StartModSelect();SceneManager.LoadScene("ModSelect");});
 
         // Crate Your Frisk
         if (GlobalControls.crate) {

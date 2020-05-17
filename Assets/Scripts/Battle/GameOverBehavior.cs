@@ -441,9 +441,11 @@ public class GameOverBehavior : MonoBehaviour {
         if (!UnitaleUtil.IsOverworld) {
             UIController.EndBattle(true);
             Destroy(gameObject);
-            if (GlobalControls.modDev)
+            if (GlobalControls.modDev) {
+				// Discord Rich Presence
+				DiscordControls.StartModSelect();
                 SceneManager.LoadScene("ModSelect");
-            else {
+            } else {
                 foreach (string str in NewMusicManager.audioname.Keys)
                     if (str == "StaticKeptAudio") {
                         NewMusicManager.Stop(str);
