@@ -33,7 +33,7 @@ public class QuickLoad : MonoBehaviour {
         SaveLoad.LoadAlMighty();
         LuaScriptBinder.Set(null, "ModFolder", DynValue.NewString("@Title"));
 
-        UnitaleUtil.AddKeysToMapCorrespondanceList();
+        //UnitaleUtil.AddKeysToMapCorrespondanceList();
 
         GlobalControls.modDev = true;
         //SceneManager.LoadScene("ModSelect");
@@ -52,6 +52,8 @@ public class QuickLoad : MonoBehaviour {
         StaticInits.InitAll();
         Debug.Log("Loading " + StaticInits.ENCOUNTER);
         GlobalControls.isInFight = true;
+		// Update Discord Rich Presence
+		DiscordControls.StartMod(modtoload);
         SceneManager.LoadScene("Battle");
 
     }

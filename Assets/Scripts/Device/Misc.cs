@@ -165,6 +165,21 @@ public class Misc {
             ScaleScreen(1, 1);
         }
     }
+    /*
+    public static string[] GetActiveWindowNames() {
+#if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
+         var processInfo = new ProcessStartInfo("cmd.exe", "powershell \"gps | where {$_.MainWindowHandle -ne 0} | select MainWindowTitle\" ");
+         processInfo.CreateNoWindow = true;
+         processInfo.UseShellExecute = true;
+ 
+         var process = Process.Start(processInfo);
+ 
+         process.WaitForExit();
+         process.Close();
+#else
+
+#endif
+    }*/
 
     public static void DestroyWindow() { Application.Quit(); }
 
@@ -246,7 +261,7 @@ public class Misc {
         }
     }
 
-    #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
+#if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
         [DllImport("user32.dll")]
         private static extern int GetActiveWindow();
         public static int window = GetActiveWindow();

@@ -369,6 +369,7 @@ public class LuaSpriteController {
             SpriteUtil.SwapSpriteFromFile(imgtemp, name);
             originalSprite = imgtemp.sprite;
             nativeSizeDelta = new Vector2(imgtemp.sprite.texture.width, imgtemp.sprite.texture.height);
+            imgtemp.material.SetTexture("_Texture", GetTexture());
         } else {
             SpriteRenderer imgtemp = img.GetComponent<SpriteRenderer>();
             SpriteUtil.SwapSpriteFromFile(imgtemp, name);
@@ -723,7 +724,8 @@ public class LuaSpriteController {
             UnitaleUtil.PlaySound("DustSound", AudioClipRegistry.GetSound("enemydust"));
         img.GetComponent<ParticleDuplicator>().Activate(this);
         if (img.gameObject.name != "player") {
-            img.SetActive(false);
+            //img.SetActive(false);
+            alpha = 0;
             if (removeObject)
                 Remove();
         }
@@ -769,6 +771,7 @@ public class LuaSpriteController {
             }
             img.GetComponent<RectTransform>().pivot = pivot;
         }
+        img.GetComponent<Image>().material.SetTexture("_Texture", GetTexture());
     }
 
     /*
@@ -784,6 +787,35 @@ public class LuaSpriteController {
         if (img.sprite != s)
             img.sprite = s;
     }*/
+
+    Texture2D GetTexture() {
+        /*
+        var croppedTexture = new Texture2D((int)img.rect.width, (int)img.rect.height);
+        var pixels = img.texture.GetPixels((int)img.textureRect.x, (int)img.textureRect.y, (int)img.textureRect.width, (int)img.textureRect.height);
+        croppedTexture.SetPixels(pixels);
+        croppedTexture.Apply();
+        return croppedTexture;*/
+        if (img.GetComponent<Image>()) {
+            return img.GetComponent<Image>().sprite.texture;
+        } else {
+            return img.GetComponent<SpriteRenderer>().sprite.texture;
+        }
+    }
+
+    
+    public void SetShader(string name) {
+        Image rend = img.GetComponent<Image>();
+        rend.material = new Material(Shader.Find(name));
+        rend.material.SetTexture("_Texture", GetTexture());
+    }
+
+    public void SetShaderProperty(string name, float value) {
+        img.GetComponent<Image>().material.SetFloat(name, value);
+    }
+
+    public void SetShaderTextureProperty(string name, LuaSpriteController value) {
+        img.GetComponent<Image>().material.SetTexture(name, value.GetTexture());
+    }
 
     void Update() {
         UpdateAnimation();

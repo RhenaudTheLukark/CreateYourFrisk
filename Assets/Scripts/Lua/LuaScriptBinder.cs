@@ -35,6 +35,8 @@ public static class LuaScriptBinder {
         UserData.RegisterType<LuaTextManager>();
         UserData.RegisterType<LuaFile>();
         UserData.RegisterType<LuaVideoController>();
+		// Discord
+		UserData.RegisterType<LuaDiscord>();
         //UserData.RegisterType<Windows>();
 
         // Overworld bindings
@@ -130,6 +132,9 @@ public static class LuaScriptBinder {
         script.Globals.Set("Misc", Win);
         DynValue TimeInfo = UserData.Create(new LuaUnityTime());
         script.Globals.Set("Time", TimeInfo);
+		// Discord
+		DynValue DiscordMgr = UserData.Create(new LuaDiscord());
+		script.Globals.Set("Discord", DiscordMgr);
         scriptlist.Add(script);
         return script;
     }

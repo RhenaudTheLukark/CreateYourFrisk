@@ -164,6 +164,8 @@ public class UIController : MonoBehaviour {
             foreach (string str in toDelete)
                 NewMusicManager.DestroyChannel(str);
             PlayerCharacter.instance.Reset();
+			// Discord Rich Presence
+			DiscordControls.StartModSelect();
             SceneManager.LoadScene("ModSelect");
         } else {
             foreach (string str in NewMusicManager.audioname.Keys)

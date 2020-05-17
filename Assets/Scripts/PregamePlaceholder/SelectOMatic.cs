@@ -203,6 +203,9 @@ public class SelectOMatic : MonoBehaviour {
             Debug.Log("Loading " + StaticInits.ENCOUNTER);
             GlobalControls.isInFight = true;
             SceneManager.LoadScene("Battle");
+
+            // Update Discord Rich Presence
+            DiscordControls.StartMod(modDirs[CurrentSelectedMod].Name);
         } catch {
             GameObject.Find("ModBackground").GetComponent<Image>().color = new Color(1f, 1f, 1f, 0.25f);
         }
