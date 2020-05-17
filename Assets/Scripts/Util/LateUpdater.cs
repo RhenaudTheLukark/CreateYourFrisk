@@ -12,14 +12,14 @@ public class LateUpdater : MonoBehaviour {
     int frametimer = 0;
 
     public static void Init() { InvokeList(lateInit); }
-	
-	void Update () {
+    
+    void Update () {
         if (frametimer > 0) {
             InvokeList(lateActions);
             Destroy(this);
         }
         frametimer++;
-	}
+    }
 
     private static void InvokeList(List<Action> l){
         foreach (Action a in l)

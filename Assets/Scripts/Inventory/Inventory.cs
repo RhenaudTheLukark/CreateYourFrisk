@@ -356,7 +356,7 @@ public static class Inventory {
                         mess = new TextMessage[] { new TextMessage(sentenceCream, true, false) }; break;
                     case "Bisicle":
                         amount = 11;
-						replacement = "Unisicle";
+                        replacement = "Unisicle";
                         mess = new TextMessage[] { new TextMessage("You ate one half of\rthe Bisicle.[w:10]\nYou recovered 11 HP!", true, false) };
                         break;
                     case "Unisicle":

@@ -8,8 +8,8 @@ public class DiscordControls {
     static string rpName = "";
     static string rpDetails = "";
     static int rpTime = 0;
-	
-	static System.DateTime epochStart = new System.DateTime(1970, 1, 1, 0, 0, 0, System.DateTimeKind.Utc);
+    
+    static System.DateTime epochStart = new System.DateTime(1970, 1, 1, 0, 0, 0, System.DateTimeKind.Utc);
 
     // Use this for initialization
     public static void Start () {
@@ -19,17 +19,17 @@ public class DiscordControls {
         //Clear();
     }
 
-	public static string getPlayingName(string name) {
-		return "Playing Mod: " + name;
-	}
-	
+    public static string getPlayingName(string name) {
+        return "Playing Mod: " + name;
+    }
+    
     public static void StartModSelect() {
-		ClearRPVars(true, true);
-		SetPresence("Selecting a Mod", "", 0);
-	}
+        ClearRPVars(true, true);
+        SetPresence("Selecting a Mod", "", 0);
+    }
 
     public static void StartMod(string name) {
-		ClearRPVars(true, true);
+        ClearRPVars(true, true);
         SetPresence(getPlayingName(name), "", 1);
     }
 
@@ -42,15 +42,15 @@ public class DiscordControls {
         if (details != "") {
             rpDetails = details;
         }
-		
-		if (time != 0) {
-			rpTime = ((int)(System.DateTime.UtcNow - epochStart).TotalSeconds) + time;
-		} else {
-			rpTime = 0;
-		}
-		
-		
-		var activityManager = discord.GetActivityManager();
+        
+        if (time != 0) {
+            rpTime = ((int)(System.DateTime.UtcNow - epochStart).TotalSeconds) + time;
+        } else {
+            rpTime = 0;
+        }
+        
+        
+        var activityManager = discord.GetActivityManager();
 
         var activity = new Discord.Activity
         {
@@ -58,12 +58,12 @@ public class DiscordControls {
             Details = rpName,
             Timestamps = {
                 Start = (remaining ? 0 : rpTime),
-				End = (remaining ? rpTime : 0)
+                End = (remaining ? rpTime : 0)
             },
-			Assets = {
-				LargeImage = "cyf_logo",
-				LargeText = "Create Your Frisk"
-			}
+            Assets = {
+                LargeImage = "cyf_logo",
+                LargeText = "Create Your Frisk"
+            }
         };
 
         activityManager.UpdateActivity(activity, (res) => {
@@ -77,11 +77,11 @@ public class DiscordControls {
             }
         });
     }
-	
-	public static void ClearRPVars(bool name = false, bool details = false) {
-		rpName = name ? "" : rpName;
-		rpDetails = details ? "" : rpDetails;
-	}
+    
+    public static void ClearRPVars(bool name = false, bool details = false) {
+        rpName = name ? "" : rpName;
+        rpDetails = details ? "" : rpDetails;
+    }
 
     public static void ClearPresence() {
         var activityManager = discord.GetActivityManager();

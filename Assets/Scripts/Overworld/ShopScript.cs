@@ -29,8 +29,8 @@ public class ShopScript : MonoBehaviour {
     public GameObject tmInfoParent, utHeart;
     public ScriptWrapper script;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start () {
         FindObjectOfType<Fading>().BeginFade(-1);
 
         tmBigTalk.SetTextQueue(new TextMessage[] { new TextMessage("[noskipatall][novoice]", false, true) });

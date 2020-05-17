@@ -14,8 +14,8 @@ public class IntroManager : MonoBehaviour {
     enum Effect { NONE, SCROLLUP, SCROLLDOWN, SCROLLLEFT, SCROLLRIGHT };
     Effect currentEffect = Effect.NONE;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start () {
         if (!SaveLoad.started) {
             StaticInits.Start();
             SaveLoad.Start();
@@ -55,9 +55,9 @@ public class IntroManager : MonoBehaviour {
         if (goToNextDirect[0] == "Y")
             timer = 0.5f;
     }
-	
-	// Update is called once per frame
-	void Update () {
+    
+    // Update is called once per frame
+    void Update () {
         timer += Time.deltaTime;
         //Effect update
         if (CheckEffect() &&!start &&!finish &&!fadeMusic)

@@ -218,8 +218,8 @@ public class GameOverBehavior : MonoBehaviour {
 
     }
 
-	// Update is called once per frame
-	void Update () {
+    // Update is called once per frame
+    void Update () {
         if (hasRevived && reviveFade2) {
             if (reviveFade2.transform.localPosition != new Vector3(0, 0, 0))
                 reviveFade2.transform.localPosition = new Vector3(0, 0, 0);
@@ -433,7 +433,7 @@ public class GameOverBehavior : MonoBehaviour {
                     EndGameOver();
                 }
             }
-	}
+    }
 
     public void EndGameOver() {
         if (!GlobalControls.modDev)
@@ -442,8 +442,8 @@ public class GameOverBehavior : MonoBehaviour {
             UIController.EndBattle(true);
             Destroy(gameObject);
             if (GlobalControls.modDev) {
-				// Discord Rich Presence
-				DiscordControls.StartModSelect();
+                // Discord Rich Presence
+                DiscordControls.StartModSelect();
                 SceneManager.LoadScene("ModSelect");
             } else {
                 foreach (string str in NewMusicManager.audioname.Keys)
