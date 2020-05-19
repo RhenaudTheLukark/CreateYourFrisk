@@ -35,25 +35,20 @@ public class DiscordControls {
 
     public static void SetPresence(string name = "", string details = "", int time = 0, bool remaining = false) {
 
-        if (name != "") {
-            rpName = name;
-        }
+        if (name != "") rpName = name;
 
-        if (details != "") {
-            rpDetails = details;
-        }
+        if (details != "") rpDetails = details;
         
-        if (time != 0) {
+        if (time != 0) 
             rpTime = ((int)(System.DateTime.UtcNow - epochStart).TotalSeconds) + time;
-        } else {
+        else 
             rpTime = 0;
-        }
+        
         
         
         var activityManager = discord.GetActivityManager();
 
-        var activity = new Discord.Activity
-        {
+        var activity = new Discord.Activity {
             State = rpDetails,
             Details = rpName,
             Timestamps = {
@@ -66,16 +61,7 @@ public class DiscordControls {
             }
         };
 
-        activityManager.UpdateActivity(activity, (res) => {
-            if (res == Discord.Result.Ok)
-            {
-                Debug.Log("Everything is fine!" + " || " + name + " || " + details);
-            }
-            else
-            {
-                Debug.Log("Failed");
-            }
-        });
+        activityManager.UpdateActivity(activity, (res) => {});
     }
     
     public static void ClearRPVars(bool name = false, bool details = false) {
@@ -85,17 +71,7 @@ public class DiscordControls {
 
     public static void ClearPresence() {
         var activityManager = discord.GetActivityManager();
-        activityManager.ClearActivity((result) =>
-        {
-            if (result == Discord.Result.Ok)
-            {
-                Debug.Log("Clear Success!");
-            }
-            else
-            {
-                Debug.Log("Clear Failed");
-            }
-        });
+        activityManager.ClearActivity((result) => {});
     }
 
     // Update is called once per frame
