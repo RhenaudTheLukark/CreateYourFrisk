@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using MoonSharp.Interpreter;
@@ -51,7 +52,6 @@ public class DiscordControls {
     
     // Returns the name with "Playing Mod: " attached to it.
     public static string getPlayingName(string name) {
-        if (!isactive) return;
         return "Playing Mod: " + name;
     }
     
