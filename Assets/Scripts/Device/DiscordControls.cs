@@ -14,11 +14,17 @@ public class DiscordControls {
     static public string[] settingNames = {"Everything", "Game Only", "Nothing"};
     
     static System.DateTime epochStart = new System.DateTime(1970, 1, 1, 0, 0, 0, System.DateTimeKind.Utc);
+    
+    static bool isactive = true;
 
     // Use this for initialization
     public static void Start () {
 
-        discord = new Discord.Discord(711497963771527219, (System.UInt64)Discord.CreateFlags.NoRequireDiscord); // Creates the object that manages the Rich Presence Commands. The first argument is the APPID, the second tells the libraries if Discord is a must or not.
+        try {
+            discord = new Discord.Discord(711497963771527219, (System.UInt64)Discord.CreateFlags.NoRequireDiscord); // Creates the object that manages the Rich Presence Commands. The first argument is the APPID, the second tells the libraries if Discord is a must or not.
+        } catch (Exception e) {
+            isactive = false;
+        }
         //ResetModName();
         //Clear();
         
@@ -28,7 +34,6 @@ public class DiscordControls {
         else
             curr_setting = (int) LuaScriptBinder.GetAlMighty(null, "CYFDiscord").Number;
         
-        Debug.Log(curr_setting);
     }
     
     public static string ChangeVisibilitySetting(int spd) { // The "speed" at which the options will go. Added so I can write out the setting at init time without changing it.
@@ -46,17 +51,20 @@ public class DiscordControls {
     
     // Returns the name with "Playing Mod: " attached to it.
     public static string getPlayingName(string name) {
+        if (!isactive) return;
         return "Playing Mod: " + name;
     }
     
     // Sets the status to "Selecting a Mod", erasing details and timer
     public static void StartModSelect() {
+        if (!isactive) return;
         ClearRPVars(true, true);
         SetPresence("Selecting a Mod", "", 0);
     }
 
     // Sets the status to "Playing a mod: ", erasing details and starting the timer
     public static void StartMod(string name) {
+        if (!isactive) return;
         ClearRPVars(true, true);
         SetPresence(getPlayingName(name), "", 1);
     }
@@ -64,6 +72,8 @@ public class DiscordControls {
     // The function that sets the Discord Rich presence status. name's and details's default value make them not change, while time's default value removes the timer.
     // The remaining boolean argument tells if Discord should run the timer backwards (as a stopwatch) or not.
     public static void SetPresence(string name = "", string details = "", int time = 0, bool remaining = false) {
+        
+        if (!isactive) return;
         
         if (name != "") rpName = name;
 
@@ -103,6 +113,7 @@ public class DiscordControls {
 
     // Update is called once per frame
     public static void Update () {
-        discord.RunCallbacks();
+        if (isactive)
+            discord.RunCallbacks();
     }
 }
