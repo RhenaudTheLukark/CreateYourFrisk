@@ -15,7 +15,7 @@ public class OptionsScript : MonoBehaviour {
     private int DescriptionTimer = 0;
 
     // game objects
-    public GameObject ResetRG, ResetAG, ClearSave, Safe, Retro, Fullscreen, Scale, Exit;
+    public GameObject ResetRG, ResetAG, ClearSave, Safe, Retro, Fullscreen, Scale, Discord, Exit;
     public Text Description;
 
     // Use this for initialization
@@ -123,6 +123,14 @@ public class OptionsScript : MonoBehaviour {
         });
         ScreenResolution.windowScale--;
         Scale.GetComponent<Button>().onClick.Invoke();
+        
+        // Change Discord Status Visibility
+        Discord.GetComponent<Button>().onClick.AddListener(() => {
+            
+            Discord.GetComponentInChildren<Text>().text = "Discord Status: " + DiscordControls.ChangeVisibilitySetting(1);
+        });
+        
+        Discord.GetComponentInChildren<Text>().text = "Discord Status: " + DiscordControls.ChangeVisibilitySetting(0);
 
         // exit
         // Discord Rich Presence
@@ -189,6 +197,12 @@ public class OptionsScript : MonoBehaviour {
                          + "This is useful for especially large screens (such as 4k monitors).\n\n"
                          + "Has no effect in Fullscreen mode.";
                 return !GlobalControls.crate ? response : Temmify.Convert(response);
+            case "Discord":
+                response = "Changes how much Discord Rich Presence should display on your profile regarding you playing Create Your Frisk.\n\n"
+                         + "<b>Everything</b>: Everything is displayed: the mod you're playing, a timestamp and a description.\n\n"
+                         + "<b>Game Only</b>: Only shows that you're playing Create Your Frisk.\n\n"
+                         + "<b>Nothing</b>: Disables Discord Rich Presence entirely.\n<b>NOTE</b>: Using the Nothing option requires to restart CYF (because Discord already knows what you are doing). You have to do the same thing if you just changed this setting to Nothing.";
+                return !GlobalControls.crate ? response : Temmify.Convert(response);
             case "Exit":
                 response = "Returns to the Mod Select screen.";
                 if (!GlobalControls.crate)
@@ -235,6 +249,9 @@ public class OptionsScript : MonoBehaviour {
                 // Scale
                 else if (mousePosY <= 180 && mousePosY > 140)
                     hoverItem = "Scale";
+                // Discord
+                else if (mousePosY <= 140 && mousePosY > 100)
+                    hoverItem = "Discord";
                 // Exit
                 else if (mousePosY <=  60 && mousePosY >  20)
                     hoverItem = "Exit";

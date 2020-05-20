@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using MoonSharp.Interpreter;
 
 public class DiscordControls {
 
@@ -8,6 +9,9 @@ public class DiscordControls {
     static string rpName = "";
     static string rpDetails = "";
     static int rpTime = 0;
+    
+    static public int curr_setting;
+    static public string[] settingNames = {"Everything", "Game Only", "Nothing"};
     
     static System.DateTime epochStart = new System.DateTime(1970, 1, 1, 0, 0, 0, System.DateTimeKind.Utc);
 
@@ -17,6 +21,27 @@ public class DiscordControls {
         discord = new Discord.Discord(711497963771527219, (System.UInt64)Discord.CreateFlags.NoRequireDiscord); // Creates the object that manages the Rich Presence Commands. The first argument is the APPID, the second tells the libraries if Discord is a must or not.
         //ResetModName();
         //Clear();
+        
+        // Gets Discord Visibility Setting
+        if (LuaScriptBinder.GetAlMighty(null, "CYFDiscord") == null)
+            curr_setting = 0;
+        else
+            curr_setting = (int) LuaScriptBinder.GetAlMighty(null, "CYFDiscord").Number;
+        
+        Debug.Log(curr_setting);
+    }
+    
+    public static string ChangeVisibilitySetting(int spd) { // The "speed" at which the options will go. Added so I can write out the setting at init time without changing it.
+        curr_setting += spd;
+        if (curr_setting >= settingNames.Length)
+            curr_setting = 0;
+        
+        if (spd > 0)
+            LuaScriptBinder.SetAlMighty(null, "CYFDiscord", DynValue.NewNumber(curr_setting), true);
+        
+        SetPresence();
+        
+        return settingNames[curr_setting];
     }
     
     // Returns the name with "Playing Mod: " attached to it.
@@ -39,7 +64,7 @@ public class DiscordControls {
     // The function that sets the Discord Rich presence status. name's and details's default value make them not change, while time's default value removes the timer.
     // The remaining boolean argument tells if Discord should run the timer backwards (as a stopwatch) or not.
     public static void SetPresence(string name = "", string details = "", int time = 0, bool remaining = false) {
-
+        
         if (name != "") rpName = name;
 
         if (details != "") rpDetails = details;
@@ -49,20 +74,20 @@ public class DiscordControls {
         else 
             rpTime = 0;
         
-        
+        if (curr_setting == 2) return;
         
         var activityManager = discord.GetActivityManager();
 
         var activity = new Discord.Activity {
-            State = rpDetails, // The details (aka second row)
-            Details = rpName, // The top row
+            State = (curr_setting == 0) ? rpDetails : "", // The details (aka second row)
+            Details = (curr_setting == 0) ? rpName : "", // The top row
             Timestamps = { // The timer being set up
-                Start = (remaining ? 0 : rpTime),
-                End = (remaining ? rpTime : 0)
+                Start = (curr_setting == 0) ? (remaining ? 0 : rpTime) : 0,
+                End = (curr_setting == 0) ? (remaining ? rpTime : 0) : 0
             },
             Assets = { // The CYF Logo
-                LargeImage = "cyf_logo",
-                LargeText = "Create Your Frisk"
+                LargeImage = (curr_setting <= 1) ? "cyf_logo" : "",
+                LargeText = (curr_setting <= 1) ? "Create Your Frisk" : ""
             }
         };
 
@@ -74,12 +99,6 @@ public class DiscordControls {
     public static void ClearRPVars(bool name = false, bool details = false) {
         rpName = name ? "" : rpName;
         rpDetails = details ? "" : rpDetails;
-    }
-
-    // Gets rid of the Discord Rich Presence thing ENTIRELY.
-    public static void ClearPresence() {
-        var activityManager = discord.GetActivityManager();
-        activityManager.ClearActivity((result) => {});
     }
 
     // Update is called once per frame
