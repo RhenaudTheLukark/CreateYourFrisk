@@ -34,7 +34,7 @@ if not "bin" in os.listdir():
 else:
     print("\"bin\" folder already exists.")
 
-# This is a list of paths to Unity. All your own if it's not in the list.
+# This is a list of paths to Unity. Add your own if it's not in the list.
 unityPath = "C:\\Program Files\\Unity\\Hub\\Editor\\2018.2.13f1\\Editor\\Unity.exe"
 if not os.path.exists(unityPath):
     unityPath = "C:\\Program Files\\Unities\\2018.2.13f1\\Editor\\Unity.exe"
@@ -46,7 +46,7 @@ if not os.path.exists(unityPath):
 # This determines if this script will attempt to use 7-Zip to package the builds after they have been created
 doPackage = True
 
-# This is a list of paths to 7-Zip. All your own if it's not in the list.
+# This is a list of paths to 7-Zip. Add your own if it's not in the list.
 sevenZPath = "C:\\Program Files (x86)\\7-Zip\\7z.exe"
 if not os.path.exists(sevenZPath):
     sevenZPath = "C:\\Program Files\\7-Zip\\7z.exe"
