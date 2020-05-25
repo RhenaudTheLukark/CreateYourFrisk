@@ -195,6 +195,8 @@ public class SelectOMatic : MonoBehaviour {
         StaticInits.Initialized = false;
         try {
             StaticInits.InitAll(true);
+            if (UnitaleUtil.firstErrorShown)
+                throw new Exception();
             Debug.Log("Loading " + StaticInits.ENCOUNTER);
             GlobalControls.isInFight = true;
             DiscordControls.StartMod(modDirs[CurrentSelectedMod].Name);

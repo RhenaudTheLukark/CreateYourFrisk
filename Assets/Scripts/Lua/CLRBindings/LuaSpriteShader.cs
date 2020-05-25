@@ -18,7 +18,7 @@ public class LuaSpriteShader {
 
         if (mode == "sprite")       this.material = go.GetComponent<Image>().material;
         else if (mode == "event")   this.material = go.GetComponent<SpriteRenderer>().material;
-        else if (mode == "camera")  this.material = CameraShader.material;
+        else if (mode == "camera")  this.material = go.GetComponent<CameraShader>().material;
     }
 
     public void Set(string bundleName, string shaderName) {
@@ -29,8 +29,9 @@ public class LuaSpriteShader {
 
         material = Material.Instantiate(ShaderRegistry.Get(bundleName, shaderName));
         if (mode == "camera") {
-            Camera.main.GetComponent<CameraShader>().enabled = true;
-            CameraShader.material = material;
+            CameraShader cs = gameObject.GetComponent<CameraShader>();
+            cs.enabled = true;
+            cs.material = material;
         } else if (mode == "event")
             gameObject.GetComponent<SpriteRenderer>().material = material;
         else
@@ -38,11 +39,36 @@ public class LuaSpriteShader {
         _isActive = true;
     }
 
+    #if UNITY_EDITOR
+        public void Test(string shaderName) {
+            if (shaderName == null)
+                throw new CYFException("shader.Test: The first argument, the name of the shader to load, is nil.");
+
+            try {
+                material = new Material(Shader.Find(shaderName));
+            } catch { throw new CYFException("The shader \"" + shaderName + "\" could not be found."); }
+            if (mode == "camera") {
+                CameraShader cs = gameObject.GetComponent<CameraShader>();
+                cs.enabled = true;
+                cs.material = material;
+            } else if (mode == "event")
+                gameObject.GetComponent<SpriteRenderer>().material = material;
+            else
+                gameObject.GetComponent<Image>().material = material;
+            _isActive = true;
+        }
+    #else
+        public void Test(string shaderName) {
+            throw new CYFException("shader.Test may only be used from within the Unity editor.");
+        }
+    #endif
+
     public void Revert() {
         material = ShaderRegistry.UI_DEFAULT_MATERIAL;
         if (mode == "camera") {
-            Camera.main.GetComponent<CameraShader>().enabled = false;
-            CameraShader.material = material;
+            CameraShader cs = gameObject.GetComponent<CameraShader>();
+            cs.enabled = false;
+            cs.material = material;
         } else if (mode == "event")
             gameObject.GetComponent<SpriteRenderer>().material = material;
         else
@@ -86,9 +112,9 @@ public class LuaSpriteShader {
         }
     }
 
-    private int IndexProperty(string name) {
+    private int IndexProperty(string name, bool get) {
         checkActive();
-        if (!material.HasProperty(name))
+        if (!material.HasProperty(name) && get)
             throw new CYFException("Shader has no property \"" + name + "\".");
 
         if (!propertyIDs.ContainsKey(name))
@@ -101,7 +127,7 @@ public class LuaSpriteShader {
 
 
     public DynValue GetColor(string name) {
-        Color color = material.GetColor(IndexProperty(name));
+        Color color = material.GetColor(IndexProperty(name, true));
         Table output = new Table(null);
         output.Set(1, DynValue.NewNumber(color.r));
         output.Set(2, DynValue.NewNumber(color.g));
@@ -116,14 +142,14 @@ public class LuaSpriteShader {
         Vector4 v4output = new Vector4((float)value.Table.Get(1).Number,
                                        (float)value.Table.Get(2).Number,
                                        (float)value.Table.Get(3).Number,
-                                       value.Table.Length > 3 ? (float)value.Table.Get(4).Number : 1);
-        material.SetColor(IndexProperty(name), v4output);
+                                       value.Table.Length > 3 ? (float)value.Table.Get(4).Number : 1f);
+        material.SetColor(IndexProperty(name, false), v4output);
     }
 
 
 
     public DynValue GetColorArray(string name) {
-        Color[] colors = material.GetColorArray(IndexProperty(name));
+        Color[] colors = material.GetColorArray(IndexProperty(name, true));
         Table output = new Table(null);
         for (var i = 0; i < colors.Length; i++) {
             Color color = colors[i];
@@ -149,37 +175,37 @@ public class LuaSpriteShader {
             Color newColor = new Color((float)item.Table.Get(1).Number,
                                        (float)item.Table.Get(2).Number,
                                        (float)item.Table.Get(3).Number,
-                                       item.Table.Length > 3 ? (float)item.Table.Get(4).Number : 1);
+                                       item.Table.Length > 3 ? (float)item.Table.Get(4).Number : 1f);
             colorarray[i] = newColor;
         }
-        material.SetColorArray(IndexProperty(name), colorarray);
+        material.SetColorArray(IndexProperty(name, false), colorarray);
     }
 
 
 
     public float GetFloat(string name) {
-        return material.GetFloat(IndexProperty(name));
+        return material.GetFloat(IndexProperty(name, true));
     }
     public void SetFloat(string name, float value) {
-        material.SetFloat(IndexProperty(name), value);
+        material.SetFloat(IndexProperty(name, false), value);
     }
 
 
 
     public float[] GetFloatArray(string name) {
-        return material.GetFloatArray(IndexProperty(name));
+        return material.GetFloatArray(IndexProperty(name, true));
     }
     public void SetFloatArray(string name, float[] value) {
-        material.SetFloatArray(IndexProperty(name), value);
+        material.SetFloatArray(IndexProperty(name, false), value);
     }
 
 
 
     public int GetInt(string name) {
-        return material.GetInt(IndexProperty(name));
+        return material.GetInt(IndexProperty(name, true));
     }
     public void SetInt(string name, int value) {
-        material.SetInt(IndexProperty(name), value);
+        material.SetInt(IndexProperty(name, false), value);
     }
 
 
@@ -244,16 +270,16 @@ public class LuaSpriteShader {
     public MatrixFourByFour Matrix(DynValue row1, DynValue row2, DynValue row3, DynValue row4) { return new MatrixFourByFour(row1, row2, row3, row4); }
 
     public MatrixFourByFour GetMatrix(string name) {
-        return new MatrixFourByFour(material.GetMatrix(IndexProperty(name)));
+        return new MatrixFourByFour(material.GetMatrix(IndexProperty(name, true)));
     }
     public void SetMatrix(string name, MatrixFourByFour value) {
-        material.SetMatrix(IndexProperty(name), value.self);
+        material.SetMatrix(IndexProperty(name, false), value.self);
     }
 
 
 
     public MatrixFourByFour[] GetMatrixArray(string name) {
-        Matrix4x4[] matrices = material.GetMatrixArray(IndexProperty(name));
+        Matrix4x4[] matrices = material.GetMatrixArray(IndexProperty(name, true));
         MatrixFourByFour[] output = new MatrixFourByFour[matrices.Length];
 
         for (int i = 0; i < matrices.Length; i++)
@@ -270,13 +296,18 @@ public class LuaSpriteShader {
         for (int i = 0; i < value.Length; i++)
             matrixArray[i] = value[i].self;
 
-        material.SetMatrixArray(IndexProperty(name), matrixArray);
+        material.SetMatrixArray(IndexProperty(name, false), matrixArray);
     }
 
 
 
+    public void SetTexture(string name, string sprite) {
+        Sprite spr = SpriteRegistry.Get(sprite);
+        material.SetTexture(IndexProperty(name, false), spr.texture);
+    }
+
     public DynValue GetVector(string name) {
-        Vector4 vector = material.GetVector(IndexProperty(name));
+        Vector4 vector = material.GetVector(IndexProperty(name, true));
         Table output = new Table(null);
         output.Set(1, DynValue.NewNumber(vector.w));
         output.Set(2, DynValue.NewNumber(vector.x));
@@ -292,13 +323,13 @@ public class LuaSpriteShader {
                                        (float)value.Table.Get(2).Number,
                                        (float)value.Table.Get(3).Number,
                                        (float)value.Table.Get(4).Number);
-        material.SetVector(IndexProperty(name), v4output);
+        material.SetVector(IndexProperty(name, false), v4output);
     }
 
 
 
     public DynValue GetVectorArray(string name) {
-        Vector4[] vectors = material.GetVectorArray(IndexProperty(name));
+        Vector4[] vectors = material.GetVectorArray(IndexProperty(name, true));
         Table output = new Table(null);
         for (var i = 0; i < vectors.Length; i++) {
             Vector4 vector = vectors[i];
@@ -327,6 +358,6 @@ public class LuaSpriteShader {
                                         (float)item.Table.Get(4).Number);
             v4array[i] = newv4;
         }
-        material.SetVectorArray(IndexProperty(name), v4array);
+        material.SetVectorArray(IndexProperty(name, false), v4array);
     }
 }

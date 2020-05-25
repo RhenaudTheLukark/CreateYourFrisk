@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<!--
+since you're here anyway: there's a small easter egg on the text commands page but it's probably not worth finding, sorry
+you may notice this page's code is garbage: i'm not a web designer! ;-;
+it's w3c valid, at least
+-->
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="favicon.ico">
+
+    <title>CYF Documentation - Unity Setup (Optional)</title>
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="../css/themesidebar.css" rel="stylesheet">
+    <link href="../css/shThemeRDark.css" rel="stylesheet">
+
+    <!-- Syntax highlighting -->
+    <script type="text/javascript" src="../js/shCore.js"></script>
+    <script type="text/javascript" src="../js/shBrushLua.js"></script>
+    <script type="text/javascript">SyntaxHighlighter.all();</script>
+</head>
+<body>
+<img src="../img/bg2.png" alt="Undertale background" class="backimg">
+<div class="container arena black">
+    <div class="col-md-2">
+        <!--navigation-->
+        <nav class="nav-sidebar">
+            <ul class="nav tabs">
+                <li class="li-header">Basics</li>
+                    <li><a href="../documentation.html">Welcome</a></li>
+                    <li><a href="howtoread.html">How to read this documentation</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li><a href="controls.html">Controls</a></li>
+                    <li><a href="basic.html"> Basic setup </a></li>
+                    <li class="active" style="margin-left:5px;">&gt;<span class="CYF"></span> Unity Setup (Optional) &lt;</li>
+                    <li><a href="variables.html">Special Variables</a></li>
+                    <li><a href="terms.html">Terminology</a></li>
+                <li class="li-header">API</li>
+                    <li><a href="api-text.html">Text commands</a></li>
+                    <li class="new"><a href="api-events.html">Game events</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li class="li-indent">Functions &amp; Objects:</li>
+                        <li class="li-indent new"><a href="api-functions-main.html">Misc. Functions</a></li>
+                        <li class="li-indent new"><a href="api-functions-player.html">The Player Object</a></li>
+                        <li class="li-indent"><a href="api-functions-script.html">The Script Object</a></li>
+                        <li class="li-indent"><a href="api-functions-audio.html">The Audio Object</a></li>
+                        <li class="li-indent"><a href="api-functions-newaudio.html"><span class="CYF"></span> The NewAudio Object</a></li>
+                        <li class="li-indent"><a href="api-functions-input.html">The Input Object</a></li>
+                        <li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
+                        <li class="li-indent"><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
+                        <li class="li-indent"><a href="api-functions-waves.html">The Arena Object</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li><a href="api-projectile.html">Projectile management</a></li>
+                    <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
+                    <li class="new"><a href="api-animation.html">Sprites &amp; Animation</a></li>
+                    <li class="new"><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
+                <li class="li-header"><span class="CYF"></span> Overworld</li>
+                    <li class="new"><a href="overworld.html">Basics</a></li>
+                    <li><a href="overworld-howto-map.html">How to create a map</a></li>
+                    <li><a href="overworld-howto-event.html">How to create an event</a></li>
+                    <li><a href="overworld-howto-animevent.html">How to animate an event</a></li>
+                    <li class="new"><a href="overworld-howto-shop.html">How to create a shop</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li class="li-indent"><span class="CYF"></span> Overworld Objects:</li>
+                        <li class="li-indent"><a href="overworld-object-general.html">The General Object</a></li>
+                        <li class="li-indent"><a href="overworld-object-event.html">The Event Object</a></li>
+                        <li class="li-indent"><a href="overworld-object-player.html">The Player Object</a></li>
+                        <li class="li-indent"><a href="overworld-object-screen.html">The Screen Object</a></li>
+                        <li class="li-indent"><a href="overworld-object-inventory.html">The Inventory Object</a></li>
+                        <li class="li-indent new"><a href="overworld-object-map.html">The Map Object</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                <li class="li-header">Resources</li>
+                    <li><a href="../media/dialogoptions.png">Dialog bubble names</a></li>
+                    <li><a href="api-keys.html"><span class="CYF"></span> Key List</a></li>
+            </ul>
+        </nav>
+    </div>
+    <!--tabs'n'shit-->
+    <div class="tab-content col-md-10">
+        <div class="tab-pane active text-style" id="basic">
+            <h2><span class="CYF"></span> Unity Setup (Optional)</h2><br><br>
+            <p>
+                This page will cover how to set up Create Your Frisk in the Unity editor, which is necessary for utilizing
+                Create Your Frisk's Overworld feature, as well as for setting up shaders. It is also helpful for seeing the
+                way encounters work from the Unity side, and in particular how sprite layers work.
+            </p>
+
+            <hr>
+            <h4>Get Started</h4>
+           
+            <p>
+                To get started, you'll need to, first of all, download the current version of Unity that CYF uses, and, of course,
+                download the project via Github.
+                <br><br>
+                To do this, go to the
+                <a href="https://github.com/RhenaudTheLukark/CreateYourFrisk/releases">Releases</a> section, find the latest version of
+                Create Your Frisk, scroll down to its downloads section, and download <span class="term">Source Code (zip)</span>.
+                You will need to extract it (you should have a means to extract it already on your computer).
+                <br><br>
+                Once the folder is extracted, you will need to open it as a project in Unity. Download the version of Unity used to build
+                the version of Create Your Frisk.
+            </p>
+            <h4>Create Your Frisk v0.6.5 was built using <b><u><a href="https://netstorage.unity3d.com/unity/83fbdcd35118/UnityDownloadAssistant-2018.2.13f1.exe">
+            Unity Personal 2018.2.13f1</a></u></b>.</h4>
+            <br>
+            <p>
+                Unity may take a lot of time to install and to load the project for the first time, due to a lot of resources being
+                registered by Unity - but you won't have to do it again in the future.
+            </p>
+            
+            <hr>
+            <h4>Once you're in</h4>
+            
+            <p>
+                Once you're in, you'll have to load the scene <span class="term">Assets/Scenes/Disclaimer.unity</span> using the command 
+			    <span class="term">File</span> => <span class="term">Open Scene</span> at the top left corner of Unity's window. You should
+                always start play mode from this scene when using Create Your Frisk in Unity.
+                <br><br>
+                In order to set up the viewport properly, first switch to the "Game" tab (<span class="term">Window</span> =>
+                <span class="term">General</span> => <span class="term">Game</span>, or click it in the editor). Within the Game tab, find the
+                button labelled <span class="term">Display 1</span>. Next to it should be another button, most likely labelled
+                <span class="term">Free Aspect</span>. Click on it, click the
+                "plus" sign at the bottom of the list that appears, and add an option with a fixed resolution of <span class="term">640</span> x
+                <span class="term">480</span>.
+                <br><br>
+                <i>This is Create Your Frisk's native resolution, and viewing it like this ensures that everything
+                you see in the Unity editor will look exactly the same in the built version of Create Your Frisk</i>.
+            </p>
+            
+            <hr>
+            <h4>Where is everything?</h4>
+            
+            <p>
+                Look in the folder <span class="term">Assets</span> within the folder you extracted earlier. In here, the folder named
+                <span class="term">Default</span> is the same as the folder named <span class="term">Default</span> in the built executable versions
+                of Create Your Frisk. Likewise, <span class="term">Mods</span> is the same as the <span class="term">Mods</span> folder in the built
+                versions of CYF. Load all of your mods here if you want them playable in the editor.
+                <br><br>
+                Another folder here is <span class="term">Scenes</span>. If you are using Create Your Frisk's Overworld feature, this is where all
+                overworld scenes will go. See the <span class="ref">Overworld</span> section of the documentation for more information.
+                <br><br>
+                Also within <span class="term">Assets</span> the folder <span class="term">Editor</span> is used for shaders. It contains a folder
+                <span class="term">Shaders</span>, which is where all of your original shader files go, and another folder
+                <span class="term">Output</span>, which is where your shaders will be compiled into AssetBundles. Read
+                <span class="ref">Shaders - Introduction</span> for more information.
+            </p>
+            
+            <hr>
+            <h4>Building CYF</h4>
+            
+            <p>
+                This is an optional step, for if you want or need to export Create Your Frisk to a built executable. Within your Create Your Frisk
+                installation is a python script, named <span class="term">Build.py</span>. It uses
+                <a href="https://www.python.org/downloads/release/python-374/">Python v3.7.4</a>. This is the script used to build CYF into executables.
+                You can optionally install <a href="https://www.7-zip.org/">7-zip</a> as well, if you want the script to automatically package your
+                builds into archives.
+                <br><br>
+                You should first peek inside the script and edit it as needed - you only need change one or two lines. You can change the variable
+                <span class="term">CYFversion</span> to dictate the names of the created folders (or edit them yourself in
+                <span class="term">buildTargets</span> and <span class="term">macTarget</span>). Next, check the variable
+                <span class="term">unityPath</span> - you need to set it to the path of your machine's Unity installation, if it is not already set to it.
+                <br><br>
+                Make sure Create Your Frisk is <u>the last project opened in Unity</u>. Then, <u>CLOSE UNITY</u> before running the script.
+                <br><br>
+                Actually running the script also has some documentation at the top of the file itself. You can either run the script directly
+                (double click it) or run it from the command line (varies depending on your operating system). If you do the former option, or do the
+                second option with no extra setup, the script will attempt to create all 5 builds, and archive them if possible.
+                <br><br>
+                If running from the command line, you may provide two arguments to specify the build process:
+                <ul>
+                    <li><span class="term">--nozip</span>: Does not attempt to package the resulting builds into archives with 7-zip.</li><br>
+                    <li>
+                        <span class="term">--single [id]</span>: Only creates one of the possible builds. <span class="term">id</span> should be
+                        from 1 to 5:
+                        <ol>
+                            <li>Windows 32-bit</li>
+                            <li>Windows 64-bit</li>
+                            <li>Linux 32-bit</li>
+                            <li>Linux 64-bit</li>
+                            <li>Mac</li>
+                        </ol>
+                    </li>
+                </ul>
+                Your build(s) of Create Your Frisk will appear in a folder named <span class="term">bin</span> within your CYF installation!
+            </p>
+        </div>
+
+        <div class="tab-pane text-style" id="mercy">
+            <h2 style="text-decoration: none; line-height:50px;">
+                * YOU WON!<br>
+                * You earned 0 EXP and 0 gold.<br>
+                * also the nav menu is broken now
+            </h2><br>
+        </div>
+
+    </div>
+</div>
+
+<div class="container">
+    <div class="col-xs-3"><img class="centerbt black" alt="Undertale fake button" src="../img/fightbt_0.png" height="42">
+    </div>
+    <div class="col-xs-3"><img class="centerbt black" alt="Undertale fake button" src="../img/actbt_0.png" height="42">
+    </div>
+    <div class="col-xs-3"><img class="centerbt black" alt="Undertale fake button" src="../img/itembt_0.png" height="42">
+    </div>
+    <div class="col-xs-3"><a href="#mercy" data-toggle="tab"><img class="centerbt black" alt="Undertale fake button"
+                                                                  src="../img/mercybt_0.png" height="42"></a>
+    </div>
+</div>
+<br>
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="../js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../js/show_hide_comments.js"></script>
+
+<script type="text/javascript" src="../js/FontToggleButton.js"></script>
+</body>
+</html>

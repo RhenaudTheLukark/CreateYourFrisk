@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<!--
+since you're here anyway: there's a small easter egg on the text commands page but it's probably not worth finding, sorry
+you may notice this page's code is garbage: i'm not a web designer! ;-;
+it's w3c valid, at least
+-->
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="favicon.ico">
+
+    <title>CYF Documentation - Shaders - Introduction</title>
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="../css/themesidebar.css" rel="stylesheet">
+    <link href="../css/shThemeRDark.css" rel="stylesheet">
+
+    <!-- Syntax highlighting -->
+    <script type="text/javascript" src="../js/shCore.js"></script>
+    <script type="text/javascript" src="../js/shBrushLua.js"></script>
+    <script type="text/javascript">SyntaxHighlighter.all();</script>
+</head>
+<body>
+<img src="../img/bg2.png" alt="Undertale background" class="backimg">
+<div class="container arena black">
+    <div class="col-md-2">
+        <!--navigation-->
+        <nav class="nav-sidebar">
+            <ul class="nav tabs">
+                <li class="li-header">Basics</li>
+                    <li><a href="../documentation.html">Welcome</a></li>
+                    <li><a href="howtoread.html">How to read this documentation</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li><a href="controls.html">Controls</a></li>
+                    <li><a href="basic.html">Basic setup</a></li>
+                    <li><a href="unity.html"><span class="CYF"></span> Unity Setup (Optional)</a></li>
+                    <li class="new"><a href="variables.html">Special Variables</a></li>
+                    <li><a href="terms.html">Terminology</a></li>
+                <li class="li-header">API</li>
+                    <li><a href="api-text.html">Text commands</a></li>
+                    <li class="new"><a href="api-events.html">Game events</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li class="li-indent">Functions &amp; Objects:</li>
+                        <li class="li-indent new"><a href="api-functions-main.html">Misc. Functions</a></li>
+                        <li class="li-indent new"><a href="api-functions-player.html">The Player Object</a></li>
+                        <li class="li-indent"><a href="api-functions-script.html">The Script Object</a></li>
+                        <li class="li-indent"><a href="api-functions-audio.html">The Audio Object</a></li>
+                        <li class="li-indent"><a href="api-functions-newaudio.html"><span class="CYF"></span> The NewAudio Object</a></li>
+                        <li class="li-indent"><a href="api-functions-input.html">The Input Object</a></li>
+                        <li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
+                        <li class="li-indent"><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
+                        <li class="li-indent"><a href="api-functions-waves.html">The Arena Object</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li><a href="api-projectile.html">Projectile management</a></li>
+                    <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
+                    <li class="new"><a href="api-animation.html">Sprites &amp; Animation</a></li>
+                    <li class="new"><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                <li class="li-header"><span class="new"></span><span class="CYF"></span> Shaders</li>
+                    <li class="active" style="margin-left:5px;">&gt; Introduction &lt;</li>
+                    <li><a href="shaders-object.html">The Shader Object</a></li>
+                    <hr style="margin-top:10px;margin-bottom:10px;">
+                <li class="li-header"><span class="CYF"></span> Overworld</li>
+                    <li class="new"><a href="overworld.html">Basics</a></li>
+                    <li><a href="overworld-howto-map.html">How to create a map</a></li>
+                    <li><a href="overworld-howto-event.html">How to create an event</a></li>
+                    <li><a href="overworld-howto-animevent.html">How to animate an event</a></li>
+                    <li class="new"><a href="overworld-howto-shop.html">How to create a shop</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li class="li-indent"><span class="CYF"></span> Overworld Objects:</li>
+                        <li class="li-indent"><a href="overworld-object-general.html">The General Object</a></li>
+                        <li class="li-indent"><a href="overworld-object-event.html">The Event Object</a></li>
+                        <li class="li-indent"><a href="overworld-object-player.html">The Player Object</a></li>
+                        <li class="li-indent"><a href="overworld-object-screen.html">The Screen Object</a></li>
+                        <li class="li-indent"><a href="overworld-object-inventory.html">The Inventory Object</a></li>
+                        <li class="li-indent new"><a href="overworld-object-map.html">The Map Object</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                <li class="li-header">Resources</li>
+                    <li><a href="../media/dialogoptions.png">Dialog bubble names</a></li>
+                    <li><a href="api-keys.html"><span class="CYF"></span> Key List</a></li>
+            </ul>
+        </nav>
+    </div>
+    <!--tabs'n'shit-->
+    <div class="tab-content col-md-10">
+        <div class="tab-pane active text-style" id="shaders">
+            <h2><span class="CYF"></span> Shaders - Introduction</h2>
+            <p>
+                As of Create Your Frisk v0.6.5, you may now use Unity shaders in your encounters (and the overworld)!<br>
+                Be warned that <b><u>this is a very advanced feature</u></b> and not everyone will be able to create
+                their own shaders. However, any shaders people make and release can be added into a mod very easily.
+                This page is intended to serve as a basic outline and interface into how the system works.
+            </p>
+            <hr>
+            <h3>Basic Overview</h3>
+            
+            <p>
+                Here's how shaders are set up in CYF:
+                <ul>
+                    <li>
+                        First of all: Shaders are stored as
+                        <a href="https://docs.unity3d.com/2018.2/Documentation/Manual/AssetBundlesIntro.html">Unity AssetBundles</a>.<br>
+                        You might expect them to be <span class="term">.shader</span> files, but they <b>aren't</b>. Keep
+                        that in mind.
+                    </li><br>
+                    <li>
+                        Every bundle can contain multiple shaders.
+                        When loading a shader in your mod, you will have to provide the name of a bundle, as well as the
+                        name of a shader in the bundle.
+                    </li><br>
+                    <li>
+                        The actual file setup consists of a folder (the bundle) within the <span class="term">Shaders</span>
+                        folder, with files inside named <span class="term">windows</span>, <span class="term">mac</span>,
+                        and <span class="term">linux</span>. <b>Keep all of these files</b> if you want your mod to be
+                        cross-compatible between operating systems.
+                    </li><br>
+                    <li>
+                        These files are created by Unity, so <u>if you want to create your own shaders, <b>you MUST set up
+                        Unity</b> on your machine.</u><br>
+                        Read <span class="ref">Unity Setup (Optional)</span> for a guide.
+                    </li><br>
+                    <li>
+                        There are some default shaders included with CYF, present in the
+                        <span class="term">CYF/Default/Shaders</span> folder. They are treated just like sprites and audio,
+                        in that shaders will be read from the mod's <span class="term">Shaders</span> folder first, and the
+                        Default shaders folder second.
+                    </li>
+                </ul>
+            </p>
+            
+            <p>
+                And on the topic of creating shaders:
+                <ul>
+                    <li>
+                        All shaders are coded using Unity ShaderLabs. See <span class="ref">TODO</span> for links and help.<br>
+                        They will be created as <span class="term">.shader</span> files on the Unity side before they're
+                        exported to bundles.<br>
+                        Note that the majority of the work and involvement in creating a shader is knowing how to write the
+                        shader, and has nothing to do with CYF.
+                    </li><br>
+                    <li>
+                        Not all errors and issues with shaders will explicitly show an error screen in game, instead resulting
+                        in a pink "error" shader being applied.<br>
+                        When creating your shader in Unity, you will be able to see syntax errors and such before compiling
+                        your shader.
+                    </li><br>
+                    <li>
+                        If the shader (and all of its fallbacks) are found to be unsupported, you'll see an error screen when
+                        loading the shader.<br>
+                        <u>You will need to use the Lua function</u> <span class="term">pcall</span> <u>to account for this</u>
+                        (an example is provided in <span class="ref">The Shader Object</span>).
+                    </li><br>
+                    <li>
+                        While actually creating a shader in Unity, there's a shortcut function available
+                        (<span class="term">shader.Test</span>) that does not require you to build your shaders to AssetBundles
+                        repeatedly.
+                    </li>
+                </ul>
+            </p>
+            <hr>
+            <h3>Creating Shaders</h3>
+            
+            <p>
+                The first step involved with creating shaders is to set up Create Your Frisk in Unity on your machine.
+                Read through <span class="ref">Unity Setup (Optional)</span> for a guide on doing this.
+                <br><br>
+                After that, locate the path <span class="term">Assets/Editor/Shaders</span>. This is where you will create and edit
+                your shaders as <span class="term">.shader</span> files. You can also find here all of the default shaders Create
+                Your Frisk comes with, which are in <span class="term">Default/Shaders</span> when Create Your Frisk gets built.
+                <br><br>
+                Create a new <span class="term">.shader</span> file here, with whatever name you like. This name is the name you will
+                eventually pass to <span class="term">shader.Set</span> from the Lua side. Follow the instructions in
+                <span class="ref">TODO</span> to write the contents of your shader file. You may use
+                <span class="term">shader.Test</span> from mods within the Unity editor (found at <span class="term">Assets/Mods</span>
+                to test shaders before you compile them.
+                <br><br>
+                Once you're done editing and testing your shader, it's time to compile it to an AssetBundle. Using the Unity project
+                files viewer (normally at the bottom of the screen), browse to the path <span class="term">Assets/Editor/Shaders</span>.
+                Click on your shader. Look for the "Asset Windows" label (normally at the bottom-right of the screen, under the
+                Inspector).<br>
+                Click on the button to the right of "AssetBundle", and enter the name of a bundle. This will be the name of the
+                AssetBundle file that gets exported, and that you will be able to drop in your mod's <span class="term">Shaders</span>
+                folder later. You can have multiple shaders contained in one bundle, or as many bundles as you like.
+                <br><br>
+                Finally, to compile all shaders into AssetBundles, click on <span class="term">Assets</span> at the top of the Unity
+                window, and click on <span class="term">Bundle CYF Shaders...</span> at the bottom of the drop-down list. You will have
+                to wait for a moment while the shaders get built into bundles. You will see an alert box whenever the shaders are done
+                being bundled.
+                <br><br>
+                Once it is finished, your bundles will appear in <span class="term">Assets/Editor/Output</span>! They will be present as
+                folders, with the same names as the AssetBundle names you entered in the editor. Each one of these folders is a shader
+                bundle that you may now move to your mod's <span class="term">Shaders</span> folder.
+            </p>
+        </div>
+
+        <div class="tab-pane text-style" id="mercy">
+            <h2 style="text-decoration: none; line-height:50px;">
+                * YOU WON!<br>
+                * You earned 0 EXP and 0 gold.<br>
+                * also the nav menu is broken now
+            </h2><br>
+        </div>
+
+    </div>
+</div>
+
+<div class="container">
+    <div class="col-xs-3"><img class="centerbt black" alt="Undertale fake button" src="../img/fightbt_0.png" height="42">
+    </div>
+    <div class="col-xs-3"><img class="centerbt black" alt="Undertale fake button" src="../img/actbt_0.png" height="42">
+    </div>
+    <div class="col-xs-3"><img class="centerbt black" alt="Undertale fake button" src="../img/itembt_0.png" height="42">
+    </div>
+    <div class="col-xs-3"><a href="#mercy" data-toggle="tab"><img class="centerbt black" alt="Undertale fake button"
+                                                                  src="../img/mercybt_0.png" height="42"></a>
+    </div>
+</div>
+<br>
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="../js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../js/show_hide_comments.js"></script>
+
+<script type="text/javascript" src="../js/FontToggleButton.js"></script>
+</body>
+</html>
