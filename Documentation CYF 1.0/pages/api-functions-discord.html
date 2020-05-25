@@ -14,7 +14,7 @@ it's w3c valid, at least
     <meta name="author" content="">
     <link rel="icon" href="favicon.ico">
 
-    <title>CYF Documentation - How to add an animation to an event</title>
+    <title>CYF Documentation - The Discord Object</title>
     <link href="../css/bootstrap.min.css" rel="stylesheet">
     <link href="../css/bootstrap-theme.min.css" rel="stylesheet">
     <link href="../css/themesidebar.css" rel="stylesheet">
@@ -54,7 +54,7 @@ it's w3c valid, at least
 						<li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
                         <li class="li-indent"><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
                         <li class="li-indent new"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
-                        <li class="li-indent new"><a href="api-functions-discord.html"><span class="CYF"></span> The Discord Object</a></li>
+                        <li class="li-indent active new" style="margin-left:5px;">> <span class="CYF"></span>The Discord Object <</li>
                         <li class="li-indent"><a href="api-functions-waves.html">The Arena Object</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                     <li><a href="api-projectile.html">Projectile management</a></li>
@@ -65,7 +65,7 @@ it's w3c valid, at least
                     <li class="new"><a href="overworld.html"><span class="CYF"></span> Basics</a></li>
                     <li><a href="overworld-howto-map.html"><span class="CYF"></span> How to create a map</a></li>
                     <li><a href="overworld-howto-event.html"><span class="CYF"></span> How to create an event</a></li>
-                    <li class="active" style="margin-left:5px;">> <span class="CYF"></span> How to animate an<br>event <</li>
+                    <li><a href="overworld-howto-animevent.html"><span class="CYF"></span> How to animate an event</a></li>
                     <li class="new"><a href="overworld-howto-shop.html"><span class="CYF"></span> How to create a shop</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                     <li class="li-indent">Overworld Objects:</li>
@@ -84,57 +84,30 @@ it's w3c valid, at least
     </div>
     <!--tabs'n'shit-->
     <div class="tab-content col-md-10">
-		<div class="tab-pane active text-style" id="overworld-howto-animevent">
-            <h2><span class="CYF"></span>The Overworld: How to add an animation to an event</h2><br><br>
-
-
+        <div class="tab-pane active text-style" id="api-functions-misc">
             <p>
-                Tired of all these static events? Do you want them to be animated, to bring more life to your map? You're in the right place!<br>
-                Animating events is (again) something very easy, but it may be time-consuming. This animator is used like
-				<span class="term">sprite.SetAnimation()</span>, only the ways you fill in data are different.
+                <br><span class="function"><span class="CYF"></span> The Discord object [E/M/W]</span>
+                This class is used to manipulate the data the <span class="term">Discord Rich Presence Status</span> bar displays, if Discord is on and if this feature is enabled.
             </p>
-            <br>
-            <p>
-                <li>All the animations are driven by a component named <span class="term">CYFAnimator</span>. Click on the event you want to add this
-				component in, go at the very bottom of the Inspector tab, then click on the button "Add component".</li>
-                <li>Enter "CYFAnimator" and you should be able to find it. Click and it'll be added.</li>
-            </p>
-
-            <br><img src="../img/CYFAnimator screenshot.png" alt="CYFAnimator screenshot"><br><br>
-            <p>
-                This is a working example of the <span class="term">CYFAnimator</span> object.
-                The 8 animations pictured here are the minimum ones required to make the component run correctly.
-            </p>
-            <br>
-            <p>
-                You should be able to see some variables. Here is a description of each of them:
-                <li><span class="term">Movement Direction</span>: The direction that the event goes. Normally, you don't need to modify this,
-				as the component will calculate this by itself.</li>
-                <li><span class="term">Begin Anim</span>: The name of the animation that the event will start with.</li>
-                <li><span class="term">Special Header</span>: This variable is used to modify the event's animation scheme.<br>
-                Normally, the event will start the animations <span class="term">StopDown</span>, <span class="term">StopUp</span>,
-                <span class="term">MovingDown</span>,  <span class="term">MovingUp</span> and all the others in the screenshot.<br>
-                But if you set this variable, it'll act as a prefix for the animations.<br>
-                So, if this variable is set to "Frisk", the <span class="term">CYFAnimator</span> component will use
-                <span class="term">FriskMovingDown</span>, <span class="term">FriskMovingUp</span>, ... instead of the others.
-                <br><br>
-                There is one exception to this scheme. If the special header is equal to an animation's name, said animation will be the only one used
-                while the special header has this value.</li>
-                <li><span class="term">Anims</span>: Your list of animations. Check the screenshot above to see how you should fill it.
-                <br><br>
-                <b>NOTE:</b> While any mix of the above animations is fine, such as only having vertical animations if your event will only move up and down,
-                an animation named "StopDown" is <b>required</b> for every event with a CYFAnimator component. It is the default animation, and the absolute
-                bare minimum to include if you wish to have a CYFAnimator component.</li>
-            </p>
-            <hr>
-            <p>
-                And that's it for animated events! As I said, the biggest part here is to fill in the Anims list, so it's not much of a deal!<br><br>
-                If you had any problems with this tutorial, please tell me what went wrong.<br>
-                If you see any ways that this tutorial can be improved, please tell me that as well.<br>
-                You'll have more chances to contact me on Unitale's Discord server - the response will be way faster and it will be much
-				smoother than using messages on reddit.<br>
-                Here is the link to the <a href="https://discord.gg/0c8fN7KCwBh4ZBL9">Discord server</a>.
-            </p>
+            <ul>
+                <li><span class="term">Discord.SetName(<span class="string"></span> name = "", <span class="boolean"></span> noPrefix = false)</span>:
+                    Sets the top row of the <span class="term">Discord Rich Presence Status</span> bar, if it's enabled. If you are in battle, it will display <span class="term">Playing Mod: </span> at the beginning of the line, unless <span class="term">noPrefix</span> is set to true, in which case <span class="term">name</span> will be displayed as-is.
+                    <br><br>
+                    By default, this line displays <span class="term">Playing Mod: MODNAME</span>, with <span class="term">MODNAME</span> being the name of your mod.
+                    <br><br>
+                    Setting <span class="term">name</span> to its default value <span class="term">""</span> doesn't display the line at all.</li><br>
+                <li><span class="term">Discord.SetDetails(<span class="string"></span> details = "")</span>:
+                    Sets the second row of the <span class="term">Discord Rich Presence Status</span> bar, if it's enabled.
+                    <br><br>
+                    By default, this line isn't displayed.
+                    <br><br>
+                    Setting <span class="term">details</span> to its default value <span class="term">""</span> doesn't display the line at all.</li><br>
+                <li><span class="term">Discord.SetTime(<span class="number"></span> time = 0, <span class="boolean"></span> isCountdown = false)</span>:
+                    Sets the current time displayed in the <span class="term">Discord Rich Presence Status</span> bar, if it's enabled. The <span class="term">time</span> value is displayed in seconds.
+                    The <span class="term">isCountdown</span> value tells the engine whether this time must be counted down or not, allowing it to act much like a stopwatch if it's enabled.
+                    <br><br>
+                    By default, this line will display the time elapsed since the mod was started.</li><br>
+            </ul>
         </div>
 
 		<div class="tab-pane text-style" id="mercy">

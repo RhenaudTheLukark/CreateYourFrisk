@@ -54,6 +54,7 @@ it's w3c valid, at least
 						<li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
                         <li class="li-indent"><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
                         <li class="li-indent new"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-discord.html"><span class="CYF"></span> The Discord Object</a></li>
                         <li class="li-indent"><a href="api-functions-waves.html">The Arena Object</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                     <li><a href="api-projectile.html">Projectile management</a></li>
@@ -88,58 +89,58 @@ it's w3c valid, at least
             <br><br>
 			<p><span style="color:#ff0000"><u>NOTE: This Inventory object is not the same as the one used in battle!<br>
 			This one is specific to the overworld!</u></span></p><br>
-            
+
             <p>
                 <br><span class="function">Inventory.SetWeapon(<span class="string"></span> weapon)</span>
                 This function is an alias of <span class="term">Player.SetWeapon</span>.<br>
 				Makes the player equip the given weapon, but only if it's in their inventory.
             </p>
-            
+
             <p>
                 <br><span class="function">Inventory.SetArmor(<span class="string"></span> armor)</span>
                 This function is an alias of <span class="term">Player.SetArmor</span>.<br>
 				Makes the player equip the given armor, but only if it's in their inventory.
             </p>
-            
+
             <p>
                 <br><span class="function">Inventory.AddItem(<span class="string"></span> name)</span>
 				Adds the given item to the player's inventory.
             </p>
-            
+
             <p>
                 <br><span class="function">Inventory.RemoveItem(<span class="number"></span> id)</span>
                 Removes the item number <span class="term">id</span> from the inventory.
             </p>
-            
+
             <p>
                 <br><span class="function">Inventory.IsItemInTheInventory(<span class="string"></span> name) returns <span class="boolean"></span></span>
                 If the inventory contains this item, this will be true. It will be false otherwise.
             </p>
-            
+
             <p>
                 <br><span class="function">Inventory.ItemExists(<span class="string"></span> name) returns <span class="boolean"></span></span>
-				If this item exists in the engine's item list (if you created/defined it already), this will be true. 
+				If this item exists in the engine's item list (if you created/defined it already), this will be true.
 				It will be false otherwise.
             </p>
-            
+
             <p>
                 <br><span class="function">Inventory.GetItemID(<span class="string"></span> name) returns <span class="number"></span></span>
 				Gets the id of the first item with the same name as <span class="term">name</span><br>
 				If the item couldn't be found, this returns -1 instead.
             </p>
-            
+
             <p>
                 <br><span class="function">Inventory.GetItemCount() returns <span class="number"></span></span>
                 Returns the number of items the player has in their inventory.
             </p>
-            
+
             <p>
                 <br><span class="function">Inventory.SpawnBoxMenu()</span>
                 This function opens Undertale's "box" menu (the chest that appears throughout the game with 10 slots).<br>
                 All items within this box are saved to CYF's save file upon using <span class="term">General.Save</span>.
             </p>
         </div>
-		
+
 		<div class="tab-pane text-style" id="mercy">
             <h2 style="text-decoration: none; line-height:50px;">
                 * YOU WON!<br>

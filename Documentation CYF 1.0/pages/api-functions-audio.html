@@ -54,6 +54,7 @@ it's w3c valid, at least
                         <li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
                         <li class="li-indent"><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
                         <li class="li-indent new"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-discord.html"><span class="CYF"></span> The Discord Object</a></li>
                         <li class="li-indent"><a href="api-functions-waves.html">The Arena Object</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                     <li><a href="api-projectile.html">Projectile management</a></li>
@@ -93,7 +94,7 @@ it's w3c valid, at least
                 <li><span class="number"></span> <span class="term">Audio.playtime</span> - Get or set the current play position of the current music in seconds.</li><br>
                 <li><span class="number"></span> <span class="term">Audio.totaltime</span> - Get the total length of the current music in seconds.</li><br>
                 <li><span class="term">Audio.Play()</span> - Play the currently loaded music. Done automatically at the beginning of a fight.</li><br>
-                <li><span class="term">Audio.Stop()</span> - Stops the music. If you want a battle not to have music, call this in 
+                <li><span class="term">Audio.Stop()</span> - Stops the music. If you want a battle not to have music, call this in
                 <span class="term">EncounterStarting()</span>.
                 </li><br>
                 <li><span class="term">Audio.Pause()</span> - Pause the music.</li><br>
@@ -115,7 +116,7 @@ it's w3c valid, at least
                 <li><span class="CYF"></span> <span class="term">Audio.StopAll()</span> - Stops all playing audio.</li><br>
                 <li><span class="CYF"></span> <span class="term">Audio.PauseAll()</span> - Pauses all the audio sources.</li><br>
                 <li><span class="CYF"></span> <span class="term">Audio.UnpauseAll()</span> - Unpauses all the audio sources.</li><br>
-                <li><span class="CYF"></span> <span class="term">Audio.SetSoundDictionary(<span class="string"></span> key, <span class="string"></span> value)</span> - Adds a sound to the sound dictionary. Doing 
+                <li><span class="CYF"></span> <span class="term">Audio.SetSoundDictionary(<span class="string"></span> key, <span class="string"></span> value)</span> - Adds a sound to the sound dictionary. Doing
                 so allows you to change the name of the sounds played by the engine - like, for example, <span class="term">hurtsound</span>
                 or <span class="term">menumove</span>.
                 <br><br>
@@ -132,14 +133,14 @@ it's w3c valid, at least
                 to, say, stop the music mid-dialogue:</p>
             <div class="code-container">
    <pre class="brush: lua;">currentdialogue = {"but then I realized...\n[w:30][func:drama]the butler did it!!!"}
-  
+
 function drama()
     Audio.Stop()
     Audio.PlaySound(dramatic_sound_effect)
 end</pre>
             </div>
         </div>
-		
+
 		<div class="tab-pane text-style" id="mercy">
             <h2 style="text-decoration: none; line-height:50px;">
                 * YOU WON!<br>

@@ -54,6 +54,7 @@ it's w3c valid, at least
 						<li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
                         <li class="li-indent"><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
                         <li class="li-indent new"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-discord.html"><span class="CYF"></span> The Discord Object</a></li>
                         <li class="li-indent"><a href="api-functions-waves.html">The Arena Object</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                     <li><a href="api-projectile.html">Projectile management</a></li>
@@ -85,31 +86,31 @@ it's w3c valid, at least
     <div class="tab-content col-md-10">
 		<div class="tab-pane active text-style" id="overworld-object-screen">
             <h2><span class="CYF"></span>The Overworld: The Screen Object</h2><br>
-            
+
             <p>
-                <br><span class="function">Screen.DispImg(<span class="string"></span> path, <span class="number"></span> id, 
-                <span class="number"></span> posX, <span class="number"></span> posY, <span class="number"></span> toneR = 255, 
-                <span class="number"></span> toneG = 255, <span class="number"></span> toneB = 255, 
+                <br><span class="function">Screen.DispImg(<span class="string"></span> path, <span class="number"></span> id,
+                <span class="number"></span> posX, <span class="number"></span> posY, <span class="number"></span> toneR = 255,
+                <span class="number"></span> toneG = 255, <span class="number"></span> toneB = 255,
 				<span class="string"></span> toneA = 255)</span>
-                This function displays an image on a given point on the map. This image will take the form of an event, and this event will be 
+                This function displays an image on a given point on the map. This image will take the form of an event, and this event will be
 				named <span class="term">"Image" + id</span>.<br>
                 Also, you'll have to give the position of your image using <span class="term">posX</span> and <span class="term">posY</span>.<br>
                 You can add a color to the image with the 4 last values, if you want to. If you do, these values must be between 0 and 255.
             </p>
-            
+
             <p>
                 <br><span class="function">Screen.SupprImg(<span class="string"></span> id)</span>
                 Deletes an image previously created with a <span class="term">Screen.DispImg()</span> function.<br>
                 In application, it's basically the same as <span class="term">Event.Remove("Image" .. id)</span>.
             </p>
-            
+
             <p>
-                <br><span class="function">Screen.SetTone(<span class="boolean"></span> anim, <span class="boolean"></span> waitEnd, 
-                <span class="number"></span> r = 255, <span class="number"></span> g = 255, <span class="number"></span> b = 255, 
+                <br><span class="function">Screen.SetTone(<span class="boolean"></span> anim, <span class="boolean"></span> waitEnd,
+                <span class="number"></span> r = 255, <span class="number"></span> g = 255, <span class="number"></span> b = 255,
                 <span class="number"></span> a = 128)</span>
                 Creates a solid color image over the whole screen with a given color (for instance, you can use this for a sepia tone).<br>
 				Set <span class="term">anim</span> to true to gradually transition to the tone.<br>
-				If <span class="term">anim</span> is set to true, you can also set <span class="term">waitEnd</span> to true to make the event's code 
+				If <span class="term">anim</span> is set to true, you can also set <span class="term">waitEnd</span> to true to make the event's code
 				pause until the transition is done. For the other values, they must be between 0 and 255.
                 <br><br>
                 128 is the recommended value for <span class="term">a</span>.<br>
@@ -119,48 +120,48 @@ it's w3c valid, at least
                 but with the argument <span class="term">a</span> as <span class="term">0</span>.<br>
                 You can remove it instantly as well if you set <span class="term">anim</span> to false!</font></span>
             </p>
-            
+
             <p>
-                <br><span class="function">Screen.Flash(<span class="number"></span> frames, <span class="number"></span> colorR = 255, 
-                <span class="number"></span> colorG = 255, <span class="number"></span> colorB = 255, <span class="number"></span> colorA = 255, 
-                <span class="boolean"></span> waitEnd = true)</span> 
+                <br><span class="function">Screen.Flash(<span class="number"></span> frames, <span class="number"></span> colorR = 255,
+                <span class="number"></span> colorG = 255, <span class="number"></span> colorB = 255, <span class="number"></span> colorA = 255,
+                <span class="boolean"></span> waitEnd = true)</span>
                 Flashes the screen for a given number of frames. A flash is an image that is displayed on top of the entire screen and fades afterwards.<br>
                 Change the color of the flash by changing the values of the 4 other variables. Each one must be between 0 and 255.<br><br>
-                By default, the script will halt execution until the flash has stopped. Set <span class="term">waitEnd</span> to false to bypass this and 
+                By default, the script will halt execution until the flash has stopped. Set <span class="term">waitEnd</span> to false to bypass this and
 				continue the script instead.
 			</p>
-            
+
             <p>
-                <br><span class="function">Screen.CenterEventOnCamera(<span class="string"></span> name, <span class="number"></span> speed = 5, 
-                <span class="boolean"></span> straightLine = false, <span class="boolean"></span> waitEnd = true)</span> 
+                <br><span class="function">Screen.CenterEventOnCamera(<span class="string"></span> name, <span class="number"></span> speed = 5,
+                <span class="boolean"></span> straightLine = false, <span class="boolean"></span> waitEnd = true)</span>
                 This function is an alias of <span class="term">Event.CenterOnScreen()</span>.<br><br>
 				Centers the camera on the given event.<br>
-                The camera will move at <span class="term">speed</span> pixels per second in each direction, 
+                The camera will move at <span class="term">speed</span> pixels per second in each direction,
                 unless you set <span class="term">straightLine</span> to true. In that case, the camera will follow a line to the center of the event.<br><br>
                 By default, the script will halt execution until the camera has stopped moving. Set <span class="term">waitEnd</span> to false to bypass
                 this and continue the script instead.
 			</p>
-            
+
             <p>
-                <br><span class="function">Screen.MoveCamera(<span class="number"></span> pixX, <span class="number"></span> pixY, 
-                <span class="number"></span> speed = 5, <span class="boolean"></span> straightLine = false, <span class="boolean"></span> waitEnd = true)</span> 
-                Moves the camera to a given position from the bottom left center of the screen.<br>The camera's speed will be 
-				<span class="term">speed</span> pixels per second in each direction, unless you set <span class="term">straightLine</span> to true. 
+                <br><span class="function">Screen.MoveCamera(<span class="number"></span> pixX, <span class="number"></span> pixY,
+                <span class="number"></span> speed = 5, <span class="boolean"></span> straightLine = false, <span class="boolean"></span> waitEnd = true)</span>
+                Moves the camera to a given position from the bottom left center of the screen.<br>The camera's speed will be
+				<span class="term">speed</span> pixels per second in each direction, unless you set <span class="term">straightLine</span> to true.
 				In that case, the camera will follow a line to reach the destination you entered.<br><br>
-                By default, the script will halt execution until the camera has stopped moving. Set <span class="term">waitEnd</span> to false to bypass 
+                By default, the script will halt execution until the camera has stopped moving. Set <span class="term">waitEnd</span> to false to bypass
                 this and continue the script instead.
             </p>
-            
+
             <p>
-                <br><span class="function">Screen.ResetCameraPosition(<span class="number"></span> speed = 5, <span class="boolean"></span> straightLine = false, <span class="boolean"></span> waitEnd = true)</span> 
+                <br><span class="function">Screen.ResetCameraPosition(<span class="number"></span> speed = 5, <span class="boolean"></span> straightLine = false, <span class="boolean"></span> waitEnd = true)</span>
                 Centers the camera on the player.<br>
-				The camera's speed will be <span class="term">speed</span> pixels per second in each direction, 
+				The camera's speed will be <span class="term">speed</span> pixels per second in each direction,
                 unless you set <span class="term">straightLine</span> to true. In that case, the camera will follow a line to the player's center.<br><br>
-                By default, the script will halt execution until the camera has stopped moving. Set <span class="term">waitEnd</span> to false to bypass 
+                By default, the script will halt execution until the camera has stopped moving. Set <span class="term">waitEnd</span> to false to bypass
                 this and continue the script instead.
             </p>
         </div>
-		
+
 		<div class="tab-pane text-style" id="mercy">
             <h2 style="text-decoration: none; line-height:50px;">
                 * YOU WON!<br>

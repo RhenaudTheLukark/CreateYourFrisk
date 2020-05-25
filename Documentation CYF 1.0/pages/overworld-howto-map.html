@@ -54,6 +54,7 @@ it's w3c valid, at least
 						<li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
                         <li class="li-indent"><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
                         <li class="li-indent new"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-discord.html"><span class="CYF"></span> The Discord Object</a></li>
                         <li class="li-indent"><a href="api-functions-waves.html">The Arena Object</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                     <li><a href="api-projectile.html">Projectile management</a></li>
@@ -85,18 +86,18 @@ it's w3c valid, at least
     <div class="tab-content col-md-10">
 		<div class="tab-pane active text-style" id="overworld-howto-map">
             <h2><span class="CYF"></span> The Overworld: How to create a map in Unity with Tiled2Unity</h2><br><br>
-            
+
             <p>
-                Creating a map for CYF is not that difficult. All that you need to do is follow the rules. 
+                Creating a map for CYF is not that difficult. All that you need to do is follow the rules.
                 There are a lot of them, but as long as you stick to them, you'll be fine.
             </p>
 
             <p>
                 The very first step is to create the map in Tiled, and save it.<br>
-                <u>Tip:</u> Undertale's tiles are 20x20 pixels, with a scale factor of 2: I suggest for you to 
+                <u>Tip:</u> Undertale's tiles are 20x20 pixels, with a scale factor of 2: I suggest for you to
                 make a tileset of 40x40px tiles so you will not have to worry about scaling.
             </p>
-            
+
             <br><img src="../img/Tiled2Unity screenshot.png" alt="Tiled2Unity screenshot"><br><br>
             <p>
                 <li>Open Tiled2Unity.exe</li>
@@ -107,24 +108,24 @@ it's w3c valid, at least
             </p>
             <br>
             <p>
-                <li>Now that you're in Unity, you should create a scene, then delete the Main Camera object, save and then name the map 
+                <li>Now that you're in Unity, you should create a scene, then delete the Main Camera object, save and then name the map
                 (the name will be important!)</li>
-                <li>Open the scene <span class="term">Assets\Scenes\test4.unity</span>, copy all its contents and paste them into your newly 
+                <li>Open the scene <span class="term">Assets\Scenes\test4.unity</span>, copy all its contents and paste them into your newly
 				created scene.</li>
-                <li>In the <span class="term">Project</span> tab, go to <span class="term">Assets\Tiled2Unity\Prefabs</span> and you should 
+                <li>In the <span class="term">Project</span> tab, go to <span class="term">Assets\Tiled2Unity\Prefabs</span> and you should
 				see your map. Drag and drop it over the scene. (Put it in the root, not in a directory)</li>
-                <li>Go to <span class="term">Assets\Resources\Prefabs</span> and include <span class="term">Main Camera OW</span> like you 
+                <li>Go to <span class="term">Assets\Resources\Prefabs</span> and include <span class="term">Main Camera OW</span> like you
 				did in the previous  line. Now you should be able to see something in the Game tab!</li>
             </p>
             <br>
             <p>
-                <li>Remove the map in <span class="term">Background</span>, disable the objects <span class="term">Foreground</span> and 
-				<span class="term">Bottom</span> by clicking on each object, going to the Inspector and unchecking the box right next to the 
+                <li>Remove the map in <span class="term">Background</span>, disable the objects <span class="term">Foreground</span> and
+				<span class="term">Bottom</span> by clicking on each object, going to the Inspector and unchecking the box right next to the
 				object's name.</li>
                 <li>Move your map so that the bottom-left corners of the map and the camera are at the same coordinates.</li>
-                <li>Delete everything that is in the GameObject <span class="term">Background</span>, except for the TPs. You'll see that 
+                <li>Delete everything that is in the GameObject <span class="term">Background</span>, except for the TPs. You'll see that
                   your map object is composed of every layer that you've added in your map.</li>
-				 <li>Now, inside of <span class="term">Background</span>, you'll have to insert the main object component of your map and 
+				 <li>Now, inside of <span class="term">Background</span>, you'll have to insert the main object component of your map and
 				  its colliders (in your object layers).<br>
                   If Unity asks you if you want to break the prefab, say "Yes".</li>
                 <li>If there are other layers, just put them in the root.</li>
@@ -132,44 +133,44 @@ it's w3c valid, at least
             </p>
             <br>
             <p>
-                <li>Adjust so that <span class="term">Background</span>'s RectTransform fits in the map. It's very important, 
+                <li>Adjust so that <span class="term">Background</span>'s RectTransform fits in the map. It's very important,
 					as the RectTransform bounds are used for map scrolling.<br>
-                  <u>Tips:</u> 
+                  <u>Tips:</u>
                   <ul>
-                      <li>Put all of <span class="term">Background</span>'s children in the root or as the children of another object, so 
+                      <li>Put all of <span class="term">Background</span>'s children in the root or as the children of another object, so
                         that their position isn't changed while the background moves.</li>
-                      <li>Then, <span class="term">Background</span>'s RectTransform size will be equal to (the bounds of the map / 100) - so, 
+                      <li>Then, <span class="term">Background</span>'s RectTransform size will be equal to (the bounds of the map / 100) - so,
 						if your map is 640x480, the size will be 6.4 by 4.8.</li>
-                      <li>Now, center the main map object to make it fit inside of <span class="term">Background</span>'s 
+                      <li>Now, center the main map object to make it fit inside of <span class="term">Background</span>'s
 					  <span class="term">RectTransform</span>.</li>
-                      <li>Don't forget that <span class="term">Background</span>'s <span class="term">RectTransform</span>'s bottom-left corner 
-						must be at the same coordinates as the <span class="term">Main Camera OW</span>'s 
+                      <li>Don't forget that <span class="term">Background</span>'s <span class="term">RectTransform</span>'s bottom-left corner
+						must be at the same coordinates as the <span class="term">Main Camera OW</span>'s
 						<span class="term">RectTransform</span>'s bottom-left corner!</li>
-                      <li>Now, when everything is all done, put <span class="term">Background</span>'s old children back to their original places 
+                      <li>Now, when everything is all done, put <span class="term">Background</span>'s old children back to their original places
 					  as <span class="term">Background</span>'s children.</li>
                   </ul></li>
                   <br>NOTE: The absolute minimum size for a map for the camera to function properly is 640x480.
             </p>
             <br>
             <p>
-                <li>For each map component, go to the component <span class="term">Sorting Layer Exposed</span> and set the value 
+                <li>For each map component, go to the component <span class="term">Sorting Layer Exposed</span> and set the value
                   <span class="term">Order in Layer</span> to 0.</li>
-                <li>For each map component, you'll need to set the Z value of the map. The Z value works like 
+                <li>For each map component, you'll need to set the Z value of the map. The Z value works like
                   this: the greater it is, the further into the background a component will be.<br>
-                  Set <span class="term">Background</span>'s Z value to 140, then play around this value to set the Z value of other 
+                  Set <span class="term">Background</span>'s Z value to 140, then play around this value to set the Z value of other
                   background layers (between 139 and 141; you can use decimal numbers, of course).<br>
                   For foreground layers' Z values, you should use values between -1.5 and -0.5.<br>
                   <u>Warning</u>: The maps' Z value must be set to 0 after setting the layers' Z values!</li>
             </p>
             <br>
             <p>
-                <li>Edit, add and/or remove the TP objects. You'll have to set some values for the TP: see the 
+                <li>Edit, add and/or remove the TP objects. You'll have to set some values for the TP: see the
                   component <span class="term">TP Handler</span>.
                   <ul>
                       <li><span class="term">Scene Name</span> = Name of the destination scene of the TP.</li>
-                      <li><span class="term">Position</span> = Position of the player in the destination map, from the bottom-left corner of 
+                      <li><span class="term">Position</span> = Position of the player in the destination map, from the bottom-left corner of
                       the map.</li>
-                      <li><span class="term">Direction</span> = Direction the player will be facing after the TP. <span class="term">2</span> = Down, 
+                      <li><span class="term">Direction</span> = Direction the player will be facing after the TP. <span class="term">2</span> = Down,
 					  <span class="term">4</span> = Left, <span class="term">6</span> = Right, <span class="term">8</span> = Up.<br>
                       (I used the NumPad for this, yeah ^^)</li>
                       <li><span class="term">Activated</span> = Boolean used when the TP is activated. Don't activate it manually!</li>
@@ -178,7 +179,7 @@ it's w3c valid, at least
             <br>
             <p>
                 <li>Change the layer of all of the colliders. Give them the layer <span class="term">BlockingLayer</span>.<br>
-                  <u>Tip:</u> Select the first one, then shift-click on the last one. Then, you can change the 
+                  <u>Tip:</u> Select the first one, then shift-click on the last one. Then, you can change the
                       layer of all objects simultaneously!</li>
                 <li>Finally, modify the data in the object <span class="term">Background</span>, in the <span class="term">Map Info</span> Component.
                   <ul>
@@ -202,12 +203,12 @@ it's w3c valid, at least
                 Build. It'll be built with the project and it can now be used!
             </p><br>
             <p>
-                <li>Open the scene <span class="term">Assets\Scenes\TransitionOverworld.unity</span> and search for the GameObject 
+                <li>Open the scene <span class="term">Assets\Scenes\TransitionOverworld.unity</span> and search for the GameObject
                   <span class="term">Main Camera OW</span>.<br>
                   <li>Go to the component <span class="term">Transition Overworld</span> and change the values.</li>
 				  <ul>
                   <li><span class="term">First Level To Load</span>: Name of the first scene to load.</li>
-                  <li><span class="term">Beginning Position</span> = Position of the player in the first map, from the bottom-left corner 
+                  <li><span class="term">Beginning Position</span> = Position of the player in the first map, from the bottom-left corner
                         of the map.</li>
 				  </ul>
 			  </li>
@@ -224,7 +225,7 @@ it's w3c valid, at least
             <p>
                 If you had any problems with this tutorial, please tell me what went wrong.<br>
                 If you see any ways that this tutorial can be improved, please tell me that as well.<br>
-                You'll have more chances to contact me on Unitale's Discord server - the response will be way faster and it will be much 
+                You'll have more chances to contact me on Unitale's Discord server - the response will be way faster and it will be much
 				smoother than using messages on reddit.<br>
                 Here is the link to the <a href="https://discord.gg/0c8fN7KCwBh4ZBL9">Discord server</a>.
             </p>
@@ -233,7 +234,7 @@ it's w3c valid, at least
                 I hope that you enjoyed the tutorial! If you're ready to add an event, go to the next tutorial!
             </p>
         </div>
-		
+
 		<div class="tab-pane text-style" id="mercy">
             <h2 style="text-decoration: none; line-height:50px;">
                 * YOU WON!<br>

@@ -54,6 +54,7 @@ it's w3c valid, at least
 						<li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
                         <li class="li-indent"><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
                         <li class="li-indent new"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-discord.html"><span class="CYF"></span> The Discord Object</a></li>
                         <li class="li-indent"><a href="api-functions-waves.html">The Arena Object</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                     <li><a href="api-projectile.html">Projectile management</a></li>
@@ -93,10 +94,10 @@ it's w3c valid, at least
             <br>
             <p>
                 <li>The first thing that you'll have to do is, of course, to open the map you want to add the event in.</li>
-                <li>As you may have seen in the previous tutorial, Unity uses "prefabs". These are generic objects that can 
+                <li>As you may have seen in the previous tutorial, Unity uses "prefabs". These are generic objects that can
                 be used in different scenes across the project.<br><br>
                 Here, you'll want to go to the Project tab and go to <span class="term">Assets/Resources/prefabs</span> to see them.<br>
-                The one that interests us here is the <span class="term">Event1</span> prefab. Click and drag it to the GameObject list 
+                The one that interests us here is the <span class="term">Event1</span> prefab. Click and drag it to the GameObject list
 				to create an instance of this prefab.</li>
             </p>
             <br>
@@ -105,7 +106,7 @@ it's w3c valid, at least
 				You <b>absolutely need to</b> rename the parent GameObject to <span class="term">"SpritePivot"</span> in order for the event to be correctly layered.<br><br>
 				This is a workaround I use to correctly layer the sprites.<br>
                 The position (transform data) of the event must be held by the parent GameObject
-				in order for its layer to be correctly set. You can modify the position of the child GameObjct if you want to, and it'll 
+				in order for its layer to be correctly set. You can modify the position of the child GameObjct if you want to, and it'll
 				move the layer point accordingly.<br>
 				<a href="https://forum.unity3d.com/threads/official-2d-sorting-feedback.376707/#post-3167142">For more infomation about this workaround and how it works, go here.</a>
 			</p>
@@ -139,7 +140,7 @@ it's w3c valid, at least
                     <li><span class="term">Offset</span>, <span class="term">Size</span>: Same as the <span class="term">Edit Collider</span> Button.</li>
                 </ul></li>
                 <li><span class="term">EventOW</span>:<ul>
-                    <li><span class="term">Script to Load</span>: Name of the event script to load when triggering this event. 
+                    <li><span class="term">Script to Load</span>: Name of the event script to load when triggering this event.
 				The event must be in the directory <span class="term">MAPMOD/Lua/Events/</span>.</li>
                     <li><span class="term">Actual Page</span>: The first page of the event (and in-game, the current page of the event).</li>
                     <li><span class="term">Event Triggers</span>: <span style="color:#ff0000">This part MUST NOT be forgotten.</span>
@@ -151,7 +152,7 @@ it's w3c valid, at least
                     <b><span class="term">EventPage0</span></b> is a special event that is <b>always automatically called</b> as soon as the map loads.<br>
                     So any custom events that you want to use the Event Trigger system below should be in <span class="term">EventPage1</span> and after.
                     <br><br><br>
-                    Back in Unity, for each X value in the <span class="term">Event Trigger</span> table, you need to give the Page number, 
+                    Back in Unity, for each X value in the <span class="term">Event Trigger</span> table, you need to give the Page number,
                     and for each matching Y value, you'll need to input the trigger type of the event:
                     <br><br>
                     <ul>
@@ -190,7 +191,7 @@ it's w3c valid, at least
             <p>
                 If you had any problems with this tutorial, please tell me what went wrong.<br>
                 If you see any ways that this tutorial can be improved, please tell me that as well.<br>
-                You'll have more chances to contact me on Unitale's Discord server - the response will be way faster and it will be much 
+                You'll have more chances to contact me on Unitale's Discord server - the response will be way faster and it will be much
 				smoother than using messages on reddit.<br>
                 Here is the link to the <a href="https://discord.gg/0c8fN7KCwBh4ZBL9">Discord server</a>.
             </p>
@@ -199,7 +200,7 @@ it's w3c valid, at least
                 I hope that you enjoyed the tutorial!
             </p>
         </div>
-		
+
 		<div class="tab-pane text-style" id="mercy">
             <h2 style="text-decoration: none; line-height:50px;">
                 * YOU WON!<br>

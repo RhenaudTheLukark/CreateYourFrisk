@@ -54,6 +54,7 @@ it's w3c valid, at least
 						<li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
                         <li class="li-indent"><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
                         <li class="li-indent new"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-discord.html"><span class="CYF"></span> The Discord Object</a></li>
                         <li class="li-indent"><a href="api-functions-waves.html">The Arena Object</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                     <li style="margin-left:5px;">> Projectile management <</li>
@@ -88,7 +89,7 @@ it's w3c valid, at least
             <p>Projectile management is, starting from 0.2.0, available from both the encounter and the wave scripts. As
                 a result it is now in its own section.</p>
             <p>
-                <br><span class="function"><span class="CYF"></span>CreateProjectileLayer(<span class="string"></span> name, 
+                <br><span class="function"><span class="CYF"></span>CreateProjectileLayer(<span class="string"></span> name,
                 <span class="string"></span> position = "", <span class="boolean"></span> below = false) [E/W]</span>
                 Creates a layer named <span class="term">name</span> that projectiles can be placed in. To create your new projectile layer, you'll need to choose a pre-existing layer.
                 <br><br>
@@ -100,7 +101,7 @@ it's w3c valid, at least
             </p>
 
             <p>
-                <br><span class="function">CreateProjectile(<span class="string"></span> spritename, <span class="number"></span> initial_x, 
+                <br><span class="function">CreateProjectile(<span class="string"></span> spritename, <span class="number"></span> initial_x,
                 <span class="number"></span> initial_y,<span class="CYF"></span> <span class="string"></span> layer = "") returns <span class="userdata">bullet</span> [E/W]</span>
                 Creates a bullet that you can store and modify, with its spawn position relative to the center of the
                 arena. The hitbox of the bullet is a rectangle around the sprite, unless you use CYF's PP mode.<br>
@@ -108,9 +109,9 @@ it's w3c valid, at least
             </p>
 
             <p>
-                <br><span class="function">CreateProjectileAbs(<span class="string"></span> spritename, <span class="number"></span> initial_x, 
+                <br><span class="function">CreateProjectileAbs(<span class="string"></span> spritename, <span class="number"></span> initial_x,
                 <span class="number"></span> initial_y,<span class="CYF"></span> <span class="string"></span> layer = "") returns <span class="userdata">bullet</span> [E/W]</span>
-                Same as <span class="term">CreateProjectile</span>, but the bullet's spawn position is relative to the bottom left of the screen instead of 
+                Same as <span class="term">CreateProjectile</span>, but the bullet's spawn position is relative to the bottom left of the screen instead of
                 the arena's center. The hitbox of the bullet is a rectangle around the sprite, unless you use CYF's PP mode.<br>
                 <span class="CYF"></span> You can specify a layer if you want - otherwise, the bullet will be in the normal bullet layer.
             </p>
@@ -205,7 +206,7 @@ it's w3c valid, at least
                 <br><span class="function">Bullet.Remove()</span>
                 Destroys this bullet.
                 <br><br>
-                You can continue retrieving its <span class="term">x</span>, 
+                You can continue retrieving its <span class="term">x</span>,
                 <span class="term">y</span>, <span class="term">absx</span> and <span class="term">absy</span>
                 properties. Trying to move a removed bullet will give you a Lua error. If you're not sure if your
                 bullet still exists, check <span class="term">Bullet.isactive</span> first.
@@ -335,7 +336,7 @@ end </pre>
 function OnHit(bullet)
     Player.Hurt(10)
 end
- 
+
 --Replicating cyan bullet functionality
 function OnHit(bullet)
     if Player.isMoving then
@@ -358,7 +359,7 @@ end
 </pre>
             </div>
         </div>
-		
+
 		<div class="tab-pane text-style" id="mercy">
             <h2 style="text-decoration: none; line-height:50px;">
                 * YOU WON!<br>

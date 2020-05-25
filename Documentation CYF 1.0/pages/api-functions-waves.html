@@ -54,6 +54,7 @@ it's w3c valid, at least
 						<li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
                         <li class="li-indent"><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
                         <li class="li-indent new"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-discord.html"><span class="CYF"></span> The Discord Object</a></li>
                         <li class="li-indent active" style="margin-left:5px;">> The Arena<br>Object <</li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                     <li><a href="api-projectile.html">Projectile management</a></li>
@@ -85,18 +86,18 @@ it's w3c valid, at least
     <div class="tab-content col-md-10">
         <div class="tab-pane active text-style" id="api-functions-waves">
             <h3>The Arena Object</h3><br><br>
-            
+
             <p>The following section is dedicated exclusively to the arena. This is the area inside the white box
                that the player is allowed to move within. Projectiles can spawn and move relative to the arena,
                and the arena can be resized <span class="CYF"></span> and moved.
             </p>
-             
+
             <p>
                 <br><span class="function">The Arena object [W]</span>
                 You can use this object to obtain information about the arena, resize it or move it.<br>
                 Don't forget that the Arena's position is reset at the end of the wave!
             </p>
-            
+
             <ul>
                 <li><span class="number"></span> <span class="term">Arena.width</span> (readonly) - the width of the arena in pixels, after resizing. Since the reference for
                     the player and bullets is the arena's center, you can get the left/right side of the arena with
@@ -119,58 +120,58 @@ it's w3c valid, at least
                 </li><br>
                 <li><span class="number"></span> <span class="term">Arena.currentheight</span> (readonly) - the <i>current</i> height of the arena in pixels. Differs from
                     <span class="term">height</span> in that it will accurately reflect the arena size in the middle of resizing, too.</li><br>
-                <li><span class="CYF"></span> <span class="number"></span> <span class="term">Arena.currentx</span> (readonly) - the <i>current</i> x of the arena in pixels. Differs 
+                <li><span class="CYF"></span> <span class="number"></span> <span class="term">Arena.currentx</span> (readonly) - the <i>current</i> x of the arena in pixels. Differs
                     from <span class="term">x</span> in that it will accurately reflect the arena position in the middle of moving, too.</li><br>
-                <li><span class="CYF"></span> <span class="number"></span> <span class="term">Arena.currenty</span> (readonly) - the <i>current</i> y of the arena in pixels. Differs 
+                <li><span class="CYF"></span> <span class="number"></span> <span class="term">Arena.currenty</span> (readonly) - the <i>current</i> y of the arena in pixels. Differs
                     from <span class="term">y</span> in that it will accurately reflect the arena position in the middle of moving, too.
                 <br><br>
                 NOTE: <span class="term">Arena.currenty</span> is the position of the bottom of the <i>inside</i> (black part) of the Arena. It will be 5 pixels (the
                 arena's width) greater than <span class="term">Arena.y</span>.
                 </li><br>
                 <li><span class="CYF"></span> <span class="boolean"></span> <span class="term">Arena.isResizing</span> (readonly) - Tells you if the Arena is currently being resized.
-                <br><span class="unitale"></span>: There's an equivalent of this in 
+                <br><span class="unitale"></span>: There's an equivalent of this in
                 0.2.1a - just use<br><span class="term" style="line-height:28px;">Arena.currentwidth ~= Arena.width or Arena.currentheight ~= Arena.height</span>.</li><br>
                 <li><span class="CYF"></span> <span class="boolean"></span> <span class="term">Arena.isMoving</span> (readonly) - Tells you if the Arena is currently being moved.</li><br>
-                <li><span class="CYF"></span> <span class="boolean"></span> <span class="term">Arena.isModifying</span> (readonly) - Returns true if the Arena is being moved <i>or</i> 
+                <li><span class="CYF"></span> <span class="boolean"></span> <span class="term">Arena.isModifying</span> (readonly) - Returns true if the Arena is being moved <i>or</i>
                 resized, false otherwise.</li><br>
                 <li><span class="term">Arena.Resize(<span class="number"></span> width, <span class="number"></span> height)</span> - Resizes the arena to the new size. Currently, monsters stay on top of
                     the arena. This was going to be changed around the animation update.<br><span class="CYF"></span> But, in CYF, you can use
                     <span class="term">BindToArena</span> to control that!
                 </li><br>
                 <li><span class="term">Arena.ResizeImmediate(<span class="number"></span> width, <span class="number"></span> height)</span> - Resizes the arena instantly, without the animation.</li><br>
-                
-                <li><span class="CYF"></span> <span class="term">Arena.Move(<span class="number"></span> x, <span class="number"></span> y, 
-                <span class="boolean"></span> movePlayer = true, <span class="boolean"></span> immediate = false)</span> - Moves the Arena 
+
+                <li><span class="CYF"></span> <span class="term">Arena.Move(<span class="number"></span> x, <span class="number"></span> y,
+                <span class="boolean"></span> movePlayer = true, <span class="boolean"></span> immediate = false)</span> - Moves the Arena
                     based on its current position. Set <span class="term">movePlayer</span> to true if you want the Player to move with the Arena and set
                     <span class="term">immediate</span> to true if you want to move the Arena immediately.</li><br>
-                    
-                <li><span class="CYF"></span> <span class="term">Arena.MoveTo(<span class="number"></span> x, <span class="number"></span> y, 
-                <span class="boolean"></span> movePlayer = true, <span class="boolean"></span> immediate = false)</span> - Moves the Arena 
-                    based on the bottom-left corner of the window. Set <span class="term">movePlayer</span> to true if you want the Player to move with the 
+
+                <li><span class="CYF"></span> <span class="term">Arena.MoveTo(<span class="number"></span> x, <span class="number"></span> y,
+                <span class="boolean"></span> movePlayer = true, <span class="boolean"></span> immediate = false)</span> - Moves the Arena
+                    based on the bottom-left corner of the window. Set <span class="term">movePlayer</span> to true if you want the Player to move with the
                     Arena and set <span class="term">immediate</span> to true if you want to move the Arena immediately.</li><br>
-                    
-                <li><span class="CYF"></span> <span class="term">Arena.MoveAndResize(<span class="number"></span> x, <span class="number"></span> y, 
-                <span class="number"></span> width, <span class="number"></span> height, <span class="boolean"></span> movePlayer = true, 
+
+                <li><span class="CYF"></span> <span class="term">Arena.MoveAndResize(<span class="number"></span> x, <span class="number"></span> y,
+                <span class="number"></span> width, <span class="number"></span> height, <span class="boolean"></span> movePlayer = true,
                 <span class="boolean"></span> immediate = false)
-                </span> - Moves the Arena based on its current position and resizes it at the same time. 
-                Set <span class="term">movePlayer</span> to true if you want the Player to move with the Arena and set 
+                </span> - Moves the Arena based on its current position and resizes it at the same time.
+                Set <span class="term">movePlayer</span> to true if you want the Player to move with the Arena and set
                 <span class="term">immediate</span> to true if you want to move the Arena immediately.</li><br>
-                    
-                <li><span class="CYF"></span> <span class="term">Arena.MoveToAndResize(<span class="number"></span> x, <span class="number"></span> y, 
-                <span class="number"></span> width, <span class="number"></span> height, <span class="boolean"></span> movePlayer = true, 
+
+                <li><span class="CYF"></span> <span class="term">Arena.MoveToAndResize(<span class="number"></span> x, <span class="number"></span> y,
+                <span class="number"></span> width, <span class="number"></span> height, <span class="boolean"></span> movePlayer = true,
                 <span class="boolean"></span> immediate = false)
-                </span> - Move the Arena based on the bottom-left corner of the window and resizes it at the same time. Set 
-                <span class="term">movePlayer</span> to true if you want the Player to move with the Arena and set <span class="term">immediate</span> to 
+                </span> - Move the Arena based on the bottom-left corner of the window and resizes it at the same time. Set
+                <span class="term">movePlayer</span> to true if you want the Player to move with the Arena and set <span class="term">immediate</span> to
                 true if you want to move the Arena immediately.</li><br>
-                
+
                 <li><span class="CYF"></span> <span class="term">Arena.Hide()</span> - Makes the Arena invisible, but it will stay active.</li><br>
-                
-                <li><span class="CYF"></span> <span class="term">Arena.Show()</span> - Makes the Arena visible after using 
+
+                <li><span class="CYF"></span> <span class="term">Arena.Show()</span> - Makes the Arena visible after using
                 <span class="term">Arena.Hide</span>.<br>
                 This is also called automatically whenever a wave ends!</li><br>
             </ul>
         </div>
-		
+
 		<div class="tab-pane text-style" id="mercy">
             <h2 style="text-decoration: none; line-height:50px;">
                 * YOU WON!<br>

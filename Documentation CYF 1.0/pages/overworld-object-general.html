@@ -54,6 +54,7 @@ it's w3c valid, at least
 						<li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
                         <li class="li-indent"><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
                         <li class="li-indent new"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-discord.html"><span class="CYF"></span> The Discord Object</a></li>
                         <li class="li-indent"><a href="api-functions-waves.html">The Arena Object</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                     <li><a href="api-projectile.html">Projectile management</a></li>
@@ -85,9 +86,9 @@ it's w3c valid, at least
     <div class="tab-content col-md-10">
 		<div class="tab-pane active text-style" id="overworld-object-general">
             <h2><span class="CYF"></span>The Overworld: The General Object</h2><br>
-           
+
             <p>
-                <br><span class="function">General.SetDialog(<span class="luatable"><span class="string"></span></span> texts, 
+                <br><span class="function">General.SetDialog(<span class="luatable"><span class="string"></span></span> texts,
                 <span class="boolean"></span> formatted = true, <span class="luatable"><span class="string"></span></span> mugshots = nil, <span class="boolean"></span> forcePosition = nil)</span>
                 Displays text.
                 <ul>
@@ -121,14 +122,14 @@ it's w3c valid, at least
                 </ul>
             </p>
             <p>
-                <br><span class="function">General.SetChoice(<span class="luatable"><span class="string"></span></span> choices, 
+                <br><span class="function">General.SetChoice(<span class="luatable"><span class="string"></span></span> choices,
                 <span class="string"></span> question = null, <span class="boolean"></span> forcePosition = nil)</span>
                 Displays a choice screen.
                 <br><br>
                 The response will be returned to a variable named <span class="term">lastChoice</span> as either <span class="term">0</span>
                 for the first option or <span class="term">1</span> for the second option.<br>
                 For now, there are a lot of constraints, but I hope that I'll find a better way to do this easily.<br><br>
-                Each choice must have no more than 3 lines. 
+                Each choice must have no more than 3 lines.
 				If you want there to be a question (a prompt to appear above the options), it must be no more than one line long.
                 <br><br>
                 * As with <span class="term">General.SetDialog</span>, set <span class="term">forcePosition</span> to <span class="term">true</span>
@@ -158,7 +159,7 @@ it's w3c valid, at least
                 Waits for the player to press the <span class="term">Confirm</span> input (Enter or Z) to continue.
             </p>
             <p>
-                <br><span class="function">General.GameOver(<span class="luatable"><span class="string"></span></span> deathText = nil, 
+                <br><span class="function">General.GameOver(<span class="luatable"><span class="string"></span></span> deathText = nil,
                 <span class="string"></span> deathMusic = nil)</span>
                 Starts the Game Over cutscene, putting the player back at their save point afterwards. <br>
                 You can choose the text and the music if you want to. Otherwise, it'll play the normal music and show a default message.
@@ -194,7 +195,7 @@ it's w3c valid, at least
                 Exits the current game and sends the player back to the title screen.
             </p>
             <p>
-                <br><span class="function">General.SetBattle(<span class="string"></span> encounterName = "", <span class="string"></span> anim = "normal", 
+                <br><span class="function">General.SetBattle(<span class="string"></span> encounterName = "", <span class="string"></span> anim = "normal",
                 <span class="boolean"></span> ForceNoFlee = false)</span>
                 Initiates a battle with a chosen encounter (leave out the <span class="term">.lua</span> in <span class="term">encounterName</span>).<br>
                 <span class="new"></span>Set <span class="term">encounterName</span> to <span class="term">""</span> to choose a random encounter from the
@@ -204,7 +205,7 @@ it's w3c valid, at least
                 <span class="new"></span>If you want the battle's intro to be quick like Undyne's battle, set <span class="term">anim</span> to <span class="term">"fast"</span>.<br>
                 You can also set it to <span class="term">"instant"</span> to enter the battle immediately on the next frame.
                 <br><br>
-                Finally, <span class="term">ForceNoFlee</span> removes the flee option from the encounter - unless your encounter sets 
+                Finally, <span class="term">ForceNoFlee</span> removes the flee option from the encounter - unless your encounter sets
 				<span class="term">flee</span> to true.
                 <br><br><br>
                 <h4 style="color:red;">VERY IMPORTANT:</h4>
@@ -216,7 +217,7 @@ it's w3c valid, at least
                 However, all events' <span class="term">EventPage0()</span> functions will automatically be called when the battle ends.<br>
                 Use this, and possibly Real Globals, to your advantage to detect when a battle ends.
             </p>
-			
+
 			<p>
 				<br><span class="function">General.EnterShop(<span class="string"></span> scriptName, <span class="boolean"></span> instant = false)</span>
 				Enters a Shop scene, using the shop .lua script given in <span class="term">scriptName</span>.<br>
@@ -228,7 +229,7 @@ it's w3c valid, at least
                 <font color="ffffff">* NOTE: Just like with <span class="term">General.SetBattle</span>, using this function will halt the rest of your event script.</font>
 			</p>
         </div>
-		
+
 		<div class="tab-pane text-style" id="mercy">
             <h2 style="text-decoration: none; line-height:50px;">
                 * YOU WON!<br>

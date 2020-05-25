@@ -54,6 +54,7 @@ it's w3c valid, at least
                         <li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
                         <li class="li-indent"><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
                         <li class="li-indent new"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-discord.html"><span class="CYF"></span> The Discord Object</a></li>
                         <li class="li-indent"><a href="api-functions-waves.html">The Arena Object</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                     <li><a href="api-projectile.html">Projectile management</a></li>
@@ -172,11 +173,11 @@ end
                 <li><span class="term">ITEMMENU</span> - When you've selected ITEM.</li><br>
                 <li><span class="term">MERCYMENU</span> - When you've selected MERCY.</li><br>
                 <li><span class="term">ENEMYDIALOGUE</span> - When your enemy/enemies start their dialogue.</li><br>
-                <li><span class="term">DIALOGRESULT</span> - When you call <span class="term">BattleDialog()</span>, or when the UI shows text on its own 
+                <li><span class="term">DIALOGRESULT</span> - When you call <span class="term">BattleDialog()</span>, or when the UI shows text on its own
                 (e.g. when using an item).
                 </li><br>
             </ul>
-            Note: There are three states not mentioned here - because they never occur naturally. You can find them in <span class="ref">Functions &amp; 
+            Note: There are three states not mentioned here - because they never occur naturally. You can find them in <span class="ref">Functions &amp;
             objects</span>.
             <br><br>For a clearer example, here's a code snippet replicating the older events above.
             <div class="code-container">
@@ -260,7 +261,7 @@ end
             <div class="code-container">
   <pre class="brush:lua;">commands = {"Sing", "Dance", "Wiggle"} --somewhere at the beginning
 wigglecounter = 0 --let's keep a counter to check how often we've wiggled
- 
+
 function HandleCustomCommand(command)
     if command == "SING" then
         BattleDialog({"You sing your heart out. It's in the arena now."})

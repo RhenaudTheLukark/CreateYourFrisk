@@ -54,6 +54,7 @@ it's w3c valid, at least
                         <li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
                         <li class="li-indent"><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
                         <li class="li-indent new"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-discord.html"><span class="CYF"></span> The Discord Object</a></li>
                         <li class="li-indent"><a href="api-functions-waves.html">The Arena Object</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                     <li><a href="api-projectile.html">Projectile management</a></li>
@@ -115,7 +116,7 @@ it's w3c valid, at least
                     <span class="term">Player.SetMaxHPShift(&lt;value&gt;, 0, true, false, false)</span>.<br>
                     Max hp is not a float, but regular hp is.
                 </li><br>
-                <li><span class="CYF"></span> <span class="number"></span> <span class="term">Player.maxhpshift</span> (readonly) - returns the difference between the 
+                <li><span class="CYF"></span> <span class="number"></span> <span class="term">Player.maxhpshift</span> (readonly) - returns the difference between the
                     player's current Max HP and their normal, unmodified Max HP.
                 </li><br>
                 <li><span class="CYF"></span> <span class="number"></span> <span class="term">Player.atk</span> - base attack of the player. Depends on the player's level.
@@ -137,26 +138,26 @@ it's w3c valid, at least
                 <li><span class="string"></span> <span class="term">Player.name</span> - get or set the player's current name. <br>
                     <span class="unitale"></span> 6 letters max. By default, it is a name randomly chosen from a small list of pre-set names.<br>
                     <span class="CYF"></span> 9 letters max. "Rhenao" by default.</li><br>
-                <li><span class="number"></span> <span class="term">Player.lv</span> - use this to get or set the player's current level. It can be between 1 and 20 (99 in <span class="CYF"></span>). It's 1 by default. 
+                <li><span class="number"></span> <span class="term">Player.lv</span> - use this to get or set the player's current level. It can be between 1 and 20 (99 in <span class="CYF"></span>). It's 1 by default.
                 Player starts with 20HP / 10 ATK and gets 4 HP / 2 ATK per level.
                 <br><br>
                 Leveling up the player through code doesn't automatically heal them; you'll have to do this manually.
                 </li><br>
-                <li><span class="CYF"></span> <span class="number"></span> <span class="term">Player.lastenemychosen</span> (readonly) - gets the id of the last chosen enemy in the 
+                <li><span class="CYF"></span> <span class="number"></span> <span class="term">Player.lastenemychosen</span> (readonly) - gets the id of the last chosen enemy in the
                 ACT/FIGHT menus. -1 at the beginning of a fight.
                 </li><br>
                 <li><span class="CYF"></span> <span class="number"></span> <span class="term">Player.lasthitmultiplier</span> (readonly) - gets the accuracy value from the last time the
-                player was in <span class="term">ATTACKING</span>. Normally, it will be between 0 and 2. It will be -1 if the player missed the attack (and 
+                player was in <span class="term">ATTACKING</span>. Normally, it will be between 0 and 2. It will be -1 if the player missed the attack (and
                 at the beginning of the battle) and 2.2 if the attack was perfectly precise.
                 </li><br>
                 <li><span class="boolean"></span> <span class="term">Player.ishurting</span> (readonly) - true if the player's currently blinking due to being hurt, false
                     otherwise.
                 </li><br>
-                <li><span class="boolean"></span> <span class="term">Player.ismoving</span> (readonly) - true if the player is currently moving in battle, false otherwise. 
+                <li><span class="boolean"></span> <span class="term">Player.ismoving</span> (readonly) - true if the player is currently moving in battle, false otherwise.
                 Will always be false while not in a wave script.
                 <br>NOTE: This only will change with the default control scheme (see <span class="term">Player.SetControlOverride</span> below).
                 </li><br>
-                <li><span class="term">Player.Hurt(<span class="number"></span> damage, <span class="number"></span> invul_time = 1.7, <span class="boolean"></span> ignoreDef = false, <span class="boolean"></span> playSound = true)</span> 
+                <li><span class="term">Player.Hurt(<span class="number"></span> damage, <span class="number"></span> invul_time = 1.7, <span class="boolean"></span> ignoreDef = false, <span class="boolean"></span> playSound = true)</span>
                 - deals damage to the player, and makes them invincible for <span class="term">invul_time</span> seconds.
                 <br>Can not hurt the player again if they are already hurting (flashing).
                 <br><br>
@@ -192,7 +193,7 @@ it's w3c valid, at least
                     have to call <span class="term">Player.SetControlOverride(true)</span> as the player's default movement keeps the soul inside
                     the arena.
                 </li><br>
-                <li><span class="CYF"></span> <span class="term">Player.ForceHP(<span class="number"></span> amount)</span> - Lets you set the player's HP to a number above the 
+                <li><span class="CYF"></span> <span class="term">Player.ForceHP(<span class="number"></span> amount)</span> - Lets you set the player's HP to a number above the
                 player's Max HP. The REAL maximum is 1.5 times the player's MaxHP.
                 </li><br>
                 <li><span class="CYF"></span> <span class="term">Player.SetMaxHPShift(<span class="number"></span> shift, <span class="number"></span> invulnerabilitySeconds = 1.7f, <span class="boolean"></span> set = false,
@@ -222,27 +223,27 @@ it's w3c valid, at least
                 </li><br>
                 <li><span class="new"></span><span class="CYF"></span> <span class="term">Player.SetAttackAnim(<span class="luatable"><span class="string"></span></span> anim, <span class="number"></span> frequency, <span class="string"></span> prefix = "")</span> - Sets the animation used
                 when attacking an enemy. Use it like <span class="term">sprite.SetAnimation()</span>.</li><br>
-                <li><span class="CYF"></span> <span class="term">Player.ResetAttackAnim()</span> - Resets the animation of the player's 
+                <li><span class="CYF"></span> <span class="term">Player.ResetAttackAnim()</span> - Resets the animation of the player's
                 attack to the default slashing animation.</li><br>
                 <li><span class="CYF"></span> <span class="term">Player.ChangeTarget(<span class="number"></span> targetNumber)</span> - Changes the target of the Player's attack
                 while in <span class="term">ATTACKING</span>. Does nothing outside of the state <span class="term">ATTACKING</span>.
                     It should be used in <span class="term">BeforeDamageCalculation()</span> or <span class="term">BeforeDamageValues()</span>.</li><br>
-                <li><span class="CYF"></span> <span class="term">Player.ForceAttack(<span class="number"></span> enemyID, <span class="number"></span> damage = normal_damage_values)</span> - Forces an 
-                    attack towards the enemy number <span class="term">enemyID</span>. If you want to, you can choose the attack's damage, too - but 
+                <li><span class="CYF"></span> <span class="term">Player.ForceAttack(<span class="number"></span> enemyID, <span class="number"></span> damage = normal_damage_values)</span> - Forces an
+                    attack towards the enemy number <span class="term">enemyID</span>. If you want to, you can choose the attack's damage, too - but
                     otherwise, damage will be calculated normally.
                     <br><span style="color:#ff0000">If you want enemies to be able to die this way, you MUST check with <span class="term">Player.CheckDeath</span>!</span></li><br>
-                <li><span class="CYF"></span> <span class="term">Player.MultiTarget(<span class="luatable"><span class="number"></span></span>  targetIDs = all, <span class="luatable"><span class="number"></span></span> damage = normal_damage_values)</span> - The 
+                <li><span class="CYF"></span> <span class="term">Player.MultiTarget(<span class="luatable"><span class="number"></span></span>  targetIDs = all, <span class="luatable"><span class="number"></span></span> damage = normal_damage_values)</span> - The
                     next attack the player executes will attack the enemies contained in <span class="term">targetIDs</span> and deal <span class="term">
                     damage</span> damage. If you want to, you can choose the attack's damage, too - but otherwise, damage will be calculated normally.
                     If you put nothing as a parameter, this will attack all enemies with the normal damage calculations.</li><br>
-                <li><span class="CYF"></span> <span class="term">Player.MultiTarget(<span class="number"></span> damage)</span> - The next attack the player executes will attack all 
+                <li><span class="CYF"></span> <span class="term">Player.MultiTarget(<span class="number"></span> damage)</span> - The next attack the player executes will attack all
                 enemies and deals <span class="term">damage</span> damage.</li><br>
-                <li><span class="CYF"></span> <span class="term">Player.ForceMultiAttack(<span class="luatable"><span class="number"></span></span> targetIDs = all, <span class="luatable"><span class="number"></span></span> = normal_damage_values)</span> 
+                <li><span class="CYF"></span> <span class="term">Player.ForceMultiAttack(<span class="luatable"><span class="number"></span></span> targetIDs = all, <span class="luatable"><span class="number"></span></span> = normal_damage_values)</span>
                     - Forces an attack towards the enemies contained in <span class="term">targetIDs</span> and deals <span class="term">damage
                     </span> damage. If you want to, you can choose the attack's damage, too - but otherwise, damage will be calculated normally.
                     If you put nothing as a parameter, this will attack all enemies with the normal damage calculations.
                     <br><span style="color:#ff0000">If you want enemies to be able to die this way, you MUST check with <span class="term">Player.CheckDeath</span>!</span></li><br>
-                <li><span class="CYF"></span> <span class="term">Player.ForceMultiAttack(<span class="number"></span> damage)</span> - Forces an attack that deals 
+                <li><span class="CYF"></span> <span class="term">Player.ForceMultiAttack(<span class="number"></span> damage)</span> - Forces an attack that deals
                 <span class="term">damage</span> damage to all enemies.
                     <br><span style="color:#ff0000">If you want enemies to be able to die this way, you MUST check with <span class="term">Player.CheckDeath</span>!</span></li><br>
                 <li><span class="CYF"></span> <span class="term">Player.CheckDeath()</span> - Checks if the enemies are dead after a forced attack.
@@ -250,7 +251,7 @@ it's w3c valid, at least
                     <span class="term">ForceAttack</span> or <span class="term">ForceMultiAttack</span> in the middle of text.</li><br>
             </ul>
         </div>
-		
+
 		<div class="tab-pane text-style" id="mercy">
             <h2 style="text-decoration: none; line-height:50px;">
                 * YOU WON!<br>

@@ -54,6 +54,7 @@ it's w3c valid, at least
                         <li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
                         <li class="li-indent"><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
                         <li class="li-indent new"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-discord.html"><span class="CYF"></span> The Discord Object</a></li>
                         <li class="li-indent"><a href="api-functions-waves.html">The Arena Object</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                     <li><a href="api-projectile.html">Projectile management</a></li>
@@ -90,10 +91,10 @@ it's w3c valid, at least
                 ways. All functions will have a suffix in square brackets to denote in which scripts they may be used.<br>
                 See <span class="ref">How to read this documentation</span> for more details.
             </p>
-            
+
             <hr>
             <h4>All-script functions</h4>
-            
+
             <p>
                 <br><span class="function">DEBUG(<span class="string"></span> text) [E/M/W]</span>
                 Write text to the debug console (toggleable with <span class="term">F9</span>). It will appear automatically the first time you
@@ -166,7 +167,7 @@ it's w3c valid, at least
                 Gets an AlMighty Global that you previously set using <span class="term">SetAlMightyGlobal()</span>.<br>
                 Can be used in the overworld.
             </p>
-            
+
             <p>
                 <br><span class="function"><span class="CYF"></span> SetFrameBasedMovement(<span class="boolean"></span> bool) [E/M/W]</span>
                 Set to <span class="term">true</span> if you want frame-based player movement (2px/frame) instead of time based player movement (120px/s).
@@ -185,8 +186,8 @@ it's w3c valid, at least
                 <br><br>
                 <span class="new"></span>If used in the state <span class="term">ACTIONSELECT</span>, this function will move the player over the specified button.
             </p>
-           
-            <p>         
+
+            <p>
                 <br><span class="function"><span class="CYF"></span> AllowPlayerDef(<span class="boolean"></span> bool) [E/M/W]</span>
                 If the given value is true, all damage that the player will take will be reduced - like in Undertale - by 1 point for each 5 defense,
                 with the player's defense at LV1 not affecting the damage.<br/>
@@ -234,34 +235,34 @@ end
                 and what that state entails. The states you pass to it are case-invariant, but uppercase is recommended
                 for readability.
             </p>
-            
-            <p>            
+
+            <p>
                 Arguably the best part about <span class="term">State</span> is that it can be used in conjunction with the text command <span class="term">
                 [func]</span> to change the state from within your dialogue. An example is below - this will have a monster say that he will
                 not fight you, then return to the action select screen, instead of starting a wave.
             </p>
-            
+
             <div class="code-container">
                 <pre class="brush: lua;">currentdialogue = {"I won't fight you.", "[func:State,ACTIONSELECT]"}</pre>
             </div>
-            
+
             <ul>
                 <li><span class="term">ACTIONSELECT</span> - While in this state, you can select FIGHT/ACT/ITEM/MERCY.</li><br>
-                <li><span class="term">ENEMYDIALOGUE</span> - When starting this state, <span class="term">currentdialogue</span> gets read from the 
+                <li><span class="term">ENEMYDIALOGUE</span> - When starting this state, <span class="term">currentdialogue</span> gets read from the
                     Encounter script for every monster and their dialogue is displayed. If that doesn't exist, it'll return something at
                     random from the <span class="term">randomdialogue</span> list.
                 </li><br>
-                <li><span class="term">DEFENDING</span> - When starting this state, <span class="term">nextwaves</span> is read out from the Encounter 
+                <li><span class="term">DEFENDING</span> - When starting this state, <span class="term">nextwaves</span> is read out from the Encounter
                     script and all scripts in the Waves folder with matching names will be part of this defense step. <span class="term">wavetimer</span>
                     is also read from the Encounter script at this time.
                 </li><br>
             </ul>
-            
+
             <p>
                 There are some other states available, but entering some might have nasty side effects. It's possible that
                 they might lock up your battle if you enter them with <span class="term">State</span>. So, use at your own risk:
             </p>
-            
+
             <ul>
                 <li><span class="term">ATTACKING</span> - Starting this state will put you in the screen where you either deal damage to an enemy by pressing
                 "Z" at the right time, or you wait and miss entirely. The enemy this affects is the same as the last enemy selected in the states <span class=
@@ -271,9 +272,9 @@ end
                 automatically after choosing FIGHT or ACT. If the Player got here from choosing FIGHT, the state loaded from pressing "Z" is <span class=
                 "term">ATTACKING</span>, if they got here from choosing ACT, that state will be <span class="term">ACTMENU</span>, but if they got here from
                 calling <span class="term">State</span> and press "Z", nothing will happen.</li><br>
-                <li><span class="term">ACTMENU</span> - This state displays all of the options from the enemy's <span class="term">commands</span> in order. 
+                <li><span class="term">ACTMENU</span> - This state displays all of the options from the enemy's <span class="term">commands</span> in order.
                 If the enemy has <span class="term">cancheck</span> set to <i>true</i>, then a "Check" option will be displayed here - which
-                will follow the syntax seen in the description for <span class="term">commands</span> as seen in <span class="ref">Basic Setup</span>. 
+                will follow the syntax seen in the description for <span class="term">commands</span> as seen in <span class="ref">Basic Setup</span>.
                 Having more than 6 ACT commands may cause glitchiness, though, so watch out! (Additional note: the enemy chosen will always be the same as
                 the last enemy chosen in <span class="term">ENEMYSELECT</span>.)</li><br>
                 <li><span class="term">ITEMMENU</span> - This state shows all of the player's available items. It's tied with the
@@ -284,21 +285,21 @@ end
                 Also, choosing "Flee" prompts some silly messages :P<br><span class="CYF"></span> If the encounter was entered from the
                 overworld, choosing "Flee" allows the player to flee the battle and return to the overworld.</li><br>
                 <li><span class="term">DIALOGRESULT</span> - This is the state that is entered whenever <span class="term">BattleDialog</span> is called,
-                when the victory message displays, when the player fails to flee, or when an item is used. When all text is done and the player presses 
+                when the victory message displays, when the player fails to flee, or when an item is used. When all text is done and the player presses
                 "Z", the state <span class="term">ENEMYDIALOGUE</span> is entered next. The soul is forcibly invisible during this state.</li><br>
             </ul>
-            
+
             <p>
                 Finally, there are two "special" states that evoke behavior in the engine itself:
             </p>
-            
+
             <ul>
                 <li><span class="term">DONE</span> - Changing state to <span class="term">DONE</span> will instantly force the player to the mod selection screen.</li><br>
                 <li><span class="term">NONE</span> - This state does nothing. It is entered for the first frame of the encounter, but entering it manually will completely freeze your encounter. It might be useful if you want to disable all of Unitale/CYF's basic functionality.
                 </li><br>
                 <li><span class="unitale"></span> <span class="term">RESETTING</span> - DEPRECATED, DO NOT USE. Only listed for completion purposes. It only exists in Unitale 0.2.1a, so trying to use it in CYF won't work. It was removed in the Github release of Unitale 0.2.1a, and seemed to be only for testing.</li><br>
             </ul>
-            
+
             <p>
                 <span class="function"><span class="CYF"></span> Freezing states</span>
                 As of CYF v0.6.2.1, calling <span class="term">State("PAUSE")</span> will perfectly "pause" an encounter. The last active state will remain active, but in a frozen state, until you call <span class="term">State</span> again.
@@ -308,15 +309,15 @@ end
                 * To unfreeze a state, you must use <span class="term">State</span> to switch to another state, preferably the last active state.</span> <span class="term">GetCurrentState()</span> will tell you the name of the frozen state.
                 <br><br>
             </p>
-            
+
             <p>
                 <br><span class="function"><span class="CYF"></span> GetCurrentState() returns <span class="string"></span> [E/M/W]</span>
                 Returns the name of the current state (see above for all states).
             </p>
-            
+
             <hr>
             <h4>Encounter script functions</h4>
-            
+
             <p>
                 <br><span class="function">RandomEncounterText() returns <span class="string"></span> [E]</span>
                 Select a random monster from the encounter, then get a random entry from the <span class="term">comments</span> table there.
@@ -343,16 +344,16 @@ end</pre>
                 </ul>
                 <font style="font-size:16px;color: white;">NOTE: Enter <span class="term">"default"</span> to reset the Buttons and UI.</font>
             </p>
-            
+
             <hr>
             <h4>Monster script functions</h4>
-            
+
             <p>
                 <br><span class="function">SetSprite(<span class="string"></span> filename) [M]</span>
                 Sets the monster's sprite from the Sprites folder to <span class="term">filename.png</span>.
                 Can be used with <span class="term">[func]</span> to change sprites mid-dialogue.
             </p>
-            
+
             <p>
                 <br><span class="function">SetActive(<span class="boolean"></span> active) [M]</span>
                 Either true or false. If false, this monster will stay on screen but will not show up in menus, do its
@@ -387,13 +388,13 @@ end</pre>
                 <br><span class="function"><span class="CYF"></span> Move(<span class="number"></span> x, <span class="number"></span> y) [M]</span>
                 Moves the enemy's sprite relative to its current position.
             </p>
-            
+
             <p>
                 <br><span class="function"><span class="CYF"></span> MoveTo(<span class="number"></span> x, <span class="number"></span> y) [M]</span>
                 Moves the enemy's sprite relative to the bottom left corner of the screen.<br>
                 This is effectively the same as setting <span class="term">enemypositions</span> again, except <span class="term">x</span> is 320px left and <span class="term">y</span> is 231px down.
             </p>
-            
+
             <p>
                 <br><span class="function"><span class="CYF"></span> BindToArena(<span class="boolean"></span> bind, <span class="boolean"></span> isUnderArena = false) [M]</span>
                 Controls whether the enemy's sprite will follow the Arena's movements.
@@ -401,27 +402,27 @@ end</pre>
                 If <span class="term">bind</span> is true, the enemy will be parented to the Arena and follow all of its movements.<br>
                 <u>Otherwise</u>, it will be either behind or in front of the arena, depending on the value of <span class="term">isUnderArena</span>.
             </p>
-            
+
             <p>
                 <br><span class="function"><span class="CYF"></span> SetBubbleOffset(<span class="number"></span> x, <span class="number"></span> y) [M]</span>
                 Makes the enemy's dialogue bubble appear <span class="term">x</span> pixels horizontally and
                 <span class="term">y</span> pixels vertically relative to its original position.
             </p>
-            
+
             <p>
                 <br><span class="function"><span class="CYF"></span> SetDamageUIOffset(<span class="number"></span> x, <span class="number"></span> y) [M]</span>
                 Changes the offset of the enemy's damage UI (the enemy's health bar and the red numbers). Note that the damage UI is on a layer
                 above that of the arena.
             </p>
-            
+
             <p>
                 <br><span class="function"><span class="CYF"></span> SetSliceAnimOffset(<span class="number"></span> x, <span class="number"></span> y) [M]</span>
                 Changes the offset of the attack animation (the red slice by default) for when the player attacks this monster.
             </p>
-            
+
             <hr>
             <h4>Wave script functions</h4>
-            
+
             <p>
                 <br><span class="function">EndWave() [W]</span>
                 Ends this wave immediately. You can only call this function from the Update function.

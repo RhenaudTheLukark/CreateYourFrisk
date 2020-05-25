@@ -54,6 +54,7 @@ it's w3c valid, at least
 						<li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
                         <li class="li-indent"><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
                         <li class="li-indent new"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-discord.html"><span class="CYF"></span> The Discord Object</a></li>
                         <li class="li-indent"><a href="api-functions-waves.html">The Arena Object</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                     <li><a href="api-projectile.html">Projectile management</a></li>
@@ -89,7 +90,7 @@ it's w3c valid, at least
                 of <span class="term">if</span> statements in <span class="term">OnHit</span> just to get precise
                 collisions? Then the Pixel-Perfect Collision System is for YOU!</p>
                 <p>You can use this system for your entire encounter with <span class="term">SetPPCollision(bool)</span>,
-                or you can apply it just to a bullet with <span class="term">bullet.ppcollision</span>. 
+                or you can apply it just to a bullet with <span class="term">bullet.ppcollision</span>.
                 The bullet's <span class="term">ppcollision</span> value will override the encounter's
                 <span class="term">ppcollision</span> value.</p>
                 <!-- <p>But wait just a minute before rushing to use the Pixel-Perfect Collision System...or not, do as you want!</p> -->
@@ -97,7 +98,7 @@ it's w3c valid, at least
                 like always and collision will still work! (this is why it took me one week to make this feature)</p>
                 <p>One last tip: The Pixel-Perfect Collision System is more resource-intensive than the Normal Collision
                 System. Don't use Pixel-Perfect for bullets that won't damage you, as that will just waste resources!</p>
-            
+
             <hr>
             <img src="../img/PP.png">
             <br><br>
@@ -116,11 +117,11 @@ it's w3c valid, at least
                 <br><br>
                 The initial value is <span class="term">false</span>.
             </p>
-            
+
             <hr>
             <i>From <span class="ref">Projectile management</ref></i>:
             <br><br>
-            
+
             <p>
                 <br><span class="function"><span class="boolean"></span> Bullet.ppcollision</span>
                 If this is true, the bullet will use the Pixel-Perfect Collision system.
@@ -146,7 +147,7 @@ it's w3c valid, at least
                 The default collision system is set by <span class="term">SetPPCollision</span>.
             </p>
         </div>
-		
+
 		<div class="tab-pane text-style" id="mercy">
             <h2 style="text-decoration: none; line-height:50px;">
                 * YOU WON!<br>

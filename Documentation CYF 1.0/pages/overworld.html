@@ -54,6 +54,7 @@ it's w3c valid, at least
 						<li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
                         <li class="li-indent"><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
                         <li class="li-indent new"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-discord.html"><span class="CYF"></span> The Discord Object</a></li>
                         <li class="li-indent"><a href="api-functions-waves.html">The Arena Object</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                     <li><a href="api-projectile.html">Projectile management</a></li>
@@ -85,9 +86,9 @@ it's w3c valid, at least
     <div class="tab-content col-md-10">
 		<div class="tab-pane active text-style" id="overworld">
             <h2><span class="CYF"></span> Create Your Frisk: RhenaudTheLukark's Overworld basics</h2><br><br>
-           
+
             <h4>Presentation</h4>
-           
+
             <p>Create Your Frisk is different from Unitale because of its numerous new features...but the overworld
                 is the key feature that everyone was waiting to use for a long time.</p>
             <p>So I'm finally able and proud to give access to the overworld feature, which includes an efficient event handler
@@ -96,7 +97,7 @@ it's w3c valid, at least
                you'll need to know at least some of the Game Objects' mechanics.</p>
            <br>
             <h4>Get Started</h4>
-           
+
             <p>To get started, you'll need to, first of all, download the current version of Unity that CYF uses, and, of course,
                 download the project via <a href="https://github.com/RhenaudTheLukark/CreateYourFrisk">Github</a>.</p>
                 <h4>Create Your Frisk v0.6.4.1 was built using <b><u><a href="https://netstorage.unity3d.com/unity/83fbdcd35118/UnityDownloadAssistant-2018.2.13f1.exe">
@@ -104,42 +105,42 @@ it's w3c valid, at least
             <br>
             <p>Unity may take a lot of time to install and to load the project for the first time, due to a lot of resources being
                registered by Unity - but you won't have to do it in the future.</p>
-            <p>Once you're in, you'll have to load the scene <span class="term">Assets/Scenes/Disclaimer.unity</span> using the command 
+            <p>Once you're in, you'll have to load the scene <span class="term">Assets/Scenes/Disclaimer.unity</span> using the command
 			    <span class="term">File</span> => <span class="term">Open Scene</span> at the top left corner of Unity's window.</p>
-            <p>You can start CYF from either the <span class="term">Disclaimer</span>, <span class="term">Intro</span>, or 
+            <p>You can start CYF from either the <span class="term">Disclaimer</span>, <span class="term">Intro</span>, or
 				<span class="term">TitleScreen</span> scenes. It's up to you to find how you want to work in CYF!</p>
             <p>Now you're ready!! You can launch CYF and you'll be ready to start fiddling with the engine! If you followed these
                 instructions and for some reason CYF won't launch, you may want to contact me directly via Discord or Reddit. In this case,
                 please get <a href="https://www.teamviewer.com/en/">TeamViewer</a>, a software that allows you to share your
                 screen with other users. With this, I'll be able to see what's wrong and help you.</p><br>
-           
+
             <h4>How does it work?</h4>
 
             <p>Some software will have to be used to create an overworld in CYF. First of all, you can use a software
                called <a href="http://www.mapeditor.org/">Tiled</a> that allows you to create maps out of tilesets - images that
-               contain tiles used to fill in maps. This tiling system is absent from Unity, though - but it's easier to use to create 
-			   a map, so being able to translate a Tiled map to a Unity scene thanks to 
+               contain tiles used to fill in maps. This tiling system is absent from Unity, though - but it's easier to use to create
+			   a map, so being able to translate a Tiled map to a Unity scene thanks to
 			   <a href="http://www.seanba.com/tiled2unity">Tiled2Unity</a> would be a great idea.</p>
             <p>Well, now we're going to go deep into the details. If you still haven't learned Unity's basics, you should research those
                 beforehand, as some technical language may be used here.</p>
             <p>There are mostly two things to look at when making a map: the map itself (how the map will be made) and the events (how
                the map will work). Let's delve into the more complex stuff now.</p>
             <p>As I said above, each map is converted into a scene with Tiled2Unity. This scene will have to contain at least one
-			   element, which is the map object called <span class="term">Background</span>. To see more about how to create a map, 
+			   element, which is the map object called <span class="term">Background</span>. To see more about how to create a map,
 			   I suggest for you to look at the tutorial on <span class="ref">How to create a map</span>.</p>
-            <p>Now, the events. These are universal and used the same way, with the exception of one "add-on" that is a 
-			   <span class="term">CYFAnimator</span> component. The events have different function-calling conditions, such as pressing 
-			   the confirm button to call it, colliding with it, it being called automatically, or the function being called as a 
-			   parallel process. The functions themselves have to be created in Lua scripts, like battles. To see more about how to use 
+            <p>Now, the events. These are universal and used the same way, with the exception of one "add-on" that is a
+			   <span class="term">CYFAnimator</span> component. The events have different function-calling conditions, such as pressing
+			   the confirm button to call it, colliding with it, it being called automatically, or the function being called as a
+			   parallel process. The functions themselves have to be created in Lua scripts, like battles. To see more about how to use
 			   the events, you should check out <span class="ref">How to create an event</span>.</p>
-            <p>Of course, there are other things to see, but these are the two main parts of CYF's overworld coding. Now, let's look at the 
+            <p>Of course, there are other things to see, but these are the two main parts of CYF's overworld coding. Now, let's look at the
                 functions that will let you do whatever you want to with the overworld!</p><br>
-           
+
             <h4>The event code</h4>
-           
-            <p>For a long time, events' code was accessible and could only be modified by going into 
-			   <span class="term">YOURMOD/Lua/Events/</span>. Maybe you already fiddled with them, maybe not. Now that the system 
-			   is stable and easier to use, event programming may be as easy as creating a battle: all that you have to do is to follow 
+
+            <p>For a long time, events' code was accessible and could only be modified by going into
+			   <span class="term">YOURMOD/Lua/Events/</span>. Maybe you already fiddled with them, maybe not. Now that the system
+			   is stable and easier to use, event programming may be as easy as creating a battle: all that you have to do is to follow
 			   the documentation and know what you're doing.
             </p>
             <hr>
@@ -152,9 +153,9 @@ it's w3c valid, at least
                 <i>for more information and specifics.</i>
             </p>
             <br>
-            <p>The <span class="term">Audio</span>, <span class="term">NewAudio</span>, <span class="term">Inventory</span>, 
-			    <span class="term">Input</span>, <span class="term">Misc</span> and <span class="term">Time</span> objects from  battles 
-				are usable in the overworld too, as well as <span class="term">RealGlobals</span> and <span class="term">AlMightyGlobals</span>. 
+            <p>The <span class="term">Audio</span>, <span class="term">NewAudio</span>, <span class="term">Inventory</span>,
+			    <span class="term">Input</span>, <span class="term">Misc</span> and <span class="term">Time</span> objects from  battles
+				are usable in the overworld too, as well as <span class="term">RealGlobals</span> and <span class="term">AlMightyGlobals</span>.
                 <br><br><br>
                 <span class="new"></span><span class="term">CreateSprite</span> and <span class="term">CreateText</span> all work exactly the same,
                 except that the default value for the "layer" argument is <span class="term">"Default"</span> instead of <span class="term">"BelowArena"</span>
@@ -186,7 +187,7 @@ it's w3c valid, at least
                     <li><span class="term">Versions after v0.6.1.2</span>: Current version's number.<br>
                     For example, in CYF v0.6.2, this will be "0.6.2".</li>
                 </ul>
-                
+
                 <h4>TIP: Lua has a very useful built-in string comparing function.</h4>
                 You can very easily check for <span class="term">if CYFversion &lt; "0.6.2.2" then</span>, <span class="term">if CYFversion &gt;= "0.6.1.2" then</span> and other combinations.
                 <span class="function new"><span class="boolean"></span> playerskipdocommand</span>
@@ -194,7 +195,7 @@ it's w3c valid, at least
                 <span class="term">[w]</span> and <span class="term">[letters]</span> commands, and commands with the tag "<span class="term">skipover</span>".
             </p>
         </div>
-		
+
 		<div class="tab-pane text-style" id="mercy">
             <h2 style="text-decoration: none; line-height:50px;">
                 * YOU WON!<br>

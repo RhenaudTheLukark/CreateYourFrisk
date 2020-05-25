@@ -54,6 +54,7 @@ it's w3c valid, at least
                         <li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
                         <li class="li-indent"><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
                         <li class="li-indent new"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-discord.html"><span class="CYF"></span> The Discord Object</a></li>
                         <li class="li-indent"><a href="api-functions-waves.html">The Arena Object</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                     <li><a href="api-projectile.html">Projectile management</a></li>
@@ -91,23 +92,23 @@ it's w3c valid, at least
                 see.</p>
             <hr>
             <h4>All-script variables</h4>
-            
+
             <p>
                 <br><span class="function"><span class="CYF"> </span><span class="boolean"></span> isCYF [E/M/W]</span>
                 A value - true by default - that indicates that if you're on CYF. nil if not on CYF. Test it with
                 <span class="term">if not isCYF then</span> or <span class="term">if isCYF then</span>.
             </p>
-            
+
             <p>
                 <br><span class="function"><span class="CYF"></span><span class="boolean"></span> safe [E/M/W]</span>
                 True if CYF's safe mode is enabled, false otherwise.
             </p>
-            
+
             <p>
                 <br><span class="function"><span class="CYF"></span><span class="boolean"></span> windows [E/M/W]</span>
                 Returns true if the user is on Windows, false otherwise.
             </p>
-            
+
             <p>
                 <br><span class="function"><span class="CYF"></span><span class="string"></span> CYFversion [E/M/W]</span>
                 Returns a different string based on the version of CYF you are using.<br>
@@ -120,11 +121,11 @@ it's w3c valid, at least
                     <li><span class="term">Versions after v0.6.1.2</span>: Current version's number.<br>
                     For example, in CYF v0.6.2, this will be "0.6.2".</li>
                 </ul>
-                
+
                 <h4>TIP: Lua has a very useful built-in string comparing function.</h4>
                 You can very easily check for <span class="term">if CYFversion &lt; "0.6.2.2" then</span>, <span class="term">if CYFversion &gt;= "0.6.1.2" then</span> and other combinations.
             </p>
-            
+
             <hr>
             <h4>Encounter script variables</h4>
             <div class="code-container">
@@ -153,7 +154,7 @@ deathtext = {
                 <span class="term">Audio.Stop()</span> in the <span class="term">EncounterStarting()</span> function.
                 For more information see <span class="ref">API - Game events</span>.</p>
             <br><p><span class="string"></span> <span class="term">encountertext</span> - Set the initial text of your encounter here.
-                After that, you can modify it at any time in preparation for the next turn. <span class="term">encountertext</span> gets read out at the 
+                After that, you can modify it at any time in preparation for the next turn. <span class="term">encountertext</span> gets read out at the
                 start of every new turn (i.e. you going back to the FIGHT/ACT/ITEM/MERCY selection).<br><br>
                 * You can use <span class="term">\n</span> to create a new line <b>with a star</b> (*), and <span class="term">\r</span> to create
                 a new line <b>without</b> a star.
@@ -166,7 +167,7 @@ deathtext = {
                 here.</p>
             <br><p><span class="number"></span> <span class="term">wavetimer</span> - How long it takes for the defending step to end.
                 If this isn't set anywhere, it'll be the default <i>4.0 seconds</i>.</p>
-            <br><p><span class="luatable"><span class="number"></span></span> <span class="term">arenasize</span> - The inner size of the box the player's 
+            <br><p><span class="luatable"><span class="number"></span></span> <span class="term">arenasize</span> - The inner size of the box the player's
                 constrained to. <span class="term">{155, 130}</span> is the default size for a
                 lot of basic Undertale encounters. Papyrus' battle, for instance, has this at <span class="term">{245, 130}</span> most of the
                 time. You may modify this at any time - it'll only get read out before the enemies start their
@@ -178,23 +179,23 @@ deathtext = {
                 <span class="term">vegetoid.lua</span> will be used from the Monsters folder. After initialization, the names will be
                 replaced by Script controller objects you can use to control your monster scripts.<br>Refer to <span class="ref">API -
                     Functions &amp; Objects</span> for more information.</p>
-            <br><p><span class="luatable"><span class="luatable"><span class="number"></span>, <span class="number"></span></span></span> 
-            <span class="term">enemypositions</span> - 
-            Defines where the enemies are on the screen. <span class="term">{0, 0}</span> means they're centered just above the arena, with 1 pixel of space 
-            inbetween. <span class="term">{-30, 0}</span> means above the arena to the left; <span class="term">{50, 80}</span> means 50 pixels to the right 
+            <br><p><span class="luatable"><span class="luatable"><span class="number"></span>, <span class="number"></span></span></span>
+            <span class="term">enemypositions</span> -
+            Defines where the enemies are on the screen. <span class="term">{0, 0}</span> means they're centered just above the arena, with 1 pixel of space
+            inbetween. <span class="term">{-30, 0}</span> means above the arena to the left; <span class="term">{50, 80}</span> means 50 pixels to the right
             and 80 pixels above that center.<br>
                 You will always need at least as many enemy positions as enemies in your encounter. In this example we
                 have 3 enemy positions set to show you how you can define more than one, but since this example only
                 contains Vegetoid you only really need one position.</p>
             <br><p><span class="CYF"></span> <span class="boolean"></span> <span class="term">autolinebreak</span> - False by default. If this value is set to
-                true, the auto linebreak system will automatically add line breaks (<span class="term">\r</span>) to the text. 
+                true, the auto linebreak system will automatically add line breaks (<span class="term">\r</span>) to the text.
                 No need to use <span class="term">\r</span> or <span class="term">\n</span> anymore!</p>
             <br><p><span class="CYF"></span> <span class="boolean"></span> <span class="term">playerskipdocommand</span> - False by default. If this value is
                 set to true, text commands will be called even if the player skips the text - except for <span class="term">[w]</span> and
                 <span class="term">[letters]</span> commands, and commands with the tag "<span class="term">skipover</span>".</p>
-            <br><p><span class="CYF"></span> <span class="boolean"></span> <span class="term">unescape</span> - False by default. If this value is set 
+            <br><p><span class="CYF"></span> <span class="boolean"></span> <span class="term">unescape</span> - False by default. If this value is set
                 to true, you can't exit the battle with the ESC key anymore.</p>
-            <br><p><span class="CYF"></span> <span class="boolean"></span> <span class="term">flee</span> - True by default. If this value is set to false, 
+            <br><p><span class="CYF"></span> <span class="boolean"></span> <span class="term">flee</span> - True by default. If this value is set to false,
             the Flee option will not appear in the Mercy menu.</p>
             <br><p><span class="CYF"></span> <span class="boolean"></span> <span class="term">fleesuccess</span> - <span class="term">nil</span> by default.
             Set this to <span class="term">true</span> or <span class="term">false</span> to force the Flee option to succeed or fail, respectively.
@@ -202,17 +203,17 @@ deathtext = {
             (regardless of if those turns were spent trying to flee as well).</p>
             <br><p><span class="CYF"></span> <span class="luatable"><span class="string"></span></span> <span class="term">fleetexts</span> - If you set this
             to a table filled with strings, a random one of your strings will be displayed whenever the player flees the battle (if that's enabled).</p>
-            <br><p><span class="CYF"></span> <span class="boolean"></span> <span class="term">revive</span> - If this variable is set to true, the player 
+            <br><p><span class="CYF"></span> <span class="boolean"></span> <span class="term">revive</span> - If this variable is set to true, the player
             will be revived when they hit 0 HP.<br>By default, there will be no special text for the player being revived; however, if you set
             <span class="term">deathtext</span>, that will be used.</p>
-            <br><p><span class="CYF"></span> <span class="luatable"><span class="string"></span></span> <span class="term">deathtext</span> - Text displayed 
+            <br><p><span class="CYF"></span> <span class="luatable"><span class="string"></span></span> <span class="term">deathtext</span> - Text displayed
             when the player dies, in the Game Over screen. By default, it'll use the normal death text.<br>
             This text is also used if the player gets revived while <span class="term">revive</span> is true. Otherwise, there is no revive text.</p>
-            <br><p><span class="CYF"></span> <span class="string"></span> <span class="term">deathmusic</span> - Sets the death music. The music is played 
+            <br><p><span class="CYF"></span> <span class="string"></span> <span class="term">deathmusic</span> - Sets the death music. The music is played
             if <span class="term">revive</span> is not set.</p>
-            <br><p><span class="CYF"></span> <span class="luatable"><span class="userdata">script</span></span> <span class="term">Wave</span> - A table returning the 
+            <br><p><span class="CYF"></span> <span class="luatable"><span class="userdata">script</span></span> <span class="term">Wave</span> - A table returning the
             current wave scripts used. Returns a table with a length of 0 if not in the state DEFENDING.</p>
-            
+
             <hr>
             <h4>Monster script variables</h4>
             <div class="code-container">
@@ -233,24 +234,24 @@ xp = 6
 gold = 1
 check = "Serving Size: 1 Monster\nNot monitored by the USDA"</pre>
             </div>
-            <p><span class="luatable"><span class="string"></span></span> <span class="term">comments</span> - A list of random comments attached to this 
+            <p><span class="luatable"><span class="string"></span></span> <span class="term">comments</span> - A list of random comments attached to this
             monster. You can retrieve one at random using the
-                <span class="term">RandomEncounterText()</span> function in your Encounter script. See <span class="ref">API - Functions &amp; Objects</span> 
+                <span class="term">RandomEncounterText()</span> function in your Encounter script. See <span class="ref">API - Functions &amp; Objects</span>
                 for details.</p>
-            <p><span class="luatable"><span class="string"></span></span> <span class="term">commands</span> - A list of ACT commands you can do. Listed in 
+            <p><span class="luatable"><span class="string"></span></span> <span class="term">commands</span> - A list of ACT commands you can do. Listed in
             the ACT menu and used in <span class="term">HandleCustomCommand()</span>.
                 See <span class="ref">API - Game events</span> for details. Note that the behaviour for Check is built-in, and shows you
-                the monster's <span class="term">name</span> followed by the <span class="term">ATK</span> and <span class="term">DEF</span>, and then the 
+                the monster's <span class="term">name</span> followed by the <span class="term">ATK</span> and <span class="term">DEF</span>, and then the
                 <span class="term">check</span> variable you'll see all the way down.</p>
-            <p><span class="luatable"><span class="string"></span></span> <span class="term">randomdialogue</span> - A list of random dialogue the monster 
-                can have. One of these is selected at random if <span class="term">currentdialogue</span> is <span class="term">nil</span> 
+            <p><span class="luatable"><span class="string"></span></span> <span class="term">randomdialogue</span> - A list of random dialogue the monster
+                can have. One of these is selected at random if <span class="term">currentdialogue</span> is <span class="term">nil</span>
                 (i.e. has no value).
                 <br><br>
                 <span class="CYF"></span> NOTE: The dialogue bubble will not be shown so long as it has no displayable letters. Set
                 <span class="term">randomdialogue</span> to a line with only text commands, such as <span class="term">"[noskip][next]"</span>, to use
                 this to your advantage.</p>
-            <p><span class="luatable"><span class="string"></span></span> <span class="term">currentdialogue</span> - The next dialogue for this monster. 
-                This overrides the random dialogue and is meant for special actions (e.g. you hit Vegetoid's green carrots after selecting Dinner from the 
+            <p><span class="luatable"><span class="string"></span></span> <span class="term">currentdialogue</span> - The next dialogue for this monster.
+                This overrides the random dialogue and is meant for special actions (e.g. you hit Vegetoid's green carrots after selecting Dinner from the
                 ACT menu). This variable gets <i>cleared every time after it's read out in the monster dialogue phase</i>. This is done
                 so you don't have to take care of managing it manually.
                 <br><br>
@@ -259,61 +260,61 @@ check = "Serving Size: 1 Monster\nNot monitored by the USDA"</pre>
                 this to your advantage.</p>
                 <p><span class="new"></span><span class="CYF"></span> <span class="string"></span> <span class="term">defensemisstext</span> - The text which will be displayed if the Player's attack is successful but deals 0 damage. "MISS" by default.</p>
                 <p><span class="new"></span><span class="CYF"></span> <span class="string"></span> <span class="term">noattackmisstext</span> - The text which will be displayed if the Player doesn't press Z when attacking. "MISS" by default.</p>
-            <p><span class="boolean"></span> <span class="term">cancheck</span> - Either true or false. You can leave this line out; it will be true by 
+            <p><span class="boolean"></span> <span class="term">cancheck</span> - Either true or false. You can leave this line out; it will be true by
                 default. If set to false, it will disable the default Check action that shows up in your ACT menu. If you want a custom
                 Check action, you can add it back into your <span class="term">commands</span> table, and handle it like any other custom
                 command. See <span class="ref">API - Game events</span> for details.</p>
-            <p><span class="boolean"></span> <span class="term">canspare</span> - Either true or false. If you leave this line out, it'll be set to false by 
+            <p><span class="boolean"></span> <span class="term">canspare</span> - Either true or false. If you leave this line out, it'll be set to false by
                 default. If you change this to true, your monster's name will turn yellow and it will be spareable.</p>
             <p><span class="CYF"></span> <span class="boolean"></span> <span class="term">isactive</span> - Tells you whether this enemy is active.<br>
                 Will be false if they have been manually de-activated, killed or spared.<br>
             <b><u>Setting this will do nothing! You must call</u></b> <span class="term">SetActive</span> (see <span class="ref">Misc. Functions</span>).</p>
             <br>
             <p><span class="string"></span> <span class="term">sprite</span> - Name of the sprite in your Sprites folder, without the .PNG extension.
-                This is the initial sprite for your monster. It can be changed using <span class="term">SetSprite(name)</span>; see <span class="ref">API - 
+                This is the initial sprite for your monster. It can be changed using <span class="term">SetSprite(name)</span>; see <span class="ref">API -
                 Functions &amp; Objects</span> for details.</p>
             <p><span class="CYF"></span> <span class="userdata">sprite</span> <span class="term">monstersprite</span> - Sprite handler of the monster.</p>
-            <p><span class="string"></span> <span class="term">dialogbubble</span> - What dialogue bubble will be used for the monster's dialogue. You can 
+            <p><span class="string"></span> <span class="term">dialogbubble</span> - What dialogue bubble will be used for the monster's dialogue. You can
                 change this at any time, but this <i>must</i> be initially set to something. For a list of all possible options, check the
                 <a href="../media/dialogoptions.png">dialog bubble names</a> chart; it's also in the sidebar.
                 Positioning of the bubbles is done automatically.</p>
             <p><span class="new"></span><span class="CYF"></span> <span class="string"></span> <span class="term">dialogueprefix</span> - A string, appended to the beginning
                 of every monster's dialogue. The default is <span class="term">"[effect:rotate]"</span></p>
-            <p><span class="string"></span> <span class="term">name</span> - Monster name. Fairly self-explanatory; shows up in the FIGHT/ACT menus. 
+            <p><span class="string"></span> <span class="term">name</span> - Monster name. Fairly self-explanatory; shows up in the FIGHT/ACT menus.
                 Can also be changed at any time.</p>
-            <p><span class="number"></span> <span class="term">hp</span> - Your monster's max HP, initially. After the fight has started, 
+            <p><span class="number"></span> <span class="term">hp</span> - Your monster's max HP, initially. After the fight has started,
                 this value will always accurately reflect your monster's current HP. You can then modify this value to change your monster's current HP.</p>
-            <p><span class="CYF"></span> <span class="number"></span> <span class="term">maxhp</span> - Your monster's max HP. After the fight has 
-                started this value will be always the same, unless you change it. It is mainly used for lifebars and such. You better not set it as 0 or as a 
+            <p><span class="CYF"></span> <span class="number"></span> <span class="term">maxhp</span> - Your monster's max HP. After the fight has
+                started this value will be always the same, unless you change it. It is mainly used for lifebars and such. You better not set it as 0 or as a
                 negative number, though.</p>
-            <p><span class="number"></span> <span class="term">atk</span> - Your monster's ATK. Only used in the default Check handler; bullet damage 
+            <p><span class="number"></span> <span class="term">atk</span> - Your monster's ATK. Only used in the default Check handler; bullet damage
                 is set through wave scripts. If you're not using the default Check you can leave this out.</p>
             <p><span class="number"></span> <span class="term">def</span> - Your monster's DEF.</p>
-            <p><span class="number"></span> <span class="term">xp</span> - Your monster's XP upon actually defeating them. You only get this by 
+            <p><span class="number"></span> <span class="term">xp</span> - Your monster's XP upon actually defeating them. You only get this by
                 killing the monster.</p>
-            <p><span class="number"></span> <span class="term">gold</span> - Gold you get from either killing or sparing this monster. Since the gold 
+            <p><span class="number"></span> <span class="term">gold</span> - Gold you get from either killing or sparing this monster. Since the gold
                 can change based on whether you kill or spare the monster, you can modify this at any time up until the fight ends.</p>
-            <p><span class="string"></span> <span class="term">check</span> - When checking with the default Check option, this is what's listed under 
+            <p><span class="string"></span> <span class="term">check</span> - When checking with the default Check option, this is what's listed under
                 the monster's name, ATK and DEF.</p>
-            <p><span class="CYF"></span> <span class="boolean"></span> <span class="term">unkillable</span> - Set it to true and the monster will not 
+            <p><span class="CYF"></span> <span class="boolean"></span> <span class="term">unkillable</span> - Set it to true and the monster will not
                 be killed if it has less than 1 HP. However, it can still be killed with <span class="term">Kill()</span>.</p>
             <p><span class="CYF"></span> <span class="boolean"></span> <span class="term">canmove</span> - Deprecated, always returns true. <br>Old behavior: Returns true if you are able to move or unbind <span class="term">monstersprite</span>, false otherwise.</p>
             <p><span class="CYF"></span> <span class="number"></span> <span class="term">posx</span> - The x position of the center of the enemy's sprite.</p>
             <p><span class="CYF"></span> <span class="number"></span> <span class="term">posy</span> - The y position of the bottom of the enemy's sprite.</p>
-            <p><span class="CYF"></span> <span class="string"></span> <span class="term">font</span> - The default font used by the monster. Set it to 
+            <p><span class="CYF"></span> <span class="string"></span> <span class="term">font</span> - The default font used by the monster. Set it to
             <span class="term">nil</span> if you want to use the normal monster font.</p>
-            <p><span class="CYF"></span> <span class="string"></span> <span class="term">voice</span> - The default voice used by the monster. Set it 
+            <p><span class="CYF"></span> <span class="string"></span> <span class="term">voice</span> - The default voice used by the monster. Set it
             to <span class="term">nil</span> if you want to use the default voice.</p>
             <hr>
-           
+
             <h4>Wave script variables</h4>
             <p>
                 <br><span class="function"><span class="CYF"></span> <span class="string"></span> wavename [W]</span>
                 Returns the name of the wave file, without the extension, from the Waves folder.
             </p>
-            
+
             <br><br>
-            
+
             <p>Other than the above, wave scripts don't have any variables that are read out from the start, but you can
                define your own. An instance of a wave script is made when you start defending, and is destroyed when the
                defending step  ends. As such, you can't store variables in a wave script for reusing later. Use the

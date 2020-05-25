@@ -54,6 +54,7 @@ it's w3c valid, at least
 						<li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
                         <li class="li-indent active" style="margin-left:5px;">> <span class="CYF"></span> The Inventory<br>Object <</li>
                         <li class="li-indent new"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-discord.html"><span class="CYF"></span> The Discord Object</a></li>
                         <li class="li-indent"><a href="api-functions-waves.html">The Arena Object</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                     <li><a href="api-projectile.html">Projectile management</a></li>
@@ -91,10 +92,10 @@ it's w3c valid, at least
                 can be deleted and the Inventory System has been simplified! Here are the functions that are created to
                 help you with this hellish mechanism that added items.
                 <br><br><br>
-                Some of these functions can only be used in <span class="term">HandleItem</span>. Examples are 
+                Some of these functions can only be used in <span class="term">HandleItem</span>. Examples are
                 included at the bottom of this page.
             </p><br>
-            
+
             <p>
                 <br><span class="function"><span class="boolean"></span> Inventory.AddItem(<span class="string"></span> name, <span class="number"></span> index = 8)</span>
                 Attempts to add the item <span class="term">name</span> to the player's inventory.
@@ -141,7 +142,7 @@ it's w3c valid, at least
                 <br><span class="term" style="margin-left:20px">name</span> = Name of the item to put in the inventory.
             </p>
             <p>
-                <br><span class="function">Inventory.AddCustomItems(<span class="luatable"><span class="string"></span></span> names, 
+                <br><span class="function">Inventory.AddCustomItems(<span class="luatable"><span class="string"></span></span> names,
                 <span class="luatable"><span class="number"></span></span> types)</span>
                 If you want to add custom items, this has to be used before <span class="term">SetInventory</span>.
                 This adds all items in <span class="term">names</span> to the inventory, where each item matches up with a
@@ -277,7 +278,7 @@ function HandleItem(ItemID)
 end
             </pre></div>
         </div>
-		
+
 		<div class="tab-pane text-style" id="mercy">
             <h2 style="text-decoration: none; line-height:50px;">
                 * YOU WON!<br>

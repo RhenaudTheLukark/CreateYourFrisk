@@ -54,6 +54,7 @@ it's w3c valid, at least
                         <li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
                         <li class="li-indent"><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
                         <li class="li-indent new"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-discord.html"><span class="CYF"></span> The Discord Object</a></li>
                         <li class="li-indent"><a href="api-functions-waves.html">The Arena Object</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                     <li><a href="api-projectile.html">Projectile management</a></li>
@@ -102,45 +103,45 @@ it's w3c valid, at least
                 <li><span class="boolean"></span> <span class="term">NewAudio.Exists(<span class="string"></span> name)</span> - Checks if the audio channel
                 <span class="term">name</span> exists.</li><br>
                 <li><span class="string"></span> <span class="term">NewAudio.GetAudioName(<span class="string"></span> name,
-                <span class="boolean"></span> withPrefix = true)</span> - Gets the name and type of the audio clip currently playing in the channel 
+                <span class="boolean"></span> withPrefix = true)</span> - Gets the name and type of the audio clip currently playing in the channel
                 <span class="term">name</span> as a string.<br>
                 If no audio is playing in a channel, this function returns <span class="term">"empty"</span>.
                 <br><br>
                 <span class="new"></span>If <span class="term">withPrefix</span> is true, the string returned by this function will begin with <span class="term">music:</span> for music clips,
                 <span class="term">sound:</span> for sound clips and <span class="term">voice:</span> for voice clips.
                 <br><br>
-                For example, playing the sound <span class="term">dogsecret</span> in an audio channel 
+                For example, playing the sound <span class="term">dogsecret</span> in an audio channel
                 and using this function on that channel would return the string <span class="term">"sound:dogsecret"</span> (or <span class="term">"dogsecret"</span>).</li><br>
                 <li><span class="number"></span> <span class="term">NewAudio.GetTotalTime(<span class="string"></span> name)</span> - Gets the length of time in seconds that an audio channel <span class="term">name</span>'s most recently played audio lasts for.</li><br>
                 <li><span class="number"></span> <span class="term">NewAudio.GetPlayTime(<span class="string"></span> name)</span> or <span class="number"></span> <span class="term">NewAudio.GetCurrentTime(<span class="string"></span> name)</span> - Get the current play position of the current audio of this channel
                 in seconds.</li><br>
-                <li><span class="term">NewAudio.PlayMusic(<span class="string"></span> name, <span class="string"></span> music, 
-                <span class="boolean"></span> loop = false, <span class="number"></span> volume = 1)</span> - Plays the music 
+                <li><span class="term">NewAudio.PlayMusic(<span class="string"></span> name, <span class="string"></span> music,
+                <span class="boolean"></span> loop = false, <span class="number"></span> volume = 1)</span> - Plays the music
                 <span class="term">music</span> on the channel <span class="term">name</span>.
                 <br><br>
                 <span class="term">loop</span> tells the engine if it should loop the music or not;<br>
                 <span class="term">volume</span> is the volume of the music.
                 <br><br>
                 Songs played are loaded from your mod's <span class="term">Audio</span> folder, as .ogg or .wav files. Don't include the file extension.</li><br>
-                
-                <li><span class="term">NewAudio.PlaySound(<span class="string"></span> name, <span class="string"></span> sound, 
-                <span class="boolean"></span> loop = false, <span class="number"></span> volume = 0.65)</span> - Plays the sound 
+
+                <li><span class="term">NewAudio.PlaySound(<span class="string"></span> name, <span class="string"></span> sound,
+                <span class="boolean"></span> loop = false, <span class="number"></span> volume = 0.65)</span> - Plays the sound
                 <span class="term">sound</span> on the channel <span class="term">name</span>.
                 <br><br>
                 <span class="term">loop</span> tells the engine if it should loop the sound or not;<br>
                 <span class="term">volume</span> is the volume of the sound.
                 <br><br>
                 Sounds played are loaded from your mod's <span class="term">Sounds</span> folder, as .ogg or .wav files. Don't include the file extension.</li><br>
-                
-                <li><span class="term">NewAudio.PlayVoice(<span class="string"></span> name, <span class="string"></span> voice, 
-                <span class="boolean"></span> loop = false, <span class="number"></span> volume = 0.65)</span> - Plays the voice 
+
+                <li><span class="term">NewAudio.PlayVoice(<span class="string"></span> name, <span class="string"></span> voice,
+                <span class="boolean"></span> loop = false, <span class="number"></span> volume = 0.65)</span> - Plays the voice
                 <span class="term">voice</span> on the channel <span class="term">name</span>.
                 <br><br>
                 <span class="term">loop</span> tells the engine if it should loop the voice or not;<br>
                 <span class="term">volume</span> is the volume of the voice.
                 <br><br>
                 Voices played are loaded from your mod's <span class="term">Sounds/Voices</span> folder, as .ogg or .wav files. Don't include the file extension.</li><br>
-                
+
                 <li><span class="term">NewAudio.SetPitch(<span class="string"></span> name, <span class="number"></span> value)</span> - Sets the pitch (and speed) of the audio channel <span class="term">name</span>.
                 <br>1.0 is normal pitch/speed.</li><br>
                 <li><span class="number"></span> <span class="term">NewAudio.GetPitch(<span class="string"></span> name)</span> - Gets the pitch of the audio channel <span class="term">name</span>.</li><br>
@@ -159,7 +160,7 @@ it's w3c valid, at least
                 <li><span class="term">NewAudio.UnpauseAll()</span> - Unpauses all the audio channels' audio.</li><br>
             </ul>
         </div>
-		
+
 		<div class="tab-pane text-style" id="mercy">
             <h2 style="text-decoration: none; line-height:50px;">
                 * YOU WON!<br>

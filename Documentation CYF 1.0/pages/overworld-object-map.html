@@ -54,6 +54,7 @@ it's w3c valid, at least
 						<li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
                         <li class="li-indent"><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
                         <li class="li-indent new"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-discord.html"><span class="CYF"></span> The Discord Object</a></li>
                         <li class="li-indent"><a href="api-functions-waves.html">The Arena Object</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                     <li><a href="api-projectile.html">Projectile management</a></li>
@@ -85,12 +86,12 @@ it's w3c valid, at least
     <div class="tab-content col-md-10">
 		<div class="tab-pane active text-style" id="overworld-object-map">
             <h2><span class="CYF"></span>The Overworld: The Map Object</h2><br>
-            
+
             <p>
 				Each map has its own settings, which are determined by the mod it loads, the music it plays, and a bunch of other stuff.
 				<br>Listed below are functions mainly used to access these variables.
 			</p>
-            
+
             <p>
                 <br><span class="function new">Map.GetName() returns <span class="string"></span></span>
                 Returns a string representing the name of the active scene. This is a valid name you may pass to the other functions here.
@@ -144,7 +145,7 @@ it's w3c valid, at least
             <p>
                 <br><span class="function">Map.SetMusicKept(<span class="boolean"></span> value)</span>
                 Sets whether music will persist between the Overworld and battles, like in The Core.<br>
-                The main Audio channel used for the map's bgm will be <span class="term">StaticKeptAudio</span> if true, and 
+                The main Audio channel used for the map's bgm will be <span class="term">StaticKeptAudio</span> if true, and
                 <span class="term">src</span> otherwise.
             </p>
             <p>
@@ -176,7 +177,7 @@ it's w3c valid, at least
             <p>
                 <br><span class="function">Map.GetNoRandomEncounterMap(<span class="string"></span> mapName) returns <span class="string"></span></span>
                 Returns whether random encounters can occur on the map <span class="term">mapName</span>.<br>
-                If <span class="term">mapName</span> is the current map's name, this will return <span class="term">Map.GetNoRandomEncounter()</span> 
+                If <span class="term">mapName</span> is the current map's name, this will return <span class="term">Map.GetNoRandomEncounter()</span>
 				instead.<br><br>
                 <span style="color:#ff0000"><u>NOTE: ONLY WORKS IF THE PLAYER HAS ENTERED THE MAP BEFORE!</u></span><br>
                 Use <span class="term">Map.HasPlayerBeenInMap()</span> to check if they have.
@@ -190,7 +191,7 @@ it's w3c valid, at least
             <p>
                 <br><span class="function">Map.GetMusicKeptMap(<span class="string"></span> mapName)</span>
                 Returns whether music will persist between the Overworld and battles, like in The Core, for the map <span class="term">mapName</span>.<br>
-				If <span class="term">mapName</span> is the current map's name, this will return <span class="term">Map.GetMusicKept()</span> 
+				If <span class="term">mapName</span> is the current map's name, this will return <span class="term">Map.GetMusicKept()</span>
 				instead.<br><br>
                 <span style="color:#ff0000"><u>NOTE: ONLY WORKS IF THE PLAYER HAS ENTERED THE MAP BEFORE!</u></span><br>
                 Use <span class="term">Map.HasPlayerBeenInMap()</span> to check if they have.
@@ -202,7 +203,7 @@ it's w3c valid, at least
 				If <span class="term">mapName</span> is the current map's name, this will call <span class="term">Map.SetMusicKept()</span> instead.
             </p>
         </div>
-		
+
 		<div class="tab-pane text-style" id="mercy">
             <h2 style="text-decoration: none; line-height:50px;">
                 * YOU WON!<br>

@@ -54,6 +54,7 @@ it's w3c valid, at least
 						<li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
                         <li class="li-indent"><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
                         <li class="li-indent new"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-discord.html"><span class="CYF"></span> The Discord Object</a></li>
                         <li class="li-indent"><a href="api-functions-waves.html">The Arena Object</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                     <li><a href="api-projectile.html">Projectile management</a></li>
@@ -89,7 +90,7 @@ it's w3c valid, at least
 			<p>
                 <span style="color:#ff0000"><u>NOTE: This Player object is not the same as the one used in battle! <br>
                 This one is specific to the overworld!</u></span></p><br>
-            
+
             <p>
                 <br><span class="function">Player.GetLevel() returns <span class="number"></span></span>
                 Returns the player's level (LV).
@@ -190,20 +191,20 @@ it's w3c valid, at least
             <p>
                 <br><span class="function">Player.CanMove(<span class="boolean"></span> canMove)</span>
                 This function determines whether the player can move or not.<br>
-                However, if <span class="term">canMove</span> is set to <i>true</i> and the function is 
-                called while a main event is running, then you can't trigger any other main events, 
+                However, if <span class="term">canMove</span> is set to <i>true</i> and the function is
+                called while a main event is running, then you can't trigger any other main events,
                 teleport to other maps or open the menu until the main event is stopped.
             </p>
 			<p>
-                <br><span class="function">Player.Teleport(<span class="string"></span> mapName, <span class="number"></span> posX, 
-                <span class="number"></span> posY, <span class="number"></span> direction = 0, <span class="boolean"></span> noFadeIn = false, 
+                <br><span class="function">Player.Teleport(<span class="string"></span> mapName, <span class="number"></span> posX,
+                <span class="number"></span> posY, <span class="number"></span> direction = 0, <span class="boolean"></span> noFadeIn = false,
                 <span class="boolean"></span> noFadeOut = false)</span>
                 Teleports the player to the map named <span class="term">mapName</span>.
 				<br>You can set the player's direction using <span class="term">direction</span>.
 				<br><span class="term">noFadeIn</span> and <span class="term">noFadeOut</span> determine whether there will be fades before and after the teleport, respectively.
             </p>
         </div>
-		
+
 		<div class="tab-pane text-style" id="mercy">
             <h2 style="text-decoration: none; line-height:50px;">
                 * YOU WON!<br>

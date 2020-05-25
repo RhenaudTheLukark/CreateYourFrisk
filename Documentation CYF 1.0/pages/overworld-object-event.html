@@ -54,6 +54,7 @@ it's w3c valid, at least
 						<li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
                         <li class="li-indent"><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
                         <li class="li-indent new"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-discord.html"><span class="CYF"></span> The Discord Object</a></li>
                         <li class="li-indent"><a href="api-functions-waves.html">The Arena Object</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                     <li><a href="api-projectile.html">Projectile management</a></li>
@@ -94,14 +95,14 @@ it's w3c valid, at least
                 Note that this refers to the name given to the GameObject in the Unity scene, rather than the name of the script attached to it.
             </p>
             <p>
-                <br><span class="function">Event.Teleport(<span class="string"></span> name, <span class="number"></span> dirX, 
+                <br><span class="function">Event.Teleport(<span class="string"></span> name, <span class="number"></span> dirX,
                 <span class="number"></span> dirY)</span>
                 Teleports the given event to a given point in space. The position (dirX and dirY) is computed based off of the bottom left corner of the map.
             </p>
             <p>
-                <br><span class="function">Event.MoveToPoint(<span class="string"></span> name, <span class="number"></span> dirX, 
+                <br><span class="function">Event.MoveToPoint(<span class="string"></span> name, <span class="number"></span> dirX,
                 <span class="number"></span> dirY, <span class="boolean"></span> wallPass = false, <span class="boolean"></span> waitEnd = true)</span>
-                Moves an event to a given point in space. The event's speed will be the speed variable of its <span class="term">EventOW</span> 
+                Moves an event to a given point in space. The event's speed will be the speed variable of its <span class="term">EventOW</span>
 				component, so choose that wisely, or use <span class="term">Event.SetSpeed()</span>.<br>
 				Set <span class="term">wallPass</span> to true to ignore any obstacles that the event may encounter while moving.<br><br>
                 By default, the script will pause until the event has stopped moving. Set <span class="term">waitEnd</span> to false
@@ -121,7 +122,7 @@ it's w3c valid, at least
             </p>
             <p>
                 <br><span class="function">Event.SetAnimHeader(<span class="string"></span> name, <span class="string"></span> anim)</span>
-                If the event given has a <span class="term">CYFAnimator</span> component, this will set its <span class="term">Special Header</span> 
+                If the event given has a <span class="term">CYFAnimator</span> component, this will set its <span class="term">Special Header</span>
                 property to <span class="term">anim</span>.
                 <br><br>
                 Set <span class="term">anim</span> to <span class="term">""</span> to reset to the default animation, <span class="term">StopDown</span>.
@@ -130,7 +131,7 @@ it's w3c valid, at least
             </p>
             <p>
                 <br><span class="function">Event.GetAnimHeader(<span class="string"></span> name) returns <span class="string"></span></span>
-                If the event given has a <span class="term">CYFAnimator</span> component, this will return its <span class="term">Special Header</span> 
+                If the event given has a <span class="term">CYFAnimator</span> component, this will return its <span class="term">Special Header</span>
                 value.
             </p>
             <p>
@@ -145,8 +146,8 @@ it's w3c valid, at least
                 </ul>
             </p>
             <p>
-                <br><span class="function">Event.Rotate(<span class="string"></span> name, <span class="number"></span> rotateX, 
-                <span class="number"></span> rotateY, <span class="number"></span> rotateZ, <span class="boolean"></span> anim = true, 
+                <br><span class="function">Event.Rotate(<span class="string"></span> name, <span class="number"></span> rotateX,
+                <span class="number"></span> rotateY, <span class="number"></span> rotateZ, <span class="boolean"></span> anim = true,
                 <span class="boolean"></span> waitEnd = true)</span>
                 This function rotates the event. The Z rotation is the rotation normally applied in battles, while the X and Y rotations
                 are 3D rotations.<br>
@@ -193,30 +194,30 @@ it's w3c valid, at least
 				Returns the sprite object of the given event.
             </p>
             <p>
-                <br><span class="function">Event.CenterOnCamera(<span class="string"></span> name, <span class="number"></span> speed = 5, 
+                <br><span class="function">Event.CenterOnCamera(<span class="string"></span> name, <span class="number"></span> speed = 5,
                 <span class="boolean"></span> straightLine = false, <span class="boolean"></span> waitEnd = true)</span>
 				Centers the camera on the given event.<br>
-                The camera's speed will be <span class="term">speed</span> pixels per second in each direction, unless you set 
+                The camera's speed will be <span class="term">speed</span> pixels per second in each direction, unless you set
                 <span class="term">straightLine</span> to true.<br>
                 In that case, the camera will follow a line to the center of the event.<br><br>
 				By default, the script will halt execution until the camera has stopped moving.<br>
-                Set <span class="term">waitEnd</span> to false to bypass this and continue the script instead. 
+                Set <span class="term">waitEnd</span> to false to bypass this and continue the script instead.
             </p>
             <p>
                 <br><span class="function">Event.GetName() returns <span class="string"></span></span>
                 Returns the name of the calling event.
             </p>
             <p>
-                <br><span class="function">Event.GetPosition(<span class="string"></span> name) returns 
+                <br><span class="function">Event.GetPosition(<span class="string"></span> name) returns
                 <span class="luatable"><span class="number"></span>, <span class="number"></span></span></span>
                 Returns a table of two values containing the position of the given event.
             </p>
             <p>
                 <br><span class="function">Event.IgnoreCollision(<span class="string"></span> name, <span class="boolean"></span> ignore)</span>
                 Sets the collision mode of the event.<br>
-                If <span class="term">ignore</span> is set to true, 
+                If <span class="term">ignore</span> is set to true,
 				all other events may pass through it normally.<br><br>
-				Events activated when the player touches them (touch-enabled events, see <span class="ref">How to create an event</span>) need their 
+				Events activated when the player touches them (touch-enabled events, see <span class="ref">How to create an event</span>) need their
                 collision to be ignored in order to function properly.
             </p>
             <p>
@@ -228,7 +229,7 @@ it's w3c valid, at least
                 Gets the set movement speed of an event.
             </p>
         </div>
-		
+
 		<div class="tab-pane text-style" id="mercy">
             <h2 style="text-decoration: none; line-height:50px;">
                 * YOU WON!<br>

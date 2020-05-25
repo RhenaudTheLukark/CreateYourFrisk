@@ -54,6 +54,7 @@ it's w3c valid, at least
                         <li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
                         <li class="li-indent"><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
                         <li class="li-indent new"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-discord.html"><span class="CYF"></span> The Discord Object</a></li>
                         <li class="li-indent"><a href="api-functions-waves.html">The Arena Object</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                     <li><a href="api-projectile.html">Projectile management</a></li>
@@ -148,7 +149,7 @@ it's w3c valid, at least
                 <br><br>
                 The number you enter should be a two-character hex value between <span class="term">"00"</span> and <span class="term">"ff"</span>.
             </p>
-            
+
             <p class="exblock">
                 <br><span class="function">[starcolor:rrggbb]</span>
                 Same usage as color but <i>only affects the first asterisk in a dialogue box that has asterisks.</i>
@@ -240,7 +241,7 @@ it's w3c valid, at least
                 <br><span class="function"><span class="CYF"></span> [noskip:off]</span>
                 Cancels a previous <span class="term">[noskip]</span> command.
             </p>
-            
+
             <p class="exblock">
                 <br><span class="function">[instant]</span>
                 Instantly shows the entire text without having to wait or press anything.
@@ -248,7 +249,7 @@ it's w3c valid, at least
                 <span class="CYF"></span> <font style='color: #fff;'>* Note: This command works as an inline command
                 when placed at the beginning of a line of text.</font>
             </p>
-            
+
             <p class="exblock">
                 <br><span class="function"><span class="CYF"></span> [instant:allowcommand]</span>
                 The same as <span class="term">[instant]</span>, but here other text commands are called, except <span class="term">[w]</span>, <span class="term">[letters]</span> and commands with the "<span class="term">skipover</span>" tag.
@@ -268,7 +269,7 @@ it's w3c valid, at least
                 Cancels a previous <span class="term">[instant]</span>, <span class="term">[instant:allowcommand]</span> command or a
                 Player skip, and resumes typing.
             </p>
-            
+
             <p class="exblock">
                 <br><span class="function">[w:x]</span>
                 The wait command. Pauses your textbox temporarily based on the number you enter.
@@ -336,7 +337,7 @@ second line: "[instant][effect:none]RUN. INTO. THE.\nfriendliness\npellets"</pre
                 text</i>. Refer to the examples below.</p>
             <div class="code-container">
    <pre class="brush: lua;">your dialogue: "hoi hoi this is dog [func:dog] and now the music changed"
-  
+
 function dog()
     Audio.LoadFile("dog_music")
     --plays dog_music.ogg (or .wav) from your Audio folder! for built-in functions like this, refer to section API - Functions &amp; Objects
@@ -346,7 +347,7 @@ end</pre>
 
             <div class="code-container">
    <pre class="brush: lua;">your dialogue: "dog with arguments!! [func:newmusic,temietheme] so intense!"
-  
+
 function newmusic(yourargumentname)
     Audio.LoadFile(yourargumentname) --with this example, it'll load 'temietheme.ogg (or .wav)'...
     --and then play it! THE FUTURE IS NOW! By using an argument, your function can be more versatile.
@@ -367,18 +368,18 @@ end</pre>
                 <br><br>
                 <b style="color:#fff">Overrides <span class="term">[waitall:x]</span>.</b>
             </p>
-           
+
             <p class="exblock">
             <br><span class="function"><span class="CYF"></span> [letters:x]</span>
                 For this frame only, the text box will show the next x characters.
             </p>
-            
+
             <p class="exblock">
                 <br><span class="function"><span class="CYF"></span> [name]</span>
-                This text gets replaced by by the name of the player. I totally forgot that we could actually use <span class="term">Player.name</span>, but 
+                This text gets replaced by by the name of the player. I totally forgot that we could actually use <span class="term">Player.name</span>, but
                 whatever.
             </p>
-           
+
             <p class="exblock">
                 <br><span class="function"><span class="CYF"></span> [music:x]</span>
                 Plays the music given as an argument on the main music channel, unless the argument is one of these keywords:
@@ -386,16 +387,16 @@ end</pre>
                     <li><span class="term">play</span> = Only plays the last played music, from the beginning.</li><br>
                     <li><span class="term">pause</span> = Pauses the music.</li><br>
                     <li><span class="term">unpause</span> = Unpauses the music.</li><br>
-                    <li><span class="term">stop</span>, <span class="term">null</span>, <span class="term">nil</span> or an empty string = Stops the current 
+                    <li><span class="term">stop</span>, <span class="term">null</span>, <span class="term">nil</span> or an empty string = Stops the current
                     music.</li><br>
                 </ul>
             </p>
-           
+
             <p class="exblock">
                 <br><span class="function"><span class="CYF"></span> [sound:x]</span>
                 Plays the sound given as an argument.
             </p>
-           
+
             <p class="exblock">
                 <br><span class="function new"><span class="CYF"></span> [mugshot:face], [mugshot:null] or [mugshot:{face1,face2,...,time}]</span>
                 <u>Overworld only.</u>
@@ -414,7 +415,7 @@ end</pre>
                 <br><br>
                 If you do not provide a time, or the time you enter is &lt;= 0, a default value of <span class="term">0.2</span> will be used.
             </p>
-           
+
             <p class="exblock">
                 <br><span class="function"><span class="CYF"></span> [health:x,y]</span>
                 Heals the Player by x points. Can damage the player if x is negative, but the Player's HP
@@ -442,20 +443,20 @@ end</pre>
                     </li>
                 </ul>
             </p>
-           
+
             <h3><span class="CYF"></span> Command tags</h3><br><br>
-           
+
             <p><br>These tags can be added after a text command and have different behaviours.<br>
-            To use them, you must do this: <span class="term">[command:tag]</span> or <span class="term">[command:arguments:tag]</span>. For now, only one 
+            To use them, you must do this: <span class="term">[command:tag]</span> or <span class="term">[command:arguments:tag]</span>. For now, only one
             tag can be added at a time.</p>
-           
+
             <p class="exblock">
                 <br><span class="function">skipover</span>
-                Makes a command only be activated when the text is not skipped (by using any <span class="term">[instant]</span> command or the 
+                Makes a command only be activated when the text is not skipped (by using any <span class="term">[instant]</span> command or the
                 player's skip if <span class="term">playerskipdocommand</span> is set to true). Has no effect on <span class="term">[w]</span> and
                 <span class="term">[letters]</span>.
             </p>
-           
+
             <p class="exblock">
                 <br><span class="function">skiponly</span>
                 The command this is attached to will only be activated if the text has been skipped by using any
