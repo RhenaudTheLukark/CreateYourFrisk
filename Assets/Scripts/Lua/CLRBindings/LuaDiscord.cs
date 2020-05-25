@@ -3,20 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class LuaDiscord {
-
     // Sets the top row of the Discord Rich Presence Status. If you are in a battle, it will always put "Playing Mod: " before it, otherwise it will set it with no prefix
     // The default value "" makes the name completely dissapear in the letter case.
-    public void SetName(string name = "") {
-        if (UnitaleUtil.IsOverworld || GlobalControls.isInShop) {
-            if (name == "") DiscordControls.ClearRPVars(true);
-            DiscordControls.SetPresence(name);
-        } else DiscordControls.SetPresence(DiscordControls.getPlayingName(name));
+    public void SetName(string name = "", bool noPrefix = false) {
+        if (name == "") DiscordControls.ClearRPVars(true);
+
+        string realName = name;
+        if (noPrefix || UnitaleUtil.IsOverworld || GlobalControls.isInShop) realName = DiscordControls.GetPlayingName(realName);
+
+        DiscordControls.SetPresence(realName);
     }
     
     // Sets the second row of the Discord Rich Presence Status. The default value "" makes it completely dissapear.
     public void SetDetails(string details = "") {
         if (details == "") DiscordControls.ClearRPVars(false, true);
-        DiscordControls.SetPresence("", details, -1);
+        DiscordControls.SetPresence("", details);
     }
     
     // Sets the current time of the Discord Rich Presence Status based on the time of execution, in seconds. 

@@ -123,7 +123,8 @@ public class OptionsScript : MonoBehaviour {
         });
         ScreenResolution.windowScale--;
         Scale.GetComponent<Button>().onClick.Invoke();
-        
+
+        // Discord Rich Presence
         // Change Discord Status Visibility
         Discord.GetComponent<Button>().onClick.AddListener(() => {
             
@@ -133,7 +134,6 @@ public class OptionsScript : MonoBehaviour {
         Discord.GetComponentInChildren<Text>().text = "Discord Status: " + DiscordControls.ChangeVisibilitySetting(0);
 
         // exit
-        // Discord Rich Presence
         Exit.GetComponent<Button>().onClick.AddListener(() => {DiscordControls.StartModSelect();SceneManager.LoadScene("ModSelect");});
 
         // Crate Your Frisk
