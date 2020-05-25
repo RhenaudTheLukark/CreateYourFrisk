@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<!--
+since you're here anyway: there's a small easter egg on the text commands page but it's probably not worth finding, sorry
+you may notice this page's code is garbage: i'm not a web designer! ;-;
+it's w3c valid, at least
+-->
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="favicon.ico">
+
+    <title>CYF Documentation - The Shader Object</title>
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="../css/themesidebar.css" rel="stylesheet">
+    <link href="../css/shThemeRDark.css" rel="stylesheet">
+
+    <!-- Syntax highlighting -->
+    <script type="text/javascript" src="../js/shCore.js"></script>
+    <script type="text/javascript" src="../js/shBrushLua.js"></script>
+    <script type="text/javascript">SyntaxHighlighter.all();</script>
+</head>
+<body>
+<img src="../img/bg2.png" alt="Undertale background" class="backimg">
+<div class="container arena black">
+    <div class="col-md-2">
+        <!--navigation-->
+        <nav class="nav-sidebar">
+            <ul class="nav tabs">
+                <li class="li-header">Basics</li>
+                    <li><a href="../documentation.html">Welcome</a></li>
+                    <li><a href="howtoread.html">How to read this documentation</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li><a href="controls.html">Controls</a></li>
+                    <li><a href="basic.html">Basic setup</a></li>
+                    <li><a href="unity.html"><span class="CYF"></span> Unity Setup (Optional)</a></li>
+                    <li class="new"><a href="variables.html">Special Variables</a></li>
+                    <li><a href="terms.html">Terminology</a></li>
+                <li class="li-header">API</li>
+                    <li><a href="api-text.html">Text commands</a></li>
+                    <li class="new"><a href="api-events.html">Game events</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li class="li-indent">Functions &amp; Objects:</li>
+                        <li class="li-indent new"><a href="api-functions-main.html">Misc. Functions</a></li>
+                        <li class="li-indent new"><a href="api-functions-player.html">The Player Object</a></li>
+                        <li class="li-indent"><a href="api-functions-script.html">The Script Object</a></li>
+                        <li class="li-indent"><a href="api-functions-audio.html">The Audio Object</a></li>
+                        <li class="li-indent"><a href="api-functions-newaudio.html"><span class="CYF"></span> The NewAudio Object</a></li>
+                        <li class="li-indent"><a href="api-functions-input.html">The Input Object</a></li>
+                        <li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
+                        <li class="li-indent"><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
+                        <li class="li-indent"><a href="api-functions-waves.html">The Arena Object</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li><a href="api-projectile.html">Projectile management</a></li>
+                    <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
+                    <li class="new"><a href="api-animation.html">Sprites &amp; Animation</a></li>
+                    <li class="new"><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                <li class="li-header"><span class="new"></span><span class="CYF"></span> Shaders</li>
+                    <li><a href="shaders.html">Introduction</a></li>
+                    <li class="active" style="margin-left:5px;">&gt; The Shader Object &lt;</li>
+                    <hr style="margin-top:10px;margin-bottom:10px;">
+                <li class="li-header"><span class="CYF"></span> Overworld</li>
+                    <li class="new"><a href="overworld.html">Basics</a></li>
+                    <li><a href="overworld-howto-map.html">How to create a map</a></li>
+                    <li><a href="overworld-howto-event.html">How to create an event</a></li>
+                    <li><a href="overworld-howto-animevent.html">How to animate an event</a></li>
+                    <li class="new"><a href="overworld-howto-shop.html">How to create a shop</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li class="li-indent"><span class="CYF"></span> Overworld Objects:</li>
+                        <li class="li-indent"><a href="overworld-object-general.html">The General Object</a></li>
+                        <li class="li-indent"><a href="overworld-object-event.html">The Event Object</a></li>
+                        <li class="li-indent"><a href="overworld-object-player.html">The Player Object</a></li>
+                        <li class="li-indent"><a href="overworld-object-screen.html">The Screen Object</a></li>
+                        <li class="li-indent"><a href="overworld-object-inventory.html">The Inventory Object</a></li>
+                        <li class="li-indent new"><a href="overworld-object-map.html">The Map Object</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                <li class="li-header">Resources</li>
+                    <li><a href="../media/dialogoptions.png">Dialog bubble names</a></li>
+                    <li><a href="api-keys.html"><span class="CYF"></span> Key List</a></li>
+            </ul>
+        </nav>
+    </div>
+    <!--tabs'n'shit-->
+    <div class="tab-content col-md-10">
+        <div class="tab-pane active text-style" id="shader-object">
+            <h2><span class="CYF"></span> The Shader Object [E/M/W]</h2>
+            <p>
+                The shader object is a Lua side object that can force a sprite object to display using a certain shader, and manipulate said shader.<br>
+            </p>
+            <hr>
+            
+            <p>
+                A new shader object is created whenever a sprite object is created - this also includes bullets.<br>
+                In addition, there is a shader object created for the camera itself, to apply a shader to the whole screen!
+                <br><br>
+                You can access the shader objects by using
+                <span class="function"><span class="userdata">shader</span> sprite.shader</span></span>
+                and
+                <span class="function"><span class="userdata">shader</span> Misc.ScreenShader</span></span>
+            </p>
+            <hr>
+            <h4>Main functions and variables</h4>
+            
+            <p>
+                <br><span class="function">shader.Set(<span class="string"></span> bundleName, <span class="string"></span> shaderName)</span>
+                Loads <span class="term">shaderName</span> from the AssetBundle named <span class="term">bundleName</span>
+                in the <span class="term">Shaders</span> folder.<br>
+                The bundle is either CYF's default shaders bundle, a bundle you got from someone or somewhere else, or a bundle you built using Unity.
+                <br><br>
+                NOTE: If the shader is unsupported on the user's graphics card (or the shader compiled with an error), you will see an error message
+                when loading your shader in game.<br>
+                It is <u>your responsibility</u> as a modder to account for this. You should use the Lua function <span class="term">pcall</span> to safely load your shader:
+                <div class="code-container">
+<pre class="brush: lua;">-- Load our shader "shaderName" from the bundle "bundleName"
+pcall(sprite.shader.Set, bundleName, shaderName)
+
+if sprite.shader.isActive == true then
+    -- Shader was successfully loaded
+end
+</pre></div>
+                Alternatively:
+                <div class="code-container">
+<pre class="brush: lua;">-- Load our shader "shaderName" from the bundle "bundleName"
+if pcall(sprite.shader.Set, bundleName, shaderName) then
+    -- Shader was successfully loaded
+else
+    -- Shader was NOT successfully loaded
+end
+</pre></div>
+                If the shader failed to load using this method, your sprite will still be using the default shader, as if you called <span class="term">shader.Revert()</span>.
+                <br><br>
+                <b>See <span class="ref">Shaders - Introduction</span> for setup instructions</b>.
+            </p>
+            
+            <p>
+                <br><span class="function">shader.Test(<span class="string"></span> shaderName)</span>
+                <u>Unity Editor only.</u>
+                <br><br>
+                Loads the shader with the name <span class="term">shaderName</span> and applies it to the sprite or screen.<br>
+                Highly recommended to use while testing shaders before packaging them into AssetBundles.
+                <br><br>
+                This function will work the same as <span class="term">shader.Set</span> otherwise, including the potential use of
+                <span class="term">pcall</span> if you see fit. Just remember to replace this function with <span class="term">shader.Set</span>
+                when you're done creating your mod.
+                <br><br>
+                You don't need to involve yourself with AssetBundles or directories this time - the name you enter here is just the name of a shader,
+                as defined in its first line, such as <span class="term">Shader "UI/Default"</span> becoming <span class="term">"UI/Default"</span>
+                for the argument <span class="term">shaderName</span>.
+            </p>
+            
+            <p>
+                <br><span class="function">shader.Revert()</span>
+                Reverts the sprite's shader to what it was originally. If no shader has been applied yet, this function simply does nothing.
+            </p>
+            
+            <p>
+                <br><span class="function"><span class="boolean"></span> shader.isactive (readonly)</span>
+                Returns <span class="term">true</span> if a shader was successfully loaded through <span class="term">shader.Set</span> or
+                <span class="term">shader.Test</span>, and <span class="term">false</span> if no shader has been applied yet, or the shader was reverted
+                using <span class="term">shader.Revert</span>.
+            </p>
+            
+            <p>
+                <br><span class="function">shader.SetWrapMode(<span class="string"></span> wrapMode, <span class="number"></span> sides = 0)</span>
+                Sets the wrap mode of this sprite's texture, or the screen. Only usable if a shader has been applied.
+                <br><br>
+                This affects what happens when a shader manipulates the position of pixels, such as with "wavey" effects.
+                It has to do with what should be drawn in the holes outside the boundaries of the original image.
+                <br><br>
+                <span class="term">wrapMode</span> can be:
+                <ul>
+                    <li><span class="term">"clamp"</span>: The default wrap mode. When a shader manipulates the positions of pixels, the texture will be
+                    clamped to the last row or column of pixels of the source image.</li><br>
+                    <li><span class="term">"repeat"</span>: The source image is tiled infinitely.</li><br>
+                    <li><span class="term">"mirror"</span>: Similar to <span class="term">"repeat"</span>, except all the repeated images will
+                    alternatingly be flipped horizontally/vertically.</li><br>
+                    <li><span class="term">"mirroronce"</span>: Similar to <span class="term">"mirror"</span>, except only one mirror image gets created,
+                    and then the behavior of <span class="term">"clamp"</span> is followed for all other areas.</li><br>
+                </ul>
+                <span class="term">sides</span> can be:
+                <ul>
+                    <li><span class="term">0</span>: The new wrap mode is applied to both the horizontal and vertical edges of the image.</li><br>
+                    <li><span class="term">1</span>: The new wrap mode is applied to the horizontal edges of the image.</li><br>
+                    <li><span class="term">2</span>: The new wrap mode is applied to the vertical edges of the image.</li><br>
+                </ul>
+                You can have a different wrap mode for both the vertical and horizontal edges of the image this way.
+            </p>
+            <hr>
+            <h4>Shader property functions and variables</h4>
+            These all have to do with getting and setting properties within the shader file. It's pretty much based on your knowledge of ShaderLab.
+            See <span class="ref">TODO</span> for some helpful links and information on writing shaders.
+            <br><br>
+            For all "Set" functions listed below, if a variable with the given name does not exist on the shader side, it will be created with the
+            value you gave.
+            
+            <p>
+                <br><span class="function"><span class="boolean"></span> shader.HasProperty(<span class="string"></span> name)</span>
+                Returns <span class="term">true</span> if the active shader has a property with the name <span class="term">name</span>,
+                <span class="term">false</span> otherwise.
+                <br><br>
+                For all "Get" functions listed below, the function will either return the data it found, or throw an error if the property does not exist
+                on the shader side. Check if the property exists first using this funciton.
+            </p>
+            
+            <p>
+                <br><span class="function"><span class="luatable"><span class="number"></span>, <span class="number"></span>, <span class="number"></span>, <span class="number"></span></span>
+                shader.GetColor(<span class="string"></span> name)</span>
+                <span class="function">shader.SetColor(<span class="string"></span> name,
+                <span class="luatable"><span class="number"></span>, <span class="number"></span>, <span class="number"></span>, <span class="number"></span> = 1</span> color)</span>
+                Gets or sets a color in the active shader, in the property named <span class="term">name</span>.
+                <br><br>
+                Here, a color is a table of either 3 or 4 number values, each from <span class="term">0.0</span> to <span class="term">1.0</span>,
+                following the RGBA format. If no fourth argument is provided, <span class="term">1.0</span> is given as the fourth argument instead.
+            </p>
+            
+            <p>
+                <br><span class="function"><span class="luatable"><span class="luatable"><span class="number"></span>, <span class="number"></span>, <span class="number"></span>, <span class="number"></span></span></span>
+                shader.GetColorArray(<span class="string"></span> name)</span>
+                <span class="function">shader.SetColorArray(<span class="string"></span> name,
+                <span class="luatable"><span class="luatable"><span class="number"></span>, <span class="number"></span>, <span class="number"></span>, <span class="number"></span> = 1</span></span> colorArray)</span>
+                Gets or sets a color <b>array</b> in the active shader, in the property named <span class="term">name</span>.
+                <br><br>
+                Just like with <span class="term">shader.SetColor</span>, a color is a table of either 3 or 4 number values.<br>
+                However, keep in mind that this is an <i>array</i> of colors. So, a table with multiple smaller tables inside, each with 3 or 4 numbers.
+            </p>
+            
+            <p>
+                <br><span class="function"><span class="number"></span> shader.GetFloat(<span class="string"></span> name)</span>
+                <span class="function">shader.SetFloat(<span class="string"></span> name, <span class="number"></span> float)</span>
+                Gets or sets a float in the active shader, in the property named <span class="term">name</span>.
+            </p>
+            
+            <p>
+                <br><span class="function"><span class="luatable"><span class="number"></span></span> shader.GetFloatArray(<span class="string"></span> name)</span>
+                <span class="function">shader.SetFloat(<span class="string"></span> name, <span class="luatable"><span class="number"></span></span> floatArray)</span>
+                Gets or sets a float <b>array</b> in the active shader, in the property named <span class="term">name</span>.
+            </p>
+            
+            <p>
+                <br><span class="function"><span class="number"></span> shader.GetInt(<span class="string"></span> name)</span>
+                <span class="function">shader.SetInt(<span class="string"></span> name, <span class="number"></span> int)</span>
+                Gets or sets an integer (a "whole number", i.e. no decimal point) in the active shader, in the property named <span class="term">name</span>.
+            </p>
+            
+            <p>
+                <span class="function">shader.SetTexture(<span class="string"></span> name, <span class="string"></span> texture)</span>
+                Sets a texture in the active shader, in the property named <span class="term">name</span>.<br>
+                This function loads an image in the same way as <span class="term">CreateProjectile</span> or <span class="term">CreateSprite</span> -
+                it searches for an image named <span class="term">texture</span> in your mod's "Sprites" folder first, then the Default folder's "Sprites"
+                folder last.
+                <br><br>
+                <i>Note that there is no <span class="term">shader.GetTexture</span>.</i>
+            </p>
+            
+            <p>
+                <br><span class="function"><span class="luatable"><span class="number"></span>, <span class="number"></span>, <span class="number"></span>, <span class="number"></span></span> shader.GetVector(<span class="string"></span> name)</span>
+                <span class="function">shader.SetVector(<span class="string"></span> name,
+                <span class="luatable"><span class="number"></span>, <span class="number"></span>, <span class="number"></span>, <span class="number"></span></span> vector)</span>
+                Gets or sets a vector (<a href="https://docs.unity3d.com/2018.2/Documentation/ScriptReference/Vector4.html">Vector4</a>) in the active shader,
+                in the property named <span class="term">name</span>.
+                <br><br>
+                Here, a vector is a table of 4 number values, with any range.
+            </p>
+            
+            <p>
+                <br><span class="function"><span class="luatable"><span class="luatable"><span class="number"></span>, <span class="number"></span>, <span class="number"></span>, <span class="number"></span></span></span>
+                shader.GetVectorArray(<span class="string"></span> name)</span>
+                <span class="function">shader.SetVectorArray(<span class="string"></span> name,
+                <span class="luatable"><span class="luatable"><span class="number"></span>, <span class="number"></span>, <span class="number"></span>, <span class="number"></span></span></span> vectorArray)</span>
+                Gets or sets a vector <b>array</b> in the active shader, in the property named <span class="term">name</span>.
+                <br><br>
+                Just like with <span class="term">shader.SetVector</span>, a vector
+                (<a href="https://docs.unity3d.com/2018.2/Documentation/ScriptReference/Vector4.html">Vector4</a>) is a table of 4 number values.<br>
+                However, keep in mind that this is an <i>array</i> of vectors. So, a table with multiple smaller tables inside, each with 4 numbers.
+            </p>
+            
+            <p>
+                <br><br>
+                <h4>The Matrix object</h4>
+                There is a Unity property called the <a href="https://docs.unity3d.com/2018.2/Documentation/ScriptReference/Matrix4x4.html">Matrix4x4</a>,
+                which can be used as a property within shaders.<br>
+                The Matrix object is a way to manipulate a Matrix4x4 on the Lua side.
+                <br><br>
+                A Matrix object represents a 4x4 matrix filled with numbers.
+                You'll create it by supplying 4 rows of 4 numbers, and after that, you can modify each individual number one at a time.
+            </p>
+            
+            <p>
+                <br><span class="function"><span class="userdata">matrix</span> shader.Matrix(
+                <span class="luatable"><span class="number"></span>, <span class="number"></span>, <span class="number"></span>, <span class="number"></span></span> row1,
+                <span class="luatable"><span class="number"></span>, <span class="number"></span>, <span class="number"></span>, <span class="number"></span></span> row2,
+                <span class="luatable"><span class="number"></span>, <span class="number"></span>, <span class="number"></span>, <span class="number"></span></span> row3,
+                <span class="luatable"><span class="number"></span>, <span class="number"></span>, <span class="number"></span>, <span class="number"></span></span> row4)</span>
+                Creates a new matrix object with its rows set to <span class="term">row1</span>, <span class="term">row2</span>,
+                <span class="term">row3</span>, and <span class="term">row4</span>, in that order, from top to bottom.
+                <br><br>
+                An easy way to visualize it while creating it is like this:
+                <div class="code-container">
+<pre class="brush: lua;">-- Create a simple numbered matrix
+matrix = shader.Matrix( {  1,  2,  3,  4 },
+                        {  5,  6,  7,  8 },
+                        {  9, 10, 11, 12 },
+                        { 13, 14, 15, 16 } )
+</pre></div>
+                After creation, you can get and set any values within the 4x4 range by using multi-indexing, like so:
+                <div class="code-container">
+<pre class="brush: lua;">-- Check what number is in row 1, column 2
+DEBUG(matrix[1, 2])
+-- Set the number in row 3, column 4
+matrix[3, 4] = 4.2
+</pre></div>
+                The matrix object is involved in the functions <span class="term">shader.SetMatrix</span>, <span class="term">shader.SetMatrixArray</span>,
+                <span class="term">shader.GetMatrix</span>, and <span class="term">shader.GetMatrixArray</span>.
+            </p>
+            
+            <p>
+                <br><span class="function"><span class="userdata">matrix</span> shader.GetMatrix(<span class="string"></span> name)</span>
+                <span class="function">shader.SetMatrix(<span class="string"></span> name, <span class="userdata">matrix</span> matrix)</span>
+                Gets or sets a Matrix4x4 in the active shader, in the property named <span class="term">name</span>. <span class="term">shader.GetMatrix</span>
+                will return a matrix object (see above), while <span class="term">shader.SetMatrix</span> requires one to be created and passed as the argument
+                <span class="term">matrix</span>.
+                <br><br>
+                NOTE: manipulating a matrix this way does <b><u>not</u></b> create a "link" between it and the shader side. If you change values of the matrix
+                object after retrieving it with <span class="term">shader.GetMatrix</span>, you will need to call <span class="term">shader.SetMatrix</span>
+                to update its values on the shader side. Likewise, if you continue to change values of the matrix object passed to
+                <span class="term">shader.SetMatrix</span> after calling the function, you will need to call it once again to update its values on the
+                shader side.
+            </p>
+            
+            <p>
+                <br><span class="function"><span class="luatable"><span class="userdata">matrix</span></span>
+                shader.GetMatrixArray(<span class="string"></span> name)</span>
+                <span class="function">shader.SetMatrixArray(<span class="string"></span> name,
+                <span class="luatable"><span class="userdata">matrix</span></span> matrixArray)</span>
+                Gets or sets a Matrix4x4 <b>array</b> in the active shader, in the property named <span class="term">name</span>.
+                <br><br>
+                Just like with <span class="term">shader.SetMatrix</span>, matrix objects are used (see above).<br>
+                This is an array of them, so basically a table containing as many matrix objects as you like.
+            </p>
+        </div>
+
+        <div class="tab-pane text-style" id="mercy">
+            <h2 style="text-decoration: none; line-height:50px;">
+                * YOU WON!<br>
+                * You earned 0 EXP and 0 gold.<br>
+                * also the nav menu is broken now
+            </h2><br>
+        </div>
+
+    </div>
+</div>
+
+<div class="container">
+    <div class="col-xs-3"><img class="centerbt black" alt="Undertale fake button" src="../img/fightbt_0.png" height="42">
+    </div>
+    <div class="col-xs-3"><img class="centerbt black" alt="Undertale fake button" src="../img/actbt_0.png" height="42">
+    </div>
+    <div class="col-xs-3"><img class="centerbt black" alt="Undertale fake button" src="../img/itembt_0.png" height="42">
+    </div>
+    <div class="col-xs-3"><a href="#mercy" data-toggle="tab"><img class="centerbt black" alt="Undertale fake button"
+                                                                  src="../img/mercybt_0.png" height="42"></a>
+    </div>
+</div>
+<br>
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="../js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../js/show_hide_comments.js"></script>
+
+<script type="text/javascript" src="../js/FontToggleButton.js"></script>
+</body>
+</html>

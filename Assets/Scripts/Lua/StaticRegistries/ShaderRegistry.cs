@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,6 +12,7 @@ public static class ShaderRegistry {
     private static Dictionary<string, Material> materialsMod     = new Dictionary<string, Material>();
     private static Dictionary<string, AssetBundle> dictDefault = new Dictionary<string, AssetBundle>();
     private static Dictionary<string, AssetBundle> dictMod     = new Dictionary<string, AssetBundle>();
+    private static string OSType = Misc.OSType.ToLower();
 
     // Load all default AssetBundles into memory one time, and never unload them
     // (except when the overworld gets restarted or whatnot)
@@ -44,7 +46,7 @@ public static class ShaderRegistry {
 
         Shader shade = bundle.LoadAsset(keyLower) as Shader;
         if (!shade.isSupported)
-            throw new CYFException("The shader \"" + key + "\" is not supported. It might not be suited for your system, or this might be a problem with the shader itself.");
+            throw new CYFException("The shader \"" + key + "\" is not supported. It might not be suited for your OS, or this might be a problem with the shader itself.");
 
         Material mat = new Material(shade);
         if (mod)    materialsMod[bundleLower + keyLower]     = mat;
@@ -62,37 +64,43 @@ public static class ShaderRegistry {
 
     // Opens all AssetBundles in a directory and stores them
     private static void loadAllFrom(string directoryPath, bool mod) {
-        DirectoryInfo dInfo = new DirectoryInfo(directoryPath);
-        FileInfo[] fInfoTest;
+        DirectoryInfo shaderFolder = new DirectoryInfo(directoryPath);
+        DirectoryInfo[] shaderFolderContents;
+        List<FileInfo> shaderBundles = new List<FileInfo>();
 
-        if (!dInfo.Exists)
+        if (!shaderFolder.Exists)
             return;
 
-        fInfoTest = dInfo.GetFiles("*.", SearchOption.AllDirectories);
+        shaderFolderContents = shaderFolder.GetDirectories("*", SearchOption.TopDirectoryOnly);
+
+        foreach (DirectoryInfo d in shaderFolderContents) {
+            FileInfo[] localShaders = d.GetFiles("*.*", SearchOption.AllDirectories).Where(file => Path.GetExtension(file.Name) == "").ToArray();
+            FileInfo OSSpecificBundle = localShaders.Single(s => s.Name == OSType);
+            if (OSSpecificBundle != null)
+                shaderBundles.Add(OSSpecificBundle);
+        }
 
         if (mod) {
             foreach (KeyValuePair<string, AssetBundle> pair in dictMod)
-                pair.Value.Unload(true);
+                try { pair.Value.Unload(true); } catch {}
             dictMod.Clear();
-            foreach (FileInfo file in fInfoTest)
-                dictMod[FileLoader.getRelativePathWithoutExtension(directoryPath, file.FullName).ToLower()] = retrieveAssetBundle(file.FullName);
+            foreach (FileInfo file in shaderBundles) {
+                DirectoryInfo parent = file.Directory;
+                dictMod[parent.Name] = retrieveAssetBundle(file.FullName);
+            }
         } else {
             foreach (KeyValuePair<string, AssetBundle> pair in dictDefault)
-                pair.Value.Unload(true);
+                try { pair.Value.Unload(true); } catch {}
             dictDefault.Clear();
-            foreach (FileInfo file in fInfoTest) {
-                string bundle = FileLoader.getRelativePathWithoutExtension(directoryPath, file.FullName);
+            foreach (FileInfo file in shaderBundles) {
+                DirectoryInfo parent = file.Directory;
+                string bundle = parent.Name;
                 string bundleL = bundle.ToLower();
-                //dictDefault[bundleL] = AssetBundle.LoadFromFile(file.FullName);
-
-                UnityWebRequest uwr = UnityWebRequestAssetBundle.GetAssetBundle(new Uri(file.FullName).AbsoluteUri.Replace("+", "%2B"));
-                uwr.SendWebRequest();
-                while (!uwr.isDone) { } // hold up a bit while it's loading; delay isn't noticeable and loading will fail otherwise
-                dictDefault[bundleL] = DownloadHandlerAssetBundle.GetContent(uwr);
+                dictDefault[bundleL] = retrieveAssetBundle(file.FullName);
 
                 // Fill up dict with Default Materials
                 string[] names = dictDefault[bundleL].GetAllAssetNames();
-                // PROBLEM: GetAllAssetNames returns "Assets/Editor/Shaders/myShader.shader" instead of just "myShader"
+                // GetAllAssetNames returns "Assets/Editor/Shaders/myShader.shader" instead of just "myShader"
                 // The default shaders have no subfolders, so we can safely just trim the string to everything after the last slash, and remove the ".shader"
                 foreach (string key in names) {
                     string[] bits = key.Split('/');
@@ -116,7 +124,14 @@ public static class ShaderRegistry {
             UnityWebRequest uwr = UnityWebRequestAssetBundle.GetAssetBundle(new Uri(fullPath).AbsoluteUri.Replace("+", "%2B"));
             uwr.SendWebRequest();
             while (!uwr.isDone) { } // hold up a bit while it's loading; delay isn't noticeable and loading will fail otherwise
-            return DownloadHandlerAssetBundle.GetContent(uwr);
+            AssetBundle content = DownloadHandlerAssetBundle.GetContent(uwr);
+            if (content == null)
+                throw new CYFException("Error while loading the shader \"" + fullPath + "\".\n\nIt's likely that you have two identical shader AssetBundles loaded at once.");
+            else if (uwr.error != null)
+                throw new CYFException(uwr.error);
+            return content;
+        } catch (CYFException e) {
+            UnitaleUtil.DisplayLuaError("loading a shader", e.Message);
         } catch (Exception e) {
             UnitaleUtil.DisplayLuaError("loading a shader", "This is a " + e.GetType() + " error. Please show this screen to a developer.\n\n" + e.Message + "\n\n" + e.StackTrace);
         }
