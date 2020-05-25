@@ -94,11 +94,11 @@ public class ScreenResolution : MonoBehaviour {
         #elif UNITY_EDITOR
             displayedSize.z = 0;
         #endif
-	}
+    }
 
-	private static double RoundToNearestEven(double value) {
-		return System.Math.Truncate(value) + (System.Math.Truncate(value) % 2);
-	}
+    private static double RoundToNearestEven(double value) {
+        return System.Math.Truncate(value) + (System.Math.Truncate(value) % 2);
+    }
 
     /// <summary>
     /// Returns a modified mousePosition that counts the bottom-left of the "play area" as (0, 0), rather than the bottom-left of the screen.

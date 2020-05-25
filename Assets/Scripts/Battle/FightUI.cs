@@ -79,7 +79,7 @@ public class FightUI : MonoBehaviour {
             return shakeTimer >= totalShakeTime;
         return false;
     }
-	
+
     public void ChangeTarget(LuaEnemyController target) {
         enemy = target;
         if (Damage != -478294)

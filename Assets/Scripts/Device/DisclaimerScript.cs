@@ -69,6 +69,8 @@ public class DisclaimerScript : MonoBehaviour {
             Desc5.GetComponent<Text>().text = "Loading mods...";
         yield return new WaitForEndOfFrame();
         GlobalControls.modDev = true;
+        // Discord Rich Presence
+        DiscordControls.StartModSelect();
         SceneManager.LoadScene("ModSelect");
     }
 }

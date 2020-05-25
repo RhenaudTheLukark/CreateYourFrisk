@@ -6,5 +6,5 @@
 public class DogGyrator : MonoBehaviour {
     RectTransform dog;
     void Start()  { dog = GetComponent<RectTransform>(); }
-	void Update() { dog.Rotate(Vector3.forward * 90 * Time.deltaTime); }
+    void Update() { dog.Rotate(Vector3.forward * 90 * Time.deltaTime); }
 }

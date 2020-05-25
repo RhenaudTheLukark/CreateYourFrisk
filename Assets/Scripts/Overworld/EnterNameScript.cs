@@ -19,9 +19,9 @@ public class EnterNameScript : MonoBehaviour {
     public AudioSource uiAudio;
     public TextManager tmInstr, tmName, tmLettersMaj, tmLettersMin;
 
-	// Use this for initialization
-	void Start () {
-		AddToDict();
+    // Use this for initialization
+    void Start () {
+        AddToDict();
         isNewGame = SaveLoad.savedGame == null;
         try { GameObject.Find("textframe_border_outer").SetActive(false); } catch { }
         if (GlobalControls.crate)
@@ -52,9 +52,9 @@ public class EnterNameScript : MonoBehaviour {
             tmLettersMin.GetComponentsInChildren<Image>()[i].name = tmLettersMaj.GetComponentsInChildren<Image>()[i].sprite.name.ToLower();
         GameObject.Find("A").GetComponent<Image>().color = new Color(1, 1, 0, 1);
     }
-	
-	// Update is called once per frame
-	void Update () {
+    
+    // Update is called once per frame
+    void Update () {
         if (!confirm) {
             if (!hackFirstString && tmName.transform.childCount != 0 && !isNewGame) {
                 hackFirstString = true;
@@ -119,8 +119,8 @@ public class EnterNameScript : MonoBehaviour {
                         confirm = true;
                         specialNameDict.TryGetValue(playerName.ToLower(), out confirmText);
                         StartCoroutine(waitConfirm(ForbiddenNames.Contains(playerName.ToLower())));
-						textObjFolder.SetActive(false);
-					}
+                        textObjFolder.SetActive(false);
+                    }
                 } else {
                     if (playerName.Length < 9)
                         playerName = playerName + choiceLetter;
@@ -187,8 +187,8 @@ public class EnterNameScript : MonoBehaviour {
         }
         uiAudio.PlayOneShot(AudioClipRegistry.GetSound("menuconfirm"));
         if (choiceLetter == "Quit") {
-			textObjFolder.SetActive(true);
-			confirmText = null;
+            textObjFolder.SetActive(true);
+            confirmText = null;
             confirm = false;
             tmName.transform.localScale = new Vector3(1, 1, 1);
             tmName.SetEffect(null);

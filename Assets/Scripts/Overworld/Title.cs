@@ -47,7 +47,7 @@ public class Title : MonoBehaviour {
         }
         GameObject.DontDestroyOnLoad(Camera.main.gameObject);
         StartCoroutine(TitlePhase1());
-	}
+    }
 
     IEnumerator TitlePhase1() {
         Camera.main.GetComponent<AudioSource>().PlayOneShot(AudioClipRegistry.GetSound("intro_noise"));
@@ -61,9 +61,9 @@ public class Title : MonoBehaviour {
             yield return new WaitForSeconds(1);
         }
     }
-	
-	// Update is called once per frame
-	void Update () {
+    
+    // Update is called once per frame
+    void Update () {
         GlobalControls.lastTitle = true;
         if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED && phase == 0) {
             phase++;
@@ -157,7 +157,7 @@ public class Title : MonoBehaviour {
                 }
             }
         }
-	}
+    }
 
     void setColor(int nbr, int mode = 1) {
         string obj;

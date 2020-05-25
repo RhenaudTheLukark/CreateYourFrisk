@@ -45,9 +45,9 @@ public class CYFAnimator : MonoBehaviour {
             waitingForLateStart = false;
         }
     }
-	
-	// Update is called once per frame
-	void Update () {
+    
+    // Update is called once per frame
+    void Update () {
         if (waitingForLateStart)
             return;
         string animName = specialHeader;

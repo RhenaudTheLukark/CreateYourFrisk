@@ -16,11 +16,11 @@ public class StationaryMissScript : MonoBehaviour {
         text = _text;
     }
 
-	void Start () {
+    void Start () {
         TextManager mgr = GetComponent<TextManager>();
         mgr.SetFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_DAMAGETEXT_NAME));
         mgr.SetText(new TextMessage("[color:c0c0c0]" + text, false, true));
-	}
+    }
 
     void Update(){
         if (UIController.instance.frozenState != UIController.UIState.PAUSE)
