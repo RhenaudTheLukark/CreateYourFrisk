@@ -244,7 +244,7 @@ public static class DiscordControls {
     }
 
     /// <summary>
-    /// Resets the imer value in the discord rich presence status to blank (or what it would be originally)
+    /// Resets the timer value in the discord rich presence status to blank (or what it would be originally)
     /// </summary>
     /// <param name="reset">If true, text will be reset to its initial value. Otherwise, it will be cleared from the status.</param>
     public static void ClearTime(bool reset) {

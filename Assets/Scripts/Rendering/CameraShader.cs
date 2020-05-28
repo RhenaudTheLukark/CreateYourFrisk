@@ -8,7 +8,7 @@ public class CameraShader : MonoBehaviour {
     public static TextureWrapMode H = TextureWrapMode.Clamp;
     public static TextureWrapMode V = TextureWrapMode.Clamp;
 
-    void Awake() {
+    public void Awake() {
         material = ShaderRegistry.UI_DEFAULT_MATERIAL;
         luashader = new LuaSpriteShader("camera", gameObject);
     }
