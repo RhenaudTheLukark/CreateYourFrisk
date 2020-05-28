@@ -577,6 +577,7 @@ public class PlayerOverworld : MonoBehaviour {
         //Now, we load our battle.
         GlobalControls.isInFight = true;
         SceneManager.LoadScene("Battle", LoadSceneMode.Additive);
+        DiscordControls.StartBattle(ModFolder, Encounter);
         yield return 0;
     }
 
@@ -997,6 +998,7 @@ public class PlayerOverworld : MonoBehaviour {
         if (callFrom == "Battle") {
             GameObject.Destroy(GameObject.Find("psContainer"));
             GameObject.Destroy(GameObject.Find("GameObject"));
+            DiscordControls.ShowOWScene(SceneManager.GetActiveScene().name);
         }
 
         GameObject.FindObjectOfType<Fading>().fade.color = new Color(0, 0, 0, 1);

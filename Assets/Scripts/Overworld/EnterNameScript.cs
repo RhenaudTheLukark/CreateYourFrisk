@@ -52,7 +52,7 @@ public class EnterNameScript : MonoBehaviour {
             tmLettersMin.GetComponentsInChildren<Image>()[i].name = tmLettersMaj.GetComponentsInChildren<Image>()[i].sprite.name.ToLower();
         GameObject.Find("A").GetComponent<Image>().color = new Color(1, 1, 0, 1);
     }
-    
+
     // Update is called once per frame
     void Update () {
         if (!confirm) {
@@ -220,6 +220,7 @@ public class EnterNameScript : MonoBehaviour {
                     yield return 0;
                 UnitaleUtil.ResetOW();
                 SceneManager.LoadScene("TransitionOverworld");
+                DiscordControls.StartOW();
             } else {
                 SaveLoad.Save();
                 SceneManager.LoadScene("TitleScreen");

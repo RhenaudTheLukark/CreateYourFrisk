@@ -87,26 +87,60 @@ it's w3c valid, at least
         <div class="tab-pane active text-style" id="api-functions-misc">
             <p>
                 <br><span class="function"><span class="CYF"></span> The Discord object [E/M/W]</span>
-                This class is used to manipulate the data the <span class="term">Discord Rich Presence Status</span> bar displays, if Discord is on and if this feature is enabled.
+                This class is used to manipulate the data the <span class="term">Discord Rich Presence Status</span> bar displays, if Discord
+                is open and if this feature is enabled. This feature can be customized in Create Your Frisk's options screen, accessible from
+                the mod selection screen. This object <i>cannot</i> override the user's settings for Discord Rich Presence.
             </p>
             <ul>
-                <li><span class="term">Discord.SetName(<span class="string"></span> name = "", <span class="boolean"></span> noPrefix = false)</span>:
-                    Sets the top row of the <span class="term">Discord Rich Presence Status</span> bar, if it's enabled. If you are in battle, it will display <span class="term">Playing Mod: </span> at the beginning of the line, unless <span class="term">noPrefix</span> is set to true, in which case <span class="term">name</span> will be displayed as-is.
+                <li><span class="term">Discord.SetName(<span class="string"></span> name)</span>:
+                    Sets the top row of the <span class="term">Discord Rich Presence Status</span> bar, if enabled in the user's options.
                     <br><br>
-                    By default, this line displays <span class="term">Playing Mod: MODNAME</span>, with <span class="term">MODNAME</span> being the name of your mod.
+                    By default, this line displays <span class="term">Playing Mod: MODNAME</span> (with <span class="term">MODNAME</span>
+                    being the name of your mod) in battle, or <span class="term">In the Overworld</span> if in the Overworld.
                     <br><br>
-                    Setting <span class="term">name</span> to its default value <span class="term">""</span> doesn't display the line at all.</li><br>
-                <li><span class="term">Discord.SetDetails(<span class="string"></span> details = "")</span>:
-                    Sets the second row of the <span class="term">Discord Rich Presence Status</span> bar, if it's enabled.
+                    Setting <span class="term">name</span> to <span class="term">""</span> doesn't display the line at all.
+                </li><br>
+                <li><span class="term">Discord.ClearName(<span class="boolean"></span> reset = false)</span>:
+                    Resets the top row of the <span class="term">Discord Rich Presence Status</span> bar, if enabled in the user's options.
                     <br><br>
-                    By default, this line isn't displayed.
+                    If <span class="term">reset</span> is true, the entire line will be hidden. Otherwise, it will be reset to its default value
+                    (see <span class="term">Discord.SetName</span> above).
+                </li><br>
+                <li><span class="term">Discord.SetDetails(<span class="string"></span> details)</span>:
+                    Sets the second row of the <span class="term">Discord Rich Presence Status</span> bar, if enabled in the user's options.
                     <br><br>
-                    Setting <span class="term">details</span> to its default value <span class="term">""</span> doesn't display the line at all.</li><br>
-                <li><span class="term">Discord.SetTime(<span class="number"></span> time = 0, <span class="boolean"></span> isCountdown = false)</span>:
-                    Sets the current time displayed in the <span class="term">Discord Rich Presence Status</span> bar, if it's enabled. The <span class="term">time</span> value is displayed in seconds.
-                    The <span class="term">isCountdown</span> value tells the engine whether this time must be counted down or not, allowing it to act much like a stopwatch if it's enabled.
+                    By default, this line displays the name of the currently running encounter file in battle, or the name of the current map
+                    if in the Overworld. If the current map has no name, the line will be hidden.<br>
+                    Map names are set in <span class="term">AddKeysToMapCorrespondanceList</span> in the file<br>
+                    <span class="term">Assets/Scripts/Util/UnitaleUtil.cs</span>.
                     <br><br>
-                    By default, this line will display the time elapsed since the mod was started.</li><br>
+                    Setting <span class="term">details</span> to <span class="term">""</span> doesn't display the line at all.
+                </li><br>
+                <li><span class="term">Discord.ClearDetails(<span class="boolean"></span> reset = true)</span>:
+                    Resets the second row of the <span class="term">Discord Rich Presence Status</span> bar, if enabled in the user's options.
+                    <br><br>
+                    If <span class="term">reset</span> is true, the entire line will be hidden. Otherwise, it will be reset to its default value
+                    (see <span class="term">Discord.SetDetails</span> above).
+                </li><br>
+                <li><span class="term">Discord.SetTime(<span class="number"></span> time, <span class="boolean"></span> countdown = false)</span>:
+                    Sets the current time displayed in the <span class="term">Discord Rich Presence Status</span> bar, if enabled in the user's options.<br>
+                    The <span class="term">time</span> value is a number of seconds. The displayed time is in the <span class="term">minutes:seconds</span>
+                    format, so every multiple of 60 in <span class="term">time</span> will display as one minute.
+                    <br><br>
+                    If <span class="term">countdown</span> is true, the given time will be displayed as a countdown timer, counting down to 0:00 from the
+                    value you entered (in the format <span class="term">mm:ss remaining</span>).<br>
+                    Otherwise, the given time will be displayed as an elapsed time counter, counting upwards from the value you entered (in the format
+                    <span class="term">mm:ss elapsed</span>).
+                    <br><br>
+                    By default, this line will display the time elapsed since the encounter was started in battle, or it will be hidden if in the Overworld.
+                </li><br>
+                <li><span class="term">Discord.ClearTime(<span class="boolean"></span> reset = false)</span>:
+                    Resets the current time displayed in the <span class="term">Discord Rich Presence Status</span> bar, if enabled in the user's options.
+                    <br><br>
+                    If <span class="term">reset</span> is true, the entire line will be hidden. Otherwise, it will be reset to its default value
+                    (see <span class="term">Discord.SetTime</span> above). Since there is no timer in the Overworld, using <span class="term">reset</span>
+                    may produce some erroneous values if used in the Overworld.
+                </li><br>
             </ul>
         </div>
 

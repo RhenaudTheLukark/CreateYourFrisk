@@ -127,30 +127,24 @@ public class OptionsScript : MonoBehaviour {
         // Discord Rich Presence
         // Change Discord Status Visibility
         Discord.GetComponent<Button>().onClick.AddListener(() => {
-            
-            Discord.GetComponentInChildren<Text>().text = "Discord Status: " + DiscordControls.ChangeVisibilitySetting(1);
+            Discord.GetComponentInChildren<Text>().text = (!GlobalControls.crate ? "Discord Display: " : "DEESCORD DESPLAY: ") + DiscordControls.ChangeVisibilitySetting(1);
         });
-        
-        Discord.GetComponentInChildren<Text>().text = "Discord Status: " + DiscordControls.ChangeVisibilitySetting(0);
+        Discord.GetComponentInChildren<Text>().text = (!GlobalControls.crate ? "Discord Display: " : "DEESCORD DESPLAY: ") + DiscordControls.ChangeVisibilitySetting(0);
 
         // exit
-        Exit.GetComponent<Button>().onClick.AddListener(() => {DiscordControls.StartModSelect();SceneManager.LoadScene("ModSelect");});
+        Exit.GetComponent<Button>().onClick.AddListener(() => {SceneManager.LoadScene("ModSelect");});
 
         // Crate Your Frisk
         if (GlobalControls.crate) {
             // labels
-            GameObject.Find("OptionsLabel").GetComponent<Text>().text =                                      "OPSHUNS";
-            GameObject.Find("DescriptionLabel").GetComponent<Text>().text =                                "MORE TXET";
+            GameObject.Find("OptionsLabel").GetComponent<Text>().text =                   "OPSHUNS";
+            GameObject.Find("DescriptionLabel").GetComponent<Text>().text =             "MORE TXET";
 
             // buttons
-            ResetRG.GetComponentInChildren<Text>().text =                                         "RESTE RELA GOLBALZ";
-            ResetAG.GetComponentInChildren<Text>().text =                                      "RESTE ALMIGTY GOLBALZ";
-            ClearSave.GetComponentInChildren<Text>().text =                                                 "WYPE SAV";
-            Safe.GetComponentInChildren<Text>().text =     "SFAE MODE: " + (ControlPanel.instance.Safe ? "ON" : "OFF");
-            Retro.GetComponentInChildren<Text>().text = "RETORCMOAPTIILBIYT MOD: " + (ControlPanel.instance.Safe ? "ON" : "OFF");
-            Fullscreen.GetComponentInChildren<Text>().text = "NOT UGLEE FULLSRCEEN: " + (ScreenResolution.perfectFullscreen ? "ON" : "OFF");
-            Scale.GetComponentInChildren<Text>().text = "WEENDO STRECH: " + ScreenResolution.windowScale.ToString() + "X";
-            Exit.GetComponentInChildren<Text>().text =                                            "EXIT TOO MAD SELCT";
+            ResetRG.GetComponentInChildren<Text>().text =                      "RESTE RELA GOLBALZ";
+            ResetAG.GetComponentInChildren<Text>().text =                   "RESTE ALMIGTY GOLBALZ";
+            ClearSave.GetComponentInChildren<Text>().text =                              "WYPE SAV";
+            Exit.GetComponentInChildren<Text>().text =                         "EXIT TOO MAD SELCT";
         }
     }
 
@@ -201,7 +195,7 @@ public class OptionsScript : MonoBehaviour {
                 response = "Changes how much Discord Rich Presence should display on your profile regarding you playing Create Your Frisk.\n\n"
                          + "<b>Everything</b>: Everything is displayed: the mod you're playing, a timestamp and a description.\n\n"
                          + "<b>Game Only</b>: Only shows that you're playing Create Your Frisk.\n\n"
-                         + "<b>Nothing</b>: Disables Discord Rich Presence entirely.\n<b>NOTE</b>: Using the Nothing option requires to restart CYF (because Discord already knows what you are doing). You have to do the same thing if you just changed this setting to Nothing.";
+                         + "<b>Nothing</b>: Disables Discord Rich Presence entirely.";
                 return !GlobalControls.crate ? response : Temmify.Convert(response);
             case "Exit":
                 response = "Returns to the Mod Select screen.";

@@ -94,7 +94,10 @@ public class SelectOMatic : MonoBehaviour {
             });
         // Grab the exit button, and give it some functions
         btnExit.GetComponent<Button>().onClick.RemoveAllListeners();
-        btnExit.GetComponent<Button>().onClick.AddListener(() => {SceneManager.LoadScene("Disclaimer");});
+        btnExit.GetComponent<Button>().onClick.AddListener(() => {
+            SceneManager.LoadScene("Disclaimer");
+            DiscordControls.StartTitle();
+        });
 
         // Add devMod button functions
         if (GlobalControls.modDev) {
@@ -199,7 +202,7 @@ public class SelectOMatic : MonoBehaviour {
                 throw new Exception();
             Debug.Log("Loading " + StaticInits.ENCOUNTER);
             GlobalControls.isInFight = true;
-            DiscordControls.StartMod(modDirs[CurrentSelectedMod].Name);
+            DiscordControls.StartBattle(modDirs[CurrentSelectedMod].Name, StaticInits.ENCOUNTER);
             SceneManager.LoadScene("Battle");
         } catch (Exception e) {
             ModBackground.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0.25f);

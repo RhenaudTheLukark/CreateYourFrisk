@@ -178,6 +178,7 @@ public class TransitionOverworld : MonoBehaviour {
 
         if (GameObject.Find("Don't show it again"))
             GameObject.Destroy(GameObject.Find("Don't show it again"));
+        DiscordControls.ShowOWScene(SceneManager.GetActiveScene().name);
         StaticInits.SendLoaded();
     }
 }

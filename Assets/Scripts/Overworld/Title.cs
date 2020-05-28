@@ -61,7 +61,7 @@ public class Title : MonoBehaviour {
             yield return new WaitForSeconds(1);
         }
     }
-    
+
     // Update is called once per frame
     void Update () {
         GlobalControls.lastTitle = true;
@@ -174,6 +174,7 @@ public class Title : MonoBehaviour {
         GameObject.DontDestroyOnLoad(gameObject);
         UnitaleUtil.ResetOW();
         SceneManager.LoadScene("TransitionOverworld");
+        DiscordControls.StartOW();
         yield return 0;
         //yield return Application.isLoadingLevel;
         //GameObject.Find("Player").transform.position = new Vector3(;
@@ -205,6 +206,7 @@ public class Title : MonoBehaviour {
         GameObject.DontDestroyOnLoad(gameObject);
         UnitaleUtil.ResetOW();
         SceneManager.LoadScene("TransitionOverworld");
+        DiscordControls.StartOW();
         yield return 0;
         GlobalControls.overworldTimestamp += (SaveLoad.savedGame != null ? SaveLoad.savedGame.playerTime : 0f);
         //yield return Application.isLoadingLevel;

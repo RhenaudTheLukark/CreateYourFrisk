@@ -2661,7 +2661,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 2
-  m_Text: 'Discord Status: Everything'
+  m_Text: 'Discord Display: Everything'
 --- !u!222 &1706522960
 CanvasRenderer:
   m_ObjectHideFlags: 0

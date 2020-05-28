@@ -62,15 +62,13 @@ public class DisclaimerScript : MonoBehaviour {
     // To compensate, this function will add "Loading" text to the Disclaimer screen
     // whenever it's time to go to the mod select menu.
     IEnumerator ModSelect() {
-        // if (LuaScriptBinder.GetAlMighty(null, "CrateYourFrisk") != null && LuaScriptBinder.GetAlMighty(null, "CrateYourFrisk").Boolean)
         if (GlobalControls.crate)
             Desc5.GetComponent<Text>().text = "LAODING MODS!!!!!";
         else
             Desc5.GetComponent<Text>().text = "Loading mods...";
         yield return new WaitForEndOfFrame();
         GlobalControls.modDev = true;
-        // Discord Rich Presence
-        DiscordControls.StartModSelect();
+        DiscordControls.StartModSelect(false);
         SceneManager.LoadScene("ModSelect");
     }
 }

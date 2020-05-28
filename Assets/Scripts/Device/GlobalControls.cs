@@ -58,7 +58,6 @@ public class GlobalControls : MonoBehaviour {
             new PlayerCharacter();
             SaveLoad.LoadAlMighty();
             LuaScriptBinder.Set(null, "ModFolder", DynValue.NewString("@Title"));
-            DiscordControls.Start();
 
             UnitaleUtil.AddKeysToMapCorrespondanceList();
 
@@ -89,6 +88,9 @@ public class GlobalControls : MonoBehaviour {
             if (LuaScriptBinder.GetAlMighty(null, "CYFWindowScale") != null
              && LuaScriptBinder.GetAlMighty(null, "CYFWindowScale").Type == DataType.Number)
                 ScreenResolution.windowScale = (int)LuaScriptBinder.GetAlMighty(null, "CYFWindowScale").Number;
+
+            //Start Discord RPC (also checks for an AlMightyGlobal within)
+            DiscordControls.Start();
 
             awakened = true;
         }
@@ -149,6 +151,7 @@ public class GlobalControls : MonoBehaviour {
             if (sceneName == "Error" && !modDev) {
                 UnitaleUtil.ExitOverworld();
                 SceneManager.LoadScene("Disclaimer");
+                DiscordControls.StartTitle();
                 GameObject.Destroy(GameObject.Find("SpritePivot"));
                 return;
             }
@@ -238,5 +241,5 @@ public class GlobalControls : MonoBehaviour {
         }
     }
 
-    void OnApplicationQuit() { /*UnitaleUtil.closeFile();*/ }
+    void OnApplicationQuit() { DiscordControls.discord.Dispose(); }
 }
