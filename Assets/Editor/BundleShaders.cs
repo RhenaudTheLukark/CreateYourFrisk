@@ -10,8 +10,18 @@ public static class BundleShaders {
     private static string assetBundleDirectory = "Assets/Editor/Output";
     private static string shaderDirectory = "Assets/Editor/Shaders";
 
-    [MenuItem("CYF Shaders/Bundle all AssetBundles...")]
-    static void AllBundlesOption() {
+    [MenuItem("Create Your Frisk/Build Shader AssetBundles...")]
+    static void OneBundleOption() {
+        if (EditorApplication.isPlaying) {
+            Debug.LogError("You may only build AssetBundles while not in play mode.");
+            return;
+        }
+
+        BundleShaderDialog window = (BundleShaderDialog)EditorWindow.GetWindow(typeof(BundleShaderDialog));
+        window.Show();
+    }
+
+    public static void AllBundlesOption() {
         if (EditorApplication.isPlaying) {
             Debug.LogError("You may only build AssetBundles while not in play mode.");
             return;
@@ -24,17 +34,6 @@ public static class BundleShaders {
         BuildBundles(bundles);
 
         EditorUtility.DisplayDialog("Bundling Shaders", "All CYF Shader Bundles have been created!\n\nYou can find them in:\n" + assetBundleDirectory, "OK");
-    }
-
-    [MenuItem("CYF Shaders/Bundle one AssetBundle...")]
-    static void OneBundleOption() {
-        if (EditorApplication.isPlaying) {
-            Debug.LogError("You may only build AssetBundles while not in play mode.");
-            return;
-        }
-
-        BundleShaderDialog window = (BundleShaderDialog)EditorWindow.GetWindow(typeof(BundleShaderDialog));
-        window.Show();
     }
 
     public static void OneBundle(string bundleName) {
@@ -121,14 +120,19 @@ public static class BundleShaders {
 public class BundleShaderDialog : EditorWindow {
     public string bundleName;
 
-    void OnGUI() {
-        bundleName = EditorGUILayout.TextField("AssetBundle Name", bundleName);
+    void OnEnable() {
+        this.titleContent = new GUIContent("CYF Shaders", "Utilities used to build CYF Shader AssetBundles for use with Create Your Frisk mods.");
+    }
 
-        if (GUILayout.Button("Save")) {
-            OnClick();
+    void OnGUI() {
+        bundleName = EditorGUILayout.TextField(new GUIContent("AssetBundle to build", "The name of a CYF Shader AssetBundle within the shaders directory to build."), bundleName);
+
+        if (GUILayout.Button(new GUIContent("Build one AssetBundle", "Builds a CYF Shader AssetBundle with the name given in the text box above."))) {
+            BundleShaders.OneBundle(bundleName);
+            GUIUtility.ExitGUI();
+        } else if (GUILayout.Button(new GUIContent("Build all AssetBundles", "Builds all CYF Shader AssetBundles set up in the shaders directory."))) {
+            BundleShaders.AllBundlesOption();
             GUIUtility.ExitGUI();
         }
     }
-
-    void OnClick() { BundleShaders.OneBundle(bundleName); }
 }

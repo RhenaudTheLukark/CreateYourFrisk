@@ -322,7 +322,7 @@ public class LuaSpriteShader {
 
         Sprite spr = SpriteRegistry.Get(sprite);
         if (spr == null)
-            throw new CYFException("The sprite Sprites/" + name + ".png doesn't exist.");
+            throw new CYFException("The sprite Sprites/" + sprite + ".png doesn't exist.");
         material.SetTexture(IndexProperty(name, false), spr.texture);
     }
 
