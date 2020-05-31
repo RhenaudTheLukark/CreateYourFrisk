@@ -12,7 +12,7 @@ public class LateUpdater : MonoBehaviour {
     int frametimer = 0;
 
     public static void Init() { InvokeList(lateInit); }
-    
+
     void Update () {
         if (frametimer > 0) {
             InvokeList(lateActions);

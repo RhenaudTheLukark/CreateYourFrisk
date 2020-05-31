@@ -55,7 +55,7 @@ public class IntroManager : MonoBehaviour {
         if (goToNextDirect[0] == "Y")
             timer = 0.5f;
     }
-    
+
     // Update is called once per frame
     void Update () {
         timer += Time.deltaTime;

@@ -256,7 +256,7 @@ public class Misc {
             GetWindowRect(window, out r);
             return new Rect(r.Left, r.Top, Mathf.Abs(r.Right - r.Left), Mathf.Abs(r.Top - r.Bottom));
         }
-#else
+    #else
         public static string WindowName {
             get {
                 UnitaleUtil.DisplayLuaError("Windows-only function", "This feature is Windows-only! Sorry, but you can't use it here.");
@@ -295,5 +295,5 @@ public class Misc {
             UnitaleUtil.DisplayLuaError("Windows-only function", "This feature is Windows-only! Sorry, but you can't use it here.");
             return new Rect();
         }
-#endif
+    #endif
 }

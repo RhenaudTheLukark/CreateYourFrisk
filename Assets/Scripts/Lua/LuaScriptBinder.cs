@@ -25,7 +25,6 @@ public static class LuaScriptBinder {
         UserData.RegisterType<ProjectileController>();
         UserData.RegisterType<LuaArenaStatus>();
         UserData.RegisterType<LuaPlayerStatus>();
-        UserData.RegisterType<LuaEnemyStatus>();
         UserData.RegisterType<LuaInputBinding>();
         UserData.RegisterType<LuaUnityTime>();
         UserData.RegisterType<ScriptWrapper>();
@@ -242,12 +241,12 @@ public static class LuaScriptBinder {
 
     public static void ClearVariables() {
         dict.Clear();
+        // Battle bindings
         UserData.RegisterType<MusicManager>();
         UserData.RegisterType<NewMusicManager>();
         UserData.RegisterType<ProjectileController>();
         UserData.RegisterType<LuaArenaStatus>();
         UserData.RegisterType<LuaPlayerStatus>();
-        UserData.RegisterType<LuaEnemyStatus>();
         UserData.RegisterType<LuaInputBinding>();
         UserData.RegisterType<LuaUnityTime>();
         UserData.RegisterType<ScriptWrapper>();
@@ -256,8 +255,11 @@ public static class LuaScriptBinder {
         UserData.RegisterType<Misc>();
         UserData.RegisterType<LuaTextManager>();
         UserData.RegisterType<LuaFile>();
-        //UserData.RegisterType<Windows>();
-        //Overworld
+        UserData.RegisterType<LuaSpriteShader>();
+        UserData.RegisterType<LuaSpriteShader.MatrixFourByFour>();
+        UserData.RegisterType<LuaDiscord>();
+
+        // Overworld bindings
         UserData.RegisterType<LuaEventOW>();
         UserData.RegisterType<LuaPlayerOW>();
         UserData.RegisterType<LuaGeneralOW>();

@@ -199,7 +199,6 @@ internal class LuaEnemyEncounter : EnemyEncounter {
         DynValue[] enemyStatusCtrl = new DynValue[enemies.Length];
         Table luaEnemyTable = script.GetVar("enemies").Table;
         for (int i = 0; i < enemyStatusCtrl.Length; i++) {
-            //enemies[i].luaStatus = new LuaEnemyStatus(enemies[i]);
             enemies[i].script = new ScriptWrapper();
             luaEnemyTable.Set(i + 1, UserData.Create(enemies[i].script));
         }

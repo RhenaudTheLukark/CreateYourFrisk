@@ -4,8 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class LuaEnemyController : EnemyController {
-    public LuaEnemyStatus luaStatus;
-
     internal string scriptName;
     internal ScriptWrapper script;
     internal bool inFight = true; // if false, enemy will no longer be considered as an option in menus and such
