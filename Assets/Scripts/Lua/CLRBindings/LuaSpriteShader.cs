@@ -32,6 +32,7 @@ public class LuaSpriteShader {
             CameraShader cs = gameObject.GetComponent<CameraShader>();
             cs.enabled = true;
             cs.material = material;
+            material.EnableKeyword("CYF_SHADER_IS_CAMERA");
         } else if (mode == "event")
             gameObject.GetComponent<SpriteRenderer>().material = material;
         else
@@ -51,6 +52,7 @@ public class LuaSpriteShader {
                 CameraShader cs = gameObject.GetComponent<CameraShader>();
                 cs.enabled = true;
                 cs.material = material;
+                material.EnableKeyword("CYF_SHADER_IS_CAMERA");
             } else if (mode == "event")
                 gameObject.GetComponent<SpriteRenderer>().material = material;
             else
@@ -114,6 +116,9 @@ public class LuaSpriteShader {
 
     private int IndexProperty(string name, bool get) {
         checkActive();
+        if (string.IsNullOrEmpty(name))
+            throw new CYFException("The first argument, the name of the property in the shader, is nil.");
+
         if (!material.HasProperty(name) && get)
             throw new CYFException("Shader has no property \"" + name + "\".");
 
@@ -123,6 +128,15 @@ public class LuaSpriteShader {
     }
 
     public bool HasProperty(string name) { return material.HasProperty(name); }
+
+
+
+    public void EnableKeyword(string key) {
+        material.EnableKeyword(key);
+    }
+    public void DisableKeyword(string key) {
+        material.DisableKeyword(key);
+    }
 
 
 
@@ -302,7 +316,13 @@ public class LuaSpriteShader {
 
 
     public void SetTexture(string name, string sprite) {
+        int property = IndexProperty(name, false);
+        if (string.IsNullOrEmpty(sprite))
+            throw new CYFException("shader.SetTexture: The second argument, the texture, needs to be the name of an image in your Sprites folder.");
+
         Sprite spr = SpriteRegistry.Get(sprite);
+        if (spr == null)
+            throw new CYFException("The sprite Sprites/" + name + ".png doesn't exist.");
         material.SetTexture(IndexProperty(name, false), spr.texture);
     }
 
