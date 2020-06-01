@@ -327,8 +327,6 @@ public class LuaSpriteController {
             Transform parent = target.parent;
             try {
                 target.SetParent(GameObject.Find(value + "Layer").transform);
-                // foreach (MaskImage ivi in img.GetComponentsInChildren<MaskImage>())
-                    // ivi.inverted = false;
                 img.GetComponent<MaskImage>().inverted = false;
             } catch { target.SetParent(parent); }
         }
@@ -668,8 +666,11 @@ public class LuaSpriteController {
         if (masked != _masked) {
             //If children need to have their "inverted" property updated, then do so
             if ((_masked < 4 && masked > 3) || (_masked > 3 && masked < 4))
-                foreach (MaskImage ivi in img.GetComponentsInChildren<MaskImage>())
-                    ivi.inverted = masked > 3;
+                foreach (Transform child in GetTarget()) {
+                    MaskImage childmask = child.gameObject.GetComponent<MaskImage>();
+                    if (childmask != null)
+                        childmask.inverted = masked > 3;
+                }
             RectMask2D box = img.GetComponent<RectMask2D>();
             Mask spr = img.GetComponent<Mask>();
 

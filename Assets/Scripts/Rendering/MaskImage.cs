@@ -11,6 +11,10 @@ public class MaskImage : Image {
             Material result = base.materialForRendering;
             if (result.HasProperty("_StencilComp"))
                 result.SetInt("_StencilComp", inverted ? 6 : result.GetInt("_StencilComp"));
+            if (inverted)
+                result.EnableKeyword("CYF_INVERTED_MASK");
+            else
+                result.DisableKeyword("CYF_INVERTED_MASK");
             return result;
         }
     }
