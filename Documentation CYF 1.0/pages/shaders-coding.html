@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<!--
+since you're here anyway: there's a small easter egg on the text commands page but it's probably not worth finding, sorry
+you may notice this page's code is garbage: i'm not a web designer! ;-;
+it's w3c valid, at least
+-->
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="favicon.ico">
+
+    <title>CYF Documentation - Coding a Shader</title>
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="../css/themesidebar.css" rel="stylesheet">
+    <link href="../css/shThemeRDark.css" rel="stylesheet">
+
+    <!-- Syntax highlighting -->
+    <script type="text/javascript" src="../js/shCore.js"></script>
+    <script type="text/javascript" src="../js/shBrushPlain.js"></script>
+    <script type="text/javascript">SyntaxHighlighter.all();</script>
+</head>
+<body>
+<img src="../img/bg2.png" alt="Undertale background" class="backimg">
+<div class="container arena black">
+    <div class="col-md-2">
+        <!--navigation-->
+        <nav class="nav-sidebar">
+            <ul class="nav tabs">
+                <li class="li-header">Basics</li>
+                    <li><a href="../documentation.html">Welcome</a></li>
+                    <li><a href="howtoread.html">How to read this documentation</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li><a href="controls.html">Controls</a></li>
+                    <li><a href="basic.html">Basic setup</a></li>
+                    <li><a href="unity.html"><span class="CYF"></span> Unity Setup (Optional)</a></li>
+                    <li class="new"><a href="variables.html">Special Variables</a></li>
+                    <li><a href="terms.html">Terminology</a></li>
+                <li class="li-header">API</li>
+                    <li><a href="api-text.html">Text commands</a></li>
+                    <li class="new"><a href="api-events.html">Game events</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li class="li-indent">Functions &amp; Objects:</li>
+                        <li class="li-indent new"><a href="api-functions-main.html">Misc. Functions</a></li>
+                        <li class="li-indent new"><a href="api-functions-player.html">The Player Object</a></li>
+                        <li class="li-indent"><a href="api-functions-script.html">The Script Object</a></li>
+                        <li class="li-indent"><a href="api-functions-audio.html">The Audio Object</a></li>
+                        <li class="li-indent"><a href="api-functions-newaudio.html"><span class="CYF"></span> The NewAudio Object</a></li>
+                        <li class="li-indent"><a href="api-functions-input.html">The Input Object</a></li>
+                        <li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
+                        <li class="li-indent"><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-discord.html"><span class="CYF"></span> The Discord Object</a></li>
+                        <li class="li-indent"><a href="api-functions-waves.html">The Arena Object</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li><a href="api-projectile.html">Projectile management</a></li>
+                    <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
+                    <li class="new"><a href="api-animation.html">Sprites &amp; Animation</a></li>
+                    <li class="new"><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                <li class="li-header"></span><span class="CYF"></span> <span class="new"></span>Shaders</li>
+                    <li><a href="shaders.html">Introduction</a></li>
+                    <li><a href="shaders-object.html">The Shader Object</a></li>
+                    <li class="active" style="margin-left:5px;">&gt; Coding a<br>Shader &lt;</li>
+                    <hr style="margin-top:10px;margin-bottom:10px;">
+                <li class="li-header"><span class="CYF"></span> Overworld</li>
+                    <li class="new"><a href="overworld.html">Basics</a></li>
+                    <li><a href="overworld-howto-map.html">How to create a map</a></li>
+                    <li><a href="overworld-howto-event.html">How to create an event</a></li>
+                    <li><a href="overworld-howto-animevent.html">How to animate an event</a></li>
+                    <li class="new"><a href="overworld-howto-shop.html">How to create a shop</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li class="li-indent"><span class="CYF"></span> Overworld Objects:</li>
+                        <li class="li-indent"><a href="overworld-object-general.html">The General Object</a></li>
+                        <li class="li-indent"><a href="overworld-object-event.html">The Event Object</a></li>
+                        <li class="li-indent"><a href="overworld-object-player.html">The Player Object</a></li>
+                        <li class="li-indent"><a href="overworld-object-screen.html">The Screen Object</a></li>
+                        <li class="li-indent"><a href="overworld-object-inventory.html">The Inventory Object</a></li>
+                        <li class="li-indent new"><a href="overworld-object-map.html">The Map Object</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                <li class="li-header">Resources</li>
+                    <li><a href="../media/dialogoptions.png">Dialog bubble names</a></li>
+                    <li><a href="api-keys.html"><span class="CYF"></span> Key List</a></li>
+            </ul>
+        </nav>
+    </div>
+    <!--tabs'n'shit-->
+    <div class="tab-content col-md-10">
+        <div class="tab-pane active text-style" id="shaders">
+            <h2><span class="CYF"></span> Coding a Shader</h2>
+            <p>
+                The purpose of this page is to go over everything necessary to know about actually coding the
+                <span class="term">.shader</span> files that can be made into shader AssetBundles for Create Your Frisk v0.6.5 and
+                higher. You will need to code at least a little in Unity ShaderLabs, so some helpful links are provided right at
+                the top for you to look at.
+                <br><br>
+                <h4>Please read <span class="ref">Shaders - Introduction</span> before continuing.</h4>
+            </p>
+            <hr>
+            <h3>Getting Started with Shaders</h3>
+
+            <p>
+                The first thing you should know about shaders is that <u>most of the process is not related to Create Your
+                Frisk</u>. It almost solely depends on your own ability to code in Unity's ShaderLabs format. There are some
+                sample shaders provided that you may look at for reference (see
+                <span class="ref">Shaders - Introduction</span>), but ultimately the deciding factor is your own skill and
+                knowledge.<br>
+                The helpful links below definitely will come in handy, especially as reference material - but
+                it is not guaranteed you will be able to code your own shader as easily as you can code in CYF.
+                <br><br>
+                The Basics
+                <ul>
+                    <li>
+                        <a href="https://docs.unity3d.com/2018.2/Documentation/Manual/ShadersOverview.html">Writing Shaders</a>
+                        - Basic descriptions and terminology to help you begin
+                    </li>
+                    <li>
+                        <a href="https://docs.unity3d.com/2018.2/Documentation/Manual/SL-Shader.html">ShaderLab Syntax</a>
+                        - Basic overview of the full shader file's syntax
+                    </li>
+                    <li>
+                        <a href="https://docs.unity3d.com/2018.2/Documentation/Manual/SL-Properties.html">ShaderLab: Properties</a>
+                        - How to set variables up in the Properties block at the top of the file
+                    </li>
+                    <li>
+                        <a href="https://docs.unity3d.com/2018.2/Documentation/Manual/SL-PropertiesInPrograms.html">ShaderLab: Access shader properties in Cg/HLSL</a>
+                        - How to access said variables later in the file
+                    </li>
+                </ul>
+                Bit more advanced (but still recommended)
+                <ul>
+                    <li>
+                        <a href="https://docs.unity3d.com/2018.2/Documentation/Manual/SL-BuiltinFunctions.html">Built-in shader helper functions</a>
+                        - Helper functions you can use within your shader scripts
+                    </li>
+                    <li>
+                        <a href="https://docs.unity3d.com/2018.2/Documentation/Manual/SL-UnityShaderVariables.html">Built-in shader variables</a>
+                        - Built in variables you can use. <span class="term">_Time</span>, <span class="term">_SinTime</span> and
+                        <span class="term">_CosTime</span> are highly recommended for performance.
+                    </li>
+                    <li>
+                        <a href="https://docs.unity3d.com/2018.2/Documentation/Manual/SL-MultipleProgramVariants.html">Making multiple shader program variants</a>
+                        - Covers setting up keywords in your shader script (see below)
+                    </li>
+                </ul>
+                Other Links
+                <ul>
+                    <li>
+                        <a href="https://developer.download.nvidia.com/cg/index_stdlib.html">Cg Standard Library Documentation</a>
+                        - A list of functions you can use within your shader's <span class="term">CGPROGRAM</span> that are not
+                        necessarily in the Unity documentation
+                    </li>
+                    <li>
+                        <a href="https://en.wikibooks.org/wiki/Cg_Programming">Cg Programming</a>
+                        - Some additional guides and tutorials on writing the <span class="term">CGPROGRAM</span>
+                    </li>
+                </ul>
+            </p>
+            <hr>
+            <h3>Properties of CYF Shaders</h3>
+
+            <h4>Name</h4>
+            <p>
+                The shader's name is defined at the very top of the script. You will see something like this:
+                <pre class="brush: plain;">Shader "CYF/ScreenTest"
+{</pre>
+                The name is what is between quotation marks here. This is also the same name you will provide if you are using
+                <span class="term">shader.Test</span> within the editor. This name must be unique if you want to use
+                <span class="term">shader.Test</span> with no issues. For that reason, it is good practice to start your shader's
+                name with <span class="term">CYF/</span>, or some other identifier.
+            </p><br>
+
+            <h4>Keywords</h4>
+            <p>
+                Because of Create Your Frisk's Unity version (2018.2), the concept of global and local keywords does not exist, as they
+                were only added in a future Unity version. Make sure you read
+                <a href="https://docs.unity3d.com/2018.2/Documentation/Manual/SL-MultipleProgramVariants.html">this page</a>, which applies
+                to our version of Unity.<br>
+                Keywords can be enabled and disabled from the Lua side using <span class="term">shader.EnableKeyword</span> and
+                <span class="term">shader.DisableKeyword</span>. The proper syntax for defining a shader from the shader script side is:
+                <pre class="brush: plain;">#pragma compile_mode KEYWORD_DISABLED KEYWORD_ENABLED</pre><br>
+                but this would require you to type <span class="term">shader.EnableKeyword("KEYWORD_ENABLED")</span> and
+                <span class="term">shader.DisableKeyword("KEYWORD_DISABLED")</span>. To remove the confusion, try something like this:
+                <br><br>
+                <pre class="brush: plain;">#pragma multi_compile __ NO_WRAP</pre><br>
+                which would use <span class="term">shader.EnableKeyword("NO_WRAP")</span> and
+                <span class="term">shader.DisableKeyword("NO_WRAP")</span>.
+                <br><br>
+                You may also check out the source code for the sample shaders included with CYF if you would like more examples.
+            </p><br>
+
+            <h4>Check if shader is on the camera or a sprite</h4>
+            <p>
+                Shaders can be applied to both the screen camera (using <span class="term">Misc.ScreenShader</span>) and sprite objects
+                (using <span class="term">sprite.shader</span>). It is not unusual to want your shader to function differently depending on
+                which one of these it is applied to.
+                <br><br>
+                The keyword <span class="term">CYF_SHADER_IS_CAMERA</span> is automatically applied whenever a shader object is applied to
+                the camera rather than a script. You may check for this within your shader script like so:
+                <pre class="brush: plain;">#ifdef CYF_SHADER_IS_CAMERA</pre> to run code specifically if it is on the camera.
+                <br><br>
+                Note that you do not have to define it using <span class="term">#pragma</span> first.
+            </p><br>
+
+            <h4>Sprite Masking</h4>
+            <p>
+                Sprite masking is the CYF feature controlled by <span class="term">sprite.Mask</span>. The default mode is "off", but
+                depending on its other 5 values, it behaves differently. Here is how to make your shader compatible with sprite masking.
+                <br><br>
+                First thing to note: When in "box" mode, the keyword <span class="term">UNITY_UI_CLIP_RECT</span> will be enabled - it is
+                disabled otherwise.<br>
+                And when in the "sprite", "stencil", "invertedsprite" or "invertedstencil" modes, the keyword
+                <span class="term">UNITY_UI_ALPHACLIP</span> will be enabled.<br>
+                Within the shader template, both of these keywords are defined through <span class="term">#pragma</span>, and have their
+                own code in the fragment shader at the bottom of the script.<br>
+                Finally, all of the code related to "stencils" and the "color mask" variable are also needed for sprite masking
+                compatibility (the properties are defined at about two places each).
+                <br><br>
+                By including all of this code in your shader, you will maintain compatibility with CYF sprite shaders.
+                <br><br>
+                Additionally - When in the mask modes "invertedsprite" and "invertedstencil", the keyword
+                <span class="term">CYF_INVERTED_MASK</span> will be enabled on <b>children</b> of the inverted parent. In these modes, the
+                child's stencil properties are exactly the same as they would be in "sprite" and "stencil", except that the stencil
+                comparison (<span class="term">_StencilComp</span>) is set to 6 (not equal).
+            </p><br>
+
+            <h4>Little Warning on the Properties Block</h4>
+            <p>
+                This is something standard to Unity shaders, but it still very much warrants a mention here. See the "Properties" block
+                at the top of the example shaders? One might assume it's useless, because it defines properties for the shader to be
+                edited in the Unity editor. But it actually serves another purpose: It's a list of "important" variables to store in the
+                shader. In other words, <u>every property you want to persist in the shader should be set here</u>. Any variables that
+                are not set up here are likely to be <b>lost</b> when the window refreshes!
+                <br><br>
+                In addition, here is something else to consider. There are a certain list of shader object properties - listed under
+                "non-persistent data" on <span class="ref">The Shader Object</span> page - that actually <i>can not be defined</i> in
+                the shader's Properties block. All examples in the Unity documentation that use them show them being applied <i>on
+                every frame</i>, i.e. in <span class="term">Update</span>. So, if you use any of the properties
+                <ul>
+                    <li><span class="term">shader.SetColorArray</span></li>
+                    <li><span class="term">shader.SetFloatArray</span></li>
+                    <li><span class="term">shader.SetVectorArray</span></li>
+                    <li><span class="term">shader.SetMatrix</span></li>
+                    <li><span class="term">shader.SetMatrixArray</span></li>
+                </ul>
+                ...be sure you are applying them every frame within <span class="term">Update</span> on the Lua side, or their values
+                may be lost suddenly!
+            </p>
+            <hr>
+            <h3>Recommended Enhancements</h3>
+
+            <h4>Pixel Snap</h4>
+            <p>
+                Create Your Frisk is designed with the intent to output its screen image in a pixelated format, obviously comparable to
+                Undertale itself. However, shaders are not guaranteed to be precise, and can often result in non-integer coordinates of
+                pixels. As a result, you may see "blurriness" output to the screen with some shaders, and you may wish to avoid that.
+                <br><br>
+                Assuming that the float2 <span class="term">offset</span> is your coordinates AFTER modification, and that you have added
+                a <span class="term">_MainTex_TexelSize</span> property alongside your <span class="term">_MainTex</span> property, simply
+                use
+                <pre class="brush: plain;">offset.x = (floor(offset.x * _MainTex_TexelSize.z) + 0.5) / _MainTex_TexelSize.z;
+offset.y = (floor(offset.y * _MainTex_TexelSize.w) + 0.5) / _MainTex_TexelSize.w;
+</pre>
+                to snap the coordinates to pixels, to avoid the texture being smoothed out.
+            </p><br>
+
+            <h4>Controlling Texture Wrapping</h4>
+            <p>
+                Let's say you have a fragment shader that is changing UVs (moving pixels on screen). Something like the "Wave" sample shader,
+                for instance. Whenever you move the whole source texture out of its normal boundaries, a void is left. Depending on the value
+                of <span class="term">shader.SetWrapMode</span>, it will look different - most commonly "stretching" the last pixel of the
+                texture very long.
+                <br><br>
+                But what if you don't want that? Well, you can put some code in your fragment shader to force pixels to not be drawn if they
+                are outside of the original texture that you moved.
+                <br><br>
+                The float2 <span class="term">offset</span> here represents the coordinates of a pixel AFTER modification in your fragment
+                shader <span class="term">IN.uv</span> (compare to <span class="term">IN.uv</span> in the template shader below):
+                <pre class="brush: plain;">(offset.x < 0 || offset.x > 1) || (offset.y < 0 || offset.y > 1) ? 0 : col.a;</pre>
+                You can find examples in the sample shaders "Displacement", "Rotation", "ScreenScale", or "Wave". As a side note, in the "Wave"
+                shader, pixels are only ever moved horizontally and not vertically, so the check for <span class="term">y</span> is omitted
+                there.
+            </p>
+            <hr>
+            <h3>Template Shader</h3>
+
+            <p>
+                Here is a template shader for you to edit to make your own. It provides compatibility with sprite masking (see above), but
+                does not necessarily make use of anything special, it being a template to build off of. It is based on the Unity default shader,
+                UI/Default.
+<pre class="brush: plain;">// Unity built-in shader source. Copyright (c) 2016 Unity Technologies. MIT license (see license.txt)
+
+Shader "CYF/Template"
+{
+    Properties
+    {
+        _MainTex("Sprite Texture", 2D) = "white" {}
+
+        _StencilComp("Stencil Comparison", Float) = 8
+        _Stencil("Stencil ID", Float) = 0
+        _StencilOp("Stencil Operation", Float) = 0
+        _StencilWriteMask("Stencil Write Mask", Float) = 255
+        _StencilReadMask("Stencil Read Mask", Float) = 255
+
+        _ColorMask("Color Mask", Float) = 15
+
+        [Toggle(UNITY_UI_ALPHACLIP)] _UseUIAlphaClip("Use Alpha Clip", Float) = 0
+    }
+
+    SubShader
+    {
+        Tags
+        {
+            "Queue" = "Transparent"
+            "IgnoreProjector" = "True"
+            "RenderType" = "Transparent"
+            "PreviewType" = "Plane"
+            "CanUseSpriteAtlas" = "True"
+        }
+
+        Stencil
+        {
+            Ref[_Stencil]
+            Comp[_StencilComp]
+            Pass[_StencilOp]
+            ReadMask[_StencilReadMask]
+            WriteMask[_StencilWriteMask]
+        }
+
+        Cull Off
+        Lighting Off
+        ZWrite Off
+        ZTest[unity_GUIZTestMode]
+        Blend SrcAlpha OneMinusSrcAlpha
+        ColorMask[_ColorMask]
+
+        Pass
+        {
+            Name "Default"
+        CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+            #pragma target 2.0
+
+            #include "UnityCG.cginc"
+            #include "UnityUI.cginc"
+
+            #pragma multi_compile __ UNITY_UI_CLIP_RECT
+            #pragma multi_compile __ UNITY_UI_ALPHACLIP
+
+            struct appdata_t
+            {
+                float4 vertex   : POSITION;
+                float4 color    : COLOR;
+                float2 texcoord : TEXCOORD0;
+                UNITY_VERTEX_INPUT_INSTANCE_ID
+            };
+
+            struct v2f
+            {
+                float4 vertex   : SV_POSITION;
+                fixed4 color    : COLOR;
+                float2 uv : TEXCOORD0;
+                float4 worldPosition : TEXCOORD1;
+                UNITY_VERTEX_OUTPUT_STEREO
+            };
+
+            sampler2D _MainTex;
+            fixed4 _TextureSampleAdd;
+            float4 _ClipRect;
+            float4 _MainTex_ST;
+
+            v2f vert(appdata_t v)
+            {
+                v2f OUT;
+                UNITY_SETUP_INSTANCE_ID(v);
+                UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(OUT);
+                OUT.worldPosition = v.vertex;
+                OUT.vertex = UnityObjectToClipPos(OUT.worldPosition);
+
+                OUT.uv = TRANSFORM_TEX(v.texcoord, _MainTex);
+
+                OUT.color = v.color;
+                return OUT;
+            }
+
+            fixed4 frag(v2f IN) : SV_Target
+            {
+                half4 color = (tex2D(_MainTex, IN.uv) + _TextureSampleAdd) * IN.color;
+
+                #ifdef UNITY_UI_CLIP_RECT
+                color.a *= UnityGet2DClipping(IN.worldPosition.xy, _ClipRect);
+                #endif
+
+                #ifdef UNITY_UI_ALPHACLIP
+                clip(color.a - 0.001);
+                #endif
+
+                return color;
+            }
+        ENDCG
+        }
+    }
+}</pre>
+            </p>
+        </div>
+
+        <div class="tab-pane text-style" id="mercy">
+            <h2 style="text-decoration: none; line-height:50px;">
+                * YOU WON!<br>
+                * You earned 0 EXP and 0 gold.<br>
+                * also the nav menu is broken now
+            </h2><br>
+        </div>
+
+    </div>
+</div>
+
+<div class="container">
+    <div class="col-xs-3"><img class="centerbt black" alt="Undertale fake button" src="../img/fightbt_0.png" height="42">
+    </div>
+    <div class="col-xs-3"><img class="centerbt black" alt="Undertale fake button" src="../img/actbt_0.png" height="42">
+    </div>
+    <div class="col-xs-3"><img class="centerbt black" alt="Undertale fake button" src="../img/itembt_0.png" height="42">
+    </div>
+    <div class="col-xs-3"><a href="#mercy" data-toggle="tab"><img class="centerbt black" alt="Undertale fake button"
+                                                                  src="../img/mercybt_0.png" height="42"></a>
+    </div>
+</div>
+<br>
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="../js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../js/show_hide_comments.js"></script>
+
+<script type="text/javascript" src="../js/FontToggleButton.js"></script>
+</body>
+</html>

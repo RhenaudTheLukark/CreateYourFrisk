@@ -19,11 +19,6 @@ it's w3c valid, at least
     <link href="css/bootstrap-theme.min.css" rel="stylesheet">
     <link href="css/themesidebar.css" rel="stylesheet">
     <link href="css/shThemeRDark.css" rel="stylesheet">
-
-    <!-- Syntax highlighting -->
-    <script type="text/javascript" src="js/shCore.js"></script>
-    <script type="text/javascript" src="js/shBrushLua.js"></script>
-    <script type="text/javascript">SyntaxHighlighter.all();</script>
 </head>
 <body>
 <img src="img/bg2.png" alt="Undertale background" class="backimg">
@@ -33,47 +28,55 @@ it's w3c valid, at least
         <nav class="nav-sidebar">
             <ul class="nav tabs">
                 <li class="li-header">Basics</li>
-                    <li class="active" style="margin-left:5px;">> Welcome <</li>
+                    <li class="active" style="margin-left:5px;">&gt; Welcome &lt;</li>
                     <li><a href="pages/howtoread.html">How to read this documentation</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                     <li><a href="pages/controls.html">Controls</a></li>
                     <li><a href="pages/basic.html">Basic setup</a></li>
-                    <li class="new"><a href="pages/variables.html">Special Variables</a></li>
+                    <li><a href="pages/unity.html"><span class="CYF"></span> Unity Setup (Optional)</a></li>
+                    <li><a href="pages/variables.html">Special Variables</a></li>
                     <li><a href="pages/terms.html">Terminology</a></li>
                 <li class="li-header">API</li>
-                    <li class="new"><a href="pages/api-text.html">Text commands</a></li>
+                    <li><a href="pages/api-text.html">Text commands</a></li>
                     <li class="new"><a href="pages/api-events.html">Game events</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                     <li class="li-indent">Functions &amp; Objects:</li>
                         <li class="li-indent new"><a href="pages/api-functions-main.html">Misc. Functions</a></li>
                         <li class="li-indent new"><a href="pages/api-functions-player.html">The Player Object</a></li>
-                        <li class="li-indent new"><a href="pages/api-functions-script.html">The Script Object</a></li>
+                        <li class="li-indent"><a href="pages/api-functions-script.html">The Script Object</a></li>
                         <li class="li-indent"><a href="pages/api-functions-audio.html">The Audio Object</a></li>
-                        <li class="li-indent new"><a href="pages/api-functions-newaudio.html"><span class="CYF"></span> The NewAudio Object</a></li>
-                        <li class="li-indent new"><a href="pages/api-functions-input.html">The Input Object</a></li>
+                        <li class="li-indent"><a href="pages/api-functions-newaudio.html"><span class="CYF"></span> The NewAudio Object</a></li>
+                        <li class="li-indent"><a href="pages/api-functions-input.html">The Input Object</a></li>
                         <li class="li-indent"><a href="pages/api-functions-time.html">The Time Object</a></li>
                         <li class="li-indent"><a href="pages/cyf-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
                         <li class="li-indent new"><a href="pages/api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
+                        <li class="li-indent new"><a href="pages/api-functions-discord.html"><span class="CYF"></span> The Discord Object</a></li>
                         <li class="li-indent"><a href="pages/api-functions-waves.html">The Arena Object</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                     <li><a href="pages/api-projectile.html">Projectile management</a></li>
                     <li><a href="pages/cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
                     <li class="new"><a href="pages/api-animation.html">Sprites &amp; Animation</a></li>
                     <li class="new"><a href="pages/cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
-                <li class="li-header">Overworld</li>
-                    <li class="new"><a href="pages/overworld.html"><span class="CYF"></span> Basics</a></li>
-                    <li><a href="pages/overworld-howto-map.html"><span class="CYF"></span> How to create a map</a></li>
-                    <li><a href="pages/overworld-howto-event.html"><span class="CYF"></span> How to create an event</a></li>
-                    <li><a href="pages/overworld-howto-animevent.html"><span class="CYF"></span> How to animate an event</a></li>
-                    <li class="new"><a href="pages/overworld-howto-shop.html"><span class="CYF"></span> How to create a shop</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
-                    <li class="li-indent">Overworld Objects:</li>
-                        <li class="li-indent new"><a href="pages/overworld-object-general.html"><span class="CYF"></span> The General Object</a></li>
-                        <li class="li-indent new"><a href="pages/overworld-object-event.html"><span class="CYF"></span> The Event Object</a></li>
-                        <li class="li-indent new"><a href="pages/overworld-object-player.html"><span class="CYF"></span> The Player Object</a></li>
-                        <li class="li-indent"><a href="pages/overworld-object-screen.html"><span class="CYF"></span> The Screen Object</a></li>
-                        <li class="li-indent"><a href="pages/overworld-object-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
-                        <li class="li-indent new"><a href="pages/overworld-object-map.html"><span class="CYF"></span> The Map Object</a></li>
+                <li class="li-header"></span><span class="CYF"></span> <span class="new"></span>Shaders</li>
+                    <li><a href="pages/shaders.html">Introduction</a></li>
+                    <li><a href="pages/shaders-object.html">The Shader Object</a></li>
+                    <li><a href="pages/shaders-coding.html">Coding a Shader</a></li>
+                    <hr style="margin-top:10px;margin-bottom:10px;">
+                <li class="li-header"><span class="CYF"></span> Overworld</li>
+                    <li class="new"><a href="pages/overworld.html">Basics</a></li>
+                    <li><a href="pages/overworld-howto-map.html">How to create a map</a></li>
+                    <li><a href="pages/overworld-howto-event.html">How to create an event</a></li>
+                    <li><a href="pages/overworld-howto-animevent.html">How to animate an event</a></li>
+                    <li class="new"><a href="pages/overworld-howto-shop.html">How to create a shop</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li class="li-indent"><span class="CYF"></span> Overworld Objects:</li>
+                        <li class="li-indent"><a href="pages/overworld-object-general.html">The General Object</a></li>
+                        <li class="li-indent"><a href="pages/overworld-object-event.html">The Event Object</a></li>
+                        <li class="li-indent"><a href="pages/overworld-object-player.html">The Player Object</a></li>
+                        <li class="li-indent"><a href="pages/overworld-object-screen.html">The Screen Object</a></li>
+                        <li class="li-indent"><a href="pages/overworld-object-inventory.html">The Inventory Object</a></li>
+                        <li class="li-indent new"><a href="pages/overworld-object-map.html">The Map Object</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                 <li class="li-header">Resources</li>
                     <li><a href="media/dialogoptions.png">Dialog bubble names</a></li>
@@ -83,27 +86,29 @@ it's w3c valid, at least
     </div>
     <!--tabs'n'shit-->
     <div class="tab-content col-md-10">
-		<div class="tab-pane active text-style" id="welcome">
+        <div class="tab-pane active text-style" id="welcome">
             <h2>Welcome to Create Your Frisk's documentation!</h2><br><br>
-            
+
             <p><b>NOTE:</b> There will be casual <b>spoilers</b>
                 all over the place. If you haven't played or completed Undertale yet, it's highly recommended that you do
                 so first! Don't say you weren't warned.
                 <br><br>
                 You probably want to get right in, so let's keep it short. Honestly, the fastest way to get started is
                 to check out the existing encounters and tinker with them. The documentation is for reference if you
-                want to know the specifics of everything. Help is provided on the 
+                want to know the specifics of everything. Help is provided on the
                 <a href="http://www.reddit.com/r/Unitale">/r/Unitale subreddit</a>.
                 <br><br>
                 <span style="color:#ff0000"><u>FOR BACKWARDS COMPATIBILITY:</u></span> You can enable <b>retrocompatibility mode</b>
                 from the options screen, and it should make all Unitale mods compatible with CYF!
                 <br><br>
-                <h4>Note: Create Your Frisk v0.6.4.1 was built using
+                <h4>Note: Create Your Frisk v0.6.5 was built using
                 <b><u><a href="https://netstorage.unity3d.com/unity/83fbdcd35118/UnityDownloadAssistant-2018.2.13f1.exe">
                 Unity Personal 2018.2.13f1</a></u></b>.
                 <br>See the GitHub page
                 <b><u><a href="https://github.com/RhenaudTheLukark/CreateYourFrisk">here</a></u></b>.</h4><br>
-                <span class="new">Indicates content <u>new or changed content</u> in v0.6.4 and its sub-versions.</span>
+                <span class="new">Indicates content <u>new or changed content</u> in Create Your Frisk v0.6.5.</span>
+                <br><br>
+                Finally, you should start your visit with <span class="ref">How to read this documentation</span>.
                 <hr>
                 <h4>Basics</h4><br>
                 <i><u>Controls</u></i><br>
@@ -112,7 +117,11 @@ it's w3c valid, at least
                 <i><u>Basic setup</u></i><br>
                 Details folder structure of mods, how the game reads folders and expects files, that kind of stuff.
                 Recommended to start with.
-                <br><br>                
+                <br><br>
+                <span class="CYF"></span> <i><u>Unity Setup (Optional)</u></i><br>
+                Explains the process of setting up Unity for use with Create Your Frisk, how to use the editor to play mods,
+                where files and folders are located, and how to export CYF builds.
+                <br><br>
                 <i><u>Special Variables</u></i><br>
                 This section talks about the unique variables that are read from a mod's scripts and how to use these variables.
                 <br><br>
@@ -156,26 +165,39 @@ it's w3c valid, at least
                 This section details the usage of CYF's Text Object. You can use it to create text anywhere at all, with any
                 font, with or without a bubble, and more!
                 <hr>
-                <h4>Overworld</h4><br>
-                <span class="CYF"></span> <i><u>Basics</u></i><br>
+                <h4><span class="CYF"></span> <span class="new"></span>Shaders</h4><br>
+                <i><u>Introduction</u></i><br>
+                Here is where you can learn all about the shaders system added in Create Your Frisk v0.6.5! It requires a bit
+                of setting up, but if you can handle it, shaders can be a fun visual addition to a mod.
+                <br><br>
+                <i><u>The Shader Object</u></i><br>
+                This is the actual object used from your battle's Lua scripts to apply and control shaders on a sprite or the
+                entire screen.
+                <br><br>
+                <i><u>Coding a Shader</u></i><br>
+                Covers the process of creating and coding your own shaders for use with Create Your Frisk.
+                <br><br>
+                <hr>
+                <h4><span class="CYF"></span> Overworld</h4><br>
+                <i><u>Basics</u></i><br>
                 This section covers how to set up CYF on your computer with Unity, and describes in general how the Overworld
                 is set up. Read this first if you are making an overworld.
                 <br><br>
-                <span class="CYF"></span> <i><u>How to create a map</u></i><br>
+                <i><u>How to create a map</u></i><br>
                 This is where you can learn how to make a map in CYF's Overworld, with Tiled2Unity in mind.
                 <br><br>
-                <span class="CYF"></span> <i><u>How to create an event</u></i><br>
+                <i><u>How to create an event</u></i><br>
                 Events are all the different objects, interactables, and cutscenes that you can add to your map. This page
                 explains how to set them up in the Unity editor.
                 <br><br>
-                <span class="CYF"></span> <i><u>How to animate an event</u></i><br>
+                <i><u>How to animate an event</u></i><br>
                 This smaller tutorial explains the CYFAnimator system in the Overworld, which removes the need to use coding
                 to set up animations on your events.
                 <br><br>
-                <span class="CYF"></span> <i><u>How to create a shop</u></i><br>
+                <i><u>How to create a shop</u></i><br>
                 This page fully documents everything accessible within Shops you can set up in the Overworld.
                 <br><br>
-                <span class="CYF"></span> <i><u>Overworld Objects</u></i><br>
+                <i><u>Overworld Objects</u></i><br>
                 These are all the different objects you can control from within your Event scripts, and how to use them. Want
                 to show dialogue, save the game, move characters around, control the player's stats, mess with the screen,
                 and so on? These are the pages to see!
@@ -193,8 +215,8 @@ it's w3c valid, at least
                 <span class="term">[waitfor:key]</span>.
             </p>
         </div>
-		
-		<div class="tab-pane text-style" id="mercy">
+
+        <div class="tab-pane text-style" id="mercy">
             <h2 style="text-decoration: none; line-height:50px;">
                 * YOU WON!<br>
                 * You earned 0 EXP and 0 gold.<br>

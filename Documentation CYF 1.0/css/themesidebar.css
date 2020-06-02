@@ -4,24 +4,29 @@
 }
 
 
-.keys {
+*:not(.syntaxhighlighter) > table {
     width: auto;
-    outline: 1px solid #ffffff;
-    color: #ffffff;
+    outline: 1px solid #fff;
+    color: #fff;
 }
 
-.keys td, .keys th {
-    border: 1px solid #dddddd;
+*:not(.syntaxhighlighter) > table td,
+*:not(.syntaxhighlighter) > table th {
+    border: 1px solid #ddd;
     text-align: left;
     padding: 5px 5px;
 }
 
-.keys tr:nth-child(even) {
-    background-color: #222222;
+*:not(.syntaxhighlighter) > table tr:nth-child(even) {
+    background-color: #111;
 }
 
-.keys tr:nth-child(1) {
-    border-bottom: 1px solid #ffffff;
+*:not(.syntaxhighlighter) > table tr:nth-child(1) {
+    border-bottom: 1px solid #fff;
+}
+
+*:not(.syntaxhighlighter) > table ul {
+    padding-inline-start: 15px;
 }
 
 span.term{

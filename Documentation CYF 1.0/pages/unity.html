@@ -19,11 +19,6 @@ it's w3c valid, at least
     <link href="../css/bootstrap-theme.min.css" rel="stylesheet">
     <link href="../css/themesidebar.css" rel="stylesheet">
     <link href="../css/shThemeRDark.css" rel="stylesheet">
-
-    <!-- Syntax highlighting -->
-    <script type="text/javascript" src="../js/shCore.js"></script>
-    <script type="text/javascript" src="../js/shBrushLua.js"></script>
-    <script type="text/javascript">SyntaxHighlighter.all();</script>
 </head>
 <body>
 <img src="../img/bg2.png" alt="Undertale background" class="backimg">
@@ -55,12 +50,19 @@ it's w3c valid, at least
                         <li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
                         <li class="li-indent"><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
                         <li class="li-indent new"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-discord.html"><span class="CYF"></span> The Discord Object</a></li>
                         <li class="li-indent"><a href="api-functions-waves.html">The Arena Object</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                     <li><a href="api-projectile.html">Projectile management</a></li>
                     <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
                     <li class="new"><a href="api-animation.html">Sprites &amp; Animation</a></li>
                     <li class="new"><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                <li class="li-header"></span><span class="CYF"></span> <span class="new"></span>Shaders</li>
+                    <li><a href="shaders.html">Introduction</a></li>
+                    <li><a href="shaders-object.html">The Shader Object</a></li>
+                    <li><a href="shaders-coding.html">Coding a Shader</a></li>
+                    <hr style="margin-top:10px;margin-bottom:10px;">
                 <li class="li-header"><span class="CYF"></span> Overworld</li>
                     <li class="new"><a href="overworld.html">Basics</a></li>
                     <li><a href="overworld-howto-map.html">How to create a map</a></li>
@@ -94,7 +96,7 @@ it's w3c valid, at least
 
             <hr>
             <h4>Get Started</h4>
-           
+
             <p>
                 To get started, you'll need to, first of all, download the current version of Unity that CYF uses, and, of course,
                 download the project via Github.
@@ -114,13 +116,13 @@ it's w3c valid, at least
                 Unity may take a lot of time to install and to load the project for the first time, due to a lot of resources being
                 registered by Unity - but you won't have to do it again in the future.
             </p>
-            
+
             <hr>
             <h4>Once you're in</h4>
-            
+
             <p>
-                Once you're in, you'll have to load the scene <span class="term">Assets/Scenes/Disclaimer.unity</span> using the command 
-			    <span class="term">File</span> => <span class="term">Open Scene</span> at the top left corner of Unity's window. You should
+                Once you're in, you'll have to load the scene <span class="term">Assets/Scenes/Disclaimer.unity</span> using the command
+                <span class="term">File</span> => <span class="term">Open Scene</span> at the top left corner of Unity's window. You should
                 always start play mode from this scene when using Create Your Frisk in Unity.
                 <br><br>
                 In order to set up the viewport properly, first switch to the "Game" tab (<span class="term">Window</span> =>
@@ -133,10 +135,10 @@ it's w3c valid, at least
                 <i>This is Create Your Frisk's native resolution, and viewing it like this ensures that everything
                 you see in the Unity editor will look exactly the same in the built version of Create Your Frisk</i>.
             </p>
-            
+
             <hr>
             <h4>Where is everything?</h4>
-            
+
             <p>
                 Look in the folder <span class="term">Assets</span> within the folder you extracted earlier. In here, the folder named
                 <span class="term">Default</span> is the same as the folder named <span class="term">Default</span> in the built executable versions
@@ -151,10 +153,10 @@ it's w3c valid, at least
                 <span class="term">Output</span>, which is where your shaders will be compiled into AssetBundles. Read
                 <span class="ref">Shaders - Introduction</span> for more information.
             </p>
-            
+
             <hr>
             <h4>Building CYF</h4>
-            
+
             <p>
                 This is an optional step, for if you want or need to export Create Your Frisk to a built executable. Within your Create Your Frisk
                 installation is a python script, named <span class="term">Build.py</span>. It uses
