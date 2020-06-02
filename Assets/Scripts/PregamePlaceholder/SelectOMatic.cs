@@ -542,7 +542,7 @@ public class SelectOMatic : MonoBehaviour {
                 count += 1;
 
                 //create a button for each encounter file
-                GameObject button = Instantiate(back);
+                GameObject button = Instantiate<GameObject>(back);
 
                 //set parent and name
                 button.transform.SetParent(content.transform);
@@ -613,7 +613,7 @@ public class SelectOMatic : MonoBehaviour {
             count += 1;
 
             // Create a button for each mod
-            GameObject button = Instantiate(back);
+            GameObject button = Instantiate<GameObject>(back);
 
             //set parent and name
             button.transform.SetParent(content.transform);

@@ -507,7 +507,7 @@ public class TextManager : MonoBehaviour {
                 letterReferences[i + 1] = letterReferences[i];
             }
 
-        GameObject singleLtr = Instantiate(SpriteFontRegistry.LETTER_OBJECT);
+        GameObject singleLtr = Instantiate<GameObject>(SpriteFontRegistry.LETTER_OBJECT);
         RectTransform ltrRect = singleLtr.GetComponent<RectTransform>();
 
         bool isLua = GetType() == typeof(LuaTextManager);

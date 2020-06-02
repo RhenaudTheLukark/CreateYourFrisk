@@ -25,7 +25,7 @@ public class FightUIController : MonoBehaviour {
     private bool finishingFade = false;
 
     private void LaunchInstance(bool bind = false) {
-        GameObject go = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("Prefabs/FightInstance"));
+        GameObject go = Instantiate<GameObject>(Resources.Load<GameObject>("Prefabs/FightInstance"));
         go.GetComponent<FightUI>().transform.SetParent(transform);
         go.GetComponent<FightUI>().transform.SetAsLastSibling();
         if (bind)
@@ -248,7 +248,7 @@ public class FightUIController : MonoBehaviour {
                 StationaryMissScript smc = Resources.Load<StationaryMissScript>("Prefabs/StationaryMiss");
                 for (int i = 0; i < boundFightUiInstances.Count; i++) {
                     boundFightUiInstances[i].enemy.HandleAttack(-1);
-                    StationaryMissScript smc2 = Instantiate(smc);
+                    StationaryMissScript smc2 = Instantiate<StationaryMissScript>(smc);
                     if (boundFightUiInstances[i].enemy.NoAttackMissText != null)
                         smc2.SetText(boundFightUiInstances[i].enemy.NoAttackMissText);
                     smc2.transform.SetParent(GameObject.Find("Canvas").transform);

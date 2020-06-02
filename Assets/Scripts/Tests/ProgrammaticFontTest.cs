@@ -58,7 +58,7 @@ public class ProgrammaticFontTest : MonoBehaviour
                 continue;
             }
 
-            GameObject singleLtr = Instantiate(letterObj);
+            GameObject singleLtr = Instantiate<GameObject>(letterObj);
             RectTransform ltrRect = singleLtr.GetComponent<RectTransform>();
             Image ltrImg = singleLtr.GetComponent<Image>();
 
@@ -111,7 +111,7 @@ public class ProgrammaticFontTest : MonoBehaviour
                     return;
                 }
 
-                GameObject singleLtr = Instantiate(letterObj);
+                GameObject singleLtr = Instantiate<GameObject>(letterObj);
                 RectTransform ltrRect = singleLtr.GetComponent<RectTransform>();
                 Image ltrImg = singleLtr.GetComponent<Image>();
 

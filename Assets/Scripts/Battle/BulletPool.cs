@@ -27,7 +27,7 @@ public class BulletPool : MonoBehaviour {
     /// Creates a new Projectile and adds it to the pool. Used during instantion and when the pool is empty.
     /// </summary>
     private void createPooledBullet() {
-        Projectile lp = Instantiate(bPrefab);
+        Projectile lp = Instantiate<Projectile>(bPrefab);
         lp.transform.SetParent(transform);
         lp.GetComponent<RectTransform>().position = new Vector2(-999, -999); // Move offscreen to be safe, but shouldn't be necessary.
         pool.Enqueue(lp);

@@ -170,7 +170,7 @@ public class GameOverBehavior : MonoBehaviour {
         GameObject.Find("GameOver").GetComponent<Image>().sprite = SpriteRegistry.Get("UI/spr_gameoverbg_0");
 
         if (UnitaleUtil.IsOverworld) {
-            utHeart = Instantiate(GameObject.Find("utHeart"));
+            utHeart = Instantiate<GameObject>(GameObject.Find("utHeart"));
             heartColor = utHeart.GetComponent<Image>().color;
             heartColor.a = 1;
         } else {
@@ -246,7 +246,7 @@ public class GameOverBehavior : MonoBehaviour {
 
             if (internalTimer > breakHeartAfter) {
                 AudioSource.PlayClipAtPoint(AudioClipRegistry.GetSound("heartbeatbreaker"), Camera.main.transform.position, 0.75f);
-                brokenHeartPrefab = Instantiate(brokenHeartPrefab);
+                brokenHeartPrefab = Instantiate<GameObject>(brokenHeartPrefab);
                 if (UnitaleUtil.IsOverworld)
                     brokenHeartPrefab.transform.SetParent(GameObject.Find("Canvas GameOver").transform);
                 else
@@ -272,7 +272,7 @@ public class GameOverBehavior : MonoBehaviour {
                 heartShardRelocs = new Vector2[6];
                 heartShardCtrl = new LuaSpriteController[6];
                 for (int i = 0; i < heartShardInstances.Length; i++) {
-                    heartShardInstances[i] = Instantiate(heartShardPrefab).GetComponent<RectTransform>();
+                    heartShardInstances[i] = Instantiate<GameObject>(heartShardPrefab).GetComponent<RectTransform>();
                     heartShardCtrl[i] = new LuaSpriteController(heartShardInstances[i].GetComponent<Image>());
                     if (UnitaleUtil.IsOverworld)
                         heartShardInstances[i].transform.SetParent(GameObject.Find("Canvas GameOver").transform);
@@ -389,7 +389,7 @@ public class GameOverBehavior : MonoBehaviour {
                 if (gameOverMusic.volume - Time.deltaTime > 0.0f) gameOverMusic.volume -= Time.deltaTime;
                 else gameOverMusic.volume = 0.0f;
                 if (gameOverFadeTimer < -1.0f) {
-                    reviveFade2 = GameObject.Instantiate(reviveFade.gameObject).GetComponent<Image>();
+                    reviveFade2 = Instantiate<GameObject>(reviveFade.gameObject).GetComponent<Image>();
                     reviveFade2.transform.SetParent(playerParent);
                     reviveFade2.transform.SetAsLastSibling();
                     reviveFade2.transform.localPosition = new Vector3(0, 0, 0);
@@ -456,7 +456,7 @@ public class GameOverBehavior : MonoBehaviour {
         } else
             EndGameOverRevive();
         if (!GlobalControls.modDev) {
-            TPHandler tp = Instantiate(Resources.Load<TPHandler>("Prefabs/TP On-the-fly"));
+            TPHandler tp = Instantiate<TPHandler>(Resources.Load<TPHandler>("Prefabs/TP On-the-fly"));
             tp.sceneName = LuaScriptBinder.Get(null, "PlayerMap").String;
 
             if (UnitaleUtil.MapCorrespondanceList.ContainsValue(tp.sceneName)) {

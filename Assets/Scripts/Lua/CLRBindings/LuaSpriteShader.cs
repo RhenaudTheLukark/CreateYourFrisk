@@ -27,7 +27,7 @@ public class LuaSpriteShader {
         else if (shaderName == null)
             throw new CYFException("shader.Set: The second argument, the name of the shader to load, is nil.");
 
-        material = Material.Instantiate(ShaderRegistry.Get(bundleName, shaderName));
+        material = GameObject.Instantiate<Material>(ShaderRegistry.Get(bundleName, shaderName));
         if (mode == "camera") {
             CameraShader cs = gameObject.GetComponent<CameraShader>();
             cs.enabled = true;

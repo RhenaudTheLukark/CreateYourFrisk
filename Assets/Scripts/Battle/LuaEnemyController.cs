@@ -330,7 +330,7 @@ public class LuaEnemyController : EnemyController {
             return;
         UIController.instance.gold += Gold;
         // We have to code the particles separately because they don't work well in UI screenspace. Great stuff.
-        ParticleSystem spareSmoke = Instantiate(Resources.Load<ParticleSystem>("Prefabs/MonsterSpareParticleSys"));
+        ParticleSystem spareSmoke = Instantiate<ParticleSystem>(Resources.Load<ParticleSystem>("Prefabs/MonsterSpareParticleSys"));
         spareSmoke.Emit(10);
         ParticleSystem.Particle[] particles = new ParticleSystem.Particle[10];
         spareSmoke.GetParticles(particles);
@@ -358,7 +358,7 @@ public class LuaEnemyController : EnemyController {
             return;
         UIController.instance.gold += Gold;
         UIController.instance.exp += XP;
-        GameObject go = GameObject.Instantiate(Resources.Load<GameObject>("Prefabs/MonsterDuster"));
+        GameObject go = Instantiate<GameObject>(Resources.Load<GameObject>("Prefabs/MonsterDuster"));
         go.transform.SetParent(UIController.instance.psContainer.transform);
         GetComponent<ParticleDuplicator>().Activate(sprite);
         SetActive(false);

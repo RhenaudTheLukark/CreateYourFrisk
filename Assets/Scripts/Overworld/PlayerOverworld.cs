@@ -952,7 +952,7 @@ public class PlayerOverworld : MonoBehaviour {
                 NewMusicManager.DestroyChannel(str);
         MusicManager.src.Stop();
         GameObject go2 = new GameObject();
-        GameObject go = Instantiate(go2);
+        GameObject go = Instantiate<GameObject>(go2);
         Destroy(go2);
         go.name = "GameObject";
         Transform[] root = UnitaleUtil.GetFirstChildren(null, true);

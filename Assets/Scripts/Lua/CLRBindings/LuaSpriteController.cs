@@ -729,7 +729,7 @@ public class LuaSpriteController {
         if (tag == "enemy" || tag == "bubble")
             throw new CYFException("sprite.Dust(): You can't dust a " + tag + "'s sprite!");
 
-        GameObject go = GameObject.Instantiate(Resources.Load<GameObject>("Prefabs/MonsterDuster"));
+        GameObject go = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("Prefabs/MonsterDuster"));
         go.transform.SetParent(UIController.instance.psContainer.transform);
         if (playDust)
             UnitaleUtil.PlaySound("DustSound", AudioClipRegistry.GetSound("enemydust"));

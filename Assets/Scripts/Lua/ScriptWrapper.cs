@@ -77,7 +77,7 @@ public class ScriptWrapper {
                                                             UnitaleUtil.FormatErrorSource(((InterpreterException)e).DecoratedMessage, ((InterpreterException)e).Message) + ((InterpreterException)e).Message,
                                                             ((InterpreterException)e).DoNotDecorateMessage);
                 } else if (!GlobalControls.retroMode)
-                    UnitaleUtil.DisplayLuaError(scriptname + ", calling the function " + function, "This is a " + e.GetType() + " error. Contact the dev and show them this screen, this must be an engine-side error.\n\n" + e.Message + "\n\n" + e.StackTrace + "\n");
+                    UnitaleUtil.DisplayLuaError(scriptname + ", calling the function " + function, "This is a " + e.GetType() + " error. Contact a dev and show them this screen, this must be an engine-side error.\n\n" + e.Message + "\n\n" + e.StackTrace + "\n");
             }
             return d;
         } else {
@@ -97,7 +97,7 @@ public class ScriptWrapper {
                           + "You almost definitely have an infinite loop in your code. A function tried to call itself infinitely. It could be a normal function or a metatable function."
                           + "\n\n\nFull stracktrace (see CYF output log at <b>" + Application.persistentDataPath + "/output_log.txt</b>):\n\n" + ex.StackTrace);
                     else
-                        UnitaleUtil.DisplayLuaError(scriptname + ", calling the function " + function, "This is a " + ex.GetType() + " error. Contact the dev and show them this screen, this must be an engine-side error.\n\n" + ex.Message + "\n\n" + ex.StackTrace + "\n");
+                        UnitaleUtil.DisplayLuaError(scriptname + ", calling the function " + function, "This is a " + ex.GetType() + " error. Contact a dev and show them this screen, this must be an engine-side error.\n\n" + ex.Message + "\n\n" + ex.StackTrace + "\n");
             }
             return d;
         }

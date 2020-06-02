@@ -183,7 +183,7 @@ internal class LuaEnemyEncounter : EnemyEncounter {
         }
         enemyInstances = new GameObject[enemies.Length];
         for (int i = 0; i < enemies.Length; i++) {
-            enemyInstances[i] = Instantiate(Resources.Load<GameObject>("Prefabs/LUAEnemy 1"));
+            enemyInstances[i] = Instantiate<GameObject>(Resources.Load<GameObject>("Prefabs/LUAEnemy 1"));
             enemyInstances[i].transform.SetParent(gameObject.transform);
             enemyInstances[i].transform.localScale = new Vector3(1, 1, 1); // apparently this was suddenly required or the scale would be (0,0,0)
             enemies[i] = enemyInstances[i].GetComponent<LuaEnemyController>();

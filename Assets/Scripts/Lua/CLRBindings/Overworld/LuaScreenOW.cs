@@ -36,7 +36,7 @@ public class LuaScreenOW {
             image = GameObject.Find("Image" + id);
         else {
             newImage = true;
-            image = GameObject.Instantiate(Resources.Load<GameObject>("Prefabs/ImageEvent"));
+            image = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("Prefabs/ImageEvent"));
             image.name = "Image" + id;
             image.tag = "Event";
             image.GetComponent<RectTransform>().SetParent(GameObject.Find("Canvas OW").transform);
@@ -82,7 +82,7 @@ public class LuaScreenOW {
         if (r < 0 || r > 255 || r % 1 != 0 || g < 0 || g > 255 || g % 1 != 0 || b < 0 || b > 255 || b % 1 != 0)
             throw new CYFException("Screen.SetTone: You can't input a value out of [0; 255] for a color value, as it is clamped from 0 to 255.\nThe number have to be an integer.");
         if (GameObject.Find("Tone") == null) {
-            GameObject image = GameObject.Instantiate(Resources.Load<GameObject>("Prefabs/ImageEvent"));
+            GameObject image = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("Prefabs/ImageEvent"));
             image.GetComponent<Image>().color = new Color(r / 255f, g / 255f, b / 255f, 0);
             image.name = "Tone";
             image.tag = "Event";

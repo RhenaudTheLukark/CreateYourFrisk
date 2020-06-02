@@ -482,7 +482,7 @@ public class UIController : MonoBehaviour {
                         if (encounter.EnabledEnemies.Length > 3)
                             if (i > 1)
                                 break;
-                        LifeBarController lifebar = Instantiate(Resources.Load<LifeBarController>("Prefabs/HPBar"));
+                        LifeBarController lifebar = Instantiate<LifeBarController>(Resources.Load<LifeBarController>("Prefabs/HPBar"));
                         lifebar.player = true;
                         lifebar.transform.SetParent(textmgr.transform);
                         lifebar.transform.SetAsFirstSibling();
@@ -533,7 +533,7 @@ public class UIController : MonoBehaviour {
                         SwitchState(UIState.DEFENDING);
                         break;
                     }
-                    GameObject speechBub = Instantiate(SpriteFontRegistry.BUBBLE_OBJECT);
+                    GameObject speechBub = Instantiate<GameObject>(SpriteFontRegistry.BUBBLE_OBJECT);
                     //RectTransform enemyRt = encounter.enabledEnemies[i].GetComponent<RectTransform>();
                     TextManager sbTextMan = speechBub.GetComponent<TextManager>();
                     monDialogues[i] = sbTextMan;
@@ -830,7 +830,7 @@ public class UIController : MonoBehaviour {
                 maxWidth = mNameWidth;
         }
         for (int i = page * 2; i <= page * 2 + 1 && i < encounter.EnabledEnemies.Length; i++) {
-            LifeBarController lifebar = Instantiate(Resources.Load<LifeBarController>("Prefabs/HPBar"));
+            LifeBarController lifebar = Instantiate<LifeBarController>(Resources.Load<LifeBarController>("Prefabs/HPBar"));
             lifebar.player = true;
             lifebar.transform.SetParent(textmgr.transform);
             lifebar.transform.SetAsFirstSibling();

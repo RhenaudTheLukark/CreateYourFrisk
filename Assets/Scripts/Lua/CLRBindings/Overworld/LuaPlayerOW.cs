@@ -153,7 +153,7 @@ public class LuaPlayerOW {
 
     [CYFEventFunction]
     public void Teleport(string mapName, float posX, float posY, int direction = 0, bool NoFadeIn = false, bool NoFadeOut = false) {
-        TPHandler tp = GameObject.Instantiate(Resources.Load<TPHandler>("Prefabs/TP On-the-fly"));
+        TPHandler tp = GameObject.Instantiate<TPHandler>(Resources.Load<TPHandler>("Prefabs/TP On-the-fly"));
         tp.sceneName = mapName;
         tp.position = new Vector2(posX, posY);
         tp.direction = direction;

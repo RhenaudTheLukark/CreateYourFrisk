@@ -508,7 +508,7 @@ public class ShopScript : MonoBehaviour {
 
                     tmBigTalk.DestroyChars();
 
-                    tp = Instantiate(Resources.Load<TPHandler>("Prefabs/TP On-the-fly"));
+                    tp = Instantiate<TPHandler>(Resources.Load<TPHandler>("Prefabs/TP On-the-fly"));
                     tp.sceneName = script.GetVar("returnscene").String;
                     tp.position = new Vector2((float) script.GetVar("returnpos").Table.Get(1).Number, (float) script.GetVar("returnpos").Table.Get(2).Number);
                     tp.direction = (int) script.GetVar("returndir").Number;
