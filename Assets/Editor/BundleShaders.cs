@@ -29,6 +29,8 @@ public static class BundleShaders {
 
         // Gets all AssetBundles from files within the shader directory
         Dictionary<string, List<Shader>> bundles = RetrieveAllBundles();
+        if (bundles == null)
+            return;
 
         // Build AssetBundles
         BuildBundles(bundles);
@@ -37,14 +39,17 @@ public static class BundleShaders {
     }
 
     public static void OneBundle(string bundleName) {
-        // Gets all AssetBundles from files within the shader directory
-        Dictionary<string, List<Shader>> bundles = RetrieveAllBundles();
-
-        // Check if the given bundle name exists within this dictionary
         if (bundleName == "") {
             Debug.LogError("Please enter the name of an AssetBundle assigned in the Unity Editor.");
             return;
         }
+
+        // Gets all AssetBundles from files within the shader directory
+        Dictionary<string, List<Shader>> bundles = RetrieveAllBundles();
+        if (bundles == null)
+            return;
+
+        // Check if the given bundle name exists within this dictionary
         if (!bundles.ContainsKey(bundleName)) {
             Debug.LogError("The AssetBundle \"" + bundleName + "\" does not exist on any files in \"" + shaderDirectory + "\".");
             return;
@@ -63,6 +68,11 @@ public static class BundleShaders {
     }
 
     private static Dictionary<string, List<Shader>> RetrieveAllBundles() {
+        if (!Directory.Exists(shaderDirectory)) {
+            Debug.LogError("The shaders directory (\"" + shaderDirectory + "\") does not exist. Thus, there are no bundles to build. Aborting.");
+            return null;
+        }
+
         // Get all assets
         string[] assets = Directory.GetFiles(shaderDirectory, "*.shader");
         Dictionary<string, List<Shader>> bundles = new Dictionary<string, List<Shader>>();
@@ -90,6 +100,11 @@ public static class BundleShaders {
                 }
                 bundles[bundleName].Add(importer.GetShader());
             }
+        }
+
+        if (bundles.Count == 0) {
+            Debug.LogError("There are no AssetBundles to build. Aborting.");
+            return null;
         }
 
         return bundles;
