@@ -70,7 +70,8 @@ public class ProjectileHitboxRenderer : MonoBehaviour {
             GL.PopMatrix();
         }
 
-        player = new Rect((PlayerController.instance.playerAbs.x + borderOffset) / screenWidth, PlayerController.instance.playerAbs.y / 480,
+        player = new Rect((PlayerController.instance.playerAbs.x - cameraOffset.x + borderOffset) / screenWidth,
+                          (PlayerController.instance.playerAbs.y - cameraOffset.y) / 480,
                           PlayerController.instance.playerAbs.width / screenWidth, PlayerController.instance.playerAbs.height / 480);
 
         GL.PushMatrix();
