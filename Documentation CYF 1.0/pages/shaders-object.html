@@ -214,10 +214,16 @@ end
             <p>
                 <br><span class="function"><span class="boolean"></span> shader.HasProperty(<span class="string"></span> name)</span>
                 Returns <span class="term">true</span> if the active shader has a property with the name <span class="term">name</span>,
-                <span class="term">false</span> otherwise.
+                <span class="term">false</span> otherwise.<br>
+                Properties must be defined within the shader's <span class="term">Properties</span> block to be persistent.
                 <br><br>
                 For all "Get" functions listed below, the function will either return the data it found, or throw an error if the property does not exist
                 on the shader side. Check if the property exists first using this funciton.
+                <br><br>
+                <span style="color:#ffffff"><u>NOTE:</u></span> The non-persistent data types (see the section below) can not be defined in the Properties
+                block at the top of a shader file. They can be defined in the shader's <span class="term">CPROGRAM</span> code, but their data is likely
+                to be lost whenever the window refreshes. Before that happens, <span class="term">HasProperty</span> will return true, and after that
+                happens, <span class="term">HasProperty</span> will return false.
             </p>
 
             <p>
@@ -316,7 +322,8 @@ end
                 A Matrix object represents a 4x4 matrix filled with numbers.
                 You'll create it by supplying 4 rows of 4 numbers, and after that, you can modify each individual number one at a time.
                 <br><br>
-                (and, yes, the Matrix object is also part of the "non-persistent data" section.)
+                NOTE: The Matrix object is also a non-persistent data type (can not be defined in the shader's Properties block). See the previous section
+                for more information.
             </p>
 
             <p>

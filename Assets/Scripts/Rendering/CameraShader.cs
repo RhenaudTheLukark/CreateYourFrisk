@@ -22,44 +22,46 @@ public class CameraShader : MonoBehaviour {
     }
 }
 
-// Base code by Xaurrien on the Unity forums
-// http://answers.unity.com/answers/975894/view.html
-[CustomEditor(typeof(CameraShader))]
-public class CameraShaderEditor : Editor {
-    private CameraShader cs;
-    private MaterialEditor editor;
+#if UNITY_EDITOR
+    // Base code by Xaurrien on the Unity forums
+    // http://answers.unity.com/answers/975894/view.html
+    [CustomEditor(typeof(CameraShader))]
+    public class CameraShaderEditor : Editor {
+        private CameraShader cs;
+        private MaterialEditor editor;
 
-    void OnEnable() {
-        cs = (CameraShader)target;
-        if (cs != null && cs.material != null)
-            editor = (MaterialEditor)CreateEditor(cs.material);
-    }
-
-    public override void OnInspectorGUI() {
-        EditorGUI.BeginChangeCheck();
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("material"));
-
-        if (EditorGUI.EndChangeCheck()) {
-            serializedObject.ApplyModifiedProperties(); 
-
-            if (editor != null)
-                DestroyImmediate(editor);
-
+        void OnEnable() {
+            cs = (CameraShader)target;
             if (cs != null && cs.material != null)
                 editor = (MaterialEditor)CreateEditor(cs.material);
         }
 
-        if (editor != null) {
-            editor.DrawHeader();
+        public override void OnInspectorGUI() {
+            EditorGUI.BeginChangeCheck();
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("material"));
 
-            bool isDefault = !AssetDatabase.GetAssetPath(cs.material).StartsWith("Assets");
-            using (new EditorGUI.DisabledGroupScope(isDefault))
-                editor.OnInspectorGUI();
+            if (EditorGUI.EndChangeCheck()) {
+                serializedObject.ApplyModifiedProperties(); 
+
+                if (editor != null)
+                    DestroyImmediate(editor);
+
+                if (cs != null && cs.material != null)
+                    editor = (MaterialEditor)CreateEditor(cs.material);
+            }
+
+            if (editor != null) {
+                editor.DrawHeader();
+
+                bool isDefault = !AssetDatabase.GetAssetPath(cs.material).StartsWith("Assets");
+                using (new EditorGUI.DisabledGroupScope(isDefault))
+                    editor.OnInspectorGUI();
+            }
+        }
+
+        void OnDisable() {
+            if (editor != null)
+                DestroyImmediate(editor);
         }
     }
-
-    void OnDisable() {
-        if (editor != null)
-            DestroyImmediate(editor);
-    }
-}
+#endif
