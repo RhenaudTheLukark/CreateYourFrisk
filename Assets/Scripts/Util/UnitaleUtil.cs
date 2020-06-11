@@ -485,8 +485,14 @@ public static class UnitaleUtil {
                     roundedValX = Mathf.RoundToInt(start.x + xDiff.x * currentWidth + yDiff.x * currentHeight);
                     roundedValY = Mathf.RoundToInt(start.y + xDiff.y * currentWidth + yDiff.y * currentHeight);
                 }
+
+                // Don't check the computed bullet's pixel if it doesn't exist, duh
+                int pixelIndex = Mathf.RoundToInt(roundedValY * bulletWidth + roundedValX);
+                if (pixelIndex < 0 || pixelIndex >= bulletMatrix.Length)
+                    continue;
+
                 // If the bullet's pixel's alpha is 0, continue to the next pixel
-                if (bulletMatrix[Mathf.RoundToInt(roundedValY * bulletWidth + roundedValX)].a != 0)
+                if (bulletMatrix[pixelIndex].a != 0)
                     // If the bullet's pixel is not inside the Player's hitbox, continue to the next pixel
                     if (roundedValY >= 0 && roundedValY < bulletHeight && roundedValX >= 0 && roundedValX < bulletWidth)
                         // All checks are passed: the two objects collide
