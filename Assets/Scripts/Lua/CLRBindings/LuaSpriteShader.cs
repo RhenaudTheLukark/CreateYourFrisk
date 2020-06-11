@@ -7,7 +7,7 @@ public class LuaSpriteShader {
     private string mode = "sprite";
     private GameObject gameObject;
     [MoonSharpHidden] public Material material;
-    [MoonSharpHidden] public bool _isActive = true;
+    [MoonSharpHidden] public bool _isActive = false;
     private TextureWrapMode H = TextureWrapMode.Clamp;
     private TextureWrapMode V = TextureWrapMode.Clamp;
     private Dictionary<string, int> propertyIDs = new Dictionary<string, int>();
