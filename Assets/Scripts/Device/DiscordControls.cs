@@ -18,13 +18,14 @@ public static class DiscordControls {
     static string oldDetails = activity.Details;
     static string oldState = activity.State;
     static long oldTime;
-    static bool isactive = true;
+    public static bool isactive = true;
 
     // Use this for initialization
     public static void Start() {
         // Creates the object that manages the Rich Presence Commands. The first argument is the APPID, the second tells the libraries if Discord must be started or not.
         try {
             discord = new Discord.Discord(711497963771527219, (ulong)Discord.CreateFlags.NoRequireDiscord);
+            activityManager = discord.GetActivityManager();
         } catch (Exception) {
             isactive = false;
         }
@@ -47,7 +48,6 @@ public static class DiscordControls {
                 LargeText = ControlPanel.instance.WindowBasisName
             }
         };
-        activityManager = discord.GetActivityManager();
 
         // Set initial activity properties and status
         ChangeVisibilitySetting(0);

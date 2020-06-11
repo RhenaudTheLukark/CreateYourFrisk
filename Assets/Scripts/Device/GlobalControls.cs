@@ -241,5 +241,8 @@ public class GlobalControls : MonoBehaviour {
         }
     }
 
-    void OnApplicationQuit() { DiscordControls.discord.Dispose(); }
+    void OnApplicationQuit() {
+        if (DiscordControls.isactive)
+            DiscordControls.discord.Dispose();
+    }
 }
