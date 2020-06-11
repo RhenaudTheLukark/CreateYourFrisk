@@ -250,8 +250,8 @@ it's w3c valid, at least
                         <ul>
                             <li><span class="term">DispMap</span> - Texture - The displacement map in question. See left.</li>
                             <li><span class="term">Intensity</span> - Float - Controls the magnitude of the displacement. 1 by default.</li>
-                            <li><span class="term">PIXEL_SNAP</span> - Keyword - If enabled, enables pixel snapping on the newly rendered
-                            image.</li>
+                            <li><span class="term">NO_PIXEL_SNAP</span> - Keyword - If enabled, disables pixel snapping on the newly rendered
+                            image (blurry).</li>
                             <li><span class="term">NO_WRAP</span> - Keyword - If enabled, does not render pixels that were outside of the
                             original image/screen boundaries.</li>
                         </ul>
@@ -274,8 +274,8 @@ it's w3c valid, at least
                                 Should be set to <span class="term">640</span> normally, or
                                 <br><span class="term">math.ceil(math.max(Misc.MonitorWidth / 3, 640))</span> in fullscreen.
                             </li>
-                            <li><span class="term">PIXEL_SNAP</span> - Keyword - If enabled, enables pixel snapping on the newly sized
-                            screen render.</li>
+                            <li><span class="term">NO_PIXEL_SNAP</span> - Keyword - If enabled, disables pixel snapping on the newly sized
+                            screen render (blurry).</li>
                         </ul>
                     </td>
                 </tr>
@@ -316,6 +316,8 @@ it's w3c valid, at least
                             <li><span class="term">yPivot</span> - Float - X pivot to rotate around. 0.5 (center) by default.</li>
                             <li><span class="term">WRAP</span> - Keyword - If enabled, renders pixels that were outside of the
                             original screen boundaries.</li>
+                            <li><span class="term">NO_PIXEL_SNAP</span> - Keyword - If enabled, disables pixel snapping on the newly rendered
+                            image (blurry).</li>
                         </ul>
                     </td>
                 </tr>
@@ -333,6 +335,8 @@ it's w3c valid, at least
                             <li><span class="term">VerMult</span> - Float - Vertical Scale. 1 by default.</li>
                             <li><span class="term">WRAP</span> - Keyword - If enabled, renders pixels that were outside of the
                             original screen boundaries.</li>
+                            <li><span class="term">NO_PIXEL_SNAP</span> - Keyword - If enabled, disables pixel snapping on the newly sized
+                            screen render (blurry).</li>
                         </ul>
                     </td>
                 </tr>
@@ -353,6 +357,8 @@ it's w3c valid, at least
                             </li>
                             <li><span class="term">NO_WRAP</span> - Keyword - If enabled, does not render pixels that were outside of the
                             original image boundaries.</li>
+                            <li><span class="term">NO_PIXEL_SNAP</span> - Keyword - If enabled, disables pixel snapping on the newly rendered
+                            image (blurry).</li>
                         </ul>
                     </td>
                 </tr>

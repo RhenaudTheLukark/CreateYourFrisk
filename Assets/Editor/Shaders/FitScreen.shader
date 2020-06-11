@@ -61,7 +61,7 @@ Shader "CYF/FitScreen"
 
             #pragma multi_compile __ UNITY_UI_CLIP_RECT
             #pragma multi_compile __ UNITY_UI_ALPHACLIP
-            #pragma shader_feature PIXEL_SNAP
+            #pragma multi_compile __ NO_PIXEL_SNAP
             
             struct appdata_t
             {
@@ -108,23 +108,23 @@ Shader "CYF/FitScreen"
                 offset.x -= 0.5;
                 offset.x = offset.x * (640 / Width);
                 offset.x += 0.5;
-                #ifdef PIXEL_SNAP
+
+                #ifndef NO_PIXEL_SNAP
                 offset.x = (floor(offset.x * _MainTex_TexelSize.z) + 0.5) / _MainTex_TexelSize.z;
                 offset.y = (floor(offset.y * _MainTex_TexelSize.w) + 0.5) / _MainTex_TexelSize.w;
                 #endif
 
                 half4 col = (tex2D(_MainTex, offset) + _TextureSampleAdd) * IN.color;
-                half4 c = fixed4(col.r, col.g, col.b, col.a);
 
                 #ifdef UNITY_UI_CLIP_RECT
-                c.a *= UnityGet2DClipping(IN.worldPosition.xy, _ClipRect);
+                col.a *= UnityGet2DClipping(IN.worldPosition.xy, _ClipRect);
                 #endif
 
                 #ifdef UNITY_UI_ALPHACLIP
-                clip (c.a - 0.001);
+                clip (col.a - 0.001);
                 #endif
 
-                return c;
+                return col;
             }
         ENDCG
         }

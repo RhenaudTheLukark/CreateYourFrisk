@@ -63,6 +63,7 @@ Shader "CYF/Rotation"
 
             #pragma multi_compile __ UNITY_UI_CLIP_RECT
             #pragma multi_compile __ UNITY_UI_ALPHACLIP
+            #pragma multi_compile __ NO_PIXEL_SNAP
             #pragma multi_compile __ WRAP
 
             struct appdata_t
@@ -125,6 +126,10 @@ Shader "CYF/Rotation"
                 UV += Center * float2(_MainTex_TexelSize.z, _MainTex_TexelSize.w);
                 UV *= float2(_MainTex_TexelSize.x, _MainTex_TexelSize.y);
 
+                #ifndef NO_PIXEL_SNAP
+                UV.x = (floor(UV.x * _MainTex_TexelSize.z) + 0.5) / _MainTex_TexelSize.z;
+                UV.y = (floor(UV.y * _MainTex_TexelSize.w) + 0.5) / _MainTex_TexelSize.w;
+                #endif
 
                 half4 col = (tex2D(_MainTex, UV) + _TextureSampleAdd) * IN.color;
 

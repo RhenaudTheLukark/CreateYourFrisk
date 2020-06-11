@@ -62,6 +62,7 @@ Shader "CYF/ScreenScale"
 
             #pragma multi_compile __ UNITY_UI_CLIP_RECT
             #pragma multi_compile __ UNITY_UI_ALPHACLIP
+            #pragma multi_compile __ NO_PIXEL_SNAP
             #pragma multi_compile __ WRAP
 
             struct appdata_t
@@ -82,6 +83,7 @@ Shader "CYF/ScreenScale"
             };
 
             sampler2D _MainTex;
+            uniform float4 _MainTex_TexelSize;
             fixed4 _TextureSampleAdd;
             float4 _ClipRect;
             float4 _MainTex_ST;
@@ -112,9 +114,13 @@ Shader "CYF/ScreenScale"
                 offset.x -= 0.5;
                 offset.x /= HorMult;
                 offset.x += 0.5;
-                half4 col = (tex2D(_MainTex, offset) + _TextureSampleAdd) * IN.color;
 
-                
+                #ifndef NO_PIXEL_SNAP
+                offset.x = (floor(offset.x * _MainTex_TexelSize.z) + 0.5) / _MainTex_TexelSize.z;
+                offset.y = (floor(offset.y * _MainTex_TexelSize.w) + 0.5) / _MainTex_TexelSize.w;
+                #endif
+
+                half4 col = (tex2D(_MainTex, offset) + _TextureSampleAdd) * IN.color;
 
                 #ifdef UNITY_UI_CLIP_RECT
                 col.a *= UnityGet2DClipping(IN.worldPosition.xy, _ClipRect);

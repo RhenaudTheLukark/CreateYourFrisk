@@ -62,7 +62,7 @@ Shader "CYF/Displacement"
 
             #pragma multi_compile __ UNITY_UI_CLIP_RECT
             #pragma multi_compile __ UNITY_UI_ALPHACLIP
-            #pragma multi_compile __ PIXEL_SNAP
+            #pragma multi_compile __ NO_PIXEL_SNAP
             #pragma multi_compile __ NO_WRAP
 
             struct appdata_t
@@ -115,11 +115,10 @@ Shader "CYF/Displacement"
 
                 offset.xy += mul(coloff.xy, float2(-Intensity / 640, -Intensity / 640));
 
-                #ifdef PIXEL_SNAP
+                #ifndef NO_PIXEL_SNAP
                 offset.x = (floor(offset.x * _MainTex_TexelSize.z) + 0.5) / _MainTex_TexelSize.z;
                 offset.y = (floor(offset.y * _MainTex_TexelSize.w) + 0.5) / _MainTex_TexelSize.w;
                 #endif
-
 
                 half4 col = (tex2D(_MainTex, offset) + _TextureSampleAdd) * IN.color;
 
