@@ -83,6 +83,7 @@ Shader "CYF/Displacement"
             };
 
             sampler2D _MainTex;
+            uniform float4 _MainTex_TexelSize;
             fixed4 _TextureSampleAdd;
             float4 _ClipRect;
             float4 _MainTex_ST;
@@ -107,19 +108,16 @@ Shader "CYF/Displacement"
             fixed4 frag(v2f IN) : SV_Target
             {
                 half4 coloff = (tex2D(DispMap, IN.uv) + _TextureSampleAdd) * IN.color;
-                coloff -= 0.5;
-                #ifdef PIXEL_SNAP
-                coloff = floor(coloff*255);
-                #else
                 coloff *= 255;
-                #endif
+                coloff -= 128;
 
                 float2 offset = IN.uv;
 
-                #ifdef PIXEL_SNAP
-                offset.xy += mul(coloff.xy, float2(floor(-Intensity*640)/409600, floor(-Intensity)/409600));
-                #else
                 offset.xy += mul(coloff.xy, float2(-Intensity / 640, -Intensity / 640));
+
+                #ifdef PIXEL_SNAP
+                offset.x = (floor(offset.x * _MainTex_TexelSize.z) + 0.5) / _MainTex_TexelSize.z;
+                offset.y = (floor(offset.y * _MainTex_TexelSize.w) + 0.5) / _MainTex_TexelSize.w;
                 #endif
 
 
