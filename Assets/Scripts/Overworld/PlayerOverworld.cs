@@ -573,6 +573,7 @@ public class PlayerOverworld : MonoBehaviour {
 
         //GameObject.Find("Main Camera OW").tag = "Untagged";
         HideOverworld("Battle");
+        EventManager.instance.eventsLoaded = false;
 
         //Now, we load our battle.
         GlobalControls.isInFight = true;

@@ -32,7 +32,7 @@ public class LuaGeneralOW {
         if (EventManager.instance.coroutines.ContainsKey(appliedScript) && EventManager.instance.script != appliedScript) {
             UnitaleUtil.DisplayLuaError(appliedScript.scriptname, "General.SetDialog: This function cannot be used in a coroutine.");
             return;
-        } else if (EventManager.instance.LoadLaunched) {
+        } else if (EventManager.instance.eventsLoading) {
             UnitaleUtil.DisplayLuaError(appliedScript.scriptname, "General.SetDialog: This function cannot be used in EventPage0.");
             return;
         }
@@ -115,7 +115,7 @@ public class LuaGeneralOW {
     }
 
     [CYFEventFunction] public void EndDialog() {
-        if (EventManager.instance.LoadLaunched) {
+        if (EventManager.instance.eventsLoading) {
             UnitaleUtil.DisplayLuaError(appliedScript.scriptname, "General.EndDialog: This function cannot be used in EventPage0.");
             return;
         } else if (EventManager.instance.script == appliedScript) {
