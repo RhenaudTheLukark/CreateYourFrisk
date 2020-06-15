@@ -1020,7 +1020,7 @@ end";
                         continue;
 
                     ev.actualPage = ei.CurrPage;
-                    ev.gameObject.layer = ei.NoCollision ? 0 : _eventLayer;
+                    ev.gameObject.layer = ei.NoCollision ? 0 : 21;
 
                     // Sets data to the event's animator if it exists
                     if (ev.GetComponent<CYFAnimator>())                        ev.GetComponent<CYFAnimator>().specialHeader = ei.CurrSpriteNameOrCYFAnim;
