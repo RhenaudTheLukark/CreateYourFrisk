@@ -301,9 +301,11 @@ end
             </p>
 
             <ul>
-                <li><span class="term">DONE</span> - Changing state to <span class="term">DONE</span> will instantly force the player to the mod selection screen.</li><br>
-                <li><span class="term">NONE</span> - This state does nothing. It is entered for the first frame of the encounter, but entering it manually will completely freeze your encounter. It might be useful if you want to disable all of Unitale/CYF's basic functionality.
-                </li><br>
+                <li><span class="term">DONE</span> - Changing state to <span class="term">DONE</span> will instantly end the current battle. Normally, this will
+                force the player to the mod selection screen.<br>
+                <span class="CYF"></span> If the encounter was entered from the overworld, the battle will end and the player will return to the overworld, in the
+                same way as if the player had ended the battle normally, such as by sparing all the enemies or running away.</li><br>
+                <li><span class="term">NONE</span> - This state does nothing. It is entered for the first frame of the encounter, but entering it manually will completely freeze your encounter. It might be useful if you want to disable all of Unitale/CYF's basic functionality.</li><br>
                 <li><span class="unitale"></span> <span class="term">RESETTING</span> - DEPRECATED, DO NOT USE. Only listed for completion purposes. It only exists in Unitale 0.2.1a, so trying to use it in CYF won't work. It was removed in the Github release of Unitale 0.2.1a, and seemed to be only for testing.</li><br>
             </ul>
 

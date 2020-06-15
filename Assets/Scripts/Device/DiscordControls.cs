@@ -270,7 +270,8 @@ public static class DiscordControls {
 
     // Update is called once per frame
     public static void Update() {
-        if (isActive)
-            discord.RunCallbacks();
+        if (!isActive) return;
+        try { discord.RunCallbacks(); }
+        catch { isActive = false; }
     }
 }

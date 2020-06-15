@@ -91,7 +91,7 @@ it's w3c valid, at least
             NOTE: You can provide <span class="term">"Player"</span> as the <span class="term">name</span> argument for any of these functions to
             instead apply them to the actual Player.
             <p>
-                <br><span class="function new">Event.Exists(<span class="string"></span> name) returns <span class="boolean"></span></span>
+                <br><span class="function">Event.Exists(<span class="string"></span> name) returns <span class="boolean"></span></span>
                 Returns <span class="term">true</span> if an event with this name exists, <span class="term">false</span> otherwise.
                 <br><br>
                 Note that this refers to the name given to the GameObject in the Unity scene, rather than the name of the script attached to it.
@@ -110,12 +110,12 @@ it's w3c valid, at least
                 By default, the script will pause until the event has stopped moving. Set <span class="term">waitEnd</span> to false
                 to bypass this and continue the script instead.
                 <br><br>
-                <span class="new"></span>By calling this function on an Event that is already moving, the event's current movement will be cancelled,
+                By calling this function on an Event that is already moving, the event's current movement will be cancelled,
                 and will start over moving towards the newly provided target destination. This also means you can provide the Event's current position
                 when interrupting movement to force the Event to stop moving instantly.
             </p>
             <p>
-                <br><span class="function new">Event.isMoving(<span class="string"></span> name)</span>
+                <br><span class="function">Event.isMoving(<span class="string"></span> name)</span>
                 Returns <span class="term">true</span> if an event is currently moving by means of <span class="term">Event.MoveToPoint</span>,
                 <span class="term">false</span> otherwise.
                 <br><br>
@@ -157,11 +157,11 @@ it's w3c valid, at least
                 By default, the script will pause until the event has stopped rotating. Set <span class="term">waitEnd</span> to false
                 to bypass this and continue the script instead.
                 <br><br>
-                <span class="new"></span>By calling this function on an Event that is already rotating, the event's current rotation will be cancelled,
+                By calling this function on an Event that is already rotating, the event's current rotation will be cancelled,
                 and will start over moving towards the newly provided target angles.
             </p>
             <p>
-                <br><span class="function new">Event.isRotating(<span class="string"></span> name)</span>
+                <br><span class="function">Event.isRotating(<span class="string"></span> name)</span>
                 Returns <span class="term">true</span> if an event is currently being rotated by means of <span class="term">Event.Rotate</span>,
                 <span class="term">false</span> otherwise.
             </p>
@@ -227,7 +227,7 @@ it's w3c valid, at least
                 Sets the set movement speed of an event.
             </p>
             <p>
-                <br><span class="function new">Event.GetSpeed(<span class="string"></span> name) returns <span class="number"></span></span>
+                <br><span class="function">Event.GetSpeed(<span class="string"></span> name) returns <span class="number"></span></span>
                 Gets the set movement speed of an event.
             </p>
         </div>
