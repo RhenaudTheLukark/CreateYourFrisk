@@ -32,11 +32,11 @@ public class CYFAnimator : MonoBehaviour {
 
     // Use this for initialization
     public void LateStart() {
-        if (EventManager.instance.sprCtrls.ContainsKey(gameObject.name)) sprctrl = EventManager.instance.sprCtrls[gameObject.name];
+        if (EventManager.instance.spriteControllers.ContainsKey(gameObject.name)) sprctrl = EventManager.instance.spriteControllers[gameObject.name];
         else if (gameObject.name == "Player")                            sprctrl = PlayerOverworld.instance.sprctrl;
         else {
             EventManager.instance.ResetEvents(false);
-            if (!EventManager.instance.sprCtrls.ContainsKey(gameObject.name))
+            if (!EventManager.instance.spriteControllers.ContainsKey(gameObject.name))
                 throw new CYFException("A CYFAnimator component must be tied to an event, however the GameObject " + gameObject.name + " doesn't seem to have one.");
         }
         lastPos = gameObject.transform.position;

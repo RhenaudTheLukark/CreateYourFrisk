@@ -131,7 +131,7 @@ public class TransitionOverworld : MonoBehaviour {
             StaticInits.InitAll(true);
             LuaScriptBinder.Set(null, "ModFolder", DynValue.NewString(StaticInits.MODFOLDER));
             if (call == "transitionoverworld") {
-                EventManager.instance.ScriptLaunched = false;
+                EventManager.instance.ScriptRunning = false;
                 EventManager.instance.script = null;
             }
         }

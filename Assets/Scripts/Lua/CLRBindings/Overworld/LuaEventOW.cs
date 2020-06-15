@@ -214,9 +214,9 @@ public class LuaEventOW {
                             CurrPage = ev.actualPage,
                             CurrSpriteNameOrCYFAnim = ev.GetComponent<CYFAnimator>()
                                 ? ev.GetComponent<CYFAnimator>().specialHeader
-                                : EventManager.instance.sprCtrls[ev.name].img.GetComponent<SpriteRenderer>()
-                                    ? EventManager.instance.sprCtrls[ev.name].img.GetComponent<SpriteRenderer>().sprite.name
-                                    : EventManager.instance.sprCtrls[ev.name].img.GetComponent<Image>().sprite.name,
+                                : EventManager.instance.spriteControllers[ev.name].img.GetComponent<SpriteRenderer>()
+                                    ? EventManager.instance.spriteControllers[ev.name].img.GetComponent<SpriteRenderer>().sprite.name
+                                    : EventManager.instance.spriteControllers[ev.name].img.GetComponent<Image>().sprite.name,
                             NoCollision = ev.gameObject.layer == 0,
                             Anchor = UnitaleUtil.VectorToVect(ev.GetComponent<RectTransform>().anchorMax),
                             Pivot = UnitaleUtil.VectorToVect(ev.GetComponent<RectTransform>().pivot)
@@ -230,14 +230,14 @@ public class LuaEventOW {
                     EventManager.instance.coroutines.Remove(EventManager.instance.eventScripts[go]);
                 EventManager.instance.eventScripts.Remove(go);
             }
-            EventManager.instance.sprCtrls.Remove(eventName);
+            EventManager.instance.spriteControllers.Remove(eventName);
             EventManager.instance.events.Remove(go);
             if (go.transform.parent != null)
                 if (go.transform.parent.name == "SpritePivot")
                     go = go.transform.parent.gameObject;
             Object.Destroy(go); //NEED PARENTAL REMOVE
         }
-        if (appliedScript != null && (EventManager.instance.ScriptLaunched || EventManager.instance.coroutines.ContainsKey(appliedScript)))
+        if (appliedScript != null && (EventManager.instance.ScriptRunning || EventManager.instance.coroutines.ContainsKey(appliedScript)))
             appliedScript.Call("CYFEventNextCommand");
     }
 
@@ -263,30 +263,30 @@ public class LuaEventOW {
             throw new CYFException("Event.SetPage: The given event doesn't exist.");
 
         GameObject go = GameObject.Find(eventName);
-        if (EventManager.instance.autoDone.ContainsKey(go))
+        if (EventManager.instance.autoDone.Contains(go))
             EventManager.instance.autoDone.Remove(go);
         go.GetComponent<EventOW>().actualPage = page;
-        if (EventManager.instance.ScriptLaunched || EventManager.instance.coroutines.ContainsKey(EventManager.instance.luaevow.appliedScript))
-            EventManager.instance.luaevow.appliedScript.Call("CYFEventNextCommand");
+        if (EventManager.instance.ScriptRunning || EventManager.instance.coroutines.ContainsKey(EventManager.instance.luaEventOw.appliedScript))
+            EventManager.instance.luaEventOw.appliedScript.Call("CYFEventNextCommand");
     }
 
     [CYFEventFunction] public DynValue GetSprite(string name) {
         try {
             if (name == "Player")
                 try { return UserData.Create(PlayerOverworld.instance.sprctrl); } finally { appliedScript.Call("CYFEventNextCommand"); }
-            foreach (string key in EventManager.instance.sprCtrls.Keys)
+            foreach (string key in EventManager.instance.spriteControllers.Keys)
                 if (key == name)
-                    try { return UserData.Create(EventManager.instance.sprCtrls[name]); } finally { appliedScript.Call("CYFEventNextCommand"); }
+                    try { return UserData.Create(EventManager.instance.spriteControllers[name]); } finally { appliedScript.Call("CYFEventNextCommand"); }
             EventManager.instance.ResetEvents(false);
-            foreach (string key in EventManager.instance.sprCtrls.Keys)
+            foreach (string key in EventManager.instance.spriteControllers.Keys)
                 if (key == name)
-                    try { return UserData.Create(EventManager.instance.sprCtrls[name]); } finally { appliedScript.Call("CYFEventNextCommand"); }
+                    try { return UserData.Create(EventManager.instance.spriteControllers[name]); } finally { appliedScript.Call("CYFEventNextCommand"); }
         } catch { }
         throw new CYFException("Event.GetSprite: The event \"" + name + "\" doesn't have a sprite.");
     }
 
     [CYFEventFunction] public void CenterOnCamera(string name, int speed = 5, bool straightLine = false, bool waitEnd = true, string info = "Event.CenterOnCamera") {
-        EventManager.instance.luascrow.CenterEventOnCamera(name, speed, straightLine, waitEnd, info);
+        EventManager.instance.luaScreenOw.CenterEventOnCamera(name, speed, straightLine, waitEnd, info);
     }
 
     [CYFEventFunction] public string GetName() {

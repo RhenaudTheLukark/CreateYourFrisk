@@ -103,19 +103,6 @@ public class ScriptWrapper {
         }
     }
 
-    internal void Bind(string key, object func) {
-        script.Globals[key] = func;
-        /*try {
-            //The script where the function to test is
-            EventManager em = GameObject.Find("Main Camera OW").GetComponent<EventManager>();
-            //I have to keep the type only, I don't need the script where it belongs (it would not work if I don't do this)
-            if (func.GetType().ToString().Split('+')[1] == typeof(Action<DynValue, DynValue, DynValue, DynValue, DynValue, DynValue, DynValue, DynValue, DynValue, DynValue>).ToString().Split('+')[1])
-                script.Globals[key] = (Action<DynValue, DynValue, DynValue, DynValue, DynValue, DynValue, DynValue, DynValue, DynValue, DynValue>)
-                                      ((v1, v2, v3, v4, v5, v6, v7, v8, v9, v10) => em.FunctionLauncher(key, new DynValue[] { v1, v2, v3, v4, v5, v6, v7, v8, v9, v10 } ));
-        } catch { }*/
-    }
-
+    internal void Bind(string key, object func)      { script.Globals[key] = func; }
     internal void BindDyn(string key, DynValue func) { script.Globals[key] = func; }
-
-    private delegate void Action<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(T1 arg, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9, T10 arg10);
 }

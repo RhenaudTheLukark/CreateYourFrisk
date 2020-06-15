@@ -68,7 +68,7 @@ public class TPHandler : MonoBehaviour {
                 yield return new WaitForSeconds(fadeTime);
             } else
                 GameObject.Find("FadingBlack").GetComponent<Fading>().FadeInstant(1);
-        EventManager.instance.nextFadeTransition = !noFadeOut;
+        EventManager.instance.fadeOutToMap = !noFadeOut;
 
         if (GlobalControls.isInShop) {
             PlayerOverworld.ShowOverworld("Shop");

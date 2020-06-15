@@ -24,7 +24,7 @@ public class GameState {
     public List<string> inventory = new List<string>();
     public List<string> boxContents = new List<string>();
     public float playerTime;
-    public string CYFversion;
+    public string CYFversion = "";
 
     [System.Serializable]
     public struct EventInfos {

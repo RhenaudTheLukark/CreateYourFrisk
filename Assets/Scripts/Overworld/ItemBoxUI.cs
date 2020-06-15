@@ -21,10 +21,10 @@ public class ItemBoxUI : MonoBehaviour {
             System.Random rnd = new System.Random();
             string[] words = new string[] { "effort", "time", "feeling" };
 
-            Table text = new Table(EventManager.instance.luainvow.appliedScript.script);
+            Table text = new Table(EventManager.instance.luaInventoryOw.appliedScript.script);
             text.Set(DynValue.NewNumber(1), DynValue.NewString("You have no items.[w:10]\nYou put a little " + words[rnd.Next(0, 3)] + "\rinto the box."));
 
-            EventManager.instance.luagenow.SetDialog(DynValue.NewTable(text));
+            EventManager.instance.luaGeneralOw.SetDialog(DynValue.NewTable(text));
             Destroy(this);
             return;
         }

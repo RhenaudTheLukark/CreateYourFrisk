@@ -31,10 +31,10 @@ public class LuaPlayerOW {
     [CYFEventFunction] public void SetGold(int value) { PlayerCharacter.instance.SetGold(value); appliedScript.Call("CYFEventNextCommand"); }
 
     [CYFEventFunction] public string GetWeapon() { try { return PlayerCharacter.instance.Weapon; } finally { appliedScript.Call("CYFEventNextCommand"); } }
-    [CYFEventFunction] public void SetWeapon(string value) { EventManager.instance.luainvow.SetEquip(value);}
+    [CYFEventFunction] public void SetWeapon(string value) { EventManager.instance.luaInventoryOw.SetEquip(value);}
 
     [CYFEventFunction] public string GetArmor() { try { return PlayerCharacter.instance.Armor; } finally { appliedScript.Call("CYFEventNextCommand"); } }
-    [CYFEventFunction] public void SetArmor(string value) { EventManager.instance.luainvow.SetEquip(value); }
+    [CYFEventFunction] public void SetArmor(string value) { EventManager.instance.luaInventoryOw.SetEquip(value); }
 
     [CYFEventFunction] public int GetEXP() { try { return PlayerCharacter.instance.EXP; } finally { appliedScript.Call("CYFEventNextCommand"); } }
     [CYFEventFunction] public void SetEXP(int value) { PlayerCharacter.instance.SetEXP(value, true); appliedScript.Call("CYFEventNextCommand"); }
@@ -66,12 +66,12 @@ public class LuaPlayerOW {
 
     public string Weapon {
         get { return PlayerCharacter.instance.Weapon; }
-        set { EventManager.instance.luainvow.SetWeapon(value); }
+        set { EventManager.instance.luaInventoryOw.SetWeapon(value); }
     }
 
     public string Armor {
         get { return PlayerCharacter.instance.Armor; }
-        set { EventManager.instance.luainvow.SetArmor(value); }
+        set { EventManager.instance.luaInventoryOw.SetArmor(value); }
     }
 
     public int EXP {
@@ -116,7 +116,7 @@ public class LuaPlayerOW {
     [MoonSharpHidden]
     public void setHP(float newhp, bool forced = false) {
         if (newhp <= 0) {
-            EventManager.instance.luagenow.GameOver();
+            EventManager.instance.luaGeneralOw.GameOver();
             return;
         }
         float CheckedHP = PlayerCharacter.instance.HP;

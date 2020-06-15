@@ -93,17 +93,17 @@ public static class LuaScriptBinder {
             script.Globals.Set("Player", PlayerStatus);
         } else if (!GlobalControls.isInShop) {
             try {
-                DynValue PlayerOW = UserData.Create(EventManager.instance.luaplow);
+                DynValue PlayerOW = UserData.Create(EventManager.instance.luaPlayerOw);
                 script.Globals.Set("FPlayer", PlayerOW);
-                DynValue EventOW = UserData.Create(EventManager.instance.luaevow);
+                DynValue EventOW = UserData.Create(EventManager.instance.luaEventOw);
                 script.Globals.Set("FEvent", EventOW);
-                DynValue GeneralOW = UserData.Create(EventManager.instance.luagenow);
+                DynValue GeneralOW = UserData.Create(EventManager.instance.luaGeneralOw);
                 script.Globals.Set("FGeneral", GeneralOW);
-                DynValue InventoryOW = UserData.Create(EventManager.instance.luainvow);
+                DynValue InventoryOW = UserData.Create(EventManager.instance.luaInventoryOw);
                 script.Globals.Set("FInventory", InventoryOW);
-                DynValue ScreenOW = UserData.Create(EventManager.instance.luascrow);
+                DynValue ScreenOW = UserData.Create(EventManager.instance.luaScreenOw);
                 script.Globals.Set("FScreen", ScreenOW);
-                DynValue MapOW = UserData.Create(EventManager.instance.luamapow);
+                DynValue MapOW = UserData.Create(EventManager.instance.luaMapOw);
                 script.Globals.Set("FMap", MapOW);
             } catch { }
         }

@@ -179,7 +179,7 @@ public class PlayerOverworld : MonoBehaviour {
 
         ControlPanel.instance.FrameBasedMovement = false;
         try {
-            EventManager.instance.ScriptLaunched = false;
+            EventManager.instance.ScriptRunning = false;
             EventManager.instance.script = null;
         } catch { }
 

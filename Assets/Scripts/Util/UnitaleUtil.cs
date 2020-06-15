@@ -408,6 +408,13 @@ public static class UnitaleUtil {
         return dec;
     }
 
+    public static bool TestContainsListVector2(List<Vector2> list, int testValue) {
+        foreach (Vector2 v in list)
+            if (v.x == testValue)
+                return true;
+        return false;
+    }
+
     public static void PlaySound(string basis, string sound, float volume = 0.65f) {
         sound = FileLoader.getRelativePathWithoutExtension(sound).Replace('\\', '/');
         for (int i = 1; i > 0; i++) {
@@ -616,7 +623,6 @@ public static class UnitaleUtil {
 
     public static void ResetOW(bool resetSave = false) {
         EventManager.instance = null;
-        EventManager.inited = false;
         GameState.current = null;
         ItemBoxUI.active = false;
         GlobalControls.po = null;

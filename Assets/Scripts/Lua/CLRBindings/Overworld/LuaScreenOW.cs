@@ -40,7 +40,7 @@ public class LuaScreenOW {
             image.name = "Image" + id;
             image.tag = "Event";
             image.GetComponent<RectTransform>().SetParent(GameObject.Find("Canvas OW").transform);
-            EventManager.instance.sprCtrls.Add("Image" + id, new LuaSpriteController(image.GetComponent<Image>()));
+            EventManager.instance.spriteControllers.Add("Image" + id, new LuaSpriteController(image.GetComponent<Image>()));
         }
 
         image.GetComponent<Image>().sprite = SpriteRegistry.Get(path);
@@ -65,7 +65,7 @@ public class LuaScreenOW {
     /// <param name="id"></param>
     [CYFEventFunction] public void SupprImg(int id) {
         if (GameObject.Find("Image" + id))
-            EventManager.instance.luaevow.Remove("Image" + id);
+            EventManager.instance.luaEventOw.Remove("Image" + id);
         else
             UnitaleUtil.Warn("The image #" + id + " doesn't exist.", false);
         appliedScript.Call("CYFEventNextCommand");
@@ -94,7 +94,7 @@ public class LuaScreenOW {
         if (!anim) {
             GameObject.Find("Tone").GetComponent<Image>().color = new Color32((byte)r, (byte)g, (byte)b, (byte)a);
             if (a == 0)
-                EventManager.instance.luaevow.Remove("Tone");
+                EventManager.instance.luaEventOw.Remove("Tone");
             appliedScript.Call("CYFEventNextCommand");
         } else
             StCoroutine("ISetTone", new object[] { waitEnd, r, g, b, a }, appliedScript.GetVar("_internalScriptName").String);
