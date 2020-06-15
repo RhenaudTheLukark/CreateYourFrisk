@@ -195,7 +195,8 @@ public class OptionsScript : MonoBehaviour {
                 response = "Changes how much Discord Rich Presence should display on your profile regarding you playing Create Your Frisk.\n\n"
                          + "<b>Everything</b>: Everything is displayed: the mod you're playing, a timestamp and a description.\n\n"
                          + "<b>Game Only</b>: Only shows that you're playing Create Your Frisk.\n\n"
-                         + "<b>Nothing</b>: Disables Discord Rich Presence entirely.";
+                         + "<b>Nothing</b>: Disables Discord Rich Presence entirely.\n\n"
+                         + "If CYF's connection to Discord is lost, you will have to restart CYF if you want your rich presence back.";
                 return !GlobalControls.crate ? response : Temmify.Convert(response);
             case "Exit":
                 response = "Returns to the Mod Select screen.";
