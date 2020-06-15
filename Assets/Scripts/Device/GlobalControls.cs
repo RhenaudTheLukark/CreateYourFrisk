@@ -242,7 +242,7 @@ public class GlobalControls : MonoBehaviour {
     }
 
     void OnApplicationQuit() {
-        if (DiscordControls.isactive)
+        if (DiscordControls.isActive)
             DiscordControls.discord.Dispose();
     }
 }
