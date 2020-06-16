@@ -1,7 +1,4 @@
 using UnityEngine;
-using UnityEngine.UI;
-using System.Collections.Generic;
-
 using UnityEditor;
 
 public class CameraShader : MonoBehaviour {
@@ -15,7 +12,7 @@ public class CameraShader : MonoBehaviour {
         luashader = new LuaSpriteShader("camera", gameObject);
     }
 
-    void OnRenderImage(RenderTexture source, RenderTexture destination) {
+    private void OnRenderImage(Texture source, RenderTexture destination) {
         source.wrapModeU = H;
         source.wrapModeV = V;
         Graphics.Blit(source, destination, material);
@@ -30,7 +27,7 @@ public class CameraShader : MonoBehaviour {
         private CameraShader cs;
         private MaterialEditor editor;
 
-        void OnEnable() {
+        private void OnEnable() {
             cs = (CameraShader)target;
             if (cs != null && cs.material != null)
                 editor = (MaterialEditor)CreateEditor(cs.material);
@@ -41,7 +38,7 @@ public class CameraShader : MonoBehaviour {
             EditorGUILayout.PropertyField(serializedObject.FindProperty("material"));
 
             if (EditorGUI.EndChangeCheck()) {
-                serializedObject.ApplyModifiedProperties(); 
+                serializedObject.ApplyModifiedProperties();
 
                 if (editor != null)
                     DestroyImmediate(editor);
@@ -50,16 +47,15 @@ public class CameraShader : MonoBehaviour {
                     editor = (MaterialEditor)CreateEditor(cs.material);
             }
 
-            if (editor != null) {
-                editor.DrawHeader();
+            if (editor == null) return;
+            editor.DrawHeader();
 
-                bool isDefault = !AssetDatabase.GetAssetPath(cs.material).StartsWith("Assets");
-                using (new EditorGUI.DisabledGroupScope(isDefault))
-                    editor.OnInspectorGUI();
-            }
+            bool isDefault = cs != null && !AssetDatabase.GetAssetPath(cs.material).StartsWith("Assets");
+            using (new EditorGUI.DisabledGroupScope(isDefault))
+                editor.OnInspectorGUI();
         }
 
-        void OnDisable() {
+        private void OnDisable() {
             if (editor != null)
                 DestroyImmediate(editor);
         }

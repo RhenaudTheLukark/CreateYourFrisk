@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 
 public class ShakeEffectLetter : TextEffectLetter {
-    private float intensity;
-    private bool skipNextFrame = false;
+    private readonly float intensity;
+    private bool skipNextFrame;
 
     public ShakeEffectLetter(Letter letter, float intensity = 1.0f) : base(letter) { this.intensity = intensity != 0 ? intensity : 1.0f; }
 

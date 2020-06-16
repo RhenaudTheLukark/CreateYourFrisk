@@ -4,26 +4,25 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 public class IntroManager : MonoBehaviour {
-    TextManager text;
-    Image img;
+    private TextManager text;
+    private Image img;
     public string[] imagePaths, textsToDisplay, specialEffects, goToNextDirect;
-    bool finish = false, start = true, pause = false, fadeMusic = false, sameImage = false, mask = false;
-    float timer = 0.0f, timerEffect = 0.0f;
-    int currentIndex = 0;
+    private bool finish, start = true, pause, fadeMusic, sameImage, mask;
+    private float timer, timerEffect;
+    private int currentIndex;
 
-    enum Effect { NONE, SCROLLUP, SCROLLDOWN, SCROLLLEFT, SCROLLRIGHT };
-    Effect currentEffect = Effect.NONE;
+    private enum Effect { NONE, SCROLLUP, SCROLLDOWN, SCROLLLEFT, SCROLLRIGHT };
+    private Effect currentEffect = Effect.NONE;
 
     // Use this for initialization
-    void Start () {
+    private void Start () {
         if (!SaveLoad.started) {
             StaticInits.Start();
             SaveLoad.Start();
             new ControlPanel();
             new PlayerCharacter();
             #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
-                if (GlobalControls.crate) Misc.WindowName = ControlPanel.instance.WinodwBsaisNmae;
-                else Misc.WindowName = ControlPanel.instance.WindowBasisName;
+                Misc.WindowName = GlobalControls.crate ? ControlPanel.instance.WinodwBsaisNmae : ControlPanel.instance.WindowBasisName;
             #endif
             SaveLoad.LoadAlMighty();
             LuaScriptBinder.Set(null, "ModFolder", MoonSharp.Interpreter.DynValue.NewString("@Title"));
@@ -33,7 +32,7 @@ public class IntroManager : MonoBehaviour {
         Camera.main.GetComponent<AudioSource>().Play();
         if (imagePaths.Length != textsToDisplay.Length)
             throw new Exception("You need to have the same number of images and lines of text.");
-        text = GameObject.FindObjectOfType<TextManager>();
+        text = FindObjectOfType<TextManager>();
         img = GameObject.Find("CutsceneImages").GetComponent<Image>();
         text.SetVerticalSpacing(6);
         text.SetHorizontalSpacing(6);
@@ -57,7 +56,7 @@ public class IntroManager : MonoBehaviour {
     }
 
     // Update is called once per frame
-    void Update () {
+    private void Update () {
         timer += Time.deltaTime;
         //Effect update
         if (CheckEffect() &&!start &&!finish &&!fadeMusic)
@@ -97,8 +96,9 @@ public class IntroManager : MonoBehaviour {
                     start = true;
                 }
             }
+        }
         //Fade in
-        } else if (start &&!fadeMusic) {
+        else if (start &&!fadeMusic) {
             if (timer < 0.5f &&!sameImage)
                 img.color = new Color(img.color.r, img.color.g, img.color.b, 2 * timer);
             else {
@@ -106,14 +106,17 @@ public class IntroManager : MonoBehaviour {
                 img.color = new Color(img.color.r, img.color.g, img.color.b, 1);
                 timer = 0.0f;
                 if (currentIndex != textsToDisplay.Length - 1)
-                    if (goToNextDirect[currentIndex + 1] == "Y")                        sameImage = true;
-                    else if (goToNextDirect[currentIndex + 1] == "N")                   sameImage = false;
-                    else if (imagePaths[currentIndex] == imagePaths[currentIndex + 1])  sameImage = true;
-                    else                                                                sameImage = false;
-                else                                                                    sameImage = false;
+                    switch (goToNextDirect[currentIndex + 1]) {
+                        case "Y": sameImage = true;  break;
+                        case "N": sameImage = false; break;
+                        default:  sameImage = imagePaths[currentIndex] == imagePaths[currentIndex + 1]; break;
+                    }
+                else
+                    sameImage = false;
             }
+        }
         //End of intro
-        } else if (fadeMusic) {
+        else if (fadeMusic) {
             if (timer < 1)
                 Camera.main.GetComponent<AudioSource>().volume = 1 - timer;
             else {
@@ -121,14 +124,15 @@ public class IntroManager : MonoBehaviour {
                 Camera.main.GetComponent<AudioSource>().volume = 1;
                 SceneManager.LoadScene("TitleScreen");
             }
+        }
         //End of current page
-        } else if (text.LineComplete() &&!start &&!CheckEffect()) {
+        else if (text.LineComplete() &&!start &&!CheckEffect()) {
             finish = true;
             timer = 0;
         }
     }
 
-    void ApplyEffect(Effect e) {
+    private void ApplyEffect(Effect e) {
         currentEffect = e;
         switch(e) {
             case Effect.SCROLLUP:
@@ -158,7 +162,7 @@ public class IntroManager : MonoBehaviour {
         }
     }
 
-    void UpdateEffect() {
+    private void UpdateEffect() {
         if (timerEffect < 4)
             timerEffect += Time.deltaTime;
         else
@@ -170,7 +174,7 @@ public class IntroManager : MonoBehaviour {
             }
     }
 
-    bool CheckEffect() {
+    private bool CheckEffect() {
         switch (currentEffect) {
             case Effect.SCROLLUP:    return img.rectTransform.position.y > (mask ? 424 : 480);
             case Effect.SCROLLDOWN:  return img.rectTransform.position.y < (mask ? 204 : 0);

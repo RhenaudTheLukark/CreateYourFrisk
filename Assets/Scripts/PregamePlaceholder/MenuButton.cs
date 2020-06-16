@@ -1,4 +1,3 @@
-using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
@@ -7,8 +6,8 @@ public class MenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     public Color NormalColor;
     public Color HoverColor;
 
-    private float animateTimerMaxValue = 2; // number of frames it takes to animate
-    private float animateTimer = 0;
+    private const float animateTimerMaxValue = 2; // number of frames it takes to animate
+    private float animateTimer;
     private int animateDirection = -1; // -1 for Fade Out, 1 for Fade In
 
     public void Update() {

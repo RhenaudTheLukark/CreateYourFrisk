@@ -7,7 +7,7 @@ using UnityEngine;
 public class BulletPool : MonoBehaviour {
     public static BulletPool instance;
     public static int POOLSIZE = 100;
-    private static Queue<Projectile> pool = new Queue<Projectile>();
+    private static readonly Queue<Projectile> pool = new Queue<Projectile>();
     private static Projectile bPrefab; // bullet prefab
     //private static int currentProjectile = 0;
 
@@ -27,7 +27,7 @@ public class BulletPool : MonoBehaviour {
     /// Creates a new Projectile and adds it to the pool. Used during instantion and when the pool is empty.
     /// </summary>
     private void createPooledBullet() {
-        Projectile lp = Instantiate<Projectile>(bPrefab);
+        Projectile lp = Instantiate(bPrefab);
         lp.transform.SetParent(transform);
         lp.GetComponent<RectTransform>().position = new Vector2(-999, -999); // Move offscreen to be safe, but shouldn't be necessary.
         pool.Enqueue(lp);

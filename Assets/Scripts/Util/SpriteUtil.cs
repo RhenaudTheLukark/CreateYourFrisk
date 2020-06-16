@@ -1,10 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml;
 using UnityEngine;
 using UnityEngine.UI;
 using MoonSharp.Interpreter;
+using Object = UnityEngine.Object;
 
 public static class SpriteUtil {
     public const float PIXELS_PER_UNIT = 100.0f;
@@ -61,31 +62,24 @@ public static class SpriteUtil {
     public static Sprite SpriteWithXml(XmlNode spriteNode, Sprite source) {
         XmlNode xmlRect = spriteNode.SelectSingleNode("rect");
         Rect spriteRect = new Rect(0, 0, source.texture.width, source.texture.height);
-        if (xmlRect != null)
-            spriteRect = new Rect(int.Parse(xmlRect.Attributes["x"].Value), int.Parse(xmlRect.Attributes["y"].Value),
-                                  int.Parse(xmlRect.Attributes["w"].Value), int.Parse(xmlRect.Attributes["h"].Value));
+        if (xmlRect != null && xmlRect.Attributes != null)
+                spriteRect = new Rect(int.Parse(xmlRect.Attributes["x"].Value), int.Parse(xmlRect.Attributes["y"].Value),
+                                      int.Parse(xmlRect.Attributes["w"].Value), int.Parse(xmlRect.Attributes["h"].Value));
         XmlNode xmlBorder = spriteNode.SelectSingleNode("border");
         Vector4 spriteBorder = Vector4.zero;
-        if (xmlBorder != null)
+        if (xmlBorder != null && xmlBorder.Attributes != null)
             spriteBorder = new Vector4(int.Parse(xmlBorder.Attributes["x"].Value), int.Parse(xmlBorder.Attributes["y"].Value),
                                        int.Parse(xmlBorder.Attributes["z"].Value), int.Parse(xmlBorder.Attributes["w"].Value));
 
         Sprite s = Sprite.Create(source.texture, spriteRect, new Vector2(0.5f, 0.5f), PIXELS_PER_UNIT, 0, SpriteMeshType.FullRect, spriteBorder);
-        if (spriteNode.Attributes["name"] != null)
+        if (spriteNode.Attributes != null && spriteNode.Attributes["name"] != null)
             s.name = spriteNode.Attributes["name"].Value;
         return s;
     }
 
     public static Sprite[] AtlasFromXml(XmlNode sheetNode, Sprite source) {
-        try {
-            List<Sprite> tempSprites = new List<Sprite>();
-            foreach (XmlNode child in sheetNode.ChildNodes)
-                if (child.Name.Equals("sprite")) {
-                    Sprite s = SpriteWithXml(child, source);
-                    tempSprites.Add(s);
-                }
-            return tempSprites.ToArray();
-        } catch (Exception ex) {
+        try { return (from XmlNode child in sheetNode.ChildNodes where child.Name.Equals("sprite") select SpriteWithXml(child, source)).ToArray(); }
+        catch (Exception ex) {
             UnitaleUtil.DisplayLuaError("[XML document]", "One of the sprites' XML documents was invalid. This could be a corrupt or edited file.\n\n" + ex.Message);
             return null;
         }
@@ -102,12 +96,11 @@ public static class SpriteUtil {
         newSprite.name = FileLoader.getRelativePathWithoutExtension(filename);
         //optional XML loading
         FileInfo fi = new FileInfo(Path.ChangeExtension(filename, "xml"));
-        if (fi.Exists) {
-            XmlDocument xmld = new XmlDocument();
-            xmld.Load(fi.FullName);
-            if (xmld["spritesheet"] != null && "single".Equals(xmld["spritesheet"].GetAttribute("type")))
-                return SpriteWithXml(xmld["spritesheet"].GetElementsByTagName("sprite")[0], newSprite);
-        }
+        if (!fi.Exists) return newSprite;
+        XmlDocument xmld = new XmlDocument();
+        xmld.Load(fi.FullName);
+        if (xmld["spritesheet"] != null && "single".Equals(xmld["spritesheet"].GetAttribute("type")))
+            return SpriteWithXml(xmld["spritesheet"].GetElementsByTagName("sprite")[0], newSprite);
         return newSprite;
     }
     public static DynValue MakeIngameSprite(string filename, int childNumber = -1) { return MakeIngameSprite(filename, "BelowArena", childNumber); }
@@ -119,7 +112,7 @@ public static class SpriteUtil {
             childNumber = ParseUtil.GetInt(tag);
             tag = UnitaleUtil.IsOverworld ? "Default" : "BelowArena";
         }
-        Image i = GameObject.Instantiate<Image>(SpriteRegistry.GENERIC_SPRITE_PREFAB);
+        Image i = Object.Instantiate(SpriteRegistry.GENERIC_SPRITE_PREFAB);
         if (!string.IsNullOrEmpty(filename))
             SwapSpriteFromFile(i, filename);
         else
@@ -130,10 +123,7 @@ public static class SpriteUtil {
             else
                 UnitaleUtil.DisplayLuaError("Creating a sprite", "The sprite layer " + tag + " doesn't exist.");
         else {
-            if (tag == "none")
-                i.transform.SetParent(GameObject.Find(canvas).transform, true);
-            else
-                i.transform.SetParent(GameObject.Find(tag + "Layer").transform, true);
+            i.transform.SetParent(GameObject.Find(tag == "none" ? canvas : tag + "Layer").transform, true);
             if (childNumber != -1)
                 i.transform.SetSiblingIndex(childNumber - 1);
         }
@@ -144,7 +134,7 @@ public static class SpriteUtil {
         string canvas = UnitaleUtil.IsOverworld ? "Canvas Two/" : "Canvas/";
         if (name == null || GameObject.Find(canvas + name + "Layer") != null)
             return false;
-        else if (relatedTag != "VeryHighest" && relatedTag != "VeryLowest" && relatedTag != "BasisNewest" && GameObject.Find(canvas + relatedTag + "Layer") == null)
+        if (relatedTag != "VeryHighest" && relatedTag != "VeryLowest" && relatedTag != "BasisNewest" && GameObject.Find(canvas + relatedTag + "Layer") == null)
             return false; // throw new CYFException("CreateLayer: Tried to make a new layer " + (before ? "below" : "above") + " the layer \"" + relatedTag + "\", but it didn't exist.");
 
         GameObject go = new GameObject(name + "Layer", typeof(RectTransform));
@@ -154,18 +144,17 @@ public static class SpriteUtil {
             if (relatedTag == "BasisNewest")
                 testName = "BelowArenaLayer";
             for (int j = 0; j < rts.Length; j++) {
-                if (rts[j].name == testName) {
-                    go.transform.SetParent(GameObject.Find(canvas).transform, true);
-                    go.transform.SetSiblingIndex(j + (before ? 0 : 1));
-                    break;
-                }
+                if (rts[j].name != testName) continue;
+                go.transform.SetParent(GameObject.Find(canvas).transform, true);
+                go.transform.SetSiblingIndex(j + (before ? 0 : 1));
+                break;
             }
         } else {
             go.transform.SetParent(GameObject.Find(canvas).transform, true);
-            if (relatedTag == "VeryHighest")
-                go.transform.SetAsLastSibling();
-            else if (relatedTag == "VeryLowest")
-                go.transform.SetAsFirstSibling();
+            switch (relatedTag) {
+                case "VeryHighest": go.transform.SetAsLastSibling();  break;
+                case "VeryLowest":  go.transform.SetAsFirstSibling(); break;
+            }
         }
 
         go.GetComponent<RectTransform>().anchorMax = new Vector2(0, 0);
@@ -183,11 +172,10 @@ public static class SpriteUtil {
             if (relatedTag == "") testName = "BulletPool";
             else                  testName = relatedTag + "Bullet";
 
-            if (rts[j].name == testName) {
-                go.transform.SetParent(GameObject.Find("Canvas").transform, true);
-                go.transform.SetSiblingIndex(j + (before ? 0 : 1));
-                break;
-            }
+            if (rts[j].name != testName) continue;
+            go.transform.SetParent(GameObject.Find("Canvas").transform, true);
+            go.transform.SetSiblingIndex(j + (before ? 0 : 1));
+            break;
         }
         go.GetComponent<RectTransform>().anchorMax = new Vector2(0, 0);
         go.GetComponent<RectTransform>().anchorMin = new Vector2(0, 0);

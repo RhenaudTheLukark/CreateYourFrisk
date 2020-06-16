@@ -2,11 +2,11 @@
 /// Lua binding to set and retrieve information for the game's arena.
 /// </summary>
 public class LuaArenaStatus {
-    public float width         { get { return ArenaManager.instance.newWidth;                            } }
-    public float height        { get { return ArenaManager.instance.newHeight;                           } }
+    public float width         { get { return ArenaManager.instance.desiredWidth;                            } }
+    public float height        { get { return ArenaManager.instance.desiredHeight;                           } }
 
-    public float x             { get { return ArenaManager.instance.newX;                                } }
-    public float y             { get { return ArenaManager.instance.newY;                                } }
+    public float x             { get { return ArenaManager.instance.desiredX;                                } }
+    public float y             { get { return ArenaManager.instance.desiredY;                                } }
 
     public float currentwidth  { get { return ArenaManager.arenaAbs.width;                               } }
     public float currentheight { get { return ArenaManager.arenaAbs.height;                              } }

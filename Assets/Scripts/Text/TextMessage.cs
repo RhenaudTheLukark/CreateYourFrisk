@@ -1,5 +1,4 @@
-﻿using UnityEngine;
-using MoonSharp.Interpreter;
+﻿using MoonSharp.Interpreter;
 
 public class TextMessage {
     public TextMessage(string text, bool decorated, bool showImmediate, bool actualText = true, DynValue mugshot = null) {
@@ -29,19 +28,18 @@ public class TextMessage {
 
     protected void Setup(string text, bool formatted, bool showImmediate) { Setup(text, formatted, showImmediate, true, null); }
 
-    public void SetText(string text) { this.Text = text; }
+    public void SetText(string text) { Text = text; }
 
-    private string DecorateText(string text) {
-        string newText = "* ", textNew = "";
+    private static string DecorateText(string text) {
+        string textNew = "";
         if (text == null)
-            return text;
+            return null;
         string[] lines = text.Split('\n');
         string[] linesCommands = new string[lines.Length];
-        int index = 0;
         if (text.Length != 0)
             for (int i = 0; i < lines.Length; i++) {
                 bool needExit = false;
-                index = 0;
+                int index = 0;
                 if (lines[i].Length != 0)
                     while (lines[i][index] == '[') {
                         if (!(lines[i].Length >= 10 + index && (lines[i].Substring(index, 10) == "[starcolor" || lines[i].Substring(index, 8) == "[letters"))) {
@@ -57,12 +55,13 @@ public class TextMessage {
                                 if (!command || lines[i].Length == 0) break;
                             }
                         } else
-                            while (lines[i][index] != ']')
+                            while (lines[i][index] != ']') {
                                 index++;
-                                if (index == lines[i].Length) {
-                                    needExit = true;
-                                    break;
-                                }
+                                if (index != lines[i].Length) continue;
+                                needExit = true;
+                                break;
+                            }
+
                         if (needExit)
                             break;
                     }
@@ -75,11 +74,13 @@ public class TextMessage {
                 else                       textNew += lines[i] + '\n';
             }
         int nCount = 0;
-        newText = linesCommands[nCount++] + "* ";
+        string newText = linesCommands[nCount++] + "* ";
         foreach (char c in textNew) {
-            if (c == '\n')      newText += "\n" + linesCommands[nCount ++] + "* ";
-            else if (c == '\r') newText += "\n  ";
-            else                newText += c;
+            switch (c) {
+                case '\n': newText += "\n" + linesCommands[nCount ++] + "* "; break;
+                case '\r': newText += "\n  ";                                 break;
+                default:   newText += c;                                      break;
+            }
         }
         return newText;
     }

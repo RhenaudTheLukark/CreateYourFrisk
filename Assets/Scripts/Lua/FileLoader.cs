@@ -15,19 +15,21 @@ public static class FileLoader {
         if (Application.platform == RuntimePlatform.OSXPlayer)
             rootInfo = rootInfo.Parent;
 
+        if (rootInfo == null) return;
         string SysDepDataRoot = rootInfo.FullName;
 
         while (true) {
             DirectoryInfo[] dfs = rootInfo.GetDirectories();
 
-            foreach (DirectoryInfo df in dfs)
-                if (df.FullName == Path.Combine(SysDepDataRoot, "Mods")) {
-                    DataRoot = SysDepDataRoot;
-                    return;
-                }
+            if (dfs.Any(df => df.FullName == Path.Combine(SysDepDataRoot, "Mods"))) {
+                DataRoot = SysDepDataRoot;
+                return;
+            }
 
-            try { rootInfo = new DirectoryInfo(rootInfo.Parent.FullName); }
-            catch {
+            try {
+                System.Diagnostics.Debug.Assert(rootInfo.Parent != null, "rootInfo.Parent != null");
+                rootInfo = new DirectoryInfo(rootInfo.Parent.FullName);
+            } catch {
                 UnitaleUtil.DisplayLuaError("CYF's Startup", "The engine detected no Mods folder in your files: are you sure it exists?");
                 return;
             }
@@ -40,7 +42,7 @@ public static class FileLoader {
         //else                                                                                                                 SysDepDataRoot = rootInfo.Parent.FullName;
     }
 
-    private static string _DataRoot = null;
+    private static string _DataRoot;
     /// <summary>
     /// Get the full platform-dependent path to the application root (the folder in which the Unitale executable resides).
     /// </summary>
@@ -106,15 +108,12 @@ public static class FileLoader {
         if (!fi.Exists)
             fi = new FileInfo(pathToDefaultFile(filename));
 
-        if (!fi.Exists) {
-            if (errorOnFailure)
-                if (filename.Length != 0)
-                    throw new CYFException("Attempted to load " + filename + " from either a mod or default directory, but it was missing in both.");
-                    //UnitaleUtil.DisplayLuaError("???", "Attempted to load " + filename + " from either a mod or default directory, but it was missing in both.");
-            return null;
-        }
+        if (fi.Exists) return fi.FullName;
+        if (!errorOnFailure) return null;
+        if (filename.Length != 0)
+            throw new CYFException("Attempted to load " + filename + " from either a mod or default directory, but it was missing in both.");
+        return null;
 
-        return fi.FullName;
     }
 
     public static bool SceneExists(string name) {
@@ -135,22 +134,22 @@ public static class FileLoader {
     /// <summary>
     /// Get an AudioClip at the given full path. Attempts to retrieve it from the AudioClipRegistry first by using folderRoot to extract the clip's name, otherwise attempts to load from disk.
     /// </summary>
+    /// <param name="folderRoot"></param>
     /// <param name="musicFilePath">Full path to a file.</param>
     /// <returns>AudioClip object on successful load, otherwise null.</returns>
     public static AudioClip getAudioClip(string folderRoot, string musicFilePath) {
-        string clipName = FileLoader.getRelativePathWithoutExtension(folderRoot, musicFilePath);
+        string clipName = getRelativePathWithoutExtension(folderRoot, musicFilePath);
         //AudioClip music = AudioClipRegistry.Get(clipName);
         //if (music != null)
         //    return music;
         WWW www = new WWW(new Uri(musicFilePath).AbsoluteUri.Replace("+", "%2B"));
         while (!www.isDone) { } // hold up a bit while it's loading; delay isn't noticeable and loading will fail otherwise
-        AudioType type = AudioType.UNKNOWN;
+        AudioType type;
         if (musicFilePath.EndsWith(".ogg"))       type = AudioType.OGGVORBIS;
         else if (musicFilePath.EndsWith(".wav"))  type = AudioType.WAV;
         else                                      return null;
 
-        AudioClip music;
-        music = www.GetAudioClip(false, false, type);
+        AudioClip music = www.GetAudioClip(false, false, type);
         music.name = "File at " + musicFilePath;
         music.LoadAudioData();
 

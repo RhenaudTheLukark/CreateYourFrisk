@@ -13,9 +13,9 @@ public class LifeBarController : MonoBehaviour {
     private float currentFill = 1.0f;
     private float oldFill = 1.0f;
     private float desiredFill = 1.0f;
-    private float fillLinearTime = 1.0f; // how many seconds does it take to go from current healthbar position to new healthbar position
-    private float fillTimer = 0.0f;
-    private float totalwidth = 0;
+    private const float fillLinearTime = 1.0f; // how many seconds does it take to go from current healthbar position to new healthbar position
+    private float fillTimer;
+    private float totalwidth;
     public bool player = false;
     public bool whenDamage = false;
     public float whenDamageValue = 0.0f;
@@ -46,8 +46,7 @@ public class LifeBarController : MonoBehaviour {
         else {
             if (fillvalue > 1)
                 fillvalue = 1;
-            if (PlayerCharacter.instance.MaxHP > 100)  fill.rectTransform.offsetMax = new Vector2(-(100 * (1-fillvalue)) * 1.2f, fill.rectTransform.offsetMin.y);
-            else                              fill.rectTransform.offsetMax = new Vector2(-(PlayerCharacter.instance.MaxHP * (1 - fillvalue)) * 1.2f, fill.rectTransform.offsetMin.y);
+            fill.rectTransform.offsetMax = new Vector2(-(Mathf.Min(PlayerCharacter.instance.MaxHP, 100) * (1-fillvalue)) * 1.2f, fill.rectTransform.offsetMin.y);
         }
         //fill.rectTransform.offsetMax = new Vector2(-(1 - fillvalue) * PlayerCharacter.instance.MaxHP * 1.2f, fill.rectTransform.offsetMin.y);
     }

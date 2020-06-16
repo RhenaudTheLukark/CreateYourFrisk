@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,14 +6,14 @@ public class EnemyEncounter : MonoBehaviour {
     public LuaEnemyController[] enemies;
     public Vector2[] enemyPositions;
     internal float waveTimer;
-    public int turnCount = 0;
+    public int turnCount;
     protected GameObject[] enemyInstances;
 
     public string EncounterText { get; set; }
     public bool CanRun { get; set; }
 
     public LuaEnemyController[] EnabledEnemies {
-        get { return enemies.Where(x => x.inFight).ToArray<LuaEnemyController>(); }
+        get { return enemies.Where(x => x.inFight).ToArray(); }
     }
 
     public virtual Vector2 ArenaSize {
@@ -26,13 +25,13 @@ public class EnemyEncounter : MonoBehaviour {
     protected string RandomEncounterText() {
         if (EnabledEnemies.Length <= 0)
             return "";
-        int randomEnemy = UnityEngine.Random.Range(0, EnabledEnemies.Length);
+        int randomEnemy = Random.Range(0, EnabledEnemies.Length);
         string[] comments;
         try { comments = EnabledEnemies[randomEnemy].Comments; }
-        catch { throw new CYFException("RandomEncounterText: Can not read the \"comments\" table of enemy #" + (randomEnemy + 1).ToString() + ".\nAre you sure it's set?"); }
+        catch { throw new CYFException("RandomEncounterText: Can not read the \"comments\" table of enemy #" + (randomEnemy + 1) + ".\nAre you sure it's set?"); }
         if (comments.Length <= 0)
             return "";
-        int randomComment = UnityEngine.Random.Range(0, comments.Length);
+        int randomComment = Random.Range(0, comments.Length);
         return comments[randomComment];
     }
 
@@ -43,10 +42,9 @@ public class EnemyEncounter : MonoBehaviour {
 
     public virtual void HandleSpare() {
         //bool sparedAny = false;
-        foreach (EnemyController enemy in enemies)
+        foreach (LuaEnemyController enemy in enemies)
             if (enemy.CanSpare)
                 enemy.GetComponent<Image>().color = new Color(0.2f, 0.2f, 0.2f);
-                //sparedAny = true;
     }
 
     // <summary>

@@ -1,24 +1,25 @@
 ﻿using System;
+using System.Linq;
 using MoonSharp.Interpreter;
 using UnityEngine;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 public class LuaEnemyController : EnemyController {
     internal string scriptName;
     internal ScriptWrapper script;
     internal bool inFight = true; // if false, enemy will no longer be considered as an option in menus and such
     private string lastBubbleName;
-    private bool error = false;
     public int presetDmg = -1826643; // You'll not be able to deal exactly -1 826 643 dmg with this technique.
     public float xFightAnimShift = 0;
     public LuaSpriteController sprite;
     public float bubbleWidth = 0;
     public int index = -1;
-    public Vector2[] offsets = new Vector2[] { new Vector2(0, 0), new Vector2(0, 0), new Vector2(0, 0) };
-                                             //SliceAnimOffset    BubbleOffset       DamageUIOffset
+    public Vector2[] offsets = { new Vector2(0, 0), new Vector2(0, 0), new Vector2(0, 0) };
+                               //SliceAnimOffset    BubbleOffset       DamageUIOffset
 
-    internal bool spared = false;
-    internal bool killed = false;
+    internal bool spared;
+    internal bool killed;
 
     public override string Name {
         get { return script.GetVar("name").String; }
@@ -27,8 +28,6 @@ public class LuaEnemyController : EnemyController {
 
     public override string[] ActCommands {
         get {
-            if (error)
-                return new string[] { "LUA error" };
             DynValue actCmds = script.GetVar("commands");
             string[] tempActCmds;
             int add = 0;
@@ -221,7 +220,7 @@ public class LuaEnemyController : EnemyController {
         get { return GetComponent<RectTransform>().position.y; }
     }
 
-    public bool canMove = false;
+    public bool canMove;
 
     private void Start() {
         try {
@@ -268,7 +267,7 @@ public class LuaEnemyController : EnemyController {
         catch (Exception ex)            { UnitaleUtil.DisplayLuaError(scriptName, "Unknown error. Usually means you're missing a sprite.\nSee documentation for details.\nStacktrace below in case you wanna notify a dev.\n\nError: " + ex.Message + "\n\n" + ex.StackTrace); }
     }
 
-    public override void HandleAttack(int hitStatus) { TryCall("HandleAttack", new DynValue[] { DynValue.NewNumber(hitStatus) }); }
+    public override void HandleAttack(int hitStatus) { TryCall("HandleAttack", new[] { DynValue.NewNumber(hitStatus) }); }
 
     /*public override string GetRegularScreenDialog() {
         if (!error)
@@ -284,20 +283,19 @@ public class LuaEnemyController : EnemyController {
     }*/
 
     public override string[] GetDefenseDialog() {
-        if (!error) {
-            DynValue dialogues = script.GetVar("currentdialogue");
-            if (dialogues == null || dialogues.Table == null)
-                if (dialogues.String != null)  return new string[] { dialogues.String };
-                else if (Dialogue == null)     return null;
-                else                           return new string[] { Dialogue[UnityEngine.Random.Range(0, Dialogue.Length)] };
+        DynValue dialogues = script.GetVar("currentdialogue");
+        if (dialogues == null)
+            return null;
+        if (dialogues.Table == null)
+            if (dialogues.String != null)  return new[] { dialogues.String };
+            else if (Dialogue == null)     return null;
+            else                           return new[] { Dialogue[Random.Range(0, Dialogue.Length)] };
 
-            string[] dialogueStrings = new string[dialogues.Table.Length];
-            for (int i = 0; i < dialogues.Table.Length; i++)
-                dialogueStrings[i] = dialogues.Table.Get(i + 1).String;
-            script.SetVar("currentdialogue", DynValue.NewNil());
-            return dialogueStrings;
-        } else
-            return new string[] { "LUA\nerror." };
+        string[] dialogueStrings = new string[dialogues.Table.Length];
+        for (int i = 0; i < dialogues.Table.Length; i++)
+            dialogueStrings[i] = dialogues.Table.Get(i + 1).String;
+        script.SetVar("currentdialogue", DynValue.NewNil());
+        return dialogueStrings;
     }
 
     public bool TryCall(string func, DynValue[] param = null) {
@@ -313,7 +311,7 @@ public class LuaEnemyController : EnemyController {
     }
 
     protected override void HandleCustomCommand(string command) {
-        TryCall("HandleCustomCommand", new DynValue[] { DynValue.NewString(command) });
+        TryCall("HandleCustomCommand", new[] { DynValue.NewString(command) });
     }
 
     public void SetSprite(string filename) {
@@ -330,7 +328,7 @@ public class LuaEnemyController : EnemyController {
             return;
         UIController.instance.gold += Gold;
         // We have to code the particles separately because they don't work well in UI screenspace. Great stuff.
-        ParticleSystem spareSmoke = Instantiate<ParticleSystem>(Resources.Load<ParticleSystem>("Prefabs/MonsterSpareParticleSys"));
+        ParticleSystem spareSmoke = Instantiate(Resources.Load<ParticleSystem>("Prefabs/MonsterSpareParticleSys"));
         spareSmoke.Emit(10);
         ParticleSystem.Particle[] particles = new ParticleSystem.Particle[10];
         spareSmoke.GetParticles(particles);
@@ -358,7 +356,7 @@ public class LuaEnemyController : EnemyController {
             return;
         UIController.instance.gold += Gold;
         UIController.instance.exp += XP;
-        GameObject go = Instantiate<GameObject>(Resources.Load<GameObject>("Prefabs/MonsterDuster"));
+        GameObject go = Instantiate(Resources.Load<GameObject>("Prefabs/MonsterDuster"));
         go.transform.SetParent(UIController.instance.psContainer.transform);
         GetComponent<ParticleDuplicator>().Activate(sprite);
         SetActive(false);
@@ -391,15 +389,12 @@ public class LuaEnemyController : EnemyController {
 
     public void BindToArena(bool bind, bool isUnderArena = false) {
         int count = 0;
-        if (bind) { //If bind :ahde:
-            foreach (LuaEnemyController luaec in GameObject.FindObjectsOfType<LuaEnemyController>()) //for each enemies...
-                if (luaec.transform.parent.name == "LuaEnemyEncounterGO" && luaec.index < index) //If the enemy's index is greater than the current enemy's index, let's put it below.
-                    count++;
+        if (bind) {
+            count += FindObjectsOfType<LuaEnemyController>().Count(luaec => luaec.transform.parent.name == "LuaEnemyEncounterGO" && luaec.index < index);
             transform.SetParent(GameObject.Find("LuaEnemyEncounterGO").transform, true);
         } else {
-            foreach (LuaEnemyController luaec in GameObject.FindObjectsOfType<LuaEnemyController>())
-                if (luaec.transform.parent.name == "arena_container" && luaec.index <= index &&
-                    ((isUnderArena && luaec.transform.GetSiblingIndex() < GameObject.Find("arena_border_outer").transform.GetSiblingIndex()) ||!isUnderArena))  count++;
+            count += FindObjectsOfType<LuaEnemyController>().Count(luaec => !isUnderArena || luaec.transform.parent.name == "arena_container" && luaec.index <= index &&
+                                                                            luaec.transform.GetSiblingIndex() < GameObject.Find("arena_border_outer").transform.GetSiblingIndex());
             if (!isUnderArena) count++;
             transform.SetParent(GameObject.Find("arena_container").transform, true);
         }
@@ -412,11 +407,11 @@ public class LuaEnemyController : EnemyController {
         try {
             script.SetVar("posx", DynValue.NewNumber(GetComponent<RectTransform>().position.x));
             script.SetVar("posy", DynValue.NewNumber(GetComponent<RectTransform>().position.y));
-        } catch { }
-        if (!ArenaManager.instance.firstTurn &&!canMove) {
-            canMove = true;
-            script.SetVar("canmove", DynValue.NewBoolean(true));
-        }
+        } catch { /* ignored */ }
+
+        if (ArenaManager.instance.firstTurn || canMove) return;
+        canMove = true;
+        script.SetVar("canmove", DynValue.NewBoolean(true));
     }
 
     public void SetSliceAnimOffset(int x, int y) { offsets[0] = new Vector2(x, y); }

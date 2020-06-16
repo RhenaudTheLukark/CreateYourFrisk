@@ -72,46 +72,41 @@ public class MusicManager {
     }
 
     [MoonSharpHidden] public static bool IsStoppedOrNull(AudioSource audio) {
-        if (audio != null) {
-            if (audio.ToString().ToLower() == "null")  return true;
-            if (!audio.isPlaying)                      return true;
-            else                                       return false;
-        }
-        return true;
+        return audio == null || audio.ToString().ToLower() == "null" || !audio.isPlaying;
     }
 
     public static void StopAll() {
-        foreach (AudioSource audioSrc in GameObject.FindObjectsOfType<AudioSource>())
+        foreach (AudioSource audioSrc in Object.FindObjectsOfType<AudioSource>())
             audioSrc.Stop();
     }
 
     public static void PauseAll() {
-        foreach (AudioSource audioSrc in GameObject.FindObjectsOfType<AudioSource>())
+        foreach (AudioSource audioSrc in Object.FindObjectsOfType<AudioSource>())
             audioSrc.Pause();
     }
 
     public static void UnpauseAll() {
-        foreach (AudioSource audioSrc in GameObject.FindObjectsOfType<AudioSource>())
+        foreach (AudioSource audioSrc in Object.FindObjectsOfType<AudioSource>())
             audioSrc.UnPause();
     }
 
     public static string GetSoundDictionary(string key) {
         if (key == null)
             throw new CYFException("Audio.GetSoundDictionary: The first argument (the index) is nil.\n\nSee the documentation for proper usage.");
-        if (hiddenDictionary.ContainsKey(key.ToLower()))  return (string)hiddenDictionary[key.ToLower()];
-        else                                              return key;
+        return hiddenDictionary.ContainsKey(key.ToLower()) ? (string)hiddenDictionary[key.ToLower()] : key;
     }
 
     public static void SetSoundDictionary(string key, string value) {
-        if (key == null)
-            throw new CYFException("Audio.SetSoundDictionary: The first argument (the index) is nil.\n\nSee the documentation for proper usage.");
-        if (key == "RESETDICTIONARY")
-            hiddenDictionary.Clear();
-        else {
-            key = key.ToLower();
-            if (hiddenDictionary.ContainsKey(key))
-                hiddenDictionary.Remove(key);
-            hiddenDictionary.Add(key, value);
+        switch (key) {
+            case null:              throw new CYFException("Audio.SetSoundDictionary: The first argument (the index) is nil.\n\nSee the documentation for proper usage.");
+            case "RESETDICTIONARY": hiddenDictionary.Clear(); break;
+            default: {
+                key = key.ToLower();
+                if (hiddenDictionary.ContainsKey(key))
+                    hiddenDictionary.Remove(key);
+                hiddenDictionary.Add(key, value);
+                break;
+            }
         }
     }
 

@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using System.Collections;
 
 /// <summary>
 /// Disables vertical sync, sets resolution to 640x480 and sets the target framerate to 60FPS.
@@ -8,22 +7,21 @@ using System.Collections;
 /// CYF v0.6.4: Houses resolution-based variables and functions.
 /// </summary>
 public class ScreenResolution : MonoBehaviour {
-    public static bool hasInitialized = false;
+    public  static bool          hasInitialized;
+    public  static bool          perfectFullscreen = true;    //"Blurless Fullscreen" option.
+    public  static int           windowScale = 1;             //"Window Scale" option.
+    public  static bool          wideFullscreen;              //Enabled/disabled by means of Misc.SetWideFullscreen.
+    public  static int           lastMonitorWidth = 640;      //The user's monitor  width. Becomes  Misc.MonitorWidth.
+    public  static int           lastMonitorHeight = 480;     //The user's monitor height. Becomes Misc.MonitorHeight.
+    public  static Vector3       displayedSize;               //x, y: width/height of the "normal" bounds of the screen. z: x offset to start measuring Mouse Position from
+    private static float         userAspectRatio;             //The aspect ratio of the user's monitor.
+    private static float         userDisplayWidth;            //Width of the user's monitor if it were compressed horizontally to match a 4:3 aspect ratio.
+    private static Rect          FSBorderRect = new Rect(0f, 0f, 1f, 1f); //Rect to apply to cameras in fullscreen (with pillarboxing).
+    private static readonly Rect NoBorderRect = new Rect(0f, 0f, 1f, 1f); //Rect to apply to cameras in windowed (or wide fullscreen).
 
-    public  static bool    perfectFullscreen = true;    //"Blurless Fullscreen" option.
-    public  static int     windowScale = 1;             //"Window Scale" option.
-    public  static bool    wideFullscreen = false;      //Enabled/disabled by means of Misc.SetWideFullscreen.
-    public  static int     lastMonitorWidth = 640;      //The user's monitor  width. Becomes  Misc.MonitorWidth.
-    public  static int     lastMonitorHeight = 480;     //The user's monitor height. Becomes Misc.MonitorHeight.
-    public  static Vector3 displayedSize;               //x, y: width/height of the "normal" bounds of the screen. z: x offset to start measuring Mouse Position from
-    private static float   userAspectRatio;             //The aspect ratio of the user's monitor.
-    private static float   userDisplayWidth;            //Width of the user's monitor if it were compressed horizontally to match a 4:3 aspect ratio.
-    private static Rect    FSBorderRect = new Rect(0f, 0f, 1f, 1f); //Rect to apply to cameras in fullscreen (with pillarboxing).
-    private static Rect    NoBorderRect = new Rect(0f, 0f, 1f, 1f); //Rect to apply to cameras in windowed (or wide fullscreen).
-
-    const int   ASPECT_WIDTH  = 640;
-    const int   ASPECT_HEIGHT = 480;
-    const float ASPECT_RATIO  = 1.333334f;
+    private const int   ASPECT_WIDTH  = 640;
+    private const int   ASPECT_HEIGHT = 480;
+    private const float ASPECT_RATIO  = 1.333334f;
 
     private void Start() {
         if (hasInitialized) {
@@ -34,11 +32,11 @@ public class ScreenResolution : MonoBehaviour {
         Application.targetFrameRate = 60;
 
         //Grab the user's monitor resolution, and calculate some things early
-        lastMonitorWidth      = Display.main.systemWidth;
-        lastMonitorHeight     = Display.main.systemHeight;
-        displayedSize         = new Vector3(Screen.width, Screen.height, 0);
-        userAspectRatio       = (float)lastMonitorWidth / (float)lastMonitorHeight;
-        userDisplayWidth      = System.Math.Min((int)RoundToNearestEven((lastMonitorHeight / (double)3) * (double)4), lastMonitorWidth);
+        lastMonitorWidth  = Display.main.systemWidth;
+        lastMonitorHeight = Display.main.systemHeight;
+        displayedSize     = new Vector3(Screen.width, Screen.height, 0);
+        userAspectRatio   = lastMonitorWidth / (float)lastMonitorHeight;
+        userDisplayWidth  = System.Math.Min((int)RoundToNearestEven(lastMonitorHeight / (double)3 * 4), lastMonitorWidth);
         ProjectileHitboxRenderer.fsScreenWidth = System.Math.Min((int)RoundToNearestEven((double)(ASPECT_HEIGHT / (float)lastMonitorHeight) * lastMonitorWidth), lastMonitorWidth);
 
         //Calculate a cropping camera rect to apply to cameras when entering fullscreen
@@ -53,12 +51,12 @@ public class ScreenResolution : MonoBehaviour {
 
         //Load BGCamera Prefab and have it be in every scene, from the moment CYF starts.
         //This is necessary so BGCamera will clear out old frames outside of the Main Camera's display rect.
-        GameObject BGCamera = Instantiate<GameObject>(Resources.Load<GameObject>("Prefabs/BGCamera"));
+        GameObject BGCamera = Instantiate(Resources.Load<GameObject>("Prefabs/BGCamera"));
         BGCamera.name = "BGCamera";
         #if UNITY_EDITOR
             BGCamera.GetComponent<Camera>().rect = NoBorderRect;
         #endif
-        GameObject.DontDestroyOnLoad(BGCamera);
+        DontDestroyOnLoad(BGCamera);
 
         //If this is the user's first time EVER opening the engine, force 640x480 windowed
         if (!PlayerPrefs.HasKey("once")) {
@@ -72,6 +70,7 @@ public class ScreenResolution : MonoBehaviour {
     /// Enters or exits fullscreen, whilst accounting for .
     /// </summary>
     /// <param name="fullscreen">Whether or not the user is in fullscreen</param>
+    /// <param name="fswitch"></param>
     public static void SetFullScreen(bool fullscreen, int fswitch = 1) {
         //Regular FS and windowed operations
         if (!fullscreen) {
@@ -87,7 +86,7 @@ public class ScreenResolution : MonoBehaviour {
             } else {
                 int downscaledAspectWidth = (int)System.Math.Min((int)RoundToNearestEven(((double)(ASPECT_HEIGHT * windowScale) / lastMonitorHeight) * lastMonitorWidth), lastMonitorWidth);
                 Screen.SetResolution(downscaledAspectWidth, ASPECT_HEIGHT * windowScale, true, 0);
-                displayedSize = new Vector3(ASPECT_WIDTH * windowScale, ASPECT_HEIGHT * windowScale, (downscaledAspectWidth - (ASPECT_WIDTH * windowScale)) / 2);
+                displayedSize = new Vector3(ASPECT_WIDTH * windowScale, ASPECT_HEIGHT * windowScale, (downscaledAspectWidth - ASPECT_WIDTH * windowScale) / 2f);
             }
         }
         BoxCameras(fullscreen);
@@ -134,7 +133,7 @@ public class ScreenResolution : MonoBehaviour {
         else
             cam.rect = NoBorderRect;
     }
-    private static void BoxCameras2(Scene scene, LoadSceneMode mode) {
+    private static void BoxCameras2(Scene scene) {
         lastScene = scene.name;
         BoxCameras(Screen.fullScreen);
     }

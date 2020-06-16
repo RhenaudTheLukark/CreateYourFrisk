@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,8 +11,8 @@ public class UserDebugger : MonoBehaviour{
     public int maxLines = 7;
     public Queue<string> dbgContent = new Queue<string>();
     public bool canShow = true;
-    private bool firstActive = false;
-    private string originalText = null;
+    private bool firstActive;
+    private string originalText;
 
     public void Warn(string line) {
         Debug.LogWarning("Frame " + GlobalControls.frame + ": " + line);
@@ -28,10 +27,9 @@ public class UserDebugger : MonoBehaviour{
         dbgContent.Clear();
         gameObject.SetActive(false);
         firstActive = false;
-        if (UnitaleUtil.printDebuggerBeforeInit != "") {
-            UserWriteLine(UnitaleUtil.printDebuggerBeforeInit);
-            UnitaleUtil.printDebuggerBeforeInit = "";
-        }
+        if (UnitaleUtil.printDebuggerBeforeInit == "") return;
+        UserWriteLine(UnitaleUtil.printDebuggerBeforeInit);
+        UnitaleUtil.printDebuggerBeforeInit = "";
     }
 
     public void UserWriteLine(string line) {
@@ -42,9 +40,9 @@ public class UserDebugger : MonoBehaviour{
         // activation of the debug window if you're printing to it for the first time
         if (!firstActive && canShow) {
             gameObject.SetActive(true);
-            try {
-                Camera.main.GetComponent<FPSDisplay>().enabled = true;
-            } catch { }
+            try { Camera.main.GetComponent<FPSDisplay>().enabled = true; }
+            catch { /* ignored */ }
+
             firstActive = true;
         }
         transform.SetAsLastSibling();

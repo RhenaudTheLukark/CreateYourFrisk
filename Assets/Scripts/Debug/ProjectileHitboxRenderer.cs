@@ -10,15 +10,12 @@ public class ProjectileHitboxRenderer : MonoBehaviour {
 
     private GameObject root;
 
-    private Vector3 topLeft;
-    private Vector3 topRight;
-    private Vector3 bottomLeft;
-    private Vector3 bottomRight;
-    private int zIndex = -9;
+    private Vector3 topLeft, topRight, bottomLeft, bottomRight;
+    private const int zIndex = -9;
     private Shader shdr;
     private Material mat;
 
-    public static Rect player = new Rect();
+    public static Rect player;
     public static int fsScreenWidth = 0;
 
     private void Start() {
@@ -34,23 +31,19 @@ public class ProjectileHitboxRenderer : MonoBehaviour {
         Vector2 cameraOffset = new Vector2(Misc.cameraX, Misc.cameraY);
         float screenWidth  = !Screen.fullScreen ? 640 : fsScreenWidth;
         float borderOffset = !Screen.fullScreen ?   0 : (fsScreenWidth - 640) / 2;
-        #if UNITY_EDITOR
-            screenWidth = 640;
-            borderOffset = 0;
-        #endif
-        for (int i = 0; i < projectiles.Length; i ++) {
-            GameObject go = projectiles[i].gameObject;
+        foreach (Projectile p in projectiles) {
+            GameObject go = p.gameObject;
 
-            bottomRight = go.GetComponent<Projectile>().selfAbs.center - cameraOffset;
+            bottomRight   =  go.GetComponent<Projectile>().selfAbs.center - cameraOffset;
             bottomRight.x += borderOffset;
             topLeft.Set    (bottomRight.x - go.GetComponent<Projectile>().selfAbs.width / 2, bottomRight.y + go.GetComponent<Projectile>().selfAbs.height / 2, zIndex);
             topRight.Set   (bottomRight.x + go.GetComponent<Projectile>().selfAbs.width / 2, bottomRight.y + go.GetComponent<Projectile>().selfAbs.height / 2, zIndex);
             bottomLeft.Set (bottomRight.x - go.GetComponent<Projectile>().selfAbs.width / 2, bottomRight.y - go.GetComponent<Projectile>().selfAbs.height / 2, zIndex);
             bottomRight.Set(bottomRight.x + go.GetComponent<Projectile>().selfAbs.width / 2, bottomRight.y - go.GetComponent<Projectile>().selfAbs.height / 2, zIndex);
 
-            topLeft.Set(topLeft.x / screenWidth, topLeft.y / 480, zIndex);
-            topRight.Set(topRight.x / screenWidth, topRight.y / 480, zIndex);
-            bottomLeft.Set(bottomLeft.x / screenWidth, bottomLeft.y / 480, zIndex);
+            topLeft.Set    (topLeft.x     / screenWidth, topLeft.y     / 480, zIndex);
+            topRight.Set   (topRight.x    / screenWidth, topRight.y    / 480, zIndex);
+            bottomLeft.Set (bottomLeft.x  / screenWidth, bottomLeft.y  / 480, zIndex);
             bottomRight.Set(bottomRight.x / screenWidth, bottomRight.y / 480, zIndex);
 
             // draw boxes

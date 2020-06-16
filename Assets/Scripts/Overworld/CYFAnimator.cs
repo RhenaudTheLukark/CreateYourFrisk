@@ -9,8 +9,8 @@ public class CYFAnimator : MonoBehaviour {
     private Vector3 lastPos;
     private bool waitingForLateStart = true;
 
-    void OnEnable()  { StaticInits.Loaded += LateStart; }
-    void OnDisable() { StaticInits.Loaded -= LateStart; }
+    private void OnEnable()  { StaticInits.Loaded += LateStart; }
+    private void OnDisable() { StaticInits.Loaded -= LateStart; }
 
     [System.Serializable] // Allows the edition of this data in the Unity Editor
     public struct Anim {
@@ -19,35 +19,34 @@ public class CYFAnimator : MonoBehaviour {
         public float transitionTime;
     }
     public Anim[] anims;
-    private Anim GetAnimPerName(string name) {
+    private Anim GetAnimPerName(string animName) {
         foreach (Anim anim in anims)
-            if (anim.name == name)
+            if (anim.name == animName)
                 return anim;
         return new Anim();
     }
 
-    public bool AnimExists(string name) {
-        return GetAnimPerName(name).name == null;
+    public bool AnimExists(string animName) {
+        return GetAnimPerName(animName).name == null;
     }
 
     // Use this for initialization
     public void LateStart() {
         if (EventManager.instance.spriteControllers.ContainsKey(gameObject.name)) sprctrl = EventManager.instance.spriteControllers[gameObject.name];
-        else if (gameObject.name == "Player")                            sprctrl = PlayerOverworld.instance.sprctrl;
+        else if (gameObject.name == "Player")                                     sprctrl = PlayerOverworld.instance.sprctrl;
         else {
             EventManager.instance.ResetEvents(false);
             if (!EventManager.instance.spriteControllers.ContainsKey(gameObject.name))
                 throw new CYFException("A CYFAnimator component must be tied to an event, however the GameObject " + gameObject.name + " doesn't seem to have one.");
         }
         lastPos = gameObject.transform.position;
-        if (waitingForLateStart) {
-            ReplaceAnim(beginAnim);
-            waitingForLateStart = false;
-        }
+        if (!waitingForLateStart) return;
+        ReplaceAnim(beginAnim);
+        waitingForLateStart = false;
     }
 
     // Update is called once per frame
-    void Update () {
+    private void Update () {
         if (waitingForLateStart)
             return;
         string animName = specialHeader;

@@ -1,18 +1,17 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-using System.Collections;
 using System.IO;
 using MoonSharp.Interpreter;
 
 public class OptionsScript : MonoBehaviour {
     // used to prevent the player from erasing real/almighty globals or their save by accident
-    private int RealGlobalCooldown = 0;
-    private int AlMightyGlobalCooldown = 0;
-    private int SaveCooldown = 0;
+    private int RealGlobalCooldown;
+    private int AlMightyGlobalCooldown;
+    private int SaveCooldown;
 
     // used to update the Description periodically
-    private int DescriptionTimer = 0;
+    private int DescriptionTimer;
 
     // game objects
     public GameObject ResetRG, ResetAG, ClearSave, Safe, Retro, Fullscreen, Scale, Discord, Exit;
@@ -135,22 +134,21 @@ public class OptionsScript : MonoBehaviour {
         Exit.GetComponent<Button>().onClick.AddListener(() => {SceneManager.LoadScene("ModSelect");});
 
         // Crate Your Frisk
-        if (GlobalControls.crate) {
-            // labels
-            GameObject.Find("OptionsLabel").GetComponent<Text>().text =                   "OPSHUNS";
-            GameObject.Find("DescriptionLabel").GetComponent<Text>().text =             "MORE TXET";
+        if (!GlobalControls.crate) return;
+        // labels
+        GameObject.Find("OptionsLabel").GetComponent<Text>().text     = "OPSHUNS";
+        GameObject.Find("DescriptionLabel").GetComponent<Text>().text = "MORE TXET";
 
-            // buttons
-            ResetRG.GetComponentInChildren<Text>().text =                      "RESTE RELA GOLBALZ";
-            ResetAG.GetComponentInChildren<Text>().text =                   "RESTE ALMIGTY GOLBALZ";
-            ClearSave.GetComponentInChildren<Text>().text =                              "WYPE SAV";
-            Exit.GetComponentInChildren<Text>().text =                         "EXIT TOO MAD SELCT";
-        }
+        // buttons
+        ResetRG.GetComponentInChildren<Text>().text   = "RESTE RELA GOLBALZ";
+        ResetAG.GetComponentInChildren<Text>().text   = "RESTE ALMIGTY GOLBALZ";
+        ClearSave.GetComponentInChildren<Text>().text = "WYPE SAV";
+        Exit.GetComponentInChildren<Text>().text      = "EXIT TOO MAD SELCT";
     }
 
     // Gets the text the description should use based on what button is currently being hovered over
     private string GetDescription(string buttonName) {
-        string response = "";
+        string response;
         switch(buttonName) {
             case "ResetRG":
                 response = "Resets all Real Globals.\n\n"
@@ -200,10 +198,7 @@ public class OptionsScript : MonoBehaviour {
                 return !GlobalControls.crate ? response : Temmify.Convert(response);
             case "Exit":
                 response = "Returns to the Mod Select screen.";
-                if (!GlobalControls.crate)
-                    return response;
-                else
-                    return Temmify.Convert(response);
+                return !GlobalControls.crate ? response : Temmify.Convert(response);
             default:
                 return !GlobalControls.crate ? "Hover over an option and its description will appear here!" : "HOVR OVR DA TING N GET TEXT HEAR!!";
         }

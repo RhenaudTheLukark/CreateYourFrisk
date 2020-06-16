@@ -62,13 +62,13 @@ public class EnemyController : MonoBehaviour {
     }
 
     public virtual string[] GetDefenseDialog() {
-        string[] randoms = new string[] {
+        string[] randoms = {
             "Check\nit out.",
             "That's\nsome\nsolid\ntext.",
             "More\ntext,\nplease.",
             "We're\ngetting\ncloser.",
             "You\nguys\nSUCK\nat this."
         };
-        return new string[] { randoms[Random.Range(0, randoms.Length)] };
+        return new[] { randoms[Random.Range(0, randoms.Length)] };
     }
 }

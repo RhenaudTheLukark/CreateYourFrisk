@@ -3,16 +3,15 @@ using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.Networking; // See the comments above retrieveAssetBundle
 
 public static class ShaderRegistry {
     public static Material UI_DEFAULT_MATERIAL;
-    private static Dictionary<string, Material> materialsDefault = new Dictionary<string, Material>();
-    private static Dictionary<string, Material> materialsMod     = new Dictionary<string, Material>();
-    private static Dictionary<string, AssetBundle> dictDefault = new Dictionary<string, AssetBundle>();
-    private static Dictionary<string, AssetBundle> dictMod     = new Dictionary<string, AssetBundle>();
-    private static string OSType = Misc.OSType.ToLower();
+    private static readonly Dictionary<string, Material> materialsDefault = new Dictionary<string, Material>();
+    private static readonly Dictionary<string, Material> materialsMod     = new Dictionary<string, Material>();
+    private static readonly Dictionary<string, AssetBundle> dictDefault = new Dictionary<string, AssetBundle>();
+    private static readonly Dictionary<string, AssetBundle> dictMod     = new Dictionary<string, AssetBundle>();
+    private static readonly string OSType = Misc.OSType.ToLower();
 
     // Load all default AssetBundles into memory one time, and never unload them
     // (except when the overworld gets restarted or whatnot)
@@ -25,27 +24,23 @@ public static class ShaderRegistry {
     public static Material Get(string bundle, string key) {
         string bundleL = bundle.ToLower();
         string keyL = key.ToLower();
-        if (dictMod.ContainsKey(bundleL)) {
-            if (materialsMod.ContainsKey(bundleL + keyL))       return materialsMod[bundleL + keyL];
-            else                                                return tryLoad(bundleL, keyL, true, bundle, key);
-        } else if (dictDefault.ContainsKey(bundleL)) {
-            if (materialsDefault.ContainsKey(bundleL + keyL))   return materialsDefault[bundleL + keyL];
-            else                                                return tryLoad(bundleL, keyL, false, bundle, key);
-        }
+        if (dictMod.ContainsKey(bundleL))
+            return materialsMod.ContainsKey(bundleL + keyL) ? materialsMod[bundleL + keyL] : tryLoad(bundleL, keyL, true, bundle, key);
+
+        if (dictDefault.ContainsKey(bundleL))
+            return materialsDefault.ContainsKey(bundleL + keyL) ? materialsDefault[bundleL + keyL] : tryLoad(bundleL, keyL, false, bundle, key);
         throw new CYFException("Shader AssetBundle \"" + bundle + "\" could not be found in a mod or default directory.");
     }
 
     // Creates a new Material with an extracted shader
     private static Material tryLoad(string bundleLower, string keyLower, bool mod, string bundleName, string key) {
-        AssetBundle bundle;
-        if (mod)    bundle = dictMod[bundleLower];
-        else        bundle = dictDefault[bundleLower];
+        AssetBundle bundle = mod ? dictMod[bundleLower] : dictDefault[bundleLower];
 
         if (!bundle.Contains(keyLower))
             throw new CYFException("Shader AssetBundle \"" + bundleName + "\" does not contain shader \"" + key + "\".");
 
         Shader shade = bundle.LoadAsset(keyLower) as Shader;
-        if (!shade.isSupported)
+        if (shade != null && !shade.isSupported)
             throw new CYFException("The shader \"" + key + "\" is not supported. It might not be suited for your OS, or this might be a problem with the shader itself.");
 
         Material mat = new Material(shade);
@@ -55,7 +50,7 @@ public static class ShaderRegistry {
     }
 
     // Unloads previous mod-specific Materials and opens AssetBundles for the new mod if applicable
-    public static void init() {
+    public static void Init() {
         materialsMod.Clear();
         loadAllFrom(FileLoader.pathToModFile("Shaders"), true);
         if (Camera.main.GetComponent<CameraShader>() && CameraShader.luashader != null)
@@ -65,36 +60,34 @@ public static class ShaderRegistry {
     // Opens all AssetBundles in a directory and stores them
     private static void loadAllFrom(string directoryPath, bool mod) {
         DirectoryInfo shaderFolder = new DirectoryInfo(directoryPath);
-        DirectoryInfo[] shaderFolderContents;
-        List<FileInfo> shaderBundles = new List<FileInfo>();
 
         if (!shaderFolder.Exists)
             return;
 
-        shaderFolderContents = shaderFolder.GetDirectories("*", SearchOption.TopDirectoryOnly);
+        DirectoryInfo[] shaderFolderContents = shaderFolder.GetDirectories("*", SearchOption.TopDirectoryOnly);
 
-        foreach (DirectoryInfo d in shaderFolderContents) {
-            FileInfo[] localShaders = d.GetFiles("*.*", SearchOption.AllDirectories).Where(file => Path.GetExtension(file.Name) == "").ToArray();
-            FileInfo OSSpecificBundle = localShaders.Single(s => s.Name == OSType);
-            if (OSSpecificBundle != null)
-                shaderBundles.Add(OSSpecificBundle);
-        }
+        List<FileInfo> shaderBundles = shaderFolderContents.Select(d => d.GetFiles("*.*", SearchOption.AllDirectories).Where(file => Path.GetExtension(file.Name) == "").ToArray()).Select(localShaders => localShaders.Single(s => s.Name == OSType)).Where(OSSpecificBundle => OSSpecificBundle != null).ToList();
 
         if (mod) {
             foreach (KeyValuePair<string, AssetBundle> pair in dictMod)
-                try { pair.Value.Unload(true); } catch {}
+                try { pair.Value.Unload(true); }
+                catch { /* ignored */ }
+
             dictMod.Clear();
             foreach (FileInfo file in shaderBundles) {
                 DirectoryInfo parent = file.Directory;
-                dictMod[parent.Name] = retrieveAssetBundle(file.FullName);
+                if (parent != null) dictMod[parent.Name] = retrieveAssetBundle(file.FullName);
             }
         } else {
             foreach (KeyValuePair<string, AssetBundle> pair in dictDefault)
-                try { pair.Value.Unload(true); } catch {}
+                try { pair.Value.Unload(true); }
+                catch { /* ignored */ }
+
             dictDefault.Clear();
             foreach (FileInfo file in shaderBundles) {
                 DirectoryInfo parent = file.Directory;
-                string bundle = parent.Name;
+                if (parent == null) continue;
+                string bundle  = parent.Name;
                 string bundleL = bundle.ToLower();
                 dictDefault[bundleL] = retrieveAssetBundle(file.FullName);
 
@@ -103,12 +96,12 @@ public static class ShaderRegistry {
                 // GetAllAssetNames returns "Assets/Editor/Shaders/myShader.shader" instead of just "myShader"
                 // The default shaders have no subfolders, so we can safely just trim the string to everything after the last slash, and remove the ".shader"
                 foreach (string key in names) {
-                    string[] bits = key.Split('/');
-                    string newKey = bits[bits.Length - 1].Replace(".shader", "");
-                    string keyL = newKey.ToLower();
+                    string[] bits   = key.Split('/');
+                    string   newKey = bits[bits.Length - 1].Replace(".shader", "");
+                    string   keyL   = newKey.ToLower();
                     materialsDefault[bundleL + newKey] = tryLoad(bundleL, keyL, false, bundle, newKey);
                 }
-            } 
+            }
         }
     }
 
@@ -125,10 +118,8 @@ public static class ShaderRegistry {
             uwr.SendWebRequest();
             while (!uwr.isDone) { } // hold up a bit while it's loading; delay isn't noticeable and loading will fail otherwise
             AssetBundle content = DownloadHandlerAssetBundle.GetContent(uwr);
-            if (content == null)
-                throw new CYFException("Error while loading the shader \"" + fullPath + "\".\n\nIt's likely that you have two identical shader AssetBundles loaded at once.");
-            else if (uwr.error != null)
-                throw new CYFException(uwr.error);
+            if (content == null)   throw new CYFException("Error while loading the shader \"" + fullPath + "\".\n\nIt's likely that you have two identical shader AssetBundles loaded at once.");
+            if (uwr.error != null) throw new CYFException(uwr.error);
             return content;
         } catch (CYFException e) {
             UnitaleUtil.DisplayLuaError("loading a shader", e.Message);

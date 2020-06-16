@@ -5,14 +5,13 @@ using UnityEngine.UI;
 /// <summary>
 /// The testing class that preceded TextManager (Which is somehow even worse). Kept for historical reasons.
 /// </summary>
-public class ProgrammaticFontTest : MonoBehaviour
-{
-    private string fontName = "unnamed_2012";
+public class ProgrammaticFontTest : MonoBehaviour {
+    private const string fontName = "unnamed_2012";
 
-    private Dictionary<char, Sprite> letters = new Dictionary<char, Sprite>();
+    private readonly Dictionary<char, Sprite> letters = new Dictionary<char, Sprite>();
     public GameObject letterObj;
     private float letterTimer = -0.1f;
-    private float timePerLetter = 1.0f / 30;
+    private const float timePerLetter = 1.0f / 30;
     private int currentLetter;
     private AudioSource letterSound;
     private Image[] letterReferences;
@@ -20,7 +19,8 @@ public class ProgrammaticFontTest : MonoBehaviour
     private GameObject canvas;
     private float currentX = 15;
     private float currentY = 450;
-    private string teststr = "* the quick brown fox jumps over\n  the lazy dog.\n* THE QUICK BROWN FOX JUMPS OVER\n  THE LAZY DOG.\n* Jerry.";
+    private const string teststr = "* the quick brown fox jumps over\n  the lazy dog.\n* THE QUICK BROWN FOX JUMPS OVER\n  THE LAZY DOG.\n* Jerry.";
+
     // string teststr = "* ";
 
     // Use this for initialization
@@ -29,12 +29,11 @@ public class ProgrammaticFontTest : MonoBehaviour
         canvas = GameObject.Find("Canvas");
         letterSprites = Resources.LoadAll<Sprite>("Fonts/" + fontName);
         foreach (Sprite s in letterSprites) {
-            string name = s.name;
-            if (name.Length == 1) {
-                letters.Add(name[0], s);
-                continue;
+            string letterName = s.name;
+            if (letterName.Length == 1) {
+                letters.Add(letterName[0], s);
             } else
-                switch (name) {
+                switch (letterName) {
                     case "slash":        letters.Add('/', s);  break;
                     case "dot":          letters.Add('.', s);  break;
                     case "pipe":         letters.Add('|', s);  break;
@@ -58,19 +57,17 @@ public class ProgrammaticFontTest : MonoBehaviour
                 continue;
             }
 
-            GameObject singleLtr = Instantiate<GameObject>(letterObj);
+            GameObject singleLtr = Instantiate(letterObj);
             RectTransform ltrRect = singleLtr.GetComponent<RectTransform>();
             Image ltrImg = singleLtr.GetComponent<Image>();
 
             ltrRect.SetParent(canvas.transform);
 
-            if (letters.ContainsKey(teststr[i])) ltrImg.sprite = letters[teststr[i]];
-            else                                 ltrImg.sprite = letters['?'];
+            ltrImg.sprite = letters[letters.ContainsKey(teststr[i]) ? teststr[i] : '?'];
 
             letterReferences[i] = ltrImg;
 
-            if (letters.ContainsKey(teststr[i])) ltrRect.position = new Vector2(currentX, currentY + letters[teststr[i]].border.w - letters[teststr[i]].border.y);
-            else                                 ltrRect.position = new Vector2(currentX, currentY);
+            ltrRect.position = new Vector2(currentX, currentY + (letters.ContainsKey(teststr[i]) ? letters[teststr[i]].border.w - letters[teststr[i]].border.y : 0));
             ltrImg.SetNativeSize();
             ltrImg.enabled = false;
 
@@ -88,46 +85,40 @@ public class ProgrammaticFontTest : MonoBehaviour
             currentLetter = 0;
         }*/
         letterTimer += Time.deltaTime;
-        if (letterTimer > timePerLetter)
-            if (currentLetter < letterReferences.Length) {
-                if (teststr[currentLetter] == '\n')
-                    letterTimer = -1.0f;
-                else {
-                    letterTimer = 0.0f;
-                    letterReferences[currentLetter].enabled = true;
-                    letterSound.Play();
-                }
-                currentLetter++;
-            }
+        if (!(letterTimer > timePerLetter)) return;
+        if (currentLetter >= letterReferences.Length) return;
+        if (teststr[currentLetter] == '\n')
+            letterTimer = -1.0f;
+        else {
+            letterTimer                             = 0.0f;
+            letterReferences[currentLetter].enabled = true;
+            letterSound.Play();
+        }
+        currentLetter++;
     }
 
     public void OnGUI() {
-        if (Event.current.type == EventType.KeyDown) {
-            char c = Event.current.character;
-            if (c != '\0') {
-                if (c == '\n') {
-                    currentX = 15;
-                    currentY -= 28;
-                    return;
-                }
-
-                GameObject singleLtr = Instantiate<GameObject>(letterObj);
-                RectTransform ltrRect = singleLtr.GetComponent<RectTransform>();
-                Image ltrImg = singleLtr.GetComponent<Image>();
-
-                ltrRect.SetParent(canvas.transform);
-
-                if (letters.ContainsKey(c)) ltrImg.sprite = letters[c];
-                else                        ltrImg.sprite = letters['?'];
-
-                if (letters.ContainsKey(c)) ltrRect.position = new Vector2(currentX, currentY + letters[c].border.w - letters[c].border.y);
-                else                        ltrRect.position = new Vector2(currentX, currentY);
-                ltrImg.SetNativeSize();
-                ltrImg.enabled = true;
-
-                currentX += ltrRect.rect.width + 2;
-                letterSound.Play();
-            }
+        if (Event.current.type != EventType.KeyDown) return;
+        char c = Event.current.character;
+        switch (c) {
+            case '\0': return;
+            case '\n': currentX =  15;
+                       currentY -= 28;
+                       return;
         }
+
+        GameObject    singleLtr = Instantiate(letterObj);
+        RectTransform ltrRect   = singleLtr.GetComponent<RectTransform>();
+        Image         ltrImg    = singleLtr.GetComponent<Image>();
+
+        ltrRect.SetParent(canvas.transform);
+
+        ltrImg.sprite    = letters[letters.ContainsKey(c) ? c : '?'];
+        ltrRect.position = new Vector2(currentX, currentY + (letters.ContainsKey(c) ? letters[c].border.w - letters[c].border.y : 0));
+        ltrImg.SetNativeSize();
+        ltrImg.enabled = true;
+
+        currentX += ltrRect.rect.width + 2;
+        letterSound.Play();
     }
 }

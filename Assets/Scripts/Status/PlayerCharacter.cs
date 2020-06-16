@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.ComponentModel;
 
 [System.Serializable]public class PlayerCharacter {
     public static PlayerCharacter instance;
@@ -17,7 +16,7 @@ using System.ComponentModel;
             MaxHP = BasisMaxHP + MaxHPShift;
         }
     }
-    private int realmhps = 0;
+    private int realmhps;
     public int MaxHPShift {
         get { return realmhps; }
         set {
@@ -38,15 +37,15 @@ using System.ComponentModel;
             _Name = shortName;
         }
     }
-    public int WeaponATK = 0;
-    public int ArmorDEF = 0;
+    public int WeaponATK;
+    public int ArmorDEF;
     public int ATK = 10;      // internally, ATK is what Undertale's menu shows + 10
     public int DEF = 10;      // not unused anymore!
-    public int EXP = 0;
-    public int Gold = 0;
+    public int EXP;
+    public int Gold;
     public string Weapon = "Stick";
     public string Armor = "Bandage";
-    private int[] LevelUpTable = new int[] { 10, 30, 70, 120, 200, 300, 500, 800, 1200, 1700, 2500, 3500, 5000, 7000, 10000, 15000, 25000, 50000, 99999, 100000 };
+    private int[] LevelUpTable = { 10, 30, 70, 120, 200, 300, 500, 800, 1200, 1700, 2500, 3500, 5000, 7000, 10000, 15000, 25000, 50000, 99999, 100000 };
 
     /*private string[] names = new string[]{
         "Chara",  "Dai",    "Dog",   "MTT",    "Papyru",
@@ -105,27 +104,25 @@ using System.ComponentModel;
 
         for (int i = 0; i < LevelUpTable.Length; i++)
             if (EXP < LevelUpTable[i]) {
-                if (LV != i + 1) {
-                    //UnitaleUtil.writeInLog(i);
-                    float currentHP = HP;
-                    if (i + 1 < 20) {
-                        BasisMaxHP = 16 + 4 * (i + 1);
-                        //HP = currentHP + 4 * (i + 1 - LV);
-                    } else {
-                        BasisMaxHP = 16 + 4 * (i + 1) + 3;
-                        //HP = currentHP + 4 * (i + 1 - LV) + 3;
-                    }
-                    if (LV > i + 1)
-                        if (HP > 1.5 * MaxHP)
-                            HP = (int)(1.5f * MaxHP);
-                        else
-                            HP = currentHP;
-                    ATK = 8 + 2 * (i + 1);
-                    LV = (i + 1);
-                    MaxHP = BasisMaxHP + MaxHPShift;
-                    return true;
+                if (LV == i + 1) return false;
+                //UnitaleUtil.writeInLog(i);
+                float currentHP = HP;
+                if (i + 1 < 20) {
+                    BasisMaxHP = 16 + 4 * (i + 1);
+                    //HP = currentHP + 4 * (i + 1 - LV);
+                } else {
+                    BasisMaxHP = 16 + 4 * (i + 1) + 3;
+                    //HP = currentHP + 4 * (i + 1 - LV) + 3;
                 }
-                return false;
+                if (LV > i + 1)
+                    if (HP > 1.5 * MaxHP)
+                        HP = (int)(1.5f * MaxHP);
+                    else
+                        HP = currentHP;
+                ATK   = 8 + 2 * (i + 1);
+                LV    = i + 1;
+                MaxHP = BasisMaxHP + MaxHPShift;
+                return true;
             }
         return false;
     }
@@ -136,7 +133,7 @@ using System.ComponentModel;
 
         BasisMaxHP = 16 + 4 * level;
         ATK = 8 + 2 * level;
-        DEF = 10 + (int)Mathf.Floor((level - 1) / 4);
+        DEF = 10 + (int)Mathf.Floor((level - 1) / 4f);
         LV = level;
         EXP = level <= 1 ? 0 : level <= 20 ? LevelUpTable[level - 2] : 99999;
 

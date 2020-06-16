@@ -1,15 +1,15 @@
 ﻿using UnityEngine;
 
 public class TwitchEffectLetter : TextEffectLetter {
-    private int updateCount = 0;
-    private float intensity;
-    private int minWigFrames = 300;
-    private int wigFrameVariety = 750;
-    private int nextWigInFrames = 300;
+    private int updateCount;
+    private readonly float intensity;
+    private const int minWigFrames = 300;
+    private const int wigFrameVariety = 750;
+    private int nextWigInFrames;
 
     public TwitchEffectLetter(Letter letter, float intensity = 2.0f) : base(letter) {
         this.intensity = intensity != 0 ? intensity : 2.0f;
-        nextWigInFrames = (int)(wigFrameVariety * UnityEngine.Random.value);
+        nextWigInFrames = (int)(wigFrameVariety * Random.value);
     }
 
     protected override void UpdateInternal() {
@@ -21,10 +21,10 @@ public class TwitchEffectLetter : TextEffectLetter {
             return;
         updateCount = 0;
 
-        float random = UnityEngine.Random.value * 2.0f * Mathf.PI;
+        float random = Random.value * 2.0f * Mathf.PI;
         float xWig = Mathf.Sin(random) * intensity;
         float yWig = Mathf.Cos(random) * intensity;
-        nextWigInFrames = minWigFrames + (int)(wigFrameVariety * UnityEngine.Random.value);
+        nextWigInFrames = minWigFrames + (int)(wigFrameVariety * Random.value);
         RectTransform rt = letter.GetComponent<RectTransform>();
         rt.position = new Vector2(rt.position.x + xWig, rt.position.y + yWig);
     }

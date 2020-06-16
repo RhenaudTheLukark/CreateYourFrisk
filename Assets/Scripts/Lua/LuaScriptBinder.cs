@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using MoonSharp.Interpreter;
 using MoonSharp.Interpreter.Loaders;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 /// <summary>
 /// Takes care of creating <see cref="Script"/> objects with globally bound functions.
@@ -11,8 +12,8 @@ using UnityEngine;
 /// </summary>
 public static class LuaScriptBinder {
     private static Dictionary<string, DynValue> dict = new Dictionary<string, DynValue>(), battleDict = new Dictionary<string, DynValue>(), alMightyDict = new Dictionary<string, DynValue>();
-    private static MusicManager mgr = new MusicManager();
-    private static NewMusicManager newmgr = new NewMusicManager();
+    private static readonly MusicManager mgr = new MusicManager();
+    private static readonly NewMusicManager newmgr = new NewMusicManager();
     public static List<Script> scriptlist = new List<Script>();
 
     /// <summary>
@@ -51,10 +52,9 @@ public static class LuaScriptBinder {
     /// </summary>
     /// <returns>Script object for use within Unitale</returns>
     public static Script BoundScript(/*bool overworld = false*/) {
-        Script script = new Script(CoreModules.Preset_Complete ^ CoreModules.IO ^ CoreModules.OS_System);
+        Script script = new Script(CoreModules.Preset_Complete ^ CoreModules.IO ^ CoreModules.OS_System) { Options = { ScriptLoader = new FileSystemScriptLoader() } };
         // library support
-        script.Options.ScriptLoader = new FileSystemScriptLoader();
-        ((ScriptLoaderBase)script.Options.ScriptLoader).ModulePaths = new string[] { FileLoader.pathToModFile("Lua/?.lua"), FileLoader.pathToDefaultFile("Lua/?.lua"), FileLoader.pathToModFile("Lua/Libraries/?.lua"), FileLoader.pathToDefaultFile("Lua/Libraries/?.lua") };
+        ((ScriptLoaderBase)script.Options.ScriptLoader).ModulePaths = new[] { FileLoader.pathToModFile("Lua/?.lua"), FileLoader.pathToDefaultFile("Lua/?.lua"), FileLoader.pathToModFile("Lua/Libraries/?.lua"), FileLoader.pathToDefaultFile("Lua/Libraries/?.lua") };
         // separate function bindings
         script.Globals["SetGlobal"] = (Action<Script, string, DynValue>)SetBattle;
         script.Globals["GetGlobal"] = (Func<Script, string, DynValue>)GetBattle;
@@ -105,7 +105,7 @@ public static class LuaScriptBinder {
                 script.Globals.Set("FScreen", ScreenOW);
                 DynValue MapOW = UserData.Create(EventManager.instance.luaMapOw);
                 script.Globals.Set("FMap", MapOW);
-            } catch { }
+            } catch { /* ignored */ }
         }
         script.Globals["DEBUG"] = (Action<string>)UnitaleUtil.WriteInLogAndDebugger;
         script.Globals["EnableDebugger"] = (Action<bool>)EnableDebugger;
@@ -140,52 +140,39 @@ public static class LuaScriptBinder {
     private delegate TResult Func<T1, T2, T3, T4, T5, T6, TResult>(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg, T6 arg6);
 
     public static string GetState() {
-        try {
-            return (UIController.instance.frozenState != UIController.UIState.PAUSE) ? UIController.instance.frozenState.ToString() : UIController.instance.state.ToString();
-        } catch {
-            return "NONE (error)";
-        }
+        try { return (UIController.instance.frozenState != UIController.UIState.PAUSE) ? UIController.instance.frozenState.ToString() : UIController.instance.state.ToString(); }
+        catch { return "NONE (error)"; }
     }
 
     public static DynValue Get(Script script, string key) {
         if (key == null)
             throw new CYFException("GetRealGlobal: The first argument (the index) is nil.\n\nSee the documentation for proper usage.");
-        if (dict.ContainsKey(key)) {
-            // Due to how MoonSharp tables require an owner, we have to create an entirely new table if we want to work with it in other scripts.
-            if (dict[key].Type == DataType.Table) {
-                DynValue t = DynValue.NewTable(script);
-                foreach (TablePair pair in dict[key].Table.Pairs)
-                    t.Table.Set(pair.Key, pair.Value);
-                return t;
-            } else
-                return dict[key];
-        }
-        return null;
+        if (!dict.ContainsKey(key)) return null;
+        // Due to how MoonSharp tables require an owner, we have to create an entirely new table if we want to work with it in other scripts.
+        if (dict[key].Type != DataType.Table) return dict[key];
+        DynValue t = DynValue.NewTable(script);
+        foreach (TablePair pair in dict[key].Table.Pairs)
+            t.Table.Set(pair.Key, pair.Value);
+        return t;
     }
 
     public static void Set(Script script, string key, DynValue value) {
         if (key == null)
             throw new CYFException("SetRealGlobal: The first argument (the index) is nil.\n\nSee the documentation for proper usage.");
-        if (dict.ContainsKey(key))
-            dict[key] = value;
-        else
-            dict.Add(key, value);
+        if (dict.ContainsKey(key)) dict[key] = value;
+        else                       dict.Add(key, value);
     }
 
     public static DynValue GetBattle(Script script, string key) {
         if (key == null)
             throw new CYFException("GetGlobal: The first argument (the index) is nil.\n\nSee the documentation for proper usage.");
-        if (battleDict.ContainsKey(key)) {
-            // Due to how MoonSharp tables require an owner, we have to create an entirely new table if we want to work with it in other scripts.
-            if (battleDict[key].Type == DataType.Table) {
-                DynValue t = DynValue.NewTable(script);
-                foreach (TablePair pair in battleDict[key].Table.Pairs)
-                    t.Table.Set(pair.Key, pair.Value);
-                return t;
-            } else
-            return battleDict[key];
-        }
-        return null;
+        if (!battleDict.ContainsKey(key)) return null;
+        // Due to how MoonSharp tables require an owner, we have to create an entirely new table if we want to work with it in other scripts.
+        if (battleDict[key].Type != DataType.Table) return battleDict[key];
+        DynValue t = DynValue.NewTable(script);
+        foreach (TablePair pair in battleDict[key].Table.Pairs)
+            t.Table.Set(pair.Key, pair.Value);
+        return t;
     }
 
     public static void SetBattle(Script script, string key, DynValue value) {
@@ -199,17 +186,13 @@ public static class LuaScriptBinder {
     public static DynValue GetAlMighty(Script script, string key) {
         if (key == null)
             throw new CYFException("GetAlMightyGlobal: The first argument (the index) is nil.\n\nSee the documentation for proper usage.");
-        if (alMightyDict.ContainsKey(key)) {
-            // Due to how MoonSharp tables require an owner, we have to create an entirely new table if we want to work with it in other scripts.
-            if (alMightyDict[key].Type == DataType.Table) {
-                DynValue t = DynValue.NewTable(script);
-                foreach (TablePair pair in alMightyDict[key].Table.Pairs)
-                    t.Table.Set(pair.Key, pair.Value);
-                return t;
-            } else
-                return alMightyDict[key];
-        }
-        return null;
+        if (!alMightyDict.ContainsKey(key)) return null;
+        // Due to how MoonSharp tables require an owner, we have to create an entirely new table if we want to work with it in other scripts.
+        if (alMightyDict[key].Type != DataType.Table) return alMightyDict[key];
+        DynValue t = DynValue.NewTable(script);
+        foreach (TablePair pair in alMightyDict[key].Table.Pairs)
+            t.Table.Set(pair.Key, pair.Value);
+        return t;
     }
 
     public static void SetAlMighty(Script script, string key, DynValue value) { SetAlMighty(script, key, value, true); }
@@ -325,20 +308,20 @@ public static class LuaScriptBinder {
 
     public static void SetAction(string action) {
         try {
-            UIController.instance.forcedaction = (UIController.Actions)Enum.Parse(typeof(UIController.Actions), action, true);
-            if (((GetState() == "ACTIONSELECT" && UIController.instance.frozenState == UIController.UIState.PAUSE) || !UIController.instance.stated) && UIController.instance.forcedaction != UIController.Actions.NONE)
-                UIController.instance.MovePlayerToAction(UIController.instance.forcedaction);
+            UIController.instance.forcedAction = (UIController.Actions)Enum.Parse(typeof(UIController.Actions), action, true);
+            if ((GetState() == "ACTIONSELECT" && UIController.instance.frozenState == UIController.UIState.PAUSE || !UIController.instance.stateSwitched) && UIController.instance.forcedAction != UIController.Actions.NONE)
+                UIController.instance.MovePlayerToAction(UIController.instance.forcedAction);
         } catch { throw new CYFException("SetAction() can only take \"FIGHT\", \"ACT\", \"ITEM\" or \"MERCY\", but you entered \"" + action + "\"."); }
     }
 
     public static void SetPPCollision(bool b) {
-        GlobalControls.ppcollision = b;
+        ProjectileController.globalPixelPerfectCollision = b;
         foreach (LuaProjectile p in GameObject.Find("Canvas").GetComponentsInChildren<LuaProjectile>(true))
             if (!p.ppchanged)
                 p.ppcollision = b;
     }
 
-    public static void AllowPlayerDef(bool b) { GlobalControls.allowplayerdef = b; }
+    public static void AllowPlayerDef(bool b) { PlayerController.allowplayerdef = b; }
 
     public static void SetPPAlphaLimit(float f) {
         if (f < 0 || f > 1)  UnitaleUtil.DisplayLuaError("Pixel-Perfect alpha limit", "The alpha limit should be between 0 and 1.");
@@ -352,7 +335,7 @@ public static class LuaScriptBinder {
         if (position == null || position.Type != DataType.Table || position.Table.Get(1).Type != DataType.Number || position.Table.Get(2).Type != DataType.Number)
             throw new CYFException("CreateText: The position argument must be a non-empty table of two numbers.");
 
-        GameObject go = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("Prefabs/CstmTxtContainer"));
+        GameObject go = Object.Instantiate(Resources.Load<GameObject>("Prefabs/CstmTxtContainer"));
         LuaTextManager luatm = go.GetComponentInChildren<LuaTextManager>();
         go.GetComponent<RectTransform>().position = new Vector2((float)position.Table.Get(1).Number, (float)position.Table.Get(2).Number);
 
@@ -364,10 +347,9 @@ public static class LuaScriptBinder {
         UnitaleUtil.GetChildPerName(go.transform, "CenterHorz").GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth + 16, 96 - 16 * 2);  //CenterHorz
         UnitaleUtil.GetChildPerName(go.transform, "CenterVert").GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth - 16, 96);           //CenterVert
         foreach (ScriptWrapper scrWrap in ScriptWrapper.instances) {
-            if (scrWrap.script == scr) {
-                luatm.SetCaller(scrWrap);
-                break;
-            }
+            if (scrWrap.script != scr) continue;
+            luatm.SetCaller(scrWrap);
+            break;
         }
         // Layers don't exist in the overworld, so we don't set it
         if (!UnitaleUtil.IsOverworld || GlobalControls.isInShop)
@@ -379,10 +361,7 @@ public static class LuaScriptBinder {
         luatm.ShowBubble();
 
         // Converts the text argument into a table if it's a simple string
-        text = text.Type == DataType.String ? DynValue.NewTable(scr, new DynValue[1] { text }) : text;
-
-        if (text.Table.Length == 0)
-            text = null;
+        text = text.Type == DataType.String ? DynValue.NewTable(scr, text) : text;
 
         //////////////////////////////////////////
         ///////////  LATE START SETTER  //////////
@@ -397,23 +376,23 @@ public static class LuaScriptBinder {
         string firstLine = text.Table.Get(1).String;
 
         // if [instant] or [instant:allowcommand] is found, check for the earliest match, and whether it is at the beginning
-        if (firstLine.IndexOf("[instant]") > -1 || firstLine.IndexOf("[instant:allowcommand]") > -1) {
+        if (firstLine.IndexOf("[instant]", StringComparison.Ordinal) > -1 || firstLine.IndexOf("[instant:allowcommand]", StringComparison.Ordinal) > -1) {
             // determine whether [instant] or [instant:allowcommand] is first
             string testFor = "[instant]";
-            if (firstLine.IndexOf("[instant:allowcommand]") > -1 &&
-                ((firstLine.IndexOf("[instant]") > -1 && firstLine.IndexOf("[instant:allowcommand]") < firstLine.IndexOf("[instant]"))
-                || firstLine.IndexOf("[instant]") == -1)) {
+            if (firstLine.IndexOf("[instant:allowcommand]", StringComparison.Ordinal) > -1 &&
+                firstLine.IndexOf("[instant]", StringComparison.Ordinal) == -1 || firstLine.IndexOf("[instant]", StringComparison.Ordinal) > -1 &&
+                                                                                   firstLine.IndexOf("[instant:allowcommand]", StringComparison.Ordinal) < firstLine.IndexOf("[instant]", StringComparison.Ordinal)) {
                 testFor = "[instant:allowcommand]";
             }
 
             // grab all of the text that comes before the matched command
-            string precedingText = firstLine.Substring(0, firstLine.IndexOf(testFor));
+            string precedingText = firstLine.Substring(0, firstLine.IndexOf(testFor, StringComparison.Ordinal));
 
             // remove all commands other than the matched command from this variable
             while (precedingText.IndexOf('[') > -1) {
                 int i = 0;
                 if (UnitaleUtil.ParseCommandInline(precedingText, ref i) == null) break;
-                else                                                              precedingText = precedingText.Replace(precedingText.Substring(0, i + 1), "");
+                precedingText = precedingText.Replace(precedingText.Substring(0, i + 1), "");
             }
 
             // if the length of the remaining string is 0, then disable late start!
@@ -426,24 +405,24 @@ public static class LuaScriptBinder {
         //////////////////////////////////////////
 
         // If the first line of text has [font] at the beginning, use it initially!
-        if (firstLine.IndexOf("[font:") > -1 && firstLine.Substring(firstLine.IndexOf("[font:")).IndexOf(']') > -1) {
+        if (firstLine.IndexOf("[font:", StringComparison.Ordinal) > -1 && firstLine.Substring(firstLine.IndexOf("[font:", StringComparison.Ordinal)).IndexOf(']') > -1) {
             // grab all of the text that comes before the matched command
-            string precedingText = firstLine.Substring(0, firstLine.IndexOf("[font:"));
+            string precedingText = firstLine.Substring(0, firstLine.IndexOf("[font:", StringComparison.Ordinal));
 
             // remove all commands other than the matched command from this variable
             while (precedingText.IndexOf('[') > -1) {
                 int i = 0;
                 if (UnitaleUtil.ParseCommandInline(precedingText, ref i) == null) break;
-                else                                                              precedingText = precedingText.Replace(precedingText.Substring(0, i + 1), "");
+                precedingText = precedingText.Replace(precedingText.Substring(0, i + 1), "");
             }
 
             // if the length of the remaining string is 0, then set the font!
             if (precedingText.Length == 0) {
-                int startCommand = firstLine.IndexOf("[font:");
+                int startCommand = firstLine.IndexOf("[font:", StringComparison.Ordinal);
                 string command = UnitaleUtil.ParseCommandInline(precedingText, ref startCommand);
                 if (command != null) {
                     string fontPartOne = command.Substring(6);
-                    string fontPartTwo = fontPartOne.Substring(0, fontPartOne.IndexOf("]"));
+                    string fontPartTwo = fontPartOne.Substring(0, fontPartOne.IndexOf("]", StringComparison.Ordinal));
                     UnderFont font = SpriteFontRegistry.Get(fontPartTwo);
                     if (font == null)
                         throw new CYFException("The font \"" + fontPartTwo + "\" doesn't exist.\nYou should check if you made a typo, or if the font really is in your mod.");
@@ -456,10 +435,9 @@ public static class LuaScriptBinder {
         if (enableLateStart)
             luatm.lateStartWaiting = true;
         luatm.SetText(text);
-        if (enableLateStart) {
-            luatm.DestroyChars();
-            luatm.LateStart();
-        }
+        if (!enableLateStart) return luatm;
+        luatm.DestroyChars();
+        luatm.LateStart();
         return luatm;
     }
 
@@ -490,9 +468,8 @@ public static class LuaScriptBinder {
             return;
 
         UserDebugger.instance.canShow = state;
-        if (!state && UserDebugger.instance.gameObject.activeSelf) {
-            UserDebugger.instance.gameObject.SetActive(false);
-            Camera.main.GetComponent<FPSDisplay>().enabled = false;
-        }
+        if (state || !UserDebugger.instance.gameObject.activeSelf) return;
+        UserDebugger.instance.gameObject.SetActive(false);
+        Camera.main.GetComponent<FPSDisplay>().enabled = false;
     }
 }

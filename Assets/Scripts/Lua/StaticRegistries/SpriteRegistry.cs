@@ -1,15 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
 public static class SpriteRegistry {
-    private static Dictionary<string, Sprite> dict = new Dictionary<string, Sprite>();
+    private static readonly Dictionary<string, Sprite> dict = new Dictionary<string, Sprite>();
     public static Image GENERIC_SPRITE_PREFAB;
     public static Sprite EMPTY_SPRITE;
-    private static Dictionary<string, FileInfo> dictDefault = new Dictionary<string, FileInfo>();
-    private static Dictionary<string, FileInfo> dictMod = new Dictionary<string, FileInfo>();
+    private static readonly Dictionary<string, FileInfo> dictDefault = new Dictionary<string, FileInfo>();
+    private static readonly Dictionary<string, FileInfo> dictMod = new Dictionary<string, FileInfo>();
 
     public static void Start() {
         loadAllFrom(FileLoader.pathToDefaultFile("Sprites"));
@@ -20,27 +19,20 @@ public static class SpriteRegistry {
     public static Sprite Get(string key) {
         key = key.ToLower();
         string dictKey = (UnitaleUtil.IsOverworld ? "ow" : "b") + key;
-        if (dict.ContainsKey(dictKey))  return dict[dictKey];
-        else                            return tryLoad(key);
-        //return null;
+        return dict.ContainsKey(dictKey) ? dict[dictKey] : tryLoad(key);
     }
 
     private static Sprite tryLoad(string key) {
         string dictKey = (UnitaleUtil.IsOverworld ? "ow" : "b") + key;
-        if      (dictMod.ContainsKey(key))
-            dict[dictKey] = SpriteUtil.FromFile(dictMod[key].FullName);
-        else if (dictDefault.ContainsKey(key))
-            dict[dictKey] = SpriteUtil.FromFile(dictDefault[key].FullName);
-        else
-            return null;
+        if (dictMod.ContainsKey(key))          dict[dictKey] = SpriteUtil.FromFile(dictMod[key].FullName);
+        else if (dictDefault.ContainsKey(key)) dict[dictKey] = SpriteUtil.FromFile(dictDefault[key].FullName);
+        else                                   return null;
         return dict[dictKey];
     }
 
-    public static Sprite GetMugshot(string key) {
-        return Get("mugshots/" + key.ToLower());
-    }
+    public static Sprite GetMugshot(string key) { return Get("mugshots/" + key.ToLower()); }
 
-    public static void init() {
+    public static void Init() {
         //dict.Clear();
         GENERIC_SPRITE_PREFAB = Resources.Load<Image>("Prefabs/generic_sprite");
         Texture2D tex = new Texture2D(1, 1, TextureFormat.RGBA32, false);
@@ -62,14 +54,13 @@ public static class SpriteRegistry {
 
     private static void loadAllFrom(string directoryPath, bool mod = false) {
         DirectoryInfo dInfo = new DirectoryInfo(directoryPath);
-        FileInfo[] fInfoTest;
 
         if (!dInfo.Exists) {
             UnitaleUtil.DisplayLuaError("mod loading", "You tried to load the mod \"" + StaticInits.MODFOLDER + "\" but it can't be found, or at least its \"Sprites\" folder can't be found.\nAre you sure it exists?");
             throw new CYFException("mod loading");
         }
 
-        fInfoTest = dInfo.GetFiles("*.png", SearchOption.AllDirectories);
+        FileInfo[] fInfoTest = dInfo.GetFiles("*.png", SearchOption.AllDirectories);
 
         if (mod) {
             dictMod.Clear();

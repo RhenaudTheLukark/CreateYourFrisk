@@ -1,12 +1,14 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.SceneManagement;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using MoonSharp.Interpreter;
 using System.Reflection;
+using MoonSharp.Interpreter;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using Coroutine = UnityEngine.Coroutine;
 
 public class EventManager : MonoBehaviour {
     public  static EventManager instance; // The instance of this class, only one EventManager should exist at all times
@@ -18,7 +20,7 @@ public class EventManager : MonoBehaviour {
     public  List<GameObject> initializedEvents = new List<GameObject>(); // All events with an initialization event page which have been initialized
 
     public  Dictionary<GameObject, ScriptWrapper> eventScripts = new Dictionary<GameObject, ScriptWrapper>();             // Lua scripts loaded for event GameObjects
-    public  Dictionary<string, UnityEngine.Coroutine> cSharpCoroutines = new Dictionary<string, UnityEngine.Coroutine>(); // Coroutines run by usual overworld functions for each event
+    public  Dictionary<string, Coroutine> cSharpCoroutines = new Dictionary<string, Coroutine>(); // Coroutines run by usual overworld functions for each event
     public  Dictionary<ScriptWrapper, int> coroutines = new Dictionary<ScriptWrapper, int>();                             // Event coroutines currently running
     public  Dictionary<string, LuaSpriteController> spriteControllers = new Dictionary<string, LuaSpriteController>();    // Sprite objects spawned in the overworld
 
@@ -77,7 +79,7 @@ public class EventManager : MonoBehaviour {
     /// <summary>
     /// Run whenever this Component is enabled.
     /// </summary>
-    void OnEnable() {
+    private void OnEnable() {
         LuaEventOW.StCoroutine += StCoroutine;
         LuaPlayerOW.StCoroutine += StCoroutine;
         LuaGeneralOW.StCoroutine += StCoroutine;
@@ -90,7 +92,7 @@ public class EventManager : MonoBehaviour {
     /// <summary>
     /// Run whenever this Component is disabled.
     /// </summary>
-    void OnDisable() {
+    private void OnDisable() {
         LuaEventOW.StCoroutine -= StCoroutine;
         LuaPlayerOW.StCoroutine -= StCoroutine;
         LuaGeneralOW.StCoroutine -= StCoroutine;
@@ -126,8 +128,8 @@ public class EventManager : MonoBehaviour {
 
             // Fade the map out when the map is initialized or there are events
             if (initialized || events.Count != 0)
-                if (fadeOutToMap) GameObject.FindObjectOfType<Fading>().BeginFade(-1);
-                else              GameObject.FindObjectOfType<Fading>().FadeInstant(-1, true);
+                if (fadeOutToMap) FindObjectOfType<Fading>().BeginFade(-1);
+                else              FindObjectOfType<Fading>().FadeInstant(-1, true);
             initialized = true;
             fadeOutToMap = true;
             eventsLoading = false;
@@ -184,7 +186,7 @@ public class EventManager : MonoBehaviour {
     /// <summary>
     /// Called once every frame.
     /// </summary>
-    void Update() {
+    private void Update() {
         try {
             // Executed once on map load
             if (readyToReLaunch && SceneManager.GetActiveScene().name != "TransitionOverworld") {
@@ -463,7 +465,7 @@ public class EventManager : MonoBehaviour {
 
         // If the script we have to load exists, let's initialize it and then execute it
         if (!isCoroutine) {
-            this.actualEventIndex = eventIndex;
+            actualEventIndex = eventIndex;
             PlayerOverworld.instance.PlayerNoMove = true;
             ScriptRunning = true;
         }
@@ -598,7 +600,7 @@ function CYFEventNextCommand()
 end
 
 -- Currently unused
-function CYFEventStopCommand() coroutine.yield() end 
+function CYFEventStopCommand() coroutine.yield() end
 
 -- Called whenever activating an overworld Event object's event pages; Creates a coroutine that runs the matching EventPage function
 function CYFEventStartEvent(func)
@@ -643,7 +645,7 @@ end";
     /// <returns>A new script wrapper allowing the user to run script functions.</returns>
     private ScriptWrapper InitScript(string eventName, Component ev) {
         // Create a ScriptWrapper object
-        ScriptWrapper scr = new ScriptWrapper() { scriptname = eventName };
+        ScriptWrapper scr = new ScriptWrapper { scriptname = eventName };
         // Load a special script hidden within CYF's internals if we're loading CYF 0.6.5's secret
         string scriptText = UnitaleUtil.IsSpecialAnnouncement(eventName) ? CYF_RELEASE_SCRIPT : ScriptRegistry.Get(ScriptRegistry.EVENT_PREFIX + eventName);
         if (scriptText == null) {
@@ -740,7 +742,7 @@ end";
     /// <param name="addPlayer">True if you want to save the Player's data in this map as well.</param>
     public void SetEventStates(bool addPlayer = false) {
         string id = SceneManager.GetActiveScene().name;
-        EventOW[] eventOws = (EventOW[])GameObject.FindObjectsOfType(typeof(EventOW));
+        EventOW[] eventOws = (EventOW[])FindObjectsOfType(typeof(EventOW));
 
         // Create or retrieve a MapData object to store all of this map's data
         GameState.MapData mapInfos = GlobalControls.GameMapData.ContainsKey(id) ? GlobalControls.GameMapData[id] : new GameState.MapData();
@@ -750,7 +752,7 @@ end";
             GlobalControls.GameMapData.Remove(id);
 
         // Store this map's data
-        MapInfos mi = GameObject.FindObjectOfType<MapInfos>();
+        MapInfos mi = FindObjectOfType<MapInfos>();
         mapInfos.Name = SceneManager.GetActiveScene().name;
         mapInfos.Music = mi.music;
         mapInfos.ModToLoad = mi.modToLoad;
@@ -764,7 +766,7 @@ end";
 
         // Add the Player's data to the map if it has been requested
         if (addPlayer) {
-            GameState.EventInfos eiPlayer = new GameState.EventInfos() {
+            GameState.EventInfos eiPlayer = new GameState.EventInfos {
                 CurrPage = 0,
                 CurrSpriteNameOrCYFAnim = GameObject.Find("Player").GetComponent<CYFAnimator>().specialHeader,
                 NoCollision = false,
@@ -783,7 +785,7 @@ end";
                 eis.Remove(ev.name);
             try {
                 // Fill in the event's data
-                GameState.EventInfos ei = new GameState.EventInfos() {
+                GameState.EventInfos ei = new GameState.EventInfos {
                     CurrPage = ev.actualPage,
                     CurrSpriteNameOrCYFAnim = ev.GetComponent<CYFAnimator>()
                         ? ev.GetComponent<CYFAnimator>().specialHeader
@@ -796,9 +798,7 @@ end";
                 };
                 // Add it to the saved events dictionary
                 eis.Add(ev.name, ei);
-            } catch {
-                // ignored
-            }
+            } catch { /* ignored */ }
         }
         // Store all of the map's data in the current save data object
         mapInfos.EventInfo = eis;
@@ -923,7 +923,7 @@ end";
         // Try to get the value from the unvisited map's scene if it exists
         // Test whether the map exists or not
         for (int i = 0; i < SceneManager.sceneCountInBuildSettings; i++) {
-            if (mapName == System.IO.Path.GetFileNameWithoutExtension(SceneUtility.GetScenePathByBuildIndex(i))) {
+            if (mapName == Path.GetFileNameWithoutExtension(SceneUtility.GetScenePathByBuildIndex(i))) {
                 buildIndex = i;
                 break;
             }
@@ -1063,7 +1063,7 @@ end";
         string key = evName + "." + coroutineName;
         // End this coroutine if this event is already running it
         ForceEndCoroutine(key);
-        UnityEngine.Coroutine newCoroutine;
+        Coroutine newCoroutine;
         // Create the coroutine by itself, passing arguments if needed
         if (args == null)                 newCoroutine = StartCoroutine(coroutineName);
         else if (!args.GetType().IsArray) newCoroutine = StartCoroutine(coroutineName, args);
@@ -1078,7 +1078,7 @@ end";
     public void ForceEndCoroutine(string key) {
         // Stops the coroutine if it exists and remove it from the table
         if (!cSharpCoroutines.ContainsKey(key)) return;
-        UnityEngine.Coroutine existingCoroutine;
+        Coroutine existingCoroutine;
         cSharpCoroutines.TryGetValue(key, out existingCoroutine);
         if (existingCoroutine != null)
             StopCoroutine(existingCoroutine);
@@ -1123,10 +1123,10 @@ end";
         // Destroy the overworld, and enter CYF v0.6's secret scene
         NewMusicManager.DestroyChannel("4eab1af3ab6a932c23b3cdb8ef618b1af9c02088");
         SceneManager.LoadScene("SpecialAnnouncement");
-        GameObject.Destroy(GameObject.Find("Player"));
-        GameObject.Destroy(GameObject.Find("Canvas OW"));
-        GameObject.Destroy(GameObject.Find("Canvas Two"));
-        GameObject.Destroy(GameObject.Find("Main Camera OW"));
+        Destroy(GameObject.Find("Player"));
+        Destroy(GameObject.Find("Canvas OW"));
+        Destroy(GameObject.Find("Canvas Two"));
+        Destroy(GameObject.Find("Main Camera OW"));
     }
 
     /// <summary>

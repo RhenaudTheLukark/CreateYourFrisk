@@ -1,7 +1,4 @@
-﻿using UnityEngine;
-using UnityEngine.SceneManagement;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using MoonSharp.Interpreter;
 
 /// <summary>
@@ -22,14 +19,15 @@ using MoonSharp.Interpreter;
             foreach (string key in LuaScriptBinder.GetAlMightyDictionary().Keys) {
                 DynValue dv;
                 LuaScriptBinder.GetAlMightyDictionary().TryGetValue(key, out dv);
-                switch (dv.Type) {
-                    case DataType.Number:   AlMightyVariablesNum.Add(key, dv.Number);    break;
-                    case DataType.String:   AlMightyVariablesStr.Add(key, dv.String);    break;
-                    case DataType.Boolean:  AlMightyVariablesBool.Add(key, dv.Boolean);  break;
-                    default:                UnitaleUtil.WriteInLogAndDebugger("SaveLoad: This DynValue can't be added to the save because it is unserializable.");  break;
-                }
+                if (dv != null)
+                    switch (dv.Type) {
+                        case DataType.Number:  AlMightyVariablesNum.Add(key, dv.Number);   break;
+                        case DataType.String:  AlMightyVariablesStr.Add(key, dv.String);   break;
+                        case DataType.Boolean: AlMightyVariablesBool.Add(key, dv.Boolean); break;
+                        default:               UnitaleUtil.WriteInLogAndDebugger("SaveLoad: This DynValue can't be added to the save because it is unserializable."); break;
+                    }
             }
-        } catch { }
+        } catch { /* ignored */ }
     }
 
     public void LoadVariables() {

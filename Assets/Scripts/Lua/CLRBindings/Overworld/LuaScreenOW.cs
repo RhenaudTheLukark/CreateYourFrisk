@@ -22,8 +22,6 @@ public class LuaScreenOW {
     /// <param name="id"></param>
     /// <param name="posX"></param>
     /// <param name="posY"></param>
-    /// <param name="dimX"></param>
-    /// <param name="dimY"></param>
     /// <param name="toneR"></param>
     /// <param name="toneG"></param>
     /// <param name="toneB"></param>
@@ -36,7 +34,7 @@ public class LuaScreenOW {
             image = GameObject.Find("Image" + id);
         else {
             newImage = true;
-            image = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("Prefabs/ImageEvent"));
+            image = Object.Instantiate(Resources.Load<GameObject>("Prefabs/ImageEvent"));
             image.name = "Image" + id;
             image.tag = "Event";
             image.GetComponent<RectTransform>().SetParent(GameObject.Find("Canvas OW").transform);
@@ -48,6 +46,7 @@ public class LuaScreenOW {
             throw new CYFException("Screen.DispImg: The sprite given doesn't exist.");
         if (toneR < 0 || toneR > 255 || toneR % 1 != 0 || toneG < 0 || toneG > 255 || toneG % 1 != 0 || toneB < 0 || toneB > 255 || toneB % 1 != 0)
             throw new CYFException("Screen.DispImg: You can't input a value out of [0; 255] for a color value, as it is clamped from 0 to 255.\nThe number have to be an integer.");
+
         if (toneA >= 0 && toneA <= 255 && toneR % 1 == 0)
             image.GetComponent<Image>().color = new Color32((byte)toneR, (byte)toneG, (byte)toneB, (byte)toneA);
         image.GetComponent<RectTransform>().sizeDelta = image.GetComponent<Image>().sprite.bounds.size * 100;
@@ -74,6 +73,8 @@ public class LuaScreenOW {
     /// <summary>
     /// Sets a tone directly, without transition
     /// </summary>
+    /// <param name="anim"></param>
+    /// <param name="waitEnd"></param>
     /// <param name="r"></param>
     /// <param name="g"></param>
     /// <param name="b"></param>
@@ -82,7 +83,7 @@ public class LuaScreenOW {
         if (r < 0 || r > 255 || r % 1 != 0 || g < 0 || g > 255 || g % 1 != 0 || b < 0 || b > 255 || b % 1 != 0)
             throw new CYFException("Screen.SetTone: You can't input a value out of [0; 255] for a color value, as it is clamped from 0 to 255.\nThe number have to be an integer.");
         if (GameObject.Find("Tone") == null) {
-            GameObject image = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("Prefabs/ImageEvent"));
+            GameObject image = Object.Instantiate(Resources.Load<GameObject>("Prefabs/ImageEvent"));
             image.GetComponent<Image>().color = new Color(r / 255f, g / 255f, b / 255f, 0);
             image.name = "Tone";
             image.tag = "Event";
@@ -96,7 +97,7 @@ public class LuaScreenOW {
             if (a == 0)
                 EventManager.instance.luaEventOw.Remove("Tone");
             appliedScript.Call("CYFEventNextCommand");
-        } else
+        } else if (StCoroutine != null)
             StCoroutine("ISetTone", new object[] { waitEnd, r, g, b, a }, appliedScript.GetVar("_internalScriptName").String);
     }
 
@@ -108,13 +109,8 @@ public class LuaScreenOW {
     [CYFEventFunction]
     public void Rumble(float frames, float intensity = 3, bool fade = false) { StCoroutine("IRumble", new object[] { frames, intensity, fade }, appliedScript.GetVar("_internalScriptName").String); }*/
 
-    /// <summary>
-    /// Rumbles the screen.
-    /// </summary>
-    /// <param name="secondsOrFrames"></param>
-    /// <param name="intensity"></param>
     [CYFEventFunction] public void Flash(int frames, int colorR = 255, int colorG = 255, int colorB = 255, int colorA = 255, bool waitEnd = true) {
-        StCoroutine("IFlash", new object[] { frames, colorR, colorG, colorB, colorA, waitEnd }, appliedScript.GetVar("_internalScriptName").String);
+        if (StCoroutine != null) StCoroutine("IFlash", new object[] { frames, colorR, colorG, colorB, colorA, waitEnd }, appliedScript.GetVar("_internalScriptName").String);
     }
 
     [CYFEventFunction] public void CenterEventOnCamera(string name, int speed = 5, bool straightLine = false, bool waitEnd = true, string info = "Screen.CenterEventOnCamera") {
@@ -124,16 +120,19 @@ public class LuaScreenOW {
         if (!EventManager.instance.events.Contains(GameObject.Find(name)))
             throw new CYFException("Screen.CenterEventOnCamera: The given event doesn't exist.");
 
-        StCoroutine("IMoveCamera", new object[] { (int)(GameObject.Find(name).transform.position.x - PlayerOverworld.instance.transform.position.x),
-                                                  (int)(GameObject.Find(name).transform.position.y - PlayerOverworld.instance.transform.position.y),
-                                                  speed, straightLine, waitEnd, info }, appliedScript.GetVar("_internalScriptName").String);
+        if (StCoroutine != null)
+            StCoroutine("IMoveCamera", new object[] {
+                (int) (GameObject.Find(name).transform.position.x - PlayerOverworld.instance.transform.position.x),
+                (int) (GameObject.Find(name).transform.position.y - PlayerOverworld.instance.transform.position.y),
+                speed, straightLine, waitEnd, info
+            }, appliedScript.GetVar("_internalScriptName").String);
     }
 
     [CYFEventFunction] public void MoveCamera(int pixX, int pixY, int speed = 5, bool straightLine = false, bool waitEnd = true) {
-        StCoroutine("IMoveCamera", new object[] { pixX, pixY, speed, straightLine, waitEnd, "Screen.MoveCamera" }, appliedScript.GetVar("_internalScriptName").String);
+        if (StCoroutine != null) StCoroutine("IMoveCamera", new object[] { pixX, pixY, speed, straightLine, waitEnd, "Screen.MoveCamera" }, appliedScript.GetVar("_internalScriptName").String);
     }
 
     [CYFEventFunction] public void ResetCameraPosition(int speed = 5, bool straightLine = false, bool waitEnd = true) {
-        StCoroutine("IMoveCamera", new object[] { 0, 0, speed, straightLine, waitEnd, "Screen.ResetCameraPosition" }, appliedScript.GetVar("_internalScriptName").String);
+        if (StCoroutine != null) StCoroutine("IMoveCamera", new object[] { 0, 0, speed, straightLine, waitEnd, "Screen.ResetCameraPosition" }, appliedScript.GetVar("_internalScriptName").String);
     }
 }

@@ -8,12 +8,13 @@ using UnityEngine.UI;
 /// </summary>
 public class ProjectileController {
     private Projectile p;
-    private LuaSpriteController spr;
-    private Dictionary<string, DynValue> vars = new Dictionary<string, DynValue>();
-    private float lastX = 0;
-    private float lastY = 0;
-    private float lastAbsX = 0;
-    private float lastAbsY = 0;
+    private readonly LuaSpriteController spr;
+    private readonly Dictionary<string, DynValue> vars = new Dictionary<string, DynValue>();
+    private float lastX;
+    private float lastY;
+    private float lastAbsX;
+    private float lastAbsY;
+    public static bool globalPixelPerfectCollision;
 
     public ProjectileController(Projectile p) {
         this.p = p;
@@ -22,12 +23,7 @@ public class ProjectileController {
 
     // The x position of the sprite, relative to the arena position and its anchor.
     public float x {
-        get {
-            if (p == null)
-                return lastX;
-            else
-                return p.self.anchoredPosition.x - ArenaManager.arenaCenter.x;
-        }
+        get { return p == null ? lastX : p.self.anchoredPosition.x - ArenaManager.arenaCenter.x; }
         set {
             if (p != null)
                 p.self.anchoredPosition = new Vector2(value + ArenaManager.arenaCenter.x, p.self.anchoredPosition.y);
@@ -36,12 +32,7 @@ public class ProjectileController {
 
     // The y position of the sprite, relative to the arena position and its anchor.
     public float y {
-        get {
-            if (p == null)
-                return lastY;
-            else
-                return p.self.anchoredPosition.y - ArenaManager.arenaCenter.y;
-        }
+        get { return p == null ? lastY : p.self.anchoredPosition.y - ArenaManager.arenaCenter.y; }
         set {
             if (p != null)
                 p.self.anchoredPosition = new Vector2(p.self.anchoredPosition.x, value + ArenaManager.arenaCenter.y);
@@ -50,12 +41,7 @@ public class ProjectileController {
 
     // The x position of the sprite, relative to the bottom left corner of the screen.
     public float absx {
-        get {
-            if (p == null)
-                return lastAbsX;
-            else
-                return p.self.position.x;
-        }
+        get { return p == null ? lastAbsX : p.self.position.x; }
         set {
             if (p != null)
                 p.self.position = new Vector2(value, p.self.position.y);
@@ -64,12 +50,7 @@ public class ProjectileController {
 
     // The y position of the sprite, relative to the bottom left corner of the screen.
     public float absy {
-        get {
-            if (p == null)
-                return lastAbsY;
-            else
-                return p.self.position.y;
-        }
+        get { return p == null ? lastAbsY : p.self.position.y; }
         set {
             if (p != null)
                 p.self.position = new Vector2(p.self.position.x, value);
@@ -151,19 +132,11 @@ public class ProjectileController {
     public bool isPersistent = false;
 
     public string layer {
-        get {
-            if (spr.img.transform.parent.name == "BulletPool")
-                return "";
-            else
-                return spr.img.transform.parent.name.Substring(0, spr.img.transform.parent.name.Length - 6);
-        }
+        get { return spr.img.transform.parent.name == "BulletPool" ? "" : spr.img.transform.parent.name.Substring(0, spr.img.transform.parent.name.Length - 6); }
         set {
             Transform parent = spr.img.transform.parent;
             try {
-                if (value == "")
-                    spr.img.transform.SetParent(GameObject.Find("BulletPool").transform);
-                else
-                    spr.img.transform.SetParent(GameObject.Find(value + "Bullet").transform);
+                spr.img.transform.SetParent(GameObject.Find(value == "" ? "BulletPool" : value + "Bullet").transform);
             } catch { spr.img.transform.SetParent(parent); }
         }
     }
@@ -183,45 +156,41 @@ public class ProjectileController {
         if (p == null)
             throw new CYFException("Attempted to reset the personal collision system of a removed bullet.");
         p.ppchanged = false;
-        p.ppcollision = GlobalControls.ppcollision;
+        p.ppcollision = globalPixelPerfectCollision;
     }
 
     public void Remove() {
-        if (isactive) {
-            Transform[] pcs = UnitaleUtil.GetFirstChildren(p.transform);
-            for (int i = 1; i < pcs.Length; i++)
-                try { pcs[i].GetComponent<Projectile>().ctrl.Remove(); }
-                catch { new LuaSpriteController(pcs[i].GetComponent<Image>()).Remove(); }
-            lastX = x;
-            lastY = y;
-            lastAbsX = absx;
-            lastAbsY = absy;
-            if (p.gameObject.GetComponent<KeyframeCollection>() != null)
-                GameObject.Destroy(p.gameObject.GetComponent<KeyframeCollection>());
-            p.gameObject.GetComponent<Mask>().enabled = false;
-            p.gameObject.GetComponent<RectMask2D>().enabled = false;
-            spr.StopAnimation();
-            BulletPool.instance.Requeue(p);
-            p = null;
-        }
+        if (!isactive) return;
+        Transform[] pcs = UnitaleUtil.GetFirstChildren(p.transform);
+        for (int i = 1; i < pcs.Length; i++)
+            try { pcs[i].GetComponent<Projectile>().ctrl.Remove(); }
+            catch { new LuaSpriteController(pcs[i].GetComponent<Image>()).Remove(); }
+        lastX = x;
+        lastY = y;
+        lastAbsX = absx;
+        lastAbsY = absy;
+        if (p.gameObject.GetComponent<KeyframeCollection>() != null)
+            Object.Destroy(p.gameObject.GetComponent<KeyframeCollection>());
+        p.gameObject.GetComponent<Mask>().enabled = false;
+        p.gameObject.GetComponent<RectMask2D>().enabled = false;
+        spr.StopAnimation();
+        BulletPool.instance.Requeue(p);
+        p = null;
     }
 
-    public void Move(float x, float y) { MoveToAbs(this.absx + x, this.absy + y); }
+    public void Move(float newX, float newY) { MoveToAbs(absx + newX, absy + newY); }
 
-    public void MoveTo(float x, float y) { MoveToAbs(ArenaManager.arenaCenter.x + x, ArenaManager.arenaCenter.y + y); }
+    public void MoveTo(float newX, float newY) { MoveToAbs(ArenaManager.arenaCenter.x + newX, ArenaManager.arenaCenter.y + newY); }
 
-    public void MoveToAbs(float x, float y) {
+    public void MoveToAbs(float newX, float newY) {
         if (p == null) {
             if (GlobalControls.retroMode)
                 return;
-            else
-                throw new CYFException("Attempted to move a removed bullet. You can use a bullet's isactive property to check if it has been removed.");
+            throw new CYFException("Attempted to move a removed bullet. You can use a bullet's isactive property to check if it has been removed.");
         }
 
-        if (GlobalControls.retroMode)
-            p.self.anchoredPosition = new Vector2(x, y);
-        else
-            p.self.position = new Vector2(x, y);
+        if (GlobalControls.retroMode) p.self.anchoredPosition = new Vector2(newX, newY);
+        else                          p.self.position = new Vector2(newX, newY);
     }
 
     public void SendToTop() { p.self.SetAsLastSibling(); }
@@ -238,8 +207,7 @@ public class ProjectileController {
         if (name == null)
             throw new CYFException("bullet.GetVar: The first argument (the index) is nil.\n\nSee the documentation for proper usage.");
         DynValue retval;
-        if (vars.TryGetValue(name, out retval)) return retval;
-        else                                    return null;
+        return vars.TryGetValue(name, out retval) ? retval : null;
     }
 
     public DynValue this[string key] {
@@ -250,7 +218,6 @@ public class ProjectileController {
     public bool isColliding() {
         if (p == null)
             return false;
-        if (p.isPP())  return p.HitTestPP();
-        else           return p.HitTest();
+        return p.isPP() ? p.HitTestPP() : p.HitTest();
     }
 }

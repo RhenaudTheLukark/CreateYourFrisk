@@ -4,39 +4,42 @@ using MoonSharp.Interpreter;
 using System.Collections.Generic;
 
 public class LuaSpriteShader {
-    private string mode = "sprite";
-    private GameObject gameObject;
+    private readonly string mode;
+    private readonly GameObject gameObject;
     [MoonSharpHidden] public Material material;
-    [MoonSharpHidden] public bool _isActive = false;
+    [MoonSharpHidden] public bool _isActive;
     private TextureWrapMode H = TextureWrapMode.Clamp;
     private TextureWrapMode V = TextureWrapMode.Clamp;
-    private Dictionary<string, int> propertyIDs = new Dictionary<string, int>();
+    private readonly Dictionary<string, int> propertyIDs = new Dictionary<string, int>();
 
     public LuaSpriteShader(string mode = "sprite", GameObject go = null) {
         this.mode = mode;
-        this.gameObject = go;
+        gameObject = go;
 
-        if (mode == "sprite")       this.material = go.GetComponent<Image>().material;
-        else if (mode == "event")   this.material = go.GetComponent<SpriteRenderer>().material;
-        else if (mode == "camera")  this.material = go.GetComponent<CameraShader>().material;
+        if (go == null) return;
+        switch (mode) {
+            case "sprite": material = go.GetComponent<Image>().material;          break;
+            case "event":  material = go.GetComponent<SpriteRenderer>().material; break;
+            case "camera": material = go.GetComponent<CameraShader>().material;   break;
+        }
     }
 
     public void Set(string bundleName, string shaderName) {
-        if (bundleName == null)
-            throw new CYFException("shader.Set: The first argument, the name of the AssetBundle to load, is nil.");
-        else if (shaderName == null)
-            throw new CYFException("shader.Set: The second argument, the name of the shader to load, is nil.");
+        if (bundleName == null) throw new CYFException("shader.Set: The first argument, the name of the AssetBundle to load, is nil.");
+        if (shaderName == null) throw new CYFException("shader.Set: The second argument, the name of the shader to load, is nil.");
 
-        material = GameObject.Instantiate<Material>(ShaderRegistry.Get(bundleName, shaderName));
-        if (mode == "camera") {
-            CameraShader cs = gameObject.GetComponent<CameraShader>();
-            cs.enabled = true;
-            cs.material = material;
-            material.EnableKeyword("CYF_SHADER_IS_CAMERA");
-        } else if (mode == "event")
-            gameObject.GetComponent<SpriteRenderer>().material = material;
-        else
-            gameObject.GetComponent<Image>().material = material;
+        material = Object.Instantiate(ShaderRegistry.Get(bundleName, shaderName));
+        switch (mode) {
+            case "camera": {
+                CameraShader cs = gameObject.GetComponent<CameraShader>();
+                cs.enabled  = true;
+                cs.material = material;
+                material.EnableKeyword("CYF_SHADER_IS_CAMERA");
+                break;
+            }
+            case "event": gameObject.GetComponent<SpriteRenderer>().material = material; break;
+            default:      gameObject.GetComponent<Image>().material = material;          break;
+        }
         _isActive = true;
     }
 
@@ -48,33 +51,35 @@ public class LuaSpriteShader {
             try {
                 material = new Material(Shader.Find(shaderName));
             } catch { throw new CYFException("The shader \"" + shaderName + "\" could not be found."); }
-            if (mode == "camera") {
-                CameraShader cs = gameObject.GetComponent<CameraShader>();
-                cs.enabled = true;
-                cs.material = material;
-                material.EnableKeyword("CYF_SHADER_IS_CAMERA");
-            } else if (mode == "event")
-                gameObject.GetComponent<SpriteRenderer>().material = material;
-            else
-                gameObject.GetComponent<Image>().material = material;
+            switch (mode) {
+                case "camera": {
+                    CameraShader cs = gameObject.GetComponent<CameraShader>();
+                    cs.enabled  = true;
+                    cs.material = material;
+                    material.EnableKeyword("CYF_SHADER_IS_CAMERA");
+                    break;
+                }
+                case "event": gameObject.GetComponent<SpriteRenderer>().material = material; break;
+                default:      gameObject.GetComponent<Image>().material = material;          break;
+            }
             _isActive = true;
         }
     #else
-        public void Test(string shaderName) {
-            throw new CYFException("shader.Test may only be used from within the Unity editor.");
-        }
+        public void Test(string shaderName) { throw new CYFException("shader.Test may only be used from within the Unity editor."); }
     #endif
 
     public void Revert() {
         material = ShaderRegistry.UI_DEFAULT_MATERIAL;
-        if (mode == "camera") {
-            CameraShader cs = gameObject.GetComponent<CameraShader>();
-            cs.enabled = false;
-            cs.material = material;
-        } else if (mode == "event")
-            gameObject.GetComponent<SpriteRenderer>().material = material;
-        else
-            gameObject.GetComponent<Image>().material = material;
+        switch (mode) {
+            case "camera": {
+                CameraShader cs = gameObject.GetComponent<CameraShader>();
+                cs.enabled  = false;
+                cs.material = material;
+                break;
+            }
+            case "event": gameObject.GetComponent<SpriteRenderer>().material = material; break;
+            default:      gameObject.GetComponent<Image>().material = material;          break;
+        }
         _isActive = false;
     }
 
@@ -94,17 +99,18 @@ public class LuaSpriteShader {
     public void SetWrapMode(string wrapMode, int sides = 0) {
         checkActive();
         TextureWrapMode newMode = TextureWrapMode.Clamp;
-        if (wrapMode == "repeat")          newMode = TextureWrapMode.Repeat;
-        else if (wrapMode == "mirror")     newMode = TextureWrapMode.Mirror;
-        else if (wrapMode == "mirroronce") newMode = TextureWrapMode.MirrorOnce;
+        switch (wrapMode) {
+            case "repeat":     newMode = TextureWrapMode.Repeat;     break;
+            case "mirror":     newMode = TextureWrapMode.Mirror;     break;
+            case "mirroronce": newMode = TextureWrapMode.MirrorOnce; break;
+        }
 
-        if (sides == 0) {
-            H = newMode;
-            V = newMode;
-        } else if (sides == 1) {
-            H = newMode;
-        } else
-            V = newMode;
+        switch (sides) {
+            case 0:  H = newMode;
+                     V = newMode; break;
+            case 1:  H = newMode; break;
+            default: V = newMode; break;
+        }
 
         if (mode != "camera")
             UpdateTexture(mode == "event" ? gameObject.GetComponent<SpriteRenderer>().sprite.texture : gameObject.GetComponent<Image>().mainTexture);
@@ -116,11 +122,8 @@ public class LuaSpriteShader {
 
     private int IndexProperty(string name, bool get) {
         checkActive();
-        if (string.IsNullOrEmpty(name))
-            throw new CYFException("The first argument, the name of the property in the shader, is nil.");
-
-        if (!material.HasProperty(name) && get)
-            throw new CYFException("Shader has no property \"" + name + "\".");
+        if (string.IsNullOrEmpty(name))         throw new CYFException("The first argument, the name of the property in the shader, is nil.");
+        if (!material.HasProperty(name) && get) throw new CYFException("Shader has no property \"" + name + "\".");
 
         if (!propertyIDs.ContainsKey(name))
             propertyIDs[name] = Shader.PropertyToID(name);
@@ -201,30 +204,14 @@ public class LuaSpriteShader {
 
 
 
-    public float GetFloat(string name) {
-        return material.GetFloat(IndexProperty(name, true));
-    }
-    public void SetFloat(string name, float value) {
-        material.SetFloat(IndexProperty(name, false), value);
-    }
+    public float GetFloat(string name)             { return material.GetFloat(IndexProperty(name, true));  }
+    public void SetFloat(string name, float value) { material.SetFloat(IndexProperty(name, false), value); }
 
+    public float[] GetFloatArray(string name)             { return material.GetFloatArray(IndexProperty(name, true));  }
+    public void SetFloatArray(string name, float[] value) { material.SetFloatArray(IndexProperty(name, false), value); }
 
-
-    public float[] GetFloatArray(string name) {
-        return material.GetFloatArray(IndexProperty(name, true));
-    }
-    public void SetFloatArray(string name, float[] value) {
-        material.SetFloatArray(IndexProperty(name, false), value);
-    }
-
-
-
-    public int GetInt(string name) {
-        return material.GetInt(IndexProperty(name, true));
-    }
-    public void SetInt(string name, int value) {
-        material.SetInt(IndexProperty(name, false), value);
-    }
+    public int GetInt(string name)             { return material.GetInt(IndexProperty(name, true));  }
+    public void SetInt(string name, int value) { material.SetInt(IndexProperty(name, false), value); }
 
 
 
@@ -234,14 +221,10 @@ public class LuaSpriteShader {
         public MatrixFourByFour(Matrix4x4 matrix) { self = matrix; }
 
         public MatrixFourByFour(DynValue row1, DynValue row2, DynValue row3, DynValue row4) {
-            if (row1 == null || row1.Type != DataType.Table || row1.Table.Length < 4)
-                throw new CYFException("shader.Matrix: The first argument needs to be a table of 4 numbers.");
-            if (row2 == null || row2.Type != DataType.Table || row2.Table.Length < 4)
-                throw new CYFException("shader.Matrix: The first argument needs to be a table of 4 numbers.");
-            if (row3 == null || row3.Type != DataType.Table || row3.Table.Length < 4)
-                throw new CYFException("shader.Matrix: The first argument needs to be a table of 4 numbers.");
-            if (row4 == null || row4.Type != DataType.Table || row4.Table.Length < 4)
-                throw new CYFException("shader.Matrix: The first argument needs to be a table of 4 numbers.");
+            if (row1 == null || row1.Type != DataType.Table || row1.Table.Length < 4) throw new CYFException("shader.Matrix: The first argument needs to be a table of 4 numbers.");
+            if (row2 == null || row2.Type != DataType.Table || row2.Table.Length < 4) throw new CYFException("shader.Matrix: The first argument needs to be a table of 4 numbers.");
+            if (row3 == null || row3.Type != DataType.Table || row3.Table.Length < 4) throw new CYFException("shader.Matrix: The first argument needs to be a table of 4 numbers.");
+            if (row4 == null || row4.Type != DataType.Table || row4.Table.Length < 4) throw new CYFException("shader.Matrix: The first argument needs to be a table of 4 numbers.");
 
             Table t1 = row1.Table;
             Table t2 = row2.Table;
@@ -267,19 +250,13 @@ public class LuaSpriteShader {
 
         public float this[int row, int column] {
             get {
-                if (row < 1 || row > 4)
-                    throw new CYFException("Row must be between 1 and 4.");
-                else if (column < 1 || column > 4)
-                    throw new CYFException("Column must be between 1 and 4.");
-
+                if (row < 1 || row > 4)       throw new CYFException("Row must be between 1 and 4.");
+                if (column < 1 || column > 4) throw new CYFException("Column must be between 1 and 4.");
                 return self[row - 1, column - 1];
             }
             set {
-                if (row < 1 || row > 4)
-                    throw new CYFException("Row must be between 1 and 4.");
-                else if (column < 1 || column > 4)
-                    throw new CYFException("Column must be between 1 and 4.");
-
+                if (row < 1 || row > 4)       throw new CYFException("Row must be between 1 and 4.");
+                if (column < 1 || column > 4) throw new CYFException("Column must be between 1 and 4.");
                 self[row - 1, column - 1] = value;
             }
         }
@@ -287,12 +264,8 @@ public class LuaSpriteShader {
 
     public MatrixFourByFour Matrix(DynValue row1, DynValue row2, DynValue row3, DynValue row4) { return new MatrixFourByFour(row1, row2, row3, row4); }
 
-    public MatrixFourByFour GetMatrix(string name) {
-        return new MatrixFourByFour(material.GetMatrix(IndexProperty(name, true)));
-    }
-    public void SetMatrix(string name, MatrixFourByFour value) {
-        material.SetMatrix(IndexProperty(name, false), value.self);
-    }
+    public MatrixFourByFour GetMatrix(string name)             { return new MatrixFourByFour(material.GetMatrix(IndexProperty(name, true))); }
+    public void SetMatrix(string name, MatrixFourByFour value) { material.SetMatrix(IndexProperty(name, false), value.self);                 }
 
 
 

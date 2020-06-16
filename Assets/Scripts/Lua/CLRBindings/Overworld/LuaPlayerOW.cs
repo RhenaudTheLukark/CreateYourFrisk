@@ -87,8 +87,7 @@ public class LuaPlayerOW {
     /// <param name="damage">This one seems obvious</param>
     [CYFEventFunction]
     public void Hurt(int damage) {
-        if (damage >= 0) UnitaleUtil.PlaySound("HurtSound", AudioClipRegistry.GetSound("hurtsound"), 0.65f);
-        else             UnitaleUtil.PlaySound("HurtSound", AudioClipRegistry.GetSound("healsound"), 0.65f);
+        UnitaleUtil.PlaySound("HurtSound", AudioClipRegistry.GetSound(damage >= 0 ? "hurtsound" : "healsound"));
 
         if (-damage + PlayerCharacter.instance.HP > PlayerCharacter.instance.MaxHP) PlayerCharacter.instance.HP = PlayerCharacter.instance.MaxHP;
         else if (-damage + PlayerCharacter.instance.HP <= 0)                        PlayerCharacter.instance.HP = 1;
@@ -120,8 +119,7 @@ public class LuaPlayerOW {
             return;
         }
         float CheckedHP = PlayerCharacter.instance.HP;
-        if (CheckedHP - newhp >= 0) UnitaleUtil.PlaySound("CollisionSoundChannel", AudioClipRegistry.GetSound("hurtsound").name);
-        else                        UnitaleUtil.PlaySound("CollisionSoundChannel", AudioClipRegistry.GetSound("healsound").name);
+        UnitaleUtil.PlaySound("CollisionSoundChannel", AudioClipRegistry.GetSound(CheckedHP - newhp >= 0 ? "hurtsound" : "healsound").name);
 
         newhp = Mathf.Round(newhp * Mathf.Pow(10, ControlPanel.instance.MaxDigitsAfterComma)) / Mathf.Pow(10, ControlPanel.instance.MaxDigitsAfterComma);
 
@@ -153,7 +151,7 @@ public class LuaPlayerOW {
 
     [CYFEventFunction]
     public void Teleport(string mapName, float posX, float posY, int direction = 0, bool NoFadeIn = false, bool NoFadeOut = false) {
-        TPHandler tp = GameObject.Instantiate<TPHandler>(Resources.Load<TPHandler>("Prefabs/TP On-the-fly"));
+        TPHandler tp = Object.Instantiate(Resources.Load<TPHandler>("Prefabs/TP On-the-fly"));
         tp.sceneName = mapName;
         tp.position = new Vector2(posX, posY);
         tp.direction = direction;

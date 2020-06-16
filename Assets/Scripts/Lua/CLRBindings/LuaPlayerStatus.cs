@@ -11,7 +11,7 @@ public class LuaPlayerStatus {
     /// <summary>
     /// The sprite controller for the player.
     /// </summary>
-    private LuaSpriteController spr;
+    private readonly LuaSpriteController spr;
 
     /// <summary>
     /// Create a new Lua controller intended for this player.
@@ -62,7 +62,7 @@ public class LuaPlayerStatus {
     /// </summary>
     public float hp {
         get { return player.HP; }
-        set { player.setHP(value); }
+        set { player.SetHP(value); }
     }
 
     /// <summary>
@@ -70,7 +70,7 @@ public class LuaPlayerStatus {
     /// </summary>
     public int maxhp {
         get { return PlayerCharacter.instance.MaxHP; }
-        set { player.setMaxHPShift(value, 0f, true, false, false); }
+        set { player.SetMaxHPShift(value, 0f, true, false, false); }
     }
 
     /// <summary>
@@ -147,13 +147,12 @@ public class LuaPlayerStatus {
     public int lv {
         get { return PlayerCharacter.instance.LV; }
         set {
-            if (PlayerCharacter.instance.LV != value) {
-                if (PlayerCharacter.instance.HP > PlayerCharacter.instance.MaxHP * 1.5 && PlayerCharacter.instance.LV > value)
-                    player.setHP((int)(PlayerCharacter.instance.MaxHP * 1.5));
-                PlayerCharacter.instance.SetLevel(value);
-                UIStats.instance.setPlayerInfo(PlayerCharacter.instance.Name, PlayerCharacter.instance.LV);
-                UIStats.instance.setMaxHP();
-            }
+            if (PlayerCharacter.instance.LV == value) return;
+            if (PlayerCharacter.instance.HP > PlayerCharacter.instance.MaxHP * 1.5 && PlayerCharacter.instance.LV > value)
+                player.SetHP((int)(PlayerCharacter.instance.MaxHP * 1.5));
+            PlayerCharacter.instance.SetLevel(value);
+            UIStats.instance.setPlayerInfo(PlayerCharacter.instance.Name, PlayerCharacter.instance.LV);
+            UIStats.instance.setMaxHP();
         }
     }
 
@@ -234,15 +233,17 @@ public class LuaPlayerStatus {
     /// <summary>
     /// Sets the player's HP above his HP Max. Maximum : 150% HP Max.
     /// </summary>
-    public void ForceHP(float HP) { player.setHP(HP, false); }
+    public void ForceHP(float HP) { player.SetHP(HP, false); }
 
     /// <summary>
     /// Sets a shift for the player's Max HP. Can be settable and can modify the player's HP.
     /// </summary>
     /// <param name="shift"></param>
+    /// <param name="invulSec"></param>
     /// <param name="set"></param>
     /// <param name="canHeal"></param>
-    public void SetMaxHPShift(int shift, float invulSec = 1.7f, bool set = false, bool canHeal = false, bool sound = true) { player.setMaxHPShift(shift, invulSec, set, canHeal, sound); }
+    /// <param name="sound"></param>
+    public void SetMaxHPShift(int shift, float invulSec = 1.7f, bool set = false, bool canHeal = false, bool sound = true) { player.SetMaxHPShift(shift, invulSec, set, canHeal, sound); }
     public void setMaxHPShift(int shift, float invulSec = 1.7f, bool set = false, bool canHeal = false, bool sound = true) { SetMaxHPShift(shift, invulSec, set, canHeal, sound); }
 
     /// <summary>
@@ -259,12 +260,12 @@ public class LuaPlayerStatus {
         if (resetATK)
             atk = 8 + (2 * lv);
         if (resetDEF)
-            def = 10 + (int)UnityEngine.Mathf.Floor((lv - 1) / 4);
+            def = 10 + (int)UnityEngine.Mathf.Floor((lv - 1) / 4f);
     }
 
     public void SetAttackAnim(string[] anim, float frequency = 1 / 6f, string prefix = "") {
         if (anim.Length == 0) {
-            UIController.instance.fightUI.sliceAnim = new string[] { "empty" };
+            UIController.instance.fightUI.sliceAnim = new[] { "empty" };
             UIController.instance.fightUI.sliceAnimFrequency = 1 / 30f;
         } else {
             if (prefix != "") {
@@ -285,7 +286,7 @@ public class LuaPlayerStatus {
 
     public void ResetAttackAnim() {
         UIController.instance.fightUI.sliceAnimFrequency = 1 / 6f;
-        UIController.instance.fightUI.sliceAnim = new string[] {
+        UIController.instance.fightUI.sliceAnim = new[] {
             "UI/Battle/spr_slice_o_0",
             "UI/Battle/spr_slice_o_1",
             "UI/Battle/spr_slice_o_2",
@@ -296,24 +297,24 @@ public class LuaPlayerStatus {
     }
 
     public void ChangeTarget(int index) {
-        if (UIController.instance.state == UIController.UIState.ATTACKING)
-            if (index <= UIController.instance.encounter.EnabledEnemies.Length && index > 0)
-                UIController.instance.fightUI.ChangeTarget(UIController.instance.encounter.EnabledEnemies[index-1]);
-            else
-                UnitaleUtil.DisplayLuaError("Changing the target", "Enemy number " + index + " doesn't exist.");
+        if (UIController.instance.state != UIController.UIState.ATTACKING) return;
+        if (index <= UIController.instance.encounter.EnabledEnemies.Length && index > 0)
+            UIController.instance.fightUI.ChangeTarget(UIController.instance.encounter.EnabledEnemies[index -1]);
+        else
+            UnitaleUtil.DisplayLuaError("Changing the target", "Enemy number " + index + " doesn't exist.");
     }
 
     public void ForceAttack(int enemyNumber, int damage = -478294) {
         if (enemyNumber <= UIController.instance.encounter.EnabledEnemies.Length && enemyNumber > 0) {
             //UIController.instance.SwitchState(UIController.UIState.ATTACKING);
             UIController.instance.fightUI.targetNumber = 1;
-            UIController.instance.fightUI.targetIDs = new int[] { enemyNumber - 1 };
+            UIController.instance.fightUI.targetIDs = new[] { enemyNumber - 1 };
             UIController.instance.fightUI.quickInit(UIController.instance.encounter.EnabledEnemies[enemyNumber - 1], damage);
         } else
             UnitaleUtil.DisplayLuaError("Force Attack", "Enemy number " + enemyNumber + " doesn't exist.");
     }
 
-    public int[] MultiTarget(int damage) { return MultiTarget(null, new int[] { damage }); }
+    public int[] MultiTarget(int damage) { return MultiTarget(null, new[] { damage }); }
     public int[] MultiTarget(int[] damage, bool thisIsTheDamageForm) { return MultiTarget(null, damage); }
     public int[] MultiTarget(int[] targets = null, int[] damage = null) {
         if (targets != null) {
@@ -323,10 +324,9 @@ public class LuaPlayerStatus {
             }
             for (int i = 0; i < targets.Length; i++) {
                 targets[i]--;
-                if (targets[i] >= UIController.instance.encounter.EnabledEnemies.Length || targets[i] < 0) {
-                    UnitaleUtil.DisplayLuaError("Multi Target", "Enemy number " + targets[i] + " doesn't exist.");
-                    return null;
-                }
+                if (targets[i] < UIController.instance.encounter.EnabledEnemies.Length && targets[i] >= 0) continue;
+                UnitaleUtil.DisplayLuaError("Multi Target", "Enemy number " + targets[i] + " doesn't exist.");
+                return null;
             }
         }
         UIController.instance.fightUI.multiHit = true;
@@ -342,24 +342,23 @@ public class LuaPlayerStatus {
 
         UIController.instance.fightUI.targetIDs = targets;
         UIController.instance.fightUI.targetNumber = targets.Length;
-        if (damage != null) {
-            if (damage.Length == 1) {
-                int tempDamage = damage[0];
-                damage = new int[UIController.instance.fightUI.targetNumber];
-                for (int i = 0; i < damage.Length; i++)
-                    damage[i] = tempDamage;
-            }
+        if (damage == null) return damage;
+        if (damage.Length == 1) {
+            int tempDamage = damage[0];
+            damage = new int[UIController.instance.fightUI.targetNumber];
             for (int i = 0; i < damage.Length; i++)
-                UIController.instance.encounter.EnabledEnemies[targets[i]].presetDmg = damage[i];
-            /*for (int i = 0; i < targets.Length; i++) {
-                Debug.Log((UIController.instance.fightUI.allFightUiInstances.Count - 1 - (targets.Length - 1 - i)) + " / " + (UIController.instance.fightUI.allFightUiInstances.Count - 1));
-                UIController.instance.fightUI.allFightUiInstances[UIController.instance.fightUI.allFightUiInstances.Count - 1 - (targets.Length - 1 - i)].Damage = damage[i];
-            }*/
+                damage[i] = tempDamage;
         }
+        for (int i = 0; i < damage.Length; i++)
+            UIController.instance.encounter.EnabledEnemies[targets[i]].presetDmg = damage[i];
+        /*for (int i = 0; i < targets.Length; i++) {
+            Debug.Log((UIController.instance.fightUI.allFightUiInstances.Count - 1 - (targets.Length - 1 - i)) + " / " + (UIController.instance.fightUI.allFightUiInstances.Count - 1));
+            UIController.instance.fightUI.allFightUiInstances[UIController.instance.fightUI.allFightUiInstances.Count - 1 - (targets.Length - 1 - i)].Damage = damage[i];
+        }*/
         return damage;
     }
 
-    public void ForceMultiAttack(int damage) { ForceMultiAttack(null, new int[] { damage }); }
+    public void ForceMultiAttack(int damage) { ForceMultiAttack(null, new[] { damage }); }
     public void ForceMultiAttack(int[] damage, bool thisIsTheDamageForm) { ForceMultiAttack(null, damage); }
     public void ForceMultiAttack(int[] targets = null, int[] damage = null) {
         int[] damage2 = MultiTarget(targets, damage);
