@@ -519,26 +519,20 @@ public class EventManager : MonoBehaviour {
     }
 
     /// <summary>
-    /// Generates the internal Lua code used by CYF events only once.
+    /// Generates the internal Lua code used by CYF events.
     /// </summary>
     private void GenerateEventCode() {
         _eventCodeFirst = string.Empty;
-        string lameFunctionBinding = string.Empty;
-        bool once = false;
         // Parse all event function objects
         foreach (Type t in _boundValueName.Keys) {
             IEnumerable<string> members = CreateBindListMember(t);
-            _eventCodeFirst += "\n" + _boundValueName[t] + " = { }";
+            _eventCodeFirst += "\n" + _boundValueName[t] + " = {";
             // Get all the functions of the current event function object and add it to the event script's prefix
-            foreach (string member in members) {
-                string completeMember = _boundValueName[t] + "." + member;
+            foreach (string member in members)
                 // Store all functions as a call to CYFEventForwarder
-                _eventCodeFirst += "\n" + "function " + completeMember + "(...) return CYFEventForwarder(\"" + completeMember + "\",...) end";
-                lameFunctionBinding += "\n    " + (once ? "elseif" : "if") + " func == '" + completeMember + "' then x = F" + completeMember;
-                once = true;
-            }
-            // Throw an error if the user tries to add a value or get a value from the hidden function object
-            _eventCodeFirst += "\nsetmetatable(" + _boundValueName[t] + @", {
+                _eventCodeFirst += "\n    " + member + " = function(...) CYFEventLastAction = '" + _boundValueName[t] + "." + member + "' return CYFEventForwarder(F" + _boundValueName[t] + "." + member + ", ...) end,";
+            // Throw an error if the user tries to add or get a value from the new, table-based object
+            _eventCodeFirst += "\n}\nsetmetatable(" + _boundValueName[t] + @", {
     __index = function(t, k)
         error(""cannot access field "" .. tostring(k) .. "" of userdata <" + t + @">"", 2)
     end,
@@ -547,18 +541,18 @@ public class EventManager : MonoBehaviour {
     end
 })";
         }
-        lameFunctionBinding += "\n    end";
-        // TODO: Add a readable explanatory comment to the code below
         _eventCodeFirst += @"
-CYFEventCoroutine = coroutine.create(DEBUG)
-CYFEventCheckRefresh = true
-CYFEventLastAction = """"
+CYFEventCoroutine = coroutine.create(DEBUG) -- Coroutine for the current event script
+CYFEventCheckRefresh = true                 -- Variable checked for by the C# scripts
+CYFEventLastAction = """"                   -- Checked for in a workaround for General.Wait
 local CYFEventAlreadyLaunched = false
+
+-- Function to read regular Lua error messages and make them say 'line' and 'char' for readability
+local errorPattern = ':%([%d%-,]+%):'
 function CYFFormatError(err)
-    local pattern = ':%([%d%-,]+%):'
-    local code = err:match(pattern)
+    local code = err:match(errorPattern)
     if code then
-        local before = err:sub(0, err:find(pattern) + (code:sub(0, 2) == ':(' and 1 or 0))
+        local before = err:sub(0, err:find(errorPattern) + (code:sub(0, 2) == ':(' and 1 or 0))
         local numbers = err:match('[%d,%-]+%)'):sub(0, -2)
         local after = err:sub(err:find(numbers:gsub('%-', '%%-'), #before) + #numbers)
 
@@ -581,6 +575,8 @@ function CYFFormatError(err)
         return err
     end
 end
+
+-- Function called by the coroutine created in CYFEventStartEvent
 function CYFEventFuncToLaunch(x)
     if _internalScriptName == nil then
         _internalScriptName = '";
@@ -591,6 +587,8 @@ function CYFEventFuncToLaunch(x)
         error(CYFFormatError(err), 0)
     end
 end
+
+-- Signals the end of an asynchronous event on the C# side and resumes the coroutine on the Lua side
 function CYFEventNextCommand()
     CYFEventAlreadyLaunched = true
     if tostring(coroutine.status(CYFEventCoroutine)) == 'suspended' then
@@ -598,29 +596,33 @@ function CYFEventNextCommand()
         if not ok then error(errorMsg, 0) end
     end
 end
-function CYFEventStopCommand() coroutine.yield() end --currently unused
+
+-- Currently unused
+function CYFEventStopCommand() coroutine.yield() end 
+
+-- Called whenever activating an overworld Event object's event pages; Creates a coroutine that runs the matching EventPage function
 function CYFEventStartEvent(func)
     if _G[func] == nil then error(""error in script "" .. _internalScriptName .. ""\n\nThe function "" .. func .. "" doesn't exist in the Event script."", 0) end
     CYFEventCoroutine = coroutine.create(function() CYFEventFuncToLaunch(_G[func]) end)
     local ok, errorMsg = coroutine.resume(CYFEventCoroutine)
     if not ok then error(errorMsg, 0) end
 end
+
+-- Function called by the fake table-based overworld objects, which runs necessary code for the C# side before running the real function (like General.Wait)
 function CYFEventForwarder(func, ...)
     CYFEventAlreadyLaunched = false
     CYFEventCheckRefresh = true
     FGeneral.HiddenReloadAppliedScript()
-    CYFEventLastAction = func
-    local x" + lameFunctionBinding + "\n"
-+ @"local ok
+    local ok
     local result
     local hasArgs = false
     for k, v in pairs(({...})) do
         hasArgs = true
-        ok, result = pcall(x, ...)
+        ok, result = pcall(func, ...)
         break
     end
     if not hasArgs then
-        ok, result = pcall(x)
+        ok, result = pcall(func)
     end
     if not ok then
         error(CYFFormatError(result), 0)
@@ -1261,31 +1263,23 @@ end";
                 target = target ?? go.transform;
 
                 // Check if the target is already being moved in another MoveEventToPoint call
-                // TODO: Find a way to compress this code? Duplicate code
-                if (eventName == "Player") {
-                    // Check if the target is already being moved
-                    ScriptWrapper isMovingSource = go.GetComponent<PlayerOverworld>().isMovingSource;
-                    Vector2 roundedPos = new Vector2(Mathf.Round(target.position.x * 1000) / 1000, Mathf.Round(target.position.y * 1000) / 1000);
-                    Vector2 roundedEnd = new Vector2(Mathf.Round(dirX              * 1000) / 1000, Mathf.Round(dirY              * 1000) / 1000);
-                    // If it's where it should be, stop the target's movement
-                    if (roundedPos == roundedEnd)
+                ScriptWrapper isMovingSource = eventName == "Player" ? go.GetComponent<PlayerOverworld>().isMovingSource : go.GetComponent<EventOW>().isMovingSource;
+                Vector2 roundedPos = new Vector2(Mathf.Round(target.position.x * 1000) / 1000, Mathf.Round(target.position.y * 1000) / 1000);
+                Vector2 roundedEnd = new Vector2(Mathf.Round(dirX              * 1000) / 1000, Mathf.Round(dirY              * 1000) / 1000);
+                // If it's where it should be, stop the target's movement
+                if (roundedPos == roundedEnd)
+                    if (eventName == "Player")
                         go.GetComponent<PlayerOverworld>().isMovingSource = null;
-                    // Properly end the current call of this coroutine if the target is already being moved
-                    if (isMovingSource != null && isMovingSource != scr && go.GetComponent<PlayerOverworld>().isMovingWaitEnd)
-                        isMovingSource.Call("CYFEventNextCommand");
+                    else
+                        go.GetComponent<EventOW>().isMovingSource = null;
+                // Properly end the current call of this coroutine if the target is already being moved
+                if (isMovingSource != null && isMovingSource != scr && (eventName == "Player" ? go.GetComponent<PlayerOverworld>().isMovingWaitEnd : go.GetComponent<EventOW>().isMovingWaitEnd))
+                    isMovingSource.Call("CYFEventNextCommand");
+                // Update some values related to movement
+                if (eventName == "Player") {
                     go.GetComponent<PlayerOverworld>().isMovingSource = null;
                     go.GetComponent<PlayerOverworld>().isMovingWaitEnd = waitEnd;
                 } else {
-                    // Check if the target is already being moved
-                    ScriptWrapper isMovingSource = go.GetComponent<EventOW>().isMovingSource;
-                    Vector2 roundedPos = new Vector2(Mathf.Round(target.position.x * 1000) / 1000, Mathf.Round(target.position.y * 1000) / 1000);
-                    Vector2 roundedEnd = new Vector2(Mathf.Round(dirX              * 1000) / 1000, Mathf.Round(dirY              * 1000) / 1000);
-                    // If it's where it should be, stop the target's movement
-                    if (roundedPos == roundedEnd)
-                        go.GetComponent<EventOW>().isMovingSource = null;
-                    // Properly end the current call of this coroutine if the target is already being moved
-                    if (isMovingSource != null && isMovingSource != scr && go.GetComponent<EventOW>().isMovingWaitEnd)
-                        isMovingSource.Call("CYFEventNextCommand");
                     go.GetComponent<EventOW>().isMovingSource = null;
                     go.GetComponent<EventOW>().isMovingWaitEnd = waitEnd;
                 }
@@ -1503,29 +1497,21 @@ end";
                 go = GameObject.Find("Player");
 
             // Check if the target is already being rotated in another RotateEvent call
-            // TODO: Find a way to compress this code? Duplicate code
-            if (eventName == "Player") {
-                // Check if the target is already being rotated
-                ScriptWrapper isRotatingSource = go.GetComponent<PlayerOverworld>().isRotatingSource;
-                // If it's in the right rotation, stop the target's rotation
-                if (go.transform.rotation.eulerAngles.x == rotateX && go.transform.rotation.eulerAngles.y == rotateY && go.transform.rotation.eulerAngles.z == rotateZ)
+            ScriptWrapper isRotatingSource = eventName == "Player" ? go.GetComponent<PlayerOverworld>().isRotatingSource : go.GetComponent<EventOW>().isRotatingSource;
+            // If it's in the right rotation, stop the target's rotation
+            if (go.transform.rotation.eulerAngles.x == rotateX && go.transform.rotation.eulerAngles.y == rotateY && go.transform.rotation.eulerAngles.z == rotateZ)
+                if (eventName == "Player")
                     go.GetComponent<PlayerOverworld>().isRotatingSource = null;
-                // Properly end the current call of this coroutine if the target is already being moved
-                if (isRotatingSource != null && isRotatingSource != scr && go.GetComponent<PlayerOverworld>().isRotatingWaitEnd)
-                    isRotatingSource.Call("CYFEventNextCommand");
-                // Update some values related to rotation
+                else
+                    go.GetComponent<EventOW>().isRotatingSource = null;
+            // Properly end the current call of this coroutine if the target is already being moved
+            if (isRotatingSource != null && isRotatingSource != scr && (eventName == "Player" ? go.GetComponent<PlayerOverworld>().isRotatingWaitEnd : go.GetComponent<EventOW>().isRotatingWaitEnd))
+                isRotatingSource.Call("CYFEventNextCommand");
+            // Update some values related to rotation
+            if (eventName == "Player") {
                 go.GetComponent<PlayerOverworld>().isRotatingSource = scr;
                 go.GetComponent<PlayerOverworld>().isRotatingWaitEnd = waitEnd;
             } else {
-                // Check if the target is already being rotated
-                ScriptWrapper isRotatingSource = go.GetComponent<EventOW>().isRotatingSource;
-                // If it's in the right rotation, stop the target's rotation
-                if (go.transform.rotation.eulerAngles.x == rotateX && go.transform.rotation.eulerAngles.y == rotateY && go.transform.rotation.eulerAngles.z == rotateZ)
-                    go.GetComponent<EventOW>().isRotatingSource = null;
-                // Properly end the current call of this coroutine if the target is already being moved
-                if (isRotatingSource != null && isRotatingSource != scr && go.GetComponent<EventOW>().isRotatingWaitEnd)
-                    isRotatingSource.Call("CYFEventNextCommand");
-                // Update some values related to rotation
                 go.GetComponent<EventOW>().isRotatingSource = scr;
                 go.GetComponent<EventOW>().isRotatingWaitEnd = waitEnd;
             }
