@@ -342,10 +342,10 @@ public class EventManager : MonoBehaviour {
                 }
             } catch (Exception e) { Debug.LogError(e.Message); }
             // If a coroutine has been deleted, remove the event
-            foreach (var t in events) {
-                if (GetTrigger(t, t.GetComponent<EventOW>().actualPage) != 3 || coroutines.ContainsKey(eventScripts[t]) || eventScripts[t] == script) continue;
-                go1 = t;
-                ExecuteEvent(t, -1, true);
+            for (int i = events.Count - 1; i >= 0; i--) {
+                if (GetTrigger(events[i], events[i].GetComponent<EventOW>().actualPage) != 3 || coroutines.ContainsKey(eventScripts[events[i]]) || eventScripts[events[i]] == script) continue;
+                go1 = events[i];
+                ExecuteEvent(events[i], -1, true);
             }
         }
         // Catch any Lua exception and display it on screen
