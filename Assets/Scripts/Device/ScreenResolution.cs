@@ -133,7 +133,7 @@ public class ScreenResolution : MonoBehaviour {
         else
             cam.rect = NoBorderRect;
     }
-    private static void BoxCameras2(Scene scene) {
+    private static void BoxCameras2(Scene scene, LoadSceneMode mode) {
         lastScene = scene.name;
         BoxCameras(Screen.fullScreen);
     }

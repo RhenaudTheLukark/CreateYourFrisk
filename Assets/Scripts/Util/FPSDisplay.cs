@@ -13,7 +13,7 @@ public class FPSDisplay : MonoBehaviour {
         GUIStyle style = new GUIStyle();
 
         #if !UNITY_EDITOR
-            rect = new Rect(ScreenResolution.displayedSize.z, 0, ScreenResolution.displayedSize.x, Screen.height / 20);
+            Rect rect = new Rect(ScreenResolution.displayedSize.z, 0, ScreenResolution.displayedSize.x, Screen.height / 20);
         #else
             Rect rect = new Rect(0, 0, Screen.width, Screen.height / 20f);
         #endif
