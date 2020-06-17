@@ -1,8 +1,9 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using UnityEngine.UI;
+using MoonSharp.Interpreter;
+using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 /// <summary>
 /// The fairly hacky and somewhat unmaintainable Game Over behaviour class. Written in a hurry as it probably wasn't going to get replaced anytime soon.
@@ -77,7 +78,7 @@ public class GameOverBehavior : MonoBehaviour {
 
         if (!UnitaleUtil.IsOverworld) {
             UIController.instance.encounter.gameOverStance = false;
-            LuaEnemyEncounter.script.SetVar("autolinebreak", MoonSharp.Interpreter.DynValue.NewBoolean(autolinebreakstate));
+            LuaEnemyEncounter.script.SetVar("autolinebreak", DynValue.NewBoolean(autolinebreakstate));
         }
         heartShardInstances = new RectTransform[0];
         breakHeartAfter = 1.0f;
@@ -109,7 +110,7 @@ public class GameOverBehavior : MonoBehaviour {
         if (!UnitaleUtil.IsOverworld) {
             UIController.instance.encounter.EndWave(true);
             autolinebreakstate = LuaEnemyEncounter.script.GetVar("autolinebreak").Boolean;
-            LuaEnemyEncounter.script.SetVar("autolinebreak", MoonSharp.Interpreter.DynValue.NewBoolean(true));
+            LuaEnemyEncounter.script.SetVar("autolinebreak", DynValue.NewBoolean(true));
             transform.position = new Vector3(transform.position.x - Misc.cameraX, transform.position.y - Misc.cameraY, transform.position.z);
         } else
             autolinebreakstate = true;
