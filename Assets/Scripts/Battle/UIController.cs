@@ -1476,7 +1476,6 @@ public class UIController : MonoBehaviour {
         fightUI.gameObject.SetActive(false);
 
         encounter.CallOnSelfOrChildren("EncounterStarting");
-        UserDebugger.instance.transform.SetAsLastSibling();
 
         if (!stated)
             SwitchState(UIState.ACTIONSELECT, true);
