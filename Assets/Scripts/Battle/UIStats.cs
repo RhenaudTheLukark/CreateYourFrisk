@@ -39,7 +39,7 @@ public class UIStats : MonoBehaviour {
         nameLevelTextMan.enabled = true;
         nameLevelTextMan.SetFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_SMALLTEXT_NAME));
         nameLevelTextMan.SetText(new TextMessage(newName.ToUpper() + "  LV " + newLv, false, true));
-        hpRect.transform.position = new Vector3(hpRect.transform.parent.position.x + PlayerCharacter.instance.Name.Length > 6 ? 286.1f : 215.1f, hpRect.transform.position.y, hpRect.transform.position.z);
+        hpRect.transform.position = new Vector3(hpRect.transform.parent.position.x + (PlayerCharacter.instance.Name.Length > 6 ? 286.1f : 215.1f), hpRect.transform.position.y, hpRect.transform.position.z);
 
         nameLevelTextMan.enabled = false;
     }

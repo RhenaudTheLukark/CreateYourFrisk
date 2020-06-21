@@ -11,17 +11,11 @@ class AutoloadResourcesFromRegistry : MonoBehaviour {
     public string SpritePath;
     [Header("Audio Resource")]
     public bool Loop;
-    public string SoundPath;
+    //public string SoundPath;
 
     public bool done;
     private bool doneFromLoadedScene;
     private bool handleDictErrors;
-
-    /*void Awake() {
-        //if (StaticInits.Initialized)
-        LateStart();
-        //LateUpdater.lateInit.Add(LateStart);
-    }*/
 
     private void OnEnable() {
         if (UnitaleUtil.IsOverworld) Fading.StartFade += LateStart;
@@ -37,7 +31,7 @@ class AutoloadResourcesFromRegistry : MonoBehaviour {
 
     private void LateStart() {
         if (this == null) return;
-        bool hasError = false;
+        //bool hasError = false;
         if ((done || !handleDictErrors) && (doneFromLoadedScene || handleDictErrors)) return;
         if (!done && handleDictErrors)
             done = true;
@@ -54,9 +48,9 @@ class AutoloadResourcesFromRegistry : MonoBehaviour {
                     UnitaleUtil.DisplayLuaError("AutoloadResourcesFromRegistry", "You tried to load the sprite \"" + SpritePath + "\", but it doesn't exist.");
                     return;
                 }
-                if (img.sprite == null)
-                    hasError = true;
-                else {
+                //if (img.sprite == null)
+                    //hasError = true;
+                if (img.sprite != null) {
                     //img.sprite.name = SpritePath.ToLower(); TODO: Find a way to store the sprite's path
                     if (SetNativeSize) {
                         img.SetNativeSize();
@@ -75,9 +69,9 @@ class AutoloadResourcesFromRegistry : MonoBehaviour {
                     UnitaleUtil.DisplayLuaError("AutoloadResourcesFromRegistry", "You tried to load the sprite \"" + SpritePath + "\", but it doesn't exist.");
                     return;
                 }
-                if (img2.sprite == null)
-                    hasError = true;
-                else {
+                //if (img2.sprite == null)
+                    //hasError = true;
+                if (img2.sprite != null) {
                     //img2.sprite.name = SpritePath.ToLower();
                     if (SetNativeSize) {
                         if (!UnitaleUtil.IsOverworld) {
@@ -95,11 +89,13 @@ class AutoloadResourcesFromRegistry : MonoBehaviour {
                 throw new CYFException("The GameObject " + gameObject.name + " doesn't have an Image, Sprite Renderer or Particle System component.");
         }
 
+        /*
         if (!string.IsNullOrEmpty(SoundPath) && !hasError) {
             AudioSource aSrc = GetComponent<AudioSource>();
             aSrc.clip = AudioClipRegistry.Get(SoundPath);
             aSrc.loop = Loop;
         }
+        */
         handleDictErrors = true;
     }
 }

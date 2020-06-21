@@ -380,10 +380,8 @@ public static class LuaScriptBinder {
             // determine whether [instant] or [instant:allowcommand] is first
             string testFor = "[instant]";
             if (firstLine.IndexOf("[instant:allowcommand]", StringComparison.Ordinal) > -1 &&
-                firstLine.IndexOf("[instant]", StringComparison.Ordinal) == -1 || firstLine.IndexOf("[instant]", StringComparison.Ordinal) > -1 &&
-                                                                                   firstLine.IndexOf("[instant:allowcommand]", StringComparison.Ordinal) < firstLine.IndexOf("[instant]", StringComparison.Ordinal)) {
+                firstLine.IndexOf("[instant:allowcommand]", StringComparison.Ordinal) < firstLine.IndexOf("[instant]") || firstLine.IndexOf("[instant]") == -1)
                 testFor = "[instant:allowcommand]";
-            }
 
             // grab all of the text that comes before the matched command
             string precedingText = firstLine.Substring(0, firstLine.IndexOf(testFor, StringComparison.Ordinal));
