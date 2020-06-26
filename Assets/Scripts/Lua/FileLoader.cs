@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Debug = System.Diagnostics.Debug;
 
 /// <summary>
 /// Static utility class to take care of various file loading features in Unitale.
@@ -27,7 +28,7 @@ public static class FileLoader {
             }
 
             try {
-                System.Diagnostics.Debug.Assert(rootInfo.Parent != null, "rootInfo.Parent != null");
+                Debug.Assert(rootInfo.Parent != null, "rootInfo.Parent != null");
                 rootInfo = new DirectoryInfo(rootInfo.Parent.FullName);
             } catch {
                 UnitaleUtil.DisplayLuaError("CYF's Startup", "The engine detected no Mods folder in your files: are you sure it exists?");

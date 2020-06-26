@@ -393,8 +393,8 @@ public class LuaEnemyController : EnemyController {
             count += FindObjectsOfType<LuaEnemyController>().Count(luaec => luaec.transform.parent.name == "LuaEnemyEncounterGO" && luaec.index < index);
             transform.SetParent(GameObject.Find("LuaEnemyEncounterGO").transform, true);
         } else {
-            count += FindObjectsOfType<LuaEnemyController>().Count(luaec => !isUnderArena || luaec.transform.parent.name == "arena_container" && luaec.index <= index &&
-                                                                            luaec.transform.GetSiblingIndex() < GameObject.Find("arena_border_outer").transform.GetSiblingIndex());
+            count += FindObjectsOfType<LuaEnemyController>().Count(luaec => luaec.transform.parent.name == "arena_container" && luaec.index <= index &&
+                                                                            (isUnderArena && luaec.transform.GetSiblingIndex() < GameObject.Find("arena_border_outer").transform.GetSiblingIndex() || !isUnderArena));
             if (!isUnderArena) count++;
             transform.SetParent(GameObject.Find("arena_container").transform, true);
         }
