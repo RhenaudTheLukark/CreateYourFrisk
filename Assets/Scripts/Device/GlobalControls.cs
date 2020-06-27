@@ -144,7 +144,7 @@ public class GlobalControls : MonoBehaviour {
             gameObject.GetComponent<ProjectileHitboxRenderer>().enabled = !gameObject.GetComponent<ProjectileHitboxRenderer>().enabled;
         // Exit a battle or the Error scene
         else if (Input.GetKeyDown(KeyCode.Escape) && (canTransOW.Contains(sceneName) || isInFight)) {
-            if (isInFight && LuaEnemyEncounter.script.GetVar("unescape").Boolean && sceneName != "Error") return;
+            if (isInFight && EnemyEncounter.script.GetVar("unescape").Boolean && sceneName != "Error") return;
             // The Error scene can only be exited if we entered the mod through the mod selection screen
             if (sceneName == "Error" && !modDev) {
                 UnitaleUtil.ExitOverworld();

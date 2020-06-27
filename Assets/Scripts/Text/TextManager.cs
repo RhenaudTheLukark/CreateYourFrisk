@@ -432,7 +432,7 @@ public class TextManager : MonoBehaviour {
     [MoonSharpHidden] public void DoSkipFromPlayer() {
         skipFromPlayer = true;
 
-        if ((GlobalControls.isInFight && LuaEnemyEncounter.script.GetVar("playerskipdocommand").Boolean) || !GlobalControls.isInFight)
+        if ((GlobalControls.isInFight && EnemyEncounter.script.GetVar("playerskipdocommand").Boolean) || !GlobalControls.isInFight)
             instantCommand = true;
 
         if (!GlobalControls.retroMode)
@@ -572,7 +572,7 @@ public class TextManager : MonoBehaviour {
         letterReferences = new Image[currentText.Length];
         letterPositions = new Vector2[currentText.Length];
         if (currentText.Length > 1 && !forceNoAutoLineBreak)
-            if (!GlobalControls.isInFight || LuaEnemyEncounter.script.GetVar("autolinebreak").Boolean || GetType() == typeof(LuaTextManager))
+            if (!GlobalControls.isInFight || EnemyEncounter.script.GetVar("autolinebreak").Boolean || GetType() == typeof(LuaTextManager))
                 SpawnTextSpaceTest(0, currentText, out currentText);
 
         // Work-around for [instant] and [instant:allowcommand] at the beginning of a line of text
@@ -638,7 +638,7 @@ public class TextManager : MonoBehaviour {
                 case ' ':
                     if (i + 1 == currentText.Length || currentText[i + 1] == ' ' || forceNoAutoLineBreak)
                         break;
-                    if (!GlobalControls.isInFight || LuaEnemyEncounter.script.GetVar("autolinebreak").Boolean || GetType() == typeof(LuaTextManager)) {
+                    if (!GlobalControls.isInFight || EnemyEncounter.script.GetVar("autolinebreak").Boolean || GetType() == typeof(LuaTextManager)) {
                         SpawnTextSpaceTest(i, currentText, out currentText);
                         if (currentText[i] != ' ') {
                             i--;

@@ -323,7 +323,7 @@ public class LuaTextManager : TextManager {
             foreach (Transform child in container.transform) {
                 MaskImage childmask = child.gameObject.GetComponent<MaskImage>();
                 if (childmask != null)
-                    childmask.inverted = parent._masked > 3;
+                    childmask.inverted = parent._masked == LuaSpriteController.MaskMode.INVERTEDSPRITE || parent._masked == LuaSpriteController.MaskMode.INVERTEDSTENCIL;
             }
         }
         catch { throw new CYFException("You tried to set a removed sprite/nil sprite as this text object's parent."); }
@@ -495,7 +495,7 @@ public class LuaTextManager : TextManager {
 
     public override void SkipLine() {
         if (noSkip1stFrame) return;
-        if (GlobalControls.isInFight && LuaEnemyEncounter.script.GetVar("playerskipdocommand").Boolean
+        if (GlobalControls.isInFight && EnemyEncounter.script.GetVar("playerskipdocommand").Boolean
          || UnitaleUtil.IsOverworld && (EventManager.instance.script != null && EventManager.instance.script.GetVar("playerskipdocommand").Boolean
          || GlobalControls.isInShop && GameObject.Find("Canvas").GetComponent<ShopScript>().script.GetVar("playerskipdocommand").Boolean))
             DoSkipFromPlayer();

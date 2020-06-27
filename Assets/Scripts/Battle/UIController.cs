@@ -33,7 +33,7 @@ public class UIController : MonoBehaviour {
     public GameObject psContainer;  // Container for any particle effect used when using sprite.Dust() and when sparing or killing an enemy
     private AudioSource uiAudio;    // AudioSource only used to play the sound menumove when the Player moves in menus
 
-    internal LuaEnemyEncounter encounter;               // Main encounter script
+    internal EnemyEncounter encounter;               // Main encounter script
     [HideInInspector] public FightUIController fightUI; // Main Player attack handler
 
     private readonly Vector2 initialHealthPos = new Vector2(250, -10); // Initial health bar position for target selection
@@ -133,19 +133,19 @@ public class UIController : MonoBehaviour {
             ScriptWrapper.instances.Clear();
             LuaScriptBinder.scriptlist.Clear();
         } else {
-            foreach (LuaEnemyController enemy in instance.encounter.enemies) {
+            foreach (EnemyController enemy in instance.encounter.enemies) {
                 ScriptWrapper.instances.Remove(enemy.script);
                 LuaScriptBinder.scriptlist.Remove(enemy.script.script);
             }
-            Table t = LuaEnemyEncounter.script["Wave"].Table;
+            Table t = EnemyEncounter.script["Wave"].Table;
             foreach (DynValue obj in t.Keys) {
                 try {
                     ScriptWrapper.instances.Remove(((ScriptWrapper)t[obj]));
                     LuaScriptBinder.scriptlist.Remove(((ScriptWrapper)t[obj]).script);
                 } catch { /* ignored */ }
             }
-            ScriptWrapper.instances.Remove(LuaEnemyEncounter.script);
-            LuaScriptBinder.scriptlist.Remove(LuaEnemyEncounter.script.script);
+            ScriptWrapper.instances.Remove(EnemyEncounter.script);
+            LuaScriptBinder.scriptlist.Remove(EnemyEncounter.script.script);
         }
 
         //Properly set "isInFight" to false, as it shouldn't be true anymore
@@ -191,9 +191,9 @@ public class UIController : MonoBehaviour {
         if (parentStateCall) {
             parentStateCall = false;
             try {
-                LuaEnemyEncounter.script.Call("EnteringState", new[] { DynValue.NewString(newState.ToString()), DynValue.NewString(state.ToString()) });
+                EnemyEncounter.script.Call("EnteringState", new[] { DynValue.NewString(newState.ToString()), DynValue.NewString(state.ToString()) });
             } catch (InterpreterException ex) {
-                UnitaleUtil.DisplayLuaError(LuaEnemyEncounter.script.scriptname, UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message);
+                UnitaleUtil.DisplayLuaError(EnemyEncounter.script.scriptname, UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message);
             }
             parentStateCall = true;
 
@@ -349,10 +349,10 @@ public class UIController : MonoBehaviour {
                 PlayerController.instance.GetComponent<Image>().enabled = true;
                 SetPlayerOnAction(action);
                 mainTextManager.SetPause(ArenaManager.instance.isResizeInProgress());
-                mainTextManager.SetCaller(LuaEnemyEncounter.script); // probably not necessary due to ActionDialogResult changes
+                mainTextManager.SetCaller(EnemyEncounter.script); // probably not necessary due to ActionDialogResult changes
                 if (!GlobalControls.retroMode) {
                     mainTextManager.SetEffect(new TwitchEffect(mainTextManager));
-                    encounter.EncounterText = LuaEnemyEncounter.script.GetVar ("encountertext").String;
+                    encounter.EncounterText = EnemyEncounter.script.GetVar ("encountertext").String;
                 }
                 if (encounter.EncounterText == null) {
                     encounter.EncounterText = "";
@@ -396,10 +396,10 @@ public class UIController : MonoBehaviour {
 
             case UIState.MERCYMENU:
                 if (LuaScriptBinder.Get(null, "ForceNoFlee") != null) {
-                    LuaEnemyEncounter.script.SetVar("flee", DynValue.NewBoolean(false));
+                    EnemyEncounter.script.SetVar("flee", DynValue.NewBoolean(false));
                     LuaScriptBinder.Remove("ForceNoFlee");
                 }
-                if (!LuaEnemyEncounter.script.GetVar("flee").Boolean && LuaEnemyEncounter.script.GetVar("flee").Type != DataType.Nil)
+                if (!EnemyEncounter.script.GetVar("flee").Boolean && EnemyEncounter.script.GetVar("flee").Type != DataType.Nil)
                     encounter.CanRun = false;
                 else
                     encounter.CanRun = true;
@@ -953,7 +953,7 @@ public class UIController : MonoBehaviour {
                             int    count    = encounter.enemies.Length;
                             for (int i = 0; i < count; i++)
                                 canSpare[i] = encounter.enemies[i].CanSpare;
-                            LuaEnemyController[] enabledEnTemp = encounter.EnabledEnemies;
+                            EnemyController[] enabledEnTemp = encounter.EnabledEnemies;
                             //bool sparedAny = false;
                             for (int i = 0; i < count; i++) {
                                 if (!enabledEnTemp.Contains(encounter.enemies[i]))
@@ -980,8 +980,8 @@ public class UIController : MonoBehaviour {
                         }
                         case 1: {
                             if (!GlobalControls.retroMode) {
-                                if ((LuaEnemyEncounter.script.GetVar("fleesuccess").Type != DataType.Boolean && (Math.RandomRange(0, 9) + encounter.turnCount) > 4)
-                                 || LuaEnemyEncounter.script.GetVar("fleesuccess").Boolean)
+                                if ((EnemyEncounter.script.GetVar("fleesuccess").Type != DataType.Boolean && (Math.RandomRange(0, 9) + encounter.turnCount) > 4)
+                                 || EnemyEncounter.script.GetVar("fleesuccess").Boolean)
                                     StartCoroutine(ISuperFlee());
                                 else
                                     SwitchState(UIState.ENEMYDIALOGUE);
@@ -1283,8 +1283,8 @@ public class UIController : MonoBehaviour {
         mainTextManager = GameObject.Find("TextManager").GetComponent<TextManager>();
         mainTextManager.SetEffect(new TwitchEffect(mainTextManager));
         mainTextManager.ResetFont();
-        mainTextManager.SetCaller(LuaEnemyEncounter.script);
-        encounter = FindObjectOfType<LuaEnemyEncounter>();
+        mainTextManager.SetCaller(EnemyEncounter.script);
+        encounter = FindObjectOfType<EnemyEncounter>();
 
         fightButton = GameObject.Find("FightBt").GetComponent<Image>();
         actButton = GameObject.Find("ActBt").GetComponent<Image>();
@@ -1331,7 +1331,7 @@ public class UIController : MonoBehaviour {
         spareList = new bool[encounter.enemies.Length];
         for (int i = 0; i < spareList.Length; i ++)
             spareList[i] = false;
-        if (LuaEnemyEncounter.script.GetVar("Update") != null)
+        if (EnemyEncounter.script.GetVar("Update") != null)
             encounterHasUpdate = true;
         GameObject.Find("Main Camera").GetComponent<ProjectileHitboxRenderer>().enabled = !GameObject.Find("Main Camera").GetComponent<ProjectileHitboxRenderer>().enabled;
         //There are scene init bugs, let's fix them!
@@ -1432,7 +1432,7 @@ public class UIController : MonoBehaviour {
         UnitaleUtil.PlaySound("Mercy", yay);
 
         List<string> fleeTexts = new List<string>();
-        DynValue tempFleeTexts = LuaEnemyEncounter.script.GetVar("fleetexts");
+        DynValue tempFleeTexts = EnemyEncounter.script.GetVar("fleetexts");
         if (tempFleeTexts.Type == DataType.Table)
             for (int i = 0; i < tempFleeTexts.Table.Length; i++)
                 fleeTexts.Add(tempFleeTexts.Table.Get(i + 1).String);
@@ -1522,7 +1522,7 @@ public class UIController : MonoBehaviour {
                 SwitchState(UIState.NONE);
             bool noOnDeath = true;
             onDeathSwitch = true;
-            foreach (LuaEnemyController enemyController in encounter.EnabledEnemies) {
+            foreach (EnemyController enemyController in encounter.EnabledEnemies) {
                 int hp = enemyController.HP;
                 if (hp > 0 || enemyController.Unkillable) continue;
                 // fightUI.disableImmediate();

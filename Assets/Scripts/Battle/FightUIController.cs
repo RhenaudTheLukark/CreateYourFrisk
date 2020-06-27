@@ -47,7 +47,7 @@ public class FightUIController : MonoBehaviour {
         instance = this;
     }
 
-    public void ChangeTarget(LuaEnemyController target) {
+    public void ChangeTarget(EnemyController target) {
         while (boundFightUiInstances.Count > 1) {
             allFightUiInstances.Remove(boundFightUiInstances[1]);
             Destroy(boundFightUiInstances[1].lifeBar.gameObject);
@@ -91,7 +91,7 @@ public class FightUIController : MonoBehaviour {
         targetRt.gameObject.SetActive(false);
     }
 
-    public void quickInit(LuaEnemyController target, int damage = -478294) {
+    public void quickInit(EnemyController target, int damage = -478294) {
         commonInit();
         commonQuickInit();
         LaunchInstance();
@@ -127,7 +127,7 @@ public class FightUIController : MonoBehaviour {
         UIController.PlaySoundSeparate(AudioClipRegistry.GetSound("slice"));
     }
 
-    public int getDamage(LuaEnemyController enemy, float atkMult) {
+    public int getDamage(EnemyController enemy, float atkMult) {
         if (enemy.presetDmg != -1826643) {
             int dmg = enemy.presetDmg;
             enemy.presetDmg = -1826643;

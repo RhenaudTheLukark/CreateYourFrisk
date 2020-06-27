@@ -78,7 +78,7 @@ public class GameOverBehavior : MonoBehaviour {
 
         if (!UnitaleUtil.IsOverworld) {
             UIController.instance.encounter.gameOverStance = false;
-            LuaEnemyEncounter.script.SetVar("autolinebreak", DynValue.NewBoolean(autolinebreakstate));
+            EnemyEncounter.script.SetVar("autolinebreak", DynValue.NewBoolean(autolinebreakstate));
         }
         heartShardInstances = new RectTransform[0];
         breakHeartAfter = 1.0f;
@@ -109,8 +109,8 @@ public class GameOverBehavior : MonoBehaviour {
         PlayerOverworld.audioCurrTime = 0;
         if (!UnitaleUtil.IsOverworld) {
             UIController.instance.encounter.EndWave(true);
-            autolinebreakstate = LuaEnemyEncounter.script.GetVar("autolinebreak").Boolean;
-            LuaEnemyEncounter.script.SetVar("autolinebreak", DynValue.NewBoolean(true));
+            autolinebreakstate = EnemyEncounter.script.GetVar("autolinebreak").Boolean;
+            EnemyEncounter.script.SetVar("autolinebreak", DynValue.NewBoolean(true));
             transform.position = new Vector3(transform.position.x - Misc.cameraX, transform.position.y - Misc.cameraY, transform.position.z);
         } else
             autolinebreakstate = true;
@@ -193,11 +193,11 @@ public class GameOverBehavior : MonoBehaviour {
             SpriteRegistry.GENERIC_SPRITE_PREFAB = Resources.Load<Image>("Prefabs/generic_sprite");
         heartShardPrefab = SpriteRegistry.GENERIC_SPRITE_PREFAB.gameObject;
         reviveText = GameObject.Find("ReviveText").GetComponent<TextManager>();
-        reviveText.SetCaller(LuaEnemyEncounter.script);
+        reviveText.SetCaller(EnemyEncounter.script);
         reviveFade = GameObject.Find("ReviveFade").GetComponent<Image>();
         reviveFade.transform.SetAsLastSibling();
         gameOverTxt = GameObject.Find("TextParent").GetComponent<TextManager>();
-        gameOverTxt.SetCaller(LuaEnemyEncounter.script);
+        gameOverTxt.SetCaller(EnemyEncounter.script);
         gameOverImage = GameObject.Find("GameOver").GetComponent<Image>();
         if (UnitaleUtil.IsOverworld) {
             /*
@@ -251,7 +251,7 @@ public class GameOverBehavior : MonoBehaviour {
                 else {
                     Color color = gameObject.GetComponent<Image>().color;
                     gameObject.GetComponent<Image>().color = new Color(color.r, color.g, color.b, 0);
-                    if (LuaEnemyEncounter.script.GetVar("revive").Boolean)
+                    if (EnemyEncounter.script.GetVar("revive").Boolean)
                         Revive();
                 }
                 breakHeartAfter = 999.0f;

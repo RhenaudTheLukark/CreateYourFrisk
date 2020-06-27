@@ -16,7 +16,7 @@ public class FightUI : MonoBehaviour {
     private float shakeTimer;
     private float totalShakeTime = 1.5f;
     public float sliceAnimFrequency = 1 / 6f;
-    public LuaEnemyController enemy;
+    public EnemyController enemy;
     public Vector2 enePos, eneSize;
     private string[] sliceAnim = {
         "UI/Battle/spr_slice_o_0",
@@ -65,7 +65,7 @@ public class FightUI : MonoBehaviour {
         shakeTimer = 0;
     }
 
-    public void quickInit(int enemyIndex, LuaEnemyController target, int damage = -478294) {
+    public void quickInit(int enemyIndex, EnemyController target, int damage = -478294) {
         Init(enemyIndex);
         enemy = target;
         if (damage != -478294)
@@ -79,7 +79,7 @@ public class FightUI : MonoBehaviour {
         return false;
     }
 
-    public void ChangeTarget(LuaEnemyController target) {
+    public void ChangeTarget(EnemyController target) {
         enemy = target;
         if (Damage != -478294)
             Damage = 0;

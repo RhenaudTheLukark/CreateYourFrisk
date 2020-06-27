@@ -348,9 +348,9 @@ public class LuaSpriteController {
         originalSprite = i.sprite;
         nativeSizeDelta = new Vector2(100, 100);
         if (img.GetComponent<Projectile>())                            tag = "projectile";
-        else if (img.GetComponent<LuaEnemyController>())               tag = "enemy";
+        else if (img.GetComponent<EnemyController>())                  tag = "enemy";
         else if (i.transform.parent != null)
-            if (i.transform.parent.GetComponent<LuaEnemyController>()) tag = "bubble";
+            if (i.transform.parent.GetComponent<EnemyController>())    tag = "bubble";
             else                                                       tag = "other";
         shader = new LuaSpriteShader("sprite", img);
     }
@@ -393,7 +393,7 @@ public class LuaSpriteController {
         try {
             GetTarget().SetParent(parent.img.transform);
             if (img.GetComponent<MaskImage>())
-                img.GetComponent<MaskImage>().inverted = parent._masked > 3;
+                img.GetComponent<MaskImage>().inverted = parent._masked == MaskMode.INVERTEDSPRITE || parent._masked == MaskMode.INVERTEDSTENCIL;
         } catch { throw new CYFException("sprite.SetParent(): You tried to set a removed sprite/nil sprite as this sprite's parent."); }
     }
 
@@ -625,15 +625,15 @@ public class LuaSpriteController {
         else                                                 GetTarget().SetSiblingIndex(sprite.GetTarget().GetSiblingIndex() + 1);
     }
 
-    private readonly Dictionary<string, int> maskTypes = new Dictionary<string, int>() {
-        {"off",             0},
-        {"box",             1},
-        {"sprite",          2},
-        {"stencil",         3},
-        {"invertedsprite",  4},
-        {"invertedstencil", 5}
-    };
-    [MoonSharpHidden] public int _masked;
+    public enum MaskMode {
+        OFF,
+        BOX,
+        SPRITE,
+        STENCIL,
+        INVERTEDSPRITE,
+        INVERTEDSTENCIL
+    }
+    [MoonSharpHidden] public MaskMode _masked;
     public void Mask(string mode) {
         switch (tag) {
             case "event":  throw new CYFException("sprite.Mask: Can not be applied to Overworld Event sprites.");
@@ -642,37 +642,42 @@ public class LuaSpriteController {
 
         }
 
-        mode = mode.ToLower();
-        int masked;
-        if (!maskTypes.TryGetValue(mode, out masked))
+        MaskMode masked;
+        try {
+            masked = (MaskMode)Enum.Parse(typeof(MaskMode), mode, true);
+        } catch {
             throw new CYFException("sprite.Mask: Invalid mask mode \"" + mode + "\".");
+        }
 
         if (masked != _masked) {
             //If children need to have their "inverted" property updated, then do so
-            if (_masked < 4 && masked > 3 || _masked > 3 && masked < 4)
+            if ((int)_masked < 4 && (int)masked > 3 || (int)_masked > 3 && (int)masked < 4)
                 foreach (Transform child in GetTarget()) {
                     MaskImage childmask = child.gameObject.GetComponent<MaskImage>();
                     if (childmask != null)
-                        childmask.inverted = masked > 3;
+                        childmask.inverted = (int)masked > 3;
                 }
             RectMask2D box = img.GetComponent<RectMask2D>();
             Mask spr = img.GetComponent<Mask>();
 
-            //Box mask mode
-            if (masked == 1) {
-                //Remove sprite mask if applicable
-                spr.enabled = false;
-                box.enabled = true;
-            } else if (masked > 1) {
-                //The mask mode now can't possibly be box, so remove box mask if applicable
-                spr.enabled = true;
-                box.enabled = false;
-                // Used to differentiate between "sprite" and "stencil"-like display modes
-                spr.showMaskGraphic = masked == 2 || masked == 4;
-            //Mask has been disabled
-            } else if (masked == 0) {
-                spr.enabled = false;
-                box.enabled = false;
+            switch (masked) {
+                case MaskMode.BOX:
+                    //Remove sprite mask if applicable
+                    spr.enabled = false;
+                    box.enabled = true;
+                    break;
+                case MaskMode.OFF:
+                    //Mask has been disabled
+                    spr.enabled = false;
+                    box.enabled = false;
+                    break;
+                default:
+                    //The mask mode now can't possibly be box, so remove box mask if applicable
+                    spr.enabled = true;
+                    box.enabled = false;
+                    // Used to differentiate between "sprite" and "stencil"-like display modes
+                    spr.showMaskGraphic = masked == MaskMode.SPRITE || masked == MaskMode.STENCIL;
+                    break;
             }
         }
 

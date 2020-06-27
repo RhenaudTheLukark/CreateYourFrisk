@@ -177,7 +177,7 @@ public class PlayerController : MonoBehaviour {
                 if (deathEscape)
                     return;
 
-                DynValue dialogues = LuaEnemyEncounter.script.GetVar("deathtext");
+                DynValue dialogues = EnemyEncounter.script.GetVar("deathtext");
                 if (dialogues == null)            deathText = null;
                 else if (dialogues.Table == null) deathText = dialogues.String != null ? new[] { dialogues.String } : null;
                 else {
@@ -185,7 +185,7 @@ public class PlayerController : MonoBehaviour {
                     for (int i = 0; i < dialogues.Table.Length; i++)
                         deathText[i] = dialogues.Table.Get(i + 1).String;
                 }
-                deathMusic = LuaEnemyEncounter.script.GetVar("deathmusic").String;
+                deathMusic = EnemyEncounter.script.GetVar("deathmusic").String;
                 if (deathMusic == "")
                     deathMusic = null;
             }

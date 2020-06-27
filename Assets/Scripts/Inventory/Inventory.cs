@@ -75,10 +75,10 @@ public static class Inventory {
     public static bool TryCall(string func, DynValue[] param = null) {
         if (UnitaleUtil.IsOverworld) return false;
         try {
-            if (LuaEnemyEncounter.script.GetVar(func) == null)
+            if (EnemyEncounter.script.GetVar(func) == null)
                 return false;
-            if (param != null)  LuaEnemyEncounter.script.Call(func, param);
-            else                LuaEnemyEncounter.script.Call(func);
+            if (param != null)  EnemyEncounter.script.Call(func, param);
+            else                EnemyEncounter.script.Call(func);
             return true;
         } catch (InterpreterException ex) {
             UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message);
