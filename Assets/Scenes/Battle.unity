@@ -2086,6 +2086,8 @@ GameObject:
   - component: {fileID: 1509689749}
   - component: {fileID: 1509689750}
   - component: {fileID: 1509689751}
+  - component: {fileID: 1509689753}
+  - component: {fileID: 1509689752}
   m_Layer: 5
   m_Name: player
   m_TagString: Player
@@ -2314,6 +2316,29 @@ MonoBehaviour:
   reviveTextSet: 0
   musicBefore: {fileID: 0}
   music: {fileID: 0}
+--- !u!114 &1509689752
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1509689743}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -146154839, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1509689753
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1509689743}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1200242548, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ShowMaskGraphic: 0
 --- !u!1 &1546366359
 GameObject:
   m_ObjectHideFlags: 0
@@ -2860,6 +2885,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7283c6f35cfc2a40b16bb214a8d4f62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  material: {fileID: 0}
 --- !u!114 &1727881053
 MonoBehaviour:
   m_ObjectHideFlags: 0
