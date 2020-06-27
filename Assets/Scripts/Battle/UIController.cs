@@ -561,7 +561,7 @@ public class UIController : MonoBehaviour {
                                                                speechBub.transform.position.y + encounter.EnabledEnemies[i].offsets[1].y, speechBub.transform.position.z);
                     sbTextMan.SetOffset(speechBubSpr.border.x, -speechBubSpr.border.w);
 
-                    UnderFont enemyFont = SpriteFontRegistry.Get(encounter.EnabledEnemies[i].Font);
+                    UnderFont enemyFont = SpriteFontRegistry.Get(encounter.EnabledEnemies[i].Font ?? string.Empty);
                     if (enemyFont == null)
                         enemyFont = SpriteFontRegistry.Get(SpriteFontRegistry.UI_MONSTERTEXT_NAME);
                     sbTextMan.SetFont(enemyFont);
