@@ -195,7 +195,7 @@ public class LuaEnemyController : EnemyController {
         get {
             DynValue fontVal = script.GetVar("font");
             if (fontVal == null || fontVal.Type == DataType.Nil)
-                return SpriteFontRegistry.UI_MONSTERTEXT_NAME;
+                return null;
             return fontVal.String;
         }
 
