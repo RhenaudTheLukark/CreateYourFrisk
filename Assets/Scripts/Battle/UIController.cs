@@ -1479,6 +1479,7 @@ public class UIController : MonoBehaviour {
         fightUI = GameObject.Find("FightUI").GetComponent<FightUIController>();
         fightUI.gameObject.SetActive(false);
 
+        if (UnitaleUtil.firstErrorShown) return;
         encounter.CallOnSelfOrChildren("EncounterStarting");
 
         if (!stated)

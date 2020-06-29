@@ -33,6 +33,7 @@ public class SelectOMatic : MonoBehaviour {
         GameObject.Destroy(GameObject.Find("Main Camera OW"));
         GameObject.Destroy(GameObject.Find("Canvas OW"));
         GameObject.Destroy(GameObject.Find("Canvas Two"));
+        UnitaleUtil.firstErrorShown = false;
 
         // Load directory info
         DirectoryInfo di = new DirectoryInfo(Path.Combine(FileLoader.DataRoot, "Mods"));
