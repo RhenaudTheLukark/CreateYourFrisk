@@ -237,11 +237,11 @@ public class LuaSpriteShader {
             if (row1 == null || row1.Type != DataType.Table || row1.Table.Length < 4)
                 throw new CYFException("shader.Matrix: The first argument needs to be a table of 4 numbers.");
             if (row2 == null || row2.Type != DataType.Table || row2.Table.Length < 4)
-                throw new CYFException("shader.Matrix: The first argument needs to be a table of 4 numbers.");
+                throw new CYFException("shader.Matrix: The second argument needs to be a table of 4 numbers.");
             if (row3 == null || row3.Type != DataType.Table || row3.Table.Length < 4)
-                throw new CYFException("shader.Matrix: The first argument needs to be a table of 4 numbers.");
+                throw new CYFException("shader.Matrix: The third argument needs to be a table of 4 numbers.");
             if (row4 == null || row4.Type != DataType.Table || row4.Table.Length < 4)
-                throw new CYFException("shader.Matrix: The first argument needs to be a table of 4 numbers.");
+                throw new CYFException("shader.Matrix: The fourth argument needs to be a table of 4 numbers.");
 
             Table t1 = row1.Table;
             Table t2 = row2.Table;
@@ -291,6 +291,8 @@ public class LuaSpriteShader {
         return new MatrixFourByFour(material.GetMatrix(IndexProperty(name, true)));
     }
     public void SetMatrix(string name, MatrixFourByFour value) {
+        if (value == null)
+            throw new CYFException("shader.SetMatrix: The second argument, the matrix to set, needs to be a Matrix object.");
         material.SetMatrix(IndexProperty(name, false), value.self);
     }
 
