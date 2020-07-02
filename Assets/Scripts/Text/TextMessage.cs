@@ -19,6 +19,7 @@ public class TextMessage {
 
     protected void Setup(string text, bool decorated, bool showImmediate, bool actualText, DynValue mugshot) {
         text = Unescape(text); // compensate for unity inspector autoescaping control characters
+        text = text.Replace("[name]", PlayerCharacter.instance.Name);
         Text = decorated ? DecorateText(text) : text;
         Decorated = decorated;
         ShowImmediate = showImmediate;

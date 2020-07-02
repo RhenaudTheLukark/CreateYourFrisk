@@ -73,7 +73,12 @@ public class LuaTextManager : TextManager {
             throw new CYFException("Attempt to perform action on removed text object.");
     }
 
-    public void DestroyText() { Destroy(transform.parent.gameObject); }
+    public void DestroyText() {
+        if (!isactive)
+            throw new CYFException("Attempt to remove a removed text object.");
+        autoDestroyed = true;
+        GameObject.Destroy(this.transform.parent.gameObject);
+    }
 
     // Shortcut to `DestroyText()`
     public void Remove() { DestroyText(); }
@@ -185,7 +190,9 @@ public class LuaTextManager : TextManager {
     public string layer {
         get {
             CheckExists();
-            return !container.transform.parent.name.Contains("Layer") ? "spriteObject" : container.transform.parent.name.Substring(0, transform.parent.name.Length - 5);
+            if (!container.transform.parent.name.Contains("Layer"))
+                return "spriteObject";
+            return container.transform.parent.name.Substring(0, container.transform.parent.name.Length - 5);
         }
         set {
             CheckExists();

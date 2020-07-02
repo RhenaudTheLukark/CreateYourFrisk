@@ -17,7 +17,7 @@ public class TextManager : MonoBehaviour {
     protected TextEffect textEffect;
     private string letterEffect = "none";
     public static string[] commandList = new string[] { "color", "alpha", "charspacing", "linespacing", "starcolor", "instant", "font", "effect", "noskip", "w", "waitall", "novoice",
-                                                        "next", "finished", "nextthisnow", "noskipatall", "waitfor", "speed", "letters", "voice", "func", "mugshot", "name",
+                                                        "next", "finished", "nextthisnow", "noskipatall", "waitfor", "speed", "letters", "voice", "func", "mugshot",
                                                         "music", "sound", "health", "lettereffect"};
     private float letterIntensity;
     public int currentLine;
@@ -1025,12 +1025,6 @@ public class TextManager : MonoBehaviour {
                 temp = args[0][0] == '{' ? UnitaleUtil.RebuildTableFromString(args[0]) : DynValue.NewString(args[0]);
 
                 SetMugshot(temp);
-                break;
-
-            case "name":
-                string text = textQueue[currentLine].Text;
-                string textEnd = text.Substring(0, currentCharacter - 1) + PlayerCharacter.instance.Name + text.Substring(currentCharacter, text.Length - 1);
-                textQueue[currentLine].SetText(textEnd);
                 break;
 
             case "music":

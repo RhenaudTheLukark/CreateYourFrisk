@@ -534,6 +534,7 @@ public class UIController : MonoBehaviour {
                         else
                             UnitaleUtil.DisplayLuaError(encounter.EnabledEnemies[i].scriptName + ": Creating a dialogue bubble",
                                                         "This monster has no set dialogue bubble.");
+                        return;
                     }
 
                     sbTextMan._textMaxWidth = (int)encounter.EnabledEnemies[i].bubbleWidth;
@@ -544,8 +545,11 @@ public class UIController : MonoBehaviour {
                     speechBub.transform.position = new Vector3(speechBub.transform.position.x + encounter.EnabledEnemies[i].offsets[1].x,
                                                                speechBub.transform.position.y + encounter.EnabledEnemies[i].offsets[1].y, speechBub.transform.position.z);
                     sbTextMan.SetOffset(speechBubSpr.border.x, -speechBubSpr.border.w);
-                    //sbTextMan.setFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_MONSTERTEXT_NAME));
-                    sbTextMan.SetFont(SpriteFontRegistry.Get(encounter.EnabledEnemies[i].Font));
+
+                    UnderFont enemyFont = SpriteFontRegistry.Get(encounter.EnabledEnemies[i].Font ?? string.Empty);
+                    if (enemyFont == null)
+                        enemyFont = SpriteFontRegistry.Get(SpriteFontRegistry.UI_MONSTERTEXT_NAME);
+                    sbTextMan.SetFont(enemyFont);
 
                     TextMessage[] monsterMessages = new TextMessage[message.Length];
                     for (int j = 0; j < monsterMessages.Length; j++)
@@ -1404,6 +1408,7 @@ public class UIController : MonoBehaviour {
         fightUI = GameObject.Find("FightUI").GetComponent<FightUIController>();
         fightUI.gameObject.SetActive(false);
 
+        if (UnitaleUtil.firstErrorShown) return;
         encounter.CallOnSelfOrChildren("EncounterStarting");
 
         if (!stateSwitched)
