@@ -676,7 +676,7 @@ public class LuaSpriteController {
                     spr.enabled = true;
                     box.enabled = false;
                     // Used to differentiate between "sprite" and "stencil"-like display modes
-                    spr.showMaskGraphic = masked == MaskMode.SPRITE || masked == MaskMode.STENCIL;
+                    spr.showMaskGraphic = masked == MaskMode.SPRITE || masked == MaskMode.INVERTEDSPRITE;
                     break;
             }
         }
