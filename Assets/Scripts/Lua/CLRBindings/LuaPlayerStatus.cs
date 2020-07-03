@@ -137,7 +137,8 @@ public class LuaPlayerStatus {
                 throw new CYFException("Player.name: Attempt to set the player's name to a nil value.\n\nPlease double-check your code.");
 
             PlayerCharacter.instance.Name = value;
-            UIStats.instance.setPlayerInfo(PlayerCharacter.instance.Name, PlayerCharacter.instance.LV);
+            if (UIStats.instance)
+                UIStats.instance.setPlayerInfo(PlayerCharacter.instance.Name, PlayerCharacter.instance.LV);
         }
     }
 
@@ -151,8 +152,10 @@ public class LuaPlayerStatus {
             if (PlayerCharacter.instance.HP > PlayerCharacter.instance.MaxHP * 1.5 && PlayerCharacter.instance.LV > value)
                 player.SetHP((int)(PlayerCharacter.instance.MaxHP * 1.5));
             PlayerCharacter.instance.SetLevel(value);
-            UIStats.instance.setPlayerInfo(PlayerCharacter.instance.Name, PlayerCharacter.instance.LV);
-            UIStats.instance.setMaxHP();
+            if (UIStats.instance) {
+                UIStats.instance.setPlayerInfo(PlayerCharacter.instance.Name, PlayerCharacter.instance.LV);
+                UIStats.instance.setMaxHP();
+            }
         }
     }
 
@@ -255,7 +258,8 @@ public class LuaPlayerStatus {
     public void ResetStats(bool resetMHP = true, bool resetATK = true, bool resetDEF = true) {
         if (resetMHP) {
             PlayerCharacter.instance.MaxHPShift = 0;
-            UIStats.instance.setMaxHP();
+            if (UIStats.instance)
+                UIStats.instance.setMaxHP();
         }
         if (resetATK)
             atk = 8 + (2 * lv);

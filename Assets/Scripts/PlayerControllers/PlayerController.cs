@@ -223,7 +223,8 @@ public class PlayerController : MonoBehaviour {
         if (HP > ControlPanel.instance.HPLimit)
             HP = ControlPanel.instance.HPLimit;
         deathEscape = true;
-        UIStats.instance.setHP(HP);
+        if (UIStats.instance)
+            UIStats.instance.setHP(HP);
     }
 
     public void SetMaxHPShift(int shift, float invulnerabilitySeconds = 1.7f, bool set = false, bool canHeal = false, bool sound = true) {
@@ -280,7 +281,8 @@ public class PlayerController : MonoBehaviour {
         }
         if (PlayerCharacter.instance.HP > PlayerCharacter.instance.MaxHP)
             SetHP(PlayerCharacter.instance.MaxHP);
-        UIStats.instance.setMaxHP();
+        if (UIStats.instance)
+            UIStats.instance.setMaxHP();
     }
 
     public bool isHurting() { return invulTimer > 0; }
