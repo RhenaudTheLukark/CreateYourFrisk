@@ -793,13 +793,13 @@ public class LuaSpriteController {
 
     public void SetVar(string name, DynValue value) {
         if (name == null)
-            throw new CYFException("sprite.SetVar: The first argument (the index) is null.\n\nSee the documentation for proper usage.");
+            throw new CYFException("sprite.SetVar: The first argument (the index) is nil.\n\nSee the documentation for proper usage.");
         vars[name] = value;
     }
 
     public DynValue GetVar(string name) {
         if (name == null)
-            throw new CYFException("sprite.GetVar: The first argument (the index) is null.\n\nSee the documentation for proper usage.");
+            throw new CYFException("sprite.GetVar: The first argument (the index) is nil.\n\nSee the documentation for proper usage.");
         DynValue retval;
         return vars.TryGetValue(name, out retval) ? retval : DynValue.NewNil();
     }

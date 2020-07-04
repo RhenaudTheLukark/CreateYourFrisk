@@ -29,7 +29,7 @@ public class ScriptWrapper {
 
     public void SetVar(string key, DynValue value) {
         if (key == null)
-            throw new CYFException("script.SetVar: The first argument (key) is null.\n\nSee the documentation for proper usage.");
+            throw new CYFException("script.SetVar: The first argument (key) is nil.\n\nSee the documentation for proper usage.");
         script.Globals.Set(key, MoonSharpUtil.CloneIfRequired(script, value));
     }
 
@@ -37,7 +37,7 @@ public class ScriptWrapper {
 
     public DynValue GetVar(Script caller, string key) {
         if (key == null)
-            throw new CYFException("script.GetVar: The first argument (key) is null.\n\nSee the documentation for proper usage.");
+            throw new CYFException("script.GetVar: The first argument (key) is nil.\n\nSee the documentation for proper usage.");
         DynValue value = script.Globals.Get(key);
         if (value == null || value.IsNil())  return DynValue.NewNil();
         if (caller == null)                  return value;

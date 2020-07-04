@@ -325,7 +325,7 @@ public class LuaTextManager : TextManager {
         if (parent != null && parent.img.transform != null && parent.img.transform.parent.name == "SpritePivot")
             throw new CYFException("text.SetParent(): Can not use SetParent with an Overworld Event's sprite.");
         try {
-            if (parent == null) throw new CYFException("text.SetParent(): Can't set a sprite's parent as null.");
+            if (parent == null) throw new CYFException("text.SetParent(): Can't set a sprite's parent as nil.");
             container.transform.SetParent(parent.img.transform);
             foreach (Transform child in container.transform) {
                 MaskImage childmask = child.gameObject.GetComponent<MaskImage>();

@@ -1,5 +1,6 @@
 ﻿public class LuaDiscord {
     public void SetName(string name) {
+        if (name == null) throw new CYFException("Discord.SetName: Argument cannot be nil.");
         DiscordControls.SetName(name);
         DiscordControls.UpdatePresence();
     }
@@ -10,6 +11,7 @@
     }
 
     public void SetDetails(string details) {
+        if (details == null) throw new CYFException("Discord.SetDetails: Argument cannot be nil.");
         DiscordControls.SetDetails(details);
         DiscordControls.UpdatePresence();
     }
