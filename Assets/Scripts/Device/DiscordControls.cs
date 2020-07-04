@@ -18,7 +18,8 @@ public static class DiscordControls {
     private static string oldDetails = activity.Details;
     private static string oldState = activity.State;
     private static long oldTime;
-    public static bool isActive = true;
+    private static bool updateQueued;
+    public static bool isActive;
 
     // Use this for initialization
     public static void Start() {
@@ -26,6 +27,7 @@ public static class DiscordControls {
         try {
             discord = new Discord.Discord(711497963771527219, (ulong)CreateFlags.NoRequireDiscord);
             activityManager = discord.GetActivityManager();
+            isActive = true;
         } catch (Exception) {
             isActive = false;
         }
@@ -172,9 +174,17 @@ public static class DiscordControls {
     /// </summary>
     /// <param name="force">Forcefully updates presence even when setting is set to "game only" or "nothing".</param>
     public static void UpdatePresence(bool force = false) {
-        if (!isActive || (!force && curr_setting > 0)) return;
+        if (!isActive || (!force && curr_setting > 0) || updateQueued) return;
 
+        updateQueued = true;
+    }
+
+    /// <summary>
+    /// This function will be called one time, on the frame after applying settings, to prevent abuse of the activity manager.
+    /// </summary>
+    private static void UpdateActivity() {
         activityManager.UpdateActivity(activity, (res) => {});
+        updateQueued = false;
     }
 
     /// <summary>
@@ -271,6 +281,7 @@ public static class DiscordControls {
     // Update is called once per frame
     public static void Update() {
         if (!isActive) return;
+        if (updateQueued) UpdateActivity();
         try { discord.RunCallbacks(); }
         catch { isActive = false; }
     }
