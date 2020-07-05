@@ -193,7 +193,8 @@ public class LuaPlayerStatus {
     /// <param name="damage">Damage to deal to the player</param>
     /// <param name="invulTime">Invulnerability time in seconds</param>
     /// <param name="ignoreDef">Will the damage ignore the player's defense?</param>
-    public void Hurt(float damage, float invulTime = 1.7f, bool ignoreDef = false) { player.Hurt(damage, invulTime, ignoreDef); }
+    /// <param name="playSound">Will sound be played from this action?</param>
+    public void Hurt(float damage, float invulTime = 1.7f, bool ignoreDef = false, bool playSound = true) { player.Hurt(damage, invulTime, ignoreDef, playSound); }
 
     /// <summary>
     /// Heals the player. Convenience method which is the same as hurting the player for -damage and no invulnerability time.
