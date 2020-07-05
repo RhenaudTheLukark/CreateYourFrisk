@@ -2,19 +2,16 @@
 using UnityEngine.SceneManagement;
 using MoonSharp.Interpreter;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
 using System.Text.RegularExpressions;
+using Object = UnityEngine.Object;
 
 /// <summary>
 /// Utility class for the Unitale engine.
 /// </summary>
 public static class UnitaleUtil {
-    internal static bool firstErrorShown = false; //Keeps track of whether an error already appeared, prevents subsequent errors from overriding the source.
+    internal static bool firstErrorShown; //Keeps track of whether an error already appeared, prevents subsequent errors from overriding the source.
     public static string printDebuggerBeforeInit = "";
     /*internal static string fileName = Application.dataPath + "/Logs/log-" + DateTime.Now.ToString().Replace('/', '-').Replace(':', '-') + ".txt";
     internal static StreamWriter sr;
@@ -35,6 +32,15 @@ public static class UnitaleUtil {
             //Debug.Log("Couldn't write on the log:\n" + e.Message + "\nMessage: " + mess);
             printDebuggerBeforeInit += (printDebuggerBeforeInit == "" ? "" : "\n") + mess;
         }
+    }
+
+    public static void Warn(string line, bool show = true) {
+        line = "[WARN]" + line;
+        if (!GlobalControls.retroMode && show) {
+            WriteInLogAndDebugger(line);
+            return;
+        }
+        try { UserDebugger.instance.Warn(line); } catch { printDebuggerBeforeInit += (printDebuggerBeforeInit == "" ? "" : "\n") + line; }
     }
 
     /*/// <summary>
@@ -79,11 +85,9 @@ public static class UnitaleUtil {
         if (firstErrorShown)
             return;
         firstErrorShown = true;
-        ErrorDisplay.Message = (!DoNotDecorateMessage ? ("error in script " + source + "\n\n") : "") + decoratedMessage;
-        if (Application.isEditor)
-            SceneManager.LoadSceneAsync("Error"); // prevents editor from crashing
-        else
-            SceneManager.LoadScene("Error");
+        ErrorDisplay.Message = (!DoNotDecorateMessage ? "error in script " + source + "\n\n" : "") + decoratedMessage;
+        if (Application.isEditor) SceneManager.LoadSceneAsync("Error"); // prevents editor from crashing
+        else                      SceneManager.LoadScene("Error");
         Debug.Log("It's a Lua error! : " + ErrorDisplay.Message);
         ScreenResolution.wideFullscreen = true;
     }
@@ -92,23 +96,18 @@ public static class UnitaleUtil {
         string source = DecoratedMessage.Substring(0, DecoratedMessage.Length - message.Length);
         Regex validator = new Regex(@"\(\d+,\d+(-[\d,]+)?\)"); //Finds `(13,9-16)` or `(13,9-14,10)` or `(20,0)`
         Match scanned = validator.Match(source);
-        if (scanned.Success) {
-            string stacktrace = scanned.Value;
-            validator = new Regex(@"(\d+),(\d+)"); //Finds `13,9`
-            MatchCollection matches = validator.Matches(stacktrace);
+        if (!scanned.Success) return source;
+        string stacktrace = scanned.Value;
+        validator = new Regex(@"(\d+),(\d+)"); //Finds `13,9`
+        MatchCollection matches = validator.Matches(stacktrace);
 
-            //Add "line " and "char " before some numbers
-            foreach (Match match in matches)
-                source = source.Replace(match.Value, "line " + match.Groups[1].Value + ", char " + match.Groups[2].Value);
-        }
-
-        return source;
+        //Add "line " and "char " before some numbers
+        return matches.Cast<Match>().Aggregate(source, (current, match) => current.Replace(match.Value, "line " + match.Groups[1].Value + ", char " + match.Groups[2].Value));
     }
 
     public static AudioSource GetCurrentOverworldAudio() {
         //if (GameObject.Find("Main Camera OW") && Camera.main != GameObject.Find("Main Camera OW")) return GameObject.Find("Main Camera OW").GetComponent<AudioSource>();
-        if (GameObject.Find("Background").GetComponent<MapInfos>().isMusicKeptBetweenBattles)      return PlayerOverworld.audioKept;
-        else                                                                                       return Camera.main.GetComponent<AudioSource>();
+        return GameObject.Find("Background").GetComponent<MapInfos>().isMusicKeptBetweenBattles ? PlayerOverworld.audioKept : Camera.main.GetComponent<AudioSource>();
     }
 
     public static Vector3 VectToVector(GameState.Vect v)    { return new Vector3(v.x, v.y, v.z); }
@@ -130,16 +129,10 @@ public static class UnitaleUtil {
 
     public static DynValue[] TableToDynValueArray(Table table) {
         DynValue[] array = new DynValue[table.Length];
-        string test = "{ ";
         for (int i = 1; i <= table.Length; i++) {
             DynValue v = table.Get(i);
             array[i - 1] = v;
-            if (v.Type == DataType.Boolean)     test += v.Boolean;
-            else if (v.Type == DataType.Number) test += v.Number;
-            else if (v.Type == DataType.String) test += v.String;
-            if (i < table.Length)               test += ", ";
         }
-        test += " }";
         return array;
     }
 
@@ -184,9 +177,10 @@ public static class UnitaleUtil {
                 case '[':
 
                     string str = ParseCommandInline(txtmgr.textQueue[txtmgr.currentLine].Text, ref i);
-                    if (str == null)
-                        totalWidth += txtmgr.Charset.Letters[txtmgr.textQueue[txtmgr.currentLine].Text[i]].textureRect.size.x + hSpacing;
-                    else if (str.Split(':')[0] == "charspacing")
+                    if (str == null) {
+                        if (txtmgr.Charset.Letters.ContainsKey(txtmgr.textQueue[txtmgr.currentLine].Text[i]))
+                            totalWidth += txtmgr.Charset.Letters[txtmgr.textQueue[txtmgr.currentLine].Text[i]].textureRect.size.x + hSpacing;
+                    } else if (str.Split(':')[0] == "charspacing")
                         hSpacing = str.Split(':')[1].ToLower() == "default" ? txtmgr.Charset.CharSpacing : ParseUtil.GetFloat(str.Split(':')[1]);
                     break;
                 case '\r':
@@ -218,23 +212,17 @@ public static class UnitaleUtil {
         if (fromLetter > toLetter || fromLetter < 0 || toLetter > txtmgr.textQueue[txtmgr.currentLine].Text.Length) return -1;
         if (fromLetter == toLetter)                                                                                 return 0;
         for (int i = fromLetter; i < toLetter; i++) {
-            if (txtmgr.Charset.Letters.ContainsKey(txtmgr.textQueue[txtmgr.currentLine].Text[i])) {
-                if (txtmgr.letterPositions[i].y < minY) {
-                    //Debug.Log("minY change: going from " + minY + " to " + txtmgr.letterPositions[i].y);
-                    minY = txtmgr.letterPositions[i].y;
-                }
-                if (txtmgr.letterPositions[i].y + txtmgr.Charset.Letters[txtmgr.textQueue[txtmgr.currentLine].Text[i]].textureRect.size.y > maxY) {
-                    //Debug.Log("maxY change: going from " + maxY + " to " + (txtmgr.letterPositions[i].y + txtmgr.Charset.Letters[txtmgr.textQueue[txtmgr.currentLine].Text[i]].textureRect.size.y));
-                    maxY = txtmgr.letterPositions[i].y + txtmgr.Charset.Letters[txtmgr.textQueue[txtmgr.currentLine].Text[i]].textureRect.size.y;
-                }
-            }
+            if (!txtmgr.Charset.Letters.ContainsKey(txtmgr.textQueue[txtmgr.currentLine].Text[i])) continue;
+            if (txtmgr.letterPositions[i].y < minY)
+                minY = txtmgr.letterPositions[i].y;
+            if (txtmgr.letterPositions[i].y + txtmgr.Charset.Letters[txtmgr.textQueue[txtmgr.currentLine].Text[i]].textureRect.size.y > maxY)
+                maxY = txtmgr.letterPositions[i].y + txtmgr.Charset.Letters[txtmgr.textQueue[txtmgr.currentLine].Text[i]].textureRect.size.y;
         }
-        //Debug.Log("The final height is " + (maxY - minY));
         return maxY - minY;
     }
 
     public static DynValue RebuildTableFromString(string text) {
-        text.Trim();
+        text = text.Trim();
         if (text[0] != '{' || text[text.Length-1] != '}') {
             Debug.LogError("RebuildTableFromString: The value given is not a reconstructible table!");
             return DynValue.Nil;
@@ -250,51 +238,50 @@ public static class UnitaleUtil {
         DynValue valueName = null;
 
         bool inString = false, inSlashEffect1 = false, inSlashEffect2 = false;
-        for (int i = 0; i < text.Length; i ++) {
+        foreach (char c in text) {
             if (inSlashEffect1)      inSlashEffect1 = false;
             else if (inSlashEffect2) inSlashEffect2 = false;
 
             if (!inSlashEffect2) {
-                if (text[i] == '{' && !inString) {
+                if (c == '{' && !inString) {
                     if (inOtherTable != 1)
-                        currentValue += text[i];
+                        currentValue += c;
                     inOtherTable++;
-                } else if (text[i] == '}' && !inString) {
+                } else if (c == '}' && !inString) {
                     inOtherTable--;
                     if (inOtherTable == 0) {
                         if (valueName == null) t.Append(DynValue.NewTable(ConstructTable(currentValue)));
                         else                   t.Set(valueName, DynValue.NewTable(ConstructTable(currentValue)));
                         currentValue = "";
-                        valueName = null;
+                        valueName    = null;
                     } else
-                        currentValue += text[i];
-                } else if (text[i] == '"' && inOtherTable != 0)
+                        currentValue += c;
+                } else if (c == '"' && inOtherTable != 0)
                     inString = !inString;
-                else if (text[i] == '\\') {
+                else if (c == '\\') {
                     inSlashEffect1 = true;
                     inSlashEffect2 = true;
-                } else if (text[i] == ',' && (!inString || inOtherTable != 0)) {
+                } else if (c == ',' && (!inString || inOtherTable != 0)) {
                     currentValue = currentValue.Trim();
-                    Type type = CheckRealType(currentValue);
+                    Type     type = CheckRealType(currentValue);
                     DynValue dv;
-                    if (type == typeof(bool))       dv = DynValue.NewBoolean(currentValue == "true");
-                    else if (type == typeof(float)) dv = DynValue.NewNumber(ParseUtil.GetFloat(currentValue));
-                    else                            dv = DynValue.NewString(currentValue.Trim('"'));
+                    if (type      == typeof(bool))       dv = DynValue.NewBoolean(currentValue == "true");
+                    else if (type == typeof(float)) dv      = DynValue.NewNumber(ParseUtil.GetFloat(currentValue));
+                    else                            dv      = DynValue.NewString(currentValue.Trim('"'));
                     if (valueName == null) t.Append(dv);
                     else                   t.Set(valueName, dv);
-                    valueName = null;
+                    valueName    = null;
                     currentValue = "";
-                } else if (text[i] == '=' && (!inString || inOtherTable != 0)) {
+                } else if (c == '=' && (!inString || inOtherTable != 0)) {
                     currentValue = currentValue.Trim();
-                    valueName = DynValue.NewString(currentValue);
                     Type type = CheckRealType(currentValue);
                     if (type == typeof(bool))       valueName = DynValue.NewBoolean(currentValue == "true");
                     else if (type == typeof(float)) valueName = DynValue.NewNumber(ParseUtil.GetFloat(currentValue));
                     else                            valueName = DynValue.NewString(currentValue.Trim('"'));
                 } else
-                    currentValue += text[i];
+                    currentValue += c;
             } else
-                currentValue += text[i];
+                currentValue += c;
         }
 
         // Parse one final time for the end of the string
@@ -305,8 +292,6 @@ public static class UnitaleUtil {
         else                            dynv = DynValue.NewString(currentValue.Trim('"'));
         if (valueName == null) t.Append(dynv);
         else                   t.Set(valueName, dynv);
-        valueName = null;
-        currentValue = "";
 
         return t;
     }
@@ -326,19 +311,19 @@ public static class UnitaleUtil {
                 tempArray.Add(str.Substring(lastIndex, i - lastIndex).Trim());
                 lastIndex = i + 1;
             }
-            if (countTables)
-                if (str[i] == '}' && tableStack > 0)
-                    tableStack--;
+            if (!countTables) continue;
+            if (str[i] == '}' && tableStack > 0)
+                tableStack--;
         }
         tempArray.Add(str.Substring(lastIndex, str.Length - lastIndex).Trim());
         return (string[])ListToArray(tempArray);
     }
 
     /// <summary>
-    /// Check DynValues parameter's value types. DON'T WORK WITH MULTIDIMENSIONNAL ARRAYS!
+    /// Check DynValues parameter's value types. DOESN'T WORK WITH MULTIDIMENSIONNAL ARRAYS!
     /// (For now it doesn't work with arrays at all :c)
     /// </summary>
-    /// <param name="parameters"></param>
+    /// <param name="parameter"></param>
     /// <returns></returns>
     public static Type CheckRealType(string parameter) {
         string parameterNoSpace = parameter.Replace(" ", "");
@@ -349,19 +334,12 @@ public static class UnitaleUtil {
             return typeof(bool);
 
         //Number (here float)
-        bool isNumber = true;
+        bool isNumber = parameterNoSpace.All(c => c == '0' || c == '1' || c == '2' || c == '3' || c == '4' || c == '5' || c == '6' || c == '7' || c == '8' || c == '9' || c == '.' || c == ',' || c == ' ' || c == '-');
         //If each parameter is a number, a dot, a space or a minus, this is a number
-        foreach (char c in parameterNoSpace)
-            if (c != '0' && c != '1' && c != '2' && c != '3' && c != '4' && c != '5' && c != '6' && c != '7' && c != '8' && c != '9' && c != '.' && c != ',' && c != ' ' && c != '-') {
-                isNumber = false;
-                break;
-            }
-        if (isNumber)
-            return typeof(float);
+        return isNumber ? typeof(float) : typeof(string);
 
         //String
         //If all our attempts to check other types failed, this is really a string
-        return typeof(string);
     }
 
     public static float CropDecimal(float number) {
@@ -385,7 +363,7 @@ public static class UnitaleUtil {
                     something = true;
             } else {
                 if (Mathf.Floor(number) == 0 )      { zerocount++;   ninecount = 0; }
-                else if (Mathf.Floor(number) == 9 ) { ninecount++;   zerocount = 0; } 
+                else if (Mathf.Floor(number) == 9 ) { ninecount++;   zerocount = 0; }
                 else                                { ninecount = 0; zerocount = 0; }
             }
             dec++;
@@ -396,6 +374,13 @@ public static class UnitaleUtil {
                 return dec;
         }
         return dec;
+    }
+
+    public static bool TestContainsListVector2(List<Vector2> list, int testValue) {
+        foreach (Vector2 v in list)
+            if (v.x == testValue)
+                return true;
+        return false;
     }
 
     public static void PlaySound(string basis, string sound, float volume = 0.65f) {
@@ -420,39 +405,74 @@ public static class UnitaleUtil {
 
     public static void PlaySound(string basis, AudioClip sound, float volume = 0.65f) { PlaySound(basis, sound.name, volume); }
 
-    public static bool TestPP(Color32[] playerMatrix, Color32[] bulletMatrix, float rotation, int playerHeight, int bulletHeight, Vector2 scale, Vector2 fromCenterProjectile, float spriteAlpha) {
+    /// <summary>
+    /// Checks if the Player and a given bullet collide.
+    /// TODO: Extend this function so it can handle two different random objects, instead of forcing one of them to be the Player.
+    /// </summary>
+    /// <param name="playerMatrix">List of pixels depicting the Player's hitbox. Currently is 8x8 with no transparent pixel.</param>
+    /// <param name="bulletMatrix">List of pixels depicting the bullet's sprite.</param>
+    /// <param name="rotation">Difference between the bullet's rotation and the Player's rotation.</param>
+    /// <param name="playerHeight">Height of the Player's hitbox. Currently always 8.</param>
+    /// <param name="bulletHeight">Height of the bullet's sprite.</param>
+    /// <param name="scale">Scale difference between the bullet and the Player.</param>
+    /// <param name="fromCenterProjectile">Position difference between the two objects.</param>
+    /// <returns>True if the two objects collide, false otherwise.</returns>
+    public static bool TestPP(Color32[] playerMatrix, Color32[] bulletMatrix, float rotation, int playerHeight, int bulletHeight, Vector2 scale, Vector2 fromCenterProjectile) {
+        // Get the bullet's and Player's widths
         int bulletWidth = bulletMatrix.Length / bulletHeight, playerWidth = playerMatrix.Length / playerHeight;
+        // As rotation is given in degrees, transform it into a value in radians
         rotation *= Mathf.Deg2Rad;
-        Vector2 start = new Vector2();
-        Vector2 xDiff = new Vector2();
-        Vector2 yDiff = new Vector2();
+        // Setup vectors to store the starting point and vertical and horizontal distance between the bullet's pixels
+        Vector2 start = new Vector2(), xDiff = new Vector2(), yDiff = new Vector2();
+
+        // For each pixel in the Player's hitbox...
         for (int currentHeight = 0; currentHeight < playerHeight && currentHeight >= 0; currentHeight ++)
             for (int currentWidth = 0; currentWidth < playerWidth && currentWidth >= 0; currentWidth ++) {
-                int totalValX, totalValY;
-                if (currentWidth > 1 || currentHeight > 1 || (currentWidth != 0 && currentHeight != 0)) {
-                    totalValX = Mathf.RoundToInt(start.x + xDiff.x * currentWidth + yDiff.x * currentHeight);
-                    totalValY = Mathf.RoundToInt(start.y + xDiff.y * currentWidth + yDiff.y * currentHeight);
-                } else {
+                int roundedValX, roundedValY;
+
+                // Three times: (0, 0), (1, 0) and (0, 1)
+                if ((currentWidth == 0 && currentHeight < 2) || (currentWidth < 2 && currentHeight == 0)) {
+                    // Compute the horizontal and vertical distance between the two objects
                     float dx = currentWidth + fromCenterProjectile.x,
                           dy = currentHeight + fromCenterProjectile.y;
                     if (scale.x < 0) dx = -dx;
                     if (scale.y < 0) dy = -dy;
 
+                    // Compute the distance between the center of the two objects
                     float DFromCenter = Mathf.Sqrt(Mathf.Pow(dx, 2) + Mathf.Pow(dy, 2)),
+                    // Compute the angle between the two objects
                           angle = Mathf.Atan2(dy, dx) - rotation,
-                          fullValX = bulletWidth  / 2 + (Mathf.Cos(angle) * DFromCenter) / Mathf.Abs(scale.x),
-                          fullValY = bulletHeight / 2 + (Mathf.Sin(angle) * DFromCenter) / Mathf.Abs(scale.y);
-                    totalValX = Mathf.RoundToInt(fullValX);
-                    totalValY = Mathf.RoundToInt(fullValY);
+                    // Compute the real coordinates of the bullet's pixel relative to the Player's hitbox
+                          fullValX = bulletWidth  / 2f + Mathf.Cos(angle) * DFromCenter / Mathf.Abs(scale.x),
+                          fullValY = bulletHeight / 2f + Mathf.Sin(angle) * DFromCenter / Mathf.Abs(scale.y);
+                    // Get a rounded value for table checks
+                    roundedValX = Mathf.RoundToInt(fullValX);
+                    roundedValY = Mathf.RoundToInt(fullValY);
 
-                    if (currentWidth == 0 && currentHeight == 0)      start = new Vector2(fullValX, fullValY);
-                    else if (currentWidth == 1 && currentHeight == 0) xDiff = new Vector2(fullValX - start.x, fullValY - start.y);
-                    else if (currentWidth == 0 && currentHeight == 1) yDiff = new Vector2(fullValX - start.x, fullValY - start.y);
+                    // Compute the starting point for (0, 0)
+                    if (currentWidth == 0 && currentHeight == 0) start = new Vector2(fullValX, fullValY);
+                    // Compute the distance between two horizontal pixels for (1, 0)
+                    else if (currentHeight == 0)                 xDiff = new Vector2(fullValX - start.x, fullValY - start.y);
+                    // Compute the distance between two vertical pixels for (0, 1)
+                    else                                         yDiff = new Vector2(fullValX - start.x, fullValY - start.y);
+                // Use the distance and starting point we computed above to compute where the current pixel is
+                } else {
+                    roundedValX = Mathf.RoundToInt(start.x + xDiff.x * currentWidth + yDiff.x * currentHeight);
+                    roundedValY = Mathf.RoundToInt(start.y + xDiff.y * currentWidth + yDiff.y * currentHeight);
                 }
-                if (totalValY >= 0 && totalValY < bulletHeight && totalValX >= 0 && totalValX < bulletWidth)
-                    if (bulletMatrix[Mathf.RoundToInt(totalValY * bulletWidth + totalValX)].a != 0)
-                        return true;
+
+                // Don't check the computed bullet's pixel if it doesn't exist, duh
+                int pixelIndex = Mathf.RoundToInt(roundedValY * bulletWidth + roundedValX);
+                if (pixelIndex < 0 || pixelIndex >= bulletMatrix.Length)
+                    continue;
+
+                // If the bullet's pixel's alpha is 0, continue to the next pixel
+                if (bulletMatrix[pixelIndex].a == 0) continue;
+                if (roundedValY >= 0 && roundedValY < bulletHeight && roundedValX >= 0 && roundedValX < bulletWidth)
+                    // All checks are passed: the two objects collide
+                    return true;
             }
+        // After checking all pixels in the Player's hitbox, if we haven't found a colliding pixel, then the two objects don't collide
         return false;
     }
 
@@ -512,7 +532,7 @@ public static class UnitaleUtil {
                 if (currentHeight < coords.w) coords.w = currentHeight; //minVert
             }
         Vector2 offset = new Vector2((coords.x + coords.y) / 2 - width / 2, (coords.z + coords.w) / 2 - height / 2);
-        Rect maxDist = new Rect (tf.position.x - Mathf.Ceil((coords.x - coords.y + 1) / 2) + offset.x, 
+        Rect maxDist = new Rect (tf.position.x - Mathf.Ceil((coords.x - coords.y + 1) / 2) + offset.x,
                                  tf.position.y - Mathf.Ceil((coords.z - coords.w + 1) / 2) + offset.y, coords.x - coords.y + 1, coords.z - coords.w + 1);
         //Rect maxDist = new Rect (tf.position.x, tf.position.y, coords.y - coords.x, coords.w - coords.z);
         //Debug.Log(maxDist);
@@ -524,17 +544,14 @@ public static class UnitaleUtil {
             throw new CYFException("If you want the parent to be null, find the object with GameObject.Find() directly.");
 
         Transform[] children = parent.GetComponentsInChildren<Transform>(getInactive);
-        foreach (Transform go in children)
-            if ((getInactive || (!getInactive && go.gameObject.activeInHierarchy)) && (go.name == name || (isInclusive && go.name.Contains(name))))
-                return go.transform;
-        return null;
+        return (from go in children where (getInactive || go.gameObject.activeInHierarchy) && (go.name == name || isInclusive && go.name.Contains(name)) select go.transform).FirstOrDefault();
     }
 
     public static Transform[] GetFirstChildren(Transform parent, bool getInactive = false) {
-        Transform[] children, firstChildren;
+        Transform[] firstChildren;
         int index = 0;
         if (parent != null) {
-            children = parent.GetComponentsInChildren<Transform>(getInactive);
+            Transform[] children = parent.GetComponentsInChildren<Transform>(getInactive);
             firstChildren = new Transform[parent.childCount];
             foreach (Transform child in children)
                 if (child.parent == parent) {
@@ -542,10 +559,7 @@ public static class UnitaleUtil {
                     index++;
                 }
         } else {
-            List<Transform> tfs = new List<Transform>();
-            foreach (Transform tf in Resources.FindObjectsOfTypeAll<Transform>().Where(o => o.hideFlags == HideFlags.None).ToList())
-                if (tf.parent == null)
-                    tfs.Add(tf);
+            List<Transform> tfs = Resources.FindObjectsOfTypeAll<Transform>().Where(o => o.hideFlags == HideFlags.None).ToList().Where(tf => tf.parent == null).ToList();
             firstChildren = new Transform[tfs.Count];
             foreach (Transform root in tfs)
                 if (getInactive || root.gameObject.activeInHierarchy) {
@@ -570,10 +584,8 @@ public static class UnitaleUtil {
 
     public static void ResetOW(bool resetSave = false) {
         EventManager.instance = null;
-        EventManager.inited = false;
         GameState.current = null;
         ItemBoxUI.active = false;
-        GlobalControls.po = null;
         GlobalControls.realName = null;
         PlayerOverworld.instance = null;
         PlayerOverworld.audioCurrTime = 0;
@@ -585,19 +597,19 @@ public static class UnitaleUtil {
 
     public static void ExitOverworld(bool totalUnload = true) {
         foreach (string str in NewMusicManager.audiolist.Keys)
-            if (((AudioSource)NewMusicManager.audiolist[str]) != null && str != "src")
-                GameObject.Destroy(((AudioSource)NewMusicManager.audiolist[str]).gameObject);
+            if ((AudioSource)NewMusicManager.audiolist[str] != null && str != "src")
+                Object.Destroy(((AudioSource)NewMusicManager.audiolist[str]).gameObject);
         NewMusicManager.audiolist.Clear();
         NewMusicManager.audioname.Clear();
-        GameObject.Destroy(GameObject.Find("Player"));
-        GameObject.Destroy(GameObject.Find("Canvas OW"));
-        GameObject.Destroy(GameObject.Find("Canvas Two"));
+        Object.Destroy(GameObject.Find("Player"));
+        Object.Destroy(GameObject.Find("Canvas OW"));
+        Object.Destroy(GameObject.Find("Canvas Two"));
         if (GameOverBehavior.gameOverContainerOw)
-            GameObject.Destroy(GameOverBehavior.gameOverContainerOw);
+            Object.Destroy(GameOverBehavior.gameOverContainerOw);
         StaticInits.MODFOLDER = "@Title";
         StaticInits.Initialized = false;
         StaticInits.InitAll();
-        UnitaleUtil.ResetOW(true);
+        ResetOW(true);
         PlayerCharacter.instance.Reset();
         Inventory.inventory.Clear();
         Inventory.RemoveAddedItems();
@@ -607,13 +619,13 @@ public static class UnitaleUtil {
         LuaScriptBinder.scriptlist.Clear();
         LuaScriptBinder.ClearBattleVar();
         LuaScriptBinder.Clear();
-        GameObject.Destroy(GameObject.Find("Main Camera OW"));
+        Object.Destroy(GameObject.Find("Main Camera OW"));
     }
 
     public static string TimeFormatter(float seconds) {
         float minutes = Mathf.Floor(Mathf.Round(seconds) / 60f);
         //float hours = Mathf.Floor((seconds / 60f) / 60f);
-        return minutes + ":" + String.Format("{0,2}", Mathf.Round(seconds) % 60).Replace(" ", "0");
+        return minutes + ":" + string.Format("{0,2}", Mathf.Round(seconds) % 60).Replace(" ", "0");
     }
 
     public static bool IsSpecialAnnouncement(string str) {
@@ -636,7 +648,7 @@ public static class UnitaleUtil {
     }*/
 
     // ******************************************************************************
-    // *** Warning: Complex System.Reflexion stuff below! Enter at your own risk! *** 
+    // *** Warning: Complex System.Reflexion stuff below! Enter at your own risk! ***
     // ******************************************************************************
 
     /*/// <summary>

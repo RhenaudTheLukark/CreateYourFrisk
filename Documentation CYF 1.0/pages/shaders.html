@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<!--
+since you're here anyway: there's a small easter egg on the text commands page but it's probably not worth finding, sorry
+you may notice this page's code is garbage: i'm not a web designer! ;-;
+it's w3c valid, at least
+-->
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="favicon.ico">
+
+    <title>CYF Documentation - Shaders - Introduction</title>
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="../css/themesidebar.css" rel="stylesheet">
+    <link href="../css/shThemeRDark.css" rel="stylesheet">
+</head>
+<body>
+<img src="../img/bg2.png" alt="Undertale background" class="backimg">
+<div class="container arena black">
+    <div class="col-md-2">
+        <!--navigation-->
+        <nav class="nav-sidebar">
+            <ul class="nav tabs">
+                <li class="li-header">Basics</li>
+                    <li><a href="../documentation.html">Welcome</a></li>
+                    <li><a href="howtoread.html">How to read this documentation</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li><a href="controls.html">Controls</a></li>
+                    <li><a href="basic.html">Basic setup</a></li>
+                    <li><a href="unity.html"><span class="CYF"></span> Unity Setup (Optional)</a></li>
+                    <li class="new"><a href="variables.html">Special Variables</a></li>
+                    <li><a href="terms.html">Terminology</a></li>
+                <li class="li-header">API</li>
+                    <li><a href="api-text.html">Text commands</a></li>
+                    <li class="new"><a href="api-events.html">Game events</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li class="li-indent">Functions &amp; Objects:</li>
+                        <li class="li-indent new"><a href="api-functions-main.html">Misc. Functions</a></li>
+                        <li class="li-indent new"><a href="api-functions-player.html">The Player Object</a></li>
+                        <li class="li-indent"><a href="api-functions-script.html">The Script Object</a></li>
+                        <li class="li-indent"><a href="api-functions-audio.html">The Audio Object</a></li>
+                        <li class="li-indent"><a href="api-functions-newaudio.html"><span class="CYF"></span> The NewAudio Object</a></li>
+                        <li class="li-indent"><a href="api-functions-input.html">The Input Object</a></li>
+                        <li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
+                        <li class="li-indent"><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-discord.html"><span class="CYF"></span> The Discord Object</a></li>
+                        <li class="li-indent"><a href="api-functions-waves.html">The Arena Object</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li><a href="api-projectile.html">Projectile management</a></li>
+                    <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
+                    <li class="new"><a href="api-animation.html">Sprites &amp; Animation</a></li>
+                    <li class="new"><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                <li class="li-header"></span><span class="CYF"></span> <span class="new"></span>Shaders</li>
+                    <li class="active" style="margin-left:5px;">&gt; Introduction &lt;</li>
+                    <li><a href="shaders-object.html">The Shader Object</a></li>
+                    <li><a href="shaders-coding.html">Coding a Shader</a></li>
+                    <hr style="margin-top:10px;margin-bottom:10px;">
+                <li class="li-header"><span class="CYF"></span> Overworld</li>
+                    <li class="new"><a href="overworld.html">Basics</a></li>
+                    <li><a href="overworld-howto-map.html">How to create a map</a></li>
+                    <li><a href="overworld-howto-event.html">How to create an event</a></li>
+                    <li><a href="overworld-howto-animevent.html">How to animate an event</a></li>
+                    <li class="new"><a href="overworld-howto-shop.html">How to create a shop</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li class="li-indent"><span class="CYF"></span> Overworld Objects:</li>
+                        <li class="li-indent"><a href="overworld-object-general.html">The General Object</a></li>
+                        <li class="li-indent"><a href="overworld-object-event.html">The Event Object</a></li>
+                        <li class="li-indent"><a href="overworld-object-player.html">The Player Object</a></li>
+                        <li class="li-indent"><a href="overworld-object-screen.html">The Screen Object</a></li>
+                        <li class="li-indent"><a href="overworld-object-inventory.html">The Inventory Object</a></li>
+                        <li class="li-indent new"><a href="overworld-object-map.html">The Map Object</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                <li class="li-header">Resources</li>
+                    <li><a href="../media/dialogoptions.png">Dialog bubble names</a></li>
+                    <li><a href="api-keys.html"><span class="CYF"></span> Key List</a></li>
+            </ul>
+        </nav>
+    </div>
+    <!--tabs'n'shit-->
+    <div class="tab-content col-md-10">
+        <div class="tab-pane active text-style" id="shaders">
+            <h2><span class="CYF"></span> Shaders - Introduction</h2>
+            <p>
+                As of Create Your Frisk v0.6.5, you may now use Unity shaders in your encounters (and the overworld)!<br>
+                Be warned that <b><u>this is a very advanced feature</u></b> and not everyone will be able to create
+                their own shaders. However, any shaders people make and release can be added into a mod very easily.
+                This page is intended to serve as a basic outline and interface into how the system works.
+            </p>
+            <hr>
+            <h3>Basic Overview</h3>
+
+            <p>
+                Here's how shaders are set up in CYF:
+                <ul>
+                    <li>
+                        First of all: Shaders are stored as
+                        <a href="https://docs.unity3d.com/2018.2/Documentation/Manual/AssetBundlesIntro.html">Unity AssetBundles</a>.<br>
+                        You might expect them to be <span class="term">.shader</span> files, but they <b>aren't</b>. Keep
+                        that in mind.
+                    </li><br>
+                    <li>
+                        Every bundle can contain multiple shaders.
+                        When loading a shader in your mod, you will have to provide the name of a bundle, as well as the
+                        name of a shader in the bundle.
+                    </li><br>
+                    <li>
+                        The actual file setup consists of a folder (the bundle) within the <span class="term">Shaders</span>
+                        folder, with files inside named <span class="term">windows</span>, <span class="term">mac</span>,
+                        and <span class="term">linux</span>. <b>Keep all of these files</b> if you want your mod to be
+                        cross-compatible between operating systems.
+                    </li><br>
+                    <li>
+                        These files are created by Unity, so <u>if you want to create your own shaders, <b>you MUST set up
+                        Unity</b> on your machine.</u><br>
+                        Read <span class="ref">Unity Setup (Optional)</span> for a guide.
+                    </li><br>
+                    <li>
+                        There are some default shaders included with CYF, present in the
+                        <span class="term">CYF/Default/Shaders</span> folder. They are treated just like sprites and audio,
+                        in that shaders will be read from the mod's <span class="term">Shaders</span> folder first, and the
+                        Default shaders folder second.
+                    </li>
+                </ul>
+            </p>
+
+            <p>
+                And on the topic of creating shaders:
+                <ul>
+                    <li>
+                        All shaders are coded using Unity ShaderLabs. See <span class="ref">Coding a Shader</span> for
+                        links and help.<br>
+                        They will be created as <span class="term">.shader</span> files on the Unity side before they're
+                        exported to bundles.<br>
+                        Note that the majority of the work and involvement in creating a shader is knowing how to write the
+                        shader, and has nothing to do with CYF.
+                    </li><br>
+                    <li>
+                        Not all errors and issues with shaders will explicitly show an error screen in game, instead resulting
+                        in a pink "error" shader being applied.<br>
+                        When creating your shader in Unity, you will be able to see syntax errors and such before compiling
+                        your shader.
+                    </li><br>
+                    <li>
+                        If the shader (and all of its fallbacks) are found to be unsupported, you'll see an error screen when
+                        loading the shader.<br>
+                        <u>You will need to use the Lua function</u> <span class="term">pcall</span> <u>to account for this</u>
+                        (an example is provided in <span class="ref">The Shader Object</span>).
+                    </li><br>
+                    <li>
+                        While actually creating a shader in Unity, there's a shortcut function available
+                        (<span class="term">shader.Test</span>) that does not require you to build your shaders to AssetBundles
+                        repeatedly.
+                    </li><br>
+                    <li>
+                        Depending on the setup of the shader, it may or may not cause issues with Create Your Frisk features
+                        such as sprite layers and sprite masking. This is why it is recommended that all shaders used be based
+                        off of the template located at <span class="ref">Coding a Shader</span> and
+                        <span class="term">Assets/Editor/Shaders/CYFShaderTemplate.shader</span>.
+                    </li>
+                </ul>
+            </p>
+            <hr>
+            <h3>Creating Shaders</h3>
+
+            <p>
+                The first step involved with creating shaders is to set up Create Your Frisk in Unity on your machine.
+                Read through <span class="ref">Unity Setup (Optional)</span> for a guide on doing this.
+                <br><br>
+                After that, locate the path <span class="term">Assets/Editor/Shaders</span>. This is where you will create and edit
+                your shaders as <span class="term">.shader</span> files. You can also find here all of the default shaders Create
+                Your Frisk comes with, which are in <span class="term">Default/Shaders</span> when Create Your Frisk gets built.
+                <br><br>
+                Create a new <span class="term">.shader</span> file here, with whatever name you like. This name is the name you will
+                eventually pass to <span class="term">shader.Set</span> from the Lua side. Follow the instructions in
+                <span class="ref">Coding a Shader</span> to write the contents of your shader file. You may use
+                <span class="term">shader.Test</span> from mods within the Unity editor (found at <span class="term">Assets/Mods</span>
+                to test shaders before you compile them.
+                <br><br>
+                Once you're done editing and testing your shader, it's time to compile it to an AssetBundle. Using the Unity project
+                files viewer (normally at the bottom of the screen), browse to the path <span class="term">Assets/Editor/Shaders</span>.
+                Click on your shader. Look for the "Asset Windows" label (normally at the bottom-right of the screen, under the
+                Inspector).
+                <br><br>
+                <img src="../img/AssetBundle.png" alt="Shader bundler screenshot">
+                <br><br>
+                Click on the button to the right of "AssetBundle" (says "none" in this image), and enter the name of a bundle. This
+                will be the name of the folder that gets exported, that you will be able to drop in your mod's
+                <span class="term">Shaders</span> folder later. You can have multiple shaders contained in one bundle, and as many
+                bundles as you like. As an example, all of the shaders listed below are part of the
+                <span class="term">cyfshaders</span> bundle.
+                <br><br>
+                Finally, to compile all shaders into AssetBundles, click on <span class="term">Create Your Frisk</span> at the top of
+                the Unity window, and click on <span class="term">Build Shader AssetBundles...</span> in the list. A new window will
+                appear.
+                <br><br>
+                <img src="../img/Shader bundler screenshot.png" alt="Shader bundler screenshot">
+                <br><br>
+                You may either click <span class="term">Build all AssetBundles</span> to build every AssetBundle you defined
+                earlier, or you may enter a single name in the box and click <span class="term">Build one AssetBundle</span> to only
+                build one AssetBundle of your choosing (for instance, <span class="term">cyfshaders</span>).
+                <br><br>
+                You will have to wait for a moment while the shaders get built into bundles. You will see an alert box whenever the
+                shaders are done being bundled. Once finished, your bundles will appear in
+                <span class="term">Assets/Editor/Output</span>! They will be present as folders, with the same names as the
+                AssetBundles you set up in the editor. Each one of these folders is a shader bundle that you may now move to your
+                mod's <span class="term">Shaders</span> folder.
+            </p>
+            <hr>
+            <h3>Sample Shaders</h3>
+
+            <p>
+                Create Your Frisk v0.6.5 comes with an AssetBundle named <span class="term">"cyfshaders"</span>, containing several sample
+                shaders for you to toy with, be it in the Lua side or as a means to create your own shaders.<br>
+                Remember that you can find the source code for these shaders by downloading CYF's source code - see
+                <span class="ref">Unity Setup (Optional)</span>.<br>
+                You may set all of the properties listed in the "usage" column by using the functions within <span class="ref">The Shader Object</span>
+                on the Lua side. All the keywords are disabled by default, that's just how the shader language functions.
+            </p>
+
+            <p>
+                <table>
+                <tr>
+                    <th>Shader Name</th>
+                    <th>Description</th>
+                    <th>Usage</th>
+                </tr>
+                <tr>
+                    <td>CYFShaderTemplate<br>(not in the bundle)</td>
+                    <td>A template base shader to build all your own shaders from. Same as the sample shader in
+                    <span class="ref">Coding a Shader</span>.</td>
+                    <td>No unique properties or variables.</td>
+                </tr>
+                <tr>
+                    <td>Displacement</td>
+                    <td>
+                        A shader that allows for the use of displacement maps, by means of images in your mod's Sprites folder.
+                        <br><br>
+                        Colors greater than 50% will move the rendered space forward, while colors less than 50% will move it backwards.<br>
+                        For reference, the color <span class="term">#808080</span> represents zero displacement.
+                    </td>
+                    <td>
+                        <ul>
+                            <li><span class="term">DispMap</span> - Texture - The displacement map in question. See left.</li>
+                            <li><span class="term">Intensity</span> - Float - Controls the magnitude of the displacement. 1 by default.</li>
+                            <li><span class="term">NO_PIXEL_SNAP</span> - Keyword - If enabled, disables pixel snapping on the newly rendered
+                            image (blurry).</li>
+                            <li><span class="term">NO_WRAP</span> - Keyword - If enabled, does not render pixels that were outside of the
+                            original image/screen boundaries.</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td>FitScreen</td>
+                    <td>
+                        This shader is intended for use alongside <span class="term">Misc.SetWideFullscreen(true)</span>, and should be
+                        applied to the camera through <span class="term">Misc.ScreenShader</span>.
+                        <br><br>
+                        It forcefully takes the 640x480, 4:3 normal display area of CYF and stretches it across the user's monitor, when
+                        in fullscreen. In other words, it uses a "stretch" display method instead of keeping letterboxing, even if it is
+                        controllable.
+                    </td>
+                    <td>
+                        <ul>
+                            <li>
+                                <span class="term">Width</span> - Float - Controls the new size of the display area.<br>
+                                Should be set to <span class="term">640</span> normally, or
+                                <br><span class="term">math.ceil(math.max(Misc.MonitorWidth / 3, 640))</span> in fullscreen.
+                            </li>
+                            <li><span class="term">NO_PIXEL_SNAP</span> - Keyword - If enabled, disables pixel snapping on the newly sized
+                            screen render (blurry).</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Gradient</td>
+                    <td>
+                        A simple shader that takes 4 colors (all white by default), applies them to the 4 corners of an image (or the
+                        screen), and generates a color gradient connecting them. The colorization is done similarly to
+                        <span class="term">sprite.color</span>, so the effect may be most visible with white images.
+                    </td>
+                    <td>
+                        <ul>
+                            <li><span class="term">TopLeft</span> - Color - Color for the top left corner.</li>
+                            <li><span class="term">TopRight</span> - Color - Color for the top right corner.</li>
+                            <li><span class="term">BottomLeft</span> - Color - Color for the bottom left corner.</li>
+                            <li><span class="term">BottomRight</span> - Color - Color for the bottom right corner.</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Invert</td>
+                    <td>A simple shader that inverts the colors of every displayed pixel.</td>
+                    <td>No unique properties or variables.</td>
+                </tr>
+                <tr>
+                    <td>Rotation</td>
+                    <td>
+                        This shader is intended to be applied to the camera through <span class="term">Misc.ScreenShader</span>.
+                        <br><br>
+                        The purpose of this shader is to allow the entire screen to be rotated all around. It has customizeable pivot
+                        points, as well.
+                    </td>
+                    <td>
+                        <ul>
+                            <li><span class="term">Rotation</span> - Float - Rotation of the screen. 0 by default. This value takes
+                                degrees.</li>
+                            <li><span class="term">xPivot</span> - Float - X pivot to rotate around. 0.5 (center) by default.</li>
+                            <li><span class="term">yPivot</span> - Float - X pivot to rotate around. 0.5 (center) by default.</li>
+                            <li><span class="term">WRAP</span> - Keyword - If enabled, renders pixels that were outside of the
+                            original screen boundaries.</li>
+                            <li><span class="term">NO_PIXEL_SNAP</span> - Keyword - If enabled, disables pixel snapping on the newly rendered
+                            image (blurry).</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td>ScreenScale</td>
+                    <td>
+                        This shader is intended to be applied to the camera through <span class="term">Misc.ScreenShader</span>.
+                        <br><br>
+                        This shader scales the screen horizontally and vertically, similarly to <span class="term">sprite.Scale</span>.
+                        Values can be both positive and negative, which can also result in flipping the screen.
+                    </td>
+                    <td>
+                        <ul>
+                            <li><span class="term">HorMult</span> - Float - Horizontal Scale. 1 by default.</li>
+                            <li><span class="term">VerMult</span> - Float - Vertical Scale. 1 by default.</li>
+                            <li><span class="term">WRAP</span> - Keyword - If enabled, renders pixels that were outside of the
+                            original screen boundaries.</li>
+                            <li><span class="term">NO_PIXEL_SNAP</span> - Keyword - If enabled, disables pixel snapping on the newly sized
+                            screen render (blurry).</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Wave</td>
+                    <td>
+                        A nifty effect that makes an image appear to wave and sway back and forth. Its size and distance can be customized.
+                    </td>
+                    <td>
+                        <ul>
+                            <li>
+                                <span class="term">Width</span> - Float - Controls the width of the wave motion.
+                                Larger numbers mean more distance travelled horizontally. 1 by default.
+                            </li>
+                            <li>
+                                <span class="term">Rate</span> - Float - Controls the rate of waves in the image.
+                                Larger numbers mean less space between waves. 1 by default.
+                            </li>
+                            <li><span class="term">NO_WRAP</span> - Keyword - If enabled, does not render pixels that were outside of the
+                            original image boundaries.</li>
+                            <li><span class="term">NO_PIXEL_SNAP</span> - Keyword - If enabled, disables pixel snapping on the newly rendered
+                            image (blurry).</li>
+                        </ul>
+                    </td>
+                </tr>
+            </table>
+            </p>
+        </div>
+
+        <div class="tab-pane text-style" id="mercy">
+            <h2 style="text-decoration: none; line-height:50px;">
+                * YOU WON!<br>
+                * You earned 0 EXP and 0 gold.<br>
+                * also the nav menu is broken now
+            </h2><br>
+        </div>
+
+    </div>
+</div>
+
+<div class="container">
+    <div class="col-xs-3"><img class="centerbt black" alt="Undertale fake button" src="../img/fightbt_0.png" height="42">
+    </div>
+    <div class="col-xs-3"><img class="centerbt black" alt="Undertale fake button" src="../img/actbt_0.png" height="42">
+    </div>
+    <div class="col-xs-3"><img class="centerbt black" alt="Undertale fake button" src="../img/itembt_0.png" height="42">
+    </div>
+    <div class="col-xs-3"><a href="#mercy" data-toggle="tab"><img class="centerbt black" alt="Undertale fake button"
+                                                                  src="../img/mercybt_0.png" height="42"></a>
+    </div>
+</div>
+<br>
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="../js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../js/show_hide_comments.js"></script>
+
+<script type="text/javascript" src="../js/FontToggleButton.js"></script>
+</body>
+</html>

@@ -5,13 +5,12 @@ public abstract class AbstractSoul {
 
     //private PlayerController player;
 
-    public AbstractSoul(PlayerController player) { speed = ControlPanel.instance.PlayerMovementPerSec; }
+    protected AbstractSoul() { speed = ControlPanel.instance.PlayerMovementPerSec; }
 
     public abstract Color color { get; }
-    
+
     public void setHalfSpeed(bool isHalfSpeed) {
-        if (isHalfSpeed) speed = ControlPanel.instance.PlayerMovementHalvedPerSec;
-        else             speed = ControlPanel.instance.PlayerMovementPerSec;
+        speed = isHalfSpeed ? ControlPanel.instance.PlayerMovementHalvedPerSec : ControlPanel.instance.PlayerMovementPerSec;
     }
 
     public abstract Vector2 GetMovement(float xDir, float yDir);

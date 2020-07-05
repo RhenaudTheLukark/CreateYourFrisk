@@ -1,58 +1,49 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-using MoonSharp.Interpreter;
 
 public class SelectOMatic : MonoBehaviour {
-    private static int CurrentSelectedMod = 0;
+    private static int CurrentSelectedMod;
     private static List<DirectoryInfo> modDirs;
     private Dictionary<string, Sprite> bgs = new Dictionary<string, Sprite>();
-    private GameObject encounterBox;
-    private GameObject devMod;
-    private GameObject btnList;
     private bool animationDone = true;
-    private float animationTimer = 0;
+    private float animationTimer;
 
-    private static float modListScroll = 0.0f;          // Used to keep track of the position of the mod list specifically. Resets if you press escape
-    private static float encounterListScroll = 0.0f;    // Used to keep track of the position of the encounter list. Resets if you press escape
+    private static float modListScroll;          // Used to keep track of the position of the mod list specifically. Resets if you press escape
+    private static float encounterListScroll;    // Used to keep track of the position of the encounter list. Resets if you press escape
 
     private float ExitButtonAlpha = 5f;                 // Used to fade the "Exit" button in and out
     private float OptionsButtonAlpha = 5f;              // Used to fade the "Options" button in and out
 
-    private static int selectedItem = 0;                // Used to let users navigate the mod and encounter menus with the arrow keys!
+    private static int selectedItem;                // Used to let users navigate the mod and encounter menus with the arrow keys!
+
+    public GameObject encounterBox, devMod, content;
+    public GameObject btnList,              btnBack,              btnNext,              btnExit,              btnOptions;
+    public Text       ListText, ListShadow, BackText, BackShadow, NextText, NextShadow, ExitText, ExitShadow, OptionsText, OptionsShadow;
+    public GameObject  ModContainer,     ModBackground,     ModTitle,     ModTitleShadow,     EncounterCount,     EncounterCountShadow;
+    public GameObject AnimContainer, AnimModBackground, AnimModTitle, AnimModTitleShadow, AnimEncounterCount, AnimEncounterCountShadow;
 
     // Use this for initialization
     private void Start() {
-        GameObject.Destroy(GameObject.Find("Player"));
-        GameObject.Destroy(GameObject.Find("Main Camera OW"));
-        GameObject.Destroy(GameObject.Find("Canvas OW"));
-        GameObject.Destroy(GameObject.Find("Canvas Two"));
+        Destroy(GameObject.Find("Player"));
+        Destroy(GameObject.Find("Main Camera OW"));
+        Destroy(GameObject.Find("Canvas OW"));
+        Destroy(GameObject.Find("Canvas Two"));
+        UnitaleUtil.firstErrorShown = false;
 
         // Load directory info
         DirectoryInfo di = new DirectoryInfo(Path.Combine(FileLoader.DataRoot, "Mods"));
         var modDirsTemp = di.GetDirectories();
 
         // Remove mods with 0 encounters and hidden mods from the list
-        List<DirectoryInfo> purged = new List<DirectoryInfo>();
-        foreach (DirectoryInfo modDir in modDirsTemp) {
-
-            // Make sure the Encounters folder exists
-            if (!(new DirectoryInfo(Path.Combine(FileLoader.DataRoot, "Mods/" + modDir.Name + "/Lua/Encounters"))).Exists)
-                continue;
-
-            // Count encounters
-            bool hasEncounters = false;
-            foreach(FileInfo file in new DirectoryInfo(Path.Combine(FileLoader.DataRoot, "Mods/" + modDir.Name + "/Lua/Encounters")).GetFiles("*.lua")) {
-                hasEncounters = true;
-                break;
-            }
-
-            if (hasEncounters && (modDir.Attributes & FileAttributes.Hidden) != FileAttributes.Hidden && !modDir.Name.StartsWith("@"))
-                purged.Add(modDir);
-        }
+        List<DirectoryInfo> purged = (from modDir in modDirsTemp where new DirectoryInfo(Path.Combine(FileLoader.DataRoot, "Mods/" + modDir.Name + "/Lua/Encounters")).Exists
+                                      let hasEncounters = new DirectoryInfo(Path.Combine(FileLoader.DataRoot, "Mods/" + modDir.Name + "/Lua/Encounters")).GetFiles("*.lua").Any() where hasEncounters && (modDir.Attributes & FileAttributes.Hidden) != FileAttributes.Hidden && !modDir.Name.StartsWith("@")
+                                      select modDir).ToList();
         modDirs = purged;
 
         // Make sure that there is at least one playable mod present
@@ -63,68 +54,59 @@ public class SelectOMatic : MonoBehaviour {
             return;
         }
 
-        modDirs.Sort(delegate(DirectoryInfo a, DirectoryInfo b) {
-            return a.Name.CompareTo(b.Name);
-        });
+        modDirs.Sort((a, b) => a.Name.CompareTo(b.Name));
 
         // Bind button functions
-        GameObject.Find("BtnBack").GetComponent<Button>().onClick.RemoveAllListeners();
-        GameObject.Find("BtnBack").GetComponent<Button>().onClick.AddListener(() => {
-            if (animationDone) {
-                modFolderSelection();
-                ScrollMods(-1);
-            }
-            });
-        GameObject.Find("BtnNext").GetComponent<Button>().onClick.RemoveAllListeners();
-        GameObject.Find("BtnNext").GetComponent<Button>().onClick.AddListener(() => {
-            if (animationDone) {
-                modFolderSelection();
-                ScrollMods( 1);
-            }
-            });
+        btnBack.GetComponent<Button>().onClick.RemoveAllListeners();
+        btnBack.GetComponent<Button>().onClick.AddListener(() => {
+            if (!animationDone) return;
+            modFolderSelection();
+            ScrollMods(-1);
+        });
+        btnNext.GetComponent<Button>().onClick.RemoveAllListeners();
+        btnNext.GetComponent<Button>().onClick.AddListener(() => {
+            if (!animationDone) return;
+            modFolderSelection();
+            ScrollMods( 1);
+        });
 
-        // Grab the encounter selection box
-        if (encounterBox == null)
-            encounterBox = GameObject.Find("ScrollWin");
-        // Grab the devMod box
-        if (devMod == null)
-            devMod = GameObject.Find("devMod");
-        // Grab the mod list button, and give it a function
-        if (btnList == null)
-            btnList = GameObject.Find("BtnList");
+        // Give the mod list button a function
         btnList.GetComponent<Button>().onClick.RemoveAllListeners();
         btnList.GetComponent<Button>().onClick.AddListener(() => {
             if (animationDone)
                 modFolderMiniMenu();
-            });
+        });
         // Grab the exit button, and give it some functions
-        GameObject.Find("BtnExit").GetComponent<Button>().onClick.RemoveAllListeners();
-        GameObject.Find("BtnExit").GetComponent<Button>().onClick.AddListener(() => {SceneManager.LoadScene("Disclaimer");});
+        btnExit.GetComponent<Button>().onClick.RemoveAllListeners();
+        btnExit.GetComponent<Button>().onClick.AddListener(() => {
+            SceneManager.LoadScene("Disclaimer");
+            DiscordControls.StartTitle();
+        });
 
         // Add devMod button functions
         if (GlobalControls.modDev) {
-            GameObject.Find("BtnOptions").GetComponent<Button>().onClick.RemoveAllListeners();
-            GameObject.Find("BtnOptions").GetComponent<Button>().onClick.AddListener(() => {SceneManager.LoadScene("Options");});
+            btnOptions.GetComponent<Button>().onClick.RemoveAllListeners();
+            btnOptions.GetComponent<Button>().onClick.AddListener(() => {SceneManager.LoadScene("Options");});
         }
 
         // Crate Your Frisk initializer
         if (GlobalControls.crate) {
             //Exit button
-            foreach (Text txt in GameObject.Find("BtnExit").GetComponentsInChildren<Text>())
-                txt.text = "← BYEE";
+            ExitText.text   = "← BYEE";
+            ExitShadow.text = ExitText.text;
 
             //Options button
-            if (GlobalControls.modDev)
-                foreach (Text txt in GameObject.Find("BtnOptions").GetComponentsInChildren<Text>())
-                    txt.text = "OPSHUNZ →";
+            if (GlobalControls.modDev) {
+                OptionsText.text   = "OPSHUNZ →";
+                OptionsShadow.text = OptionsText.text;
+            }
 
-            //Back button
-            GameObject back = encounterBox.transform.Find("ScrollCutoff/Content/Back").gameObject;
-            back.transform.Find("Text").GetComponent<Text>().text = "← BCAK";
+            //Back button within scrolling list
+            content.transform.Find("Back/Text").GetComponent<Text>().text = "← BCAK";
 
             //Mod list button
-            btnList.transform.Find("Label").gameObject.GetComponent<Text>().text = "MDO LITS";
-            btnList.transform.Find("LabelShadow").gameObject.GetComponent<Text>().text = "MDO LITS";
+            ListText.gameObject.GetComponent<Text>().text   = "MDO LITS";
+            ListShadow.gameObject.GetComponent<Text>().text = "MDO LITS";
         }
 
         // This check will be true if we just exited out of an encounter
@@ -132,8 +114,8 @@ public class SelectOMatic : MonoBehaviour {
         modFolderSelection();
         if (StaticInits.ENCOUNTER != "") {
             //Check to see if there is more than one encounter in the mod just exited from
-            List<string> encounters = new List<string>();
-            DirectoryInfo di2 = new DirectoryInfo(Path.Combine(FileLoader.ModDataPath, "Lua/Encounters"));
+            List<string>  encounters = new List<string>();
+            DirectoryInfo di2        = new DirectoryInfo(Path.Combine(FileLoader.ModDataPath, "Lua/Encounters"));
             foreach (FileInfo f in di2.GetFiles("*.lua")) {
                 if (encounters.Count < 2)
                     encounters.Add(Path.GetFileNameWithoutExtension(f.Name));
@@ -144,30 +126,30 @@ public class SelectOMatic : MonoBehaviour {
                 int temp = selectedItem;
                 encounterSelection();
                 selectedItem = temp;
-                encounterBox.transform.Find("ScrollCutoff/Content").GetChild(selectedItem).GetComponent<MenuButton>().StartAnimation(1);
+                content.transform.GetChild(selectedItem).GetComponent<MenuButton>().StartAnimation(1);
             }
 
             // Move the scrolly bit to where it was when the player entered the encounter
-            encounterBox.transform.Find("ScrollCutoff/Content").gameObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, encounterListScroll);
+            content.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, encounterListScroll);
 
             // Start the Exit button at half transparency
-            ExitButtonAlpha = 0.5f;
-            GameObject.Find("BtnExit/Text").GetComponent<Text>().color       = new Color(1f, 1f, 1f, 0.5f);
-            GameObject.Find("BtnExit/TextShadow").GetComponent<Text>().color = new Color(0f, 0f, 0f, 0.5f);
+            ExitButtonAlpha                       = 0.5f;
+            ExitText.GetComponent<Text>().color   = new Color(1f, 1f, 1f, 0.5f);
+            ExitShadow.GetComponent<Text>().color = new Color(0f, 0f, 0f, 0.5f);
 
             // Start the Options button at half transparency
             if (GlobalControls.modDev) {
-                OptionsButtonAlpha = 0.5f;
-                GameObject.Find("BtnOptions/Text").GetComponent<Text>().color       = new Color(1f, 1f, 1f, 0.5f);
-                GameObject.Find("BtnOptions/TextShadow").GetComponent<Text>().color = new Color(0f, 0f, 0f, 0.5f);
+                OptionsButtonAlpha                       = 0.5f;
+                OptionsText.GetComponent<Text>().color   = new Color(1f, 1f, 1f, 0.5f);
+                OptionsShadow.GetComponent<Text>().color = new Color(0f, 0f, 0f, 0.5f);
             }
 
             // Reset it to let us accurately tell if the player just came here from the Disclaimer scene or the Battle scene
             StaticInits.ENCOUNTER = "";
-        // Player is coming here from the Disclaimer scene
+            // Player is coming here from the Disclaimer scene
         } else {
             // When the player enters from the Disclaimer screen, reset stored scroll positions
-            modListScroll = 0.0f;
+            modListScroll       = 0.0f;
             encounterListScroll = 0.0f;
         }
     }
@@ -176,35 +158,39 @@ public class SelectOMatic : MonoBehaviour {
     // It re-generates the mod list, and selects the first mod
     // Used for cases where the player selects a mod or encounter that no longer exists
     private void HandleErrors() {
-        Debug.LogWarning("Error detected! Mod or Encounter not found! Resetting mod list...");
+        Debug.LogWarning("Mod or Encounter not found! Resetting mod list...");
         CurrentSelectedMod = 0;
         bgs = new Dictionary<string, Sprite>();
         Start();
     }
 
-    IEnumerator LaunchMod() {
+    private IEnumerator LaunchMod() {
         // First: make sure the mod is still here and can be opened
-        if (!(new DirectoryInfo(Path.Combine(FileLoader.DataRoot, "Mods/" + modDirs[CurrentSelectedMod].Name + "/Lua/Encounters/"))).Exists
+        if (!new DirectoryInfo(Path.Combine(FileLoader.DataRoot, "Mods/" + modDirs[CurrentSelectedMod].Name + "/Lua/Encounters/")).Exists
          || !File.Exists(Path.Combine(FileLoader.DataRoot, "Mods/" + modDirs[CurrentSelectedMod].Name + "/Lua/Encounters/" + StaticInits.ENCOUNTER + ".lua"))) {
             HandleErrors();
             yield break;
         }
 
         // Dim the background to indicate loading
-        GameObject.Find("ModBackground").GetComponent<Image>().color = new Color(1f, 1f, 1f, 0.1875f);
+        ModBackground.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0.1875f);
 
         // Store the current position of the scrolly bit
-        encounterListScroll = encounterBox.transform.Find("ScrollCutoff/Content").gameObject.GetComponent<RectTransform>().anchoredPosition.y;
+        encounterListScroll = content.GetComponent<RectTransform>().anchoredPosition.y;
 
         yield return new WaitForEndOfFrame();
         StaticInits.Initialized = false;
         try {
-            StaticInits.InitAll();
+            StaticInits.InitAll(true);
+            if (UnitaleUtil.firstErrorShown)
+                throw new Exception();
             Debug.Log("Loading " + StaticInits.ENCOUNTER);
             GlobalControls.isInFight = true;
+            DiscordControls.StartBattle(modDirs[CurrentSelectedMod].Name, StaticInits.ENCOUNTER);
             SceneManager.LoadScene("Battle");
-        } catch {
-            GameObject.Find("ModBackground").GetComponent<Image>().color = new Color(1f, 1f, 1f, 0.25f);
+        } catch (Exception e) {
+            ModBackground.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0.25f);
+            Debug.LogError("An error occured while loading a mod:\n" + e.Message + "\n\n" + e.StackTrace);
         }
     }
 
@@ -213,8 +199,8 @@ public class SelectOMatic : MonoBehaviour {
         // Error handler
         // If current index is now out of range OR currently selected mod is not present:
         if (CurrentSelectedMod < 0 || CurrentSelectedMod > modDirs.Count - 1
-            || !(new DirectoryInfo(Path.Combine(FileLoader.DataRoot, "Mods/" + modDirs[CurrentSelectedMod].Name + "/Lua/Encounters"))).Exists
-            ||  (new DirectoryInfo(Path.Combine(FileLoader.DataRoot, "Mods/" + modDirs[CurrentSelectedMod].Name + "/Lua/Encounters"))).GetFiles("*.lua").Length == 0) {
+            || !new DirectoryInfo(Path.Combine(FileLoader.DataRoot, "Mods/" + modDirs[CurrentSelectedMod].Name + "/Lua/Encounters")).Exists
+            ||  new DirectoryInfo(Path.Combine(FileLoader.DataRoot, "Mods/" + modDirs[CurrentSelectedMod].Name + "/Lua/Encounters")).GetFiles("*.lua").Length == 0) {
             HandleErrors();
             return;
         }
@@ -223,14 +209,14 @@ public class SelectOMatic : MonoBehaviour {
         StaticInits.MODFOLDER = modDirs[id].Name;
 
         // Make clicking the background go to the encounter select screen
-        GameObject.Find("ModBackground").GetComponent<Button>().onClick.RemoveAllListeners();
-        GameObject.Find("ModBackground").GetComponent<Button>().onClick.AddListener(() => {
+        ModBackground.GetComponent<Button>().onClick.RemoveAllListeners();
+        ModBackground.GetComponent<Button>().onClick.AddListener(() => {
             if (animationDone)
                     encounterSelection();
-            });
+        });
 
         // Update the background
-        var ImgComp = GameObject.Find("ModBackground").GetComponent<Image>();
+        var ImgComp = ModBackground.GetComponent<Image>();
         // First, check if we already have this mod's background loaded in memory
         if (bgs.ContainsKey(modDirs[CurrentSelectedMod].Name)) {
             ImgComp.sprite = bgs[modDirs[CurrentSelectedMod].Name];
@@ -249,141 +235,100 @@ public class SelectOMatic : MonoBehaviour {
         }
 
         // Get all encounters in the mod's Encounters folder
-        List<string> encounters = new List<string>();
-        DirectoryInfo di = new DirectoryInfo(Path.Combine(FileLoader.ModDataPath, "Lua/Encounters"));
-        foreach (FileInfo f in di.GetFiles("*.lua"))
-            encounters.Add(Path.GetFileNameWithoutExtension(f.Name));
+        DirectoryInfo di        = new DirectoryInfo(Path.Combine(FileLoader.ModDataPath, "Lua/Encounters"));
+        List<string> encounters = di.GetFiles("*.lua").Select(f => Path.GetFileNameWithoutExtension(f.Name)).ToList();
 
         // Update the text
-        GameObject.Find("ModTitle").GetComponent<Text>().text = modDirs[id].Name;
+        ModTitle.GetComponent<Text>().text = modDirs[id].Name;
         // Crate your frisk version
         if (GlobalControls.crate)
-            GameObject.Find("ModTitle").GetComponent<Text>().text = Temmify.Convert(modDirs[id].Name, true);
-        GameObject.Find("ModTitleShadow").GetComponent<Text>().text = GameObject.Find("ModTitle").GetComponent<Text>().text;
+            ModTitle.GetComponent<Text>().text = Temmify.Convert(modDirs[id].Name, true);
+        ModTitleShadow.GetComponent<Text>().text = ModTitle.GetComponent<Text>().text;
 
         // List # of encounters, or name of encounter if there is only one
         if (encounters.Count == 1) {
-            GameObject.Find("EncounterCount").GetComponent<Text>().text = encounters[0];
+            EncounterCount.GetComponent<Text>().text = encounters[0];
             // crate your frisk version
             if (GlobalControls.crate)
-                GameObject.Find("EncounterCount").GetComponent<Text>().text = Temmify.Convert(encounters[0], true);
+                EncounterCount.GetComponent<Text>().text = Temmify.Convert(encounters[0], true);
 
             // Make clicking the bg directly open the encounter
-            GameObject.Find("ModBackground").GetComponent<Button>().onClick.RemoveAllListeners();
-            GameObject.Find("ModBackground").GetComponent<Button>().onClick.AddListener(() => {
-                if (animationDone) {
-                    StaticInits.ENCOUNTER = encounters[0];
-                    StartCoroutine(LaunchMod());
-                }
-                });
+            ModBackground.GetComponent<Button>().onClick.RemoveAllListeners();
+            ModBackground.GetComponent<Button>().onClick.AddListener(() => {
+                if (!animationDone) return;
+                StaticInits.ENCOUNTER = encounters[0];
+                StartCoroutine(LaunchMod());
+            });
         } else {
-            GameObject.Find("EncounterCount").GetComponent<Text>().text = "Has " + encounters.Count + " encounters";
+            EncounterCount.GetComponent<Text>().text = "Has " + encounters.Count + " encounters";
             // crate your frisk version
             if (GlobalControls.crate)
-                GameObject.Find("EncounterCount").GetComponent<Text>().text = "HSA " + encounters.Count + " ENCUOTNERS";
+                EncounterCount.GetComponent<Text>().text = "HSA " + encounters.Count + " ENCUOTNERS";
         }
-        GameObject.Find("EncounterCountShadow").GetComponent<Text>().text = GameObject.Find("EncounterCount").GetComponent<Text>().text;
+        EncounterCountShadow.GetComponent<Text>().text = EncounterCount.GetComponent<Text>().text;
 
         // Update the color of the arrows
         if (CurrentSelectedMod == 0 && modDirs.Count == 1)
-            GameObject.Find("BtnBack").transform.Find("Text").gameObject.GetComponent<Text>().color = new Color(0.25f, 0.25f, 0.25f, 1f);
+            BackText.color = new Color(0.25f, 0.25f, 0.25f, 1f);
         else
-            GameObject.Find("BtnBack").transform.Find("Text").gameObject.GetComponent<Text>().color = new Color(1f, 1f, 1f, 1f);
+            BackText.color = new Color(1f, 1f, 1f, 1f);
         if (CurrentSelectedMod == modDirs.Count - 1 && modDirs.Count == 1)
-            GameObject.Find("BtnNext").transform.Find("Text").gameObject.GetComponent<Text>().color = new Color(0.25f, 0.25f, 0.25f, 1f);
+            NextText.color = new Color(0.25f, 0.25f, 0.25f, 1f);
         else
-            GameObject.Find("BtnNext").transform.Find("Text").gameObject.GetComponent<Text>().color = new Color(1f, 1f, 1f, 1f);
+            NextText.color = new Color(1f, 1f, 1f, 1f);
     }
 
     // Goes to the next or previous mod with a little scrolling animation.
     // -1 for left, 1 for right
     private void ScrollMods(int dir) {
         // First, determine if the next mod should be shown
-        bool animate = false;
+        bool animate = modDirs.Count > 1;
         //if ((dir == -1 && CurrentSelectedMod > 0) || (dir == 1 && CurrentSelectedMod < modDirs.Count - 1)) {
-        if (modDirs.Count > 1)
-            animate = true; //show the new mod
 
         // If the new mod is being shown, start the animation!
-        if (animate) {
-            animationTimer = dir / 10f;
-            animationDone = false;
+        if (!animate) return;
+        animationTimer = dir / 10f;
+        animationDone  = false;
 
-            // Create a BG for the previous mod
-            GameObject OldBG = Instantiate(GameObject.Find("ModBackground"), GameObject.Find("Canvas").transform);
-            OldBG.name = "ANIM ModBackground";
-            OldBG.GetComponent<Button>().onClick.RemoveAllListeners();
+        // Enable the "ANIM" assets
+        AnimContainer.SetActive(true);
+        AnimContainer.transform.localPosition                 = new Vector2(0, 0);
+        AnimModBackground       .GetComponent<Image>().sprite = ModBackground.GetComponent<Image>().sprite;
+        AnimModTitleShadow      .GetComponent<Text>().text    = ModTitleShadow.GetComponent<Text>().text;
+        AnimModTitle            .GetComponent<Text>().text    = ModTitle.GetComponent<Text>().text;
+        AnimEncounterCountShadow.GetComponent<Text>().text    = EncounterCountShadow.GetComponent<Text>().text;
+        AnimEncounterCount      .GetComponent<Text>().text    = EncounterCount.GetComponent<Text>().text;
 
-            // Create a new mod title
-            GameObject OldTitleShadow = Instantiate(GameObject.Find("ModTitleShadow"), GameObject.Find("Canvas").transform);
-            OldTitleShadow.name = "ANIM ModTitleShadow";
-            GameObject OldTitle = Instantiate(GameObject.Find("ModTitle"), GameObject.Find("Canvas").transform);
-            OldTitle.name = "ANIM ModTitle";
+        // Move all real assets to the side
+        ModBackground.transform.Translate(640        * dir, 0, 0);
+        ModTitleShadow.transform.Translate(640       * dir, 0, 0);
+        ModTitle.transform.Translate(640             * dir, 0, 0);
+        EncounterCountShadow.transform.Translate(640 * dir, 0, 0);
+        EncounterCount.transform.Translate(640       * dir, 0, 0);
 
-            // Create a new encounter count label
-            GameObject OldCountShadow = Instantiate(GameObject.Find("EncounterCountShadow"), GameObject.Find("Canvas").transform);
-            OldCountShadow.name = "ANIM EncounterCountShadow";
-            GameObject OldCount = Instantiate(GameObject.Find("EncounterCount"), GameObject.Find("Canvas").transform);
-            OldCount.name = "ANIM EncounterCount";
+        // Actually choose the new mod
+        CurrentSelectedMod = (CurrentSelectedMod + dir) % modDirs.Count;
+        if (CurrentSelectedMod < 0) CurrentSelectedMod += modDirs.Count;
 
-            // Properly layer all "fake" assets
-            OldCount.transform.SetAsFirstSibling();
-            OldCountShadow.transform.SetAsFirstSibling();
-            OldTitle.transform.SetAsFirstSibling();
-            OldTitleShadow.transform.SetAsFirstSibling();
-            OldBG.transform.SetAsFirstSibling();
-
-            // Move all real assets to the side
-            GameObject.Find("ModBackground").transform.Translate(640 * dir, 0, 0);
-            GameObject.Find("ModTitleShadow").transform.Translate(640 * dir, 0, 0);
-            GameObject.Find("ModTitle").transform.Translate(640 * dir, 0, 0);
-            GameObject.Find("EncounterCountShadow").transform.Translate(640 * dir, 0, 0);
-            GameObject.Find("EncounterCount").transform.Translate(640 * dir, 0, 0);
-
-            // Actually choose the new mod
-            CurrentSelectedMod = (CurrentSelectedMod + dir) % modDirs.Count;
-            if (CurrentSelectedMod < 0) CurrentSelectedMod += modDirs.Count;
-
-            ShowMod(CurrentSelectedMod);
-        }
+        ShowMod(CurrentSelectedMod);
     }
 
     // Used to animate scrolling left or right.
     private void Update() {
         // Animation updating section
-        if (GameObject.Find("ANIM ModBackground") != null) {
-            if (animationTimer > 0)
-                animationTimer = Mathf.Floor((animationTimer + 1));
-            else
-                animationTimer = Mathf.Ceil ((animationTimer - 1));
+        if (AnimContainer.activeSelf) {
+            animationTimer = animationTimer > 0 ? Mathf.Floor(animationTimer + 1) : Mathf.Ceil (animationTimer - 1);
 
-            int distance = (int)(((20 - Mathf.Abs(animationTimer)) * 3.4) * -Mathf.Sign(animationTimer));
+            int distance = (int)((20 - Mathf.Abs(animationTimer)) * 3.4 * -Mathf.Sign(animationTimer));
 
-            GameObject.Find("ANIM ModBackground")       .transform.Translate(distance, 0, 0);
-            GameObject.Find("ANIM ModTitleShadow")      .transform.Translate(distance, 0, 0);
-            GameObject.Find("ANIM ModTitle")            .transform.Translate(distance, 0, 0);
-            GameObject.Find("ANIM EncounterCountShadow").transform.Translate(distance, 0, 0);
-            GameObject.Find("ANIM EncounterCount")      .transform.Translate(distance, 0, 0);
-
-            GameObject.Find("ModBackground")            .transform.Translate(distance, 0, 0);
-            GameObject.Find("ModTitleShadow")           .transform.Translate(distance, 0, 0);
-            GameObject.Find("ModTitle")                 .transform.Translate(distance, 0, 0);
-            GameObject.Find("EncounterCountShadow")     .transform.Translate(distance, 0, 0);
-            GameObject.Find("EncounterCount")           .transform.Translate(distance, 0, 0);
+            AnimContainer.transform.Translate(distance, 0, 0);
+            ModContainer.transform.Translate(distance, 0, 0);
 
             if (Mathf.Abs(animationTimer) == 20) {
-                Destroy(GameObject.Find("ANIM ModBackground"));
-                Destroy(GameObject.Find("ANIM ModTitleShadow"));
-                Destroy(GameObject.Find("ANIM ModTitle"));
-                Destroy(GameObject.Find("ANIM EncounterCountShadow"));
-                Destroy(GameObject.Find("ANIM EncounterCount"));
+                AnimContainer.SetActive(false);
 
                 // Manual movement because I can't change the movement multiplier to a precise enough value
-                GameObject.Find("ModBackground")        .transform.Translate((int)(2 * -Mathf.Sign(animationTimer)), 0, 0);
-                GameObject.Find("ModTitleShadow")       .transform.Translate((int)(2 * -Mathf.Sign(animationTimer)), 0, 0);
-                GameObject.Find("ModTitle")             .transform.Translate((int)(2 * -Mathf.Sign(animationTimer)), 0, 0);
-                GameObject.Find("EncounterCountShadow") .transform.Translate((int)(2 * -Mathf.Sign(animationTimer)), 0, 0);
-                GameObject.Find("EncounterCount")       .transform.Translate((int)(2 * -Mathf.Sign(animationTimer)), 0, 0);
+                ModContainer.transform.Translate((int)(2 * -Mathf.Sign(animationTimer)), 0, 0);
 
                 animationTimer = 0;
                 animationDone = true;
@@ -391,8 +336,7 @@ public class SelectOMatic : MonoBehaviour {
         }
 
         // Prevent scrolling too far in the encounter box
-        if (GameObject.Find("ScrollWin")) {
-            GameObject content = encounterBox.transform.Find("ScrollCutoff/Content").gameObject;
+        if (encounterBox.activeSelf) {
             if (content.GetComponent<RectTransform>().anchoredPosition.y < -200)
                 content.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -200);
             else if (content.GetComponent<RectTransform>().anchoredPosition.y > (content.transform.childCount - 1) * 30)
@@ -400,26 +344,26 @@ public class SelectOMatic : MonoBehaviour {
         }
 
         // Detect hovering over the Exit button and handle fading
-        if ((ScreenResolution.mousePosition.x / ScreenResolution.displayedSize.x) * 640 < 70 && (Input.mousePosition.y / ScreenResolution.displayedSize.y) * 480 > 450 && ExitButtonAlpha < 1f) {
+        if (ScreenResolution.mousePosition.x / ScreenResolution.displayedSize.x * 640 < 70 && Input.mousePosition.y / ScreenResolution.displayedSize.y * 480 > 450 && ExitButtonAlpha < 1f) {
             ExitButtonAlpha += 0.05f;
-            GameObject.Find("BtnExit/Text").GetComponent<Text>().color =        new Color(1f, 1f, 1f, ExitButtonAlpha);
-            GameObject.Find("BtnExit/TextShadow").GetComponent<Text>().color =  new Color(0f, 0f, 0f, ExitButtonAlpha);
+            ExitText.color   = new Color(1f, 1f, 1f, ExitButtonAlpha);
+            ExitShadow.color = new Color(0f, 0f, 0f, ExitButtonAlpha);
         } else if (ExitButtonAlpha > 0.5f) {
             ExitButtonAlpha -= 0.05f;
-            GameObject.Find("BtnExit/Text").GetComponent<Text>().color =        new Color(1f, 1f, 1f, ExitButtonAlpha);
-            GameObject.Find("BtnExit/TextShadow").GetComponent<Text>().color =  new Color(0f, 0f, 0f, ExitButtonAlpha);
+            ExitText.color   = new Color(1f, 1f, 1f, ExitButtonAlpha);
+            ExitShadow.color = new Color(0f, 0f, 0f, ExitButtonAlpha);
         }
 
         // Detect hovering over the Options button and handle fading
         if (GlobalControls.modDev) {
-            if ((ScreenResolution.mousePosition.x / ScreenResolution.displayedSize.x) * 640 > 550 && (Input.mousePosition.y / ScreenResolution.displayedSize.y) * 480 > 450 && OptionsButtonAlpha < 1f) {
+            if (ScreenResolution.mousePosition.x / ScreenResolution.displayedSize.x * 640 > 550 && Input.mousePosition.y / ScreenResolution.displayedSize.y * 480 > 450 && OptionsButtonAlpha < 1f) {
                 OptionsButtonAlpha += 0.05f;
-                GameObject.Find("BtnOptions/Text").GetComponent<Text>().color =        new Color(1f, 1f, 1f, OptionsButtonAlpha);
-                GameObject.Find("BtnOptions/TextShadow").GetComponent<Text>().color =  new Color(0f, 0f, 0f, OptionsButtonAlpha);
+                OptionsText.color   = new Color(1f, 1f, 1f, OptionsButtonAlpha);
+                OptionsShadow.color = new Color(0f, 0f, 0f, OptionsButtonAlpha);
             } else if (OptionsButtonAlpha > 0.5f) {
                 OptionsButtonAlpha -= 0.05f;
-                GameObject.Find("BtnOptions/Text").GetComponent<Text>().color =        new Color(1f, 1f, 1f, OptionsButtonAlpha);
-                GameObject.Find("BtnOptions/TextShadow").GetComponent<Text>().color =  new Color(0f, 0f, 0f, OptionsButtonAlpha);
+                OptionsText.color   = new Color(1f, 1f, 1f, OptionsButtonAlpha);
+                OptionsShadow.color = new Color(0f, 0f, 0f, OptionsButtonAlpha);
             }
         }
 
@@ -440,7 +384,7 @@ public class SelectOMatic : MonoBehaviour {
         /////////////////////////////////////////////////////////////
 
         // Main controls:
-        if (!GameObject.Find("ScrollWin")) {
+        if (!encounterBox.activeSelf) {
             if (animationDone) {
                 //scroll left
                 if (Input.GetKeyDown(KeyCode.LeftArrow))
@@ -451,21 +395,19 @@ public class SelectOMatic : MonoBehaviour {
                 //open the mod list
                 else if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.C)) {
                     modFolderMiniMenu();
-                    encounterBox.transform.Find("ScrollCutoff/Content").GetChild(selectedItem).GetComponent<MenuButton>().StartAnimation(1);
+                    content.transform.GetChild(selectedItem).GetComponent<MenuButton>().StartAnimation(1);
                 // Open the encounter list or start the encounter (if there is only one encounter)
                 } else if (Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.Return))
-                    GameObject.Find("ModBackground").GetComponent<Button>().onClick.Invoke();
-                    //encounterBox.transform.Find("ScrollCutoff/Content").GetChild(selectedItem).GetComponent<MenuButton>().StartAnimation(1);
+                    ModBackground.GetComponent<Button>().onClick.Invoke();
+                //content.transform.GetChild(selectedItem).GetComponent<MenuButton>().StartAnimation(1);
             }
 
             // Return to the Disclaimer screen
             if (Input.GetKeyDown(KeyCode.X) || Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift))
-                GameObject.Find("BtnExit").GetComponent<Button>().onClick.Invoke();
-        // Encounter or Mod List controls:
+                btnExit.GetComponent<Button>().onClick.Invoke();
+            // Encounter or Mod List controls:
         } else {
             if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow)) {
-                GameObject content = encounterBox.transform.Find("ScrollCutoff/Content").gameObject;
-
                 // Store previous value of selectedItem
                 int previousSelectedItem = selectedItem;
 
@@ -510,10 +452,10 @@ public class SelectOMatic : MonoBehaviour {
 
             // Exit
             if (Input.GetKeyDown(KeyCode.X) || Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift))
-                GameObject.Find("ModBackground").GetComponent<Button>().onClick.Invoke();
+                ModBackground.GetComponent<Button>().onClick.Invoke();
             // Select the mod or encounter
             else if (Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.Return))
-                encounterBox.transform.Find("ScrollCutoff/Content").GetChild(selectedItem).gameObject.GetComponent<Button>().onClick.Invoke();
+                content.transform.GetChild(selectedItem).gameObject.GetComponent<Button>().onClick.Invoke();
         }
     }
 
@@ -530,16 +472,14 @@ public class SelectOMatic : MonoBehaviour {
         btnList.SetActive(true);
 
         // If the encounter box is visible, remove all encounter buttons before hiding
-        // Use try because GameObject.Find will not find inactive GameObjects
-        try {
-            Transform content = encounterBox.transform.Find("ScrollCutoff/Content");
-            foreach (Transform b in content) {
+        if (encounterBox.activeSelf) {
+            foreach (Transform b in content.transform) {
                 if (b.gameObject.name != "Back")
                     Destroy(b.gameObject);
                 else
                     b.GetComponent<MenuButton>().Reset();
             }
-        } catch {}
+        }
         //hide the encounter selection box
         encounterBox.SetActive(false);
     }
@@ -553,64 +493,61 @@ public class SelectOMatic : MonoBehaviour {
         selectedItem = 0;
 
         // Make clicking the background exit the encounter selection screen
-        GameObject.Find("ModBackground").GetComponent<Button>().onClick.RemoveAllListeners();
-        GameObject.Find("ModBackground").GetComponent<Button>().onClick.AddListener(() => {
+        ModBackground.GetComponent<Button>().onClick.RemoveAllListeners();
+        ModBackground.GetComponent<Button>().onClick.AddListener(() => {
             if (animationDone)
                 modFolderSelection();
-            });
+        });
         //show the encounter selection box
         encounterBox.SetActive(true);
         //reset the encounter box's position
-        encounterBox.transform.Find("ScrollCutoff/Content").GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
+        content.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
 
-        //grab pre-existing objects
-        GameObject content = encounterBox.transform.Find("ScrollCutoff/Content").gameObject;
         //give the back button its function
         GameObject back = content.transform.Find("Back").gameObject;
         back.GetComponent<Button>().onClick.RemoveAllListeners();
-        back.GetComponent<Button>().onClick.AddListener(() => {modFolderSelection();});
+        back.GetComponent<Button>().onClick.AddListener(modFolderSelection);
 
         DirectoryInfo di = new DirectoryInfo(Path.Combine(FileLoader.DataRoot, "Mods/" + StaticInits.MODFOLDER + "/Lua/Encounters"));
-        if (di.Exists && di.GetFiles().Length > 0) {
-            FileInfo[] encounterFiles = di.GetFiles("*.lua");
+        if (!di.Exists || di.GetFiles().Length <= 0) return;
+        FileInfo[] encounterFiles = di.GetFiles("*.lua");
 
-            int count = 0;
-            foreach (FileInfo encounter in encounterFiles) {
-                count += 1;
+        int count = 0;
+        foreach (FileInfo encounter in encounterFiles) {
+            count += 1;
 
-                //create a button for each encounter file
-                GameObject button = Instantiate(back);
+            //create a button for each encounter file
+            GameObject button = Instantiate(back);
 
-                //set parent and name
-                button.transform.SetParent(content.transform);
-                button.name = "EncounterButton";
+            //set parent and name
+            button.transform.SetParent(content.transform);
+            button.name = "EncounterButton";
 
-                //set position
-                button.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 100 - (count * 30));
+            //set position
+            button.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 100 - count * 30);
 
-                //set color
-                button.GetComponent<Image>().color = new Color(0.75f, 0.75f, 0.75f, 0.5f);
-                button.GetComponent<MenuButton>().NormalColor = new Color(0.75f, 0.75f, 0.75f, 0.5f);
-                button.GetComponent<MenuButton>().HoverColor  = new Color(0.75f, 0.75f, 0.75f, 1f);
-                button.transform.Find("Fill").GetComponent<Image>().color = new Color(0.5f, 0.5f, 0.5f, 0.5f);
+            //set color
+            button.GetComponent<Image>().color                        = new Color(0.75f, 0.75f, 0.75f, 0.5f);
+            button.GetComponent<MenuButton>().NormalColor             = new Color(0.75f, 0.75f, 0.75f, 0.5f);
+            button.GetComponent<MenuButton>().HoverColor              = new Color(0.75f, 0.75f, 0.75f, 1f);
+            button.transform.Find("Fill").GetComponent<Image>().color = new Color(0.5f,  0.5f,  0.5f,  0.5f);
 
-                // set text
-                button.transform.Find("Text").GetComponent<Text>().text = Path.GetFileNameWithoutExtension(encounter.Name);
-                if (GlobalControls.crate)
-                    button.transform.Find("Text").GetComponent<Text>().text = Temmify.Convert(Path.GetFileNameWithoutExtension(encounter.Name), true);
+            // set text
+            button.transform.Find("Text").GetComponent<Text>().text = Path.GetFileNameWithoutExtension(encounter.Name);
+            if (GlobalControls.crate)
+                button.transform.Find("Text").GetComponent<Text>().text = Temmify.Convert(Path.GetFileNameWithoutExtension(encounter.Name), true);
 
-                //finally, set function!
-                string filename = Path.GetFileNameWithoutExtension(encounter.Name);
+            //finally, set function!
+            string filename = Path.GetFileNameWithoutExtension(encounter.Name);
 
-                int tempCount = count;
+            int tempCount = count;
 
-                button.GetComponent<Button>().onClick.RemoveAllListeners();
-                button.GetComponent<Button>().onClick.AddListener(() => {
-                    selectedItem = tempCount;
-                    StaticInits.ENCOUNTER = filename;
-                    StartCoroutine(LaunchMod());
-                });
-            }
+            button.GetComponent<Button>().onClick.RemoveAllListeners();
+            button.GetComponent<Button>().onClick.AddListener(() => {
+                selectedItem          = tempCount;
+                StaticInits.ENCOUNTER = filename;
+                StartCoroutine(LaunchMod());
+            });
         }
     }
 
@@ -622,8 +559,6 @@ public class SelectOMatic : MonoBehaviour {
         // Automatically select the current mod when the mod list appears
         selectedItem = CurrentSelectedMod + 1;
 
-        // Grab pre-existing objects
-        GameObject content = encounterBox.transform.Find("ScrollCutoff/Content").gameObject;
         // Give the back button its function
         GameObject back = content.transform.Find("Back").gameObject;
         back.GetComponent<Button>().onClick.RemoveAllListeners();
@@ -634,14 +569,13 @@ public class SelectOMatic : MonoBehaviour {
             });
 
         // Make clicking the background exit this menu
-        GameObject.Find("ModBackground").GetComponent<Button>().onClick.RemoveAllListeners();
-        GameObject.Find("ModBackground").GetComponent<Button>().onClick.AddListener(() => {
-            if (animationDone) {
-                // Store the encounter box's position so it can be remembered upon exiting a mod
-                modListScroll = content.GetComponent<RectTransform>().anchoredPosition.y;
-                modFolderSelection();
-            }
-            });
+        ModBackground.GetComponent<Button>().onClick.RemoveAllListeners();
+        ModBackground.GetComponent<Button>().onClick.AddListener(() => {
+            if (!animationDone) return;
+            // Store the encounter box's position so it can be remembered upon exiting a mod
+            modListScroll = content.GetComponent<RectTransform>().anchoredPosition.y;
+            modFolderSelection();
+        });
         // Show the encounter selection box
         encounterBox.SetActive(true);
         // Move the encounter box to the stored position, for easier mod browsing
@@ -659,7 +593,7 @@ public class SelectOMatic : MonoBehaviour {
             button.name = "ModButton";
 
             //set position
-            button.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 100 - ((count + 1) * 30));
+            button.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 100 - (count + 1) * 30);
 
             //set color
             button.GetComponent<Image>().color = new Color(0.75f, 0.75f, 0.75f, 0.5f);

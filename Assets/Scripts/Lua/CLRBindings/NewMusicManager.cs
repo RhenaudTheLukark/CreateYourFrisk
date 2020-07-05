@@ -6,26 +6,22 @@ using System.Collections.Generic;
 public class NewMusicManager {
     [MoonSharpHidden] public static Hashtable audiolist = new Hashtable();
     [MoonSharpHidden] public static Dictionary<string, string> audioname = new Dictionary<string, string>();
-   
+
     public static void CreateChannel(string name) {
         if (name == null)
             throw new CYFException("NewAudio.CreateChannel: The first argument (the channel name) is nil.\n\nSee the documentation for proper usage.");
-        if (audiolist.ContainsKey(name)) {
-            Debug.LogWarning("The audio channel " + name + " already exists.");
+        if (audiolist.ContainsKey(name))
             return;
-        }
         GameObject go = new GameObject("AudioChannel" + audiolist.Count + ": " + name, typeof(AudioSource));
-        GameObject.DontDestroyOnLoad(go);
+        Object.DontDestroyOnLoad(go);
         audiolist.Add(name, go.GetComponent<AudioSource>());
         if (!audioname.ContainsKey(name))
             audioname.Add(name, "empty");
     }
 
     [MoonSharpHidden] public static AudioSource CreateChannelAndGetAudioSource(string name) {
-        if (audiolist.ContainsKey(name)) {
-            Debug.LogWarning("The audio channel " + name + " already exists.");
+        if (audiolist.ContainsKey(name))
             return GameObject.Find("AudioChannel" + audiolist.Count + ": " + name).GetComponent<AudioSource>();
-        }
         GameObject go = new GameObject("AudioChannel" + audiolist.Count + ": " + name, typeof(AudioSource));
         audiolist.Add(name, go.GetComponent<AudioSource>());
         if (!audioname.ContainsKey(name))
@@ -34,15 +30,17 @@ public class NewMusicManager {
     }
 
     public static void DestroyChannel(string name) {
-        if (name == null)
-            throw new CYFException("NewAudio.DestroyChannel: The first argument (the channel name) is nil.\n\nSee the documentation for proper usage.");
-        if (name == "src")                throw new CYFException("You can't delete the audio channel \"src\".");
+        switch (name) {
+            case null:  throw new CYFException("NewAudio.DestroyChannel: The first argument (the channel name) is nil.\n\nSee the documentation for proper usage.");
+            case "src": throw new CYFException("You can't delete the audio channel \"src\".");
+        }
+
         if (!audiolist.ContainsKey(name)) throw new CYFException("The audio channel " + name + " doesn't exist.");
-        try {
-            GameObject.Destroy(((AudioSource)audiolist[name]).gameObject);
-        } catch { }        
+        try { Object.Destroy(((AudioSource)audiolist[name]).gameObject); }
+        catch { /* ignored */ }
+
         audiolist.Remove(name);
-        audioname.Remove(name);        
+        audioname.Remove(name);
     }
 
     public static bool Exists(string name) {
@@ -62,65 +60,58 @@ public class NewMusicManager {
     }
 
     public static float GetTotalTime(string name) {
-        if (name == null)
-            throw new CYFException("NewAudio.GetTotalTime: The first argument (the channel name) is nil.\n\nSee the documentation for proper usage.");
+        if (name == null)                 throw new CYFException("NewAudio.GetTotalTime: The first argument (the channel name) is nil.\n\nSee the documentation for proper usage.");
         if (!audiolist.ContainsKey(name)) throw new CYFException("The audio channel " + name + " doesn't exist.");
         if (((AudioSource)audiolist[name]).clip != null) return ((AudioSource)audiolist[name]).clip.length;
         return 0;
     }
 
-    public static bool PlayMusic(string name, string music, bool loop = false, float volume = 1) {
-        if (name == null)
-            throw new CYFException("NewAudio.PlayMusic: The first argument (the channel name) is nil.\n\nSee the documentation for proper usage.");
-        else if (music == null)
-            throw new CYFException("NewAudio.PlayMusic: The second argument (the music name) is nil.\n\nSee the documentation for proper usage.");
+    public static void PlayMusic(string name, string music, bool loop = false, float volume = 1) {
+        if (name == null)  throw new CYFException("NewAudio.PlayMusic: The first argument (the channel name) is nil.\n\nSee the documentation for proper usage.");
+        if (music == null) throw new CYFException("NewAudio.PlayMusic: The second argument (the music name) is nil.\n\nSee the documentation for proper usage.");
         if (!audiolist.ContainsKey(name)) throw new CYFException("The audio channel " + name + " doesn't exist.");
+
         ((AudioSource)audiolist[name]).Stop();
         ((AudioSource)audiolist[name]).loop = loop;
         ((AudioSource)audiolist[name]).volume = volume;
-        ((AudioSource)audiolist[name]).clip = AudioClipRegistry.GetMusic(music, GlobalControls.retroMode);
+        ((AudioSource)audiolist[name]).clip = AudioClipRegistry.GetMusic(music);
         audiolist[name] = ((AudioSource)audiolist[name]);
         audioname[name] = "music:" + music.ToLower();
         if (name == "src")
             MusicManager.filename = "music:" + music.ToLower();
         ((AudioSource)audiolist[name]).Play();
-        return (((AudioSource)audiolist[name]).clip != null);
     }
 
-    public static bool PlaySound(string name, string sound, bool loop = false, float volume = 0.65f) {
-        if (name == null)
-            throw new CYFException("NewAudio.PlaySound: The first argument (the channel name) is nil.\n\nSee the documentation for proper usage.");
-        else if (sound == null)
-            throw new CYFException("NewAudio.PlaySound: The second argument (the sound name) is nil.\n\nSee the documentation for proper usage.");
+    public static void PlaySound(string name, string sound, bool loop = false, float volume = 0.65f) {
+        if (name == null)  throw new CYFException("NewAudio.PlaySound: The first argument (the channel name) is nil.\n\nSee the documentation for proper usage.");
+        if (sound == null) throw new CYFException("NewAudio.PlaySound: The second argument (the sound name) is nil.\n\nSee the documentation for proper usage.");
         if (!audiolist.ContainsKey(name)) throw new CYFException("The audio channel " + name + " doesn't exist.");
+
         ((AudioSource)audiolist[name]).Stop();
         ((AudioSource)audiolist[name]).loop = loop;
         ((AudioSource)audiolist[name]).volume = volume;
-        ((AudioSource)audiolist[name]).clip = AudioClipRegistry.GetSound(sound, GlobalControls.retroMode);
+        ((AudioSource)audiolist[name]).clip = AudioClipRegistry.GetSound(sound);
         audiolist[name] = ((AudioSource)audiolist[name]);
         audioname[name] = "sound:" + sound.ToLower();
         if (name == "src")
             MusicManager.filename = "sound:" + sound.ToLower();
         ((AudioSource)audiolist[name]).Play();
-        return (((AudioSource)audiolist[name]).clip != null);
     }
 
-    public static bool PlayVoice(string name, string voice, bool loop = false, float volume = 0.65f) {
-        if (name == null)
-            throw new CYFException("NewAudio.PlayVoice: The first argument (the channel name) is nil.\n\nSee the documentation for proper usage.");
-        else if (voice == null)
-            throw new CYFException("NewAudio.PlayVoice: The second argument (the voice name) is nil.\n\nSee the documentation for proper usage.");
+    public static void PlayVoice(string name, string voice, bool loop = false, float volume = 0.65f) {
+        if (name == null)  throw new CYFException("NewAudio.PlayVoice: The first argument (the channel name) is nil.\n\nSee the documentation for proper usage.");
+        if (voice == null) throw new CYFException("NewAudio.PlayVoice: The second argument (the voice name) is nil.\n\nSee the documentation for proper usage.");
         if (!audiolist.ContainsKey(name)) throw new CYFException("The audio channel " + name + " doesn't exist.");
+
         ((AudioSource)audiolist[name]).Stop();
         ((AudioSource)audiolist[name]).loop = loop;
         ((AudioSource)audiolist[name]).volume = volume;
-        ((AudioSource)audiolist[name]).clip = AudioClipRegistry.GetVoice(voice, GlobalControls.retroMode);
+        ((AudioSource)audiolist[name]).clip = AudioClipRegistry.GetVoice(voice);
         audiolist[name] = ((AudioSource)audiolist[name]);
         audioname[name] = "voice:" + voice.ToLower();
         if (name == "src")
             MusicManager.filename = "voice:" + voice.ToLower();
         ((AudioSource)audiolist[name]).Play();
-        return (((AudioSource)audiolist[name]).clip != null);
     }
 
     public static void SetPitch(string name, float value) {
@@ -131,9 +122,9 @@ public class NewMusicManager {
     }
 
     public static float GetPitch(string name) {
-        if (name == null)
-            throw new CYFException("NewAudio.GetPitch: The first argument (the channel name) is nil.\n\nSee the documentation for proper usage.");
+        if (name == null)                 throw new CYFException("NewAudio.GetPitch: The first argument (the channel name) is nil.\n\nSee the documentation for proper usage.");
         if (!audiolist.ContainsKey(name)) throw new CYFException("The audio channel " + name + " doesn't exist.");
+
         return ((AudioSource)audiolist[name]).pitch;
     }
 
@@ -145,34 +136,34 @@ public class NewMusicManager {
     }
 
     public static float GetVolume(string name) {
-        if (name == null)
-            throw new CYFException("NewAudio.GetVolume: The first argument (the channel name) is nil.\n\nSee the documentation for proper usage.");
+        if (name == null)                 throw new CYFException("NewAudio.GetVolume: The first argument (the channel name) is nil.\n\nSee the documentation for proper usage.");
         if (!audiolist.ContainsKey(name)) throw new CYFException("The audio channel " + name + " doesn't exist.");
+
         return ((AudioSource)audiolist[name]).volume;
     }
 
     public static void Play(string name) {
-        if (name == null)
-            throw new CYFException("NewAudio.Play: The first argument (the channel name) is nil.\n\nSee the documentation for proper usage.");
+        if (name == null)                 throw new CYFException("NewAudio.Play: The first argument (the channel name) is nil.\n\nSee the documentation for proper usage.");
         if (!audiolist.ContainsKey(name)) throw new CYFException("The audio channel " + name + " doesn't exist.");
+
         ((AudioSource)audiolist[name]).Play();
     }
     public static void Stop(string name) {
-        if (name == null)
-            throw new CYFException("NewAudio.Stop: The first argument (the channel name) is nil.\n\nSee the documentation for proper usage.");
+        if (name == null)                 throw new CYFException("NewAudio.Stop: The first argument (the channel name) is nil.\n\nSee the documentation for proper usage.");
         if (!audiolist.ContainsKey(name)) throw new CYFException("The audio channel " + name + " doesn't exist.");
+
         ((AudioSource)audiolist[name]).Stop();
     }
     public static void Pause(string name) {
-        if (name == null)
-            throw new CYFException("NewAudio.Pause: The first argument (the channel name) is nil.\n\nSee the documentation for proper usage.");
+        if (name == null)                 throw new CYFException("NewAudio.Pause: The first argument (the channel name) is nil.\n\nSee the documentation for proper usage.");
         if (!audiolist.ContainsKey(name)) throw new CYFException("The audio channel " + name + " doesn't exist.");
+
         ((AudioSource)audiolist[name]).Pause();
     }
     public static void Unpause(string name) {
-        if (name == null)
-            throw new CYFException("NewAudio.Unpause: The first argument (the channel name) is nil.\n\nSee the documentation for proper usage.");
+        if (name == null)                 throw new CYFException("NewAudio.Unpause: The first argument (the channel name) is nil.\n\nSee the documentation for proper usage.");
         if (!audiolist.ContainsKey(name)) throw new CYFException("The audio channel " + name + " doesn't exist.");
+
         ((AudioSource)audiolist[name]).UnPause();
     }
 
@@ -182,16 +173,16 @@ public class NewMusicManager {
     }
 
     public static float GetPlayTime(string name) {
-        if (name == null)
-            throw new CYFException("NewAudio.GetPlayTime: The first argument (the channel name) is nil.\n\nSee the documentation for proper usage.");
+        if (name == null)                 throw new CYFException("NewAudio.GetPlayTime: The first argument (the channel name) is nil.\n\nSee the documentation for proper usage.");
         if (!audiolist.ContainsKey(name)) throw new CYFException("The audio channel " + name + " doesn't exist.");
+
         return ((AudioSource)audiolist[name]).time;
     }
 
     public static float GetCurrentTime(string name) {
-        if (name == null)
-            throw new CYFException("NewAudio.GetCurrentTime: The first argument (the channel name) is nil.\n\nSee the documentation for proper usage.");
+        if (name == null)                 throw new CYFException("NewAudio.GetCurrentTime: The first argument (the channel name) is nil.\n\nSee the documentation for proper usage.");
         if (!audiolist.ContainsKey(name)) throw new CYFException("The audio channel " + name + " doesn't exist.");
+
         return ((AudioSource)audiolist[name]).time;
     }
 
@@ -211,9 +202,9 @@ public class NewMusicManager {
     }
 
     public static bool isStopped(string name) {
-        if (name == null)
-            throw new CYFException("NewAudio.isStopped: The first argument (the channel name) is nil.\n\nSee the documentation for proper usage.");
+        if (name == null)                 throw new CYFException("NewAudio.isStopped: The first argument (the channel name) is nil.\n\nSee the documentation for proper usage.");
         if (!audiolist.ContainsKey(name)) throw new CYFException("The audio channel " + name + " doesn't exist.");
+
         return !((AudioSource)audiolist[name]).isPlaying;
     }
     public static bool IsStopped(string name) { return isStopped(name); }
@@ -223,9 +214,8 @@ public class NewMusicManager {
         audioname.Clear();
         audiolist.Add("src", MusicManager.src);
         audioname.Add("src", MusicManager.filename);
-        if (PlayerOverworld.audioKept) {
-            audiolist.Add("StaticKeptAudio", PlayerOverworld.audioKept);
-            audioname.Add("StaticKeptAudio", "Sorry, nyi");
-        }
+        if (!PlayerOverworld.audioKept) return;
+        audiolist.Add("StaticKeptAudio", PlayerOverworld.audioKept);
+        audioname.Add("StaticKeptAudio", "Sorry, nyi");
     }
 }

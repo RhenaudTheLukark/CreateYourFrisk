@@ -2,8 +2,8 @@
 
 public class RotatingEffectLetter : TextEffectLetter {
     private float sinTimer;
-    private float intensity;
-    private float rotSpeed = 7.0f;
+    private readonly float intensity;
+    private const float rotSpeed = 7.0f;
 
     public RotatingEffectLetter(Letter letter, float intensity = 1.5f) : base(letter) { this.intensity = intensity != 0 ? intensity : 1.5f; }
 

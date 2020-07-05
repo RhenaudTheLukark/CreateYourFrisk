@@ -45,9 +45,6 @@ EditorBuildSettings:
     path: Assets/Scenes/Error.unity
     guid: a7d68a9279560f449b7139c815237bd7
   - enabled: 1
-    path: Assets/Scenes/GameOver.unity
-    guid: ff009f92cc830594993955257fdad965
-  - enabled: 1
     path: Assets/Scenes/EnterName.unity
     guid: 9bdbfca8d1f425843ae466352228e423
   - enabled: 1

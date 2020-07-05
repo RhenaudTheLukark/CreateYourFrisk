@@ -15,7 +15,7 @@ public class EarthboundBG : MonoBehaviour
 
     private Sprite l1Mod;
 
-    private Dictionary<int, Color32> colorTable = new Dictionary<int, Color32>();
+    private readonly Dictionary<int, Color32> colorTable = new Dictionary<int, Color32>();
 
     private BGMode mode = BGMode.SINE;
 

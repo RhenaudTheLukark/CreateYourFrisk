@@ -2,19 +2,16 @@
 using System.Runtime.InteropServices;
 using System.Text;
 using System.IO;
+using System.Linq;
 
 public class Misc {
-    public string MachineName {
-        get { return System.Environment.UserName; }
-    }
+    public string MachineName { get { return System.Environment.UserName; } }
 
     public void ShakeScreen(float duration, float intensity = 3, bool isIntensityDecreasing = true) {
         Camera.main.GetComponent<GlobalControls>().ShakeScreen(duration, intensity, isIntensityDecreasing);
     }
 
-    public void StopShake() {
-        GlobalControls.stopScreenShake = true;
-    }
+    public void StopShake() { GlobalControls.stopScreenShake = true; }
 
     public bool FullScreen {
         get { return Screen.fullScreen; }
@@ -24,8 +21,16 @@ public class Misc {
         }
     }
 
+    public static int WindowWidth {
+        get { return Screen.fullScreen && ScreenResolution.wideFullscreen ? Screen.currentResolution.width : (int)ScreenResolution.displayedSize.x; }
+    }
+
+    public static int WindowHeight {
+        get { return Screen.fullScreen && ScreenResolution.wideFullscreen ? Screen.currentResolution.height : (int)ScreenResolution.displayedSize.y; }
+    }
+
     public static int ScreenWidth {
-        get { return (Screen.fullScreen && !ScreenResolution.wideFullscreen) ? (int)ScreenResolution.displayedSize.x : Screen.currentResolution.width; }
+        get { return Screen.fullScreen && !ScreenResolution.wideFullscreen ? (int)ScreenResolution.displayedSize.x : Screen.currentResolution.width; }
     }
 
     public static int ScreenHeight {
@@ -91,11 +96,14 @@ public class Misc {
             MoveCameraTo(0f, 0f);
     }
 
+    public LuaSpriteShader ScreenShader {
+        get { return CameraShader.luashader; }
+    }
+
     public static void DestroyWindow() { Application.Quit(); }
 
-    public static LuaFile OpenFile(string path, string mode = "rw") { // TODO: When OW is reworked, add 3rd argument to open a file in any of "mod", "map" or "default" locations
-        return new LuaFile(path, mode);
-    }
+    // TODO: When OW is reworked, add 3rd argument to open a file in any of "mod", "map" or "default" locations
+    public static LuaFile OpenFile(string path, string mode = "rw") { return new LuaFile(path, mode); }
 
     public bool FileExists(string path) {
         if (path.Contains(".."))
@@ -113,40 +121,36 @@ public class Misc {
         if (path.Contains(".."))
             throw new CYFException("You cannot create a directory outside of a mod folder. The use of \"..\" is forbidden.");
 
-        if (!Directory.Exists((FileLoader.ModDataPath + "/" + path).Replace('\\', '/'))) {
-            Directory.CreateDirectory((FileLoader.ModDataPath + "/" + path));
-            return true;
-        }
-        return false;
+        if (Directory.Exists((FileLoader.ModDataPath + "/" + path).Replace('\\', '/'))) return false;
+        Directory.CreateDirectory(FileLoader.ModDataPath + "/" + path);
+        return true;
     }
 
-    private bool PathValid(string path) { return (path != " " && path != "" && path != "/" && path != "\\" && path != "." && path != "./" && path != ".\\"); }
+    private static bool PathValid(string path) { return path != " " && path != "" && path != "/" && path != "\\" && path != "." && path != "./" && path != ".\\"; }
 
     public bool MoveDir(string path, string newPath) {
         if (path.Contains("..") || newPath.Contains(".."))
             throw new CYFException("You cannot move a directory outside of a mod folder. The use of \"..\" is forbidden.");
 
-        if (DirExists(path) && !DirExists(newPath) && PathValid(path)) {
-            Directory.Move(FileLoader.ModDataPath + "/" + path, FileLoader.ModDataPath + "/" + newPath);
-            return true;
-        }
-        return false;
+        if (!DirExists(path) || DirExists(newPath) || !PathValid(path)) return false;
+        Directory.Move(FileLoader.ModDataPath + "/" + path, FileLoader.ModDataPath + "/" + newPath);
+        return true;
     }
 
     public bool RemoveDir(string path, bool force = false) {
         if (path.Contains(".."))
             throw new CYFException("You cannot remove a directory outside of a mod folder. The use of \"..\" is forbidden.");
 
-        if (Directory.Exists((FileLoader.ModDataPath + "/" + path).Replace('\\', '/')))
-            try { Directory.Delete((FileLoader.ModDataPath + "/" + path), force); } catch {}
+        if (!Directory.Exists((FileLoader.ModDataPath + "/" + path).Replace('\\', '/'))) return false;
+        try { Directory.Delete(FileLoader.ModDataPath + "/" + path, force); }
+        catch { /* ignored */ }
+
         return false;
     }
 
     public string[] ListDir(string path, bool getFolders = false) {
-        if (path == null)
-            throw new CYFException("Cannot list a directory with a nil path.");
-        if (path.Contains(".."))
-            throw new CYFException("You cannot list directories outside of a mod folder. The use of \"..\" is forbidden.");
+        if (path == null)        throw new CYFException("Cannot list a directory with a nil path.");
+        if (path.Contains("..")) throw new CYFException("You cannot list directories outside of a mod folder. The use of \"..\" is forbidden.");
 
         path = (FileLoader.ModDataPath + "/" + path).Replace('\\', '/');
         if (!Directory.Exists(path))
@@ -154,20 +158,20 @@ public class Misc {
 
         DirectoryInfo d = new DirectoryInfo(path);
         System.Collections.Generic.List<string> retval = new System.Collections.Generic.List<string>();
-        if (!getFolders)
-            foreach (FileInfo fi in d.GetFiles())
-                retval.Add(Path.GetFileName(fi.ToString()));
-        else
-            foreach (DirectoryInfo di in d.GetDirectories())
-                retval.Add(di.Name);
+        retval.AddRange(!getFolders ? d.GetFiles().Select(fi => Path.GetFileName(fi.ToString()))
+                                    : d.GetDirectories().Select(di => di.Name));
         return retval.ToArray();
     }
 
     public static string OSType {
         get {
-            if (Application.platform == RuntimePlatform.WindowsEditor || Application.platform == RuntimePlatform.WindowsPlayer)  return "Windows";
-            else if (Application.platform == RuntimePlatform.LinuxEditor || Application.platform == RuntimePlatform.LinuxPlayer) return "Linux";
-            else                                                                                                                 return "Mac";
+            switch (Application.platform) {
+                case RuntimePlatform.WindowsEditor:
+                case RuntimePlatform.WindowsPlayer: return "Windows";
+                case RuntimePlatform.LinuxEditor:
+                case RuntimePlatform.LinuxPlayer:   return "Linux";
+                default:                            return "Mac";
+            }
         }
     }
 
@@ -240,25 +244,11 @@ public class Misc {
         }
 
         private static Rect GetWindowRect() {
-            RECT r = new RECT();
+            RECT r;
             GetWindowRect(window, out r);
             return new Rect(r.Left, r.Top, Mathf.Abs(r.Right - r.Left), Mathf.Abs(r.Top - r.Bottom));
         }
-
-        public static int WindowWidth {
-            get {
-                Rect size = GetWindowRect();
-                return (int)size.width;
-            }
-        }
-
-        public static int WindowHeight {
-            get {
-                Rect size = GetWindowRect();
-                return (int)size.height;
-            }
-        }
-#else
+    #else
         public static string WindowName {
             get {
                 UnitaleUtil.DisplayLuaError("Windows-only function", "This feature is Windows-only! Sorry, but you can't use it here.");
@@ -297,19 +287,5 @@ public class Misc {
             UnitaleUtil.DisplayLuaError("Windows-only function", "This feature is Windows-only! Sorry, but you can't use it here.");
             return new Rect();
         }
-
-        public static int WindowWidth {
-            get {
-                UnitaleUtil.DisplayLuaError("Windows-only function", "This feature is Windows-only! Sorry, but you can't use it here.");
-                return 0;
-            }
-        }
-
-        public static int WindowHeight {
-            get {
-                UnitaleUtil.DisplayLuaError("Windows-only function", "This feature is Windows-only! Sorry, but you can't use it here.");
-                return 0;
-            }
-        }
-#endif
+    #endif
 }

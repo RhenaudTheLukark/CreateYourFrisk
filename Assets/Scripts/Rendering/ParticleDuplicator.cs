@@ -9,9 +9,7 @@ public class ParticleDuplicator : MonoBehaviour {
     private ParticleSystem.Particle[] particles;
 
     public void Activate(LuaSpriteController sprctrl) {
-        Sprite sprite;
-        if (sprctrl.img.GetComponent<Image>()) sprite = sprctrl.img.GetComponent<Image>().sprite;
-        else                                   sprite = sprctrl.img.GetComponent<SpriteRenderer>().sprite;
+        Sprite sprite = sprctrl.img.GetComponent<Image>() ? sprctrl.img.GetComponent<Image>().sprite : sprctrl.img.GetComponent<SpriteRenderer>().sprite;
 
         int xLength = Mathf.Abs(Mathf.FloorToInt(sprctrl.xscale * sprite.texture.width)),
             yLength = Mathf.Abs(Mathf.FloorToInt(sprctrl.yscale * sprite.texture.height));
@@ -48,11 +46,11 @@ public class ParticleDuplicator : MonoBehaviour {
                 if (c.a == 0.0f || (c.r + c.b + c.g) == 0.0f)
                     continue;
                 //particles[particleCount].position = new Vector3(vpbl.x + x * pxWidth, vpbl.y + y * pxHeight, -5.0f);
-                particles[particleCount].position = new Vector3(bottomLeft.x + Mathf.RoundToInt(REALX * sprctrl.xscale) + (xIncrement ? 0 : xLength), 
+                particles[particleCount].position = new Vector3(bottomLeft.x + Mathf.RoundToInt(REALX * sprctrl.xscale) + (xIncrement ? 0 : xLength),
                                                                 bottomLeft.y + Mathf.RoundToInt(REALY * sprctrl.yscale) + (yIncrement ? 0 : yLength), -5.0f);
                 particles[particleCount].startColor = c;
                 particles[particleCount].startSize = 1; // we have to assume a square aspect ratio for pixels here
-                particles[particleCount].remainingLifetime = yFrac * 1.5f + UnityEngine.Random.value * 0.3f;
+                particles[particleCount].remainingLifetime = yFrac * 1.5f + Random.value * 0.3f;
                 particles[particleCount].startLifetime = particles[particleCount].remainingLifetime;
                 particleCount++;
             }

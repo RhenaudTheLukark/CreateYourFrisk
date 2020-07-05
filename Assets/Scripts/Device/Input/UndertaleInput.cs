@@ -1,9 +1,5 @@
-﻿using UnityEngine;
-using System.Collections;
-
-public abstract class UndertaleInput {
-    public enum ButtonState
-    {
+﻿public abstract class UndertaleInput {
+    public enum ButtonState {
         RELEASED = -1,
         NONE = 0,
         PRESSED = 1,

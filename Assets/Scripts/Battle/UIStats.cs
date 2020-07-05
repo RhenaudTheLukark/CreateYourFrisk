@@ -9,14 +9,14 @@ public class UIStats : MonoBehaviour {
     private TextManager hpTextMan;
     private LifeBarController lifebar;
     private RectTransform lifebarRt;
+    private GameObject hpRect;
 
-    private bool initialized = false;
+    private bool initialized;
 
-    void Awake() { instance = this; }
+    private void Awake() { instance = this; }
 
     private void Start() {
-        GameObject statsObj = GameObject.Find("Stats");
-        lifebar = statsObj.GetComponentInChildren<LifeBarController>();
+        lifebar = gameObject.GetComponentInChildren<LifeBarController>();
         lifebarRt = lifebar.GetComponent<RectTransform>();
 
         nameLevelTextManParent = GameObject.Find("NameLv");
@@ -26,6 +26,7 @@ public class UIStats : MonoBehaviour {
 
         nameLevelTextMan = nameLevelTextManParent.AddComponent<TextManager>();
         hpTextMan = hpTextManParent.AddComponent<TextManager>();
+        hpRect = GameObject.Find("HPRect");
 
         hpTextMan.SetFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_SMALLTEXT_NAME));
         initialized = true;
@@ -33,41 +34,30 @@ public class UIStats : MonoBehaviour {
         setPlayerInfo(PlayerCharacter.instance.Name, PlayerCharacter.instance.LV);
     }
 
-    public void setPlayerInfo(string name, int lv) {
-        if (initialized) {
-            nameLevelTextMan.enabled = true;
-            nameLevelTextMan.SetFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_SMALLTEXT_NAME));
-            nameLevelTextMan.SetText(new TextMessage(name.ToUpper() + "  LV " + lv, false, true));
-            if (PlayerCharacter.instance.Name.Length > 6)
-                GameObject.Find("HPRect").transform.position = new Vector3(GameObject.Find("HPRect").transform.parent.position.x + 286.1f, 
-                                                                           GameObject.Find("HPRect").transform.position.y, GameObject.Find("HPRect").transform.position.z);
-            else
-                GameObject.Find("HPRect").transform.position = new Vector3(GameObject.Find("HPRect").transform.parent.position.x + 215.1f,
-                                                                           GameObject.Find("HPRect").transform.position.y, GameObject.Find("HPRect").transform.position.z);
+    public void setPlayerInfo(string newName, int newLv) {
+        if (!initialized) return;
+        nameLevelTextMan.enabled = true;
+        nameLevelTextMan.SetFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_SMALLTEXT_NAME));
+        nameLevelTextMan.SetText(new TextMessage(newName.ToUpper() + "  LV " + newLv, false, true));
+        hpRect.transform.position = new Vector3(hpRect.transform.parent.position.x + (PlayerCharacter.instance.Name.Length > 6 ? 286.1f : 215.1f), hpRect.transform.position.y, hpRect.transform.position.z);
 
-            nameLevelTextMan.enabled = false;
-        }
+        nameLevelTextMan.enabled = false;
     }
 
     public void setHP(float hpCurrent) {
-        if (initialized) {
-            float hpMax = (float)PlayerCharacter.instance.MaxHP,
-                  hpFrac = hpCurrent / hpMax;
-            lifebar.setInstant(hpFrac);
-            int count = UnitaleUtil.DecimalCount(hpCurrent);
-            string sHpCurrent = hpCurrent < 10 ? "0" + hpCurrent.ToString("F" + count) : hpCurrent.ToString("F" + count);
-            string sHpMax = hpMax < 10 ? "0" + hpMax : "" + hpMax;
-            hpTextMan.SetText(new TextMessage(sHpCurrent + " / " + sHpMax, false, true));
-        }
+        if (!initialized) return;
+        float hpMax  = PlayerCharacter.instance.MaxHP,
+              hpFrac = hpCurrent / hpMax;
+        lifebar.setInstant(hpFrac);
+        int    count      = UnitaleUtil.DecimalCount(hpCurrent);
+        string sHpCurrent = hpCurrent < 10 ? "0" + hpCurrent.ToString("F" + count) : hpCurrent.ToString("F" + count);
+        string sHpMax     = hpMax     < 10 ? "0" + hpMax : "" + hpMax;
+        hpTextMan.SetText(new TextMessage(sHpCurrent + " / " + sHpMax, false, true));
     }
 
     public void setMaxHP() {
-        if (initialized) {
-            if (PlayerCharacter.instance.MaxHP >= 100)
-                lifebarRt.sizeDelta = new Vector2(120, lifebarRt.sizeDelta.y);
-            else
-                lifebarRt.sizeDelta = new Vector2(PlayerCharacter.instance.MaxHP * 1.2f, lifebarRt.sizeDelta.y);
-            setHP(PlayerCharacter.instance.HP);
-        }
+        if (!initialized) return;
+        lifebarRt.sizeDelta = new Vector2(Mathf.Min(120, PlayerCharacter.instance.MaxHP * 1.2f), lifebarRt.sizeDelta.y);
+        setHP(PlayerCharacter.instance.HP);
     }
 }

@@ -1,10 +1,9 @@
 ﻿using UnityEngine;
-using System.Collections.Generic;
 
 public class RotatingEffect : TextEffect {
     private float sinTimer;
-    private float intensity;
-    private float rotSpeed = 7.0f;
+    private readonly float intensity;
+    private const float rotSpeed = 7.0f;
 
     public RotatingEffect(TextManager textMan, float intensity = 1.5f) : base(textMan) { this.intensity = intensity; }
 

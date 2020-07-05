@@ -1136,13 +1136,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 778448265}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7619ed34f4bdaa3439a84bf45ab51cd0, type: 3}
+  m_Script: {fileID: 11500000, guid: 5a65416e168c49b428ba746d73f328f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   enemies:
   - {fileID: 11490680, guid: abc6ac7c8c097dc40812d63eb4e8a40a, type: 2}
   enemyPositions:
   - {x: 0, y: 0}
+  turnCount: 0
   waveBeginTime: 0
   gameOverStance: 0
 --- !u!1 &930260304
@@ -2085,6 +2086,8 @@ GameObject:
   - component: {fileID: 1509689749}
   - component: {fileID: 1509689750}
   - component: {fileID: 1509689751}
+  - component: {fileID: 1509689753}
+  - component: {fileID: 1509689752}
   m_Layer: 5
   m_Name: player
   m_TagString: Player
@@ -2306,7 +2309,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerIndex: -1
-  luaEncounterIndex: -1
   playerZ: -1
   autolinebreakstate: 0
   revived: 0
@@ -2314,6 +2316,29 @@ MonoBehaviour:
   reviveTextSet: 0
   musicBefore: {fileID: 0}
   music: {fileID: 0}
+--- !u!114 &1509689752
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1509689743}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -146154839, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1509689753
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1509689743}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1200242548, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ShowMaskGraphic: 0
 --- !u!1 &1546366359
 GameObject:
   m_ObjectHideFlags: 0
@@ -2661,6 +2686,7 @@ GameObject:
   - component: {fileID: 1727881053}
   - component: {fileID: 1727881054}
   - component: {fileID: 1727881056}
+  - component: {fileID: 1727881052}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -2848,6 +2874,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4aa500e896f56ea4291706c581edeb86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1727881052
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1727881044}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7283c6f35cfc2a40b16bb214a8d4f62, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  material: {fileID: 0}
 --- !u!114 &1727881053
 MonoBehaviour:
   m_ObjectHideFlags: 0

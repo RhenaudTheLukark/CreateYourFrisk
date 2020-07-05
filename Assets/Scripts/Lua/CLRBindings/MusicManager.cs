@@ -43,32 +43,23 @@ public class MusicManager {
         src.pitch = value;
     }
 
-    public static bool LoadFile(string name) {
-        if (name == null) {
-            UnitaleUtil.WriteInLogAndDebugger("[WARN]Attempted to load a nil value as an Audio file.");
-            return false;
-        }
-        
+    public static void LoadFile(string name) {
+        if (name == null)
+            throw new CYFException("Attempted to load a nil value as an Audio file.");
+
         src.Stop();
-        src.clip = AudioClipRegistry.GetMusic(name, GlobalControls.retroMode);
+        src.clip = AudioClipRegistry.GetMusic(name);
         filename = "music:" + name.ToLower();
         NewMusicManager.audioname["src"] = filename;
         src.loop = true;
         src.Play();
-        return (src.clip != null);
     }
 
-    public static bool PlaySound(string name, float volume = 0.65f) {
-        if (name == null) {
-            UnitaleUtil.WriteInLogAndDebugger("[WARN]Attempted to load a nil value as a sound.");
-            return false;
-        }
-        
-        try {
-            UnitaleUtil.PlaySound("MusicPlaySound", AudioClipRegistry.GetSound(name, GlobalControls.retroMode), volume);
-            return true;
-        }
-        catch { return false; }
+    public static void PlaySound(string name, float volume = 0.65f) {
+        if (name == null)
+            throw new CYFException("Attempted to load a nil value as a sound.");
+
+        UnitaleUtil.PlaySound("MusicPlaySound", AudioClipRegistry.GetSound(name), volume);
     }
 
     public static float playtime {
@@ -79,48 +70,43 @@ public class MusicManager {
     public static float totaltime {
         get { return src.clip.length; }
     }
-    
+
     [MoonSharpHidden] public static bool IsStoppedOrNull(AudioSource audio) {
-        if (audio != null) {
-            if (audio.ToString().ToLower() == "null")  return true;
-            if (!audio.isPlaying)                      return true;
-            else                                       return false;
-        }
-        return true;
+        return audio == null || audio.ToString().ToLower() == "null" || !audio.isPlaying;
     }
 
     public static void StopAll() {
-        foreach (AudioSource audioSrc in GameObject.FindObjectsOfType<AudioSource>())
+        foreach (AudioSource audioSrc in Object.FindObjectsOfType<AudioSource>())
             audioSrc.Stop();
     }
 
     public static void PauseAll() {
-        foreach (AudioSource audioSrc in GameObject.FindObjectsOfType<AudioSource>())
+        foreach (AudioSource audioSrc in Object.FindObjectsOfType<AudioSource>())
             audioSrc.Pause();
     }
 
     public static void UnpauseAll() {
-        foreach (AudioSource audioSrc in GameObject.FindObjectsOfType<AudioSource>())
+        foreach (AudioSource audioSrc in Object.FindObjectsOfType<AudioSource>())
             audioSrc.UnPause();
     }
 
     public static string GetSoundDictionary(string key) {
         if (key == null)
             throw new CYFException("Audio.GetSoundDictionary: The first argument (the index) is nil.\n\nSee the documentation for proper usage.");
-        if (hiddenDictionary.ContainsKey(key.ToLower()))  return (string)hiddenDictionary[key.ToLower()];
-        else                                              return key;
+        return hiddenDictionary.ContainsKey(key.ToLower()) ? (string)hiddenDictionary[key.ToLower()] : key;
     }
 
     public static void SetSoundDictionary(string key, string value) {
-        if (key == null)
-            throw new CYFException("Audio.SetSoundDictionary: The first argument (the index) is nil.\n\nSee the documentation for proper usage.");
-        if (key == "RESETDICTIONARY")
-            hiddenDictionary.Clear();
-        else {
-            key = key.ToLower();
-            if (hiddenDictionary.ContainsKey(key))
-                hiddenDictionary.Remove(key);
-            hiddenDictionary.Add(key, value);
+        switch (key) {
+            case null:              throw new CYFException("Audio.SetSoundDictionary: The first argument (the index) is nil.\n\nSee the documentation for proper usage.");
+            case "RESETDICTIONARY": hiddenDictionary.Clear(); break;
+            default: {
+                key = key.ToLower();
+                if (hiddenDictionary.ContainsKey(key))
+                    hiddenDictionary.Remove(key);
+                hiddenDictionary.Add(key, value);
+                break;
+            }
         }
     }
 

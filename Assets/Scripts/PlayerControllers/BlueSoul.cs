@@ -1,16 +1,16 @@
 ﻿using UnityEngine;
 
 public class BlueSoul : AbstractSoul {
-    private bool jumping = false;
+    private bool jumping;
     private bool falling = true;
-    private float ySpeed = 0;
-    private int jumpYSpeed = 60 * 4;
-    private int maxFallSpeed = 60 * 9;
-    private int jumpDecelerationSpeed = 60 * 7;
+    private float ySpeed;
+    private const int jumpYSpeed = 60 * 4;
+    private const int maxFallSpeed = 60 * 9;
+    private const int jumpDecelerationSpeed = 60 * 7;
     private int fallSpeed; // appears to increase per update and then reset
-    private int fallSpeedIncrement = 60;
+    private const int fallSpeedIncrement = 60;
 
-    public BlueSoul(PlayerController player) : base(player) {
+    public BlueSoul() {
         fallSpeed = -fallSpeedIncrement; // mildly filthy hack to assure one frame of midair hold
     }
 
@@ -57,9 +57,8 @@ public class BlueSoul : AbstractSoul {
     }
 
     public override void PostMovement(float xDelta, float yDelta) {
-        if (falling && fallSpeed > 0 && yDelta == 0.0f) {
-            falling = false;
-            fallSpeed = -fallSpeedIncrement;
-        }
+        if (!falling || fallSpeed <= 0 || yDelta != 0.0f) return;
+        falling   = false;
+        fallSpeed = -fallSpeedIncrement;
     }
 }

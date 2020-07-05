@@ -6,86 +6,87 @@ using UnityEngine.UI;
 
 public class SpecialAnnouncementScript : MonoBehaviour {
     // Globally used variables
-    private Text        mainText,  subText;  // Text objects used for the old CYF v0.6 secret and the new part of the secret
-    private AudioSource mainAudio, subAudio; // Audio objects, first one used for the two vocal messages, the second one used for Goat Sound
+    public  Text        mainText,  subText;  // Text objects used for the old CYF v0.6 secret and the new part of the secret
+    public  AudioSource mainAudio, subAudio; // Audio objects, first one used for the two vocal messages, the second one used for Goat Sound
     private LuaSpriteController mainSprite, subSprite, fadeSprite, pauseSprite; // Sprites used for both animated characters, the fade effect and the pause button
     private int phase = 0; // Current speech phase
     private float punderTime = 0; // Used to store the current time when switching to the old text to the new one
     private string lastPunderSprite = "", lastLuSprite = ""; // Variables used to know whether we should change the current animated sprite or not
     private bool firstTalk = false; // Used in order to know when to fade in the first animated character
-    private Dictionary<string, Sprite> punderSprites = new Dictionary<string, Sprite>(), luSprites = new Dictionary<string, Sprite>(); // Dictionaries storing the two animated characters' sprites
-    private Dictionary<string, AudioClip> audioFiles = new Dictionary<string, AudioClip>(); // Dictionary storing all of the project's files
+    private readonly Dictionary<string, Sprite> punderSprites = new Dictionary<string, Sprite>(); // Dictionaries storing the two animated characters' sprites
+    private readonly Dictionary<string, Sprite> luSprites = new Dictionary<string, Sprite>(); // Dictionaries storing the two animated characters' sprites
+    private readonly Dictionary<string, AudioClip> audioFiles = new Dictionary<string, AudioClip>(); // Dictionary storing all of the project's files
 
     // MisriHalek reference variables
-    private Image misriHalek;
+    public  Image misriHalek;
     private Vector2 MHPos;
-    private bool MHStarted = false;
-    private bool MHJustStarted = false;
+    private bool MHStarted;
+    private bool MHJustStarted;
 
     // Volume check variables
-    private float lastTime = 0;
-    private int sampleDataLength = 256;
+    private float lastTime;
+    private const int sampleDataLength = 256;
     private float clipVolume;
     private float[] clipSampleData;
 
     // Dictionary associating two functions: the goal is to associate a current time value and its punder face
-    private Dictionary<Func<float, bool>, Func<string>> punderFaceList = new Dictionary<Func<float, bool>, Func<string>> {
-        { x => x == 0,     () => { return "veryHappy"; }     },
-        { x => x < 7.5,    () => { return "question"; }      },
-        { x => x < 8.5,    () => { return "idle"; }          },
-        { x => x < 18.5,   () => { return "happy"; }         },
-        { x => x < 21,     () => { return "perv"; }          },
-        { x => x < 23,     () => { return "misriHalek"; }    },
-        { x => x < 28.5,   () => { return "happy"; }         },
-        { x => x < 42,     () => { return "serious"; }       },
-        { x => x < 55.5,   () => { return "happy"; }         },
-        { x => x < 57.5,   () => { return "serious"; }       },
-        { x => x < 58,     () => { return "happy"; }         },
-        { x => x < 59,     () => { return "sad"; }           },
-        { x => x < 60,     () => { return "happy"; }         },
-        { x => x < 62,     () => { return "sad"; }           },
-        { x => x < 64.5,   () => { return "happy"; }         },
-        { x => x < 74,     () => { return "serious"; }       },
-        { x => x < 80,     () => { return "idle"; }          },
-        { x => x < 94.7,   () => { return "serious"; }       },
-        { x => x < 107.5,  () => { return "happy"; }         },
-        { x => x < 117,    () => { return "serious"; }       },
-        { x => x < 120.25, () => { return "happy"; }         },
-        { x => x < 120.4,  () => { return "undyne2"; }       },
-        { x => x < 120.55, () => { return "undyne"; }        },
-        { x => x < 120.65, () => { return "undyne2"; }       },
-        { x => x < 120.75, () => { return "undyne3"; }       },
-        { x => x < 121,    () => { return "undyne"; }        },
-        { x => x < 129,    () => { return "happy"; }         },
-        { x => x < 130,    () => { return "questionHappy"; } },
-        { x => x < 133.5,  () => { return "happy"; }         },
-        { x => x < 137,    () => { return "determined"; }    },
-        { x => x < 138.6,  () => { return "happy"; }         },
-        { x => x < 139.25, () => { return "laugh"; }         },
-        { x => x < 143.1,  () => { return "happy"; }         },
-        { x => x < 150,    () => { return "veryHappy"; }     }
+    private readonly Dictionary<Func<float, bool>, Func<string>> punderFaceList = new Dictionary<Func<float, bool>, Func<string>> {
+        { x => x == 0,     () => "veryHappy" },
+        { x => x < 7.5,    () => "question" },
+        { x => x < 8.5,    () => "idle" },
+        { x => x < 18.5,   () => "happy" },
+        { x => x < 21,     () => "perv" },
+        { x => x < 23,     () => "misriHalek" },
+        { x => x < 28.5,   () => "happy" },
+        { x => x < 42,     () => "serious" },
+        { x => x < 55.5,   () => "happy" },
+        { x => x < 57.5,   () => "serious" },
+        { x => x < 58,     () => "happy" },
+        { x => x < 59,     () => "sad" },
+        { x => x < 60,     () => "happy" },
+        { x => x < 62,     () => "sad" },
+        { x => x < 64.5,   () => "happy" },
+        { x => x < 74,     () => "serious" },
+        { x => x < 80,     () => "idle" },
+        { x => x < 94.7,   () => "serious" },
+        { x => x < 107.5,  () => "happy" },
+        { x => x < 117,    () => "serious" },
+        { x => x < 120.25, () => "happy" },
+        { x => x < 120.4,  () => "undyne2" },
+        { x => x < 120.55, () => "undyne" },
+        { x => x < 120.65, () => "undyne2" },
+        { x => x < 120.75, () => "undyne3" },
+        { x => x < 121,    () => "undyne" },
+        { x => x < 129,    () => "happy" },
+        { x => x < 130,    () => "questionHappy" },
+        { x => x < 133.5,  () => "happy" },
+        { x => x < 137,    () => "determined" },
+        { x => x < 138.6,  () => "happy" },
+        { x => x < 139.25, () => "laugh" },
+        { x => x < 143.1,  () => "happy" },
+        { x => x < 150,    () => "veryHappy" }
     };
 
     // Dictionary associating two functions: the goal is to associate a current time value and its punder face
-    private Dictionary<Func<float, bool>, Func<string>> luFaceList = new Dictionary<Func<float, bool>, Func<string>> {
-        { x => x < 2,    () => { return "NormalNormal"; } },
-        { x => x < 3.5,  () => { return "WaveNormal";   } },
-        { x => x < 6.3,  () => { return "NormalNormal"; } },
-        { x => x < 8,    () => { return "PointNormal";  } },
-        { x => x < 12.4, () => { return "NormalSad";    } },
-        { x => x < 14.5, () => { return "NormalNormal"; } },
-        { x => x < 18.4, () => { return "PointHappy";   } },
-        { x => x < 19.5, () => { return "NormalNormal"; } },
-        { x => x < 22.4, () => { return "HoldNormal";   } },
-        { x => x < 27.2, () => { return "PointNormal";  } },
-        { x => x < 31.1, () => { return "NormalHappy";  } },
-        { x => x < 32.2, () => { return "NormalNormal"; } },
-        { x => x < 34.4, () => { return "NormalHappy";  } },
-        { x => x < 38,   () => { return "WaveHappy";    } },
+    private readonly Dictionary<Func<float, bool>, Func<string>> luFaceList = new Dictionary<Func<float, bool>, Func<string>> {
+        { x => x < 2,    () => "NormalNormal" },
+        { x => x < 3.5,  () => "WaveNormal" },
+        { x => x < 6.3,  () => "NormalNormal" },
+        { x => x < 8,    () => "PointNormal" },
+        { x => x < 12.4, () => "NormalSad" },
+        { x => x < 14.5, () => "NormalNormal" },
+        { x => x < 18.4, () => "PointHappy" },
+        { x => x < 19.5, () => "NormalNormal" },
+        { x => x < 22.4, () => "HoldNormal" },
+        { x => x < 27.2, () => "PointNormal" },
+        { x => x < 31.1, () => "NormalHappy" },
+        { x => x < 32.2, () => "NormalNormal" },
+        { x => x < 34.4, () => "NormalHappy" },
+        { x => x < 38,   () => "WaveHappy" },
     };
 
     // Use this for initialization
-    void Start () {
+    private void Start() {
         // Load CYF's save file
         StaticInits.Start();
         SaveLoad.Start();
@@ -94,18 +95,10 @@ public class SpecialAnnouncementScript : MonoBehaviour {
         new ControlPanel();
         new PlayerCharacter();
         #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
-            if (GlobalControls.crate) Misc.WindowName = ControlPanel.instance.WinodwBsaisNmae;
-            else Misc.WindowName = ControlPanel.instance.WindowBasisName;
+            Misc.WindowName = GlobalControls.crate ? ControlPanel.instance.WinodwBsaisNmae : ControlPanel.instance.WindowBasisName;
         #endif
         // Load CYF's AlMighty save file
         SaveLoad.LoadAlMighty();
-
-        // Store useful scene objects
-        misriHalek = GameObject.Find("MisriHalek").GetComponent<Image>();
-        mainText = GameObject.Find("MainText").GetComponent<Text>();
-        subText = GameObject.Find("SubText").GetComponent<Text>();
-        mainAudio = Camera.main.GetComponent<AudioSource>();
-        subAudio = GameObject.Find("SubAudio").GetComponent<AudioSource>();
 
         // Load all resources needed for this animation to play
         Sprite[] punderSprs = Resources.LoadAll<Sprite>("Sprites/Punder");
@@ -121,20 +114,20 @@ public class SpecialAnnouncementScript : MonoBehaviour {
             audioFiles.Add(adc.name, adc);
 
         // Create all sprites needed for the animation
-        mainSprite = (LuaSpriteController) SpriteUtil.MakeIngameSprite("empty", "Default", -1).UserData.Object;
+        mainSprite = (LuaSpriteController) SpriteUtil.MakeIngameSprite("empty", "Default").UserData.Object;
         mainSprite.alpha = 0;
         mainSprite.SetPivot(.5f, 0);
         mainSprite.x = 0;
         mainSprite.y = 20;
 
-        fadeSprite = (LuaSpriteController) SpriteUtil.MakeIngameSprite("black", "Default", -1).UserData.Object;
+        fadeSprite = (LuaSpriteController) SpriteUtil.MakeIngameSprite("black", "Default").UserData.Object;
         fadeSprite.alpha = 0;
 
-        pauseSprite = (LuaSpriteController) SpriteUtil.MakeIngameSprite("empty", "Default", -1).UserData.Object;
+        pauseSprite = (LuaSpriteController) SpriteUtil.MakeIngameSprite("empty", "Default").UserData.Object;
         SetSprite(Resources.Load<Sprite>("Sprites/pause"), "", pauseSprite);
         pauseSprite.alpha = 0;
 
-        subSprite = (LuaSpriteController) SpriteUtil.MakeIngameSprite("empty", "Lu", -1).UserData.Object;
+        subSprite = (LuaSpriteController) SpriteUtil.MakeIngameSprite("empty", "Lu").UserData.Object;
         subSprite.x = 0;
         subSprite.y = -400;
         SetSprite("HoldNormal0", false);
@@ -152,35 +145,35 @@ public class SpecialAnnouncementScript : MonoBehaviour {
     }
 
     // Set the main or sub sprite using a string key
-    void SetSprite(string key, bool main) {
+    private void SetSprite(string key, bool main) {
         LuaSpriteController spr = main ? mainSprite : subSprite;
         SetSprite(key, spr, main ? 0 : 1);
     }
 
     // Set a sprite using a string key
-    void SetSprite(string key, LuaSpriteController spr, int main = -1) {
+    private void SetSprite(string key, LuaSpriteController spr, int main = -1) {
         Dictionary<string, Sprite> sprDict = main == 0 ? punderSprites : luSprites;
         SetSprite(sprDict[key], key, spr, main);
     }
 
     // Set a given sprite to a sprite controller
-    void SetSprite(Sprite key, string strKey, LuaSpriteController spr, int main = -1) {
+    protected virtual void SetSprite(Sprite key, string strKey, LuaSpriteController spr, int main = -1) {
         if (key == null)
             throw new Exception("Tried to set sprite with key \"" + strKey + "\".");
-        if (main < 0 || main > 1 || (main == 0 ? lastPunderSprite : lastLuSprite) != strKey) {
-            spr.img.GetComponent<Image>().sprite = key;
-            spr.img.GetComponent<RectTransform>().sizeDelta = new Vector2(key.texture.width, key.texture.height);
-            if (main == 0)
-                lastPunderSprite = strKey;
-            else if (main == 1) {
+        if (main >= 0 && main <= 1 && (main == 0 ? lastPunderSprite : lastLuSprite) == strKey) return;
+        spr.img.GetComponent<Image>().sprite            = key;
+        spr.img.GetComponent<RectTransform>().sizeDelta = new Vector2(key.texture.width, key.texture.height);
+        switch (main) {
+            case 0: lastPunderSprite = strKey; break;
+            case 1:
                 lastLuSprite = strKey;
                 spr.Scale(2, 2);
-            }
+                break;
         }
     }
 
     // Update is called once per frame
-    void Update() {
+    private void Update() {
         if (mainAudio.time != lastTime) {
             lastTime = mainAudio.time;
 
@@ -223,7 +216,7 @@ public class SpecialAnnouncementScript : MonoBehaviour {
     }
 
     // Execute a range of events
-    void CheckPhaseEvent() {
+    private void CheckPhaseEvent() {
         if (punderTime == 0)
             switch (phase) {
                 case 0:
@@ -256,8 +249,7 @@ public class SpecialAnnouncementScript : MonoBehaviour {
                             mainText.text = "";
                         }
 
-                        if (subAudio.time != 0) misriHalek.transform.localPosition = new Vector2(MHPos.x + (float)(UnityEngine.Random.value - .5) * 10, MHPos.y + (float)(UnityEngine.Random.value - .5) * 10);
-                        else                    misriHalek.transform.localPosition = MHPos;
+                        misriHalek.transform.localPosition = subAudio.time != 0 ? new Vector2(MHPos.x + (float)(UnityEngine.Random.value - .5) * 10, MHPos.y + (float)(UnityEngine.Random.value - .5) * 10) : MHPos;
                     }
                     break;
                 case 2:
@@ -346,19 +338,19 @@ public class SpecialAnnouncementScript : MonoBehaviour {
                     }
                     break;
             }
-            if (!mainAudio.isPlaying) {
-                subAudio.loop = false;
-                subAudio.clip = audioFiles["ButtonSound"];
-                subAudio.Play();
 
-                pauseSprite.alpha = 0;
-                fadeSprite.alpha = 0;
-                mainAudio.clip = audioFiles["MisriHalek"];
-                mainAudio.loop = false;
-                mainAudio.time = punderTime;
-                punderTime = 0;
-                mainAudio.Play();
-            }
+            if (mainAudio.isPlaying) return;
+            subAudio.loop = false;
+            subAudio.clip = audioFiles["ButtonSound"];
+            subAudio.Play();
+
+            pauseSprite.alpha = 0;
+            fadeSprite.alpha  = 0;
+            mainAudio.clip    = audioFiles["MisriHalek"];
+            mainAudio.loop    = false;
+            mainAudio.time    = punderTime;
+            punderTime        = 0;
+            mainAudio.Play();
         }
     }
 }

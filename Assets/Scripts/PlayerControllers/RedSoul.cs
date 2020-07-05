@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
 
 public class RedSoul : AbstractSoul {
-    public RedSoul(PlayerController player) : base(player) { }
-
     public override Color color {
         get { return Color.red; }
     }

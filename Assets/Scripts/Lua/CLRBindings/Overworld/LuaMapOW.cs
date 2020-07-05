@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+using UnityEngine;
 using MoonSharp.Interpreter;
 using UnityEngine.SceneManagement;
 
@@ -33,16 +34,27 @@ public class LuaMapOW {
                 newAs.Play();
                 newAs.time = oldAs.time;
                 oldAs.Stop();
-            }  
+            }
         }
         appliedScript.Call("CYFEventNextCommand");
     }
 
+    [CYFEventFunction] public string GetName() {
+        try { return SceneManager.GetActiveScene().name; }
+        finally { appliedScript.Call("CYFEventNextCommand"); }
+    }
+    [CYFEventFunction] public string GetSaveName(string mapName) {
+        try {
+            string result;
+            UnitaleUtil.MapCorrespondanceList.TryGetValue(mapName, out result);
+            return result;
+        }
+        finally { appliedScript.Call("CYFEventNextCommand"); }
+    }
     [CYFEventFunction] public string GetMusicMap(string mapName) {
         if (SceneManager.GetActiveScene().name == mapName) return GetMusic();
-        else
-            try { return (string)EventManager.TryGetMapValue(mapName, "Music"); } 
-            finally { appliedScript.Call("CYFEventNextCommand"); }
+        try { return (string)EventManager.TryGetMapValue(mapName, "Music"); }
+        finally { appliedScript.Call("CYFEventNextCommand"); }
     }
     [CYFEventFunction] public void SetMusicMap(string mapName, string value) {
         if (SceneManager.GetActiveScene().name == mapName) SetMusic(value);
@@ -52,8 +64,8 @@ public class LuaMapOW {
 
     [CYFEventFunction] public string GetModToLoadMap(string mapName) {
         if (SceneManager.GetActiveScene().name == mapName) return GetModToLoad();
-        else
-            try { return (string)EventManager.TryGetMapValue(mapName, "ModToLoad"); } finally { appliedScript.Call("CYFEventNextCommand"); }
+        try { return (string)EventManager.TryGetMapValue(mapName, "ModToLoad"); }
+        finally { appliedScript.Call("CYFEventNextCommand"); }
     }
     [CYFEventFunction] public void SetModToLoadMap(string mapName, string value) {
         if (SceneManager.GetActiveScene().name == mapName) SetModToLoad(value);
@@ -63,8 +75,8 @@ public class LuaMapOW {
 
     [CYFEventFunction] public bool GetNoRandomEncounterMap(string mapName) {
         if (SceneManager.GetActiveScene().name == mapName) return GetMusicKept();
-        else
-            try { return (bool)EventManager.TryGetMapValue(mapName, "MusicKept"); } finally { appliedScript.Call("CYFEventNextCommand"); }
+        try { return (bool)EventManager.TryGetMapValue(mapName, "MusicKept"); }
+        finally { appliedScript.Call("CYFEventNextCommand"); }
     }
     [CYFEventFunction] public void SetNoRandomEncounterMap(string mapName, bool value) {
         if (SceneManager.GetActiveScene().name == mapName) SetNoRandomEncounter(value);
@@ -74,8 +86,8 @@ public class LuaMapOW {
 
     [CYFEventFunction] public bool GetMusicKeptMap(string mapName) {
         if (SceneManager.GetActiveScene().name == mapName) return GetNoRandomEncounter();
-        else
-            try { return (bool)EventManager.TryGetMapValue(mapName, "NoRandomEncounter"); } finally { appliedScript.Call("CYFEventNextCommand"); }
+        try { return (bool)EventManager.TryGetMapValue(mapName, "NoRandomEncounter"); }
+        finally { appliedScript.Call("CYFEventNextCommand"); }
     }
     [CYFEventFunction] public void SetMusicKeptMap(string mapName, bool value) {
         if (SceneManager.GetActiveScene().name == mapName) SetMusicKept(value);
@@ -83,13 +95,7 @@ public class LuaMapOW {
         appliedScript.Call("CYFEventNextCommand");
     }
     [CYFEventFunction] public bool HasPlayerBeenInMap(string mapName) {
-        try {
-            if (SceneManager.GetActiveScene().name == mapName)
-                return true;
-            foreach (GameState.MapData md in GlobalControls.GameMapData.Values)
-                if (md.Name == mapName)
-                    return true;
-            return false;
-        } finally { appliedScript.Call("CYFEventNextCommand"); }
+        try { return SceneManager.GetActiveScene().name == mapName || GlobalControls.GameMapData.Values.Any(md => md.Name == mapName); }
+        finally { appliedScript.Call("CYFEventNextCommand"); }
     }
 }

@@ -4,7 +4,7 @@ import sys, os, subprocess, shutil, math
 Welcome to the CYF build script!
 
 This is a specialized script to build CYF releases completely automatically.
-The only requirements are Unity 2018.2.13f1, and 7-zip if you wish to auto-package the builds too.
+The only requirements are Unity 2018.2.13f1, and 7-Zip if you wish to auto-package the builds too.
 Just set up the options below in "Script Vars" to your liking and run the script!
 
 Alternatively, you may run this script from the command line:
@@ -15,14 +15,14 @@ Type `--single` followed by a number from 1 - 5 to build for a given target syst
 If not provided, the script will build for every possible build target defined in the script below.
 
 You may also type `--nozip` either before or after `--single <target>`, or by itself, to prevent the script
-from automatically zipping up your build(s) with 7-zip.
-If not provided, the script will automatically use 7-zip to package all of your CYF builds into .zip files.
+from automatically zipping up your build(s) with 7-Zip.
+If not provided, the script will automatically use 7-Zip to package all of your CYF builds into .zip files.
 '''
 
 ### Script Vars ###
 
 # This is the version of CYF to name the executables and the Documentation folder
-CYFversion = "0.6.4"
+CYFversion = "0.6.5"
 
 # This is the path we will build to
 buildPath = os.getcwd() + "\\bin"
@@ -34,18 +34,24 @@ if not "bin" in os.listdir():
 else:
     print("\"bin\" folder already exists.")
 
-# This is the path of Unity on your machine
+# This is a list of paths to Unity. Add your own if it's not in the list.
 unityPath = "C:\\Program Files\\Unity\\Hub\\Editor\\2018.2.13f1\\Editor\\Unity.exe"
 if not os.path.exists(unityPath):
+    unityPath = "C:\\Program Files\\Unities\\2018.2.13f1\\Editor\\Unity.exe"
+if not os.path.exists(unityPath):
     unityPath = "C:\\Program Files\\Unity\\Editor\\Unity.exe"
+if not os.path.exists(unityPath):
+    sys.exit("None of the given paths to Unity's executable are valid. Please install Unity or edit your own path in this file.")
 
-# This determines if this script will attempt to use 7-zip to package the builds after they have been created
+# This determines if this script will attempt to use 7-Zip to package the builds after they have been created
 doPackage = True
 
-# This is the path of 7-zip on your machine
+# This is a list of paths to 7-Zip. Add your own if it's not in the list.
 sevenZPath = "C:\\Program Files (x86)\\7-Zip\\7z.exe"
 if not os.path.exists(sevenZPath):
-    sevenZPath = "C:\\Program Files\\7-zip\\7z.exe"
+    sevenZPath = "C:\\Program Files\\7-Zip\\7z.exe"
+if not os.path.exists(sevenZPath):
+    print("None of the given paths to 7-Zip's executable are valid. Please install 7-Zip or edit your own path in this file.")
 
 ### Actual code or whatever ###
 
@@ -101,30 +107,30 @@ def buildWithUnity(folder, argument, target):
         except:
             print("\n\nFatal error when attempting to delete \"bin\\" + folder + "\" folder. Exiting.\nYou should probably delete it manually.")
             sys.exit()
-    
+
     # Build the Unity executable
     print("Begin Unity build for " + folder + "...", end="")
     sys.stdout.flush()
     subprocess.call([unityPath, "-batchmode", "-logFile " + buildPath + "\\output_" + folder + ".txt", argument, target, "-quit"])
     print("Done.")
-    
+
     # Copy over the Documentation
     print("Copying Documentation...", end="")
     sys.stdout.flush()
     shutil.copytree("Documentation CYF 1.0", buildPath + "\\" + folder + "\\Documentation CYF " + CYFversion)
     print("Done.")
-    
+
     # Copy over the Default and Mods folders
     print("Copying Default folder...", end="")
     sys.stdout.flush()
     os.system("xcopy \"" + buildPath + "\\Default\" \"" + buildPath + "\\" + folder + "\\Default\" /e /h /i > nul")
     print("Done.")
-    
+
     print("Copying Mods folder...", end="")
     sys.stdout.flush()
     os.system("xcopy \"" + buildPath + "\\Mods\" \"" + buildPath + "\\" + folder + "\\Mods\" /e /h /i > nul")
     print("Done.")
-    
+
     if len(folder) < 76:
         print("╘" + ("═" * 74) + "╛")
     print("")
@@ -277,19 +283,19 @@ def buildForMac():
 
 if len(sys.argv) > 1:
     try:
-        # `--nozip` to make the program not auto-zip all outputted builds with 7-zip (enabled by default)
+        # `--nozip` to make the program not auto-zip all outputted builds with 7-Zip (enabled by default)
         if sys.argv[1] == "--nozip":
             doPackage = sys.argv[1] != "--nozip"
         elif len(sys.argv) > 3 and sys.argv[3] == "--nozip":
             doPackage = sys.argv[3] != "--nozip"
-        
+
         # provide `--single` as the first or second argument, followed by one number or "mac", to choose one specific build target (builds all if not provided)
         target = None
         if sys.argv[1] == "--single":
             target = sys.argv[2] == "5" and "mac" or buildTargets[int(sys.argv[2]) - 1]
         elif len(sys.argv) > 2 and sys.argv[2] == "--single":
             target = sys.argv[2] == "5" and "mac" or buildTargets[int(sys.argv[3]) - 1]
-        
+
         # build target
         if target == "mac":
             buildForMac()
@@ -322,13 +328,16 @@ except:
 
 # Auto-package all builds
 if doPackage:
-    print("\nBegin packaging all builds into archives through 7-zip.")
-    binContents = os.listdir("bin")
-    for build in [x for x in binContents if os.path.isdir(os.path.join(os.path.abspath("bin"), x)) and x not in ["Default", "Mods"]]:
-        print("Creating \"" + build + ".zip\"...")
-        sys.stdout.flush()
-        subprocess.call([sevenZPath, "a", "-mx9", buildPath + "\\" + build + ".zip", buildPath + "\\" + build + "\\*", "-bso0", "-bsp0"])
-        print("Done.")
+    print("\nBegin packaging all builds into archives through 7-Zip.")
+    if not os.path.exists(sevenZPath):
+        print("Missing 7-Zip executable.")
+    else:
+        binContents = os.listdir("bin")
+        for build in [x for x in binContents if os.path.isdir(os.path.join(os.path.abspath("bin"), x)) and x not in ["Default", "Mods"]]:
+            print("Creating \"" + build + ".zip\"...")
+            sys.stdout.flush()
+            subprocess.call([sevenZPath, "a", "-mx9", buildPath + "\\" + build + ".zip", buildPath + "\\" + build + "\\*", "-bso0", "-bsp0"])
+            print("Done.")
 
 # Congratulations :)
 print("\n\n\nAll done!")

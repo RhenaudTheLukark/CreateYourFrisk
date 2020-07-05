@@ -11,24 +11,18 @@ public static class SpriteFontRegistry {
 
     public static GameObject LETTER_OBJECT;
     public static GameObject BUBBLE_OBJECT;
-    private static Dictionary<string, FileInfo> dictDefault = new Dictionary<string, FileInfo>();
-    private static Dictionary<string, FileInfo> dictMod = new Dictionary<string, FileInfo>();
+    private static readonly Dictionary<string, FileInfo> dictDefault = new Dictionary<string, FileInfo>();
+    private static readonly Dictionary<string, FileInfo> dictMod = new Dictionary<string, FileInfo>();
 
-    private static Dictionary<string, UnderFont> dict = new Dictionary<string, UnderFont>();
+    private static readonly Dictionary<string, UnderFont> dict = new Dictionary<string, UnderFont>();
     //private static bool initialized;
 
-    public static void Start() {
-        LoadAllFrom(FileLoader.pathToDefaultFile("Sprites/UI/Fonts"));
-    }
+    public static void Start() { LoadAllFrom(FileLoader.pathToDefaultFile("Sprites/UI/Fonts")); }
 
     public static UnderFont Get(string key) {
         string k = key;
         key = key.ToLower();
-        if (dict.ContainsKey(key))
-            return dict[key];
-        else
-            return TryLoad(k);
-        //return null;
+        return dict.ContainsKey(key) ? dict[key] : TryLoad(k);
     }
 
     public static void Init() {
@@ -49,9 +43,8 @@ public static class SpriteFontRegistry {
     private static void LoadAllFrom(string directoryPath, bool mod = false) {
         DirectoryInfo dInfo = new DirectoryInfo(directoryPath);
 
-        if (!dInfo.Exists) {
+        if (!dInfo.Exists)
             return;
-        }
 
         FileInfo[] fInfo = dInfo.GetFiles("*.png", SearchOption.TopDirectoryOnly);
 
@@ -91,10 +84,18 @@ public static class SpriteFontRegistry {
         string xmlPath = FileLoader.requireFile("Sprites/UI/Fonts/" + fontName + ".xml", false);
         if (xmlPath == null)
             return null;
-        xml.Load(xmlPath);
+        try { xml.Load(xmlPath); }
+        catch (XmlException ex) {
+            UnitaleUtil.DisplayLuaError("Instanciating a font", "An error was encountered while loading the font \"" + fontName + "\":\n\n" + ex.Message);
+            return null;
+        }
+        if (xml["font"] == null) {
+            UnitaleUtil.DisplayLuaError("Instanciating a font", "The font '" + fontName + "' doesn't have a font element at its root.");
+            return null;
+        }
         Dictionary<char, Sprite> fontMap = LoadBuiltInFont(xml["font"]["spritesheet"], fontPath);
 
-        UnderFont underfont = null;
+        UnderFont underfont;
         try { underfont = new UnderFont(fontMap, fontName); }
         catch {
             UnitaleUtil.DisplayLuaError("Instanciating a font", "The fonts need a space character to compute their line height, and the font '" + fontName + "' doesn't have one.");
@@ -114,10 +115,9 @@ public static class SpriteFontRegistry {
         Dictionary<char, Sprite> letters = new Dictionary<char, Sprite>();
         foreach (Sprite s in letterSprites) {
             string name = s.name;
-            if (name.Length == 1) {
+            if (name.Length == 1)
                 letters.Add(name[0], s);
-                continue;
-            } else
+            else
                 switch (name) {
                     case "slash":         letters.Add('/', s);   break;
                     case "dot":           letters.Add('.', s);   break;

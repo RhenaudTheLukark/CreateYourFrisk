@@ -31,10 +31,10 @@ public class LuaPlayerOW {
     [CYFEventFunction] public void SetGold(int value) { PlayerCharacter.instance.SetGold(value); appliedScript.Call("CYFEventNextCommand"); }
 
     [CYFEventFunction] public string GetWeapon() { try { return PlayerCharacter.instance.Weapon; } finally { appliedScript.Call("CYFEventNextCommand"); } }
-    [CYFEventFunction] public void SetWeapon(string value) { EventManager.instance.luainvow.SetEquip(value);}
+    [CYFEventFunction] public void SetWeapon(string value) { EventManager.instance.luaInventoryOw.SetEquip(value);}
 
     [CYFEventFunction] public string GetArmor() { try { return PlayerCharacter.instance.Armor; } finally { appliedScript.Call("CYFEventNextCommand"); } }
-    [CYFEventFunction] public void SetArmor(string value) { EventManager.instance.luainvow.SetEquip(value); }
+    [CYFEventFunction] public void SetArmor(string value) { EventManager.instance.luaInventoryOw.SetEquip(value); }
 
     [CYFEventFunction] public int GetEXP() { try { return PlayerCharacter.instance.EXP; } finally { appliedScript.Call("CYFEventNextCommand"); } }
     [CYFEventFunction] public void SetEXP(int value) { PlayerCharacter.instance.SetEXP(value, true); appliedScript.Call("CYFEventNextCommand"); }
@@ -66,12 +66,12 @@ public class LuaPlayerOW {
 
     public string Weapon {
         get { return PlayerCharacter.instance.Weapon; }
-        set { EventManager.instance.luainvow.SetWeapon(value); }
+        set { EventManager.instance.luaInventoryOw.SetWeapon(value); }
     }
 
     public string Armor {
         get { return PlayerCharacter.instance.Armor; }
-        set { EventManager.instance.luainvow.SetArmor(value); }
+        set { EventManager.instance.luaInventoryOw.SetArmor(value); }
     }
 
     public int EXP {
@@ -87,8 +87,7 @@ public class LuaPlayerOW {
     /// <param name="damage">This one seems obvious</param>
     [CYFEventFunction]
     public void Hurt(int damage) {
-        if (damage >= 0) UnitaleUtil.PlaySound("HurtSound", AudioClipRegistry.GetSound("hurtsound"), 0.65f);
-        else             UnitaleUtil.PlaySound("HurtSound", AudioClipRegistry.GetSound("healsound"), 0.65f);
+        UnitaleUtil.PlaySound("HurtSound", AudioClipRegistry.GetSound(damage >= 0 ? "hurtsound" : "healsound"));
 
         if (-damage + PlayerCharacter.instance.HP > PlayerCharacter.instance.MaxHP) PlayerCharacter.instance.HP = PlayerCharacter.instance.MaxHP;
         else if (-damage + PlayerCharacter.instance.HP <= 0)                        PlayerCharacter.instance.HP = 1;
@@ -116,12 +115,11 @@ public class LuaPlayerOW {
     [MoonSharpHidden]
     public void setHP(float newhp, bool forced = false) {
         if (newhp <= 0) {
-            EventManager.instance.luagenow.GameOver();
+            EventManager.instance.luaGeneralOw.GameOver();
             return;
         }
         float CheckedHP = PlayerCharacter.instance.HP;
-        if (CheckedHP - newhp >= 0) UnitaleUtil.PlaySound("CollisionSoundChannel", AudioClipRegistry.GetSound("hurtsound").name);
-        else                        UnitaleUtil.PlaySound("CollisionSoundChannel", AudioClipRegistry.GetSound("healsound").name);
+        UnitaleUtil.PlaySound("CollisionSoundChannel", AudioClipRegistry.GetSound(CheckedHP - newhp >= 0 ? "hurtsound" : "healsound").name);
 
         newhp = Mathf.Round(newhp * Mathf.Pow(10, ControlPanel.instance.MaxDigitsAfterComma)) / Mathf.Pow(10, ControlPanel.instance.MaxDigitsAfterComma);
 
@@ -153,7 +151,7 @@ public class LuaPlayerOW {
 
     [CYFEventFunction]
     public void Teleport(string mapName, float posX, float posY, int direction = 0, bool NoFadeIn = false, bool NoFadeOut = false) {
-        TPHandler tp = GameObject.Instantiate(Resources.Load<TPHandler>("Prefabs/TP On-the-fly"));
+        TPHandler tp = Object.Instantiate(Resources.Load<TPHandler>("Prefabs/TP On-the-fly"));
         tp.sceneName = mapName;
         tp.position = new Vector2(posX, posY);
         tp.direction = direction;

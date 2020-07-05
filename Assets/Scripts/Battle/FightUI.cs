@@ -1,24 +1,24 @@
-﻿using UnityEngine;
+﻿using MoonSharp.Interpreter;
+using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
 
 public class FightUI : MonoBehaviour {
     public LuaSpriteController slice;
     public LifeBarController lifeBar;
     public TextManager damageText;
     private RectTransform damageTextRt;
-    
-    public bool shakeInProgress = false;
-    private int[] shakeX = new int[] { 12, -12, 7, -7, 3, -3, 1, -1, 0 };
+
+    public bool shakeInProgress;
+    private int[] shakeX = { 12, -12, 7, -7, 3, -3, 1, -1, 0 };
     //private int[] shakeX = new int[] { 24, 0, 0, 0, 0, -48, 0, 0, 0, 0, 38, 0, 0, 0, 0, -28, 0, 0, 0, 0, 20, 0, 0, 0, 0, -12, 0, 0, 0, 0, 8, 0, 0, 0, 0, -2, 0, 0, 0, 0};
     private int shakeIndex = -1;
     private int Damage = -478294;
-    private float shakeTimer = 0.0f;
+    private float shakeTimer;
     private float totalShakeTime = 1.5f;
     public float sliceAnimFrequency = 1 / 6f;
-    public LuaEnemyController enemy;
+    public EnemyController enemy;
     public Vector2 enePos, eneSize;
-    private string[] sliceAnim = new string[] {
+    private string[] sliceAnim = {
         "UI/Battle/spr_slice_o_0",
         "UI/Battle/spr_slice_o_1",
         "UI/Battle/spr_slice_o_2",
@@ -26,22 +26,22 @@ public class FightUI : MonoBehaviour {
         "UI/Battle/spr_slice_o_4",
         "UI/Battle/spr_slice_o_5"
     };
-    private bool wait1frame = false; //Hacky way to wait one frame before launching the lifebars anim
-    private bool needAgain = false;
-    private bool showedup = false;
-    public bool stopped = false;
-    public bool isCoroutine = false;
-    public bool waitingToFade = false;
+    private bool wait1frame; //Hacky way to wait one frame before launching the lifebars anim
+    private bool needAgain;
+    private bool showedup;
+    public bool stopped;
+    public bool isCoroutine;
+    public bool waitingToFade;
 
     public void Start() {
         foreach(RectTransform child in transform) {
-            if (child.name == "SliceAnim")
-                slice = new LuaSpriteController(child.GetComponent<Image>());
-            else if (child.name == "HPBar")
-                lifeBar = child.GetComponent<LifeBarController>();
-            else if (child.name == "DamageNumber") {
-                damageText = child.GetComponent<TextManager>();
-                damageTextRt = child.GetComponent<RectTransform>();
+            switch (child.name) {
+                case "SliceAnim": slice = new LuaSpriteController(child.GetComponent<Image>()); break;
+                case "HPBar":    lifeBar = child.GetComponent<LifeBarController>(); break;
+                case "DamageNumber":
+                    damageText = child.GetComponent<TextManager>();
+                    damageTextRt = child.GetComponent<RectTransform>();
+                    break;
             }
         }
         sliceAnim = UIController.instance.fightUI.sliceAnim;
@@ -50,7 +50,7 @@ public class FightUI : MonoBehaviour {
         damageText.SetFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_DAMAGETEXT_NAME));
         damageText.SetMute(true);
     }
-    
+
     public void Init(int enemyIndex) {
         Start();
         Damage = -478294;
@@ -65,7 +65,7 @@ public class FightUI : MonoBehaviour {
         shakeTimer = 0;
     }
 
-    public void quickInit(int enemyIndex, LuaEnemyController target, int damage = -478294) {
+    public void quickInit(int enemyIndex, EnemyController target, int damage = -478294) {
         Init(enemyIndex);
         enemy = target;
         if (damage != -478294)
@@ -78,8 +78,8 @@ public class FightUI : MonoBehaviour {
             return shakeTimer >= totalShakeTime;
         return false;
     }
-	
-    public void ChangeTarget(LuaEnemyController target) {
+
+    public void ChangeTarget(EnemyController target) {
         enemy = target;
         if (Damage != -478294)
             Damage = 0;
@@ -95,9 +95,7 @@ public class FightUI : MonoBehaviour {
 
     public void StopAction(float atkMult) {
         PlayerController.instance.lastHitMult = FightUIController.instance.getAtkMult();
-        bool damagePredefined = false;
-        if (Damage != -478294)
-            damagePredefined = true;
+        bool damagePredefined = Damage != -478294;
         stopped = true;
         enemy.TryCall("BeforeDamageCalculation");
         if (!damagePredefined)
@@ -109,19 +107,17 @@ public class FightUI : MonoBehaviour {
     }
 
     // Update is called once per frame
-    void Update() {
+    private void Update() {
         // do not update the attack UI if the ATTACKING state is frozen
         if (UIController.instance.frozenState != UIController.UIState.PAUSE)
             return;
-        
+
         if (shakeInProgress) {
             int shakeidx = (int)Mathf.Floor(shakeTimer * shakeX.Length / totalShakeTime);
-            bool wentIn = false;
-            if (Damage > 0 && shakeIndex != shakeidx || wentIn) {
+            if (Damage > 0 && shakeIndex != shakeidx) {
                 if (shakeIndex != shakeidx && shakeIndex >= shakeX.Length)
                     shakeIndex = shakeX.Length - 1;
                 shakeIndex = shakeidx;
-                wentIn = true;
                 Vector2 localEnePos = enemy.GetComponent<RectTransform>().anchoredPosition; // get local position to do the shake
                 enemy.GetComponent<RectTransform>().anchoredPosition = new Vector2(localEnePos.x + shakeX[shakeIndex], localEnePos.y);
 
@@ -141,14 +137,14 @@ public class FightUI : MonoBehaviour {
                 wait1frame = true;
                 slice.StopAnimation();
                 slice.Set("empty");
-                enemy.TryCall("BeforeDamageValues");
+                enemy.TryCall("BeforeDamageValues", new[] { DynValue.NewNumber(Damage) });
                 if (Damage > 0) {
                     AudioSource aSrc = GetComponent<AudioSource>();
                     aSrc.clip = AudioClipRegistry.GetSound("hitsound");
                     aSrc.Play();
                 }
                 // set damage numbers and positioning
-                string damageTextStr = "";
+                string damageTextStr;
                 if (Damage == 0) {
                     if (enemy.DefenseMissText == null) damageTextStr = "[color:c0c0c0]MISS";
                     else                               damageTextStr = "[color:c0c0c0]" + enemy.DefenseMissText;
@@ -166,8 +162,8 @@ public class FightUI : MonoBehaviour {
                         lifeBar.GetComponent<RectTransform>().localPosition = new Vector2(enemy.offsets[2].x, 20 + enemy.offsets[2].y);
                         lifeBar.GetComponent<RectTransform>().sizeDelta = new Vector2(enemy.GetComponent<RectTransform>().rect.width, 13);
                         lifeBar.whenDamageValue = enemy.GetComponent<RectTransform>().rect.width;
-                        lifeBar.setInstant(enemy.HP < 0 ? 0 : (float)enemy.HP / (float)enemy.MaxHP);
-                        lifeBar.setLerp((float)enemy.HP / (float)enemy.MaxHP, (float)newHP / (float)enemy.MaxHP);
+                        lifeBar.setInstant(enemy.HP < 0 ? 0 : enemy.HP / (float)enemy.MaxHP);
+                        lifeBar.setLerp(enemy.HP / (float)enemy.MaxHP, newHP / (float)enemy.MaxHP);
                         lifeBar.setVisible(true);
                         enemy.doDamage(Damage);
                     } catch { return; }

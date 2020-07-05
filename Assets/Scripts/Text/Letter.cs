@@ -2,12 +2,12 @@
 using UnityEngine.UI;
 
 public class Letter : MonoBehaviour {
-    public Vector2 basisPos = new Vector2();
+    public Vector2 basisPos;
     public Image img;
     public TextEffectLetter effect = null;
-    public bool started = false;
+    public bool started;
     public Color colorFromText;
-    private bool goodInit = false;
+    private bool goodInit;
 
 
     private void Start() {
@@ -23,16 +23,15 @@ public class Letter : MonoBehaviour {
         try {
             basisPos = transform.position;
             goodInit = true;
-        } catch { }
+        } catch { /* ignored */ }
     }
 
     private void Update() {
-        if (effect != null && started) {
-            if (!goodInit) {
-                basisPos = transform.position;
-                goodInit = true;
-            }
-            effect.UpdateEffects();
+        if (effect == null || !started) return;
+        if (!goodInit) {
+            basisPos = transform.position;
+            goodInit = true;
         }
+        effect.UpdateEffects();
     }
 }

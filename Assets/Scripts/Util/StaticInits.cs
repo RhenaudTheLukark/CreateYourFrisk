@@ -1,20 +1,19 @@
 ﻿using System.Diagnostics;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public static class StaticInits {
     public static string MODFOLDER;
     public static string ENCOUNTER = "";
     public static string EDITOR_MODFOLDER = "@Title";
-    private static bool firstInit = false;
+    private static bool firstInit;
 
     public static bool Initialized { get; set; }
-    
+
     public delegate void LoadedAction();
     public static event LoadedAction Loaded;
 
-    static void OnEnable() {  UIController.SendToStaticInits += StaticInits.SendLoaded; }
-    static void OnDisable() { UIController.SendToStaticInits -= StaticInits.SendLoaded; }
+    private static void OnEnable() {  UIController.SendToStaticInit += SendLoaded; }
+    private static void OnDisable() { UIController.SendToStaticInit -= SendLoaded; }
 
     public static void Start() {
         if (!firstInit) {
@@ -22,34 +21,33 @@ public static class StaticInits {
             SpriteRegistry.Start();
             AudioClipRegistry.Start();
             SpriteFontRegistry.Start();
+            ShaderRegistry.Start();
         }
-        if (MODFOLDER == null || MODFOLDER == "")
+        if (string.IsNullOrEmpty(MODFOLDER))
             MODFOLDER = EDITOR_MODFOLDER;
         //if (CurrMODFOLDER != MODFOLDER || CurrENCOUNTER != ENCOUNTER)
         InitAll();
         Initialized = true;
     }
 
-    public static void InitAll() {
-        if (!Initialized && (!GlobalControls.isInFight || GlobalControls.lastSceneUnitale)) {
+    public static void InitAll(bool shaders = false) {
+        if (!Initialized && (!GlobalControls.isInFight || GlobalControls.modDev)) {
             //UnitaleUtil.createFile();
-            if (GlobalControls.lastSceneUnitale)
-                GlobalControls.lastSceneUnitale = false;
             Stopwatch sw = new Stopwatch(); //benchmarking terrible loading times
             sw.Start();
-            ScriptRegistry.init();
+            ScriptRegistry.Init();
             sw.Stop();
             UnityEngine.Debug.Log("Script registry loading time: " + sw.ElapsedMilliseconds + "ms");
             sw.Reset();
 
             sw.Start();
-            SpriteRegistry.init();
+            SpriteRegistry.Init();
             sw.Stop();
             UnityEngine.Debug.Log("Sprite registry loading time: " + sw.ElapsedMilliseconds + "ms");
             sw.Reset();
 
             sw.Start();
-            AudioClipRegistry.init();
+            AudioClipRegistry.Init();
             sw.Stop();
             UnityEngine.Debug.Log("Audio clip registry loading time: " + sw.ElapsedMilliseconds + "ms");
             sw.Reset();
@@ -59,7 +57,15 @@ public static class StaticInits {
             sw.Stop();
             UnityEngine.Debug.Log("Sprite font registry loading time: " + sw.ElapsedMilliseconds + "ms");
             sw.Reset();
-        } else 
+
+            if (shaders) {
+                sw.Start();
+                ShaderRegistry.Init();
+                sw.Stop();
+                UnityEngine.Debug.Log("Shader registry loading time: " + sw.ElapsedMilliseconds + "ms");
+                sw.Reset();
+            }
+        } else
             Initialized = true;
         LateUpdater.Init(); // must be last; lateupdater's initialization is for classes that depend on the above registries
         MusicManager.src = Camera.main.GetComponent<AudioSource>();

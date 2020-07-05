@@ -1,22 +1,19 @@
 ﻿using UnityEngine;
-using UnityEngine.SceneManagement;
-using System;
-using System.Linq;
 
 public class Fading : MonoBehaviour {
     public SpriteRenderer fade;        // The texture that will overlay the screen. This can be a black image or a loading graphic
     [HideInInspector]
     public float fadeSpeed = 3f;       // The fading speed
     public float alpha = 1.0f;         // The texture's alpha between 0 and 1
-    
+
     private int fadeDir = 1;          // The direction to fade : in = -1 or out = 1
-    private bool eventSent = false;
+    private bool eventSent;
 
     public delegate void LoadedAction();
     public static event LoadedAction FinishFade;
     public static event LoadedAction StartFade;
 
-    void Update () {
+    private void Update() {
         if (fade == null)
             fade = GetComponent<SpriteRenderer>();
         if ((fade.color.a > 0 && fadeDir == -1) || (fade.color.a < 1 && fadeDir == 1)) {
@@ -38,7 +35,7 @@ public class Fading : MonoBehaviour {
     }
 
     // Sets fadeDir to the direction parameter making the scene fade in if -1 and out if 1
-    public float BeginFade (int direction) {
+    public float BeginFade(int direction) {
         gameObject.transform.SetAsLastSibling();
         fadeDir = direction;
         eventSent = false;
@@ -46,7 +43,7 @@ public class Fading : MonoBehaviour {
         fade.color = new Color(0, 0, 0, alpha);
         if (StartFade != null && StaticInits.MODFOLDER != "@Title")
             StartFade();
-        return 1f/fadeSpeed;     // Return the fadeSpeed variable so it's easy to time the Application.LoadLevel();
+        return 1f / fadeSpeed;     // Return the fadeSpeed variable so it's easy to time the Application.LoadLevel();
     }
 
     public void FadeInstant(int direction, bool needSig = false) {
@@ -54,14 +51,13 @@ public class Fading : MonoBehaviour {
         fadeDir = direction;
         alpha = direction == 1 ? 1 : 0;
         fade.color = new Color(0, 0, 0, alpha);
-        if (needSig && FinishFade != null) {
-            StartFade();
-            FinishFade();
-        }
+        if (!needSig || FinishFade == null) return;
+        if (StartFade != null) StartFade();
+        FinishFade();
     }
 
     // LoadScene is called when a level is loaded. It takes loaded level index (int) as a parameter so you can limit the fade in to certain scenes
-    /*public void LoadScene(Scene scene, LoadSceneMode mode) {   
+    /*public void LoadScene(Scene scene, LoadSceneMode mode) {
         string index = SceneManager.GetActiveScene().name;
         if (!GlobalControls.nonOWScenes.Contains(index)) {
             BeginFade(-1);          // Call the fade in function

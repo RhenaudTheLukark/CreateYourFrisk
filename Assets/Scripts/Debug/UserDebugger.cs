@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,8 +10,14 @@ public class UserDebugger : MonoBehaviour{
     public Text text;
     public int maxLines = 7;
     public Queue<string> dbgContent = new Queue<string>();
-    private bool firstActive = false;
-    private string originalText = null;
+    public bool canShow = true;
+    private bool firstActive;
+    private string originalText;
+
+    public void Warn(string line) {
+        Debug.LogWarning("Frame " + GlobalControls.frame + ": " + line);
+        WriteLine(line);
+    }
 
     public void Start() {
         instance = this;
@@ -22,24 +27,22 @@ public class UserDebugger : MonoBehaviour{
         dbgContent.Clear();
         gameObject.SetActive(false);
         firstActive = false;
-        if (UnitaleUtil.printDebuggerBeforeInit != "") {
-            UserWriteLine(UnitaleUtil.printDebuggerBeforeInit, false);
-            UnitaleUtil.printDebuggerBeforeInit = "";
-        }
+        if (UnitaleUtil.printDebuggerBeforeInit == "") return;
+        UserWriteLine(UnitaleUtil.printDebuggerBeforeInit);
+        UnitaleUtil.printDebuggerBeforeInit = "";
     }
 
-    public void UserWriteLine(string line, bool debug = true) {
+    public void UserWriteLine(string line) {
         line = line ?? "nil";
         foreach (string str in line.Split('\n'))
             WriteLine(str);
         Debug.Log("Frame " + GlobalControls.frame + ": " + line);
         // activation of the debug window if you're printing to it for the first time
-        if (!firstActive) {
+        if (!firstActive && canShow) {
             gameObject.SetActive(true);
-            try {
-                Camera.main.GetComponent<FPSDisplay>().enabled = true;
-            } catch { }
-            GameObject.Find("Text").transform.SetParent(transform);
+            try { Camera.main.GetComponent<FPSDisplay>().enabled = true; }
+            catch { /* ignored */ }
+
             firstActive = true;
         }
         transform.SetAsLastSibling();

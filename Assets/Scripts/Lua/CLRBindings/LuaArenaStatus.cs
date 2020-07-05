@@ -2,11 +2,11 @@
 /// Lua binding to set and retrieve information for the game's arena.
 /// </summary>
 public class LuaArenaStatus {
-    public float width         { get { return ArenaManager.instance.newWidth;                            } }
-    public float height        { get { return ArenaManager.instance.newHeight;                           } }
+    public float width         { get { return ArenaManager.instance.desiredWidth;                            } }
+    public float height        { get { return ArenaManager.instance.desiredHeight;                           } }
 
-    public float x             { get { return ArenaManager.instance.newX;                                } }
-    public float y             { get { return ArenaManager.instance.newY;                                } }
+    public float x             { get { return ArenaManager.instance.desiredX;                                } }
+    public float y             { get { return ArenaManager.instance.desiredY;                                } }
 
     public float currentwidth  { get { return ArenaManager.arenaAbs.width;                               } }
     public float currentheight { get { return ArenaManager.arenaAbs.height;                              } }
@@ -37,17 +37,17 @@ public class LuaArenaStatus {
         if (UIController.instance.GetState() == UIController.UIState.DEFENDING) ArenaManager.instance.ResizeImmediate(w, h);
         else                                                                    UnitaleUtil.DisplayLuaError("NOT THE WAVE SCRIPT", "sorry but pls don't");
     }
-    
+
     public void Hide() {
         if (UIController.instance.GetState() == UIController.UIState.DEFENDING) ArenaManager.instance.Hide();
         else                                                                    UnitaleUtil.DisplayLuaError("NOT THE WAVE SCRIPT", "sorry but pls don't");
     }
-    
+
     public void Show() {
         if (UIController.instance.GetState() == UIController.UIState.DEFENDING) ArenaManager.instance.Show();
         else                                                                    UnitaleUtil.DisplayLuaError("NOT THE WAVE SCRIPT", "sorry but pls don't");
     }
-    
+
     public void Move(float x, float y, bool movePlayer = true, bool immediate = false) {
         if (UIController.instance.GetState() == UIController.UIState.DEFENDING) {
             if (immediate) ArenaManager.instance.MoveImmediate(x, y, movePlayer);
