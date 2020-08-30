@@ -28,7 +28,7 @@ public class LuaSpriteController {
     private KeyframeCollection.LoopMode loop = KeyframeCollection.LoopMode.LOOP;
     [MoonSharpHidden] public static MoonSharp.Interpreter.Interop.IUserDataDescriptor data = UserData.GetDescriptorForType<LuaSpriteController>(true);
 
-    //The name of the sprite
+    // The name of the sprite
     public string spritename {
         get { return img.GetComponent<Image>() ? img.GetComponent<Image>().sprite.name : img.GetComponent<SpriteRenderer>().sprite.name; }
     }
@@ -371,6 +371,7 @@ public class LuaSpriteController {
         if (img.GetComponent<Image>()) {
             Image imgtemp = img.GetComponent<Image>();
             SpriteUtil.SwapSpriteFromFile(imgtemp, name);
+            if (!UnitaleUtil.IsOverworld) imgtemp.name = name;
             originalSprite = imgtemp.sprite;
             nativeSizeDelta = new Vector2(imgtemp.sprite.texture.width, imgtemp.sprite.texture.height);
         } else {
@@ -477,7 +478,7 @@ public class LuaSpriteController {
             if (SpriteRegistry.Get(spriteNames[i]) == null)
                 throw new CYFException("sprite.SetAnimation: Failed to load sprite with the name \"" + spriteNames[i] + "\". Are you sure it is spelled correctly?");
 
-            kfArray[i] = new Keyframe(SpriteRegistry.Get(spriteNames[i]), spriteNames[i].ToLower());
+            kfArray[i] = new Keyframe(SpriteRegistry.Get(spriteNames[i]), spriteNames[i]);
         }
         if (keyframes == null) {
             if (img.GetComponent<KeyframeCollection>()) {
@@ -736,9 +737,10 @@ public class LuaSpriteController {
             return;
         Keyframe k = keyframes.getCurrent();
         Sprite s;
-        if (k != null)
+        if (k != null) {
             s = k.sprite;
-        else {
+            if (!UnitaleUtil.IsOverworld) img.name = k.name;
+        } else {
             StopAnimation();
             return;
         }

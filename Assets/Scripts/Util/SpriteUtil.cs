@@ -113,9 +113,10 @@ public static class SpriteUtil {
             tag = UnitaleUtil.IsOverworld ? "Default" : "BelowArena";
         }
         Image i = Object.Instantiate(SpriteRegistry.GENERIC_SPRITE_PREFAB);
-        if (!string.IsNullOrEmpty(filename))
+        if (!string.IsNullOrEmpty(filename)) {
             SwapSpriteFromFile(i, filename);
-        else
+            if (!UnitaleUtil.IsOverworld) i.name = filename;
+        } else
             throw new CYFException("You can't create a sprite object with a nil sprite!");
         if (!GameObject.Find(tag + "Layer") && tag != "none")
             if ((!UnitaleUtil.IsOverworld && tag == "BelowArena") || (UnitaleUtil.IsOverworld && tag == "Default"))
