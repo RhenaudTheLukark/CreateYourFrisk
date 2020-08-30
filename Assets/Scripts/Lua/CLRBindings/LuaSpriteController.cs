@@ -705,14 +705,44 @@ public class LuaSpriteController {
         if (throwError)
             throw new CYFException("sprite.Remove(): You can't remove a " + tag + "'s sprite!");
 
-        if (tag == "projectile") {
-            Projectile[] pcs = img.GetComponentsInChildren<Projectile>();
-            for (int i = 1; i < pcs.Length; i++)
-                pcs[i].ctrl.Remove();
-        }
+        RemoveChildren(img);
         StopAnimation();
         Object.Destroy(GetTarget().gameObject);
         _img = null;
+    }
+
+    [MoonSharpHidden] public static void RemoveChildren(GameObject go) {
+        // Delete all children, must they be bullets or sprites
+        List<Transform> spritesToDelete = new List<Transform> { go.transform };
+
+        while (spritesToDelete.Count > 0) {
+            Transform t = spritesToDelete[spritesToDelete.Count - 1];
+            Transform[] pcs = UnitaleUtil.GetFirstChildren(t, true);
+
+            bool needToHandleNewTransform = false;
+            for (int i = 0; i < pcs.Length; i++) {
+                // Bullet to delete recursively
+                if (pcs[i].GetComponent<Projectile>()) {
+                    pcs[i].GetComponent<Projectile>().ctrl.Remove();
+                    // Sprite to add to the sprite queue
+                } else {
+                    spritesToDelete.Add(pcs[i]);
+                    pcs[i].SetParent(t.parent);
+                    needToHandleNewTransform = true;
+                    break;
+                }
+            }
+
+            if (needToHandleNewTransform) continue;
+
+            // Actually delete the sprite if its not the current one
+            if (!t.GetComponent<Projectile>() && spritesToDelete.Count > 1) {
+                if (t.GetComponent<Image>()) new LuaSpriteController(t.GetComponent<Image>()).Remove();
+                else new LuaSpriteController(t.GetComponent<SpriteRenderer>()).Remove();
+            }
+
+            spritesToDelete.RemoveAt(spritesToDelete.Count - 1);
+        }
     }
 
     public void Dust(bool playDust = true, bool removeObject = false) {

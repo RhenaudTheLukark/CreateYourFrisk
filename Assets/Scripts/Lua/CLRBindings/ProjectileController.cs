@@ -161,10 +161,7 @@ public class ProjectileController {
 
     public void Remove() {
         if (!isactive) return;
-        Transform[] pcs = UnitaleUtil.GetFirstChildren(p.transform);
-        for (int i = 1; i < pcs.Length; i++)
-            try { pcs[i].GetComponent<Projectile>().ctrl.Remove(); }
-            catch { new LuaSpriteController(pcs[i].GetComponent<Image>()).Remove(); }
+        LuaSpriteController.RemoveChildren(p.gameObject);
         lastX = x;
         lastY = y;
         lastAbsX = absx;
