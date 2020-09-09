@@ -66,7 +66,7 @@ public class TextManager : MonoBehaviour {
     protected Color currentColor = Color.white;
     private bool colorSet;
     protected Color defaultColor = Color.white;
-    //private Color defaultColor = Color.white;
+    protected Color fontDefaultColor = Color.white;
 
     private float letterTimer;
     private float timePerLetter;
@@ -122,7 +122,7 @@ public class TextManager : MonoBehaviour {
 
         vSpacing = 0;
         hSpacing = font.CharSpacing;
-        defaultColor = font.DefaultColor;
+        fontDefaultColor = defaultColor = font.DefaultColor;
         if (GetType() == typeof(LuaTextManager)) {
             if (((LuaTextManager) this).hasColorBeenSet) defaultColor = ((LuaTextManager) this)._color;
             if (((LuaTextManager) this).hasAlphaBeenSet) defaultColor.a = ((LuaTextManager) this).alpha;
@@ -142,7 +142,9 @@ public class TextManager : MonoBehaviour {
         Charset = default_charset;
         Debug.Assert(default_charset != null, "default_charset != null");
         letterSound.clip = default_voice ?? default_charset.Sound;
-        defaultColor = default_charset.DefaultColor;
+        fontDefaultColor = default_charset.DefaultColor;
+        if (GetType() == typeof(LuaTextManager) && !((LuaTextManager) this).hasColorBeenSet)
+            fontDefaultColor = defaultColor = default_charset.DefaultColor;
 
         // Default voice in the overworld
         if (gameObject.name == "TextManager OW")
@@ -546,8 +548,10 @@ public class TextManager : MonoBehaviour {
         if (isLua) {
             Color luaColor = luaThis._color;
             if (!colorSet) {
-                ltrImg.color = luaThis.hasColorBeenSet ? luaColor : currentColor;
-                if (luaThis.hasAlphaBeenSet) ltrImg.color = new Color(ltrImg.color.r, ltrImg.color.g, ltrImg.color.b, luaColor.a);
+                if (!luaThis.hasAlphaBeenSet && !luaThis.hasColorBeenSet) ltrImg.color = currentColor;
+                else if (!luaThis.hasColorBeenSet)                        ltrImg.color = new Color(currentColor.r, currentColor.g, currentColor.b, luaColor.a    );
+                else if (!luaThis.hasAlphaBeenSet)                        ltrImg.color = new Color(luaColor.r,     luaColor.g,     luaColor.b,     currentColor.a);
+                else                                                      ltrImg.color = luaColor;
             } else                           ltrImg.color = currentColor;
         } else                               ltrImg.color = currentColor;
         ltrImg.GetComponent<Letter>().colorFromText = currentColor;
