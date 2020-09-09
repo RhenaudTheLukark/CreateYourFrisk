@@ -737,8 +737,8 @@ public class LuaSpriteController {
 
             // Actually delete the sprite if its not the current one
             if (!t.GetComponent<Projectile>() && spritesToDelete.Count > 1) {
-                if (t.GetComponent<Image>()) new LuaSpriteController(t.GetComponent<Image>()).Remove();
-                else new LuaSpriteController(t.GetComponent<SpriteRenderer>()).Remove();
+                if      (t.GetComponent<Image>())          new LuaSpriteController(t.GetComponent<Image>()).Remove();
+                else if (t.GetComponent<SpriteRenderer>()) new LuaSpriteController(t.GetComponent<SpriteRenderer>()).Remove();
             }
 
             spritesToDelete.RemoveAt(spritesToDelete.Count - 1);
