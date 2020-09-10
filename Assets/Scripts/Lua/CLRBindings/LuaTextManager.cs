@@ -228,6 +228,40 @@ public class LuaTextManager : TextManager {
         }
     }
 
+    public void ResetColor(bool resetAlpha = false) {
+        Color c = fontDefaultColor;
+        if (!resetAlpha) c.a = alpha;
+
+        if (currentColor.r == defaultColor.r && currentColor.g == defaultColor.g && currentColor.b == defaultColor.b)
+            currentColor = c;
+
+        foreach (Image i in letterReferences)
+            if (i != null)
+                if (i.color == defaultColor) i.color = c;
+
+        _color = c;
+        defaultColor = c;
+
+        hasColorBeenSet = false;
+        hasAlphaBeenSet = resetAlpha ? false : hasAlphaBeenSet;
+    }
+
+    public void ResetAlpha() {
+        Color c = currentColor;
+        c.a = fontDefaultColor.a;
+
+        if (currentColor.a == defaultColor.a)
+            currentColor = c;
+
+        foreach (Image i in letterReferences)
+            if (i != null)
+                if (i.color == defaultColor) i.color = c;
+
+        _color.a = c.a;
+        defaultColor = c;
+        hasAlphaBeenSet = false;
+    }
+
     [MoonSharpHidden] public Color _color = Color.white;
     [MoonSharpHidden] public bool hasColorBeenSet;
     [MoonSharpHidden] public bool hasAlphaBeenSet;

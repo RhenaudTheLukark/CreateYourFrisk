@@ -832,13 +832,12 @@ public class TextManager : MonoBehaviour {
         switch (cmds[0].ToLower()) {
             case "color":
                 float oldAlpha = currentColor.a;
-                currentColor = ParseUtil.GetColor(cmds[1]);
-                currentColor = new Color(currentColor.r, currentColor.g, currentColor.b, oldAlpha);
-                colorSet = true;
+                colorSet = args.Length == 1;
+                currentColor = colorSet ? ParseUtil.GetColor(cmds[1]) : defaultColor;
+                currentColor.a = oldAlpha;
                 break;
             case "alpha":
-                if (cmds[1].Length == 2)
-                    currentColor = new Color(currentColor.r, currentColor.g, currentColor.b, ParseUtil.GetByte(cmds[1]) / 255);
+                currentColor.a = args.Length == 1 ? ParseUtil.GetByte(cmds[1]) / 255 : defaultColor.a;
                 break;
             case "charspacing":
                 if (cmds.Length > 1 && cmds[1].ToLower() == "default") SetHorizontalSpacing(Charset.CharSpacing);
