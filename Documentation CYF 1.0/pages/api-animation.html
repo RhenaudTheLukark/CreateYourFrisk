@@ -58,9 +58,9 @@ it's w3c valid, at least
                         <li class="li-indent new"><a href="api-functions-discord.html"><span class="CYF"></span> The Discord Object</a></li>
                         <li class="li-indent"><a href="api-functions-waves.html">The Arena Object</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
-                    <li><a href="api-projectile.html">Projectile management</a></li>
+                    <li class="new066"><a href="api-projectile.html">Projectile management</a></li>
                     <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
-                    <li class="active new" style="margin-left:5px;">&gt; Sprites &amp; Animation &lt;</li>
+                    <li class="new066 active" style="margin-left:5px;">&gt; Sprites &amp; Animation &lt;</li>
                     <li class="new066"><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                 <li class="li-header"></span><span class="CYF"></span> <span class="new"></span>Shaders</li>
@@ -389,6 +389,10 @@ it's w3c valid, at least
                 Default value: <span class="term">"BelowArena"</span> (or <span class="term">"Default"</span> in the Overworld)
                 <br><br>
                 Overworld Event sprites and Text Objects letter sprites can not have their layers set.
+                <br><br>
+                <span class="new066"></span>Note: It is common practice to use <span class="term">sprite.layer</span> to deparent
+                a sprite if you need to do so. Setting it again will set this sprite's parent as that layer, removing its parenting
+                altogether.
             </p><br>
 
             <p>
