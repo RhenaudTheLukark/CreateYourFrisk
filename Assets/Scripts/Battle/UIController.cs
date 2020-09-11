@@ -54,10 +54,10 @@ public class UIController : MonoBehaviour {
     public int gold = 0;    // Amount of Gold earned by the Player at the end of the encounter
 
     public UIState state;                                   // Current state of the battle
-    private UIState stateAfterDialogs = UIState.DEFENDING;  // State to enter after the current arena dialogue is done
-    private UIState lastNewState = UIState.UNUSED;          // Related to OnDeath TODO Add a good description to this variable, I'm unsure about what it really does
+    private UIState stateAfterDialogs = UIState.DEFENDING;  // State to enter after the current arena dialogue is done. Only used after a proper call to BattleDialog()
+    private UIState lastNewState = UIState.UNUSED;          // Allows the detection of state changes during an OnDeath() call so the engine can switch to it properly
 
-    private readonly Vector2 upperLeft = new Vector2(65, 190);  // Coordinates of the first choice in a choice text
+    private readonly Vector2 upperLeft = new Vector2(65, 190);      // Coordinates of the first choice in a choice text
     private bool encounterHasUpdate;                                // True if the encounter has an Update function, false otherwise
     private bool parentStateCall = true;                            // Used to stop the execution of a previous State() call if a new call has been done and to prevent infinite EnteringState() loops
     private bool childStateCalled;                                  // Used to stop the execution of a previous State() call if a new call has been done and to prevent infinite EnteringState() loops
@@ -85,7 +85,7 @@ public class UIController : MonoBehaviour {
         DIALOGRESULT,   // Transition state leading to either UIState.ENEMYDIALOGUE or UIState.DEFENDING
         DONE,           // Finished state of battle. Returns the Player to the mod selection screen or the overworld
         SPAREIDLE,      // Used for OnSpare()'s inactivity, to make it works like OnDeath(). You don't want to go in there
-        UNUSED,         // Used for OnDeath. Keep this state secret, please
+        UNUSED,         // Used for OnDeath(). Keep this state secret, please
         PAUSE           // Used exclusively for State("PAUSE"). Not a real state, but it needs to be listed to allow users to call State("PAUSE")
     }
 
@@ -98,14 +98,12 @@ public class UIController : MonoBehaviour {
     public delegate void Message();
     public static event Message SendToStaticInit;
 
-    public void ActionDialogResult(TextMessage msg, UIState afterDialogState, ScriptWrapper caller = null) {
-        ActionDialogResult(new[] { msg }, afterDialogState, caller);
+    public void ActionDialogResult(TextMessage msg, UIState afterDialogState = UIState.ENEMYDIALOGUE) {
+        ActionDialogResult(new[] { msg }, afterDialogState);
     }
 
-    public void ActionDialogResult(TextMessage[] msg, UIState afterDialogState, ScriptWrapper caller = null) {
+    public void ActionDialogResult(TextMessage[] msg, UIState afterDialogState = UIState.ENEMYDIALOGUE) {
         stateAfterDialogs = afterDialogState;
-        if (caller != null)
-            mainTextManager.SetCaller(caller);
         SwitchState(UIState.DIALOGRESULT);
         mainTextManager.SetTextQueue(msg);
     }
@@ -349,7 +347,6 @@ public class UIController : MonoBehaviour {
                 PlayerController.instance.GetComponent<Image>().enabled = true;
                 SetPlayerOnAction(action);
                 mainTextManager.SetPause(ArenaManager.instance.isResizeInProgress());
-                mainTextManager.SetCaller(EnemyEncounter.script); // probably not necessary due to ActionDialogResult changes
                 if (!GlobalControls.retroMode) {
                     mainTextManager.SetEffect(new TwitchEffect(mainTextManager));
                     encounter.EncounterText = EnemyEncounter.script.GetVar ("encountertext").String;
@@ -869,7 +866,7 @@ public class UIController : MonoBehaviour {
                                 string strModified = strBasis;
                                 for (int i = strBasis.Length - 2; i >= 0; i--)
                                     strModified = strModified.Substring(0, i) + "[voice:tem" + Math.RandomRange(1, 7) + "]" + strModified.Substring(i, strModified.Length - i);
-                                ActionDialogResult(new TextMessage(strModified, true, false), UIState.ENEMYDIALOGUE);
+                                ActionDialogResult(new TextMessage(strModified, true, false));
 
                             } else {
                                 if (Inventory.inventory.Count == 0) {
@@ -884,35 +881,38 @@ public class UIController : MonoBehaviour {
 
                         case Actions.MERCY:
                             if (GlobalControls.crate) {
-                                switch (meCry) {
-                                    case 0:  ActionDialogResult(new TextMessage("You know...\rSeeing the engine like this...\rIt makes me want to cry.",          true, false), UIState.ENEMYDIALOGUE); break;
-                                    case 1:  ActionDialogResult(new TextMessage("All these typos...\rCrate Your Frisk is bad.\nWe must destroy it.",              true, false), UIState.ENEMYDIALOGUE); break;
-                                    case 2:  ActionDialogResult(new TextMessage("We have two solutions here:\nDownload the engine again...",                      true, false), UIState.ENEMYDIALOGUE); break;
-                                    case 3:  ActionDialogResult(new TextMessage("...Or another way. Though, I'll\rneed some time to find out\rhow to do this...", true, false), UIState.ENEMYDIALOGUE); break;
-                                    case 4:  ActionDialogResult(new TextMessage("*sniffles* I can barely stand\rthe view... This is so\rdisgusting...",           true, false), UIState.ENEMYDIALOGUE); break;
-                                    case 5:  ActionDialogResult(new TextMessage("I feel like I'm getting there,\rkeep up the good work!",                         true, false), UIState.ENEMYDIALOGUE); break;
-                                    case 6:  ActionDialogResult(new TextMessage("Here, just a bit more...",                                                       true, false), UIState.ENEMYDIALOGUE); break;
-                                    case 7:  ActionDialogResult(new TextMessage("...No, I don't have it.\nStupid dog!\nPlease give me more time!",                true, false), UIState.ENEMYDIALOGUE); break;
-                                    case 8:  ActionDialogResult(new TextMessage("I want to puke...\nEven the engine is a\rplace of shitposts and memes.",         true, false), UIState.ENEMYDIALOGUE); break;
-                                    case 9:  ActionDialogResult(new TextMessage("Will there one day be a place\rwhere shitposts and memes\rwill not appear?",     true, false), UIState.ENEMYDIALOGUE); break;
-                                    case 10: ActionDialogResult(new TextMessage("I hope so...\rMy eyes are bleeding.",                                            true, false), UIState.ENEMYDIALOGUE); break;
-                                    case 11: ActionDialogResult(new TextMessage("Hm? Oh! Look! I have it!",                                                       true, false), UIState.ENEMYDIALOGUE); break;
-                                    case 12: ActionDialogResult(new TextMessage("Let me read:",                                                                   true, false), UIState.ENEMYDIALOGUE); break;
-                                    case 13: ActionDialogResult(new TextMessage("\"To remove the big engine\rtypo bug...\"",                                      true, false), UIState.ENEMYDIALOGUE); break;
-                                    case 14:
-                                        ActionDialogResult(new TextMessage[] {
-                                            new RegularMessage("\"...erase the AlMighty Globals\rin CYF's option menu.\""),
-                                            new RegularMessage("Is that all? Come on, all\rthis time lost for such\ran easy response..."),
-                                            new RegularMessage("...Sorry for the wait.\nDo whatever you want now! :D"),
-                                            new RegularMessage("But please..."),
-                                            new RegularMessage("For GOD's sake..."),
-                                            new RegularMessage("Remove Crate Your Frisk."),
-                                            new RegularMessage("Now I'll wash my eyes with\rsome bleach."),
-                                            new RegularMessage("Cya!")
-                                        }, UIState.ENEMYDIALOGUE);
-                                        break;
-                                    default: ActionDialogResult(new TextMessage("But the dev is long gone\r(and blind).", true, false), UIState.ENEMYDIALOGUE); break;
-                                }
+                                string[] texts = {
+                                    "You know...\rSeeing the engine like this...\rIt makes me want to cry.",
+                                    "All these typos...\rCrate Your Frisk is bad.\nWe must destroy it.",
+                                    "We have two solutions here:\nDownload the engine again...",
+                                    "...Or another way. Though, I'll\rneed some time to find out\rhow to do this...",
+                                    "*sniffles* I can barely stand\rthe view... This is so\rdisgusting...",
+                                    "I feel like I'm getting there,\rkeep up the good work!",
+                                    "Here, just a bit more...",
+                                    "...No, I don't have it.\nStupid dog!\nPlease give me more time!",
+                                    "I want to puke...\nEven the engine is a\rplace of shitposts and memes.",
+                                    "Will there one day be a place\rwhere shitposts and memes\rwill not appear?",
+                                    "I hope so...\rMy eyes are bleeding.",
+                                    "Hm? Oh! Look! I have it!",
+                                    "Let me read:",
+                                    "\"To remove the big engine\rtypo bug...\""
+                                };
+
+                                if (meCry < 14)
+                                    ActionDialogResult(new TextMessage(texts[meCry], true, false));
+                                else if (meCry == 14)
+                                    ActionDialogResult(new TextMessage[] {
+                                        new RegularMessage("\"...erase the AlMighty Globals\rin CYF's option menu.\""),
+                                        new RegularMessage("Is that all? Come on, all\rthis time lost for such\ran easy response..."),
+                                        new RegularMessage("...Sorry for the wait.\nDo whatever you want now! :D"),
+                                        new RegularMessage("But please..."),
+                                        new RegularMessage("For GOD's sake..."),
+                                        new RegularMessage("Remove Crate Your Frisk."),
+                                        new RegularMessage("Now I'll wash my eyes with\rsome bleach."),
+                                        new RegularMessage("Cya!")
+                                    });
+                                else
+                                    ActionDialogResult(new TextMessage("But the dev is long gone\r(and blind).", true, false));
                                 meCry++;
                             } else
                                 SwitchState(UIState.MERCYMENU);
@@ -939,7 +939,6 @@ public class UIController : MonoBehaviour {
 
                 case UIState.ACTMENU:
                     PlayerController.instance.lastEnemyChosen = selectedEnemy + 1;
-                    mainTextManager.SetCaller(encounter.EnabledEnemies[selectedEnemy].script); // probably not necessary due to ActionDialogResult changes
                     encounter.EnabledEnemies[selectedEnemy].Handle(encounter.EnabledEnemies[selectedEnemy].ActCommands[selectedAction]);
                     PlaySound(AudioClipRegistry.GetSound("menuconfirm"));
                     break;
@@ -1007,7 +1006,7 @@ public class UIController : MonoBehaviour {
                                     default: fittingLine = "...[w:15]But you decided to\rstay anyway.";                                           break;
                                 }
 
-                                ActionDialogResult(new TextMessage[] { new RegularMessage("I'm outta here."), new RegularMessage(fittingLine) }, UIState.ENEMYDIALOGUE);
+                                ActionDialogResult(new TextMessage[] { new RegularMessage("I'm outta here."), new RegularMessage(fittingLine) });
                                 Camera.main.GetComponent<AudioSource>().Pause();
                                 musicPausedFromRunning = true;
                                 runAwayAttempts++;
@@ -1455,7 +1454,7 @@ public class UIController : MonoBehaviour {
         /*string[] text = { "See mom, I can flee!", "LEGZ!", "It looks more like a\nreal flee.", "/me flees", "*flees*", "To infinity and beyond!",
                             "Yeah, that's the secret.\nI hope you liked it!"};*/
 
-        ActionDialogResult(new TextMessage[] { new RegularMessage(fleeTexts[Math.RandomRange(0, fleeTexts.Count)]) }, UIState.ENEMYDIALOGUE);
+        ActionDialogResult(new TextMessage[] { new RegularMessage(fleeTexts[Math.RandomRange(0, fleeTexts.Count)]) });
         fleeSwitch = true;
 
         Camera.main.GetComponent<AudioSource>().Pause();

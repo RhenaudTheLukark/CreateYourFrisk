@@ -103,7 +103,7 @@ public static class Inventory {
                 if (!usedItemNoDelete && type == 0)
                     inventory.RemoveAt(ID);
                 if ((type == 1 || type == 2) && mess.Length != 0 && !UIController.instance.battleDialogueStarted)
-                    UIController.instance.ActionDialogResult(mess, UIController.UIState.ENEMYDIALOGUE);
+                    UIController.instance.ActionDialogResult(mess);
                 return;
             }
         }
@@ -120,7 +120,7 @@ public static class Inventory {
             inventory.RemoveAt(ID);
         if (!UnitaleUtil.IsOverworld) {
             if (!UIController.instance.battleDialogueStarted && mess.Length != 0)
-                UIController.instance.ActionDialogResult(mess, UIController.UIState.ENEMYDIALOGUE);
+                UIController.instance.ActionDialogResult(mess);
         } else {
             GameObject.Find("TextManager OW").GetComponent<TextManager>().SetTextQueue(mess);
             GameObject.Find("TextManager OW").transform.parent.parent.SetAsLastSibling();

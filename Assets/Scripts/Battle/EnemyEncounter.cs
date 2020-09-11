@@ -199,7 +199,7 @@ public class EnemyEncounter : MonoBehaviour {
                                                             "\n\nIf you're sure that you've entered what's needed, you may contact the dev.");
             if (!GlobalControls.retroMode)
                 UIController.instance.mainTextManager.SetEffect(new TwitchEffect(UIController.instance.mainTextManager));
-            UIController.instance.ActionDialogResult(msgs, UIController.UIState.ENEMYDIALOGUE);
+            UIController.instance.ActionDialogResult(msgs);
         }
     }
 
