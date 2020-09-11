@@ -9,7 +9,7 @@ using MoonSharp.Interpreter;
 /// Controls that should be active on all screens. Pretty much a hack to allow people to reset. Now it's more useful.
 /// </summary>
 public class GlobalControls : MonoBehaviour {
-    public static string CYFversion       = "0.6.5";    // Current version of CYF displayed in the main menu and usable in scripts
+    public static string CYFversion       = "0.6.5.1";  // Current version of CYF displayed in the main menu and usable in scripts
     public static string OverworldVersion = "0.6.4";    // Last version in which the overworld was changed, notifying any user with an old save to delete it
 
     public static int frame;                        // Frame counter used for logging purposes
