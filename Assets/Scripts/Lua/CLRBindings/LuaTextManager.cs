@@ -552,7 +552,7 @@ public class LuaTextManager : TextManager {
 
     public void NextLine() {
         CheckExists();
-        if (AllLinesComplete()) {
+        if (AllLinesComplete() || currentLine + 1 == LineCount()) {
             if (bubble)
                 containerBubble.SetActive(false);
             DestroyText();
