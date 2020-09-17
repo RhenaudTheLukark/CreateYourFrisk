@@ -173,11 +173,10 @@ public class LuaSpriteController {
     public string loopmode {
         get { return loop.ToString(); }
         set {
-            try {
-                loop = (KeyframeCollection.LoopMode)Enum.Parse(typeof(KeyframeCollection.LoopMode), value.ToUpper(), true);
-                if (keyframes != null)
-                    keyframes.SetLoop((KeyframeCollection.LoopMode)Enum.Parse(typeof(KeyframeCollection.LoopMode), value.ToUpper(), true));
-            } catch { throw new CYFException("sprite.loopmode can only have either \"ONESHOT\", \"ONESHOTEMPTY\" or \"LOOP\", but you entered \"" + value.ToUpper() + "\"."); }
+            try { loop = (KeyframeCollection.LoopMode)Enum.Parse(typeof(KeyframeCollection.LoopMode), value.ToUpper(), true); }
+            catch { throw new CYFException("sprite.loopmode can only be either \"ONESHOT\", \"ONESHOTEMPTY\" or \"LOOP\", but you entered \"" + value.ToUpper() + "\"."); }
+            if (keyframes != null)
+                keyframes.SetLoop(loop);
         }
     }
 
