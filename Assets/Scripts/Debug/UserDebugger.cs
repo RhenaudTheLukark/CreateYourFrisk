@@ -21,6 +21,8 @@ public class UserDebugger : MonoBehaviour{
 
     public void Start() {
         instance = this;
+		MoveTo(100, 100);
+		Move(100, 0);
         if (originalText == null)
             originalText = text.text;
         text.text = originalText;
@@ -60,4 +62,13 @@ public class UserDebugger : MonoBehaviour{
             text.text += "\n" + dbgLine;
         }
     }
+	
+	public static void MoveTo(float x, float y) {
+		instance.GetComponent<RectTransform>().anchoredPosition = new Vector2(x - 320, y - 240);
+	}
+	
+	public static void Move(float x, float y) {
+		var pos = instance.GetComponent<RectTransform>().anchoredPosition;
+		instance.GetComponent<RectTransform>().anchoredPosition = new Vector2(pos.x + x, pos.y + y);
+	}
 }

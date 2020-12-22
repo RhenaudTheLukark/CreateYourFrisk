@@ -174,6 +174,14 @@ public class Misc {
             }
         }
     }
+	
+	public static void MoveDebugger(float x, float y) {
+		UserDebugger.Move(x, y);
+	}
+	
+	public static void MoveDebuggerTo(float x, float y) {
+		UserDebugger.MoveTo(x, y);
+	}
 
     #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
         [DllImport("user32.dll")]
