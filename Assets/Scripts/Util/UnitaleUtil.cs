@@ -446,8 +446,8 @@ public static class UnitaleUtil {
                           fullValX = bulletWidth  / 2f + Mathf.Cos(angle) * DFromCenter / Mathf.Abs(scale.x),
                           fullValY = bulletHeight / 2f + Mathf.Sin(angle) * DFromCenter / Mathf.Abs(scale.y);
                     // Get a rounded value for table checks
-                    roundedValX = Mathf.RoundToInt(fullValX);
-                    roundedValY = Mathf.RoundToInt(fullValY);
+                    roundedValX = Mathf.FloorToInt(fullValX);
+                    roundedValY = Mathf.FloorToInt(fullValY);
 
                     // Compute the starting point for (0, 0)
                     if (currentWidth == 0 && currentHeight == 0) start = new Vector2(fullValX, fullValY);
@@ -457,12 +457,12 @@ public static class UnitaleUtil {
                     else                                         yDiff = new Vector2(fullValX - start.x, fullValY - start.y);
                 // Use the distance and starting point we computed above to compute where the current pixel is
                 } else {
-                    roundedValX = Mathf.RoundToInt(start.x + xDiff.x * currentWidth + yDiff.x * currentHeight);
-                    roundedValY = Mathf.RoundToInt(start.y + xDiff.y * currentWidth + yDiff.y * currentHeight);
+                    roundedValX = Mathf.FloorToInt(start.x + xDiff.x * currentWidth + yDiff.x * currentHeight);
+                    roundedValY = Mathf.FloorToInt(start.y + xDiff.y * currentWidth + yDiff.y * currentHeight);
                 }
 
                 // Don't check the computed bullet's pixel if it doesn't exist, duh
-                int pixelIndex = Mathf.RoundToInt(roundedValY * bulletWidth + roundedValX);
+                int pixelIndex = Mathf.FloorToInt(roundedValY * bulletWidth + roundedValX);
                 if (pixelIndex < 0 || pixelIndex >= bulletMatrix.Length)
                     continue;
 

@@ -16,6 +16,7 @@ public class LuaProjectile : Projectile {
         if (newSprite == null)
             throw new CYFException("You can't set a projectile's sprite to nil!");
         SpriteUtil.SwapSpriteFromFile(this, newSprite);
+        if (!UnitaleUtil.IsOverworld) name = newSprite;
     }
 
     //public override void OnUpdate() {

@@ -42,7 +42,7 @@ it's w3c valid, at least
                     <li><a href="variables.html">Special Variables</a></li>
                     <li><a href="terms.html">Terminology</a></li>
                 <li class="li-header">API</li>
-                    <li><a href="api-text.html">Text commands</a></li>
+                    <li class="new066"><a href="api-text.html">Text commands</a></li>
                     <li class="new"><a href="api-events.html">Game events</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                     <li class="li-indent">Functions &amp; Objects:</li>
@@ -53,15 +53,15 @@ it's w3c valid, at least
                         <li class="li-indent"><a href="api-functions-newaudio.html"><span class="CYF"></span> The NewAudio Object</a></li>
                         <li class="li-indent"><a href="api-functions-input.html">The Input Object</a></li>
                         <li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
-                        <li class="li-indent"><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
+                        <li class="new066 li-indent"><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
                         <li class="li-indent new"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
                         <li class="li-indent new"><a href="api-functions-discord.html"><span class="CYF"></span> The Discord Object</a></li>
                         <li class="li-indent"><a href="api-functions-waves.html">The Arena Object</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
-                    <li><a href="api-projectile.html">Projectile management</a></li>
+                    <li class="new066"><a href="api-projectile.html">Projectile management</a></li>
                     <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
-                    <li class="active new" style="margin-left:5px;">&gt; Sprites &amp; Animation &lt;</li>
-                    <li class="new"><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
+                    <li class="new066 active" style="margin-left:5px;">&gt; Sprites &amp; Animation &lt;</li>
+                    <li class="new066"><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                 <li class="li-header"></span><span class="CYF"></span> <span class="new"></span>Shaders</li>
                     <li><a href="shaders.html">Introduction</a></li>
@@ -308,7 +308,6 @@ it's w3c valid, at least
             <p>
                 <span class="function"><span class="CYF"></span> <span class="number"></span> sprite.totaltime (read-only)</span></span>
                 If a sprite has an active animation running, this represents the total amount of time its animation will last for.<br>
-                Can both be read and set.<br>
                 Note that this is based on the speed the animation runs at, and will always be equal to
                 (<span class="term">sprite.animationspeed</span> * the number of frames in a sprite's animation).
                 <br><br>
@@ -389,6 +388,10 @@ it's w3c valid, at least
                 Default value: <span class="term">"BelowArena"</span> (or <span class="term">"Default"</span> in the Overworld)
                 <br><br>
                 Overworld Event sprites and Text Objects letter sprites can not have their layers set.
+                <br><br>
+                <span class="new066"></span>Note: It is common practice to use <span class="term">sprite.layer</span> to deparent
+                a sprite if you need to do so. Setting it again will parent the sprite to the given layer, removing its previous
+                parenting altogether.
             </p><br>
 
             <p>

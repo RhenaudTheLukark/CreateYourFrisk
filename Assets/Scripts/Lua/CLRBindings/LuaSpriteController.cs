@@ -28,7 +28,7 @@ public class LuaSpriteController {
     private KeyframeCollection.LoopMode loop = KeyframeCollection.LoopMode.LOOP;
     [MoonSharpHidden] public static MoonSharp.Interpreter.Interop.IUserDataDescriptor data = UserData.GetDescriptorForType<LuaSpriteController>(true);
 
-    //The name of the sprite
+    // The name of the sprite
     public string spritename {
         get { return img.GetComponent<Image>() ? img.GetComponent<Image>().sprite.name : img.GetComponent<SpriteRenderer>().sprite.name; }
     }
@@ -173,11 +173,10 @@ public class LuaSpriteController {
     public string loopmode {
         get { return loop.ToString(); }
         set {
-            try {
-                loop = (KeyframeCollection.LoopMode)Enum.Parse(typeof(KeyframeCollection.LoopMode), value.ToUpper(), true);
-                if (keyframes != null)
-                    keyframes.SetLoop((KeyframeCollection.LoopMode)Enum.Parse(typeof(KeyframeCollection.LoopMode), value.ToUpper(), true));
-            } catch { throw new CYFException("sprite.loopmode can only have either \"ONESHOT\", \"ONESHOTEMPTY\" or \"LOOP\", but you entered \"" + value.ToUpper() + "\"."); }
+            try { loop = (KeyframeCollection.LoopMode)Enum.Parse(typeof(KeyframeCollection.LoopMode), value.ToUpper(), true); }
+            catch { throw new CYFException("sprite.loopmode can only be either \"ONESHOT\", \"ONESHOTEMPTY\" or \"LOOP\", but you entered \"" + value.ToUpper() + "\"."); }
+            if (keyframes != null)
+                keyframes.SetLoop(loop);
         }
     }
 
@@ -371,6 +370,7 @@ public class LuaSpriteController {
         if (img.GetComponent<Image>()) {
             Image imgtemp = img.GetComponent<Image>();
             SpriteUtil.SwapSpriteFromFile(imgtemp, name);
+            if (!UnitaleUtil.IsOverworld) imgtemp.name = name;
             originalSprite = imgtemp.sprite;
             nativeSizeDelta = new Vector2(imgtemp.sprite.texture.width, imgtemp.sprite.texture.height);
         } else {
@@ -477,7 +477,7 @@ public class LuaSpriteController {
             if (SpriteRegistry.Get(spriteNames[i]) == null)
                 throw new CYFException("sprite.SetAnimation: Failed to load sprite with the name \"" + spriteNames[i] + "\". Are you sure it is spelled correctly?");
 
-            kfArray[i] = new Keyframe(SpriteRegistry.Get(spriteNames[i]), spriteNames[i].ToLower());
+            kfArray[i] = new Keyframe(SpriteRegistry.Get(spriteNames[i]), spriteNames[i]);
         }
         if (keyframes == null) {
             if (img.GetComponent<KeyframeCollection>()) {
@@ -704,14 +704,44 @@ public class LuaSpriteController {
         if (throwError)
             throw new CYFException("sprite.Remove(): You can't remove a " + tag + "'s sprite!");
 
-        if (tag == "projectile") {
-            Projectile[] pcs = img.GetComponentsInChildren<Projectile>();
-            for (int i = 1; i < pcs.Length; i++)
-                pcs[i].ctrl.Remove();
-        }
+        RemoveChildren(img);
         StopAnimation();
         Object.Destroy(GetTarget().gameObject);
         _img = null;
+    }
+
+    [MoonSharpHidden] public static void RemoveChildren(GameObject go) {
+        // Delete all children, must they be bullets or sprites
+        List<Transform> spritesToDelete = new List<Transform> { go.transform };
+
+        while (spritesToDelete.Count > 0) {
+            Transform t = spritesToDelete[spritesToDelete.Count - 1];
+            Transform[] pcs = UnitaleUtil.GetFirstChildren(t, true);
+
+            bool needToHandleNewTransform = false;
+            for (int i = 0; i < pcs.Length; i++) {
+                // Bullet to delete recursively
+                if (pcs[i].GetComponent<Projectile>()) {
+                    pcs[i].GetComponent<Projectile>().ctrl.Remove();
+                    // Sprite to add to the sprite queue
+                } else {
+                    spritesToDelete.Add(pcs[i]);
+                    pcs[i].SetParent(t.parent);
+                    needToHandleNewTransform = true;
+                    break;
+                }
+            }
+
+            if (needToHandleNewTransform) continue;
+
+            // Actually delete the sprite if its not the current one
+            if (!t.GetComponent<Projectile>() && spritesToDelete.Count > 1) {
+                if      (t.GetComponent<Image>())          new LuaSpriteController(t.GetComponent<Image>()).Remove();
+                else if (t.GetComponent<SpriteRenderer>()) new LuaSpriteController(t.GetComponent<SpriteRenderer>()).Remove();
+            }
+
+            spritesToDelete.RemoveAt(spritesToDelete.Count - 1);
+        }
     }
 
     public void Dust(bool playDust = true, bool removeObject = false) {
@@ -736,9 +766,10 @@ public class LuaSpriteController {
             return;
         Keyframe k = keyframes.getCurrent();
         Sprite s;
-        if (k != null)
+        if (k != null) {
             s = k.sprite;
-        else {
+            if (!UnitaleUtil.IsOverworld) img.name = k.name;
+        } else {
             StopAnimation();
             return;
         }
