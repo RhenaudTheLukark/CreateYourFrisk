@@ -21,7 +21,6 @@ public class UserDebugger : MonoBehaviour{
 
     public void Start() {
         instance = this;
-        print(x + " || " + y);
         saved_x = x;
         saved_y = y;
         if (originalText == null)
@@ -102,7 +101,6 @@ public class UserDebugger : MonoBehaviour{
     public static void MoveTo(float new_x, float new_y) {
         x = new_x;
         y = new_y;
-        print(x + " || " + y);
     }
     
     public static void Move(float new_x, float new_y) {

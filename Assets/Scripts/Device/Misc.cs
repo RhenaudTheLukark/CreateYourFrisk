@@ -179,38 +179,67 @@ public class Misc {
     }
     
     public static float debuggerX {
-        get { return UserDebugger.x; }
-        set { UserDebugger.x = value; }
+        get {
+            if (UserDebugger.instance)
+                return UserDebugger.x;
+            throw new CYFException("Misc.debuggerX cannot be used outside of a function.");
+        }
+        set {
+            if (UserDebugger.instance)
+                UserDebugger.x = value;
+            throw new CYFException("Misc.debuggerX cannot be used outside of a function.");
+        }
     }
     
     public static float debuggerY {
-        get { return UserDebugger.y; }
-        set { UserDebugger.y = value; }
+        get {
+            if (UserDebugger.instance) return UserDebugger.y;
+            else throw new CYFException("Misc.debuggerY cannot be used outside of a function.");
+        }
+        set {
+            if (UserDebugger.instance) UserDebugger.y = value;
+            else throw new CYFException("Misc.debuggerY cannot be used outside of a function.");
+        }
     }
     
     public static float debuggerAbsX {
-        get { return UserDebugger.absx; }
-        set { UserDebugger.absx = value; }
+        get {
+            if (UserDebugger.instance) return UserDebugger.absx;
+            else throw new CYFException("Misc.debuggerAbsX cannot be used outside of a function.");
+        }
+        set {
+            if (UserDebugger.instance) UserDebugger.absx = value;
+            else throw new CYFException("Misc.debuggerAbsX cannot be used outside of a function.");
+        }
     }
     
     public static float debuggerAbsY {
-        get { return UserDebugger.absy; }
-        set { UserDebugger.absy = value; }
+        get {
+            if (UserDebugger.instance) return UserDebugger.absy;
+            else throw new CYFException("Misc.debuggerAbsY cannot be used outside of a function.");
+        }
+        set {
+            if (UserDebugger.instance) UserDebugger.absy = value;
+            else throw new CYFException("Misc.debuggerAbsY cannot be used outside of a function.");
+        }
     }
     
     // Moves the debugger relative to its current position.
     public static void MoveDebugger(float x, float y) {
-        UserDebugger.Move(x, y);
+        if (UserDebugger.instance) UserDebugger.Move(x, y);
+        else throw new CYFException("Misc.MoveDebugger cannot be used outside of a function.");
     }
     
-    // Moves the debugger relative to the camera's position. The default position is (620, 480). The debugger's width is 320 and its height is 140.
+    // Moves the debugger relative to the camera's position. The default position is (300, 480). The debugger's width is 320 and its height is 140. The debugger's pivot is the top-left corner.
     public static void MoveDebuggerTo(float x, float y) {
-        UserDebugger.MoveTo(x, y);
+        if (UserDebugger.instance) UserDebugger.MoveTo(x, y);
+        else throw new CYFException("Misc.MoveDebuggerTo cannot be used outside of a function.");
     }
     
     // Moves the debugger relative to the game's (0, 0) position.
     public static void MoveDebuggerToAbs(float x, float y) {
-        UserDebugger.MoveToAbs(x, y);
+        if (UserDebugger.instance) UserDebugger.MoveToAbs(x, y);
+        else throw new CYFException("Misc.MoveDebuggerToAbs cannot be used outside of a function.");
     }
 
     #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
