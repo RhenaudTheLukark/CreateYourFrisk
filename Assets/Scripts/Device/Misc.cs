@@ -64,8 +64,6 @@ public class Misc {
             else {
                 Camera.main.transform.position = new Vector3(value + 320, Camera.main.transform.position.y, Camera.main.transform.position.z);
                 if (UserDebugger.instance && isDebuggerAttachedToCamera)
-                    //Debug.Log("Placeholder.");
-                    //UserDebugger.instance.transform.position = new Vector3(value + 620, UserDebugger.instance.transform.position.y, UserDebugger.instance.transform.position.z);
                     UserDebugger.absx = value + UserDebugger.saved_x;
             }
         }
@@ -79,7 +77,7 @@ public class Misc {
             else {
                 Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, value + 240, Camera.main.transform.position.z);
                 if (UserDebugger.instance && isDebuggerAttachedToCamera)
-                    UserDebugger.instance.transform.position = new Vector3(UserDebugger.instance.transform.position.x, value + 480, UserDebugger.instance.transform.position.z);
+                    UserDebugger.absy = value + UserDebugger.saved_y;
             }
         }
     }
