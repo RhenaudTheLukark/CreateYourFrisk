@@ -254,7 +254,6 @@ MonoBehaviour:
   SetNativeSize: 0
   SpritePath: UI/spr_hpname_0
   Loop: 0
-  SoundPath: 
   done: 0
 --- !u!1 &141548671
 GameObject:
@@ -505,7 +504,6 @@ MonoBehaviour:
   SetNativeSize: 0
   SpritePath: UI/Buttons/itembt_0
   Loop: 0
-  SoundPath: 
   done: 0
 --- !u!1 &610348797
 GameObject:
@@ -717,7 +715,6 @@ MonoBehaviour:
   SetNativeSize: 0
   SpritePath: UI/Battle/spr_target_0
   Loop: 0
-  SoundPath: 
   done: 0
 --- !u!1 &639286007
 GameObject:
@@ -1061,20 +1058,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cd5272475a518749a954d77524c56f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  textmgr: {fileID: 0}
-  forcedaction: 4
+  mainTextManager: {fileID: 0}
+  forcedAction: 4
   psContainer: {fileID: 0}
   fightUI: {fileID: 0}
-  monDialogues: []
+  monsterDialogues: []
   exp: 0
   gold: 0
   state: 0
-  returnstate: 0
-  psList: 
   readyToNextLine: 
   needOnDeath: 0
-  stated: 0
-  battleDialogued: 0
+  stateSwitched: 0
+  battleDialogueStarted: 0
   frozenState: 0
   frozenTimestamp: 0
 --- !u!1 &669874877
@@ -1370,7 +1365,6 @@ MonoBehaviour:
   SetNativeSize: 0
   SpritePath: UI/Buttons/actbt_0
   Loop: 0
-  SoundPath: 
   done: 0
 --- !u!1 &1003495342
 GameObject:
@@ -1599,7 +1593,6 @@ MonoBehaviour:
   SetNativeSize: 0
   SpritePath: UI/Buttons/mercybt_0
   Loop: 0
-  SoundPath: 
   done: 0
 --- !u!1 &1304618329
 GameObject:
@@ -1732,7 +1725,6 @@ MonoBehaviour:
   SetNativeSize: 0
   SpritePath: UI/Battle/spr_targetchoice_0
   Loop: 0
-  SoundPath: 
   done: 0
 --- !u!114 &1306673878
 MonoBehaviour:
@@ -2284,7 +2276,6 @@ MonoBehaviour:
   SetNativeSize: 1
   SpritePath: ut-heart
   Loop: 0
-  SoundPath: 
   done: 0
 --- !u!114 &1509689750
 MonoBehaviour:
@@ -2449,7 +2440,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22465858, guid: 1ccc044534d366d4abebb5047dfda396, type: 2}
       propertyPath: m_AnchoredPosition.x
-      value: -20
+      value: -340
       objectReference: {fileID: 0}
     - target: {fileID: 22465858, guid: 1ccc044534d366d4abebb5047dfda396, type: 2}
       propertyPath: m_AnchoredPosition.y
@@ -2481,7 +2472,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22465858, guid: 1ccc044534d366d4abebb5047dfda396, type: 2}
       propertyPath: m_Pivot.x
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 22465858, guid: 1ccc044534d366d4abebb5047dfda396, type: 2}
       propertyPath: m_Pivot.y
@@ -3003,7 +2994,6 @@ MonoBehaviour:
   SetNativeSize: 0
   SpritePath: UI/Buttons/fightbt_0
   Loop: 0
-  SoundPath: 
   done: 0
 --- !u!1 &1776304109
 GameObject:
