@@ -53,6 +53,9 @@ public class Misc {
             ScreenResolution.SetFullScreen(true, 0);
     }
 
+    // Whether or not should the camera's movement affect the debugger's movement. (Think of it as . . . parenting.)
+    public static bool isDebuggerAttachedToCamera = true;
+
     public static float cameraX {
         get { return Camera.main.transform.position.x - 320; }
         set {
@@ -60,8 +63,10 @@ public class Misc {
                 PlayerOverworld.instance.cameraShift.x += value - (Camera.main.transform.position.x - 320);
             else {
                 Camera.main.transform.position = new Vector3(value + 320, Camera.main.transform.position.y, Camera.main.transform.position.z);
-                if (UserDebugger.instance)
-                    UserDebugger.instance.transform.position = new Vector3(value + 620, UserDebugger.instance.transform.position.y, UserDebugger.instance.transform.position.z);
+                if (UserDebugger.instance && isDebuggerAttachedToCamera)
+                    //Debug.Log("Placeholder.");
+                    //UserDebugger.instance.transform.position = new Vector3(value + 620, UserDebugger.instance.transform.position.y, UserDebugger.instance.transform.position.z);
+                    UserDebugger.absx = value + UserDebugger.saved_x;
             }
         }
     }
@@ -73,7 +78,7 @@ public class Misc {
                 PlayerOverworld.instance.cameraShift.y += value - (Camera.main.transform.position.y - 240);
             else {
                 Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, value + 240, Camera.main.transform.position.z);
-                if (UserDebugger.instance)
+                if (UserDebugger.instance && isDebuggerAttachedToCamera)
                     UserDebugger.instance.transform.position = new Vector3(UserDebugger.instance.transform.position.x, value + 480, UserDebugger.instance.transform.position.z);
             }
         }
@@ -174,14 +179,41 @@ public class Misc {
             }
         }
     }
-	
-	public static void MoveDebugger(float x, float y) {
-		UserDebugger.Move(x, y);
-	}
-	
-	public static void MoveDebuggerTo(float x, float y) {
-		UserDebugger.MoveTo(x, y);
-	}
+    
+    public static float debuggerX {
+        get { return UserDebugger.x; }
+        set { UserDebugger.x = value; }
+    }
+    
+    public static float debuggerY {
+        get { return UserDebugger.y; }
+        set { UserDebugger.y = value; }
+    }
+    
+    public static float debuggerAbsX {
+        get { return UserDebugger.absx; }
+        set { UserDebugger.absx = value; }
+    }
+    
+    public static float debuggerAbsY {
+        get { return UserDebugger.absy; }
+        set { UserDebugger.absy = value; }
+    }
+    
+    // Moves the debugger relative to its current position.
+    public static void MoveDebugger(float x, float y) {
+        UserDebugger.Move(x, y);
+    }
+    
+    // Moves the debugger relative to the camera's position. The default position is (620, 480). The debugger's width is 320 and its height is 140.
+    public static void MoveDebuggerTo(float x, float y) {
+        UserDebugger.MoveTo(x, y);
+    }
+    
+    // Moves the debugger relative to the game's (0, 0) position.
+    public static void MoveDebuggerToAbs(float x, float y) {
+        UserDebugger.MoveToAbs(x, y);
+    }
 
     #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
         [DllImport("user32.dll")]
