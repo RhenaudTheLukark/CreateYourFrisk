@@ -53,6 +53,9 @@ public class Misc {
             ScreenResolution.SetFullScreen(true, 0);
     }
 
+    // Whether or not should the camera's movement affect the debugger's movement. (Think of it as . . . parenting.)
+    public static bool isDebuggerAttachedToCamera = true;
+
     public static float cameraX {
         get { return Camera.main.transform.position.x - 320; }
         set {
@@ -60,8 +63,8 @@ public class Misc {
                 PlayerOverworld.instance.cameraShift.x += value - (Camera.main.transform.position.x - 320);
             else {
                 Camera.main.transform.position = new Vector3(value + 320, Camera.main.transform.position.y, Camera.main.transform.position.z);
-                if (UserDebugger.instance)
-                    UserDebugger.instance.transform.position = new Vector3(value + 620, UserDebugger.instance.transform.position.y, UserDebugger.instance.transform.position.z);
+                if (UserDebugger.instance && isDebuggerAttachedToCamera)
+                    UserDebugger.absx = value + UserDebugger.saved_x;
             }
         }
     }
@@ -73,8 +76,8 @@ public class Misc {
                 PlayerOverworld.instance.cameraShift.y += value - (Camera.main.transform.position.y - 240);
             else {
                 Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, value + 240, Camera.main.transform.position.z);
-                if (UserDebugger.instance)
-                    UserDebugger.instance.transform.position = new Vector3(UserDebugger.instance.transform.position.x, value + 480, UserDebugger.instance.transform.position.z);
+                if (UserDebugger.instance && isDebuggerAttachedToCamera)
+                    UserDebugger.absy = value + UserDebugger.saved_y;
             }
         }
     }
@@ -173,6 +176,70 @@ public class Misc {
                 default:                            return "Mac";
             }
         }
+    }
+    
+    public static float debuggerX {
+        get {
+            if (UserDebugger.instance)
+                return UserDebugger.x;
+            throw new CYFException("Misc.debuggerX cannot be used outside of a function.");
+        }
+        set {
+            if (UserDebugger.instance)
+                UserDebugger.x = value;
+            throw new CYFException("Misc.debuggerX cannot be used outside of a function.");
+        }
+    }
+    
+    public static float debuggerY {
+        get {
+            if (UserDebugger.instance) return UserDebugger.y;
+            else throw new CYFException("Misc.debuggerY cannot be used outside of a function.");
+        }
+        set {
+            if (UserDebugger.instance) UserDebugger.y = value;
+            else throw new CYFException("Misc.debuggerY cannot be used outside of a function.");
+        }
+    }
+    
+    public static float debuggerAbsX {
+        get {
+            if (UserDebugger.instance) return UserDebugger.absx;
+            else throw new CYFException("Misc.debuggerAbsX cannot be used outside of a function.");
+        }
+        set {
+            if (UserDebugger.instance) UserDebugger.absx = value;
+            else throw new CYFException("Misc.debuggerAbsX cannot be used outside of a function.");
+        }
+    }
+    
+    public static float debuggerAbsY {
+        get {
+            if (UserDebugger.instance) return UserDebugger.absy;
+            else throw new CYFException("Misc.debuggerAbsY cannot be used outside of a function.");
+        }
+        set {
+            if (UserDebugger.instance) UserDebugger.absy = value;
+            else throw new CYFException("Misc.debuggerAbsY cannot be used outside of a function.");
+        }
+    }
+    
+    // Moves the debugger relative to its current position.
+    public static void MoveDebugger(float x, float y) {
+        if (UserDebugger.instance) UserDebugger.Move(x, y);
+        else throw new CYFException("Misc.MoveDebugger cannot be used outside of a function.");
+    }
+    
+    // Moves the debugger relative to the camera's position. The default position is (300, 480). The debugger's width is 320 and its height is 140. The debugger's pivot is the top-left corner.
+    public static void MoveDebuggerTo(float x, float y) {
+        if (UserDebugger.instance) UserDebugger.MoveTo(x, y);
+        else throw new CYFException("Misc.MoveDebuggerTo cannot be used outside of a function.");
+    }
+    
+    // Moves the debugger relative to the game's (0, 0) position.
+    public static void MoveDebuggerToAbs(float x, float y) {
+        if (UserDebugger.instance) UserDebugger.MoveToAbs(x, y);
+        else throw new CYFException("Misc.MoveDebuggerToAbs cannot be used outside of a function.");
     }
 
     #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
