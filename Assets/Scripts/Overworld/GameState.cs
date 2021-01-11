@@ -104,9 +104,10 @@ public class GameState {
                 DynValue dv;
                 LuaScriptBinder.GetSavedDictionary().TryGetValue(key, out dv);
                 switch (dv.Type) {
-                    case DataType.Number:  playerVariablesNum.Add(key, dv.Number);  break;
-                    case DataType.String:  playerVariablesStr.Add(key, dv.String);  break;
+                    case DataType.Number:  playerVariablesNum.Add(key, dv.Number);   break;
+                    case DataType.String:  playerVariablesStr.Add(key, dv.String);   break;
                     case DataType.Boolean: playerVariablesBool.Add(key, dv.Boolean); break;
+                    case DataType.Nil:     LuaScriptBinder.Remove(key);              break;
                     default:
                         UnitaleUtil.WriteInLogAndDebugger("The saved value \"" + key + "\" is erroneous because a " + dv.Type.ToString().ToLower() + " can't be saved. Deleting it now.");
                         LuaScriptBinder.Remove(key);

@@ -24,6 +24,7 @@ using MoonSharp.Interpreter;
                         case DataType.Number:  AlMightyVariablesNum.Add(key, dv.Number);   break;
                         case DataType.String:  AlMightyVariablesStr.Add(key, dv.String);   break;
                         case DataType.Boolean: AlMightyVariablesBool.Add(key, dv.Boolean); break;
+                        case DataType.Nil:     LuaScriptBinder.Remove(key);                break;
                         default:
                             UnitaleUtil.WriteInLogAndDebugger("The almighty global \"" + key + "\" is erroneous because a " + dv.Type.ToString().ToLower() + " can't be saved. Deleting it now.");
                             LuaScriptBinder.RemoveAlMighty(key);

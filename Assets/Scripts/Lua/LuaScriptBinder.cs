@@ -158,7 +158,7 @@ public static class LuaScriptBinder {
             throw new CYFException("SetRealGlobal: The first argument (the index) is nil.\n\nSee the documentation for proper usage.");
 
         if (value.Type != DataType.Number && value.Type != DataType.String && value.Type != DataType.Boolean && value.Type != DataType.Nil) {
-            UnitaleUtil.WriteInLogAndDebugger("SetRealGlobal: The value \"" + key + "\" can't be added to the savefile because it is a " + value.Type.ToString().ToLower() + ", which can't be saved.");
+            UnitaleUtil.WriteInLogAndDebugger("SetRealGlobal: The value \"" + key + "\" can't be saved in the savefile because it is a " + value.Type.ToString().ToLower() + ".");
             return;
         }
 
@@ -200,7 +200,7 @@ public static class LuaScriptBinder {
             throw new CYFException("SetAlMightyGlobal: The first argument (the index) is nil.\n\nSee the documentation for proper usage.");
 
         if (value.Type != DataType.Number && value.Type != DataType.String && value.Type != DataType.Boolean && value.Type != DataType.Nil) {
-            UnitaleUtil.WriteInLogAndDebugger("SetAlMightyGlobal: The value \"" + key + "\" can't be added to the almighties because it is a " + value.Type.ToString().ToLower() + ", which can't be saved.");
+            UnitaleUtil.WriteInLogAndDebugger("SetAlMightyGlobal: The value \"" + key + "\" can't be saved in the almighties because it is a " + value.Type.ToString().ToLower() + ".");
             return;
         }
 
