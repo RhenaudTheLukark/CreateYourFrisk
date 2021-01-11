@@ -387,7 +387,7 @@ public class LuaTextManager : TextManager {
         try { SetTextQueue(msgs); }
         catch { /* ignored */ }
 
-        if (text.Table.Length != 0 && bubble)
+        if (text.Table.Length != 0)
             ResizeBubble();
     }
 
@@ -406,8 +406,7 @@ public class LuaTextManager : TextManager {
 
         currentLine = -1;
         Advance();
-        if (bubble)
-            ResizeBubble();
+        ResizeBubble();
     }
 
     public void AddText(DynValue text) {
@@ -559,8 +558,7 @@ public class LuaTextManager : TextManager {
             autoDestroyed = true;
         } else {
             ShowLine(++currentLine);
-            if (bubble)
-                ResizeBubble();
+            ResizeBubble();
         }
     }
 
