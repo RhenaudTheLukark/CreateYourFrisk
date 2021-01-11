@@ -148,13 +148,9 @@ public static class LuaScriptBinder {
     public static DynValue Get(Script script, string key) {
         if (key == null)
             throw new CYFException("GetRealGlobal: The first argument (the index) is nil.\n\nSee the documentation for proper usage.");
-        if (!dict.ContainsKey(key)) return null;
-        // Due to how MoonSharp tables require an owner, we have to create an entirely new table if we want to work with it in other scripts.
-        if (dict[key].Type != DataType.Table) return dict[key];
-        DynValue t = DynValue.NewTable(script);
-        foreach (TablePair pair in dict[key].Table.Pairs)
-            t.Table.Set(pair.Key, pair.Value);
-        return t;
+        if (!dict.ContainsKey(key))
+            return null;
+        return dict[key];
     }
 
     public static void Set(Script script, string key, DynValue value) {
@@ -193,13 +189,9 @@ public static class LuaScriptBinder {
     public static DynValue GetAlMighty(Script script, string key) {
         if (key == null)
             throw new CYFException("GetAlMightyGlobal: The first argument (the index) is nil.\n\nSee the documentation for proper usage.");
-        if (!alMightyDict.ContainsKey(key)) return null;
-        // Due to how MoonSharp tables require an owner, we have to create an entirely new table if we want to work with it in other scripts.
-        if (alMightyDict[key].Type != DataType.Table) return alMightyDict[key];
-        DynValue t = DynValue.NewTable(script);
-        foreach (TablePair pair in alMightyDict[key].Table.Pairs)
-            t.Table.Set(pair.Key, pair.Value);
-        return t;
+        if (!alMightyDict.ContainsKey(key))
+            return null;
+        return alMightyDict[key];
     }
 
     public static void SetAlMighty(Script script, string key, DynValue value) { SetAlMighty(script, key, value, true); }
