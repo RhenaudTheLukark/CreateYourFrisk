@@ -902,7 +902,7 @@ public class UIController : MonoBehaviour {
                                     ActionDialogResult(new TextMessage(texts[meCry], true, false));
                                 else if (meCry == 14)
                                     ActionDialogResult(new TextMessage[] {
-                                        new RegularMessage("\"...erase the AlMighty Globals\rin CYF's option menu.\""),
+                                        new RegularMessage("\"...click the BAD SPELING button\rin CYF's option menu.\""),
                                         new RegularMessage("Is that all? Come on, all\rthis time lost for such\ran easy response..."),
                                         new RegularMessage("...Sorry for the wait.\nDo whatever you want now! :D"),
                                         new RegularMessage("But please..."),
