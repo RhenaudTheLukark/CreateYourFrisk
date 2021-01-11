@@ -273,7 +273,7 @@ public class EnemyController : MonoBehaviour {
             if (spriteFile != null)
                 SetSprite(spriteFile);
             else
-                throw new CYFException("missing sprite");
+                throw new CYFException("The monster script " + scriptName + ".lua's sprite value is not a string.");
 
             ui = FindObjectOfType<UIController>();
             if (MaxHP == 0)
