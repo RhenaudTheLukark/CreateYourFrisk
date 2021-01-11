@@ -64,6 +64,7 @@ public static class LuaScriptBinder {
         script.Globals["GetAlMightyGlobal"] = (Func<Script, string, DynValue>)GetAlMighty;
 
         script.Globals["isCYF"] = true;
+        script.Globals["isRetro"] = GlobalControls.retroMode;
         script.Globals["safe"] = ControlPanel.instance.Safe;
         #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
             script.Globals["windows"] = true;
