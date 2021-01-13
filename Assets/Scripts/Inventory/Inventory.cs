@@ -222,7 +222,7 @@ public static class Inventory {
 
         //-----------------------------------------------------------------------------------------------------------------------------------------------------------
 
-        NametoDesc.Add("Stick", "Its bark is worse than\rits bite. ");
+        NametoDesc.Add("Stick", "Its bark is worse than\rits bite.");
         NametoType.Add("Stick", 3);                                                                            NametoPrice.Add("Stick", 50);
 
         NametoDesc.Add("Toy Knife", "Made of plastic. A rarity\rnowadays.");
@@ -264,7 +264,7 @@ public static class Inventory {
         NametoType.Add("Cloudy Glasses", 2);                                                                   NametoPrice.Add("Cloudy Glasses", 35);
 
         NametoDesc.Add("Temmie Armor", "The things you can do with a\rcollege education! Raises ATTACK when\rworn. Recovers HP every other\rturn. INV up slightly.");
-        NametoShortName.Add("Temmie Armor", "Temmie AR");       NametoType.Add("Temmie Armor", 2);             NametoPrice.Add("Temmie Armor", 9999);
+        NametoShortName.Add("Temmie Armor", "Temmie AR");        NametoType.Add("Temmie Armor", 2);            NametoPrice.Add("Temmie Armor", 9999);
 
         NametoDesc.Add("Stained Apron", "Heals 1 HP every other turn.");                                       NametoShortName.Add("Stained Apron", "StainApro");
         NametoType.Add("Stained Apron", 2);                                                                    NametoPrice.Add("Stained Apron", 200);
@@ -302,7 +302,7 @@ public static class Inventory {
                         break;
                     case "Spider Donut":
                         amount = 12;
-                        mess = new[] { new TextMessage("Don't worry,[w:5]spider didn't.[w:10]\nYou recovered 12 HP!", true, false) };
+                        mess = new[] { new TextMessage("Don't worry, [w:5]spider didn't.[w:10]\nYou recovered 12 HP!", true, false) };
                         break;
                     case "Spider Cider":
                         amount = 24;
@@ -334,7 +334,8 @@ public static class Inventory {
                             case 6: sentenceCream = "Is this as sweet as you?" + sentenceCream; break;
                             case 7: sentenceCream = "You're just great!" + sentenceCream; break;
                         }
-                        mess = new[] { new TextMessage(sentenceCream, true, false) }; break;
+                        mess = new[] { new TextMessage(sentenceCream, true, false) };
+                        break;
                     case "Bisicle":
                         amount = 11;
                         replacement = "Unisicle";
@@ -359,8 +360,9 @@ public static class Inventory {
                     case "Sea Tea":
                         amount = 18;
                         mess = new[] { new TextMessage("[sound:SeaTea]You drank the Sea Tea.[w:10]\nYour SPEED boosts![w:10]\nYou recovered 18 HP!", true, false),
-                                                   new TextMessage("[music:pause][waitall:10]...[waitall:1]but for now stats\rdon't change.", true, false),
-                                                   new TextMessage("[noskip][music:unpause][next]", true, false)}; break;
+                                       new TextMessage("[music:pause][waitall:10]...[waitall:1]but for now stats\rdon't change.", true, false),
+                                       new TextMessage("[noskip][music:unpause][next]", true, false) };
+                        break;
                     case "Abandoned Quiche":
                         amount = 34;
                         mess = new[] { new TextMessage("You ate the quiche.[w:10]\nYou recovered 34 HP!", true, false) };
@@ -394,21 +396,21 @@ public static class Inventory {
                         break;
                     case "Instant Noodles":
                         mess = new[] { new TextMessage("You remove the Instant\rNoodles from their\rpackaging.", true, false),
-                                                   new TextMessage("You put some water in\rthe pot and place it\ron the heat.", true, false),
-                                                   new TextMessage("You wait for the water\rto boil...", true, false),
-                                                   new TextMessage("[noskip][music:pause]...[w:30]\n...[w:30]\n...", true, false),
-                                                   new TextMessage("[noskip]It's[w:30] boiling.", true, false),
-                                                   new TextMessage("[noskip]You place the noodles[w:30]\rinto the pot.", true, false),
-                                                   new TextMessage("[noskip]4[w:30] minutes left[w:30] until\rthe noodles[w:30] are finished.", true, false),
-                                                   new TextMessage("[noskip]3[w:30] minutes left[w:30] until\rthe noodles[w:30] are finished.", true, false),
-                                                   new TextMessage("[noskip]2[w:30] minutes left[w:30] until\rthe noodles[w:30] are finished.", true, false),
-                                                   new TextMessage("[noskip]1[w:30] minute left[w:30] until\rthe noodles[w:30] are finished.", true, false),
-                                                   new TextMessage("[noskip]The noodles[w:30] are finished.", true, false),
-                                                   new TextMessage("...they don't taste very\rgood.", true, false),
-                                                   new TextMessage("You add the flavor packet.", true, false),
-                                                   new TextMessage("That's better.", true, false),
-                                                   new TextMessage("Not great,[w:5] but better.", true, false),
-                                                   new TextMessage("[music:unpause]You ate the Instant Noodles.[w:10]\nYou recovered 4 HP!", true, false)};
+                                       new TextMessage("You put some water in\rthe pot and place it\ron the heat.", true, false),
+                                       new TextMessage("You wait for the water\rto boil...", true, false),
+                                       new TextMessage("[noskip][music:pause]...[w:30]\n...[w:30]\n...", true, false),
+                                       new TextMessage("[noskip]It's[w:30] boiling.", true, false),
+                                       new TextMessage("[noskip]You place the noodles[w:30]\rinto the pot.", true, false),
+                                       new TextMessage("[noskip]4[w:30] minutes left[w:30] until\rthe noodles[w:30] are finished.", true, false),
+                                       new TextMessage("[noskip]3[w:30] minutes left[w:30] until\rthe noodles[w:30] are finished.", true, false),
+                                       new TextMessage("[noskip]2[w:30] minutes left[w:30] until\rthe noodles[w:30] are finished.", true, false),
+                                       new TextMessage("[noskip]1[w:30] minute left[w:30] until\rthe noodles[w:30] are finished.", true, false),
+                                       new TextMessage("[noskip]The noodles[w:30] are finished.", true, false),
+                                       new TextMessage("...they don't taste very\rgood.", true, false),
+                                       new TextMessage("You add the flavor packet.", true, false),
+                                       new TextMessage("That's better.", true, false),
+                                       new TextMessage("Not great,[w:5] but better.", true, false),
+                                       new TextMessage("[music:unpause]You ate the Instant Noodles.[w:10]\nYou recovered 4 HP!", true, false) };
                         break;
                     case "Hot Dog...?":
                         amount = 20;
@@ -461,7 +463,7 @@ public static class Inventory {
                         mess = new[] { new TextMessage("Through DETERMINATION,\rthe dream became true.[w:10]\nYou recovered 17 HP!", true, false) };
                         break;
                     default:
-                        UnitaleUtil.Warn("The item doesn't exist in this pool.");
+                        UnitaleUtil.Warn("The item " + name + " doesn't exist in CYF's usable item pool.");
                         break;
                 }
                 if (amount != 0)
@@ -478,7 +480,7 @@ public static class Inventory {
                     case "Empty Gun":     amount = 12; break;
                     case "Worn Dagger":   amount = 15; break;
                     case "Real Knife":    amount = 99; break;
-                    default:              UnitaleUtil.Warn("The item doesn't exist in this pool."); break;
+                    default:              UnitaleUtil.Warn("The item " + name + " doesn't exist in CYF's weapon item pool."); break;
                 }
                 break;
             case 2:
@@ -486,19 +488,35 @@ public static class Inventory {
                     case "Faded Ribbon":   amount = 3;  break;
                     case "Manly Bandanna": amount = 7;  break;
                     case "Old Tutu":       amount = 10; break;
-                    case "Cloudy Glasses": amount = 6;  break;
-                    case "Stained Apron":  amount = 11; break;
+                    case "Temmie Armor":   amount = 20;
+                                           mess = new[] { new TextMessage("You equipped the Temmie Armor.", true, false),
+                                                          new TextMessage("[music:pause][waitall:10]...[waitall:1]but its secondary effects\rare missing.", true, false),
+                                                          new TextMessage("[noskip][music:unpause][next]", true, false)};
+                                           break;
+                    case "Cloudy Glasses": amount = 6;
+                    case "Stained Apron":  amount = 11;
+                                           mess = new[] { new TextMessage("You equipped the Temmie Armor.", true, false),
+                                                          new TextMessage("[music:pause][waitall:10]...[waitall:1]but its regenerative effect\ris missing.", true, false),
+                                                          new TextMessage("[noskip][music:unpause][next]", true, false)};
+                                           break;
                     case "Cowboy Hat":     amount = 12; break;
                     case "Heart Locket":   amount = 15; break;
                     case "The Locket":     amount = 99; break;
-                    default:               UnitaleUtil.Warn("The item doesn't exist in this pool."); break;
+                    default:               UnitaleUtil.Warn("The item " + name + " doesn't exist in CYF's armor item pool."); break;
                 }
                 break;
             default:
                 switch (name) {
-                    case "Testing Dog": mess = new[] { new TextMessage("This dog is testing something.", true, false), new TextMessage("I must leave it alone.", true, false) }; break;
-                    case "Stick":       mess = new[] { new TextMessage("You throw the stick.[w:10]\nNothing happens.", true, false) }; break;
-                    default:            UnitaleUtil.Warn("The item doesn't exist in this pool."); break;
+                    case "Testing Dog":
+                        mess = new[] { new TextMessage("This dog is testing something.", true, false),
+                                       new TextMessage("I must leave it alone.", true, false) };
+                        break;
+                    case "Stick":
+                        mess = new[] { new TextMessage("You throw the stick.[w:10]\nNothing happens.", true, false) };
+                        break;
+                    default:
+                        UnitaleUtil.Warn("The item " + name + " doesn't exist in CYF's miscellaneous item pool.");
+                        break;
                 }
                 break;
         }
@@ -523,14 +541,11 @@ public static class Inventory {
     private static void SetEquip(int ID) {
         string Name = inventory[ID].Name;
         int mode;
-        if (NametoType.ContainsKey(Name))
-            mode = NametoType[Name];
-        else {
-            if (addedItems.Contains(Name))
-                mode = addedItemsTypes[addedItems.IndexOf(Name)];
-            else
-                throw new CYFException("The item \"" + Name + "\" doesn't exist.");
-        }
+
+        if (NametoType.ContainsKey(Name))   mode = NametoType[Name];
+        else if (addedItems.Contains(Name)) mode = addedItemsTypes[addedItems.IndexOf(Name)];
+        else                                throw new CYFException("The item \"" + Name + "\" doesn't exist.");
+
         switch (mode) {
             case 1:
                 PlayerCharacter.instance.WeaponATK = tempAmount;
@@ -549,14 +564,12 @@ public static class Inventory {
         }
     }
 
-    public static void ChangeEquipment(int itemIndex) {
-        SetEquip(itemIndex);
-    }
+    public static void ChangeEquipment(int itemIndex) { SetEquip(itemIndex); }
 
     public static TextMessage[] ChangeEquipment(int ID, TextMessage[] mess) {
         string name = inventory[ID].Name;
         SetEquip(ID);
-        mess = mess.Length == 0 ? new[] { new TextMessage("You equipped " + name + ".", true, false) } : new TextMessage[] { };
+        mess = mess.Length == 0 ? new[] { new TextMessage("You equipped the " + name + ".", true, false) } : new TextMessage[] { };
         return mess;
     }
 
