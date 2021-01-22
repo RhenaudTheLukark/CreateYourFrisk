@@ -467,7 +467,7 @@ public static class Inventory {
                         break;
                 }
                 if (amount != 0)
-                    if (UnitaleUtil.IsOverworld) EventManager.instance.luaPlayerOw.setHP(PlayerController.instance.HP + amount);
+                    if (UnitaleUtil.IsOverworld) EventManager.instance.luaPlayerOw.setHP(PlayerCharacter.instance.HP + amount);
                     else                         PlayerController.instance.Hurt(-amount, 0);
                 break;
             case 1:
