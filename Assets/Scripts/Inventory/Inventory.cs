@@ -493,7 +493,7 @@ public static class Inventory {
                                                           new TextMessage("[music:pause][waitall:10]...[waitall:1]but its secondary effects\rare missing.", true, false),
                                                           new TextMessage("[noskip][music:unpause][next]", true, false)};
                                            break;
-                    case "Cloudy Glasses": amount = 6;
+                    case "Cloudy Glasses": amount = 6;  break;
                     case "Stained Apron":  amount = 11;
                                            mess = new[] { new TextMessage("You equipped the Temmie Armor.", true, false),
                                                           new TextMessage("[music:pause][waitall:10]...[waitall:1]but its regenerative effect\ris missing.", true, false),
