@@ -38,11 +38,16 @@ public class EnemyController : MonoBehaviour {
         HP = newHP;
     }
 
+    private int realPresetDmg = FightUIController.DAMAGE_NOT_SET;
+    public int presetDmg {
+        set { realPresetDmg = value == FightUIController.DAMAGE_NOT_SET ? realPresetDmg : value; }
+        get { return realPresetDmg; }
+    }
+
     internal string scriptName;
     internal ScriptWrapper script;
     internal bool inFight = true; // if false, enemy will no longer be considered as an option in menus and such
     private string lastBubbleName;
-    public int presetDmg = -1826643; // You'll not be able to deal exactly -1 826 643 dmg with this technique.
     public float xFightAnimShift = 0;
     public LuaSpriteController sprite;
     public float bubbleWidth = 0;
@@ -427,4 +432,6 @@ public class EnemyController : MonoBehaviour {
     public void SetBubbleOffset(int x, int y) { offsets[1] = new Vector2(x, y); }
 
     public void SetDamageUIOffset(int x, int y) { offsets[2] = new Vector2(x, y); }
+
+    public void ResetPresetDamage() { realPresetDmg = FightUIController.DAMAGE_NOT_SET; }
 }

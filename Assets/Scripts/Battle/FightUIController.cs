@@ -8,6 +8,8 @@ public class FightUIController : MonoBehaviour {
     public List<FightUI> boundFightUiInstances = new List<FightUI>();
     public List<FightUI> allFightUiInstances = new List<FightUI>();
 
+    public const int DAMAGE_NOT_SET = -478294;
+
     public RectTransform targetRt;
     public int presetDmg = 0;
     public LuaSpriteController line;
@@ -85,52 +87,37 @@ public class FightUIController : MonoBehaviour {
         line.img.GetComponent<Image>().enabled = true;
         borderX = -GetComponent<RectTransform>().rect.width / 2;
     }
-    public void commonQuickInit() {
+
+    public void quickInit(int damage) { quickInit(new[] { damage }); }
+    public void quickInit(int[] damage) {
+        commonInit();
         if (UIController.instance.state == UIController.UIState.ATTACKING) return;
         gameObject.GetComponent<Image>().enabled = false;
         targetRt.gameObject.SetActive(false);
-    }
-
-    public void quickInit(EnemyController target, int damage = -478294) {
-        commonInit();
-        commonQuickInit();
-        LaunchInstance();
-        allFightUiInstances[allFightUiInstances.Count - 1].quickInit(targetIDs[0], target, damage);
-        allFightUiInstances[allFightUiInstances.Count - 1].isCoroutine = true;
-        StopAction(-2, true);
-        allFightUiInstances[allFightUiInstances.Count - 1].StopAction(-2);
-        // damageTextRt.position = target.GetComponent<RectTransform>().position;
-    }
-
-    public void quickMultiInit(float atkMult, int[] damage) {
-        commonInit();
-        commonQuickInit();
-        for (int i = 0; i < targetIDs.Length; i++) {
+        for (int i = 0; i < targetNumber; i++) {
             LaunchInstance();
             allFightUiInstances[allFightUiInstances.Count - 1].quickInit(targetIDs[i], UIController.instance.encounter.EnabledEnemies[targetIDs[i]], damage[i]);
             allFightUiInstances[allFightUiInstances.Count - 1].isCoroutine = true;
         }
-        StopAction(atkMult, true);
+        UIController.PlaySoundSeparate(AudioClipRegistry.GetSound("slice"));
         for (int i = 0; i < targetIDs.Length; i++)
-            allFightUiInstances[allFightUiInstances.Count - 1 - (targetIDs.Length - 1 - i)].StopAction(atkMult);
+            allFightUiInstances[allFightUiInstances.Count - 1 - (targetIDs.Length - 1 - i)].StopAction(2.2f);
     }
 
-    public void StopAction(float atkMult = -2, bool stopCoroutine = false) {
-        if (!stopCoroutine) {
-            if (stopped)
-                return;
-            stopped = true;
-            foreach (FightUI fight in boundFightUiInstances)
-                fight.StopAction(atkMult);
-        }
+    public void StopAction(float atkMult = -2) {
+        if (stopped)
+            return;
+        stopped = true;
+        foreach (FightUI fight in boundFightUiInstances)
+            fight.StopAction(atkMult);
         line.SetAnimation(lineAnim, 1 / 12f);
         UIController.PlaySoundSeparate(AudioClipRegistry.GetSound("slice"));
     }
 
     public int getDamage(EnemyController enemy, float atkMult) {
-        if (enemy.presetDmg != -1826643) {
+        if (enemy.presetDmg != DAMAGE_NOT_SET) {
             int dmg = enemy.presetDmg;
-            enemy.presetDmg = -1826643;
+            enemy.ResetPresetDamage();
             return dmg;
         }
         if (atkMult == -2)
