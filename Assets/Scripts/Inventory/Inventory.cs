@@ -308,7 +308,7 @@ public static class Inventory {
                         break;
                     case "Spider Donut":
                         amount = 12;
-                        mess = new[] { new TextMessage("You ate the Monster Candy.[w:10]\nDon't worry, [w:5]spider didn't." + HPRecoverString(amount), true, false) };
+                        mess = new[] { new TextMessage("You ate the Spider Donut.[w:10]\nDon't worry, [w:5]spider didn't." + HPRecoverString(amount), true, false) };
                         break;
                     case "Spider Cider":
                         amount = 24;
