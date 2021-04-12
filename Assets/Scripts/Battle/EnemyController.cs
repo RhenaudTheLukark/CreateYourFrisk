@@ -269,6 +269,7 @@ public class EnemyController : MonoBehaviour {
             script.Bind("SetDamageUIOffset", (Action<int, int>)SetDamageUIOffset);
             script.Bind("SetSliceAnimOffset", (Action<int, int>)SetSliceAnimOffset);
             script.Bind("State", (Action<Script, string>)UIController.SwitchStateOnString);
+            script.Bind("Remove", (Action)Remove);
             script.SetVar("canmove", DynValue.NewBoolean(false));
             sprite = new LuaSpriteController(GetComponent<Image>());
             script.SetVar("monstersprite", UserData.Create(sprite, LuaSpriteController.data));
@@ -325,6 +326,16 @@ public class EnemyController : MonoBehaviour {
 
     protected void HandleCustomCommand(string command) {
         TryCall("HandleCustomCommand", new[] { DynValue.NewString(command) });
+    }
+
+    public void Remove() {
+        try {
+            SetActive(false);
+            UIController.instance.encounter.enemies.Remove(this);
+            Destroy(gameObject);
+        } catch (MissingReferenceException) {
+            throw new CYFException("Attempt to remove a removed enemy.");
+        }
     }
 
     public void SetSprite(string filename) {

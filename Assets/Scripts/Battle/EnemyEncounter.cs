@@ -11,7 +11,6 @@ public class EnemyEncounter : MonoBehaviour {
     public Vector2[] enemyPositions;
     internal float waveTimer;
     public int turnCount;
-    protected List<GameObject> enemyInstances = new List<GameObject>();
 
     public string EncounterText { get; set; }
     public bool CanRun { get; set; }
@@ -60,7 +59,6 @@ public class EnemyEncounter : MonoBehaviour {
 
         enemyObject.transform.SetParent(gameObject.transform);
         enemyObject.transform.localScale = new Vector3(1, 1, 1); // apparently this was suddenly required or the scale would be (0,0,0)
-        enemyInstances.Add(enemyObject);
 
         EnemyController enemyController = enemyObject.GetComponent<EnemyController>();
         enemyController.scriptName = enemyScript;
