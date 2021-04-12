@@ -248,7 +248,7 @@ public class EnemyController : MonoBehaviour {
         get { return GetComponent<RectTransform>().position.y; }
     }
 
-    private void Start() {
+    public void InitializeEnemy() {
         try {
             string scriptText = ScriptRegistry.Get(ScriptRegistry.MONSTER_PREFIX + scriptName);
             if (scriptText == null) {
