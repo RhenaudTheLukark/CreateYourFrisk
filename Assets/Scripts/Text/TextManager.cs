@@ -871,7 +871,7 @@ public class TextManager : MonoBehaviour {
                 if (uf == null)
                     UnitaleUtil.DisplayLuaError("[font:x] usage", "The font \"" + cmds[1] + "\" doesn't exist.\nYou should check if you made a typo, or if the font really is in your mod.");
                 SetFont(uf);
-                if (GetType() == typeof(LuaTextManager))
+                if (GetType() == typeof(LuaTextManager) && ((LuaTextManager)this).bubble)
                     ((LuaTextManager) this).UpdateBubble();
                 break;
 

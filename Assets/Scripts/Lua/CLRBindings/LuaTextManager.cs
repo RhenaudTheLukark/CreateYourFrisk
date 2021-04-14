@@ -10,7 +10,7 @@ public class LuaTextManager : TextManager {
     private RectTransform speechThing;
     private RectTransform speechThingShadow;
     private DynValue bubbleLastVar = DynValue.NewNil();
-    private bool bubble = true;
+    public bool bubble = true;
     private int framesWait = 60;
     private int countFrames;
     private int _bubbleHeight = -1;
@@ -77,7 +77,7 @@ public class LuaTextManager : TextManager {
         if (!isactive)
             throw new CYFException("Attempt to remove a removed text object.");
         autoDestroyed = true;
-        GameObject.Destroy(this.transform.parent.gameObject);
+        Destroy(transform.parent.gameObject);
     }
 
     // Shortcut to `DestroyText()`
@@ -243,7 +243,7 @@ public class LuaTextManager : TextManager {
         defaultColor = c;
 
         hasColorBeenSet = false;
-        hasAlphaBeenSet = resetAlpha ? false : hasAlphaBeenSet;
+        hasAlphaBeenSet = !resetAlpha && hasAlphaBeenSet;
     }
 
     public void ResetAlpha() {
@@ -387,7 +387,7 @@ public class LuaTextManager : TextManager {
         try { SetTextQueue(msgs); }
         catch { /* ignored */ }
 
-        if (text.Table.Length != 0)
+        if (text.Table.Length != 0 && bubble)
             ResizeBubble();
     }
 
@@ -406,7 +406,8 @@ public class LuaTextManager : TextManager {
 
         currentLine = -1;
         Advance();
-        ResizeBubble();
+        if (bubble)
+            ResizeBubble();
     }
 
     public void AddText(DynValue text) {
@@ -446,13 +447,15 @@ public class LuaTextManager : TextManager {
         SetFont(uf, firstTime);
         if (!firstTime)
             default_charset = uf;
-        UpdateBubble();
+        if (bubble)
+            UpdateBubble();
     }
 
     [MoonSharpHidden] public void UpdateBubble() {
         containerBubble.GetComponent<RectTransform>().localPosition = new Vector2(-12, 24);
         // GetComponent<RectTransform>().localPosition = new Vector2(0, 16);
         GetComponent<RectTransform>().localPosition = new Vector2(0, 0);
+        ResizeBubble();
     }
 
     public void SetEffect(string effect, float intensity = -1) {
@@ -473,6 +476,7 @@ public class LuaTextManager : TextManager {
     public void ShowBubble(string side = null, DynValue position = null) {
         bubble = true;
         containerBubble.SetActive(true);
+        UpdateBubble();
         SetSpeechThingPositionAndSide(side, position);
     }
 
@@ -558,7 +562,8 @@ public class LuaTextManager : TextManager {
             autoDestroyed = true;
         } else {
             ShowLine(++currentLine);
-            ResizeBubble();
+            if (bubble)
+                ResizeBubble();
         }
     }
 
