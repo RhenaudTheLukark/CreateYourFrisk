@@ -616,7 +616,6 @@ public static class UnitaleUtil {
         ScriptWrapper.instances.Clear();
         GlobalControls.isInFight = false;
         GlobalControls.isInShop = false;
-        LuaScriptBinder.scriptlist.Clear();
         LuaScriptBinder.ClearBattleVar();
         LuaScriptBinder.Clear();
         Object.Destroy(GameObject.Find("Main Camera OW"));

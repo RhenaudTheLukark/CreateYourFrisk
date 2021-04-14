@@ -129,21 +129,16 @@ public class UIController : MonoBehaviour {
         //Stop encounter storage for good!
         if (GlobalControls.modDev) {
             ScriptWrapper.instances.Clear();
-            LuaScriptBinder.scriptlist.Clear();
         } else {
-            foreach (EnemyController enemy in instance.encounter.enemies) {
+            foreach (EnemyController enemy in instance.encounter.enemies)
                 ScriptWrapper.instances.Remove(enemy.script);
-                LuaScriptBinder.scriptlist.Remove(enemy.script.script);
-            }
             Table t = EnemyEncounter.script["Wave"].Table;
             foreach (DynValue obj in t.Keys) {
                 try {
                     ScriptWrapper.instances.Remove(((ScriptWrapper)t[obj]));
-                    LuaScriptBinder.scriptlist.Remove(((ScriptWrapper)t[obj]).script);
                 } catch { /* ignored */ }
             }
             ScriptWrapper.instances.Remove(EnemyEncounter.script);
-            LuaScriptBinder.scriptlist.Remove(EnemyEncounter.script.script);
         }
 
         //Properly set "isInFight" to false, as it shouldn't be true anymore

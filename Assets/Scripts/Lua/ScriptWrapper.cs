@@ -21,7 +21,7 @@ public class ScriptWrapper {
         instances.Add(this);
     }
 
-    ~ScriptWrapper() {
+    public void Remove() {
         instances.Remove(this);
     }
 

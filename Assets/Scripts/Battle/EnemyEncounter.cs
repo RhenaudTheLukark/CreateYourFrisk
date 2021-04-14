@@ -30,6 +30,10 @@ public class EnemyEncounter : MonoBehaviour {
         CanRun = true;
     }
 
+    public void OnDestroy() {
+        ScriptWrapper.instances.Clear();
+    }
+
     /// <summary>
     /// Attempts to initialize the encounter's script file and bind encounter-specific functions to it.
     /// </summary>
@@ -338,6 +342,11 @@ public class EnemyEncounter : MonoBehaviour {
                 UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, "nextwaves is a " + nextWaves.Type + ", but should be a table.");
             return;
         }
+
+        if (waves != null)
+            foreach (ScriptWrapper wrap in waves)
+                wrap.Remove();
+
         waves = new ScriptWrapper[nextWaves.Table.Length];
         waveNames = new string[waves.Length];
         int currentWaveScript = 0;
@@ -391,8 +400,7 @@ public class EnemyEncounter : MonoBehaviour {
             foreach (DynValue obj in t.Keys) {
                 try {
                     ((ScriptWrapper)t[obj]).Call("EndingWave");
-                    ScriptWrapper.instances.Remove(((ScriptWrapper)t[obj]));
-                    LuaScriptBinder.scriptlist.Remove(((ScriptWrapper)t[obj]).script);
+                    ScriptWrapper.instances.Remove((ScriptWrapper)t[obj]);
                 } catch { UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, "You shouldn't override Wave, now you get an error :P"); }
             }
         if (!GlobalControls.retroMode)

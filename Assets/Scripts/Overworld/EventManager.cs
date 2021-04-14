@@ -386,7 +386,6 @@ public class EventManager : MonoBehaviour {
         if (resetScripts) {
             eventScripts.Clear();
             ScriptWrapper.instances.Clear();
-            LuaScriptBinder.scriptlist.Clear();
         }
         PlayerOverworld.instance.parallaxes.Clear();
         // Load all events

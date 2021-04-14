@@ -10,7 +10,7 @@ public class LuaTextManager : TextManager {
     private RectTransform speechThing;
     private RectTransform speechThingShadow;
     private DynValue bubbleLastVar = DynValue.NewNil();
-    public bool bubble = false;
+    public bool bubble;
     private int framesWait = 60;
     private int countFrames;
     private int _bubbleHeight = -1;

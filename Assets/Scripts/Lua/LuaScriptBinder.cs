@@ -14,7 +14,6 @@ public static class LuaScriptBinder {
     private static Dictionary<string, DynValue> dict = new Dictionary<string, DynValue>(), battleDict = new Dictionary<string, DynValue>(), alMightyDict = new Dictionary<string, DynValue>();
     private static readonly MusicManager mgr = new MusicManager();
     private static readonly NewMusicManager newmgr = new NewMusicManager();
-    public static List<Script> scriptlist = new List<Script>();
 
     /// <summary>
     /// Registers C# types with MoonSharp so we can bind them to Lua scripts later.
@@ -133,7 +132,6 @@ public static class LuaScriptBinder {
         script.Globals.Set("Time", TimeInfo);
         DynValue DiscordMgr = UserData.Create(new LuaDiscord());
         script.Globals.Set("Discord", DiscordMgr);
-        scriptlist.Add(script);
         return script;
     }
 

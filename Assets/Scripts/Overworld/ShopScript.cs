@@ -506,6 +506,7 @@ public class ShopScript : MonoBehaviour {
                     tp.sceneName = script.GetVar("returnscene").String;
                     tp.position = new Vector2((float) script.GetVar("returnpos").Table.Get(1).Number, (float) script.GetVar("returnpos").Table.Get(2).Number);
                     tp.direction = (int) script.GetVar("returndir").Number;
+                    script.Remove();
                     DontDestroyOnLoad(tp);
                     StartCoroutine(tp.LaunchTP());
                     break;

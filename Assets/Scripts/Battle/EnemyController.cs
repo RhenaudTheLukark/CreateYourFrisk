@@ -331,6 +331,7 @@ public class EnemyController : MonoBehaviour {
     public void Remove() {
         try {
             UIController.instance.encounter.enemies.Remove(this);
+            script.Remove();
             Destroy(gameObject);
         } catch (MissingReferenceException) {
             throw new CYFException("Attempt to remove a removed enemy.");
