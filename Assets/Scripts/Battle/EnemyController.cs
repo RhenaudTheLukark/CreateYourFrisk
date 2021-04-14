@@ -330,7 +330,6 @@ public class EnemyController : MonoBehaviour {
 
     public void Remove() {
         try {
-            SetActive(false);
             UIController.instance.encounter.enemies.Remove(this);
             Destroy(gameObject);
         } catch (MissingReferenceException) {
