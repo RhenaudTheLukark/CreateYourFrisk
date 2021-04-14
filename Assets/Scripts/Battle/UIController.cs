@@ -952,8 +952,8 @@ public class UIController : MonoBehaviour {
                 case UIState.MERCYMENU:
                     switch (selectedMercy) {
                         case 0: {
-                            bool[] canSpare = new bool[encounter.enemies.Length];
-                            int    count    = encounter.enemies.Length;
+                            bool[] canSpare = new bool[encounter.enemies.Count];
+                            int    count    = encounter.enemies.Count;
                             for (int i = 0; i < count; i++)
                                 canSpare[i] = encounter.enemies[i].CanSpare;
                             EnemyController[] enabledEnTemp = encounter.EnabledEnemies;
@@ -1331,7 +1331,7 @@ public class UIController : MonoBehaviour {
         ControlPanel.instance.FrameBasedMovement = false;
 
         LuaScriptBinder.CopyToBattleVar();
-        spareList = new bool[encounter.enemies.Length];
+        spareList = new bool[encounter.enemies.Count];
         for (int i = 0; i < spareList.Length; i ++)
             spareList[i] = false;
         if (EnemyEncounter.script.GetVar("Update") != null)

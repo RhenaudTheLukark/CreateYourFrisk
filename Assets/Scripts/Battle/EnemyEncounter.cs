@@ -7,11 +7,10 @@ using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class EnemyEncounter : MonoBehaviour {
-    public EnemyController[] enemies;
+    public List<EnemyController> enemies;
     public Vector2[] enemyPositions;
     internal float waveTimer;
     public int turnCount;
-    protected GameObject[] enemyInstances;
 
     public string EncounterText { get; set; }
     public bool CanRun { get; set; }
@@ -50,8 +49,25 @@ public class EnemyEncounter : MonoBehaviour {
             script.Bind("CreateProjectile", (Func<Script, string, float, float, string, DynValue>)CreateProjectile);
             script.Bind("CreateProjectileAbs", (Func<Script, string, float, float, string, DynValue>)CreateProjectileAbs);
             script.Bind("SetButtonLayer", (Action<string>)LuaScriptBinder.SetButtonLayer);
+            script.Bind("CreateEnemy", (Func<string, float, float, DynValue>)CreateEnemy);
             return true;
         }
+    }
+
+    public DynValue CreateEnemy(string enemyScript, float x, float y) {
+        GameObject enemyObject = Instantiate(Resources.Load<GameObject>("Prefabs/LUAEnemy 1"));
+
+        enemyObject.transform.SetParent(gameObject.transform);
+        enemyObject.transform.localScale = new Vector3(1, 1, 1); // apparently this was suddenly required or the scale would be (0,0,0)
+
+        EnemyController enemyController = enemyObject.GetComponent<EnemyController>();
+        enemyController.scriptName = enemyScript;
+        enemyController.index = enemies.Count - 1;
+        enemyController.GetComponent<RectTransform>().anchoredPosition = new Vector2(x, y);
+        enemyController.script = new ScriptWrapper();
+        enemies.Add(enemyController);
+        enemyController.InitializeEnemy();
+        return UserData.Create(enemyController.script);
     }
 
     public bool CallOnSelfOrChildren(string func, DynValue[] param = null) {
@@ -104,20 +120,18 @@ public class EnemyEncounter : MonoBehaviour {
         DynValue enemyPositionsLua = script.GetVar("enemypositions");
         string musicFile = script.GetVar("music").String;
 
-        try { enemies = new EnemyController[enemyScriptsLua.Table.Length]; /*dangerously assumes enemies is defined*/ }
-        catch (Exception) {
-            UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, "There's no enemies table in your encounter. Is this a pre-0.1.2 encounter? It's easy to fix!\n\n"
-                + "1. Create a Monsters folder in the mod's Lua folder\n"
-                + "2. Add the monster script (custom.lua) to this new folder\n"
-                + "3. Add the following line to the beginning of this encounter script, located in the mod folder/Lua/Encounters:\nenemies = {\"custom\"}\n"
-                + "4. You're done! Starting from 0.1.2, you can name your monster and encounter scripts anything.");
+        if (enemyScriptsLua.Table == null) {
+            UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, "There has to be an enemies table in your encounter's file.");
             return;
         }
+
+        int enemyCount = enemyScriptsLua.Table.Length;
+
         if (enemyPositionsLua != null && enemyPositionsLua.Table != null) {
             enemyPositions = new Vector2[enemyPositionsLua.Table.Length];
             for (int i = 0; i < enemyPositionsLua.Table.Length; i++) {
                 Table posTable = enemyPositionsLua.Table.Get(i + 1).Table;
-                if (i >= enemies.Length)
+                if (i >= enemyCount)
                     break;
 
                 enemyPositions[i] = new Vector2((float)posTable.Get(1).Number, (float)posTable.Get(2).Number);
@@ -139,28 +153,18 @@ public class EnemyEncounter : MonoBehaviour {
             NewMusicManager.audioname["src"] = MusicManager.filename;
         }
         // Instantiate all the enemy objects
-        if (enemies.Length > enemyPositions.Length) {
+        if (enemyCount > enemyPositions.Length) {
             UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, "All enemies in an encounter must have a screen position defined. Either your enemypositions table is missing, "
                 + "or there are more enemies than available positions. Refer to the documentation's Basic Setup section on how to do this.");
         }
-        enemyInstances = new GameObject[enemies.Length];
-        for (int i = 0; i < enemies.Length; i++) {
-            enemyInstances[i] = Instantiate(Resources.Load<GameObject>("Prefabs/LUAEnemy 1"));
-            enemyInstances[i].transform.SetParent(gameObject.transform);
-            enemyInstances[i].transform.localScale = new Vector3(1, 1, 1); // apparently this was suddenly required or the scale would be (0,0,0)
-            enemies[i] = enemyInstances[i].GetComponent<EnemyController>();
-            enemies[i].scriptName = enemyScriptsLua.Table.Get(i + 1).String;
-            enemies[i].index = i;
-            enemies[i].GetComponent<RectTransform>().anchoredPosition = i < enemyPositions.Length ? new Vector2(enemyPositions[i].x, enemyPositions[i].y) : new Vector2(0, 1);
+
+        enemies = new List<EnemyController>();
+        Table luaEnemyTable = script.GetVar("enemies").Table;
+
+        for (int i = 0; i < enemyCount; i++) {
+            luaEnemyTable.Set(i + 1, CreateEnemy(enemyScriptsLua.Table.Get(i + 1).String, enemyPositions[i].x, enemyPositions[i].y));
         }
 
-        // Attach the controllers to the encounter's enemies table
-        DynValue[] enemyStatusCtrl = new DynValue[enemies.Length];
-        Table luaEnemyTable = script.GetVar("enemies").Table;
-        for (int i = 0; i < enemyStatusCtrl.Length; i++) {
-            enemies[i].script = new ScriptWrapper();
-            luaEnemyTable.Set(i + 1, UserData.Create(enemies[i].script));
-        }
         script.SetVar("enemies", DynValue.NewTable(luaEnemyTable));
         Table luaWaveTable = new Table(null);
         script.SetVar("Wave", DynValue.NewTable(luaWaveTable));
