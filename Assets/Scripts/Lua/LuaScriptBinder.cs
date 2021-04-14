@@ -361,9 +361,6 @@ public static class LuaScriptBinder {
             luatm.layer = layer;
         else
             luatm.layer = (layer == "BelowPlayer" ? "Default" : layer);
-        luatm.textMaxWidth = textWidth;
-        luatm.bubbleHeight = bubbleHeight;
-        luatm.ShowBubble();
 
         // Converts the text argument into a table if it's a simple string
         text = text.Type == DataType.String ? DynValue.NewTable(scr, text) : text;
@@ -430,7 +427,6 @@ public static class LuaScriptBinder {
                     if (font == null)
                         throw new CYFException("The font \"" + fontPartTwo + "\" doesn't exist.\nYou should check if you made a typo, or if the font really is in your mod.");
                     luatm.SetFont(font, true);
-                    luatm.UpdateBubble();
                 } else luatm.ResetFont();
             } else     luatm.ResetFont();
         } else         luatm.ResetFont();
@@ -438,6 +434,13 @@ public static class LuaScriptBinder {
         if (enableLateStart)
             luatm.lateStartWaiting = true;
         luatm.SetText(text);
+
+        // Bubble variables
+        luatm.bubble = true;
+        luatm.textMaxWidth = textWidth;
+        luatm.bubbleHeight = bubbleHeight;
+        luatm.ShowBubble();
+
         if (!enableLateStart) return luatm;
         luatm.DestroyChars();
         luatm.LateStart();
