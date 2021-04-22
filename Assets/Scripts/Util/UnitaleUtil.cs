@@ -377,14 +377,10 @@ public static class UnitaleUtil {
     }
 
     public static bool TestContainsListVector2(List<Vector2> list, int testValue) {
-        foreach (Vector2 v in list)
-            if (v.x == testValue)
-                return true;
-        return false;
+        return list.Any(v => v.x == testValue);
     }
 
     public static void PlaySound(string basis, string sound, float volume = 0.65f) {
-        sound = FileLoader.getRelativePathWithoutExtension(sound).Replace('\\', '/');
         for (int i = 1; i > 0; i++) {
             object audio = NewMusicManager.audiolist[basis + i];
             if (audio != null) {
@@ -403,7 +399,7 @@ public static class UnitaleUtil {
         }
     }
 
-    public static void PlaySound(string basis, AudioClip sound, float volume = 0.65f) { PlaySound(basis, sound.name, volume); }
+    public static void PlayVoice(string basis, string voice, float volume = 0.65f) { PlaySound(basis, "Voices/" + voice, volume); }
 
     /// <summary>
     /// Checks if the Player and a given bullet collide.

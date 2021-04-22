@@ -398,7 +398,7 @@ public class UIController : MonoBehaviour {
                 selectedMercy = 0;
                 string[] mercyOptions = new string[1 + (encounter.CanRun ? 1 : 0)];
                 mercyOptions[0] = "Spare";
-                if (encounter.EnabledEnemies.Cast<EnemyController>().Any(enemy => enemy.CanSpare))
+                if (encounter.EnabledEnemies.Any(enemy => enemy.CanSpare))
                     mercyOptions[0] = "[starcolor:ffff00][color:ffff00]" + mercyOptions[0] + "[color:ffffff]";
                 if (encounter.CanRun)
                     mercyOptions[1] = "Flee";
@@ -552,7 +552,7 @@ public class UIController : MonoBehaviour {
 
                     speechBub.GetComponent<Image>().enabled = true;
                     if (encounter.EnabledEnemies[i].Voice != "")
-                        sbTextMan.letterSound.clip = AudioClipRegistry.GetVoice(encounter.EnabledEnemies[i].Voice);
+                        sbTextMan.letterSound = encounter.EnabledEnemies[i].Voice;
                 }
                 break;
 
@@ -627,7 +627,7 @@ public class UIController : MonoBehaviour {
                 speechBub.transform.position = new Vector3(speechBub.transform.position.x + encounter.EnabledEnemies[i].offsets[1].x,
                                                            speechBub.transform.position.y + encounter.EnabledEnemies[i].offsets[1].y, speechBub.transform.position.z);
                 if (encounter.EnabledEnemies[i].Voice != "")
-                    sbTextMan.letterSound.clip = AudioClipRegistry.GetVoice(encounter.EnabledEnemies[i].Voice);
+                    sbTextMan.letterSound = encounter.EnabledEnemies[i].Voice;
             } catch {
                 throw new CYFException("Error while updating monster #" + i);
             }
@@ -664,13 +664,13 @@ public class UIController : MonoBehaviour {
                 return;
 
             if (monsterDialogues[index].HasNext()) {
-                FileInfo fi = new FileInfo(FileLoader.pathToDefaultFile("Sprites/" + encounter.EnabledEnemies[index].DialogBubble + ".png"));
+                FileInfo fi = new FileInfo(FileLoader.PathToDefaultFile("Sprites/" + encounter.EnabledEnemies[index].DialogBubble + ".png"));
                 if (!fi.Exists)
-                    fi = new FileInfo(FileLoader.pathToModFile("Sprites/" + encounter.EnabledEnemies[index].DialogBubble + ".png"));
+                    fi = new FileInfo(FileLoader.PathToModFile("Sprites/" + encounter.EnabledEnemies[index].DialogBubble + ".png"));
                 if (!fi.Exists) {
                     Debug.LogError("The bubble " + encounter.EnabledEnemies[index].DialogBubble + ".png doesn't exist.");
                 } else {
-                    Sprite speechBubSpr = SpriteUtil.FromFile(fi.FullName);
+                    Sprite speechBubSpr = SpriteUtil.FromFile(encounter.EnabledEnemies[index].DialogBubble + ".png");
                     monsterDialogues[index].SetOffset(speechBubSpr.border.x, -speechBubSpr.border.w);
                 }
                 monsterDialogues[index].NextLineText();
@@ -697,13 +697,13 @@ public class UIController : MonoBehaviour {
                 // part that autoskips text if [nextthisnow] or [finished] is introduced
                 if (monsterDialogues[i].CanAutoSkipThis() || monsterDialogues[i].CanAutoSkip()) {
                     if (monsterDialogues[i].HasNext()) {
-                        FileInfo fi = new FileInfo(FileLoader.pathToDefaultFile("Sprites/" + encounter.EnabledEnemies[i].DialogBubble + ".png"));
+                        FileInfo fi = new FileInfo(FileLoader.PathToDefaultFile("Sprites/" + encounter.EnabledEnemies[i].DialogBubble + ".png"));
                         if (!fi.Exists)
-                            fi = new FileInfo(FileLoader.pathToModFile("Sprites/" + encounter.EnabledEnemies[i].DialogBubble + ".png"));
+                            fi = new FileInfo(FileLoader.PathToModFile("Sprites/" + encounter.EnabledEnemies[i].DialogBubble + ".png"));
                         if (!fi.Exists) {
                             Debug.LogError("The bubble " + encounter.EnabledEnemies[i].DialogBubble + ".png doesn't exist.");
                         } else {
-                            Sprite speechBubSpr = SpriteUtil.FromFile(fi.FullName);
+                            Sprite speechBubSpr = SpriteUtil.FromFile(encounter.EnabledEnemies[i].DialogBubble + ".png");
                             monsterDialogues[i].SetOffset(speechBubSpr.border.x, -speechBubSpr.border.w);
                         }
                         monsterDialogues[i].NextLineText();
@@ -715,13 +715,13 @@ public class UIController : MonoBehaviour {
                         continue;
                     }
                 } else if (readyToNextLine[i]) {
-                    FileInfo fi = new FileInfo(FileLoader.pathToDefaultFile("Sprites/" + encounter.EnabledEnemies[i].DialogBubble + ".png"));
+                    FileInfo fi = new FileInfo(FileLoader.PathToDefaultFile("Sprites/" + encounter.EnabledEnemies[i].DialogBubble + ".png"));
                     if (!fi.Exists)
-                        fi = new FileInfo(FileLoader.pathToModFile("Sprites/" + encounter.EnabledEnemies[i].DialogBubble + ".png"));
+                        fi = new FileInfo(FileLoader.PathToModFile("Sprites/" + encounter.EnabledEnemies[i].DialogBubble + ".png"));
                     if (!fi.Exists) {
                         Debug.LogError("The bubble " + encounter.EnabledEnemies[i].DialogBubble + ".png doesn't exist.");
                     } else {
-                        Sprite speechBubSpr = SpriteUtil.FromFile(fi.FullName);
+                        Sprite speechBubSpr = SpriteUtil.FromFile(encounter.EnabledEnemies[i].DialogBubble + ".png");
                         monsterDialogues[i].SetOffset(speechBubSpr.border.x, -speechBubSpr.border.w);
                     }
                     monsterDialogues[i].NextLineText();
@@ -1226,7 +1226,7 @@ public class UIController : MonoBehaviour {
         uiAudio.Play();
     }
 
-    public static void PlaySoundSeparate(AudioClip clip) { UnitaleUtil.PlaySound("SeparateSound", clip, 0.95f); }
+    public static void PlaySoundSeparate(string sound) { UnitaleUtil.PlaySound("SeparateSound", sound, 0.95f); }
 
     private void SetPlayerOnAction(Actions newAction) {
         switch (newAction) {
@@ -1427,8 +1427,7 @@ public class UIController : MonoBehaviour {
 
     private IEnumerator ISuperFlee() {
         PlayerController.instance.GetComponent<Image>().enabled = false;
-        AudioClip yay = AudioClipRegistry.GetSound("runaway");
-        UnitaleUtil.PlaySound("Mercy", yay);
+        UnitaleUtil.PlaySound("Mercy", "runaway");
 
         List<string> fleeTexts = new List<string>();
         DynValue tempFleeTexts = EnemyEncounter.script.GetVar("fleetexts");

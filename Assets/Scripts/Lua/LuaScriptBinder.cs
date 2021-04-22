@@ -53,7 +53,7 @@ public static class LuaScriptBinder {
     public static Script BoundScript(/*bool overworld = false*/) {
         Script script = new Script(CoreModules.Preset_Complete ^ CoreModules.IO ^ CoreModules.OS_System) { Options = { ScriptLoader = new FileSystemScriptLoader() } };
         // library support
-        ((ScriptLoaderBase)script.Options.ScriptLoader).ModulePaths = new[] { FileLoader.pathToModFile("Lua/?.lua"), FileLoader.pathToDefaultFile("Lua/?.lua"), FileLoader.pathToModFile("Lua/Libraries/?.lua"), FileLoader.pathToDefaultFile("Lua/Libraries/?.lua") };
+        ((ScriptLoaderBase)script.Options.ScriptLoader).ModulePaths = new[] { FileLoader.PathToModFile("Lua/?.lua"), FileLoader.PathToDefaultFile("Lua/?.lua"), FileLoader.PathToModFile("Lua/Libraries/?.lua"), FileLoader.PathToDefaultFile("Lua/Libraries/?.lua") };
         // separate function bindings
         script.Globals["SetGlobal"] = (Action<Script, string, DynValue>)SetBattle;
         script.Globals["GetGlobal"] = (Func<Script, string, DynValue>)GetBattle;

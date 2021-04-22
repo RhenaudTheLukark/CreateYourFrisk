@@ -99,7 +99,7 @@ public class FightUIController : MonoBehaviour {
             allFightUiInstances[allFightUiInstances.Count - 1].quickInit(targetIDs[i], UIController.instance.encounter.EnabledEnemies[targetIDs[i]], damage[i]);
             allFightUiInstances[allFightUiInstances.Count - 1].isCoroutine = true;
         }
-        UIController.PlaySoundSeparate(AudioClipRegistry.GetSound("slice"));
+        UIController.PlaySoundSeparate("slice");
         for (int i = 0; i < targetIDs.Length; i++)
             allFightUiInstances[allFightUiInstances.Count - 1 - (targetIDs.Length - 1 - i)].StopAction(2.2f);
     }
@@ -111,7 +111,7 @@ public class FightUIController : MonoBehaviour {
         foreach (FightUI fight in boundFightUiInstances)
             fight.StopAction(atkMult);
         line.SetAnimation(lineAnim, 1 / 12f);
-        UIController.PlaySoundSeparate(AudioClipRegistry.GetSound("slice"));
+        UIController.PlaySoundSeparate("slice");
     }
 
     public int getDamage(EnemyController enemy, float atkMult) {

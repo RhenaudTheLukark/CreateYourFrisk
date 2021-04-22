@@ -3,8 +3,8 @@
 public static class MapLoader {
     public static void LoadMap(string path) {
         XmlDocument xml = new XmlDocument();
-        string xmlPath = FileLoader.requireFile("Sprites/UI/Fonts/" + path + ".xml", false);
-        if (xmlPath == null)
+        string xmlPath = path + ".xml";
+        if (FileLoader.SanitizePath(ref xmlPath, "Sprites/UI/Fonts/", false))
             return;
         xml.Load(xmlPath);
     }

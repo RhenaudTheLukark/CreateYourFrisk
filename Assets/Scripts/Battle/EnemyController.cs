@@ -250,7 +250,7 @@ public class EnemyController : MonoBehaviour {
 
     public void InitializeEnemy() {
         try {
-            string scriptText = ScriptRegistry.Get(ScriptRegistry.MONSTER_PREFIX + scriptName);
+            string scriptText = ScriptRegistry.Get("Monsters/" + scriptName);
             if (scriptText == null) {
                 UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, "Tried to load monster script " + scriptName + ".lua but it didn't exist. Is it misspelled?");
                 return;
@@ -365,7 +365,7 @@ public class EnemyController : MonoBehaviour {
 
         // The actually relevant part of sparing code.
         GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.4f);
-        UIController.PlaySoundSeparate(AudioClipRegistry.GetSound("enemydust"));
+        UIController.PlaySoundSeparate("enemydust");
         SetActive(false);
         spared = true;
 
@@ -385,7 +385,7 @@ public class EnemyController : MonoBehaviour {
         GetComponent<ParticleDuplicator>().Activate(sprite);
         SetActive(false);
         killed = true;
-        UIController.PlaySoundSeparate(AudioClipRegistry.GetSound("enemydust"));
+        UIController.PlaySoundSeparate("enemydust");
 
         UIController.instance.CheckAndTriggerVictory();
     }

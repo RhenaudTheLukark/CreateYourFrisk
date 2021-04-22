@@ -223,13 +223,13 @@ public class SelectOMatic : MonoBehaviour {
         } else {
             // if not, find it and store it
             try {
-                Sprite thumbnail = SpriteUtil.FromFile(FileLoader.pathToModFile("Sprites/preview.png"));
+                Sprite thumbnail = SpriteUtil.FromFile("preview.png");
                 ImgComp.sprite = thumbnail;
             } catch {
                 try {
-                    Sprite bg = SpriteUtil.FromFile(FileLoader.pathToModFile("Sprites/bg.png"));
+                    Sprite bg = SpriteUtil.FromFile("bg.png");
                     ImgComp.sprite = bg;
-                } catch { ImgComp.sprite = SpriteUtil.FromFile("Sprites/black.png"); }
+                } catch { ImgComp.sprite = SpriteUtil.FromFile("black.png"); }
             }
             bgs.Add(modDirs[CurrentSelectedMod].Name, ImgComp.sprite);
         }

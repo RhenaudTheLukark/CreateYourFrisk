@@ -5,54 +5,49 @@ using UnityEngine.UI;
 
 public static class SpriteRegistry {
     private static readonly Dictionary<string, Sprite> dict = new Dictionary<string, Sprite>();
-    public static Image GENERIC_SPRITE_PREFAB;
+    public static Image GENERIC_SPRITE_PREFAB = Resources.Load<Image>("Prefabs/generic_sprite");
     public static Sprite EMPTY_SPRITE;
     private static readonly Dictionary<string, FileInfo> dictDefault = new Dictionary<string, FileInfo>();
     private static readonly Dictionary<string, FileInfo> dictMod = new Dictionary<string, FileInfo>();
 
-    public static void Start() {
-        loadAllFrom(FileLoader.pathToDefaultFile("Sprites"));
-    }
+    public static void Start() { LoadAllFrom(FileLoader.PathToDefaultFile("Sprites")); }
 
-    public static void Set(string key, Sprite value) { dict[(UnitaleUtil.IsOverworld ? "ow" : "b") + key.ToLower()] = value; }
+    public static void Set(string key, Sprite value) {
+        key += key.EndsWith(".png") ? "" : ".png";
+        FileLoader.SanitizePath(ref key, "Sprites/");
+        key = key.ToLower();
+        dict[(UnitaleUtil.IsOverworld ? "ow::" : "b::") + key] = value;
+    }
 
     public static Sprite Get(string key) {
-        key = key.ToLower();
-        string dictKey = (UnitaleUtil.IsOverworld ? "ow" : "b") + key;
-        return dict.ContainsKey(dictKey) ? dict[dictKey] : tryLoad(key);
-    }
-
-    private static Sprite tryLoad(string key) {
-        string dictKey = (UnitaleUtil.IsOverworld ? "ow" : "b") + key;
-        if (dictMod.ContainsKey(key))          dict[dictKey] = SpriteUtil.FromFile(dictMod[key].FullName);
-        else if (dictDefault.ContainsKey(key)) dict[dictKey] = SpriteUtil.FromFile(dictDefault[key].FullName);
-        else                                   return null;
-        return dict[dictKey];
+        string dictKey = key + (key.EndsWith(".png") ? "" : ".png");
+        FileLoader.SanitizePath(ref dictKey, "Sprites/");
+        dictKey = (UnitaleUtil.IsOverworld ? "ow::" : "b::") + dictKey.ToLower();
+        return dict.ContainsKey(dictKey) ? dict[dictKey] : TryLoad(key);
     }
 
     public static Sprite GetMugshot(string key) { return Get("mugshots/" + key.ToLower()); }
 
+    private static Sprite TryLoad(string key) {
+        string fileName = key;
+        string dictKey = (UnitaleUtil.IsOverworld ? "ow::" : "b::") + key;
+
+        key += key.EndsWith(".png") ? "" : ".png";
+        FileLoader.SanitizePath(ref key, "Sprites/");
+        key = key.ToLower();
+        if (dictMod.ContainsKey(key))          dict[dictKey] = SpriteUtil.FromFile(fileName + ".png");
+        else if (dictDefault.ContainsKey(key)) dict[dictKey] = SpriteUtil.FromFile(fileName + ".png");
+        else                                   return null;
+        return dict[dictKey];
+    }
+
     public static void Init() {
-        //dict.Clear();
-        GENERIC_SPRITE_PREFAB = Resources.Load<Image>("Prefabs/generic_sprite");
-        Texture2D tex = new Texture2D(1, 1, TextureFormat.RGBA32, false);
-        tex.SetPixel(0, 0, new Color(0, 0, 0, 0));
-        tex.Apply();
-        EMPTY_SPRITE = Sprite.Create(tex, new Rect(0, 0, 1, 1), new Vector2(0.5f, 0.5f));
-        EMPTY_SPRITE.name = "blank";
-        string modPath = FileLoader.pathToModFile("Sprites");
-        //string defaultPath = FileLoader.pathToDefaultFile("Sprites");
-        //loadAllFrom(defaultPath);
-        prepareMod(modPath);
+        LoadAllFrom(FileLoader.PathToModFile("Sprites"), true);
+        if (EMPTY_SPRITE == null) EMPTY_SPRITE = Get("empty");
     }
 
-    private static void prepareMod(string directoryPath) {
+    private static void LoadAllFrom(string directoryPath, bool mod = false) {
         dict.Clear();
-
-        loadAllFrom(directoryPath, true);
-    }
-
-    private static void loadAllFrom(string directoryPath, bool mod = false) {
         DirectoryInfo dInfo = new DirectoryInfo(directoryPath);
 
         if (!dInfo.Exists) {
@@ -64,29 +59,18 @@ public static class SpriteRegistry {
 
         if (mod) {
             dictMod.Clear();
-            foreach (FileInfo file in fInfoTest)
-                dictMod[FileLoader.getRelativePathWithoutExtension(directoryPath, file.FullName).ToLower()] = file;
+            foreach (FileInfo file in fInfoTest) {
+                string k = file.FullName.Substring(directoryPath.Length + 1);
+                FileLoader.SanitizePath(ref k, "Sprites/");
+                dictMod[k.ToLower()] = file;
+            }
         } else {
             dictDefault.Clear();
-            foreach (FileInfo file in fInfoTest)
-                dictDefault[FileLoader.getRelativePathWithoutExtension(directoryPath, file.FullName).ToLower()] = file;
+            foreach (FileInfo file in fInfoTest) {
+                string k = file.FullName.Substring(directoryPath.Length + 1);
+                FileLoader.SanitizePath(ref k, "Sprites/");
+                dictDefault[k.ToLower()] = file;
+            }
         }
-        /*foreach (FileInfo file in fInfoTest) {
-            string imageName = FileLoader.getRelativePathWithoutExtension(directoryPath, file.FullName).ToLower();
-            Sprite temp;
-            dict.TryGetValue(imageName, out temp);
-
-            if (dict.ContainsKey(imageName) && temp == SpriteUtil.fromFile(file.FullName) &&!mod)
-                continue;
-            else if (dict.ContainsKey(imageName))
-                dict.Remove(imageName);
-
-            //Set(script_prefix + scriptName, FileLoader.getTextFrom(file.FullName));
-            //string imageName = FileLoader.getRelativePathWithoutExtension(directoryPath, file.FullName).ToLower();
-            //if (dict.ContainsKey(imageName))
-            //    continue;
-
-            dict.Add(imageName, SpriteUtil.fromFile(file.FullName));
-        }*/
     }
 }

@@ -41,7 +41,7 @@ public class ShopScript : MonoBehaviour {
         script = new ScriptWrapper {
             scriptname = scriptName
         };
-        string scriptText = ScriptRegistry.Get(ScriptRegistry.SHOP_PREFIX + scriptName);
+        string scriptText = ScriptRegistry.Get("Shops/" + scriptName);
 
         if (scriptText == null)
             throw new CYFException("You must give a valid script name to the function General.EnterShop()");

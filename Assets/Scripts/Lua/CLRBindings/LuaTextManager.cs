@@ -399,7 +399,7 @@ public class LuaTextManager : TextManager {
         if (!isactive)
             yield break;
 
-        letterSound.clip = default_voice ?? default_charset.Sound;
+        letterSound = defaultVoice ?? default_charset.SoundName;
 
         // only allow inline text commands and letter sounds on the second frame
         lateStartWaiting = false;
@@ -434,7 +434,7 @@ public class LuaTextManager : TextManager {
         if (voiceName == null)
             throw new CYFException("Text.SetVoice: The first argument (the voice name) is nil.\n\nSee the documentation for proper usage.");
         CheckExists();
-        default_voice = voiceName == "none" ? null : AudioClipRegistry.GetVoice(voiceName);
+        defaultVoice = voiceName == "none" ? null : voiceName;
     }
 
     public void SetFont(string fontName, bool firstTime = false) {

@@ -349,7 +349,7 @@ public class LuaSpriteController {
         if (img.GetComponent<Projectile>())                            tag = "projectile";
         else if (img.GetComponent<EnemyController>())                  tag = "enemy";
         else if (i.transform.parent != null)
-            if (i.transform.parent.GetComponent<EnemyController>())    tag = "bubble";
+            if (i.transform.parent.GetComponent<EnemyController>())    tag = "bubble"; // TODO: Change right away
             else                                                       tag = "other";
         shader = new LuaSpriteShader("sprite", img);
     }
@@ -751,7 +751,7 @@ public class LuaSpriteController {
         GameObject go = Object.Instantiate(Resources.Load<GameObject>("Prefabs/MonsterDuster"));
         go.transform.SetParent(UIController.instance.psContainer.transform);
         if (playDust)
-            UnitaleUtil.PlaySound("DustSound", AudioClipRegistry.GetSound("enemydust"));
+            UnitaleUtil.PlaySound("DustSound", "enemydust");
         img.GetComponent<ParticleDuplicator>().Activate(this);
         if (img.gameObject.name == "player") return;
         if (removeObject)

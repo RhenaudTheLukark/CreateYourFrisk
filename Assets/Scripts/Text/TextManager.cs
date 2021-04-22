@@ -12,13 +12,13 @@ public class TextManager : MonoBehaviour {
     internal Vector2[] letterPositions;
 
     protected UnderFont default_charset;
-    protected AudioClip default_voice;
-    [MoonSharpHidden] public AudioSource letterSound;
+    protected string defaultVoice;
+    [MoonSharpHidden] public string letterSound;
     protected TextEffect textEffect;
     private string letterEffect = "none";
-    public static string[] commandList = new string[] { "color", "alpha", "charspacing", "linespacing", "starcolor", "instant", "font", "effect", "noskip", "w", "waitall", "novoice",
-                                                        "next", "finished", "nextthisnow", "noskipatall", "waitfor", "speed", "letters", "voice", "func", "mugshot",
-                                                        "music", "sound", "health", "lettereffect"};
+    public static string[] commandList = { "color", "alpha", "charspacing", "linespacing", "starcolor", "instant", "font", "effect", "noskip", "w", "waitall", "novoice",
+                                           "next", "finished", "nextthisnow", "noskipatall", "waitfor", "speed", "letters", "voice", "func", "mugshot",
+                                           "music", "sound", "health", "lettereffect"};
     private float letterIntensity;
     public int currentLine;
     [MoonSharpHidden] public int _textMaxWidth;
@@ -84,7 +84,7 @@ public class TextManager : MonoBehaviour {
 
     [MoonSharpHidden] public bool lateStartWaiting = false; // Lua text objects will use a late start
     public TextManager() {
-        default_voice = null;
+        defaultVoice = null;
         textEffect = null;
         letterIntensity = 0.0f;
         currentLine = 0;
@@ -115,10 +115,10 @@ public class TextManager : MonoBehaviour {
         if (default_charset == null)
             default_charset = font;
         if (firstTime) {
-            if (letterSound.clip == default_voice && font.Sound != null)
-                letterSound.clip = font.Sound;
+            if (letterSound == defaultVoice && font.Sound != null)
+                letterSound = font.SoundName;
         } else if (font.Sound != null)
-            letterSound.clip = font.Sound;
+            letterSound = font.SoundName;
 
         vSpacing = 0;
         hSpacing = font.CharSpacing;
@@ -141,20 +141,18 @@ public class TextManager : MonoBehaviour {
                 SetFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_DEFAULT_NAME), true);
         Charset = default_charset;
         Debug.Assert(default_charset != null, "default_charset != null");
-        letterSound.clip = default_voice ?? default_charset.Sound;
+        letterSound = defaultVoice ?? default_charset.SoundName;
         fontDefaultColor = default_charset.DefaultColor;
         if (GetType() == typeof(LuaTextManager) && !((LuaTextManager) this).hasColorBeenSet)
             fontDefaultColor = defaultColor = default_charset.DefaultColor;
 
         // Default voice in the overworld
         if (gameObject.name == "TextManager OW")
-            default_voice = AudioClipRegistry.GetVoice("monsterfont");
+            defaultVoice = "monsterfont";
     }
 
     protected virtual void Awake() {
         self = gameObject.GetComponent<RectTransform>();
-        letterSound = gameObject.AddComponent<AudioSource>();
-        letterSound.playOnAwake = false;
         // SetFont(SpriteFontRegistry.F_UI_DIALOGFONT);
         timePerLetter = singleFrameTiming;
 
@@ -811,10 +809,10 @@ public class TextManager : MonoBehaviour {
                 case "shake":  letterReferences[currentCharacter].GetComponent<Letter>().effect = new ShakeEffectLetter(letterReferences[currentCharacter].GetComponent<Letter>(), letterIntensity);    break;
                 default:       letterReferences[currentCharacter].GetComponent<Letter>().effect = null;                                                                                                 break;
             }
+
             if (letterSound != null && !muted && !soundPlayed && (GlobalControls.retroMode || textQueue[currentLine].Text[currentCharacter] != ' ')) {
                 soundPlayed = true;
-                if (letterSound.isPlaying) UnitaleUtil.PlaySound("BubbleSound", letterSound.clip.name);
-                else                       letterSound.Play();
+                UnitaleUtil.PlayVoice("BubbleSound", letterSound);
             }
         }
         currentReferenceCharacter++;
@@ -915,7 +913,7 @@ public class TextManager : MonoBehaviour {
                 break;
 
             case "waitall":     timePerLetter = singleFrameTiming * ParseUtil.GetInt(cmds[1]); break;
-            case "novoice":     letterSound.clip = null;                                       break;
+            case "novoice":     letterSound = null;                                            break;
             case "next":        autoSkipAll = true;                                            break;
             case "finished":    autoSkipThis = true;                                           break;
             case "nextthisnow": autoSkip = true;                                               break;
@@ -936,7 +934,7 @@ public class TextManager : MonoBehaviour {
                 break;
 
             case "voice":
-                letterSound.clip = cmds[1].ToLower() == "default" ? SpriteFontRegistry.Get(SpriteFontRegistry.UI_DEFAULT_NAME).Sound : AudioClipRegistry.GetVoice(cmds[1].ToLower());
+                letterSound = cmds[1].ToLower() == "default" ? SpriteFontRegistry.UI_DEFAULT_NAME : cmds[1].ToLower();
                 break;
 
             case "instant":
@@ -1063,11 +1061,11 @@ public class TextManager : MonoBehaviour {
                 if (ParseUtil.TestInt(args[0]))
                     tryHP = ParseUtil.GetInt(args[0]);
 
-                if ((args[0].Contains("-") && args[0] != "Max-1") || args[0] == "kill") PlayerController.PlaySound(AudioClipRegistry.GetSound("hurtsound"));
+                if ((args[0].Contains("-") && args[0] != "Max-1") || args[0] == "kill") PlayerController.PlaySound("hurtsound");
                 else if (args.Length > 1) {
-                    if (args[1] == "set" && tryHP < HP)                                 PlayerController.PlaySound(AudioClipRegistry.GetSound("hurtsound"));
-                    else                                                                PlayerController.PlaySound(AudioClipRegistry.GetSound("healsound"));
-                } else                                                                  PlayerController.PlaySound(AudioClipRegistry.GetSound("healsound"));
+                    if (args[1] == "set" && tryHP < HP)                                 PlayerController.PlaySound("hurtsound");
+                    else                                                                PlayerController.PlaySound("healsound");
+                } else                                                                  PlayerController.PlaySound("healsound");
 
                 switch (args[0]) {
                     case "kill":  SetHP(0);         break;

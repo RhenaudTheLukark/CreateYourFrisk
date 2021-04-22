@@ -42,7 +42,10 @@ public class EnemyEncounter : MonoBehaviour {
         get {
             doNotGivePreviousEncounterToSelf = true;
             script = new ScriptWrapper { scriptname = StaticInits.ENCOUNTER };
-            string scriptText = ScriptRegistry.Get(ScriptRegistry.ENCOUNTER_PREFIX + StaticInits.ENCOUNTER);
+            string scriptText = ScriptRegistry.Get("Encounters/" + StaticInits.ENCOUNTER);
+            if (scriptText == null)
+                throw new CYFException("There is no encounter file at the path Lua/Encounters/" + StaticInits.ENCOUNTER);
+
             try { script.DoString(scriptText); }
             catch (InterpreterException ex) {
                 UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message, ex.DoNotDecorateMessage);
@@ -368,11 +371,11 @@ public class EnemyEncounter : MonoBehaviour {
                 waveNames[i] = nextWaves.Table.Get(i + 1).String;
                 waves[i].script.Globals["wavename"] = nextWaves.Table.Get(i + 1).String;
                 try {
-                    waves[i].DoString(ScriptRegistry.Get(ScriptRegistry.WAVE_PREFIX + nextWaves.Table.Get(i + 1).String));
+                    waves[i].DoString(ScriptRegistry.Get("Waves/" + nextWaves.Table.Get(i + 1).String));
                     indexes.Add(i);
                 } catch (InterpreterException ex) { UnitaleUtil.DisplayLuaError(nextWaves.Table.Get(i + 1).String + ".lua", UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message);
                 } catch (Exception ex) {
-                    if (!GlobalControls.retroMode &&!ScriptRegistry.dict.ContainsKey(ScriptRegistry.WAVE_PREFIX + nextWaves.Table.Get(i + 1).String))
+                    if (!GlobalControls.retroMode &&!ScriptRegistry.dict.ContainsKey("Waves/" + nextWaves.Table.Get(i + 1).String))
                         UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, "The wave \"" + nextWaves.Table.Get(i + 1).String + "\" doesn't exist.");
                     else
                         UnitaleUtil.DisplayLuaError("<UNKNOWN LOCATION>", ex.Message + "\n\n" + ex.StackTrace);

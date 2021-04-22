@@ -12,7 +12,7 @@ public class BackgroundLoader : MonoBehaviour {
     private void Start() {
         bgImage = GetComponent<Image>();
         try {
-            Sprite bg = SpriteUtil.FromFile(FileLoader.pathToModFile("Sprites/bg.png"));
+            Sprite bg = SpriteUtil.FromFile("bg.png");
             if (bg == null) return;
             bg.texture.filterMode = FilterMode.Point;
             bgImage.sprite = bg;

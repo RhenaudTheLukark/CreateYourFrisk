@@ -241,7 +241,7 @@ public class LuaGeneralOW {
         volume = Mathf.Clamp01(volume);
         if (AudioClipRegistry.GetSound(sound) == null)
             throw new CYFException("General.PlaySound: The given BGM doesn't exist. Please check if you've spelled it correctly.");
-        UnitaleUtil.PlaySound("PlaySound", AudioClipRegistry.GetSound(sound), volume);
+        UnitaleUtil.PlaySound("PlaySound", sound, volume);
         //GameObject.Find("Player").GetComponent<AudioSource>().PlayOneShot(AudioClipRegistry.GetSound(sound), volume);
         appliedScript.Call("CYFEventNextCommand");
     }
