@@ -9,13 +9,9 @@ public class LuaFile {
     public string filePath { get; private set; }
 
     public LuaFile(string path, string mode = "rw") {
-        if (path == null)        throw new CYFException("Cannot open a file with a nil path.");
-        if (path.Contains("..")) throw new CYFException("You cannot open a file outside of a mod folder. The use of \"..\" is forbidden.");
-
-        path = (FileLoader.ModDataPath + "/" + path).Replace('\\', '/');
-
-        if (mode != "r" && mode != "w" && mode != "rw" && mode != "wr") throw new CYFException("A file's open mode can only be \"r\" (read), \"w\" (write) or \"rw\" (read + write).");
-        if (mode.Contains("r") && !File.Exists(path))                   throw new CYFException("You can't open a file that doesn't exist in read-only mode.");
+        if (path == null)                                                                      throw new CYFException("Cannot open a file with a nil path.");
+        if (mode != "r" && mode != "w" && mode != "rw" && mode != "wr")                        throw new CYFException("A file's open mode can only be \"r\" (read), \"w\" (write) or \"rw\" (read + write).");
+        if (!FileLoader.SanitizePath(ref path, "", false, true) && mode == "r")                throw new CYFException("You can't open a file that doesn't exist (" + path + ") in read-only mode.");
         if (!Directory.Exists(path.Substring(0, path.Length - Path.GetFileName(path).Length))) throw new CYFException("Invalid path:\n\n\"" + path + "\"");
 
         filePath = path;

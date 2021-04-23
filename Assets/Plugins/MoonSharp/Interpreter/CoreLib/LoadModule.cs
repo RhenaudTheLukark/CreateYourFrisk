@@ -261,7 +261,8 @@ end";
         /// <param name="errorOnFailure">Defines whether the error screen should be displayed if the file isn't in either folder.</param>
         /// <param name="needsAbsolutePath">True if you want to get the absolute path to the file, false otherwise.</param>
         /// <returns>True if the sanitization was successful, false otherwise.</returns>
-        public static bool RequireFile(ref string fileName, string pathSuffix, bool errorOnFailure = true, bool needsAbsolutePath = false) {
+        public static bool RequireFile(ref string fileName, string pathSuffix, bool errorOnFailure = true, bool needsAbsolutePath = false, bool needsToExist = true) {
+            string baseFileName = fileName;
             string fileNameMod, fileNameDefault;
             // Get the presumed absolute path to the mod and default folder to this resource if it's a relative path
             if (!fileName.Replace('\\', '/').Contains(DataRoot.Replace('\\', '/'))) {
@@ -281,21 +282,21 @@ end";
             string error;
             try {
                 string result = ExplorePath(fileNameMod, pathSuffix, true);
-                if (!new FileInfo(result).Exists) throw new CYFException("The file " + result + " doesn't exist.");
                 fileName = ExplorePath(fileNameMod, pathSuffix, needsAbsolutePath);
+                if (needsToExist && !new FileInfo(result).Exists) throw new CYFException("The file " + result + " doesn't exist.");
                 return true;
             } catch (Exception e) { error = e.Message; }
 
             // Check if the resource exists using the default path
             try {
                 string result = ExplorePath(fileNameDefault, pathSuffix, true);
-                if (!new FileInfo(result).Exists) throw new CYFException("The file " + result + " doesn't exist.");
+                if (needsToExist && !new FileInfo(result).Exists) throw new CYFException("The file " + result + " doesn't exist.");
                 fileName = ExplorePath(fileNameDefault, pathSuffix, needsAbsolutePath);
                 return true;
             } catch (Exception e) { error = "Mod path error: " + error + "\n\nDefault path error: " + e.Message; }
 
             if (errorOnFailure)
-                throw new CYFException("Attempted to load " + fileName + " from either a mod or default directory, but it was missing in both.\n\n" + error);
+                throw new CYFException("Attempted to load " + baseFileName + " from either a mod or default directory, but it was missing in both.\n\n" + error);
             return false;
         }
 

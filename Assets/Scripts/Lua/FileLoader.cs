@@ -134,16 +134,16 @@ public static class FileLoader {
     /// <param name="errorOnFailure">Defines whether the error screen should be displayed if the file isn't in either folder.</param>
     /// <param name="needsAbsolutePath">True if you want to get the absolute path to the file, false otherwise.</param>
     /// <returns>True if the sanitization was successful, false otherwise.</returns>
-    public static bool SanitizePath(ref string fileName, string pathSuffix, bool errorOnFailure = true, bool needsAbsolutePath = false) {
+    public static bool SanitizePath(ref string fileName, string pathSuffix, bool errorOnFailure = true, bool needsAbsolutePath = false, bool needsToExist = true) {
         fileName = fileName.Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar);
 
         // Sanitize if path from CYF root, need to transform a relative path to an absolute path and vice-versa, or if there's an occurence of ..
         if (fileName.StartsWith(Path.DirectorySeparatorChar.ToString()) || fileName.Contains(DataRoot) ^ needsAbsolutePath || fileName.Contains(".." + Path.DirectorySeparatorChar))
-            return LoadModule.RequireFile(ref fileName, pathSuffix, errorOnFailure, needsAbsolutePath);
+            return LoadModule.RequireFile(ref fileName, pathSuffix, errorOnFailure, needsAbsolutePath, needsToExist);
 
         if (fileName.Contains(DataRoot))
-            return new FileInfo(fileName).Exists;
+            return !needsToExist || new FileInfo(fileName).Exists;
 
-        return new FileInfo(PathToModFile(fileName)).Exists || new FileInfo(PathToDefaultFile(fileName)).Exists;
+        return !needsToExist || new FileInfo(PathToModFile(fileName)).Exists || new FileInfo(PathToDefaultFile(fileName)).Exists;
     }
 }
