@@ -85,7 +85,7 @@ namespace MoonSharp.Interpreter
 		public static ScriptOptions DefaultOptions { get; private set; }
 
 		/// <summary>
-		/// Gets access to the script options. 
+		/// Gets access to the script options.
 		/// </summary>
 		public ScriptOptions Options { get; private set; }
 
@@ -558,9 +558,9 @@ namespace MoonSharp.Interpreter
 
 		/// <summary>
 		/// Gets or sets a value indicating whether the debugger is enabled.
-		/// Note that unless a debugger attached, this property returns a 
+		/// Note that unless a debugger attached, this property returns a
 		/// value which might not reflect the real status of the debugger.
-		/// Use this property if you want to disable the debugger for some 
+		/// Use this property if you want to disable the debugger for some
 		/// executions.
 		/// </summary>
 		public bool DebuggerEnabled
@@ -631,6 +631,11 @@ namespace MoonSharp.Interpreter
 			return func;
 		}
 
+		public string ResolveModuleName(string modname, Table globalContext = null) {
+			this.CheckScriptOwnership(globalContext);
+			Table  globals = globalContext ?? m_GlobalTable;
+			return Options.ScriptLoader.ResolveModuleName(modname, globals);
+		}
 
 
 		/// <summary>
@@ -712,11 +717,11 @@ namespace MoonSharp.Interpreter
 		}
 
 		/// <summary>
-		/// MoonSharp (like Lua itself) provides a registry, a predefined table that can be used by any CLR code to 
-		/// store whatever Lua values it needs to store. 
-		/// Any CLR code can store data into this table, but it should take care to choose keys 
-		/// that are different from those used by other libraries, to avoid collisions. 
-		/// Typically, you should use as key a string GUID, a string containing your library name, or a 
+		/// MoonSharp (like Lua itself) provides a registry, a predefined table that can be used by any CLR code to
+		/// store whatever Lua values it needs to store.
+		/// Any CLR code can store data into this table, but it should take care to choose keys
+		/// that are different from those used by other libraries, to avoid collisions.
+		/// Typically, you should use as key a string GUID, a string containing your library name, or a
 		/// userdata with the address of a CLR object in your code.
 		/// </summary>
 		public Table Registry

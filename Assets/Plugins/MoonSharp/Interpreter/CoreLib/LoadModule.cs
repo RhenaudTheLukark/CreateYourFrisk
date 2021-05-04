@@ -136,20 +136,19 @@ namespace MoonSharp.Interpreter.CoreLib
 
 
 
-		private static DynValue loadfile_impl(ScriptExecutionContext executionContext, CallbackArguments args, Table defaultEnv)
+		private static DynValue loadfile_impl(ScriptExecutionContext executionContext, CallbackArguments args, Table defaultEnv, bool catchError = true)
 		{
 			try
 			{
 				Script S = executionContext.GetScript();
 				DynValue filename = args.AsType(0, "loadfile", DataType.String, false);
 				DynValue env = args.AsType(2, "loadfile", DataType.Table, true);
-
-				DynValue fn = S.LoadFile(ExplorePath(filename.String, "Lua/", true), env.IsNil() ? defaultEnv : env.Table);
-
-				return fn;
-			}
-			catch (SyntaxErrorException ex)
-			{
+				return S.LoadFile(ExplorePath(filename.String, "Lua/", true), env.IsNil() ? defaultEnv : env.Table);
+			} catch (FileNotFoundException) {
+				if (!catchError)
+					return DynValue.Nil;
+				throw;
+			} catch (SyntaxErrorException ex) {
 				return DynValue.NewTuple(DynValue.Nil, DynValue.NewString(ex.DecoratedMessage ?? ex.Message));
 			}
 		}
@@ -212,13 +211,14 @@ namespace MoonSharp.Interpreter.CoreLib
 		[MoonSharpModuleMethod]
 		public static DynValue __require_clr_impl(ScriptExecutionContext executionContext, CallbackArguments args)
 		{
-			//Script S = executionContext.GetScript();
 			DynValue v = args.AsType(0, "__require_clr_impl", DataType.String, false);
 
-            CallbackArguments newArgs = new CallbackArguments(new List<DynValue> { DynValue.NewString(ModDataPath + "Lua/" + v.String + ".lua"), args[1], args[2] }, args.IsMethodCall);
-            DynValue fn = loadfile(executionContext, newArgs);
-            //DynValue fn = S.RequireModule(v.String);
+			CallbackArguments newArgs = new CallbackArguments(new List<DynValue> { DynValue.NewString(ModDataPath + "Lua/" + v.String + ".lua"), args[1], args[2] }, args.IsMethodCall);
+			DynValue fn = loadfile_impl(executionContext, newArgs, null, false);
+			if (fn.Type != DataType.Nil) return fn; // tail call to dofile
 
+			newArgs = new CallbackArguments(new List<DynValue> { DynValue.NewString(ModDataPath + "Lua/Libraries/" + v.String + ".lua"), args[1], args[2] }, args.IsMethodCall);
+			fn = loadfile_impl(executionContext, newArgs, null);
 			return fn; // tail call to dofile
 		}
 
@@ -248,108 +248,108 @@ function(modulename)
 	return res;
 end";
 
-        public static string DataRoot;
-        public static string ModDataPath     { get { return Path.Combine(DataRoot, "Mods" + Path.DirectorySeparatorChar + ModFolder + Path.DirectorySeparatorChar); } }
-        public static string DefaultDataPath { get { return Path.Combine(DataRoot, "Default" + Path.DirectorySeparatorChar);                                        } }
-        public static string ModFolder;
+		public static string DataRoot;
+		public static string ModDataPath     { get { return Path.Combine(DataRoot, "Mods" + Path.DirectorySeparatorChar + ModFolder + Path.DirectorySeparatorChar); } }
+		public static string DefaultDataPath { get { return Path.Combine(DataRoot, "Default" + Path.DirectorySeparatorChar);                                        } }
+		public static string ModFolder;
 
-        /// <summary>
-        /// Checks if a file exists in CYF's Default or Mods folder and returns a clean path to it.
-        /// </summary>
-        /// <param name="fileName">Path to the file to require, relative or absolute. Will also contain the clean path to the existing resource if found.</param>
-        /// <param name="pathSuffix">String to add to the tested path to check in the given folder.</param>
-        /// <param name="errorOnFailure">Defines whether the error screen should be displayed if the file isn't in either folder.</param>
-        /// <param name="needsAbsolutePath">True if you want to get the absolute path to the file, false otherwise.</param>
-        /// <returns>True if the sanitization was successful, false otherwise.</returns>
-        public static bool RequireFile(ref string fileName, string pathSuffix, bool errorOnFailure = true, bool needsAbsolutePath = false, bool needsToExist = true) {
-            string baseFileName = fileName;
-            string fileNameMod, fileNameDefault;
-            // Get the presumed absolute path to the mod and default folder to this resource if it's a relative path
-            if (!fileName.Replace('\\', '/').Contains(DataRoot.Replace('\\', '/'))) {
-                if (fileName.Replace('\\', '/').StartsWith("/")) {
-                    fileNameMod = Path.Combine(DataRoot, fileName.TrimStart('/'));
-                    fileNameDefault = fileNameMod;
-                } else {
-                    fileNameMod = Path.Combine(ModDataPath, Path.Combine(pathSuffix, fileName));
-                    fileNameDefault = Path.Combine(DefaultDataPath, Path.Combine(pathSuffix, fileName));
-                }
-            } else {
-                fileNameMod = fileName;
-                fileNameDefault = fileName;
-            }
+		/// <summary>
+		/// Checks if a file exists in CYF's Default or Mods folder and returns a clean path to it.
+		/// </summary>
+		/// <param name="fileName">Path to the file to require, relative or absolute. Will also contain the clean path to the existing resource if found.</param>
+		/// <param name="pathSuffix">String to add to the tested path to check in the given folder.</param>
+		/// <param name="errorOnFailure">Defines whether the error screen should be displayed if the file isn't in either folder.</param>
+		/// <param name="needsAbsolutePath">True if you want to get the absolute path to the file, false otherwise.</param>
+		/// <returns>True if the sanitization was successful, false otherwise.</returns>
+		public static bool RequireFile(ref string fileName, string pathSuffix, bool errorOnFailure = true, bool needsAbsolutePath = false, bool needsToExist = true) {
+			string baseFileName = fileName;
+			string fileNameMod, fileNameDefault;
+			// Get the presumed absolute path to the mod and default folder to this resource if it's a relative path
+			if (!fileName.Replace('\\', '/').Contains(DataRoot.Replace('\\', '/'))) {
+				if (fileName.Replace('\\', '/').StartsWith("/")) {
+					fileNameMod = Path.Combine(DataRoot, fileName.TrimStart('/'));
+					fileNameDefault = fileNameMod;
+				} else {
+					fileNameMod = Path.Combine(ModDataPath, Path.Combine(pathSuffix, fileName));
+					fileNameDefault = Path.Combine(DefaultDataPath, Path.Combine(pathSuffix, fileName));
+				}
+			} else {
+				fileNameMod = fileName;
+				fileNameDefault = fileName;
+			}
 
-            // Check if the resource exists using the mod path
-            string error;
-            try {
-                string result = ExplorePath(fileNameMod, pathSuffix, true);
-                fileName = ExplorePath(fileNameMod, pathSuffix, needsAbsolutePath);
-                if (needsToExist && !new FileInfo(result).Exists) throw new CYFException("The file " + result + " doesn't exist.");
-                return true;
-            } catch (Exception e) { error = e.Message; }
+			// Check if the resource exists using the mod path
+			string error;
+			try {
+				string result = ExplorePath(fileNameMod, pathSuffix, true);
+				fileName = ExplorePath(fileNameMod, pathSuffix, needsAbsolutePath);
+				if (needsToExist && !new FileInfo(result).Exists) throw new CYFException("The file " + result + " doesn't exist.");
+				return true;
+			} catch (Exception e) { error = e.Message; }
 
-            // Check if the resource exists using the default path
-            try {
-                string result = ExplorePath(fileNameDefault, pathSuffix, true);
-                if (needsToExist && !new FileInfo(result).Exists) throw new CYFException("The file " + result + " doesn't exist.");
-                fileName = ExplorePath(fileNameDefault, pathSuffix, needsAbsolutePath);
-                return true;
-            } catch (Exception e) { error = "Mod path error: " + error + "\n\nDefault path error: " + e.Message; }
+			// Check if the resource exists using the default path
+			try {
+				string result = ExplorePath(fileNameDefault, pathSuffix, true);
+				if (needsToExist && !new FileInfo(result).Exists) throw new CYFException("The file " + result + " doesn't exist.");
+				fileName = ExplorePath(fileNameDefault, pathSuffix, needsAbsolutePath);
+				return true;
+			} catch (Exception e) { error = "Mod path error: " + error + "\n\nDefault path error: " + e.Message; }
 
-            if (errorOnFailure)
-                throw new CYFException("Attempted to load " + baseFileName + " from either a mod or default directory, but it was missing in both.\n\n" + error);
-            return false;
-        }
+			if (errorOnFailure)
+				throw new CYFException("Attempted to load " + baseFileName + " from either a mod or default directory, but it was missing in both.\n\n" + error);
+			return false;
+		}
 
-        /// <summary>
-        /// Checks if a file exists in CYF's Default or Mods folder and returns a clean path to it.
-        /// </summary>
-        /// <param name="fullPath">Path to the file to require.</param>
-        /// <param name="pathSuffix">String to add to the tested path to check in the given folder.</param>
-        /// <param name="needsAbsolutePath">True if you want to get the absolute path to the file, false otherwise.</param>
-        /// <returns>The clean path to the existing resource if found.</returns>
-        public static string ExplorePath(string fullPath, string pathSuffix = "", bool needsAbsolutePath = false) {
-            fullPath = fullPath.Replace('\\', Path.DirectorySeparatorChar).Replace('/', Path.DirectorySeparatorChar);
+		/// <summary>
+		/// Checks if a file exists in CYF's Default or Mods folder and returns a clean path to it.
+		/// </summary>
+		/// <param name="fullPath">Path to the file to require.</param>
+		/// <param name="pathSuffix">String to add to the tested path to check in the given folder.</param>
+		/// <param name="needsAbsolutePath">True if you want to get the absolute path to the file, false otherwise.</param>
+		/// <returns>The clean path to the existing resource if found.</returns>
+		public static string ExplorePath(string fullPath, string pathSuffix = "", bool needsAbsolutePath = false) {
+			fullPath = fullPath.Replace('\\', Path.DirectorySeparatorChar).Replace('/', Path.DirectorySeparatorChar);
 
-            if      (fullPath.Contains(ModDataPath))     pathSuffix = Path.Combine(ModDataPath,     pathSuffix);
-            else if (fullPath.Contains(DefaultDataPath)) pathSuffix = Path.Combine(DefaultDataPath, pathSuffix);
-            else if (fullPath.Contains(DataRoot))        pathSuffix = Path.Combine(DataRoot,        pathSuffix);
-            // Fetch CYF's root folder if none has been found (Used for dofile, require, loadfile...)
-            else {
-                pathSuffix = fullPath.StartsWith(Path.DirectorySeparatorChar.ToString()) ? DataRoot : Path.Combine(ModDataPath, pathSuffix);
-                fullPath = Path.Combine(pathSuffix, fullPath.TrimStart(Path.DirectorySeparatorChar));
-            }
+			if      (fullPath.Contains(ModDataPath))     pathSuffix = Path.Combine(ModDataPath,     pathSuffix);
+			else if (fullPath.Contains(DefaultDataPath)) pathSuffix = Path.Combine(DefaultDataPath, pathSuffix);
+			else if (fullPath.Contains(DataRoot))        pathSuffix = Path.Combine(DataRoot,        pathSuffix);
+			// Fetch CYF's root folder if none has been found (Used for dofile, require, loadfile...)
+			else {
+				pathSuffix = fullPath.StartsWith(Path.DirectorySeparatorChar.ToString()) ? DataRoot : Path.Combine(ModDataPath, pathSuffix);
+				fullPath = Path.Combine(pathSuffix, fullPath.TrimStart(Path.DirectorySeparatorChar));
+			}
 
-            fullPath = fullPath.Replace('\\', Path.DirectorySeparatorChar).Replace('/', Path.DirectorySeparatorChar);
+			fullPath = fullPath.Replace('\\', Path.DirectorySeparatorChar).Replace('/', Path.DirectorySeparatorChar);
 
-            if (!new DirectoryInfo(pathSuffix).Exists)
-                throw new CYFException("The root folder \"" + pathSuffix + "\" doesn't exist.");
+			if (!new DirectoryInfo(pathSuffix).Exists)
+				throw new CYFException("The root folder \"" + pathSuffix + "\" doesn't exist.");
 
-            // Get the folder containing the resource to load
-            string fileName = fullPath.Substring(fullPath.LastIndexOf(Path.DirectorySeparatorChar) + 1);
-            DirectoryInfo endFolder = new DirectoryInfo(fullPath.Substring(0, fullPath.LastIndexOf(Path.DirectorySeparatorChar)));
-            if (!endFolder.Exists)
-                throw new CYFException("The path \"" + endFolder.FullName + "\" (file is \"" + fullPath + "\") doesn't exist.");
+			// Get the folder containing the resource to load
+			string fileName = fullPath.Substring(fullPath.LastIndexOf(Path.DirectorySeparatorChar) + 1);
+			DirectoryInfo endFolder = new DirectoryInfo(fullPath.Substring(0, fullPath.LastIndexOf(Path.DirectorySeparatorChar)));
+			if (!endFolder.Exists)
+				throw new CYFException("The path \"" + endFolder.FullName + "\" (file is \"" + fullPath + "\") doesn't exist.");
 
-            // Check if the final directory is a child of CYF's root directory
-            if (!endFolder.FullName.StartsWith(Path.Combine(DataRoot, "Mods")) && !endFolder.FullName.StartsWith(Path.Combine(DataRoot, "Default")))
-                throw new CYFException("The folder \"" + endFolder.FullName + "\" isn't inside of CYF (\"" + DataRoot + "\"). Please only fetch files inside CYF's Mods or Default folder.");
+			// Check if the final directory is a child of CYF's root directory
+			if (!endFolder.FullName.StartsWith(Path.Combine(DataRoot, "Mods")) && !endFolder.FullName.StartsWith(Path.Combine(DataRoot, "Default")))
+				throw new CYFException("The folder \"" + endFolder.FullName + "\" isn't inside of CYF (\"" + DataRoot + "\"). Please only fetch files inside CYF's Mods or Default folder.");
 
-            fullPath = endFolder.FullName;
-            if (!fullPath.EndsWith(Path.DirectorySeparatorChar.ToString())) fullPath += Path.DirectorySeparatorChar;
-            if (!pathSuffix.EndsWith(Path.DirectorySeparatorChar.ToString())) pathSuffix += Path.DirectorySeparatorChar;
+			fullPath = endFolder.FullName;
+			if (!fullPath.EndsWith(Path.DirectorySeparatorChar.ToString())) fullPath += Path.DirectorySeparatorChar;
+			if (!pathSuffix.EndsWith(Path.DirectorySeparatorChar.ToString())) pathSuffix += Path.DirectorySeparatorChar;
 
-            // If relative path
-            if (!needsAbsolutePath) {
-                Uri uriRel = new Uri(pathSuffix).MakeRelativeUri(new Uri(fullPath));
-                fullPath = Uri.UnescapeDataString(uriRel.OriginalString);
-            }
+			// If relative path
+			if (!needsAbsolutePath) {
+				Uri uriRel = new Uri(pathSuffix).MakeRelativeUri(new Uri(fullPath));
+				fullPath = Uri.UnescapeDataString(uriRel.OriginalString);
+			}
 
-            fullPath = Path.Combine(fullPath, fileName).Replace('\\', Path.DirectorySeparatorChar).Replace('/', Path.DirectorySeparatorChar);
-            return fullPath;
-        }
-    }
+			fullPath = Path.Combine(fullPath, fileName).Replace('\\', Path.DirectorySeparatorChar).Replace('/', Path.DirectorySeparatorChar);
+			return fullPath;
+		}
+	}
 
-    public class CYFException : ScriptRuntimeException {
-        public CYFException(string message) : base(message) { }
-    }
+	public class CYFException : ScriptRuntimeException {
+		public CYFException(string message) : base(message) { }
+	}
 }
