@@ -19,7 +19,7 @@ public class LuaPlayerStatus {
     /// <param name="p">PlayerController this controller is intended for</param>
     public LuaPlayerStatus(PlayerController p) {
         player = p;
-        spr = new LuaSpriteController(p.GetComponent<Image>());
+        spr = LuaSpriteController.Create(p.gameObject);
     }
 
     /// <summary>

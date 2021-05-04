@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml;
@@ -134,7 +135,7 @@ public static class SpriteUtil {
             if (childNumber != -1)
                 i.transform.SetSiblingIndex(childNumber - 1);
         }
-        return UserData.Create(new LuaSpriteController(i), LuaSpriteController.data);
+        return UserData.Create(LuaSpriteController.Create(i.gameObject), LuaSpriteController.data);
     }
 
     public static bool CreateLayer(string name, string relatedTag = "BasisNewest", bool before = false) {
@@ -146,11 +147,11 @@ public static class SpriteUtil {
 
         GameObject go = new GameObject(name + "Layer", typeof(RectTransform));
         string testName = relatedTag + "Layer";
-        Transform[] rts = UnitaleUtil.GetFirstChildren(GameObject.Find(canvas).transform);
+        List<Transform> rts = UnitaleUtil.GetFirstChildren(GameObject.Find(canvas).transform);
         if (relatedTag != "VeryHighest" && relatedTag != "VeryLowest") {
             if (relatedTag == "BasisNewest")
                 testName = "BelowArenaLayer";
-            for (int j = 0; j < rts.Length; j++) {
+            for (int j = 0; j < rts.Count; j++) {
                 if (rts[j].name != testName) continue;
                 go.transform.SetParent(GameObject.Find(canvas).transform, true);
                 go.transform.SetSiblingIndex(j + (before ? 0 : 1));

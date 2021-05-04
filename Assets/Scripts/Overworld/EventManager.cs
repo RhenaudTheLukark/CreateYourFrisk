@@ -403,11 +403,7 @@ public class EventManager : MonoBehaviour {
             }
 
             // Repopulate the spriteControllers table
-            if (go.GetComponent<SpriteRenderer>()) {
-                if (go.name == "Player") spriteControllers[go.name] = PlayerOverworld.instance.sprctrl;
-                else                     spriteControllers[go.name] = new LuaSpriteController(go.GetComponent<SpriteRenderer>());
-            } else if (go.GetComponent<Image>())
-                spriteControllers[go.name] = new LuaSpriteController(go.GetComponent<Image>());
+            spriteControllers[go.name] = LuaSpriteController.Create(go);
 
             // Initialize the event's script if scripts have been reset
             if (resetScripts)

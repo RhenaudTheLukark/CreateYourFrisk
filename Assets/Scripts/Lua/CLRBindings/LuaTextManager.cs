@@ -336,7 +336,8 @@ public class LuaTextManager : TextManager {
         foreach (Image i in letterReferences)
             if (i != null) {
                 key++;
-                LuaSpriteController letter = new LuaSpriteController(i) { tag = "letter" };
+                LuaSpriteController letter = LuaSpriteController.Create(i.gameObject);
+                letter.tag = "letter";
                 table.Set(key, UserData.Create(letter, LuaSpriteController.data));
             }
         return DynValue.NewTable(table);

@@ -18,7 +18,7 @@ public class ProjectileController {
 
     public ProjectileController(Projectile p) {
         this.p = p;
-        spr = new LuaSpriteController(p.GetComponent<Image>());
+        spr = LuaSpriteController.Create(p.gameObject);
     }
 
     // The x position of the sprite, relative to the arena position and its anchor.
@@ -161,7 +161,7 @@ public class ProjectileController {
 
     public void Remove() {
         if (!isactive) return;
-        LuaSpriteController.RemoveChildren(p.gameObject);
+        UnitaleUtil.RemoveChildren(p.gameObject);
         lastX = x;
         lastY = y;
         lastAbsX = absx;

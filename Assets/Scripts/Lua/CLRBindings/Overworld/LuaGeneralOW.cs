@@ -121,7 +121,7 @@ public class LuaGeneralOW {
             return;
         }
 
-        if (GameObject.Find("textframe_border_outer") && GameObject.Find("textframe_border_outer").GetComponent<UnityEngine.UI.Image>().color.a != 0) {
+        if (textmgr != null && textmgr.GetComponent<UnityEngine.UI.Image>().color.a != 0) {
             // Clean up text manager
             textmgr.SetTextFrameAlpha(0);
             textmgr.textQueue = new TextMessage[] { };

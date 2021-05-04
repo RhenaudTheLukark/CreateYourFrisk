@@ -36,8 +36,8 @@ public class FightUI : MonoBehaviour {
     public void Start() {
         foreach(RectTransform child in transform) {
             switch (child.name) {
-                case "SliceAnim": slice = new LuaSpriteController(child.GetComponent<Image>()); break;
-                case "HPBar":    lifeBar = child.GetComponent<LifeBarController>(); break;
+                case "SliceAnim": slice   = LuaSpriteController.Create(child.gameObject); break;
+                case "HPBar":     lifeBar = child.GetComponent<LifeBarController>();      break;
                 case "DamageNumber":
                     damageText = child.GetComponent<TextManager>();
                     damageTextRt = child.GetComponent<RectTransform>();

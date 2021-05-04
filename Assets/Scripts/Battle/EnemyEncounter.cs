@@ -62,7 +62,7 @@ public class EnemyEncounter : MonoBehaviour {
     }
 
     public DynValue CreateEnemy(string enemyScript, float x, float y) {
-        GameObject enemyObject = Instantiate(Resources.Load<GameObject>("Prefabs/LUAEnemy 1"));
+        GameObject enemyObject = Instantiate(Resources.Load<GameObject>("Prefabs/LUAEnemy"));
 
         enemyObject.transform.SetParent(gameObject.transform);
         enemyObject.transform.localScale = new Vector3(1, 1, 1); // apparently this was suddenly required or the scale would be (0,0,0)

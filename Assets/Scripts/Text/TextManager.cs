@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using MoonSharp.Interpreter;
 using UnityEngine;
 using UnityEngine.UI;
@@ -54,7 +55,6 @@ public class TextManager : MonoBehaviour {
     private bool firstChar;
     internal float hSpacing = 3;
     internal float vSpacing;
-    private GameObject textframe;
     private LuaSpriteController mugshot;
     private string[] mugshotList;
     private string finalMugshot;
@@ -156,9 +156,9 @@ public class TextManager : MonoBehaviour {
         // SetFont(SpriteFontRegistry.F_UI_DIALOGFONT);
         timePerLetter = singleFrameTiming;
 
-        if (!UnitaleUtil.IsOverworld || !GameObject.Find("textframe_border_outer")) return;
-        textframe = GameObject.Find("textframe_border_outer");
-        mugshot   = new LuaSpriteController(GameObject.Find("Mugshot").GetComponent<Image>());
+        GameObject textFrameOuter = GameObject.Find("textframe_border_outer");
+        if (!UnitaleUtil.IsOverworld || !textFrameOuter || textFrameOuter.GetComponentInChildren<TextManager>() != this) return;
+        mugshot = LuaSpriteController.Create(GameObject.Find("Mugshot"));
     }
 
     private void Start() {
@@ -269,7 +269,7 @@ public class TextManager : MonoBehaviour {
             mugshots.Add("mugshots/");
 
         bool mugshotSet = false;
-        if (mugshot != null && mugshot._img != null) {
+        if (mugshot != null && mugshot.isactive) {
             mugshot.StopAnimation();
             if ((mugshots.Count > 1 || (mugshots[0] != "mugshots/" && mugshots[0] != "mugshots/null")) && text != null) {
                 try {
@@ -358,13 +358,13 @@ public class TextManager : MonoBehaviour {
         SpawnText(forceNoAutoLineBreak);
         //if (!overworld)
         //    UIController.instance.encounter.CallOnSelfOrChildren("AfterText");
-        if (UnitaleUtil.IsOverworld && textframe != null && this == PlayerOverworld.instance.textmgr) {
+        if (UnitaleUtil.IsOverworld && this == PlayerOverworld.instance.textmgr) {
             if (textQueue[line].ActualText) {
-                if (textframe.GetComponent<Image>().color.a == 0)
+                if (transform.parent.GetComponent<Image>().color.a == 0)
                     SetTextFrameAlpha(1);
                 blockSkip = false;
             } else {
-                if ((textframe.GetComponent<Image>().color.a == 1))
+                if (transform.parent.GetComponent<Image>().color.a == 1)
                     SetTextFrameAlpha(0);
                 blockSkip = true;
                 DestroyChars();
@@ -394,22 +394,13 @@ public class TextManager : MonoBehaviour {
     }
 
     [MoonSharpHidden] public void SetTextFrameAlpha(float a) {
-        Image[] imagesChild;
-        Image[] images;
+        string objectName = UnitaleUtil.IsOverworld ? "textframe_border_outer" : "arena_border_outer";
 
-        if (UnitaleUtil.IsOverworld) {
-            imagesChild = textframe.GetComponentsInChildren<Image>();
-            images = new Image[imagesChild.Length + 1];
-            images[0] = textframe.GetComponent<Image>();
-        } else {
-            imagesChild = GameObject.Find("arena_border_outer").GetComponentsInChildren<Image>();
-            images = new Image[imagesChild.Length + 1];
-            images[0] = GameObject.Find("arena_border_outer").GetComponent<Image>();
-        }
+        GameObject target = GameObject.Find(objectName);
+        List<Image> imagesChild = target.GetComponentsInChildren<Image>().ToList();
+        imagesChild.Add(target.GetComponent<Image>());
 
-        imagesChild.CopyTo(images, 1);
-
-        foreach (Image img in images)
+        foreach (Image img in imagesChild)
             img.color = new Color(img.color.r, img.color.g, img.color.b, a);
     }
 
@@ -661,11 +652,8 @@ public class TextManager : MonoBehaviour {
         if (skipImmediate)
             InUpdateControlCommand(DynValue.NewString(skipCommand));
 
-        if (UnitaleUtil.IsOverworld && SceneManager.GetActiveScene().name != "TitleScreen" && SceneManager.GetActiveScene().name != "EnterName" && !GlobalControls.isInShop)
-            try {
-                if (mugshot.alpha == 0)
-                    mugshot.color = new float[] { 1, 1, 1 };
-            } catch { /* ignored */ }
+        if (mugshot != null && mugshot.alpha == 0)
+            mugshot.color = new float[] { 1, 1, 1 };
         if (!instantActive)
             Update();
     }

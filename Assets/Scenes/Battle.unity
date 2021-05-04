@@ -158,7 +158,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96dc5aa61b3446942acd3e628a7d73d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  letterSound: {fileID: 0}
+  letterSound: $
   currentLine: 0
   _textMaxWidth: 320
   currentReferenceCharacter: 0
@@ -1135,7 +1135,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemies:
-  - {fileID: 11490680, guid: abc6ac7c8c097dc40812d63eb4e8a40a, type: 2}
+  - {fileID: 0}
   enemyPositions:
   - {x: 0, y: 0}
   turnCount: 0
@@ -1411,7 +1411,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96dc5aa61b3446942acd3e628a7d73d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  letterSound: {fileID: 0}
+  letterSound: $
   currentLine: 0
   _textMaxWidth: 0
   currentReferenceCharacter: 0
@@ -1686,6 +1686,7 @@ GameObject:
   - component: {fileID: 1306673879}
   - component: {fileID: 1306673878}
   - component: {fileID: 1306673877}
+  - component: {fileID: 1306673880}
   m_Layer: 5
   m_Name: FightUILine
   m_TagString: Untagged
@@ -1745,7 +1746,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 491600d126d711f4ca4479ff7889f3ff, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1760,6 +1761,17 @@ CanvasRenderer:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1306673875}
   m_CullTransparentMesh: 0
+--- !u!114 &1306673880
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1306673875}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c7b8a91bf13f244b93c1a72a65984e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1320941747
 GameObject:
   m_ObjectHideFlags: 0
@@ -2080,6 +2092,7 @@ GameObject:
   - component: {fileID: 1509689751}
   - component: {fileID: 1509689753}
   - component: {fileID: 1509689752}
+  - component: {fileID: 1509689754}
   m_Layer: 5
   m_Name: player
   m_TagString: Player
@@ -2330,6 +2343,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ShowMaskGraphic: 0
+--- !u!114 &1509689754
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1509689743}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c7b8a91bf13f244b93c1a72a65984e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1546366359
 GameObject:
   m_ObjectHideFlags: 0
@@ -2580,7 +2604,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96dc5aa61b3446942acd3e628a7d73d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  letterSound: {fileID: 0}
+  letterSound: $
   currentLine: 0
   _textMaxWidth: 320
   currentReferenceCharacter: 0

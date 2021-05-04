@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 22262094}
   - component: {fileID: 114512164272687224}
   - component: {fileID: 11425434}
+  - component: {fileID: 114678350029539784}
   m_Layer: 5
   m_Name: letter
   m_TagString: Untagged
@@ -125,3 +126,14 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   inverted: 0
+--- !u!114 &114678350029539784
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 119928}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c7b8a91bf13f244b93c1a72a65984e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

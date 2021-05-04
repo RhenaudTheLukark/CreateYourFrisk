@@ -126,6 +126,7 @@ GameObject:
   - component: {fileID: 354093672}
   - component: {fileID: 354093671}
   - component: {fileID: 354093676}
+  - component: {fileID: 354093677}
   m_Layer: 0
   m_Name: Story3
   m_TagString: Event
@@ -150,6 +151,8 @@ MonoBehaviour:
   - {x: 1, y: 1}
   - {x: 2, y: 2}
   moveSpeed: 1
+  isMovingWaitEnd: 0
+  isRotatingWaitEnd: 0
 --- !u!61 &354093672
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -273,8 +276,18 @@ MonoBehaviour:
   SetNativeSize: 0
   SpritePath: empty
   Loop: 0
-  SoundPath: 
   done: 0
+--- !u!114 &354093677
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 354093670}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c7b8a91bf13f244b93c1a72a65984e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &405518739
 GameObject:
   m_ObjectHideFlags: 0

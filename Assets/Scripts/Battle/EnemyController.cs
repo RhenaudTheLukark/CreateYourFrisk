@@ -271,7 +271,7 @@ public class EnemyController : MonoBehaviour {
             script.Bind("State", (Action<Script, string>)UIController.SwitchStateOnString);
             script.Bind("Remove", (Action)Remove);
             script.SetVar("canmove", DynValue.NewBoolean(false));
-            sprite = new LuaSpriteController(GetComponent<Image>());
+            sprite = LuaSpriteController.Create(gameObject);
             script.SetVar("monstersprite", UserData.Create(sprite, LuaSpriteController.data));
             script.DoString(scriptText);
 

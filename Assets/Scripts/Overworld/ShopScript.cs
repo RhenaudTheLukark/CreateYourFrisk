@@ -48,7 +48,7 @@ public class ShopScript : MonoBehaviour {
 
         try {
             script.DoString(scriptText);
-            script.SetVar("background", UserData.Create(new LuaSpriteController(GameObject.Find("Background").GetComponent<Image>())));
+            script.SetVar("background", UserData.Create(LuaSpriteController.Create(GameObject.Find("Background"))));
             script.script.Globals["Interrupt"] = ((Action<DynValue, string>) Interrupt);
             script.script.Globals["CreateSprite"] = (Func<string, string, int, DynValue>) SpriteUtil.MakeIngameSprite;
             script.script.Globals["CreateLayer"] = (Func<string, string, bool, bool>) SpriteUtil.CreateLayer;
