@@ -303,13 +303,14 @@ public class UIController : MonoBehaviour {
         if (state == UIState.ENEMYSELECT && forcedAction == Actions.FIGHT)
             foreach (LifeBarController lbc in arenaParent.GetComponentsInChildren<LifeBarController>())
                 Destroy(lbc.gameObject);
-
-        if (state == UIState.ENEMYDIALOGUE) {
+        else if (state == UIState.ENEMYDIALOGUE) {
             TextManager[] textManagers = FindObjectsOfType<TextManager>();
             foreach (TextManager textManager in textManagers)
                 if (textManager.gameObject.name.StartsWith("DialogBubble")) // game object name is hardcoded as it won't change
                     Destroy(textManager.gameObject);
-        }
+        } else if (state == UIState.DIALOGRESULT)
+            mainTextManager.SetCaller(EnemyEncounter.script);
+
         UIState oldState = state;
         state = newState;
         //encounter.CallOnSelfOrChildren("Entered" + Enum.GetName(typeof(UIState), state).Substring(0, 1)
@@ -320,6 +321,7 @@ public class UIController : MonoBehaviour {
             if (state != current && !GlobalControls.retroMode)
                 return;
         }
+
         switch (state) {
             case UIState.ATTACKING:
                 // Error for no active enemies

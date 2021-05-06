@@ -193,7 +193,7 @@ public class EnemyEncounter : MonoBehaviour {
         return comments[randomComment];
     }
 
-    public static void BattleDialog(DynValue arg) {
+    public static void BattleDialog(Script scr, DynValue arg) {
         if (UIController.instance == null)
             UnitaleUtil.Warn("BattleDialog can only be used as early as EncounterStarting.");
         else {
@@ -216,6 +216,14 @@ public class EnemyEncounter : MonoBehaviour {
                                        "\n\nIf you're sure that you've entered what's needed, you may contact the dev.");
             if (!GlobalControls.retroMode)
                 UIController.instance.mainTextManager.SetEffect(new TwitchEffect(UIController.instance.mainTextManager));
+
+            // Fetch the script this function has been called from as its caller
+            foreach (ScriptWrapper scrWrap in ScriptWrapper.instances) {
+                if (scrWrap.script != scr) continue;
+                UIController.instance.mainTextManager.SetCaller(scrWrap);
+                break;
+            }
+
             UIController.instance.ActionDialogResult(msgs);
         }
     }
