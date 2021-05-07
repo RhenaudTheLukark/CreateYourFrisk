@@ -555,12 +555,15 @@ public static class UnitaleUtil {
             // Bullet to delete recursively
             if (t.GetComponent<Projectile>())
                 t.GetComponent<Projectile>().ctrl.Remove();
-            // Sprite to add to the sprite queue
-            else if (t.GetComponent<LuaTextManager>())
-                t.GetComponent<LuaTextManager>().Remove();
-            // Sprite to add to the sprite queue
-            else
+            // Sprite to delete recursively
+            else if (t.GetComponent<CYFSprite>())
                 LuaSpriteController.Create(t.gameObject).Remove();
+            // Text object to delete
+            else if (t.GetComponentInChildren<LuaTextManager>())
+                t.GetComponentInChildren<LuaTextManager>().Remove();
+            // Normally this shouldn't happen, just a failsafe
+            else
+                throw new CYFException("For some reason, it seems you're trying to remove something which is neither a sprite, bullet or text object.");
         }
     }
 
