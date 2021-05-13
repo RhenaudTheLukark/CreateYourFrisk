@@ -403,7 +403,7 @@ public class EventManager : MonoBehaviour {
             }
 
             // Repopulate the spriteControllers table
-            spriteControllers[go.name] = LuaSpriteController.Create(go);
+            spriteControllers[go.name] = LuaSpriteController.GetOrCreate(go);
 
             // Initialize the event's script if scripts have been reset
             if (resetScripts)

@@ -18,7 +18,7 @@ public class ProjectileController {
 
     public ProjectileController(Projectile p) {
         this.p = p;
-        spr = LuaSpriteController.Create(p.gameObject);
+        spr = LuaSpriteController.GetOrCreate(p.gameObject);
     }
 
     // The x position of the sprite, relative to the arena position and its anchor.

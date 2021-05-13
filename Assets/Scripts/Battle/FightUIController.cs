@@ -38,7 +38,7 @@ public class FightUIController : MonoBehaviour {
     private void Awake() {
         foreach (Transform child in gameObject.transform)
             if (child.name == "FightUILine") {
-                line = LuaSpriteController.Create(child.gameObject);
+                line = LuaSpriteController.GetOrCreate(child.gameObject);
                 Start();
                 return;
             }

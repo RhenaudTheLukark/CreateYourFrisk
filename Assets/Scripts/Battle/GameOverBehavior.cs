@@ -261,7 +261,7 @@ public class GameOverBehavior : MonoBehaviour {
                 heartShardCtrl = new LuaSpriteController[6];
                 for (int i = 0; i < heartShardInstances.Length; i++) {
                     heartShardInstances[i] = Instantiate(SpriteRegistry.GENERIC_SPRITE_PREFAB.gameObject).GetComponent<RectTransform>();
-                    heartShardCtrl[i] = LuaSpriteController.Create(heartShardInstances[i].gameObject);
+                    heartShardCtrl[i] = LuaSpriteController.GetOrCreate(heartShardInstances[i].gameObject);
                     heartShardInstances[i].transform.SetParent(UnitaleUtil.IsOverworld ? GameObject.Find("Canvas GameOver").transform : gameObject.transform);
                     heartShardInstances[i].GetComponent<RectTransform>().position = heartPos;
                     heartShardInstances[i].GetComponent<Image>().color = heartColor;

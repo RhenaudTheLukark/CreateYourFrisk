@@ -1,5 +1,4 @@
-﻿using UnityEngine.UI;
-/// <summary>
+﻿/// <summary>
 /// Lua binding to set and retrieve information for the on-screen player.
 /// </summary>
 public class LuaPlayerStatus {
@@ -19,7 +18,7 @@ public class LuaPlayerStatus {
     /// <param name="p">PlayerController this controller is intended for</param>
     public LuaPlayerStatus(PlayerController p) {
         player = p;
-        spr = LuaSpriteController.Create(p.gameObject);
+        spr = LuaSpriteController.GetOrCreate(p.gameObject);
     }
 
     /// <summary>

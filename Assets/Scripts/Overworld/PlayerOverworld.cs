@@ -74,7 +74,7 @@ public class PlayerOverworld : MonoBehaviour {
 
         //Get a component reference to the Player's animator component
         //animator = Player.GetComponent<Animator>();
-        sprctrl = LuaSpriteController.Create(Player.gameObject);
+        sprctrl = LuaSpriteController.GetOrCreate(Player.gameObject);
         sprctrl.loopmode = "LOOP";
         animator = Player.GetComponent<CYFAnimator>();
 

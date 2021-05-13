@@ -557,7 +557,7 @@ public static class UnitaleUtil {
                 t.GetComponent<Projectile>().ctrl.Remove();
             // Sprite to delete recursively
             else if (t.GetComponent<CYFSprite>())
-                LuaSpriteController.Create(t.gameObject).Remove();
+                LuaSpriteController.GetOrCreate(t.gameObject).Remove();
             // Text object to delete
             else if (t.GetComponentInChildren<LuaTextManager>())
                 t.GetComponentInChildren<LuaTextManager>().Remove();

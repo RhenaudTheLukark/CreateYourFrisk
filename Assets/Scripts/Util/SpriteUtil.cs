@@ -137,7 +137,7 @@ public static class SpriteUtil {
             if (childNumber != -1)
                 i.transform.SetSiblingIndex(childNumber - 1);
         }
-        return UserData.Create(LuaSpriteController.Create(i.gameObject), LuaSpriteController.data);
+        return UserData.Create(LuaSpriteController.GetOrCreate(i.gameObject), LuaSpriteController.data);
     }
 
     public static bool CreateLayer(string name, string relatedTag = "BasisNewest", bool before = false) {

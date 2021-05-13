@@ -4,7 +4,6 @@ using System.Linq;
 using MoonSharp.Interpreter;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 using Debug = System.Diagnostics.Debug;
 
 // TODO less code duplicate-y way of pulling commands out of the text.
@@ -158,7 +157,7 @@ public class TextManager : MonoBehaviour {
 
         GameObject textFrameOuter = GameObject.Find("textframe_border_outer");
         if (!UnitaleUtil.IsOverworld || !textFrameOuter || textFrameOuter.GetComponentInChildren<TextManager>() != this) return;
-        mugshot = LuaSpriteController.Create(GameObject.Find("Mugshot"));
+        mugshot = LuaSpriteController.GetOrCreate(GameObject.Find("Mugshot"));
     }
 
     private void Start() {

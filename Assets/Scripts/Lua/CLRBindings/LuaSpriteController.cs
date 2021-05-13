@@ -343,7 +343,7 @@ public class LuaSpriteController {
     /// </summary>
     /// <param name="go">GameObject to create a controller for.</param>
     /// <returns>An instance of LuaSpriteController manipulating the Gameobject go.</returns>
-    public static LuaSpriteController Create(GameObject go) {
+    public static LuaSpriteController GetOrCreate(GameObject go) {
         // Fetch or add the GameObject's CYFSprite component, then retrieve its controller if it exists
         CYFSprite newSpr = go.GetComponent<CYFSprite>() ?? go.AddComponent<CYFSprite>();
         if (newSpr.ctrl != null) return newSpr.ctrl;
