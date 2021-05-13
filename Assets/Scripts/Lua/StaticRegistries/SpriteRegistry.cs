@@ -37,7 +37,16 @@ public static class SpriteRegistry {
         key = key.ToLower();
         if (dictMod.ContainsKey(key))          dict[dictKey] = SpriteUtil.FromFile(fileName + ".png");
         else if (dictDefault.ContainsKey(key)) dict[dictKey] = SpriteUtil.FromFile(fileName + ".png");
-        else                                   return null;
+        else                                   return TryFetchFromMod(fileName, dictKey);
+        return dict[dictKey];
+    }
+
+    private static Sprite TryFetchFromMod(string key, string dictKey) {
+        FileInfo tryF = new FileInfo(Path.Combine(FileLoader.PathToModFile("Sprites"), key) + (key.EndsWith(".png") ? "" : ".png"));
+        if (!tryF.Exists) return null;
+
+        dictDefault[key.ToLower()] = tryF;
+        dict[dictKey]              = SpriteUtil.FromFile(key + ".png");
         return dict[dictKey];
     }
 

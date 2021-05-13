@@ -45,6 +45,9 @@ public static class SpriteUtil {
         } else
             newSprite = SpriteRegistry.Get(filename);
 
+        if (newSprite == null)
+            throw new CYFException("The sprite Sprites/" + filename + ".png doesn't exist.");
+
         Image img = target.GetComponent<Image>();
         if (!img) {
             SpriteRenderer img2 = target.GetComponent<SpriteRenderer>();
@@ -59,7 +62,6 @@ public static class SpriteUtil {
             img.rectTransform.sizeDelta = new Vector2(newSprite.texture.width, newSprite.texture.height);
             img.rectTransform.pivot = pivot;
         }
-
     }
 
     public static Sprite SpriteWithXml(XmlNode spriteNode, Sprite source) {
