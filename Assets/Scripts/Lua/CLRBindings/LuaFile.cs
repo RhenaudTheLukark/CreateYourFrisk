@@ -4,7 +4,7 @@ using System.IO;
 public class LuaFile {
     private string[] content;
 
-    public int lineCount { get { return content.Length; } }
+    public int lineCount { get { return content == null ? 0 : content.Length; } }
     public string openMode { get; private set; }
     public string filePath { get; private set; }
 
