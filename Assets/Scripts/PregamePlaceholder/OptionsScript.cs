@@ -14,8 +14,8 @@ public class OptionsScript : MonoBehaviour {
     private int DescriptionTimer;
 
     // used to store the state of CreteYourFrisk at the start of the scene
-    private bool LocalCrate = GlobalControls.crate;
-    private bool CrateUnlocked = LuaScriptBinder.GetAlMighty(null, "CrateYourFrisk") != null;
+    private bool LocalCrate;
+    private bool CrateUnlocked;
 
     // game objects
     public GameObject ResetRG, ResetAG, ClearSave, Safe, Retro, Fullscreen, Scale, Discord, Crate, Exit;
@@ -23,6 +23,9 @@ public class OptionsScript : MonoBehaviour {
 
     // Use this for initialization
     private void Start() {
+        LocalCrate = GlobalControls.crate;
+        CrateUnlocked = LuaScriptBinder.GetAlMighty(null, "CrateYourFrisk") != null;
+
         // add button functions
 
         // reset RealGlobals
