@@ -13,41 +13,31 @@ public static class SpriteRegistry {
     public static void Start() { LoadAllFrom(FileLoader.PathToDefaultFile("Sprites")); }
 
     public static void Set(string key, Sprite value) {
-        key += key.EndsWith(".png") ? "" : ".png";
-        FileLoader.SanitizePath(ref key, "Sprites/");
-        key = key.ToLower();
-        dict[(UnitaleUtil.IsOverworld ? "ow::" : "b::") + key] = value;
+        dict[ProcessKey(key + (key.EndsWith(".png") ? "" : ".png"))] = value;
     }
 
-    public static Sprite Get(string key) {
-        string dictKey = key + (key.EndsWith(".png") ? "" : ".png");
-        FileLoader.SanitizePath(ref dictKey, "Sprites/");
-        dictKey = (UnitaleUtil.IsOverworld ? "ow::" : "b::") + dictKey.ToLower();
-        return dict.ContainsKey(dictKey) ? dict[dictKey] : TryLoad(key);
+    public static Sprite Get(string origKey) {
+        origKey += origKey.EndsWith(".png") ? "" : ".png";
+        string key = ProcessKey(origKey);
+        return dict.ContainsKey(key) ? dict[key] : TryLoad(origKey, key);
     }
 
-    public static Sprite GetMugshot(string key) { return Get("mugshots/" + key.ToLower()); }
+    public static Sprite GetMugshot(string key) { return Get("Mugshots/" + key); }
 
-    private static Sprite TryLoad(string key) {
-        string fileName = key;
-        string dictKey = (UnitaleUtil.IsOverworld ? "ow::" : "b::") + key;
-
-        key += key.EndsWith(".png") ? "" : ".png";
-        FileLoader.SanitizePath(ref key, "Sprites/");
-        key = key.ToLower();
-        if (dictMod.ContainsKey(key))          dict[dictKey] = SpriteUtil.FromFile(fileName + ".png");
-        else if (dictDefault.ContainsKey(key)) dict[dictKey] = SpriteUtil.FromFile(fileName + ".png");
-        else                                   return TryFetchFromMod(fileName, dictKey);
-        return dict[dictKey];
+    private static Sprite TryLoad(string origKey, string key) {
+        if (dictMod.ContainsKey(key))          dict[key] = SpriteUtil.FromFile(origKey);
+        else if (dictDefault.ContainsKey(key)) dict[key] = SpriteUtil.FromFile(origKey);
+        else                                   return TryFetchFromMod(origKey, key);
+        return dict[key];
     }
 
-    private static Sprite TryFetchFromMod(string key, string dictKey) {
-        FileInfo tryF = new FileInfo(Path.Combine(FileLoader.PathToModFile("Sprites"), key) + (key.EndsWith(".png") ? "" : ".png"));
+    private static Sprite TryFetchFromMod(string origKey, string key) {
+        FileInfo tryF = new FileInfo(Path.Combine(FileLoader.PathToModFile("Sprites"), origKey) + (origKey.EndsWith(".png") ? "" : ".png"));
         if (!tryF.Exists) return null;
 
-        dictDefault[key.ToLower()] = tryF;
-        dict[dictKey]              = SpriteUtil.FromFile(key + ".png");
-        return dict[dictKey];
+        dictMod[key] = tryF;
+        dict[key] = SpriteUtil.FromFile(origKey);
+        return dict[key];
     }
 
     public static void Init() {
@@ -68,18 +58,17 @@ public static class SpriteRegistry {
 
         if (mod) {
             dictMod.Clear();
-            foreach (FileInfo file in fInfoTest) {
-                string k = file.FullName.Substring(directoryPath.Length + 1);
-                FileLoader.SanitizePath(ref k, "Sprites/");
-                dictMod[k.ToLower()] = file;
-            }
+            foreach (FileInfo file in fInfoTest)
+                dictMod[ProcessKey(file.FullName.Substring(directoryPath.Length + 1))] = file;
         } else {
             dictDefault.Clear();
-            foreach (FileInfo file in fInfoTest) {
-                string k = file.FullName.Substring(directoryPath.Length + 1);
-                FileLoader.SanitizePath(ref k, "Sprites/");
-                dictDefault[k.ToLower()] = file;
-            }
+            foreach (FileInfo file in fInfoTest)
+                dictDefault[ProcessKey(file.FullName.Substring(directoryPath.Length + 1))] = file;
         }
+    }
+
+    private static string ProcessKey(string key) {
+        FileLoader.SanitizePath(ref key, "Sprites/");
+        return (UnitaleUtil.IsOverworld ? "ow::" : "b::") + key.ToLower();
     }
 }
