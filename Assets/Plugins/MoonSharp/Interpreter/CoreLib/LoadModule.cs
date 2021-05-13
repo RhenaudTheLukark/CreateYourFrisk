@@ -138,18 +138,17 @@ namespace MoonSharp.Interpreter.CoreLib
 
 		private static DynValue loadfile_impl(ScriptExecutionContext executionContext, CallbackArguments args, Table defaultEnv, bool catchError = true)
 		{
-			try
-			{
+			try {
 				Script S = executionContext.GetScript();
 				DynValue filename = args.AsType(0, "loadfile", DataType.String, false);
 				DynValue env = args.AsType(2, "loadfile", DataType.Table, true);
 				return S.LoadFile(ExplorePath(filename.String, "Lua/", true), env.IsNil() ? defaultEnv : env.Table);
-			} catch (FileNotFoundException) {
+            } catch (SyntaxErrorException ex) {
+                return DynValue.NewTuple(DynValue.Nil, DynValue.NewString(ex.DecoratedMessage ?? ex.Message));
+            } catch (Exception) {
 				if (!catchError)
 					return DynValue.Nil;
 				throw;
-			} catch (SyntaxErrorException ex) {
-				return DynValue.NewTuple(DynValue.Nil, DynValue.NewString(ex.DecoratedMessage ?? ex.Message));
 			}
 		}
 
