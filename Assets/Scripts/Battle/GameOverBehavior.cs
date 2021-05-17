@@ -163,7 +163,7 @@ public class GameOverBehavior : MonoBehaviour {
 
         if (UnitaleUtil.IsOverworld) gameOverContainerOw.SetActive(true);
         else                         gameOverContainer.SetActive(true);
-        ScreenResolution.BoxCameras(Screen.fullScreen);
+        ScreenResolution.BoxCameras(Screen.fullScreen, 640, 480);
 
         Camera.main.GetComponent<AudioSource>().clip = AudioClipRegistry.GetMusic("mus_gameover");
         GameObject.Find("GameOver").GetComponent<Image>().sprite = SpriteRegistry.Get("UI/spr_gameoverbg_0");

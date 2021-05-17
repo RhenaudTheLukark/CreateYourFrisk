@@ -13,12 +13,12 @@ public class FPSDisplay : MonoBehaviour {
         GUIStyle style = new GUIStyle();
 
         #if !UNITY_EDITOR
-            Rect rect = new Rect(ScreenResolution.displayedSize.z, 0, ScreenResolution.displayedSize.x, Screen.height / 20);
+            Rect rect = new Rect(ScreenResolution.mousePosShift.x, ScreenResolution.mousePosShift.y, 640 * ScreenResolution.tempWindowScale, 24 * ScreenResolution.tempWindowScale);
         #else
             Rect rect = new Rect(0, 0, Screen.width, Screen.height / 20f);
         #endif
         style.alignment = TextAnchor.UpperLeft;
-        style.fontSize = Screen.height / 20;
+        style.fontSize = 24 * ScreenResolution.tempWindowScale;
         style.normal.textColor = new Color(1, 1, 1, 1);
         string text = string.Format("{0:0.} fps", lastValue);
         GUI.Label(rect, text, style);
