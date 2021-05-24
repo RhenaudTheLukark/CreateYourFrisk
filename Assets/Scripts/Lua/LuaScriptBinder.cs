@@ -107,7 +107,7 @@ public static class LuaScriptBinder {
                 script.Globals.Set("FMap", MapOW);
             } catch { /* ignored */ }
         }
-        script.Globals["DEBUG"] = (Action<string>)UnitaleUtil.WriteInLogAndDebugger;
+        script.Globals["DEBUG"] = (Action)UnitaleUtil.WriteInLogAndDebugger;
         script.Globals["EnableDebugger"] = (Action<bool>)EnableDebugger;
         // clr bindings
         DynValue MusicMgr = UserData.Create(mgr);

@@ -23,14 +23,13 @@ public static class UnitaleUtil {
             sr = File.CreateText(fileName);
     }*/
 
-    public static void WriteInLogAndDebugger(string mess) {
+    public static void WriteInLogAndDebugger(params string[] objects) {
+        string message = string.Join(" ", objects);
+
         try {
-            /*sr.WriteLine("By DEBUG: " + mess.Replace("\n", "\\n").Replace("\r", "\\r").Replace("\t", "\\t"));
-            sr.Flush();*/
-            UserDebugger.instance.UserWriteLine(mess);
-        } catch /*(Exception e)*/ {
-            //Debug.Log("Couldn't write on the log:\n" + e.Message + "\nMessage: " + mess);
-            printDebuggerBeforeInit += (printDebuggerBeforeInit == "" ? "" : "\n") + mess;
+            UserDebugger.instance.UserWriteLine(message);
+        } catch {
+            printDebuggerBeforeInit += (printDebuggerBeforeInit == "" ? "" : "\n") + message;
         }
     }
 
