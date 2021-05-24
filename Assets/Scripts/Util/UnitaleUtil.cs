@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using MoonSharp.Interpreter;
+using MoonSharp.Interpreter.Serialization.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,8 +24,14 @@ public static class UnitaleUtil {
             sr = File.CreateText(fileName);
     }*/
 
-    public static void WriteInLogAndDebugger(params string[] objects) {
-        string message = string.Join(" ", objects);
+    public static void WriteInLogAndDebugger(params object[] objects) {
+        string message = string.Join(
+            " ", objects.Select(
+                obj => obj is Table
+                    ? JsonTableConverter.TableToJson((Table) obj)
+                    : obj.ToString()
+            ).ToArray()
+        );
 
         try {
             UserDebugger.instance.UserWriteLine(message);
