@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using MoonSharp.Interpreter;
-using MoonSharp.Interpreter.Serialization.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,13 +24,7 @@ public static class UnitaleUtil {
     }*/
 
     public static void WriteInLogAndDebugger(params object[] objects) {
-        string message = string.Join(
-            " ", objects.Select(
-                obj => obj is Table
-                    ? JsonTableConverter.TableToJson((Table) obj)
-                    : obj.ToString()
-            ).ToArray()
-        );
+        string message = string.Join(" ", objects.Select(Convert.ToString).ToArray());
 
         try {
             UserDebugger.instance.UserWriteLine(message);
