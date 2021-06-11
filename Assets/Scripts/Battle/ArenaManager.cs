@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
@@ -216,28 +216,16 @@ public class ArenaManager : MonoBehaviour {
     /// Makes the arena invisible, but it will stay active.
     /// </summary>
     public void Hide() {
-        inner.GetComponent<Image>().color = new Color(inner.GetComponent<Image>().color.r,
-                                                      inner.GetComponent<Image>().color.g,
-                                                      inner.GetComponent<Image>().color.b,
-                                                      0f);
-        outer.GetComponent<Image>().color = new Color(outer.GetComponent<Image>().color.r,
-                                                      outer.GetComponent<Image>().color.g,
-                                                      outer.GetComponent<Image>().color.b,
-                                                      0f);
+        inner.GetComponent<Image>().enabled = false;
+        outer.GetComponent<Image>().enabled = false;
     }
 
     /// <summary>
     /// Makes the arena visible, if it was previously set invisible with Hide().
     /// </summary>
     public void Show() {
-        inner.GetComponent<Image>().color = new Color(inner.GetComponent<Image>().color.r,
-                                                      inner.GetComponent<Image>().color.g,
-                                                      inner.GetComponent<Image>().color.b,
-                                                      1f);
-        outer.GetComponent<Image>().color = new Color(outer.GetComponent<Image>().color.r,
-                                                      outer.GetComponent<Image>().color.g,
-                                                      outer.GetComponent<Image>().color.b,
-                                                      1f);
+        inner.GetComponent<Image>().enabled = true;
+        outer.GetComponent<Image>().enabled = true;
     }
 
     /// <summary>
