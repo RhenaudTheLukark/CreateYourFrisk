@@ -79,4 +79,19 @@ public class LuaArenaStatus {
         } else
             UnitaleUtil.DisplayLuaError("NOT THE WAVE SCRIPT", "sorry but pls don't");
     }
+
+    public void SetSprite(string filename) {
+        if (UIController.instance.GetState() == UIController.UIState.DEFENDING) ArenaManager.instance.sprite.Set(filename);
+        else                                                                    UnitaleUtil.DisplayLuaError("NOT THE WAVE SCRIPT", "sorry but pls don't");
+    }
+
+    public void SetColor(float[] color) {
+        if (UIController.instance.GetState() == UIController.UIState.DEFENDING) ArenaManager.instance.sprite.color = color;
+        else                                                                    UnitaleUtil.DisplayLuaError("NOT THE WAVE SCRIPT", "sorry but pls don't");
+    }
+
+    public void SetColor32(float[] color32) {
+        if (UIController.instance.GetState() == UIController.UIState.DEFENDING) ArenaManager.instance.sprite.color32 = color32;
+        else                                                                    UnitaleUtil.DisplayLuaError("NOT THE WAVE SCRIPT", "sorry but pls don't");
+    }
 }

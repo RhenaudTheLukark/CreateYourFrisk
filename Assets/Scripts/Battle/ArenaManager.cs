@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
@@ -15,6 +15,7 @@ public class ArenaManager : MonoBehaviour {
     public static Vector2 arenaCenter; // arena center, updated here to save computation time on doing it per frame
     [HideInInspector]
     public static LuaArenaStatus luaStatus { get; private set; } // The Lua Arena object on the C# side
+    public LuaSpriteController sprite; // inner part's sprite
     public bool firstTurn = true, yup, falseInit;
 
     private RectTransform outer; // RectTransform of the slightly larger white box under the arena (it's the border).
@@ -42,6 +43,7 @@ public class ArenaManager : MonoBehaviour {
 
         inner = GameObject.Find("arena").GetComponent<RectTransform>();
         outer = inner.parent.GetComponent<RectTransform>();
+        sprite = LuaSpriteController.GetOrCreate(GameObject.Find("arena"));
         /*outer = GameObject.Find("arena_border_outer").GetComponent<RectTransform>();
         inner = GameObject.Find("arena").GetComponent<RectTransform>();*/
         desiredWidth = currentWidth;
@@ -356,6 +358,12 @@ public class ArenaManager : MonoBehaviour {
         if (!firstTurn)
             MoveToImmediate(320, 90, false);
         Resize(UIWidth, UIHeight);
+        ResetSprite();
+    }
+
+    private void ResetSprite() {
         Show();
+        inner.GetComponent<Image>().sprite = null;
+        inner.GetComponent<Image>().color = new Color(0, 0, 0);
     }
 }
