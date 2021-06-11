@@ -29,69 +29,71 @@ public class LuaArenaStatus {
     /// <param name="w">New width for arena.</param>
     /// <param name="h">New height for arena.</param>
     public void Resize(int w, int h) {
-        if (UIController.instance.GetState() == UIController.UIState.DEFENDING) ArenaManager.instance.Resize(w, h);
-        else                                                                    UnitaleUtil.DisplayLuaError("NOT THE WAVE SCRIPT", "sorry but pls don't");
+        AssertIsDefending();
+        ArenaManager.instance.Resize(w, h);
     }
 
     public void ResizeImmediate(int w, int h) {
-        if (UIController.instance.GetState() == UIController.UIState.DEFENDING) ArenaManager.instance.ResizeImmediate(w, h);
-        else                                                                    UnitaleUtil.DisplayLuaError("NOT THE WAVE SCRIPT", "sorry but pls don't");
+        AssertIsDefending();
+        ArenaManager.instance.ResizeImmediate(w, h);
     }
 
     public void Hide() {
-        if (UIController.instance.GetState() == UIController.UIState.DEFENDING) ArenaManager.instance.Hide();
-        else                                                                    UnitaleUtil.DisplayLuaError("NOT THE WAVE SCRIPT", "sorry but pls don't");
+        AssertIsDefending();
+        ArenaManager.instance.Hide();
     }
 
     public void Show() {
-        if (UIController.instance.GetState() == UIController.UIState.DEFENDING) ArenaManager.instance.Show();
-        else                                                                    UnitaleUtil.DisplayLuaError("NOT THE WAVE SCRIPT", "sorry but pls don't");
+        AssertIsDefending();
+        ArenaManager.instance.Show();
     }
 
     public void Move(float x, float y, bool movePlayer = true, bool immediate = false) {
-        if (UIController.instance.GetState() == UIController.UIState.DEFENDING) {
-            if (immediate) ArenaManager.instance.MoveImmediate(x, y, movePlayer);
-            else           ArenaManager.instance.Move(x, y, movePlayer);
-        } else
-            UnitaleUtil.DisplayLuaError("NOT THE WAVE SCRIPT", "sorry but pls don't");
+        AssertIsDefending();
+
+        if (immediate) ArenaManager.instance.MoveImmediate(x, y, movePlayer);
+        else           ArenaManager.instance.Move(x, y, movePlayer);
     }
 
     public void MoveTo(float x, float y, bool movePlayer = true, bool immediate = false) {
-        if (UIController.instance.GetState() == UIController.UIState.DEFENDING) {
-            if (immediate) ArenaManager.instance.MoveToImmediate(x, y, movePlayer);
-            else           ArenaManager.instance.MoveTo(x, y, movePlayer);
-        } else
-            UnitaleUtil.DisplayLuaError("NOT THE WAVE SCRIPT", "sorry but pls don't");
+        AssertIsDefending();
+
+        if (immediate) ArenaManager.instance.MoveToImmediate(x, y, movePlayer);
+        else           ArenaManager.instance.MoveTo(x, y, movePlayer);
     }
 
     public void MoveAndResize(float x, float y, int width, int height, bool movePlayer = true, bool immediate = false) {
-        if (UIController.instance.GetState() == UIController.UIState.DEFENDING) {
-            if (immediate) ArenaManager.instance.MoveAndResizeImmediate(x, y, width, height, movePlayer);
-            else           ArenaManager.instance.MoveAndResize(x, y, width, height, movePlayer);
-        } else
-            UnitaleUtil.DisplayLuaError("NOT THE WAVE SCRIPT", "sorry but pls don't");
+        AssertIsDefending();
+
+        if (immediate) ArenaManager.instance.MoveAndResizeImmediate(x, y, width, height, movePlayer);
+        else           ArenaManager.instance.MoveAndResize(x, y, width, height, movePlayer);
     }
 
     public void MoveToAndResize(float x, float y, int width, int height, bool movePlayer = true, bool immediate = false) {
-        if (UIController.instance.GetState() == UIController.UIState.DEFENDING) {
-            if (immediate) ArenaManager.instance.MoveToAndResizeImmediate(x, y, width, height, movePlayer);
-            else           ArenaManager.instance.MoveToAndResize(x, y, width, height, movePlayer);
-        } else
-            UnitaleUtil.DisplayLuaError("NOT THE WAVE SCRIPT", "sorry but pls don't");
+        AssertIsDefending();
+
+        if (immediate) ArenaManager.instance.MoveToAndResizeImmediate(x, y, width, height, movePlayer);
+        else           ArenaManager.instance.MoveToAndResize(x, y, width, height, movePlayer);
     }
 
     public void SetSprite(string filename) {
-        if (UIController.instance.GetState() == UIController.UIState.DEFENDING) ArenaManager.instance.sprite.Set(filename);
-        else                                                                    UnitaleUtil.DisplayLuaError("NOT THE WAVE SCRIPT", "sorry but pls don't");
+        AssertIsDefending();
+        ArenaManager.instance.sprite.Set(filename);
     }
 
     public void SetColor(float[] color) {
-        if (UIController.instance.GetState() == UIController.UIState.DEFENDING) ArenaManager.instance.sprite.color = color;
-        else                                                                    UnitaleUtil.DisplayLuaError("NOT THE WAVE SCRIPT", "sorry but pls don't");
+        AssertIsDefending();
+        ArenaManager.instance.sprite.color = color;
     }
 
     public void SetColor32(float[] color32) {
-        if (UIController.instance.GetState() == UIController.UIState.DEFENDING) ArenaManager.instance.sprite.color32 = color32;
-        else                                                                    UnitaleUtil.DisplayLuaError("NOT THE WAVE SCRIPT", "sorry but pls don't");
+        AssertIsDefending();
+        ArenaManager.instance.sprite.color32 = color32;
+    }
+
+    private void AssertIsDefending() {
+        if (UIController.instance.GetState() != UIController.UIState.DEFENDING) {
+            UnitaleUtil.DisplayLuaError("NOT THE WAVE SCRIPT", "sorry but pls don't");
+        }
     }
 }
