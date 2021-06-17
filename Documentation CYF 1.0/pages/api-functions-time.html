@@ -47,7 +47,7 @@ it's w3c valid, at least
                         <li class="li-indent"><a href="api-functions-audio.html">The Audio Object</a></li>
                         <li class="li-indent"><a href="api-functions-newaudio.html"><span class="CYF"></span> The NewAudio Object</a></li>
                         <li class="li-indent"><a href="api-functions-input.html">The Input Object</a></li>
-                        <li class="li-indent active" style="margin-left:5px;">&gt; The Time<br>Object &lt;</li>
+                        <li class="new066 li-indent active" style="margin-left:5px;">&gt; The Time<br>Object &lt;</li>
                         <li class="new066 li-indent"><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
                         <li class="li-indent new"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
                         <li class="li-indent new"><a href="api-functions-discord.html"><span class="CYF"></span> The Discord Object</a></li>
@@ -94,22 +94,22 @@ it's w3c valid, at least
                 ensure equal behaviour across all framerates.
             </p>
             <ul>
-                <li><span class="number"></span> <span class="term">Time.time</span> - Time (in seconds) since the game application started. If you want to time specific
+                <li><span class="number"></span> <span class="term">Time.time</span> (readonly) - Time (in seconds) since the game application started. If you want to time specific
                     events, store <span class="term">Time.time</span> in a variable of your own at the start of what you want to time, then
                     subtract <span class="term">Time.time</span> from your stored time to calculate the difference.
                 </li><br>
-                <li><span class="number"></span> <span class="term">Time.dt</span> - Delta time (in seconds). This is the time it took for the last game update to complete.
+                <li><span class="number"></span> <span class="term">Time.dt</span> (readonly) - Delta time (in seconds). This is the time it took for the last game update to complete.
                 </li><br>
-                <li><span class="number"></span> <span class="term">Time.mult</span> - Multiplier to ensure equal movement across all framerates (this is essentially
+                <li><span class="number"></span> <span class="term">Time.mult</span> (readonly) - Multiplier to ensure equal movement across all framerates (this is essentially
                     <span class="term">deltatime*framerate</span>). This will be around 1.0 when the application runs at 60FPS, ~0.5 at 120FPS and
                     ~2.0 at 30FPS, etc. By multiplying your movement by this value, your waves will be consistent on
                     lower framerates as well.
                 </li><br>
-                <li><span class="CYF"></span> <span class="number"></span> <span class="term">Time.wave</span> - Returns the elapsed time (in seconds) of the current
+                <li><span class="CYF"></span> <span class="number"></span> <span class="term">Time.wave</span> (readonly) - Returns the elapsed time (in seconds) of the current
                 waves while in <span class="term">DEFENDING</span>. -1 outside of <span class="term">DEFENDING</span>.<br>
                 You can use <span class="term">wavetimer - Time.wave</span> while in <span class="term">DEFENDING</span> to see how much time is left in the defense round.
                 </li><br>
-                <li><span class="CYF"></span> <span class="number"></span> <span class="term">Time.frameCount</span> - The total number of frames since the start of the
+                <li><span class="new066"></span> <span class="CYF"></span> <span class="number"></span> <span class="term">Time.frameCount</span> (readonly) - The total number of frames since the start of the
                 encounter or overworld.</li><br>
             </ul>
         </div>
