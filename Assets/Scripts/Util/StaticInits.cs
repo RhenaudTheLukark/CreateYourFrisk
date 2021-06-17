@@ -1,8 +1,17 @@
 ﻿using System.Diagnostics;
+using MoonSharp.Interpreter.CoreLib;
 using UnityEngine;
 
 public static class StaticInits {
-    public static string MODFOLDER;
+    public static string _MODFOLDER;
+    public static string MODFOLDER {
+        get { return _MODFOLDER; }
+        set {
+            _MODFOLDER = value;
+            LoadModule.ModFolder = value;
+        }
+    }
+
     public static string ENCOUNTER = "";
     public static string EDITOR_MODFOLDER = "@Title";
     private static bool firstInit;

@@ -14,7 +14,6 @@ public static class LuaScriptBinder {
     private static Dictionary<string, DynValue> dict = new Dictionary<string, DynValue>(), battleDict = new Dictionary<string, DynValue>(), alMightyDict = new Dictionary<string, DynValue>();
     private static readonly MusicManager mgr = new MusicManager();
     private static readonly NewMusicManager newmgr = new NewMusicManager();
-    public static List<Script> scriptlist = new List<Script>();
 
     /// <summary>
     /// Registers C# types with MoonSharp so we can bind them to Lua scripts later.
@@ -54,7 +53,7 @@ public static class LuaScriptBinder {
     public static Script BoundScript(/*bool overworld = false*/) {
         Script script = new Script(CoreModules.Preset_Complete ^ CoreModules.IO ^ CoreModules.OS_System) { Options = { ScriptLoader = new FileSystemScriptLoader() } };
         // library support
-        ((ScriptLoaderBase)script.Options.ScriptLoader).ModulePaths = new[] { FileLoader.pathToModFile("Lua/?.lua"), FileLoader.pathToDefaultFile("Lua/?.lua"), FileLoader.pathToModFile("Lua/Libraries/?.lua"), FileLoader.pathToDefaultFile("Lua/Libraries/?.lua") };
+        ((ScriptLoaderBase)script.Options.ScriptLoader).ModulePaths = new[] { FileLoader.PathToModFile("Lua/?.lua"), FileLoader.PathToDefaultFile("Lua/?.lua"), FileLoader.PathToModFile("Lua/Libraries/?.lua"), FileLoader.PathToDefaultFile("Lua/Libraries/?.lua") };
         // separate function bindings
         script.Globals["SetGlobal"] = (Action<Script, string, DynValue>)SetBattle;
         script.Globals["GetGlobal"] = (Func<Script, string, DynValue>)GetBattle;
@@ -64,6 +63,7 @@ public static class LuaScriptBinder {
         script.Globals["GetAlMightyGlobal"] = (Func<Script, string, DynValue>)GetAlMighty;
 
         script.Globals["isCYF"] = true;
+        script.Globals["isRetro"] = GlobalControls.retroMode;
         script.Globals["safe"] = ControlPanel.instance.Safe;
         #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
             script.Globals["windows"] = true;
@@ -81,8 +81,8 @@ public static class LuaScriptBinder {
             script.Globals["AllowPlayerDef"] = (Action<bool>)AllowPlayerDef;
             script.Globals["CreateText"] = (Func<Script, DynValue, DynValue, int, string, int, LuaTextManager>)CreateText;
             script.Globals["GetCurrentState"] = (Func<string>)GetState;
-            script.Globals["BattleDialog"] = (Action<DynValue>)EnemyEncounter.BattleDialog;
-            script.Globals["BattleDialogue"] = (Action<DynValue>)EnemyEncounter.BattleDialog;
+            script.Globals["BattleDialog"] = (Action<Script, DynValue>)EnemyEncounter.BattleDialog;
+            script.Globals["BattleDialogue"] = (Action<Script, DynValue>)EnemyEncounter.BattleDialog;
 
             if (EnemyEncounter.doNotGivePreviousEncounterToSelf)
                 EnemyEncounter.doNotGivePreviousEncounterToSelf = false;
@@ -132,7 +132,6 @@ public static class LuaScriptBinder {
         script.Globals.Set("Time", TimeInfo);
         DynValue DiscordMgr = UserData.Create(new LuaDiscord());
         script.Globals.Set("Discord", DiscordMgr);
-        scriptlist.Add(script);
         return script;
     }
 
@@ -147,18 +146,20 @@ public static class LuaScriptBinder {
     public static DynValue Get(Script script, string key) {
         if (key == null)
             throw new CYFException("GetRealGlobal: The first argument (the index) is nil.\n\nSee the documentation for proper usage.");
-        if (!dict.ContainsKey(key)) return null;
-        // Due to how MoonSharp tables require an owner, we have to create an entirely new table if we want to work with it in other scripts.
-        if (dict[key].Type != DataType.Table) return dict[key];
-        DynValue t = DynValue.NewTable(script);
-        foreach (TablePair pair in dict[key].Table.Pairs)
-            t.Table.Set(pair.Key, pair.Value);
-        return t;
+        if (!dict.ContainsKey(key))
+            return null;
+        return dict[key];
     }
 
     public static void Set(Script script, string key, DynValue value) {
         if (key == null)
             throw new CYFException("SetRealGlobal: The first argument (the index) is nil.\n\nSee the documentation for proper usage.");
+
+        if (value.Type != DataType.Number && value.Type != DataType.String && value.Type != DataType.Boolean && value.Type != DataType.Nil) {
+            UnitaleUtil.WriteInLogAndDebugger("SetRealGlobal: The value \"" + key + "\" can't be saved in the savefile because it is a " + value.Type.ToString().ToLower() + ".");
+            return;
+        }
+
         if (dict.ContainsKey(key)) dict[key] = value;
         else                       dict.Add(key, value);
     }
@@ -186,19 +187,21 @@ public static class LuaScriptBinder {
     public static DynValue GetAlMighty(Script script, string key) {
         if (key == null)
             throw new CYFException("GetAlMightyGlobal: The first argument (the index) is nil.\n\nSee the documentation for proper usage.");
-        if (!alMightyDict.ContainsKey(key)) return null;
-        // Due to how MoonSharp tables require an owner, we have to create an entirely new table if we want to work with it in other scripts.
-        if (alMightyDict[key].Type != DataType.Table) return alMightyDict[key];
-        DynValue t = DynValue.NewTable(script);
-        foreach (TablePair pair in alMightyDict[key].Table.Pairs)
-            t.Table.Set(pair.Key, pair.Value);
-        return t;
+        if (!alMightyDict.ContainsKey(key))
+            return null;
+        return alMightyDict[key];
     }
 
     public static void SetAlMighty(Script script, string key, DynValue value) { SetAlMighty(script, key, value, true); }
     public static void SetAlMighty(Script script, string key, DynValue value, bool reload) {
         if (key == null)
             throw new CYFException("SetAlMightyGlobal: The first argument (the index) is nil.\n\nSee the documentation for proper usage.");
+
+        if (value.Type != DataType.Number && value.Type != DataType.String && value.Type != DataType.Boolean && value.Type != DataType.Nil) {
+            UnitaleUtil.WriteInLogAndDebugger("SetAlMightyGlobal: The value \"" + key + "\" can't be saved in the almighties because it is a " + value.Type.ToString().ToLower() + ".");
+            return;
+        }
+
         if (alMightyDict.ContainsKey(key))
             alMightyDict.Remove(key);
         alMightyDict.Add(key, value);
@@ -356,9 +359,6 @@ public static class LuaScriptBinder {
             luatm.layer = layer;
         else
             luatm.layer = (layer == "BelowPlayer" ? "Default" : layer);
-        luatm.textMaxWidth = textWidth;
-        luatm.bubbleHeight = bubbleHeight;
-        luatm.ShowBubble();
 
         // Converts the text argument into a table if it's a simple string
         text = text.Type == DataType.String ? DynValue.NewTable(scr, text) : text;
@@ -380,7 +380,7 @@ public static class LuaScriptBinder {
             // determine whether [instant] or [instant:allowcommand] is first
             string testFor = "[instant]";
             if (firstLine.IndexOf("[instant:allowcommand]", StringComparison.Ordinal) > -1 &&
-                firstLine.IndexOf("[instant:allowcommand]", StringComparison.Ordinal) < firstLine.IndexOf("[instant]") || firstLine.IndexOf("[instant]") == -1)
+                firstLine.IndexOf("[instant:allowcommand]", StringComparison.Ordinal) < firstLine.IndexOf("[instant]", StringComparison.Ordinal) || firstLine.IndexOf("[instant]", StringComparison.Ordinal) == -1)
                 testFor = "[instant:allowcommand]";
 
             // grab all of the text that comes before the matched command
@@ -425,7 +425,6 @@ public static class LuaScriptBinder {
                     if (font == null)
                         throw new CYFException("The font \"" + fontPartTwo + "\" doesn't exist.\nYou should check if you made a typo, or if the font really is in your mod.");
                     luatm.SetFont(font, true);
-                    luatm.UpdateBubble();
                 } else luatm.ResetFont();
             } else     luatm.ResetFont();
         } else         luatm.ResetFont();
@@ -433,6 +432,13 @@ public static class LuaScriptBinder {
         if (enableLateStart)
             luatm.lateStartWaiting = true;
         luatm.SetText(text);
+
+        // Bubble variables
+        luatm.bubble = true;
+        luatm.textMaxWidth = textWidth;
+        luatm.bubbleHeight = bubbleHeight;
+        luatm.ShowBubble();
+
         if (!enableLateStart) return luatm;
         luatm.DestroyChars();
         luatm.LateStart();

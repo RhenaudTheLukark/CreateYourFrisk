@@ -87,7 +87,7 @@ public class LuaPlayerOW {
     /// <param name="damage">This one seems obvious</param>
     [CYFEventFunction]
     public void Hurt(int damage) {
-        UnitaleUtil.PlaySound("HurtSound", AudioClipRegistry.GetSound(damage >= 0 ? "hurtsound" : "healsound"));
+        UnitaleUtil.PlaySound("HurtSound", damage >= 0 ? "hurtsound" : "healsound");
 
         if (-damage + PlayerCharacter.instance.HP > PlayerCharacter.instance.MaxHP) PlayerCharacter.instance.HP = PlayerCharacter.instance.MaxHP;
         else if (-damage + PlayerCharacter.instance.HP <= 0)                        PlayerCharacter.instance.HP = 1;
@@ -119,7 +119,7 @@ public class LuaPlayerOW {
             return;
         }
         float CheckedHP = PlayerCharacter.instance.HP;
-        UnitaleUtil.PlaySound("CollisionSoundChannel", AudioClipRegistry.GetSound(CheckedHP - newhp >= 0 ? "hurtsound" : "healsound").name);
+        UnitaleUtil.PlaySound("CollisionSoundChannel", CheckedHP - newhp >= 0 ? "hurtsound" : "healsound");
 
         newhp = Mathf.Round(newhp * Mathf.Pow(10, ControlPanel.instance.MaxDigitsAfterComma)) / Mathf.Pow(10, ControlPanel.instance.MaxDigitsAfterComma);
 
@@ -145,7 +145,7 @@ public class LuaPlayerOW {
         else if (PlayerCharacter.instance.HP > value)
             PlayerCharacter.instance.HP = value;
         else
-            UnitaleUtil.PlaySound("CollisionSoundChannel", AudioClipRegistry.GetSound("healsound").name);
+            UnitaleUtil.PlaySound("CollisionSoundChannel", "healsound");
         PlayerCharacter.instance.MaxHPShift = value - PlayerCharacter.instance.BasisMaxHP;
     }
 

@@ -47,7 +47,7 @@ public class ItemBoxUI : MonoBehaviour {
             inventory.Add(tm);
 
             LuaSpriteController sprite = (LuaSpriteController) (SpriteUtil.MakeIngameSprite("px", -1).UserData.Object);
-            sprite._img.transform.SetParent(transform);
+            sprite.img.transform.SetParent(transform);
             sprite.SetPivot(0, 0.5f);
             sprite.MoveToAbs(Misc.cameraX + 92, Misc.cameraY + 386 - (i * 32));
             sprite.xscale = 190;
@@ -65,7 +65,7 @@ public class ItemBoxUI : MonoBehaviour {
             boxContents.Add(tm);
 
             LuaSpriteController sprite = (LuaSpriteController) (SpriteUtil.MakeIngameSprite("px", -1).UserData.Object);
-            sprite._img.transform.SetParent(transform);
+            sprite.img.transform.SetParent(transform);
             sprite.SetPivot(0, 0.5f);
             sprite.MoveToAbs(Misc.cameraX + 384, Misc.cameraY + 386 - (i * 32));
             sprite.xscale = 190;

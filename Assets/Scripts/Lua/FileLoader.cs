@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using MoonSharp.Interpreter.CoreLib;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Debug = System.Diagnostics.Debug;
 
 /// <summary>
 /// Static utility class to take care of various file loading features in Unitale.
@@ -23,12 +23,12 @@ public static class FileLoader {
             DirectoryInfo[] dfs = rootInfo.GetDirectories();
 
             if (dfs.Any(df => df.FullName == Path.Combine(SysDepDataRoot, "Mods"))) {
-                DataRoot = SysDepDataRoot;
+                DataRoot = SysDepDataRoot.Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar);
                 return;
             }
 
             try {
-                Debug.Assert(rootInfo.Parent != null, "rootInfo.Parent != null");
+                System.Diagnostics.Debug.Assert(rootInfo.Parent != null, "rootInfo.Parent != null");
                 rootInfo = new DirectoryInfo(rootInfo.Parent.FullName);
             } catch {
                 UnitaleUtil.DisplayLuaError("CYF's Startup", "The engine detected no Mods folder in your files: are you sure it exists?");
@@ -53,7 +53,10 @@ public static class FileLoader {
                 calcDataRoot();
             return _DataRoot;
         }
-        private set { _DataRoot = value; }
+        private set {
+            _DataRoot = value;
+            LoadModule.DataRoot = value;
+        }
     }
 
     /// <summary>
@@ -71,51 +74,29 @@ public static class FileLoader {
     }
 
     /// <summary>
-    /// Return all text from a file as a string.
-    /// </summary>
-    /// <param name="filename">Path to file that should be read</param>
-    /// <returns>String containing all text in the file.</returns>
-    public static string getTextFrom(string filename) { return File.ReadAllText(requireFile(filename)); }
-
-    /// <summary>
     /// Return the given file as a byte array.
     /// </summary>
     /// <param name="filename">Path to file that should be read</param>
+    /// <param name="pathSuffix">Suffix of the file after the mod or default folder</param>
     /// <returns>Byte array containing all bytes in the file.</returns>
-    public static byte[] getBytesFrom(string filename) { return File.ReadAllBytes(requireFile(filename)); }
+    public static byte[] GetBytesFrom(ref string filename, string pathSuffix = "Sprites/") {
+        SanitizePath(ref filename, pathSuffix, true, true);
+        return File.ReadAllBytes(filename);
+    }
 
     /// <summary>
     /// Returns the path to the given file within the selected mod directory.
     /// </summary>
     /// <param name="filename">Path to file relative to mod directory root</param>
     /// <returns>Full path to the file specified</returns>
-    public static string pathToModFile(string filename) { return Path.Combine(ModDataPath, filename); }
+    public static string PathToModFile(string filename) { return Path.Combine(ModDataPath, filename); }
 
     /// <summary>
     /// Returns the path to the given file within the default directory.
     /// </summary>
     /// <param name="filename">Path to file relative to default directory root</param>
     /// <returns>Full path to the file specified</returns>
-    public static string pathToDefaultFile(string filename) { return Path.Combine(DefaultDataPath, filename); }
-
-    /// <summary>
-    /// Returns the path to the given file in the mod folder if it exists, otherwise the default folder. If it doesn't exist, returns null and optionally shows the error screen.
-    /// </summary>
-    /// <param name="filename">Filename to require, relative to either mod or default folder root</param>
-    /// <param name="errorOnFailure">Defines whether the error screen should be displayed if the file isn't in either folder.</param>
-    /// <returns>File path if it exists, null otherwise (closely followed by error screen)</returns>
-    public static string requireFile(string filename, bool errorOnFailure = true) {
-        FileInfo fi = new FileInfo(pathToModFile(filename));
-        if (!fi.Exists)
-            fi = new FileInfo(pathToDefaultFile(filename));
-
-        if (fi.Exists) return fi.FullName;
-        if (!errorOnFailure) return null;
-        if (filename.Length != 0)
-            throw new CYFException("Attempted to load " + filename + " from either a mod or default directory, but it was missing in both.");
-        return null;
-
-    }
+    public static string PathToDefaultFile(string filename) { return Path.Combine(DefaultDataPath, filename); }
 
     public static bool SceneExists(string name) {
         for (int i = 0; i < SceneManager.sceneCountInBuildSettings; i++)
@@ -124,57 +105,45 @@ public static class FileLoader {
         return false;
     }
 
-
-
-    public static AudioClip getAudioClipFromMod(string relPath, string clipName)
-        { return getAudioClip(pathToModFile(relPath), pathToModFile(relPath + Path.DirectorySeparatorChar + clipName)); }
-
-    public static AudioClip getAudioClipFromDefault(string relPath, string clipName)
-        { return getAudioClip(pathToDefaultFile(relPath), pathToDefaultFile(relPath + Path.DirectorySeparatorChar + clipName)); }
+    ///////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////
 
     /// <summary>
-    /// Get an AudioClip at the given full path. Attempts to retrieve it from the AudioClipRegistry first by using folderRoot to extract the clip's name, otherwise attempts to load from disk.
+    /// Checks if a file exists in CYF's Default or Mods folder and returns a clean path to it without its extension using SanitizePath().
     /// </summary>
-    /// <param name="folderRoot"></param>
-    /// <param name="musicFilePath">Full path to a file.</param>
-    /// <returns>AudioClip object on successful load, otherwise null.</returns>
-    public static AudioClip getAudioClip(string folderRoot, string musicFilePath) {
-        string clipName = getRelativePathWithoutExtension(folderRoot, musicFilePath);
-        //AudioClip music = AudioClipRegistry.Get(clipName);
-        //if (music != null)
-        //    return music;
-        WWW www = new WWW(new Uri(musicFilePath).AbsoluteUri.Replace("+", "%2B"));
-        while (!www.isDone) { } // hold up a bit while it's loading; delay isn't noticeable and loading will fail otherwise
-        AudioType type;
-        if (musicFilePath.EndsWith(".ogg"))       type = AudioType.OGGVORBIS;
-        else if (musicFilePath.EndsWith(".wav"))  type = AudioType.WAV;
-        else                                      return null;
-
-        AudioClip music = www.GetAudioClip(false, false, type);
-        music.name = "File at " + musicFilePath;
-        music.LoadAudioData();
-
-        AudioClipRegistry.Set(clipName, music);
-        return music;
+    /// <param name="fileName">Path to the file to require, relative or absolute. Will also contain the clean path to the existing resource if found.</param>
+    /// <param name="pathSuffix">String to add to the tested path to check in the given folder.</param>
+    /// <param name="errorOnFailure">Defines whether the error screen should be displayed if the file isn't in either folder.</param>
+    /// <param name="needsAbsolutePath">True if you want to get the absolute path to the file, false otherwise.</param>
+    /// <returns>True if the sanitization was successful, false otherwise.</returns>
+    public static bool GetRelativePathWithoutExtension(ref string fileName, string pathSuffix, bool errorOnFailure = true, bool needsAbsolutePath = false) {
+        bool result = SanitizePath(ref fileName, pathSuffix, errorOnFailure, needsAbsolutePath);
+        if (!result) return false;
+        int extIndex = fileName.LastIndexOf('.');
+        fileName = extIndex > 0 ? fileName.Substring(0, extIndex) : fileName;
+        return true;
     }
 
-    public static string getRelativePathWithoutExtension(string fullPath) {
-        fullPath = fullPath.Replace('\\', '/');
-        if (fullPath.Contains(ModDataPath.Replace('\\', '/')))
-            fullPath = fullPath.Substring(ModDataPath.Length + 9, fullPath.Length - ModDataPath.Length - 13);
-        if (fullPath.Contains(DefaultDataPath.Replace('\\', '/')))
-            fullPath = fullPath.Substring(DefaultDataPath.Length + 9, fullPath.Length - DefaultDataPath.Length - 13);
-        return fullPath;
-    }
+    /// <summary>
+    /// Checks if a file exists in CYF's Default or Mods folder and returns a clean path to it.
+    /// It only runs RequireFile() if it's truly useful, otherwise it just checks if the file at the given path exists.
+    /// </summary>
+    /// <param name="fileName">Path to the file to require, relative or absolute. Will also contain the clean path to the existing resource if found.</param>
+    /// <param name="pathSuffix">String to add to the tested path to check in the given folder.</param>
+    /// <param name="errorOnFailure">Defines whether the error screen should be displayed if the file isn't in either folder.</param>
+    /// <param name="needsAbsolutePath">True if you want to get the absolute path to the file, false otherwise.</param>
+    /// <returns>True if the sanitization was successful, false otherwise.</returns>
+    public static bool SanitizePath(ref string fileName, string pathSuffix, bool errorOnFailure = true, bool needsAbsolutePath = false, bool needsToExist = true) {
+        fileName = fileName.Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar);
 
-    public static string getRelativePathWithoutExtension(string rootPath, string fullPath) {
-        if (rootPath[rootPath.Length-1] != Path.DirectorySeparatorChar)
-            rootPath += Path.DirectorySeparatorChar;
-        Uri uriFull = new Uri(fullPath),
-            uriRel = new Uri(rootPath).MakeRelativeUri(uriFull);
-        string relativePath = Uri.UnescapeDataString(uriRel.OriginalString);
-        int extIndex = relativePath.LastIndexOf('.');
-        if (extIndex > 0)  return relativePath.Substring(0, extIndex);
-        else               return relativePath;
+        // Sanitize if path from CYF root, need to transform a relative path to an absolute path and vice-versa, or if there's an occurence of ..
+        if (fileName.StartsWith(Path.DirectorySeparatorChar.ToString()) || fileName.Contains(DataRoot) ^ needsAbsolutePath || fileName.Contains(".." + Path.DirectorySeparatorChar))
+            return LoadModule.RequireFile(ref fileName, pathSuffix, errorOnFailure, needsAbsolutePath, needsToExist);
+
+        if (fileName.Contains(DataRoot))
+            return !needsToExist || new FileInfo(fileName).Exists;
+
+        return !needsToExist || new FileInfo(PathToModFile(fileName)).Exists || new FileInfo(PathToDefaultFile(fileName)).Exists;
     }
 }

@@ -129,21 +129,16 @@ public class UIController : MonoBehaviour {
         //Stop encounter storage for good!
         if (GlobalControls.modDev) {
             ScriptWrapper.instances.Clear();
-            LuaScriptBinder.scriptlist.Clear();
         } else {
-            foreach (EnemyController enemy in instance.encounter.enemies) {
+            foreach (EnemyController enemy in instance.encounter.enemies)
                 ScriptWrapper.instances.Remove(enemy.script);
-                LuaScriptBinder.scriptlist.Remove(enemy.script.script);
-            }
             Table t = EnemyEncounter.script["Wave"].Table;
             foreach (DynValue obj in t.Keys) {
                 try {
                     ScriptWrapper.instances.Remove(((ScriptWrapper)t[obj]));
-                    LuaScriptBinder.scriptlist.Remove(((ScriptWrapper)t[obj]).script);
                 } catch { /* ignored */ }
             }
             ScriptWrapper.instances.Remove(EnemyEncounter.script);
-            LuaScriptBinder.scriptlist.Remove(EnemyEncounter.script.script);
         }
 
         //Properly set "isInFight" to false, as it shouldn't be true anymore
@@ -308,13 +303,14 @@ public class UIController : MonoBehaviour {
         if (state == UIState.ENEMYSELECT && forcedAction == Actions.FIGHT)
             foreach (LifeBarController lbc in arenaParent.GetComponentsInChildren<LifeBarController>())
                 Destroy(lbc.gameObject);
-
-        if (state == UIState.ENEMYDIALOGUE) {
+        else if (state == UIState.ENEMYDIALOGUE) {
             TextManager[] textManagers = FindObjectsOfType<TextManager>();
             foreach (TextManager textManager in textManagers)
                 if (textManager.gameObject.name.StartsWith("DialogBubble")) // game object name is hardcoded as it won't change
                     Destroy(textManager.gameObject);
-        }
+        } else if (state == UIState.DIALOGRESULT)
+            mainTextManager.SetCaller(EnemyEncounter.script);
+
         UIState oldState = state;
         state = newState;
         //encounter.CallOnSelfOrChildren("Entered" + Enum.GetName(typeof(UIState), state).Substring(0, 1)
@@ -325,6 +321,7 @@ public class UIController : MonoBehaviour {
             if (state != current && !GlobalControls.retroMode)
                 return;
         }
+
         switch (state) {
             case UIState.ATTACKING:
                 // Error for no active enemies
@@ -403,7 +400,7 @@ public class UIController : MonoBehaviour {
                 selectedMercy = 0;
                 string[] mercyOptions = new string[1 + (encounter.CanRun ? 1 : 0)];
                 mercyOptions[0] = "Spare";
-                if (encounter.EnabledEnemies.Cast<EnemyController>().Any(enemy => enemy.CanSpare))
+                if (encounter.EnabledEnemies.Any(enemy => enemy.CanSpare))
                     mercyOptions[0] = "[starcolor:ffff00][color:ffff00]" + mercyOptions[0] + "[color:ffffff]";
                 if (encounter.CanRun)
                     mercyOptions[1] = "Flee";
@@ -543,9 +540,7 @@ public class UIController : MonoBehaviour {
                                                                speechBub.transform.position.y + encounter.EnabledEnemies[i].offsets[1].y, speechBub.transform.position.z);
                     sbTextMan.SetOffset(speechBubSpr.border.x, -speechBubSpr.border.w);
 
-                    UnderFont enemyFont = SpriteFontRegistry.Get(encounter.EnabledEnemies[i].Font ?? string.Empty);
-                    if (enemyFont == null)
-                        enemyFont = SpriteFontRegistry.Get(SpriteFontRegistry.UI_MONSTERTEXT_NAME);
+                    UnderFont enemyFont = SpriteFontRegistry.Get(encounter.EnabledEnemies[i].Font ?? string.Empty) ?? SpriteFontRegistry.Get(SpriteFontRegistry.UI_MONSTERTEXT_NAME);
                     sbTextMan.SetFont(enemyFont);
 
                     TextMessage[] monsterMessages = new TextMessage[message.Length];
@@ -557,7 +552,7 @@ public class UIController : MonoBehaviour {
 
                     speechBub.GetComponent<Image>().enabled = true;
                     if (encounter.EnabledEnemies[i].Voice != "")
-                        sbTextMan.letterSound.clip = AudioClipRegistry.GetVoice(encounter.EnabledEnemies[i].Voice);
+                        sbTextMan.letterSound = encounter.EnabledEnemies[i].Voice;
                 }
                 break;
 
@@ -632,7 +627,7 @@ public class UIController : MonoBehaviour {
                 speechBub.transform.position = new Vector3(speechBub.transform.position.x + encounter.EnabledEnemies[i].offsets[1].x,
                                                            speechBub.transform.position.y + encounter.EnabledEnemies[i].offsets[1].y, speechBub.transform.position.z);
                 if (encounter.EnabledEnemies[i].Voice != "")
-                    sbTextMan.letterSound.clip = AudioClipRegistry.GetVoice(encounter.EnabledEnemies[i].Voice);
+                    sbTextMan.letterSound = encounter.EnabledEnemies[i].Voice;
             } catch {
                 throw new CYFException("Error while updating monster #" + i);
             }
@@ -669,13 +664,13 @@ public class UIController : MonoBehaviour {
                 return;
 
             if (monsterDialogues[index].HasNext()) {
-                FileInfo fi = new FileInfo(FileLoader.pathToDefaultFile("Sprites/" + encounter.EnabledEnemies[index].DialogBubble + ".png"));
+                FileInfo fi = new FileInfo(FileLoader.PathToDefaultFile("Sprites/" + encounter.EnabledEnemies[index].DialogBubble + ".png"));
                 if (!fi.Exists)
-                    fi = new FileInfo(FileLoader.pathToModFile("Sprites/" + encounter.EnabledEnemies[index].DialogBubble + ".png"));
+                    fi = new FileInfo(FileLoader.PathToModFile("Sprites/" + encounter.EnabledEnemies[index].DialogBubble + ".png"));
                 if (!fi.Exists) {
                     Debug.LogError("The bubble " + encounter.EnabledEnemies[index].DialogBubble + ".png doesn't exist.");
                 } else {
-                    Sprite speechBubSpr = SpriteUtil.FromFile(fi.FullName);
+                    Sprite speechBubSpr = SpriteUtil.FromFile(encounter.EnabledEnemies[index].DialogBubble + ".png");
                     monsterDialogues[index].SetOffset(speechBubSpr.border.x, -speechBubSpr.border.w);
                 }
                 monsterDialogues[index].NextLineText();
@@ -702,13 +697,13 @@ public class UIController : MonoBehaviour {
                 // part that autoskips text if [nextthisnow] or [finished] is introduced
                 if (monsterDialogues[i].CanAutoSkipThis() || monsterDialogues[i].CanAutoSkip()) {
                     if (monsterDialogues[i].HasNext()) {
-                        FileInfo fi = new FileInfo(FileLoader.pathToDefaultFile("Sprites/" + encounter.EnabledEnemies[i].DialogBubble + ".png"));
+                        FileInfo fi = new FileInfo(FileLoader.PathToDefaultFile("Sprites/" + encounter.EnabledEnemies[i].DialogBubble + ".png"));
                         if (!fi.Exists)
-                            fi = new FileInfo(FileLoader.pathToModFile("Sprites/" + encounter.EnabledEnemies[i].DialogBubble + ".png"));
+                            fi = new FileInfo(FileLoader.PathToModFile("Sprites/" + encounter.EnabledEnemies[i].DialogBubble + ".png"));
                         if (!fi.Exists) {
                             Debug.LogError("The bubble " + encounter.EnabledEnemies[i].DialogBubble + ".png doesn't exist.");
                         } else {
-                            Sprite speechBubSpr = SpriteUtil.FromFile(fi.FullName);
+                            Sprite speechBubSpr = SpriteUtil.FromFile(encounter.EnabledEnemies[i].DialogBubble + ".png");
                             monsterDialogues[i].SetOffset(speechBubSpr.border.x, -speechBubSpr.border.w);
                         }
                         monsterDialogues[i].NextLineText();
@@ -720,13 +715,13 @@ public class UIController : MonoBehaviour {
                         continue;
                     }
                 } else if (readyToNextLine[i]) {
-                    FileInfo fi = new FileInfo(FileLoader.pathToDefaultFile("Sprites/" + encounter.EnabledEnemies[i].DialogBubble + ".png"));
+                    FileInfo fi = new FileInfo(FileLoader.PathToDefaultFile("Sprites/" + encounter.EnabledEnemies[i].DialogBubble + ".png"));
                     if (!fi.Exists)
-                        fi = new FileInfo(FileLoader.pathToModFile("Sprites/" + encounter.EnabledEnemies[i].DialogBubble + ".png"));
+                        fi = new FileInfo(FileLoader.PathToModFile("Sprites/" + encounter.EnabledEnemies[i].DialogBubble + ".png"));
                     if (!fi.Exists) {
                         Debug.LogError("The bubble " + encounter.EnabledEnemies[i].DialogBubble + ".png doesn't exist.");
                     } else {
-                        Sprite speechBubSpr = SpriteUtil.FromFile(fi.FullName);
+                        Sprite speechBubSpr = SpriteUtil.FromFile(encounter.EnabledEnemies[i].DialogBubble + ".png");
                         monsterDialogues[i].SetOffset(speechBubSpr.border.x, -speechBubSpr.border.w);
                     }
                     monsterDialogues[i].NextLineText();
@@ -902,7 +897,7 @@ public class UIController : MonoBehaviour {
                                     ActionDialogResult(new TextMessage(texts[meCry], true, false));
                                 else if (meCry == 14)
                                     ActionDialogResult(new TextMessage[] {
-                                        new RegularMessage("\"...erase the AlMighty Globals\rin CYF's option menu.\""),
+                                        new RegularMessage("\"...click the BAD SPELING button\rin CYF's option menu.\""),
                                         new RegularMessage("Is that all? Come on, all\rthis time lost for such\ran easy response..."),
                                         new RegularMessage("...Sorry for the wait.\nDo whatever you want now! :D"),
                                         new RegularMessage("But please..."),
@@ -952,8 +947,8 @@ public class UIController : MonoBehaviour {
                 case UIState.MERCYMENU:
                     switch (selectedMercy) {
                         case 0: {
-                            bool[] canSpare = new bool[encounter.enemies.Length];
-                            int    count    = encounter.enemies.Length;
+                            bool[] canSpare = new bool[encounter.enemies.Count];
+                            int    count    = encounter.enemies.Count;
                             for (int i = 0; i < count; i++)
                                 canSpare[i] = encounter.enemies[i].CanSpare;
                             EnemyController[] enabledEnTemp = encounter.EnabledEnemies;
@@ -1231,7 +1226,7 @@ public class UIController : MonoBehaviour {
         uiAudio.Play();
     }
 
-    public static void PlaySoundSeparate(AudioClip clip) { UnitaleUtil.PlaySound("SeparateSound", clip, 0.95f); }
+    public static void PlaySoundSeparate(string sound) { UnitaleUtil.PlaySound("SeparateSound", sound, 0.95f); }
 
     private void SetPlayerOnAction(Actions newAction) {
         switch (newAction) {
@@ -1331,7 +1326,7 @@ public class UIController : MonoBehaviour {
         ControlPanel.instance.FrameBasedMovement = false;
 
         LuaScriptBinder.CopyToBattleVar();
-        spareList = new bool[encounter.enemies.Length];
+        spareList = new bool[encounter.enemies.Count];
         for (int i = 0; i < spareList.Length; i ++)
             spareList[i] = false;
         if (EnemyEncounter.script.GetVar("Update") != null)
@@ -1432,8 +1427,7 @@ public class UIController : MonoBehaviour {
 
     private IEnumerator ISuperFlee() {
         PlayerController.instance.GetComponent<Image>().enabled = false;
-        AudioClip yay = AudioClipRegistry.GetSound("runaway");
-        UnitaleUtil.PlaySound("Mercy", yay);
+        UnitaleUtil.PlaySound("Mercy", "runaway");
 
         List<string> fleeTexts = new List<string>();
         DynValue tempFleeTexts = EnemyEncounter.script.GetVar("fleetexts");

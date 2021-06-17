@@ -201,6 +201,7 @@ GameObject:
   - component: {fileID: 283179578}
   - component: {fileID: 283179577}
   - component: {fileID: 283179576}
+  - component: {fileID: 283179582}
   m_Layer: 0
   m_Name: TheFinalChoice
   m_TagString: Event
@@ -222,7 +223,6 @@ MonoBehaviour:
   SetNativeSize: 1
   SpritePath: Punderbolt/PunderRight1
   Loop: 0
-  SoundPath: 
   done: 0
 --- !u!114 &283179577
 MonoBehaviour:
@@ -241,6 +241,8 @@ MonoBehaviour:
   - {x: 1, y: 1}
   - {x: 2, y: 2}
   moveSpeed: 1
+  isMovingWaitEnd: 0
+  isRotatingWaitEnd: 0
 --- !u!61 &283179578
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -350,6 +352,17 @@ RectTransform:
   m_AnchoredPosition: {x: 1480, y: 255}
   m_SizeDelta: {x: 28, y: 38}
   m_Pivot: {x: 0.5, y: 0}
+--- !u!114 &283179582
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 283179575}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c7b8a91bf13f244b93c1a72a65984e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &358459829
 GameObject:
   m_ObjectHideFlags: 0

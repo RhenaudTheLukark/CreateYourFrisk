@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using MoonSharp.Interpreter;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 using Debug = System.Diagnostics.Debug;
 
 // TODO less code duplicate-y way of pulling commands out of the text.
@@ -12,13 +12,13 @@ public class TextManager : MonoBehaviour {
     internal Vector2[] letterPositions;
 
     protected UnderFont default_charset;
-    protected AudioClip default_voice;
-    [MoonSharpHidden] public AudioSource letterSound;
+    protected string defaultVoice;
+    [MoonSharpHidden] public string letterSound;
     protected TextEffect textEffect;
     private string letterEffect = "none";
-    public static string[] commandList = new string[] { "color", "alpha", "charspacing", "linespacing", "starcolor", "instant", "font", "effect", "noskip", "w", "waitall", "novoice",
-                                                        "next", "finished", "nextthisnow", "noskipatall", "waitfor", "speed", "letters", "voice", "func", "mugshot",
-                                                        "music", "sound", "health", "lettereffect"};
+    public static string[] commandList = { "color", "alpha", "charspacing", "linespacing", "starcolor", "instant", "font", "effect", "noskip", "w", "waitall", "novoice",
+                                           "next", "finished", "nextthisnow", "noskipatall", "waitfor", "speed", "letters", "voice", "func", "mugshot",
+                                           "music", "sound", "health", "lettereffect"};
     private float letterIntensity;
     public int currentLine;
     [MoonSharpHidden] public int _textMaxWidth;
@@ -54,7 +54,6 @@ public class TextManager : MonoBehaviour {
     private bool firstChar;
     internal float hSpacing = 3;
     internal float vSpacing;
-    private GameObject textframe;
     private LuaSpriteController mugshot;
     private string[] mugshotList;
     private string finalMugshot;
@@ -84,7 +83,7 @@ public class TextManager : MonoBehaviour {
 
     [MoonSharpHidden] public bool lateStartWaiting = false; // Lua text objects will use a late start
     public TextManager() {
-        default_voice = null;
+        defaultVoice = null;
         textEffect = null;
         letterIntensity = 0.0f;
         currentLine = 0;
@@ -115,10 +114,10 @@ public class TextManager : MonoBehaviour {
         if (default_charset == null)
             default_charset = font;
         if (firstTime) {
-            if (letterSound.clip == default_voice && font.Sound != null)
-                letterSound.clip = font.Sound;
+            if (letterSound == defaultVoice && font.Sound != null)
+                letterSound = font.SoundName;
         } else if (font.Sound != null)
-            letterSound.clip = font.Sound;
+            letterSound = font.SoundName;
 
         vSpacing = 0;
         hSpacing = font.CharSpacing;
@@ -141,26 +140,24 @@ public class TextManager : MonoBehaviour {
                 SetFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_DEFAULT_NAME), true);
         Charset = default_charset;
         Debug.Assert(default_charset != null, "default_charset != null");
-        letterSound.clip = default_voice ?? default_charset.Sound;
+        letterSound = defaultVoice ?? default_charset.SoundName;
         fontDefaultColor = default_charset.DefaultColor;
         if (GetType() == typeof(LuaTextManager) && !((LuaTextManager) this).hasColorBeenSet)
             fontDefaultColor = defaultColor = default_charset.DefaultColor;
 
         // Default voice in the overworld
         if (gameObject.name == "TextManager OW")
-            default_voice = AudioClipRegistry.GetVoice("monsterfont");
+            defaultVoice = "monsterfont";
     }
 
     protected virtual void Awake() {
         self = gameObject.GetComponent<RectTransform>();
-        letterSound = gameObject.AddComponent<AudioSource>();
-        letterSound.playOnAwake = false;
         // SetFont(SpriteFontRegistry.F_UI_DIALOGFONT);
         timePerLetter = singleFrameTiming;
 
-        if (!UnitaleUtil.IsOverworld || !GameObject.Find("textframe_border_outer")) return;
-        textframe = GameObject.Find("textframe_border_outer");
-        mugshot   = new LuaSpriteController(GameObject.Find("Mugshot").GetComponent<Image>());
+        GameObject textFrameOuter = GameObject.Find("textframe_border_outer");
+        if (!UnitaleUtil.IsOverworld || !textFrameOuter || textFrameOuter.GetComponentInChildren<TextManager>() != this) return;
+        mugshot = LuaSpriteController.GetOrCreate(GameObject.Find("Mugshot"));
     }
 
     private void Start() {
@@ -271,7 +268,7 @@ public class TextManager : MonoBehaviour {
             mugshots.Add("mugshots/");
 
         bool mugshotSet = false;
-        if (mugshot != null && mugshot._img != null) {
+        if (mugshot != null && mugshot.isactive) {
             mugshot.StopAnimation();
             if ((mugshots.Count > 1 || (mugshots[0] != "mugshots/" && mugshots[0] != "mugshots/null")) && text != null) {
                 try {
@@ -360,13 +357,13 @@ public class TextManager : MonoBehaviour {
         SpawnText(forceNoAutoLineBreak);
         //if (!overworld)
         //    UIController.instance.encounter.CallOnSelfOrChildren("AfterText");
-        if (UnitaleUtil.IsOverworld && textframe != null && this == PlayerOverworld.instance.textmgr) {
+        if (UnitaleUtil.IsOverworld && this == PlayerOverworld.instance.textmgr) {
             if (textQueue[line].ActualText) {
-                if (textframe.GetComponent<Image>().color.a == 0)
+                if (transform.parent.GetComponent<Image>().color.a == 0)
                     SetTextFrameAlpha(1);
                 blockSkip = false;
             } else {
-                if ((textframe.GetComponent<Image>().color.a == 1))
+                if (transform.parent.GetComponent<Image>().color.a == 1)
                     SetTextFrameAlpha(0);
                 blockSkip = true;
                 DestroyChars();
@@ -396,22 +393,13 @@ public class TextManager : MonoBehaviour {
     }
 
     [MoonSharpHidden] public void SetTextFrameAlpha(float a) {
-        Image[] imagesChild;
-        Image[] images;
+        string objectName = UnitaleUtil.IsOverworld ? "textframe_border_outer" : "arena_border_outer";
 
-        if (UnitaleUtil.IsOverworld) {
-            imagesChild = textframe.GetComponentsInChildren<Image>();
-            images = new Image[imagesChild.Length + 1];
-            images[0] = textframe.GetComponent<Image>();
-        } else {
-            imagesChild = GameObject.Find("arena_border_outer").GetComponentsInChildren<Image>();
-            images = new Image[imagesChild.Length + 1];
-            images[0] = GameObject.Find("arena_border_outer").GetComponent<Image>();
-        }
+        GameObject target = GameObject.Find(objectName);
+        List<Image> imagesChild = target.GetComponentsInChildren<Image>().ToList();
+        imagesChild.Add(target.GetComponent<Image>());
 
-        imagesChild.CopyTo(images, 1);
-
-        foreach (Image img in images)
+        foreach (Image img in imagesChild)
             img.color = new Color(img.color.r, img.color.g, img.color.b, a);
     }
 
@@ -663,11 +651,8 @@ public class TextManager : MonoBehaviour {
         if (skipImmediate)
             InUpdateControlCommand(DynValue.NewString(skipCommand));
 
-        if (UnitaleUtil.IsOverworld && SceneManager.GetActiveScene().name != "TitleScreen" && SceneManager.GetActiveScene().name != "EnterName" && !GlobalControls.isInShop)
-            try {
-                if (mugshot.alpha == 0)
-                    mugshot.color = new float[] { 1, 1, 1 };
-            } catch { /* ignored */ }
+        if (mugshot != null && mugshot.alpha == 0)
+            mugshot.color = new float[] { 1, 1, 1 };
         if (!instantActive)
             Update();
     }
@@ -811,10 +796,10 @@ public class TextManager : MonoBehaviour {
                 case "shake":  letterReferences[currentCharacter].GetComponent<Letter>().effect = new ShakeEffectLetter(letterReferences[currentCharacter].GetComponent<Letter>(), letterIntensity);    break;
                 default:       letterReferences[currentCharacter].GetComponent<Letter>().effect = null;                                                                                                 break;
             }
+
             if (letterSound != null && !muted && !soundPlayed && (GlobalControls.retroMode || textQueue[currentLine].Text[currentCharacter] != ' ')) {
                 soundPlayed = true;
-                if (letterSound.isPlaying) UnitaleUtil.PlaySound("BubbleSound", letterSound.clip.name);
-                else                       letterSound.Play();
+                UnitaleUtil.PlayVoice("BubbleSound", letterSound);
             }
         }
         currentReferenceCharacter++;
@@ -871,7 +856,7 @@ public class TextManager : MonoBehaviour {
                 if (uf == null)
                     UnitaleUtil.DisplayLuaError("[font:x] usage", "The font \"" + cmds[1] + "\" doesn't exist.\nYou should check if you made a typo, or if the font really is in your mod.");
                 SetFont(uf);
-                if (GetType() == typeof(LuaTextManager))
+                if (GetType() == typeof(LuaTextManager) && ((LuaTextManager)this).bubble)
                     ((LuaTextManager) this).UpdateBubble();
                 break;
 
@@ -915,7 +900,7 @@ public class TextManager : MonoBehaviour {
                 break;
 
             case "waitall":     timePerLetter = singleFrameTiming * ParseUtil.GetInt(cmds[1]); break;
-            case "novoice":     letterSound.clip = null;                                       break;
+            case "novoice":     letterSound = null;                                            break;
             case "next":        autoSkipAll = true;                                            break;
             case "finished":    autoSkipThis = true;                                           break;
             case "nextthisnow": autoSkip = true;                                               break;
@@ -936,7 +921,7 @@ public class TextManager : MonoBehaviour {
                 break;
 
             case "voice":
-                letterSound.clip = cmds[1].ToLower() == "default" ? SpriteFontRegistry.Get(SpriteFontRegistry.UI_DEFAULT_NAME).Sound : AudioClipRegistry.GetVoice(cmds[1].ToLower());
+                letterSound = cmds[1].ToLower() == "default" ? SpriteFontRegistry.UI_DEFAULT_NAME : cmds[1].ToLower();
                 break;
 
             case "instant":
@@ -1063,11 +1048,11 @@ public class TextManager : MonoBehaviour {
                 if (ParseUtil.TestInt(args[0]))
                     tryHP = ParseUtil.GetInt(args[0]);
 
-                if ((args[0].Contains("-") && args[0] != "Max-1") || args[0] == "kill") PlayerController.PlaySound(AudioClipRegistry.GetSound("hurtsound"));
+                if ((args[0].Contains("-") && args[0] != "Max-1") || args[0] == "kill") PlayerController.PlaySound("hurtsound");
                 else if (args.Length > 1) {
-                    if (args[1] == "set" && tryHP < HP)                                 PlayerController.PlaySound(AudioClipRegistry.GetSound("hurtsound"));
-                    else                                                                PlayerController.PlaySound(AudioClipRegistry.GetSound("healsound"));
-                } else                                                                  PlayerController.PlaySound(AudioClipRegistry.GetSound("healsound"));
+                    if (args[1] == "set" && tryHP < HP)                                 PlayerController.PlaySound("hurtsound");
+                    else                                                                PlayerController.PlaySound("healsound");
+                } else                                                                  PlayerController.PlaySound("healsound");
 
                 switch (args[0]) {
                     case "kill":  SetHP(0);         break;

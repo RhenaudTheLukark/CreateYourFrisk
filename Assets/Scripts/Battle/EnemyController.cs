@@ -38,11 +38,16 @@ public class EnemyController : MonoBehaviour {
         HP = newHP;
     }
 
+    private int realPresetDmg = FightUIController.DAMAGE_NOT_SET;
+    public int presetDmg {
+        set { realPresetDmg = value == FightUIController.DAMAGE_NOT_SET ? realPresetDmg : value; }
+        get { return realPresetDmg; }
+    }
+
     internal string scriptName;
     internal ScriptWrapper script;
     internal bool inFight = true; // if false, enemy will no longer be considered as an option in menus and such
     private string lastBubbleName;
-    public int presetDmg = -1826643; // You'll not be able to deal exactly -1 826 643 dmg with this technique.
     public float xFightAnimShift = 0;
     public LuaSpriteController sprite;
     public float bubbleWidth = 0;
@@ -243,9 +248,9 @@ public class EnemyController : MonoBehaviour {
         get { return GetComponent<RectTransform>().position.y; }
     }
 
-    private void Start() {
+    public void InitializeEnemy() {
         try {
-            string scriptText = ScriptRegistry.Get(ScriptRegistry.MONSTER_PREFIX + scriptName);
+            string scriptText = ScriptRegistry.Get("Monsters/" + scriptName);
             if (scriptText == null) {
                 UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, "Tried to load monster script " + scriptName + ".lua but it didn't exist. Is it misspelled?");
                 return;
@@ -264,8 +269,9 @@ public class EnemyController : MonoBehaviour {
             script.Bind("SetDamageUIOffset", (Action<int, int>)SetDamageUIOffset);
             script.Bind("SetSliceAnimOffset", (Action<int, int>)SetSliceAnimOffset);
             script.Bind("State", (Action<Script, string>)UIController.SwitchStateOnString);
+            script.Bind("Remove", (Action)Remove);
             script.SetVar("canmove", DynValue.NewBoolean(false));
-            sprite = new LuaSpriteController(GetComponent<Image>());
+            sprite = LuaSpriteController.GetOrCreate(gameObject);
             script.SetVar("monstersprite", UserData.Create(sprite, LuaSpriteController.data));
             script.DoString(scriptText);
 
@@ -273,7 +279,7 @@ public class EnemyController : MonoBehaviour {
             if (spriteFile != null)
                 SetSprite(spriteFile);
             else
-                throw new CYFException("missing sprite");
+                throw new CYFException("The monster script " + scriptName + ".lua's sprite value is not a string.");
 
             ui = FindObjectOfType<UIController>();
             if (MaxHP == 0)
@@ -322,6 +328,16 @@ public class EnemyController : MonoBehaviour {
         TryCall("HandleCustomCommand", new[] { DynValue.NewString(command) });
     }
 
+    public void Remove() {
+        try {
+            UIController.instance.encounter.enemies.Remove(this);
+            script.Remove();
+            Destroy(gameObject);
+        } catch (MissingReferenceException) {
+            throw new CYFException("Attempt to remove a removed enemy.");
+        }
+    }
+
     public void SetSprite(string filename) {
         if (filename == null)
             throw new CYFException("The enemy's sprite can't be nil!");
@@ -349,7 +365,7 @@ public class EnemyController : MonoBehaviour {
 
         // The actually relevant part of sparing code.
         GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.4f);
-        UIController.PlaySoundSeparate(AudioClipRegistry.GetSound("enemydust"));
+        UIController.PlaySoundSeparate("enemydust");
         SetActive(false);
         spared = true;
 
@@ -369,7 +385,7 @@ public class EnemyController : MonoBehaviour {
         GetComponent<ParticleDuplicator>().Activate(sprite);
         SetActive(false);
         killed = true;
-        UIController.PlaySoundSeparate(AudioClipRegistry.GetSound("enemydust"));
+        UIController.PlaySoundSeparate("enemydust");
 
         UIController.instance.CheckAndTriggerVictory();
     }
@@ -427,4 +443,6 @@ public class EnemyController : MonoBehaviour {
     public void SetBubbleOffset(int x, int y) { offsets[1] = new Vector2(x, y); }
 
     public void SetDamageUIOffset(int x, int y) { offsets[2] = new Vector2(x, y); }
+
+    public void ResetPresetDamage() { realPresetDmg = FightUIController.DAMAGE_NOT_SET; }
 }

@@ -112,8 +112,8 @@ public class PlayerController : MonoBehaviour {
         HP = PlayerCharacter.instance.HP;
     }
 
-    public static void PlaySound(AudioClip clip) {
-        UnitaleUtil.PlaySound("CollisionSoundChannel", clip.name);
+    public static void PlaySound(string sound) {
+        UnitaleUtil.PlaySound("CollisionSoundChannel", sound);
     }
 
     public string deathMusic;
@@ -148,14 +148,14 @@ public class PlayerController : MonoBehaviour {
         if (damage >= 0 && (invulTimer <= 0 || invulnerabilitySeconds < 0)) {
             if (soundDelay < 0 && playSound) {
                 soundDelay = 2;
-                PlaySound(AudioClipRegistry.GetSound("hurtsound"));
+                PlaySound("hurtsound");
             }
 
             if (invulnerabilitySeconds >= 0) invulTimer = invulnerabilitySeconds;
             if (damage != 0)                 SetHP(HP - damage, false);
         } else if (damage < 0) {
             if (playSound)
-                PlaySound(AudioClipRegistry.GetSound("healsound"));
+                PlaySound("healsound");
             SetHP(HP - damage);
         }
     }

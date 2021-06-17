@@ -52,12 +52,7 @@ public class GlobalControls : MonoBehaviour {
         UnitaleUtil.AddKeysToMapCorrespondanceList();
 
         // Use AlMightyGlobals to load Crate Your Frisk, Safe Mode, Retromode and Fullscreen mode preferences
-        // CrateYourFrisk
-        if (LuaScriptBinder.GetAlMighty(null, "CrateYourFrisk") != null && LuaScriptBinder.GetAlMighty(null, "CrateYourFrisk").Boolean)
-            crate = true;
-        #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
-            Misc.WindowName = crate ? ControlPanel.instance.WinodwBsaisNmae : ControlPanel.instance.WindowBasisName;
-        #endif
+        ReloadCrate();
 
         // Check if safe mode has a stored preference that is a boolean
         if (LuaScriptBinder.GetAlMighty(null, "CYFSafeMode")      != null
@@ -83,6 +78,14 @@ public class GlobalControls : MonoBehaviour {
         DiscordControls.Start();
 
         awakened = true;
+    }
+
+    public static void ReloadCrate() {
+        if (LuaScriptBinder.GetAlMighty(null, "CrateYourFrisk") != null && LuaScriptBinder.GetAlMighty(null, "CrateYourFrisk").Boolean)
+            crate = true;
+        #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
+            Misc.WindowName = crate ? ControlPanel.instance.WinodwBsaisNmae : ControlPanel.instance.WindowBasisName;
+        #endif
     }
 
     #if UNITY_STANDALONE_WIN

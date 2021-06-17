@@ -41,14 +41,14 @@ public class ShopScript : MonoBehaviour {
         script = new ScriptWrapper {
             scriptname = scriptName
         };
-        string scriptText = ScriptRegistry.Get(ScriptRegistry.SHOP_PREFIX + scriptName);
+        string scriptText = ScriptRegistry.Get("Shops/" + scriptName);
 
         if (scriptText == null)
             throw new CYFException("You must give a valid script name to the function General.EnterShop()");
 
         try {
             script.DoString(scriptText);
-            script.SetVar("background", UserData.Create(new LuaSpriteController(GameObject.Find("Background").GetComponent<Image>())));
+            script.SetVar("background", UserData.Create(LuaSpriteController.GetOrCreate(GameObject.Find("Background"))));
             script.script.Globals["Interrupt"] = ((Action<DynValue, string>) Interrupt);
             script.script.Globals["CreateSprite"] = (Func<string, string, int, DynValue>) SpriteUtil.MakeIngameSprite;
             script.script.Globals["CreateLayer"] = (Func<string, string, bool, bool>) SpriteUtil.CreateLayer;
@@ -506,6 +506,7 @@ public class ShopScript : MonoBehaviour {
                     tp.sceneName = script.GetVar("returnscene").String;
                     tp.position = new Vector2((float) script.GetVar("returnpos").Table.Get(1).Number, (float) script.GetVar("returnpos").Table.Get(2).Number);
                     tp.direction = (int) script.GetVar("returndir").Number;
+                    script.Remove();
                     DontDestroyOnLoad(tp);
                     StartCoroutine(tp.LaunchTP());
                     break;

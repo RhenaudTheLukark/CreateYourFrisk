@@ -9,38 +9,37 @@ public static class SpriteFontRegistry {
     public const string UI_MONSTERTEXT_NAME = "monster";
     public const string UI_SMALLTEXT_NAME = "uibattlesmall";
 
-    public static GameObject LETTER_OBJECT;
-    public static GameObject BUBBLE_OBJECT;
+    public static GameObject LETTER_OBJECT = Resources.Load<GameObject>("Prefabs/letter");
+    public static GameObject BUBBLE_OBJECT = Resources.Load<GameObject>("Prefabs/DialogBubble");
     private static readonly Dictionary<string, FileInfo> dictDefault = new Dictionary<string, FileInfo>();
     private static readonly Dictionary<string, FileInfo> dictMod = new Dictionary<string, FileInfo>();
 
     private static readonly Dictionary<string, UnderFont> dict = new Dictionary<string, UnderFont>();
-    //private static bool initialized;
 
-    public static void Start() { LoadAllFrom(FileLoader.pathToDefaultFile("Sprites/UI/Fonts")); }
+    public static void Start() { LoadAllFrom(FileLoader.PathToDefaultFile("Sprites/UI/Fonts")); }
 
     public static UnderFont Get(string key) {
         string k = key;
+        key += key.EndsWith(".png") ? "" : ".png";
+        FileLoader.SanitizePath(ref key, "Sprites/UI/Fonts/", false);
         key = key.ToLower();
         return dict.ContainsKey(key) ? dict[key] : TryLoad(k);
     }
 
-    public static void Init() {
-        dict.Clear();
-        /*if (initialized)
-            return;*/
-        LETTER_OBJECT = Resources.Load<GameObject>("Prefabs/letter");
-        BUBBLE_OBJECT = Resources.Load<GameObject>("Prefabs/DialogBubble");
-
-        //string modPath = FileLoader.pathToModFile("Sprites/UI/Fonts");
-        //string defaultPath = FileLoader.pathToDefaultFile("Sprites/UI/Fonts");
-        //loadAllFrom(defaultPath);
-        LoadAllFrom(FileLoader.pathToModFile("Sprites/UI/Fonts"), true);
-
-        //initialized = true;
+    public static UnderFont TryLoad(string key) {
+        string k = key;
+        key += key.EndsWith(".png") ? "" : ".png";
+        FileLoader.SanitizePath(ref key, "Sprites/UI/Fonts/", false);
+        key = key.ToLower();
+        if (dictMod.ContainsKey(key) || dictDefault.ContainsKey(key)) dict[key] = GetUnderFont(k);
+        else return null;
+        return dict[key];
     }
 
+    public static void Init() { LoadAllFrom(FileLoader.PathToModFile("Sprites/UI/Fonts"), true); }
+
     private static void LoadAllFrom(string directoryPath, bool mod = false) {
+        dict.Clear();
         DirectoryInfo dInfo = new DirectoryInfo(directoryPath);
 
         if (!dInfo.Exists)
@@ -50,39 +49,25 @@ public static class SpriteFontRegistry {
 
         if (mod) {
             dictMod.Clear();
-            foreach (FileInfo file in fInfo)
-                dictMod[Path.GetFileNameWithoutExtension(file.FullName).ToLower()] = file;
+            foreach (FileInfo file in fInfo) {
+                string k = file.FullName.Substring(directoryPath.Length + 1);
+                FileLoader.SanitizePath(ref k, "Sprites/UI/Fonts/");
+                dictMod[k.ToLower()] = file;
+            }
         } else {
             dictDefault.Clear();
-            foreach (FileInfo file in fInfo)
-                dictDefault[Path.GetFileNameWithoutExtension(file.FullName).ToLower()] = file;
+            foreach (FileInfo file in fInfo) {
+                string k = file.FullName.Substring(directoryPath.Length + 1);
+                FileLoader.SanitizePath(ref k, "Sprites/UI/Fonts/");
+                dictDefault[k.ToLower()] = file;
+            }
         }
-        /*foreach (FileInfo file in fInfo) {
-            string fontName = Path.GetFileNameWithoutExtension(file.FullName);
-            UnderFont underfont = getUnderFont(fontName);
-            if (underfont == null)
-                continue;
-            dict[fontName.ToLower()] = underfont;
-        }*/
-    }
-
-    public static UnderFont TryLoad(string key) {
-        string k = key;
-        key = key.ToLower();
-        if (dictMod.ContainsKey(key) || dictDefault.ContainsKey(key)) {
-            UnderFont underfont = GetUnderFont(k);
-            //if (underfont != null)
-            dict[key] = underfont;
-        } else
-            return null;
-        return dict[key];
     }
 
     private static UnderFont GetUnderFont(string fontName) {
         XmlDocument xml = new XmlDocument();
-        string fontPath = FileLoader.requireFile("Sprites/UI/Fonts/" + fontName + ".png");
-        string xmlPath = FileLoader.requireFile("Sprites/UI/Fonts/" + fontName + ".xml", false);
-        if (xmlPath == null)
+        string xmlPath = fontName + ".xml";
+        if (!FileLoader.SanitizePath(ref xmlPath, "Sprites/UI/Fonts/", false, true))
             return null;
         try { xml.Load(xmlPath); }
         catch (XmlException ex) {
@@ -93,7 +78,7 @@ public static class SpriteFontRegistry {
             UnitaleUtil.DisplayLuaError("Instanciating a font", "The font '" + fontName + "' doesn't have a font element at its root.");
             return null;
         }
-        Dictionary<char, Sprite> fontMap = LoadBuiltInFont(xml["font"]["spritesheet"], fontPath);
+        Dictionary<char, Sprite> fontMap = LoadBuiltInFont(xml["font"]["spritesheet"], fontName + ".png");
 
         UnderFont underfont;
         try { underfont = new UnderFont(fontMap, fontName); }
@@ -102,7 +87,10 @@ public static class SpriteFontRegistry {
             return null;
         }
 
-        if (xml["font"]["voice"] != null)        underfont.Sound = AudioClipRegistry.GetVoice(xml["font"]["voice"].InnerText);
+        if (xml["font"]["voice"] != null) {
+            underfont.Sound = AudioClipRegistry.GetVoice(xml["font"]["voice"].InnerText);
+            underfont.SoundName = xml["font"]["voice"].InnerText;
+        }
         if (xml["font"]["linespacing"] != null)  underfont.LineSpacing = ParseUtil.GetFloat(xml["font"]["linespacing"].InnerText);
         if (xml["font"]["charspacing"] != null)  underfont.CharSpacing = ParseUtil.GetFloat(xml["font"]["charspacing"].InnerText);
         if (xml["font"]["color"] != null)        underfont.DefaultColor = ParseUtil.GetColor(xml["font"]["color"].InnerText);
@@ -111,7 +99,7 @@ public static class SpriteFontRegistry {
     }
 
     private static Dictionary<char, Sprite> LoadBuiltInFont(XmlNode sheetNode, string fontPath) {
-        Sprite[] letterSprites = SpriteUtil.AtlasFromXml(sheetNode, SpriteUtil.FromFile(fontPath));
+        Sprite[] letterSprites = SpriteUtil.AtlasFromXml(sheetNode, SpriteUtil.FromFile(fontPath, "Sprites/UI/Fonts/"));
         Dictionary<char, Sprite> letters = new Dictionary<char, Sprite>();
         foreach (Sprite s in letterSprites) {
             string name = s.name;

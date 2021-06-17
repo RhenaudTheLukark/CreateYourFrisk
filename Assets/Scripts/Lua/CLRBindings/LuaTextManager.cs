@@ -10,7 +10,7 @@ public class LuaTextManager : TextManager {
     private RectTransform speechThing;
     private RectTransform speechThingShadow;
     private DynValue bubbleLastVar = DynValue.NewNil();
-    private bool bubble = true;
+    public bool bubble;
     private int framesWait = 60;
     private int countFrames;
     private int _bubbleHeight = -1;
@@ -77,7 +77,7 @@ public class LuaTextManager : TextManager {
         if (!isactive)
             throw new CYFException("Attempt to remove a removed text object.");
         autoDestroyed = true;
-        GameObject.Destroy(this.transform.parent.gameObject);
+        Destroy(transform.parent.gameObject);
     }
 
     // Shortcut to `DestroyText()`
@@ -243,7 +243,7 @@ public class LuaTextManager : TextManager {
         defaultColor = c;
 
         hasColorBeenSet = false;
-        hasAlphaBeenSet = resetAlpha ? false : hasAlphaBeenSet;
+        hasAlphaBeenSet = !resetAlpha && hasAlphaBeenSet;
     }
 
     public void ResetAlpha() {
@@ -336,7 +336,8 @@ public class LuaTextManager : TextManager {
         foreach (Image i in letterReferences)
             if (i != null) {
                 key++;
-                LuaSpriteController letter = new LuaSpriteController(i) { tag = "letter" };
+                LuaSpriteController letter = LuaSpriteController.GetOrCreate(i.gameObject);
+                letter.tag = "letter";
                 table.Set(key, UserData.Create(letter, LuaSpriteController.data));
             }
         return DynValue.NewTable(table);
@@ -399,7 +400,7 @@ public class LuaTextManager : TextManager {
         if (!isactive)
             yield break;
 
-        letterSound.clip = default_voice ?? default_charset.Sound;
+        letterSound = defaultVoice ?? default_charset.SoundName;
 
         // only allow inline text commands and letter sounds on the second frame
         lateStartWaiting = false;
@@ -434,7 +435,7 @@ public class LuaTextManager : TextManager {
         if (voiceName == null)
             throw new CYFException("Text.SetVoice: The first argument (the voice name) is nil.\n\nSee the documentation for proper usage.");
         CheckExists();
-        default_voice = voiceName == "none" ? null : AudioClipRegistry.GetVoice(voiceName);
+        defaultVoice = voiceName == "none" ? null : voiceName;
     }
 
     public void SetFont(string fontName, bool firstTime = false) {
@@ -447,13 +448,15 @@ public class LuaTextManager : TextManager {
         SetFont(uf, firstTime);
         if (!firstTime)
             default_charset = uf;
-        UpdateBubble();
+        if (bubble)
+            UpdateBubble();
     }
 
     [MoonSharpHidden] public void UpdateBubble() {
         containerBubble.GetComponent<RectTransform>().localPosition = new Vector2(-12, 24);
         // GetComponent<RectTransform>().localPosition = new Vector2(0, 16);
         GetComponent<RectTransform>().localPosition = new Vector2(0, 0);
+        ResizeBubble();
     }
 
     public void SetEffect(string effect, float intensity = -1) {
@@ -474,6 +477,7 @@ public class LuaTextManager : TextManager {
     public void ShowBubble(string side = null, DynValue position = null) {
         bubble = true;
         containerBubble.SetActive(true);
+        UpdateBubble();
         SetSpeechThingPositionAndSide(side, position);
     }
 

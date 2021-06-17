@@ -386,7 +386,6 @@ public class EventManager : MonoBehaviour {
         if (resetScripts) {
             eventScripts.Clear();
             ScriptWrapper.instances.Clear();
-            LuaScriptBinder.scriptlist.Clear();
         }
         PlayerOverworld.instance.parallaxes.Clear();
         // Load all events
@@ -404,11 +403,7 @@ public class EventManager : MonoBehaviour {
             }
 
             // Repopulate the spriteControllers table
-            if (go.GetComponent<SpriteRenderer>()) {
-                if (go.name == "Player") spriteControllers[go.name] = PlayerOverworld.instance.sprctrl;
-                else                     spriteControllers[go.name] = new LuaSpriteController(go.GetComponent<SpriteRenderer>());
-            } else if (go.GetComponent<Image>())
-                spriteControllers[go.name] = new LuaSpriteController(go.GetComponent<Image>());
+            spriteControllers[go.name] = LuaSpriteController.GetOrCreate(go);
 
             // Initialize the event's script if scripts have been reset
             if (resetScripts)
@@ -647,7 +642,7 @@ end";
         // Create a ScriptWrapper object
         ScriptWrapper scr = new ScriptWrapper { scriptname = eventName };
         // Load a special script hidden within CYF's internals if we're loading CYF 0.6.5's secret
-        string scriptText = UnitaleUtil.IsSpecialAnnouncement(eventName) ? CYF_RELEASE_SCRIPT : ScriptRegistry.Get(ScriptRegistry.EVENT_PREFIX + eventName);
+        string scriptText = UnitaleUtil.IsSpecialAnnouncement(eventName) ? CYF_RELEASE_SCRIPT : ScriptRegistry.Get("Events/" + eventName);
         if (scriptText == null) {
             UnitaleUtil.DisplayLuaError("Launching an event", "The event \"" + eventName + "\" doesn't exist.");
             return null;

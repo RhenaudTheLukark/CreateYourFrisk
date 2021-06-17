@@ -377,14 +377,10 @@ public static class UnitaleUtil {
     }
 
     public static bool TestContainsListVector2(List<Vector2> list, int testValue) {
-        foreach (Vector2 v in list)
-            if (v.x == testValue)
-                return true;
-        return false;
+        return list.Any(v => v.x == testValue);
     }
 
     public static void PlaySound(string basis, string sound, float volume = 0.65f) {
-        sound = FileLoader.getRelativePathWithoutExtension(sound).Replace('\\', '/');
         for (int i = 1; i > 0; i++) {
             object audio = NewMusicManager.audiolist[basis + i];
             if (audio != null) {
@@ -403,7 +399,7 @@ public static class UnitaleUtil {
         }
     }
 
-    public static void PlaySound(string basis, AudioClip sound, float volume = 0.65f) { PlaySound(basis, sound.name, volume); }
+    public static void PlayVoice(string basis, string voice, float volume = 0.65f) { PlaySound(basis, "Voices/" + voice, volume); }
 
     /// <summary>
     /// Checks if the Player and a given bullet collide.
@@ -547,27 +543,28 @@ public static class UnitaleUtil {
         return (from go in children where (getInactive || go.gameObject.activeInHierarchy) && (go.name == name || isInclusive && go.name.Contains(name)) select go.transform).FirstOrDefault();
     }
 
-    public static Transform[] GetFirstChildren(Transform parent, bool getInactive = false) {
-        Transform[] firstChildren;
-        int index = 0;
-        if (parent != null) {
-            Transform[] children = parent.GetComponentsInChildren<Transform>(getInactive);
-            firstChildren = new Transform[parent.childCount];
-            foreach (Transform child in children)
-                if (child.parent == parent) {
-                    firstChildren[index] = child;
-                    index++;
-                }
-        } else {
-            List<Transform> tfs = Resources.FindObjectsOfTypeAll<Transform>().Where(o => o.hideFlags == HideFlags.None).ToList().Where(tf => tf.parent == null).ToList();
-            firstChildren = new Transform[tfs.Count];
-            foreach (Transform root in tfs)
-                if (getInactive || root.gameObject.activeInHierarchy) {
-                    firstChildren[index] = root;
-                    index++;
-                }
-        }
+    public static List<Transform> GetFirstChildren(Transform parent, bool getInactive = false) {
+        List<Transform> firstChildren = new List<Transform>();
+        firstChildren.AddRange(parent != null ? parent.GetComponentsInChildren<Transform>(getInactive).Where(child => child.parent == parent)
+                                              : Resources.FindObjectsOfTypeAll<Transform>().Where(tf => tf.hideFlags == HideFlags.None && tf.parent == null && (getInactive || tf.gameObject.activeInHierarchy)));
         return firstChildren;
+    }
+
+    public static void RemoveChildren(GameObject go) {
+        foreach (Transform t in GetFirstChildren(go.transform, true)) {
+            // Bullet to delete recursively
+            if (t.GetComponent<Projectile>())
+                t.GetComponent<Projectile>().ctrl.Remove();
+            // Sprite to delete recursively
+            else if (t.GetComponent<CYFSprite>())
+                LuaSpriteController.GetOrCreate(t.gameObject).Remove();
+            // Text object to delete
+            else if (t.GetComponentInChildren<LuaTextManager>())
+                t.GetComponentInChildren<LuaTextManager>().Remove();
+            // Normally this shouldn't happen, just a failsafe
+            else
+                throw new CYFException("For some reason, it seems you're trying to remove something which is neither a sprite, bullet or text object.");
+        }
     }
 
     public static Dictionary<string, string> MapCorrespondanceList = new Dictionary<string, string>();
@@ -616,61 +613,19 @@ public static class UnitaleUtil {
         ScriptWrapper.instances.Clear();
         GlobalControls.isInFight = false;
         GlobalControls.isInShop = false;
-        LuaScriptBinder.scriptlist.Clear();
         LuaScriptBinder.ClearBattleVar();
         LuaScriptBinder.Clear();
         Object.Destroy(GameObject.Find("Main Camera OW"));
     }
 
-    public static string TimeFormatter(float seconds) {
-        float minutes = Mathf.Floor(Mathf.Round(seconds) / 60f);
-        //float hours = Mathf.Floor((seconds / 60f) / 60f);
-        return minutes + ":" + string.Format("{0,2}", Mathf.Round(seconds) % 60).Replace(" ", "0");
+    public static string TimeFormatter(float time) {
+        float seconds = Mathf.Floor(Mathf.Floor(time));
+        float minutes = Mathf.Floor(seconds / 60);
+        //float hours = Mathf.Floor(minutes / 60);
+        return minutes + ":" + string.Format("{0,2:00}", seconds % 60);
     }
 
     public static bool IsSpecialAnnouncement(string str) {
         return str == "4eab1af3ab6a932c23b3cdb8ef618b1af9c02088";
     }
-
-    /*public static bool CheckAvailableDuster(out GameObject go) {
-        go = null;
-        ParticleSystem[] pss = GameObject.Find("psContainer").GetComponentsInChildren<ParticleSystem>(true);
-        int a = pss.Length;
-        for (int i = 0; i < a; i++) {
-            if (!pss[i].gameObject.activeInHierarchy && pss[i].gameObject.name.Contains("MonsterDuster(Clone)")) {
-                go = pss[i].gameObject;
-                go.SetActive(true);
-                go.transform.SetAsFirstSibling();
-                return true;
-            }
-        }
-        return false;
-    }*/
-
-    // ******************************************************************************
-    // *** Warning: Complex System.Reflexion stuff below! Enter at your own risk! ***
-    // ******************************************************************************
-
-    /*/// <summary>
-    /// Complex af
-    /// Used like this: MethodInfo method = MethodOf(() => controller.Method3(default(int)));
-    /// </summary>
-    /// <param name="expression"></param>
-    /// <returns></returns>
-    public static MethodInfo MethodOf(Expression<Action> expression) {
-        return ((MethodCallExpression)expression.Body).Method;
-    }
-
-    /// <summary>
-    /// Checks if the expression given has the CYFEventFunction attribute I guess
-    /// </summary>
-    /// <param name="expression"></param>
-    /// <returns></returns>
-    public static bool MethodHasCYFEventFunctionAttribute(MethodInfo mf) {
-        const bool includeInherited = false;
-        return mf.GetCustomAttributes(typeof(CYFEventFunction), includeInherited).Any();
-    }
-    private static bool MethodHasCYFEventFunctionAttribute(Expression<Action> expression) {
-        return MethodHasCYFEventFunctionAttribute(MethodOf(expression));
-    }*/
 }

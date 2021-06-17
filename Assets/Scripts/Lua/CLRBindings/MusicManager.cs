@@ -59,7 +59,7 @@ public class MusicManager {
         if (name == null)
             throw new CYFException("Attempted to load a nil value as a sound.");
 
-        UnitaleUtil.PlaySound("MusicPlaySound", AudioClipRegistry.GetSound(name), volume);
+        UnitaleUtil.PlaySound("MusicPlaySound", name, volume);
     }
 
     public static float playtime {

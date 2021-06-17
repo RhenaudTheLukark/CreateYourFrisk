@@ -12,7 +12,7 @@ public class FightUI : MonoBehaviour {
     private int[] shakeX = { 12, -12, 7, -7, 3, -3, 1, -1, 0 };
     //private int[] shakeX = new int[] { 24, 0, 0, 0, 0, -48, 0, 0, 0, 0, 38, 0, 0, 0, 0, -28, 0, 0, 0, 0, 20, 0, 0, 0, 0, -12, 0, 0, 0, 0, 8, 0, 0, 0, 0, -2, 0, 0, 0, 0};
     private int shakeIndex = -1;
-    private int Damage = -478294;
+    private int Damage = FightUIController.DAMAGE_NOT_SET;
     private float shakeTimer;
     private float totalShakeTime = 1.5f;
     public float sliceAnimFrequency = 1 / 6f;
@@ -36,8 +36,8 @@ public class FightUI : MonoBehaviour {
     public void Start() {
         foreach(RectTransform child in transform) {
             switch (child.name) {
-                case "SliceAnim": slice = new LuaSpriteController(child.GetComponent<Image>()); break;
-                case "HPBar":    lifeBar = child.GetComponent<LifeBarController>(); break;
+                case "SliceAnim": slice   = LuaSpriteController.GetOrCreate(child.gameObject); break;
+                case "HPBar":     lifeBar = child.GetComponent<LifeBarController>();      break;
                 case "DamageNumber":
                     damageText = child.GetComponent<TextManager>();
                     damageTextRt = child.GetComponent<RectTransform>();
@@ -53,7 +53,7 @@ public class FightUI : MonoBehaviour {
 
     public void Init(int enemyIndex) {
         Start();
-        Damage = -478294;
+        Damage = FightUIController.DAMAGE_NOT_SET;
         lifeBar.setVisible(false);
         lifeBar.whenDamage = true;
         enemy = UIController.instance.encounter.EnabledEnemies[enemyIndex];
@@ -65,10 +65,11 @@ public class FightUI : MonoBehaviour {
         shakeTimer = 0;
     }
 
-    public void quickInit(int enemyIndex, EnemyController target, int damage = -478294) {
+    public void quickInit(int enemyIndex, EnemyController target, int damage) {
         Init(enemyIndex);
         enemy = target;
-        if (damage != -478294)
+
+        if (damage != FightUIController.DAMAGE_NOT_SET)
             Damage = damage;
         shakeInProgress = false;
     }
@@ -81,7 +82,7 @@ public class FightUI : MonoBehaviour {
 
     public void ChangeTarget(EnemyController target) {
         enemy = target;
-        if (Damage != -478294)
+        if (Damage != FightUIController.DAMAGE_NOT_SET)
             Damage = 0;
         Damage = FightUIController.instance.getDamage(enemy, PlayerController.instance.lastHitMult);
         enePos = enemy.GetComponent<RectTransform>().position;
@@ -95,7 +96,7 @@ public class FightUI : MonoBehaviour {
 
     public void StopAction(float atkMult) {
         PlayerController.instance.lastHitMult = FightUIController.instance.getAtkMult();
-        bool damagePredefined = Damage != -478294;
+        bool damagePredefined = Damage != FightUIController.DAMAGE_NOT_SET;
         stopped = true;
         enemy.TryCall("BeforeDamageCalculation");
         if (!damagePredefined)
@@ -148,9 +149,8 @@ public class FightUI : MonoBehaviour {
                 if (Damage == 0) {
                     if (enemy.DefenseMissText == null) damageTextStr = "[color:c0c0c0]MISS";
                     else                               damageTextStr = "[color:c0c0c0]" + enemy.DefenseMissText;
-                }
-                else if (Damage > 0) damageTextStr = "[color:ff0000]" + Damage;
-                else damageTextStr = "[color:00ff00]" + Damage;
+                } else if (Damage > 0)                 damageTextStr = "[color:ff0000]" + Damage;
+                else                                   damageTextStr = "[color:00ff00]" + Damage;
                 damageTextRt.localPosition = new Vector3(0, 0, 0);
                 damageText.SetText(new TextMessage(damageTextStr, false, true));
                 damageTextRt.localPosition = new Vector3(-UnitaleUtil.CalcTextWidth(damageText)/2 + enemy.offsets[2].x, 40 + enemy.offsets[2].y);
@@ -181,11 +181,11 @@ public class FightUI : MonoBehaviour {
             slice.img.gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(slice.img.GetComponent<Image>().sprite.rect.width, slice.img.GetComponent<Image>().sprite.rect.height);
     }
 
-    Vector3 CalculateSlicePos() {
+    private Vector3 CalculateSlicePos() {
         return new Vector3(enemy.offsets[0].x, eneSize.y / 2 + enemy.offsets[0].y - 55, 0);
     }
 
-    void UpdateSlicePos() {
+    private void UpdateSlicePos() {
         slice.img.GetComponent<RectTransform>().localPosition = CalculateSlicePos();
     }
 }

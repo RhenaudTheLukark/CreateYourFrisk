@@ -2,51 +2,36 @@
 using System.IO;
 
 public class ScriptRegistry {
-    internal static string WAVE_PREFIX = "wave_";
-    internal static string ENCOUNTER_PREFIX = "enc_";
-    internal static string MONSTER_PREFIX = "mon_";
-    internal static string EVENT_PREFIX = "event_";
-    internal static string SHOP_PREFIX = "shop_";
     public static Dictionary<string, string> dict = new Dictionary<string, string>();
 
-    private static readonly string[] folders = { "Waves", "Encounters", "Monsters", "Events", "Shops" };
-    private static readonly string[] prefixes = { WAVE_PREFIX, ENCOUNTER_PREFIX, MONSTER_PREFIX, EVENT_PREFIX, SHOP_PREFIX };
+    public static void Set(string key, string value) { dict[key.ToLower()] = value; }
 
     public static string Get(string key) {
+        key += key.EndsWith(".lua") ? "" : ".lua";
+        FileLoader.SanitizePath(ref key, "Lua/");
         key = key.ToLower();
         return dict.ContainsKey(key) ? dict[key] : null;
     }
 
-    public static void Set(string key, string value) { dict[key.ToLower()] = value; }
+    public static void Init() { LoadAllFrom(StaticInits.MODFOLDER != "@Title"); }
 
-    public static void Init() {
-        dict.Clear();
-        for (int i = 0; i < folders.Length; i++)
-            loadAllFrom(folders[i], prefixes[i], StaticInits.MODFOLDER != "@Title" && i == 1);
-    }
-
-    private static void loadAllFrom(string folderName, string script_prefix, bool needed) {
-        string directoryPath = FileLoader.pathToModFile("Lua/" + folderName);
+    private static void LoadAllFrom(bool needed) {
+        string directoryPath = FileLoader.PathToModFile("Lua");
         DirectoryInfo dInfo = new DirectoryInfo(directoryPath);
         if (!dInfo.Exists) {
             if (!needed) return;
-            UnitaleUtil.DisplayLuaError("mod loading", "You tried to load the mod \"" + StaticInits.MODFOLDER + "\" but it can't be found, or at least its \"Lua/" + folderName + "\" folder can't be found.\nAre you sure it exists?");
+            UnitaleUtil.DisplayLuaError("mod loading", "You tried to load the mod \"" + StaticInits.MODFOLDER + "\" but it can't be found, or at least its Lua folder can't be found.\nAre you sure it exists?");
             throw new CYFException("mod loading");
         }
+
         FileInfo[] fInfo = dInfo.GetFiles("*.lua", SearchOption.AllDirectories);
+        dict.Clear();
         foreach (FileInfo file in fInfo) {
-            //UnitaleUtil.writeInLog(file.Name);
-            string scriptName = FileLoader.getRelativePathWithoutExtension(directoryPath, file.FullName).ToLower();
-            string temp;
-            dict.TryGetValue(script_prefix + scriptName, out temp);
-
-            if (dict.ContainsKey(script_prefix + scriptName) && temp == FileLoader.getTextFrom(file.FullName))
-                continue;
-
-            if (dict.ContainsKey(script_prefix + scriptName))
-                dict.Remove(script_prefix + scriptName);
-
-            Set(script_prefix + scriptName, FileLoader.getTextFrom(file.FullName));
+            string k   = file.FullName.Substring(directoryPath.Length + 1),
+                   val = k;
+            FileLoader.SanitizePath(ref k, "Lua/");
+            FileLoader.SanitizePath(ref val, "Lua/", true, true);
+            Set(k, File.ReadAllText(val));
         }
     }
 }

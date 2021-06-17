@@ -121,7 +121,7 @@ public class LuaGeneralOW {
             return;
         }
 
-        if (GameObject.Find("textframe_border_outer") && GameObject.Find("textframe_border_outer").GetComponent<UnityEngine.UI.Image>().color.a != 0) {
+        if (textmgr != null && textmgr.GetComponent<UnityEngine.UI.Image>().color.a != 0) {
             // Clean up text manager
             textmgr.SetTextFrameAlpha(0);
             textmgr.textQueue = new TextMessage[] { };
@@ -241,7 +241,7 @@ public class LuaGeneralOW {
         volume = Mathf.Clamp01(volume);
         if (AudioClipRegistry.GetSound(sound) == null)
             throw new CYFException("General.PlaySound: The given BGM doesn't exist. Please check if you've spelled it correctly.");
-        UnitaleUtil.PlaySound("PlaySound", AudioClipRegistry.GetSound(sound), volume);
+        UnitaleUtil.PlaySound("PlaySound", sound, volume);
         //GameObject.Find("Player").GetComponent<AudioSource>().PlayOneShot(AudioClipRegistry.GetSound(sound), volume);
         appliedScript.Call("CYFEventNextCommand");
     }

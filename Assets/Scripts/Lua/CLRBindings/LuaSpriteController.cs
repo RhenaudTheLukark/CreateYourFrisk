@@ -6,25 +6,23 @@ using UnityEngine.UI;
 using Object = UnityEngine.Object;
 
 public class LuaSpriteController {
-    [MoonSharpHidden] public GameObject _img;  // The real image
+    [MoonSharpHidden] public CYFSprite spr;
+    [MoonSharpHidden] public bool removed;
     internal GameObject img { // A image that returns the real image. We use this to be able to detect if the real image is null, and if it is, throw an exception
         get {
-            if (_img == null)                           throw new CYFException("Attempted to perform action on removed sprite.");
-            if (!_img.activeInHierarchy && !firstFrame) throw new CYFException("Attempted to perform action on removed sprite.");
-            return _img;
+            if (removed) throw new CYFException("Attempted to perform action on removed sprite.");
+            return spr.gameObject;
         }
-        set { _img = value; }
     }
     public LuaSpriteShader shader;
-    private bool firstFrame = true;
     private readonly Dictionary<string, DynValue> vars = new Dictionary<string, DynValue>();
-    [MoonSharpHidden] public Vector2 nativeSizeDelta;                   // The native size of the image
-    private Vector3 internalRotation = Vector3.zero;  // The rotation of the sprite
-    private float xScale = 1;                         // The X scale of the sprite
-    private float yScale = 1;                         // The Y scale of the sprite
-    private Sprite originalSprite;                    // The original sprite
-    [MoonSharpHidden] public KeyframeCollection keyframes;              // This variable is used to store an animation
-    [MoonSharpHidden] public string tag;                                // The tag of the sprite : "projectile", "enemy", "bubble", "letter" or "other"
+    [MoonSharpHidden] public Vector2 nativeSizeDelta;      // The native size of the image
+    private Vector3 internalRotation = Vector3.zero;       // The rotation of the sprite
+    private float xScale = 1;                              // The X scale of the sprite
+    private float yScale = 1;                              // The Y scale of the sprite
+    private Sprite originalSprite;                         // The original sprite
+    [MoonSharpHidden] public KeyframeCollection keyframes; // This variable is used to store an animation
+    [MoonSharpHidden] public string tag;                   // The tag of the sprite : "projectile", "enemy", "letter" or "other"
     private KeyframeCollection.LoopMode loop = KeyframeCollection.LoopMode.LOOP;
     [MoonSharpHidden] public static MoonSharp.Interpreter.Interop.IUserDataDescriptor data = UserData.GetDescriptorForType<LuaSpriteController>(true);
 
@@ -123,7 +121,7 @@ public class LuaSpriteController {
 
     // Is the sprite active? True if the image of the sprite isn't null, false otherwise
     public bool isactive {
-        get { return GlobalControls.retroMode ? _img == null : _img != null; }
+        get { return !GlobalControls.retroMode ^ removed; }
     }
 
     // The original width of the sprite
@@ -311,14 +309,13 @@ public class LuaSpriteController {
         // You can't get or set the layer on an enemy sprite
         get {
             Transform target = GetTarget();
-            if (tag == "bubble" || tag == "event" || tag == "letter")         return "none";
+            if (tag == "event" || tag == "letter")                            return "none";
             if (tag == "projectile" && !target.parent.name.Contains("Layer")) return "BulletPool";
             if (tag == "enemy" && !target.parent.name.Contains("Layer"))      return "specialEnemyLayer";
             return target.parent.name.Substring(0, target.parent.name.Length - 5);
         } set {
             switch (tag) {
                 case "event":  throw new CYFException("sprite.layer: Overworld events' layers can't be changed.");
-                case "bubble": throw new CYFException("sprite.layer: Bubbles' layers can't be changed.");
                 case "letter": throw new CYFException("sprite.layer: Letters' layers can't be changed.");
             }
 
@@ -341,25 +338,40 @@ public class LuaSpriteController {
     }
     */
 
-    // The function that creates a sprite.
-    public LuaSpriteController(Image i) {
-        img = i.gameObject;
-        originalSprite = i.sprite;
-        nativeSizeDelta = new Vector2(100, 100);
-        if (img.GetComponent<Projectile>())                            tag = "projectile";
-        else if (img.GetComponent<EnemyController>())                  tag = "enemy";
-        else if (i.transform.parent != null)
-            if (i.transform.parent.GetComponent<EnemyController>())    tag = "bubble";
-            else                                                       tag = "other";
-        shader = new LuaSpriteShader("sprite", img);
-    }
+    /// <summary>
+    /// Creates the instance of LuaSpriteController for the given GameObject or returns one if it already exists.
+    /// </summary>
+    /// <param name="go">GameObject to create a controller for.</param>
+    /// <returns>An instance of LuaSpriteController manipulating the Gameobject go.</returns>
+    public static LuaSpriteController GetOrCreate(GameObject go) {
+        // Fetch or add the GameObject's CYFSprite component, then retrieve its controller if it exists
+        CYFSprite newSpr = go.GetComponent<CYFSprite>() ?? go.AddComponent<CYFSprite>();
+        if (newSpr.ctrl != null) return newSpr.ctrl;
 
-    public LuaSpriteController(SpriteRenderer i) {
-        img = i.gameObject;
-        originalSprite = i.sprite;
-        nativeSizeDelta = new Vector2(100, 100);
-        tag = "event";
-        shader = new LuaSpriteShader("event", img);
+        // Otherwise, create a new controller
+        LuaSpriteController ctrl = new LuaSpriteController { spr = newSpr };
+        newSpr.ctrl = ctrl;
+
+        // Images are used for most of CYF's sprites
+        Image image = newSpr.GetComponent<Image>();
+        if (image != null) {
+            ctrl.originalSprite  = image.sprite;
+            ctrl.nativeSizeDelta = new Vector2(100, 100);
+            // A controller's tag gives us more info on what the sprite actually is used for
+            if (ctrl.img.GetComponent<Projectile>())           ctrl.tag = "projectile";
+            else if (ctrl.img.GetComponent<EnemyController>()) ctrl.tag = "enemy";
+            else                                               ctrl.tag = "other";
+            ctrl.shader = new LuaSpriteShader("sprite", ctrl.img);
+            return ctrl;
+        }
+
+        // SpriteRenderers are used for overworld events
+        SpriteRenderer render = newSpr.GetComponent<SpriteRenderer>();
+        ctrl.originalSprite  = render.sprite;
+        ctrl.nativeSizeDelta = new Vector2(100, 100);
+        ctrl.tag             = "event";
+        ctrl.shader          = new LuaSpriteShader("event", ctrl.img);
+        return ctrl;
     }
 
     // Changes the sprite of this instance
@@ -387,7 +399,6 @@ public class LuaSpriteController {
     // Sets the parent of a sprite.
     public void SetParent(LuaSpriteController parent) {
         if (parent == null)                                               throw new CYFException("sprite.SetParent() can't set null as the sprite's parent.");
-        if (tag == "bubble")                                              throw new CYFException("sprite.SetParent() can not be used with bubbles.");
         if (tag == "event" || parent != null && parent.tag == "event")    throw new CYFException("sprite.SetParent() can not be used with an Overworld Event's sprite.");
         if (tag == "letter" ^ (parent != null && parent.tag == "letter")) throw new CYFException("sprite.SetParent() can not be used between letter sprites and other sprites.");
         try {
@@ -472,11 +483,8 @@ public class LuaSpriteController {
 
         Vector2 pivot = img.GetComponent<RectTransform>().pivot;
         Keyframe[] kfArray = new Keyframe[spriteNames.Length];
-        for (int i = 0; i < spriteNames.Length; i++) {
-            // at least one sprite in the sequence was unable to be loaded
-            if (SpriteRegistry.Get(spriteNames[i]) == null)
-                throw new CYFException("sprite.SetAnimation: Failed to load sprite with the name \"" + spriteNames[i] + "\". Are you sure it is spelled correctly?");
-
+        for (int i = spriteNames.Length - 1; i >= 0; i--) {
+            Set(spriteNames[i]);
             kfArray[i] = new Keyframe(SpriteRegistry.Get(spriteNames[i]), spriteNames[i]);
         }
         if (keyframes == null) {
@@ -685,7 +693,7 @@ public class LuaSpriteController {
     }
 
     public void Remove() {
-        if (_img == null)
+        if (removed)
             return;
         if (!GlobalControls.retroMode && tag == "projectile") {
             img.GetComponent<Projectile>().ctrl.Remove();
@@ -693,7 +701,7 @@ public class LuaSpriteController {
         }
 
         bool throwError = false;
-        if ((!GlobalControls.retroMode && img.gameObject.name == "player") || (!GlobalControls.retroMode && tag == "projectile") || tag == "enemy" || tag == "bubble") {
+        if ((!GlobalControls.retroMode && img.gameObject.name == "player") || (!GlobalControls.retroMode && tag == "projectile") || tag == "enemy") {
             if (img.gameObject.name == "player")
                 throw new CYFException("sprite.Remove(): You can't remove the Player's sprite!");
             if (tag == "projectile") {
@@ -704,57 +712,22 @@ public class LuaSpriteController {
         if (throwError)
             throw new CYFException("sprite.Remove(): You can't remove a " + tag + "'s sprite!");
 
-        RemoveChildren(img);
+        UnitaleUtil.RemoveChildren(img);
         StopAnimation();
         Object.Destroy(GetTarget().gameObject);
-        _img = null;
-    }
-
-    [MoonSharpHidden] public static void RemoveChildren(GameObject go) {
-        // Delete all children, must they be bullets or sprites
-        List<Transform> spritesToDelete = new List<Transform> { go.transform };
-
-        while (spritesToDelete.Count > 0) {
-            Transform t = spritesToDelete[spritesToDelete.Count - 1];
-            Transform[] pcs = UnitaleUtil.GetFirstChildren(t, true);
-
-            bool needToHandleNewTransform = false;
-            for (int i = 0; i < pcs.Length; i++) {
-                // Bullet to delete recursively
-                if (pcs[i].GetComponent<Projectile>()) {
-                    pcs[i].GetComponent<Projectile>().ctrl.Remove();
-                    // Sprite to add to the sprite queue
-                } else {
-                    spritesToDelete.Add(pcs[i]);
-                    pcs[i].SetParent(t.parent);
-                    needToHandleNewTransform = true;
-                    break;
-                }
-            }
-
-            if (needToHandleNewTransform) continue;
-
-            // Actually delete the sprite if its not the current one
-            if (!t.GetComponent<Projectile>() && spritesToDelete.Count > 1) {
-                if      (t.GetComponent<Image>())          new LuaSpriteController(t.GetComponent<Image>()).Remove();
-                else if (t.GetComponent<SpriteRenderer>()) new LuaSpriteController(t.GetComponent<SpriteRenderer>()).Remove();
-            }
-
-            spritesToDelete.RemoveAt(spritesToDelete.Count - 1);
-        }
+        removed = true;
     }
 
     public void Dust(bool playDust = true, bool removeObject = false) {
-        if (tag == "enemy" || tag == "bubble")
-            throw new CYFException("sprite.Dust(): You can't dust a " + tag + "'s sprite!");
+        if (tag == "enemy")
+            throw new CYFException("sprite.Dust(): You can't dust an enemy's sprite!");
 
         GameObject go = Object.Instantiate(Resources.Load<GameObject>("Prefabs/MonsterDuster"));
         go.transform.SetParent(UIController.instance.psContainer.transform);
         if (playDust)
-            UnitaleUtil.PlaySound("DustSound", AudioClipRegistry.GetSound("enemydust"));
+            UnitaleUtil.PlaySound("DustSound", "enemydust");
         img.GetComponent<ParticleDuplicator>().Activate(this);
         if (img.gameObject.name == "player") return;
-        img.SetActive(false);
         if (removeObject)
             Remove();
     }
@@ -816,11 +789,6 @@ public class LuaSpriteController {
         if (img.sprite != s)
             img.sprite = s;
     }*/
-
-    void Update() {
-        UpdateAnimation();
-        firstFrame = false;
-    }
 
     public void SetVar(string name, DynValue value) {
         if (name == null)
