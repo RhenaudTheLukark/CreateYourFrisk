@@ -19,6 +19,11 @@ public class LuaUnityTime {
     /// </summary>
     public static float mult { get { return Time.deltaTime * 60; } }
 
+    public static float timeScale {
+        get { return Time.timeScale; }
+        set { Time.timeScale = value; }
+    }
+
     public static float wave {
         get { return UIController.instance.state != UIController.UIState.DEFENDING ? -1f : Time.time - UIController.instance.encounter.waveBeginTime; }
     }

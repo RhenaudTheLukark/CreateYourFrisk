@@ -168,6 +168,8 @@ public class UIController : MonoBehaviour {
             ScreenResolution.SetFullScreen(true, 0);
         }
         ScreenResolution.wideFullscreen = false;
+
+        Time.timeScale = 1;
     }
 
     public void SwitchState(UIState newState, bool first = false) {
