@@ -83,6 +83,7 @@ public static class LuaScriptBinder {
             script.Globals["GetCurrentState"] = (Func<string>)GetState;
             script.Globals["BattleDialog"] = (Action<Script, DynValue>)EnemyEncounter.BattleDialog;
             script.Globals["BattleDialogue"] = (Action<Script, DynValue>)EnemyEncounter.BattleDialog;
+			script.Globals["CreateState"] = (Action<string>)UIController.CreateNewUIState;
 
             if (EnemyEncounter.doNotGivePreviousEncounterToSelf)
                 EnemyEncounter.doNotGivePreviousEncounterToSelf = false;
@@ -139,7 +140,7 @@ public static class LuaScriptBinder {
     private delegate TResult Func<T1, T2, T3, T4, T5, T6, TResult>(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg, T6 arg6);
 
     public static string GetState() {
-        try { return (UIController.instance.frozenState != UIController.UIState.PAUSE) ? UIController.instance.frozenState.ToString() : UIController.instance.state.ToString(); }
+        try { return (UIController.instance.frozenState != "PAUSE") ? UIController.instance.frozenState : UIController.instance.state; }
         catch { return "NONE (error)"; }
     }
 
@@ -312,7 +313,7 @@ public static class LuaScriptBinder {
     public static void SetAction(string action) {
         try {
             UIController.instance.forcedAction = (UIController.Actions)Enum.Parse(typeof(UIController.Actions), action, true);
-            if ((GetState() == "ACTIONSELECT" && UIController.instance.frozenState == UIController.UIState.PAUSE || !UIController.instance.stateSwitched) && UIController.instance.forcedAction != UIController.Actions.NONE)
+            if ((GetState() == "ACTIONSELECT" && UIController.instance.frozenState == "PAUSE" || !UIController.instance.stateSwitched) && UIController.instance.forcedAction != UIController.Actions.NONE)
                 UIController.instance.MovePlayerToAction(UIController.instance.forcedAction);
         } catch { throw new CYFException("SetAction() can only take \"FIGHT\", \"ACT\", \"ITEM\" or \"MERCY\", but you entered \"" + action + "\"."); }
     }

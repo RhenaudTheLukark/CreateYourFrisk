@@ -90,7 +90,7 @@ public class UIController : MonoBehaviour {
         PAUSE           // Used exclusively for State("PAUSE"). Not a real state, but it needs to be listed to allow users to call State("PAUSE")
     }*/
 	
-	public List<string> UIStates = new List<string>();
+	public List<string> UIStates = new List<string>() {"NONE", "ACTIONSELECT", "ATTACKING", "DEFENDING", "ENEMYSELECT", "ACTMENU", "ITEMMENU", "MERCYMENU", "ENEMYDIALOGUE", "DIALOGRESULT", "DONE", "SPAREIDLE", "UNUSED", "PAUSE"};
 
     // Variables for PAUSE's "encounter freezing" behavior
     public string frozenState = "PAUSE"; // Used to keep track of what state was frozen
@@ -278,7 +278,7 @@ public class UIController : MonoBehaviour {
 
             PlayerController.instance.selfImg.enabled = frozenPlayerVisibility;
 
-            frozenState = UIState.PAUSE;
+            frozenState = "PAUSE";
 
             return;
         }
@@ -303,7 +303,7 @@ public class UIController : MonoBehaviour {
             PlayerController.instance.setControlOverride(true);
         }
 
-        if (state == "ENEMYSELECT" && forcedAction == "FIGHT")
+        if (state == "ENEMYSELECT" && forcedAction == Actions.FIGHT)
             foreach (LifeBarController lbc in arenaParent.GetComponentsInChildren<LifeBarController>())
                 Destroy(lbc.gameObject);
         else if (state == "ENEMYDIALOGUE") {
@@ -571,7 +571,7 @@ public class UIController : MonoBehaviour {
         if (state == null)
             throw new CYFException("State: Argument cannot be nil.");
         if (instance.encounter.gameOverStance) return;
-		if (!instance.UIStates.ContainsKey(state))
+		if (!instance.UIStates.Contains(state))
 			throw new CYFException("The state \"" + state + "\" is not a valid state. Are you sure it exists?\n\nPlease double-check in the Misc. Functions section of the docs for a list of every default valid state.");
 			
         try {
@@ -581,6 +581,13 @@ public class UIController : MonoBehaviour {
             throw new CYFException("An error occured while trying to enter the state \"" + state + "\":\n\n" + ex.Message + "\n\nTraceback (for devs):\n" + ex);
         }
     }
+	
+	public static void CreateNewUIState(string name) {
+		if (instance.UIStates.Contains(name))
+			throw new CYFException("The state \"" + name + "\" already exists, but you tried to create it again.");
+			
+		instance.UIStates.Add(name);
+	}
 
     private void Awake() {
         if (GlobalControls.crate) {
@@ -1211,7 +1218,7 @@ public class UIController : MonoBehaviour {
                 break;
 
             case "ACTMENU":
-                SwitchState(UIState.ENEMYSELECT);
+                SwitchState("ENEMYSELECT");
                 break;
 
             case "ENEMYSELECT":
