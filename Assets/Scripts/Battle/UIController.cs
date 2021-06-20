@@ -54,8 +54,8 @@ public class UIController : MonoBehaviour {
     public int gold = 0;    // Amount of Gold earned by the Player at the end of the encounter
 
     public string state;                                // Current state of the battle
-    private string stateAfterDialogs = "DEFENDING";  	// State to enter after the current arena dialogue is done. Only used after a proper call to BattleDialog()
-    private string lastNewState = "UNUSED";          	// Allows the detection of state changes during an OnDeath() call so the engine can switch to it properly
+    private string stateAfterDialogs = "DEFENDING";      // State to enter after the current arena dialogue is done. Only used after a proper call to BattleDialog()
+    private string lastNewState = "UNUSED";              // Allows the detection of state changes during an OnDeath() call so the engine can switch to it properly
 
     private readonly Vector2 upperLeft = new Vector2(65, 190);      // Coordinates of the first choice in a choice text
     private bool encounterHasUpdate;                                // True if the encounter has an Update function, false otherwise
@@ -72,7 +72,7 @@ public class UIController : MonoBehaviour {
 
     public enum Actions { FIGHT, ACT, ITEM, MERCY, NONE }   // Action enumeration used to know which main UI button we're selecting or we chose
 
-	/*
+    /*
     public enum UIState {
         NONE,           // Initial state. Used to see if a modder has changed the state before the UI controller wants to
         ACTIONSELECT,   // Selecting an action (FIGHT/ACT/ITEM/MERCY)
@@ -89,8 +89,8 @@ public class UIController : MonoBehaviour {
         UNUSED,         // Used for OnDeath(). Keep this state secret, please
         PAUSE           // Used exclusively for State("PAUSE"). Not a real state, but it needs to be listed to allow users to call State("PAUSE")
     }*/
-	
-	public List<string> UIStates = new List<string>() {"NONE", "ACTIONSELECT", "ATTACKING", "DEFENDING", "ENEMYSELECT", "ACTMENU", "ITEMMENU", "MERCYMENU", "ENEMYDIALOGUE", "DIALOGRESULT", "DONE", "SPAREIDLE", "UNUSED", "PAUSE"};
+    
+    public List<string> UIStates = new List<string>() {"NONE", "ACTIONSELECT", "ATTACKING", "DEFENDING", "ENEMYSELECT", "ACTMENU", "ITEMMENU", "MERCYMENU", "ENEMYDIALOGUE", "DIALOGRESULT", "DONE", "SPAREIDLE", "UNUSED", "PAUSE"};
 
     // Variables for PAUSE's "encounter freezing" behavior
     public string frozenState = "PAUSE"; // Used to keep track of what state was frozen
@@ -571,9 +571,9 @@ public class UIController : MonoBehaviour {
         if (state == null)
             throw new CYFException("State: Argument cannot be nil.");
         if (instance.encounter.gameOverStance) return;
-		if (!instance.UIStates.Contains(state))
-			throw new CYFException("The state \"" + state + "\" is not a valid state. Are you sure it exists?\n\nPlease double-check in the Misc. Functions section of the docs for a list of every default valid state.");
-			
+        if (!instance.UIStates.Contains(state))
+            throw new CYFException("The state \"" + state + "\" is not a valid state. Are you sure it exists?\n\nPlease double-check in the Misc. Functions section of the docs for a list of every default valid state.");
+            
         try {
             instance.SwitchState(state);
         } catch (Exception ex) {
@@ -581,13 +581,13 @@ public class UIController : MonoBehaviour {
             throw new CYFException("An error occured while trying to enter the state \"" + state + "\":\n\n" + ex.Message + "\n\nTraceback (for devs):\n" + ex);
         }
     }
-	
-	public static void CreateNewUIState(string name) {
-		if (instance.UIStates.Contains(name))
-			throw new CYFException("The state \"" + name + "\" already exists, but you tried to create it again.");
-			
-		instance.UIStates.Add(name);
-	}
+    
+    public static void CreateNewUIState(string name) {
+        if (instance.UIStates.Contains(name))
+            throw new CYFException("The state \"" + name + "\" already exists.");
+            
+        instance.UIStates.Add(name);
+    }
 
     private void Awake() {
         if (GlobalControls.crate) {

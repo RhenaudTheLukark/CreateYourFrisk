@@ -83,7 +83,7 @@ public static class LuaScriptBinder {
             script.Globals["GetCurrentState"] = (Func<string>)GetState;
             script.Globals["BattleDialog"] = (Action<Script, DynValue>)EnemyEncounter.BattleDialog;
             script.Globals["BattleDialogue"] = (Action<Script, DynValue>)EnemyEncounter.BattleDialog;
-			script.Globals["CreateState"] = (Action<string>)UIController.CreateNewUIState;
+            script.Globals["CreateState"] = (Action<string>)UIController.CreateNewUIState;
 
             if (EnemyEncounter.doNotGivePreviousEncounterToSelf)
                 EnemyEncounter.doNotGivePreviousEncounterToSelf = false;
