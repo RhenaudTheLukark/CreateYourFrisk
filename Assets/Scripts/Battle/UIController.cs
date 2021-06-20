@@ -53,9 +53,9 @@ public class UIController : MonoBehaviour {
     public int exp = 0;     // Amount of EXP earned by the Player at the end of the encounter
     public int gold = 0;    // Amount of Gold earned by the Player at the end of the encounter
 
-    public UIState state;                                   // Current state of the battle
-    private UIState stateAfterDialogs = UIState.DEFENDING;  // State to enter after the current arena dialogue is done. Only used after a proper call to BattleDialog()
-    private UIState lastNewState = UIState.UNUSED;          // Allows the detection of state changes during an OnDeath() call so the engine can switch to it properly
+    public string state;                                // Current state of the battle
+    private string stateAfterDialogs = "DEFENDING";  	// State to enter after the current arena dialogue is done. Only used after a proper call to BattleDialog()
+    private string lastNewState = "UNUSED";          	// Allows the detection of state changes during an OnDeath() call so the engine can switch to it properly
 
     private readonly Vector2 upperLeft = new Vector2(65, 190);      // Coordinates of the first choice in a choice text
     private bool encounterHasUpdate;                                // True if the encounter has an Update function, false otherwise
@@ -72,6 +72,7 @@ public class UIController : MonoBehaviour {
 
     public enum Actions { FIGHT, ACT, ITEM, MERCY, NONE }   // Action enumeration used to know which main UI button we're selecting or we chose
 
+	/*
     public enum UIState {
         NONE,           // Initial state. Used to see if a modder has changed the state before the UI controller wants to
         ACTIONSELECT,   // Selecting an action (FIGHT/ACT/ITEM/MERCY)
@@ -87,10 +88,12 @@ public class UIController : MonoBehaviour {
         SPAREIDLE,      // Used for OnSpare()'s inactivity, to make it works like OnDeath(). You don't want to go in there
         UNUSED,         // Used for OnDeath(). Keep this state secret, please
         PAUSE           // Used exclusively for State("PAUSE"). Not a real state, but it needs to be listed to allow users to call State("PAUSE")
-    }
+    }*/
+	
+	public List<string> UIStates = new List<string>();
 
     // Variables for PAUSE's "encounter freezing" behavior
-    public UIState frozenState = UIState.PAUSE; // Used to keep track of what state was frozen
+    public string frozenState = "PAUSE"; // Used to keep track of what state was frozen
     public float frozenTimestamp;               // Used for DEFENDING's wavetimer
     private bool frozenControlOverride = true;  // Used for the Player's control override
     private bool frozenPlayerVisibility = true; // Used for the Player's invincibility timer when hurt
@@ -98,13 +101,13 @@ public class UIController : MonoBehaviour {
     public delegate void Message();
     public static event Message SendToStaticInit;
 
-    public void ActionDialogResult(TextMessage msg, UIState afterDialogState = UIState.ENEMYDIALOGUE) {
+    public void ActionDialogResult(TextMessage msg, string afterDialogState = "ENEMYDIALOGUE") {
         ActionDialogResult(new[] { msg }, afterDialogState);
     }
 
-    public void ActionDialogResult(TextMessage[] msg, UIState afterDialogState = UIState.ENEMYDIALOGUE) {
+    public void ActionDialogResult(TextMessage[] msg, string afterDialogState = "ENEMYDIALOGUE") {
         stateAfterDialogs = afterDialogState;
-        SwitchState(UIState.DIALOGRESULT);
+        SwitchState("DIALOGRESULT");
         mainTextManager.SetTextQueue(msg);
     }
 
@@ -170,7 +173,7 @@ public class UIController : MonoBehaviour {
         ScreenResolution.wideFullscreen = false;
     }
 
-    public void SwitchState(UIState newState, bool first = false) {
+    public void SwitchState(string newState, bool first = false) {
         stateSwitched = true;
         if (onDeathSwitch) {
             lastNewState = newState;
@@ -184,7 +187,7 @@ public class UIController : MonoBehaviour {
         if (parentStateCall) {
             parentStateCall = false;
             try {
-                EnemyEncounter.script.Call("EnteringState", new[] { DynValue.NewString(newState.ToString()), DynValue.NewString(state.ToString()) });
+                EnemyEncounter.script.Call("EnteringState", new[] { DynValue.NewString(newState), DynValue.NewString(state) });
             } catch (InterpreterException ex) {
                 UnitaleUtil.DisplayLuaError(EnemyEncounter.script.scriptname, UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message);
             }
@@ -207,29 +210,29 @@ public class UIController : MonoBehaviour {
         // below: actions based on ending a previous state, or actions that affect multiple states
 
         // PAUSE can freeze states
-        if (newState == UIState.PAUSE && frozenState != UIState.PAUSE) return;
-        if (newState == UIState.PAUSE && frozenState == UIState.PAUSE) {
+        if (newState == "PAUSE" && frozenState != "PAUSE") return;
+        if (newState == "PAUSE" && frozenState == "PAUSE") {
             frozenState = state;
 
             // execute extra code based on the state that is being frozen
             switch(frozenState) {
-                case UIState.ACTIONSELECT:
-                case UIState.DIALOGRESULT:
+                case "ACTIONSELECT":
+                case "DIALOGRESULT":
                     mainTextManager.SetPause(true);
                     break;
-                case UIState.DEFENDING:
+                case "DEFENDING":
                     frozenControlOverride = PlayerController.instance.overrideControl;
                     PlayerController.instance.setControlOverride(true);
 
                     frozenTimestamp = Time.time;
                     break;
-                case UIState.ENEMYDIALOGUE:
+                case "ENEMYDIALOGUE":
                     TextManager[] textManagers = FindObjectsOfType<TextManager>();
                     foreach (TextManager textManager in textManagers)
                         if (textManager.gameObject.name.StartsWith("DialogBubble")) // game object name is hardcoded as it won't change
                             textManager.SetPause(true);
                     break;
-                case UIState.ATTACKING:
+                case "ATTACKING":
                     FightUI fui = fightUI.boundFightUiInstances[0];
                     if (fui.slice != null && fui.slice.keyframes != null)
                         fui.slice.keyframes.paused = true;
@@ -244,26 +247,26 @@ public class UIController : MonoBehaviour {
 
             return;
         }
-        if (newState == frozenState && frozenState != UIState.PAUSE) {
+        if (newState == frozenState && frozenState != "PAUSE") {
             // execute extra code based on the state that is being un-frozen
             switch(frozenState) {
-                case UIState.ACTIONSELECT:
-                case UIState.DIALOGRESULT:
+                case "ACTIONSELECT":
+                case "DIALOGRESULT":
                     mainTextManager.SetPause(true);
                     break;
-                case UIState.DEFENDING:
+                case "DEFENDING":
                     PlayerController.instance.setControlOverride(frozenControlOverride);
 
                     frozenTimestamp     =  Time.time - frozenTimestamp;
                     encounter.waveTimer += frozenTimestamp;
                     break;
-                case UIState.ENEMYDIALOGUE:
+                case "ENEMYDIALOGUE":
                     TextManager[] textManagers = FindObjectsOfType<TextManager>();
                     foreach (TextManager textManager in textManagers)
                         if (textManager.gameObject.name.StartsWith("DialogBubble")) // game object name is hardcoded as it won't change
                             textManager.SetPause(false);
                     break;
-                case UIState.ATTACKING:
+                case "ATTACKING":
                     FightUI fui = fightUI.boundFightUiInstances[0];
                     if (fui.slice != null && fui.slice.keyframes != null)
                         fui.slice.keyframes.paused = false;
@@ -279,12 +282,12 @@ public class UIController : MonoBehaviour {
 
             return;
         }
-        frozenState = UIState.PAUSE;
+        frozenState = "PAUSE";
 
         frozenTimestamp  = 0.0f;
 
-        if (newState == UIState.DEFENDING || newState == UIState.ENEMYDIALOGUE) {
-            PlayerController.instance.setControlOverride(newState != UIState.DEFENDING);
+        if (newState == "DEFENDING" || newState == "ENEMYDIALOGUE") {
+            PlayerController.instance.setControlOverride(newState != "DEFENDING");
             mainTextManager.DestroyChars();
             PlayerController.instance.SetPosition(320, 160, true);
             PlayerController.instance.GetComponent<Image>().enabled = true;
@@ -300,30 +303,30 @@ public class UIController : MonoBehaviour {
             PlayerController.instance.setControlOverride(true);
         }
 
-        if (state == UIState.ENEMYSELECT && forcedAction == Actions.FIGHT)
+        if (state == "ENEMYSELECT" && forcedAction == "FIGHT")
             foreach (LifeBarController lbc in arenaParent.GetComponentsInChildren<LifeBarController>())
                 Destroy(lbc.gameObject);
-        else if (state == UIState.ENEMYDIALOGUE) {
+        else if (state == "ENEMYDIALOGUE") {
             TextManager[] textManagers = FindObjectsOfType<TextManager>();
             foreach (TextManager textManager in textManagers)
                 if (textManager.gameObject.name.StartsWith("DialogBubble")) // game object name is hardcoded as it won't change
                     Destroy(textManager.gameObject);
-        } else if (state == UIState.DIALOGRESULT)
+        } else if (state == "DIALOGRESULT")
             mainTextManager.SetCaller(EnemyEncounter.script);
 
-        UIState oldState = state;
+        string oldState = state;
         state = newState;
         //encounter.CallOnSelfOrChildren("Entered" + Enum.GetName(typeof(UIState), state).Substring(0, 1)
         //                                         + Enum.GetName(typeof(UIState), state).Substring(1, Enum.GetName(typeof(UIState), state).Length - 1).ToLower());
-        if (oldState == UIState.DEFENDING && state != UIState.DEFENDING) {
-            UIState current = state;
+        if (oldState == "DEFENDING" && state != "DEFENDING") {
+            string current = state;
             encounter.EndWave();
             if (state != current && !GlobalControls.retroMode)
                 return;
         }
 
         switch (state) {
-            case UIState.ATTACKING:
+            case "ATTACKING":
                 // Error for no active enemies
                 if (encounter.EnabledEnemies.Length == 0)
                     throw new CYFException("Cannot enter state ATTACKING with no active enemies.");
@@ -338,7 +341,7 @@ public class UIController : MonoBehaviour {
                 fightUI.Init();
                 break;
 
-            case UIState.ACTIONSELECT:
+            case "ACTIONSELECT":
                 forcedAction = Actions.NONE;
                 PlayerController.instance.setControlOverride(true);
                 PlayerController.instance.GetComponent<Image>().enabled = true;
@@ -355,7 +358,7 @@ public class UIController : MonoBehaviour {
                 mainTextManager.SetText(new RegularMessage(encounter.EncounterText));
                 break;
 
-            case UIState.ACTMENU:
+            case "ACTMENU":
                 string[] actions = new string[encounter.EnabledEnemies[selectedEnemy].ActCommands.Length];
                 if (actions.Length == 0)
                     throw new CYFException("Cannot enter state ACTMENU without commands.");
@@ -369,7 +372,7 @@ public class UIController : MonoBehaviour {
                 mainTextManager.SetText(new SelectMessage(actions, false));
                 break;
 
-            case UIState.ITEMMENU:
+            case "ITEMMENU":
                 battleDialogueStarted = false;
                 // Error for empty inventory
                 if (Inventory.inventory.Count == 0)
@@ -388,7 +391,7 @@ public class UIController : MonoBehaviour {
                 }
                 break;
 
-            case UIState.MERCYMENU:
+            case "MERCYMENU":
                 if (LuaScriptBinder.Get(null, "ForceNoFlee") != null) {
                     EnemyEncounter.script.SetVar("flee", DynValue.NewBoolean(false));
                     LuaScriptBinder.Remove("ForceNoFlee");
@@ -410,7 +413,7 @@ public class UIController : MonoBehaviour {
                 mainTextManager.SetText(new SelectMessage(mercyOptions, true));
                 break;
 
-            case UIState.ENEMYSELECT:
+            case "ENEMYSELECT":
                 // Error for no active enemies
                 if (encounter.EnabledEnemies.Length == 0)
                     throw new CYFException("Cannot enter state ENEMYSELECT with no active enemies.");
@@ -483,18 +486,18 @@ public class UIController : MonoBehaviour {
                 SetPlayerOnSelection(selectedEnemy * 2); // single list so skip right row by multiplying x2
                 break;
 
-            case UIState.DEFENDING:
+            case "DEFENDING":
                 ArenaManager.instance.Resize((int)encounter.ArenaSize.x, (int)encounter.ArenaSize.y);
                 PlayerController.instance.setControlOverride(false);
                 encounter.NextWave();
                 // ActionDialogResult(new TextMessage("This is where you'd\rdefend yourself.\nBut the code was spaghetti.", true, false), UIState.ACTIONSELECT);
                 break;
 
-            case UIState.DIALOGRESULT:
+            case "DIALOGRESULT":
                 PlayerController.instance.GetComponent<Image>().enabled = false;
                 break;
 
-            case UIState.ENEMYDIALOGUE:
+            case "ENEMYDIALOGUE":
                 PlayerController.instance.GetComponent<Image>().enabled = true;
                 if (!GlobalControls.retroMode)
                     ArenaManager.instance.Resize((int)encounter.ArenaSize.x, (int)encounter.ArenaSize.y);
@@ -509,7 +512,7 @@ public class UIController : MonoBehaviour {
                     string[] message = messages[i];
                     if (message == null) {
                         UnitaleUtil.Warn("Entered ENEMYDIALOGUE, but no current/random dialogue was set for " + encounter.EnabledEnemies[i].Name);
-                        SwitchState(UIState.DEFENDING);
+                        SwitchState("DEFENDING");
                         break;
                     }
                     GameObject speechBub = Instantiate(SpriteFontRegistry.BUBBLE_OBJECT);
@@ -556,7 +559,7 @@ public class UIController : MonoBehaviour {
                 }
                 break;
 
-            case UIState.DONE:
+            case "DONE":
                 //StaticInits.Reset();
                 //LuaEnemyEncounter.script.SetVar("unescape", DynValue.NewBoolean(false));
                 EndBattle();
@@ -568,13 +571,12 @@ public class UIController : MonoBehaviour {
         if (state == null)
             throw new CYFException("State: Argument cannot be nil.");
         if (instance.encounter.gameOverStance) return;
+		if (!instance.UIStates.ContainsKey(state))
+			throw new CYFException("The state \"" + state + "\" is not a valid state. Are you sure it exists?\n\nPlease double-check in the Misc. Functions section of the docs for a list of every default valid state.");
+			
         try {
-            UIState newState = (UIState)Enum.Parse(typeof(UIState), state, true);
-            instance.SwitchState(newState);
+            instance.SwitchState(state);
         } catch (Exception ex) {
-            // invalid state was given
-            if (ex.Message.Contains("The requested value '" + state + "' was not found."))
-                throw new CYFException("The state \"" + state + "\" is not a valid state. Are you sure it exists?\n\nPlease double-check in the Misc. Functions section of the docs for a list of every valid state.");
             // a different error has occured
             throw new CYFException("An error occured while trying to enter the state \"" + state + "\":\n\n" + ex.Message + "\n\nTraceback (for devs):\n" + ex);
         }
@@ -748,7 +750,7 @@ public class UIController : MonoBehaviour {
         if (!complete) return; // break if we're not done with all text
         if (encounter.EnabledEnemies.Length <= 0) return;
         encounter.CallOnSelfOrChildren("EnemyDialogueEnding");
-        SwitchState(UIState.DEFENDING);
+        SwitchState("DEFENDING");
     }
 
     private static string[] GetInventoryPage(int page) {
@@ -815,16 +817,16 @@ public class UIController : MonoBehaviour {
         }
     }
 
-    public UIState GetState() { return state; }
+    public string GetState() { return state; }
 
     private void HandleAction() {
-        if (!stateSwitched || state == UIState.ATTACKING)
+        if (!stateSwitched || state == "ATTACKING")
             switch (state) {
-                case UIState.ATTACKING:
+                case "ATTACKING":
                     fightUI.StopAction();
                     break;
 
-                case UIState.DIALOGRESULT:
+                case "DIALOGRESULT":
                     if (!mainTextManager.LineComplete())
                         break;
 
@@ -836,11 +838,11 @@ public class UIController : MonoBehaviour {
                     }
                     break;
 
-                case UIState.ACTIONSELECT:
+                case "ACTIONSELECT":
                     switch (action) {
                         case Actions.FIGHT:
                             if (encounter.EnabledEnemies.Length > 0)
-                                SwitchState(UIState.ENEMYSELECT);
+                                SwitchState("ENEMYSELECT");
                             else
                                 mainTextManager.DoSkipFromPlayer();
                             break;
@@ -850,7 +852,7 @@ public class UIController : MonoBehaviour {
                                 if (ControlPanel.instance.Safe) UnitaleUtil.PlaySound("MEOW", "sounds/meow" + Math.RandomRange(1, 8));
                                 else UnitaleUtil.PlaySound("MEOW", "sounds/meow" + Math.RandomRange(1, 9));
                             else if (encounter.EnabledEnemies.Length > 0)
-                                SwitchState(UIState.ENEMYSELECT);
+                                SwitchState("ENEMYSELECT");
                             else
                                 mainTextManager.DoSkipFromPlayer();
                             break;
@@ -870,7 +872,7 @@ public class UIController : MonoBehaviour {
                                     mainTextManager.DoSkipFromPlayer();
                                     return;
                                 }
-                                SwitchState(UIState.ITEMMENU);
+                                SwitchState("ITEMMENU");
                             }
                             break;
 
@@ -910,41 +912,41 @@ public class UIController : MonoBehaviour {
                                     ActionDialogResult(new TextMessage("But the dev is long gone\r(and blind).", true, false));
                                 meCry++;
                             } else
-                                SwitchState(UIState.MERCYMENU);
+                                SwitchState("MERCYMENU");
                             break;
                     }
                     PlaySound(AudioClipRegistry.GetSound("menuconfirm"));
                     break;
 
-                case UIState.ENEMYSELECT:
+                case "ENEMYSELECT":
                     switch (forcedAction) {
                         case Actions.FIGHT:
                             // encounter.enemies[selectedEnemy].HandleAttack(-1);
                             PlayerController.instance.lastEnemyChosen = selectedEnemy + 1;
-                            SwitchState(UIState.ATTACKING);
+                            SwitchState("ATTACKING");
                             break;
 
                         case Actions.ACT:
                             if (encounter.EnabledEnemies[selectedEnemy].ActCommands.Length != 0)
-                                SwitchState(UIState.ACTMENU);
+                                SwitchState("ACTMENU");
                             break;
                     }
                     PlaySound(AudioClipRegistry.GetSound("menuconfirm"));
                     break;
 
-                case UIState.ACTMENU:
+                case "ACTMENU":
                     PlayerController.instance.lastEnemyChosen = selectedEnemy + 1;
                     encounter.EnabledEnemies[selectedEnemy].Handle(encounter.EnabledEnemies[selectedEnemy].ActCommands[selectedAction]);
                     PlaySound(AudioClipRegistry.GetSound("menuconfirm"));
                     break;
 
-                case UIState.ITEMMENU:
+                case "ITEMMENU":
                     //encounter.HandleItem(Inventory.container[selectedItem]);
                     encounter.HandleItem(selectedItem);
                     PlaySound(AudioClipRegistry.GetSound("menuconfirm"));
                     break;
 
-                case UIState.MERCYMENU:
+                case "MERCYMENU":
                     switch (selectedMercy) {
                         case 0: {
                             bool[] canSpare = new bool[encounter.enemies.Count];
@@ -982,7 +984,7 @@ public class UIController : MonoBehaviour {
                                  || EnemyEncounter.script.GetVar("fleesuccess").Boolean)
                                     StartCoroutine(ISuperFlee());
                                 else
-                                    SwitchState(UIState.ENEMYDIALOGUE);
+                                    SwitchState("ENEMYDIALOGUE");
                             } else {
                                 PlayerController.instance.GetComponent<Image>().enabled = false;
                                 AudioClip yay = AudioClipRegistry.GetSound("runaway");
@@ -1013,7 +1015,7 @@ public class UIController : MonoBehaviour {
                     PlaySound(AudioClipRegistry.GetSound("menuconfirm"));
                     break;
 
-                case UIState.ENEMYDIALOGUE:
+                case "ENEMYDIALOGUE":
                     bool singleLineAll = monsterDialogues.Where(mgr => mgr != null).All(mgr => mgr.LineCount() <= 1 && mgr.CanSkip());
                     if (singleLineAll) {
                         foreach (TextManager mgr in monsterDialogues)
@@ -1037,7 +1039,7 @@ public class UIController : MonoBehaviour {
         bool down = InputUtil.Pressed(GlobalControls.input.Down);
 
         switch (state) {
-            case UIState.ACTIONSELECT:
+            case "ACTIONSELECT":
                 if (!left &&!right)
                     break;
 
@@ -1056,7 +1058,7 @@ public class UIController : MonoBehaviour {
                 PlaySound(AudioClipRegistry.GetSound("menumove"));
                 break;
 
-            case UIState.ENEMYSELECT:
+            case "ENEMYSELECT":
                 bool odd = false;
                 if (encounter.EnabledEnemies.Length > 3) {
                     if (!up &&!down &&!right &&!left) break;
@@ -1093,7 +1095,7 @@ public class UIController : MonoBehaviour {
                 }
                 break;
 
-            case UIState.ACTMENU:
+            case "ACTMENU":
                 if (!up && !down && !left && !right)
                     return;
 
@@ -1118,7 +1120,7 @@ public class UIController : MonoBehaviour {
                 }
                 break;
 
-            case UIState.ITEMMENU:
+            case "ITEMMENU":
                 if (!up &&!down &&!left &&!right)
                     return;
 
@@ -1170,7 +1172,7 @@ public class UIController : MonoBehaviour {
                 // UnitaleUtil.writeInLog("Desired item index after evaluation " + desiredItem);
                 break;
 
-            case UIState.MERCYMENU:
+            case "MERCYMENU":
                 if (!up && !down) break;
                 if (up)           selectedMercy--;
                 else              selectedMercy++;
@@ -1183,13 +1185,13 @@ public class UIController : MonoBehaviour {
 
     private void HandleCancel() {
         switch (state) {
-            case UIState.ACTIONSELECT:
-            case UIState.DIALOGRESULT:
+            case "ACTIONSELECT":
+            case "DIALOGRESULT":
                 if (mainTextManager.CanSkip() &&!mainTextManager.LineComplete())
                     mainTextManager.DoSkipFromPlayer();
                 break;
 
-            case UIState.ENEMYDIALOGUE:
+            case "ENEMYDIALOGUE":
                 bool singleLineAll = true;
                 bool cannotSkip = false;
                 // why two booleans for the same result? 'cause they're different conditions
@@ -1208,14 +1210,14 @@ public class UIController : MonoBehaviour {
                     mgr.DoSkipFromPlayer();
                 break;
 
-            case UIState.ACTMENU:
+            case "ACTMENU":
                 SwitchState(UIState.ENEMYSELECT);
                 break;
 
-            case UIState.ENEMYSELECT:
-            case UIState.ITEMMENU:
-            case UIState.MERCYMENU:
-                SwitchState(UIState.ACTIONSELECT);
+            case "ENEMYSELECT":
+            case "ITEMMENU":
+            case "MERCYMENU":
+                SwitchState("ACTIONSELECT");
                 break;
         }
     }
@@ -1406,7 +1408,7 @@ public class UIController : MonoBehaviour {
         encounter.CallOnSelfOrChildren("EncounterStarting");
 
         if (!stateSwitched)
-            SwitchState(UIState.ACTIONSELECT, true);
+            SwitchState("ACTIONSELECT", true);
     }
 
     public void CheckAndTriggerVictory() {
@@ -1420,9 +1422,9 @@ public class UIController : MonoBehaviour {
             UIStats.instance.setPlayerInfo(PlayerCharacter.instance.Name, PlayerCharacter.instance.LV);
             UIStats.instance.setMaxHP();
             UIStats.instance.setHP(PlayerCharacter.instance.HP);
-            ActionDialogResult(new RegularMessage("[sound:levelup]YOU WON!\nYou earned "+ exp +" XP and "+ gold +" gold.\nYour LOVE increased."), UIState.DONE);
+            ActionDialogResult(new RegularMessage("[sound:levelup]YOU WON!\nYou earned "+ exp +" XP and "+ gold +" gold.\nYour LOVE increased."), "DONE");
         } else
-            ActionDialogResult(new RegularMessage("YOU WON!\nYou earned " + exp + " XP and " + gold + " gold."), UIState.DONE);
+            ActionDialogResult(new RegularMessage("YOU WON!\nYou earned " + exp + " XP and " + gold + " gold."), "DONE");
     }
 
     private IEnumerator ISuperFlee() {
@@ -1472,13 +1474,13 @@ public class UIController : MonoBehaviour {
         if (encounterHasUpdate)
             encounter.TryCall("Update");
 
-        if (frozenState != UIState.PAUSE)
+        if (frozenState != "PAUSE")
             return;
 
         if (mainTextManager.IsPaused() &&!ArenaManager.instance.isResizeInProgress())
             mainTextManager.SetPause(false);
 
-        if (state == UIState.DIALOGRESULT)
+        if (state == "DIALOGRESULT")
             if (mainTextManager.CanAutoSkipAll() || (mainTextManager.CanAutoSkipThis() && mainTextManager.LineComplete()))
                 if (mainTextManager.HasNext())
                     mainTextManager.NextLineText();
@@ -1487,37 +1489,37 @@ public class UIController : MonoBehaviour {
                     SwitchState(stateAfterDialogs);
                 }
 
-        if (state == UIState.ENEMYDIALOGUE) {
+        if (state == "ENEMYDIALOGUE") {
             bool allSkip = monsterDialogues.All(mgr => mgr.CanAutoSkipThis());
             if (allSkip)  DoNextMonsterDialogue();
             else          UpdateMonsterDialogue();
         }
 
-        if (state == UIState.DEFENDING) {
+        if (state == "DEFENDING") {
             if (!encounter.WaveInProgress()) {
                 if (GlobalControls.retroMode)
                     foreach (LuaProjectile p in FindObjectsOfType<LuaProjectile>())
                             BulletPool.instance.Requeue(p);
-                SwitchState(UIState.ACTIONSELECT);
-            } else if (!encounter.gameOverStance && frozenState == UIState.PAUSE)
+                SwitchState("ACTIONSELECT");
+            } else if (!encounter.gameOverStance && frozenState == "PAUSE")
                 encounter.UpdateWave();
             return;
         }
 
         if (!fleeSwitch)
             if (InputUtil.Pressed(GlobalControls.input.Confirm)) {
-                if (state == UIState.ACTIONSELECT && !ArenaManager.instance.isMoveInProgress() && !ArenaManager.instance.isResizeInProgress() || state != UIState.ACTIONSELECT)
+                if (state == "ACTIONSELECT" && !ArenaManager.instance.isMoveInProgress() && !ArenaManager.instance.isResizeInProgress() || state != "ACTIONSELECT")
                     HandleAction();
             } else if (InputUtil.Pressed(GlobalControls.input.Cancel)) HandleCancel();
             else HandleArrows();
         else if (InputUtil.Pressed(GlobalControls.input.Confirm))
             SwitchStateOnString(null, "DONE");
 
-        if (state == UIState.ATTACKING || needOnDeath) {
+        if (state == "ATTACKING" || needOnDeath) {
             if (!fightUI.Finished())
                 return;
-            if (state != UIState.ATTACKING && state != UIState.NONE)
-                SwitchState(UIState.NONE);
+            if (state != "ATTACKING" && state != "NONE")
+                SwitchState("NONE");
             bool noOnDeath = true;
             onDeathSwitch = true;
             foreach (EnemyController enemyController in encounter.EnabledEnemies) {
@@ -1529,31 +1531,31 @@ public class UIController : MonoBehaviour {
                 enemyController.DoKill();
 
                 if (encounter.EnabledEnemies.Length > 0)
-                    SwitchState(UIState.ENEMYDIALOGUE);
+                    SwitchState("ENEMYDIALOGUE");
                 //else
                 //    checkAndTriggerVictory();
             }
             onDeathSwitch = false;
-            if (lastNewState != UIState.UNUSED) {
+            if (lastNewState != "UNUSED") {
                 needOnDeath = false;
                 SwitchState(lastNewState);
-                lastNewState = UIState.UNUSED;
+                lastNewState = "UNUSED";
             } else if (noOnDeath) {
                 needOnDeath = false;
-                SwitchState(UIState.ENEMYDIALOGUE);
+                SwitchState("ENEMYDIALOGUE");
             }
         }
 
-        if (state != UIState.MERCYMENU && state != UIState.SPAREIDLE) return;
+        if (state != "MERCYMENU" && state != "SPAREIDLE") return;
         bool toSpare = false;
         for (int i = 0; i < spareList.Length; i++) {
             if (!spareList[i] || encounter.enemies[i].spared) continue;
-            state = UIState.SPAREIDLE;
+            state = "SPAREIDLE";
             encounter.enemies[i].TryCall("OnSpare");
             toSpare = true;
         }
         if (!toSpare)
-            state = UIState.MERCYMENU;
+            state = "MERCYMENU";
         //if (state == UIState.ENEMYDIALOGUE)
         //    if ((Vector2)arenaParent.transform.position == new Vector2(320, 90))
         //        PlayerController.instance.setControlOverride(false);
