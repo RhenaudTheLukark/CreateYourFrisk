@@ -235,6 +235,15 @@ end
 </pre>
             </div>
 
+			<p>
+                <br><span class="function"><span class="new066"></span><span class="CYF"></span> CreateState(<span class="string"></span> stateName) [E/M/W]</span>
+                This function creates a <span class="term">state</span> with the name <span class="term">stateName</span> which you can enter 
+				with the <span class="term">State</span> function and will act as the <span class="term">NONE</span> state,
+				but you can add your own functionality to it using <span class="term">EnteringState</span> and <span class="term">Update</span>.<br><br>
+                Some best practices with this function would be to initialize states in <span class="term">EncounterStarting</span> and to make all state names be 
+				all upper case with no spaces between words (just like the default states mentioned below) to avoid confusion later on, but any valid string can be a state name.
+            </p>
+
             <p>
                 <br><span class="function">State(<span class="string"></span> state_to_go_to) [E/M/W]</span>
                 A powerful function that immediately skips the battle to the specified state, rather than following the
