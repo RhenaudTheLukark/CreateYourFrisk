@@ -240,6 +240,7 @@ end
                 This function creates a <span class="term">state</span> with the name <span class="term">stateName</span> which you can enter 
 				with the <span class="term">State</span> function and will act as the <span class="term">NONE</span> state,
 				but you can add your own functionality to it using <span class="term">EnteringState</span> and <span class="term">Update</span>.<br><br>
+				Two states cannot have the same name! Attempting to create a state with the same name as another one will result in an error.<br><br>
                 Some best practices with this function would be to initialize states in <span class="term">EncounterStarting</span> and to make all state names be 
 				all upper case with no spaces between words (just like the default states mentioned below) to avoid confusion later on, but any valid string can be a state name.
             </p>
