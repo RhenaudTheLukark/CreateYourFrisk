@@ -978,8 +978,14 @@ public class UIController : MonoBehaviour {
                         }
                         case 1: {
                             if (!GlobalControls.retroMode) {
-                                if ((EnemyEncounter.script.GetVar("fleesuccess").Type != DataType.Boolean && (Math.RandomRange(0, 9) + encounter.turnCount) > 4)
-                                 || EnemyEncounter.script.GetVar("fleesuccess").Boolean)
+                                bool fleeSuccess = (
+                                    EnemyEncounter.script.GetVar("fleesuccess").Type != DataType.Boolean
+                                    && (Math.RandomRange(0, 9) + encounter.turnCount) > 4
+                                ) || EnemyEncounter.script.GetVar("fleesuccess").Boolean;
+
+                                encounter.CallOnSelfOrChildren("HandleFlee", new DynValue[] {DynValue.NewBoolean(fleeSuccess)});
+
+                                if (fleeSuccess)
                                     StartCoroutine(ISuperFlee());
                                 else
                                     SwitchState(UIState.ENEMYDIALOGUE);
