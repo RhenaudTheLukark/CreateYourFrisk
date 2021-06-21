@@ -43,7 +43,7 @@ it's w3c valid, at least
                     <li><a href="terms.html">Terminology</a></li>
                 <li class="li-header">API</li>
                     <li class="new066"><a href="api-text.html">Text commands</a></li>
-                    <li class="active new" style="margin-left:5px;">&gt; Game events &lt;</li>
+                    <li class="active new066" style="margin-left:5px;">&gt; Game events &lt;</li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                     <li class="li-indent">Functions &amp; Objects:</li>
                         <li class="new066 li-indent"><a href="api-functions-main.html">Misc. Functions</a></li>
@@ -137,6 +137,13 @@ it's w3c valid, at least
                 Happens when you select the Spare option from the Mercy menu, regardless of whether a monster is
                 spareable or not. This event fires <i>after</i> the sparing of monsters is completed. If you spare the
                 last enemy in the encounter, this function will not happen - the encounter is over at that point.
+            </p>
+            <p>
+                <br><span class="function new066">HandleFlee(<span class="boolean"> success</span>)</span>
+                Happens when you select the Flee option from the Mercy menu.
+                <ul>
+                    <li><span class="term">success</span>: Whether the fleeing was successful.</li>
+                </ul>
             </p>
             <p>
                 <br><span class="function">HandleItem(<span class="string"></span> item_ID, <span class="number"></span> position)</span>
