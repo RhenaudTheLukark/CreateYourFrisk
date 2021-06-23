@@ -158,9 +158,8 @@ it's w3c valid, at least
             </p>
             <p>
                 <br><span class="function new066">Inventory.UseItem(<span class="number"></span> index)</span>
-                Uses the inventory item at <span class="term">index</span>. If said object uses the function <span class="term">BattleDialog</span>,
-                it will send the Player to the state <span class="term">BATTLEDIALOG</span>.
-                <br><span class="term" style="margin-left:20px">index</span> = Index of the item to use. The first item is position 1.
+                Uses the inventory item at index <span class="term">index</span>. Will throw an error if you have no item at the given index, so check if it exists before using this function.
+                <br><span class="term" style="margin-left:20px">index</span> = Index of the item to use, starting from 1.
             </p>
             <p>
                 <br><span class="function">Inventory.AddCustomItems(<span class="luatable"><span class="string"></span></span> names,
