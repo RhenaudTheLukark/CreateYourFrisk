@@ -113,8 +113,7 @@ public class GlobalControls : MonoBehaviour {
         yield return new WaitForEndOfFrame();
 
         try {
-            ScreenResolution.lastMonitorWidth = Screen.currentResolution.width;
-            ScreenResolution.lastMonitorHeight = Screen.currentResolution.height;
+            ScreenResolution.lastMonitorSize = new Vector2(Screen.currentResolution.width, Screen.currentResolution.height);
         } catch { /* ignored */ }
     }
 

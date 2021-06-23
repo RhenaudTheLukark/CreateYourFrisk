@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.IO;
 using System.Linq;
+using MoonSharp.Interpreter;
 
 public class Misc {
     public string MachineName { get { return System.Environment.UserName; } }
@@ -22,16 +23,17 @@ public class Misc {
     }
 
     public static int WindowWidth {
-        get { return Screen.fullScreen && ScreenResolution.wideFullscreen ? Screen.currentResolution.width : ScreenResolution.windowWidth; }
+        get { return (int)ScreenResolution.windowSize.x; }
+        set { ResizeWindow(value, WindowHeight); }
     }
 
     public static int WindowHeight {
-        get { return Screen.fullScreen && ScreenResolution.wideFullscreen ? Screen.currentResolution.height : ScreenResolution.windowHeight; }
+        get { return (int)ScreenResolution.windowSize.y; }
+        set { ResizeWindow(WindowWidth, value); }
     }
 
     public static bool ResizeWindow(int width = 640, int height = 480) {
-        if (width <= 0     || height <= 0)     throw new CYFException("The window's width and height have to be positive numbers!");
-        //if (width % 2 == 1 || height % 2 == 1) throw new CYFException("The window's width and height must both be even!");
+        if (width <= 0 || height <= 0) throw new CYFException("The window's width and height have to be positive numbers!");
         if (width >= Screen.currentResolution.width || height >= Screen.currentResolution.height)
             return false;
 
@@ -51,11 +53,11 @@ public class Misc {
     }
 
     public static int MonitorWidth {
-        get { return ScreenResolution.lastMonitorWidth; }
+        get { return (int)ScreenResolution.lastMonitorSize.x; }
     }
 
     public static int MonitorHeight {
-        get { return ScreenResolution.lastMonitorHeight; }
+        get { return (int)ScreenResolution.lastMonitorSize.y; }
     }
 
     public void SetWideFullscreen(bool borderless) {
@@ -66,28 +68,56 @@ public class Misc {
             ScreenResolution.SetFullScreen(true, 0);
     }
 
+    private static float _cameraXWindowSizeShift;
+    /// <summary>
+    /// Used to remove the camera shift shown when the window's width is odd, which blurs the entire screen.
+    /// </summary>
+    [MoonSharpHidden] public static float cameraXWindowSizeShift {
+        private get { return _cameraXWindowSizeShift; }
+        set {
+            float oldCameraX        = cameraX;
+            _cameraXWindowSizeShift = value;
+            cameraX                 = oldCameraX;
+        }
+    }
+
     public static float cameraX {
-        get { return Camera.main.transform.position.x - 320; }
+        get { return Camera.main.transform.position.x - 320 - cameraXWindowSizeShift; }
         set {
             if (UnitaleUtil.IsOverworld && !GlobalControls.isInShop)
                 PlayerOverworld.instance.cameraShift.x += value - (Camera.main.transform.position.x - 320);
             else {
-                Camera.main.transform.position = new Vector3(value + 320, Camera.main.transform.position.y, Camera.main.transform.position.z);
+                Camera.main.transform.position = new Vector3(value + 320 + cameraXWindowSizeShift, Camera.main.transform.position.y, Camera.main.transform.position.z);
+                // Updates the Debugger's position using the new camera position
                 if (UserDebugger.instance)
-                    UserDebugger.absx = value + UserDebugger.saved_x;
+                    UserDebugger.x = UserDebugger.x;
             }
         }
     }
 
+    private static float _cameraYWindowSizeShift;
+    /// <summary>
+    /// Used to remove the camera shift shown when the window's height is odd, which blurs the entire screen.
+    /// </summary>
+    [MoonSharpHidden] public static float cameraYWindowSizeShift {
+        private get { return _cameraYWindowSizeShift; }
+        set {
+            float oldCameraY        = cameraY;
+            _cameraYWindowSizeShift = value;
+            cameraY                 = oldCameraY;
+        }
+    }
+
     public static float cameraY {
-        get { return Camera.main.transform.position.y - 240; }
+        get { return Camera.main.transform.position.y - 240 - cameraYWindowSizeShift; }
         set {
             if (UnitaleUtil.IsOverworld && !GlobalControls.isInShop)
                 PlayerOverworld.instance.cameraShift.y += value - (Camera.main.transform.position.y - 240);
             else {
-                Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, value + 240, Camera.main.transform.position.z);
+                Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, value + 240 + cameraYWindowSizeShift, Camera.main.transform.position.z);
+                // Updates the Debugger's position using the new camera position
                 if (UserDebugger.instance)
-                    UserDebugger.absy = value + UserDebugger.saved_y;
+                    UserDebugger.y = UserDebugger.y;
             }
         }
     }
