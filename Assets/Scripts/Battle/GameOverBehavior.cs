@@ -482,7 +482,7 @@ public class GameOverBehavior : MonoBehaviour {
 
         if (!UnitaleUtil.IsOverworld) {
             ArenaManager.instance.ResizeImmediate(ArenaManager.UIWidth, ArenaManager.UIHeight);
-            UIController.instance.SwitchState(UIController.UIState.ACTIONSELECT);
+            UIController.instance.SwitchState("ACTIONSELECT");
             gameOverContainer.SetActive(false);
         } else
             gameOverContainerOw.SetActive(false);

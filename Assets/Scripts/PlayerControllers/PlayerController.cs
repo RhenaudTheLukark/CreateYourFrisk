@@ -421,7 +421,7 @@ public class PlayerController : MonoBehaviour {
         */
 
         // prevent player actions from working and the timer from decreasing, if the game is paused
-        if (UIController.instance.frozenState != UIController.UIState.PAUSE)
+        if (UIController.instance.frozenState != "PAUSE")
             return;
 
         // handle input and movement, unless control is overridden by the UI controller, for instance

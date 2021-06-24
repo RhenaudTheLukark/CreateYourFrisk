@@ -104,7 +104,7 @@ public class LifeBarController : MonoBehaviour {
     /// Takes care of moving the healthbar to its intended position.
     /// </summary>
     private void Update() {
-        if (currentFill == desiredFill || UIController.instance.frozenState != UIController.UIState.PAUSE) return;
+        if (currentFill == desiredFill || UIController.instance.frozenState != "PAUSE") return;
 
         currentFill = Mathf.Lerp(oldFill, desiredFill, fillTimer / fillLinearTime);
         //fill.fillAmount = currentFill;

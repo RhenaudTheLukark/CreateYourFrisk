@@ -21,7 +21,7 @@ public class StationaryMissScript : MonoBehaviour {
     }
 
     private void Update(){
-        if (UIController.instance.frozenState != UIController.UIState.PAUSE)
+        if (UIController.instance.frozenState != "PAUSE")
             return;
 
         despawnTimer += Time.deltaTime;

@@ -372,7 +372,7 @@ public class TextManager : MonoBehaviour {
 
         // Move the text up a little if there are more than 3 lines so they can possibly fit in the arena
         if (!GlobalControls.retroMode && !UnitaleUtil.IsOverworld && UIController.instance && this == UIController.instance.mainTextManager) {
-            int     lines = (textQueue[line].Text.Split('\n').Length > 3 && (UIController.instance.state == UIController.UIState.ACTIONSELECT || UIController.instance.state == UIController.UIState.DIALOGRESULT)) ? 4 : 3;
+            int     lines = (textQueue[line].Text.Split('\n').Length > 3 && (UIController.instance.state == "ACTIONSELECT" || UIController.instance.state == "DIALOGRESULT")) ? 4 : 3;
             Vector3 pos   = self.localPosition;
 
             // remove the offset
