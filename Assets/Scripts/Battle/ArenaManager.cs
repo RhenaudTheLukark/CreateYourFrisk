@@ -358,12 +358,5 @@ public class ArenaManager : MonoBehaviour {
         if (!firstTurn)
             MoveToImmediate(320, 90, false);
         Resize(UIWidth, UIHeight);
-        ResetSprite();
-    }
-
-    private void ResetSprite() {
-        Show();
-        inner.GetComponent<Image>().sprite = null;
-        inner.GetComponent<Image>().color = new Color(0, 0, 0);
     }
 }
