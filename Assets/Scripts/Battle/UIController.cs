@@ -983,7 +983,13 @@ public class UIController : MonoBehaviour {
                                     && (Math.RandomRange(0, 9) + encounter.turnCount) > 4
                                 ) || EnemyEncounter.script.GetVar("fleesuccess").Boolean;
 
-                                encounter.CallOnSelfOrChildren("HandleFlee", new DynValue[] {DynValue.NewBoolean(fleeSuccess)});
+                                bool called = encounter.CallOnSelfOrChildren(
+                                    "HandleFlee", new DynValue[] {DynValue.NewBoolean(fleeSuccess)}
+                                );
+
+                                if (called) {
+                                    break;
+                                }
 
                                 if (fleeSuccess)
                                     StartCoroutine(ISuperFlee());
@@ -1431,7 +1437,7 @@ public class UIController : MonoBehaviour {
             ActionDialogResult(new RegularMessage("YOU WON!\nYou earned " + exp + " XP and " + gold + " gold."), UIState.DONE);
     }
 
-    private IEnumerator ISuperFlee() {
+    public IEnumerator ISuperFlee() {
         PlayerController.instance.GetComponent<Image>().enabled = false;
         UnitaleUtil.PlaySound("Mercy", "runaway");
 
