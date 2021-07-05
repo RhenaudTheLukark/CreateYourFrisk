@@ -57,6 +57,7 @@ public class EnemyEncounter : MonoBehaviour {
             script.Bind("CreateProjectileAbs", (Func<Script, string, float, float, string, DynValue>)CreateProjectileAbs);
             script.Bind("SetButtonLayer", (Action<string>)LuaScriptBinder.SetButtonLayer);
             script.Bind("CreateEnemy", (Func<string, float, float, DynValue>)CreateEnemy);
+            script.Bind("Flee", (Action)Flee);
             return true;
         }
     }
@@ -75,6 +76,10 @@ public class EnemyEncounter : MonoBehaviour {
         enemies.Add(enemyController);
         enemyController.InitializeEnemy();
         return UserData.Create(enemyController.script);
+    }
+
+    public void Flee() {
+        StartCoroutine(UIController.instance.ISuperFlee());
     }
 
     public bool CallOnSelfOrChildren(string func, DynValue[] param = null) {
