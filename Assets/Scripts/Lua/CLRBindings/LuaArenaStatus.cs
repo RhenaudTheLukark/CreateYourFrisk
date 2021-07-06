@@ -23,6 +23,23 @@ public class LuaArenaStatus {
     public bool isModifying { get { return isMoving || isResizing;                     } }
     public bool ismodifying { get { return isModifying; } }
 
+    public float[] innerColor {
+        get { return ArenaManager.instance.innerSprite.color; }
+        set { ArenaManager.instance.innerSprite.color = value; }
+    }
+    public float[] innerColor32 {
+        get { return ArenaManager.instance.innerSprite.color32; }
+        set { ArenaManager.instance.innerSprite.color32 = value; }
+    }
+    public float[] outerColor {
+        get { return ArenaManager.instance.outerSprite.color; }
+        set { ArenaManager.instance.outerSprite.color = value; }
+    }
+    public float[] outerColor32 {
+        get { return ArenaManager.instance.outerSprite.color32; }
+        set { ArenaManager.instance.outerSprite.color32 = value; }
+    }
+
     /// <summary>
     /// Resize the arena to the new width/height. Throws a hilarious (read: not hilarious) error message if user was sneaky, bound it globally and tried using it outside of a wave script.
     /// </summary>
@@ -65,14 +82,6 @@ public class LuaArenaStatus {
     }
 
     public void SetSprite(string filename) {
-        ArenaManager.instance.sprite.Set(filename);
-    }
-
-    public void SetColor(float[] color) {
-        ArenaManager.instance.sprite.color = color;
-    }
-
-    public void SetColor32(float[] color32) {
-        ArenaManager.instance.sprite.color32 = color32;
+        ArenaManager.instance.innerSprite.Set(filename);
     }
 }
