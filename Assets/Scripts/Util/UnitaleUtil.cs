@@ -85,6 +85,7 @@ public static class UnitaleUtil {
         if (firstErrorShown)
             return;
         firstErrorShown = true;
+        ScreenResolution.ResetAfterBattle();
         ErrorDisplay.Message = (!DoNotDecorateMessage ? "error in script " + source + "\n\n" : "") + decoratedMessage;
         if (Application.isEditor) SceneManager.LoadSceneAsync("Error"); // prevents editor from crashing
         else                      SceneManager.LoadScene("Error");

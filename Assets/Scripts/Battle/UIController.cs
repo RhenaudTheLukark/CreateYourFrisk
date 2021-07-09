@@ -163,11 +163,7 @@ public class UIController : MonoBehaviour {
         }
 
         //Reset to 4:3
-        if (Screen.fullScreen && ScreenResolution.wideFullscreen) {
-            ScreenResolution.wideFullscreen = false;
-            ScreenResolution.SetFullScreen(true, 0);
-        }
-        ScreenResolution.wideFullscreen = false;
+        ScreenResolution.ResetAfterBattle();
 
         Time.timeScale = 1;
     }
