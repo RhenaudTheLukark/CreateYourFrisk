@@ -158,6 +158,11 @@ public class LuaPlayerStatus {
         }
     }
 
+    public float speed {
+        get { return player.soul.speed; }
+        set { player.soul.speed = value; }
+    }
+
     public int lastenemychosen {
         get { return player.lastEnemyChosen; }
     }
