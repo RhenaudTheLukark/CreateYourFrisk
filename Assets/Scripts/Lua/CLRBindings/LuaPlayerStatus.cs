@@ -1,4 +1,6 @@
-﻿/// <summary>
+﻿using System;
+
+/// <summary>
 /// Lua binding to set and retrieve information for the on-screen player.
 /// </summary>
 public class LuaPlayerStatus {
@@ -184,6 +186,20 @@ public class LuaPlayerStatus {
     }
     public bool ismoving {
         get { return isMoving; }
+    }
+
+    public void SetSoul(string className) {
+        AbstractSoul soul;
+
+        try {
+            soul = (AbstractSoul)Activator.CreateInstance(
+                Type.GetType(className)
+            );
+        } catch (ArgumentNullException) {
+            throw new CYFException("Soul " + className + " doesn't exist.");
+        }
+
+        player.SetSoul(soul);
     }
 
     /// <summary>
