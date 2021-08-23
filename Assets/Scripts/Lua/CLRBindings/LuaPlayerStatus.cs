@@ -211,7 +211,7 @@ public class LuaPlayerStatus {
     /// </summary>
     /// <param name="overrideControl"></param>
     public void SetControlOverride(bool overrideControl) {
-        if (UIController.instance.GetState() == UIController.UIState.DEFENDING) player.setControlOverride(overrideControl);
+        if (UIController.instance.GetState() == "DEFENDING") player.setControlOverride(overrideControl);
     }
 
     /// <summary>
@@ -306,7 +306,7 @@ public class LuaPlayerStatus {
     }
 
     public void ChangeTarget(int index) {
-        if (UIController.instance.state != UIController.UIState.ATTACKING)
+        if (UIController.instance.state != "ATTACKING")
             return;
         if (index > UIController.instance.encounter.EnabledEnemies.Length || index <= 0)
             throw new CYFException("Player.ChangeTarget(): Enemy number " + index + " doesn't exist.");
