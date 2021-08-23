@@ -621,7 +621,9 @@ function Stare6(frame)
                 if k == 2 then
                     Audio.PlaySound("BeginBattle1")
                 end
-                local spritename = sprite.spritename:sub(sprite.spritename:find("/[^/]*$") + 1)
+                local foundNumber = sprite.spritename:find("/[^/]*$")
+                if not foundNumber then foundNumber = sprite.spritename:find("\\[^\\]*$") end
+                local spritename = sprite.spritename:sub(foundNumber + 1)
                 sprite.StopAnimation()
                 sprite.Set(sprite["path"] .. "/" .. (math.floor(tonumber(spritename) / 4) * 4 + 1))
                 local surprise = CreateSprite("Overworld/EncounterBubble" .. (k == 2 and "Geno" or ""))

@@ -62,13 +62,15 @@ public static class SpriteRegistry {
                 dictMod[ProcessKey(file.FullName.Substring(directoryPath.Length + 1))] = file;
         } else {
             dictDefault.Clear();
-            foreach (FileInfo file in fInfoTest)
-                dictDefault[ProcessKey(file.FullName.Substring(directoryPath.Length + 1))] = file;
+            foreach (FileInfo file in fInfoTest) {
+                string key = ProcessKey(file.FullName.Substring(directoryPath.Length + 1));
+                dictDefault[key] = file;
+            }
         }
     }
 
     private static string ProcessKey(string key) {
         FileLoader.SanitizePath(ref key, "Sprites/");
-        return (UnitaleUtil.IsOverworld ? "ow::" : "b::") + key.ToLower();
+        return key.ToLower();
     }
 }

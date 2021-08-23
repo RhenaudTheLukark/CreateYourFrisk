@@ -88,7 +88,7 @@ public class PlayerController : MonoBehaviour {
     /// Contains a Soul type that affects what player movement does.
     /// Only the Red soul is used for now.
     /// </summary>
-    private AbstractSoul soul;
+    public AbstractSoul soul;
 
     /// <summary>
     /// True if the Player's defense should be taken in account when computing damage dealt to them, false otherwise.

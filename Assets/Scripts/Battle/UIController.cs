@@ -166,11 +166,9 @@ public class UIController : MonoBehaviour {
         }
 
         //Reset to 4:3
-        if (Screen.fullScreen && ScreenResolution.wideFullscreen) {
-            ScreenResolution.wideFullscreen = false;
-            ScreenResolution.SetFullScreen(true, 0);
-        }
-        ScreenResolution.wideFullscreen = false;
+        ScreenResolution.ResetAfterBattle();
+
+        Time.timeScale = 1;
     }
 
     public void SwitchState(string newState, bool first = false) {
@@ -987,8 +985,20 @@ public class UIController : MonoBehaviour {
                         }
                         case 1: {
                             if (!GlobalControls.retroMode) {
-                                if ((EnemyEncounter.script.GetVar("fleesuccess").Type != DataType.Boolean && (Math.RandomRange(0, 9) + encounter.turnCount) > 4)
-                                 || EnemyEncounter.script.GetVar("fleesuccess").Boolean)
+                                bool fleeSuccess = (
+                                    EnemyEncounter.script.GetVar("fleesuccess").Type != DataType.Boolean
+                                    && (Math.RandomRange(0, 9) + encounter.turnCount) > 4
+                                ) || EnemyEncounter.script.GetVar("fleesuccess").Boolean;
+
+                                bool called = encounter.CallOnSelfOrChildren(
+                                    "HandleFlee", new DynValue[] {DynValue.NewBoolean(fleeSuccess)}
+                                );
+
+                                if (called) {
+                                    break;
+                                }
+
+                                if (fleeSuccess)
                                     StartCoroutine(ISuperFlee());
                                 else
                                     SwitchState("ENEMYDIALOGUE");
@@ -1434,7 +1444,7 @@ public class UIController : MonoBehaviour {
             ActionDialogResult(new RegularMessage("YOU WON!\nYou earned " + exp + " XP and " + gold + " gold."), "DONE");
     }
 
-    private IEnumerator ISuperFlee() {
+    public IEnumerator ISuperFlee() {
         PlayerController.instance.GetComponent<Image>().enabled = false;
         UnitaleUtil.PlaySound("Mercy", "runaway");
 

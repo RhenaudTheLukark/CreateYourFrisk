@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 public abstract class AbstractSoul {
-    protected float speed; // actual player speed used in game update cycles
+    public float speed; // actual player speed used in game update cycles
 
     //private PlayerController player;
 

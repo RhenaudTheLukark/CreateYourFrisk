@@ -120,28 +120,37 @@ public class OptionsScript : MonoBehaviour {
 
         // change window scale
         Scale.GetComponent<Button>().onClick.AddListener(() => {
-            double maxScale = System.Math.Floor(Screen.currentResolution.height / 480.0);
+            #if UNITY_EDITOR
+                int maxScale = 0;
+            #else
+                int maxScale = Mathf.FloorToInt(System.Math.Min(Screen.currentResolution.width / 640f, Screen.currentResolution.height / 480f));
+            #endif
             if (ScreenResolution.windowScale < maxScale)
                 ScreenResolution.windowScale += 1;
             else
                 ScreenResolution.windowScale = 1;
-
-            if (Screen.height != ScreenResolution.windowScale * 480 && !Screen.fullScreen)
-                ScreenResolution.SetFullScreen(false);
+            ScreenResolution.tempWindowScale = ScreenResolution.windowScale;
+            ScreenResolution.SetFullScreen(Screen.fullScreen);
 
             // save RetroMode preferences to AlMighties
             LuaScriptBinder.SetAlMighty(null, "CYFWindowScale", DynValue.NewNumber(ScreenResolution.windowScale));
 
             Scale.GetComponentInChildren<Text>().text = !LocalCrate
-                ? ( "Window Scale: " + ScreenResolution.windowScale.ToString() + "x")
-                : ("WEENDO STRECH: " + ScreenResolution.windowScale.ToString() + "X");
+                ? "Window Scale: "  + ScreenResolution.windowScale + "x"
+                : "WEENDO STRECH: " + ScreenResolution.windowScale + "X";
         });
-        ScreenResolution.windowScale--;
-        Scale.GetComponent<Button>().onClick.Invoke();
+        #if UNITY_EDITOR
+            Scale.GetComponent<Button>().onClick.Invoke();
+        #else
+            Scale.GetComponentInChildren<Text>().text = !LocalCrate
+                ? "Window Scale: " + ScreenResolution.windowScale  + "x"
+                : "WEENDO STRECH: " + ScreenResolution.windowScale + "X";
+        #endif
 
         // Discord Rich Presence
         // Change Discord Status Visibility
         Discord.GetComponent<Button>().onClick.AddListener(() => {
+            Debug.Log("whaDiscord");
             Discord.GetComponentInChildren<Text>().text = (!LocalCrate ? "Discord Display: " : "DEESCORD DESPLAY: ") + DiscordControls.ChangeVisibilitySetting(1);
         });
         Discord.GetComponentInChildren<Text>().text = (!LocalCrate ? "Discord Display: " : "DEESCORD DESPLAY: ") + DiscordControls.ChangeVisibilitySetting(0);

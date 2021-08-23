@@ -43,18 +43,18 @@ it's w3c valid, at least
                     <li><a href="terms.html">Terminology</a></li>
                 <li class="li-header">API</li>
                     <li class="new066"><a href="api-text.html">Text commands</a></li>
-                    <li class="new"><a href="api-events.html">Game events</a></li>
+                    <li class="new066"><a href="api-events.html">Game events</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                     <li class="li-indent">Functions &amp; Objects:</li>
                         <li class="new066 li-indent"><a href="api-functions-main.html">Misc. Functions</a></li>
-                        <li class="li-indent new"><a href="api-functions-player.html">The Player Object</a></li>
+                        <li class="li-indent new066"><a href="api-functions-player.html">The Player Object</a></li>
                         <li class="li-indent"><a href="api-functions-script.html">The Script Object</a></li>
                         <li class="li-indent"><a href="api-functions-audio.html">The Audio Object</a></li>
                         <li class="li-indent"><a href="api-functions-newaudio.html"><span class="CYF"></span> The NewAudio Object</a></li>
                         <li class="li-indent"><a href="api-functions-input.html">The Input Object</a></li>
-                        <li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
+                        <li class="new066 li-indent"><a href="api-functions-time.html">The Time Object</a></li>
                         <li class="new066 li-indent"><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
-                        <li class="li-indent active new" style="margin-left:5px;">&gt; <span class="CYF"></span>The Misc Object &lt;</li>
+                        <li class="li-indent active new066" style="margin-left:5px;">&gt; <span class="CYF"></span>The Misc Object &lt;</li>
                         <li class="li-indent new"><a href="api-functions-discord.html"><span class="CYF"></span> The Discord Object</a></li>
                         <li class="li-indent"><a href="api-functions-waves.html">The Arena Object</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
@@ -116,11 +116,18 @@ it's w3c valid, at least
                 <li><span class="number"></span> <span class="term">Misc.cameraX</span> - Gets or sets the current x position of the bottom-left corner of the camera.</li><br>
                 <li><span class="number"></span> <span class="term">Misc.cameraY</span> - Gets or sets the current y position of the bottom-left corner of the camera.</li><br>
                 <li><span class="boolean"></span> <span class="term">Misc.FullScreen</span> - Gets or sets whether the user is in fullscreen mode.</li><br>
-                <li><span class="new"></span><span class="number"></span> <span class="term">Misc.WindowWidth</span> (read-only) - Returns the width of the game window if it were running in windowed mode (even in fullscreen). If in wide fullscreen with <span class="term">Misc.SetWideFullscreen</span>, this includes the extra displayed pixels.</li><br>
                 <li>
-                    <span class="new"></span><span class="number"></span> <span class="term">Misc.WindowHeight</span> (read-only) - Returns the height of the game window if it were running in windowed mode (even in fullscreen).
+                    <span class="new066"></span><span class="boolean"></span> <span class="term">Misc.ResizeWindow(<span class="number"></span> width, <span class="number"></span> height)</span> - Resizes CYF's window to the given width and height, in pixels. The parameters <span class="term">width</span> and <span class="term">height</span> must both be positive, and the function will return <span class="term">true</span> if the window was successfully resized, false otherwise. The window will not be resized if the requested width or height are bigger than the player's screen's respective width or height.
+                </li><br>
+                <li>
+                    <span class="new066"></span><span class="number"></span> <span class="term">Misc.WindowWidth</span> - Returns the width of the game window when running in windowed mode (even in fullscreen).
                     <br><br>
-                    Use <span class="term">Misc.WindowHeight/480</span> to calculate the scale at which CYF is being drawn to your window (or your screen, if in fullscreen).
+                    If set, it will set the width of CYF's window in pixels. CYF's default width is 640 pixels. Only effective if the player is not in fullscreen. Will do nothing if the player's screen's width is lower than the requested width.
+                </li><br>
+                <li>
+                    <span class="new066"></span><span class="number"></span> <span class="term">Misc.WindowHeight</span> - Returns the height of the game window when running in windowed mode (even in fullscreen).
+                    <br><br>
+                    If set, it will set the height of CYF's window in pixels. CYF's default height is 480 pixels. Only effective if the player is not in fullscreen. Will do nothing if the player's screen's height is lower than the requested height.
                 </li><br>
                 <li><span class="number"></span> <span class="term">Misc.ScreenWidth</span> (read-only) - Returns the width of the user's screen in windowed mode, or the number of displayed pixel columns when in fullscreen.</li><br>
                 <li><span class="number"></span> <span class="term">Misc.ScreenHeight</span> (read-only) - Returns the height of the user's screen in windowed mode, or the number of displayed pixel rows when in fullscreen.</li><br>
