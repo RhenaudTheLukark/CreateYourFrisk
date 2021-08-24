@@ -149,55 +149,50 @@ public class Misc {
     public static LuaFile OpenFile(string path, string mode = "rw") { return new LuaFile(path, mode); }
 
     public bool FileExists(string path) {
-        if (path.Contains(".."))
-            throw new CYFException("You cannot check for a file outside of a mod folder. The use of \"..\" is forbidden.");
-        return File.Exists((FileLoader.ModDataPath + "/" + path).Replace('\\', '/'));
+        FileLoader.SanitizePath(ref path, "", false, true, false);
+        return File.Exists(path);
     }
 
     public bool DirExists(string path) {
-        if (path.Contains(".."))
-            throw new CYFException("You cannot check for a directory outside of a mod folder. The use of \"..\" is forbidden.");
-        return Directory.Exists((FileLoader.ModDataPath + "/" + path).Replace('\\', '/'));
+        FileLoader.SanitizePath(ref path, "", false, true, false);
+        return Directory.Exists(path);
     }
 
     public bool CreateDir(string path) {
-        if (path.Contains(".."))
-            throw new CYFException("You cannot create a directory outside of a mod folder. The use of \"..\" is forbidden.");
-
-        if (Directory.Exists((FileLoader.ModDataPath + "/" + path).Replace('\\', '/'))) return false;
-        Directory.CreateDirectory(FileLoader.ModDataPath + "/" + path);
+        FileLoader.SanitizePath(ref path, "", false, true, false);
+        if (Directory.Exists(path)) return false;
+        Directory.CreateDirectory(path);
         return true;
     }
 
     private static bool PathValid(string path) { return path != " " && path != "" && path != "/" && path != "\\" && path != "." && path != "./" && path != ".\\"; }
 
     public bool MoveDir(string path, string newPath) {
-        if (path.Contains("..") || newPath.Contains(".."))
-            throw new CYFException("You cannot move a directory outside of a mod folder. The use of \"..\" is forbidden.");
-
         if (!DirExists(path) || DirExists(newPath) || !PathValid(path)) return false;
-        Directory.Move(FileLoader.ModDataPath + "/" + path, FileLoader.ModDataPath + "/" + newPath);
+
+        FileLoader.SanitizePath(ref path,    "", false, true, false);
+        FileLoader.SanitizePath(ref newPath, "", false, true, false);
+        Directory.Move(path, newPath);
         return true;
     }
 
     public bool RemoveDir(string path, bool force = false) {
-        if (path.Contains(".."))
-            throw new CYFException("You cannot remove a directory outside of a mod folder. The use of \"..\" is forbidden.");
+        FileLoader.SanitizePath(ref path, "", false, true, false);
 
-        if (!Directory.Exists((FileLoader.ModDataPath + "/" + path).Replace('\\', '/'))) return false;
-        try { Directory.Delete(FileLoader.ModDataPath + "/" + path, force); }
+        if (!Directory.Exists(path)) return false;
+        try { Directory.Delete(path, force); }
         catch { /* ignored */ }
 
         return false;
     }
 
     public string[] ListDir(string path, bool getFolders = false) {
-        if (path == null)        throw new CYFException("Cannot list a directory with a nil path.");
-        if (path.Contains("..")) throw new CYFException("You cannot list directories outside of a mod folder. The use of \"..\" is forbidden.");
+        if (path == null) throw new CYFException("Cannot list a directory with a nil path.");
 
-        path = (FileLoader.ModDataPath + "/" + path).Replace('\\', '/');
+        string origPath = path;
+        FileLoader.SanitizePath(ref path, "", false, true, false);
         if (!Directory.Exists(path))
-            throw new CYFException("Invalid path:\n\n\"" + path + "\"");
+            throw new CYFException("Invalid path:\n\n\"" + origPath + "\"");
 
         DirectoryInfo d = new DirectoryInfo(path);
         System.Collections.Generic.List<string> retval = new System.Collections.Generic.List<string>();

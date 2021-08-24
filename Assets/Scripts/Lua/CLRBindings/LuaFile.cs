@@ -104,30 +104,30 @@ public class LuaFile {
         catch (UnauthorizedAccessException) { throw new CYFException("File.Delete: Unauthorized access to file:\n\"" + filePath + "\"\n\nIt may be read-only or hidden."); }
     }
 
-    public void Move(string relativePath) {
-        string newPath = (FileLoader.ModDataPath + "/" + relativePath).Replace('\\', '/');
+    public void Move(string newPath) {
+        string origNewPath = newPath;
+        FileLoader.SanitizePath(ref newPath, "", false, true, false);
 
         if (!File.Exists(filePath)) throw new CYFException("The file at the path \"" + filePath + "\" doesn't exist, so you can't move it.");
-        if (newPath.Contains("..")) throw new CYFException("You cannot move a file outside of a mod folder. The use of \"..\" is forbidden.");
-        if (File.Exists(newPath))   throw new CYFException("The file at the path \"" + newPath + "\" already exists.");
+        if (File.Exists(newPath))   throw new CYFException("The file at the path \"" + origNewPath + "\" already exists.");
 
         try { File.Move(filePath, newPath); }
-        catch (DirectoryNotFoundException) { throw new CYFException("File.Move: Could not find part or all of the path:\n\"" + newPath + "\"\n\nMake sure the path specified is valid, and its total length (" + newPath.Length + " characters) is not too long."); }
-        catch (PathTooLongException) { throw new CYFException("File.Move: The destination path is too long:\n\"" + newPath + "\""); }
+        catch (DirectoryNotFoundException) { throw new CYFException("File.Move: Could not find part or all of the path:\n\"" + origNewPath + "\"\n\nMake sure the path specified is valid, and its total length (" + origNewPath.Length + " characters, " + newPath.Length + " after sanitization) is not too long."); }
+        catch (PathTooLongException) { throw new CYFException("File.Move: The destination path is too long:\n\"" + origNewPath + "\" (\"" + newPath + "\""); }
 
         filePath = newPath;
     }
 
-    public void Copy(string relativePath, bool overwrite = false) {
-        string newPath = (FileLoader.ModDataPath + "/" + relativePath).Replace('\\', '/');
+    public void Copy(string newPath, bool overwrite = false) {
+        string origNewPath = newPath;
+        FileLoader.SanitizePath(ref newPath, "", false, true, false);
 
         if (!File.Exists(filePath)) throw new CYFException("The file at the path \"" + filePath + "\" doesn't exist, so you can't move it.");
-        if (newPath.Contains("..")) throw new CYFException("You cannot move a file outside of a mod folder. The use of \"..\" is forbidden.");
-        if (File.Exists(newPath) && !overwrite) throw new CYFException("The file at the path \"" + newPath + "\" already exists.");
+        if (File.Exists(newPath) && !overwrite) throw new CYFException("The file at the path \"" + origNewPath + "\" already exists.");
 
         try { File.Copy(filePath, newPath, overwrite); }
-        catch (DirectoryNotFoundException) { throw new CYFException("File.Copy: Could not find part or all of the path:\n\"" + newPath + "\"\n\nMake sure the path specified is valid, and its total length (" + newPath.Length + " characters) is not too long."); }
-        catch (PathTooLongException) { throw new CYFException("File.Copy: The destination path is too long:\n\"" + newPath + "\""); }
-        catch (UnauthorizedAccessException) { throw new CYFException("File.Copy: Unauthorized access to file:\n\"" + newPath + "\"\n\nIt may be read-only or hidden."); }
+        catch (DirectoryNotFoundException) { throw new CYFException("File.Copy: Could not find part or all of the path:\n\"" + origNewPath + "\"\n\nMake sure the path specified is valid, and its total length (" + origNewPath.Length + " characters, " + newPath.Length + " after sanitization) is not too long."); }
+        catch (PathTooLongException) { throw new CYFException("File.Copy: The destination path is too long:\n\"" + origNewPath + "\" (\"" + newPath + "\""); }
+        catch (UnauthorizedAccessException) { throw new CYFException("File.Copy: Unauthorized access to file:\n\"" + origNewPath + "\"\n\nIt may be read-only or hidden."); }
     }
 }

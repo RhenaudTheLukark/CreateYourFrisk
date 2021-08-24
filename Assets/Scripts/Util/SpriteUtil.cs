@@ -99,9 +99,8 @@ public static class SpriteUtil {
 
         Sprite newSprite = Sprite.Create(SpriteTexture, new Rect(0, 0, SpriteTexture.width, SpriteTexture.height), new Vector2(0.5f, UnitaleUtil.IsOverworld ? 0 : 0.5f), PIXELS_PER_UNIT);
 
-        string name = relativeFileName;
-        FileLoader.SanitizePath(ref name, pathSuffix);
-        newSprite.name = name.Substring(0, name.Length - 4);
+        FileLoader.SanitizePath(ref relativeFileName, pathSuffix);
+        newSprite.name = relativeFileName.Substring(0, relativeFileName.Length - 4);
 
         //optional XML loading
         FileInfo fi = new FileInfo(Path.ChangeExtension(fullPath, "xml"));
