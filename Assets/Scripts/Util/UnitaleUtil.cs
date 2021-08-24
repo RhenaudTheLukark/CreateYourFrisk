@@ -629,4 +629,14 @@ public static class UnitaleUtil {
     public static bool IsSpecialAnnouncement(string str) {
         return str == "4eab1af3ab6a932c23b3cdb8ef618b1af9c02088";
     }
+
+    public static bool TryCall(ScriptWrapper script, string func, DynValue param) { return TryCall(script, func, new[] { param }); }
+    public static bool TryCall(ScriptWrapper script, string func, DynValue[] param = null) {
+        try {
+            DynValue sval = script.GetVar(func);
+            if (sval == null || sval.Type == DataType.Nil) return false;
+            script.Call(func, param);
+        } catch (InterpreterException ex) { DisplayLuaError(script.scriptname, FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message); }
+        return true;
+    }
 }

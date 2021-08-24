@@ -83,30 +83,13 @@ public class EnemyEncounter : MonoBehaviour {
     }
 
     public bool CallOnSelfOrChildren(string func, DynValue[] param = null) {
-        bool result = param != null ? TryCall(func, param) : TryCall(func);
+        if (UnitaleUtil.TryCall(script, func, param)) return true;
 
-        if (result) return true;
         bool calledOne = false;
-        foreach (EnemyController enemy in enemies) {
-            if (param != null) {
-                if (enemy.TryCall(func, param))
-                    calledOne = true;
-            } else if (enemy.TryCall(func))
+        foreach (EnemyController enemy in enemies)
+            if (UnitaleUtil.TryCall(enemy.script, func, param))
                 calledOne = true;
-        }
         return calledOne;
-    }
-
-    public bool TryCall(string func, DynValue[] param = null) {
-        try {
-            if (script.GetVar(func) == null) return false;
-            if (param != null)               script.Call(func, param);
-            else                             script.Call(func);
-            return true;
-        } catch (InterpreterException ex) {
-            UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message);
-            return true;
-        }
     }
 
     public EnemyController[] EnabledEnemies {

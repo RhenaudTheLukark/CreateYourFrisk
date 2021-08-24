@@ -98,7 +98,7 @@ public class FightUI : MonoBehaviour {
         PlayerController.instance.lastHitMult = FightUIController.instance.getAtkMult();
         bool damagePredefined = Damage != FightUIController.DAMAGE_NOT_SET;
         stopped = true;
-        enemy.TryCall("BeforeDamageCalculation");
+        UnitaleUtil.TryCall(enemy.script, "BeforeDamageCalculation");
         if (!damagePredefined)
             Damage = FightUIController.instance.getDamage(enemy, atkMult);
         UpdateSlicePos();
@@ -138,7 +138,7 @@ public class FightUI : MonoBehaviour {
                 wait1frame = true;
                 slice.StopAnimation();
                 slice.Set("empty");
-                enemy.TryCall("BeforeDamageValues", new[] { DynValue.NewNumber(Damage) });
+                UnitaleUtil.TryCall(enemy.script, "BeforeDamageValues", new[] { DynValue.NewNumber(Damage) });
                 if (Damage > 0) {
                     AudioSource aSrc = GetComponent<AudioSource>();
                     aSrc.clip = AudioClipRegistry.GetSound("hitsound");

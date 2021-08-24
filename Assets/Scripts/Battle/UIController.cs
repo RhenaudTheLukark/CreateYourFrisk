@@ -112,6 +112,7 @@ public class UIController : MonoBehaviour {
     }
 
     public static void EndBattle(bool fromGameOver = false) {
+        MusicManager.SetSoundDictionary("RESETDICTIONARY", "");
         LuaSpriteController spr = (LuaSpriteController)SpriteUtil.MakeIngameSprite("black", -1).UserData.Object;
         if (GameObject.Find("TopLayer"))
             spr.layer = "Top";
@@ -964,7 +965,7 @@ public class UIController : MonoBehaviour {
                                 if (!enabledEnTemp.Contains(encounter.enemies[i]))
                                     continue;
                                 if (!canSpare[i]) continue;
-                                if (!encounter.enemies[i].TryCall("OnSpare"))
+                                if (!UnitaleUtil.TryCall(encounter.enemies[i].script, "OnSpare"))
                                     encounter.enemies[i].DoSpare();
                                 else
                                     spareList[i] = true;
@@ -985,23 +986,13 @@ public class UIController : MonoBehaviour {
                         }
                         case 1: {
                             if (!GlobalControls.retroMode) {
-                                bool fleeSuccess = (
-                                    EnemyEncounter.script.GetVar("fleesuccess").Type != DataType.Boolean
-                                    && (Math.RandomRange(0, 9) + encounter.turnCount) > 4
-                                ) || EnemyEncounter.script.GetVar("fleesuccess").Boolean;
+                                bool fleeSuccess = EnemyEncounter.script.GetVar("fleesuccess").Boolean || EnemyEncounter.script.GetVar("fleesuccess").Type != DataType.Boolean && Math.RandomRange(0, 9) + encounter.turnCount > 4;
 
-                                bool called = encounter.CallOnSelfOrChildren(
-                                    "HandleFlee", new DynValue[] {DynValue.NewBoolean(fleeSuccess)}
-                                );
-
-                                if (called) {
+                                if (encounter.CallOnSelfOrChildren("HandleFlee", new[] { DynValue.NewBoolean(fleeSuccess) }))
                                     break;
-                                }
 
-                                if (fleeSuccess)
-                                    StartCoroutine(ISuperFlee());
-                                else
-                                    SwitchState("ENEMYDIALOGUE");
+                                if (fleeSuccess) StartCoroutine(ISuperFlee());
+                                else             SwitchState("ENEMYDIALOGUE");
                             } else {
                                 PlayerController.instance.GetComponent<Image>().enabled = false;
                                 AudioClip yay = AudioClipRegistry.GetSound("runaway");
@@ -1434,7 +1425,6 @@ public class UIController : MonoBehaviour {
         Camera.main.GetComponent<AudioSource>().Stop();
         bool levelUp = PlayerCharacter.instance.AddBattleResults(exp, gold);
         Inventory.RemoveAddedItems();
-        MusicManager.SetSoundDictionary("RESETDICTIONARY", "");
         if (levelUp && exp != 0) {
             UIStats.instance.setPlayerInfo(PlayerCharacter.instance.Name, PlayerCharacter.instance.LV);
             UIStats.instance.setMaxHP();
@@ -1454,18 +1444,32 @@ public class UIController : MonoBehaviour {
             for (int i = 0; i < tempFleeTexts.Table.Length; i++)
                 fleeTexts.Add(tempFleeTexts.Table.Get(i + 1).String);
         else {
-            fleeTexts = new List<string> { "I'm outta here.",  "I've got better things to do.", "Don't waste my time.",
+            /*fleeTexts = new List<string> { "I'm outta here.",  "I've got better things to do.", "Don't waste my time.",
                                            "Nah, I don't like you.", "I just wanted to walk\ra bit. Leave me alone.", "You're cute, I won't kill you :3",
                                            "Better safe than sorry.", "Do as if you never saw\rthem and walk away.", "I'll kill you last.",
                                            "Nope. [w:5]Nope. Nope. Nope. Nope.", "Wait for me, Rhenaud!", "Flee like sissy!" };
             if (!ControlPanel.instance.Safe) {
                 fleeTexts.Add("I've got shit to do.");
                 fleeTexts.Add("Fuck this shit I'm out.");
-            }
+            }*/
+            if (exp > 0 || gold > 0) {
+                string fleeString = "Ran away with " + exp + " EXP\rand " + gold + " GOLD.";
+                bool levelUp = PlayerCharacter.instance.AddBattleResults(exp, gold);
+                if (levelUp && exp > 0) {
+                    UIStats.instance.setPlayerInfo(PlayerCharacter.instance.Name, PlayerCharacter.instance.LV);
+                    UIStats.instance.setMaxHP();
+                    UIStats.instance.setHP(PlayerCharacter.instance.HP);
+                    fleeString = "[sound:levelup]" + fleeString + "\nYour LOVE increased.";
+                }
+                fleeTexts = new List<string> { fleeString };
+            } else
+                fleeTexts = new List<string> {
+                    "Escaped...",
+                    "Don't slow me down.",
+                    "I've got better to do.",
+                    "I'm outta here."
+                };
         }
-
-        /*string[] text = { "See mom, I can flee!", "LEGZ!", "It looks more like a\nreal flee.", "/me flees", "*flees*", "To infinity and beyond!",
-                            "Yeah, that's the secret.\nI hope you liked it!"};*/
 
         ActionDialogResult(new TextMessage[] { new RegularMessage(fleeTexts[Math.RandomRange(0, fleeTexts.Count)]) });
         fleeSwitch = true;
@@ -1489,7 +1493,7 @@ public class UIController : MonoBehaviour {
         if (encounter.gameOverStance)
             return;
         if (encounterHasUpdate)
-            encounter.TryCall("Update");
+            UnitaleUtil.TryCall(EnemyEncounter.script, "Update");
 
         if (frozenState != "PAUSE")
             return;
@@ -1543,7 +1547,7 @@ public class UIController : MonoBehaviour {
                 int hp = enemyController.HP;
                 if (hp > 0 || enemyController.Unkillable) continue;
                 // fightUI.disableImmediate();
-                if (enemyController.TryCall("OnDeath")) continue;
+                if (UnitaleUtil.TryCall(enemyController.script, "OnDeath")) continue;
                 noOnDeath = false;
                 enemyController.DoKill();
 
@@ -1568,7 +1572,7 @@ public class UIController : MonoBehaviour {
         for (int i = 0; i < spareList.Length; i++) {
             if (!spareList[i] || encounter.enemies[i].spared) continue;
             state = "SPAREIDLE";
-            encounter.enemies[i].TryCall("OnSpare");
+            UnitaleUtil.TryCall(encounter.enemies[i].script, "OnSpare");
             toSpare = true;
         }
         if (!toSpare)

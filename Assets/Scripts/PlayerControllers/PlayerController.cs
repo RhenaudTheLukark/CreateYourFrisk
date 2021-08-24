@@ -173,7 +173,7 @@ public class PlayerController : MonoBehaviour {
         if (newhp <= 0) {
             deathEscape = false;
             if (GlobalControls.isInFight) {
-                UIController.instance.encounter.TryCall("BeforeDeath");
+                UnitaleUtil.TryCall(EnemyEncounter.script, "BeforeDeath");
                 if (deathEscape)
                     return;
 

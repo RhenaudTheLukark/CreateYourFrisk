@@ -67,23 +67,8 @@ public static class Inventory {
         return type;
     }
 
-    private static void CallOnSelf(string func, DynValue[] param = null) {
-        if (param != null) TryCall(func, param);
-        else               TryCall(func);
-    }
-
     public static bool TryCall(string func, DynValue[] param = null) {
-        if (UnitaleUtil.IsOverworld) return false;
-        try {
-            if (EnemyEncounter.script.GetVar(func) == null)
-                return false;
-            if (param != null)  EnemyEncounter.script.Call(func, param);
-            else                EnemyEncounter.script.Call(func);
-            return true;
-        } catch (InterpreterException ex) {
-            UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message);
-            return true;
-        }
+        return !UnitaleUtil.IsOverworld && UnitaleUtil.TryCall(EnemyEncounter.script, func, param);
     }
 
     public static void UseItem(int ID) {
@@ -93,7 +78,7 @@ public static class Inventory {
         //bool inverseRemove = false;
         int type = inventory[ID].Type;
         float amount;
-        CallOnSelf("HandleItem", new[] { DynValue.NewString(Name.ToUpper()), DynValue.NewNumber(ID + 1) });
+        TryCall("HandleItem", new[] { DynValue.NewString(Name.ToUpper()), DynValue.NewNumber(ID + 1) });
 
         TextMessage[] mess = { };
         if (addedItems.Count != 0) {

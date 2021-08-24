@@ -294,7 +294,7 @@ public class EnemyController : MonoBehaviour {
         catch (Exception ex)            { UnitaleUtil.DisplayLuaError(scriptName, "Unknown error. Usually means you're missing a sprite.\nSee documentation for details.\nStacktrace below in case you wanna notify a dev.\n\nError: " + ex.Message + "\n\n" + ex.StackTrace); }
     }
 
-    public void HandleAttack(int hitStatus) { TryCall("HandleAttack", new[] { DynValue.NewNumber(hitStatus) }); }
+    public void HandleAttack(int hitStatus) { UnitaleUtil.TryCall(script, "HandleAttack", new[] { DynValue.NewNumber(hitStatus) }); }
 
     public string[] GetDefenseDialog() {
         DynValue dialogues = script.GetVar("currentdialogue");
@@ -312,20 +312,8 @@ public class EnemyController : MonoBehaviour {
         return dialogueStrings;
     }
 
-    public bool TryCall(string func, DynValue[] param = null) {
-        try {
-            DynValue sval = script.GetVar(func);
-            if (sval == null || sval.Type == DataType.Nil) return false;
-            if (param != null)                             script.Call(func, param);
-            else                                           script.Call(func);
-            return true;
-        }
-        catch (InterpreterException ex) { UnitaleUtil.DisplayLuaError(scriptName, UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message); }
-        return true;
-    }
-
     protected void HandleCustomCommand(string command) {
-        TryCall("HandleCustomCommand", new[] { DynValue.NewString(command) });
+        UnitaleUtil.TryCall(script, "HandleCustomCommand", new[] { DynValue.NewString(command) });
     }
 
     public void Remove() {
