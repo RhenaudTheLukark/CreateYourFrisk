@@ -399,6 +399,7 @@ public static class Inventory {
                         mess = new[] { new TextMessage(sentenceSalad + HPRecoverString(amount), true, false) };
                         break;
                     case "Instant Noodles":
+                        amount = GlobalControls.isInFight ? 4 : 15;
                         mess = new[] { new TextMessage("You remove the Instant\rNoodles from their\rpackaging.", true, false),
                                        new TextMessage("You put some water in\rthe pot and place it\ron the heat.", true, false),
                                        new TextMessage("You wait for the water\rto boil...", true, false),
@@ -414,7 +415,8 @@ public static class Inventory {
                                        new TextMessage("You add the flavor packet.", true, false),
                                        new TextMessage("That's better.", true, false),
                                        new TextMessage("Not great,[w:5] but better.", true, false),
-                                       new TextMessage("[music:unpause]You ate the Instant Noodles." + HPRecoverString(amount), true, false) };
+                                       new TextMessage("[music:unpause][health:" + amount + "]You ate the Instant Noodles." + HPRecoverString(amount), true, false) };
+                        amount = 0;
                         break;
                     case "Hot Dog...?":
                         amount = 20;
