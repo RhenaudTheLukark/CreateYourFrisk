@@ -194,6 +194,19 @@ public class ProjectileController {
 
     public void SendToBottom() { p.self.SetAsFirstSibling(); }
 
+    private DynValue _OnHit = DynValue.Nil;
+    public DynValue OnHit {
+        get { return _OnHit; }
+        set {
+            if (value.Type != DataType.Nil && value.Type != DataType.Function)
+                throw new CYFException("bullet.OnHit: This variable has to be a function!");
+            if (value.Type == DataType.Function && value.Function.OwnerScript != p.owner)
+                throw new CYFException("bullet.OnHit: You can only use a function created in the same script as the projectile!");
+            _OnHit = value;
+        }
+    }
+
+
     public void SetVar(string name, DynValue value) {
         if (name == null)
             throw new CYFException("bullet.SetVar: The first argument (the index) is nil.\n\nSee the documentation for proper usage.");
