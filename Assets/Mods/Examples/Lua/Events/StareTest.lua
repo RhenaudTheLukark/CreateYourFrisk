@@ -222,7 +222,7 @@ function Stare3(frame)
                 stare3DogLegsYScale = dogLegsSprite.yscale
             end
             -- Barking animation, sound and bouncing
-            Stare3Bark(frame, 60)
+            Stare3Bark(frame - 450, 60)
             Stare3Bounce(frame, true)
         -- Lowers the dog back to normal
         elseif frame >= 510 and frame < 590 then
