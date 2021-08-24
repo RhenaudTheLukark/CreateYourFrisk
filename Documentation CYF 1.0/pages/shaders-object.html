@@ -275,6 +275,8 @@ end
                 in the property named <span class="term">name</span>.
                 <br><br>
                 Here, a vector is a table of 4 number values, with any range.
+                <br><br>
+                <span style="color:#ffffff"><u>NOTE:</u></span> The two functions don't use the same kind of vectors. <span class="term">shader.GetVector()</span> uses <span class="term">(w, x, y, z)</span> vectors, where <span class="term">shader.SetVector()</span> uses <span class="term">(x, y, z, w)</span> vectors. This behavior will be corrected to only use <span class="term">(x, y, z, w)</span> vectors in a later version.
             </p>
 
             <hr>
@@ -310,6 +312,8 @@ end
                 Just like with <span class="term">shader.SetVector</span>, a vector
                 (<a href="https://docs.unity3d.com/2018.2/Documentation/ScriptReference/Vector4.html">Vector4</a>) is a table of 4 number values.<br>
                 However, keep in mind that this is an <i>array</i> of vectors. So, a table with multiple smaller tables inside, each with 4 numbers.
+                <br><br>
+                <span style="color:#ffffff"><u>NOTE:</u></span> The two functions don't use the same kind of vectors. <span class="term">shader.GetVectorArray()</span> uses <span class="term">(w, x, y, z)</span> vectors, where <span class="term">shader.SetVectorArray()</span> uses <span class="term">(x, y, z, w)</span> vectors. This behavior will be corrected to only use <span class="term">(x, y, z, w)</span> vectors in a later version.
             </p>
 
             <p>
