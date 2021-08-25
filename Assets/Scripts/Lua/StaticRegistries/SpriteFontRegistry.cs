@@ -23,16 +23,12 @@ public static class SpriteFontRegistry {
         key += key.EndsWith(".png") ? "" : ".png";
         FileLoader.SanitizePath(ref key, "Sprites/UI/Fonts/", false);
         key = key.ToLower();
-        return dict.ContainsKey(key) ? dict[key] : TryLoad(k);
+        return dict.ContainsKey(key) ? dict[key] : TryLoad(k, key);
     }
 
-    public static UnderFont TryLoad(string key) {
-        string k = key;
-        key += key.EndsWith(".png") ? "" : ".png";
-        FileLoader.SanitizePath(ref key, "Sprites/UI/Fonts/", false);
-        key = key.ToLower();
-        if (dictMod.ContainsKey(key) || dictDefault.ContainsKey(key)) dict[key] = GetUnderFont(k);
-        else return null;
+    public static UnderFont TryLoad(string baseKey, string key) {
+        if (!dictMod.ContainsKey(key) && !dictDefault.ContainsKey(key)) return null;
+        dict[key] = GetUnderFont(baseKey);
         return dict[key];
     }
 
