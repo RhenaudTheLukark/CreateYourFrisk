@@ -285,17 +285,19 @@ end";
 			}
 
 			// Check if the resource exists using the mod path
+			string modPath = pathSuffix;
 			string error;
 			try {
-				string modPath = pathSuffix;
 				ExplorePath(ref fileNameMod, ref modPath);
-				if (needsToExist && !new FileInfo(fileNameMod).Exists) throw new CYFException("The file " + fileNameMod + " doesn't exist.");
+				// Keep the mod path even if the file needs to exist
 				fileName = fileNameMod;
 
-				if (needsAbsolutePath) return true;
+				if (!needsAbsolutePath) {
+					Uri uriRel = new Uri(modPath).MakeRelativeUri(new Uri(fileName));
+					fileName = Uri.UnescapeDataString(uriRel.OriginalString);
+				}
 
-				Uri uriRel = new Uri(modPath).MakeRelativeUri(new Uri(fileName));
-				fileName = Uri.UnescapeDataString(uriRel.OriginalString);
+				if (needsToExist && !new FileInfo(fileNameMod).Exists) throw new CYFException("The file " + fileNameMod + " doesn't exist.");
 				return true;
 			} catch (Exception e) { error = e.Message; }
 
