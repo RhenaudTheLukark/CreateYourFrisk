@@ -157,7 +157,11 @@ public class EnemyEncounter : MonoBehaviour {
         Table luaEnemyTable = script.GetVar("enemies").Table;
 
         for (int i = 0; i < enemyCount; i++) {
-            luaEnemyTable.Set(i + 1, CreateEnemy(enemyScriptsLua.Table.Get(i + 1).String, enemyPositions[i].x, enemyPositions[i].y));
+            string enemyName = enemyScriptsLua.Table.Get(i + 1).String;
+            DynValue enemy = CreateEnemy(enemyName, enemyPositions[i].x, enemyPositions[i].y);
+
+            luaEnemyTable.Set(i + 1, enemy);
+            luaEnemyTable.Set(enemyName, enemy);
         }
 
         script.SetVar("enemies", DynValue.NewTable(luaEnemyTable));
