@@ -181,7 +181,7 @@ namespace MoonSharp.Interpreter.CoreLib
 				DynValue v = args.AsType(0, "dofile", DataType.String, false);
 
 				string str = v.String;
-				string suffix = "Lua/";
+				string suffix = DataRoot;
 				ExplorePath(ref str, ref suffix);
 				DynValue fn = S.LoadFile(str);
 
@@ -326,10 +326,11 @@ end";
 		public static void ExplorePath(ref string fullPath, ref string pathSuffix) {
 			fullPath = fullPath.Replace('\\', Path.DirectorySeparatorChar).Replace('/', Path.DirectorySeparatorChar);
 
-			if      (fullPath.Contains(ModDataPath))     pathSuffix = Path.Combine(ModDataPath,     pathSuffix);
+			if      (pathSuffix.Contains(DataRoot))      { }
+			else if (fullPath.Contains(ModDataPath))     pathSuffix = Path.Combine(ModDataPath,     pathSuffix);
 			else if (fullPath.Contains(DefaultDataPath)) pathSuffix = Path.Combine(DefaultDataPath, pathSuffix);
 			else if (fullPath.Contains(DataRoot))        pathSuffix = Path.Combine(DataRoot,        pathSuffix);
-			// Fetch CYF's root folder if none has been found (Used for dofile, require, loadfile...)
+			// Fetch CYF's root folder if none has been found (Used for require, loadfile...)
 			else {
 				pathSuffix = fullPath.StartsWith(Path.DirectorySeparatorChar.ToString()) ? DataRoot : Path.Combine(ModDataPath, pathSuffix);
 				fullPath = Path.Combine(pathSuffix, fullPath.TrimStart(Path.DirectorySeparatorChar));
