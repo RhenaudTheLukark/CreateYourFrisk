@@ -9,6 +9,7 @@ public class LuaFile {
     public string filePath { get; private set; }
 
     public LuaFile(string path, string mode = "rw") {
+        path = path.Replace('\\', '/').TrimStart('/'); // TODO: Remove this for 0.7
         if (path == null)                                                                      throw new CYFException("Cannot open a file with a nil path.");
         if (mode != "r" && mode != "w" && mode != "rw" && mode != "wr")                        throw new CYFException("A file's open mode can only be \"r\" (read), \"w\" (write) or \"rw\" (read + write).");
         if (!FileLoader.SanitizePath(ref path, "", false, true) && mode == "r")                throw new CYFException("You can't open a file that doesn't exist (" + path + ") in read-only mode.");
