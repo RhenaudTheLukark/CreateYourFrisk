@@ -306,7 +306,7 @@ public class UIController : MonoBehaviour {
             foreach (LifeBarController lbc in arenaParent.GetComponentsInChildren<LifeBarController>())
                 Destroy(lbc.gameObject);
         else if (state == "ENEMYDIALOGUE") {
-            TextManager[] textManagers = FindObjectsOfType<TextManager>();
+            TextManager[] textManagers = encounter.transform.GetComponentsInChildren<TextManager>();
             foreach (TextManager textManager in textManagers)
                 if (textManager.gameObject.name.StartsWith("DialogBubble")) // game object name is hardcoded as it won't change
                     Destroy(textManager.gameObject);
@@ -505,6 +505,7 @@ public class UIController : MonoBehaviour {
                 encounter.CallOnSelfOrChildren("EnemyDialogueStarting");
                 monsterDialogues = new TextManager[encounter.EnabledEnemies.Length];
                 readyToNextLine = new bool[encounter.EnabledEnemies.Length];
+                // TODO: Try to merge this and the other bubble-related code block
                 for (int i = 0; i < encounter.EnabledEnemies.Length; i++) {
                     messages.Remove(i);
                     messages.Add(i, encounter.EnabledEnemies[i].GetDefenseDialog());
@@ -536,10 +537,13 @@ public class UIController : MonoBehaviour {
                     sbTextMan._textMaxWidth = (int)encounter.EnabledEnemies[i].bubbleWidth;
                     Sprite speechBubSpr = speechBubImg.sprite;
                     // TODO improve position setting/remove hardcoding of position setting
+                    bool reversedX = encounter.EnabledEnemies[i].sprite.xscale < 0,
+                         reversedY = encounter.EnabledEnemies[i].sprite.yscale < 0;
+
                     speechBub.transform.SetParent(encounter.EnabledEnemies[i].transform);
-                    speechBub.GetComponent<RectTransform>().anchoredPosition = encounter.EnabledEnemies[i].DialogBubblePosition;
-                    speechBub.transform.position = new Vector3(speechBub.transform.position.x + encounter.EnabledEnemies[i].offsets[1].x,
-                                                               speechBub.transform.position.y + encounter.EnabledEnemies[i].offsets[1].y, speechBub.transform.position.z);
+                    speechBub.GetComponent<RectTransform>().anchorMin = speechBub.GetComponent<RectTransform>().anchorMax = new Vector2(0.5f, 0.5f);
+                    speechBub.GetComponent<RectTransform>().anchoredPosition = new Vector3((encounter.EnabledEnemies[i].DialogBubblePosition.x + encounter.EnabledEnemies[i].offsets[1].x) * (reversedX ? -1 : 1),
+                                                                                           (encounter.EnabledEnemies[i].DialogBubblePosition.y + encounter.EnabledEnemies[i].offsets[1].y) * (reversedY ? -1 : 1));
                     sbTextMan.SetOffset(speechBubSpr.border.x, -speechBubSpr.border.w);
 
                     UnderFont enemyFont = SpriteFontRegistry.Get(encounter.EnabledEnemies[i].Font ?? string.Empty) ?? SpriteFontRegistry.Get(SpriteFontRegistry.UI_MONSTERTEXT_NAME);
@@ -621,6 +625,7 @@ public class UIController : MonoBehaviour {
                     readyToNextLine[i] = true;
                     continue;
                 }
+
                 GameObject speechBub = encounter.EnabledEnemies[i].transform.Find("DialogBubble(Clone)").gameObject;
                 TextManager sbTextMan = speechBub.GetComponent<TextManager>();
                 sbTextMan._textMaxWidth = (int)encounter.EnabledEnemies[i].bubbleWidth;
@@ -631,9 +636,12 @@ public class UIController : MonoBehaviour {
                 SpriteUtil.SwapSpriteFromFile(speechBubImg, encounter.EnabledEnemies[i].DialogBubble, i);
                 Sprite speechBubSpr = speechBubImg.sprite;
                 sbTextMan.SetOffset(speechBubSpr.border.x, -speechBubSpr.border.w);
-                speechBub.GetComponent<RectTransform>().anchoredPosition = encounter.EnabledEnemies[i].DialogBubblePosition;
-                speechBub.transform.position = new Vector3(speechBub.transform.position.x + encounter.EnabledEnemies[i].offsets[1].x,
-                                                           speechBub.transform.position.y + encounter.EnabledEnemies[i].offsets[1].y, speechBub.transform.position.z);
+
+                bool reversedX = encounter.EnabledEnemies[i].sprite.xscale < 0,
+                     reversedY = encounter.EnabledEnemies[i].sprite.yscale < 0;
+                speechBub.GetComponent<RectTransform>().anchorMin = speechBub.GetComponent<RectTransform>().anchorMax = new Vector2(0.5f, 0.5f);
+                speechBub.GetComponent<RectTransform>().anchoredPosition = new Vector3((encounter.EnabledEnemies[i].DialogBubblePosition.x + encounter.EnabledEnemies[i].offsets[1].x) * (reversedX ? -1 : 1),
+                                                                                       (encounter.EnabledEnemies[i].DialogBubblePosition.y + encounter.EnabledEnemies[i].offsets[1].y) * (reversedY ? -1 : 1));
                 if (encounter.EnabledEnemies[i].Voice != "")
                     sbTextMan.letterSound = encounter.EnabledEnemies[i].Voice;
             } catch {

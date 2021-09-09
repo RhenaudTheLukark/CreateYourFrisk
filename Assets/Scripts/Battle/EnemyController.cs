@@ -16,11 +16,11 @@ public class EnemyController : MonoBehaviour {
         get {
             Sprite diagBubbleSpr = SpriteRegistry.Get(DialogBubble);
             RectTransform t = GetComponent<RectTransform>();
-            if (diagBubbleSpr.name.StartsWith("right"))        textBubblePos = new Vector2(t.rect.width + 5, (-t.rect.height + diagBubbleSpr.rect.height) / 2);
-            else if (diagBubbleSpr.name.StartsWith("left"))    textBubblePos = new Vector2(-diagBubbleSpr.rect.width - 5, (-t.rect.height + diagBubbleSpr.rect.height) / 2);
-            else if (diagBubbleSpr.name.StartsWith("top"))     textBubblePos = new Vector2((t.rect.width - diagBubbleSpr.rect.width) / 2, diagBubbleSpr.rect.height + 5);
-            else if (diagBubbleSpr.name.StartsWith("bottom"))  textBubblePos = new Vector2((t.rect.width - diagBubbleSpr.rect.width) / 2, -t.rect.height - 5);
-            else                                               textBubblePos = new Vector2(t.rect.width + 5, (t.rect.height - diagBubbleSpr.rect.height) / 2); // rightside default
+            if (diagBubbleSpr.name.StartsWith("right"))        textBubblePos = new Vector2(t.rect.width / 2 + 5,                             diagBubbleSpr.rect.height / 2);
+            else if (diagBubbleSpr.name.StartsWith("left"))    textBubblePos = new Vector2(-t.rect.width / 2 - diagBubbleSpr.rect.width - 5, diagBubbleSpr.rect.height / 2);
+            else if (diagBubbleSpr.name.StartsWith("top"))     textBubblePos = new Vector2(-diagBubbleSpr.rect.width / 2,                    t.rect.height / 2 + diagBubbleSpr.rect.height + 5);
+            else if (diagBubbleSpr.name.StartsWith("bottom"))  textBubblePos = new Vector2(-diagBubbleSpr.rect.width / 2,                    -t.rect.height / 2 - 5);
+            else                                               textBubblePos = new Vector2(t.rect.width / 2 + 5,                             diagBubbleSpr.rect.height / 2); // rightside default
             return textBubblePos;
         }
     }

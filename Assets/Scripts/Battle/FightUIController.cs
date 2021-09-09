@@ -187,6 +187,7 @@ public class FightUIController : MonoBehaviour {
             if (resizeProg != 0.0f) return;
             while (boundFightUiInstances.Count != 0) {
                 allFightUiInstances.Remove(boundFightUiInstances[boundFightUiInstances.Count - 1]);
+                boundFightUiInstances[boundFightUiInstances.Count - 1].slice.Remove();
                 Destroy(boundFightUiInstances[boundFightUiInstances.Count - 1].lifeBar.gameObject);
                 Destroy(boundFightUiInstances[boundFightUiInstances.Count - 1].damageText.gameObject);
                 Destroy(boundFightUiInstances[boundFightUiInstances.Count - 1].gameObject);
