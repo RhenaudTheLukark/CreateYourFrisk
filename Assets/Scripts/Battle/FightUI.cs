@@ -129,7 +129,7 @@ public class FightUI : MonoBehaviour {
             shakeTimer += Time.deltaTime;
             if (shakeTimer >= totalShakeTime)
                 shakeInProgress = false;
-        } else if ((slice.animcomplete && !slice.img.GetComponent<KeyframeCollection>().enabled && stopped &&!showedup) || needAgain) {
+        } else if (((!slice.isactive || slice.animcomplete && !slice.img.GetComponent<KeyframeCollection>().enabled) && stopped &&!showedup) || needAgain) {
             needAgain = true;
             if (!wait1frame) {
                 wait1frame = true;
@@ -174,7 +174,7 @@ public class FightUI : MonoBehaviour {
                 totalShakeTime = shakeX.Length * (1.5f / 8.0f);
                 showedup = true;
             }
-        } else if (!slice.animcomplete) {
+        } else if (slice.isactive && !slice.animcomplete) {
             slice.img.gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(slice.img.GetComponent<Image>().sprite.rect.width, slice.img.GetComponent<Image>().sprite.rect.height);
             slice.img.GetComponent<RectTransform>().position = new Vector2(enePos.x + enemy.offsets[0].x, enePos.y + enemy.offsets[0].y);
         }

@@ -53,7 +53,7 @@ public class UIController : MonoBehaviour {
     public int exp = 0;     // Amount of EXP earned by the Player at the end of the encounter
     public int gold = 0;    // Amount of Gold earned by the Player at the end of the encounter
 
-    public string state;                                // Current state of the battle
+    public string state;                                 // Current state of the battle
     private string stateAfterDialogs = "DEFENDING";      // State to enter after the current arena dialogue is done. Only used after a proper call to BattleDialog()
     private string lastNewState = "UNUSED";              // Allows the detection of state changes during an OnDeath() call so the engine can switch to it properly
 
@@ -62,7 +62,6 @@ public class UIController : MonoBehaviour {
     private bool parentStateCall = true;                            // Used to stop the execution of a previous State() call if a new call has been done and to prevent infinite EnteringState() loops
     private bool childStateCalled;                                  // Used to stop the execution of a previous State() call if a new call has been done and to prevent infinite EnteringState() loops
     private bool fleeSwitch;                                        // True if the Player fled, and the encounter can be ended
-    private bool[] spareList;                                       // Includes a list telling which enemies have just been spared
     public Dictionary<int, string[]> messages;                      // Stores the messages enemies will say in the state ENEMYDIALOGUE
     public bool[] readyToNextLine;                                  // Used to know which enemy bubbles are done displaying their text
     public bool needOnDeath;                                        // Related to OnDeath TODO Add a good description to this variable, I'm unsure about what it really does
@@ -968,28 +967,16 @@ public class UIController : MonoBehaviour {
                             for (int i = 0; i < count; i++)
                                 canSpare[i] = encounter.enemies[i].CanSpare;
                             EnemyController[] enabledEnTemp = encounter.EnabledEnemies;
-                            //bool sparedAny = false;
+                            bool playSound = true;
                             for (int i = 0; i < count; i++) {
-                                if (!enabledEnTemp.Contains(encounter.enemies[i]))
-                                    continue;
+                                if (!enabledEnTemp.Contains(encounter.enemies[i])) continue;
                                 if (!canSpare[i]) continue;
-                                if (!UnitaleUtil.TryCall(encounter.enemies[i].script, "OnSpare"))
-                                    encounter.enemies[i].DoSpare();
-                                else
-                                    spareList[i] = true;
-                                //sparedAny = true;
+                                if (UnitaleUtil.TryCall(encounter.enemies[i].script, "OnSpare")) continue;
+                                encounter.enemies[i].DoSpare(playSound);
+                                playSound = false;
                             }
                             if (encounter.EnabledEnemies.Length > 0)
                                 encounter.CallOnSelfOrChildren("HandleSpare");
-                            /*if (encounter.enabledEnemies.Length > 0)
-                            encounter.CallOnSelfOrChildren("HandleSpare");*/
-
-                            /*if (sparedAny) {
-                            if (encounter.enabledEnemies.Length == 0) {
-                                checkAndTriggerVictory();
-                                break;
-                            }
-                        }*/
                             break;
                         }
                         case 1: {
@@ -1344,9 +1331,6 @@ public class UIController : MonoBehaviour {
         ControlPanel.instance.FrameBasedMovement = false;
 
         LuaScriptBinder.CopyToBattleVar();
-        spareList = new bool[encounter.enemies.Count];
-        for (int i = 0; i < spareList.Length; i ++)
-            spareList[i] = false;
         if (EnemyEncounter.script.GetVar("Update") != null)
             encounterHasUpdate = true;
         GameObject.Find("Main Camera").GetComponent<ProjectileHitboxRenderer>().enabled = !GameObject.Find("Main Camera").GetComponent<ProjectileHitboxRenderer>().enabled;
@@ -1544,47 +1528,37 @@ public class UIController : MonoBehaviour {
         else if (InputUtil.Pressed(GlobalControls.input.Confirm))
             SwitchStateOnString(null, "DONE");
 
-        if (state == "ATTACKING" || needOnDeath) {
-            if (!fightUI.Finished())
-                return;
+        if (state == "ATTACKING" || needOnDeath && fightUI.Finished()) {
             if (state != "ATTACKING" && state != "NONE")
                 SwitchState("NONE");
             bool noOnDeath = true;
             onDeathSwitch = true;
+            bool playSound = true;
             foreach (EnemyController enemyController in encounter.EnabledEnemies) {
-                int hp = enemyController.HP;
-                if (hp > 0 || enemyController.Unkillable) continue;
+                if (enemyController.HP > 0 || enemyController.Unkillable) continue;
                 // fightUI.disableImmediate();
                 if (UnitaleUtil.TryCall(enemyController.script, "OnDeath")) continue;
                 noOnDeath = false;
-                enemyController.DoKill();
+                enemyController.DoKill(playSound);
+                playSound = false;
 
                 if (encounter.EnabledEnemies.Length > 0)
                     SwitchState("ENEMYDIALOGUE");
                 //else
                 //    checkAndTriggerVictory();
             }
-            onDeathSwitch = false;
-            if (lastNewState != "UNUSED") {
-                needOnDeath = false;
-                SwitchState(lastNewState);
-                lastNewState = "UNUSED";
-            } else if (noOnDeath) {
-                needOnDeath = false;
-                SwitchState("ENEMYDIALOGUE");
-            }
-        }
 
-        if (state != "MERCYMENU" && state != "SPAREIDLE") return;
-        bool toSpare = false;
-        for (int i = 0; i < spareList.Length; i++) {
-            if (!spareList[i] || encounter.enemies[i].spared) continue;
-            state = "SPAREIDLE";
-            UnitaleUtil.TryCall(encounter.enemies[i].script, "OnSpare");
-            toSpare = true;
+            onDeathSwitch = false;
+            if (!needOnDeath) {
+                if (lastNewState != "UNUSED") {
+                    SwitchState(lastNewState);
+                    lastNewState = "UNUSED";
+                }
+                else if (noOnDeath)
+                    SwitchState("ENEMYDIALOGUE");
+            }
+            needOnDeath = false;
         }
-        if (!toSpare)
-            state = "MERCYMENU";
         //if (state == UIState.ENEMYDIALOGUE)
         //    if ((Vector2)arenaParent.transform.position == new Vector2(320, 90))
         //        PlayerController.instance.setControlOverride(false);

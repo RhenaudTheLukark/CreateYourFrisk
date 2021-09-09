@@ -259,8 +259,8 @@ public class EnemyController : MonoBehaviour {
             script.Bind("SetSprite", (Action<string>)SetSprite);
             script.Bind("SetActive", (Action<bool>)SetActive);
             script.Bind("isactive", DynValue.NewBoolean(true));
-            script.Bind("Kill", (Action)DoKill);
-            script.Bind("Spare", (Action)DoSpare);
+            script.Bind("Kill", (Action<bool>)DoKill);
+            script.Bind("Spare", (Action<bool>)DoSpare);
             script.Bind("Move", (Action<float, float>)Move);
             script.Bind("MoveTo", (Action<float, float>)MoveTo);
             script.Bind("BindToArena", (Action<bool, bool>)BindToArena);
@@ -335,7 +335,7 @@ public class EnemyController : MonoBehaviour {
     /// <summary>
     /// Call function to grey out enemy and pop the smoke particles, and mark it as spared.
     /// </summary>
-    public void DoSpare() {
+    public void DoSpare(bool playSound = true) {
         if (!inFight)
             return;
         UIController.instance.gold += Gold;
@@ -353,7 +353,7 @@ public class EnemyController : MonoBehaviour {
 
         // The actually relevant part of sparing code.
         GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.4f);
-        UIController.PlaySoundSeparate("enemydust");
+        if (playSound) UIController.PlaySoundSeparate("enemydust");
         SetActive(false);
         spared = true;
 
@@ -363,7 +363,7 @@ public class EnemyController : MonoBehaviour {
     /// <summary>
     /// Call function to turn enemy to dust and mark it as killed.
     /// </summary>
-    public void DoKill() {
+    public void DoKill(bool playSound = true) {
         if (!inFight)
             return;
         UIController.instance.gold += Gold;
@@ -373,7 +373,7 @@ public class EnemyController : MonoBehaviour {
         GetComponent<ParticleDuplicator>().Activate(sprite);
         SetActive(false);
         killed = true;
-        UIController.PlaySoundSeparate("enemydust");
+        if (playSound) UIController.PlaySoundSeparate("enemydust");
 
         UIController.instance.CheckAndTriggerVictory();
     }
