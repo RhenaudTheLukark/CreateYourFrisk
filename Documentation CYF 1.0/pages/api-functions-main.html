@@ -403,15 +403,17 @@ end</pre>
             </p>
 
             <p>
-                <br><span class="function">Kill() [M]</span>
+                <br><span class="function"><span class="new066"></span>Kill(<span class="boolean"></span> playSound = true) [M]</span>
                 Kills the monster immediately. If this was the last monster, the battle ends.<br>
-                Does NOT call the <span class="ref">Game Event</span> <span class="term">OnDeath</span>.
+                Does NOT call the <span class="ref">Game Event</span> <span class="term">OnDeath</span>.<br><br>
+                If <span class="term">playSound</span> is set to <span class="term">false</span>, the dusting sound will not be played.
             </p>
 
             <p>
-                <br><span class="function">Spare() [M]</span>
+                <br><span class="function"><span class="new066"></span>Spare(<span class="boolean"></span> playSound = true) [M]</span>
                 Spares the monster immediately. Similar to <span class="term">Kill()</span>, if this was the last monster, the battle ends.<br>
-                Does NOT call the <span class="ref">Game Event</span> <span class="term">OnDeath</span>.
+                Does NOT call the <span class="ref">Game Event</span> <span class="term">OnSpare</span>.<br><br>
+                If <span class="term">playSound</span> is set to <span class="term">false</span>, the sparing sound will not be played.
             </p>
 
             <p>
