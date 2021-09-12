@@ -166,7 +166,6 @@ public class UIController : MonoBehaviour {
 
         //Reset to 4:3
         ScreenResolution.ResetAfterBattle();
-
         Time.timeScale = 1;
     }
 
