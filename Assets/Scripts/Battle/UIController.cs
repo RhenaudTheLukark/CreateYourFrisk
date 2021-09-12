@@ -64,8 +64,8 @@ public class UIController : MonoBehaviour {
     private bool fleeSwitch;                                        // True if the Player fled, and the encounter can be ended
     public Dictionary<int, string[]> messages;                      // Stores the messages enemies will say in the state ENEMYDIALOGUE
     public bool[] readyToNextLine;                                  // Used to know which enemy bubbles are done displaying their text
-    public bool needOnDeath;                                        // Related to OnDeath TODO Add a good description to this variable, I'm unsure about what it really does
-    private bool onDeathSwitch;                                     // Related to OnDeath TODO Add a good description to this variable, I'm unsure about what it really does
+    public bool needOnDeath;                                        // Used to force the check on whether the enemies are dead or not
+    private bool onDeathSwitch;                                     // Allows to switch to a given state if State() was used in OnDeath()
     public bool stateSwitched;                                      // True if the state has been changed this frame, false otherwise
     public bool battleDialogueStarted;                              // True if the battle dialog is being displayed, false otherwise. Only used for the state ITEMMENU, and not updated outside of it
 
@@ -84,12 +84,11 @@ public class UIController : MonoBehaviour {
         ENEMYDIALOGUE,  // The Player is visible and the arena is resizing, but the enemy still has own dialogue
         DIALOGRESULT,   // Transition state leading to either UIState.ENEMYDIALOGUE or UIState.DEFENDING
         DONE,           // Finished state of battle. Returns the Player to the mod selection screen or the overworld
-        SPAREIDLE,      // Used for OnSpare()'s inactivity, to make it works like OnDeath(). You don't want to go in there
         UNUSED,         // Used for OnDeath(). Keep this state secret, please
         PAUSE           // Used exclusively for State("PAUSE"). Not a real state, but it needs to be listed to allow users to call State("PAUSE")
     }*/
     
-    public List<string> UIStates = new List<string>() {"NONE", "ACTIONSELECT", "ATTACKING", "DEFENDING", "ENEMYSELECT", "ACTMENU", "ITEMMENU", "MERCYMENU", "ENEMYDIALOGUE", "DIALOGRESULT", "DONE", "SPAREIDLE", "UNUSED", "PAUSE"};
+    public List<string> UIStates = new List<string>() {"NONE", "ACTIONSELECT", "ATTACKING", "DEFENDING", "ENEMYSELECT", "ACTMENU", "ITEMMENU", "MERCYMENU", "ENEMYDIALOGUE", "DIALOGRESULT", "DONE", "UNUSED", "PAUSE"};
 
     // Variables for PAUSE's "encounter freezing" behavior
     public string frozenState = "PAUSE"; // Used to keep track of what state was frozen
@@ -311,6 +310,10 @@ public class UIController : MonoBehaviour {
                     Destroy(textManager.gameObject);
         } else if (state == "DIALOGRESULT")
             mainTextManager.SetCaller(EnemyEncounter.script);
+        else if (state == "ATTACKING") {
+            fightUI.stopped = false;
+            fightUI.targetRt.anchoredPosition = new Vector2(GetComponent<RectTransform>().rect.width / 2, 0);
+        }
 
         string oldState = state;
         state = newState;
@@ -1528,9 +1531,7 @@ public class UIController : MonoBehaviour {
         else if (InputUtil.Pressed(GlobalControls.input.Confirm))
             SwitchStateOnString(null, "DONE");
 
-        if (state == "ATTACKING" || needOnDeath && fightUI.Finished()) {
-            if (state != "ATTACKING" && state != "NONE")
-                SwitchState("NONE");
+        if ((state == "ATTACKING" || needOnDeath) && fightUI.Finished()) {
             bool noOnDeath = true;
             onDeathSwitch = true;
             bool playSound = true;
@@ -1549,12 +1550,11 @@ public class UIController : MonoBehaviour {
             }
 
             onDeathSwitch = false;
-            if (!needOnDeath) {
+            if (state == "ATTACKING" && fightUI.Finished()) {
                 if (lastNewState != "UNUSED") {
                     SwitchState(lastNewState);
                     lastNewState = "UNUSED";
-                }
-                else if (noOnDeath)
+                } else if (noOnDeath)
                     SwitchState("ENEMYDIALOGUE");
             }
             needOnDeath = false;

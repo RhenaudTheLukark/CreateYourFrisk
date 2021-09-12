@@ -206,7 +206,7 @@ public class FightUIController : MonoBehaviour {
                 initFade();
         }
 
-        if (stopped)
+        if (stopped || UIController.instance.state != "ATTACKING")
             return;
 
         float mv = xSpeed * Time.deltaTime;
