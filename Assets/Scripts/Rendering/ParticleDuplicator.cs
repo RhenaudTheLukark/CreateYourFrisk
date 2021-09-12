@@ -5,16 +5,15 @@ using UnityEngine.UI;
 /// Script to attach to gameobjects with UnityEngine.UI.Image components, used to dissolve them into particles.
 /// </summary>
 public class ParticleDuplicator : MonoBehaviour {
-    private ParticleSystem ps;
     private ParticleSystem.Particle[] particles;
+    private Vector2[] particlePos;
 
-    public void Activate(LuaSpriteController sprctrl) {
-        Sprite sprite = sprctrl.img.GetComponent<Image>() ? sprctrl.img.GetComponent<Image>().sprite : sprctrl.img.GetComponent<SpriteRenderer>().sprite;
+    public void Activate(LuaSpriteController sprctrl, ParticleSystem ps) {
+        bool hasImage = GetComponent<Image>();
+        Sprite sprite = hasImage ? GetComponent<Image>().sprite : GetComponent<SpriteRenderer>().sprite;
 
-        int xLength = Mathf.Abs(Mathf.FloorToInt(sprctrl.xscale * sprite.texture.width)),
-            yLength = Mathf.Abs(Mathf.FloorToInt(sprctrl.yscale * sprite.texture.height));
-        GetComponentsInChildren<ParticleSystem>(true);
-        ps = FindObjectOfType<ParticleSystem>();
+        int xLength = Mathf.FloorToInt(Mathf.Abs(sprctrl.xscale) * sprite.texture.width),
+            yLength = Mathf.FloorToInt(Mathf.Abs(sprctrl.yscale) * sprite.texture.height);
         ps.transform.SetAsLastSibling();
 
         //Emit particles from particle system and retrieve into particles array
@@ -24,39 +23,58 @@ public class ParticleDuplicator : MonoBehaviour {
 
         //Get sprite viewport coordinates and pixel width/height on display
         RectTransform rt = GetComponent<RectTransform>();
-        //Vector2 bottomLeft = new Vector2((rt.position.x - rt.rect.width / 2) / (float)Screen.width, (rt.position.y) / (float)Screen.height);
-        //Vector2 topRight = new Vector2((rt.position.x + rt.rect.width / 2) / (float)Screen.width, (rt.position.y + rt.rect.height) / (float)Screen.height);
-        Vector2 bottomLeft = new Vector2(rt.position.x - rt.pivot.x * rt.sizeDelta.x, rt.position.y - rt.pivot.y * rt.sizeDelta.y);
-        //Vector2 topRight = new Vector2(rt.position.x + (1 - rt.anchorMin.x) * rt.sizeDelta.x, rt.position.y + (1 - rt.anchorMin.x) * rt.sizeDelta.y);
-        //Vector2 vpbl = Camera.main.ViewportToWorldPoint(bottomLeft);
-        //Vector2 vptr = Camera.main.ViewportToWorldPoint(topRight);
-        //float pxWidth = (topRight.x - vpbl.x) / rt.sizeDelta.x;
-        //float pxHeight = (topRight.y - vpbl.y) / rt.sizeDelta.y;
+        bool posScaleX = sprctrl.xscale > 0, posScaleY = sprctrl.yscale > 0;
+        //Apply horizontal negative scale
+        float radSprRot = Mathf.Deg2Rad * sprctrl.rotation * (posScaleX ? 1 : -1);
+        //Apply vertical negative scale
+        if (!posScaleY) radSprRot -= (radSprRot - Mathf.PI) * 2;
+        // Take in account the pivot and scale
+        float distFromPivotX = rt.pivot.x * rt.sizeDelta.x * (posScaleX ? 1 : -1) + (posScaleX ? 0 : rt.sizeDelta.x),
+              distFromPivotY = rt.pivot.y * rt.sizeDelta.y * (posScaleY ? 1 : -1) + (posScaleY ? 0 : rt.sizeDelta.y);
+        Vector2 bottomLeft = new Vector2(rt.position.x - Mathf.Cos(radSprRot) * distFromPivotX + Mathf.Sin(radSprRot) * distFromPivotY,
+                                         rt.position.y - Mathf.Sin(radSprRot) * distFromPivotX - Mathf.Cos(radSprRot) * distFromPivotY);
+
         //Modify particle placement to reform the original sprite, and put back into particle system
         int particleCount = 0;
-        bool xIncrement = sprctrl.xscale > 0, yIncrement = sprctrl.yscale > 0;
+
+        Vector2 movementPerHorzPix = new Vector2(Mathf.Cos(radSprRot),  Mathf.Sin(radSprRot));
+        Vector2 movementPerVertPix = new Vector2(-Mathf.Sin(radSprRot), Mathf.Cos(radSprRot));
+
+        float maxY = -9999, minY = 9999;
+        particlePos = new Vector2[xLength * yLength];
         for (int y = 0; y < yLength; y++) {
-            float REALY = yIncrement ? y / sprctrl.yscale : (y / sprctrl.yscale + sprite.texture.height - 1);
-            int realY = yIncrement ? Mathf.FloorToInt(REALY) : Mathf.CeilToInt(REALY);
-            float yFrac = (yLength - y) / (float)yLength;
+            float realY = posScaleY ? y / sprctrl.yscale : (y / sprctrl.yscale + sprite.texture.height - 1);
+            int usedY = posScaleY ? Mathf.FloorToInt(realY) : Mathf.CeilToInt(realY);
             for (int x = 0; x < xLength; x++) {
-                float REALX = xIncrement ? x / sprctrl.xscale : (x / sprctrl.xscale + sprite.texture.width - 1);
-                int realX = yIncrement ? Mathf.FloorToInt(REALX) : Mathf.CeilToInt(REALX);
-                Color c = sprite.texture.GetPixel(realX, realY);
-                if (c.a == 0.0f || (c.r + c.b + c.g) == 0.0f)
+                float realX = posScaleX ? x / sprctrl.xscale : (x / sprctrl.xscale + sprite.texture.width - 1);
+                int usedX = posScaleX ? Mathf.FloorToInt(realX) : Mathf.CeilToInt(realX);
+                Color c = sprite.texture.GetPixel(usedX, usedY);
+                if (c.a == 0.0f || c.r + c.b + c.g == 0.0f)
                     continue;
-                //particles[particleCount].position = new Vector3(vpbl.x + x * pxWidth, vpbl.y + y * pxHeight, -5.0f);
-                particles[particleCount].position = new Vector3(bottomLeft.x + Mathf.RoundToInt(REALX * sprctrl.xscale) + (xIncrement ? 0 : xLength),
-                                                                bottomLeft.y + Mathf.RoundToInt(REALY * sprctrl.yscale) + (yIncrement ? 0 : yLength), -5.0f);
-                particles[particleCount].startColor = c;
+
+                Vector2 pos = new Vector2(bottomLeft.x + x * movementPerHorzPix.x + y * movementPerVertPix.x,
+                                          bottomLeft.y + x * movementPerHorzPix.y + y * movementPerVertPix.y);
+                particles[particleCount].position = pos;
+                particlePos[particleCount] = pos;
+                particles[particleCount].startColor = c * GetComponent<Image>().color;
                 particles[particleCount].startSize = 1; // we have to assume a square aspect ratio for pixels here
-                particles[particleCount].remainingLifetime = yFrac * 1.5f + Random.value * 0.3f;
-                particles[particleCount].startLifetime = particles[particleCount].remainingLifetime;
                 particleCount++;
+
+                if (pos.y < minY) minY = pos.y;
+                if (pos.y > maxY) maxY = pos.y;
             }
         }
+
+        // Make so higher pixels are actiated first, no matter the rotation/scaling of the sprite
+        for (int y = 0; y < yLength; y++)
+            for (int x = 0; x < xLength; x++) {
+                if (particlePos[y * xLength + x].y == 0)
+                    continue;
+                particles[y * xLength + x].remainingLifetime = (maxY - particlePos[y * xLength + x].y) / (maxY - minY) * 1.5f + Random.value * 0.3f;
+                particles[y * xLength + x].startLifetime = particles[y * xLength + x].remainingLifetime;
+            }
+
         ps.SetParticles(particles, particleCount);
-        GetComponent<Image>().enabled = false;
-        //GameObject.Destroy(gameObject);
+        sprctrl.alpha = 0;
     }
 }

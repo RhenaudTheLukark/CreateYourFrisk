@@ -726,9 +726,11 @@ public class LuaSpriteController {
         go.transform.SetParent(UIController.instance.psContainer.transform);
         if (playDust)
             UnitaleUtil.PlaySound("DustSound", "enemydust");
-        img.GetComponent<ParticleDuplicator>().Activate(this);
-        if (img.gameObject.name == "player") return;
-        if (removeObject)
+        img.GetComponent<ParticleDuplicator>().Activate(this, go.GetComponent<ParticleSystem>());
+
+        go.transform.SetParent(img.transform.parent);
+        go.transform.SetSiblingIndex(img.transform.GetSiblingIndex() + 1);
+        if (removeObject && !img.GetComponent<PlayerController>())
             Remove();
     }
 
