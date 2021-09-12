@@ -23,3 +23,6 @@ Unity **2018.2+** due to new interface for ParticleSystemRender:
 
 ## License
 * MIT
+
+## Credits
+Made by [Kirill Belonogov](https://github.com/ken48).
