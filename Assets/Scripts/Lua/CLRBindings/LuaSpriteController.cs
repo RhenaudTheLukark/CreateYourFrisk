@@ -711,11 +711,13 @@ public class LuaSpriteController {
             return;
 
         if (!GlobalControls.retroMode) {
-            if (tag == "projectile")
+            if (tag == "projectile") {
                 img.GetComponent<Projectile>().ctrl.Remove();
+                return;
+            }
+
             if (img.gameObject.name == "player")
                 throw new CYFException("sprite.Remove(): You can't remove the Player's sprite!");
-            return;
         }
         if (tag == "enemy")
             throw new CYFException("sprite.Remove(): You can't remove an enemy's sprite!");
@@ -730,14 +732,9 @@ public class LuaSpriteController {
         if (tag == "enemy")
             throw new CYFException("sprite.Dust(): You can't dust an enemy's sprite!");
 
-        GameObject go = Object.Instantiate(Resources.Load<GameObject>("Prefabs/MonsterDuster"));
-        go.transform.SetParent(UIController.instance.psContainer.transform);
+        UnitaleUtil.Dust(img, this);
         if (playDust)
             UnitaleUtil.PlaySound("DustSound", "enemydust");
-        img.GetComponent<ParticleDuplicator>().Activate(this, go.GetComponent<ParticleSystem>());
-
-        go.transform.SetParent(img.transform.parent);
-        go.transform.SetSiblingIndex(img.transform.GetSiblingIndex() + 1);
         if (removeObject && !img.GetComponent<PlayerController>())
             Remove();
     }

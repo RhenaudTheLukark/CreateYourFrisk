@@ -320,6 +320,13 @@ public static class UnitaleUtil {
         return (string[])ListToArray(tempArray);
     }
 
+    public static void Dust(GameObject go, LuaSpriteController spr) {
+        GameObject dust = Object.Instantiate(Resources.Load<GameObject>("Prefabs/MonsterDuster"));
+        go.GetComponent<ParticleDuplicator>().Activate(spr, dust.GetComponent<ParticleSystem>());
+        dust.transform.SetParent(go.transform.parent);
+        dust.transform.SetSiblingIndex(go.transform.GetSiblingIndex() + 1);
+    }
+
     /// <summary>
     /// Check DynValues parameter's value types. DOESN'T WORK WITH MULTIDIMENSIONNAL ARRAYS!
     /// (For now it doesn't work with arrays at all :c)

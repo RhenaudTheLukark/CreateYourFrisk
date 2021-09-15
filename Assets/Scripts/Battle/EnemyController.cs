@@ -368,9 +368,7 @@ public class EnemyController : MonoBehaviour {
             return;
         UIController.instance.gold += Gold;
         UIController.instance.exp += XP;
-        GameObject go = Instantiate(Resources.Load<GameObject>("Prefabs/MonsterDuster"));
-        go.transform.SetParent(UIController.instance.psContainer.transform);
-        GetComponent<ParticleDuplicator>().Activate(sprite, go.GetComponent<ParticleSystem>());
+        UnitaleUtil.Dust(gameObject, sprite);
         SetActive(false);
         killed = true;
         if (playSound) UIController.PlaySoundSeparate("enemydust");
