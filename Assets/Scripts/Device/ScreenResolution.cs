@@ -155,7 +155,7 @@ public class ScreenResolution : MonoBehaviour {
     public static void BoxCameras(bool fullscreen) {
         //Grab the right camera to edit
         Camera cam;
-        if (GlobalControls.isInFight && (UIController.instance.encounter == null || !UIController.instance.encounter.gameOverStance))
+        if (GlobalControls.isInFight && UIController.instance != null && (UIController.instance.encounter == null || !UIController.instance.encounter.gameOverStance))
             cam = GameObject.Find("Main Camera").GetComponent<Camera>();
         else
             cam = Camera.main;
