@@ -152,13 +152,19 @@ it's w3c valid, at least
                 <br><span class="function"><span class="string"></span> Text.progressmode</span>
                 This value is used to set the progression mode of the text to one of the following values.
                 <ul>
-                    <li><span class="term">"auto"</span>: Makes the text start a new line after a  given number of frames
+                    <li><span class="term">"auto"</span>: Makes the text start a new line after a given number of frames
                     set in <span class="term">Text.SetAutoWaitTimeBetweenTexts()</span>.</li>
                     <li><span class="term">"manual"</span>: Makes the text require the player to press the Confirm button at
                     the end of each line.</li>
                     <li><span class="term">"none"</span>: With this option, you will need to manually display the next line
                     in-code using <span class="term">Text.NextLine()</span>.</li>
                 </ul>
+            </p>
+            <p>
+                <br><span class="new066 function"><span class="boolean"></span> Text.deleteWhenFinished</span>
+                This value is used to check whether the text object should be removed or not after the text is finished.
+                Its default value is <span class="term">true</span>, meaning the text object will be automatically removed after the end of the text.
+                You can set it to <span class="term">false</span> to automatically hide the text object once its text is complete, which allows you to reuse it later.
             </p>
             <p>
                 <br><span class="function"><span class="number"></span> Text.x</span>
