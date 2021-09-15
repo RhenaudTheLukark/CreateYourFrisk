@@ -26,6 +26,25 @@ public class LuaSpriteController {
     private KeyframeCollection.LoopMode loop = KeyframeCollection.LoopMode.LOOP;
     [MoonSharpHidden] public static MoonSharp.Interpreter.Interop.IUserDataDescriptor data = UserData.GetDescriptorForType<LuaSpriteController>(true);
 
+    public void Reset() {
+        removed = false;
+
+        internalRotation = Vector3.zero;
+        Scale(1, 1);
+        SetPivot(0.5f, 0.5f);
+        SetAnchor(0.5f, 0.5f);
+        img.GetComponent<Image>().color = new Color(1, 1, 1, 1);
+
+        Mask("OFF");
+        shader.Revert();
+
+        StopAnimation();
+        keyframes = null;
+        loop = KeyframeCollection.LoopMode.LOOP;
+
+        vars.Clear();
+    }
+
     // The name of the sprite
     public string spritename {
         get { return img.GetComponent<Image>() ? img.GetComponent<Image>().sprite.name : img.GetComponent<SpriteRenderer>().sprite.name; }
@@ -41,7 +60,7 @@ public class LuaSpriteController {
             return val;
         }
         set {
-            if (img.transform.parent.name == "SpritePivot")
+            if (img.transform.parent != null && img.transform.parent.name == "SpritePivot")
                 img.transform.parent.localPosition = new Vector3(value, img.transform.parent.localPosition.y, img.transform.parent.localPosition.z) - (Vector3)img.GetComponent<RectTransform>().anchoredPosition;
             else
                 img.GetComponent<RectTransform>().anchoredPosition = new Vector2(value, img.GetComponent<RectTransform>().anchoredPosition.y);
@@ -58,7 +77,7 @@ public class LuaSpriteController {
             return val;
         }
         set {
-            if (img.transform.parent.name == "SpritePivot")
+            if (img.transform.parent != null && img.transform.parent.name == "SpritePivot")
                 img.transform.parent.localPosition = new Vector3(img.transform.parent.localPosition.x, value, img.transform.parent.localPosition.z) - (Vector3)img.GetComponent<RectTransform>().anchoredPosition;
             else
                 img.GetComponent<RectTransform>().anchoredPosition = new Vector2(img.GetComponent<RectTransform>().anchoredPosition.x, value);
@@ -342,14 +361,13 @@ public class LuaSpriteController {
     /// Creates the instance of LuaSpriteController for the given GameObject or returns one if it already exists.
     /// </summary>
     /// <param name="go">GameObject to create a controller for.</param>
+    /// <param name="forceReset">Force the reset of the sprite object.</param>
     /// <returns>An instance of LuaSpriteController manipulating the Gameobject go.</returns>
-    public static LuaSpriteController GetOrCreate(GameObject go) {
+    public static LuaSpriteController GetOrCreate(GameObject go, bool forceReset = false) {
         // Fetch or add the GameObject's CYFSprite component, then retrieve its controller if it exists
         CYFSprite newSpr = go.GetComponent<CYFSprite>() ?? go.AddComponent<CYFSprite>();
-        if (newSpr.ctrl != null) return newSpr.ctrl;
-
-        // Otherwise, create a new controller
-        LuaSpriteController ctrl = new LuaSpriteController { spr = newSpr };
+        LuaSpriteController ctrl = newSpr.ctrl ?? new LuaSpriteController { spr = newSpr };
+        if (newSpr.ctrl != null && !forceReset) return ctrl;
         newSpr.ctrl = ctrl;
 
         // Images are used for most of CYF's sprites
@@ -411,7 +429,7 @@ public class LuaSpriteController {
     // Sets the pivot of a sprite (its rotation point)
     public void SetPivot(float x, float y) {
         img.GetComponent<RectTransform>().pivot = new Vector2(x, y);
-        if (img.transform.parent.name == "SpritePivot")
+        if (img.transform.parent != null && img.transform.parent.name == "SpritePivot")
             img.GetComponent<RectTransform>().localPosition = new Vector3(0, 0, 0);
     }
 
@@ -422,14 +440,14 @@ public class LuaSpriteController {
     }
 
     public void Move(float x, float y) {
-        if (img.transform.parent.name == "SpritePivot")
+        if (img.transform.parent != null && img.transform.parent.name == "SpritePivot")
             img.transform.parent.localPosition = new Vector3(x + this.x, y + this.y, img.transform.parent.localPosition.z) - (Vector3)img.GetComponent<RectTransform>().anchoredPosition;
         else
             img.GetComponent<RectTransform>().anchoredPosition = new Vector2(x + this.x, y + this.y);
     }
 
     public void MoveTo(float x, float y) {
-        if (img.transform.parent.name == "SpritePivot")
+        if (img.transform.parent != null && img.transform.parent.name == "SpritePivot")
             img.transform.parent.localPosition = new Vector3(x, y, img.transform.parent.localPosition.z) - (Vector3)img.GetComponent<RectTransform>().anchoredPosition;
         else
             img.GetComponent<RectTransform>().anchoredPosition = new Vector2(x, y);
@@ -647,15 +665,11 @@ public class LuaSpriteController {
             case "event":  throw new CYFException("sprite.Mask: Can not be applied to Overworld Event sprites.");
             case "letter": throw new CYFException("sprite.Mask: Can not be applied to Letter sprites.");
             default:       if (mode == null) throw new CYFException("sprite.Mask: No argument provided."); break;
-
         }
 
         MaskMode masked;
-        try {
-            masked = (MaskMode)Enum.Parse(typeof(MaskMode), mode, true);
-        } catch {
-            throw new CYFException("sprite.Mask: Invalid mask mode \"" + mode + "\".");
-        }
+        try { masked = (MaskMode)Enum.Parse(typeof(MaskMode), mode, true); }
+        catch { throw new CYFException("sprite.Mask: Invalid mask mode \"" + mode + "\"."); }
 
         if (masked != _masked) {
             //If children need to have their "inverted" property updated, then do so
@@ -666,25 +680,25 @@ public class LuaSpriteController {
                         childmask.inverted = (int)masked > 3;
                 }
             RectMask2D box = img.GetComponent<RectMask2D>();
-            Mask spr = img.GetComponent<Mask>();
+            Mask mask = img.GetComponent<Mask>();
 
             switch (masked) {
                 case MaskMode.BOX:
                     //Remove sprite mask if applicable
-                    spr.enabled = false;
+                    mask.enabled = false;
                     box.enabled = true;
                     break;
                 case MaskMode.OFF:
                     //Mask has been disabled
-                    spr.enabled = false;
+                    mask.enabled = false;
                     box.enabled = false;
                     break;
                 default:
                     //The mask mode now can't possibly be box, so remove box mask if applicable
-                    spr.enabled = true;
+                    mask.enabled = true;
                     box.enabled = false;
                     // Used to differentiate between "sprite" and "stencil"-like display modes
-                    spr.showMaskGraphic = masked == MaskMode.SPRITE || masked == MaskMode.INVERTEDSPRITE;
+                    mask.showMaskGraphic = masked == MaskMode.SPRITE || masked == MaskMode.INVERTEDSPRITE;
                     break;
             }
         }
@@ -695,22 +709,16 @@ public class LuaSpriteController {
     public void Remove() {
         if (removed)
             return;
-        if (!GlobalControls.retroMode && tag == "projectile") {
-            img.GetComponent<Projectile>().ctrl.Remove();
-            return;
-        }
 
-        bool throwError = false;
-        if ((!GlobalControls.retroMode && img.gameObject.name == "player") || (!GlobalControls.retroMode && tag == "projectile") || tag == "enemy") {
+        if (!GlobalControls.retroMode) {
+            if (tag == "projectile")
+                img.GetComponent<Projectile>().ctrl.Remove();
             if (img.gameObject.name == "player")
                 throw new CYFException("sprite.Remove(): You can't remove the Player's sprite!");
-            if (tag == "projectile") {
-                if (img.GetComponent<Projectile>().ctrl != null)
-                    if (img.GetComponent<Projectile>().ctrl.isactive) throwError = true;
-            } else                                                    throwError = true;
+            return;
         }
-        if (throwError)
-            throw new CYFException("sprite.Remove(): You can't remove a " + tag + "'s sprite!");
+        if (tag == "enemy")
+            throw new CYFException("sprite.Remove(): You can't remove an enemy's sprite!");
 
         UnitaleUtil.RemoveChildren(img);
         StopAnimation();
@@ -812,7 +820,7 @@ public class LuaSpriteController {
 
     private Transform GetTarget() {
         Transform target = img.transform;
-        if (img.transform.parent.name == "SpritePivot")
+        if (img.transform.parent != null && img.transform.parent.name == "SpritePivot")
             target = target.parent;
         return target;
     }
