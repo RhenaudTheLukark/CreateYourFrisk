@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class EnemyController : MonoBehaviour {
+    public GameObject bubbleObject;
     internal Sprite textBubbleSprite;
 
     internal Vector2 textBubblePos;

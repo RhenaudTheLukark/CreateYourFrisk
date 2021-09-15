@@ -560,6 +560,7 @@ public class UIController : MonoBehaviour {
                     speechBub.GetComponent<Image>().enabled = true;
                     if (encounter.EnabledEnemies[i].Voice != "")
                         sbTextMan.letterSound = encounter.EnabledEnemies[i].Voice;
+                    encounter.EnabledEnemies[i].bubbleObject = speechBub;
                 }
                 break;
 
@@ -615,8 +616,11 @@ public class UIController : MonoBehaviour {
     }
 
     public void UpdateBubble() {
-        for (int i = 0; i < encounter.EnabledEnemies.Length; i++) {
+        for (int i = 0; i < encounter.enemies.Count; i++) {
             try {
+                EnemyController enemy = encounter.enemies[i];
+                if (!enemy.bubbleObject)
+                    continue;
                 if (monsterDialogues[i] == null) {
                     readyToNextLine[i] = true;
                     continue;
@@ -627,26 +631,26 @@ public class UIController : MonoBehaviour {
                     continue;
                 }
 
-                GameObject speechBub = encounter.EnabledEnemies[i].transform.Find("DialogBubble(Clone)").gameObject;
+                GameObject speechBub = enemy.bubbleObject;
                 TextManager sbTextMan = speechBub.GetComponent<TextManager>();
-                sbTextMan._textMaxWidth = (int)encounter.EnabledEnemies[i].bubbleWidth;
+                sbTextMan._textMaxWidth = (int)enemy.bubbleWidth;
                 readyToNextLine[i] = false;
                 Image speechBubImg = speechBub.GetComponent<Image>();
                 speechBubImg.color = new Color(speechBubImg.color.r, speechBubImg.color.g, speechBubImg.color.b, sbTextMan.letterReferences.Count(ltr => ltr != null) == 0 ? 0 : 1);
 
-                SpriteUtil.SwapSpriteFromFile(speechBubImg, encounter.EnabledEnemies[i].DialogBubble, i);
+                SpriteUtil.SwapSpriteFromFile(speechBubImg, enemy.DialogBubble, i);
                 Sprite speechBubSpr = speechBubImg.sprite;
                 sbTextMan.SetOffset(speechBubSpr.border.x, -speechBubSpr.border.w);
 
-                bool reversedX = encounter.EnabledEnemies[i].sprite.xscale < 0,
-                     reversedY = encounter.EnabledEnemies[i].sprite.yscale < 0;
+                bool reversedX = enemy.sprite.xscale < 0,
+                     reversedY = enemy.sprite.yscale < 0;
                 speechBub.GetComponent<RectTransform>().anchorMin = speechBub.GetComponent<RectTransform>().anchorMax = new Vector2(0.5f, 0.5f);
-                speechBub.GetComponent<RectTransform>().anchoredPosition = new Vector3((encounter.EnabledEnemies[i].DialogBubblePosition.x + encounter.EnabledEnemies[i].offsets[1].x) * (reversedX ? -1 : 1),
-                                                                                       (encounter.EnabledEnemies[i].DialogBubblePosition.y + encounter.EnabledEnemies[i].offsets[1].y) * (reversedY ? -1 : 1));
-                if (encounter.EnabledEnemies[i].Voice != "")
-                    sbTextMan.letterSound = encounter.EnabledEnemies[i].Voice;
-            } catch {
-                throw new CYFException("Error while updating monster #" + i);
+                speechBub.GetComponent<RectTransform>().anchoredPosition = new Vector3((enemy.DialogBubblePosition.x + enemy.offsets[1].x) * (reversedX ? -1 : 1),
+                                                                                       (enemy.DialogBubblePosition.y + enemy.offsets[1].y) * (reversedY ? -1 : 1));
+                if (enemy.Voice != "")
+                    sbTextMan.letterSound = enemy.Voice;
+            } catch (Exception e) {
+                throw new CYFException("Error while updating monster #" + i + ": \n" + e.Message + "\n\n" + e.StackTrace);
             }
         }
     }
@@ -684,9 +688,9 @@ public class UIController : MonoBehaviour {
                 FileInfo fi = new FileInfo(FileLoader.PathToDefaultFile("Sprites/" + encounter.EnabledEnemies[index].DialogBubble + ".png"));
                 if (!fi.Exists)
                     fi = new FileInfo(FileLoader.PathToModFile("Sprites/" + encounter.EnabledEnemies[index].DialogBubble + ".png"));
-                if (!fi.Exists) {
-                    Debug.LogError("The bubble " + encounter.EnabledEnemies[index].DialogBubble + ".png doesn't exist.");
-                } else {
+                if (!fi.Exists)
+                    UnitaleUtil.Warn("The bubble " + encounter.EnabledEnemies[index].DialogBubble + ".png doesn't exist.");
+                else {
                     Sprite speechBubSpr = SpriteUtil.FromFile(encounter.EnabledEnemies[index].DialogBubble + ".png");
                     monsterDialogues[index].SetOffset(speechBubSpr.border.x, -speechBubSpr.border.w);
                 }
