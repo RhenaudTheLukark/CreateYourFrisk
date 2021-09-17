@@ -159,8 +159,8 @@ public class LuaPlayerStatus {
     }
 
     public float speed {
-        get { return player.soul.speed; }
-        set { player.soul.speed = value; }
+        get { return player.soul.realSpeed; }
+        set { player.soul.SetSpeed(value); }
     }
 
     public int lastenemychosen {
