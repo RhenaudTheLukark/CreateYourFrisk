@@ -286,7 +286,9 @@ public class EnemyEncounter : MonoBehaviour {
         if (sprite == null)
             throw new CYFException("You can't create a projectile with a nil sprite!");
         SpriteUtil.SwapSpriteFromFile(projectile, sprite);
-        projectile.name = sprite;
+        // TODO: Restore in 0.7
+        //projectile.name = sprite;
+        projectile.GetComponent<CYFSprite>().ctrl._spritename = sprite;
         projectile.owner = s;
         projectile.gameObject.SetActive(true);
         projectile.ctrl.MoveToAbs(xpos, ypos);

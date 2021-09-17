@@ -46,8 +46,11 @@ public class LuaSpriteController {
     }
 
     // The name of the sprite
+    [MoonSharpHidden] public string _spritename = "empty";
     public string spritename {
-        get { return img.GetComponent<Image>() ? img.GetComponent<Image>().sprite.name : img.GetComponent<SpriteRenderer>().sprite.name; }
+        // TODO: Restore in 0.7
+        //get { return img.GetComponent<Image>() ? img.GetComponent<Image>().sprite.name : img.GetComponent<SpriteRenderer>().sprite.name; }
+        get { return _spritename; }
     }
 
     // The x position of the sprite, relative to the arena position and its anchor.
@@ -400,7 +403,9 @@ public class LuaSpriteController {
         if (img.GetComponent<Image>()) {
             Image imgtemp = img.GetComponent<Image>();
             SpriteUtil.SwapSpriteFromFile(imgtemp, name);
-            if (!UnitaleUtil.IsOverworld) imgtemp.name = name;
+            // TODO: Restore in 0.7
+            //if (!UnitaleUtil.IsOverworld) imgtemp.name = name;
+            if (!UnitaleUtil.IsOverworld) _spritename = name;
             originalSprite = imgtemp.sprite;
             nativeSizeDelta = new Vector2(imgtemp.sprite.texture.width, imgtemp.sprite.texture.height);
         } else {
@@ -748,7 +753,9 @@ public class LuaSpriteController {
         Sprite s;
         if (k != null) {
             s = k.sprite;
-            if (!UnitaleUtil.IsOverworld) img.name = k.name;
+            // TODO: Restore in 0.7
+            //if (!UnitaleUtil.IsOverworld) img.name = k.name;
+            if (!UnitaleUtil.IsOverworld) _spritename = k.name;
         } else {
             StopAnimation();
             return;

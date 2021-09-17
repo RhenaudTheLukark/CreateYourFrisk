@@ -120,10 +120,15 @@ public static class SpriteUtil {
             childNumber = ParseUtil.GetInt(tag);
             tag = UnitaleUtil.IsOverworld ? "Default" : "BelowArena";
         }
+
         Image i = Object.Instantiate(SpriteRegistry.GENERIC_SPRITE_PREFAB);
+        LuaSpriteController sprCtrl;
         if (!string.IsNullOrEmpty(filename)) {
             SwapSpriteFromFile(i, filename);
-            if (!UnitaleUtil.IsOverworld) i.name = filename;
+            sprCtrl = LuaSpriteController.GetOrCreate(i.gameObject);
+            // TODO: Restore in 0.7
+            //if (!UnitaleUtil.IsOverworld) i.name = filename;
+            if (!UnitaleUtil.IsOverworld) sprCtrl._spritename = filename;
         } else
             throw new CYFException("You can't create a sprite object with a nil sprite!");
         if (!GameObject.Find(tag + "Layer") && tag != "none")
@@ -136,7 +141,7 @@ public static class SpriteUtil {
             if (childNumber != -1)
                 i.transform.SetSiblingIndex(childNumber - 1);
         }
-        return UserData.Create(LuaSpriteController.GetOrCreate(i.gameObject), LuaSpriteController.data);
+        return UserData.Create(sprCtrl, LuaSpriteController.data);
     }
 
     public static bool CreateLayer(string name, string relatedTag = "BasisNewest", bool before = false) {

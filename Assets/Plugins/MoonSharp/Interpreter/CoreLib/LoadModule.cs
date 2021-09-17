@@ -315,8 +315,9 @@ end";
 				return true;
 			} catch (Exception e) { error = "Mod path error: " + error + "\n\nDefault path error: " + e.Message; }
 
+			// TODO: Restore on 0.7
 			if (errorOnFailure)
-				throw new CYFException("Attempted to load " + baseFileName + " from either a mod or default directory, but it was missing in both.\n\n" + error);
+				throw new CYFException("Attempted to load " + baseFileName + " from either a mod or default directory, but it was missing in both."); //"\n\n" + error);
 			return false;
 		}
 
