@@ -920,7 +920,13 @@ public class TextManager : MonoBehaviour {
                 break;
 
             case "voice":
-                letterSound = cmds[1].ToLower() == "default" ? SpriteFontRegistry.UI_DEFAULT_NAME : cmds[1].ToLower();
+                if (cmds[1].ToLower() != "default") {
+                    try {
+                        AudioClipRegistry.GetVoice(cmds[1].ToLower());
+                        letterSound = cmds[1].ToLower();
+                    } catch (InterpreterException) { UnitaleUtil.Warn("The voice file " + cmds[1].ToLower() + " doesn't exist. Note that all sound files use lowercase letters only.", false); }
+                } else
+                    letterSound = SpriteFontRegistry.UI_DEFAULT_NAME;
                 break;
 
             case "instant":
