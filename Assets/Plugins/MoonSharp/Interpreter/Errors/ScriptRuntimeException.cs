@@ -20,7 +20,7 @@ namespace MoonSharp.Interpreter
 		public ScriptRuntimeException(Exception ex)
 			: base(ex)
 		{
-		}       
+		}
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ScriptRuntimeException"/> class.
@@ -146,8 +146,8 @@ namespace MoonSharp.Interpreter
 		/// </returns>
 		public static ScriptRuntimeException BadArgumentUserData(int argNum, string funcName, Type expected, object got, bool allowNil)
 		{
-			return new ScriptRuntimeException("bad argument #{0} to '{1}' (userdata<{2}>{3} expected, got {4})", 
-				argNum + 1, 
+			return new ScriptRuntimeException("bad argument #{0} to '{1}' (userdata<{2}>{3} expected, got {4})",
+				argNum + 1,
 				funcName,
 				expected.Name,
 				allowNil ? "nil or " : "",
@@ -193,7 +193,7 @@ namespace MoonSharp.Interpreter
 		/// <summary>
 		/// Creates a ScriptRuntimeException with a predefined error message specifying that
 		/// a function was called with no value when a value was required.
-		/// 
+		///
 		/// This function creates a message like "bad argument #xxx to 'yyy' (zzz expected, got no value)"
 		/// while <see cref="BadArgumentValueExpected" /> creates a message like "bad argument #xxx to 'yyy' (value expected)"
 		/// </summary>
@@ -506,8 +506,13 @@ namespace MoonSharp.Interpreter
 			return new ScriptRuntimeException("attempt to access instance member {0}.{1} from a static userdata", typeDescr.Name, desc.Name);
 		}
 
+		public static ScriptRuntimeException CallFromAnotherScript()
+		{
+			return new ScriptRuntimeException("Attempt to call a function from another script. Please use the \"script.Call()\" function instead.");
+		}
+
 		/// <summary>
-		/// Rethrows this instance if 
+		/// Rethrows this instance if
 		/// </summary>
 		/// <returns></returns>
 		public override void Rethrow()
