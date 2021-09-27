@@ -180,6 +180,8 @@ GameObject:
   - component: {fileID: 132697917}
   - component: {fileID: 132697916}
   - component: {fileID: 132697919}
+  - component: {fileID: 132697921}
+  - component: {fileID: 132697920}
   m_Layer: 5
   m_Name: HPLabel
   m_TagString: Untagged
@@ -255,6 +257,28 @@ MonoBehaviour:
   SpritePath: UI/spr_hpname_0
   Loop: 0
   done: 0
+--- !u!114 &132697920
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 132697915}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c7b8a91bf13f244b93c1a72a65984e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &132697921
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 132697915}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7bbc081086ab24d458b6c45dcf29bf75, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &141548671
 GameObject:
   m_ObjectHideFlags: 0
@@ -1070,6 +1094,20 @@ MonoBehaviour:
   needOnDeath: 0
   stateSwitched: 0
   battleDialogueStarted: 0
+  UIStates:
+  - NONE
+  - ACTIONSELECT
+  - ATTACKING
+  - DEFENDING
+  - ENEMYSELECT
+  - ACTMENU
+  - ITEMMENU
+  - MERCYMENU
+  - ENEMYDIALOGUE
+  - DIALOGRESULT
+  - DONE
+  - UNUSED
+  - PAUSE
   frozenState: 0
   frozenTimestamp: 0
 --- !u!1 &669874877
@@ -1605,6 +1643,8 @@ GameObject:
   - component: {fileID: 1304618332}
   - component: {fileID: 1304618333}
   - component: {fileID: 1304618331}
+  - component: {fileID: 1304618334}
+  - component: {fileID: 1304618335}
   m_Layer: 0
   m_Name: Background
   m_TagString: Untagged
@@ -1625,10 +1665,10 @@ RectTransform:
   m_Father: {fileID: 930260305}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 640, y: 480}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1304618331
 MonoBehaviour:
@@ -1673,6 +1713,28 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8da84050e7192c3478c338bc5a5df523, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1304618334
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1304618329}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c7b8a91bf13f244b93c1a72a65984e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1304618335
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1304618329}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7bbc081086ab24d458b6c45dcf29bf75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1306673875
