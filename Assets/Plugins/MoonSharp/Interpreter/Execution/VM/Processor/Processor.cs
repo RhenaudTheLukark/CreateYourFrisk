@@ -70,7 +70,7 @@ namespace MoonSharp.Interpreter.Execution.VM
 				}
 				catch (ArgumentOutOfRangeException)
 				{
-					ScriptRuntimeException e = new ScriptRuntimeException("Tried to call a function from another script.\nPlease go through \"script.Call\" to do such a thing.");
+					ScriptRuntimeException e = ScriptRuntimeException.CallFromAnotherScript();
 					FillDebugData(e, entrypoint);
 					throw e;
 				}
