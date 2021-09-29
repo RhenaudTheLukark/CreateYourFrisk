@@ -67,23 +67,8 @@ public static class Inventory {
         return type;
     }
 
-    private static void CallOnSelf(string func, DynValue[] param = null) {
-        if (param != null) TryCall(func, param);
-        else               TryCall(func);
-    }
-
     public static bool TryCall(string func, DynValue[] param = null) {
-        if (UnitaleUtil.IsOverworld) return false;
-        try {
-            if (EnemyEncounter.script.GetVar(func) == null)
-                return false;
-            if (param != null)  EnemyEncounter.script.Call(func, param);
-            else                EnemyEncounter.script.Call(func);
-            return true;
-        } catch (InterpreterException ex) {
-            UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message);
-            return true;
-        }
+        return !UnitaleUtil.IsOverworld && UnitaleUtil.TryCall(EnemyEncounter.script, func, param);
     }
 
     public static void UseItem(int ID) {
@@ -93,7 +78,7 @@ public static class Inventory {
         //bool inverseRemove = false;
         int type = inventory[ID].Type;
         float amount;
-        CallOnSelf("HandleItem", new[] { DynValue.NewString(Name.ToUpper()), DynValue.NewNumber(ID + 1) });
+        TryCall("HandleItem", new[] { DynValue.NewString(Name.ToUpper()), DynValue.NewNumber(ID + 1) });
 
         TextMessage[] mess = { };
         if (addedItems.Count != 0) {
@@ -399,6 +384,7 @@ public static class Inventory {
                         mess = new[] { new TextMessage(sentenceSalad + HPRecoverString(amount), true, false) };
                         break;
                     case "Instant Noodles":
+                        amount = GlobalControls.isInFight ? 4 : 15;
                         mess = new[] { new TextMessage("You remove the Instant\rNoodles from their\rpackaging.", true, false),
                                        new TextMessage("You put some water in\rthe pot and place it\ron the heat.", true, false),
                                        new TextMessage("You wait for the water\rto boil...", true, false),
@@ -414,7 +400,8 @@ public static class Inventory {
                                        new TextMessage("You add the flavor packet.", true, false),
                                        new TextMessage("That's better.", true, false),
                                        new TextMessage("Not great,[w:5] but better.", true, false),
-                                       new TextMessage("[music:unpause]You ate the Instant Noodles." + HPRecoverString(amount), true, false) };
+                                       new TextMessage("[music:unpause][health:" + amount + "]You ate the Instant Noodles." + HPRecoverString(amount), true, false) };
+                        amount = 0;
                         break;
                     case "Hot Dog...?":
                         amount = 20;

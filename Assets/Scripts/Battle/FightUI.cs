@@ -60,8 +60,6 @@ public class FightUI : MonoBehaviour {
         lifeBar.transform.SetParent(enemy.transform);
         damageText.transform.SetParent(enemy.transform);
         slice.img.transform.SetParent(enemy.transform);
-        enePos = enemy.GetComponent<RectTransform>().position;
-        eneSize = enemy.GetComponent<RectTransform>().sizeDelta;
         shakeTimer = 0;
     }
 
@@ -85,23 +83,18 @@ public class FightUI : MonoBehaviour {
         if (Damage != FightUIController.DAMAGE_NOT_SET)
             Damage = 0;
         Damage = FightUIController.instance.getDamage(enemy, PlayerController.instance.lastHitMult);
-        enePos = enemy.GetComponent<RectTransform>().position;
-        eneSize = enemy.GetComponent<RectTransform>().sizeDelta;
         lifeBar.transform.SetParent(enemy.transform);
         damageText.transform.SetParent(enemy.transform);
         slice.img.transform.SetParent(enemy.transform);
-        /*Vector3 slicePos = new Vector3(enemy.GetComponent<RectTransform>().position.x + enemy.offsets[0].x,
-                                       enemy.GetComponent<RectTransform>().position.y + eneSize.y / 2 + enemy.offsets[0].y - 55, enemy.GetComponent<RectTransform>().position.z);*/
     }
 
     public void StopAction(float atkMult) {
         PlayerController.instance.lastHitMult = FightUIController.instance.getAtkMult();
         bool damagePredefined = Damage != FightUIController.DAMAGE_NOT_SET;
         stopped = true;
-        enemy.TryCall("BeforeDamageCalculation");
+        UnitaleUtil.TryCall(enemy.script, "BeforeDamageCalculation");
         if (!damagePredefined)
             Damage = FightUIController.instance.getDamage(enemy, atkMult);
-        UpdateSlicePos();
         //slice.StopAnimation();
         slice.SetAnimation(sliceAnim, sliceAnimFrequency);
         slice.loopmode = "ONESHOT";
@@ -110,8 +103,12 @@ public class FightUI : MonoBehaviour {
     // Update is called once per frame
     private void Update() {
         // do not update the attack UI if the ATTACKING state is frozen
-        if (UIController.instance.frozenState != UIController.UIState.PAUSE)
+        if (UIController.instance.frozenState != "PAUSE")
             return;
+
+        eneSize = enemy.GetComponent<RectTransform>().sizeDelta;
+        enePos = new Vector2(enemy.GetComponent<RectTransform>().position.x - eneSize.x * (Mathf.Abs(enemy.sprite.xpivot) - 0.5f) * Mathf.Sign(enemy.sprite.xscale),
+                             enemy.GetComponent<RectTransform>().position.y - eneSize.y * (Mathf.Abs(enemy.sprite.ypivot) - 0.5f) * Mathf.Sign(enemy.sprite.yscale));
 
         if (shakeInProgress) {
             int shakeidx = (int)Mathf.Floor(shakeTimer * shakeX.Length / totalShakeTime);
@@ -128,17 +125,17 @@ public class FightUI : MonoBehaviour {
                 #endif*/
             }
             if (shakeTimer < 1.5f)
-                damageTextRt.localPosition = new Vector2(damageTextRt.localPosition.x, enemy.offsets[2].y + 40 * (2 + Mathf.Sin(shakeTimer * Mathf.PI * 0.75f)));
+                damageTextRt.position = new Vector2(damageTextRt.position.x, enePos.y - eneSize.y / 2 + enemy.offsets[2].y + 40 * (2 + Mathf.Sin(shakeTimer * Mathf.PI * 0.75f)));
             shakeTimer += Time.deltaTime;
             if (shakeTimer >= totalShakeTime)
                 shakeInProgress = false;
-        } else if ((slice.animcomplete &&!slice.img.GetComponent<KeyframeCollection>().enabled && stopped &&!showedup) || needAgain) {
+        } else if (((!slice.isactive || slice.animcomplete && !slice.img.GetComponent<KeyframeCollection>().enabled) && stopped &&!showedup) || needAgain) {
             needAgain = true;
             if (!wait1frame) {
                 wait1frame = true;
                 slice.StopAnimation();
                 slice.Set("empty");
-                enemy.TryCall("BeforeDamageValues", new[] { DynValue.NewNumber(Damage) });
+                UnitaleUtil.TryCall(enemy.script, "BeforeDamageValues", new[] { DynValue.NewNumber(Damage) });
                 if (Damage > 0) {
                     AudioSource aSrc = GetComponent<AudioSource>();
                     aSrc.clip = AudioClipRegistry.GetSound("hitsound");
@@ -153,13 +150,13 @@ public class FightUI : MonoBehaviour {
                 else                                   damageTextStr = "[color:00ff00]" + Damage;
                 damageTextRt.localPosition = new Vector3(0, 0, 0);
                 damageText.SetText(new TextMessage(damageTextStr, false, true));
-                damageTextRt.localPosition = new Vector3(-UnitaleUtil.CalcTextWidth(damageText)/2 + enemy.offsets[2].x, 40 + enemy.offsets[2].y);
+                damageTextRt.position = new Vector3(enePos.x - UnitaleUtil.CalcTextWidth(damageText) / 2 + enemy.offsets[2].x, enePos.y - eneSize.y / 2 + 40 + enemy.offsets[2].y);
 
                 // initiate lifebar and set lerp to its new health value
                 if (Damage != 0) {
                     int newHP = enemy.HP - Damage;
                     try {
-                        lifeBar.GetComponent<RectTransform>().localPosition = new Vector2(enemy.offsets[2].x, 20 + enemy.offsets[2].y);
+                        lifeBar.GetComponent<RectTransform>().position = new Vector2(enePos.x + enemy.offsets[2].x, enePos.y - eneSize.y / 2 + 20 + enemy.offsets[2].y);
                         lifeBar.GetComponent<RectTransform>().sizeDelta = new Vector2(enemy.GetComponent<RectTransform>().rect.width, 13);
                         lifeBar.whenDamageValue = enemy.GetComponent<RectTransform>().rect.width;
                         lifeBar.setInstant(enemy.HP < 0 ? 0 : enemy.HP / (float)enemy.MaxHP);
@@ -177,15 +174,9 @@ public class FightUI : MonoBehaviour {
                 totalShakeTime = shakeX.Length * (1.5f / 8.0f);
                 showedup = true;
             }
-        } else if (!slice.animcomplete)
+        } else if (slice.isactive && !slice.animcomplete) {
             slice.img.gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(slice.img.GetComponent<Image>().sprite.rect.width, slice.img.GetComponent<Image>().sprite.rect.height);
-    }
-
-    private Vector3 CalculateSlicePos() {
-        return new Vector3(enemy.offsets[0].x, eneSize.y / 2 + enemy.offsets[0].y - 55, 0);
-    }
-
-    private void UpdateSlicePos() {
-        slice.img.GetComponent<RectTransform>().localPosition = CalculateSlicePos();
+            slice.img.GetComponent<RectTransform>().position = new Vector2(enePos.x + enemy.offsets[0].x, enePos.y + enemy.offsets[0].y);
+        }
     }
 }

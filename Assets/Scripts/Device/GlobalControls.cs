@@ -71,8 +71,10 @@ public class GlobalControls : MonoBehaviour {
 
         // Check if window scale has a stored preference that is a number
         if (LuaScriptBinder.GetAlMighty(null, "CYFWindowScale")      != null
-         && LuaScriptBinder.GetAlMighty(null, "CYFWindowScale").Type == DataType.Number)
-            ScreenResolution.windowScale = (int)LuaScriptBinder.GetAlMighty(null, "CYFWindowScale").Number;
+         && LuaScriptBinder.GetAlMighty(null, "CYFWindowScale").Type == DataType.Number) {
+            ScreenResolution.windowScale = (int) LuaScriptBinder.GetAlMighty(null, "CYFWindowScale").Number;
+            ScreenResolution.ResetAfterBattle();
+        }
 
         // Start Discord RPC (also checks for an AlMightyGlobal within)
         DiscordControls.Start();
@@ -93,14 +95,14 @@ public class GlobalControls : MonoBehaviour {
         /// Used to reposition the window in the middle of the screen after exiting fullscreen.
         /// </summary>
         /// <returns>All coroutines must return an IEnumerator object, don't mind it.</returns>
-        public static int fullscreenSwitch = 0;
+        public static int fullscreenSwitch;
+
         static IEnumerator RepositionWindow() {
             yield return new WaitForEndOfFrame();
-
             try {
-                Misc.MoveWindowTo((int)(Screen.currentResolution.width/2 - (Screen.width/2)), (int)(Screen.currentResolution.height/2 - (Screen.height/2)));
-            } catch {}
-        }
+                Misc.MoveWindowTo(Screen.currentResolution.width / 2 - Screen.width / 2, Screen.currentResolution.height / 2 - Screen.height / 2);
+            } catch { /* ignored */ }
+    }
     #endif
 
     /// <summary>
@@ -111,8 +113,7 @@ public class GlobalControls : MonoBehaviour {
         yield return new WaitForEndOfFrame();
 
         try {
-            ScreenResolution.lastMonitorWidth = Screen.currentResolution.width;
-            ScreenResolution.lastMonitorHeight = Screen.currentResolution.height;
+            ScreenResolution.lastMonitorSize = new Vector2(Screen.currentResolution.width, Screen.currentResolution.height);
         } catch { /* ignored */ }
     }
 
@@ -150,6 +151,7 @@ public class GlobalControls : MonoBehaviour {
             if (isInFight && EnemyEncounter.script.GetVar("unescape").Boolean && sceneName != "Error") return;
             // The Error scene can only be exited if we entered the mod through the mod selection screen
             if (sceneName == "Error" && !modDev) {
+                ScreenResolution.ResetAfterBattle();
                 UnitaleUtil.ExitOverworld();
                 SceneManager.LoadScene("Disclaimer");
                 DiscordControls.StartTitle();

@@ -91,7 +91,7 @@ public class FightUIController : MonoBehaviour {
     public void quickInit(int damage) { quickInit(new[] { damage }); }
     public void quickInit(int[] damage) {
         commonInit();
-        if (UIController.instance.state == UIController.UIState.ATTACKING) return;
+        if (UIController.instance.state == "ATTACKING") return;
         gameObject.GetComponent<Image>().enabled = false;
         targetRt.gameObject.SetActive(false);
         for (int i = 0; i < targetNumber; i++) {
@@ -164,7 +164,7 @@ public class FightUIController : MonoBehaviour {
     // Update is called once per frame
     private void Update() {
         // do not update the attack UI if the ATTACKING state is frozen
-        if (UIController.instance.frozenState != UIController.UIState.PAUSE)
+        if (UIController.instance.frozenState != "PAUSE")
             return;
 
         if (ArenaManager.instance.firstTurn) return;
@@ -187,6 +187,7 @@ public class FightUIController : MonoBehaviour {
             if (resizeProg != 0.0f) return;
             while (boundFightUiInstances.Count != 0) {
                 allFightUiInstances.Remove(boundFightUiInstances[boundFightUiInstances.Count - 1]);
+                boundFightUiInstances[boundFightUiInstances.Count - 1].slice.Remove();
                 Destroy(boundFightUiInstances[boundFightUiInstances.Count - 1].lifeBar.gameObject);
                 Destroy(boundFightUiInstances[boundFightUiInstances.Count - 1].damageText.gameObject);
                 Destroy(boundFightUiInstances[boundFightUiInstances.Count - 1].gameObject);
@@ -205,7 +206,7 @@ public class FightUIController : MonoBehaviour {
                 initFade();
         }
 
-        if (stopped)
+        if (stopped || UIController.instance.state != "ATTACKING")
             return;
 
         float mv = xSpeed * Time.deltaTime;

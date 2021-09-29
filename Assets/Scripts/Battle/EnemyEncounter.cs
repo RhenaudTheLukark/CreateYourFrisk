@@ -57,6 +57,7 @@ public class EnemyEncounter : MonoBehaviour {
             script.Bind("CreateProjectileAbs", (Func<Script, string, float, float, string, DynValue>)CreateProjectileAbs);
             script.Bind("SetButtonLayer", (Action<string>)LuaScriptBinder.SetButtonLayer);
             script.Bind("CreateEnemy", (Func<string, float, float, DynValue>)CreateEnemy);
+            script.Bind("Flee", (Action)Flee);
             return true;
         }
     }
@@ -77,31 +78,18 @@ public class EnemyEncounter : MonoBehaviour {
         return UserData.Create(enemyController.script);
     }
 
-    public bool CallOnSelfOrChildren(string func, DynValue[] param = null) {
-        bool result = param != null ? TryCall(func, param) : TryCall(func);
-
-        if (result) return true;
-        bool calledOne = false;
-        foreach (EnemyController enemy in enemies) {
-            if (param != null) {
-                if (enemy.TryCall(func, param))
-                    calledOne = true;
-            } else if (enemy.TryCall(func))
-                calledOne = true;
-        }
-        return calledOne;
+    public void Flee() {
+        StartCoroutine(UIController.instance.ISuperFlee());
     }
 
-    public bool TryCall(string func, DynValue[] param = null) {
-        try {
-            if (script.GetVar(func) == null) return false;
-            if (param != null)               script.Call(func, param);
-            else                             script.Call(func);
-            return true;
-        } catch (InterpreterException ex) {
-            UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message);
-            return true;
-        }
+    public bool CallOnSelfOrChildren(string func, DynValue[] param = null) {
+        if (UnitaleUtil.TryCall(script, func, param)) return true;
+
+        bool calledOne = false;
+        foreach (EnemyController enemy in enemies)
+            if (UnitaleUtil.TryCall(enemy.script, func, param))
+                calledOne = true;
+        return calledOne;
     }
 
     public EnemyController[] EnabledEnemies {
@@ -298,7 +286,9 @@ public class EnemyEncounter : MonoBehaviour {
         if (sprite == null)
             throw new CYFException("You can't create a projectile with a nil sprite!");
         SpriteUtil.SwapSpriteFromFile(projectile, sprite);
-        projectile.name = sprite;
+        // TODO: Restore in 0.7
+        //projectile.name = sprite;
+        projectile.GetComponent<CYFSprite>().ctrl._spritename = sprite;
         projectile.owner = s;
         projectile.gameObject.SetActive(true);
         projectile.ctrl.MoveToAbs(xpos, ypos);

@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class EnemyController : MonoBehaviour {
+    public GameObject bubbleObject;
     internal Sprite textBubbleSprite;
 
     internal Vector2 textBubblePos;
@@ -16,11 +17,11 @@ public class EnemyController : MonoBehaviour {
         get {
             Sprite diagBubbleSpr = SpriteRegistry.Get(DialogBubble);
             RectTransform t = GetComponent<RectTransform>();
-            if (diagBubbleSpr.name.StartsWith("right"))        textBubblePos = new Vector2(t.rect.width + 5, (-t.rect.height + diagBubbleSpr.rect.height) / 2);
-            else if (diagBubbleSpr.name.StartsWith("left"))    textBubblePos = new Vector2(-diagBubbleSpr.rect.width - 5, (-t.rect.height + diagBubbleSpr.rect.height) / 2);
-            else if (diagBubbleSpr.name.StartsWith("top"))     textBubblePos = new Vector2((t.rect.width - diagBubbleSpr.rect.width) / 2, diagBubbleSpr.rect.height + 5);
-            else if (diagBubbleSpr.name.StartsWith("bottom"))  textBubblePos = new Vector2((t.rect.width - diagBubbleSpr.rect.width) / 2, -t.rect.height - 5);
-            else                                               textBubblePos = new Vector2(t.rect.width + 5, (t.rect.height - diagBubbleSpr.rect.height) / 2); // rightside default
+            if (diagBubbleSpr.name.StartsWith("right"))        textBubblePos = new Vector2(t.rect.width / 2 + 5,                             diagBubbleSpr.rect.height / 2);
+            else if (diagBubbleSpr.name.StartsWith("left"))    textBubblePos = new Vector2(-t.rect.width / 2 - diagBubbleSpr.rect.width - 5, diagBubbleSpr.rect.height / 2);
+            else if (diagBubbleSpr.name.StartsWith("top"))     textBubblePos = new Vector2(-diagBubbleSpr.rect.width / 2,                    t.rect.height / 2 + diagBubbleSpr.rect.height + 5);
+            else if (diagBubbleSpr.name.StartsWith("bottom"))  textBubblePos = new Vector2(-diagBubbleSpr.rect.width / 2,                    -t.rect.height / 2 - 5);
+            else                                               textBubblePos = new Vector2(t.rect.width / 2 + 5,                             diagBubbleSpr.rect.height / 2); // rightside default
             return textBubblePos;
         }
     }
@@ -259,8 +260,8 @@ public class EnemyController : MonoBehaviour {
             script.Bind("SetSprite", (Action<string>)SetSprite);
             script.Bind("SetActive", (Action<bool>)SetActive);
             script.Bind("isactive", DynValue.NewBoolean(true));
-            script.Bind("Kill", (Action)DoKill);
-            script.Bind("Spare", (Action)DoSpare);
+            script.Bind("Kill", (Action<bool>)DoKill);
+            script.Bind("Spare", (Action<bool>)DoSpare);
             script.Bind("Move", (Action<float, float>)Move);
             script.Bind("MoveTo", (Action<float, float>)MoveTo);
             script.Bind("BindToArena", (Action<bool, bool>)BindToArena);
@@ -294,7 +295,7 @@ public class EnemyController : MonoBehaviour {
         catch (Exception ex)            { UnitaleUtil.DisplayLuaError(scriptName, "Unknown error. Usually means you're missing a sprite.\nSee documentation for details.\nStacktrace below in case you wanna notify a dev.\n\nError: " + ex.Message + "\n\n" + ex.StackTrace); }
     }
 
-    public void HandleAttack(int hitStatus) { TryCall("HandleAttack", new[] { DynValue.NewNumber(hitStatus) }); }
+    public void HandleAttack(int hitStatus) { UnitaleUtil.TryCall(script, "HandleAttack", new[] { DynValue.NewNumber(hitStatus) }); }
 
     public string[] GetDefenseDialog() {
         DynValue dialogues = script.GetVar("currentdialogue");
@@ -312,20 +313,8 @@ public class EnemyController : MonoBehaviour {
         return dialogueStrings;
     }
 
-    public bool TryCall(string func, DynValue[] param = null) {
-        try {
-            DynValue sval = script.GetVar(func);
-            if (sval == null || sval.Type == DataType.Nil) return false;
-            if (param != null)                             script.Call(func, param);
-            else                                           script.Call(func);
-            return true;
-        }
-        catch (InterpreterException ex) { UnitaleUtil.DisplayLuaError(scriptName, UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message); }
-        return true;
-    }
-
     protected void HandleCustomCommand(string command) {
-        TryCall("HandleCustomCommand", new[] { DynValue.NewString(command) });
+        UnitaleUtil.TryCall(script, "HandleCustomCommand", new[] { DynValue.NewString(command) });
     }
 
     public void Remove() {
@@ -347,7 +336,7 @@ public class EnemyController : MonoBehaviour {
     /// <summary>
     /// Call function to grey out enemy and pop the smoke particles, and mark it as spared.
     /// </summary>
-    public void DoSpare() {
+    public void DoSpare(bool playSound = true) {
         if (!inFight)
             return;
         UIController.instance.gold += Gold;
@@ -365,7 +354,7 @@ public class EnemyController : MonoBehaviour {
 
         // The actually relevant part of sparing code.
         GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.4f);
-        UIController.PlaySoundSeparate("enemydust");
+        if (playSound) UIController.PlaySoundSeparate("enemydust");
         SetActive(false);
         spared = true;
 
@@ -375,17 +364,15 @@ public class EnemyController : MonoBehaviour {
     /// <summary>
     /// Call function to turn enemy to dust and mark it as killed.
     /// </summary>
-    public void DoKill() {
+    public void DoKill(bool playSound = true) {
         if (!inFight)
             return;
         UIController.instance.gold += Gold;
         UIController.instance.exp += XP;
-        GameObject go = Instantiate(Resources.Load<GameObject>("Prefabs/MonsterDuster"));
-        go.transform.SetParent(UIController.instance.psContainer.transform);
-        GetComponent<ParticleDuplicator>().Activate(sprite);
+        UnitaleUtil.Dust(gameObject, sprite);
         SetActive(false);
         killed = true;
-        UIController.PlaySoundSeparate("enemydust");
+        if (playSound) UIController.PlaySoundSeparate("enemydust");
 
         UIController.instance.CheckAndTriggerVictory();
     }

@@ -43,18 +43,18 @@ it's w3c valid, at least
                     <li><a href="terms.html">Terminology</a></li>
                 <li class="li-header">API</li>
                     <li class="new066"><a href="api-text.html">Text commands</a></li>
-                    <li class="new"><a href="api-events.html">Game events</a></li>
+                    <li class="new066"><a href="api-events.html">Game events</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                     <li class="li-indent">Functions &amp; Objects:</li>
                         <li class="new066 li-indent"><a href="api-functions-main.html">Misc. Functions</a></li>
-                        <li class="li-indent new"><a href="api-functions-player.html">The Player Object</a></li>
+                        <li class="li-indent new066"><a href="api-functions-player.html">The Player Object</a></li>
                         <li class="li-indent"><a href="api-functions-script.html">The Script Object</a></li>
                         <li class="li-indent"><a href="api-functions-audio.html">The Audio Object</a></li>
                         <li class="li-indent"><a href="api-functions-newaudio.html"><span class="CYF"></span> The NewAudio Object</a></li>
                         <li class="li-indent"><a href="api-functions-input.html">The Input Object</a></li>
-                        <li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
+                        <li class="new066 li-indent"><a href="api-functions-time.html">The Time Object</a></li>
                         <li class="new066 li-indent"><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
-                        <li class="li-indent new"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
+                        <li class="new066 li-indent"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
                         <li class="li-indent new"><a href="api-functions-discord.html"><span class="CYF"></span> The Discord Object</a></li>
                         <li class="new066 li-indent"><a href="api-functions-waves.html">The Arena Object</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
@@ -458,15 +458,26 @@ it's w3c valid, at least
                 <span class="term">(0, 0)</span> is the bottom-left corner of the sprite, <span class="term">(1, 1)</span> is the top-right corner.
                 <br>
                 You can also have values outside the 0-1 range.
+                <br><br>
+                <b>NOTE:</b> The origin point of the sprite will change after the usage of this function, meaning moving the sprite to a given relative position
+                (through <span class="term">sprite.Move()</span>, <span class="term">sprite.x</span> or <span class="term">sprite.y</span>) will move the sprite
+                to a different position, centering the sprite's pivot on the new position.
             </p><br>
 
             <p>
                 <span class="function">sprite.SetAnchor(<span class="number"></span> x, <span class="number"></span> y)</span></span>
-                Changes the point a sprite anchors to when moving.
+                Changes the point a sprite anchors to when moving. Works much like <span class="term">sprite.SetPivot()</span>, except it takes the sprite's
+                parent in account.
                 <br><br>
                 Most useful when rescaling a parent sprite and making this child sprite stick to a certain edge of it.
                 <br>
                 <span class="term">x</span> and <span class="term">y</span> should be between 0 and 1.
+                <br><br>
+                <b>NOTE:</b> The origin point of the sprite will change after the usage of this function, meaning moving the sprite to a given relative position
+                (through <span class="term">sprite.Move()</span>, <span class="term">sprite.x</span> or <span class="term">sprite.y</span>) will move the sprite
+                to a different position, aka the current pivot of the sprite will now be moved relative to its parent. An anchor of
+                <span class="term">(0, 0)</span> means the sprite's pivot point will be on the bottom left corner of its parent's own sprite.<br>
+                If a sprite has no parent, then all layers span across the entire screen.
             </p><br>
 
             <p>

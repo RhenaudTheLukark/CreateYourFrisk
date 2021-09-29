@@ -20,8 +20,11 @@ public class LuaInputBinding {
 
     // X and Y position of the mouse
     // The X position of the mouse is taken from ScreenResolution so that the value is correct even if WideScreen is enabled
-    public int MousePosX { get { return (int)(ScreenResolution.mousePosition.x / ScreenResolution.displayedSize.x * 640); } }
-    public int MousePosY { get { return (int)(Input.mousePosition.y / ScreenResolution.displayedSize.y * 480); } }
+    public int MousePosX { get { return (int) (ScreenResolution.mousePosition.x / ScreenResolution.displayedSize.x * 640); } }
+    public int MousePosY { get { return (int) (ScreenResolution.mousePosition.y / ScreenResolution.displayedSize.y * 480); } }
+
+    public int MousePosAbsX { get { return (int) (Input.mousePosition.x / ScreenResolution.displayedSize.x * 640); } }
+    public int MousePosAbsY { get { return (int) (Input.mousePosition.y / ScreenResolution.displayedSize.y * 480); } }
 
     public bool isMouseInWindow {
         get {

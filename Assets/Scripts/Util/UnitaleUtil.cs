@@ -85,6 +85,7 @@ public static class UnitaleUtil {
         if (firstErrorShown)
             return;
         firstErrorShown = true;
+        ScreenResolution.ResetAfterBattle();
         ErrorDisplay.Message = (!DoNotDecorateMessage ? "error in script " + source + "\n\n" : "") + decoratedMessage;
         if (Application.isEditor) SceneManager.LoadSceneAsync("Error"); // prevents editor from crashing
         else                      SceneManager.LoadScene("Error");
@@ -317,6 +318,13 @@ public static class UnitaleUtil {
         }
         tempArray.Add(str.Substring(lastIndex, str.Length - lastIndex).Trim());
         return (string[])ListToArray(tempArray);
+    }
+
+    public static void Dust(GameObject go, LuaSpriteController spr) {
+        GameObject dust = Object.Instantiate(Resources.Load<GameObject>("Prefabs/MonsterDuster"));
+        go.GetComponent<ParticleDuplicator>().Activate(spr, dust.GetComponent<ParticleSystem>());
+        dust.transform.SetParent(go.transform.parent);
+        dust.transform.SetSiblingIndex(go.transform.GetSiblingIndex() + 1);
     }
 
     /// <summary>
@@ -627,5 +635,15 @@ public static class UnitaleUtil {
 
     public static bool IsSpecialAnnouncement(string str) {
         return str == "4eab1af3ab6a932c23b3cdb8ef618b1af9c02088";
+    }
+
+    public static bool TryCall(ScriptWrapper script, string func, DynValue param) { return TryCall(script, func, new[] { param }); }
+    public static bool TryCall(ScriptWrapper script, string func, DynValue[] param = null) {
+        try {
+            DynValue sval = script.GetVar(func);
+            if (sval == null || sval.Type == DataType.Nil) return false;
+            script.Call(func, param);
+        } catch (InterpreterException ex) { DisplayLuaError(script.scriptname, FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message); }
+        return true;
     }
 }

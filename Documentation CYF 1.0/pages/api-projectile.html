@@ -43,18 +43,18 @@ it's w3c valid, at least
                     <li><a href="terms.html">Terminology</a></li>
                 <li class="li-header">API</li>
                     <li class="new066"><a href="api-text.html">Text commands</a></li>
-                    <li class="new"><a href="api-events.html">Game events</a></li>
+                    <li class="new066"><a href="api-events.html">Game events</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                     <li class="li-indent">Functions &amp; Objects:</li>
                         <li class="new066 li-indent"><a href="api-functions-main.html">Misc. Functions</a></li>
-                        <li class="li-indent new"><a href="api-functions-player.html">The Player Object</a></li>
+                        <li class="li-indent new066"><a href="api-functions-player.html">The Player Object</a></li>
                         <li class="li-indent"><a href="api-functions-script.html">The Script Object</a></li>
                         <li class="li-indent"><a href="api-functions-audio.html">The Audio Object</a></li>
                         <li class="li-indent"><a href="api-functions-newaudio.html"><span class="CYF"></span> The NewAudio Object</a></li>
                         <li class="li-indent"><a href="api-functions-input.html">The Input Object</a></li>
-                        <li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
+                        <li class="new066 li-indent"><a href="api-functions-time.html">The Time Object</a></li>
                         <li class="new066 li-indent"><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
-                        <li class="li-indent new"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
+                        <li class="new066 li-indent"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
                         <li class="li-indent new"><a href="api-functions-discord.html"><span class="CYF"></span> The Discord Object</a></li>
                         <li class="new066 li-indent"><a href="api-functions-waves.html">The Arena Object</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
@@ -96,7 +96,7 @@ it's w3c valid, at least
             <p>Projectile management is, starting from 0.2.0, available from both the encounter and the wave scripts. As
                 a result it is now in its own section.</p>
             <p>
-                <br><span class="function"><span class="CYF"></span>CreateProjectileLayer(<span class="string"></span> name,
+                <br><span class="function"><span class="CYF"></span> CreateProjectileLayer(<span class="string"></span> name,
                 <span class="string"></span> position = "", <span class="boolean"></span> below = false) [E/W]</span>
                 Creates a layer named <span class="term">name</span> that projectiles can be placed in. To create your new projectile layer, you'll need to choose a pre-existing layer.
                 <br><br>
@@ -252,6 +252,26 @@ it's w3c valid, at least
                 Returns true if the player is colliding with the bullet.
                 <br><br>
                 Will use PPCollision (pixel-perfect collisions) if the bullet has PP enabled. See <span class="term">Bullet.ppcollision</span>.</li><br>
+            </p>
+            <p>
+                <br><span class="function"><span class="new066"></span><span class="CYF"></span> Bullet.OnHit</span>
+                This variable must receive a function, which can be done in two possible ways:
+            </p>
+            <div class="code-container">
+<pre class="brush: lua;">Bullet.OnHit = function(bullet)
+    -- Your code
+end
+</pre>
+            </div>
+            <div class="code-container">
+<pre class="brush: lua;">function Bullet.OnHit(bullet)
+    -- Your code
+end
+</pre>
+            </div>
+                If it has been assigned, this function will be run instead of the script's <span class="term">OnHit</span> function when the bullet collides with the Player.
+                <br><br>
+                The bullet and its <span class="term">OnHit</span> function must both be created in the same script.
             </p>
             <p>
                 <br><span class="function"><span class="CYF"></span> <span class="boolean"></span> Bullet.isPersistent = false</span>

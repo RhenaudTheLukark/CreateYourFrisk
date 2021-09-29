@@ -6,6 +6,8 @@ using MoonSharp.Interpreter;
 
 public class LuaTextManager : TextManager {
     private GameObject container;
+    private bool removed;
+    private bool hidden;
     private GameObject containerBubble;
     private RectTransform speechThing;
     private RectTransform speechThingShadow;
@@ -20,15 +22,14 @@ public class LuaTextManager : TextManager {
     private float xScale = 1;
     private float yScale = 1;
 
-    private bool autoDestroyed;
     public bool isactive {
-        get {
-            return container != null && containerBubble != null && speechThing != null && speechThingShadow != null && !autoDestroyed;
-        }
+        get { return !removed && !hidden; }
     }
 
     private enum BubbleSide { LEFT = 0, DOWN = 90, RIGHT = 180, UP = 270, NONE = -1 }
     private enum ProgressMode { AUTO, MANUAL, NONE }
+
+    public bool deleteWhenFinished = true;
 
     protected override void Awake() {
         base.Awake();
@@ -41,6 +42,7 @@ public class LuaTextManager : TextManager {
     }
 
     protected override void Update() {
+        if (hidden) return;
         base.Update();
 
         //Next line/EOF check
@@ -69,19 +71,21 @@ public class LuaTextManager : TextManager {
 
     // Used to test if a text object still exists.
     private void CheckExists() {
-        if (!isactive)
+        if (removed)
             throw new CYFException("Attempt to perform action on removed text object.");
     }
 
+    public void Remove() { DestroyText(); }
     public void DestroyText() {
-        if (!isactive)
-            throw new CYFException("Attempt to remove a removed text object.");
-        autoDestroyed = true;
+        CheckExists();
+        removed = true;
         Destroy(transform.parent.gameObject);
     }
 
-    // Shortcut to `DestroyText()`
-    public void Remove() { DestroyText(); }
+    [MoonSharpHidden] public void HideTextObject() {
+        SetText(DynValue.NewString(""));
+        hidden = true;
+    }
 
     private void ResizeBubble() {
         float effectiveBubbleHeight = bubbleHeight != -1 ? bubbleHeight < 16 ? 40 : bubbleHeight + 24 : UnitaleUtil.CalcTextHeight(this) < 16 ? 40 : UnitaleUtil.CalcTextHeight(this) + 24;
@@ -164,16 +168,24 @@ public class LuaTextManager : TextManager {
     }
 
     public float xscale {
-        get { return xScale; }
+        get {
+            CheckExists();
+            return xScale;
+        }
         set {
+            CheckExists();
             xScale = value;
             Scale(xScale, yScale);
         }
     }
 
     public float yscale {
-        get { return yScale; }
+        get {
+            CheckExists();
+            return yScale;
+        }
         set {
+            CheckExists();
             yScale = value;
             Scale(xScale, yScale);
         }
@@ -229,6 +241,7 @@ public class LuaTextManager : TextManager {
     }
 
     public void ResetColor(bool resetAlpha = false) {
+        CheckExists();
         Color c = fontDefaultColor;
         if (!resetAlpha) c.a = alpha;
 
@@ -247,6 +260,7 @@ public class LuaTextManager : TextManager {
     }
 
     public void ResetAlpha() {
+        CheckExists();
         Color c = currentColor;
         c.a = fontDefaultColor.a;
 
@@ -267,7 +281,10 @@ public class LuaTextManager : TextManager {
     [MoonSharpHidden] public bool hasAlphaBeenSet;
     // The color of the text. It uses an array of three floats between 0 and 1
     public float[] color {
-        get { return new[] { _color.r, _color.g, _color.b }; }
+        get {
+            CheckExists();
+            return new[] { _color.r, _color.g, _color.b };
+        }
         set {
             CheckExists();
             if (value == null)
@@ -296,7 +313,10 @@ public class LuaTextManager : TextManager {
     // The color of the text on a 32 bits format. It uses an array of three or four floats between 0 and 255
     public float[] color32 {
         // We need first to convert the Color into a Color32, and then get the values.
-        get { return new float[] { ((Color32)_color).r, ((Color32)_color).g, ((Color32)_color).b }; }
+        get {
+            CheckExists();
+            return new float[] { ((Color32)_color).r, ((Color32)_color).g, ((Color32)_color).b };
+        }
         set {
             CheckExists();
             if (value == null)
@@ -313,7 +333,10 @@ public class LuaTextManager : TextManager {
 
     // The alpha of the text. It is clamped between 0 and 1
     public float alpha {
-        get { return _color.a; }
+        get {
+            CheckExists();
+            return _color.a;
+        }
         set {
             CheckExists();
             color = new[] { _color.r, _color.g, _color.b, Mathf.Clamp01(value) };
@@ -323,7 +346,10 @@ public class LuaTextManager : TextManager {
 
     // The alpha of the text in a 32 bits format. It is clamped between 0 and 255
     public float alpha32 {
-        get { return ((Color32)_color).a; }
+        get {
+            CheckExists();
+            return ((Color32)_color).a;
+        }
         set {
             CheckExists();
             alpha = value / 255;
@@ -331,6 +357,7 @@ public class LuaTextManager : TextManager {
     }
 
     public DynValue GetLetters() {
+        CheckExists();
         Table table = new Table(null);
         int key = 0;
         foreach (Image i in letterReferences)
@@ -351,7 +378,10 @@ public class LuaTextManager : TextManager {
     }
 
     public bool allLinesComplete {
-        get { return AllLinesComplete(); }
+        get {
+            CheckExists();
+            return AllLinesComplete();
+        }
     }
 
     public void SetParent(LuaSpriteController parent) {
@@ -371,6 +401,9 @@ public class LuaTextManager : TextManager {
     }
 
     public void SetText(DynValue text) {
+        CheckExists();
+        hidden = false;
+
         // disable late start if SetText is used on the same frame the text is created
         lateStartWaiting = false;
 
@@ -421,7 +454,7 @@ public class LuaTextManager : TextManager {
         // Converts the text argument into a table if it's a simple string
         text = text.Type == DataType.String ? DynValue.NewTable(null, text) : text;
 
-        if (AllLinesComplete()) {
+        if (AllLinesComplete() || hidden) {
             SetText(text);
             return;
         }
@@ -475,6 +508,7 @@ public class LuaTextManager : TextManager {
     }
 
     public void ShowBubble(string side = null, DynValue position = null) {
+        CheckExists();
         bubble = true;
         containerBubble.SetActive(true);
         UpdateBubble();
@@ -539,6 +573,7 @@ public class LuaTextManager : TextManager {
 
     public override void SkipLine() {
         if (noSkip1stFrame) return;
+        CheckExists();
         if (GlobalControls.isInFight && EnemyEncounter.script.GetVar("playerskipdocommand").Boolean
          || UnitaleUtil.IsOverworld && (EventManager.instance.script != null && EventManager.instance.script.GetVar("playerskipdocommand").Boolean
          || GlobalControls.isInShop && GameObject.Find("Canvas").GetComponent<ShopScript>().script.GetVar("playerskipdocommand").Boolean))
@@ -550,7 +585,7 @@ public class LuaTextManager : TextManager {
     private void Advance() {
         NextLine();
         if (caller.script.Globals["OnTextAdvance"] == null || caller.script.Globals.Get("OnTextAdvance") == null) return;
-        try {caller.script.Call(caller.script.Globals["OnTextAdvance"], this, autoDestroyed); }
+        try {caller.script.Call(caller.script.Globals["OnTextAdvance"], this, removed); }
         catch (ScriptRuntimeException ex) { UnitaleUtil.DisplayLuaError(caller.scriptname, UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message, ex.DoNotDecorateMessage); }
     }
 
@@ -559,8 +594,8 @@ public class LuaTextManager : TextManager {
         if (AllLinesComplete() || currentLine + 1 == LineCount()) {
             if (bubble)
                 containerBubble.SetActive(false);
-            DestroyText();
-            autoDestroyed = true;
+            if (!deleteWhenFinished) HideTextObject();
+            else                     DestroyText();
         } else {
             ShowLine(++currentLine);
             if (bubble)

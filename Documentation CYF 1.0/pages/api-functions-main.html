@@ -43,18 +43,18 @@ it's w3c valid, at least
                     <li><a href="terms.html">Terminology</a></li>
                 <li class="li-header">API</li>
                     <li class="new066"><a href="api-text.html">Text commands</a></li>
-                    <li class="new"><a href="api-events.html">Game events</a></li>
+                    <li class="new066"><a href="api-events.html">Game events</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                     <li class="li-indent">Functions &amp; Objects:</li>
                         <li class="new066 li-indent active" style="margin-left:5px;">&gt; Misc. <br>Functions &lt;</li>
-                        <li class="li-indent new"><a href="api-functions-player.html">The Player Object</a></li>
+                        <li class="li-indent new066"><a href="api-functions-player.html">The Player Object</a></li>
                         <li class="li-indent"><a href="api-functions-script.html">The Script Object</a></li>
                         <li class="li-indent"><a href="api-functions-audio.html">The Audio Object</a></li>
                         <li class="li-indent"><a href="api-functions-newaudio.html"><span class="CYF"></span> The NewAudio Object</a></li>
                         <li class="li-indent"><a href="api-functions-input.html">The Input Object</a></li>
-                        <li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
+                        <li class="new066 li-indent"><a href="api-functions-time.html">The Time Object</a></li>
                         <li class="new066 li-indent"><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
-                        <li class="li-indent new"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
+                        <li class="new066 li-indent"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
                         <li class="li-indent new"><a href="api-functions-discord.html"><span class="CYF"></span> The Discord Object</a></li>
                         <li class="new066 li-indent"><a href="api-functions-waves.html">The Arena Object</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
@@ -236,6 +236,11 @@ end
             </div>
 
             <p>
+                <br><span class="function"><span class="new066"></span><span class="CYF"></span> CreateState(<span class="string"></span> name) [E/M/W]</span>
+				This function creates a custom state with the name <span class="term">name</span>, which will function like the NONE state. You cannot have two states with the same name.
+            </p>
+
+            <p>
                 <br><span class="function">State(<span class="string"></span> state_to_go_to) [E/M/W]</span>
                 A powerful function that immediately skips the battle to the specified state, rather than following the
                 default conventions. Below is a list of valid strings you can pass to it, what state you'll be going to
@@ -365,6 +370,11 @@ end</pre>
                 so you have to manage the table yourself by adding this new enemy script to it.
             </p>
 
+            <p>
+                <br><span class="function"><span class="new066"></span><span class="CYF"></span> Flee() [E/M/W]</span>
+                This function runs the fleeing sequence.
+            </p>
+
             <hr>
             <h4>Monster script functions</h4>
 
@@ -393,15 +403,17 @@ end</pre>
             </p>
 
             <p>
-                <br><span class="function">Kill() [M]</span>
+                <br><span class="function"><span class="new066"></span>Kill(<span class="boolean"></span> playSound = true) [M]</span>
                 Kills the monster immediately. If this was the last monster, the battle ends.<br>
-                Does NOT call the <span class="ref">Game Event</span> <span class="term">OnDeath</span>.
+                Does NOT call the <span class="ref">Game Event</span> <span class="term">OnDeath</span>.<br><br>
+                If <span class="term">playSound</span> is set to <span class="term">false</span>, the dusting sound will not be played.
             </p>
 
             <p>
-                <br><span class="function">Spare() [M]</span>
+                <br><span class="function"><span class="new066"></span>Spare(<span class="boolean"></span> playSound = true) [M]</span>
                 Spares the monster immediately. Similar to <span class="term">Kill()</span>, if this was the last monster, the battle ends.<br>
-                Does NOT call the <span class="ref">Game Event</span> <span class="term">OnDeath</span>.
+                Does NOT call the <span class="ref">Game Event</span> <span class="term">OnSpare</span>.<br><br>
+                If <span class="term">playSound</span> is set to <span class="term">false</span>, the sparing sound will not be played.
             </p>
 
             <p>

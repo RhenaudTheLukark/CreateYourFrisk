@@ -38,18 +38,18 @@ it's w3c valid, at least
                     <li><a href="terms.html">Terminology</a></li>
                 <li class="li-header">API</li>
                     <li class="new066"><a href="api-text.html">Text commands</a></li>
-                    <li class="new"><a href="api-events.html">Game events</a></li>
+                    <li class="new066"><a href="api-events.html">Game events</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                     <li class="li-indent">Functions &amp; Objects:</li>
                         <li class="new066 li-indent"><a href="api-functions-main.html">Misc. Functions</a></li>
-                        <li class="li-indent new"><a href="api-functions-player.html">The Player Object</a></li>
+                        <li class="li-indent new066"><a href="api-functions-player.html">The Player Object</a></li>
                         <li class="li-indent"><a href="api-functions-script.html">The Script Object</a></li>
                         <li class="li-indent"><a href="api-functions-audio.html">The Audio Object</a></li>
                         <li class="li-indent"><a href="api-functions-newaudio.html"><span class="CYF"></span> The NewAudio Object</a></li>
                         <li class="li-indent"><a href="api-functions-input.html">The Input Object</a></li>
-                        <li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
+                        <li class="new066 li-indent"><a href="api-functions-time.html">The Time Object</a></li>
                         <li class="new066 li-indent"><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
-                        <li class="li-indent new"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
+                        <li class="new066 li-indent"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
                         <li class="li-indent new"><a href="api-functions-discord.html"><span class="CYF"></span> The Discord Object</a></li>
                         <li class="new066 li-indent"><a href="api-functions-waves.html">The Arena Object</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
@@ -135,6 +135,17 @@ it's w3c valid, at least
                 <br><span class="function">Event.GetAnimHeader(<span class="string"></span> name) returns <span class="string"></span></span>
                 If the event given has a <span class="term">CYFAnimator</span> component, this will return its <span class="term">Special Header</span>
                 value.
+            </p>
+            <p>
+                <br><span class="function">Event.GetDirection(<span class="string"></span> name) returns <span class="number"></span></span>
+                If the event has a CYFAnimator component, this returns the direction the event is facing.<br>
+                Possible values:
+                <ul>
+                    <li><span class="term">2</span>: Down</li>
+                    <li><span class="term">4</span>: Left</li>
+                    <li><span class="term">6</span>: Right</li>
+                    <li><span class="term">8</span>: Up</li>
+                </ul>
             </p>
             <p>
                 <br><span class="function">Event.SetDirection(<span class="string"></span> name, <span class="number"></span> dir)</span>

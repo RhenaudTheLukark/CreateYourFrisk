@@ -88,7 +88,7 @@ public class PlayerController : MonoBehaviour {
     /// Contains a Soul type that affects what player movement does.
     /// Only the Red soul is used for now.
     /// </summary>
-    private AbstractSoul soul;
+    public AbstractSoul soul;
 
     /// <summary>
     /// True if the Player's defense should be taken in account when computing damage dealt to them, false otherwise.
@@ -173,7 +173,7 @@ public class PlayerController : MonoBehaviour {
         if (newhp <= 0) {
             deathEscape = false;
             if (GlobalControls.isInFight) {
-                UIController.instance.encounter.TryCall("BeforeDeath");
+                UnitaleUtil.TryCall(EnemyEncounter.script, "BeforeDeath");
                 if (deathEscape)
                     return;
 
@@ -421,7 +421,7 @@ public class PlayerController : MonoBehaviour {
         */
 
         // prevent player actions from working and the timer from decreasing, if the game is paused
-        if (UIController.instance.frozenState != UIController.UIState.PAUSE)
+        if (UIController.instance.frozenState != "PAUSE")
             return;
 
         // handle input and movement, unless control is overridden by the UI controller, for instance

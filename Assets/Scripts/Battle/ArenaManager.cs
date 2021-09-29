@@ -281,7 +281,7 @@ public class ArenaManager : MonoBehaviour {
         //    outer.position = new Vector3(320, 90, outer.position.z);
 
         // do not resize the arena if the state is frozen with PAUSE
-        if (UIController.instance.frozenState != UIController.UIState.PAUSE)
+        if (UIController.instance.frozenState != "PAUSE")
             return;
 
         if (currentWidth == desiredWidth && currentHeight == desiredHeight && currentX == desiredX && currentY == desiredY)

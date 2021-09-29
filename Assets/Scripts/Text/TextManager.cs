@@ -4,7 +4,6 @@ using System.Linq;
 using MoonSharp.Interpreter;
 using UnityEngine;
 using UnityEngine.UI;
-using Debug = System.Diagnostics.Debug;
 
 // TODO less code duplicate-y way of pulling commands out of the text.
 public class TextManager : MonoBehaviour {
@@ -372,7 +371,7 @@ public class TextManager : MonoBehaviour {
 
         // Move the text up a little if there are more than 3 lines so they can possibly fit in the arena
         if (!GlobalControls.retroMode && !UnitaleUtil.IsOverworld && UIController.instance && this == UIController.instance.mainTextManager) {
-            int     lines = (textQueue[line].Text.Split('\n').Length > 3 && (UIController.instance.state == UIController.UIState.ACTIONSELECT || UIController.instance.state == UIController.UIState.DIALOGRESULT)) ? 4 : 3;
+            int     lines = (textQueue[line].Text.Split('\n').Length > 3 && (UIController.instance.state == "ACTIONSELECT" || UIController.instance.state == "DIALOGRESULT")) ? 4 : 3;
             Vector3 pos   = self.localPosition;
 
             // remove the offset
@@ -921,7 +920,13 @@ public class TextManager : MonoBehaviour {
                 break;
 
             case "voice":
-                letterSound = cmds[1].ToLower() == "default" ? SpriteFontRegistry.UI_DEFAULT_NAME : cmds[1].ToLower();
+                if (cmds[1].ToLower() != "default") {
+                    try {
+                        AudioClipRegistry.GetVoice(cmds[1].ToLower());
+                        letterSound = cmds[1].ToLower();
+                    } catch (InterpreterException) { UnitaleUtil.Warn("The voice file " + cmds[1].ToLower() + " doesn't exist. Note that all sound files use lowercase letters only.", false); }
+                } else
+                    letterSound = SpriteFontRegistry.UI_DEFAULT_NAME;
                 break;
 
             case "instant":

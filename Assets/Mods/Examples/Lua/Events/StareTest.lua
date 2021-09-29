@@ -222,7 +222,7 @@ function Stare3(frame)
                 stare3DogLegsYScale = dogLegsSprite.yscale
             end
             -- Barking animation, sound and bouncing
-            Stare3Bark(frame, 60)
+            Stare3Bark(frame - 450, 60)
             Stare3Bounce(frame, true)
         -- Lowers the dog back to normal
         elseif frame >= 510 and frame < 590 then
@@ -621,7 +621,7 @@ function Stare6(frame)
                 if k == 2 then
                     Audio.PlaySound("BeginBattle1")
                 end
-                local spritename = sprite.spritename:sub(sprite.spritename:find("/[^/]*$") + 1)
+                local spritename = sprite.spritename:sub(sprite.spritename:find("[%/%\\][^%/%\\]*$") + 1)
                 sprite.StopAnimation()
                 sprite.Set(sprite["path"] .. "/" .. (math.floor(tonumber(spritename) / 4) * 4 + 1))
                 local surprise = CreateSprite("Overworld/EncounterBubble" .. (k == 2 and "Geno" or ""))

@@ -13,6 +13,9 @@ namespace MoonSharp.Interpreter.Execution.VM
 
 		internal long AutoYieldCounter = 0;
 
+		private bool exceptionHijack;
+		private int lastInstrPtr = 0;
+
 		private DynValue Processing_Loop(int instructionPtr)
 		{
 			// This is the main loop of the processor, has a weird control flow and needs to be as fast as possible.
@@ -25,6 +28,8 @@ namespace MoonSharp.Interpreter.Execution.VM
 
 			try
 			{
+				if (exceptionHijack)
+					throw ScriptRuntimeException.CallFromAnotherScript();
 				while (true)
 				{
 					Instruction i = m_RootChunk.Code[instructionPtr];
@@ -112,6 +117,7 @@ namespace MoonSharp.Interpreter.Execution.VM
 							break;
 						case OpCode.Call:
 						case OpCode.ThisCall:
+							lastInstrPtr = instructionPtr;
 							instructionPtr = Internal_ExecCall(i.NumVal, instructionPtr, null, null, i.OpCode == OpCode.ThisCall, i.Name);
 							if (instructionPtr == YIELD_SPECIAL_TRAP) goto yield_to_calling_coroutine;
 							break;
@@ -234,6 +240,7 @@ namespace MoonSharp.Interpreter.Execution.VM
 					}
 				}
 
+
 			yield_to_calling_coroutine:
 
 				DynValue yieldRequest = m_ValueStack.Pop().ToScalar();
@@ -245,6 +252,18 @@ namespace MoonSharp.Interpreter.Execution.VM
 				else
 					throw ScriptRuntimeException.CannotYield();
 
+			}
+			catch (NullReferenceException)
+			{
+				exceptionHijack = true;
+				instructionPtr = lastInstrPtr;
+				goto repeat_execution;
+			}
+			catch (ArgumentOutOfRangeException)
+			{
+				exceptionHijack = true;
+				instructionPtr = lastInstrPtr;
+				goto repeat_execution;
 			}
 			catch (InterpreterException ex)
 			{
@@ -701,12 +720,12 @@ namespace MoonSharp.Interpreter.Execution.VM
 			{
 				//IList<DynValue> args = new Slice<DynValue>(m_ValueStack, m_ValueStack.Count - argsCount, argsCount, false);
 				IList<DynValue> args = CreateArgsListForFunctionCall(argsCount, 0);
-		                // we expand tuples before callbacks
+						// we expand tuples before callbacks
 				// args = DynValue.ExpandArgumentsToList(args);
 
 				// instructionPtr - 1: instructionPtr already points to the next instruction at this moment
 				// but we need the current instruction here
-                		SourceRef sref = GetCurrentSourceRef(instructionPtr - 1);
+						SourceRef sref = GetCurrentSourceRef(instructionPtr - 1);
 
 				m_ExecutionStack.Push(new CallStackItem()
 				{
@@ -730,6 +749,8 @@ namespace MoonSharp.Interpreter.Execution.VM
 			}
 			else if (fn.Type == DataType.Function)
 			{
+				if (fn.Function.OwnerScript != m_Script)
+					throw ScriptRuntimeException.CallFromAnotherScript();
 				m_ValueStack.Push(DynValue.NewNumber(argsCount));
 				m_ExecutionStack.Push(new CallStackItem()
 				{
@@ -742,7 +763,7 @@ namespace MoonSharp.Interpreter.Execution.VM
 					Continuation = continuation,
 					ErrorHandlerBeforeUnwind = unwindHandler,
 					Flags = flags,
-                    Function = fn.Function
+					Function = fn.Function
 				});
 				return fn.Function.EntryPointByteCodeLocation;
 			}

@@ -127,11 +127,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4671881132980978, guid: a0add8308da8d24468328221253c3ec7, type: 2}
       propertyPath: m_LocalPosition.x
-      value: 490
+      value: 1140
       objectReference: {fileID: 0}
     - target: {fileID: 4671881132980978, guid: a0add8308da8d24468328221253c3ec7, type: 2}
       propertyPath: m_LocalPosition.y
-      value: 170
+      value: 280
       objectReference: {fileID: 0}
     - target: {fileID: 4671881132980978, guid: a0add8308da8d24468328221253c3ec7, type: 2}
       propertyPath: m_LocalPosition.z
@@ -330,7 +330,7 @@ Prefab:
     - target: {fileID: 114879940000294058, guid: a0add8308da8d24468328221253c3ec7,
         type: 2}
       propertyPath: eventTriggers.Array.data[2].x
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 114879940000294058, guid: a0add8308da8d24468328221253c3ec7,
         type: 2}
@@ -350,6 +350,30 @@ Prefab:
     - target: {fileID: 114879940000294058, guid: a0add8308da8d24468328221253c3ec7,
         type: 2}
       propertyPath: eventTriggers.Array.data[1].y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114879940000294058, guid: a0add8308da8d24468328221253c3ec7,
+        type: 2}
+      propertyPath: eventTriggers.Array.data[2].y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114879940000294058, guid: a0add8308da8d24468328221253c3ec7,
+        type: 2}
+      propertyPath: eventTriggers.Array.data[1].x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1649222073514108, guid: a0add8308da8d24468328221253c3ec7, type: 2}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114879940000294058, guid: a0add8308da8d24468328221253c3ec7,
+        type: 2}
+      propertyPath: actualPage
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 61614148327684554, guid: a0add8308da8d24468328221253c3ec7,
+        type: 2}
+      propertyPath: m_IsTrigger
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents:
