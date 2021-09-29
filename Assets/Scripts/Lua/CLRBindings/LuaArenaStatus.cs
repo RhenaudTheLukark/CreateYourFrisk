@@ -80,8 +80,4 @@ public class LuaArenaStatus {
         if (immediate) ArenaManager.instance.MoveToAndResizeImmediate(x, y, width, height, movePlayer);
         else           ArenaManager.instance.MoveToAndResize(x, y, width, height, movePlayer);
     }
-
-    public void SetSprite(string filename) {
-        ArenaManager.instance.innerSprite.Set(filename);
-    }
 }
