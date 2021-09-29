@@ -15,6 +15,8 @@ public class ArenaManager : MonoBehaviour {
     public static Vector2 arenaCenter; // arena center, updated here to save computation time on doing it per frame
     [HideInInspector]
     public static LuaArenaStatus luaStatus { get; private set; } // The Lua Arena object on the C# side
+    public LuaSpriteController innerSprite; // inner part's sprite
+    public LuaSpriteController outerSprite; // outer part's sprite
     public bool firstTurn = true, yup, falseInit;
 
     private RectTransform outer; // RectTransform of the slightly larger white box under the arena (it's the border).
@@ -42,6 +44,8 @@ public class ArenaManager : MonoBehaviour {
 
         inner = GameObject.Find("arena").GetComponent<RectTransform>();
         outer = inner.parent.GetComponent<RectTransform>();
+        innerSprite = LuaSpriteController.GetOrCreate(GameObject.Find("arena"));
+        outerSprite = LuaSpriteController.GetOrCreate(GameObject.Find("arena_border_outer"));
         /*outer = GameObject.Find("arena_border_outer").GetComponent<RectTransform>();
         inner = GameObject.Find("arena").GetComponent<RectTransform>();*/
         desiredWidth = currentWidth;
@@ -216,28 +220,16 @@ public class ArenaManager : MonoBehaviour {
     /// Makes the arena invisible, but it will stay active.
     /// </summary>
     public void Hide() {
-        inner.GetComponent<Image>().color = new Color(inner.GetComponent<Image>().color.r,
-                                                      inner.GetComponent<Image>().color.g,
-                                                      inner.GetComponent<Image>().color.b,
-                                                      0f);
-        outer.GetComponent<Image>().color = new Color(outer.GetComponent<Image>().color.r,
-                                                      outer.GetComponent<Image>().color.g,
-                                                      outer.GetComponent<Image>().color.b,
-                                                      0f);
+        inner.GetComponent<Image>().enabled = false;
+        outer.GetComponent<Image>().enabled = false;
     }
 
     /// <summary>
     /// Makes the arena visible, if it was previously set invisible with Hide().
     /// </summary>
     public void Show() {
-        inner.GetComponent<Image>().color = new Color(inner.GetComponent<Image>().color.r,
-                                                      inner.GetComponent<Image>().color.g,
-                                                      inner.GetComponent<Image>().color.b,
-                                                      1f);
-        outer.GetComponent<Image>().color = new Color(outer.GetComponent<Image>().color.r,
-                                                      outer.GetComponent<Image>().color.g,
-                                                      outer.GetComponent<Image>().color.b,
-                                                      1f);
+        inner.GetComponent<Image>().enabled = true;
+        outer.GetComponent<Image>().enabled = true;
     }
 
     /// <summary>
@@ -368,6 +360,5 @@ public class ArenaManager : MonoBehaviour {
         if (!firstTurn)
             MoveToImmediate(320, 90, false);
         Resize(UIWidth, UIHeight);
-        Show();
     }
 }

@@ -91,7 +91,9 @@ public static class LuaScriptBinder {
                 script.Globals["Encounter"] = EnemyEncounter.script;
 
             DynValue PlayerStatus = UserData.Create(PlayerController.luaStatus);
+            DynValue ArenaStatus = UserData.Create(ArenaManager.luaStatus);
             script.Globals.Set("Player", PlayerStatus);
+            script.Globals.Set("Arena", ArenaStatus);
         } else if (!GlobalControls.isInShop) {
             try {
                 DynValue PlayerOW = UserData.Create(EventManager.instance.luaPlayerOw);
