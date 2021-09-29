@@ -21,6 +21,7 @@ public class LuaTextManager : TextManager {
     private Color textColor;
     private float xScale = 1;
     private float yScale = 1;
+    [MoonSharpHidden] public bool autoSetLayer = true;
 
     public bool isactive {
         get { return !removed && !hidden; }
@@ -33,12 +34,17 @@ public class LuaTextManager : TextManager {
 
     protected override void Awake() {
         base.Awake();
-        if (!UnitaleUtil.IsOverworld)
+        if (!UnitaleUtil.IsOverworld && autoSetLayer)
             transform.parent.SetParent(GameObject.Find("TopLayer").transform);
         container = transform.parent.gameObject;
-        containerBubble = UnitaleUtil.GetChildPerName(container.transform, "BubbleContainer").gameObject;
-        speechThing = UnitaleUtil.GetChildPerName(containerBubble.transform, "SpeechThing", false, true).GetComponent<RectTransform>();
-        speechThingShadow = UnitaleUtil.GetChildPerName(containerBubble.transform, "SpeechThingShadow", false, true).GetComponent<RectTransform>();
+
+        Transform bubbleTransform = UnitaleUtil.GetChildPerName(container.transform, "BubbleContainer");
+
+        if (bubbleTransform != null) {
+            containerBubble = bubbleTransform.gameObject;
+            speechThing = UnitaleUtil.GetChildPerName(containerBubble.transform, "SpeechThing", false, true).GetComponent<RectTransform>();
+            speechThingShadow = UnitaleUtil.GetChildPerName(containerBubble.transform, "SpeechThingShadow", false, true).GetComponent<RectTransform>();
+        }
     }
 
     protected override void Update() {
@@ -584,6 +590,7 @@ public class LuaTextManager : TextManager {
 
     private void Advance() {
         NextLine();
+        if (caller == null) return;
         if (caller.script.Globals["OnTextAdvance"] == null || caller.script.Globals.Get("OnTextAdvance") == null) return;
         try {caller.script.Call(caller.script.Globals["OnTextAdvance"], this, removed); }
         catch (ScriptRuntimeException ex) { UnitaleUtil.DisplayLuaError(caller.scriptname, UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message, ex.DoNotDecorateMessage); }

@@ -7,10 +7,8 @@ using UnityEngine.UI;
 /// Attached to the Background object in the Battle scene.
 /// </summary>
 public class BackgroundLoader : MonoBehaviour {
-    private Image bgImage;
     // Use this for initialization
     private void Start() {
-        bgImage = GetComponent<Image>();
         LuaSpriteController sprite = LuaSpriteController.GetOrCreate(gameObject);
         try {
             sprite.Set("bg");
