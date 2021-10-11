@@ -68,8 +68,8 @@ public static class SpriteUtil {
         XmlNode xmlRect = spriteNode.SelectSingleNode("rect");
         Rect spriteRect = new Rect(0, 0, source.texture.width, source.texture.height);
         if (xmlRect != null && xmlRect.Attributes != null)
-                spriteRect = new Rect(int.Parse(xmlRect.Attributes["x"].Value), int.Parse(xmlRect.Attributes["y"].Value),
-                                      int.Parse(xmlRect.Attributes["w"].Value), int.Parse(xmlRect.Attributes["h"].Value));
+            spriteRect = new Rect(int.Parse(xmlRect.Attributes["x"].Value), int.Parse(xmlRect.Attributes["y"].Value),
+                                  int.Parse(xmlRect.Attributes["w"].Value), int.Parse(xmlRect.Attributes["h"].Value));
         XmlNode xmlBorder = spriteNode.SelectSingleNode("border");
         Vector4 spriteBorder = Vector4.zero;
         if (xmlBorder != null && xmlBorder.Attributes != null)

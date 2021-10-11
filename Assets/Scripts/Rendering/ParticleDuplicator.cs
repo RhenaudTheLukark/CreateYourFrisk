@@ -12,8 +12,8 @@ public class ParticleDuplicator : MonoBehaviour {
         bool hasImage = GetComponent<Image>();
         Sprite sprite = hasImage ? GetComponent<Image>().sprite : GetComponent<SpriteRenderer>().sprite;
 
-        int xLength = Mathf.FloorToInt(Mathf.Abs(sprctrl.xscale) * sprite.texture.width),
-            yLength = Mathf.FloorToInt(Mathf.Abs(sprctrl.yscale) * sprite.texture.height);
+        int xLength = Mathf.FloorToInt(Mathf.Abs(sprctrl.xscale) * sprite.rect.width),
+            yLength = Mathf.FloorToInt(Mathf.Abs(sprctrl.yscale) * sprite.rect.height);
         ps.transform.SetAsLastSibling();
 
         //Emit particles from particle system and retrieve into particles array
@@ -42,13 +42,14 @@ public class ParticleDuplicator : MonoBehaviour {
 
         float maxY = -9999, minY = 9999;
         particlePos = new Vector2[xLength * yLength];
+
         for (int y = 0; y < yLength; y++) {
-            float realY = posScaleY ? y / sprctrl.yscale : (y / sprctrl.yscale + sprite.texture.height - 1);
+            float realY = posScaleY ? y / sprctrl.yscale : (y / sprctrl.yscale + sprite.rect.height - 1);
             int usedY = posScaleY ? Mathf.FloorToInt(realY) : Mathf.CeilToInt(realY);
             for (int x = 0; x < xLength; x++) {
-                float realX = posScaleX ? x / sprctrl.xscale : (x / sprctrl.xscale + sprite.texture.width - 1);
+                float realX = posScaleX ? x / sprctrl.xscale : (x / sprctrl.xscale + sprite.rect.width - 1);
                 int usedX = posScaleX ? Mathf.FloorToInt(realX) : Mathf.CeilToInt(realX);
-                Color c = sprite.texture.GetPixel(usedX, usedY);
+                Color c = sprite.texture.GetPixel((int)sprite.rect.x + usedX, (int)sprite.rect.y + usedY) * GetComponent<Image>().color;
                 if (c.a == 0.0f || c.r + c.b + c.g == 0.0f)
                     continue;
 
@@ -56,7 +57,7 @@ public class ParticleDuplicator : MonoBehaviour {
                                           bottomLeft.y + x * movementPerHorzPix.y + y * movementPerVertPix.y);
                 particles[particleCount].position = pos;
                 particlePos[particleCount] = pos;
-                particles[particleCount].startColor = c * GetComponent<Image>().color;
+                particles[particleCount].startColor = c;
                 particles[particleCount].startSize = 1; // we have to assume a square aspect ratio for pixels here
                 particleCount++;
 
@@ -65,7 +66,7 @@ public class ParticleDuplicator : MonoBehaviour {
             }
         }
 
-        // Make so higher pixels are actiated first, no matter the rotation/scaling of the sprite
+        // Make so higher pixels are activated first, no matter the rotation/scaling of the sprite
         for (int y = 0; y < yLength; y++)
             for (int x = 0; x < xLength; x++) {
                 if (particlePos[y * xLength + x].y == 0)

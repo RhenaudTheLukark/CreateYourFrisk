@@ -322,6 +322,8 @@ public static class UnitaleUtil {
 
     public static void Dust(GameObject go, LuaSpriteController spr) {
         GameObject dust = Object.Instantiate(Resources.Load<GameObject>("Prefabs/MonsterDuster"));
+        if (go.GetComponent<ParticleDuplicator>() == null)
+            go.AddComponent<ParticleDuplicator>();
         go.GetComponent<ParticleDuplicator>().Activate(spr, dust.GetComponent<ParticleSystem>());
         dust.transform.SetParent(go.transform.parent);
         dust.transform.SetSiblingIndex(go.transform.GetSiblingIndex() + 1);
