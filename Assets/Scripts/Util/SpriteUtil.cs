@@ -38,7 +38,7 @@ public static class SpriteUtil {
                 Debug.LogError("SwapSprite: Filename is empty!");
                 return;
             }
-            newSprite = FromFile(filename + ".png", "Sprites/", true);
+            newSprite = FromFile(filename + ".png");
             if (newSprite == null)
                 throw new CYFException("The sprite Sprites/" + filename + ".png doesn't exist.");
             SpriteRegistry.Set(filename, newSprite);
@@ -90,7 +90,7 @@ public static class SpriteUtil {
         }
     }
 
-    public static Sprite FromFile(string fullPath, string pathSuffix = "Sprites/", bool isBubble = false) {
+    public static Sprite FromFile(string fullPath, string pathSuffix = "Sprites/") {
         string relativeFileName = fullPath;
         Texture2D SpriteTexture = new Texture2D(1, 1, TextureFormat.RGBA32, false);
         SpriteTexture.LoadImage(FileLoader.GetBytesFrom(ref fullPath, pathSuffix));

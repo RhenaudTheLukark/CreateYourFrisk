@@ -87,7 +87,7 @@ public class UIController : MonoBehaviour {
         UNUSED,         // Used for OnDeath(). Keep this state secret, please
         PAUSE           // Used exclusively for State("PAUSE"). Not a real state, but it needs to be listed to allow users to call State("PAUSE")
     }*/
-    
+
     public List<string> UIStates = new List<string>() {"NONE", "ACTIONSELECT", "ATTACKING", "DEFENDING", "ENEMYSELECT", "ACTMENU", "ITEMMENU", "MERCYMENU", "ENEMYDIALOGUE", "DIALOGRESULT", "DONE", "UNUSED", "PAUSE"};
 
     // Variables for PAUSE's "encounter freezing" behavior
@@ -578,19 +578,19 @@ public class UIController : MonoBehaviour {
         if (instance.encounter.gameOverStance) return;
         if (!instance.UIStates.Contains(state))
             throw new CYFException("The state \"" + state + "\" is not a valid state. Are you sure it exists?\n\nPlease double-check in the Misc. Functions section of the docs for a list of every default valid state.");
-            
+
         try {
             instance.SwitchState(state);
         } catch (Exception ex) {
-            // a different error has occured
-            throw new CYFException("An error occured while trying to enter the state \"" + state + "\":\n\n" + ex.Message + "\n\nTraceback (for devs):\n" + ex);
+            // a different error has occurred
+            throw new CYFException("An error occurred while trying to enter the state \"" + state + "\":\n\n" + ex.Message + "\n\nTraceback (for devs):\n" + ex);
         }
     }
-    
+
     public static void CreateNewUIState(string name) {
         if (instance.UIStates.Contains(name))
             throw new CYFException("The state \"" + name + "\" already exists.");
-            
+
         instance.UIStates.Add(name);
     }
 

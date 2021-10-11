@@ -77,9 +77,8 @@ public class LuaTextManager : TextManager {
 
     public void Remove() { DestroyText(); }
     public void DestroyText() {
-        CheckExists();
+        if (!removed) Destroy(transform.parent.gameObject);
         removed = true;
-        Destroy(transform.parent.gameObject);
     }
 
     [MoonSharpHidden] public void HideTextObject() {
@@ -372,14 +371,12 @@ public class LuaTextManager : TextManager {
 
     public bool lineComplete {
         get {
-            CheckExists();
             return LineComplete();
         }
     }
 
     public bool allLinesComplete {
         get {
-            CheckExists();
             return AllLinesComplete();
         }
     }

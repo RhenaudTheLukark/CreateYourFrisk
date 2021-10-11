@@ -370,9 +370,9 @@ public static class UnitaleUtil {
                 } else if ((Mathf.Floor(number) != 0 && zeromode) || (Mathf.Floor(number) != 9 && ninemode))
                     something = true;
             } else {
-                if (Mathf.Floor(number) == 0 )      { zerocount++;   ninecount = 0; }
-                else if (Mathf.Floor(number) == 9 ) { ninecount++;   zerocount = 0; }
-                else                                { ninecount = 0; zerocount = 0; }
+                if (Mathf.Floor(number) == 0)      { zerocount++;   ninecount = 0; }
+                else if (Mathf.Floor(number) == 9) { ninecount++;   zerocount = 0; }
+                else                               { ninecount = 0; zerocount = 0; }
             }
             dec++;
             number %= 1;
