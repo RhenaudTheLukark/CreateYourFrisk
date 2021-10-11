@@ -253,14 +253,18 @@ namespace MoonSharp.Interpreter.Execution.VM
 					throw ScriptRuntimeException.CannotYield();
 
 			}
-			catch (NullReferenceException)
+			catch (NullReferenceException e)
 			{
+				if (!e.StackTrace.StartsWith("at Processor"))
+					throw;
 				exceptionHijack = true;
 				instructionPtr = lastInstrPtr;
 				goto repeat_execution;
 			}
-			catch (ArgumentOutOfRangeException)
+			catch (ArgumentOutOfRangeException e)
 			{
+				if (!e.StackTrace.StartsWith("at Processor"))
+					throw;
 				exceptionHijack = true;
 				instructionPtr = lastInstrPtr;
 				goto repeat_execution;

@@ -68,8 +68,10 @@ namespace MoonSharp.Interpreter.Execution.VM
 					entrypoint = PushClrToScriptStackFrame(CallStackItemFlags.CallEntryPoint, function, args);
 					return Processing_Loop(entrypoint);
 				}
-				catch (ArgumentOutOfRangeException)
+				catch (ArgumentOutOfRangeException ex)
 				{
+					if (!ex.StackTrace.StartsWith("at Processor"))
+						throw;
 					ScriptRuntimeException e = ScriptRuntimeException.CallFromAnotherScript();
 					FillDebugData(e, entrypoint);
 					throw e;
