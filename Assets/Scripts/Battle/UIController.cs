@@ -303,7 +303,7 @@ public class UIController : MonoBehaviour {
             foreach (LifeBarController lbc in arenaParent.GetComponentsInChildren<LifeBarController>())
                 Destroy(lbc.gameObject);
         else if (state == "ENEMYDIALOGUE") {
-            TextManager[] textManagers = encounter.transform.GetComponentsInChildren<TextManager>();
+            TextManager[] textManagers = FindObjectsOfType<TextManager>();
             foreach (TextManager textManager in textManagers)
                 if (textManager.gameObject.name.StartsWith("DialogBubble")) // game object name is hardcoded as it won't change
                     Destroy(textManager.gameObject);
