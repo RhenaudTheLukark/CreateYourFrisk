@@ -25,8 +25,10 @@ public static class SpriteUtil {
                             UIController.instance.encounter.EnabledEnemies[bubbleID].bubbleWidth = ParseUtil.GetFloat(xmld["spritesheet"].GetElementsByTagName("width").Count > 0
                                 ? xmld["spritesheet"].GetElementsByTagName("width")[0].InnerText
                                 : xmld["spritesheet"].GetElementsByTagName("wideness")[0].InnerText);
-                } else
+                } else {
+                    UnitaleUtil.Warn("XML data " + filename + ".xml was not found.");
                     UIController.instance.encounter.EnabledEnemies[bubbleID].bubbleWidth = 0;
+                }
             }
         } catch (Exception) {
             UIController.instance.encounter.EnabledEnemies[bubbleID].bubbleWidth = 0;
@@ -92,6 +94,7 @@ public static class SpriteUtil {
 
     public static Sprite FromFile(string fullPath, string pathSuffix = "Sprites/", bool isBubble = false) {
         string relativeFileName = fullPath;
+        string relativeFileNameXml = Path.ChangeExtension(fullPath, "xml");
         Texture2D SpriteTexture = new Texture2D(1, 1, TextureFormat.RGBA32, false);
         SpriteTexture.LoadImage(FileLoader.GetBytesFrom(ref fullPath, pathSuffix));
         SpriteTexture.filterMode = FilterMode.Point;
@@ -100,10 +103,11 @@ public static class SpriteUtil {
         Sprite newSprite = Sprite.Create(SpriteTexture, new Rect(0, 0, SpriteTexture.width, SpriteTexture.height), new Vector2(0.5f, UnitaleUtil.IsOverworld ? 0 : 0.5f), PIXELS_PER_UNIT);
 
         FileLoader.SanitizePath(ref relativeFileName, pathSuffix);
+        FileLoader.SanitizePath(ref relativeFileNameXml, pathSuffix, false, true);
         newSprite.name = relativeFileName.Substring(0, relativeFileName.Length - 4);
 
         //optional XML loading
-        FileInfo fi = new FileInfo(Path.ChangeExtension(fullPath, "xml"));
+        FileInfo fi = new FileInfo(relativeFileNameXml);
         if (!fi.Exists) return newSprite;
         XmlDocument xmld = new XmlDocument();
         xmld.Load(fi.FullName);
