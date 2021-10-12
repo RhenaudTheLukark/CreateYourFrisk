@@ -62,10 +62,10 @@ public class UserDebugger : MonoBehaviour{
             text.text += "\n" + dbgLine;
         }
     }
-    
+
     public static float saved_x;
     public static float saved_y;
-    
+
     public static float x {
         get { return instance.transform.position.x - Misc.cameraX; }
         set {
@@ -73,7 +73,7 @@ public class UserDebugger : MonoBehaviour{
             saved_x = x;
         }
     }
-    
+
     public static float y {
         get { return instance.transform.position.y - Misc.cameraY; }
         set {
@@ -81,7 +81,7 @@ public class UserDebugger : MonoBehaviour{
             saved_y = y;
         }
     }
-    
+
     public static float absx {
         get { return instance.transform.position.x; }
         set {
@@ -89,7 +89,7 @@ public class UserDebugger : MonoBehaviour{
             saved_x = x;
         }
     }
-    
+
     public static float absy {
         get { return instance.transform.position.y; }
         set {
@@ -97,17 +97,17 @@ public class UserDebugger : MonoBehaviour{
             saved_y = y;
         }
     }
-    
+
     public static void MoveTo(float new_x, float new_y) {
         x = new_x;
         y = new_y;
     }
-    
+
     public static void Move(float new_x, float new_y) {
         absx += new_x;
         absy += new_y;
     }
-    
+
     public static void MoveToAbs(float new_x, float new_y) {
         absx = new_x;
         absy = new_y;

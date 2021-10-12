@@ -39,6 +39,7 @@ public class UIController : MonoBehaviour {
     private readonly Vector2 initialHealthPos = new Vector2(250, -10); // Initial health bar position for target selection
 
     public TextManager[] monsterDialogues;  // Enemies' dialogue bubbles' text objects appearing in the state ENEMYDIALOGUE
+    public int[] monsterDialogueEnemyID;    // Stores the ID of the associated enemy
 
     private bool musicPausedFromRunning;    // Used to pause the BGM when trying to flee in retromode for a comedic effect
     private int runAwayAttempts;            // Amount of times the Player tried to flee unsuccessfully in this encounter
@@ -505,7 +506,8 @@ public class UIController : MonoBehaviour {
                     ArenaManager.instance.Resize(155, 130);
                 encounter.CallOnSelfOrChildren("EnemyDialogueStarting");
                 monsterDialogues = new TextManager[encounter.EnabledEnemies.Length];
-                readyToNextLine = new bool[encounter.EnabledEnemies.Length];
+                monsterDialogueEnemyID = new int[encounter.EnabledEnemies.Length];
+                readyToNextLine = new bool[encounter.enemies.Count];
                 // TODO: Try to merge this and the other bubble-related code block
                 for (int i = 0; i < encounter.EnabledEnemies.Length; i++) {
                     messages.Remove(i);
@@ -520,6 +522,7 @@ public class UIController : MonoBehaviour {
                     //RectTransform enemyRt = encounter.enabledEnemies[i].GetComponent<RectTransform>();
                     TextManager sbTextMan = speechBub.GetComponent<TextManager>();
                     monsterDialogues[i] = sbTextMan;
+                    monsterDialogueEnemyID[i] = encounter.enemies.IndexOf(encounter.EnabledEnemies[i]);
                     sbTextMan.SetCaller(encounter.EnabledEnemies[i].script);
                     Image speechBubImg = speechBub.GetComponent<Image>();
 
@@ -621,12 +624,13 @@ public class UIController : MonoBehaviour {
                 EnemyController enemy = encounter.enemies[i];
                 if (!enemy.bubbleObject)
                     continue;
-                if (monsterDialogues[i] == null) {
+                int monsterDialogueID = Array.IndexOf(monsterDialogueEnemyID, i);
+                if (monsterDialogues[monsterDialogueID] == null) {
                     readyToNextLine[i] = true;
                     continue;
                 }
 
-                if (monsterDialogues[i].currentLine >= monsterDialogues[i].LineCount()) {
+                if (monsterDialogues[monsterDialogueID].currentLine >= monsterDialogues[monsterDialogueID].LineCount()) {
                     readyToNextLine[i] = true;
                     continue;
                 }
@@ -638,7 +642,7 @@ public class UIController : MonoBehaviour {
                 Image speechBubImg = speechBub.GetComponent<Image>();
                 speechBubImg.color = new Color(speechBubImg.color.r, speechBubImg.color.g, speechBubImg.color.b, sbTextMan.letterReferences.Count(ltr => ltr != null) == 0 ? 0 : 1);
 
-                SpriteUtil.SwapSpriteFromFile(speechBubImg, enemy.DialogBubble, i);
+                SpriteUtil.SwapSpriteFromFile(speechBubImg, enemy.DialogBubble, monsterDialogueID);
                 Sprite speechBubSpr = speechBubImg.sprite;
                 sbTextMan.SetOffset(speechBubSpr.border.x, -speechBubSpr.border.w);
 
@@ -656,26 +660,36 @@ public class UIController : MonoBehaviour {
     }
 
     private void UpdateMonsterDialogue() {
+        bool allGood = true;
         for (int i = 0; i < monsterDialogues.Length; i++) {
-            if (readyToNextLine[i])       continue;
+            if (readyToNextLine[monsterDialogueEnemyID[i]]) continue;
             if (monsterDialogues[i] == null) {
-                readyToNextLine[i] = true;
+                readyToNextLine[monsterDialogueEnemyID[i]] = true;
                 continue;
             }
             if (monsterDialogues[i].CanAutoSkip()) {
-                readyToNextLine[i] = true;
+                readyToNextLine[monsterDialogueEnemyID[i]] = true;
                 DoNextMonsterDialogue(false, i);
             }
             if (monsterDialogues[i].CanAutoSkipAll()) {
                 for (int j = 0; j < monsterDialogues.Length; j++)
-                    readyToNextLine[j] = true;
+                    readyToNextLine[monsterDialogueEnemyID[j]] = true;
                 DoNextMonsterDialogue();
                 return;
             }
 
-            if ((!monsterDialogues[i].AllLinesComplete() || monsterDialogues[i].LineCount() == 0) && !monsterDialogues[i].CanAutoSkipThis() && (monsterDialogues[i].AllLinesComplete() || !monsterDialogues[i].LineComplete())) continue;
-            readyToNextLine[i] = true;
+            if ((!monsterDialogues[i].AllLinesComplete() || monsterDialogues[i].LineCount() == 0) && !monsterDialogues[i].CanAutoSkipThis() && (monsterDialogues[i].AllLinesComplete() || !monsterDialogues[i].LineComplete())) {
+                allGood = false;
+                continue;
+            }
+
+
+            readyToNextLine[monsterDialogueEnemyID[i]] = true;
         }
+
+        if (!allGood) return;
+        for (int i = 0; i < readyToNextLine.Length; i++)
+            readyToNextLine[i] = true;
     }
 
     public void DoNextMonsterDialogue(bool singleLineAll = false, int index = -1) {
@@ -735,7 +749,7 @@ public class UIController : MonoBehaviour {
                             complete = true;
                         continue;
                     }
-                } else if (readyToNextLine[i]) {
+                } else if (readyToNextLine[monsterDialogueEnemyID[i]]) {
                     FileInfo fi = new FileInfo(FileLoader.PathToDefaultFile("Sprites/" + encounter.EnabledEnemies[i].DialogBubble + ".png"));
                     if (!fi.Exists)
                         fi = new FileInfo(FileLoader.PathToModFile("Sprites/" + encounter.EnabledEnemies[i].DialogBubble + ".png"));
