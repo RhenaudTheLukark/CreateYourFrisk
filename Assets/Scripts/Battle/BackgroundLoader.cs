@@ -7,19 +7,16 @@ using UnityEngine.UI;
 /// Attached to the Background object in the Battle scene.
 /// </summary>
 public class BackgroundLoader : MonoBehaviour {
-    private Image bgImage;
     // Use this for initialization
     private void Start() {
-        bgImage = GetComponent<Image>();
+        LuaSpriteController sprite = LuaSpriteController.GetOrCreate(gameObject);
         try {
-            Sprite bg = SpriteUtil.FromFile("bg.png");
-            if (bg == null) return;
-            bg.texture.filterMode = FilterMode.Point;
-            bgImage.sprite = bg;
-            bgImage.color = Color.white;
-        } catch {
+            sprite.Set("bg");
+            sprite.color = new float[4] { 1, 1, 1, 1 };
+        } catch (CYFException) {
             // Background failed loading, no need to do anything.
             UnitaleUtil.Warn("No background file found. Using empty background.");
         }
+        sprite.Scale(640 / sprite.width, 480 / sprite.height);
     }
 }
