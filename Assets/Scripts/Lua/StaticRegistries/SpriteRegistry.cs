@@ -17,11 +17,10 @@ public static class SpriteRegistry {
     }
 
     public static void Unload(string key) {
-        string origKey = key;
         key = ProcessKey(key);
-        if (dict.ContainsKey(key))        { dict.Remove(key);        Debug.Log("Removed " + origKey + " from fast memory");    }
-        if (dictMod.ContainsKey(key))     { dictMod.Remove(key);     Debug.Log("Removed " + origKey + " from mod folder");     }
-        if (dictDefault.ContainsKey(key)) { dictDefault.Remove(key); Debug.Log("Removed " + origKey + " from default folder"); }
+        if (dict.ContainsKey(key))        dict.Remove(key);
+        if (dictMod.ContainsKey(key))     dictMod.Remove(key);
+        if (dictDefault.ContainsKey(key)) dictDefault.Remove(key);
     }
 
     public static Sprite Get(string origKey) {
