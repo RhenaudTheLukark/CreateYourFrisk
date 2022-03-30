@@ -642,7 +642,7 @@ end";
         // Create a ScriptWrapper object
         ScriptWrapper scr = new ScriptWrapper { scriptname = eventName };
         // Load a special script hidden within CYF's internals if we're loading CYF 0.6.5's secret
-        string scriptText = UnitaleUtil.IsSpecialAnnouncement(eventName) ? CYF_RELEASE_SCRIPT : ScriptRegistry.Get("Events/" + eventName);
+        string scriptText = UnitaleUtil.IsSpecialAnnouncement(eventName) ? CYF_RELEASE_SCRIPT : FileLoader.GetScript("Events/" + eventName, "Loading an event", "event");
         if (scriptText == null) {
             UnitaleUtil.DisplayLuaError("Launching an event", "The event \"" + eventName + "\" doesn't exist.");
             return null;

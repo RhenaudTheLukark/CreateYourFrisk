@@ -7,7 +7,7 @@ using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class EnemyEncounter : MonoBehaviour {
-    public List<EnemyController> enemies = new List<EnemyController>();
+    public List<EnemyController> enemies;
     public Vector2[] enemyPositions;
     internal float waveTimer;
     public int turnCount;
@@ -39,14 +39,8 @@ public class EnemyEncounter : MonoBehaviour {
     public void InitScript() {
         doNotGivePreviousEncounterToSelf = true;
         script = new ScriptWrapper { scriptname = StaticInits.ENCOUNTER };
-        string scriptText = ScriptRegistry.Get("Encounters/" + StaticInits.ENCOUNTER);
-        if (scriptText == null)
-            throw new CYFException("There is no encounter file at the path Lua/Encounters/" + StaticInits.ENCOUNTER);
 
-        try { script.DoString(scriptText); }
-        catch (InterpreterException ex) {
-            UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message, ex.DoNotDecorateMessage);
-        }
+        script.DoString(FileLoader.GetScript("Encounters/" + StaticInits.ENCOUNTER, StaticInits.ENCOUNTER, "encounter"));
         script.Bind("State", (Action<Script, string>)UIController.SwitchStateOnString);
         script.Bind("RandomEncounterText", (Func<string>)RandomEncounterText);
         script.Bind("CreateProjectile", (Func<Script, string, float, float, string, DynValue>)CreateProjectile);
@@ -152,6 +146,7 @@ public class EnemyEncounter : MonoBehaviour {
 
         Table luaEnemyTable = script.GetVar("enemies").Table;
 
+        enemies = new List<EnemyController>();
         for (int i = 0; i < enemyCount; i++)
             luaEnemyTable.Set(i + 1, CreateEnemy(enemyScriptsLua.Table.Get(i + 1).String, enemyPositions[i].x, enemyPositions[i].y));
 
@@ -362,15 +357,10 @@ public class EnemyEncounter : MonoBehaviour {
                 waveNames[i] = nextWaves.Table.Get(i + 1).String;
                 waves[i].script.Globals["wavename"] = nextWaves.Table.Get(i + 1).String;
                 try {
-                    waves[i].DoString(ScriptRegistry.Get("Waves/" + nextWaves.Table.Get(i + 1).String));
+                    waves[i].DoString(FileLoader.GetScript("Waves/" + nextWaves.Table.Get(i + 1).String, nextWaves.Table.Get(i + 1).String + ".lua", "wave"));
                     indexes.Add(i);
                 } catch (InterpreterException ex) { UnitaleUtil.DisplayLuaError(nextWaves.Table.Get(i + 1).String + ".lua", UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message);
-                } catch (Exception ex) {
-                    if (!GlobalControls.retroMode &&!ScriptRegistry.dict.ContainsKey("Waves/" + nextWaves.Table.Get(i + 1).String))
-                        UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, "The wave \"" + nextWaves.Table.Get(i + 1).String + "\" doesn't exist.");
-                    else
-                        UnitaleUtil.DisplayLuaError("<UNKNOWN LOCATION>", ex.Message + "\n\n" + ex.StackTrace);
-                }
+                } catch (Exception ex) { UnitaleUtil.DisplayLuaError("<UNKNOWN LOCATION>", ex.Message + "\n\n" + ex.StackTrace); }
             }
             Table luaWaveTable = new Table(null);
             for (int i = 0; i < indexes.Count; i++)

@@ -251,11 +251,7 @@ public class EnemyController : MonoBehaviour {
 
     public void InitializeEnemy() {
         try {
-            string scriptText = ScriptRegistry.Get("Monsters/" + scriptName);
-            if (scriptText == null) {
-                UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, "Tried to load monster script " + scriptName + ".lua but it didn't exist. Is it misspelled?");
-                return;
-            }
+            string scriptText = FileLoader.GetScript("Monsters/" + scriptName, StaticInits.ENCOUNTER, "monster");
             script.scriptname = scriptName;
             script.Bind("SetSprite", (Action<string>)SetSprite);
             script.Bind("SetActive", (Action<bool>)SetActive);

@@ -106,6 +106,16 @@ public static class FileLoader {
         return false;
     }
 
+    public static string GetScript(string path, string errorSource, string errorContext) {
+        path += path.EndsWith(".lua") ? "" : ".lua";
+        FileInfo f = new FileInfo(Path.Combine(PathToModFile("Lua"), path));
+        if (!f.Exists)
+            UnitaleUtil.DisplayLuaError(errorSource, "Tried to load " + errorContext + " script \"" + path + "\" but it couldn't be found. Is it mispelled?\n\nFull path: " + f.FullName);
+
+        SanitizePath(ref path, "Lua/", true, true);
+        return File.ReadAllText(path);
+    }
+
     ///////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////

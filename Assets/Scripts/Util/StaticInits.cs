@@ -47,12 +47,7 @@ public static class StaticInits {
             //UnitaleUtil.createFile();
             Stopwatch sw = new Stopwatch(); //benchmarking terrible loading times
             sw.Start();
-            ScriptRegistry.Init();
-            sw.Stop();
-            UnityEngine.Debug.Log("Script registry loading time: " + sw.ElapsedMilliseconds + "ms");
-            sw.Reset();
 
-            sw.Start();
             SpriteRegistry.Init();
             sw.Stop();
             UnityEngine.Debug.Log("Sprite registry loading time: " + sw.ElapsedMilliseconds + "ms");
