@@ -372,11 +372,10 @@ public class EnemyEncounter : MonoBehaviour {
                     indexes.Add(i);
                 } catch (InterpreterException ex) { UnitaleUtil.DisplayLuaError(nextWaves.Table.Get(i + 1).String + ".lua", UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message);
                 } catch (Exception ex) {
-                    UnitaleUtil.DisplayLuaError("sex", "FUck. God. FUck . Dammit");
-                    /*if (!GlobalControls.retroMode &&!ScriptRegistry.dict.ContainsKey("Waves/" + nextWaves.Table.Get(i + 1).String))
+                    if (!GlobalControls.retroMode &&!ScriptRegistry.dict.ContainsKey("Waves/" + nextWaves.Table.Get(i + 1).String))
                         UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, "The wave \"" + nextWaves.Table.Get(i + 1).String + "\" doesn't exist.");
                     else
-                        UnitaleUtil.DisplayLuaError("<UNKNOWN LOCATION>", ex.Message + "\n\n" + ex.StackTrace);*/
+                        UnitaleUtil.DisplayLuaError("<UNKNOWN LOCATION>", ex.Message + "\n\n" + ex.StackTrace);
                 }
             }
             Table luaWaveTable = new Table(null);
