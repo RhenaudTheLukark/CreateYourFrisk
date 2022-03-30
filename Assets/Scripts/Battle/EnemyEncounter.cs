@@ -7,13 +7,13 @@ using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class EnemyEncounter : MonoBehaviour {
-    public List<EnemyController> enemies;
+    public List<EnemyController> enemies = new List<EnemyController>();
     public Vector2[] enemyPositions;
     internal float waveTimer;
     public int turnCount;
 
     public string EncounterText { get; set; }
-    public bool CanRun { get; set; }
+    public bool CanRun = true;
 
     public static ScriptWrapper script;
     public float waveBeginTime;
@@ -25,9 +25,7 @@ public class EnemyEncounter : MonoBehaviour {
     private delegate TResult Func<T1, T2, T3, T4, T5, TResult>(T1 arg, T2 arg2, T3 arg3, T4 arg4, T5 arg5);
 
     public void Awake() {
-        if (InitScript)
-            LoadEnemiesAndPositions();
-        CanRun = true;
+        InitScript();
     }
 
     public void OnDestroy() {
@@ -38,28 +36,26 @@ public class EnemyEncounter : MonoBehaviour {
     /// Attempts to initialize the encounter's script file and bind encounter-specific functions to it.
     /// </summary>
     /// <returns>True if initialization succeeded, false if there was an error.</returns>
-    private bool InitScript {
-        get {
-            doNotGivePreviousEncounterToSelf = true;
-            script = new ScriptWrapper { scriptname = StaticInits.ENCOUNTER };
-            string scriptText = ScriptRegistry.Get("Encounters/" + StaticInits.ENCOUNTER);
-            if (scriptText == null)
-                throw new CYFException("There is no encounter file at the path Lua/Encounters/" + StaticInits.ENCOUNTER);
+    public void InitScript() {
+        doNotGivePreviousEncounterToSelf = true;
+        script = new ScriptWrapper { scriptname = StaticInits.ENCOUNTER };
+        string scriptText = ScriptRegistry.Get("Encounters/" + StaticInits.ENCOUNTER);
+        if (scriptText == null)
+            throw new CYFException("There is no encounter file at the path Lua/Encounters/" + StaticInits.ENCOUNTER);
 
-            try { script.DoString(scriptText); }
-            catch (InterpreterException ex) {
-                UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message, ex.DoNotDecorateMessage);
-                return false;
-            }
-            script.Bind("State", (Action<Script, string>)UIController.SwitchStateOnString);
-            script.Bind("RandomEncounterText", (Func<string>)RandomEncounterText);
-            script.Bind("CreateProjectile", (Func<Script, string, float, float, string, DynValue>)CreateProjectile);
-            script.Bind("CreateProjectileAbs", (Func<Script, string, float, float, string, DynValue>)CreateProjectileAbs);
-            script.Bind("SetButtonLayer", (Action<string>)LuaScriptBinder.SetButtonLayer);
-            script.Bind("CreateEnemy", (Func<string, float, float, DynValue>)CreateEnemy);
-            script.Bind("Flee", (Action)Flee);
-            return true;
+        try { script.DoString(scriptText); }
+        catch (InterpreterException ex) {
+            UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message, ex.DoNotDecorateMessage);
         }
+        script.Bind("State", (Action<Script, string>)UIController.SwitchStateOnString);
+        script.Bind("RandomEncounterText", (Func<string>)RandomEncounterText);
+        script.Bind("CreateProjectile", (Func<Script, string, float, float, string, DynValue>)CreateProjectile);
+        script.Bind("CreateProjectileAbs", (Func<Script, string, float, float, string, DynValue>)CreateProjectileAbs);
+        script.Bind("SetButtonLayer", (Action<string>)LuaScriptBinder.SetButtonLayer);
+        script.Bind("CreateEnemy", (Func<string, float, float, DynValue>)CreateEnemy);
+        script.Bind("Flee", (Action)Flee);
+
+        LoadEnemiesAndPositions();
     }
 
     public DynValue CreateEnemy(string enemyScript, float x, float y) {
@@ -83,6 +79,7 @@ public class EnemyEncounter : MonoBehaviour {
     }
 
     public bool CallOnSelfOrChildren(string func, DynValue[] param = null) {
+        // TODO: Don't stop execution if the function has been run in the Encounter script
         if (UnitaleUtil.TryCall(script, func, param)) return true;
 
         bool calledOne = false;
@@ -153,12 +150,10 @@ public class EnemyEncounter : MonoBehaviour {
                 + "or there are more enemies than available positions. Refer to the documentation's Basic Setup section on how to do this.");
         }
 
-        enemies = new List<EnemyController>();
         Table luaEnemyTable = script.GetVar("enemies").Table;
 
-        for (int i = 0; i < enemyCount; i++) {
+        for (int i = 0; i < enemyCount; i++)
             luaEnemyTable.Set(i + 1, CreateEnemy(enemyScriptsLua.Table.Get(i + 1).String, enemyPositions[i].x, enemyPositions[i].y));
-        }
 
         script.SetVar("enemies", DynValue.NewTable(luaEnemyTable));
         Table luaWaveTable = new Table(null);

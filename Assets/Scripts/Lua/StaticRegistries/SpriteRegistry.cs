@@ -13,7 +13,15 @@ public static class SpriteRegistry {
     public static void Start() { LoadAllFrom(FileLoader.PathToDefaultFile("Sprites")); }
 
     public static void Set(string key, Sprite value) {
-        dict[ProcessKey(key + (key.EndsWith(".png") ? "" : ".png"))] = value;
+        dict[ProcessKey(key)] = value;
+    }
+
+    public static void Unload(string key) {
+        string origKey = key;
+        key = ProcessKey(key);
+        if (dict.ContainsKey(key))        { dict.Remove(key);        Debug.Log("Removed " + origKey + " from fast memory");    }
+        if (dictMod.ContainsKey(key))     { dictMod.Remove(key);     Debug.Log("Removed " + origKey + " from mod folder");     }
+        if (dictDefault.ContainsKey(key)) { dictDefault.Remove(key); Debug.Log("Removed " + origKey + " from default folder"); }
     }
 
     public static Sprite Get(string origKey) {
@@ -27,7 +35,15 @@ public static class SpriteRegistry {
     private static Sprite TryLoad(string origKey, string key) {
         if (dictMod.ContainsKey(key))          dict[key] = SpriteUtil.FromFile(origKey);
         else if (dictDefault.ContainsKey(key)) dict[key] = SpriteUtil.FromFile(origKey);
-        else                                   return TryFetchFromMod(origKey, key);
+        else                                   return TryFetchFromMod(origKey, key) ?? TryFetchFromDefault(origKey, key);
+        return dict[key];
+    }
+    private static Sprite TryFetchFromDefault(string origKey, string key) {
+        FileInfo tryF = new FileInfo(Path.Combine(FileLoader.PathToDefaultFile("Sprites"), origKey) + (origKey.EndsWith(".png") ? "" : ".png"));
+        if (!tryF.Exists) return null;
+
+        dictDefault[key] = tryF;
+        dict[key] = SpriteUtil.FromFile(origKey);
         return dict[key];
     }
 
@@ -70,6 +86,7 @@ public static class SpriteRegistry {
     }
 
     private static string ProcessKey(string key) {
+        key += key.EndsWith(".png") ? "" : ".png";
         FileLoader.SanitizePath(ref key, "Sprites/");
         return key.ToLower();
     }

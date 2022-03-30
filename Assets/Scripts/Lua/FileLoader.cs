@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using MoonSharp.Interpreter.CoreLib;
@@ -125,6 +126,9 @@ public static class FileLoader {
         return true;
     }
 
+    public static Dictionary<string, string> relativeSanitizationDictionary = new Dictionary<string, string>();
+    public static Dictionary<string, string> absoluteSanitizationDictionary = new Dictionary<string, string>();
+
     /// <summary>
     /// Checks if a file exists in CYF's Default or Mods folder and returns a clean path to it.
     /// It only runs RequireFile() if it's truly useful, otherwise it just checks if the file at the given path exists.
@@ -137,9 +141,26 @@ public static class FileLoader {
     public static bool SanitizePath(ref string fileName, string pathSuffix, bool errorOnFailure = true, bool needsAbsolutePath = false, bool needsToExist = true) {
         fileName = fileName.Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar);
 
+        // Check if this same string has been passed to RequireFile before
+        if (needsAbsolutePath && absoluteSanitizationDictionary.ContainsKey(fileName)) {
+            Debug.Log("Fast sanitization for " + fileName + " (absolute)");
+            fileName = absoluteSanitizationDictionary[fileName];
+            return true;
+        }
+        if (!needsAbsolutePath && relativeSanitizationDictionary.ContainsKey(fileName)) {
+            Debug.Log("Fast sanitization for " + fileName + " (relative)");
+            fileName = relativeSanitizationDictionary[fileName];
+            return true;
+        }
+
         // Sanitize if path from CYF root, need to transform a relative path to an absolute path and vice-versa, or if there's an occurence of ..
-        if (fileName.StartsWith(Path.DirectorySeparatorChar.ToString()) || fileName.Contains(DataRoot) ^ needsAbsolutePath || fileName.Contains(".." + Path.DirectorySeparatorChar))
-            return LoadModule.RequireFile(ref fileName, pathSuffix, errorOnFailure, needsAbsolutePath, needsToExist);
+        if (fileName.StartsWith(Path.DirectorySeparatorChar.ToString()) || fileName.Contains(DataRoot) ^ needsAbsolutePath || fileName.Contains(".." + Path.DirectorySeparatorChar)) {
+            string original = fileName;
+            bool res = LoadModule.RequireFile(ref fileName, pathSuffix, errorOnFailure, needsAbsolutePath, needsToExist);
+            if (needsAbsolutePath) absoluteSanitizationDictionary.Add(original, fileName);
+            else                   relativeSanitizationDictionary.Add(original, fileName);
+            return res;
+        }
 
         if (fileName.Contains(DataRoot))
             return !needsToExist || new FileInfo(fileName).Exists;

@@ -41,6 +41,9 @@ public static class StaticInits {
 
     public static void InitAll(bool shaders = false) {
         if (!Initialized && (!GlobalControls.isInFight || GlobalControls.modDev)) {
+            FileLoader.absoluteSanitizationDictionary.Clear();
+            FileLoader.relativeSanitizationDictionary.Clear();
+
             //UnitaleUtil.createFile();
             Stopwatch sw = new Stopwatch(); //benchmarking terrible loading times
             sw.Start();

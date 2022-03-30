@@ -31,7 +31,7 @@ public class ScriptRegistry {
                    val = k;
             FileLoader.SanitizePath(ref k, "Lua/");
             FileLoader.SanitizePath(ref val, "Lua/", true, true);
-            Set(k, File.ReadAllText(val));
+            Set(k.ToLower(), File.ReadAllText(val));
         }
     }
 }

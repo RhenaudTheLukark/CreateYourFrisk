@@ -72,7 +72,7 @@ public class GlobalControls : MonoBehaviour {
         // Check if window scale has a stored preference that is a number
         if (LuaScriptBinder.GetAlMighty(null, "CYFWindowScale")      != null
          && LuaScriptBinder.GetAlMighty(null, "CYFWindowScale").Type == DataType.Number) {
-            ScreenResolution.windowScale = (int) LuaScriptBinder.GetAlMighty(null, "CYFWindowScale").Number;
+            ScreenResolution.windowScale = (int) System.Math.Min(LuaScriptBinder.GetAlMighty(null, "CYFWindowScale").Number, 1);
             ScreenResolution.ResetAfterBattle();
         }
 

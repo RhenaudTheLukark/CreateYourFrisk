@@ -70,6 +70,9 @@ public static class LuaScriptBinder {
         #else
             script.Globals["windows"] = false;
         #endif
+
+        script.Globals["UnloadSprite"] = (Action<string>)SpriteRegistry.Unload;
+
         script.Globals["CYFversion"] = GlobalControls.CYFversion;
         if (!UnitaleUtil.IsOverworld) {
             script.Globals["CreateSprite"] = (Func<string, string, int, DynValue>)SpriteUtil.MakeIngameSprite;
