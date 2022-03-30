@@ -153,12 +153,10 @@ public static class FileLoader {
 
         // Check if this same string has been passed to RequireFile before
         if (needsAbsolutePath && absoluteSanitizationDictionary.ContainsKey(fileName)) {
-            Debug.Log("Fast sanitization for " + fileName + " (absolute)");
             fileName = absoluteSanitizationDictionary[fileName];
             return true;
         }
         if (!needsAbsolutePath && relativeSanitizationDictionary.ContainsKey(fileName)) {
-            Debug.Log("Fast sanitization for " + fileName + " (relative)");
             fileName = relativeSanitizationDictionary[fileName];
             return true;
         }
