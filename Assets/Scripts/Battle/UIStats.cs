@@ -52,7 +52,7 @@ public class UIStats : MonoBehaviour {
                 textLength++;
         }
 
-        hpRect.transform.position = new Vector3(hpRect.transform.parent.position.x + (textLength > 13 ? 286.1f : 215.1f), hpRect.transform.position.y, hpRect.transform.position.z);
+        hpRect.transform.position = new Vector3(hpRect.transform.parent.position.x + (((textLength > 13) || (PlayerCharacter.instance.Name.Length > 6) ) ? 286.1f : 215.1f), hpRect.transform.position.y, hpRect.transform.position.z);
     }
 
     public void setHP(float hpCurrent) {
