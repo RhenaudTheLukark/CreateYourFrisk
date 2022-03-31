@@ -142,7 +142,7 @@ public class TextManager : MonoBehaviour {
         letterSound = defaultVoice ?? default_charset.SoundName;
         fontDefaultColor = default_charset.DefaultColor;
         if (GetType() == typeof(LuaTextManager) && !((LuaTextManager) this).hasColorBeenSet)
-            fontDefaultColor = defaultColor = default_charset.DefaultColor;
+            defaultColor = fontDefaultColor;
 
         // Default voice in the overworld
         if (gameObject.name == "TextManager OW")
@@ -796,7 +796,7 @@ public class TextManager : MonoBehaviour {
                 default:       letterReferences[currentCharacter].GetComponent<Letter>().effect = null;                                                                                                 break;
             }
 
-            if (letterSound != null && !muted && !soundPlayed && (GlobalControls.retroMode || textQueue[currentLine].Text[currentCharacter] != ' ')) {
+            if (letterSound != null && letterSound != "" && !muted && !soundPlayed && (GlobalControls.retroMode || textQueue[currentLine].Text[currentCharacter] != ' ')) {
                 soundPlayed = true;
                 UnitaleUtil.PlayVoice("BubbleSound", letterSound);
             }
