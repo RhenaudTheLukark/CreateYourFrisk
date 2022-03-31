@@ -237,7 +237,14 @@ end
 
             <p>
                 <br><span class="function"><span class="new066"></span><span class="CYF"></span> CreateState(<span class="string"></span> name) [E/M/W]</span>
-				This function creates a custom state with the name <span class="term">name</span>, which will function like the NONE state. You cannot have two states with the same name.
+                This function creates a custom state with the name <span class="term">name</span>, which will function like the NONE state. You cannot have two states with the same name.
+            </p>
+
+            <p>
+                <br><span class="function"><span class="new066"></span><span class="CYF"></span> UnloadSprite(<span class="string"></span> path) [E/M/W]</span>
+                This function removes the sprite loaded through <span class="term">path</span> from CYF's internal cache, allowing you to load it from your folder again.
+                <br><br>
+                Usually, CYF keeps all sprites it loads in an encounter in memory so the engine does not have to load it again, which may create a lag spike. However, if the sprite is changed during the mod, the file will not be reloaded, and only its first version will be kept until the encounter is over, or the mod is unloaded in the overworld.
             </p>
 
             <p>
