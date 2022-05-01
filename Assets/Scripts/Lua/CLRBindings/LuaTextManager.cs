@@ -147,7 +147,7 @@ public class LuaTextManager : TextManager {
             CheckExists();
             return Mathf.RoundToInt(container.transform.position.y);
         }
-        set { MoveTo(absx, value); }
+        set { MoveToAbs(absx, value); }
     }
 
     public int textMaxWidth {
