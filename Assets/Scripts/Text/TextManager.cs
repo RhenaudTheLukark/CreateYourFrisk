@@ -796,7 +796,7 @@ public class TextManager : MonoBehaviour {
                 default:       letterReferences[currentCharacter].GetComponent<Letter>().effect = null;                                                                                                 break;
             }
 
-            if (letterSound != null && letterSound != "" && !muted && !soundPlayed && (GlobalControls.retroMode || textQueue[currentLine].Text[currentCharacter] != ' ')) {
+            if (!string.IsNullOrEmpty(letterSound) && !muted && !soundPlayed && (GlobalControls.retroMode || textQueue[currentLine].Text[currentCharacter] != ' ')) {
                 soundPlayed = true;
                 UnitaleUtil.PlayVoice("BubbleSound", letterSound);
             }

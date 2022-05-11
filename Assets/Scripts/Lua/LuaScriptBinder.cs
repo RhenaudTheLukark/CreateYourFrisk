@@ -36,7 +36,8 @@ public static class LuaScriptBinder {
         UserData.RegisterType<LuaSpriteShader>();
         UserData.RegisterType<LuaSpriteShader.MatrixFourByFour>();
         UserData.RegisterType<LuaDiscord>();
-        UserData.RegisterType<LuaUIController>();
+        UserData.RegisterType<LuaPlayerUI>();
+        UserData.RegisterType<LifeBarController>();
 
         // Overworld bindings
         UserData.RegisterType<LuaEventOW>();
@@ -84,6 +85,8 @@ public static class LuaScriptBinder {
             script.Globals["SetPPCollision"] = (Action<bool>)SetPPCollision;
             script.Globals["AllowPlayerDef"] = (Action<bool>)AllowPlayerDef;
             script.Globals["CreateText"] = (Func<Script, DynValue, DynValue, int, string, int, LuaTextManager>)CreateText;
+            script.Globals["CreateBar"] = (Func<float, float, float, float, LifeBarController>)LifeBarController.Create;
+            script.Globals["CreateBarWithSprite"] = (Func<float, float, string, string, LifeBarController>)LifeBarController.Create;
             script.Globals["GetCurrentState"] = (Func<string>)GetState;
             script.Globals["BattleDialog"] = (Action<Script, DynValue>)EnemyEncounter.BattleDialog;
             script.Globals["BattleDialogue"] = (Action<Script, DynValue>)EnemyEncounter.BattleDialog;
@@ -139,7 +142,7 @@ public static class LuaScriptBinder {
         script.Globals.Set("Time", TimeInfo);
         DynValue DiscordMgr = UserData.Create(new LuaDiscord());
         script.Globals.Set("Discord", DiscordMgr);
-        DynValue LuaUI = UserData.Create(new LuaUIController());
+        DynValue LuaUI = UserData.Create(new LuaPlayerUI());
         script.Globals.Set("UI", LuaUI);
         return script;
     }

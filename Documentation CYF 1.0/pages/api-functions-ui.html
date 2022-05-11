@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<!--
+since you're here anyway: there's a small easter egg on the text commands page but it's probably not worth finding, sorry
+you may notice this page's code is garbage: i'm not a web designer! ;-;
+it's w3c valid, at least
+-->
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="favicon.ico">
+
+    <title>CYF Documentation - The UI Object</title>
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="../css/themesidebar.css" rel="stylesheet">
+    <link href="../css/shThemeRDark.css" rel="stylesheet">
+</head>
+<body>
+<img src="../img/bg2.png" alt="Undertale background" class="backimg">
+<div class="container arena black">
+    <div class="col-md-2">
+        <!--navigation-->
+        <nav class="nav-sidebar">
+            <ul class="nav tabs">
+                <li class="li-header">Basics</li>
+                    <li><a href="../documentation.html">Welcome</a></li>
+                    <li><a href="howtoread.html">How to read this documentation</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li><a href="controls.html">Controls</a></li>
+                    <li><a href="basic.html">Basic setup</a></li>
+                    <li><a href="unity.html"><span class="CYF"></span> Unity Setup (Optional)</a></li>
+                    <li class="new066"><a href="variables.html">Special Variables</a></li>
+                    <li><a href="terms.html">Terminology</a></li>
+                <li class="li-header">API</li>
+                    <li class="new066"><a href="api-text.html">Text commands</a></li>
+                    <li class="new066"><a href="api-events.html">Game events</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li class="li-indent">Functions &amp; Objects:</li>
+                        <li class="li-indent new066"><a href="api-functions-main.html">Misc. Functions</a></li>
+                        <li class="li-indent new066"><a href="api-functions-player.html">The Player Object</a></li>
+                        <li class="li-indent"><a href="api-functions-script.html">The Script Object</a></li>
+                        <li class="li-indent"><a href="api-functions-audio.html">The Audio Object</a></li>
+                        <li class="li-indent"><a href="api-functions-newaudio.html"><span class="CYF"></span> The NewAudio Object</a></li>
+                        <li class="li-indent"><a href="api-functions-input.html">The Input Object</a></li>
+                        <li class="li-indent new066"><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
+                        <li class="li-indent new066"><a href="api-functions-time.html">The Time Object</a></li>
+                        <li class="li-indent new066"><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
+                        <li class="li-indent new066"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-discord.html"><span class="CYF"></span> The Discord Object</a></li>
+                        <li class="li-indent new066"><a href="api-functions-waves.html">The Arena Object</a></li>
+                        <li class="li-indent new066 active" style="margin-left:5px;">&gt; <span class="CYF"></span> The UI Object &lt;</li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li class="new066"><a href="api-projectile.html">Projectile management</a></li>
+                    <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
+                    <li class="new066"><a href="api-animation.html">Sprites &amp; Animation</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                <li class="li-header"></span><span class="CYF"></span> <span class="new"></span>Shaders</li>
+                    <li><a href="shaders.html">Introduction</a></li>
+                    <li><a href="shaders-object.html">The Shader Object</a></li>
+                    <li><a href="shaders-coding.html">Coding a Shader</a></li>
+                    <hr style="margin-top:10px;margin-bottom:10px;">
+                <li class="li-header"><span class="CYF"></span> Overworld</li>
+                    <li class="new"><a href="overworld.html">Basics</a></li>
+                    <li><a href="overworld-howto-map.html">How to create a map</a></li>
+                    <li><a href="overworld-howto-event.html">How to create an event</a></li>
+                    <li><a href="overworld-howto-animevent.html">How to animate an event</a></li>
+                    <li class="new"><a href="overworld-howto-shop.html">How to create a shop</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                    <li class="li-indent"><span class="CYF"></span> Overworld Objects:</li>
+                        <li class="li-indent"><a href="overworld-object-general.html">The General Object</a></li>
+                        <li class="li-indent"><a href="overworld-object-event.html">The Event Object</a></li>
+                        <li class="li-indent"><a href="overworld-object-player.html">The Player Object</a></li>
+                        <li class="li-indent"><a href="overworld-object-screen.html">The Screen Object</a></li>
+                        <li class="li-indent"><a href="overworld-object-inventory.html">The Inventory Object</a></li>
+                        <li class="li-indent new"><a href="overworld-object-map.html">The Map Object</a></li>
+                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
+                <li class="li-header">Resources</li>
+                    <li><a href="../media/dialogoptions.png">Dialog bubble names</a></li>
+                    <li><a href="api-keys.html"><span class="CYF"></span> Key List</a></li>
+            </ul>
+        </nav>
+    </div>
+    <!--tabs'n'shit-->
+    <div class="tab-content col-md-10">
+        <div class="tab-pane active text-style" id="api-functions-main">
+            <h2><span class="CYF"></span> The UI Object [E/M/W]</h2><br><br>
+            <p>
+                This section details the various elements you can use to manipulate CYF's internal user interface. Some elements such as the <span class="term">buttons</span> cannot be manipulated yet, but pretty much all of CYF's other UI elements can be manipulated through this object.
+                <br><br>
+                If you want to manipulate UI elements related to the enemy (attack animation, health bar, position of the damage text), I suggest visiting the
+            </p>
+
+            <p>
+                <br><span class="function"> <span class="userdata">sprite</span> UI.background</span>
+                Sprite object allowing you to manipulate the background image set using the <span class="term">background</span> variable.
+            </p>
+
+            <p>
+                <br><span class="function"> <span class="userdata">textObject</span> UI.namelv</span>
+                Text object displaying the Player's name as well as its level. Its contents is usually the Player's name followed by two spaces, the text <span class="term">LV</span>, another space, then finally the Player's level.
+            </p>
+
+            <p>
+                <br><span class="function"> <span class="userdata">sprite</span> UI.hplabel</span>
+                Sprite for the <span class="term">HP</span> text next to the Player's life bar.
+            </p>
+
+            <p>
+                <br><span class="function"> <span class="userdata">bar</span> UI.hpbar</span>
+                Bar object used as the Player's life bar.
+            </p>
+
+            <p>
+                <br><span class="function"> <span class="userdata">textObject</span> UI.hptext</span>
+                Text object displaying the Player's HP. Its contents display the Player's current HP, a space, a slash, another space, and finally the Player's max HP.
+            </p>
+
+            <p>
+                <br><span class="function">UI.StopUpdate(<span class="boolean"></span> toggle)</span>
+                If <span class="term">toggle</span> is true, the Player's UI (except the buttons) will not be updated by the engine, whether it is the Player's name and level text or the Player's hp bar and text.<br><br>
+                False by default.
+            </p>
+
+            <p>
+                <br><span class="function">UI.Hide(<span class="boolean"></span> hide)</span>
+                If <span class="term">hide</span> is true, all of the Player's UI (including the buttons) will be hidden.<br><br>
+                False by default.
+            </p>
+
+            <p>
+                <br><span class="function">UI.UpdateHPTextShift()</span>
+                Updates the Player's life's bar's position, and the player's hp text's position depending on the sizes of the hp bar and the hp label.
+            </p>
+
+            <p>
+                <br><span class="function">UI.Reset()</span>
+                Tries to reset all modifications to the Player's UI, making it look like it originally is at the beginning of the battle by resetting most of the UI elements' parameters.
+            </p>
+
+
+            <hr>
+            <h3><span class="CYF"></span> The Bar Object [E/M/W]</h2><br><br>
+            <p>
+                This separate section lists the various functions and variables are usable when dealing with a bar object, which can be used for anything such as life bars, .
+                <br><br>
+                These objects are used in CYF as life bars, whether it's the Player's, the life bars appearing next to the enemy's names after selecting the <span class="term">FIGHT</span> button and the life bar appearing after attacking an enemy.
+                <br><br>
+                Bar objects are composed of three sprite (four of them if it has an outline) which are all children of one another: <span class="term">fill</span> is the child of <span class="term">mask</span> which is itself the child of <span class="term">background</span>. If the bar's <span class="term">outline</span> exists, then <span class="term">background</span> will be its child.
+            </p>
+
+            <p>
+                <br><span class="function">CreateBar(<span class="number"></span> x, <span class="number"></span> y, <span class="number"></span> width, <span class="number"></span> height = 20) returns <span class="userdata">bar</span> [E/M/W]</span>
+                Creates a bar object which bottom left corner is at the absolute position <span class="term">x</span> and <span class="term">y</span>, with a size of <span class="term">width</span> pixels horizontally and <span class="term">height</span> pixels vertically.
+            </p>
+
+            <p>
+                <br><span class="function">CreateBarWithSprites(<span class="number"></span> x, <span class="number"></span> y, <span class="string"></span> backgroundSprite, <span class="string"></span> fillSprite = backgroundSprite) returns <span class="userdata">bar</span> [E/M/W]</span>
+                Creates a bar object which bottom left corner is at the absolute position <span class="term">x</span> and <span class="term">y</span>, and which uses the sprites <span class="term">backgroundSprite</span> and <span class="term">fillSprite</span> to create the life bar.
+                <br><br>
+                Both sprites must have the same size, and if no value is given for <span class="term">fillSprite</span>, then it uses the same sprite as <span class="term">backgroundSprite</span>.
+            </p>
+
+            <p>
+                <br><span class="function"> <span class="userdata">sprite</span> Bar.background</span>
+                Background sprite of the bar object, which is also the parent of all other standard bar elements.
+            </p>
+
+            <p>
+                <br><span class="function"> <span class="userdata">sprite</span> Bar.mask</span>
+                Mast sprite of the bar object, used to hide part of the <span class="term">fill</span> sprite. A mask is used in order to cut the <span class="term">fill</span> sprite if it's a sprite other than a single pixel scaled up, allowing for the bar's <span class="term">fill</span> to be cut instead of squished.
+            </p>
+
+            <p>
+                <br><span class="function"> <span class="userdata">sprite</span> Bar.fill</span>
+                Fill sprite of the bar object, which is used to represent the amount of the bar which is still full.
+            </p>
+
+            <p>
+                <br><span class="function"> <span class="userdata">sprite</span> Bar.outline</span>
+                Outline sprite of the bar object, which adds a black outline to the bar object. It needs to be created first using the function <span class="term">AddOutline()</span>.
+                <br><br>
+                If it exists, it will be the parent of the <span class="term">background</span> sprite.
+            </p>
+
+            <p>
+                <br><span class="function"> <span class="number"></span> Bar.currentFill (readonly)</span>
+                Value usually between 0 and 1 that gives the percentage of the bar which is currently full. <span class="term">0</span> means the bar is empty, while <span class="term">1</span> means it is full.
+                <br><br>
+                Can be outside of these bounds if <span class="term">SetInstant()</span> or <span class="term">SetLerp()</span> are used without clamping.
+            </p>
+
+            <p>
+                <br><span class="function"> <span class="boolean"></span> Bar.hasOutline (readonly)</span>
+                Returns true if the bar object has an <span class="term">outline</span> sprite, false otherwise.
+            </p>
+
+            <p>
+                <br><span class="function"> <span class="boolean"></span> Bar.outlineThickness</span>
+                Returns the thickness in pixels of the <span class="term">outline</span> sprite. Returns 0 if the outline doesn't exist.
+                <br><br>
+                Can be set to resize the outline's thickness.
+            </p>
+
+            <p>
+                <br><span class="function"> Bar.SetInstant(<span class="number"></span> fillValue, <span class="boolean"></span> allowNonClamped = false)</span>
+                Sets the fill percentage of the bar object between 0 and 1. <span class="term">0</span> means the bar is empty, while <span class="term">1</span> means it is full.
+                <br><br>
+                If <span class="term">allowNonClamped</span> is set to true, you can use values lower than 0 and higher than 1.
+                <br><br>
+                Note that the bar will be updated properly when <span class="term">fillValue</span> is beyond its usual bounds only if the <span class="term">px</span> sprite is used for all of the bar's sprites.
+            </p>
+
+            <p>
+                <br><span class="function"> Bar.SetLerp(<span class="number"></span> fillValue, <span class="number"></span> time = 60, <span class="boolean"></span> allowNonClamped = false)</span>
+                Gradually sets the fill percentage of the bar object between 0 and 1 to <span class="term">fillValue</span> over <span class="term">time</span> frames, with 60 frames being equal to one second. <span class="term">0</span> means the bar is empty, while <span class="term">1</span> means it is full.
+                <br><br>
+                If <span class="term">allowNonClamped</span> is set to true, you can use values lower than 0 and higher than 1.
+                <br><br>
+                Note that the bar will be updated properly when <span class="term">fillValue</span> is beyond its usual bounds only if the <span class="term">px</span> sprite is used for all of the bar's sprites.
+            </p>
+
+            <p>
+                <br><span class="function"> Bar.SetLerp(<span class="number"></span> originalValue, <span class="number"></span> fillValue, <span class="number"></span> time = 60, <span class="boolean"></span> allowNonClamped = false)</span>
+                Acts like the function above, except you can set the initial fill percentage of the bar object using <span class="term">originalValue</span>.
+            </p>
+
+            <p>
+                <br><span class="function"> Bar.AddOutline(<span class="number"></span> thickness, <span class="number"></span> r = 0, <span class="number"></span> g = 0, <span class="number"></span> b = 0)</span>
+                Creates a rectangle outline sprite which has a thickness of <span class="term">thickness</span> pixels on all sides. This new sprite will be the parent of the <span class="term">background</span> sprite, which means it needs to be moved if you want to move the entire bar object if it exists.
+                <br><br>
+                The standard color of the outline is black, but you can change the color of the <span class="term">outline</span> sprite by setting the values <span class="term">r</span>, <span class="term">g</span> and <span class="term">b</span> between 0 and 1.
+            </p>
+
+            <p>
+                <br><span class="function"> Bar.RemoveOutline()</span>
+                Removes the <span class="term">outline</span> sprite if it exists without removing the bar object.
+            </p>
+
+            <p>
+                <br><span class="function"> Bar.Resize(<span class="number"></span> width, <span class="number"></span> height, <span class="boolean"></span> updateOutline = true)</span>
+                Sets the scale of the various elements of the bar object. If the <span class="term">outline</span> sprite shouldnt be updated, set <span class="term">updateOutline</span> to <span class="term">false</span>.
+                <br><br>
+                If used on a bar object using the <span class="term">px</span> sprite for both its <span class="term">background</span> and its <span class="term">fill</span> sprite, then the bar object will be <span class="term">width</span> pixels wide and <span class="term">height</span> pixels tall.
+            </p>
+
+            <p>
+                <br><span class="function"> Bar.SetSprites(<span class="string"></span> bgSprite, <span class="string"></span> fSprite = bgSprite, <span class="string"></span> mSprite = nil, <span class="string"></span> oSprite = nil)</span>
+                Sets the sprites of the various elements of the bar object. <span class="term">bgSprite</span> will replace the image of the <span class="term">background</span> sprite, <span class="term">fSprite</span> will replace the image of the <span class="term">fill</span> sprite, <span class="term">mSprite</span> will replace the image of the <span class="term">mask</span> sprite and <span class="term">oSprite</span> will replace the image of the <span class="term">outline</span> sprite, if it exists.
+                <br><br>
+                The size of the <span class="term">background</span> and <span class="term">fill</span> sprites must always be the same, hence why if <span class="term">fSprite</span> is not given, it will use the same spite as <span class="term">bgSprite</span>.
+            </p>
+
+            <p>
+                <br><span class="function"> Bar.SetVisible(<span class="boolean"></span> visible)</span>
+                Hides the bar object completely if <span class="term">visible</span> is set to <span class="term">false</span>, shows it otherwise.
+            </p>
+
+            <p>
+                <br><span class="function"> Bar.Destroy()</span>
+                Destroys this bar object, removing all of its sprites. The Player's lifebar cannot be destroyed.
+            </p>
+        </div>
+
+        <div class="tab-pane text-style" id="mercy">
+            <h2 style="text-decoration: none; line-height:50px;">
+                * YOU WON!<br>
+                * You earned 0 EXP and 0 gold.<br>
+                * also the nav menu is broken now
+            </h2><br>
+        </div>
+
+    </div>
+</div>
+
+<div class="container">
+    <div class="col-xs-3"><img class="centerbt black" alt="Undertale fake button" src="../img/fightbt_0.png" height="42">
+    </div>
+    <div class="col-xs-3"><img class="centerbt black" alt="Undertale fake button" src="../img/actbt_0.png" height="42">
+    </div>
+    <div class="col-xs-3"><img class="centerbt black" alt="Undertale fake button" src="../img/itembt_0.png" height="42">
+    </div>
+    <div class="col-xs-3"><a href="#mercy" data-toggle="tab"><img class="centerbt black" alt="Undertale fake button"
+                                                                  src="../img/mercybt_0.png" height="42"></a>
+    </div>
+</div>
+<br>
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="../js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../js/show_hide_comments.js"></script>
+
+<script type="text/javascript" src="../js/FontToggleButton.js"></script>
+</body>
+</html>

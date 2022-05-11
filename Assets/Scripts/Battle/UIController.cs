@@ -24,7 +24,7 @@ public class UIController : MonoBehaviour {
     public TextManager mainTextManager;     // Main text manager in the arena
 
     private static Sprite fightButtonSprite, actButtonSprite, itemButtonSprite, mercyButtonSprite;  // UI button sprites when the soul is selecting them
-    private Image fightButton, actButton, itemButton, mercyButton;                                  // UI button objects in the scene
+    public Image fightButton, actButton, itemButton, mercyButton;                                   // UI button objects in the scene
 
     private Actions action = Actions.FIGHT;     // Current action chosen when entering the state ENEMYSELECT
     public Actions forcedAction = Actions.NONE; // Action forced by the user previously for the next time we enter the state ENEMYSELECT
@@ -465,20 +465,13 @@ public class UIController : MonoBehaviour {
                         if (encounter.EnabledEnemies.Length > 3)
                             if (i > 1)
                                 break;
-                        LifeBarController lifeBar = Instantiate(Resources.Load<LifeBarController>("Prefabs/HPBar"));
-                        lifeBar.player = true;
+                        LifeBarController lifeBar = LifeBarController.Create(0, 0, 90);
                         lifeBar.transform.SetParent(mainTextManager.transform);
                         lifeBar.transform.SetAsFirstSibling();
-                        RectTransform lifeBarRect = lifeBar.GetComponent<RectTransform>();
-                        lifeBarRect.anchoredPosition = new Vector2(maxWidth, initialHealthPos.y - i * mainTextManager.Charset.LineSpacing);
-                        lifeBarRect.sizeDelta = new Vector2(90, lifeBarRect.sizeDelta.y);
-                        lifeBar.setFillColor(Color.green);
+                        lifeBar.background.MoveTo(maxWidth, initialHealthPos.y - i * mainTextManager.Charset.LineSpacing);
+                        lifeBar.SetFillColor(Color.green);
                         float hpDivide = encounter.EnabledEnemies[i].HP / (float)encounter.EnabledEnemies[i].MaxHP;
-                        if (encounter.EnabledEnemies[i].HP < 0) {
-                            lifeBar.fill.rectTransform.offsetMin = new Vector2(-90 * hpDivide, 0);
-                            lifeBar.fill.rectTransform.offsetMax = new Vector2(-90, 0);
-                        } else
-                            lifeBar.setInstant(hpDivide);
+                        lifeBar.SetInstant(hpDivide, encounter.EnabledEnemies[i].HP < 0);
                     }
                 }
 
@@ -833,20 +826,13 @@ public class UIController : MonoBehaviour {
                 maxWidth = mNameWidth;
         }
         for (int i = page * 2; i <= page * 2 + 1 && i < encounter.EnabledEnemies.Length; i++) {
-            LifeBarController lifeBar = Instantiate(Resources.Load<LifeBarController>("Prefabs/HPBar"));
-            lifeBar.player = true;
+            LifeBarController lifeBar = LifeBarController.Create(0, 0, 90);
             lifeBar.transform.SetParent(mainTextManager.transform);
             lifeBar.transform.SetAsFirstSibling();
-            RectTransform lifeBarRect = lifeBar.GetComponent<RectTransform>();
-            lifeBarRect.anchoredPosition = new Vector2(maxWidth, initialHealthPos.y - (i - page * 2) * mainTextManager.Charset.LineSpacing);
-            lifeBarRect.sizeDelta = new Vector2(90, lifeBarRect.sizeDelta.y);
-            lifeBar.setFillColor(Color.green);
+            lifeBar.background.MoveTo(maxWidth, initialHealthPos.y - (i - page * 2) * mainTextManager.Charset.LineSpacing);
+            lifeBar.SetFillColor(Color.green);
             float hpDivide = encounter.EnabledEnemies[i].HP / (float)encounter.EnabledEnemies[i].MaxHP;
-            if (encounter.EnabledEnemies[i].HP < 0) {
-                lifeBar.fill.rectTransform.offsetMin = new Vector2(-90 * hpDivide, 0);
-                lifeBar.fill.rectTransform.offsetMax = new Vector2(-90, 0);
-            } else
-                lifeBar.setInstant(hpDivide);
+            lifeBar.SetInstant(hpDivide, encounter.EnabledEnemies[i].HP < 0);
         }
     }
 
@@ -1411,8 +1397,7 @@ public class UIController : MonoBehaviour {
 
         if (GlobalControls.crate) {
             UserDebugger.instance.gameObject.transform.GetChild(0).gameObject.GetComponent<Text>().text = "DEGUBBER (F9 OT TOGLGE, DEBUG(STIRNG) TO PRNIT)";
-            GameObject.Find("HPLabelCrate").GetComponent<Image>().enabled = true;
-            GameObject.Find("HPLabel").GetComponent<Image>().enabled = false;
+            LuaSpriteController.GetOrCreate(GameObject.Find("HPLabel")).Set("UI/spr_phname_0");
         }
 
         // PlayerController.instance.Awake();

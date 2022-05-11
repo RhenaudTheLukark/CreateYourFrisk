@@ -28,8 +28,8 @@ public class FightUIController : MonoBehaviour {
 
     private void LaunchInstance(bool bind = false) {
         GameObject go = Instantiate(Resources.Load<GameObject>("Prefabs/FightInstance"));
-        go.GetComponent<FightUI>().transform.SetParent(transform);
-        go.GetComponent<FightUI>().transform.SetAsLastSibling();
+        go.transform.SetParent(transform);
+        go.transform.SetAsLastSibling();
         if (bind)
             boundFightUiInstances.Add(go.GetComponent<FightUI>());
         allFightUiInstances.Add(go.GetComponent<FightUI>());
@@ -52,8 +52,6 @@ public class FightUIController : MonoBehaviour {
     public void ChangeTarget(EnemyController target) {
         while (boundFightUiInstances.Count > 1) {
             allFightUiInstances.Remove(boundFightUiInstances[1]);
-            Destroy(boundFightUiInstances[1].lifeBar.gameObject);
-            Destroy(boundFightUiInstances[1].damageText.gameObject);
             Destroy(boundFightUiInstances[1].gameObject);
             boundFightUiInstances.RemoveAt(1);
         }
@@ -171,12 +169,7 @@ public class FightUIController : MonoBehaviour {
         for (int i = 0; i < allFightUiInstances.Count; i++)
             if (!boundFightUiInstances.Contains(allFightUiInstances[i]))
                 if (allFightUiInstances[i].Finished()) {
-                    allFightUiInstances[i].slice.Remove();
-                    if (allFightUiInstances[i].lifeBar) {
-                        Destroy(allFightUiInstances[i].lifeBar.gameObject);
-                        Destroy(allFightUiInstances[i].damageText.gameObject);
-                        Destroy(allFightUiInstances[i].gameObject);
-                    }
+                    Destroy(allFightUiInstances[i].gameObject);
                     allFightUiInstances.RemoveAt(i);
                     i--;
                 }
@@ -187,9 +180,6 @@ public class FightUIController : MonoBehaviour {
             if (resizeProg != 0.0f) return;
             while (boundFightUiInstances.Count != 0) {
                 allFightUiInstances.Remove(boundFightUiInstances[boundFightUiInstances.Count - 1]);
-                boundFightUiInstances[boundFightUiInstances.Count - 1].slice.Remove();
-                Destroy(boundFightUiInstances[boundFightUiInstances.Count - 1].lifeBar.gameObject);
-                Destroy(boundFightUiInstances[boundFightUiInstances.Count - 1].damageText.gameObject);
                 Destroy(boundFightUiInstances[boundFightUiInstances.Count - 1].gameObject);
                 boundFightUiInstances.RemoveAt(boundFightUiInstances.Count - 1);
             }
