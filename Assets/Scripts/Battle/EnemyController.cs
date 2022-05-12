@@ -414,7 +414,7 @@ public class EnemyController : MonoBehaviour {
             script.SetVar("posy", DynValue.NewNumber(GetComponent<RectTransform>().position.y));
         } catch { /* ignored */ }
 
-        if (ArenaManager.instance.firstTurn || canMove) return;
+        if (ArenaManager.instance.needsInit || canMove) return;
         canMove = true;
         script.SetVar("canmove", DynValue.NewBoolean(true));
     }

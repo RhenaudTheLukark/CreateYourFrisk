@@ -17,7 +17,7 @@ public class ArenaManager : MonoBehaviour {
     public static LuaArenaStatus luaStatus { get; private set; } // The Lua Arena object on the C# side
     public LuaSpriteController innerSprite; // inner part's sprite
     public LuaSpriteController outerSprite; // outer part's sprite
-    public bool firstTurn = true, yup, falseInit;
+    public bool needsInit = true, WaitAFrameForFullInit;
 
     private RectTransform outer; // RectTransform of the slightly larger white box under the arena (it's the border).
     private RectTransform inner; // RectTransform of the inner part of the arena.
@@ -261,21 +261,13 @@ public class ArenaManager : MonoBehaviour {
     /// Resizes the arena if the desired size is different from the current size.
     /// </summary>
     private void Update() {
-        if (firstTurn) {
-            if (!falseInit) {
-                Vector2[] enemyPositions = FindObjectOfType<EnemyEncounter>().enemyPositions;
-                EnemyController[] rts = FindObjectsOfType<EnemyController>();
-
-                bool nope = false;
-                for (int i = 0; i < rts.Length; i++)
-                    if (rts[i].GetComponent<RectTransform>().position.y != 231 + enemyPositions[rts.Length - i - 1].y)
-                        nope = true;
-                if (!nope)
-                    falseInit = true;
+        // Delays the moment the Arena is fully initialized by a frame because the Arena is weird like that
+        if (needsInit) {
+            if (WaitAFrameForFullInit) needsInit = false;
+            else {
+                WaitAFrameForFullInit = true;
+                return;
             }
-            if (yup)        firstTurn = false;
-            if (falseInit)  yup = true;
-            return;
         }
         //if (UIController.instance.state != UIController.UIState.DEFENDING && UIController.instance.state != UIController.UIState.ENEMYDIALOGUE)
         //    outer.position = new Vector3(320, 90, outer.position.z);
@@ -306,7 +298,7 @@ public class ArenaManager : MonoBehaviour {
                 currentHeight = desiredHeight;
         }
 
-        if (!firstTurn) {
+        if (!needsInit) {
             if (currentX < desiredX) {
                 currentX += pxPerSecond * Time.deltaTime / 2;
                 if (currentX >= desiredX)
@@ -345,7 +337,7 @@ public class ArenaManager : MonoBehaviour {
         outer.sizeDelta = new Vector2(arenaWidth + 10, arenaHeight + 10);
         if (movePlayer)
             PlayerController.instance.MoveDirect(new Vector2(arenaX - outer.position.x, arenaY - outer.position.y));
-        if (!firstTurn) {
+        if (!needsInit) {
             outer.position = new Vector2(arenaX, arenaY);
             outer.localPosition = new Vector3(outer.localPosition.x, outer.localPosition.y, 0);
             arenaAbs.x = inner.position.x - inner.sizeDelta.x / 2;
@@ -357,7 +349,7 @@ public class ArenaManager : MonoBehaviour {
     }
 
     public void resetArena() {
-        if (!firstTurn)
+        if (!needsInit)
             MoveToImmediate(320, 90, false);
         Resize(UIWidth, UIHeight);
     }

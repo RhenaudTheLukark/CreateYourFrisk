@@ -294,7 +294,7 @@ public class UIController : MonoBehaviour {
             mercyButton.overrideSprite = null;
             mainTextManager.SetPause(true);
         } else {
-            if (!first &&!ArenaManager.instance.firstTurn)
+            if (!first &&!ArenaManager.instance.needsInit)
                 ArenaManager.instance.resetArena();
             PlayerController.instance.invulTimer = 0.0f;
             PlayerController.instance.setControlOverride(true);

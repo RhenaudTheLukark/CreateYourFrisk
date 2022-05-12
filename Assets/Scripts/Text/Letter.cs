@@ -13,7 +13,7 @@ public class Letter : MonoBehaviour {
     private void Start() {
         img = GetComponent<Image>();
         if (GlobalControls.isInFight)
-            if (ArenaManager.instance.firstTurn) LateUpdater.lateActions.Add(LateStart);
+            if (ArenaManager.instance.needsInit) LateUpdater.lateActions.Add(LateStart);
             else                                 LateStart();
         else                                     LateStart();
     }

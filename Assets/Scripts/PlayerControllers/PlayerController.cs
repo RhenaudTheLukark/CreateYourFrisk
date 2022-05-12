@@ -414,7 +414,7 @@ public class PlayerController : MonoBehaviour {
             SetSoul(new BlueSoul(this));*/
         // END DEBUG CONTROLS
         /*
-        if (!ArenaManager.instance.firstTurn && (tempQueue.x != -5000 || tempQueue.y != -5000)) {
+        if (!ArenaManager.instance.needsInit && (tempQueue.x != -5000 || tempQueue.y != -5000)) {
             SetPosition(tempQueue.x, tempQueue.y, tempQueue2);
             tempQueue = new Vector2(-5000, -5000);
         }

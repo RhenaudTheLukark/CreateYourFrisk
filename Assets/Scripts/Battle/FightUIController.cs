@@ -165,7 +165,7 @@ public class FightUIController : MonoBehaviour {
         if (UIController.instance.frozenState != "PAUSE")
             return;
 
-        if (ArenaManager.instance.firstTurn) return;
+        if (ArenaManager.instance.needsInit) return;
         for (int i = 0; i < allFightUiInstances.Count; i++)
             if (!boundFightUiInstances.Contains(allFightUiInstances[i]))
                 if (allFightUiInstances[i].Finished()) {
