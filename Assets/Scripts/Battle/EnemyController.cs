@@ -324,9 +324,7 @@ public class EnemyController : MonoBehaviour {
     }
 
     public void SetSprite(string filename) {
-        if (filename == null)
-            throw new CYFException("The enemy's sprite can't be nil!");
-        SpriteUtil.SwapSpriteFromFile(this, filename);
+        sprite.Set(filename);
     }
 
     /// <summary>

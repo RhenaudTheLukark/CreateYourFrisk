@@ -75,7 +75,6 @@ public static class Inventory {
         usedItemNoDelete = false;
         tempAmount = 0;
         string Name = inventory[ID].Name, replacement;
-        //bool inverseRemove = false;
         int type = inventory[ID].Type;
         float amount;
         TryCall("HandleItem", new[] { DynValue.NewString(Name.ToUpper()), DynValue.NewNumber(ID + 1) });
@@ -100,13 +99,12 @@ public static class Inventory {
         if (replacement != null) {
             inventory.RemoveAt(ID);
             inventory.Insert(ID, new UnderItem(replacement));
-        //} else if ((!inverseRemove && type == 0) || (inverseRemove && type != 0))
         } else if (type == 0)
             inventory.RemoveAt(ID);
         if (!UnitaleUtil.IsOverworld) {
-            if (!UIController.instance.battleDialogueStarted && mess.Length != 0)
+            if (!UIController.instance.battleDialogueStarted && mess != null)
                 UIController.instance.ActionDialogResult(mess);
-        } else {
+        } else if (mess != null) {
             GameObject.Find("TextManager OW").GetComponent<TextManager>().SetTextQueue(mess);
             GameObject.Find("TextManager OW").transform.parent.parent.SetAsLastSibling();
         }
@@ -279,7 +277,7 @@ public static class Inventory {
     }
 
     public static void ItemLibrary(string name, int type, out TextMessage[] mess, out float amount, out string replacement) {
-        mess = new TextMessage[] { }; amount = 0; replacement = null;
+        mess = null; amount = 0; replacement = null;
         switch (type) {
             case 0:
                 switch (name) {
