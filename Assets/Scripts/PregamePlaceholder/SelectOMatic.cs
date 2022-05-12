@@ -179,9 +179,8 @@ public class SelectOMatic : MonoBehaviour {
         encounterListScroll = content.GetComponent<RectTransform>().anchoredPosition.y;
 
         yield return new WaitForEndOfFrame();
-        StaticInits.Initialized = false;
         try {
-            StaticInits.InitAll(true);
+            StaticInits.InitAll(StaticInits.MODFOLDER, true);
             if (UnitaleUtil.firstErrorShown)
                 throw new Exception();
             Debug.Log("Loading " + StaticInits.ENCOUNTER);

@@ -35,12 +35,14 @@ public static class StaticInits {
         if (string.IsNullOrEmpty(MODFOLDER))
             MODFOLDER = EDITOR_MODFOLDER;
         //if (CurrMODFOLDER != MODFOLDER || CurrENCOUNTER != ENCOUNTER)
-        InitAll();
+        InitAll(MODFOLDER);
         Initialized = true;
     }
 
-    public static void InitAll(bool shaders = false) {
-        if (!Initialized && (!GlobalControls.isInFight || GlobalControls.modDev)) {
+    public static void InitAll(string mod, bool shaders = false) {
+        MODFOLDER = mod;
+        Initialized = false;
+        if (!GlobalControls.isInFight || GlobalControls.modDev) {
             FileLoader.absoluteSanitizationDictionary.Clear();
             FileLoader.relativeSanitizationDictionary.Clear();
 
@@ -72,11 +74,11 @@ public static class StaticInits {
                 UnityEngine.Debug.Log("Shader registry loading time: " + sw.ElapsedMilliseconds + "ms");
                 sw.Reset();
             }
-        } else
-            Initialized = true;
+        }
         LateUpdater.Init(); // must be last; lateupdater's initialization is for classes that depend on the above registries
         MusicManager.src = Camera.main.GetComponent<AudioSource>();
         SendLoaded();
+        Initialized = true;
         //CurrENCOUNTER = ENCOUNTER;
         //CurrMODFOLDER = MODFOLDER;
     }

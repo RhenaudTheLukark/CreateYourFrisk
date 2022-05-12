@@ -613,9 +613,7 @@ public static class UnitaleUtil {
         Object.Destroy(GameObject.Find("Canvas Two"));
         if (GameOverBehavior.gameOverContainerOw)
             Object.Destroy(GameOverBehavior.gameOverContainerOw);
-        StaticInits.MODFOLDER = "@Title";
-        StaticInits.Initialized = false;
-        StaticInits.InitAll();
+        StaticInits.InitAll("@Title");
         ResetOW(true);
         PlayerCharacter.instance.Reset();
         Inventory.inventory.Clear();

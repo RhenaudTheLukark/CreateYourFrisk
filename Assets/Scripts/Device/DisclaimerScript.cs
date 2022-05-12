@@ -41,9 +41,7 @@ public class DisclaimerScript : MonoBehaviour {
 
         if (!ScreenResolution.hasInitialized) return;
         if (Input.GetKeyDown(KeyCode.O)) {
-            StaticInits.MODFOLDER   = StaticInits.EDITOR_MODFOLDER;
-            StaticInits.Initialized = false;
-            StaticInits.InitAll();
+            StaticInits.InitAll(StaticInits.EDITOR_MODFOLDER);
             GlobalControls.modDev = false;
             SceneManager.LoadScene("Intro");
             Destroy(this);

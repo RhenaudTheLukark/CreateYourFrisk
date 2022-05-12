@@ -174,9 +174,7 @@ public class Title : MonoBehaviour {
         yield return 0;
         //yield return Application.isLoadingLevel;
         //GameObject.Find("Player").transform.position = new Vector3(;
-        StaticInits.MODFOLDER = LuaScriptBinder.Get(null, "ModFolder").String;
-        StaticInits.Initialized = false;
-        StaticInits.InitAll(true);
+        StaticInits.InitAll(LuaScriptBinder.Get(null, "ModFolder").String, true);
         if (GameObject.Find("Main Camera"))
             Destroy(GameObject.Find("Main Camera"));
         Destroy(gameObject);
