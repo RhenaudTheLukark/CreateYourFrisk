@@ -32,7 +32,7 @@ public class ScreenResolution : MonoBehaviour {
 
         //Grab the user's monitor resolution, and calculate some things early
         lastMonitorSize  = new Vector2(Display.main.systemWidth, Display.main.systemHeight);
-        displayedSize    = new Vector3(Screen.width, Screen.height, 0);
+        displayedSize    = new Vector2(Screen.width, Screen.height);
         userAspectRatio  = lastMonitorSize.x / lastMonitorSize.y;
         userDisplayWidth = System.Math.Min((int)RoundToNearestEven(lastMonitorSize.y / (double)3 * 4), lastMonitorSize.x);
         ProjectileHitboxRenderer.fsScreenWidth = (int)System.Math.Min(RoundToNearestEven((double)(480 / lastMonitorSize.y) * lastMonitorSize.x), lastMonitorSize.x);
