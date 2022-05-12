@@ -235,8 +235,8 @@ public class LifeBarController : MonoBehaviour {
     /// <summary>
     /// Destroys this bar object's instance.
     /// </summary>
-    public void Destroy() {
-        if (this == UIStats.instance.lifebar) throw new CYFException("You can't destroy the player's lifebar!");
+    public void Remove() {
+        if (this == UIStats.instance.lifebar) throw new CYFException("You can't remove the player's lifebar!");
         if (hasOutline) outline.Remove();
         background.Remove();
     }

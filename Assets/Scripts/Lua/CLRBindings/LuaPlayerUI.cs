@@ -40,7 +40,7 @@ public class LuaPlayerUI {
         ui.Hide(hide);
     }
 
-    public void UpdateHPTextShift() {
+    public void RepositionHPElements() {
         hpbar.transform.position = new Vector3(ui.hpLabel.absx + ui.hpLabel.spr.GetComponent<RectTransform>().sizeDelta.x + 8, hpbar.transform.position.y, hpbar.transform.position.z);
         ui.hpTextMan.transform.position = new Vector3(hpbar.background.absx + hpbar.backgroundRt.sizeDelta.x + 14, ui.hpTextMan.transform.position.y, ui.hpTextMan.transform.position.z);
     }
