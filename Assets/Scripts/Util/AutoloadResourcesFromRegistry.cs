@@ -12,6 +12,11 @@ class AutoloadResourcesFromRegistry : MonoBehaviour {
     public bool Loop;
 
     private bool loadRequested;
+    private int tries;
+
+    private void Start() {
+        LateStart();
+    }
 
     private void OnEnable() {
         if (UnitaleUtil.IsOverworld) Fading.StartFade += LateStart;
@@ -29,7 +34,9 @@ class AutoloadResourcesFromRegistry : MonoBehaviour {
         if (!string.IsNullOrEmpty(SpritePath)) {
             Sprite spr = SpriteRegistry.Get(SpritePath);
             if (spr == null) {
-                UnitaleUtil.DisplayLuaError("AutoloadResourcesFromRegistry", "You tried to load the sprite \"" + SpritePath + "\", but it doesn't exist.");
+                // Needs to wait for mod loading
+                if (tries < 10) tries++;
+                else            UnitaleUtil.DisplayLuaError("AutoloadResourcesFromRegistry", "You tried to load the sprite \"" + SpritePath + "\", but it doesn't exist.");
                 return;
             }
             Image                  img  = GetComponent<Image>();
