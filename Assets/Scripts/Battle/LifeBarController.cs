@@ -80,6 +80,9 @@ public class LifeBarController : MonoBehaviour {
         mask = LuaSpriteController.GetOrCreate(maskRt.gameObject);
         fill = LuaSpriteController.GetOrCreate(fillRt.gameObject);
 
+        if (!backgroundRt.parent)
+            background.layer = "BelowArena";
+
         float width = backgroundRt.sizeDelta.x, height = backgroundRt.sizeDelta.y;
         background.Set("px");
         mask.Set("px");
@@ -87,6 +90,8 @@ public class LifeBarController : MonoBehaviour {
         Resize(width, height);
 
         mask.Mask("stencil");
+
+        currentFill = 1;
 
         init = true;
     }
@@ -185,11 +190,18 @@ public class LifeBarController : MonoBehaviour {
     /// <param name="height">New y scale of the bar object.</param>
     /// <param name="updateOutline">True of the outline should be resized as well.</param>
     public void Resize(float width, float height, bool updateOutline = true) {
-        if (outlineRt && updateOutline) outline.Scale((width + outlineThickness * 2) * background.width / outline.width, (height + outlineThickness * 2) * background.height / outline.height);
+        // Update the position and size of the outline
+        if (outlineRt && updateOutline) {
+            outline.Scale((width + outlineThickness * 2) * background.width / outline.width, (height + outlineThickness * 2) * background.height / outline.height);
+            Vector2 oldPos = new Vector2(background.absx, background.absy);
+            background.MoveTo(outlineThickness, outlineThickness);
+            outline.Move(oldPos.x - background.absx, oldPos.y - background.absy);
+        }
         background.Scale(width, height);
         mask.Scale(currentFill * width * background.width / mask.width, height * background.height / mask.height);
         fill.Scale(width, height);
-        SetInstant(currentFill, true);
+        if (!inLerp)
+            SetInstant(currentFill, true);
     }
 
     /// <summary>
