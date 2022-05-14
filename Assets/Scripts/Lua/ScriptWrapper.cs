@@ -16,8 +16,8 @@ public class ScriptWrapper {
 
     public ScriptWrapper(/*bool overworld = false*/) {
         script = LuaScriptBinder.BoundScript(/*overworld*/);
-        Bind("_getv", (Func<Script, string, DynValue>)this.GetVar);
-        script.DoString(toDoString, null, scriptname);
+        Bind("_getv", (Func<Script, string, DynValue>)GetVar);
+        DoString(toDoString);
         instances.Add(this);
     }
 
@@ -25,7 +25,29 @@ public class ScriptWrapper {
         instances.Remove(this);
     }
 
-    internal DynValue DoString(string source) { return script.DoString(source, null, scriptname != "???" ? scriptname : null); }
+    internal DynValue DoString(string source) {
+        DynValue d = DynValue.Nil, res = DynValue.Nil;
+        try {
+            res = script.DoString(source, null, scriptname != "???" ? scriptname : null);
+        } catch (InterpreterException ex) {
+            UnitaleUtil.DisplayLuaError(scriptname, ex.DecoratedMessage == null ?
+                    ex.Message :
+                    UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message,
+                ex.DoNotDecorateMessage);
+        } catch (Exception ex) {
+            if (GlobalControls.retroMode)
+                return d;
+            if (ex.GetType().ToString() == "System.IndexOutOfRangeException" && ex.StackTrace.StartsWith("  at (wrapper stelemref) object:stelemref (object,intptr,object)"
+                + "\r\n  at MoonSharp.Interpreter.DataStructs.FastStack`1[MoonSharp.Interpreter.DynValue].Push"))
+                UnitaleUtil.DisplayLuaError(scriptname, "<b>Possible infinite loop</b>\n\nThis is a " + ex.GetType() + " error.\n\n"
+                    + "You almost definitely have an infinite loop in your code. A function tried to call itself infinitely. It could be a normal function or a metatable function."
+                    + "\n\n\nFull stracktrace (see CYF output log at <b>" + Application.persistentDataPath + "/output_log.txt</b>):\n\n" + ex.StackTrace);
+            else
+                UnitaleUtil.DisplayLuaError(scriptname, "This is a " + ex.GetType() + " error. Contact a dev and show them this screen, this must be an engine-side error.\n\n" + ex.Message + "\n\n" + ex.StackTrace + "\n");
+        }
+
+        return res;
+    }
 
     public void SetVar(string key, DynValue value) {
         if (key == null)
