@@ -817,26 +817,41 @@ public class TextManager : MonoBehaviour {
             case "color":
                 float oldAlpha = currentColor.a;
                 colorSet = args.Length == 1;
-                currentColor = colorSet ? ParseUtil.GetColor(cmds[1]) : defaultColor;
+                try { currentColor = colorSet ? ParseUtil.GetColor(cmds[1]) : defaultColor; }
+                catch { UnitaleUtil.DisplayLuaError("[color:x] usage", "You used the value \"" + cmds[1] + "\" to set the text's color but it's not a valid hexadecimal color value."); }
                 currentColor.a = oldAlpha;
                 break;
             case "alpha":
-                currentColor.a = args.Length == 1 ? ParseUtil.GetByte(cmds[1]) / 255 : defaultColor.a;
+                try { currentColor.a = args.Length == 1 ? ParseUtil.GetByte(cmds[1]) / 255 : defaultColor.a; }
+                catch { UnitaleUtil.DisplayLuaError("[alpha:x] usage", "You used the value \"" + cmds[1] + "\" to set the text's alpha but it's not a valid hexadecimal value."); }
+
                 break;
             case "charspacing":
-                if (cmds.Length > 1 && cmds[1].ToLower() == "default") SetHorizontalSpacing(Charset.CharSpacing);
-                else                                                   SetHorizontalSpacing(ParseUtil.GetFloat(cmds[1]));
+                try {
+                    if (cmds.Length > 1 && cmds[1].ToLower() == "default") SetHorizontalSpacing(Charset.CharSpacing);
+                    else                                                   SetHorizontalSpacing(ParseUtil.GetFloat(cmds[1]));
+                } catch (CYFException) {
+                    UnitaleUtil.DisplayLuaError("[charspacing:x] usage", "You used the value \"" + cmds[1] + "\" to set the text's horizontal spacing but it's not a valid number value.");
+                }
                 break;
             case "linespacing":
-                if (cmds.Length > 1)
-                    SetVerticalSpacing(ParseUtil.GetFloat(cmds[1]));
+                try {
+                    if (cmds.Length > 1)
+                        SetVerticalSpacing(ParseUtil.GetFloat(cmds[1]));
+                } catch (CYFException) {
+                    UnitaleUtil.DisplayLuaError("[linespacing:x] usage", "You used the value \"" + cmds[1] + "\" to set the text's vertical spacing but it's not a valid number value.");
+                }
                 break;
 
             case "starcolor":
-                Color starColor = ParseUtil.GetColor(cmds[1]);
-                int indexOfStar = textQueue[currentLine].Text.IndexOf('*'); // HACK oh my god lol
-                if (indexOfStar > -1)
-                    letterReferences[indexOfStar].color = starColor;
+                try {
+                    Color starColor = ParseUtil.GetColor(cmds[1]);
+                    int indexOfStar = textQueue[currentLine].Text.IndexOf('*'); // HACK oh my god lol
+                    if (indexOfStar > -1)
+                        letterReferences[indexOfStar].color = starColor;
+                } catch (CYFException) {
+                    UnitaleUtil.DisplayLuaError("[starcolor:x] usage", "You used the value \"" + cmds[1] + "\" to set the color of the text's star, but it's not a valid hexadecimal color value.");
+                }
                 break;
 
             case "instant":
@@ -861,7 +876,7 @@ public class TextManager : MonoBehaviour {
 
             case "effect":
                 switch (cmds[1].ToUpper()) {
-                    case "NONE":   textEffect = null;                                                                           break;
+                    case "NONE":   textEffect = null;                                                                                 break;
                     case "TWITCH": textEffect = new TwitchEffect(this, args.Length > 1 ? ParseUtil.GetFloat(args[1]) : 2);      break;
                     case "SHAKE":  textEffect = new ShakeEffect(this, args.Length > 1 ? ParseUtil.GetFloat(args[1]) : 1);       break;
                     case "ROTATE": textEffect = new RotatingEffect(this, args.Length > 1 ? ParseUtil.GetFloat(args[1]) : 1.5f); break;
@@ -891,32 +906,41 @@ public class TextManager : MonoBehaviour {
 
             case "waitfor":
                 try { waitingChar = (KeyCode)Enum.Parse(typeof(KeyCode), cmds[1]); }
-                catch { throw new CYFException("The key \"" + cmds[1] + "\" isn't a valid key."); }
+                catch { UnitaleUtil.DisplayLuaError("[waitfor:x] usage", "The key \"" + cmds[1] + "\" isn't a valid key."); }
                 break;
 
             case "w":
-                letterTimer = timePerLetter - (singleFrameTiming * ParseUtil.GetInt(cmds[1]));
+                try { letterTimer = timePerLetter - singleFrameTiming * ParseUtil.GetInt(cmds[1]); }
+                catch { UnitaleUtil.DisplayLuaError("[w:x] usage", "You used the value \"" + cmds[1] + "\" to wait for a certain amount of frames, but it's not a valid integer value."); }
                 break;
 
-            case "waitall":     timePerLetter = singleFrameTiming * ParseUtil.GetInt(cmds[1]); break;
+            case "waitall":
+                try { timePerLetter = singleFrameTiming * ParseUtil.GetInt(cmds[1]); }
+                catch { UnitaleUtil.DisplayLuaError("[waitall:x] usage", "You used the value \"" + cmds[1] + "\" to set the text's waiting time between letters, but it's not a valid integer value."); }
+                break;
+
             case "novoice":     letterSound = null;                                            break;
             case "next":        autoSkipAll = true;                                            break;
             case "finished":    autoSkipThis = true;                                           break;
             case "nextthisnow": autoSkip = true;                                               break;
             case "noskipatall": blockSkip = true;                                              break;
-            //case "speed":       letterSpeed = Int32.Parse(args[0]);                            break;
             case "speed":
-                //you can only set text speed to a number >= 0
-                float newSpeedValue = float.Parse(args[0]);
-                // protect against divide-by-zero errors
-                if (newSpeedValue > 0f)
-                    timePerLetter = singleFrameTiming / newSpeedValue;
-                else if (newSpeedValue == 0f)
-                    timePerLetter = 0f;
+                try {
+                    //you can only set text speed to a number >= 0
+                    float newSpeedValue = ParseUtil.GetFloat(args[0]);
+                    // protect against divide-by-zero errors
+                    if (newSpeedValue > 0f)
+                        timePerLetter = singleFrameTiming / newSpeedValue;
+                    else if (newSpeedValue == 0f)
+                        timePerLetter = 0f;
+                } catch {
+                    UnitaleUtil.DisplayLuaError("[speed:x] usage", "You used the value \"" + args[0] + "\" to set the text's typing speed, but it's not a valid number value.");
+                }
                 break;
 
             case "letters":
-                letterOnceValue = int.Parse(args[0]);
+                try { letterOnceValue = ParseUtil.GetInt(args[0]); }
+                catch { UnitaleUtil.DisplayLuaError("[letters:x] usage", "You used the value \"" + args[0] + "\" to display a given amount of letters instantly, but it's not a valid integer value."); }
                 break;
 
             case "voice":
@@ -1050,8 +1074,11 @@ public class TextManager : MonoBehaviour {
                         killable = true;
                 }
                 float HP = PlayerCharacter.instance.HP, MaxHP = PlayerCharacter.instance.MaxHP, tryHP = 0;
-                if (ParseUtil.TestInt(args[0]))
-                    tryHP = ParseUtil.GetInt(args[0]);
+                try { tryHP = ParseUtil.GetInt(args[0]); }
+                catch {
+                    UnitaleUtil.DisplayLuaError("[health:x] usage", "You used the value \"" + args[0] + "\" to set the player's HP, but it's not a valid integer value.");
+                    return;
+                }
 
                 if ((args[0].Contains("-") && args[0] != "Max-1") || args[0] == "kill") PlayerController.PlaySound("hurtsound");
                 else if (args.Length > 1) {
@@ -1079,7 +1106,8 @@ public class TextManager : MonoBehaviour {
             case "lettereffect":
                 letterEffect = args[0];
                 if (args.Length == 2)
-                    letterIntensity = ParseUtil.GetFloat(args[1]);
+                    try { letterIntensity = ParseUtil.GetFloat(args[1]); }
+                    catch { UnitaleUtil.DisplayLuaError("[lettereffect:x] usage", "You used the value \"" + args[1] + "\" to set the letter effect's intensity, but it's not a valid number value."); }
                 break;
         }
     }
