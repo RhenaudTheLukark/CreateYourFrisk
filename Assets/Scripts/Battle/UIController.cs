@@ -900,7 +900,7 @@ public class UIController : MonoBehaviour {
                                 string[] texts = {
                                     "You know...\rSeeing the engine like this...\rIt makes me want to cry.",
                                     "All these typos...\rCrate Your Frisk is bad.\nWe must destroy it.",
-                                    "We have two solutions here:\nDownload the engine again...",
+                                    "We have two solutions here:\nDestroy the engine's data...",
                                     "...Or another way. Though, I'll\rneed some time to find out\rhow to do this...",
                                     "*sniffles* I can barely stand\rthe view... This is so\rdisgusting...",
                                     "I feel like I'm getting there,\rkeep up the good work!",
@@ -918,11 +918,11 @@ public class UIController : MonoBehaviour {
                                     ActionDialogResult(new TextMessage(texts[meCry], true, false));
                                 else if (meCry == 14)
                                     ActionDialogResult(new TextMessage[] {
-                                        new RegularMessage("\"...click the BAD SPELING button\rin CYF's option menu.\""),
+                                        new RegularMessage("\"...click the BAD SPELING button\rin CYF's options menu.\""),
                                         new RegularMessage("Is that all? Come on, all\rthis time lost for such\ran easy response..."),
                                         new RegularMessage("...Sorry for the wait.\nDo whatever you want now! :D"),
                                         new RegularMessage("But please..."),
-                                        new RegularMessage("For GOD's sake..."),
+                                        new RegularMessage("For the love of all that\ris good..."),
                                         new RegularMessage("Remove Crate Your Frisk."),
                                         new RegularMessage("Now I'll wash my eyes with\rsome bleach."),
                                         new RegularMessage("Cya!")

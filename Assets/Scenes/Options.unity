@@ -2069,7 +2069,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 2
-  m_Text: 'Blurless Fullscreen: On'
+  m_Text: 'Cropped Fullscreen: On'
 --- !u!222 &1189463716
 CanvasRenderer:
   m_ObjectHideFlags: 0
