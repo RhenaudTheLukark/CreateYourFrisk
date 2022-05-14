@@ -678,6 +678,7 @@ GameObject:
   - component: {fileID: 506907623}
   - component: {fileID: 506907625}
   - component: {fileID: 506907624}
+  - component: {fileID: 506907627}
   - component: {fileID: 506907626}
   m_Layer: 5
   m_Name: ItemBt
@@ -751,6 +752,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SpritePath: UI/Buttons/itembt_0
   Loop: 0
+--- !u!114 &506907627
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 506907622}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c7b8a91bf13f244b93c1a72a65984e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &516848000
 GameObject:
   m_ObjectHideFlags: 0
@@ -1986,6 +1998,7 @@ GameObject:
   - component: {fileID: 991344420}
   - component: {fileID: 991344422}
   - component: {fileID: 991344421}
+  - component: {fileID: 991344424}
   - component: {fileID: 991344423}
   m_Layer: 5
   m_Name: ActBt
@@ -2059,6 +2072,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SpritePath: UI/Buttons/actbt_0
   Loop: 0
+--- !u!114 &991344424
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 991344419}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c7b8a91bf13f244b93c1a72a65984e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1003495342
 GameObject:
   m_ObjectHideFlags: 0
@@ -2211,6 +2235,7 @@ GameObject:
   - component: {fileID: 1280180706}
   - component: {fileID: 1280180708}
   - component: {fileID: 1280180707}
+  - component: {fileID: 1280180710}
   - component: {fileID: 1280180709}
   m_Layer: 5
   m_Name: MercyBt
@@ -2284,6 +2309,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SpritePath: UI/Buttons/mercybt_0
   Loop: 0
+--- !u!114 &1280180710
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1280180705}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c7b8a91bf13f244b93c1a72a65984e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1304618329
 GameObject:
   m_ObjectHideFlags: 0
@@ -4309,6 +4345,7 @@ GameObject:
   - component: {fileID: 1745075054}
   - component: {fileID: 1745075056}
   - component: {fileID: 1745075055}
+  - component: {fileID: 1745075058}
   - component: {fileID: 1745075057}
   m_Layer: 5
   m_Name: FightBt
@@ -4382,6 +4419,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SpritePath: UI/Buttons/fightbt_0
   Loop: 0
+--- !u!114 &1745075058
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1745075053}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c7b8a91bf13f244b93c1a72a65984e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1776304109
 GameObject:
   m_ObjectHideFlags: 0
