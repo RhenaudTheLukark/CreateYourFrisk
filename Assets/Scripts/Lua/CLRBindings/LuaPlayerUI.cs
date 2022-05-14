@@ -70,7 +70,7 @@ public class LuaPlayerUI {
         hpbar.background.SetAnchor(0, 0);
         hpbar.background.color = new float[] { 1, 0, 0, 1 };
         hpbar.fill.color = new float[] { 1, 1, 0, 1 };
-        hpbar.SetSprites("px");
+        hpbar.SetSprites("bar-px");
         hpbar.Resize(1, 20);
 
         hptext.SetFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_SMALLTEXT_NAME));

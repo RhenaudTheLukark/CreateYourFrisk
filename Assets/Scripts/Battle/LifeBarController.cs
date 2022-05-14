@@ -84,9 +84,9 @@ public class LifeBarController : MonoBehaviour {
             background.layer = "BelowArena";
 
         float width = backgroundRt.sizeDelta.x, height = backgroundRt.sizeDelta.y;
-        background.Set("px");
-        mask.Set("px");
-        fill.Set("px");
+        background.Set("bar-px");
+        mask.Set("bar-px");
+        fill.Set("bar-px");
         Resize(width, height);
 
         mask.Mask("stencil");
@@ -153,7 +153,7 @@ public class LifeBarController : MonoBehaviour {
     public void AddOutline(int thickness, float r = 0, float g = 0, float b = 0) {
         if (outlineRt) RemoveOutline();
 
-        outline = (LuaSpriteController)SpriteUtil.MakeIngameSprite("px", -1).UserData.Object;
+        outline = (LuaSpriteController)SpriteUtil.MakeIngameSprite("bar-px", -1).UserData.Object;
         outlineRt = outline.spr.GetComponent<RectTransform>();
         outlineRt.gameObject.name = "HPBarOutline";
 
@@ -268,7 +268,7 @@ public class LifeBarController : MonoBehaviour {
 
         currentFill = Mathf.Lerp(oldFill, desiredFill, fillTimer / fillLinearTime);
         mask.Scale(currentFill * backgroundRt.sizeDelta.x, backgroundRt.sizeDelta.y);
-        if (background.spritename == "px" && mask.spritename == "px" && fill.spritename == "px") {
+        if (background.spritename == "bar-px" && mask.spritename == "bar-px" && fill.spritename == "bar-px") {
             if (currentFill < 0 || currentFill > 1) fill.Scale(currentFill * backgroundRt.sizeDelta.x, backgroundRt.sizeDelta.y);
             else                                    fill.Scale(backgroundRt.sizeDelta.x, backgroundRt.sizeDelta.y);
         }
