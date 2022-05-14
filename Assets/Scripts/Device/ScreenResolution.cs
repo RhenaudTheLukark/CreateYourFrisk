@@ -136,7 +136,7 @@ public class ScreenResolution : MonoBehaviour {
             }
         }
 
-        #if UNITY_STANDALONE
+        #if UNITY_STANDALONE_WIN
             GlobalControls.fullscreenSwitch = fswitch;
         #elif UNITY_EDITOR
             mousePosShift = new Vector2();
