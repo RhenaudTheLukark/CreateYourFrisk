@@ -10,7 +10,7 @@ randomdialogue = { "[effect:none][func:SetFace,angry]Come back here!",
 
 sprite = "Lukark/full" --Always PNG. Extension is added automatically.
 name = "Lukark"
-hp = 2
+hp = 1000
 atk = 5
 def = 1
 gold = math.random(35, 105)

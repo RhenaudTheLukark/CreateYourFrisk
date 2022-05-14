@@ -54,13 +54,13 @@ function OnDeath()
         currentdialogue = { "[noskip][effect:none]Heh... [w:15][func:SetAnimRTL,happy]Hahahaha![w:20][next]",
                             "[noskip][effect:none][func:SetAnimRTL,angry]You're pathetic. [w:15]Did you REALLY think I would just keel over and die against you?[w:20][next]",
                             "[noskip][effect:none][func:SetAnimRTL,angryhurt]Well you're [effect:shake][voice:v_floweymad][waitall:2]wrong,[waitall:1][voice:monsterfont][effect:none] [w:20]buckaroo.[w:20][next]",
-                            "[noskip][effect:none]Now, I'll send you right where you belong, [w:10]and I'll do it by force if I have to![w:20][func:PlaySE,Asriel TF][func:StartTransformation][next]",
-                            "[noskip][w:90][next]",
+                            "[noskip][effect:none]Now, I'll send you right where you belong, [w:10]and I'll do it by force if I have to!",
+                            "[noskip][func:PlaySE,Asriel TF][func:StartTransformation][w:80][next]",
                             "[noskip][effect:shake][voice:v_floweymad][func:SetLukarkFace,mad]Your rampage will stop right now![w:20][func:SetLukark][func:State,ACTIONSELECT]" }
                             --"[noskip][effect:none][func:SetAnimRTL,happy][func:PlaySE,mus_dogsong_tf]" .. "What were you expecting, seriously?\n[w:20]Well there's nothing here, I'll just die and that's it.[w:20][func:Unpause][func:Kill][next]"}
     else
         shouts = {
-            "Your rampage will stop right now!"
+            "Your rampage will stop right now!",
             "This time you'll pay for your sins!",
             "I will only stop when everyone will be avenged!",
             "I won't let you go this time!",
@@ -72,9 +72,9 @@ function OnDeath()
             "Oh lawd he comin!",
             "Hey am I like at least 20% Sans if I can remember stuff? [w:15]Neat...?"
         }
-        currentdialogue = { "[noskip][effect:none]Gah, what's the point. Let's get it over with already.[w:20][func:PlaySE,Asriel TF][func:StartTransformation][next]",
-                            "[noskip][w:90][next]",
-                            "[noskip][effect:shake][voice:v_floweymad][func:SetLukarkFace,mad]" .. math.random() < 0.04 and sillyShouts[math.random(#sillyShouts)] : shouts[math.random(#shouts)] .. "[w:20][func:SetLukark][func:State,ACTIONSELECT]" }
+        currentdialogue = { "[effect:none]Gah, what's the point. [w:15]Let's just get it over with already.",
+                            "[noskip][func:PlaySE,Asriel TF][func:StartTransformation][w:80][next]",
+                            "[noskip][effect:shake][voice:v_floweymad][func:SetLukarkFace,mad]" .. (math.random() < 0.04 and sillyShouts[math.random(#sillyShouts)] or shouts[math.random(#shouts)]) .. "[w:20][func:SetLukark][func:State,ACTIONSELECT]" }
 
     end
 end
