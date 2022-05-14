@@ -49,7 +49,8 @@ public class UIController : MonoBehaviour {
     private int selectedItem;   // Item chosen by the Player
     private int selectedMercy;  // Mercy option chosen by the Player
 
-    private bool[] blockedActions = new bool[4] { false, false, false, false }; // Actions blocked by the player
+    private bool[] disabledActions = new bool[4] { false, false, false, false }; // Actions disabled by the player
+    public Vector2[] playerOffsets = new Vector2[4] { new Vector2(337, 25), new Vector2(338, 25), new Vector2(227, 25), new Vector2(226, 25) }; // Player can customize its position on the button.
 
     private int meCry;  // Used to display which dialogue should be displayed if the MECRY button has been selected, in CrateYourFrisk mode
 
@@ -1043,45 +1044,45 @@ public class UIController : MonoBehaviour {
             PlaySound(AudioClipRegistry.GetSound("menuconfirm"));
     }
 
-    public static void BlockButton(string btn)
+    public static void DisableButton(string btn)
     {
         switch (btn)
         {
             case "FIGHT":
-                instance.blockedActions[0] = true;
+                instance.disabledActions[0] = true;
                 break;
             case "ACT":
-                instance.blockedActions[1] = true;
+                instance.disabledActions[1] = true;
                 break;
             case "ITEM":
-                instance.blockedActions[2] = true;
+                instance.disabledActions[2] = true;
                 break;
             case "MERCY":
-                instance.blockedActions[3] = true;
+                instance.disabledActions[3] = true;
                 break;
             default:
-                throw new CYFException("BlockButton() can only take \"FIGHT\", \"ACT\", \"ITEM\" or \"MERCY\", but you entered \"" + btn + "\".");
+                throw new CYFException("DisableButton() can only take \"FIGHT\", \"ACT\", \"ITEM\" or \"MERCY\", but you entered \"" + btn + "\".");
         }
     }
 
-    public static void UnblockButton(string btn)
+    public static void EnableButton(string btn)
     {
         switch (btn)
         {
             case "FIGHT":
-                instance.blockedActions[0] = true;
+                instance.disabledActions[0] = true;
                 break;
             case "ACT":
-                instance.blockedActions[1] = true;
+                instance.disabledActions[1] = true;
                 break;
             case "ITEM":
-                instance.blockedActions[2] = true;
+                instance.disabledActions[2] = true;
                 break;
             case "MERCY":
-                instance.blockedActions[3] = true;
+                instance.disabledActions[3] = true;
                 break;
             default:
-                throw new CYFException("UnblockButton() can only take \"FIGHT\", \"ACT\", \"ITEM\" or \"MERCY\", but you entered \"" + btn + "\".");
+                throw new CYFException("EnableButton() can only take \"FIGHT\", \"ACT\", \"ITEM\" or \"MERCY\", but you entered \"" + btn + "\".");
         }
     }
 
@@ -1106,21 +1107,20 @@ public class UIController : MonoBehaviour {
                 itemButton.overrideSprite = null;
                 mercyButton.overrideSprite = null;
 
-                if (blockedActions[actionIndex])
+                if (disabledActions[actionIndex])
                 {
-                    if (blockedActions.Count(x => !x) == 0)
+                    if (disabledActions.Count(x => !x) == 0)
                     {
                         if (left) actionIndex++;
                         if (right) actionIndex--;
                     }
-                    else if (blockedActions.Count(x => !x) == 1)
+                    else if (disabledActions.Count(x => !x) == 1)
                     {
-                        if (left) actionIndex = Array.IndexOf(blockedActions.Take(actionIndex).ToArray(), false);
-                        if (right) actionIndex = Array.IndexOf(blockedActions.Skip(actionIndex).ToArray(), false);
+                        if (left) actionIndex = Array.IndexOf(disabledActions.Take(actionIndex).ToArray(), false);
+                        if (right) actionIndex = Array.IndexOf(disabledActions.Skip(actionIndex).ToArray(), false);
                         actionIndex = Math.Mod(actionIndex, 4);
                     }
-                    else
-                        actionIndex = Array.IndexOf(blockedActions, false);
+                    else actionIndex = Array.IndexOf(disabledActions, false);
                 }
                 action = (Actions)actionIndex;
                 SetPlayerOnAction(action);
@@ -1299,18 +1299,16 @@ public class UIController : MonoBehaviour {
 
     public static void PlaySoundSeparate(string sound) { UnitaleUtil.PlaySound("SeparateSound", sound, 0.95f); }
 
-    public Vector2 FindPlayerOffsetForAction(Actions action)
-    {
-        switch (action)
-        {
+    public Vector2 FindPlayerOffsetForAction(Actions action) {
+        switch (action) {
             case Actions.FIGHT:
-                return new Vector2(fightButton.transform.localPosition.x + 337, fightButton.transform.localPosition.y + 25);
+                return new Vector2(fightButton.transform.localPosition.x + playerOffsets[0].x, fightButton.transform.localPosition.y + playerOffsets[0].y);
             case Actions.ACT:
-                return new Vector2(actButton.transform.localPosition.x + 338, actButton.transform.localPosition.y + 25);
+                return new Vector2(actButton.transform.localPosition.x + playerOffsets[1].x, actButton.transform.localPosition.y + playerOffsets[1].y);
             case Actions.ITEM:
-                return new Vector2(itemButton.transform.localPosition.x + 227, itemButton.transform.localPosition.y + 25);
+                return new Vector2(itemButton.transform.localPosition.x + playerOffsets[2].x, itemButton.transform.localPosition.y + playerOffsets[2].y);
             case Actions.MERCY:
-                return new Vector2(mercyButton.transform.localPosition.x + 226, mercyButton.transform.localPosition.y + 25);
+                return new Vector2(mercyButton.transform.localPosition.x + playerOffsets[3].x, mercyButton.transform.localPosition.y + playerOffsets[3].y);
         }
 
         return Vector2.zero;
