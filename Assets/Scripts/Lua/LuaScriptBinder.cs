@@ -38,6 +38,7 @@ public static class LuaScriptBinder {
         UserData.RegisterType<LuaDiscord>();
         UserData.RegisterType<LuaPlayerUI>();
         UserData.RegisterType<LifeBarController>();
+        UserData.RegisterType<LuaButtons>();
 
         // Overworld bindings
         UserData.RegisterType<LuaEventOW>();
@@ -144,6 +145,8 @@ public static class LuaScriptBinder {
         script.Globals.Set("Discord", DiscordMgr);
         DynValue LuaUI = UserData.Create(new LuaPlayerUI());
         script.Globals.Set("UI", LuaUI);
+        DynValue LuaButtons = UserData.Create(new LuaButtons());
+        script.Globals.Set("Buttons", LuaButtons);
         return script;
     }
 
