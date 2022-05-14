@@ -15,29 +15,26 @@ public class ScreenResolution : MonoBehaviour {
     public  static Vector2       lastMonitorSize;             // The user's monitor size. Becomes Misc.MonitorWidth and Misc.MonitorHeight.
     public  static Vector2       displayedSize;               // Width/Height of the "normal" bounds of the screen.
     public  static Vector2       mousePosShift;               // Offset to start measuring Mouse Position from.
-    public  static Vector2       windowSize;                  // Size of the window.
-    public  static float         battleCanvasScale = 1;       // Scale value of the Canvas object in CYF's Battle scene.
+    public  static Vector2       windowSize = new Vector2(640, 480);  // Size of the window.
     private static float         userAspectRatio;             // The aspect ratio of the user's monitor.
-    private static float         userDisplayWidth;            // Width of the user's monitor if it were compressed horizontally to match a 4:3 aspect ratio.
     private static Rect          FSBorderRect = new Rect(0f, 0f, 1f, 1f); // Rect to apply to cameras in fullscreen (with pillarboxing).
     private static readonly Rect NoBorderRect = new Rect(0f, 0f, 1f, 1f); // Rect to apply to cameras in windowed (or wide fullscreen).
+    private static GameObject BGCamera;
+    private static float orthographicSize = 240;
 
-    private void Start() {
-        if (hasInitialized) {
-            Destroy(this);
+    public void Start() {
+        if (hasInitialized)
             return;
-        }
         QualitySettings.vSyncCount = 0;
         Application.targetFrameRate = 60;
 
-        //Grab the user's monitor resolution, and calculate some things early
+        // Grab the user's monitor resolution, and calculate some things early
         lastMonitorSize  = new Vector2(Display.main.systemWidth, Display.main.systemHeight);
         displayedSize    = new Vector2(Screen.width, Screen.height);
         userAspectRatio  = lastMonitorSize.x / lastMonitorSize.y;
-        userDisplayWidth = System.Math.Min((int)RoundToNearestEven(lastMonitorSize.y / (double)3 * 4), lastMonitorSize.x);
         ProjectileHitboxRenderer.fsScreenWidth = (int)System.Math.Min(RoundToNearestEven((double)(480 / lastMonitorSize.y) * lastMonitorSize.x), lastMonitorSize.x);
 
-        //Calculate a cropping camera rect to apply to cameras when entering fullscreen
+        // Calculate a cropping camera rect to apply to cameras when entering fullscreen
         if (userAspectRatio > 1.333334f) {
             float inset = 1f - 1.333334f / userAspectRatio;
             FSBorderRect = new Rect(inset/2, 0f, 1f-inset, 1f);
@@ -47,16 +44,16 @@ public class ScreenResolution : MonoBehaviour {
             SceneManager.sceneLoaded += BoxCameras2;
         #endif
 
-        //Load BGCamera Prefab and have it be in every scene, from the moment CYF starts.
-        //This is necessary so BGCamera will clear out old frames outside of the Main Camera's display rect.
-        GameObject BGCamera = Instantiate(Resources.Load<GameObject>("Prefabs/BGCamera"));
+        // Load BGCamera Prefab and have it be in every scene, from the moment CYF starts.
+        // This is necessary so BGCamera will clear out old frames outside of the Main Camera's display rect.
+        BGCamera = Instantiate(Resources.Load<GameObject>("Prefabs/BGCamera"));
         BGCamera.name = "BGCamera";
         #if UNITY_EDITOR
             BGCamera.GetComponent<Camera>().rect = NoBorderRect;
         #endif
         DontDestroyOnLoad(BGCamera);
 
-        //If this is the user's first time EVER opening the engine, force 640x480 windowed
+        // If this is the user's first time EVER opening the engine, force 640x480 windowed
         if (!PlayerPrefs.HasKey("once")) {
             SetFullScreen(false, 2);
             PlayerPrefs.SetInt("once", 1);
@@ -70,6 +67,8 @@ public class ScreenResolution : MonoBehaviour {
         #endif
     }
 
+    private static bool setSize;
+
     /// <summary>
     /// Enters or exits fullscreen, whilst accounting for the screen's dimensions.
     /// </summary>
@@ -78,11 +77,16 @@ public class ScreenResolution : MonoBehaviour {
     /// <param name="width"></param>
     /// <param name="height"></param>
     public static void SetFullScreen(bool fullscreen, int fswitch = 1, int width = -1, int height = -1) {
+        // Failsafe if the data we need hasn't been provided yet
+        if (userAspectRatio == 0)
+            Camera.main.gameObject.AddComponent<ScreenResolution>().Start();
+
         if (width == -1)
             width = (int)windowSize.x;
         else if (width != (int)windowSize.x) {
             windowSize.x                = width;
             Misc.cameraXWindowSizeShift = -width % 2 / 2f;
+            setSize = true;
         }
 
         if (height == -1)
@@ -90,51 +94,63 @@ public class ScreenResolution : MonoBehaviour {
         else if (height != (int)windowSize.y) {
             windowSize.y                = height;
             Misc.cameraYWindowSizeShift = -height % 2 / 2f;
+            setSize = true;
         }
 
-        //Regular FS and windowed operations
+        Rect rect;
+        // Windowed
         if (!fullscreen) {
+            int maxScale = Mathf.FloorToInt(Mathf.Min(Display.main.systemWidth / (float)width, Display.main.systemHeight / (float)height));
+            tempWindowScale = Mathf.Min(windowScale, maxScale);
+
             Screen.SetResolution(width * tempWindowScale, height * tempWindowScale, false, 0);
             displayedSize = new Vector2(640 * tempWindowScale, 480 * tempWindowScale);
             mousePosShift = new Vector2(width / 2f - 320, height / 2f - 240);
-            battleCanvasScale = 480f / height;
-        //Enter FS
+            rect = new Rect(0f, 0f, 1f, 1f);
         } else {
-            //Blurless FS
-            if (perfectFullscreen) {
-                Screen.SetResolution((int)lastMonitorSize.x, (int)lastMonitorSize.y, true, 0);
-                displayedSize = new Vector2(userDisplayWidth, lastMonitorSize.y);
-                mousePosShift = new Vector2((lastMonitorSize.x - userDisplayWidth) / 2, 0);
-            //Blurry FS
+            int newWidth, newHeight;
+            if (setSize || !perfectFullscreen) {
+                // 4:3 FS or FS with set size
+                float maxScale = Mathf.Min(lastMonitorSize.x / width, lastMonitorSize.y / height);
+                newWidth = Mathf.RoundToInt(width * maxScale);
+                newHeight = Mathf.RoundToInt(height * maxScale);
             } else {
-                int downscaledAspectWidth = (int)System.Math.Min(RoundToNearestEven(((double)(480 * tempWindowScale) / lastMonitorSize.y) * lastMonitorSize.x), lastMonitorSize.x);
-                Screen.SetResolution(downscaledAspectWidth, 480 * tempWindowScale, true, 0);
-                displayedSize = new Vector2(640 * tempWindowScale, 480 * tempWindowScale);
-                mousePosShift = new Vector2((downscaledAspectWidth - 640 * tempWindowScale) / 2f, 0);
+                // Wide FS
+                newWidth = (int)lastMonitorSize.x;
+                newHeight = (int)lastMonitorSize.y;
             }
-            battleCanvasScale = 1;
+
+            float currRatio = (float)newWidth / newHeight;
+            float newScaledHeight = newHeight * Mathf.Min(1, userAspectRatio / currRatio);
+            displayedSize = new Vector2(newScaledHeight * 1.333333f, newScaledHeight);
+
+            Screen.SetResolution((int)lastMonitorSize.x, (int)lastMonitorSize.y, true, 0);
+            mousePosShift = new Vector2((lastMonitorSize.x - displayedSize.x) / 2f, (lastMonitorSize.y - displayedSize.y) / 2f);
+
+            if (currRatio <= userAspectRatio) {
+                float inset = 1f - currRatio / userAspectRatio;
+                rect = new Rect(inset / 2, 0f, 1f - inset, 1f);
+            } else {
+                float inset = 1f - userAspectRatio / currRatio;
+                rect = new Rect(0f, inset / 2, 1f, 1f - inset);
+            }
         }
 
-        #if UNITY_STANDALONE_WIN
+        #if UNITY_STANDALONE
             GlobalControls.fullscreenSwitch = fswitch;
-            // Update the canvas' size (only works in windowed!)
-            if (GameObject.Find("arena")) {
-                GameObject.Find("Canvas").transform.localScale = new Vector3(battleCanvasScale, battleCanvasScale, 1);
-                GameOverBehavior.gameOverContainer.transform.GetChild(1).localScale = new Vector3(battleCanvasScale, battleCanvasScale, 1);
-            }
         #elif UNITY_EDITOR
             mousePosShift = new Vector2();
-            battleCanvasScale = 1;
         #endif
 
-        BoxCameras(fullscreen);
+        BoxCameras(height / 2f, rect);
     }
 
     public static void ResetAfterBattle() {
         wideFullscreen  = false;
         tempWindowScale = windowScale;
-        if (Screen.width != 640 * windowSize.x || Screen.height != 480 * windowSize.x)
+        if (setSize)
             SetFullScreen(Screen.fullScreen, 0, 640, 480);
+        setSize = false;
     }
 
     private static double RoundToNearestEven(double value) {
@@ -151,20 +167,21 @@ public class ScreenResolution : MonoBehaviour {
     /// <summary>
     /// Applies (or un-applies) pillarboxing to applicable cameras.
     /// </summary>
-    /// <param name="fullscreen">Whether or not the user is in fullscreen</param>
-    public static void BoxCameras(bool fullscreen) {
-        //Grab the right camera to edit
+    public static void BoxCameras(float newOrthographicSize, Rect rect) {
+        // Grab the right camera to edit
         Camera cam;
         if (GlobalControls.isInFight && UIController.instance != null && (UIController.instance.encounter == null || !UIController.instance.encounter.gameOverStance))
             cam = GameObject.Find("Main Camera").GetComponent<Camera>();
         else
             cam = Camera.main;
 
-        //Set displayed rect
-        cam.rect = fullscreen && !wideFullscreen ? FSBorderRect : NoBorderRect;
+        // Set displayed rect
+        cam.rect = rect;
+        cam.orthographicSize = newOrthographicSize;
+        orthographicSize = newOrthographicSize;
     }
 
     private static void BoxCameras2(Scene scene, LoadSceneMode mode) {
-        BoxCameras(Screen.fullScreen);
+        BoxCameras(orthographicSize, Screen.fullScreen && !wideFullscreen ? FSBorderRect : NoBorderRect);
     }
 }

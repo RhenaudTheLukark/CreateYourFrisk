@@ -73,6 +73,11 @@ public class GlobalControls : MonoBehaviour {
         if (LuaScriptBinder.GetAlMighty(null, "CYFWindowScale")      != null
          && LuaScriptBinder.GetAlMighty(null, "CYFWindowScale").Type == DataType.Number) {
             ScreenResolution.windowScale = (int) System.Math.Min(LuaScriptBinder.GetAlMighty(null, "CYFWindowScale").Number, 1);
+            if (!ScreenResolution.hasInitialized) {
+                Screen.SetResolution(640, 480, false, 0);
+                ScreenResolution scrRes = FindObjectOfType<ScreenResolution>();
+                if (scrRes) scrRes.Start();
+            }
             ScreenResolution.ResetAfterBattle();
         }
 

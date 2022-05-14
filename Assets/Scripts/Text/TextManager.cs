@@ -624,7 +624,7 @@ public class TextManager : MonoBehaviour {
                     currentY = currentY - vSpacing - Charset.LineSpacing;
                     break;
                 case '\t':
-                    currentX = !GlobalControls.isInFight ? (356 + Camera.main.transform.position.x - 320) : 356; // HACK: bad tab usage
+                    currentX = !GlobalControls.isInFight ? (356 + Misc.cameraX) : 356; // HACK: bad tab usage
                     break;
                 case ' ':
                     if (i + 1 == currentText.Length || currentText[i + 1] == ' ' || forceNoAutoLineBreak)

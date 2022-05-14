@@ -34,11 +34,10 @@ public class Misc {
 
     public static bool ResizeWindow(int width = 640, int height = 480) {
         if (width <= 0 || height <= 0) throw new CYFException("The window's width and height have to be positive numbers!");
+        if (!GlobalControls.isInFight)
+            throw new CYFException("ResizeWindow is only usable from within battles.");
         if (width >= Screen.currentResolution.width || height >= Screen.currentResolution.height)
             return false;
-
-        int maxScale = (int) System.Math.Floor(System.Math.Min(Screen.currentResolution.width / (double) width, Screen.currentResolution.height / (double) height));
-        ScreenResolution.tempWindowScale = System.Math.Min(ScreenResolution.windowScale, maxScale);
 
         ScreenResolution.SetFullScreen(Screen.fullScreen, 0, width, height);
         return true;

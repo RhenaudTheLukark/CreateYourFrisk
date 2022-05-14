@@ -13,7 +13,7 @@ public class OptionsScript : MonoBehaviour {
     // used to update the Description periodically
     private int DescriptionTimer;
 
-    // used to store the state of CreteYourFrisk at the start of the scene
+    // used to store the state of CrateYourFrisk at the start of the scene
     private bool LocalCrate;
     private bool CrateUnlocked;
 
@@ -115,8 +115,8 @@ public class OptionsScript : MonoBehaviour {
                 : ("NOT UGLEE FULLSCREEN: " + (ScreenResolution.perfectFullscreen ? "ON" : "OFF"));
         });
         Fullscreen.GetComponentInChildren<Text>().text = !LocalCrate
-            ? ( "Blurless Fullscreen: " + (ScreenResolution.perfectFullscreen ? "On" : "Off"))
-            : ("NOT UGLEE FULLSCREEN: " + (ScreenResolution.perfectFullscreen ? "ON" : "OFF"));
+            ? ( "Cropped Fullscreen: " + (ScreenResolution.perfectFullscreen ? "On" : "Off"))
+            : ("CRAPPED FULLSCREEN: " + (ScreenResolution.perfectFullscreen ? "ON" : "OFF"));
 
         // change window scale
         Scale.GetComponent<Button>().onClick.AddListener(() => {
@@ -150,7 +150,6 @@ public class OptionsScript : MonoBehaviour {
         // Discord Rich Presence
         // Change Discord Status Visibility
         Discord.GetComponent<Button>().onClick.AddListener(() => {
-            Debug.Log("whaDiscord");
             Discord.GetComponentInChildren<Text>().text = (!LocalCrate ? "Discord Display: " : "DEESCORD DESPLAY: ") + DiscordControls.ChangeVisibilitySetting(1);
         });
         Discord.GetComponentInChildren<Text>().text = (!LocalCrate ? "Discord Display: " : "DEESCORD DESPLAY: ") + DiscordControls.ChangeVisibilitySetting(0);
@@ -161,8 +160,8 @@ public class OptionsScript : MonoBehaviour {
             LuaScriptBinder.SetAlMighty(null, "CrateYourFrisk", DynValue.NewBoolean(GlobalControls.crate));
 
             Crate.GetComponentInChildren<Text>().text = !LocalCrate
-                ? ("Crate Your Frisk: " + (GlobalControls.crate ? "On" : "Off"))
-                : ("BAD SPELING: " + (GlobalControls.crate ? "ON" : "OFF"));
+                ? "Crate Your Frisk: " + (GlobalControls.crate ? "On" : "Off")
+                : "BAD SPELING: " + (GlobalControls.crate ? "ON" : "OFF");
         });
         Crate.GetComponentInChildren<Text>().text = !LocalCrate ? "Crate Your Frisk: Off" : "BAD SPELING: ON";
         // Hide the Crate button if CrateYourFrisk is nil
@@ -221,9 +220,9 @@ public class OptionsScript : MonoBehaviour {
                 else
                     return Temmify.Convert(response) + "<b>" + Temmify.Convert("CAUTION!\nDISABLE") + "</b> " + Temmify.Convert("this for mods made for CYF.");
             case "Fullscreen":
-                response = "Toggles blurless Fullscreen mode.\n\n"
-                         + "This controls whether fullscreen mode will appear \"blurry\" or not.\n\n\n"
-                         + "Press <b>F4</b> or <b>Alt+Enter</b> to toggle Fullscreen.";
+                response = "Toggles cropped Fullscreen mode.\n\n"
+                         + "This controls whether fullscreen mode will display elements outside of CYF's usual screen space or not.\n\n\n"
+                         + "Press <b>F4</b> or <b>Alt+Enter</b> to toggle fullscreen.";
                 return !LocalCrate ? response : Temmify.Convert(response);
             case "Scale":
                 response = "Scales the window in Windowed mode.\n\n"
