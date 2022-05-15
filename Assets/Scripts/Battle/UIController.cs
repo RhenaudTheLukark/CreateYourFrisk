@@ -293,9 +293,8 @@ public class UIController : MonoBehaviour {
             itemButton.overrideSprite = null;
             mercyButton.overrideSprite = null;
             mainTextManager.SetPause(true);
-        } else {
-            if (!first &&!ArenaManager.instance.needsInit)
-                ArenaManager.instance.resetArena();
+        } else if ((state == "DEFENDING" || state == "ENEMYDIALOGUE") && newState != "DEFENDING" && newState != "ENEMYDIALOGUE") {
+            ArenaManager.instance.ResetArena();
             PlayerController.instance.invulTimer = 0.0f;
             PlayerController.instance.setControlOverride(true);
         }

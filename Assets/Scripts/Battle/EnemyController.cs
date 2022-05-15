@@ -58,7 +58,6 @@ public class EnemyController : MonoBehaviour {
 
     internal bool spared;
     internal bool killed;
-    public bool canMove;
 
     public string Name {
         get { return script.GetVar("name").String; }
@@ -267,7 +266,7 @@ public class EnemyController : MonoBehaviour {
             script.Bind("SetSliceAnimOffset", (Action<int, int>)SetSliceAnimOffset);
             script.Bind("State", (Action<Script, string>)UIController.SwitchStateOnString);
             script.Bind("Remove", (Action)Remove);
-            script.SetVar("canmove", DynValue.NewBoolean(false));
+            script.SetVar("canmove", DynValue.NewBoolean(true));
             sprite = LuaSpriteController.GetOrCreate(gameObject);
             script.SetVar("monstersprite", UserData.Create(sprite, LuaSpriteController.data));
             script.DoString(scriptText);
@@ -381,14 +380,10 @@ public class EnemyController : MonoBehaviour {
     }
 
     public void Move(float x, float y) {
-        if (!canMove)
-            return;
         GetComponent<RectTransform>().position = new Vector2(GetComponent<RectTransform>().position.x + x, GetComponent<RectTransform>().position.y + y);
     }
 
     public void MoveTo(float x, float y) {
-        if (!canMove)
-            return;
         GetComponent<RectTransform>().position = new Vector2(x, y);
     }
 
@@ -413,10 +408,6 @@ public class EnemyController : MonoBehaviour {
             script.SetVar("posx", DynValue.NewNumber(GetComponent<RectTransform>().position.x));
             script.SetVar("posy", DynValue.NewNumber(GetComponent<RectTransform>().position.y));
         } catch { /* ignored */ }
-
-        if (ArenaManager.instance.needsInit || canMove) return;
-        canMove = true;
-        script.SetVar("canmove", DynValue.NewBoolean(true));
     }
 
     public void SetSliceAnimOffset(int x, int y) { offsets[0] = new Vector2(x, y); }

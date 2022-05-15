@@ -378,7 +378,6 @@ public class EnemyEncounter : MonoBehaviour {
     }
 
     public void EndWave(bool death = false) {
-        ArenaManager.instance.resetArena();
         Table t = script["Wave"].Table;
         if (!death)
             foreach (DynValue obj in t.Keys) {
