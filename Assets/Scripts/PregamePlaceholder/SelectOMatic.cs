@@ -54,7 +54,7 @@ public class SelectOMatic : MonoBehaviour {
             return;
         }
 
-        modDirs.Sort((a, b) => a.Name.CompareTo(b.Name));
+        modDirs.Sort((a, b) => string.Compare(a.Name, b.Name, StringComparison.Ordinal));
 
         // Bind button functions
         btnBack.GetComponent<Button>().onClick.RemoveAllListeners();
@@ -197,9 +197,9 @@ public class SelectOMatic : MonoBehaviour {
     private void ShowMod(int id) {
         // Error handler
         // If current index is now out of range OR currently selected mod is not present:
-        if (CurrentSelectedMod < 0 || CurrentSelectedMod > modDirs.Count - 1
-            || !new DirectoryInfo(Path.Combine(FileLoader.DataRoot, "Mods/" + modDirs[CurrentSelectedMod].Name + "/Lua/Encounters")).Exists
-            ||  new DirectoryInfo(Path.Combine(FileLoader.DataRoot, "Mods/" + modDirs[CurrentSelectedMod].Name + "/Lua/Encounters")).GetFiles("*.lua").Length == 0) {
+        if (id < 0 || id > modDirs.Count - 1
+            || !new DirectoryInfo(Path.Combine(FileLoader.DataRoot, "Mods/" + modDirs[id].Name + "/Lua/Encounters")).Exists
+            ||  new DirectoryInfo(Path.Combine(FileLoader.DataRoot, "Mods/" + modDirs[id].Name + "/Lua/Encounters")).GetFiles("*.lua").Length == 0) {
             HandleErrors();
             return;
         }
@@ -211,14 +211,16 @@ public class SelectOMatic : MonoBehaviour {
         ModBackground.GetComponent<Button>().onClick.RemoveAllListeners();
         ModBackground.GetComponent<Button>().onClick.AddListener(() => {
             if (animationDone)
-                    encounterSelection();
+                encounterSelection();
         });
 
         // Update the background
         var ImgComp = ModBackground.GetComponent<Image>();
+        FileLoader.absoluteSanitizationDictionary.Clear();
+        FileLoader.relativeSanitizationDictionary.Clear();
         // First, check if we already have this mod's background loaded in memory
-        if (bgs.ContainsKey(modDirs[CurrentSelectedMod].Name)) {
-            ImgComp.sprite = bgs[modDirs[CurrentSelectedMod].Name];
+        if (bgs.ContainsKey(modDirs[id].Name)) {
+            ImgComp.sprite = bgs[modDirs[id].Name];
         } else {
             // if not, find it and store it
             try {
@@ -230,7 +232,7 @@ public class SelectOMatic : MonoBehaviour {
                     ImgComp.sprite = bg;
                 } catch { ImgComp.sprite = SpriteUtil.FromFile("black.png"); }
             }
-            bgs.Add(modDirs[CurrentSelectedMod].Name, ImgComp.sprite);
+            bgs.Add(modDirs[id].Name, ImgComp.sprite);
         }
 
         // Get all encounters in the mod's Encounters folder
@@ -267,11 +269,11 @@ public class SelectOMatic : MonoBehaviour {
         EncounterCountShadow.GetComponent<Text>().text = EncounterCount.GetComponent<Text>().text;
 
         // Update the color of the arrows
-        if (CurrentSelectedMod == 0 && modDirs.Count == 1)
+        if (id == 0 && modDirs.Count == 1)
             BackText.color = new Color(0.25f, 0.25f, 0.25f, 1f);
         else
             BackText.color = new Color(1f, 1f, 1f, 1f);
-        if (CurrentSelectedMod == modDirs.Count - 1 && modDirs.Count == 1)
+        if (id == modDirs.Count - 1 && modDirs.Count == 1)
             NextText.color = new Color(0.25f, 0.25f, 0.25f, 1f);
         else
             NextText.color = new Color(1f, 1f, 1f, 1f);
