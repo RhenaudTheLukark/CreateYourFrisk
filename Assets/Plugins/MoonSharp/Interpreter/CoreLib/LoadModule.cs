@@ -266,6 +266,7 @@ end";
 		/// <param name="pathSuffix">String to add to the tested path to check in the given folder.</param>
 		/// <param name="errorOnFailure">Defines whether the error screen should be displayed if the file isn't in either folder.</param>
 		/// <param name="needsAbsolutePath">True if you want to get the absolute path to the file, false otherwise.</param>
+		/// <param name="needsToExist">True if the file you're looking for needs to exist.</param>
 		/// <returns>True if the sanitization was successful, false otherwise.</returns>
 		public static bool RequireFile(ref string fileName, string pathSuffix, bool errorOnFailure = true, bool needsAbsolutePath = false, bool needsToExist = true) {
 			string baseFileName = fileName;
@@ -315,9 +316,8 @@ end";
 				return true;
 			} catch (Exception e) { error = "Mod path error: " + error + "\n\nDefault path error: " + e.Message; }
 
-			// TODO: Restore on 0.7
 			if (errorOnFailure)
-				throw new CYFException("Attempted to load " + baseFileName + " from either a mod or default directory, but it was missing in both."); //"\n\n" + error);
+				throw new CYFException("Attempted to load " + baseFileName + " from either a mod or default directory, but it was missing in both.\n\n" + error);
 			return false;
 		}
 
@@ -330,7 +330,7 @@ end";
 			fullPath = fullPath.Replace('\\', Path.DirectorySeparatorChar).Replace('/', Path.DirectorySeparatorChar);
 
 			if      (pathSuffix == "raw")                pathSuffix = "/";
-            else if (pathSuffix.Contains(DataRoot))      { }
+			else if (pathSuffix.Contains(DataRoot))      { }
 			else if (fullPath.Contains(ModDataPath))     pathSuffix = Path.Combine(ModDataPath,     pathSuffix);
 			else if (fullPath.Contains(DefaultDataPath)) pathSuffix = Path.Combine(DefaultDataPath, pathSuffix);
 			else if (fullPath.Contains(DataRoot))        pathSuffix = Path.Combine(DataRoot,        pathSuffix);

@@ -147,6 +147,7 @@ public static class FileLoader {
     /// <param name="pathSuffix">String to add to the tested path to check in the given folder.</param>
     /// <param name="errorOnFailure">Defines whether the error screen should be displayed if the file isn't in either folder.</param>
     /// <param name="needsAbsolutePath">True if you want to get the absolute path to the file, false otherwise.</param>
+    /// <param name="needsToExist">True if the file you are looking for needs to exist. In this case, the function will return false if it doesn't exist.</param>
     /// <returns>True if the sanitization was successful, false otherwise.</returns>
     public static bool SanitizePath(ref string fileName, string pathSuffix, bool errorOnFailure = true, bool needsAbsolutePath = false, bool needsToExist = true) {
         fileName = fileName.Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar);
@@ -161,18 +162,32 @@ public static class FileLoader {
             return true;
         }
 
+        string original = fileName;
         // Sanitize if path from CYF root, need to transform a relative path to an absolute path and vice-versa, or if there's an occurence of ..
         if (fileName.StartsWith(Path.DirectorySeparatorChar.ToString()) || fileName.Contains(DataRoot) ^ needsAbsolutePath || fileName.Contains(".." + Path.DirectorySeparatorChar)) {
-            string original = fileName;
-            bool res = LoadModule.RequireFile(ref fileName, pathSuffix, errorOnFailure, needsAbsolutePath, needsToExist);
+            if (!LoadModule.RequireFile(ref fileName, pathSuffix, errorOnFailure, needsAbsolutePath, needsToExist)) return false;
+            // Add the sanitized path if the file actually exists
             if (needsAbsolutePath) absoluteSanitizationDictionary.Add(original, fileName);
             else                   relativeSanitizationDictionary.Add(original, fileName);
-            return res;
+            return true;
         }
 
-        if (fileName.Contains(DataRoot))
-            return !needsToExist || new FileInfo(fileName).Exists;
+        string pathToTest = pathSuffix + fileName;
 
-        return !needsToExist || new FileInfo(PathToModFile(fileName)).Exists || new FileInfo(PathToDefaultFile(fileName)).Exists;
+        if (errorOnFailure && needsToExist) {
+            if (!new FileInfo(pathToTest).Exists && !new FileInfo(PathToModFile(pathToTest)).Exists && !new FileInfo(PathToDefaultFile(pathToTest)).Exists) {
+                string toDisplay = fileName.Contains(DataRoot) ? fileName : new FileInfo(PathToModFile(pathToTest)).FullName;
+                throw new CYFException("Attempted to load " + toDisplay + " from either a mod or default directory, but it was missing in both.");
+            }
+        }
+
+        bool exists = new FileInfo(fileName).Exists || new FileInfo(PathToModFile(pathToTest)).Exists || new FileInfo(PathToDefaultFile(pathToTest)).Exists;
+        if (!exists) return !needsToExist;
+
+        // Add the sanitized path if the file actually exists
+        if (needsAbsolutePath) absoluteSanitizationDictionary.Add(original, fileName);
+        else                   relativeSanitizationDictionary.Add(original, fileName);
+
+        return true;
     }
 }

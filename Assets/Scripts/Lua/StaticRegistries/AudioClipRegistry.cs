@@ -18,7 +18,7 @@ public class AudioClipRegistry {
         dict[key.ToLower()] = value;
     }
 
-    public static AudioClip Get(string key) {
+    private static AudioClip Get(string key) {
         string k = key;
 
         string oggKey = key + (key.EndsWith(".ogg") ? "" : ".ogg");
@@ -29,39 +29,28 @@ public class AudioClipRegistry {
         } else
             key = oggKey.ToLower();
 
-        return dict.ContainsKey(key) ? dict[key] : TryLoad(k);
+        return dict.ContainsKey(key) ? dict[key] : TryLoad(key, k);
     }
 
     public static AudioClip GetVoice(string key) {
-        if (key.Length < 14)                                         key = "Sounds/Voices/" + key;
-        else if (key.Substring(0, 14).ToLower() != "sounds/voices/") key = "Sounds/Voices/" + key;
+        key = (string)MusicManager.hiddenDictionary[key] ?? key;
+        if (key.Length < 14 || key.Substring(0, 14).ToLower() != "sounds/voices/") key = "Sounds/Voices/" + key;
         return Get(key);
     }
 
     public static AudioClip GetSound(string key) {
         key = (string)MusicManager.hiddenDictionary[key] ?? key;
-        if (key.Length < 7)                                   key = "Sounds/" + key;
-        else if (key.Substring(0, 7).ToLower() != "sounds/")  key = "Sounds/" + key;
+        if (key.Length < 7 || key.Substring(0, 7).ToLower() != "sounds/") key = "Sounds/" + key;
         return Get(key);
     }
 
     public static AudioClip GetMusic(string key) {
-        if (key.Length < 6)                                 key = "Audio/" + key;
-        else if (key.Substring(0, 6).ToLower() != "audio/") key = "Audio/" + key;
+        key = (string)MusicManager.hiddenDictionary[key] ?? key;
+        if (key.Length < 6 || key.Substring(0, 6).ToLower() != "audio/") key = "Audio/" + key;
         return Get(key);
     }
 
-    public static AudioClip TryLoad(string key) {
-        string k = key;
-
-        string oggKey = key + (key.EndsWith(".ogg") ? "" : ".ogg");
-        string wavKey = key + (key.EndsWith(".wav") ? "" : ".wav");
-        if (!FileLoader.SanitizePath(ref oggKey, "", false)) {
-            FileLoader.SanitizePath(ref wavKey, "");
-            key = wavKey.ToLower();
-        } else
-            key = oggKey.ToLower();
-
+    public static AudioClip TryLoad(string key, string k) {
         if (dictMod.ContainsKey(key))          dict[key] = GetAudioClip(dictMod[key].FullName);
         else if (dictDefault.ContainsKey(key)) dict[key] = GetAudioClip(dictDefault[key].FullName);
         else {
