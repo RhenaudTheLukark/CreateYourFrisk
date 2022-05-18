@@ -22,7 +22,7 @@ public class SelectOMatic : MonoBehaviour {
 
     private static int selectedItem;                // Used to let users navigate the mod and encounter menus with the arrow keys!
 
-    public GameObject encounterBox, devMod, content;
+    public GameObject encounterBox, devMod, content, retromodeWarning;
     public GameObject btnList,              btnBack,              btnNext,              btnExit,              btnOptions;
     public Text       ListText, ListShadow, BackText, BackShadow, NextText, NextShadow, ExitText, ExitShadow, OptionsText, OptionsShadow;
     public GameObject  ModContainer,     ModBackground,     ModTitle,     ModTitleShadow,     EncounterCount,     EncounterCountShadow;
@@ -108,6 +108,8 @@ public class SelectOMatic : MonoBehaviour {
             ListText.gameObject.GetComponent<Text>().text   = "MDO LITS";
             ListShadow.gameObject.GetComponent<Text>().text = "MDO LITS";
         }
+
+        retromodeWarning.SetActive(GlobalControls.retroMode);
 
         // This check will be true if we just exited out of an encounter
         // If that's the case, we want to open the encounter list so the user only has to click once to re enter
