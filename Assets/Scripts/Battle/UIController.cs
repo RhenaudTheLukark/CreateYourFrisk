@@ -23,10 +23,10 @@ public class UIController : MonoBehaviour {
     public static UIController instance;    // The instance of this class, only one UIController should exist at all times
     public TextManager mainTextManager;     // Main text manager in the arena
 
-    private static Sprite fightButtonSprite, actButtonSprite, itemButtonSprite, mercyButtonSprite;  // UI button sprites when the soul is selecting them
+    public static Sprite fightButtonSprite, actButtonSprite, itemButtonSprite, mercyButtonSprite;  // UI button sprites when the soul is selecting them
     public Image fightButton, actButton, itemButton, mercyButton;                                   // UI button objects in the scene
 
-    private Actions action = Actions.FIGHT;     // Current action chosen when entering the state ENEMYSELECT
+    public Actions action = Actions.FIGHT;     // Current action chosen when entering the state ENEMYSELECT
     public Actions forcedAction = Actions.NONE; // Action forced by the user previously for the next time we enter the state ENEMYSELECT
 
     private GameObject arenaParent; // Arena's parent, which will be used to manipulate it
@@ -48,6 +48,9 @@ public class UIController : MonoBehaviour {
     private int selectedEnemy;  // Enemy chosen by the Player
     private int selectedItem;   // Item chosen by the Player
     private int selectedMercy;  // Mercy option chosen by the Player
+
+    private bool[] disabledActions = new bool[4] { false, false, false, false }; // Actions disabled by the player
+    public Vector2[] playerOffsets = new Vector2[4] { new Vector2(337, 25), new Vector2(338, 25), new Vector2(227, 25), new Vector2(226, 25) }; // Player can customize its position on the button.
 
     private int meCry;  // Used to display which dialogue should be displayed if the MECRY button has been selected, in CrateYourFrisk mode
 
@@ -1043,6 +1046,48 @@ public class UIController : MonoBehaviour {
             PlaySound(AudioClipRegistry.GetSound("menuconfirm"));
     }
 
+    public static void DisableButton(string btn)
+    {
+        switch (btn)
+        {
+            case "FIGHT":
+                instance.disabledActions[0] = true;
+                break;
+            case "ACT":
+                instance.disabledActions[1] = true;
+                break;
+            case "ITEM":
+                instance.disabledActions[2] = true;
+                break;
+            case "MERCY":
+                instance.disabledActions[3] = true;
+                break;
+            default:
+                throw new CYFException("DisableButton() can only take \"FIGHT\", \"ACT\", \"ITEM\" or \"MERCY\", but you entered \"" + btn + "\".");
+        }
+    }
+
+    public static void EnableButton(string btn)
+    {
+        switch (btn)
+        {
+            case "FIGHT":
+                instance.disabledActions[0] = true;
+                break;
+            case "ACT":
+                instance.disabledActions[1] = true;
+                break;
+            case "ITEM":
+                instance.disabledActions[2] = true;
+                break;
+            case "MERCY":
+                instance.disabledActions[3] = true;
+                break;
+            default:
+                throw new CYFException("EnableButton() can only take \"FIGHT\", \"ACT\", \"ITEM\" or \"MERCY\", but you entered \"" + btn + "\".");
+        }
+    }
+
     private void HandleArrows() {
         bool left = InputUtil.Pressed(GlobalControls.input.Left);
         bool right = InputUtil.Pressed(GlobalControls.input.Right);
@@ -1054,16 +1099,31 @@ public class UIController : MonoBehaviour {
                 if (!left &&!right)
                     break;
 
+                int actionIndex = (int)action;
+                if (left) actionIndex--;
+                if (right) actionIndex++;
+                actionIndex = Math.Mod(actionIndex, 4);
+
                 fightButton.overrideSprite = null;
                 actButton.overrideSprite = null;
                 itemButton.overrideSprite = null;
                 mercyButton.overrideSprite = null;
 
-                int actionIndex = (int)action;
-
-                if (left)  actionIndex--;
-                if (right) actionIndex++;
-                actionIndex = Math.Mod(actionIndex, 4);
+                if (disabledActions[actionIndex])
+                {
+                    if (disabledActions.Count(x => !x) == 0)
+                    {
+                        if (left) actionIndex++;
+                        if (right) actionIndex--;
+                    }
+                    else if (disabledActions.Count(x => !x) == 1)
+                    {
+                        if (left) actionIndex = Array.IndexOf(disabledActions.Take(actionIndex).ToArray(), false);
+                        if (right) actionIndex = Array.IndexOf(disabledActions.Skip(actionIndex).ToArray(), false);
+                        actionIndex = Math.Mod(actionIndex, 4);
+                    }
+                    else actionIndex = Array.IndexOf(disabledActions, false);
+                }
                 action = (Actions)actionIndex;
                 SetPlayerOnAction(action);
                 PlaySound(AudioClipRegistry.GetSound("menumove"));
@@ -1241,28 +1301,42 @@ public class UIController : MonoBehaviour {
 
     public static void PlaySoundSeparate(string sound) { UnitaleUtil.PlaySound("SeparateSound", sound, 0.95f); }
 
+    public Vector2 FindPlayerOffsetForAction(Actions action) {
+        switch (action) {
+            case Actions.FIGHT:
+                return new Vector2(fightButton.transform.localPosition.x + playerOffsets[0].x, fightButton.transform.localPosition.y + playerOffsets[0].y);
+            case Actions.ACT:
+                return new Vector2(actButton.transform.localPosition.x + playerOffsets[1].x, actButton.transform.localPosition.y + playerOffsets[1].y);
+            case Actions.ITEM:
+                return new Vector2(itemButton.transform.localPosition.x + playerOffsets[2].x, itemButton.transform.localPosition.y + playerOffsets[2].y);
+            case Actions.MERCY:
+                return new Vector2(mercyButton.transform.localPosition.x + playerOffsets[3].x, mercyButton.transform.localPosition.y + playerOffsets[3].y);
+        }
+
+        return Vector2.zero;
+    }
+
     private void SetPlayerOnAction(Actions newAction) {
         switch (newAction) {
             case Actions.FIGHT:
                 fightButton.overrideSprite = fightButtonSprite;
-                PlayerController.instance.SetPosition(48, 25, true);
                 break;
 
             case Actions.ACT:
                 actButton.overrideSprite = actButtonSprite;
-                PlayerController.instance.SetPosition(202, 25, true);
                 break;
 
             case Actions.ITEM:
                 itemButton.overrideSprite = itemButtonSprite;
-                PlayerController.instance.SetPosition(361, 25, true);
                 break;
 
             case Actions.MERCY:
                 mercyButton.overrideSprite = mercyButtonSprite;
-                PlayerController.instance.SetPosition(515, 25, true);
                 break;
         }
+
+        if (newAction != Actions.NONE)
+            PlayerController.instance.SetPosition(FindPlayerOffsetForAction(newAction).x, FindPlayerOffsetForAction(newAction).y, true);
     }
 
     public void MovePlayerToAction(Actions act) {
