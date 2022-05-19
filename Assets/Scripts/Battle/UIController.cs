@@ -49,8 +49,8 @@ public class UIController : MonoBehaviour {
     private int selectedItem;   // Item chosen by the Player
     private int selectedMercy;  // Mercy option chosen by the Player
 
-    private bool[] disabledActions = new bool[4] { false, false, false, false }; // Actions disabled by the player
-    public Vector2[] playerOffsets = new Vector2[4] { new Vector2(337, 25), new Vector2(338, 25), new Vector2(227, 25), new Vector2(226, 25) }; // Player can customize its position on the button.
+    private bool[] disabledActions = { false, false, false, false }; // Actions disabled by the player
+    public Vector2[] playerOffsets = { new Vector2(16, 19), new Vector2(16, 19), new Vector2(16, 19), new Vector2(16, 19) }; // Player can customize its position on the button.
 
     private int meCry;  // Used to display which dialogue should be displayed if the MECRY button has been selected, in CrateYourFrisk mode
 
@@ -74,6 +74,11 @@ public class UIController : MonoBehaviour {
     public bool battleDialogueStarted;                              // True if the battle dialog is being displayed, false otherwise. Only used for the state ITEMMENU, and not updated outside of it
 
     public enum Actions { FIGHT, ACT, ITEM, MERCY, NONE }   // Action enumeration used to know which main UI button we're selecting or we chose
+    // Dictionaries used to link values gracefully
+    public Dictionary<string, Image> buttonDictionary = new Dictionary<string, Image>();
+    public Dictionary<string, Sprite> buttonSpriteDictionary = new Dictionary<string, Sprite>();
+    public Dictionary<string, Vector2> buttonBasePositions = new Dictionary<string, Vector2>();
+    public Dictionary<string, Vector2> buttonBasePlayerPositions = new Dictionary<string, Vector2>();
 
     /*
     public enum UIState {
@@ -1046,46 +1051,28 @@ public class UIController : MonoBehaviour {
             PlaySound(AudioClipRegistry.GetSound("menuconfirm"));
     }
 
-    public static void DisableButton(string btn)
-    {
-        switch (btn)
-        {
-            case "FIGHT":
-                instance.disabledActions[0] = true;
-                break;
-            case "ACT":
-                instance.disabledActions[1] = true;
-                break;
-            case "ITEM":
-                instance.disabledActions[2] = true;
-                break;
-            case "MERCY":
-                instance.disabledActions[3] = true;
-                break;
-            default:
+    public static void DisableButton(string btn) {
+        Actions act;
+        try {
+            act = (Actions)Enum.Parse(typeof(Actions), btn);
+            if (act == Actions.NONE)
                 throw new CYFException("DisableButton() can only take \"FIGHT\", \"ACT\", \"ITEM\" or \"MERCY\", but you entered \"" + btn + "\".");
         }
+        catch { throw new CYFException("DisableButton() can only take \"FIGHT\", \"ACT\", \"ITEM\" or \"MERCY\", but you entered \"" + btn + "\"."); }
+
+        instance.disabledActions[(int)act] = true;
     }
 
-    public static void EnableButton(string btn)
-    {
-        switch (btn)
-        {
-            case "FIGHT":
-                instance.disabledActions[0] = true;
-                break;
-            case "ACT":
-                instance.disabledActions[1] = true;
-                break;
-            case "ITEM":
-                instance.disabledActions[2] = true;
-                break;
-            case "MERCY":
-                instance.disabledActions[3] = true;
-                break;
-            default:
-                throw new CYFException("EnableButton() can only take \"FIGHT\", \"ACT\", \"ITEM\" or \"MERCY\", but you entered \"" + btn + "\".");
+    public static void EnableButton(string btn) {
+        Actions act;
+        try {
+            act = (Actions)Enum.Parse(typeof(Actions), btn);
+            if (act == Actions.NONE)
+                throw new CYFException("DisableButton() can only take \"FIGHT\", \"ACT\", \"ITEM\" or \"MERCY\", but you entered \"" + btn + "\".");
         }
+        catch { throw new CYFException("DisableButton() can only take \"FIGHT\", \"ACT\", \"ITEM\" or \"MERCY\", but you entered \"" + btn + "\"."); }
+
+        instance.disabledActions[(int)act] = false;
     }
 
     private void HandleArrows() {
@@ -1100,32 +1087,31 @@ public class UIController : MonoBehaviour {
                     break;
 
                 int actionIndex = (int)action;
-                if (left) actionIndex--;
-                if (right) actionIndex++;
+                int oldActionIndex = actionIndex;
+                actionIndex += left ? -1 : 1;
                 actionIndex = Math.Mod(actionIndex, 4);
 
-                fightButton.overrideSprite = null;
-                actButton.overrideSprite = null;
-                itemButton.overrideSprite = null;
-                mercyButton.overrideSprite = null;
-
-                if (disabledActions[actionIndex])
-                {
+                if (disabledActions[actionIndex]) {
+                    // All buttons are disabled
                     if (disabledActions.Count(x => !x) == 0)
-                    {
-                        if (left) actionIndex++;
-                        if (right) actionIndex--;
-                    }
-                    else if (disabledActions.Count(x => !x) == 1)
-                    {
-                        if (left) actionIndex = Array.IndexOf(disabledActions.Take(actionIndex).ToArray(), false);
-                        if (right) actionIndex = Array.IndexOf(disabledActions.Skip(actionIndex).ToArray(), false);
-                        actionIndex = Math.Mod(actionIndex, 4);
-                    }
-                    else actionIndex = Array.IndexOf(disabledActions, false);
+                        actionIndex = oldActionIndex;
+                    else
+                        do {
+                            actionIndex += left ? -1 : 1;
+                            actionIndex = Math.Mod(actionIndex, 4);
+                        } while (disabledActions[actionIndex]);
                 }
-                action = (Actions)actionIndex;
-                SetPlayerOnAction(action);
+
+                if (oldActionIndex != actionIndex) {
+                    fightButton.overrideSprite = null;
+                    actButton.overrideSprite = null;
+                    itemButton.overrideSprite = null;
+                    mercyButton.overrideSprite = null;
+
+                    action = (Actions) actionIndex;
+                    SetPlayerOnAction(action);
+                }
+
                 PlaySound(AudioClipRegistry.GetSound("menumove"));
                 break;
 
@@ -1302,37 +1288,18 @@ public class UIController : MonoBehaviour {
     public static void PlaySoundSeparate(string sound) { UnitaleUtil.PlaySound("SeparateSound", sound, 0.95f); }
 
     public Vector2 FindPlayerOffsetForAction(Actions action) {
-        switch (action) {
-            case Actions.FIGHT:
-                return new Vector2(fightButton.transform.localPosition.x + playerOffsets[0].x, fightButton.transform.localPosition.y + playerOffsets[0].y);
-            case Actions.ACT:
-                return new Vector2(actButton.transform.localPosition.x + playerOffsets[1].x, actButton.transform.localPosition.y + playerOffsets[1].y);
-            case Actions.ITEM:
-                return new Vector2(itemButton.transform.localPosition.x + playerOffsets[2].x, itemButton.transform.localPosition.y + playerOffsets[2].y);
-            case Actions.MERCY:
-                return new Vector2(mercyButton.transform.localPosition.x + playerOffsets[3].x, mercyButton.transform.localPosition.y + playerOffsets[3].y);
-        }
-
-        return Vector2.zero;
+        string str = action.ToString();
+        Image image;
+        buttonDictionary.TryGetValue(str, out image);
+        return action != Actions.NONE ? new Vector2(image.transform.position.x + playerOffsets[(int)action].x, image.transform.position.y + playerOffsets[(int)action].y) : Vector2.zero;
     }
 
     private void SetPlayerOnAction(Actions newAction) {
         switch (newAction) {
-            case Actions.FIGHT:
-                fightButton.overrideSprite = fightButtonSprite;
-                break;
-
-            case Actions.ACT:
-                actButton.overrideSprite = actButtonSprite;
-                break;
-
-            case Actions.ITEM:
-                itemButton.overrideSprite = itemButtonSprite;
-                break;
-
-            case Actions.MERCY:
-                mercyButton.overrideSprite = mercyButtonSprite;
-                break;
+            case Actions.FIGHT: fightButton.overrideSprite = fightButtonSprite; break;
+            case Actions.ACT:   actButton.overrideSprite   = actButtonSprite;   break;
+            case Actions.ITEM:  itemButton.overrideSprite  = itemButtonSprite;  break;
+            case Actions.MERCY: mercyButton.overrideSprite = mercyButtonSprite; break;
         }
 
         if (newAction != Actions.NONE)
@@ -1385,6 +1352,23 @@ public class UIController : MonoBehaviour {
             mercyButton.sprite = SpriteRegistry.Get("UI/Buttons/mecrybt_0");
             mercyButton.GetComponent<AutoloadResourcesFromRegistry>().SpritePath = "UI/Buttons/mecrybt_0";
         }
+        // Add dictionaries to easily access buttons and their data through strings
+        buttonDictionary.Add("FIGHT", fightButton);
+        buttonDictionary.Add("ACT", actButton);
+        buttonDictionary.Add("ITEM", itemButton);
+        buttonDictionary.Add("MERCY", mercyButton);
+        buttonSpriteDictionary.Add("FIGHT", fightButtonSprite);
+        buttonSpriteDictionary.Add("ACT", actButtonSprite);
+        buttonSpriteDictionary.Add("ITEM", itemButtonSprite);
+        buttonSpriteDictionary.Add("MERCY", mercyButtonSprite);
+        buttonBasePositions.Add("FIGHT", new Vector2(32, 6));
+        buttonBasePositions.Add("ACT", new Vector2(185, 6));
+        buttonBasePositions.Add("ITEM", new Vector2(355, 6));
+        buttonBasePositions.Add("MERCY", new Vector2(500, 6));
+        buttonBasePlayerPositions.Add("FIGHT", new Vector2(16, 19));
+        buttonBasePlayerPositions.Add("ACT", new Vector2(16, 19));
+        buttonBasePlayerPositions.Add("ITEM", new Vector2(16, 19));
+        buttonBasePlayerPositions.Add("MERCY", new Vector2(16, 19));
 
         ArenaManager.instance.ResizeImmediate(ArenaManager.UIWidth, ArenaManager.UIHeight);
         //ArenaManager.instance.MoveToImmediate(0, -160, false);
