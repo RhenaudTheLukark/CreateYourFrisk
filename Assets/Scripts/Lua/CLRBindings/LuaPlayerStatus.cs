@@ -320,7 +320,7 @@ public class LuaPlayerStatus {
 
         UIController.instance.fightUI.targetNumber = 1;
         UIController.instance.fightUI.targetIDs = new[] { enemyNumber - 1 };
-        UIController.instance.fightUI.quickInit(damage);
+        UIController.instance.fightUI.QuickInit(damage);
     }
 
     public int[] MultiTarget(int damage = FightUIController.DAMAGE_NOT_SET) { return MultiTarget(null,    new[] { damage }); }
@@ -371,7 +371,7 @@ public class LuaPlayerStatus {
     public void ForceMultiAttack(int[] targets = null, int[] damage = null) {
         try                    { damage = MultiTarget(targets, damage); }
         catch (CYFException e) { throw new CYFException("Player.ForceMultiAttack() using " + e.Message); }
-        UIController.instance.fightUI.quickInit(damage);
+        UIController.instance.fightUI.QuickInit(damage);
     }
 
     public void CheckDeath() { UIController.instance.needOnDeath = true; }

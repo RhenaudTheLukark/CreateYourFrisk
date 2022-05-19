@@ -309,10 +309,8 @@ public class UIController : MonoBehaviour {
                     Destroy(textManager.gameObject);
         } else if (state == "DIALOGRESULT")
             mainTextManager.SetCaller(EnemyEncounter.script);
-        else if (state == "ATTACKING") {
-            fightUI.stopped = false;
-            fightUI.targetRt.anchoredPosition = new Vector2(GetComponent<RectTransform>().rect.width / 2, 0);
-        }
+        else if (state == "ATTACKING")
+            FightUIController.instance.HideAttackingUI();
 
         string oldState = state;
         state = newState;
@@ -330,6 +328,11 @@ public class UIController : MonoBehaviour {
                 // Error for no active enemies
                 if (encounter.EnabledEnemies.Length == 0)
                     throw new CYFException("Cannot enter state ATTACKING with no active enemies.");
+
+                // Disable all current attack instances otherwise they break
+                // TODO: Find the exact reason why they break
+                foreach (EnemyController enemy in encounter.EnabledEnemies)
+                    FightUIController.instance.DestroyAllAttackInstances(enemy);
 
                 mainTextManager.DestroyChars();
                 PlayerController.instance.GetComponent<Image>().enabled = false;
@@ -1507,9 +1510,8 @@ public class UIController : MonoBehaviour {
                 }
 
         if (state == "ENEMYDIALOGUE") {
-            bool allSkip = monsterDialogues.All(mgr => mgr.CanAutoSkipThis());
-            if (allSkip)  DoNextMonsterDialogue();
-            else          UpdateMonsterDialogue();
+            if (monsterDialogues.All(mgr => mgr.CanAutoSkipThis())) DoNextMonsterDialogue();
+            else                                                             UpdateMonsterDialogue();
         }
 
         if (state == "DEFENDING") {
@@ -1530,7 +1532,7 @@ public class UIController : MonoBehaviour {
             } else if (InputUtil.Pressed(GlobalControls.input.Cancel)) HandleCancel();
             else HandleArrows();
         else if (InputUtil.Pressed(GlobalControls.input.Confirm))
-            SwitchStateOnString(null, "DONE");
+            SwitchState("DONE");
 
         if ((state == "ATTACKING" || needOnDeath) && fightUI.Finished()) {
             bool noOnDeath = true;

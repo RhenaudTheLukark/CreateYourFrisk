@@ -31,12 +31,11 @@ public class FightUI : MonoBehaviour {
     private bool needAgain;
     private bool showedup;
     public bool stopped;
-    public bool isCoroutine;
     public bool waitingToFade;
 
     public bool isInit;
 
-    public void Start() {
+    public void Setup() {
         if (isInit) return;
         lifeBar = transform.GetComponentInChildren<LifeBarController>();
         lifeBar.Start();
@@ -64,12 +63,10 @@ public class FightUI : MonoBehaviour {
 
     public void Init(int eIndex) {
         enemyIndex = eIndex;
-        Start();
-        enemy = UIController.instance.encounter.EnabledEnemies[enemyIndex];
-        transform.SetParent(enemy.transform);
+        Setup();
     }
 
-    public void quickInit(int enemyIndex, EnemyController target, int damage) {
+    public void QuickInit(int enemyIndex, EnemyController target, int damage) {
         Init(enemyIndex);
         enemy = target;
 
@@ -87,17 +84,17 @@ public class FightUI : MonoBehaviour {
         enemy = target;
         if (Damage != FightUIController.DAMAGE_NOT_SET)
             Damage = 0;
-        Damage = FightUIController.instance.getDamage(enemy, PlayerController.instance.lastHitMult);
+        Damage = FightUIController.instance.GetDamage(enemy, PlayerController.instance.lastHitMult);
         transform.SetParent(enemy.transform);
     }
 
     public void StopAction(float atkMult) {
-        PlayerController.instance.lastHitMult = FightUIController.instance.getAtkMult();
+        PlayerController.instance.lastHitMult = FightUIController.instance.GetAtkMult();
         bool damagePredefined = Damage != FightUIController.DAMAGE_NOT_SET;
         stopped = true;
         UnitaleUtil.TryCall(enemy.script, "BeforeDamageCalculation");
         if (!damagePredefined)
-            Damage = FightUIController.instance.getDamage(enemy, atkMult);
+            Damage = FightUIController.instance.GetDamage(enemy, atkMult);
         //slice.StopAnimation();
         slice.SetAnimation(sliceAnim, sliceAnimFrequency);
         slice.loopmode = "ONESHOT";
@@ -159,10 +156,7 @@ public class FightUI : MonoBehaviour {
                 if (Damage != 0) {
                     int newHP = enemy.HP - Damage;
                     lifeBar.outline.MoveToAbs(enePos.x + enemy.offsets[2].x - 1, enePos.y - eneSize.y / 2 + 20 + enemy.offsets[2].y - 1);
-                    lifeBar.outline.Scale(enemy.GetComponent<RectTransform>().rect.width + 2, 15);
-                    lifeBar.background.Scale(enemy.GetComponent<RectTransform>().rect.width, 13);
-                    lifeBar.mask.Scale(lifeBar.background.xscale, lifeBar.background.yscale);
-                    lifeBar.fill.Scale(lifeBar.background.xscale, lifeBar.background.yscale);
+                    lifeBar.Resize(enemy.GetComponent<RectTransform>().rect.width, 13);
                     lifeBar.SetLerp(enemy.HP / (float)enemy.MaxHP, newHP / (float)enemy.MaxHP);
                     lifeBar.SetVisible(true);
                     enemy.doDamage(Damage);

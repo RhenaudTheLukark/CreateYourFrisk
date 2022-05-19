@@ -350,6 +350,7 @@ public class EnemyController : MonoBehaviour {
         if (playSound) UIController.PlaySoundSeparate("enemydust");
         SetActive(false);
         spared = true;
+        FightUIController.instance.DestroyAllAttackInstances(this);
 
         UIController.instance.CheckAndTriggerVictory();
     }
@@ -366,6 +367,7 @@ public class EnemyController : MonoBehaviour {
         SetActive(false);
         killed = true;
         if (playSound) UIController.PlaySoundSeparate("enemydust");
+        FightUIController.instance.DestroyAllAttackInstances(this);
 
         UIController.instance.CheckAndTriggerVictory();
     }

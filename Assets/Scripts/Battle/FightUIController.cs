@@ -11,7 +11,6 @@ public class FightUIController : MonoBehaviour {
     public const int DAMAGE_NOT_SET = -478294;
 
     public RectTransform targetRt;
-    public int presetDmg = 0;
     public LuaSpriteController line;
     private float borderX;
     private const float xSpeed = -450.0f;
@@ -29,23 +28,13 @@ public class FightUIController : MonoBehaviour {
     private void LaunchInstance(bool bind = false) {
         GameObject go = Instantiate(Resources.Load<GameObject>("Prefabs/FightInstance"));
         go.transform.SetParent(transform);
-        go.transform.SetAsLastSibling();
         if (bind)
             boundFightUiInstances.Add(go.GetComponent<FightUI>());
         allFightUiInstances.Add(go.GetComponent<FightUI>());
     }
 
     private void Awake() {
-        foreach (Transform child in gameObject.transform)
-            if (child.name == "FightUILine") {
-                line = LuaSpriteController.GetOrCreate(child.gameObject);
-                Start();
-                return;
-            }
-    }
-
-    private void Start() {
-        line.Set("UI/Battle/spr_targetchoice_0");
+        line = LuaSpriteController.GetOrCreate(targetRt.gameObject);
         instance = this;
     }
 
@@ -58,44 +47,43 @@ public class FightUIController : MonoBehaviour {
         boundFightUiInstances[0].ChangeTarget(target);
     }
 
-    public void setAlpha(float a) {
+    public void SetAlpha(float a) {
         Color c = Color.white;
         c.a = a;
         GetComponent<Image>().color = c;
     }
 
     public void Init() {
-        commonInit();
+        CommonInit();
+        gameObject.GetComponent<Image>().enabled = true;
+        borderX = -GetComponent<RectTransform>().rect.width / 2;
         finishingFade = false;
         stopped = false;
         targetRt.anchoredPosition = new Vector2(GetComponent<RectTransform>().rect.width / 2, 0);
+        targetRt.GetComponent<Image>().enabled = true;
+        line.StopAnimation();
+        line.Set("UI/Battle/spr_targetchoice_0");
         for (int i = 0; i < targetNumber; i++) {
             LaunchInstance(true);
             boundFightUiInstances[boundFightUiInstances.Count - 1].Init(targetIDs[i]);
         }
-        // damageTextRt.position = target.GetComponent<RectTransform>().position;
-        setAlpha(1.0f);
+        SetAlpha(1.0f);
     }
 
-    public void commonInit() {
+    public void CommonInit() {
         gameObject.SetActive(true);
-        gameObject.GetComponent<Image>().enabled = true;
-        line.StopAnimation();
-        line.img.gameObject.SetActive(true);
-        line.img.GetComponent<Image>().enabled = true;
-        borderX = -GetComponent<RectTransform>().rect.width / 2;
     }
 
-    public void quickInit(int damage) { quickInit(new[] { damage }); }
-    public void quickInit(int[] damage) {
-        commonInit();
+    public void QuickInit(int damage) { QuickInit(new[] { damage }); }
+    public void QuickInit(int[] damage) {
+        CommonInit();
         if (UIController.instance.state == "ATTACKING") return;
-        gameObject.GetComponent<Image>().enabled = false;
-        targetRt.gameObject.SetActive(false);
+        if (boundFightUiInstances.Count == 0)
+            HideAttackingUI();
+
         for (int i = 0; i < targetNumber; i++) {
             LaunchInstance();
-            allFightUiInstances[allFightUiInstances.Count - 1].quickInit(targetIDs[i], UIController.instance.encounter.EnabledEnemies[targetIDs[i]], damage[i]);
-            allFightUiInstances[allFightUiInstances.Count - 1].isCoroutine = true;
+            allFightUiInstances[allFightUiInstances.Count - 1].QuickInit(targetIDs[i], UIController.instance.encounter.EnabledEnemies[targetIDs[i]], damage[i]);
         }
         UIController.PlaySoundSeparate("slice");
         for (int i = 0; i < targetIDs.Length; i++)
@@ -112,14 +100,14 @@ public class FightUIController : MonoBehaviour {
         UIController.PlaySoundSeparate("slice");
     }
 
-    public int getDamage(EnemyController enemy, float atkMult) {
+    public int GetDamage(EnemyController enemy, float atkMult) {
         if (enemy.presetDmg != DAMAGE_NOT_SET) {
             int dmg = enemy.presetDmg;
             enemy.ResetPresetDamage();
             return dmg;
         }
         if (atkMult == -2)
-            atkMult = getAtkMult();
+            atkMult = GetAtkMult();
         if (atkMult < 0)
             return -1;
         int damage = (int)Mathf.Round(((PlayerCharacter.instance.WeaponATK + PlayerCharacter.instance.ATK - enemy.Defense) + Random.value * 2) * atkMult);
@@ -130,7 +118,7 @@ public class FightUIController : MonoBehaviour {
         return damage;
     }
 
-    public float getAtkMult() {
+    public float GetAtkMult() {
         if (!stopped) return -1.0f;
         if (Mathf.Abs(targetRt.anchoredPosition.x) <= 12)
             return 2.2f;
@@ -138,7 +126,6 @@ public class FightUIController : MonoBehaviour {
         if (mult < 0)
             mult = 0;
         return mult;
-
     }
 
     public bool Finished() {
@@ -147,17 +134,35 @@ public class FightUIController : MonoBehaviour {
         return boundFightUiInstances.All(fight => fight.Finished());
     }
 
-    public void initFade() {
+    public void InitFade() {
         if (finishingFade) return;
         finishingFade = true;
         multiHit = false;
-        line.img.GetComponent<Image>().enabled = false;
-        line.StopAnimation();
-        //Damage = new int[] { };
-        // Arena resizes to a small default size in most regular battles before entering actual defense state
+        targetRt.GetComponent<Image>().enabled = false;
     }
 
-    public void disableImmediate() { gameObject.SetActive(false); }
+    public void HideAttackingUI() {
+        if (allFightUiInstances.Count == 0)
+            gameObject.SetActive(false);
+        else {
+            gameObject.GetComponent<Image>().enabled = false;
+            targetRt.GetComponent<Image>().enabled = false;
+        }
+    }
+
+    public void DestroyAllAttackInstances(EnemyController enemy) {
+        for (int i = allFightUiInstances.Count - 1; i >= 0; i--) {
+            FightUI f = allFightUiInstances[i];
+            if (f.enemy != enemy) continue;
+            int boundID = boundFightUiInstances.IndexOf(f);
+            if (boundID != -1) boundFightUiInstances.Remove(f);
+            allFightUiInstances.Remove(f);
+            Destroy(f.gameObject);
+        }
+
+        if (boundFightUiInstances.Count == 0)
+            HideAttackingUI();
+    }
 
     // Update is called once per frame
     private void Update() {
@@ -175,24 +180,22 @@ public class FightUIController : MonoBehaviour {
 
         if (finishingFade) {
             float resizeProg = 1.0f - ArenaManager.instance.getProgress();
-            setAlpha(resizeProg);
+            SetAlpha(resizeProg);
             if (resizeProg != 0.0f) return;
             while (boundFightUiInstances.Count != 0) {
                 allFightUiInstances.Remove(boundFightUiInstances[boundFightUiInstances.Count - 1]);
                 Destroy(boundFightUiInstances[boundFightUiInstances.Count - 1].gameObject);
                 boundFightUiInstances.RemoveAt(boundFightUiInstances.Count - 1);
             }
-            targetRt.gameObject.SetActive(true);
             gameObject.GetComponent<Image>().enabled = true;
             finishingFade                            = false;
-            if (allFightUiInstances.Count == 0)
-                gameObject.SetActive(false);
+            gameObject.SetActive(false);
             return;
         }
         if (boundFightUiInstances.Count != 0) {
             bool pass = boundFightUiInstances.All(t => t.slice.animcomplete && !t.slice.keyframes.enabled && stopped && t.waitingToFade);
             if (pass && boundFightUiInstances.All(fightUi => !fightUi.shakeInProgress))
-                initFade();
+                InitFade();
         }
 
         if (stopped || UIController.instance.state != "ATTACKING")
@@ -213,6 +216,6 @@ public class FightUIController : MonoBehaviour {
                 smc2.setXPosition(fightUi.enePos.x - 10 * fightUi.enemy.NoAttackMissText.Length + 20);
             else smc2.setXPosition(fightUi.enePos.x);
         }
-        initFade();
+        InitFade();
     }
 }
