@@ -90,7 +90,7 @@ it's w3c valid, at least
         <div class="tab-pane active text-style" id="api-functions-main">
             <h2><span class="CYF"></span> The UI Object [E/M/W]</h2><br><br>
             <p>
-                This section details the various elements you can use to manipulate CYF's internal user interface. Some elements such as the <span class="term">buttons</span> cannot be manipulated yet, but pretty much all of CYF's other UI elements can be manipulated through this object.
+                This section details the various elements you can use to manipulate CYF's internal user interface.
                 <br><br>
                 If you want to manipulate UI elements related to the enemy (attack animation, health bar, position of the damage text), I suggest visiting the <span class="term">Misc. Functions</span> section of the documentation.
             </p>
@@ -121,6 +121,26 @@ it's w3c valid, at least
             </p>
 
             <p>
+                <br><span class="function"> <span class="userdata">sprite</span> UI.fightbtn</span>
+                Sprite for the <span class="term">FIGHT</span> button. Do not remove it in any way, or it may cause unexpected errors. If you want to remove it, set its alpha to 0 instead.
+            </p>
+
+            <p>
+                <br><span class="function"> <span class="userdata">sprite</span> UI.actbtn</span>
+                Sprite for the <span class="term">ACT</span> button. Do not remove it in any way, or it may cause unexpected errors. If you want to remove it, set its alpha to 0 instead.
+            </p>
+
+            <p>
+                <br><span class="function"> <span class="userdata">sprite</span> UI.itembtn</span>
+                Sprite for the <span class="term">ITEM</span> button. Do not remove it in any way, or it may cause unexpected errors. If you want to remove it, set its alpha to 0 instead.
+            </p>
+
+            <p>
+                <br><span class="function"> <span class="userdata">sprite</span> UI.mercybtn</span>
+                Sprite for the <span class="term">MERCY</span> button. Do not remove it in any way, or it may cause unexpected errors. If you want to remove it, set its alpha to 0 instead.
+            </p>
+
+            <p>
                 <br><span class="function">UI.StopUpdate(<span class="boolean"></span> toggle)</span>
                 If <span class="term">toggle</span> is true, the Player's UI (except the buttons) will not be updated by the engine, whether it is the Player's name and level text or the Player's hp bar and text.<br><br>
                 False by default.
@@ -140,6 +160,86 @@ it's w3c valid, at least
             <p>
                 <br><span class="function">UI.Reset()</span>
                 Tries to reset all modifications to the Player's UI, making it look like it originally is at the beginning of the battle by resetting most of the UI elements' parameters.
+            </p>
+
+            <p>
+                <br><span class="function">UI.GetCurrentButton() returns <span class="string"></span></span>
+                Returns the name of the currently selected button. Its return value can either be <span class="term">FIGHT</span>, <span class="term">ACT</span>, <span class="term">ITEM</span> or <span class="term">MERCY</span>.
+            </p>
+
+            <p>
+                <br><span class="function">UI.DisableButton(<span class="string"></span> button)</span>
+                Disables the given button, preventing its selection in the state <span class="term">ACTIONSELECT</span>.
+                <br><br>
+                Accepted values for the <span class="term">button</span> argument are <span class="term">FIGHT</span>, <span class="term">ACT</span>, <span class="term">ITEM</span> or <span class="term">MERCY</span>.
+            </p>
+
+            <p>
+                <br><span class="function">UI.EnableButton(<span class="string"></span> button)</span>
+                Reenables the given button if it was previously disabled using <span class="term">UI.DisableButton</span>.
+                <br><br>
+                Accepted values for the <span class="term">button</span> argument are <span class="term">FIGHT</span>, <span class="term">ACT</span>, <span class="term">ITEM</span> or <span class="term">MERCY</span>.
+            </p>
+
+            <p>
+                <br><span class="function">UI.ResetButtonPosition(<span class="string"></span> button, <span class="boolean"></span> resetX = true, <span class="boolean"></span> resetY = true)</span>
+                Resets the position of the given button. Setting <span class="term">resetX</span> to <span class="term">true</span> resets the button's horizontal position, while setting <span class="term">resetY</span> to <span class="term">true</span> resets the button's vertical position.
+                <br><br>
+                Accepted values for the <span class="term">button</span> argument are <span class="term">FIGHT</span>, <span class="term">ACT</span>, <span class="term">ITEM</span> or <span class="term">MERCY</span>.
+            </p>
+
+            <p>
+                <br><span class="function">UI.GetPlayerXPosOnButton(<span class="string"></span> button)</span>
+                Returns the player's horizontal position offset when selecting the given button, starting from the button's bottom left corner. The default value for all buttons is <span class="term">16</span>.
+                <br><br>
+                Accepted values for the <span class="term">button</span> argument are <span class="term">FIGHT</span>, <span class="term">ACT</span>, <span class="term">ITEM</span> or <span class="term">MERCY</span>.
+            </p>
+
+            <p>
+                <br><span class="function">UI.GetPlayerYPosOnButton(<span class="string"></span> button)</span>
+                Returns the player's vertical position offset when selecting the given button, starting from the button's bottom left corner. The default value for all buttons is <span class="term">19</span>.
+                <br><br>
+                Accepted values for the <span class="term">button</span> argument are <span class="term">FIGHT</span>, <span class="term">ACT</span>, <span class="term">ITEM</span> or <span class="term">MERCY</span>.
+            </p>
+
+            <p>
+                <br><span class="function">UI.SetPlayerXPosOnButton(<span class="string"></span> button)</span>
+                Sets the player's horizontal position offset when selecting the given button, starting from the button's bottom left corner.
+                <br><br>
+                Accepted values for the <span class="term">button</span> argument are <span class="term">FIGHT</span>, <span class="term">ACT</span>, <span class="term">ITEM</span> or <span class="term">MERCY</span>.
+            </p>
+
+            <p>
+                <br><span class="function">UI.SetPlayerYPosOnButton(<span class="string"></span> button)</span>
+                Sets the player's vertical position offset when selecting the given button, starting from the button's bottom left corner.
+                <br><br>
+                Accepted values for the <span class="term">button</span> argument are <span class="term">FIGHT</span>, <span class="term">ACT</span>, <span class="term">ITEM</span> or <span class="term">MERCY</span>.
+            </p>
+
+            <p>
+                <br><span class="function">UI.ResetPlayerPosOnButton(<span class="string"></span> button, <span class="boolean"></span> resetX = true, <span class="boolean"></span> resetY = true)</span>
+                Resets the player's position offset when selecting the given button, starting from the button's bottom left corner. Setting <span class="term">resetX</span> to <span class="term">true</span> resets the player's horizontal position offset, while setting <span class="term">resetY</span> to <span class="term">true</span> resets the player's vertical position offset.
+                <br><br>
+                Accepted values for the <span class="term">button</span> argument are <span class="term">FIGHT</span>, <span class="term">ACT</span>, <span class="term">ITEM</span> or <span class="term">MERCY</span>.
+            </p>
+
+            <p>
+                <br><span class="function">UI.SetButtonActiveSprite(<span class="string"></span> button, <span class="string"></span> sprite)</span>
+                Sets the sprite of the given button whenever it is selected.
+                <br><br>
+                Accepted values for the <span class="term">button</span> argument are <span class="term">FIGHT</span>, <span class="term">ACT</span>, <span class="term">ITEM</span> or <span class="term">MERCY</span>.
+            </p>
+
+            <p>
+                <br><span class="function">UI.ResetButtonActiveSprite(<span class="string"></span> button)</span>
+                Resets the sprite of the given button whenever it is selected to the one that was used by the engine at the beginning of the encounter.
+                <br><br>
+                Accepted values for the <span class="term">button</span> argument are <span class="term">FIGHT</span>, <span class="term">ACT</span>, <span class="term">ITEM</span> or <span class="term">MERCY</span>.
+            </p>
+
+            <p>
+                <br><span class="function">UI.UpdateButtons()</span>
+                Sets the active button's active sprite and moves the Player where it needs to be on its currently selected button. This function is automatically called after most functions related to button manipulation.
             </p>
 
 

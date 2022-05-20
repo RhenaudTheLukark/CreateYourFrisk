@@ -101,6 +101,26 @@ public class LuaPlayerUI {
         ui.setPlayerInfo(PlayerCharacter.instance.Name, PlayerCharacter.instance.LV);
         ui.setNamePosition();
         ui.setMaxHP();
+
+        EnableButton("FIGHT");
+        ResetButtonPosition("FIGHT");
+        ResetPlayerPosOnButton("FIGHT");
+        ResetButtonActiveSprite("FIGHT");
+
+        EnableButton("ACT");
+        ResetButtonPosition("ACT");
+        ResetPlayerPosOnButton("ACT");
+        ResetButtonActiveSprite("ACT");
+
+        EnableButton("ITEM");
+        ResetButtonPosition("ITEM");
+        ResetPlayerPosOnButton("ITEM");
+        ResetButtonActiveSprite("ITEM");
+
+        EnableButton("MERCY");
+        ResetButtonPosition("MERCY");
+        ResetPlayerPosOnButton("MERCY");
+        ResetButtonActiveSprite("MERCY");
     }
 
 
@@ -123,6 +143,7 @@ public class LuaPlayerUI {
             throw new CYFException("ResetButtonPosition() can only take \"FIGHT\", \"ACT\", \"ITEM\" or \"MERCY\", but you entered \"" + btn + "\".");
         UIController.instance.buttonBasePositions.TryGetValue(btn, out basePos);
         image.transform.position = new Vector3(resetX ? basePos.x : image.transform.position.x, resetY ? basePos.y : image.transform.position.y);
+        UpdateButtons();
     }
 
     public float GetPlayerXPosOnButton(string btn) {
@@ -162,6 +183,8 @@ public class LuaPlayerUI {
         }
 
         UIController.instance.playerOffsets[(int)action].x = newX;
+
+        UpdateButtons();
     }
 
     public void SetPlayerYPosOnButton(string btn, float newY) {
@@ -175,6 +198,8 @@ public class LuaPlayerUI {
         }
 
         UIController.instance.playerOffsets[(int)action].y = newY;
+
+        UpdateButtons();
     }
 
     public void ResetPlayerPosOnButton(string btn, bool resetX = true, bool resetY = true) {
@@ -192,6 +217,8 @@ public class LuaPlayerUI {
 
         if (resetX) UIController.instance.playerOffsets[(int)action].x = basePlayerPos.x;
         if (resetY) UIController.instance.playerOffsets[(int)action].y = basePlayerPos.y;
+
+        UpdateButtons();
     }
 
     public void SetButtonActiveSprite(string btn, string sprite) {
@@ -205,6 +232,7 @@ public class LuaPlayerUI {
             case "MERCY": UIController.mercyButtonSprite = SpriteRegistry.Get(sprite); break;
             default:      throw new CYFException("SetButtonActiveSprite() can only take \"FIGHT\", \"ACT\", \"ITEM\" or \"MERCY\", but you entered \"" + btn + "\".");
         }
+        UpdateButtons();
     }
 
     public void ResetButtonActiveSprite(string btn) {
@@ -215,5 +243,10 @@ public class LuaPlayerUI {
             case "MERCY": UIController.mercyButtonSprite = SpriteRegistry.Get(GlobalControls.crate ? "UI/Buttons/mecrybt_1" : "UI/Buttons/mercybt_1"); break;
             default:      throw new CYFException("ResetButtonActiveSprite() can only take \"FIGHT\", \"ACT\", \"ITEM\" or \"MERCY\", but you entered \"" + btn + "\".");
         }
+        UpdateButtons();
+    }
+
+    public void UpdateButtons() {
+        LuaScriptBinder.SetAction(UIController.instance.action.ToString());
     }
 }
