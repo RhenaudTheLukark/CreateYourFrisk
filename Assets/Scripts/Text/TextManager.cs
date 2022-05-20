@@ -692,10 +692,10 @@ public class TextManager : MonoBehaviour {
                     test = false;
             }
             if (test) {
+                nextMonsterDialogueOnce = false;
                 if (!wasStated)
                     UIController.instance.DoNextMonsterDialogue(true);
                 wasStated = false;
-                nextMonsterDialogueOnce = false;
             }
         } else if (mugshot != null && mugshotList != null)
             if (UnitaleUtil.IsOverworld&& mugshot.alpha != 0 && mugshotList.Length > 1) {

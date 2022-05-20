@@ -185,10 +185,8 @@ public class UIController : MonoBehaviour {
             return;
         }
         //Pre-state
-        if (fleeSwitch) {
-            EndBattle();
+        if (fleeSwitch && newState != "DONE")
             return;
-        }
         if (parentStateCall) {
             parentStateCall = false;
             try {
@@ -508,6 +506,8 @@ public class UIController : MonoBehaviour {
                 else
                     ArenaManager.instance.Resize(155, 130);
                 encounter.CallOnSelfOrChildren("EnemyDialogueStarting");
+                if (state != "ENEMYDIALOGUE")
+                    return;
                 monsterDialogues = new TextManager[encounter.EnabledEnemies.Length];
                 monsterDialogueEnemyID = new int[encounter.EnabledEnemies.Length];
                 readyToNextLine = new bool[encounter.enemies.Count];
@@ -786,7 +786,8 @@ public class UIController : MonoBehaviour {
         if (!complete) return; // break if we're not done with all text
         if (encounter.EnabledEnemies.Length <= 0) return;
         encounter.CallOnSelfOrChildren("EnemyDialogueEnding");
-        SwitchState("DEFENDING");
+        if (state == "ENEMYDIALOGUE")
+            SwitchState("DEFENDING");
     }
 
     private static string[] GetInventoryPage(int page) {
@@ -1533,12 +1534,12 @@ public class UIController : MonoBehaviour {
 
         Camera.main.GetComponent<AudioSource>().Pause();
         LuaSpriteController spr = (LuaSpriteController)SpriteUtil.MakeIngameSprite("spr_heartgtfo_0", "Top").UserData.Object;
-        spr.x = PlayerController.instance.transform.position.x;
-        spr.y = PlayerController.instance.transform.position.y;
+        spr.absx = PlayerController.instance.transform.position.x;
+        spr.absy = PlayerController.instance.transform.position.y;
         spr.SetAnimation(new[] { "spr_heartgtfo_0", "spr_heartgtfo_1" }, 1 / 10f);
         spr.color = new[] { PlayerController.instance.GetComponent<Image>().color.r, PlayerController.instance.GetComponent<Image>().color.g, PlayerController.instance.GetComponent<Image>().color.b };
-        while (spr.x > -20) {
-            spr.x--;
+        while (spr.absx > -20) {
+            spr.absx--;
             yield return 0;
         }
     }
