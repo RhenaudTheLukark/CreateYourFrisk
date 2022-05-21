@@ -327,15 +327,10 @@ public class PlayerController : MonoBehaviour {
     public void SetPosition(float xPos, float yPos, bool ignoreBounds) {
         // check if new position would be out of arena bounds, and modify accordingly if it is
         if (!ignoreBounds) {
-            if (xPos < arenaBounds.position.x - arenaBounds.sizeDelta.x / 2 + self.rect.size.x / 2)
-                xPos = arenaBounds.position.x - arenaBounds.sizeDelta.x / 2 + self.rect.size.x / 2;
-            else if (xPos > arenaBounds.position.x + arenaBounds.sizeDelta.x / 2 - self.rect.size.x / 2)
-                xPos = arenaBounds.position.x + arenaBounds.sizeDelta.x / 2 - self.rect.size.x / 2;
-
-            if (yPos < arenaBounds.position.y - arenaBounds.sizeDelta.y / 2 + self.rect.size.y / 2)
-                yPos = arenaBounds.position.y - arenaBounds.sizeDelta.y / 2 + self.rect.size.y / 2;
-            else if (yPos > arenaBounds.position.y + arenaBounds.sizeDelta.y / 2 - self.rect.size.y / 2)
-                yPos = arenaBounds.position.y + arenaBounds.sizeDelta.y / 2 - self.rect.size.y / 2;
+            xPos = Mathf.Clamp(xPos, arenaBounds.position.x - arenaBounds.sizeDelta.x / 2 + self.rect.size.x / 2,
+                                     arenaBounds.position.x + arenaBounds.sizeDelta.x / 2 - self.rect.size.x / 2);
+            yPos = Mathf.Clamp(yPos, arenaBounds.position.y - arenaBounds.sizeDelta.y / 2 + self.rect.size.y / 2,
+                                     arenaBounds.position.y + arenaBounds.sizeDelta.y / 2 - self.rect.size.y / 2);
         }
 
         // set player position on screen

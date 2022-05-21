@@ -61,7 +61,7 @@ public class UIController : MonoBehaviour {
     private string stateAfterDialogs = "DEFENDING";      // State to enter after the current arena dialogue is done. Only used after a proper call to BattleDialog()
     private string lastNewState = "UNUSED";              // Allows the detection of state changes during an OnDeath() call so the engine can switch to it properly
 
-    private readonly Vector2 upperLeft = new Vector2(65, 190);      // Coordinates of the first choice in a choice text
+    private readonly Vector2 upperLeft = new Vector2(-255, 100);    // Coordinates of the first choice in a choice text
     private bool encounterHasUpdate;                                // True if the encounter has an Update function, false otherwise
     private bool parentStateCall = true;                            // Used to stop the execution of a previous State() call if a new call has been done and to prevent infinite EnteringState() loops
     private bool childStateCalled;                                  // Used to stop the execution of a previous State() call if a new call has been done and to prevent infinite EnteringState() loops
@@ -292,7 +292,7 @@ public class UIController : MonoBehaviour {
         if (newState == "DEFENDING" || newState == "ENEMYDIALOGUE") {
             PlayerController.instance.setControlOverride(newState != "DEFENDING");
             mainTextManager.DestroyChars();
-            PlayerController.instance.SetPosition(320, 160, true);
+            PlayerController.instance.SetPosition(ArenaManager.instance.currentX, ArenaManager.instance.currentY + 70, true);
             PlayerController.instance.GetComponent<Image>().enabled = true;
             fightButton.overrideSprite = null;
             actButton.overrideSprite = null;
@@ -1088,7 +1088,7 @@ public class UIController : MonoBehaviour {
         do { actionIndex = Math.Mod(actionIndex + nextChange, 4); }
         while (disabledActions[actionIndex]);
 
-            return (Actions)actionIndex;
+        return (Actions)actionIndex;
     }
 
     private void HandleArrows() {
@@ -1303,10 +1303,10 @@ public class UIController : MonoBehaviour {
             case Actions.ACT:   actButton.overrideSprite   = actButtonSprite;   break;
             case Actions.ITEM:  itemButton.overrideSprite  = itemButtonSprite;  break;
             case Actions.MERCY: mercyButton.overrideSprite = mercyButtonSprite; break;
+            default:            return;
         }
 
-        if (newAction != Actions.NONE)
-            PlayerController.instance.SetPosition(FindPlayerOffsetForAction(newAction).x, FindPlayerOffsetForAction(newAction).y, true);
+        PlayerController.instance.SetPosition(FindPlayerOffsetForAction(newAction).x, FindPlayerOffsetForAction(newAction).y, true);
     }
 
     public void MovePlayerToAction(Actions act) {
@@ -1327,8 +1327,8 @@ public class UIController : MonoBehaviour {
     private void SetPlayerOnSelection(int selection) {
         int xMv = selection % 2; // remainder safe again, selection is never negative
         int yMv = selection / 2;
-        // HACK: remove hardcoding of this sometime, ever... probably not happening lmao
-        PlayerController.instance.SetPosition(upperLeft.x + xMv * 256, upperLeft.y - yMv * mainTextManager.Charset.LineSpacing, true);
+        PlayerController.instance.SetPosition(upperLeft.x + ArenaManager.instance.currentX + xMv * 256,
+                                              upperLeft.y + ArenaManager.instance.currentY - yMv * mainTextManager.Charset.LineSpacing, true);
     }
 
     private void Start() {

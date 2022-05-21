@@ -22,14 +22,14 @@ public class ArenaManager : MonoBehaviour {
     private RectTransform inner; // RectTransform of the inner part of the arena.
     private const int pxPerSecond = 100 * 10; // How many pixels per second the arena should resize and move
 
-    private float currentWidth; // Current width of the arena as it is resizing
-    private float currentHeight; // Current height of the arena as it is resizing
-    private float currentX; // Current X of the arena as it is moving
-    private float currentY; // Current Y of the arena as it is moving
-    internal float desiredWidth; // Desired width of the arena; internal so the Lua Arena object may refer to it (lazy)
-    internal float desiredHeight; // Desired height of the arena; internal so the Lua Arena object may refer to it (lazy)
-    internal float desiredX; // Desired x of the arena; internal so the Lua Arena object may refer to it (lazy)
-    internal float desiredY; // Desired y of the arena; internal so the Lua Arena object may refer to it (lazy)
+    public float currentWidth; // Current width of the arena as it is resizing
+    public float currentHeight; // Current height of the arena as it is resizing
+    public float currentX; // Current X of the arena as it is moving
+    public float currentY; // Current Y of the arena as it is moving
+    public float desiredWidth; // Desired width of the arena; internal so the Lua Arena object may refer to it (lazy)
+    public float desiredHeight; // Desired height of the arena; internal so the Lua Arena object may refer to it (lazy)
+    public float desiredX; // Desired x of the arena; internal so the Lua Arena object may refer to it (lazy)
+    public float desiredY; // Desired y of the arena; internal so the Lua Arena object may refer to it (lazy)
     private bool movePlayer;
 
     /// <summary>
@@ -294,7 +294,7 @@ public class ArenaManager : MonoBehaviour {
     private void ApplyChanges(float arenaX, float arenaY, float arenaWidth, float arenaHeight) {
         inner.sizeDelta = new Vector2(arenaWidth, arenaHeight);
         outer.sizeDelta = new Vector2(arenaWidth + 10, arenaHeight + 10);
-        if (movePlayer)
+        if (movePlayer && UIController.instance.state != "ACTIONSELECT")
             PlayerController.instance.MoveDirect(new Vector2(arenaX - outer.position.x, arenaY - outer.position.y));
         outer.position = new Vector2(arenaX, arenaY);
         outer.localPosition = new Vector3(outer.localPosition.x, outer.localPosition.y, 0);
