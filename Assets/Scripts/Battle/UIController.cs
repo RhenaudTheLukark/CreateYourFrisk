@@ -1076,6 +1076,21 @@ public class UIController : MonoBehaviour {
         instance.disabledActions[(int)act] = false;
     }
 
+    public Actions FindAvailableAction(int change) {
+        // All buttons are disabled: nothing is done
+        if (disabledActions.Count(x => !x) == 0)
+            return action;
+
+        int actionIndex = Math.Mod((int)action + change, 4);
+        if (!disabledActions[actionIndex]) return (Actions) actionIndex;
+
+        int nextChange = change >= 0 ? 1 : -1;
+        do { actionIndex = Math.Mod(actionIndex + nextChange, 4); }
+        while (disabledActions[actionIndex]);
+
+            return (Actions)actionIndex;
+    }
+
     private void HandleArrows() {
         bool left = InputUtil.Pressed(GlobalControls.input.Left);
         bool right = InputUtil.Pressed(GlobalControls.input.Right);
@@ -1087,21 +1102,9 @@ public class UIController : MonoBehaviour {
                 if (!left &&!right)
                     break;
 
+                int oldActionIndex = (int)action;
+                action = FindAvailableAction(left ? -1 : 1);
                 int actionIndex = (int)action;
-                int oldActionIndex = actionIndex;
-                actionIndex += left ? -1 : 1;
-                actionIndex = Math.Mod(actionIndex, 4);
-
-                if (disabledActions[actionIndex]) {
-                    // All buttons are disabled
-                    if (disabledActions.Count(x => !x) == 0)
-                        actionIndex = oldActionIndex;
-                    else
-                        do {
-                            actionIndex += left ? -1 : 1;
-                            actionIndex = Math.Mod(actionIndex, 4);
-                        } while (disabledActions[actionIndex]);
-                }
 
                 if (oldActionIndex != actionIndex) {
                     fightButton.overrideSprite = null;
@@ -1109,7 +1112,6 @@ public class UIController : MonoBehaviour {
                     itemButton.overrideSprite = null;
                     mercyButton.overrideSprite = null;
 
-                    action = (Actions) actionIndex;
                     SetPlayerOnAction(action);
                 }
 
@@ -1314,6 +1316,7 @@ public class UIController : MonoBehaviour {
         mercyButton.overrideSprite = null;
 
         action = act;
+        action = FindAvailableAction(0);
         SetPlayerOnAction(action);
     }
 
