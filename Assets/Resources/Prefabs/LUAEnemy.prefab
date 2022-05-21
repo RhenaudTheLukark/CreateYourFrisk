@@ -44,6 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ccc4510dd1610c46be8204aaf9c3a93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  bubbleObject: {fileID: 0}
   xFightAnimShift: 0
   bubbleWidth: 0
   index: -1
@@ -51,7 +52,6 @@ MonoBehaviour:
   - {x: 0, y: 0}
   - {x: 0, y: 0}
   - {x: 0, y: 0}
-  canMove: 0
 --- !u!114 &114548722136434830
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -105,7 +105,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 2156519dc0aa60141a3d1549c052af1b, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
