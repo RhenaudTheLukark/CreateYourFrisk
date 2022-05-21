@@ -88,7 +88,7 @@ public class LuaTextManager : TextManager {
     }
 
     [MoonSharpHidden] public void HideTextObject() {
-        SetText(DynValue.NewString(""));
+        DestroyChars();
         hidden = true;
     }
 
@@ -596,10 +596,12 @@ public class LuaTextManager : TextManager {
     public void NextLine() {
         CheckExists();
         if (AllLinesComplete() || currentLine + 1 == LineCount()) {
-            if (bubble)
-                containerBubble.SetActive(false);
-            if (!deleteWhenFinished) HideTextObject();
-            else                     DestroyText();
+            if (!deleteWhenFinished) {
+                HideTextObject();
+                if (bubble)
+                    containerBubble.SetActive(false);
+            } else
+                DestroyText();
         } else {
             ShowLine(++currentLine);
             if (bubble)
