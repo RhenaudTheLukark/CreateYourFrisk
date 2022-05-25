@@ -78,13 +78,15 @@ public class FightUIController : MonoBehaviour {
     public void QuickInit(int[] damage) {
         CommonInit();
         if (UIController.instance.state == "ATTACKING") return;
-        if (boundFightUiInstances.Count == 0)
-            HideAttackingUI();
 
         for (int i = 0; i < targetNumber; i++) {
             LaunchInstance();
             allFightUiInstances[allFightUiInstances.Count - 1].QuickInit(targetIDs[i], UIController.instance.encounter.EnabledEnemies[targetIDs[i]], damage[i]);
         }
+
+        if (boundFightUiInstances.Count == 0)
+            HideAttackingUI();
+
         UIController.PlaySoundSeparate("slice");
         for (int i = 0; i < targetIDs.Length; i++)
             allFightUiInstances[allFightUiInstances.Count - 1 - (targetIDs.Length - 1 - i)].StopAction(2.2f);
@@ -176,6 +178,9 @@ public class FightUIController : MonoBehaviour {
                     Destroy(allFightUiInstances[i].gameObject);
                     allFightUiInstances.RemoveAt(i);
                     i--;
+
+                    if (boundFightUiInstances.Count == 0)
+                        HideAttackingUI();
                 }
 
         if (finishingFade) {
