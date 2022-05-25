@@ -33,7 +33,6 @@ public class AudioClipRegistry {
     }
 
     public static AudioClip GetVoice(string key) {
-        key = (string)MusicManager.hiddenDictionary[key] ?? key;
         if (key.Length < 14 || key.Substring(0, 14).ToLower() != "sounds/voices/") key = "Sounds/Voices/" + key;
         return Get(key);
     }
@@ -45,7 +44,6 @@ public class AudioClipRegistry {
     }
 
     public static AudioClip GetMusic(string key) {
-        key = (string)MusicManager.hiddenDictionary[key] ?? key;
         if (key.Length < 6 || key.Substring(0, 6).ToLower() != "audio/") key = "Audio/" + key;
         return Get(key);
     }
