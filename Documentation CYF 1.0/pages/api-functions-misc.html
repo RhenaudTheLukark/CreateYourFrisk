@@ -177,9 +177,10 @@ CreateProjectileAbs("bullet", 0 - widthOnEachSide, 240) -- creates a bullet at t
 				<li><span class="new066"></span><span class="boolean"></span> <span class="term">Misc.isDebuggerAttachedToCamera</span> - Whether or not the camera should move the debugger along with it when it moves. True by default.</li><br>
 				<li>Additional notes on the debugger:
 					<ul>
-						<li>The debugger's pivot point is its top-left corner.</li>
-						<li>Its default position is (300, 480).</li>
-						<li>Its width is 320 and its height 140.</li>
+						<li>The debugger's pivot point is its top-right corner.</li>
+						<li>Its default absolute position is (620, 480).</li>
+                        <li>Its width is 320 and its height 140.</li>
+                        <li>If <span class="term">Misc.isDebuggerAttachedToCamera</span> is true when the window is resized, the debugger will stick to the top right corner of the screen.</li>
 					</ul>
 				</li>
             </ul>

@@ -13,6 +13,7 @@ public class UserDebugger : MonoBehaviour{
     public bool canShow = true;
     private bool firstActive;
     private string originalText;
+    public static Vector2 offset;
 
     public void Warn(string line) {
         Debug.LogWarning("Frame " + GlobalControls.frame + ": " + line);
@@ -21,8 +22,6 @@ public class UserDebugger : MonoBehaviour{
 
     public void Start() {
         instance = this;
-        saved_x = x;
-        saved_y = y;
         if (originalText == null)
             originalText = text.text;
         text.text = originalText;
@@ -58,43 +57,39 @@ public class UserDebugger : MonoBehaviour{
 
         // print to debug console
         text.text = originalText;
-        foreach(string dbgLine in dbgContent){
+        foreach (string dbgLine in dbgContent)
             text.text += "\n" + dbgLine;
-        }
     }
-
-    public static float saved_x;
-    public static float saved_y;
 
     public static float x {
         get { return instance.transform.position.x - Misc.cameraX; }
         set {
+            offset.x = value - Misc.WindowWidth / 2f - 300;
             instance.transform.position = new Vector3(value + Misc.cameraX, instance.transform.position.y, instance.transform.position.z);
-            saved_x = x;
         }
     }
 
     public static float y {
         get { return instance.transform.position.y - Misc.cameraY; }
         set {
+            offset.y = value - Misc.WindowHeight / 2f - 240;
             instance.transform.position = new Vector3(instance.transform.position.x, value + Misc.cameraY, instance.transform.position.z);
-            saved_y = y;
         }
     }
 
     public static float absx {
         get { return instance.transform.position.x; }
         set {
+            offset.x = value - Misc.WindowWidth / 2f - Misc.cameraX - 300;
             instance.transform.position = new Vector3(value, instance.transform.position.y, instance.transform.position.z);
-            saved_x = x;
         }
     }
 
     public static float absy {
         get { return instance.transform.position.y; }
         set {
+            offset.y = value - Misc.WindowHeight / 2f - Misc.cameraY - 240;
             instance.transform.position = new Vector3(instance.transform.position.x, value, instance.transform.position.z);
-            saved_y = y;
         }
     }
 

@@ -40,6 +40,9 @@ public class Misc {
             return false;
 
         ScreenResolution.SetFullScreen(Screen.fullScreen, 0, width, height);
+        if (UserDebugger.instance && isDebuggerAttachedToCamera)
+            UserDebugger.MoveTo(UserDebugger.offset.x + WindowWidth / 2f + 300, UserDebugger.offset.y + WindowHeight / 2f + 240);
+
         return true;
     }
 
@@ -86,10 +89,13 @@ public class Misc {
             if (UnitaleUtil.IsOverworld && !GlobalControls.isInShop)
                 PlayerOverworld.instance.cameraShift.x += value - (Camera.main.transform.position.x - 320);
             else {
+                float oldDebuggerX = 0;
+                if (UserDebugger.instance && isDebuggerAttachedToCamera)
+                    oldDebuggerX = UserDebugger.x;
                 Camera.main.transform.position = new Vector3(value + 320 + cameraXWindowSizeShift, Camera.main.transform.position.y, Camera.main.transform.position.z);
                 // Updates the Debugger's position using the new camera position
-                if (UserDebugger.instance)
-                    UserDebugger.x = UserDebugger.x;
+                if (UserDebugger.instance && isDebuggerAttachedToCamera)
+                    UserDebugger.x = oldDebuggerX;
             }
         }
     }
@@ -113,10 +119,13 @@ public class Misc {
             if (UnitaleUtil.IsOverworld && !GlobalControls.isInShop)
                 PlayerOverworld.instance.cameraShift.y += value - (Camera.main.transform.position.y - 240);
             else {
+                float oldDebuggerY = 0;
+                if (UserDebugger.instance && isDebuggerAttachedToCamera)
+                    oldDebuggerY = UserDebugger.y - cameraYWindowSizeShift;
                 Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, value + 240 + cameraYWindowSizeShift, Camera.main.transform.position.z);
                 // Updates the Debugger's position using the new camera position
-                if (UserDebugger.instance)
-                    UserDebugger.y = UserDebugger.y;
+                if (UserDebugger.instance && isDebuggerAttachedToCamera)
+                    UserDebugger.y = oldDebuggerY + cameraYWindowSizeShift;
             }
         }
     }
@@ -260,6 +269,21 @@ public class Misc {
         set {
             if (!UserDebugger.instance) throw new CYFException("Misc.debuggerAbsY cannot be used outside of a function.");
             UserDebugger.absy = value;
+        }
+    }
+
+    private static bool _isDebuggerAttachedToCamera = true;
+    public static bool isDebuggerAttachedToCamera
+    {
+        get { return _isDebuggerAttachedToCamera; }
+        set {
+            float newDebuggerX = debuggerAbsX, newDebuggerY = debuggerAbsY;
+            if (value != _isDebuggerAttachedToCamera) {
+                newDebuggerX += (value ? -1 : 1) * cameraX;
+                newDebuggerY += (value ? -1 : 1) * cameraY;
+            }
+            _isDebuggerAttachedToCamera = value;
+            MoveDebuggerToAbs(newDebuggerX, newDebuggerY);
         }
     }
 

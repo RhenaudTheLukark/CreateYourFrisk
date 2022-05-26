@@ -1493,11 +1493,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cd5272475a518749a954d77524c56f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainTextManager: {fileID: 0}
-  fightButton: {fileID: 0}
-  actButton: {fileID: 0}
-  itemButton: {fileID: 0}
-  mercyButton: {fileID: 0}
+  mainTextManager: {fileID: 1003495344}
+  fightButton: {fileID: 1745075055}
+  actButton: {fileID: 991344421}
+  itemButton: {fileID: 506907624}
+  mercyButton: {fileID: 1280180707}
   action: 0
   forcedAction: 4
   psContainer: {fileID: 0}
@@ -1511,7 +1511,6 @@ MonoBehaviour:
   - {x: 16, y: 19}
   exp: 0
   gold: 0
-  state: 0
   readyToNextLine: 
   needOnDeath: 0
   stateSwitched: 0
@@ -1530,7 +1529,7 @@ MonoBehaviour:
   - DONE
   - UNUSED
   - PAUSE
-  frozenState: 0
+  frozenState: PAUSE
   frozenTimestamp: 0
 --- !u!1 &669874877
 GameObject:
@@ -2228,6 +2227,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   basisCoordinates: {x: 0, y: 0}
+  currentWidth: 0
+  currentHeight: 0
+  currentX: 0
+  currentY: 0
+  desiredWidth: 0
+  desiredHeight: 0
+  desiredX: 0
+  desiredY: 0
 --- !u!1 &1280180705
 GameObject:
   m_ObjectHideFlags: 0
@@ -3591,11 +3598,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22465858, guid: 1ccc044534d366d4abebb5047dfda396, type: 2}
       propertyPath: m_AnchoredPosition.x
-      value: -340
+      value: 300
       objectReference: {fileID: 0}
     - target: {fileID: 22465858, guid: 1ccc044534d366d4abebb5047dfda396, type: 2}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: 240
       objectReference: {fileID: 0}
     - target: {fileID: 22465858, guid: 1ccc044534d366d4abebb5047dfda396, type: 2}
       propertyPath: m_SizeDelta.x
@@ -3607,23 +3614,23 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22465858, guid: 1ccc044534d366d4abebb5047dfda396, type: 2}
       propertyPath: m_AnchorMin.x
-      value: 1
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 22465858, guid: 1ccc044534d366d4abebb5047dfda396, type: 2}
       propertyPath: m_AnchorMin.y
-      value: 1
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 22465858, guid: 1ccc044534d366d4abebb5047dfda396, type: 2}
       propertyPath: m_AnchorMax.x
-      value: 1
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 22465858, guid: 1ccc044534d366d4abebb5047dfda396, type: 2}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 22465858, guid: 1ccc044534d366d4abebb5047dfda396, type: 2}
       propertyPath: m_Pivot.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 22465858, guid: 1ccc044534d366d4abebb5047dfda396, type: 2}
       propertyPath: m_Pivot.y
@@ -3678,6 +3685,10 @@ Prefab:
       value: 
       objectReference: {fileID: 12800000, guid: abd91933b51b6fc47931c535c62c6929,
         type: 3}
+    - target: {fileID: 11413288, guid: 1ccc044534d366d4abebb5047dfda396, type: 2}
+      propertyPath: m_FontData.m_AlignByGeometry
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1ccc044534d366d4abebb5047dfda396, type: 2}
   m_IsPrefabAsset: 0

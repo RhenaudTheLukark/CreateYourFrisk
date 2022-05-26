@@ -84,16 +84,16 @@ public class ScreenResolution : MonoBehaviour {
         if (width == -1)
             width = (int)windowSize.x;
         else if (width != (int)windowSize.x) {
-            windowSize.x                = width;
             Misc.cameraXWindowSizeShift = -width % 2 / 2f;
+            windowSize.x                = width;
             setSize = true;
         }
 
         if (height == -1)
             height = (int)windowSize.y;
         else if (height != (int)windowSize.y) {
-            windowSize.y                = height;
             Misc.cameraYWindowSizeShift = -height % 2 / 2f;
+            windowSize.y                = height;
             setSize = true;
         }
 
