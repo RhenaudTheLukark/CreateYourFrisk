@@ -324,7 +324,7 @@ public static class LuaScriptBinder {
     public static void SetAction(string action) {
         try {
             UIController.instance.forcedAction = (UIController.Actions)Enum.Parse(typeof(UIController.Actions), action, true);
-            if ((GetState() == "ACTIONSELECT" && UIController.instance.frozenState == "PAUSE" || !UIController.instance.stateSwitched) && UIController.instance.forcedAction != UIController.Actions.NONE)
+            if (UIController.instance.forcedAction != UIController.Actions.NONE)
                 UIController.instance.MovePlayerToAction(UIController.instance.forcedAction);
         } catch { throw new CYFException("SetAction() can only take \"FIGHT\", \"ACT\", \"ITEM\" or \"MERCY\", but you entered \"" + action + "\"."); }
     }

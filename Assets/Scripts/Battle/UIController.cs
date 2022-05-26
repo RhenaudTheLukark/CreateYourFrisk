@@ -57,7 +57,7 @@ public class UIController : MonoBehaviour {
     public int exp = 0;     // Amount of EXP earned by the Player at the end of the encounter
     public int gold = 0;    // Amount of Gold earned by the Player at the end of the encounter
 
-    public string state;                                 // Current state of the battle
+    internal string state = "ACTIONSELECT";              // Current state of the battle
     private string stateAfterDialogs = "DEFENDING";      // State to enter after the current arena dialogue is done. Only used after a proper call to BattleDialog()
     private string lastNewState = "UNUSED";              // Allows the detection of state changes during an OnDeath() call so the engine can switch to it properly
 
@@ -1306,7 +1306,8 @@ public class UIController : MonoBehaviour {
             default:            return;
         }
 
-        PlayerController.instance.SetPosition(FindPlayerOffsetForAction(newAction).x, FindPlayerOffsetForAction(newAction).y, true);
+        if (state == "ACTIONSELECT")
+            PlayerController.instance.SetPosition(FindPlayerOffsetForAction(newAction).x, FindPlayerOffsetForAction(newAction).y, true);
     }
 
     public void MovePlayerToAction(Actions act) {
