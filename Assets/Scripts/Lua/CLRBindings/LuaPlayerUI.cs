@@ -134,6 +134,7 @@ public class LuaPlayerUI {
 
     public void DisableButton(string btn) {
         UIController.DisableButton(btn);
+        UpdateButtons();
     }
 
     public void ResetButtonPosition(string btn, bool resetX = true, bool resetY = true) {
