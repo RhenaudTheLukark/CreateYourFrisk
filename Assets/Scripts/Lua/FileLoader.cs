@@ -165,7 +165,15 @@ public static class FileLoader {
         string original = fileName;
         // Sanitize if path from CYF root, need to transform a relative path to an absolute path and vice-versa, or if there's an occurence of ..
         if (fileName.StartsWith(Path.DirectorySeparatorChar.ToString()) || fileName.Contains(DataRoot) ^ needsAbsolutePath || fileName.Contains(".." + Path.DirectorySeparatorChar)) {
-            if (!LoadModule.RequireFile(ref fileName, pathSuffix, errorOnFailure, needsAbsolutePath, needsToExist)) return false;
+            if (!LoadModule.RequireFile(ref fileName, pathSuffix, false, needsAbsolutePath, needsToExist))
+                if (fileName.StartsWith(Path.DirectorySeparatorChar.ToString()) && !fileName.Contains(DataRoot)) {
+                    // Passthrough: Remove the leading slash if the file wasn't found
+                    // TODO: Remove this on 0.7
+                    fileName = fileName.Substring(1);
+                    if (!LoadModule.RequireFile(ref fileName, pathSuffix, errorOnFailure, needsAbsolutePath, needsToExist))
+                        return false;
+                } else
+                    return false;
             // Add the sanitized path if the file actually exists
             if (needsAbsolutePath) absoluteSanitizationDictionary.Add(original, fileName);
             else                   relativeSanitizationDictionary.Add(original, fileName);
