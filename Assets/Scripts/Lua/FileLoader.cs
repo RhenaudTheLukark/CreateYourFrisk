@@ -165,8 +165,9 @@ public static class FileLoader {
         string original = fileName;
         // Sanitize if path from CYF root, need to transform a relative path to an absolute path and vice-versa, or if there's an occurence of ..
         if (fileName.StartsWith(Path.DirectorySeparatorChar.ToString()) || fileName.Contains(DataRoot) ^ needsAbsolutePath || fileName.Contains(".." + Path.DirectorySeparatorChar)) {
-            if (!LoadModule.RequireFile(ref fileName, pathSuffix, false, needsAbsolutePath, needsToExist))
-                if (fileName.StartsWith(Path.DirectorySeparatorChar.ToString()) && !fileName.Contains(DataRoot)) {
+            bool leadingSlash = fileName.StartsWith(Path.DirectorySeparatorChar.ToString()) && !fileName.Contains(DataRoot);
+            if (!LoadModule.RequireFile(ref fileName, pathSuffix, !leadingSlash && errorOnFailure, needsAbsolutePath, needsToExist))
+                if (leadingSlash) {
                     // Passthrough: Remove the leading slash if the file wasn't found
                     // TODO: Remove this on 0.7
                     fileName = fileName.Substring(1);
