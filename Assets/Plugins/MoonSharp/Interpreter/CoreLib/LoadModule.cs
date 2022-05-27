@@ -353,7 +353,7 @@ end";
 
 			// Check if the final directory is a child of CYF's root directory
 			if (!endFolder.FullName.StartsWith(Path.Combine(DataRoot, "Mods")) && !endFolder.FullName.StartsWith(Path.Combine(DataRoot, "Default")))
-				throw new CYFException("The folder \"" + endFolder.FullName + "\" isn't inside of CYF (\"" + DataRoot + "\"). Please only fetch files inside CYF's Mods or Default folder.");
+				throw new CYFException("The folder \"" + endFolder.FullName + "\" isn't inside of CYF's allowed folders (CYF's path is \"" + DataRoot + "\"). Please only fetch files from inside CYF's Mods or Default folders.");
 
 			fullPath = endFolder.FullName;
 			if (!fullPath.EndsWith(Path.DirectorySeparatorChar.ToString())) fullPath += Path.DirectorySeparatorChar;
