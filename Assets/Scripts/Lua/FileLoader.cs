@@ -151,18 +151,18 @@ public static class FileLoader {
     /// <returns>True if the sanitization was successful, false otherwise.</returns>
     public static bool SanitizePath(ref string fileName, string pathSuffix, bool errorOnFailure = true, bool needsAbsolutePath = false, bool needsToExist = true) {
         fileName = fileName.Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar);
+        string pathToTest = pathSuffix + fileName;
 
         // Check if this same string has been passed to RequireFile before
-        if (needsAbsolutePath && absoluteSanitizationDictionary.ContainsKey(fileName)) {
-            fileName = absoluteSanitizationDictionary[fileName];
+        if (needsAbsolutePath && absoluteSanitizationDictionary.ContainsKey(pathToTest)) {
+            fileName = absoluteSanitizationDictionary[pathToTest];
             return true;
         }
-        if (!needsAbsolutePath && relativeSanitizationDictionary.ContainsKey(fileName)) {
-            fileName = relativeSanitizationDictionary[fileName];
+        if (!needsAbsolutePath && relativeSanitizationDictionary.ContainsKey(pathToTest)) {
+            fileName = relativeSanitizationDictionary[pathToTest];
             return true;
         }
 
-        string original = fileName;
         // Sanitize if path from CYF root, need to transform a relative path to an absolute path and vice-versa, or if there's an occurence of ..
         if (fileName.StartsWith(Path.DirectorySeparatorChar.ToString()) || fileName.Contains(DataRoot) ^ needsAbsolutePath || fileName.Contains(".." + Path.DirectorySeparatorChar)) {
             bool leadingSlash = fileName.StartsWith(Path.DirectorySeparatorChar.ToString()) && !fileName.Contains(DataRoot);
@@ -176,12 +176,10 @@ public static class FileLoader {
                 } else
                     return false;
             // Add the sanitized path if the file actually exists
-            if (needsAbsolutePath) absoluteSanitizationDictionary.Add(original, fileName);
-            else                   relativeSanitizationDictionary.Add(original, fileName);
+            if (needsAbsolutePath) absoluteSanitizationDictionary.Add(pathToTest, fileName);
+            else                   relativeSanitizationDictionary.Add(pathToTest, fileName);
             return true;
         }
-
-        string pathToTest = pathSuffix + fileName;
 
         if (errorOnFailure && needsToExist) {
             if (!new FileInfo(pathToTest).Exists && !new FileInfo(PathToModFile(pathToTest)).Exists && !new FileInfo(PathToDefaultFile(pathToTest)).Exists) {
@@ -194,8 +192,8 @@ public static class FileLoader {
         if (!exists) return !needsToExist;
 
         // Add the sanitized path if the file actually exists
-        if (needsAbsolutePath) absoluteSanitizationDictionary.Add(original, fileName);
-        else                   relativeSanitizationDictionary.Add(original, fileName);
+        if (needsAbsolutePath) absoluteSanitizationDictionary.Add(pathToTest, fileName);
+        else                   relativeSanitizationDictionary.Add(pathToTest, fileName);
 
         return true;
     }
