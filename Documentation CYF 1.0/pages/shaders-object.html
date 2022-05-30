@@ -272,7 +272,7 @@ end
                 <br><span class="function"><span class="luatable"><span class="number"></span>, <span class="number"></span>, <span class="number"></span>, <span class="number"></span></span> shader.GetVector(<span class="string"></span> name)</span>
                 <span class="function">shader.SetVector(<span class="string"></span> name,
                 <span class="luatable"><span class="number"></span>, <span class="number"></span>, <span class="number"></span>, <span class="number"></span></span> vector)</span>
-                Gets or sets a vector (<a href="https://docs.unity3d.com/2018.2/Documentation/ScriptReference/Vector4.html">Vector4</a>) in the active shader,
+                Gets or sets a vector (<a href="https://docs.unity3d.com/2018.4/Documentation/ScriptReference/Vector4.html">Vector4</a>) in the active shader,
                 in the property named <span class="term">name</span>.
                 <br><br>
                 Here, a vector is a table of 4 number values, with any range.
@@ -311,7 +311,7 @@ end
                 Gets or sets a vector <b>array</b> in the active shader, in the property named <span class="term">name</span>.
                 <br><br>
                 Just like with <span class="term">shader.SetVector</span>, a vector
-                (<a href="https://docs.unity3d.com/2018.2/Documentation/ScriptReference/Vector4.html">Vector4</a>) is a table of 4 number values.<br>
+                (<a href="https://docs.unity3d.com/2018.4/Documentation/ScriptReference/Vector4.html">Vector4</a>) is a table of 4 number values.<br>
                 However, keep in mind that this is an <i>array</i> of vectors. So, a table with multiple smaller tables inside, each with 4 numbers.
                 <br><br>
                 <span style="color:#ffffff"><u>NOTE:</u></span> The two functions don't use the same kind of vectors. <span class="term">shader.GetVectorArray()</span> uses <span class="term">(w, x, y, z)</span> vectors, where <span class="term">shader.SetVectorArray()</span> uses <span class="term">(x, y, z, w)</span> vectors. This behavior will be corrected to only use <span class="term">(x, y, z, w)</span> vectors in a later version.
@@ -320,7 +320,7 @@ end
             <p>
                 <br><br>
                 <h4>The Matrix object</h4>
-                There is a Unity property called the <a href="https://docs.unity3d.com/2018.2/Documentation/ScriptReference/Matrix4x4.html">Matrix4x4</a>,
+                There is a Unity property called the <a href="https://docs.unity3d.com/2018.4/Documentation/ScriptReference/Matrix4x4.html">Matrix4x4</a>,
                 which can be used as a property within shaders.<br>
                 The Matrix object is a way to manipulate a Matrix4x4 on the Lua side.
                 <br><br>
