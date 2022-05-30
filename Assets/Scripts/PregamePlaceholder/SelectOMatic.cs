@@ -54,7 +54,7 @@ public class SelectOMatic : MonoBehaviour {
             return;
         }
 
-        modDirs.Sort((a, b) => string.Compare(a.Name, b.Name, StringComparison.Ordinal));
+        modDirs.Sort((a, b) => string.Compare(a.Name, b.Name, StringComparison.OrdinalIgnoreCase));
 
         // Bind button functions
         btnBack.GetComponent<Button>().onClick.RemoveAllListeners();

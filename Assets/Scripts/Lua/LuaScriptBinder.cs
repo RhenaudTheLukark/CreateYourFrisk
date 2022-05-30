@@ -388,15 +388,15 @@ public static class LuaScriptBinder {
         string firstLine = text.Table.Get(1).String;
 
         // if [instant] or [instant:allowcommand] is found, check for the earliest match, and whether it is at the beginning
-        if (firstLine.IndexOf("[instant]", StringComparison.Ordinal) > -1 || firstLine.IndexOf("[instant:allowcommand]", StringComparison.Ordinal) > -1) {
+        if (firstLine.IndexOf("[instant]", StringComparison.OrdinalIgnoreCase) > -1 || firstLine.IndexOf("[instant:allowcommand]", StringComparison.OrdinalIgnoreCase) > -1) {
             // determine whether [instant] or [instant:allowcommand] is first
             string testFor = "[instant]";
-            if (firstLine.IndexOf("[instant:allowcommand]", StringComparison.Ordinal) > -1 &&
-                firstLine.IndexOf("[instant:allowcommand]", StringComparison.Ordinal) < firstLine.IndexOf("[instant]", StringComparison.Ordinal) || firstLine.IndexOf("[instant]", StringComparison.Ordinal) == -1)
+            if (firstLine.IndexOf("[instant:allowcommand]", StringComparison.OrdinalIgnoreCase) > -1 &&
+                firstLine.IndexOf("[instant:allowcommand]", StringComparison.OrdinalIgnoreCase) < firstLine.IndexOf("[instant]", StringComparison.OrdinalIgnoreCase) || firstLine.IndexOf("[instant]", StringComparison.OrdinalIgnoreCase) == -1)
                 testFor = "[instant:allowcommand]";
 
             // grab all of the text that comes before the matched command
-            string precedingText = firstLine.Substring(0, firstLine.IndexOf(testFor, StringComparison.Ordinal));
+            string precedingText = firstLine.Substring(0, firstLine.IndexOf(testFor, StringComparison.OrdinalIgnoreCase));
 
             // remove all commands other than the matched command from this variable
             while (precedingText.IndexOf('[') > -1) {
@@ -415,9 +415,9 @@ public static class LuaScriptBinder {
         //////////////////////////////////////////
 
         // If the first line of text has [font] at the beginning, use it initially!
-        if (firstLine.IndexOf("[font:", StringComparison.Ordinal) > -1 && firstLine.Substring(firstLine.IndexOf("[font:", StringComparison.Ordinal)).IndexOf(']') > -1) {
+        if (firstLine.IndexOf("[font:", StringComparison.OrdinalIgnoreCase) > -1 && firstLine.Substring(firstLine.IndexOf("[font:", StringComparison.OrdinalIgnoreCase)).IndexOf(']') > -1) {
             // grab all of the text that comes before the matched command
-            string precedingText = firstLine.Substring(0, firstLine.IndexOf("[font:", StringComparison.Ordinal));
+            string precedingText = firstLine.Substring(0, firstLine.IndexOf("[font:", StringComparison.OrdinalIgnoreCase));
 
             // remove all commands other than the matched command from this variable
             while (precedingText.IndexOf('[') > -1) {
@@ -428,11 +428,11 @@ public static class LuaScriptBinder {
 
             // if the length of the remaining string is 0, then set the font!
             if (precedingText.Length == 0) {
-                int startCommand = firstLine.IndexOf("[font:", StringComparison.Ordinal);
+                int startCommand = firstLine.IndexOf("[font:", StringComparison.OrdinalIgnoreCase);
                 string command = UnitaleUtil.ParseCommandInline(precedingText, ref startCommand);
                 if (command != null) {
                     string fontPartOne = command.Substring(6);
-                    string fontPartTwo = fontPartOne.Substring(0, fontPartOne.IndexOf("]", StringComparison.Ordinal));
+                    string fontPartTwo = fontPartOne.Substring(0, fontPartOne.IndexOf("]", StringComparison.OrdinalIgnoreCase));
                     UnderFont font = SpriteFontRegistry.Get(fontPartTwo);
                     if (font == null)
                         throw new CYFException("The font \"" + fontPartTwo + "\" doesn't exist.\nYou should check if you made a typo, or if the font really is in your mod.");
