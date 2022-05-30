@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Networking;
 
 public class AudioClipRegistry {
     public static Dictionary<string, AudioClip> dict = new Dictionary<string, AudioClip>();
@@ -95,14 +96,16 @@ public class AudioClipRegistry {
     /// <param name="musicFilePath">Full path to a file.</param>
     /// <returns>AudioClip object on successful load, otherwise null.</returns>
     public static AudioClip GetAudioClip(string musicFilePath) {
-        WWW www = new WWW(new Uri(musicFilePath).AbsoluteUri.Replace("+", "%2B"));
-        while (!www.isDone) { } // hold up a bit while it's loading; delay isn't noticeable and loading will fail otherwise
         AudioType type;
-        if (musicFilePath.EndsWith(".ogg")) type      = AudioType.OGGVORBIS;
+        if (musicFilePath.EndsWith(".ogg"))      type = AudioType.OGGVORBIS;
         else if (musicFilePath.EndsWith(".wav")) type = AudioType.WAV;
-        else return null;
+        else                                     return null;
 
-        AudioClip music = www.GetAudioClip(false, false, type);
+        UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(new Uri(musicFilePath).AbsoluteUri.Replace("+", "%2B"), type);
+        www.SendWebRequest();
+        while (!www.isDone) { } // hold up a bit while it's loading; delay isn't noticeable and loading will fail otherwise
+
+        AudioClip music = DownloadHandlerAudioClip.GetContent(www);
         music.name = musicFilePath;
         music.LoadAudioData();
 
