@@ -35,9 +35,9 @@ else:
     print("\"bin\" folder already exists.")
 
 # This is a list of paths to Unity. Add your own if it's not in the list.
-unityPath = "C:\\Program Files\\Unity\\Hub\\Editor\\2018.2.13f1\\Editor\\Unity.exe"
+unityPath = "C:\\Program Files\\Unity\\Hub\\Editor\\2018.4.36f1\\Editor\\Unity.exe"
 if not os.path.exists(unityPath):
-    unityPath = "C:\\Program Files\\Unities\\2018.2.13f1\\Editor\\Unity.exe"
+    unityPath = "C:\\Program Files\\Unities\\2018.4.36f1\\Editor\\Unity.exe"
 if not os.path.exists(unityPath):
     unityPath = "C:\\Program Files\\Unity\\Editor\\Unity.exe"
 if not os.path.exists(unityPath):
