@@ -51,17 +51,10 @@ public static class SpriteUtil {
         Image img = target.GetComponent<Image>();
         if (!img) {
             SpriteRenderer img2 = target.GetComponent<SpriteRenderer>();
-            Vector2 pivot = img2.GetComponent<RectTransform>().pivot;
             img2.sprite = newSprite;
-            img2.GetComponent<RectTransform>().sizeDelta = new Vector2(newSprite.texture.width, newSprite.texture.height);
-            img2.GetComponent<RectTransform>().pivot = pivot;
-        } else {
-            Vector2 pivot = img.rectTransform.pivot;
+        } else
             img.sprite = newSprite;
-            //enemyImg.SetNativeSize();
-            img.rectTransform.sizeDelta = new Vector2(newSprite.texture.width, newSprite.texture.height);
-            img.rectTransform.pivot = pivot;
-        }
+        target.GetComponent<RectTransform>().sizeDelta = new Vector2(newSprite.texture.width, newSprite.texture.height);
     }
 
     public static Sprite SpriteWithXml(XmlNode spriteNode, Sprite source) {

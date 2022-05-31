@@ -20,7 +20,6 @@ public class LuaSpriteController {
     private Vector3 internalRotation = Vector3.zero;       // The rotation of the sprite
     private float xScale = 1;                              // The X scale of the sprite
     private float yScale = 1;                              // The Y scale of the sprite
-    private Sprite originalSprite;                         // The original sprite
     [MoonSharpHidden] public KeyframeCollection keyframes; // This variable is used to store an animation
     [MoonSharpHidden] public string tag;                   // The tag of the sprite : "projectile", "enemy", "letter" or "other"
     private KeyframeCollection.LoopMode loop = KeyframeCollection.LoopMode.LOOP;
@@ -374,24 +373,20 @@ public class LuaSpriteController {
         newSpr.ctrl = ctrl;
 
         // Images are used for most of CYF's sprites
+        ctrl.nativeSizeDelta = new Vector2(100, 100);
         Image image = newSpr.GetComponent<Image>();
         if (image != null) {
-            ctrl.originalSprite  = image.sprite;
-            ctrl.nativeSizeDelta = new Vector2(100, 100);
             // A controller's tag gives us more info on what the sprite actually is used for
             if (ctrl.img.GetComponent<Projectile>())           ctrl.tag = "projectile";
             else if (ctrl.img.GetComponent<EnemyController>()) ctrl.tag = "enemy";
             else                                               ctrl.tag = "other";
             ctrl.shader = new LuaSpriteShader("sprite", ctrl.img);
-            return ctrl;
+        } else {
+            // SpriteRenderers are used for overworld events
+            ctrl.tag = "event";
+            ctrl.shader = new LuaSpriteShader("event", ctrl.img);
         }
 
-        // SpriteRenderers are used for overworld events
-        SpriteRenderer render = newSpr.GetComponent<SpriteRenderer>();
-        ctrl.originalSprite  = render.sprite;
-        ctrl.nativeSizeDelta = new Vector2(100, 100);
-        ctrl.tag             = "event";
-        ctrl.shader          = new LuaSpriteShader("event", ctrl.img);
         return ctrl;
     }
 
@@ -403,17 +398,17 @@ public class LuaSpriteController {
         if (img.GetComponent<Image>()) {
             Image imgtemp = img.GetComponent<Image>();
             SpriteUtil.SwapSpriteFromFile(imgtemp, name);
-            // TODO: Restore in 0.7
-            //if (!UnitaleUtil.IsOverworld) imgtemp.name = name;
-            if (!UnitaleUtil.IsOverworld) _spritename = name;
-            originalSprite = imgtemp.sprite;
             nativeSizeDelta = new Vector2(imgtemp.sprite.texture.width, imgtemp.sprite.texture.height);
+            shader.UpdateTexture(imgtemp.sprite.texture);
         } else {
             SpriteRenderer imgtemp = img.GetComponent<SpriteRenderer>();
             SpriteUtil.SwapSpriteFromFile(imgtemp, name);
-            originalSprite = imgtemp.sprite;
             nativeSizeDelta = new Vector2(imgtemp.sprite.texture.width, imgtemp.sprite.texture.height);
+            shader.UpdateTexture(imgtemp.sprite.texture);
         }
+        // TODO: Restore in 0.7
+        //imgtemp.name = name;
+        _spritename = name;
         Scale(xScale, yScale);
         if (tag == "projectile")
             img.GetComponent<Projectile>().needUpdateTex = true;
@@ -479,6 +474,8 @@ public class LuaSpriteController {
             nativeSizeDelta = new Vector2(img.GetComponent<SpriteRenderer>().sprite.texture.width, img.GetComponent<SpriteRenderer>().sprite.texture.height);
             img.GetComponent<RectTransform>().localScale = new Vector3(100 * Mathf.Abs(xScale), 100 * Mathf.Abs(yScale), 1);
         }
+
+        if (EnemyEncounter.script.GetVar("noscalerotationbug").Boolean) return;
         internalRotation = new Vector3(ys < 0 ? 180 : 0, xs < 0 ? 180 : 0, internalRotation.z);
         img.GetComponent<RectTransform>().eulerAngles = internalRotation;
     }
@@ -504,40 +501,28 @@ public class LuaSpriteController {
                 spriteNames[i] = prefix + spriteNames[i];
         }
 
-        Vector2 pivot = img.GetComponent<RectTransform>().pivot;
         Keyframe[] kfArray = new Keyframe[spriteNames.Length];
         for (int i = spriteNames.Length - 1; i >= 0; i--) {
             Set(spriteNames[i]);
             kfArray[i] = new Keyframe(SpriteRegistry.Get(spriteNames[i]), spriteNames[i]);
         }
         if (keyframes == null) {
-            if (img.GetComponent<KeyframeCollection>()) {
+            if (img.GetComponent<KeyframeCollection>())
                 keyframes = img.GetComponent<KeyframeCollection>();
-                keyframes.enabled = true;
-            } else {
+            else {
                 keyframes = img.AddComponent<KeyframeCollection>();
                 keyframes.spr = this;
             }
-        } else
-            keyframes.enabled = true;
+        }
+        keyframes.enabled = true;
         keyframes.loop = loop;
         keyframes.Set(kfArray, frametime);
         UpdateAnimation();
-        img.GetComponent<RectTransform>().pivot = pivot;
     }
 
     public void StopAnimation() {
         if (keyframes == null) return;
-        Vector2 pivot = img.GetComponent<RectTransform>().pivot;
         keyframes.enabled = false;
-        if (img.GetComponent<Image>()) {
-            Image imgtemp = img.GetComponent<Image>();
-            imgtemp.sprite = originalSprite;
-        } else {
-            SpriteRenderer imgtemp = img.GetComponent<SpriteRenderer>();
-            imgtemp.sprite = originalSprite;
-        }
-        img.GetComponent<RectTransform>().pivot = pivot;
     }
 
     // Gets or sets the paused state of a sprite's animation.
@@ -750,59 +735,18 @@ public class LuaSpriteController {
         if (keyframes == null || keyframes.paused)
             return;
         Keyframe k = keyframes.getCurrent();
-        Sprite s;
         if (k != null) {
-            s = k.sprite;
             // TODO: Restore in 0.7
-            //if (!UnitaleUtil.IsOverworld) img.name = k.name;
-            if (!UnitaleUtil.IsOverworld) _spritename = k.name;
+            //img.name = k.name;
+             _spritename = k.name;
         } else {
             StopAnimation();
             return;
         }
 
         if (k.sprite == null) return;
-        Quaternion rot = img.transform.rotation;
-        Vector2 pivot = img.GetComponent<RectTransform>().pivot;
-        if (img.GetComponent<Image>()) {
-            Image imgtemp = img.GetComponent<Image>();
-            if (imgtemp.sprite != s) {
-                imgtemp.sprite = s;
-                originalSprite = imgtemp.sprite;
-                nativeSizeDelta = new Vector2(imgtemp.sprite.texture.width, imgtemp.sprite.texture.height);
-                shader.UpdateTexture(imgtemp.sprite.texture);
-                Scale(xScale, yScale);
-                if (tag == "projectile")
-                    img.GetComponent<Projectile>().needUpdateTex = true;
-                img.transform.rotation = rot;
-            }
-        } else {
-            SpriteRenderer imgtemp = img.GetComponent<SpriteRenderer>();
-            if (imgtemp.sprite != s) {
-                imgtemp.sprite = s;
-                originalSprite = imgtemp.sprite;
-                nativeSizeDelta = new Vector2(imgtemp.sprite.texture.width, imgtemp.sprite.texture.height);
-                shader.UpdateTexture(imgtemp.sprite.texture);
-                Scale(xScale, yScale);
-                img.transform.rotation = rot;
-            }
-        }
-        img.GetComponent<RectTransform>().pivot = pivot;
+        Set(_spritename);
     }
-
-    /*
-    internal void UpdateAnimation() {
-        if (keyframes == null)
-            return;
-        Keyframe k = keyframes.getCurrent();
-        Sprite s = SpriteRegistry.GENERIC_SPRITE_PREFAB.sprite;
-
-        if (k != null)
-            s = k.sprite;
-
-        if (img.sprite != s)
-            img.sprite = s;
-    }*/
 
     public void SetVar(string name, DynValue value) {
         if (name == null)
