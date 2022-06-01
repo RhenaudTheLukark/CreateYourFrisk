@@ -813,17 +813,18 @@ public class TextManager : MonoBehaviour {
             args = UnitaleUtil.SpecialSplit(',', cmds[1], true);
             cmds[1] = args[0];
         }
+        // TODO: Restore errors for 0.7
         switch (cmds[0].ToLower()) {
             case "color":
                 float oldAlpha = currentColor.a;
                 colorSet = args.Length == 1;
                 try { currentColor = colorSet ? ParseUtil.GetColor(cmds[1]) : defaultColor; }
-                catch { UnitaleUtil.DisplayLuaError("[color:x] usage", "You used the value \"" + cmds[1] + "\" to set the text's color but it's not a valid hexadecimal color value."); }
+                catch { Debug.LogError("[color:x] usage - You used the value \"" + cmds[1] + "\" to set the text's color but it's not a valid hexadecimal color value."); }
                 currentColor.a = oldAlpha;
                 break;
             case "alpha":
                 try { currentColor.a = args.Length == 1 ? ParseUtil.GetByte(cmds[1]) / 255 : defaultColor.a; }
-                catch { UnitaleUtil.DisplayLuaError("[alpha:x] usage", "You used the value \"" + cmds[1] + "\" to set the text's alpha but it's not a valid hexadecimal value."); }
+                catch { Debug.LogError("[alpha:x] usage - You used the value \"" + cmds[1] + "\" to set the text's alpha but it's not a valid hexadecimal value."); }
 
                 break;
             case "charspacing":
@@ -831,7 +832,7 @@ public class TextManager : MonoBehaviour {
                     if (cmds.Length > 1 && cmds[1].ToLower() == "default") SetHorizontalSpacing(Charset.CharSpacing);
                     else                                                   SetHorizontalSpacing(ParseUtil.GetFloat(cmds[1]));
                 } catch (CYFException) {
-                    UnitaleUtil.DisplayLuaError("[charspacing:x] usage", "You used the value \"" + cmds[1] + "\" to set the text's horizontal spacing but it's not a valid number value.");
+                    Debug.LogError("[charspacing:x] usage - You used the value \"" + cmds[1] + "\" to set the text's horizontal spacing but it's not a valid number value.");
                 }
                 break;
             case "linespacing":
@@ -839,7 +840,7 @@ public class TextManager : MonoBehaviour {
                     if (cmds.Length > 1)
                         SetVerticalSpacing(ParseUtil.GetFloat(cmds[1]));
                 } catch (CYFException) {
-                    UnitaleUtil.DisplayLuaError("[linespacing:x] usage", "You used the value \"" + cmds[1] + "\" to set the text's vertical spacing but it's not a valid number value.");
+                    Debug.LogError("[linespacing:x] usage - You used the value \"" + cmds[1] + "\" to set the text's vertical spacing but it's not a valid number value.");
                 }
                 break;
 
@@ -850,7 +851,7 @@ public class TextManager : MonoBehaviour {
                     if (indexOfStar > -1)
                         letterReferences[indexOfStar].color = starColor;
                 } catch (CYFException) {
-                    UnitaleUtil.DisplayLuaError("[starcolor:x] usage", "You used the value \"" + cmds[1] + "\" to set the color of the text's star, but it's not a valid hexadecimal color value.");
+                    Debug.LogError("[starcolor:x] usage - You used the value \"" + cmds[1] + "\" to set the color of the text's star, but it's not a valid hexadecimal color value.");
                 }
                 break;
 
@@ -868,7 +869,7 @@ public class TextManager : MonoBehaviour {
             case "font":
                 UnderFont uf = SpriteFontRegistry.Get(cmds[1]);
                 if (uf == null)
-                    UnitaleUtil.DisplayLuaError("[font:x] usage", "The font \"" + cmds[1] + "\" doesn't exist.\nYou should check if you made a typo, or if the font really is in your mod.");
+                    Debug.LogError("[font:x] usage - The font \"" + cmds[1] + "\" doesn't exist.\nYou should check if you made a typo, or if the font really is in your mod.");
                 SetFont(uf);
                 if (GetType() == typeof(LuaTextManager) && ((LuaTextManager)this).bubble)
                     ((LuaTextManager) this).UpdateBubble();
@@ -898,6 +899,7 @@ public class TextManager : MonoBehaviour {
             cmds[1] = args[0];
         }
         //print("Frame " + GlobalControls.frame + ": Command " + cmds[0].ToLower() + " found for " + gameObject.name);
+        // TODO: Restore errors for 0.7
         switch (cmds[0].ToLower()) {
             case "noskip":
                 if (args.Length == 0)      currentSkippable = false;
@@ -906,17 +908,17 @@ public class TextManager : MonoBehaviour {
 
             case "waitfor":
                 try { waitingChar = (KeyCode)Enum.Parse(typeof(KeyCode), cmds[1]); }
-                catch { UnitaleUtil.DisplayLuaError("[waitfor:x] usage", "The key \"" + cmds[1] + "\" isn't a valid key."); }
+                catch { Debug.LogError("[waitfor:x] usage - The key \"" + cmds[1] + "\" isn't a valid key."); }
                 break;
 
             case "w":
                 try { letterTimer = timePerLetter - singleFrameTiming * ParseUtil.GetInt(cmds[1]); }
-                catch { UnitaleUtil.DisplayLuaError("[w:x] usage", "You used the value \"" + cmds[1] + "\" to wait for a certain amount of frames, but it's not a valid integer value."); }
+                catch { Debug.LogError("[w:x] usage - You used the value \"" + cmds[1] + "\" to wait for a certain amount of frames, but it's not a valid integer value."); }
                 break;
 
             case "waitall":
                 try { timePerLetter = singleFrameTiming * ParseUtil.GetInt(cmds[1]); }
-                catch { UnitaleUtil.DisplayLuaError("[waitall:x] usage", "You used the value \"" + cmds[1] + "\" to set the text's waiting time between letters, but it's not a valid integer value."); }
+                catch { Debug.LogError("[waitall:x] usage - You used the value \"" + cmds[1] + "\" to set the text's waiting time between letters, but it's not a valid integer value."); }
                 break;
 
             case "novoice":     letterSound = null;                                            break;
@@ -934,13 +936,13 @@ public class TextManager : MonoBehaviour {
                     else if (newSpeedValue == 0f)
                         timePerLetter = 0f;
                 } catch {
-                    UnitaleUtil.DisplayLuaError("[speed:x] usage", "You used the value \"" + args[0] + "\" to set the text's typing speed, but it's not a valid number value.");
+                    Debug.LogError("[speed:x] usage - You used the value \"" + args[0] + "\" to set the text's typing speed, but it's not a valid number value.");
                 }
                 break;
 
             case "letters":
                 try { letterOnceValue = ParseUtil.GetInt(args[0]); }
-                catch { UnitaleUtil.DisplayLuaError("[letters:x] usage", "You used the value \"" + args[0] + "\" to display a given amount of letters instantly, but it's not a valid integer value."); }
+                catch { Debug.LogError("[letters:x] usage - You used the value \"" + args[0] + "\" to display a given amount of letters instantly, but it's not a valid integer value."); }
                 break;
 
             case "voice":
