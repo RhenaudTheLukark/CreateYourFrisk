@@ -401,6 +401,9 @@ it's w3c valid, at least
                 Change a sprite's current image. It retains its scaling and rotation.
                 <br><br>
                 If you have an animation running with <span class="term">SetAnimation</span>, the animation will override your sprite change.
+                <br><br>
+                <span class="new066"></span> Note: Using this function with a sprite which has a parent with a different rotation will reset the sprite's rotation to its usual value.
+                Setting the variable <span class="term">noscalerotationbug</span> to true in the Encounter script prevents that effect!
             </p><br>
 
             <p>
@@ -508,6 +511,9 @@ it's w3c valid, at least
                 Same as setting xscale and yscale simultaneously.
                 <br><br>
                 See <span class="term">sprite.xscale</span> and <span class="term">sprite.yscale</span>.
+                <br><br>
+                <span class="new066"></span> Note: Using this function with a sprite which has a parent with a different rotation will reset the sprite's rotation to its usual value.
+                Setting the variable <span class="term">noscalerotationbug</span> to true in the Encounter script prevents that effect!
             </p><br>
 
             <p>
@@ -524,6 +530,9 @@ it's w3c valid, at least
                 For example, you can load your collection of 6 sprites in <span class="term">Sprites/character</span> with <span class="term">sprite.SetAnimation({"spr1", "spr2", "spr3", "spr4", "spr5", "spr6"}, 1/30, "character")</span>.
                 <br><br>
                 <span class="CYF"></span> This can use sprites with different sizes!
+                <br><br>
+                <span class="new066"></span> Note: Using this function with a sprite which has a parent with a different rotation will reset the sprite's rotation to its usual value.
+                Setting the variable <span class="term">noscalerotationbug</span> to true in the Encounter script prevents that effect!
             </p><br>
 
             <p>
