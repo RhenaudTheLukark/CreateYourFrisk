@@ -148,46 +148,6 @@ span.new::before {
 }
 
 
-span.new066::before {
-    content: "..";
-    color: transparent;
-
-    font-size: 26px;
-
-    background-image: url("../img/new066.png");
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: 10px 22px;
-
-    image-rendering: optimizeSpeed;             /*                     */
-    image-rendering: -moz-crisp-edges;          /* Firefox             */
-    image-rendering: -o-crisp-edges;            /* Opera               */
-    image-rendering: -webkit-optimize-contrast; /* Chrome (and Safari) */
-    image-rendering: pixelated;                 /* Chrome as of 2019   */
-    image-rendering: optimize-contrast;         /* CSS3 Proposed       */
-    -ms-interpolation-mode: nearest-neighbor;   /* IE8+                */
-}
-
-.nav-sidebar li.new066::before {
-    position: absolute;
-    content: url("../img/new066.png");
-    left: -15px;
-    margin-top: 6px;
-    z-index: 1;
-}
-.nav-sidebar li.li-indent.new066::before {
-    left: 0px;
-}
-.nav-sidebar li.new066.active::before {
-    margin-top: 0px;
-    left: -20px;
-    opacity: 0.25;
-}
-.nav-sidebar li.li-indent.new066.active::before {
-    left: -25px;
-}
-
-
 h4::before {
     content: "* ";
 }

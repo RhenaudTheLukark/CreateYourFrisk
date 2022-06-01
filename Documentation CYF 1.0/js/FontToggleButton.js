@@ -34,7 +34,7 @@ function SwapFonts() {
     var i;
     var table = document.body.getElementsByTagName("*");
     for (i = 0; i < table.length; i++) {
-        if (getCSS(table[i], "font-family").indexOf("monospace") == -1 && getCSS(table[i], "font-family").indexOf("courier new") == -1) {
+        if (getCSS(table[i], "font-family").indexOf("monospace") == -1 && getCSS(table[i], "font-family").indexOf("courier") == -1) {
             //alert(getCSS(table[i], "font-family"));
             
             if (!fontsSwapped) {
