@@ -722,6 +722,8 @@ public class LuaSpriteController {
     public void Dust(bool playDust = true, bool removeObject = false) {
         if (tag == "enemy")
             throw new CYFException("sprite.Dust(): You can't dust an enemy's sprite!");
+        if (removed)
+            return;
 
         UnitaleUtil.Dust(img, this);
         if (playDust)
