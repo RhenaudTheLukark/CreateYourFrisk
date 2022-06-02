@@ -741,7 +741,7 @@ public class LuaSpriteController {
         if (k != null) {
             // TODO: Restore in 0.7
             //img.name = k.name;
-             _spritename = k.name;
+            _spritename = k.name;
         } else {
             StopAnimation();
             return;
@@ -749,6 +749,9 @@ public class LuaSpriteController {
 
         if (k.sprite == null) return;
         Set(_spritename);
+        // TODO: Remove in 0.7
+        if (k == KeyframeCollection.EMPTY_KEYFRAME)
+            _spritename = "blank";
     }
 
     public void SetVar(string name, DynValue value) {
