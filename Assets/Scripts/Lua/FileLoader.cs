@@ -150,8 +150,8 @@ public static class FileLoader {
     /// <param name="needsToExist">True if the file you are looking for needs to exist. In this case, the function will return false if it doesn't exist.</param>
     /// <returns>True if the sanitization was successful, false otherwise.</returns>
     public static bool SanitizePath(ref string fileName, string pathSuffix, bool errorOnFailure = true, bool needsAbsolutePath = false, bool needsToExist = true) {
-        fileName = fileName.Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar);
         string pathToTest = pathSuffix + fileName;
+        fileName = fileName.Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar);
 
         // Check if this same string has been passed to RequireFile before
         if (needsAbsolutePath && absoluteSanitizationDictionary.ContainsKey(pathToTest)) {
@@ -170,7 +170,7 @@ public static class FileLoader {
                 if (leadingSlash) {
                     // Passthrough: Remove the leading slash if the file wasn't found
                     // TODO: Remove this on 0.7
-                    fileName = fileName.Substring(1);
+                    fileName = fileName.TrimStart(Path.DirectorySeparatorChar);
                     if (!LoadModule.RequireFile(ref fileName, pathSuffix, errorOnFailure, needsAbsolutePath, needsToExist))
                         return false;
                 } else

@@ -20,7 +20,7 @@ public static class SpriteFontRegistry {
 
     public static UnderFont Get(string key) {
         string k = key;
-        key += key.EndsWith(".png") ? "" : ".png";
+        key = key.TrimStart('/', '\\') + (key.EndsWith(".png") ? "" : ".png");
         FileLoader.SanitizePath(ref key, "Sprites/UI/Fonts/", false);
         key = key.ToLower();
         return dict.ContainsKey(key) ? dict[key] : TryLoad(k, key);
