@@ -1078,7 +1078,7 @@ public class TextManager : MonoBehaviour {
                 float HP = PlayerCharacter.instance.HP, MaxHP = PlayerCharacter.instance.MaxHP, tryHP = 0;
                 try { tryHP = ParseUtil.GetInt(args[0]); }
                 catch {
-                    UnitaleUtil.DisplayLuaError("[health:x] usage", "You used the value \"" + args[0] + "\" to set the player's HP, but it's not a valid integer value.");
+                    Debug.LogError("[health:x] usage - You used the value \"" + args[0] + "\" to set the player's HP, but it's not a valid integer value.");
                     return;
                 }
 
@@ -1109,7 +1109,7 @@ public class TextManager : MonoBehaviour {
                 letterEffect = args[0];
                 if (args.Length == 2)
                     try { letterIntensity = ParseUtil.GetFloat(args[1]); }
-                    catch { UnitaleUtil.DisplayLuaError("[lettereffect:x] usage", "You used the value \"" + args[1] + "\" to set the letter effect's intensity, but it's not a valid number value."); }
+                    catch { Debug.LogError("[lettereffect:x] usage - You used the value \"" + args[1] + "\" to set the letter effect's intensity, but it's not a valid number value."); }
                 break;
         }
     }
