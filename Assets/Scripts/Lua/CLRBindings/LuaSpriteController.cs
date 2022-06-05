@@ -3,11 +3,11 @@ using System;
 using System.Collections.Generic;
 using MoonSharp.Interpreter;
 using UnityEngine.UI;
-using Object = UnityEngine.Object;
 
 public class LuaSpriteController {
     [MoonSharpHidden] public CYFSprite spr;
     [MoonSharpHidden] public bool removed;
+    [MoonSharpHidden] public bool limbo;
     internal GameObject img { // A image that returns the real image. We use this to be able to detect if the real image is null, and if it is, throw an exception
         get {
             if (removed) throw new CYFException("Attempted to perform action on removed sprite.");
@@ -27,6 +27,7 @@ public class LuaSpriteController {
 
     public void Reset() {
         removed = false;
+        limbo = false;
 
         internalRotation = Vector3.zero;
         Scale(1, 1);
@@ -714,9 +715,12 @@ public class LuaSpriteController {
             throw new CYFException("sprite.Remove(): You can't remove an enemy's sprite!");
 
         UnitaleUtil.RemoveChildren(img);
+
+        if (limbo)
+            return;
+
         StopAnimation();
-        Object.Destroy(GetTarget().gameObject);
-        removed = true;
+        limbo = true;
     }
 
     public void Dust(bool playDust = true, bool removeObject = false) {

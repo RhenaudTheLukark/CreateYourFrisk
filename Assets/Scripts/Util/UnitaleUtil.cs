@@ -323,6 +323,11 @@ public static class UnitaleUtil {
     public static void Dust(GameObject go, LuaSpriteController spr) {
         if (go.GetComponent<ParticleDuplicator>() == null)
             go.AddComponent<ParticleDuplicator>();
+
+        // Move it to the nearest remanent object
+        while (go.transform.parent.GetComponent<CYFSprite>() && go.transform.parent.GetComponent<CYFSprite>().ctrl.limbo)
+            go.transform.SetParent(go.transform.parent.parent);
+
         go.GetComponent<ParticleDuplicator>().Activate(spr);
     }
 
@@ -557,21 +562,29 @@ public static class UnitaleUtil {
         return firstChildren;
     }
 
-    public static void RemoveChildren(GameObject go) {
+    public static void RemoveChildren(GameObject go, bool immediate = false, bool firstPass = true) {
         foreach (Transform t in GetFirstChildren(go.transform, true)) {
             // Bullet to delete recursively
             if (t.GetComponent<Projectile>())
                 t.GetComponent<Projectile>().ctrl.Remove();
             // Sprite to delete recursively
             else if (t.GetComponent<CYFSprite>())
-                LuaSpriteController.GetOrCreate(t.gameObject).Remove();
+                if (immediate) LuaSpriteController.GetOrCreate(t.gameObject).spr.LateUpdate();
+                else           LuaSpriteController.GetOrCreate(t.gameObject).Remove();
             // Text object to delete
             else if (t.GetComponentInChildren<LuaTextManager>())
                 t.GetComponentInChildren<LuaTextManager>().Remove();
+            // Dusting object: move it back to a valid parent
+            else if (t.GetComponentInChildren<ParticleSystem>())
+                while (t.parent.GetComponent<CYFSprite>() && (t.parent.GetComponent<CYFSprite>().ctrl.limbo || t.transform.parent.gameObject == go))
+                    t.SetParent(t.parent.parent);
             // Normally this shouldn't happen, just a failsafe
             else
                 throw new CYFException("For some reason, it seems you're trying to remove something which is neither a sprite, bullet or text object.");
         }
+
+        if (firstPass && !immediate)
+            RemoveChildren(go, false, false);
     }
 
     public static Dictionary<string, string> MapCorrespondanceList = new Dictionary<string, string>();
