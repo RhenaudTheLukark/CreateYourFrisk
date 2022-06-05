@@ -66,6 +66,9 @@ public class ParticleDuplicator : MonoBehaviour {
             }
         }
 
+        if (particleData.Count == 0)
+            return;
+
         // Emit particles from particle system and retrieve into particles array
         // Particle Systems have a limit of 16383 particles because of the new BakeMesh function
         // For that reason, each particle system can have up to 16383 particles
