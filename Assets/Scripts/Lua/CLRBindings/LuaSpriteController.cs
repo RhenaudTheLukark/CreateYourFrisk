@@ -143,7 +143,7 @@ public class LuaSpriteController {
 
     // Is the sprite active? True if the image of the sprite isn't null, false otherwise
     public bool isactive {
-        get { return !GlobalControls.retroMode ^ removed; }
+        get { return !GlobalControls.retroMode ^ (removed || limbo); }
     }
 
     // The original width of the sprite
