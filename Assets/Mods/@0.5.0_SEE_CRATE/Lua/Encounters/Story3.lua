@@ -12,8 +12,8 @@ beginfade = false
 endfade = false
 alphaup = false
 
-enemies = {"cereb"}
-enemypositions = { {0, -8} }
+enemies = {"poseur"}
+enemypositions = { {0, 0} }
 
 possible_attacks = {"bullettest_bouncy", "bullettest_chaserorb", "bullettest_touhou"}
 
@@ -25,7 +25,6 @@ function EncounterStarting()
 	fade.y = 240
 	fade.Scale(640, 480)
 	fade.alpha = 1
-    require "Animations/cereb_anim"
     enemies[1]["currentdialogue"] = {"[noskip][func:LaunchFade, true][w:30][next]",
 									 "[noskip][effect:none]After two months of hard work,[w:10] RhenaudTheLukark released CYF 0.1.[w:30][next]",
 									 "[noskip][effect:none]He did everything he could to keep the upcoming engine a secret,[w:10] but was too excited about showing it to the world.[w:30][next]",
@@ -48,7 +47,6 @@ function LaunchFade(begin)
 end
 
 function Update()
-    AnimateCereb()
 	if (beginfade or endfade) and Time.time - currentTime >= 1/3 then
 	    alphaup = endfade
 		endfade = false

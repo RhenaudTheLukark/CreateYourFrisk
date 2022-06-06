@@ -122,9 +122,7 @@ public class TransitionOverworld : MonoBehaviour {
         //Permits to reload the current data if needed
         MapInfos mi = GameObject.Find("Background").GetComponent<MapInfos>();
         if (StaticInits.MODFOLDER != mi.modToLoad) {
-            StaticInits.MODFOLDER = mi.modToLoad;
-            StaticInits.Initialized = false;
-            StaticInits.InitAll(true);
+            StaticInits.InitAll(mi.modToLoad, true);
             LuaScriptBinder.Set(null, "ModFolder", DynValue.NewString(StaticInits.MODFOLDER));
             if (call == "transitionoverworld") {
                 EventManager.instance.ScriptRunning = false;

@@ -1,4 +1,5 @@
-﻿using MoonSharp.Interpreter.Debugging;
+﻿using System;
+using MoonSharp.Interpreter.Debugging;
 
 namespace MoonSharp.Interpreter.Execution.VM
 {
@@ -7,7 +8,7 @@ namespace MoonSharp.Interpreter.Execution.VM
 		private SourceRef GetCurrentSourceRef(int instructionPtr)
 		{
 			if (m_doFileRequireHack != null)
-                return m_doFileRequireHack.SourceCodeRef;
+				return m_doFileRequireHack.SourceCodeRef;
 			else if (instructionPtr >= 0 && instructionPtr < m_RootChunk.Code.Count)
 				return m_RootChunk.Code[instructionPtr].SourceCodeRef;
 			return null;
@@ -28,7 +29,13 @@ namespace MoonSharp.Interpreter.Execution.VM
 
 			ex.DecorateMessage(m_Script, sref, ip);
 
-			ex.CallStack = Debugger_GetCallStack(sref);
+			try
+			{
+				ex.CallStack = Debugger_GetCallStack(sref);
+			}
+			catch (ArgumentOutOfRangeException)
+			{
+			}
 		}
 
 

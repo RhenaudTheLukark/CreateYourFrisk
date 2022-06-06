@@ -1,8 +1,17 @@
 ﻿using System.Diagnostics;
+using MoonSharp.Interpreter.CoreLib;
 using UnityEngine;
 
 public static class StaticInits {
-    public static string MODFOLDER;
+    public static string _MODFOLDER;
+    public static string MODFOLDER {
+        get { return _MODFOLDER; }
+        set {
+            _MODFOLDER = value;
+            LoadModule.ModFolder = value;
+        }
+    }
+
     public static string ENCOUNTER = "";
     public static string EDITOR_MODFOLDER = "@Title";
     private static bool firstInit;
@@ -26,21 +35,21 @@ public static class StaticInits {
         if (string.IsNullOrEmpty(MODFOLDER))
             MODFOLDER = EDITOR_MODFOLDER;
         //if (CurrMODFOLDER != MODFOLDER || CurrENCOUNTER != ENCOUNTER)
-        InitAll();
+        InitAll(MODFOLDER);
         Initialized = true;
     }
 
-    public static void InitAll(bool shaders = false) {
-        if (!Initialized && (!GlobalControls.isInFight || GlobalControls.modDev)) {
+    public static void InitAll(string mod, bool shaders = false) {
+        MODFOLDER = mod;
+        Initialized = false;
+        if (!GlobalControls.isInFight || GlobalControls.modDev) {
+            FileLoader.absoluteSanitizationDictionary.Clear();
+            FileLoader.relativeSanitizationDictionary.Clear();
+
             //UnitaleUtil.createFile();
             Stopwatch sw = new Stopwatch(); //benchmarking terrible loading times
             sw.Start();
-            ScriptRegistry.Init();
-            sw.Stop();
-            UnityEngine.Debug.Log("Script registry loading time: " + sw.ElapsedMilliseconds + "ms");
-            sw.Reset();
 
-            sw.Start();
             SpriteRegistry.Init();
             sw.Stop();
             UnityEngine.Debug.Log("Sprite registry loading time: " + sw.ElapsedMilliseconds + "ms");
@@ -65,11 +74,11 @@ public static class StaticInits {
                 UnityEngine.Debug.Log("Shader registry loading time: " + sw.ElapsedMilliseconds + "ms");
                 sw.Reset();
             }
-        } else
-            Initialized = true;
+        }
         LateUpdater.Init(); // must be last; lateupdater's initialization is for classes that depend on the above registries
         MusicManager.src = Camera.main.GetComponent<AudioSource>();
         SendLoaded();
+        Initialized = true;
         //CurrENCOUNTER = ENCOUNTER;
         //CurrMODFOLDER = MODFOLDER;
     }

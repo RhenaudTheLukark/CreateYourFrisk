@@ -9,7 +9,6 @@
     public int GoldLimit = 99999;
     public float MaxDigitsAfterComma = 5;
     public float PlayerMovementPerSec = 120.0f;
-    public float PlayerMovementHalvedPerSec = 60.0f;
     public float MinimumAlpha = 0.5f;
     public string BasisName = "Rhenao";
     public string WindowBasisName = "Create Your Frisk";

@@ -1,5 +1,4 @@
-﻿using UnityEngine.UI;
-/// <summary>
+﻿/// <summary>
 /// Lua binding to set and retrieve information for the on-screen player.
 /// </summary>
 public class LuaPlayerStatus {
@@ -19,7 +18,7 @@ public class LuaPlayerStatus {
     /// <param name="p">PlayerController this controller is intended for</param>
     public LuaPlayerStatus(PlayerController p) {
         player = p;
-        spr = new LuaSpriteController(p.GetComponent<Image>());
+        spr = LuaSpriteController.GetOrCreate(p.gameObject);
     }
 
     /// <summary>
@@ -159,6 +158,11 @@ public class LuaPlayerStatus {
         }
     }
 
+    public float speed {
+        get { return player.soul.realSpeed; }
+        set { player.soul.SetSpeed(value); }
+    }
+
     public int lastenemychosen {
         get { return player.lastEnemyChosen; }
     }
@@ -207,7 +211,7 @@ public class LuaPlayerStatus {
     /// </summary>
     /// <param name="overrideControl"></param>
     public void SetControlOverride(bool overrideControl) {
-        if (UIController.instance.GetState() == UIController.UIState.DEFENDING) player.setControlOverride(overrideControl);
+        if (UIController.instance.GetState() == "DEFENDING") player.setControlOverride(overrideControl);
     }
 
     /// <summary>
@@ -302,88 +306,73 @@ public class LuaPlayerStatus {
     }
 
     public void ChangeTarget(int index) {
-        if (UIController.instance.state != UIController.UIState.ATTACKING) return;
-        if (index <= UIController.instance.encounter.EnabledEnemies.Length && index > 0)
-            UIController.instance.fightUI.ChangeTarget(UIController.instance.encounter.EnabledEnemies[index -1]);
-        else
-            UnitaleUtil.DisplayLuaError("Changing the target", "Enemy number " + index + " doesn't exist.");
+        if (UIController.instance.state != "ATTACKING")
+            return;
+        if (index > UIController.instance.encounter.EnabledEnemies.Length || index <= 0)
+            throw new CYFException("Player.ChangeTarget(): Enemy number " + index + " doesn't exist.");
+
+        UIController.instance.fightUI.ChangeTarget(UIController.instance.encounter.EnabledEnemies[index -1]);
     }
 
-    public void ForceAttack(int enemyNumber, int damage = -478294) {
-        if (enemyNumber <= UIController.instance.encounter.EnabledEnemies.Length && enemyNumber > 0) {
-            //UIController.instance.SwitchState(UIController.UIState.ATTACKING);
-            UIController.instance.fightUI.targetNumber = 1;
-            UIController.instance.fightUI.targetIDs = new[] { enemyNumber - 1 };
-            UIController.instance.fightUI.quickInit(UIController.instance.encounter.EnabledEnemies[enemyNumber - 1], damage);
-        } else
-            UnitaleUtil.DisplayLuaError("Force Attack", "Enemy number " + enemyNumber + " doesn't exist.");
+    public void ForceAttack(int enemyNumber, int damage = FightUIController.DAMAGE_NOT_SET) {
+        if (enemyNumber > UIController.instance.encounter.EnabledEnemies.Length || enemyNumber <= 0)
+            throw new CYFException("Player.ForceAttack(): Enemy number " + enemyNumber + " doesn't exist.");
+
+        UIController.instance.fightUI.targetNumber = 1;
+        UIController.instance.fightUI.targetIDs = new[] { enemyNumber - 1 };
+        UIController.instance.fightUI.QuickInit(damage);
     }
 
-    public int[] MultiTarget(int damage) { return MultiTarget(null, new[] { damage }); }
-    public int[] MultiTarget(int[] damage, bool thisIsTheDamageForm) { return MultiTarget(null, damage); }
+    public int[] MultiTarget(int damage = FightUIController.DAMAGE_NOT_SET) { return MultiTarget(null,    new[] { damage }); }
+    public int[] MultiTarget(int[] targets, int damage)                     { return MultiTarget(targets, new[] { damage }); }
     public int[] MultiTarget(int[] targets = null, int[] damage = null) {
-        if (targets != null) {
-            if (targets.Length < 2) {
-                UnitaleUtil.DisplayLuaError("Multi Target", "You must have at least 2 enemies to trigger a multi attack.");
-                return null;
-            }
-            for (int i = 0; i < targets.Length; i++) {
-                targets[i]--;
-                if (targets[i] < UIController.instance.encounter.EnabledEnemies.Length && targets[i] >= 0) continue;
-                UnitaleUtil.DisplayLuaError("Multi Target", "Enemy number " + targets[i] + " doesn't exist.");
-                return null;
-            }
-        }
         UIController.instance.fightUI.multiHit = true;
+
+        // Create a table with all active enemies if none's given
         if (targets == null) {
             targets = new int[UIController.instance.encounter.EnabledEnemies.Length];
             for (int i = 0; i < targets.Length; i++)
                 targets[i] = i;
+        } else {
+            if (targets.Length < 2)
+                throw new CYFException("Player.MultiTarget(): You must have at least 2 enemies to trigger a multi attack.");
+
+            // Check for valid attack IDs
+            for (int i = 0; i < targets.Length; i++) {
+                targets[i]--;
+                if (targets[i] >= UIController.instance.encounter.EnabledEnemies.Length || targets[i] < 0)
+                    throw new CYFException("Player.MultiTarget(): Enemy number " + targets[i] + " doesn't exist.");
+            }
         }
-        if (damage != null)
-            if (damage.Length != 1 && damage.Length != targets.Length)
-                UnitaleUtil.DisplayLuaError("Multi Target", "You may have as many numbers of damage values as the number of enemies if you're using forced damage,"
-                                                          + " or 1 for all enemies at the same time.");
 
         UIController.instance.fightUI.targetIDs = targets;
         UIController.instance.fightUI.targetNumber = targets.Length;
-        if (damage == null) return damage;
-        if (damage.Length == 1) {
-            int tempDamage = damage[0];
-            damage = new int[UIController.instance.fightUI.targetNumber];
-            for (int i = 0; i < damage.Length; i++)
-                damage[i] = tempDamage;
-        }
+
+        // Use a dummy value to not replace the attack values of the enemies themselves
+        if (damage == null) damage = new[] { FightUIController.DAMAGE_NOT_SET };
+
+        // Check same amount of targets / damage values if each has their own
+        if (damage.Length != 1 && damage.Length != targets.Length)
+            throw new CYFException("Player.MultiTarget(): You may have as many numbers of damage values as the number of"
+                                 + " enemies if you're using forced damage, or 1 for all enemies at the same time.");
+
+        if (damage.Length != 1) return damage;
+
+        // If only one value, copy it for all targets
+        int tempDamage = damage[0];
+        damage = new int[targets.Length];
         for (int i = 0; i < damage.Length; i++)
-            UIController.instance.encounter.EnabledEnemies[targets[i]].presetDmg = damage[i];
-        /*for (int i = 0; i < targets.Length; i++) {
-            Debug.Log((UIController.instance.fightUI.allFightUiInstances.Count - 1 - (targets.Length - 1 - i)) + " / " + (UIController.instance.fightUI.allFightUiInstances.Count - 1));
-            UIController.instance.fightUI.allFightUiInstances[UIController.instance.fightUI.allFightUiInstances.Count - 1 - (targets.Length - 1 - i)].Damage = damage[i];
-        }*/
+            damage[i] = tempDamage;
         return damage;
     }
 
-    public void ForceMultiAttack(int damage) { ForceMultiAttack(null, new[] { damage }); }
-    public void ForceMultiAttack(int[] damage, bool thisIsTheDamageForm) { ForceMultiAttack(null, damage); }
+    public void ForceMultiAttack(int damage = FightUIController.DAMAGE_NOT_SET) { ForceMultiAttack(null,    new[] { damage }); }
+    public void ForceMultiAttack(int[] targets, int damage)                     { ForceMultiAttack(targets, new[] { damage }); }
     public void ForceMultiAttack(int[] targets = null, int[] damage = null) {
-        int[] damage2 = MultiTarget(targets, damage);
-        if (targets == null) {
-            targets = new int[UIController.instance.encounter.EnabledEnemies.Length];
-            for (int i = 0; i < targets.Length; i++)
-                targets[i] = i;
-        }
-        if (damage != null)
-            if (damage.Length == 1) {
-                int tempDamage = damage[0];
-                damage = new int[targets.Length];
-                for (int i = 0; i < damage.Length; i++)
-                    damage[i] = tempDamage;
-            } else
-                damage = damage2;
-        UIController.instance.fightUI.quickMultiInit(2.2f, damage);
+        try                    { damage = MultiTarget(targets, damage); }
+        catch (CYFException e) { throw new CYFException("Player.ForceMultiAttack() using " + e.Message); }
+        UIController.instance.fightUI.QuickInit(damage);
     }
 
-    public void CheckDeath() {
-        UIController.instance.needOnDeath = true;
-    }
+    public void CheckDeath() { UIController.instance.needOnDeath = true; }
 }

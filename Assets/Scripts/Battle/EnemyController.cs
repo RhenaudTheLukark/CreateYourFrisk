@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class EnemyController : MonoBehaviour {
+    public GameObject bubbleObject;
     internal Sprite textBubbleSprite;
 
     internal Vector2 textBubblePos;
@@ -16,11 +17,11 @@ public class EnemyController : MonoBehaviour {
         get {
             Sprite diagBubbleSpr = SpriteRegistry.Get(DialogBubble);
             RectTransform t = GetComponent<RectTransform>();
-            if (diagBubbleSpr.name.StartsWith("right"))        textBubblePos = new Vector2(t.rect.width + 5, (-t.rect.height + diagBubbleSpr.rect.height) / 2);
-            else if (diagBubbleSpr.name.StartsWith("left"))    textBubblePos = new Vector2(-diagBubbleSpr.rect.width - 5, (-t.rect.height + diagBubbleSpr.rect.height) / 2);
-            else if (diagBubbleSpr.name.StartsWith("top"))     textBubblePos = new Vector2((t.rect.width - diagBubbleSpr.rect.width) / 2, diagBubbleSpr.rect.height + 5);
-            else if (diagBubbleSpr.name.StartsWith("bottom"))  textBubblePos = new Vector2((t.rect.width - diagBubbleSpr.rect.width) / 2, -t.rect.height - 5);
-            else                                               textBubblePos = new Vector2(t.rect.width + 5, (t.rect.height - diagBubbleSpr.rect.height) / 2); // rightside default
+            if (diagBubbleSpr.name.StartsWith("right"))        textBubblePos = new Vector2(t.rect.width / 2 + 5,                             diagBubbleSpr.rect.height / 2);
+            else if (diagBubbleSpr.name.StartsWith("left"))    textBubblePos = new Vector2(-t.rect.width / 2 - diagBubbleSpr.rect.width - 5, diagBubbleSpr.rect.height / 2);
+            else if (diagBubbleSpr.name.StartsWith("top"))     textBubblePos = new Vector2(-diagBubbleSpr.rect.width / 2,                    t.rect.height / 2 + diagBubbleSpr.rect.height + 5);
+            else if (diagBubbleSpr.name.StartsWith("bottom"))  textBubblePos = new Vector2(-diagBubbleSpr.rect.width / 2,                    -t.rect.height / 2 - 5);
+            else                                               textBubblePos = new Vector2(t.rect.width / 2 + 5,                             diagBubbleSpr.rect.height / 2); // rightside default
             return textBubblePos;
         }
     }
@@ -31,18 +32,23 @@ public class EnemyController : MonoBehaviour {
         else                                  HandleCustomCommand(cmd);
     }
 
-    public virtual void HandleCheck() { ui.ActionDialogResult(new RegularMessage(Name.ToUpper() + " " + Attack + " ATK " + Defense + " DEF\n" + CheckData), UIController.UIState.ENEMYDIALOGUE); }
+    public virtual void HandleCheck() { ui.ActionDialogResult(new RegularMessage(Name.ToUpper() + " " + Attack + " ATK " + Defense + " DEF\n" + CheckData)); }
 
     public void doDamage(int damage) {
         int newHP = HP - damage;
         HP = newHP;
     }
 
+    private int realPresetDmg = FightUIController.DAMAGE_NOT_SET;
+    public int presetDmg {
+        set { realPresetDmg = value == FightUIController.DAMAGE_NOT_SET ? realPresetDmg : value; }
+        get { return realPresetDmg; }
+    }
+
     internal string scriptName;
     internal ScriptWrapper script;
     internal bool inFight = true; // if false, enemy will no longer be considered as an option in menus and such
     private string lastBubbleName;
-    public int presetDmg = -1826643; // You'll not be able to deal exactly -1 826 643 dmg with this technique.
     public float xFightAnimShift = 0;
     public LuaSpriteController sprite;
     public float bubbleWidth = 0;
@@ -52,7 +58,6 @@ public class EnemyController : MonoBehaviour {
 
     internal bool spared;
     internal bool killed;
-    public bool canMove;
 
     public string Name {
         get { return script.GetVar("name").String; }
@@ -243,19 +248,15 @@ public class EnemyController : MonoBehaviour {
         get { return GetComponent<RectTransform>().position.y; }
     }
 
-    private void Start() {
+    public void InitializeEnemy() {
         try {
-            string scriptText = ScriptRegistry.Get(ScriptRegistry.MONSTER_PREFIX + scriptName);
-            if (scriptText == null) {
-                UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, "Tried to load monster script " + scriptName + ".lua but it didn't exist. Is it misspelled?");
-                return;
-            }
+            string scriptText = FileLoader.GetScript("Monsters/" + scriptName, StaticInits.ENCOUNTER, "monster");
             script.scriptname = scriptName;
             script.Bind("SetSprite", (Action<string>)SetSprite);
             script.Bind("SetActive", (Action<bool>)SetActive);
             script.Bind("isactive", DynValue.NewBoolean(true));
-            script.Bind("Kill", (Action)DoKill);
-            script.Bind("Spare", (Action)DoSpare);
+            script.Bind("Kill", (Action<bool>)DoKill);
+            script.Bind("Spare", (Action<bool>)DoSpare);
             script.Bind("Move", (Action<float, float>)Move);
             script.Bind("MoveTo", (Action<float, float>)MoveTo);
             script.Bind("BindToArena", (Action<bool, bool>)BindToArena);
@@ -264,8 +265,9 @@ public class EnemyController : MonoBehaviour {
             script.Bind("SetDamageUIOffset", (Action<int, int>)SetDamageUIOffset);
             script.Bind("SetSliceAnimOffset", (Action<int, int>)SetSliceAnimOffset);
             script.Bind("State", (Action<Script, string>)UIController.SwitchStateOnString);
-            script.SetVar("canmove", DynValue.NewBoolean(false));
-            sprite = new LuaSpriteController(GetComponent<Image>());
+            script.Bind("Remove", (Action)Remove);
+            script.SetVar("canmove", DynValue.NewBoolean(true));
+            sprite = LuaSpriteController.GetOrCreate(gameObject);
             script.SetVar("monstersprite", UserData.Create(sprite, LuaSpriteController.data));
             script.DoString(scriptText);
 
@@ -273,7 +275,7 @@ public class EnemyController : MonoBehaviour {
             if (spriteFile != null)
                 SetSprite(spriteFile);
             else
-                throw new CYFException("missing sprite");
+                throw new CYFException("The monster script " + scriptName + ".lua's sprite value is not a string.");
 
             ui = FindObjectOfType<UIController>();
             if (MaxHP == 0)
@@ -288,7 +290,7 @@ public class EnemyController : MonoBehaviour {
         catch (Exception ex)            { UnitaleUtil.DisplayLuaError(scriptName, "Unknown error. Usually means you're missing a sprite.\nSee documentation for details.\nStacktrace below in case you wanna notify a dev.\n\nError: " + ex.Message + "\n\n" + ex.StackTrace); }
     }
 
-    public void HandleAttack(int hitStatus) { TryCall("HandleAttack", new[] { DynValue.NewNumber(hitStatus) }); }
+    public void HandleAttack(int hitStatus) { UnitaleUtil.TryCall(script, "HandleAttack", new[] { DynValue.NewNumber(hitStatus) }); }
 
     public string[] GetDefenseDialog() {
         DynValue dialogues = script.GetVar("currentdialogue");
@@ -306,32 +308,28 @@ public class EnemyController : MonoBehaviour {
         return dialogueStrings;
     }
 
-    public bool TryCall(string func, DynValue[] param = null) {
-        try {
-            DynValue sval = script.GetVar(func);
-            if (sval == null || sval.Type == DataType.Nil) return false;
-            if (param != null)                             script.Call(func, param);
-            else                                           script.Call(func);
-            return true;
-        }
-        catch (InterpreterException ex) { UnitaleUtil.DisplayLuaError(scriptName, UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message); }
-        return true;
+    protected void HandleCustomCommand(string command) {
+        UnitaleUtil.TryCall(script, "HandleCustomCommand", new[] { DynValue.NewString(command) });
     }
 
-    protected void HandleCustomCommand(string command) {
-        TryCall("HandleCustomCommand", new[] { DynValue.NewString(command) });
+    public void Remove() {
+        try {
+            UIController.instance.encounter.enemies.Remove(this);
+            script.Remove();
+            Destroy(gameObject);
+        } catch (MissingReferenceException) {
+            throw new CYFException("Attempt to remove a removed enemy.");
+        }
     }
 
     public void SetSprite(string filename) {
-        if (filename == null)
-            throw new CYFException("The enemy's sprite can't be nil!");
-        SpriteUtil.SwapSpriteFromFile(this, filename);
+        sprite.Set(filename);
     }
 
     /// <summary>
     /// Call function to grey out enemy and pop the smoke particles, and mark it as spared.
     /// </summary>
-    public void DoSpare() {
+    public void DoSpare(bool playSound = true) {
         if (!inFight)
             return;
         UIController.instance.gold += Gold;
@@ -349,9 +347,10 @@ public class EnemyController : MonoBehaviour {
 
         // The actually relevant part of sparing code.
         GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.4f);
-        UIController.PlaySoundSeparate(AudioClipRegistry.GetSound("enemydust"));
+        if (playSound) UIController.PlaySoundSeparate("enemydust");
         SetActive(false);
         spared = true;
+        FightUIController.instance.DestroyAllAttackInstances(this);
 
         UIController.instance.CheckAndTriggerVictory();
     }
@@ -359,17 +358,16 @@ public class EnemyController : MonoBehaviour {
     /// <summary>
     /// Call function to turn enemy to dust and mark it as killed.
     /// </summary>
-    public void DoKill() {
+    public void DoKill(bool playSound = true) {
         if (!inFight)
             return;
         UIController.instance.gold += Gold;
         UIController.instance.exp += XP;
-        GameObject go = Instantiate(Resources.Load<GameObject>("Prefabs/MonsterDuster"));
-        go.transform.SetParent(UIController.instance.psContainer.transform);
-        GetComponent<ParticleDuplicator>().Activate(sprite);
+        UnitaleUtil.Dust(gameObject, sprite);
         SetActive(false);
         killed = true;
-        UIController.PlaySoundSeparate(AudioClipRegistry.GetSound("enemydust"));
+        if (playSound) UIController.PlaySoundSeparate("enemydust");
+        FightUIController.instance.DestroyAllAttackInstances(this);
 
         UIController.instance.CheckAndTriggerVictory();
     }
@@ -384,14 +382,10 @@ public class EnemyController : MonoBehaviour {
     }
 
     public void Move(float x, float y) {
-        if (!canMove)
-            return;
         GetComponent<RectTransform>().position = new Vector2(GetComponent<RectTransform>().position.x + x, GetComponent<RectTransform>().position.y + y);
     }
 
     public void MoveTo(float x, float y) {
-        if (!canMove)
-            return;
         GetComponent<RectTransform>().position = new Vector2(x, y);
     }
 
@@ -416,10 +410,6 @@ public class EnemyController : MonoBehaviour {
             script.SetVar("posx", DynValue.NewNumber(GetComponent<RectTransform>().position.x));
             script.SetVar("posy", DynValue.NewNumber(GetComponent<RectTransform>().position.y));
         } catch { /* ignored */ }
-
-        if (ArenaManager.instance.firstTurn || canMove) return;
-        canMove = true;
-        script.SetVar("canmove", DynValue.NewBoolean(true));
     }
 
     public void SetSliceAnimOffset(int x, int y) { offsets[0] = new Vector2(x, y); }
@@ -427,4 +417,6 @@ public class EnemyController : MonoBehaviour {
     public void SetBubbleOffset(int x, int y) { offsets[1] = new Vector2(x, y); }
 
     public void SetDamageUIOffset(int x, int y) { offsets[2] = new Vector2(x, y); }
+
+    public void ResetPresetDamage() { realPresetDmg = FightUIController.DAMAGE_NOT_SET; }
 }

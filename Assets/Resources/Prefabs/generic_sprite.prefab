@@ -24,6 +24,7 @@ GameObject:
   - component: {fileID: 114546803662507760}
   - component: {fileID: 114139757390083642}
   - component: {fileID: 114833082201626112}
+  - component: {fileID: 114755993985704044}
   m_Layer: 5
   m_Name: generic_sprite
   m_TagString: Untagged
@@ -79,6 +80,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7bbc081086ab24d458b6c45dcf29bf75, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &114755993985704044
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1005169997042860}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c7b8a91bf13f244b93c1a72a65984e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &114833082201626112

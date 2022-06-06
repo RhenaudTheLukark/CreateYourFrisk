@@ -22,7 +22,7 @@ If not provided, the script will automatically use 7-Zip to package all of your 
 ### Script Vars ###
 
 # This is the version of CYF to name the executables and the Documentation folder
-CYFversion = "0.6.5"
+CYFversion = "0.6.6"
 
 # This is the path we will build to
 buildPath = os.getcwd() + "\\bin"
@@ -35,9 +35,9 @@ else:
     print("\"bin\" folder already exists.")
 
 # This is a list of paths to Unity. Add your own if it's not in the list.
-unityPath = "C:\\Program Files\\Unity\\Hub\\Editor\\2018.2.13f1\\Editor\\Unity.exe"
+unityPath = "C:\\Program Files\\Unity\\Hub\\Editor\\2018.4.36f1\\Editor\\Unity.exe"
 if not os.path.exists(unityPath):
-    unityPath = "C:\\Program Files\\Unities\\2018.2.13f1\\Editor\\Unity.exe"
+    unityPath = "C:\\Program Files\\Unities\\2018.4.36f1\\Editor\\Unity.exe"
 if not os.path.exists(unityPath):
     unityPath = "C:\\Program Files\\Unity\\Editor\\Unity.exe"
 if not os.path.exists(unityPath):
@@ -260,9 +260,9 @@ def buildForMac():
     print("Done.")
 
     # Copy over the warning .txt file
-    print("Copying \"How to add mods to CYF (Mac).txt\"...", end="")
+    print("Copying \"How to use CYF and add mods (Mac).txt\"...", end="")
     sys.stdout.flush()
-    shutil.copyfile("How to add mods to CYF (Mac).txt", buildPath + "\\" + macTarget[0] + "\\How to add mods to CYF (Mac).txt")
+    shutil.copyfile("How to use CYF and add mods (Mac).txt", buildPath + "\\" + macTarget[0] + "\\How to use CYF and add mods (Mac).txt")
     print("Done.")
 
     print("Disabling allowFullscreenSwitch...", end="")

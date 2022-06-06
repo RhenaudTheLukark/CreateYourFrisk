@@ -74,9 +74,8 @@ public class PlayerOverworld : MonoBehaviour {
 
         //Get a component reference to the Player's animator component
         //animator = Player.GetComponent<Animator>();
-        sprctrl = new LuaSpriteController(Player.GetComponent<SpriteRenderer>()) {
-            loopmode = "LOOP"
-        };
+        sprctrl = LuaSpriteController.GetOrCreate(Player.gameObject);
+        sprctrl.loopmode = "LOOP";
         animator = Player.GetComponent<CYFAnimator>();
 
         //Get a component reference to this object's Rigidbody2D
@@ -576,11 +575,11 @@ public class PlayerOverworld : MonoBehaviour {
     }
 
     /// <summary>
-    /// Permits to set a dialogue (old method).
+    /// Sets a dialogue (old method).
     /// </summary>
     /// <param name="textTable">The text that'll be printed</param>
-    /// <param name="rearranged">Will the text be rearranged ? (\r replacements etc)</param>
-    /// <param name="mugshots">The mugshots' name that'll be used in the dialogue</param>
+    /// <param name="rearranged">Will the text be rearranged? (\r replacements etc)</param>
+    /// <param name="mugshots">The mugshots that'll be used in the dialogue box</param>
     public void SetDialog(string[] textTable, bool rearranged, DynValue mugshots = null) {
         if (textTable[0] == string.Empty) {
             UnitaleUtil.WriteInLogAndDebugger("Old SetDialog: There is no text to print!");
@@ -951,8 +950,7 @@ public class PlayerOverworld : MonoBehaviour {
         GameObject go = Instantiate(go2);
         Destroy(go2);
         go.name = "GameObject";
-        Transform[] root = UnitaleUtil.GetFirstChildren(null, true);
-        foreach (Transform t in root)
+        foreach (Transform t in UnitaleUtil.GetFirstChildren(null, true))
             if (t != go && !t.name.Contains("AudioChannel") && t.name != "BGCamera")
                 if (callFrom == "Shop" && t.name == "Main Camera OW") {
                     t.GetComponent<EventManager>().enabled = false;
@@ -965,14 +963,12 @@ public class PlayerOverworld : MonoBehaviour {
     }
 
     public static void ShowOverworld(string callFrom = "Unknown") {
-        Transform[] root = UnitaleUtil.GetFirstChildren(null, true);
-        GameObject go = (from tf in root where tf.gameObject.name == "GameObject" select tf.gameObject).FirstOrDefault();
+        GameObject go = (from tf in UnitaleUtil.GetFirstChildren(null, true) where tf.gameObject.name == "GameObject" select tf.gameObject).FirstOrDefault();
         if (go != null) {
             go.SetActive(true);
             if (GameObject.Find("Main Camera"))
                 Destroy(GameObject.Find("Main Camera"));
-            Transform[] children = UnitaleUtil.GetFirstChildren(go.transform, true);
-            foreach (Transform tf in children) {
+            foreach (Transform tf in UnitaleUtil.GetFirstChildren(go.transform, true)) {
                 try {
                     tf.SetParent(null);
                     if (tf.name == "Canvas OW" || tf.name == "Canvas Two" || tf.name == "Main Camera OW" || tf.name == "GameOverContainer" || tf.name == "BGCamera")

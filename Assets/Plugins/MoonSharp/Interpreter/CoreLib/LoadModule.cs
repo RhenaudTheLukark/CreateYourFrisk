@@ -1,4 +1,8 @@
-﻿// Disable warnings about XML documentation
+﻿using System;
+using System.IO;
+using Boo.Lang;
+
+// Disable warnings about XML documentation
 #pragma warning disable 1591
 
 
@@ -24,7 +28,7 @@ namespace MoonSharp.Interpreter.CoreLib
 				throw new InternalErrorException("'package' global variable was found and it is not a table");
 			}
 
-#if PCL || ENABLE_DOTNET || NETFX_CORE 
+#if PCL || ENABLE_DOTNET || NETFX_CORE
 			string cfg = "\\\n;\n?\n!\n-\n";
 #else
 			string cfg = System.IO.Path.DirectorySeparatorChar + "\n;\n?\n!\n-\n";
@@ -38,17 +42,17 @@ namespace MoonSharp.Interpreter.CoreLib
 		// load (ld [, source [, mode [, env]]])
 		// ----------------------------------------------------------------
 		// Loads a chunk.
-		// 
-		// If ld is a string, the chunk is this string. 
-		// 
-		// If there are no syntactic errors, returns the compiled chunk as a function; 
+		//
+		// If ld is a string, the chunk is this string.
+		//
+		// If there are no syntactic errors, returns the compiled chunk as a function;
 		// otherwise, returns nil plus the error message.
-		// 
-		// source is used as the source of the chunk for error messages and debug 
-		// information (see §4.9). When absent, it defaults to ld, if ld is a string, 
+		//
+		// source is used as the source of the chunk for error messages and debug
+		// information (see §4.9). When absent, it defaults to ld, if ld is a string,
 		// or to "=(load)" otherwise.
-		// 
-		// The string mode is ignored, and assumed to be "t"; 
+		//
+		// The string mode is ignored, and assumed to be "t";
 		[MoonSharpModuleMethod]
 		public static DynValue load(ScriptExecutionContext executionContext, CallbackArguments args)
 		{
@@ -112,7 +116,7 @@ namespace MoonSharp.Interpreter.CoreLib
 
 		// loadfile ([filename [, mode [, env]]])
 		// ----------------------------------------------------------------
-		// Similar to load, but gets the chunk from file filename or from the standard input, 
+		// Similar to load, but gets the chunk from file filename or from the standard input,
 		// if no file name is given. INCOMPAT: stdin not supported, mode ignored
 		[MoonSharpModuleMethod]
 		public static DynValue loadfile(ScriptExecutionContext executionContext, CallbackArguments args)
@@ -132,21 +136,23 @@ namespace MoonSharp.Interpreter.CoreLib
 
 
 
-		private static DynValue loadfile_impl(ScriptExecutionContext executionContext, CallbackArguments args, Table defaultEnv)
+		private static DynValue loadfile_impl(ScriptExecutionContext executionContext, CallbackArguments args, Table defaultEnv, bool catchError = true)
 		{
-			try
-			{
+			try {
 				Script S = executionContext.GetScript();
 				DynValue filename = args.AsType(0, "loadfile", DataType.String, false);
 				DynValue env = args.AsType(2, "loadfile", DataType.Table, true);
 
-				DynValue fn = S.LoadFile(filename.String, env.IsNil() ? defaultEnv : env.Table);
-
-				return fn;
-			}
-			catch (SyntaxErrorException ex)
-			{
+				string str = filename.String;
+				string suffix = "Lua/";
+				ExplorePath(ref str, ref suffix);
+				return S.LoadFile(str, env.IsNil() ? defaultEnv : env.Table);
+			} catch (SyntaxErrorException ex) {
 				return DynValue.NewTuple(DynValue.Nil, DynValue.NewString(ex.DecoratedMessage ?? ex.Message));
+			} catch (Exception) {
+				if (!catchError)
+					return DynValue.Nil;
+				throw;
 			}
 		}
 
@@ -163,9 +169,9 @@ namespace MoonSharp.Interpreter.CoreLib
 
 		//dofile ([filename])
 		//--------------------------------------------------------------------------------------------------------------
-		//Opens the named file and executes its contents as a Lua chunk. When called without arguments, 
-		//dofile executes the contents of the standard input (stdin). Returns all values returned by the chunk. 
-		//In case of errors, dofile propagates the error to its caller (that is, dofile does not run in protected mode). 
+		//Opens the named file and executes its contents as a Lua chunk. When called without arguments,
+		//dofile executes the contents of the standard input (stdin). Returns all values returned by the chunk.
+		//In case of errors, dofile propagates the error to its caller (that is, dofile does not run in protected mode).
 		[MoonSharpModuleMethod]
 		public static DynValue dofile(ScriptExecutionContext executionContext, CallbackArguments args)
 		{
@@ -174,7 +180,10 @@ namespace MoonSharp.Interpreter.CoreLib
 				Script S = executionContext.GetScript();
 				DynValue v = args.AsType(0, "dofile", DataType.String, false);
 
-				DynValue fn = S.LoadFile(v.String);
+				string str = v.String.Replace('\\', '/');
+				string suffix = str[0] == '/' ? "raw" : DataRoot;
+				ExplorePath(ref str, ref suffix);
+				DynValue fn = S.LoadFile(str);
 
 				return DynValue.NewTailCallReq(fn); // tail call to dofile
 			}
@@ -186,33 +195,36 @@ namespace MoonSharp.Interpreter.CoreLib
 
 		//require (modname)
 		//----------------------------------------------------------------------------------------------------------------
-		//Loads the given module. The function starts by looking into the package.loaded table to determine whether 
-		//modname is already loaded. If it is, then require returns the value stored at package.loaded[modname]. 
+		//Loads the given module. The function starts by looking into the package.loaded table to determine whether
+		//modname is already loaded. If it is, then require returns the value stored at package.loaded[modname].
 		//Otherwise, it tries to find a loader for the module.
 		//
-		//To find a loader, require is guided by the package.loaders array. By changing this array, we can change 
+		//To find a loader, require is guided by the package.loaders array. By changing this array, we can change
 		//how require looks for a module. The following explanation is based on the default configuration for package.loaders.
 		//
-		//First require queries package.preload[modname]. If it has a value, this value (which should be a function) 
-		//is the loader. Otherwise require searches for a Lua loader using the path stored in package.path. 
-		//If that also fails, it searches for a C loader using the path stored in package.cpath. If that also fails, 
+		//First require queries package.preload[modname]. If it has a value, this value (which should be a function)
+		//is the loader. Otherwise require searches for a Lua loader using the path stored in package.path.
+		//If that also fails, it searches for a C loader using the path stored in package.cpath. If that also fails,
 		//it tries an all-in-one loader (see package.loaders).
 		//
-		//Once a loader is found, require calls the loader with a single argument, modname. If the loader returns any value, 
-		//require assigns the returned value to package.loaded[modname]. If the loader returns no value and has not assigned 
-		//any value to package.loaded[modname], then require assigns true to this entry. In any case, require returns the 
+		//Once a loader is found, require calls the loader with a single argument, modname. If the loader returns any value,
+		//require assigns the returned value to package.loaded[modname]. If the loader returns no value and has not assigned
+		//any value to package.loaded[modname], then require assigns true to this entry. In any case, require returns the
 		//final value of package.loaded[modname].
 		//
-		//If there is any error loading or running the module, or if it cannot find any loader for the module, then require 
-		//signals an error. 
+		//If there is any error loading or running the module, or if it cannot find any loader for the module, then require
+		//signals an error.
 		[MoonSharpModuleMethod]
 		public static DynValue __require_clr_impl(ScriptExecutionContext executionContext, CallbackArguments args)
 		{
-			Script S = executionContext.GetScript();
 			DynValue v = args.AsType(0, "__require_clr_impl", DataType.String, false);
 
-			DynValue fn = S.RequireModule(v.String);
+			CallbackArguments newArgs = new CallbackArguments(new List<DynValue> { DynValue.NewString(ModDataPath + "Lua/" + v.String + ".lua"), args[1], args[2] }, args.IsMethodCall);
+			DynValue fn = loadfile_impl(executionContext, newArgs, null, false);
+			if (fn.Type != DataType.Nil) return fn; // tail call to dofile
 
+			newArgs = new CallbackArguments(new List<DynValue> { DynValue.NewString(ModDataPath + "Lua/Libraries/" + v.String + ".lua"), args[1], args[2] }, args.IsMethodCall);
+			fn = loadfile_impl(executionContext, newArgs, null);
 			return fn; // tail call to dofile
 		}
 
@@ -242,7 +254,116 @@ function(modulename)
 	return res;
 end";
 
+		public static string DataRoot;
+		public static string ModDataPath     { get { return Path.Combine(DataRoot, "Mods" + Path.DirectorySeparatorChar + ModFolder + Path.DirectorySeparatorChar); } }
+		public static string DefaultDataPath { get { return Path.Combine(DataRoot, "Default" + Path.DirectorySeparatorChar);                                        } }
+		public static string ModFolder;
 
+		/// <summary>
+		/// Checks if a file exists in CYF's Default or Mods folder and returns a clean path to it.
+		/// </summary>
+		/// <param name="fileName">Path to the file to require, relative or absolute. Will also contain the clean path to the existing resource if found.</param>
+		/// <param name="pathSuffix">String to add to the tested path to check in the given folder.</param>
+		/// <param name="errorOnFailure">Defines whether the error screen should be displayed if the file isn't in either folder.</param>
+		/// <param name="needsAbsolutePath">True if you want to get the absolute path to the file, false otherwise.</param>
+		/// <param name="needsToExist">True if the file you're looking for needs to exist.</param>
+		/// <returns>True if the sanitization was successful, false otherwise.</returns>
+		public static bool RequireFile(ref string fileName, string pathSuffix, bool errorOnFailure = true, bool needsAbsolutePath = false, bool needsToExist = true) {
+			string baseFileName = fileName;
+			string fileNameMod, fileNameDefault;
+			// Get the presumed absolute path to the mod and default folder to this resource if it's a relative path
+			if (!fileName.Replace('\\', '/').Contains(DataRoot.Replace('\\', '/'))) {
+				if (fileName.Replace('\\', '/').StartsWith("/")) {
+					fileNameMod = Path.Combine(DataRoot, fileName.TrimStart('/'));
+					fileNameDefault = fileNameMod;
+				} else {
+					fileNameMod = Path.Combine(ModDataPath, Path.Combine(pathSuffix, fileName));
+					fileNameDefault = Path.Combine(DefaultDataPath, Path.Combine(pathSuffix, fileName));
+				}
+			} else {
+				fileNameMod = fileName;
+				fileNameDefault = fileName;
+			}
 
+			// Check if the resource exists using the mod path
+			string modPath = pathSuffix;
+			string error;
+			try {
+				ExplorePath(ref fileNameMod, ref modPath);
+				// Keep the mod path even if the file needs to exist
+				fileName = fileNameMod;
+
+				if (!needsAbsolutePath) {
+					Uri uriRel = new Uri(modPath).MakeRelativeUri(new Uri(fileName));
+					fileName = Uri.UnescapeDataString(uriRel.OriginalString);
+				}
+
+				if (needsToExist && !new FileInfo(fileNameMod).Exists) throw new CYFException("The file " + fileNameMod + " doesn't exist.");
+				return true;
+			} catch (Exception e) { error = e.Message; }
+
+			// Check if the resource exists using the default path
+			try {
+				string defaultPath = pathSuffix;
+				ExplorePath(ref fileNameDefault, ref defaultPath);
+				if (needsToExist && !new FileInfo(fileNameDefault).Exists) throw new CYFException("The file " + fileNameDefault + " doesn't exist.");
+				fileName = fileNameDefault;
+
+				if (needsAbsolutePath) return true;
+
+				Uri uriRel = new Uri(defaultPath).MakeRelativeUri(new Uri(fileName));
+				fileName = Uri.UnescapeDataString(uriRel.OriginalString);
+				return true;
+			} catch (Exception e) { error = "Mod path error: " + error + "\n\nDefault path error: " + e.Message; }
+
+			if (errorOnFailure)
+				throw new CYFException("Attempted to load " + baseFileName + " from either a mod or default directory, but it was missing in both.\n\n" + error);
+			return false;
+		}
+
+		/// <summary>
+		/// Checks if a file exists in CYF's Default or Mods folder and returns a clean path to it.
+		/// </summary>
+		/// <param name="fullPath">Path to the file to require.</param>
+		/// <param name="pathSuffix">String to add to the tested path to check in the given folder.</param>
+		public static void ExplorePath(ref string fullPath, ref string pathSuffix) {
+			fullPath = fullPath.Replace('\\', Path.DirectorySeparatorChar).Replace('/', Path.DirectorySeparatorChar);
+
+			if      (pathSuffix == "raw")                pathSuffix = "/";
+			else if (pathSuffix.Contains(DataRoot))      { }
+			else if (fullPath.Contains(ModDataPath))     pathSuffix = Path.Combine(ModDataPath,     pathSuffix);
+			else if (fullPath.Contains(DefaultDataPath)) pathSuffix = Path.Combine(DefaultDataPath, pathSuffix);
+			else if (fullPath.Contains(DataRoot))        pathSuffix = Path.Combine(DataRoot,        pathSuffix);
+			// Fetch CYF's root folder if none has been found (Used for dofile, require, loadfile...)
+			else {
+				pathSuffix = fullPath.StartsWith(Path.DirectorySeparatorChar.ToString()) ? DataRoot : Path.Combine(ModDataPath, pathSuffix);
+				fullPath = Path.Combine(pathSuffix, fullPath.TrimStart(Path.DirectorySeparatorChar));
+			}
+
+			fullPath = fullPath.Replace('\\', Path.DirectorySeparatorChar).Replace('/', Path.DirectorySeparatorChar);
+
+			if (!new DirectoryInfo(pathSuffix).Exists)
+				throw new CYFException("The root folder \"" + pathSuffix + "\" doesn't exist.");
+
+			// Get the folder containing the resource to load
+			string fileName = fullPath.Substring(fullPath.LastIndexOf(Path.DirectorySeparatorChar) + 1);
+			DirectoryInfo endFolder = new DirectoryInfo(fullPath.Substring(0, fullPath.LastIndexOf(Path.DirectorySeparatorChar)));
+			if (!endFolder.Exists)
+				throw new CYFException("The path \"" + endFolder.FullName + "\" (file is \"" + fullPath + "\") doesn't exist.");
+
+			// Check if the final directory is a child of CYF's root directory
+			if (!endFolder.FullName.StartsWith(Path.Combine(DataRoot, "Mods")) && !endFolder.FullName.StartsWith(Path.Combine(DataRoot, "Default")))
+				throw new CYFException("The folder \"" + endFolder.FullName + "\" isn't inside of CYF's allowed folders (CYF's path is \"" + DataRoot + "\"). Please only fetch files from inside CYF's Mods or Default folders.");
+
+			fullPath = endFolder.FullName;
+			if (!fullPath.EndsWith(Path.DirectorySeparatorChar.ToString())) fullPath += Path.DirectorySeparatorChar;
+			if (!pathSuffix.EndsWith(Path.DirectorySeparatorChar.ToString())) pathSuffix += Path.DirectorySeparatorChar;
+
+			fullPath = Path.Combine(fullPath, fileName).Replace('\\', Path.DirectorySeparatorChar).Replace('/', Path.DirectorySeparatorChar);
+		}
+	}
+
+	public class CYFException : ScriptRuntimeException {
+		public CYFException(string message) : base(message) { }
 	}
 }

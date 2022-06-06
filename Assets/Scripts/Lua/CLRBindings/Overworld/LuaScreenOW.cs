@@ -38,7 +38,7 @@ public class LuaScreenOW {
             image.name = "Image" + id;
             image.tag = "Event";
             image.GetComponent<RectTransform>().SetParent(GameObject.Find("Canvas OW").transform);
-            EventManager.instance.spriteControllers.Add("Image" + id, new LuaSpriteController(image.GetComponent<Image>()));
+            EventManager.instance.spriteControllers.Add("Image" + id, LuaSpriteController.GetOrCreate(image));
         }
 
         image.GetComponent<Image>().sprite = SpriteRegistry.Get(path);

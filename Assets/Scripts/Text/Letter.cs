@@ -7,31 +7,15 @@ public class Letter : MonoBehaviour {
     public TextEffectLetter effect = null;
     public bool started;
     public Color colorFromText;
-    private bool goodInit;
-
 
     private void Start() {
         img = GetComponent<Image>();
-        if (GlobalControls.isInFight)
-            if (ArenaManager.instance.firstTurn) LateUpdater.lateActions.Add(LateStart);
-            else                                 LateStart();
-        else                                     LateStart();
-    }
-
-    private void LateStart() {
+        basisPos = transform.position;
         started = true;
-        try {
-            basisPos = transform.position;
-            goodInit = true;
-        } catch { /* ignored */ }
     }
 
     private void Update() {
         if (effect == null || !started) return;
-        if (!goodInit) {
-            basisPos = transform.position;
-            goodInit = true;
-        }
         effect.UpdateEffects();
     }
 }

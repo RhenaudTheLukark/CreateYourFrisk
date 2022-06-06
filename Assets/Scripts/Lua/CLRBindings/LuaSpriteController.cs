@@ -3,34 +3,54 @@ using System;
 using System.Collections.Generic;
 using MoonSharp.Interpreter;
 using UnityEngine.UI;
-using Object = UnityEngine.Object;
 
 public class LuaSpriteController {
-    [MoonSharpHidden] public GameObject _img;  // The real image
+    [MoonSharpHidden] public CYFSprite spr;
+    [MoonSharpHidden] public bool removed;
+    [MoonSharpHidden] public bool limbo;
     internal GameObject img { // A image that returns the real image. We use this to be able to detect if the real image is null, and if it is, throw an exception
         get {
-            if (_img == null)                           throw new CYFException("Attempted to perform action on removed sprite.");
-            if (!_img.activeInHierarchy && !firstFrame) throw new CYFException("Attempted to perform action on removed sprite.");
-            return _img;
+            if (removed) throw new CYFException("Attempted to perform action on removed sprite.");
+            return spr.gameObject;
         }
-        set { _img = value; }
     }
     public LuaSpriteShader shader;
-    private bool firstFrame = true;
     private readonly Dictionary<string, DynValue> vars = new Dictionary<string, DynValue>();
-    [MoonSharpHidden] public Vector2 nativeSizeDelta;                   // The native size of the image
-    private Vector3 internalRotation = Vector3.zero;  // The rotation of the sprite
-    private float xScale = 1;                         // The X scale of the sprite
-    private float yScale = 1;                         // The Y scale of the sprite
-    private Sprite originalSprite;                    // The original sprite
-    [MoonSharpHidden] public KeyframeCollection keyframes;              // This variable is used to store an animation
-    [MoonSharpHidden] public string tag;                                // The tag of the sprite : "projectile", "enemy", "bubble", "letter" or "other"
+    [MoonSharpHidden] public Vector2 nativeSizeDelta;      // The native size of the image
+    private Vector3 internalRotation = Vector3.zero;       // The rotation of the sprite
+    private float xScale = 1;                              // The X scale of the sprite
+    private float yScale = 1;                              // The Y scale of the sprite
+    [MoonSharpHidden] public KeyframeCollection keyframes; // This variable is used to store an animation
+    [MoonSharpHidden] public string tag;                   // The tag of the sprite : "projectile", "enemy", "letter" or "other"
     private KeyframeCollection.LoopMode loop = KeyframeCollection.LoopMode.LOOP;
     [MoonSharpHidden] public static MoonSharp.Interpreter.Interop.IUserDataDescriptor data = UserData.GetDescriptorForType<LuaSpriteController>(true);
 
-    //The name of the sprite
+    public void Reset() {
+        removed = false;
+        limbo = false;
+
+        internalRotation = Vector3.zero;
+        Scale(1, 1);
+        SetPivot(0.5f, 0.5f);
+        SetAnchor(0.5f, 0.5f);
+        img.GetComponent<Image>().color = new Color(1, 1, 1, 1);
+
+        Mask("OFF");
+        shader.Revert();
+
+        StopAnimation();
+        keyframes = null;
+        loop = KeyframeCollection.LoopMode.LOOP;
+
+        vars.Clear();
+    }
+
+    // The name of the sprite
+    [MoonSharpHidden] public string _spritename = "empty";
     public string spritename {
-        get { return img.GetComponent<Image>() ? img.GetComponent<Image>().sprite.name : img.GetComponent<SpriteRenderer>().sprite.name; }
+        // TODO: Restore in 0.7
+        //get { return img.GetComponent<Image>() ? img.GetComponent<Image>().sprite.name : img.GetComponent<SpriteRenderer>().sprite.name; }
+        get { return _spritename; }
     }
 
     // The x position of the sprite, relative to the arena position and its anchor.
@@ -43,7 +63,7 @@ public class LuaSpriteController {
             return val;
         }
         set {
-            if (img.transform.parent.name == "SpritePivot")
+            if (img.transform.parent != null && img.transform.parent.name == "SpritePivot")
                 img.transform.parent.localPosition = new Vector3(value, img.transform.parent.localPosition.y, img.transform.parent.localPosition.z) - (Vector3)img.GetComponent<RectTransform>().anchoredPosition;
             else
                 img.GetComponent<RectTransform>().anchoredPosition = new Vector2(value, img.GetComponent<RectTransform>().anchoredPosition.y);
@@ -60,7 +80,7 @@ public class LuaSpriteController {
             return val;
         }
         set {
-            if (img.transform.parent.name == "SpritePivot")
+            if (img.transform.parent != null && img.transform.parent.name == "SpritePivot")
                 img.transform.parent.localPosition = new Vector3(img.transform.parent.localPosition.x, value, img.transform.parent.localPosition.z) - (Vector3)img.GetComponent<RectTransform>().anchoredPosition;
             else
                 img.GetComponent<RectTransform>().anchoredPosition = new Vector2(img.GetComponent<RectTransform>().anchoredPosition.x, value);
@@ -123,7 +143,7 @@ public class LuaSpriteController {
 
     // Is the sprite active? True if the image of the sprite isn't null, false otherwise
     public bool isactive {
-        get { return GlobalControls.retroMode ? _img == null : _img != null; }
+        get { return !GlobalControls.retroMode ^ (removed || limbo); }
     }
 
     // The original width of the sprite
@@ -173,11 +193,10 @@ public class LuaSpriteController {
     public string loopmode {
         get { return loop.ToString(); }
         set {
-            try {
-                loop = (KeyframeCollection.LoopMode)Enum.Parse(typeof(KeyframeCollection.LoopMode), value.ToUpper(), true);
-                if (keyframes != null)
-                    keyframes.SetLoop((KeyframeCollection.LoopMode)Enum.Parse(typeof(KeyframeCollection.LoopMode), value.ToUpper(), true));
-            } catch { throw new CYFException("sprite.loopmode can only have either \"ONESHOT\", \"ONESHOTEMPTY\" or \"LOOP\", but you entered \"" + value.ToUpper() + "\"."); }
+            try { loop = (KeyframeCollection.LoopMode)Enum.Parse(typeof(KeyframeCollection.LoopMode), value.ToUpper(), true); }
+            catch { throw new CYFException("sprite.loopmode can only be either \"ONESHOT\", \"ONESHOTEMPTY\" or \"LOOP\", but you entered \"" + value.ToUpper() + "\"."); }
+            if (keyframes != null)
+                keyframes.SetLoop(loop);
         }
     }
 
@@ -312,14 +331,13 @@ public class LuaSpriteController {
         // You can't get or set the layer on an enemy sprite
         get {
             Transform target = GetTarget();
-            if (tag == "bubble" || tag == "event" || tag == "letter")         return "none";
+            if (tag == "event" || tag == "letter")                            return "none";
             if (tag == "projectile" && !target.parent.name.Contains("Layer")) return "BulletPool";
             if (tag == "enemy" && !target.parent.name.Contains("Layer"))      return "specialEnemyLayer";
             return target.parent.name.Substring(0, target.parent.name.Length - 5);
         } set {
             switch (tag) {
                 case "event":  throw new CYFException("sprite.layer: Overworld events' layers can't be changed.");
-                case "bubble": throw new CYFException("sprite.layer: Bubbles' layers can't be changed.");
                 case "letter": throw new CYFException("sprite.layer: Letters' layers can't be changed.");
             }
 
@@ -342,25 +360,35 @@ public class LuaSpriteController {
     }
     */
 
-    // The function that creates a sprite.
-    public LuaSpriteController(Image i) {
-        img = i.gameObject;
-        originalSprite = i.sprite;
-        nativeSizeDelta = new Vector2(100, 100);
-        if (img.GetComponent<Projectile>())                            tag = "projectile";
-        else if (img.GetComponent<EnemyController>())                  tag = "enemy";
-        else if (i.transform.parent != null)
-            if (i.transform.parent.GetComponent<EnemyController>())    tag = "bubble";
-            else                                                       tag = "other";
-        shader = new LuaSpriteShader("sprite", img);
-    }
+    /// <summary>
+    /// Creates the instance of LuaSpriteController for the given GameObject or returns one if it already exists.
+    /// </summary>
+    /// <param name="go">GameObject to create a controller for.</param>
+    /// <param name="forceReset">Force the reset of the sprite object.</param>
+    /// <returns>An instance of LuaSpriteController manipulating the Gameobject go.</returns>
+    public static LuaSpriteController GetOrCreate(GameObject go, bool forceReset = false) {
+        // Fetch or add the GameObject's CYFSprite component, then retrieve its controller if it exists
+        CYFSprite newSpr = go.GetComponent<CYFSprite>() ?? go.AddComponent<CYFSprite>();
+        LuaSpriteController ctrl = newSpr.ctrl ?? new LuaSpriteController { spr = newSpr };
+        if (newSpr.ctrl != null && !forceReset) return ctrl;
+        newSpr.ctrl = ctrl;
 
-    public LuaSpriteController(SpriteRenderer i) {
-        img = i.gameObject;
-        originalSprite = i.sprite;
-        nativeSizeDelta = new Vector2(100, 100);
-        tag = "event";
-        shader = new LuaSpriteShader("event", img);
+        // Images are used for most of CYF's sprites
+        ctrl.nativeSizeDelta = new Vector2(100, 100);
+        Image image = newSpr.GetComponent<Image>();
+        if (image != null) {
+            // A controller's tag gives us more info on what the sprite actually is used for
+            if (ctrl.img.GetComponent<Projectile>())           ctrl.tag = "projectile";
+            else if (ctrl.img.GetComponent<EnemyController>()) ctrl.tag = "enemy";
+            else                                               ctrl.tag = "other";
+            ctrl.shader = new LuaSpriteShader("sprite", ctrl.img);
+        } else {
+            // SpriteRenderers are used for overworld events
+            ctrl.tag = "event";
+            ctrl.shader = new LuaSpriteShader("event", ctrl.img);
+        }
+
+        return ctrl;
     }
 
     // Changes the sprite of this instance
@@ -371,14 +399,17 @@ public class LuaSpriteController {
         if (img.GetComponent<Image>()) {
             Image imgtemp = img.GetComponent<Image>();
             SpriteUtil.SwapSpriteFromFile(imgtemp, name);
-            originalSprite = imgtemp.sprite;
             nativeSizeDelta = new Vector2(imgtemp.sprite.texture.width, imgtemp.sprite.texture.height);
+            shader.UpdateTexture(imgtemp.sprite.texture);
         } else {
             SpriteRenderer imgtemp = img.GetComponent<SpriteRenderer>();
             SpriteUtil.SwapSpriteFromFile(imgtemp, name);
-            originalSprite = imgtemp.sprite;
             nativeSizeDelta = new Vector2(imgtemp.sprite.texture.width, imgtemp.sprite.texture.height);
+            shader.UpdateTexture(imgtemp.sprite.texture);
         }
+        // TODO: Restore in 0.7
+        //imgtemp.name = name;
+        _spritename = name;
         Scale(xScale, yScale);
         if (tag == "projectile")
             img.GetComponent<Projectile>().needUpdateTex = true;
@@ -387,7 +418,6 @@ public class LuaSpriteController {
     // Sets the parent of a sprite.
     public void SetParent(LuaSpriteController parent) {
         if (parent == null)                                               throw new CYFException("sprite.SetParent() can't set null as the sprite's parent.");
-        if (tag == "bubble")                                              throw new CYFException("sprite.SetParent() can not be used with bubbles.");
         if (tag == "event" || parent != null && parent.tag == "event")    throw new CYFException("sprite.SetParent() can not be used with an Overworld Event's sprite.");
         if (tag == "letter" ^ (parent != null && parent.tag == "letter")) throw new CYFException("sprite.SetParent() can not be used between letter sprites and other sprites.");
         try {
@@ -400,7 +430,7 @@ public class LuaSpriteController {
     // Sets the pivot of a sprite (its rotation point)
     public void SetPivot(float x, float y) {
         img.GetComponent<RectTransform>().pivot = new Vector2(x, y);
-        if (img.transform.parent.name == "SpritePivot")
+        if (img.transform.parent != null && img.transform.parent.name == "SpritePivot")
             img.GetComponent<RectTransform>().localPosition = new Vector3(0, 0, 0);
     }
 
@@ -411,14 +441,14 @@ public class LuaSpriteController {
     }
 
     public void Move(float x, float y) {
-        if (img.transform.parent.name == "SpritePivot")
+        if (img.transform.parent != null && img.transform.parent.name == "SpritePivot")
             img.transform.parent.localPosition = new Vector3(x + this.x, y + this.y, img.transform.parent.localPosition.z) - (Vector3)img.GetComponent<RectTransform>().anchoredPosition;
         else
             img.GetComponent<RectTransform>().anchoredPosition = new Vector2(x + this.x, y + this.y);
     }
 
     public void MoveTo(float x, float y) {
-        if (img.transform.parent.name == "SpritePivot")
+        if (img.transform.parent != null && img.transform.parent.name == "SpritePivot")
             img.transform.parent.localPosition = new Vector3(x, y, img.transform.parent.localPosition.z) - (Vector3)img.GetComponent<RectTransform>().anchoredPosition;
         else
             img.GetComponent<RectTransform>().anchoredPosition = new Vector2(x, y);
@@ -445,7 +475,10 @@ public class LuaSpriteController {
             nativeSizeDelta = new Vector2(img.GetComponent<SpriteRenderer>().sprite.texture.width, img.GetComponent<SpriteRenderer>().sprite.texture.height);
             img.GetComponent<RectTransform>().localScale = new Vector3(100 * Mathf.Abs(xScale), 100 * Mathf.Abs(yScale), 1);
         }
-        internalRotation = new Vector3(ys < 0 ? 180 : 0, xs < 0 ? 180 : 0, internalRotation.z);
+
+        // Flip the sprite horizontally and/or vertically if its scale is negative
+        float zValue = GlobalControls.isInFight && EnemyEncounter.script.GetVar("noscalerotationbug").Boolean ? img.GetComponent<RectTransform>().eulerAngles.z : internalRotation.z;
+        internalRotation = new Vector3(ys < 0 ? 180 : 0, xs < 0 ? 180 : 0, zValue);
         img.GetComponent<RectTransform>().eulerAngles = internalRotation;
     }
 
@@ -470,43 +503,28 @@ public class LuaSpriteController {
                 spriteNames[i] = prefix + spriteNames[i];
         }
 
-        Vector2 pivot = img.GetComponent<RectTransform>().pivot;
         Keyframe[] kfArray = new Keyframe[spriteNames.Length];
-        for (int i = 0; i < spriteNames.Length; i++) {
-            // at least one sprite in the sequence was unable to be loaded
-            if (SpriteRegistry.Get(spriteNames[i]) == null)
-                throw new CYFException("sprite.SetAnimation: Failed to load sprite with the name \"" + spriteNames[i] + "\". Are you sure it is spelled correctly?");
-
-            kfArray[i] = new Keyframe(SpriteRegistry.Get(spriteNames[i]), spriteNames[i].ToLower());
+        for (int i = spriteNames.Length - 1; i >= 0; i--) {
+            Set(spriteNames[i]);
+            kfArray[i] = new Keyframe(SpriteRegistry.Get(spriteNames[i]), spriteNames[i]);
         }
         if (keyframes == null) {
-            if (img.GetComponent<KeyframeCollection>()) {
+            if (img.GetComponent<KeyframeCollection>())
                 keyframes = img.GetComponent<KeyframeCollection>();
-                keyframes.enabled = true;
-            } else {
+            else {
                 keyframes = img.AddComponent<KeyframeCollection>();
                 keyframes.spr = this;
             }
-        } else
-            keyframes.enabled = true;
+        }
+        keyframes.enabled = true;
         keyframes.loop = loop;
         keyframes.Set(kfArray, frametime);
         UpdateAnimation();
-        img.GetComponent<RectTransform>().pivot = pivot;
     }
 
     public void StopAnimation() {
         if (keyframes == null) return;
-        Vector2 pivot = img.GetComponent<RectTransform>().pivot;
         keyframes.enabled = false;
-        if (img.GetComponent<Image>()) {
-            Image imgtemp = img.GetComponent<Image>();
-            imgtemp.sprite = originalSprite;
-        } else {
-            SpriteRenderer imgtemp = img.GetComponent<SpriteRenderer>();
-            imgtemp.sprite = originalSprite;
-        }
-        img.GetComponent<RectTransform>().pivot = pivot;
     }
 
     // Gets or sets the paused state of a sprite's animation.
@@ -639,15 +657,11 @@ public class LuaSpriteController {
             case "event":  throw new CYFException("sprite.Mask: Can not be applied to Overworld Event sprites.");
             case "letter": throw new CYFException("sprite.Mask: Can not be applied to Letter sprites.");
             default:       if (mode == null) throw new CYFException("sprite.Mask: No argument provided."); break;
-
         }
 
         MaskMode masked;
-        try {
-            masked = (MaskMode)Enum.Parse(typeof(MaskMode), mode, true);
-        } catch {
-            throw new CYFException("sprite.Mask: Invalid mask mode \"" + mode + "\".");
-        }
+        try { masked = (MaskMode)Enum.Parse(typeof(MaskMode), mode, true); }
+        catch { throw new CYFException("sprite.Mask: Invalid mask mode \"" + mode + "\"."); }
 
         if (masked != _masked) {
             //If children need to have their "inverted" property updated, then do so
@@ -658,25 +672,25 @@ public class LuaSpriteController {
                         childmask.inverted = (int)masked > 3;
                 }
             RectMask2D box = img.GetComponent<RectMask2D>();
-            Mask spr = img.GetComponent<Mask>();
+            Mask mask = img.GetComponent<Mask>();
 
             switch (masked) {
                 case MaskMode.BOX:
                     //Remove sprite mask if applicable
-                    spr.enabled = false;
+                    mask.enabled = false;
                     box.enabled = true;
                     break;
                 case MaskMode.OFF:
                     //Mask has been disabled
-                    spr.enabled = false;
+                    mask.enabled = false;
                     box.enabled = false;
                     break;
                 default:
                     //The mask mode now can't possibly be box, so remove box mask if applicable
-                    spr.enabled = true;
+                    mask.enabled = true;
                     box.enabled = false;
                     // Used to differentiate between "sprite" and "stencil"-like display modes
-                    spr.showMaskGraphic = masked == MaskMode.SPRITE || masked == MaskMode.INVERTEDSPRITE;
+                    mask.showMaskGraphic = masked == MaskMode.SPRITE || masked == MaskMode.INVERTEDSPRITE;
                     break;
             }
         }
@@ -685,47 +699,40 @@ public class LuaSpriteController {
     }
 
     public void Remove() {
-        if (_img == null)
+        if (removed)
             return;
-        if (!GlobalControls.retroMode && tag == "projectile") {
-            img.GetComponent<Projectile>().ctrl.Remove();
-            return;
-        }
 
-        bool throwError = false;
-        if ((!GlobalControls.retroMode && img.gameObject.name == "player") || (!GlobalControls.retroMode && tag == "projectile") || tag == "enemy" || tag == "bubble") {
+        if (!GlobalControls.retroMode) {
+            if (tag == "projectile") {
+                img.GetComponent<Projectile>().ctrl.Remove();
+                return;
+            }
+
             if (img.gameObject.name == "player")
                 throw new CYFException("sprite.Remove(): You can't remove the Player's sprite!");
-            if (tag == "projectile") {
-                if (img.GetComponent<Projectile>().ctrl != null)
-                    if (img.GetComponent<Projectile>().ctrl.isactive) throwError = true;
-            } else                                                    throwError = true;
         }
-        if (throwError)
-            throw new CYFException("sprite.Remove(): You can't remove a " + tag + "'s sprite!");
+        if (tag == "enemy")
+            throw new CYFException("sprite.Remove(): You can't remove an enemy's sprite!");
 
-        if (tag == "projectile") {
-            Projectile[] pcs = img.GetComponentsInChildren<Projectile>();
-            for (int i = 1; i < pcs.Length; i++)
-                pcs[i].ctrl.Remove();
-        }
+        UnitaleUtil.RemoveChildren(img);
+
+        if (limbo)
+            return;
+
         StopAnimation();
-        Object.Destroy(GetTarget().gameObject);
-        _img = null;
+        limbo = true;
     }
 
     public void Dust(bool playDust = true, bool removeObject = false) {
-        if (tag == "enemy" || tag == "bubble")
-            throw new CYFException("sprite.Dust(): You can't dust a " + tag + "'s sprite!");
+        if (tag == "enemy")
+            throw new CYFException("sprite.Dust(): You can't dust an enemy's sprite!");
+        if (removed)
+            return;
 
-        GameObject go = Object.Instantiate(Resources.Load<GameObject>("Prefabs/MonsterDuster"));
-        go.transform.SetParent(UIController.instance.psContainer.transform);
+        UnitaleUtil.Dust(img, this);
         if (playDust)
-            UnitaleUtil.PlaySound("DustSound", AudioClipRegistry.GetSound("enemydust"));
-        img.GetComponent<ParticleDuplicator>().Activate(this);
-        if (img.gameObject.name == "player") return;
-        img.SetActive(false);
-        if (removeObject)
+            UnitaleUtil.PlaySound("DustSound", "enemydust");
+        if (removeObject && !img.GetComponent<PlayerController>())
             Remove();
     }
 
@@ -735,60 +742,20 @@ public class LuaSpriteController {
         if (keyframes == null || keyframes.paused)
             return;
         Keyframe k = keyframes.getCurrent();
-        Sprite s;
-        if (k != null)
-            s = k.sprite;
-        else {
+        if (k != null) {
+            // TODO: Restore in 0.7
+            //img.name = k.name;
+            _spritename = k.name;
+        } else {
             StopAnimation();
             return;
         }
 
         if (k.sprite == null) return;
-        Quaternion rot = img.transform.rotation;
-        Vector2 pivot = img.GetComponent<RectTransform>().pivot;
-        if (img.GetComponent<Image>()) {
-            Image imgtemp = img.GetComponent<Image>();
-            if (imgtemp.sprite != s) {
-                imgtemp.sprite = s;
-                originalSprite = imgtemp.sprite;
-                nativeSizeDelta = new Vector2(imgtemp.sprite.texture.width, imgtemp.sprite.texture.height);
-                shader.UpdateTexture(imgtemp.sprite.texture);
-                Scale(xScale, yScale);
-                if (tag == "projectile")
-                    img.GetComponent<Projectile>().needUpdateTex = true;
-                img.transform.rotation = rot;
-            }
-        } else {
-            SpriteRenderer imgtemp = img.GetComponent<SpriteRenderer>();
-            if (imgtemp.sprite != s) {
-                imgtemp.sprite = s;
-                originalSprite = imgtemp.sprite;
-                nativeSizeDelta = new Vector2(imgtemp.sprite.texture.width, imgtemp.sprite.texture.height);
-                shader.UpdateTexture(imgtemp.sprite.texture);
-                Scale(xScale, yScale);
-                img.transform.rotation = rot;
-            }
-        }
-        img.GetComponent<RectTransform>().pivot = pivot;
-    }
-
-    /*
-    internal void UpdateAnimation() {
-        if (keyframes == null)
-            return;
-        Keyframe k = keyframes.getCurrent();
-        Sprite s = SpriteRegistry.GENERIC_SPRITE_PREFAB.sprite;
-
-        if (k != null)
-            s = k.sprite;
-
-        if (img.sprite != s)
-            img.sprite = s;
-    }*/
-
-    void Update() {
-        UpdateAnimation();
-        firstFrame = false;
+        Set(_spritename);
+        // TODO: Remove in 0.7
+        if (k == KeyframeCollection.EMPTY_KEYFRAME)
+            _spritename = "blank";
     }
 
     public void SetVar(string name, DynValue value) {
@@ -811,7 +778,7 @@ public class LuaSpriteController {
 
     private Transform GetTarget() {
         Transform target = img.transform;
-        if (img.transform.parent.name == "SpritePivot")
+        if (img.transform.parent != null && img.transform.parent.name == "SpritePivot")
             target = target.parent;
         return target;
     }

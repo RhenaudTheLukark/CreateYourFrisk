@@ -9,8 +9,8 @@ using MoonSharp.Interpreter;
 /// Controls that should be active on all screens. Pretty much a hack to allow people to reset. Now it's more useful.
 /// </summary>
 public class GlobalControls : MonoBehaviour {
-    public static string CYFversion       = "0.6.5";    // Current version of CYF displayed in the main menu and usable in scripts
-    public static string OverworldVersion = "0.6.4";    // Last version in which the overworld was changed, notifying any user with an old save to delete it
+    public static string CYFversion       = "0.6.6";    // Current version of CYF displayed in the main menu and usable in scripts
+    public static string OverworldVersion = "0.6.6";    // Last version in which the overworld was changed, notifying any user with an old save to delete it
 
     public static int frame;                        // Frame counter used for logging purposes
     public static float overworldTimestamp = 0f;    // Timestamp of the creation of the save file, mostly used to know the time spent in this save in the save and load screen
@@ -52,12 +52,7 @@ public class GlobalControls : MonoBehaviour {
         UnitaleUtil.AddKeysToMapCorrespondanceList();
 
         // Use AlMightyGlobals to load Crate Your Frisk, Safe Mode, Retromode and Fullscreen mode preferences
-        // CrateYourFrisk
-        if (LuaScriptBinder.GetAlMighty(null, "CrateYourFrisk") != null && LuaScriptBinder.GetAlMighty(null, "CrateYourFrisk").Boolean)
-            crate = true;
-        #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
-            Misc.WindowName = crate ? ControlPanel.instance.WinodwBsaisNmae : ControlPanel.instance.WindowBasisName;
-        #endif
+        ReloadCrate();
 
         // Check if safe mode has a stored preference that is a boolean
         if (LuaScriptBinder.GetAlMighty(null, "CYFSafeMode")      != null
@@ -76,8 +71,15 @@ public class GlobalControls : MonoBehaviour {
 
         // Check if window scale has a stored preference that is a number
         if (LuaScriptBinder.GetAlMighty(null, "CYFWindowScale")      != null
-         && LuaScriptBinder.GetAlMighty(null, "CYFWindowScale").Type == DataType.Number)
-            ScreenResolution.windowScale = (int)LuaScriptBinder.GetAlMighty(null, "CYFWindowScale").Number;
+         && LuaScriptBinder.GetAlMighty(null, "CYFWindowScale").Type == DataType.Number) {
+            ScreenResolution.windowScale = (int) System.Math.Min(LuaScriptBinder.GetAlMighty(null, "CYFWindowScale").Number, 1);
+            if (!ScreenResolution.hasInitialized) {
+                Screen.SetResolution(640, 480, false, 0);
+                ScreenResolution scrRes = FindObjectOfType<ScreenResolution>();
+                if (scrRes) scrRes.Start();
+            }
+            ScreenResolution.ResetAfterBattle();
+        }
 
         // Start Discord RPC (also checks for an AlMightyGlobal within)
         DiscordControls.Start();
@@ -85,19 +87,27 @@ public class GlobalControls : MonoBehaviour {
         awakened = true;
     }
 
+    public static void ReloadCrate() {
+        if (LuaScriptBinder.GetAlMighty(null, "CrateYourFrisk") != null && LuaScriptBinder.GetAlMighty(null, "CrateYourFrisk").Boolean)
+            crate = true;
+        #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
+            Misc.WindowName = crate ? ControlPanel.instance.WinodwBsaisNmae : ControlPanel.instance.WindowBasisName;
+        #endif
+    }
+
     #if UNITY_STANDALONE_WIN
         /// <summary>
         /// Used to reposition the window in the middle of the screen after exiting fullscreen.
         /// </summary>
         /// <returns>All coroutines must return an IEnumerator object, don't mind it.</returns>
-        public static int fullscreenSwitch = 0;
+        public static int fullscreenSwitch;
+
         static IEnumerator RepositionWindow() {
             yield return new WaitForEndOfFrame();
-
             try {
-                Misc.MoveWindowTo((int)(Screen.currentResolution.width/2 - (Screen.width/2)), (int)(Screen.currentResolution.height/2 - (Screen.height/2)));
-            } catch {}
-        }
+                Misc.MoveWindowTo(Screen.currentResolution.width / 2 - Screen.width / 2, Screen.currentResolution.height / 2 - Screen.height / 2);
+            } catch { /* ignored */ }
+    }
     #endif
 
     /// <summary>
@@ -108,8 +118,7 @@ public class GlobalControls : MonoBehaviour {
         yield return new WaitForEndOfFrame();
 
         try {
-            ScreenResolution.lastMonitorWidth = Screen.currentResolution.width;
-            ScreenResolution.lastMonitorHeight = Screen.currentResolution.height;
+            ScreenResolution.lastMonitorSize = new Vector2(Screen.currentResolution.width, Screen.currentResolution.height);
         } catch { /* ignored */ }
     }
 
@@ -147,6 +156,7 @@ public class GlobalControls : MonoBehaviour {
             if (isInFight && EnemyEncounter.script.GetVar("unescape").Boolean && sceneName != "Error") return;
             // The Error scene can only be exited if we entered the mod through the mod selection screen
             if (sceneName == "Error" && !modDev) {
+                ScreenResolution.ResetAfterBattle();
                 UnitaleUtil.ExitOverworld();
                 SceneManager.LoadScene("Disclaimer");
                 DiscordControls.StartTitle();

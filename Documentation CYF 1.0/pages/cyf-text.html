@@ -39,10 +39,10 @@ it's w3c valid, at least
                     <li><a href="controls.html">Controls</a></li>
                     <li><a href="basic.html">Basic setup</a></li>
                     <li><a href="unity.html"><span class="CYF"></span> Unity Setup (Optional)</a></li>
-                    <li><a href="variables.html">Special Variables</a></li>
+                    <li class="new"><a href="variables.html">Special Variables</a></li>
                     <li><a href="terms.html">Terminology</a></li>
                 <li class="li-header">API</li>
-                    <li><a href="api-text.html">Text commands</a></li>
+                    <li class="new"><a href="api-text.html">Text commands</a></li>
                     <li class="new"><a href="api-events.html">Game events</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                     <li class="li-indent">Functions &amp; Objects:</li>
@@ -52,28 +52,29 @@ it's w3c valid, at least
                         <li class="li-indent"><a href="api-functions-audio.html">The Audio Object</a></li>
                         <li class="li-indent"><a href="api-functions-newaudio.html"><span class="CYF"></span> The NewAudio Object</a></li>
                         <li class="li-indent"><a href="api-functions-input.html">The Input Object</a></li>
-                        <li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
-                        <li class="li-indent"><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
+                        <li class="li-indent active new" style="margin-left:5px;">&gt; <span class="CYF"></span> The Text Object &lt;</li>
+                        <li class="li-indent new"><a href="api-functions-time.html">The Time Object</a></li>
+                        <li class="li-indent new"><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
                         <li class="li-indent new"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
-                        <li class="li-indent new"><a href="api-functions-discord.html"><span class="CYF"></span> The Discord Object</a></li>
-                        <li class="li-indent"><a href="api-functions-waves.html">The Arena Object</a></li>
+                        <li class="li-indent"><a href="api-functions-discord.html"><span class="CYF"></span> The Discord Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-waves.html">The Arena Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-ui.html"><span class="CYF"></span> The UI Object</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
-                    <li><a href="api-projectile.html">Projectile management</a></li>
+                    <li class="new"><a href="api-projectile.html">Projectile management</a></li>
                     <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
                     <li class="new"><a href="api-animation.html">Sprites &amp; Animation</a></li>
-                    <li class="active new" style="margin-left:5px;">&gt; <span class="CYF"></span> The Text Object &lt;</li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
-                <li class="li-header"></span><span class="CYF"></span> <span class="new"></span>Shaders</li>
+                <li class="li-header"></span><span class="CYF"></span> Shaders</li>
                     <li><a href="shaders.html">Introduction</a></li>
                     <li><a href="shaders-object.html">The Shader Object</a></li>
                     <li><a href="shaders-coding.html">Coding a Shader</a></li>
                     <hr style="margin-top:10px;margin-bottom:10px;">
                 <li class="li-header"><span class="CYF"></span> Overworld</li>
-                    <li class="new"><a href="overworld.html">Basics</a></li>
+                    <li><a href="overworld.html">Basics</a></li>
                     <li><a href="overworld-howto-map.html">How to create a map</a></li>
                     <li><a href="overworld-howto-event.html">How to create an event</a></li>
                     <li><a href="overworld-howto-animevent.html">How to animate an event</a></li>
-                    <li class="new"><a href="overworld-howto-shop.html">How to create a shop</a></li>
+                    <li><a href="overworld-howto-shop.html">How to create a shop</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                     <li class="li-indent"><span class="CYF"></span> Overworld Objects:</li>
                         <li class="li-indent"><a href="overworld-object-general.html">The General Object</a></li>
@@ -81,7 +82,7 @@ it's w3c valid, at least
                         <li class="li-indent"><a href="overworld-object-player.html">The Player Object</a></li>
                         <li class="li-indent"><a href="overworld-object-screen.html">The Screen Object</a></li>
                         <li class="li-indent"><a href="overworld-object-inventory.html">The Inventory Object</a></li>
-                        <li class="li-indent new"><a href="overworld-object-map.html">The Map Object</a></li>
+                        <li class="li-indent"><a href="overworld-object-map.html">The Map Object</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                 <li class="li-header">Resources</li>
                     <li><a href="../media/dialogoptions.png">Dialog bubble names</a></li>
@@ -152,13 +153,19 @@ it's w3c valid, at least
                 <br><span class="function"><span class="string"></span> Text.progressmode</span>
                 This value is used to set the progression mode of the text to one of the following values.
                 <ul>
-                    <li><span class="term">"auto"</span>: Makes the text start a new line after a  given number of frames
+                    <li><span class="term">"auto"</span>: Makes the text start a new line after a given number of frames
                     set in <span class="term">Text.SetAutoWaitTimeBetweenTexts()</span>.</li>
                     <li><span class="term">"manual"</span>: Makes the text require the player to press the Confirm button at
                     the end of each line.</li>
                     <li><span class="term">"none"</span>: With this option, you will need to manually display the next line
                     in-code using <span class="term">Text.NextLine()</span>.</li>
                 </ul>
+            </p>
+            <p>
+                <br><span class="new function"><span class="boolean"></span> Text.deleteWhenFinished</span>
+                This value is used to check whether the text object should be removed or not after the text is finished.
+                Its default value is <span class="term">true</span>, meaning the text object will be automatically removed after the end of the text.
+                You can set it to <span class="term">false</span> to automatically hide the text object once its text is complete, which allows you to reuse it later.
             </p>
             <p>
                 <br><span class="function"><span class="number"></span> Text.x</span>
@@ -203,12 +210,24 @@ it's w3c valid, at least
                 The 4th value is the alpha (transparency) value of the text.
             </p>
             <p>
+                <br><span class="new function">Text.ResetColor(<span class="boolean"></span> resetAlpha = false)</span>
+                Resets any previous set of the variable <span class="term">Text.color</span> or <span class="term">Text.color32</span>,
+                resetting the text's default color to the font's default color.<br>
+                This function will not reset the color's <span class="term">alpha</span> if it was set in any way unless
+                <span class="term">resetAlpha</span> is set to true.
+            </p>
+            <p>
                 <br><span class="function"><span class="number"></span> Text.alpha</span>
                 Get or set the text's transparency, as a value between 0 and 1.
             </p>
             <p>
                 <br><span class="function"><span class="number"></span> Text.alpha32</span>
                 Get or set the text's transparency, as an integer between 0 and 255.
+            </p>
+            <p>
+                <br><span class="new function">Text.ResetAlpha()</span>
+                Resets the text object's <span class="term">alpha</span> value, whether it was set through <span class="term">Text.alpha</span>,
+                <span class="term">Text.color</span> or <span class="term">Text.color32</span>, resetting the text's default alpha to the font's default alpha.
             </p>
             <p>
                 <br><span class="function"><span class="number"></span> Text.currentReferenceCharacter</span>
@@ -224,7 +243,7 @@ it's w3c valid, at least
             <p>
                 <br><span class="new function"><span class="luatable"><span class="userdata">sprite</span></span> Text.GetLetters()</span>
                 Returns a table containing sprite objects representing every letter to be displayed in the text object's current line of text. Note that even if a text object has not finished typing yet, all characters it will type are still accessible this way.
-                <h4>Letter sprite objects can not have their layer changed, can not run <span class="term">sprite.Mask</span>, and can only be parented to other letter sprites.</h4>
+                <h4>Letter sprite objects can not have their layer changed, can not run <span class="term">sprite.Mask</span>, and can only be parented to other letter sprites. They cannot be deleted or dusted (using sprite.Dust()) as well.</h4>
                 <br>NOTE: Accessing this table generates the table anew every time. To save on resources, store this table to a local variable before doing any operations on it. Even code such as <span class="term">for i = 1, #text.GetLetters() do</span> is a bad idea.
                 <br><br>
                 It is recommended to use this property in coordination with the <span class="ref">Game Event</span> <span class="term">OnTextAdvance</span>. You may also have some difficulty if you use this on the same frame as creating the text - read the note under <span class="term">CreateText</span> for more information.
@@ -280,7 +299,9 @@ end
             </p>
             <p>
                 <br><span class="function">Text.NextLine()</span>
-                Shows the next line (dialogue) of the text instantly, regardless of if the current one is finished or what progress mode the object has.
+                Shows the next line (dialogue) of the text instantly, regardless of if the current one is finished or what progress mode the object has.<br>
+                <span class="new"></span>If you run this function while this is this text object's last line, it will delete the text object if its
+                <span class="term">Text.deleteWhenFinished</span> variable is set to true, othrwise it will deactive it until further use.
             </p>
             <p>
                 <br><span class="function">Text.SetWaitTime(<span class="number"></span> time)</span>

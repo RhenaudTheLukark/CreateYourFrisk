@@ -16,6 +16,7 @@ public class LuaProjectile : Projectile {
         if (newSprite == null)
             throw new CYFException("You can't set a projectile's sprite to nil!");
         SpriteUtil.SwapSpriteFromFile(this, newSprite);
+        if (!UnitaleUtil.IsOverworld) name = newSprite;
     }
 
     //public override void OnUpdate() {
@@ -25,8 +26,13 @@ public class LuaProjectile : Projectile {
     //}
 
     public override void OnProjectileHit() {
-        if (owner.Globals["OnHit"] != null && owner.Globals.Get("OnHit") != null)
-            try { owner.Call(owner.Globals["OnHit"], this.ctrl); }
+        if (ctrl.OnHit.Type != DataType.Nil)
+            try { owner.Call(ctrl.OnHit, ctrl); }
+            catch (ScriptRuntimeException ex) {
+                UnitaleUtil.DisplayLuaError((owner.Globals["wavename"] != null) ? (string) owner.Globals["wavename"] : "[wave script filename here]\n(should be a filename, sorry! missing feature)", UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message, ex.DoNotDecorateMessage);
+            }
+        else if (owner.Globals["OnHit"] != null && owner.Globals.Get("OnHit") != null)
+            try { owner.Call(owner.Globals["OnHit"], ctrl); }
             catch (ScriptRuntimeException ex) {
                 UnitaleUtil.DisplayLuaError((owner.Globals["wavename"] != null) ? (string)owner.Globals["wavename"] : "[wave script filename here]\n(should be a filename, sorry! missing feature)", UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message, ex.DoNotDecorateMessage);
             }

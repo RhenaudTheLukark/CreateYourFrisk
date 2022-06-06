@@ -1,89 +1,75 @@
 -- A basic monster script skeleton you can copy and modify for your own creations.
-comments = {"Lukark is revengeful.","Lukark prepares his\nnext attack.","Lukark frowns at you.",
-			"What an irony that\nLukark will die soon","Lukark is brushing\nhis hair.","Lukark looks you\nwith intensity.",
-			"Lukark is mad\nbecause of all the dust\non your clothes."}
-commands = {"Pardon"}
-randomdialogue = {"[noskip][font:monster][func:SetAnim,angry]Come back\nhere !", "[noskip][font:monster][func:SetAnim,angry]You can't\nescape me !",
-				  "[noskip][font:monster][func:SetAnim,angry]I'll got you,\nwhatever you'll\ndo !","[noskip][font:monster][func:SetAnim,angry]Take this !"}
+comments = { "Lukark is vengeful.", "Lukark prepares his next move.", "Lukark frowns at you.",
+             "Lukark brushes his hair as dust gets into it.", "Lukark gazes at you with intensity.",
+             "The dust staining your clothes only fuels Lukark's rage." }
+commands = { "Pardon" }
+randomdialogue = { "[effect:none][func:SetFace,angry]Come back here!",
+                   "[effect:none][func:SetFace,angry]You can't escape me now!",
+                   "[effect:none][func:SetFace,angry]I'll get you no matter what.",
+                   "[effect:none][func:SetFace,angry]Take this!" }
 
-sprite = "empty" --Always PNG. Extension is added automatically.
+sprite = "Lukark/full" --Always PNG. Extension is added automatically.
 name = "Lukark"
 hp = 1000
 atk = 5
 def = 1
-check = "The Overworld Creator.[w:10]\nJust destroy him."
+gold = math.random(35, 105)
+xp = math.random(125, 375)
+check = "The Overworld Creator.[w:15]\rDestroy him if you dare."
 dialogbubble = "rightwideminus" -- See documentation for what bubbles you have available.
 cancheck = true
 canspare = false
-priercompteur = 0
+pardonCount = 0
 attackprogression = 0
 anim = "normal"
 SetActive(false)
+effect = "none"
 
 -- Happens after the slash animation but before 
 function HandleAttack(attackstatus)
-    if attackstatus == -1 then
-        -- player pressed fight but didn't press Z afterwards
-    else
-        -- player did actually attack
-		SetGlobal("Lukark","hurt")
-		SetGlobal("hitAnimLukark", true)
+    if attackstatus > 0 then
+        SetFace("hurt")
     end
 end
  
 -- This handles the commands; all-caps versions of the commands list you have above.
 function HandleCustomCommand(command)
     if command == "PARDON" then
-		if priercompteur == 0 then
-			BattleDialog({"You tells Lukark that\nyou'll stop killing everyone."})
-			currentdialogue = {"[noskip][font:monster][func:SetAnim,angry]You REALLY\nthink that\nI'll trust\nyou ?"}
-		elseif priercompteur == 1 then
-			BattleDialog({"You continue to tell\nLukark that you'll\nstop this."})
-			currentdialogue = {"[noskip][font:monster][waitall:5]...[waitall:0][wait:10][func:SetAnim,smiling]I still\ndon't believe\nyou."}
-		elseif priercompteur == 2 then
-			BattleDialog({"Once again,[w:10] you tells\nLukark that you'll stop\nthis slaughter."})
-			currentdialogue = {"[noskip][font:monster][waitall:5]......[waitall:0][func:SetAnim,happy]No,\n[w:10]please stop."}
-		else
-			BattleDialog({"You ask Lukark's forgiveness\nonce more[waitall:5]...",
-						  "But he ignores you."})
-		end
-		priercompteur = priercompteur + 1
+        if pardonCount == 0 then
+            BattleDialog({ "You tell Lukark you'll stop your killing frenzy.", "It doesn't seem to calm him down one bit." })
+            currentdialogue = { "[effect:none][func:SetFace,angry]Hah! As if someone like you could feel remorse!", "[next]" }
+        elseif pardonCount == 1 then
+            BattleDialog({ "Your voice crackles as you mutter an apology to Lukark." })
+            currentdialogue = {"[effect:none]...[w:20][noskip][func:SetFace,smiling][noskip:off]I still don't believe you, you killer.", "[next]" }
+        elseif pardonCount == 2 then
+            BattleDialog({ "A tear roll down your cheek as you bow in front of Lukark, pleading him to stop this nonsense." })
+            currentdialogue = { "[effect:none]......[noskip][w:20][func:SetFace,happy][noskip:off]Please stop. We both know this has gone too far by now.", "[next]" }
+        else
+            BattleDialog({ "You ask for Lukark's forgiveness once more...", "But he ignores you." })
+        end
+        pardonCount = pardonCount + 1
     end
 end
 
 function OnDeath()
-	hp = 1
-	Audio.Pause()
-	currentdialogue = {"[noskip][font:monster]" .. "No,[w:20] I knew it.[w:40][next]",
-					   "[noskip][font:monster]" .. "I should have\nbeen more\ncareful.[w:10].[w:10].[w:40][next]",
-					   "[noskip][font:monster][func:SetAnim,happy]" .. "[waitall:5]Wh-What a j-je[func:FadeKill][func:Kill][next]"}
+    hp = 1
+    Audio.Pause()
+    currentdialogue = { "[noskip][effect:none]Gah, [w:20]I knew it...[w:20][next]",
+                        "[noskip][effect:none]I should have been more careful...[w:20][next]",
+                        "[noskip][effect:none][func:SetFace,happy]What a joke...[w:20][func:FadeKill][func:Kill][next]" }
 end
 
---Permet de pouvoir lancer l'anim de fade
-function FadeKill()
-	SetGlobal("LukarkDead", true)
-end
+-- Starts the death fade anim
+function FadeKill() Encounter.Call("LukarkHideAnimation", true) end
 
---Permet de changer l'anim
-function SetAnim(nomAnim)
-	SetGlobal("Lukark", nomAnim)
-end
+-- Changes Lukark's animation
+function SetFace(anim) Encounter.Call("SetLukarkFace", anim) end
 
---Permet de stopper la musique
-function Pause()
-	Audio.Pause()
-end
+function Pause()   Audio.Pause()   end
+function Unpause() Audio.Unpause() end
 
---Permet de relancer la musique
-function Unpause()
-	Audio.Unpause()
-end
+-- Plays a given sound
+function PlaySE(filename) Audio.PlaySound(filename) end
 
---Permet de jouer des sons
-function PlaySE(filename)
-	Audio.PlaySound(filename)
-end
-
-function Activate()
-	SetActive(true)
-end
+-- Enables this enemy
+function Activate() SetActive(true) end

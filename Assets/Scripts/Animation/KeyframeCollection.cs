@@ -7,7 +7,7 @@ public class KeyframeCollection : MonoBehaviour {
     internal LuaSpriteController spr;
     internal LoopMode loop = LoopMode.LOOP;
     public float totalTime;
-    public Keyframe EMPTY_KEYFRAME = new Keyframe(SpriteRegistry.EMPTY_SPRITE);
+    public static Keyframe EMPTY_KEYFRAME = new Keyframe(SpriteRegistry.EMPTY_SPRITE);
 
     public bool paused = false;
 

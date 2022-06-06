@@ -85,6 +85,7 @@ public static class UnitaleUtil {
         if (firstErrorShown)
             return;
         firstErrorShown = true;
+        ScreenResolution.ResetAfterBattle();
         ErrorDisplay.Message = (!DoNotDecorateMessage ? "error in script " + source + "\n\n" : "") + decoratedMessage;
         if (Application.isEditor) SceneManager.LoadSceneAsync("Error"); // prevents editor from crashing
         else                      SceneManager.LoadScene("Error");
@@ -319,6 +320,17 @@ public static class UnitaleUtil {
         return (string[])ListToArray(tempArray);
     }
 
+    public static void Dust(GameObject go, LuaSpriteController spr) {
+        if (go.GetComponent<ParticleDuplicator>() == null)
+            go.AddComponent<ParticleDuplicator>();
+
+        // Move it to the nearest remanent object
+        while (go.transform.parent.GetComponent<CYFSprite>() && go.transform.parent.GetComponent<CYFSprite>().ctrl.limbo)
+            go.transform.SetParent(go.transform.parent.parent);
+
+        go.GetComponent<ParticleDuplicator>().Activate(spr);
+    }
+
     /// <summary>
     /// Check DynValues parameter's value types. DOESN'T WORK WITH MULTIDIMENSIONNAL ARRAYS!
     /// (For now it doesn't work with arrays at all :c)
@@ -362,9 +374,9 @@ public static class UnitaleUtil {
                 } else if ((Mathf.Floor(number) != 0 && zeromode) || (Mathf.Floor(number) != 9 && ninemode))
                     something = true;
             } else {
-                if (Mathf.Floor(number) == 0 )      { zerocount++;   ninecount = 0; }
-                else if (Mathf.Floor(number) == 9 ) { ninecount++;   zerocount = 0; }
-                else                                { ninecount = 0; zerocount = 0; }
+                if (Mathf.Floor(number) == 0)      { zerocount++;   ninecount = 0; }
+                else if (Mathf.Floor(number) == 9) { ninecount++;   zerocount = 0; }
+                else                               { ninecount = 0; zerocount = 0; }
             }
             dec++;
             number %= 1;
@@ -377,14 +389,10 @@ public static class UnitaleUtil {
     }
 
     public static bool TestContainsListVector2(List<Vector2> list, int testValue) {
-        foreach (Vector2 v in list)
-            if (v.x == testValue)
-                return true;
-        return false;
+        return list.Any(v => v.x == testValue);
     }
 
     public static void PlaySound(string basis, string sound, float volume = 0.65f) {
-        sound = FileLoader.getRelativePathWithoutExtension(sound).Replace('\\', '/');
         for (int i = 1; i > 0; i++) {
             object audio = NewMusicManager.audiolist[basis + i];
             if (audio != null) {
@@ -403,7 +411,7 @@ public static class UnitaleUtil {
         }
     }
 
-    public static void PlaySound(string basis, AudioClip sound, float volume = 0.65f) { PlaySound(basis, sound.name, volume); }
+    public static void PlayVoice(string basis, string voice, float volume = 0.65f) { PlaySound(basis, "Voices/" + voice, volume); }
 
     /// <summary>
     /// Checks if the Player and a given bullet collide.
@@ -446,8 +454,8 @@ public static class UnitaleUtil {
                           fullValX = bulletWidth  / 2f + Mathf.Cos(angle) * DFromCenter / Mathf.Abs(scale.x),
                           fullValY = bulletHeight / 2f + Mathf.Sin(angle) * DFromCenter / Mathf.Abs(scale.y);
                     // Get a rounded value for table checks
-                    roundedValX = Mathf.RoundToInt(fullValX);
-                    roundedValY = Mathf.RoundToInt(fullValY);
+                    roundedValX = Mathf.FloorToInt(fullValX);
+                    roundedValY = Mathf.FloorToInt(fullValY);
 
                     // Compute the starting point for (0, 0)
                     if (currentWidth == 0 && currentHeight == 0) start = new Vector2(fullValX, fullValY);
@@ -457,12 +465,12 @@ public static class UnitaleUtil {
                     else                                         yDiff = new Vector2(fullValX - start.x, fullValY - start.y);
                 // Use the distance and starting point we computed above to compute where the current pixel is
                 } else {
-                    roundedValX = Mathf.RoundToInt(start.x + xDiff.x * currentWidth + yDiff.x * currentHeight);
-                    roundedValY = Mathf.RoundToInt(start.y + xDiff.y * currentWidth + yDiff.y * currentHeight);
+                    roundedValX = Mathf.FloorToInt(start.x + xDiff.x * currentWidth + yDiff.x * currentHeight);
+                    roundedValY = Mathf.FloorToInt(start.y + xDiff.y * currentWidth + yDiff.y * currentHeight);
                 }
 
                 // Don't check the computed bullet's pixel if it doesn't exist, duh
-                int pixelIndex = Mathf.RoundToInt(roundedValY * bulletWidth + roundedValX);
+                int pixelIndex = Mathf.FloorToInt(roundedValY * bulletWidth + roundedValX);
                 if (pixelIndex < 0 || pixelIndex >= bulletMatrix.Length)
                     continue;
 
@@ -547,27 +555,36 @@ public static class UnitaleUtil {
         return (from go in children where (getInactive || go.gameObject.activeInHierarchy) && (go.name == name || isInclusive && go.name.Contains(name)) select go.transform).FirstOrDefault();
     }
 
-    public static Transform[] GetFirstChildren(Transform parent, bool getInactive = false) {
-        Transform[] firstChildren;
-        int index = 0;
-        if (parent != null) {
-            Transform[] children = parent.GetComponentsInChildren<Transform>(getInactive);
-            firstChildren = new Transform[parent.childCount];
-            foreach (Transform child in children)
-                if (child.parent == parent) {
-                    firstChildren[index] = child;
-                    index++;
-                }
-        } else {
-            List<Transform> tfs = Resources.FindObjectsOfTypeAll<Transform>().Where(o => o.hideFlags == HideFlags.None).ToList().Where(tf => tf.parent == null).ToList();
-            firstChildren = new Transform[tfs.Count];
-            foreach (Transform root in tfs)
-                if (getInactive || root.gameObject.activeInHierarchy) {
-                    firstChildren[index] = root;
-                    index++;
-                }
-        }
+    public static List<Transform> GetFirstChildren(Transform parent, bool getInactive = false) {
+        List<Transform> firstChildren = new List<Transform>();
+        firstChildren.AddRange(parent != null ? parent.GetComponentsInChildren<Transform>(getInactive).Where(child => child.parent == parent)
+                                              : Resources.FindObjectsOfTypeAll<Transform>().Where(tf => tf.hideFlags == HideFlags.None && tf.parent == null && (getInactive || tf.gameObject.activeInHierarchy)));
         return firstChildren;
+    }
+
+    public static void RemoveChildren(GameObject go, bool immediate = false, bool firstPass = true) {
+        foreach (Transform t in GetFirstChildren(go.transform, true)) {
+            // Bullet to delete recursively
+            if (t.GetComponent<Projectile>())
+                t.GetComponent<Projectile>().ctrl.Remove();
+            // Sprite to delete recursively
+            else if (t.GetComponent<CYFSprite>())
+                if (immediate) LuaSpriteController.GetOrCreate(t.gameObject).spr.LateUpdate();
+                else           LuaSpriteController.GetOrCreate(t.gameObject).Remove();
+            // Text object to delete
+            else if (t.GetComponentInChildren<LuaTextManager>())
+                t.GetComponentInChildren<LuaTextManager>().Remove();
+            // Dusting object: move it back to a valid parent
+            else if (t.GetComponentInChildren<ParticleSystem>())
+                while (t.parent.GetComponent<CYFSprite>() && (t.parent.GetComponent<CYFSprite>().ctrl.limbo || t.transform.parent.gameObject == go))
+                    t.SetParent(t.parent.parent);
+            // Normally this shouldn't happen, just a failsafe
+            else
+                throw new CYFException("For some reason, it seems you're trying to remove something which is neither a sprite, bullet or text object.");
+        }
+
+        if (firstPass && !immediate)
+            RemoveChildren(go, false, false);
     }
 
     public static Dictionary<string, string> MapCorrespondanceList = new Dictionary<string, string>();
@@ -606,9 +623,7 @@ public static class UnitaleUtil {
         Object.Destroy(GameObject.Find("Canvas Two"));
         if (GameOverBehavior.gameOverContainerOw)
             Object.Destroy(GameOverBehavior.gameOverContainerOw);
-        StaticInits.MODFOLDER = "@Title";
-        StaticInits.Initialized = false;
-        StaticInits.InitAll();
+        StaticInits.InitAll("@Title");
         ResetOW(true);
         PlayerCharacter.instance.Reset();
         Inventory.inventory.Clear();
@@ -616,61 +631,29 @@ public static class UnitaleUtil {
         ScriptWrapper.instances.Clear();
         GlobalControls.isInFight = false;
         GlobalControls.isInShop = false;
-        LuaScriptBinder.scriptlist.Clear();
         LuaScriptBinder.ClearBattleVar();
         LuaScriptBinder.Clear();
         Object.Destroy(GameObject.Find("Main Camera OW"));
     }
 
-    public static string TimeFormatter(float seconds) {
-        float minutes = Mathf.Floor(Mathf.Round(seconds) / 60f);
-        //float hours = Mathf.Floor((seconds / 60f) / 60f);
-        return minutes + ":" + string.Format("{0,2}", Mathf.Round(seconds) % 60).Replace(" ", "0");
+    public static string TimeFormatter(float time) {
+        float seconds = Mathf.Floor(Mathf.Floor(time));
+        float minutes = Mathf.Floor(seconds / 60);
+        //float hours = Mathf.Floor(minutes / 60);
+        return minutes + ":" + string.Format("{0,2:00}", seconds % 60);
     }
 
     public static bool IsSpecialAnnouncement(string str) {
         return str == "4eab1af3ab6a932c23b3cdb8ef618b1af9c02088";
     }
 
-    /*public static bool CheckAvailableDuster(out GameObject go) {
-        go = null;
-        ParticleSystem[] pss = GameObject.Find("psContainer").GetComponentsInChildren<ParticleSystem>(true);
-        int a = pss.Length;
-        for (int i = 0; i < a; i++) {
-            if (!pss[i].gameObject.activeInHierarchy && pss[i].gameObject.name.Contains("MonsterDuster(Clone)")) {
-                go = pss[i].gameObject;
-                go.SetActive(true);
-                go.transform.SetAsFirstSibling();
-                return true;
-            }
-        }
-        return false;
-    }*/
-
-    // ******************************************************************************
-    // *** Warning: Complex System.Reflexion stuff below! Enter at your own risk! ***
-    // ******************************************************************************
-
-    /*/// <summary>
-    /// Complex af
-    /// Used like this: MethodInfo method = MethodOf(() => controller.Method3(default(int)));
-    /// </summary>
-    /// <param name="expression"></param>
-    /// <returns></returns>
-    public static MethodInfo MethodOf(Expression<Action> expression) {
-        return ((MethodCallExpression)expression.Body).Method;
+    public static bool TryCall(ScriptWrapper script, string func, DynValue param) { return TryCall(script, func, new[] { param }); }
+    public static bool TryCall(ScriptWrapper script, string func, DynValue[] param = null) {
+        try {
+            DynValue sval = script.GetVar(func);
+            if (sval == null || sval.Type == DataType.Nil) return false;
+            script.Call(func, param);
+        } catch (InterpreterException ex) { DisplayLuaError(script.scriptname, FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message); }
+        return true;
     }
-
-    /// <summary>
-    /// Checks if the expression given has the CYFEventFunction attribute I guess
-    /// </summary>
-    /// <param name="expression"></param>
-    /// <returns></returns>
-    public static bool MethodHasCYFEventFunctionAttribute(MethodInfo mf) {
-        const bool includeInherited = false;
-        return mf.GetCustomAttributes(typeof(CYFEventFunction), includeInherited).Any();
-    }
-    private static bool MethodHasCYFEventFunctionAttribute(Expression<Action> expression) {
-        return MethodHasCYFEventFunctionAttribute(MethodOf(expression));
-    }*/
 }

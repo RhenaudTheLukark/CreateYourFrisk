@@ -12,7 +12,7 @@ public class Title : MonoBehaviour {
     private readonly string[] secondPhaseEventNames = { "No", "Yes" };
 
     public TextManager tmName, TextManagerName, TextManagerLevel, TextManagerTime, TextManagerMap;
-    public GameObject Logo, LogoCrate;
+    public GameObject Logo, LogoCrate, RetromodeCanvas;
     public SpriteRenderer PressEnterOrZ;
 
     // Use this for initialization
@@ -61,6 +61,7 @@ public class Title : MonoBehaviour {
         if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED && phase == 0) {
             phase++;
             Camera.main.GetComponent<AudioSource>().Stop();
+            Destroy(RetromodeCanvas);
             StopCoroutine(TitlePhase1());
         } else switch (phase) {
             case 1: {
@@ -174,9 +175,7 @@ public class Title : MonoBehaviour {
         yield return 0;
         //yield return Application.isLoadingLevel;
         //GameObject.Find("Player").transform.position = new Vector3(;
-        StaticInits.MODFOLDER = LuaScriptBinder.Get(null, "ModFolder").String;
-        StaticInits.Initialized = false;
-        StaticInits.InitAll(true);
+        StaticInits.InitAll(LuaScriptBinder.Get(null, "ModFolder").String, true);
         if (GameObject.Find("Main Camera"))
             Destroy(GameObject.Find("Main Camera"));
         Destroy(gameObject);

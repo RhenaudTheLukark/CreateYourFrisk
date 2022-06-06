@@ -41,19 +41,16 @@ public class ShopScript : MonoBehaviour {
         script = new ScriptWrapper {
             scriptname = scriptName
         };
-        string scriptText = ScriptRegistry.Get(ScriptRegistry.SHOP_PREFIX + scriptName);
-
-        if (scriptText == null)
-            throw new CYFException("You must give a valid script name to the function General.EnterShop()");
+        string scriptText = FileLoader.GetScript("Shops/" + scriptName, "Loading a shop", "event");
 
         try {
             script.DoString(scriptText);
-            script.SetVar("background", UserData.Create(new LuaSpriteController(GameObject.Find("Background").GetComponent<Image>())));
+            script.SetVar("background", UserData.Create(LuaSpriteController.GetOrCreate(GameObject.Find("Background"))));
             script.script.Globals["Interrupt"] = ((Action<DynValue, string>) Interrupt);
             script.script.Globals["CreateSprite"] = (Func<string, string, int, DynValue>) SpriteUtil.MakeIngameSprite;
             script.script.Globals["CreateLayer"] = (Func<string, string, bool, bool>) SpriteUtil.CreateLayer;
             script.script.Globals["CreateText"] = (Func<Script, DynValue, DynValue, int, string, int, LuaTextManager>) LuaScriptBinder.CreateText;
-            TryCall("Start");
+            UnitaleUtil.TryCall(script, "Start");
 
             tmMain.SetCaller(script);
             tmChoice.SetCaller(script);
@@ -92,7 +89,7 @@ public class ShopScript : MonoBehaviour {
 
     private void Interrupt(DynValue text, string nextState = "MENU") {
         if (currentState == State.INTERRUPT) return;
-        TryCall("OnInterrupt", DynValue.NewString(nextState));
+        UnitaleUtil.TryCall(script, "OnInterrupt", DynValue.NewString(nextState));
         try { interruptState = (State)Enum.Parse(typeof(State), nextState, true); }
         catch { throw new CYFException("\"" + nextState + "\" is not a valid shop state."); }
         ChangeState(State.INTERRUPT, -1, text);
@@ -115,7 +112,7 @@ public class ShopScript : MonoBehaviour {
         string text;
         switch (state) {
             case State.MENU:
-                TryCall("EnterMenu");
+                UnitaleUtil.TryCall(script, "EnterMenu");
                 if (!interrupted) {
                     sellItem = -1;
                     if (select != -1)
@@ -144,7 +141,7 @@ public class ShopScript : MonoBehaviour {
                                                                "\n\n\t   [color:ffff00](" + PlayerCharacter.instance.Gold + "G)", false, true) });
                 break;
             case State.BUY:
-                TryCall("EnterBuy");
+                UnitaleUtil.TryCall(script, "EnterBuy");
                 if (!interrupted) {
                     if (select != -1)
                         selection = select;
@@ -157,7 +154,7 @@ public class ShopScript : MonoBehaviour {
                 }
                 break;
             case State.SELL:
-                TryCall("EnterSell");
+                UnitaleUtil.TryCall(script, "EnterSell");
                 if (!interrupted) {
                     if (select != -1)
                         selection = select;
@@ -167,14 +164,14 @@ public class ShopScript : MonoBehaviour {
                     numberOfChoices = Inventory.inventory.Count + 1;
                     tmBigTalk.SetTextQueue(new[] { new TextMessage("[noskipatall][novoice][font:uidialoglilspace][linespacing:11]" + text, false, true) });
                     if (Inventory.inventory.Count == 0) {
-                        TryCall("FailSell", DynValue.NewString("empty"));
+                        UnitaleUtil.TryCall(script, "FailSell", DynValue.NewString("empty"));
                         if (!interrupted)
                             HandleCancel();
                     }
                 }
                 break;
             case State.TALK:
-                TryCall("EnterTalk");
+                UnitaleUtil.TryCall(script, "EnterTalk");
                 if (!interrupted) {
                     if (select != -1)
                         selection = select;
@@ -185,7 +182,7 @@ public class ShopScript : MonoBehaviour {
                 }
                 break;
             case State.TALKINPROGRESS:
-                TryCall("SuccessTalk", DynValue.NewString(mainName[selection]));
+                UnitaleUtil.TryCall(script, "SuccessTalk", DynValue.NewString(mainName[selection]));
                 if (!interrupted) {
                     TextMessage[] texts = BuildTalkResultStrings();
                     tmBigTalk.SetTextQueue(texts);
@@ -193,7 +190,7 @@ public class ShopScript : MonoBehaviour {
                 }
                 break;
             case State.EXIT:
-                TryCall("EnterExit");
+                UnitaleUtil.TryCall(script, "EnterExit");
                 if (!interrupted) {
                     TextMessage[] texts2 = BuildTextFromTable(script.GetVar("exittalk"), "[linespacing:11]");
                     tmBigTalk.SetTextQueue(texts2);
@@ -362,7 +359,7 @@ public class ShopScript : MonoBehaviour {
                 else {
                     ChangeState(State.BUYCONFIRM, 0);
                     if (mainPrice[currentItemIndex] == 0) {
-                        TryCall("FailBuy", DynValue.NewString("soldout"));
+                        UnitaleUtil.TryCall(script, "FailBuy", DynValue.NewString("soldout"));
                         HandleCancel();
                     }
                 }
@@ -373,7 +370,7 @@ public class ShopScript : MonoBehaviour {
                     ChangeState(State.SELLCONFIRM, 0);
                     if (Inventory.NametoPrice[Inventory.inventory[currentItemIndex].Name] == 0) {
                         UnitaleUtil.PlaySound("SeparateSound", "ShopFail");
-                        TryCall("FailSell", DynValue.NewString("cantsell"));
+                        UnitaleUtil.TryCall(script, "FailSell", DynValue.NewString("cantsell"));
                         HandleCancel();
                     }
                 }
@@ -383,13 +380,13 @@ public class ShopScript : MonoBehaviour {
                 else                                  ChangeState(State.TALKINPROGRESS);
                 break;
             case State.BUYCONFIRM:
-                if (selection == numberOfChoices - 1) TryCall("ReturnBuy");
+                if (selection == numberOfChoices - 1) UnitaleUtil.TryCall(script, "ReturnBuy");
                 else {
-                    if (PlayerCharacter.instance.Gold < mainPrice[currentItemIndex]) TryCall("FailBuy", DynValue.NewString("gold"));
-                    else if (Inventory.inventory.Count == Inventory.inventorySize)   TryCall("FailBuy", DynValue.NewString("full"));
-                    else if (mainPrice[currentItemIndex] == 0)                       TryCall("FailBuy", DynValue.NewString("soldout"));
+                    if (PlayerCharacter.instance.Gold < mainPrice[currentItemIndex]) UnitaleUtil.TryCall(script, "FailBuy", DynValue.NewString("gold"));
+                    else if (Inventory.inventory.Count == Inventory.inventorySize)   UnitaleUtil.TryCall(script, "FailBuy", DynValue.NewString("full"));
+                    else if (mainPrice[currentItemIndex] == 0)                       UnitaleUtil.TryCall(script, "FailBuy", DynValue.NewString("soldout"));
                     else {
-                        TryCall("SuccessBuy", DynValue.NewString(mainName[currentItemIndex]));
+                        UnitaleUtil.TryCall(script, "SuccessBuy", DynValue.NewString(mainName[currentItemIndex]));
                         UnitaleUtil.PlaySound("SeparateSound", "ShopSuccess");
                         PlayerCharacter.instance.SetGold(PlayerCharacter.instance.Gold - mainPrice[currentItemIndex]);
                         Inventory.AddItem(mainName[currentItemIndex]);
@@ -403,9 +400,9 @@ public class ShopScript : MonoBehaviour {
                 }
                 break;
             case State.SELLCONFIRM:
-                if (selection == numberOfChoices - 1) TryCall("ReturnSell");
+                if (selection == numberOfChoices - 1) UnitaleUtil.TryCall(script, "ReturnSell");
                 else {
-                    TryCall("SuccessSell", DynValue.NewString(mainName[currentItemIndex]));
+                    UnitaleUtil.TryCall(script, "SuccessSell", DynValue.NewString(mainName[currentItemIndex]));
                     UnitaleUtil.PlaySound("SeparateSound", "ShopSuccess");
                     PlayerCharacter.instance.SetGold(PlayerCharacter.instance.Gold + Inventory.NametoPrice[Inventory.inventory[currentItemIndex].Name] / 5);
                     Inventory.RemoveItem(currentItemIndex);
@@ -506,6 +503,7 @@ public class ShopScript : MonoBehaviour {
                     tp.sceneName = script.GetVar("returnscene").String;
                     tp.position = new Vector2((float) script.GetVar("returnpos").Table.Get(1).Number, (float) script.GetVar("returnpos").Table.Get(2).Number);
                     tp.direction = (int) script.GetVar("returndir").Number;
+                    script.Remove();
                     DontDestroyOnLoad(tp);
                     StartCoroutine(tp.LaunchTP());
                     break;
@@ -518,22 +516,10 @@ public class ShopScript : MonoBehaviour {
         }
     }
 
-    public bool TryCall(string func, DynValue param) { return TryCall(func, new[] { param }); }
-    public bool TryCall(string func, DynValue[] param = null) {
-        try {
-            DynValue sval = script.GetVar(func);
-            if (sval == null || sval.Type == DataType.Nil) return false;
-            if (param != null) script.Call(func, param);
-            else script.Call(func);
-            return true;
-        } catch (InterpreterException ex) { UnitaleUtil.DisplayLuaError(scriptName, UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message); }
-        return true;
-    }
-
     // Update is called once per frame
     private void Update() {
         if (script.GetVar("Update") != null)
-            TryCall("Update");
+            UnitaleUtil.TryCall(script, "Update");
         if (waitForSelection) {
             SetPlayerOnSelection();
             waitForSelection = false;

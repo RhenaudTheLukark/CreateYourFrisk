@@ -6,6 +6,7 @@ public class UnderFont {
         Name = name;
         Letters = letters;
         Sound = null;
+        SoundName = "";
         try { LineSpacing = Letters[' '].rect.height * 1.5f; }
         catch { throw new CYFException("The font \"" + name + "\" doesn't have a space character, however the font needs one."); }
         CharSpacing = 3;
@@ -15,6 +16,7 @@ public class UnderFont {
     public string Name { get; private set; }
     public Dictionary<char, Sprite> Letters { get; private set; }
     public AudioClip Sound { get; set; }
+    public string SoundName { get; set; }
     public Color DefaultColor { get; set; }
     public float LineSpacing { get; set; }
     public float CharSpacing { get; set; }

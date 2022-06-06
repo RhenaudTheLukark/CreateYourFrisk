@@ -4,18 +4,15 @@ using System.IO;
 public class LuaFile {
     private string[] content;
 
-    public int lineCount { get { return content.Length; } }
+    public int lineCount { get { return content == null ? 0 : content.Length; } }
     public string openMode { get; private set; }
     public string filePath { get; private set; }
 
     public LuaFile(string path, string mode = "rw") {
-        if (path == null)        throw new CYFException("Cannot open a file with a nil path.");
-        if (path.Contains("..")) throw new CYFException("You cannot open a file outside of a mod folder. The use of \"..\" is forbidden.");
-
-        path = (FileLoader.ModDataPath + "/" + path).Replace('\\', '/');
-
-        if (mode != "r" && mode != "w" && mode != "rw" && mode != "wr") throw new CYFException("A file's open mode can only be \"r\" (read), \"w\" (write) or \"rw\" (read + write).");
-        if (mode.Contains("r") && !File.Exists(path))                   throw new CYFException("You can't open a file that doesn't exist in read-only mode.");
+        path = path.Replace('\\', '/').TrimStart('/'); // TODO: Remove this for 0.7
+        if (path == null)                                                                      throw new CYFException("Cannot open a file with a nil path.");
+        if (mode != "r" && mode != "w" && mode != "rw" && mode != "wr")                        throw new CYFException("A file's open mode can only be \"r\" (read), \"w\" (write) or \"rw\" (read + write).");
+        if (!FileLoader.SanitizePath(ref path, "", false, true) && mode == "r")                throw new CYFException("You can't open a file that doesn't exist (" + path + ") in read-only mode.");
         if (!Directory.Exists(path.Substring(0, path.Length - Path.GetFileName(path).Length))) throw new CYFException("Invalid path:\n\n\"" + path + "\"");
 
         filePath = path;
@@ -108,30 +105,30 @@ public class LuaFile {
         catch (UnauthorizedAccessException) { throw new CYFException("File.Delete: Unauthorized access to file:\n\"" + filePath + "\"\n\nIt may be read-only or hidden."); }
     }
 
-    public void Move(string relativePath) {
-        string newPath = (FileLoader.ModDataPath + "/" + relativePath).Replace('\\', '/');
+    public void Move(string newPath) {
+        string origNewPath = newPath;
+        FileLoader.SanitizePath(ref newPath, "", false, true, false);
 
         if (!File.Exists(filePath)) throw new CYFException("The file at the path \"" + filePath + "\" doesn't exist, so you can't move it.");
-        if (newPath.Contains("..")) throw new CYFException("You cannot move a file outside of a mod folder. The use of \"..\" is forbidden.");
-        if (File.Exists(newPath))   throw new CYFException("The file at the path \"" + newPath + "\" already exists.");
+        if (File.Exists(newPath))   throw new CYFException("The file at the path \"" + origNewPath + "\" already exists.");
 
         try { File.Move(filePath, newPath); }
-        catch (DirectoryNotFoundException) { throw new CYFException("File.Move: Could not find part or all of the path:\n\"" + newPath + "\"\n\nMake sure the path specified is valid, and its total length (" + newPath.Length + " characters) is not too long."); }
-        catch (PathTooLongException) { throw new CYFException("File.Move: The destination path is too long:\n\"" + newPath + "\""); }
+        catch (DirectoryNotFoundException) { throw new CYFException("File.Move: Could not find part or all of the path:\n\"" + origNewPath + "\"\n\nMake sure the path specified is valid, and its total length (" + origNewPath.Length + " characters, " + newPath.Length + " after sanitization) is not too long."); }
+        catch (PathTooLongException) { throw new CYFException("File.Move: The destination path is too long:\n\"" + origNewPath + "\" (\"" + newPath + "\""); }
 
         filePath = newPath;
     }
 
-    public void Copy(string relativePath, bool overwrite = false) {
-        string newPath = (FileLoader.ModDataPath + "/" + relativePath).Replace('\\', '/');
+    public void Copy(string newPath, bool overwrite = false) {
+        string origNewPath = newPath;
+        FileLoader.SanitizePath(ref newPath, "", false, true, false);
 
         if (!File.Exists(filePath)) throw new CYFException("The file at the path \"" + filePath + "\" doesn't exist, so you can't move it.");
-        if (newPath.Contains("..")) throw new CYFException("You cannot move a file outside of a mod folder. The use of \"..\" is forbidden.");
-        if (File.Exists(newPath) && !overwrite) throw new CYFException("The file at the path \"" + newPath + "\" already exists.");
+        if (File.Exists(newPath) && !overwrite) throw new CYFException("The file at the path \"" + origNewPath + "\" already exists.");
 
         try { File.Copy(filePath, newPath, overwrite); }
-        catch (DirectoryNotFoundException) { throw new CYFException("File.Copy: Could not find part or all of the path:\n\"" + newPath + "\"\n\nMake sure the path specified is valid, and its total length (" + newPath.Length + " characters) is not too long."); }
-        catch (PathTooLongException) { throw new CYFException("File.Copy: The destination path is too long:\n\"" + newPath + "\""); }
-        catch (UnauthorizedAccessException) { throw new CYFException("File.Copy: Unauthorized access to file:\n\"" + newPath + "\"\n\nIt may be read-only or hidden."); }
+        catch (DirectoryNotFoundException) { throw new CYFException("File.Copy: Could not find part or all of the path:\n\"" + origNewPath + "\"\n\nMake sure the path specified is valid, and its total length (" + origNewPath.Length + " characters, " + newPath.Length + " after sanitization) is not too long."); }
+        catch (PathTooLongException) { throw new CYFException("File.Copy: The destination path is too long:\n\"" + origNewPath + "\" (\"" + newPath + "\""); }
+        catch (UnauthorizedAccessException) { throw new CYFException("File.Copy: Unauthorized access to file:\n\"" + origNewPath + "\"\n\nIt may be read-only or hidden."); }
     }
 }

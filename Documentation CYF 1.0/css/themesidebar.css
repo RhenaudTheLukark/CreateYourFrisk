@@ -78,12 +78,12 @@ span.boolean::before {
 }
 span.userdata {
     /* display: contents !important; */
-    
+
     color: #2FEEDC;
     font-family: segoe ui;
     font-weight: bold;
     /* font-size: 12px; */
-    
+
     /*
     border: 1px solid #2d2d2d;
     background-color: #111111;
@@ -107,17 +107,18 @@ span.unitale::before{
     content: " <0.2.1a>";
 }
 
+
 span.new::before {
     content: "..";
     color: transparent;
-    
+
     font-size: 26px;
-    
+
     background-image: url("../img/new.png");
     background-repeat: no-repeat;
     background-position: center;
     background-size: 10px 22px;
-    
+
     image-rendering: optimizeSpeed;             /*                     */
     image-rendering: -moz-crisp-edges;          /* Firefox             */
     image-rendering: -o-crisp-edges;            /* Opera               */
@@ -145,6 +146,7 @@ span.new::before {
 .nav-sidebar li.li-indent.new.active::before {
     left: -25px;
 }
+
 
 h4::before {
     content: "* ";
@@ -206,7 +208,7 @@ h4 {
     width    : 100%;
     top      : 0px;
     z-index  : -1;
-    
+
     image-rendering: optimizeSpeed;             /*                     */
     image-rendering: -moz-crisp-edges;          /* Firefox             */
     image-rendering: -o-crisp-edges;            /* Opera               */

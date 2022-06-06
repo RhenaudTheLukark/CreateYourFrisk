@@ -34,10 +34,10 @@ it's w3c valid, at least
                     <li><a href="controls.html">Controls</a></li>
                     <li><a href="basic.html">Basic setup</a></li>
                     <li><a href="unity.html"><span class="CYF"></span> Unity Setup (Optional)</a></li>
-                    <li><a href="variables.html">Special Variables</a></li>
+                    <li class="new"><a href="variables.html">Special Variables</a></li>
                     <li><a href="terms.html">Terminology</a></li>
                 <li class="li-header">API</li>
-                    <li><a href="api-text.html">Text commands</a></li>
+                    <li class="new"><a href="api-text.html">Text commands</a></li>
                     <li class="new"><a href="api-events.html">Game events</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                     <li class="li-indent">Functions &amp; Objects:</li>
@@ -47,28 +47,29 @@ it's w3c valid, at least
                         <li class="li-indent"><a href="api-functions-audio.html">The Audio Object</a></li>
                         <li class="li-indent"><a href="api-functions-newaudio.html"><span class="CYF"></span> The NewAudio Object</a></li>
                         <li class="li-indent"><a href="api-functions-input.html">The Input Object</a></li>
-                        <li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
-                        <li class="li-indent"><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
+                        <li class="li-indent new"><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-time.html">The Time Object</a></li>
+                        <li class="li-indent new"><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
                         <li class="li-indent new"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
-                        <li class="li-indent new"><a href="api-functions-discord.html"><span class="CYF"></span> The Discord Object</a></li>
-                        <li class="li-indent"><a href="api-functions-waves.html">The Arena Object</a></li>
+                        <li class="li-indent"><a href="api-functions-discord.html"><span class="CYF"></span> The Discord Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-waves.html">The Arena Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-ui.html"><span class="CYF"></span> The UI Object</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
-                    <li><a href="api-projectile.html">Projectile management</a></li>
+                    <li class="new"><a href="api-projectile.html">Projectile management</a></li>
                     <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
                     <li class="new"><a href="api-animation.html">Sprites &amp; Animation</a></li>
-                    <li class="new"><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
-                <li class="li-header"></span><span class="CYF"></span> <span class="new"></span>Shaders</li>
+                <li class="li-header"></span><span class="CYF"></span> Shaders</li>
                     <li><a href="shaders.html">Introduction</a></li>
                     <li><a href="shaders-object.html">The Shader Object</a></li>
                     <li><a href="shaders-coding.html">Coding a Shader</a></li>
                     <hr style="margin-top:10px;margin-bottom:10px;">
                 <li class="li-header"><span class="CYF"></span> Overworld</li>
-                    <li class="new"><a href="overworld.html">Basics</a></li>
+                    <li><a href="overworld.html">Basics</a></li>
                     <li><a href="overworld-howto-map.html">How to create a map</a></li>
                     <li><a href="overworld-howto-event.html">How to create an event</a></li>
                     <li><a href="overworld-howto-animevent.html">How to animate an event</a></li>
-                    <li class="new"><a href="overworld-howto-shop.html">How to create a shop</a></li>
+                    <li><a href="overworld-howto-shop.html">How to create a shop</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                     <li class="li-indent"><span class="CYF"></span> Overworld Objects:</li>
                         <li class="li-indent"><a href="overworld-object-general.html">The General Object</a></li>
@@ -76,7 +77,7 @@ it's w3c valid, at least
                         <li class="li-indent"><a href="overworld-object-player.html">The Player Object</a></li>
                         <li class="li-indent"><a href="overworld-object-screen.html">The Screen Object</a></li>
                         <li class="li-indent"><a href="overworld-object-inventory.html">The Inventory Object</a></li>
-                        <li class="li-indent new"><a href="overworld-object-map.html">The Map Object</a></li>
+                        <li class="li-indent"><a href="overworld-object-map.html">The Map Object</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                 <li class="li-header">Resources</li>
                     <li><a href="../media/dialogoptions.png">Dialog bubble names</a></li>
@@ -137,6 +138,8 @@ it's w3c valid, at least
                 </li><br>
                 <li><span class="CYF"></span> <span class="number"></span> <span class="term">Player.armordef</span> (readonly) - defense value of the player's current armor.
                 </li><br>
+                <li><span class="new"><span class="CYF"></span> <span class="number"></span> <span class="term">Player.speed</span> - Player's speed in pixels per second. Default is 120.
+                </li><br>
                 <li><span class="string"></span> <span class="term">Player.name</span> - get or set the player's current name. <br>
                     <span class="unitale"></span> 6 letters max. By default, it is a name randomly chosen from a small list of pre-set names.<br>
                     <span class="CYF"></span> 9 letters max. "Rhenao" by default.</li><br>
@@ -160,14 +163,14 @@ it's w3c valid, at least
                 Will always be false while not in a wave script.
                 <br>NOTE: This only will change with the default control scheme (see <span class="term">Player.SetControlOverride</span> below).
                 </li><br>
-                <li><span class="new"></span><span class="term">Player.Hurt(<span class="number"></span> damage, <span class="number"></span> invul_time = 1.7, <span class="boolean"></span> ignoreDef = false, <span class="boolean"></span> playSound = true)</span>
+                <li><span class="term">Player.Hurt(<span class="number"></span> damage, <span class="number"></span> invul_time = 1.7, <span class="boolean"></span> ignoreDef = false, <span class="boolean"></span> playSound = true)</span>
                 - deals damage to the player, and makes them invincible for <span class="term">invul_time</span> seconds.
                 <br>Can not hurt the player again if they are already hurting (flashing).
                 <br><br>
                 Set <span class="term">ignoreDef</span> to true, and if the encounter variable <span class="term">allowPlayerDef</span> is true, the damage dealt here will ignore the player's defense.
                 <br><br>
                 <span class="CYF"></span> Call <span class="term">Player.Hurt(0, 0)</span> to stop the player's invincibility frames without making a sound.
-                <br><span class="new"></span>Set <span class="term">playSound</span> to <span class="term">false</span>, and no sound will be played whatsoever.
+                <br>Set <span class="term">playSound</span> to <span class="term">false</span>, and no sound will be played whatsoever.
                 </li><br>
                 <li><span class="term">Player.Heal(<span class="number"></span> value)</span> - heals the player for this amount. This is exactly the same as
                     Player.Hurt(-value, 0). It also plays the healing sound.
@@ -235,16 +238,18 @@ it's w3c valid, at least
                     attack towards the enemy number <span class="term">enemyID</span>. If you want to, you can choose the attack's damage, too - but
                     otherwise, damage will be calculated normally.
                     <br><span style="color:#ff0000">If you want enemies to be able to die this way, you MUST check with <span class="term">Player.CheckDeath</span>!</span></li><br>
-                <li><span class="CYF"></span> <span class="term">Player.MultiTarget(<span class="luatable"><span class="number"></span></span>  targetIDs = all, <span class="luatable"><span class="number"></span></span> damage = normal_damage_values)</span> - The
+                <li><span class="CYF"></span> <span class="term">Player.MultiTarget(<span class="luatable"><span class="number"></span></span>  targetIDs = all, <span class="luatable"><span class="number"></span></span> OR <span class="number"></span> damage = normal_damage_values)</span> - The
                     next attack the player executes will attack the enemies contained in <span class="term">targetIDs</span> and deal <span class="term">
                     damage</span> damage. If you want to, you can choose the attack's damage, too - but otherwise, damage will be calculated normally.
-                    If you put nothing as a parameter, this will attack all enemies with the normal damage calculations.</li><br>
+                    If you put nothing as a parameter, this will attack all enemies with the normal damage calculations.
+                    <br>Each target needs to have one damage value if you use a <span class="term">table of numbers</span> for the <span class="term">damage</span> value, or all targets can share the same damage value if the <span class="term">damage</span> value is a simple <span class="term">number</span>.</li><br>
                 <li><span class="CYF"></span> <span class="term">Player.MultiTarget(<span class="number"></span> damage)</span> - The next attack the player executes will attack all
                 enemies and deals <span class="term">damage</span> damage.</li><br>
-                <li><span class="CYF"></span> <span class="term">Player.ForceMultiAttack(<span class="luatable"><span class="number"></span></span> targetIDs = all, <span class="luatable"><span class="number"></span></span> = normal_damage_values)</span>
+                <li><span class="CYF"></span> <span class="term">Player.ForceMultiAttack(<span class="luatable"><span class="number"></span></span> targetIDs = all, <span class="luatable"><span class="number"></span></span> OR <span class="number"></span> damage = normal_damage_values)</span>
                     - Forces an attack towards the enemies contained in <span class="term">targetIDs</span> and deals <span class="term">damage
                     </span> damage. If you want to, you can choose the attack's damage, too - but otherwise, damage will be calculated normally.
                     If you put nothing as a parameter, this will attack all enemies with the normal damage calculations.
+                    <br>Each target needs to have one damage value if you use a <span class="term">table of numbers</span> for the <span class="term">damage</span> value, or all targets can share the same damage value if the <span class="term">damage</span> value is a simple <span class="term">number</span>.
                     <br><span style="color:#ff0000">If you want enemies to be able to die this way, you MUST check with <span class="term">Player.CheckDeath</span>!</span></li><br>
                 <li><span class="CYF"></span> <span class="term">Player.ForceMultiAttack(<span class="number"></span> damage)</span> - Forces an attack that deals
                 <span class="term">damage</span> damage to all enemies.

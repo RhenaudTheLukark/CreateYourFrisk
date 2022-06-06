@@ -12,7 +12,6 @@ using UnityEngine.UI;
 /// </summary>
 public class GameOverBehavior : MonoBehaviour {
     private GameObject brokenHeartPrefab;
-    private GameObject heartShardPrefab;
     private GameObject utHeart;
     private Transform playerParent;
     public static GameObject battleCamera;
@@ -164,7 +163,6 @@ public class GameOverBehavior : MonoBehaviour {
 
         if (UnitaleUtil.IsOverworld) gameOverContainerOw.SetActive(true);
         else                         gameOverContainer.SetActive(true);
-        ScreenResolution.BoxCameras(Screen.fullScreen);
 
         Camera.main.GetComponent<AudioSource>().clip = AudioClipRegistry.GetMusic("mus_gameover");
         GameObject.Find("GameOver").GetComponent<Image>().sprite = SpriteRegistry.Get("UI/spr_gameoverbg_0");
@@ -189,9 +187,6 @@ public class GameOverBehavior : MonoBehaviour {
             UIStats.instance.setHP(PlayerCharacter.instance.MaxHP);
         }
         brokenHeartPrefab = Resources.Load<GameObject>("Prefabs/heart_broken");
-        if (SpriteRegistry.GENERIC_SPRITE_PREFAB == null)
-            SpriteRegistry.GENERIC_SPRITE_PREFAB = Resources.Load<Image>("Prefabs/generic_sprite");
-        heartShardPrefab = SpriteRegistry.GENERIC_SPRITE_PREFAB.gameObject;
         reviveText = GameObject.Find("ReviveText").GetComponent<TextManager>();
         reviveText.SetCaller(EnemyEncounter.script);
         reviveFade = GameObject.Find("ReviveFade").GetComponent<Image>();
@@ -264,8 +259,8 @@ public class GameOverBehavior : MonoBehaviour {
                 heartShardRelocs = new Vector2[6];
                 heartShardCtrl = new LuaSpriteController[6];
                 for (int i = 0; i < heartShardInstances.Length; i++) {
-                    heartShardInstances[i] = Instantiate(heartShardPrefab).GetComponent<RectTransform>();
-                    heartShardCtrl[i] = new LuaSpriteController(heartShardInstances[i].GetComponent<Image>());
+                    heartShardInstances[i] = Instantiate(SpriteRegistry.GENERIC_SPRITE_PREFAB.gameObject).GetComponent<RectTransform>();
+                    heartShardCtrl[i] = LuaSpriteController.GetOrCreate(heartShardInstances[i].gameObject);
                     heartShardInstances[i].transform.SetParent(UnitaleUtil.IsOverworld ? GameObject.Find("Canvas GameOver").transform : gameObject.transform);
                     heartShardInstances[i].GetComponent<RectTransform>().position = heartPos;
                     heartShardInstances[i].GetComponent<Image>().color = heartColor;
@@ -487,7 +482,7 @@ public class GameOverBehavior : MonoBehaviour {
 
         if (!UnitaleUtil.IsOverworld) {
             ArenaManager.instance.ResizeImmediate(ArenaManager.UIWidth, ArenaManager.UIHeight);
-            UIController.instance.SwitchState(UIController.UIState.ACTIONSELECT);
+            UIController.instance.SwitchState("ACTIONSELECT");
             gameOverContainer.SetActive(false);
         } else
             gameOverContainerOw.SetActive(false);

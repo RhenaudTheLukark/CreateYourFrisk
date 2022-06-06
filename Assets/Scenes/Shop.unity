@@ -493,7 +493,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96dc5aa61b3446942acd3e628a7d73d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  letterSound: {fileID: 0}
+  letterSound: (
   currentLine: 0
   _textMaxWidth: 0
   currentReferenceCharacter: 0
@@ -1023,7 +1023,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96dc5aa61b3446942acd3e628a7d73d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  letterSound: {fileID: 0}
+  letterSound: (
   currentLine: 0
   _textMaxWidth: 574
   currentReferenceCharacter: 0
@@ -1473,7 +1473,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96dc5aa61b3446942acd3e628a7d73d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  letterSound: {fileID: 0}
+  letterSound: (
   currentLine: 0
   _textMaxWidth: 164
   currentReferenceCharacter: 0
@@ -1662,7 +1662,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96dc5aa61b3446942acd3e628a7d73d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  letterSound: {fileID: 0}
+  letterSound: (
   currentLine: 0
   _textMaxWidth: 164
   currentReferenceCharacter: 0
@@ -1818,7 +1818,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96dc5aa61b3446942acd3e628a7d73d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  letterSound: {fileID: 0}
+  letterSound: (
   currentLine: 0
   _textMaxWidth: 364
   currentReferenceCharacter: 0
@@ -2062,7 +2062,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96dc5aa61b3446942acd3e628a7d73d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  letterSound: {fileID: 0}
+  letterSound: (
   currentLine: 0
   _textMaxWidth: 0
   currentReferenceCharacter: 0
@@ -2103,6 +2103,7 @@ GameObject:
   - component: {fileID: 1823239362}
   - component: {fileID: 1823239364}
   - component: {fileID: 1823239363}
+  - component: {fileID: 1823239365}
   m_Layer: 5
   m_Name: Background
   m_TagString: Untagged
@@ -2165,6 +2166,17 @@ CanvasRenderer:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1823239361}
   m_CullTransparentMesh: 0
+--- !u!114 &1823239365
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1823239361}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c7b8a91bf13f244b93c1a72a65984e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1872943036
 Prefab:
   m_ObjectHideFlags: 0

@@ -1,111 +1,109 @@
 -- A basic monster script skeleton you can copy and modify for your own creations.
-comments = {"RTL looks nervous."}
-commands = {"Threaten", "Insult"}
-randomdialogue = {"[noskip][font:monster]H-hey[waitall:5]...[w:20][func:State,ACTIONSELECT]"}
+comments = { "RTL seems nervous." }
+commands = { "Check", "Threaten", "Insult" }
+randomdialogue = { "H-Hello there..." }
 
-sprite = "empty" --Always PNG. Extension is added automatically.
+sprite = "RTL/full" --Always PNG. Extension is added automatically.
 name = "RTL"
 hp = 100
 atk = 1
 def = -999
-check = "Just free EXP."
+check = "Just free EXP.\rYou know the drill by now."
 dialogbubble = "rightwideminus" -- See documentation for what bubbles you have available.
 cancheck = false
 canspare = true
 sprite_placing = -1
 
-function ChangeBubble(str)
-	DEBUG("Got in !")
-    if (str != null) then
-        dialogbubble = str
-    else
-        DEBUG("The function takes one argument.\nYOU HAD ONE JOB.")
-    end        
+SetBubbleOffset(10, 24)
+
+function BeforeDamageCalculation()
+    Encounter.Call("SetRTLAnimation", "attacked")
 end
 
 -- Happens after the slash animation but before 
 function HandleAttack(attackstatus)
     if attackstatus == -1 then
         -- player pressed fight but didn't press Z afterwards
-		SetGlobal("RTL","close")
-		DEBUG("close one!")
-		currentdialogue = {"[noskip][font:monster]It was[func:ChangeBubble,left]\nclose...[w:40]",
-						   "[noskip]This is a test.[func:animGo][func:State,ACTIONSELECT]"}
+        Encounter.Call("SetRTLAnimation", "close")
+        currentdialogue = { "That was close..." }
     else
         -- player did actually attack
-		SetGlobal("RTL","hurt")
-		SetGlobal("hitAnimRTL", true)
+        Encounter.Call("SetRTLAnimation", "hurt")
     end
 end
  
 -- This handles the commands; all-caps versions of the commands list you have above.
 function HandleCustomCommand(command)
-    if command == "THREATEN" then
-        BattleDialog({"You threaten RTL.\nHe looks afraid."})
-        currentdialogue = {"[noskip][func:SetAnimRTL,attacked]Leave me\nalone !\nYou're\nweird ![w:40][func:State,ACTIONSELECT]"}
+    if command == "CHECK" then
+        BattleDialog({ "RTL - 1 ATK 1 DEF\n" .. check })
+    elseif command == "THREATEN" then
+        BattleDialog({ "You threaten RTL.\nHe seems scared." })
+        currentdialogue = {"[func:SetAnimRTL,attacked]Leave me alone! You're weird!"}
     elseif command == "INSULT" then
-        BattleDialog({"You insult RTL."})
-        currentdialogue = {"[noskip][func:SetAnimRTL,angry]Why are you\ninsulting me ?\nI did nothing\nbad ![w:40][func:State,ACTIONSELECT]"}
+        BattleDialog({ "You insult RTL." })
+        currentdialogue = {"[func:SetAnimRTL,angry]Hey, what was that for? I did nothing wrong to you!"}
     end
-    currentdialogue = {"[font:monster]" .. currentdialogue[1]}
-end
-
-function HandleSpare()
-	SetGlobal("sparedRTL", true) 
-	DEBUG("spared !") 
 end
 
 function OnDeath()
-	dialogbubble = "rightlargeminus"
-	hp = 30
-	def = 1
-	Audio.Pause()
-	--currentdialogue = {"[noskip][effect:none][font:monster][func:SetAnimRTL,angryhurt]blablablablabla[func:PlaySE,Asriel TF][func:AnimDilate][w:120][func:SetLukark][func:State,ACTIONSELECT]"}
-	currentdialogue = {"[noskip][effect:none][font:monster]" .. "Ah,[w:20] ah ah ah ![w:40][next]",
-					   "[noskip][effect:none][font:monster]" .. "You're pathetic.\n[w:20]You REALLY\nthought that I\nwill not struggle\nagainst you ?[w:40][next]",
-					   "[noskip][effect:shake][font:monster][func:SetAnimRTL,angryhurt][voice:v_floweymad]" .. "[waitall:5]WELL YOU'RE\nWRONG.[w:40][next]",
-					   "[noskip][effect:none][font:monster]" .. "Now, I'll send\nyou right where\nyou came from,[w:20]\nand I'll do it\nby force if I\nhave to ![w:40][func:PlaySE,Asriel TF][func:AnimDilate][next]",
-					   "[noskip][w:120][next]",
-					   "[noskip][effect:shake][font:monster][voice:v_floweymad]ALL OF YOUR\nCRIMES WILL\nSTOP RIGHT\nNOW ![w:40][func:SetLukark][func:State,ACTIONSELECT]"}
-					   --"[noskip][effect:none][font:monster][func:SetAnimRTL,happy][func:PlaySE,mus_dogsong_tf]" .. "Tu t'attendais\na quoi, srx ?\n[w:20]Eh ben non y'a\nrien, je vais\ncrever c'est\ntout.[w:40][func:Unpause][func:FadeKill][func:Kill][next]"}
+    hp = 30
+    def = 1
+    Audio.Pause()
+    if not GetAlMightyGlobal("RTLGenoIntro") then
+        SetAlMightyGlobal("RTLGenoIntro", true)
+        currentdialogue = { "[noskip][effect:none]Heh... [w:15][func:SetAnimRTL,happy]Hahahaha![w:20][next]",
+                            "[noskip][effect:none][func:SetAnimRTL,angry]You're pathetic. [w:15]Did you REALLY think I would just keel over and die against you?[w:20][next]",
+                            "[noskip][effect:none][func:SetAnimRTL,angryhurt]Well you're [effect:shake][voice:v_floweymad][waitall:2]wrong,[waitall:1][voice:monsterfont][effect:none] [w:20]buckaroo.[w:20][next]",
+                            "[noskip][effect:none]Now, I'll send you right where you belong, [w:10]and I'll do it by force if I have to!",
+                            "[noskip][func:PlaySE,Asriel TF][func:StartTransformation][w:80][next]",
+                            "[noskip][effect:shake][voice:v_floweymad][func:SetLukarkFace,mad]Your rampage will stop right now![w:20][func:SetLukark][func:State,ACTIONSELECT]" }
+                            --"[noskip][effect:none][func:SetAnimRTL,happy][func:PlaySE,mus_dogsong_tf]" .. "What were you expecting, seriously?\n[w:20]Well there's nothing here, I'll just die and that's it.[w:20][func:Unpause][func:Kill][next]"}
+    else
+        shouts = {
+            "Your rampage will stop right now!",
+            "This time you'll pay for your sins!",
+            "I will only stop when everyone will be avenged!",
+            "I won't let you go this time!",
+            "Retribution time!",
+            "I guess last time wasn't enough for you!"
+        }
+        sillyShouts = {
+            "Oh $#!?, [w:10]here we go again!",
+            "Oh lawd he comin!",
+            "Hey am I like at least 20% Sans if I can remember stuff? [w:15]Neat...?"
+        }
+        currentdialogue = { "[effect:none]Gah, what's the point. [w:15]Let's just get it over with already.",
+                            "[noskip][func:PlaySE,Asriel TF][func:StartTransformation][w:80][next]",
+                            "[noskip][effect:shake][voice:v_floweymad][func:SetLukarkFace,mad]" .. (math.random() < 0.04 and sillyShouts[math.random(#sillyShouts)] or shouts[math.random(#shouts)]) .. "[w:20][func:SetLukark][func:State,ACTIONSELECT]" }
+
+    end
 end
 
---Permet de pouvoir lancer l'anim de fade
-function FadeKill()
-	SetGlobal("RTLDead", true)
+function OnSpare()
+    Encounter.Call("RTLHideAnimation", true)
+    Encounter["RTLAnim"].stopped = true
+    Spare()
 end
 
---Permet de changer l'anim
-function SetAnimRTL(nomAnim)
-	SetGlobal("RTL", nomAnim)
-end
+-- hanges the current animation
+function SetAnimRTL(anim) Encounter.Call("SetRTLAnimation", anim) end
+-- Changes Lukark's animation
+function SetLukarkFace(anim) Encounter.Call("SetLukarkFace", anim) end
 
---Permet de lancer l'anim de "tf"
-function AnimDilate()
-	SetGlobal("animDilate", true)
-end
+-- Starts the "transformation" animation
+function StartTransformation() Encounter["RTLAnim"].inTransformation = true end
 
---Permet de faire repartir la musique
-function Unpause()
-	Audio.Unpause()
-end
+function Unpause() Audio.Unpause() end
 
---Permet de jouer des sons
-function PlaySE(filename)
-	Audio.PlaySound(filename)
-end
+-- Plays a given sound
+function PlaySE(filename) Audio.PlaySound(filename) end
 
+-- Starts the battle with Lukark
 function SetLukark()
-	Audio.Pitch(1)
-	Audio.Volume(0.75)
-	Audio.LoadFile("charafuntroncated")
-	SetGlobal("revived", true)
+    Audio.Pitch(1)
+    Audio.LoadFile("charafuntroncated")
+    SetLukarkFace("normal")
 end
 
-function Deactivate()
-	SetActive(false)
-end
-
-function animGo()
-	SetGlobal("placingRTL", -1)
-end
+-- Disables this enemy
+function Deactivate() SetActive(false) end

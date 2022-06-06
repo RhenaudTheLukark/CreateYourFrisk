@@ -88,7 +88,7 @@ public class PlayerController : MonoBehaviour {
     /// Contains a Soul type that affects what player movement does.
     /// Only the Red soul is used for now.
     /// </summary>
-    private AbstractSoul soul;
+    public AbstractSoul soul;
 
     /// <summary>
     /// True if the Player's defense should be taken in account when computing damage dealt to them, false otherwise.
@@ -112,8 +112,8 @@ public class PlayerController : MonoBehaviour {
         HP = PlayerCharacter.instance.HP;
     }
 
-    public static void PlaySound(AudioClip clip) {
-        UnitaleUtil.PlaySound("CollisionSoundChannel", clip.name);
+    public static void PlaySound(string sound) {
+        UnitaleUtil.PlaySound("CollisionSoundChannel", sound);
     }
 
     public string deathMusic;
@@ -148,14 +148,14 @@ public class PlayerController : MonoBehaviour {
         if (damage >= 0 && (invulTimer <= 0 || invulnerabilitySeconds < 0)) {
             if (soundDelay < 0 && playSound) {
                 soundDelay = 2;
-                PlaySound(AudioClipRegistry.GetSound("hurtsound"));
+                PlaySound("hurtsound");
             }
 
             if (invulnerabilitySeconds >= 0) invulTimer = invulnerabilitySeconds;
             if (damage != 0)                 SetHP(HP - damage, false);
         } else if (damage < 0) {
             if (playSound)
-                PlaySound(AudioClipRegistry.GetSound("healsound"));
+                PlaySound("healsound");
             SetHP(HP - damage);
         }
     }
@@ -173,7 +173,7 @@ public class PlayerController : MonoBehaviour {
         if (newhp <= 0) {
             deathEscape = false;
             if (GlobalControls.isInFight) {
-                UIController.instance.encounter.TryCall("BeforeDeath");
+                UnitaleUtil.TryCall(EnemyEncounter.script, "BeforeDeath");
                 if (deathEscape)
                     return;
 
@@ -327,15 +327,10 @@ public class PlayerController : MonoBehaviour {
     public void SetPosition(float xPos, float yPos, bool ignoreBounds) {
         // check if new position would be out of arena bounds, and modify accordingly if it is
         if (!ignoreBounds) {
-            if (xPos < arenaBounds.position.x - arenaBounds.sizeDelta.x / 2 + self.rect.size.x / 2)
-                xPos = arenaBounds.position.x - arenaBounds.sizeDelta.x / 2 + self.rect.size.x / 2;
-            else if (xPos > arenaBounds.position.x + arenaBounds.sizeDelta.x / 2 - self.rect.size.x / 2)
-                xPos = arenaBounds.position.x + arenaBounds.sizeDelta.x / 2 - self.rect.size.x / 2;
-
-            if (yPos < arenaBounds.position.y - arenaBounds.sizeDelta.y / 2 + self.rect.size.y / 2)
-                yPos = arenaBounds.position.y - arenaBounds.sizeDelta.y / 2 + self.rect.size.y / 2;
-            else if (yPos > arenaBounds.position.y + arenaBounds.sizeDelta.y / 2 - self.rect.size.y / 2)
-                yPos = arenaBounds.position.y + arenaBounds.sizeDelta.y / 2 - self.rect.size.y / 2;
+            xPos = Mathf.Clamp(xPos, arenaBounds.position.x - arenaBounds.sizeDelta.x / 2 + self.rect.size.x / 2,
+                                     arenaBounds.position.x + arenaBounds.sizeDelta.x / 2 - self.rect.size.x / 2);
+            yPos = Mathf.Clamp(yPos, arenaBounds.position.y - arenaBounds.sizeDelta.y / 2 + self.rect.size.y / 2,
+                                     arenaBounds.position.y + arenaBounds.sizeDelta.y / 2 - self.rect.size.y / 2);
         }
 
         // set player position on screen
@@ -414,14 +409,14 @@ public class PlayerController : MonoBehaviour {
             SetSoul(new BlueSoul(this));*/
         // END DEBUG CONTROLS
         /*
-        if (!ArenaManager.instance.firstTurn && (tempQueue.x != -5000 || tempQueue.y != -5000)) {
+        if (!ArenaManager.instance.needsInit && (tempQueue.x != -5000 || tempQueue.y != -5000)) {
             SetPosition(tempQueue.x, tempQueue.y, tempQueue2);
             tempQueue = new Vector2(-5000, -5000);
         }
         */
 
         // prevent player actions from working and the timer from decreasing, if the game is paused
-        if (UIController.instance.frozenState != UIController.UIState.PAUSE)
+        if (UIController.instance.frozenState != "PAUSE")
             return;
 
         // handle input and movement, unless control is overridden by the UI controller, for instance

@@ -61,11 +61,20 @@ namespace MoonSharp.Interpreter.Execution.VM
 				var stopwatch = this.m_Script.PerformanceStats.StartStopwatch(Diagnostics.PerformanceCounter.Execution);
 
 				m_CanYield = false;
+				int entrypoint = 0;
 
 				try
 				{
-					int entrypoint = PushClrToScriptStackFrame(CallStackItemFlags.CallEntryPoint, function, args);
+					entrypoint = PushClrToScriptStackFrame(CallStackItemFlags.CallEntryPoint, function, args);
 					return Processing_Loop(entrypoint);
+				}
+				catch (ArgumentOutOfRangeException ex)
+				{
+					if (!ex.StackTrace.StartsWith("at Processor"))
+						throw;
+					ScriptRuntimeException e = ScriptRuntimeException.CallFromAnotherScript();
+					FillDebugData(e, entrypoint);
+					throw e;
 				}
 				finally
 				{
@@ -85,7 +94,7 @@ namespace MoonSharp.Interpreter.Execution.VM
 		// at vstack top.
 		private int PushClrToScriptStackFrame(CallStackItemFlags flags, DynValue function, DynValue[] args)
 		{
-			if (function == null) 
+			if (function == null)
 				function = m_ValueStack.Peek();
 			else
 				m_ValueStack.Push(function);  // func val
@@ -105,7 +114,7 @@ namespace MoonSharp.Interpreter.Execution.VM
 				ClosureScope = function.Function.ClosureContext,
 				CallingSourceRef = SourceRef.GetClrLocation(),
 				Flags = flags,
-                Function = function.Function
+				Function = function.Function
 			});
 
 			return function.Function.EntryPointByteCodeLocation;
@@ -125,7 +134,7 @@ namespace MoonSharp.Interpreter.Execution.VM
 				m_Parent.m_CoroutinesStack.RemoveAt(m_Parent.m_CoroutinesStack.Count - 1);
 			}
 
-			if (m_ExecutionNesting == 0 && m_Debug != null && m_Debug.DebuggerEnabled 
+			if (m_ExecutionNesting == 0 && m_Debug != null && m_Debug.DebuggerEnabled
 				&& m_Debug.DebuggerAttached != null)
 			{
 				m_Debug.DebuggerAttached.SignalExecutionEnded();

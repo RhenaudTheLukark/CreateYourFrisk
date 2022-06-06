@@ -39,10 +39,10 @@ it's w3c valid, at least
                     <li><a href="controls.html">Controls</a></li>
                     <li><a href="basic.html">Basic setup</a></li>
                     <li><a href="unity.html"><span class="CYF"></span> Unity Setup (Optional)</a></li>
-                    <li><a href="variables.html">Special Variables</a></li>
+                    <li class="new"><a href="variables.html">Special Variables</a></li>
                     <li><a href="terms.html">Terminology</a></li>
                 <li class="li-header">API</li>
-                    <li><a href="api-text.html">Text commands</a></li>
+                    <li class="new"><a href="api-text.html">Text commands</a></li>
                     <li class="new"><a href="api-events.html">Game events</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                     <li class="li-indent">Functions &amp; Objects:</li>
@@ -52,28 +52,29 @@ it's w3c valid, at least
                         <li class="li-indent"><a href="api-functions-audio.html">The Audio Object</a></li>
                         <li class="li-indent"><a href="api-functions-newaudio.html"><span class="CYF"></span> The NewAudio Object</a></li>
                         <li class="li-indent"><a href="api-functions-input.html">The Input Object</a></li>
-                        <li class="li-indent"><a href="api-functions-time.html">The Time Object</a></li>
-                        <li class="li-indent"><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
+                        <li class="li-indent new"><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-time.html">The Time Object</a></li>
+                        <li class="li-indent new"><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
                         <li class="li-indent new"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
-                        <li class="li-indent new"><a href="api-functions-discord.html"><span class="CYF"></span> The Discord Object</a></li>
-                        <li class="li-indent"><a href="api-functions-waves.html">The Arena Object</a></li>
+                        <li class="li-indent"><a href="api-functions-discord.html"><span class="CYF"></span> The Discord Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-waves.html">The Arena Object</a></li>
+                        <li class="li-indent new"><a href="api-functions-ui.html"><span class="CYF"></span> The UI Object</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
-                    <li class="active" style="margin-left:5px;">&gt; Projectile management &lt;</li>
+                    <li class="new active" style="margin-left:5px;">&gt; Projectile management &lt;</li>
                     <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
                     <li class="new"><a href="api-animation.html">Sprites &amp; Animation</a></li>
-                    <li class="new"><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
-                <li class="li-header"></span><span class="CYF"></span> <span class="new"></span>Shaders</li>
+                <li class="li-header"></span><span class="CYF"></span> Shaders</li>
                     <li><a href="shaders.html">Introduction</a></li>
                     <li><a href="shaders-object.html">The Shader Object</a></li>
                     <li><a href="shaders-coding.html">Coding a Shader</a></li>
                     <hr style="margin-top:10px;margin-bottom:10px;">
                 <li class="li-header"><span class="CYF"></span> Overworld</li>
-                    <li class="new"><a href="overworld.html">Basics</a></li>
+                    <li><a href="overworld.html">Basics</a></li>
                     <li><a href="overworld-howto-map.html">How to create a map</a></li>
                     <li><a href="overworld-howto-event.html">How to create an event</a></li>
                     <li><a href="overworld-howto-animevent.html">How to animate an event</a></li>
-                    <li class="new"><a href="overworld-howto-shop.html">How to create a shop</a></li>
+                    <li><a href="overworld-howto-shop.html">How to create a shop</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                     <li class="li-indent"><span class="CYF"></span> Overworld Objects:</li>
                         <li class="li-indent"><a href="overworld-object-general.html">The General Object</a></li>
@@ -81,7 +82,7 @@ it's w3c valid, at least
                         <li class="li-indent"><a href="overworld-object-player.html">The Player Object</a></li>
                         <li class="li-indent"><a href="overworld-object-screen.html">The Screen Object</a></li>
                         <li class="li-indent"><a href="overworld-object-inventory.html">The Inventory Object</a></li>
-                        <li class="li-indent new"><a href="overworld-object-map.html">The Map Object</a></li>
+                        <li class="li-indent"><a href="overworld-object-map.html">The Map Object</a></li>
                     <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
                 <li class="li-header">Resources</li>
                     <li><a href="../media/dialogoptions.png">Dialog bubble names</a></li>
@@ -96,7 +97,7 @@ it's w3c valid, at least
             <p>Projectile management is, starting from 0.2.0, available from both the encounter and the wave scripts. As
                 a result it is now in its own section.</p>
             <p>
-                <br><span class="function"><span class="CYF"></span>CreateProjectileLayer(<span class="string"></span> name,
+                <br><span class="function"><span class="CYF"></span> CreateProjectileLayer(<span class="string"></span> name,
                 <span class="string"></span> position = "", <span class="boolean"></span> below = false) [E/W]</span>
                 Creates a layer named <span class="term">name</span> that projectiles can be placed in. To create your new projectile layer, you'll need to choose a pre-existing layer.
                 <br><br>
@@ -186,7 +187,9 @@ it's w3c valid, at least
                 <br><span class="function"><span class="CYF"></span> <span class="string"></span> Bullet.layer</span>
                 The bullet layer that the bullet is on.
                 <br><br>
-                Set it back to <span class="term">""</span> to return the bullet to the default layer.
+                <span class="new"></span>Note: It is common practice to use <span class="term">Bullet.layer</span> to deparent
+                a bullet if you need to do so. Setting it back to <span class="term">""</span> will parent the bullet to its default
+                layer, removing its previous parenting altogether.
             </p>
             <p>
                 <br><span class="function"><span class="boolean"></span> Bullet.isactive (read-only)</span>
@@ -250,6 +253,26 @@ it's w3c valid, at least
                 Returns true if the player is colliding with the bullet.
                 <br><br>
                 Will use PPCollision (pixel-perfect collisions) if the bullet has PP enabled. See <span class="term">Bullet.ppcollision</span>.</li><br>
+            </p>
+            <p>
+                <br><span class="function"><span class="new"></span><span class="CYF"></span> Bullet.OnHit(<span class="userdata">bullet</span> bullet)</span>
+                This variable must receive a function, which can be done in two possible ways:
+            </p>
+            <div class="code-container">
+<pre class="brush: lua;">Bullet.OnHit = function(bullet)
+    -- Your code
+end
+</pre>
+            </div>
+            <div class="code-container">
+<pre class="brush: lua;">function Bullet.OnHit(bullet)
+    -- Your code
+end
+</pre>
+            </div>
+                If it has been assigned, this function will be run instead of the script's <span class="term">OnHit</span> function when the bullet collides with the Player.
+                <br><br>
+                The bullet and its <span class="term">OnHit</span> function must both be created in the same script.
             </p>
             <p>
                 <br><span class="function"><span class="CYF"></span> <span class="boolean"></span> Bullet.isPersistent = false</span>

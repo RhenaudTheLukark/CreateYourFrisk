@@ -12,7 +12,8 @@ public class FightUI : MonoBehaviour {
     private int[] shakeX = { 12, -12, 7, -7, 3, -3, 1, -1, 0 };
     //private int[] shakeX = new int[] { 24, 0, 0, 0, 0, -48, 0, 0, 0, 0, 38, 0, 0, 0, 0, -28, 0, 0, 0, 0, 20, 0, 0, 0, 0, -12, 0, 0, 0, 0, 8, 0, 0, 0, 0, -2, 0, 0, 0, 0};
     private int shakeIndex = -1;
-    private int Damage = -478294;
+    private int Damage = FightUIController.DAMAGE_NOT_SET;
+    private int enemyIndex = 1;
     private float shakeTimer;
     private float totalShakeTime = 1.5f;
     public float sliceAnimFrequency = 1 / 6f;
@@ -30,47 +31,47 @@ public class FightUI : MonoBehaviour {
     private bool needAgain;
     private bool showedup;
     public bool stopped;
-    public bool isCoroutine;
     public bool waitingToFade;
 
-    public void Start() {
-        foreach(RectTransform child in transform) {
-            switch (child.name) {
-                case "SliceAnim": slice = new LuaSpriteController(child.GetComponent<Image>()); break;
-                case "HPBar":    lifeBar = child.GetComponent<LifeBarController>(); break;
-                case "DamageNumber":
-                    damageText = child.GetComponent<TextManager>();
-                    damageTextRt = child.GetComponent<RectTransform>();
-                    break;
-            }
-        }
+    public bool isInit;
+
+    public void Setup() {
+        if (isInit) return;
+        lifeBar = transform.GetComponentInChildren<LifeBarController>();
+        lifeBar.Start();
+        lifeBar.AddOutline(1);
+        lifeBar.outline.SetPivot(0.5f, 0.5f);
+        lifeBar.outline.SetAnchor(0.5f, 1);
+        lifeBar.SetVisible(false);
+
+        damageText = transform.GetComponentInChildren<TextManager>();
+        damageTextRt = damageText.GetComponent<RectTransform>();
+        damageText.SetFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_DAMAGETEXT_NAME));
+        damageText.SetMute(true);
+
+        slice = LuaSpriteController.GetOrCreate(transform.GetComponentInChildren<Image>().gameObject);
         sliceAnim = UIController.instance.fightUI.sliceAnim;
         sliceAnimFrequency = UIController.instance.fightUI.sliceAnimFrequency;
         shakeX = UIController.instance.fightUI.shakeX;
-        damageText.SetFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_DAMAGETEXT_NAME));
-        damageText.SetMute(true);
+
+        if (enemy == null)
+            enemy = UIController.instance.encounter.EnabledEnemies[enemyIndex];
+        transform.SetParent(enemy.transform);
+
+        isInit = true;
     }
 
-    public void Init(int enemyIndex) {
-        Start();
-        Damage = -478294;
-        lifeBar.setVisible(false);
-        lifeBar.whenDamage = true;
-        enemy = UIController.instance.encounter.EnabledEnemies[enemyIndex];
-        lifeBar.transform.SetParent(enemy.transform);
-        damageText.transform.SetParent(enemy.transform);
-        slice.img.transform.SetParent(enemy.transform);
-        enePos = enemy.GetComponent<RectTransform>().position;
-        eneSize = enemy.GetComponent<RectTransform>().sizeDelta;
-        shakeTimer = 0;
+    public void Init(int eIndex) {
+        enemyIndex = eIndex;
+        Setup();
     }
 
-    public void quickInit(int enemyIndex, EnemyController target, int damage = -478294) {
+    public void QuickInit(int enemyIndex, EnemyController target, int damage) {
         Init(enemyIndex);
         enemy = target;
-        if (damage != -478294)
+
+        if (damage != FightUIController.DAMAGE_NOT_SET)
             Damage = damage;
-        shakeInProgress = false;
     }
 
     public bool Finished() {
@@ -81,26 +82,19 @@ public class FightUI : MonoBehaviour {
 
     public void ChangeTarget(EnemyController target) {
         enemy = target;
-        if (Damage != -478294)
+        if (Damage != FightUIController.DAMAGE_NOT_SET)
             Damage = 0;
-        Damage = FightUIController.instance.getDamage(enemy, PlayerController.instance.lastHitMult);
-        enePos = enemy.GetComponent<RectTransform>().position;
-        eneSize = enemy.GetComponent<RectTransform>().sizeDelta;
-        lifeBar.transform.SetParent(enemy.transform);
-        damageText.transform.SetParent(enemy.transform);
-        slice.img.transform.SetParent(enemy.transform);
-        /*Vector3 slicePos = new Vector3(enemy.GetComponent<RectTransform>().position.x + enemy.offsets[0].x,
-                                       enemy.GetComponent<RectTransform>().position.y + eneSize.y / 2 + enemy.offsets[0].y - 55, enemy.GetComponent<RectTransform>().position.z);*/
+        Damage = FightUIController.instance.GetDamage(enemy, PlayerController.instance.lastHitMult);
+        transform.SetParent(enemy.transform);
     }
 
     public void StopAction(float atkMult) {
-        PlayerController.instance.lastHitMult = FightUIController.instance.getAtkMult();
-        bool damagePredefined = Damage != -478294;
+        PlayerController.instance.lastHitMult = FightUIController.instance.GetAtkMult();
+        bool damagePredefined = Damage != FightUIController.DAMAGE_NOT_SET;
         stopped = true;
-        enemy.TryCall("BeforeDamageCalculation");
+        UnitaleUtil.TryCall(enemy.script, "BeforeDamageCalculation");
         if (!damagePredefined)
-            Damage = FightUIController.instance.getDamage(enemy, atkMult);
-        UpdateSlicePos();
+            Damage = FightUIController.instance.GetDamage(enemy, atkMult);
         //slice.StopAnimation();
         slice.SetAnimation(sliceAnim, sliceAnimFrequency);
         slice.loopmode = "ONESHOT";
@@ -109,8 +103,12 @@ public class FightUI : MonoBehaviour {
     // Update is called once per frame
     private void Update() {
         // do not update the attack UI if the ATTACKING state is frozen
-        if (UIController.instance.frozenState != UIController.UIState.PAUSE)
+        if (UIController.instance.frozenState != "PAUSE" || !isInit)
             return;
+
+        eneSize = enemy.GetComponent<RectTransform>().sizeDelta;
+        enePos = new Vector2(enemy.GetComponent<RectTransform>().position.x - eneSize.x * (Mathf.Abs(enemy.sprite.xpivot) - 0.5f) * Mathf.Sign(enemy.sprite.xscale),
+                             enemy.GetComponent<RectTransform>().position.y - eneSize.y * (Mathf.Abs(enemy.sprite.ypivot) - 0.5f) * Mathf.Sign(enemy.sprite.yscale));
 
         if (shakeInProgress) {
             int shakeidx = (int)Mathf.Floor(shakeTimer * shakeX.Length / totalShakeTime);
@@ -127,17 +125,17 @@ public class FightUI : MonoBehaviour {
                 #endif*/
             }
             if (shakeTimer < 1.5f)
-                damageTextRt.localPosition = new Vector2(damageTextRt.localPosition.x, enemy.offsets[2].y + 40 * (2 + Mathf.Sin(shakeTimer * Mathf.PI * 0.75f)));
+                damageTextRt.position = new Vector3(damageTextRt.position.x, enePos.y - eneSize.y / 2 + enemy.offsets[2].y + 40 * (2 + Mathf.Sin(shakeTimer * Mathf.PI * 0.75f)), 0);
             shakeTimer += Time.deltaTime;
             if (shakeTimer >= totalShakeTime)
                 shakeInProgress = false;
-        } else if ((slice.animcomplete &&!slice.img.GetComponent<KeyframeCollection>().enabled && stopped &&!showedup) || needAgain) {
+        } else if (((!slice.isactive || slice.animcomplete && !slice.img.GetComponent<KeyframeCollection>().enabled) && stopped &&!showedup) || needAgain) {
             needAgain = true;
             if (!wait1frame) {
                 wait1frame = true;
                 slice.StopAnimation();
                 slice.Set("empty");
-                enemy.TryCall("BeforeDamageValues", new[] { DynValue.NewNumber(Damage) });
+                UnitaleUtil.TryCall(enemy.script, "BeforeDamageValues", new[] { DynValue.NewNumber(Damage) });
                 if (Damage > 0) {
                     AudioSource aSrc = GetComponent<AudioSource>();
                     aSrc.clip = AudioClipRegistry.GetSound("hitsound");
@@ -148,25 +146,20 @@ public class FightUI : MonoBehaviour {
                 if (Damage == 0) {
                     if (enemy.DefenseMissText == null) damageTextStr = "[color:c0c0c0]MISS";
                     else                               damageTextStr = "[color:c0c0c0]" + enemy.DefenseMissText;
-                }
-                else if (Damage > 0) damageTextStr = "[color:ff0000]" + Damage;
-                else damageTextStr = "[color:00ff00]" + Damage;
+                } else if (Damage > 0)                 damageTextStr = "[color:ff0000]" + Damage;
+                else                                   damageTextStr = "[color:00ff00]" + Damage;
                 damageTextRt.localPosition = new Vector3(0, 0, 0);
                 damageText.SetText(new TextMessage(damageTextStr, false, true));
-                damageTextRt.localPosition = new Vector3(-UnitaleUtil.CalcTextWidth(damageText)/2 + enemy.offsets[2].x, 40 + enemy.offsets[2].y);
+                damageTextRt.position = new Vector3(enePos.x - UnitaleUtil.CalcTextWidth(damageText) / 2 + enemy.offsets[2].x, enePos.y - eneSize.y / 2 + 40 + enemy.offsets[2].y, 0);
 
                 // initiate lifebar and set lerp to its new health value
                 if (Damage != 0) {
                     int newHP = enemy.HP - Damage;
-                    try {
-                        lifeBar.GetComponent<RectTransform>().localPosition = new Vector2(enemy.offsets[2].x, 20 + enemy.offsets[2].y);
-                        lifeBar.GetComponent<RectTransform>().sizeDelta = new Vector2(enemy.GetComponent<RectTransform>().rect.width, 13);
-                        lifeBar.whenDamageValue = enemy.GetComponent<RectTransform>().rect.width;
-                        lifeBar.setInstant(enemy.HP < 0 ? 0 : enemy.HP / (float)enemy.MaxHP);
-                        lifeBar.setLerp(enemy.HP / (float)enemy.MaxHP, newHP / (float)enemy.MaxHP);
-                        lifeBar.setVisible(true);
-                        enemy.doDamage(Damage);
-                    } catch { return; }
+                    lifeBar.outline.MoveToAbs(enePos.x + enemy.offsets[2].x - 1, enePos.y - eneSize.y / 2 + 20 + enemy.offsets[2].y - 1);
+                    lifeBar.Resize(enemy.GetComponent<RectTransform>().rect.width, 13);
+                    lifeBar.SetLerp(enemy.HP / (float)enemy.MaxHP, newHP / (float)enemy.MaxHP);
+                    lifeBar.SetVisible(true);
+                    enemy.doDamage(Damage);
                 }
                 enemy.HandleAttack(Damage);
             } else {
@@ -177,15 +170,9 @@ public class FightUI : MonoBehaviour {
                 totalShakeTime = shakeX.Length * (1.5f / 8.0f);
                 showedup = true;
             }
-        } else if (!slice.animcomplete)
+        } else if (slice.isactive && !slice.animcomplete) {
             slice.img.gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(slice.img.GetComponent<Image>().sprite.rect.width, slice.img.GetComponent<Image>().sprite.rect.height);
-    }
-
-    Vector3 CalculateSlicePos() {
-        return new Vector3(enemy.offsets[0].x, eneSize.y / 2 + enemy.offsets[0].y - 55, 0);
-    }
-
-    void UpdateSlicePos() {
-        slice.img.GetComponent<RectTransform>().localPosition = CalculateSlicePos();
+            slice.img.GetComponent<RectTransform>().position = new Vector2(enePos.x + enemy.offsets[0].x, enePos.y + enemy.offsets[0].y);
+        }
     }
 }
