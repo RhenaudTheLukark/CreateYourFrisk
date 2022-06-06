@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
@@ -11,8 +12,9 @@ public class SelectOMatic : MonoBehaviour {
     private static int CurrentSelectedMod;
     private static List<DirectoryInfo> modDirs;
     private Dictionary<string, Sprite> bgs = new Dictionary<string, Sprite>();
-    private bool animationDone = true, modIsRunning;
+    private bool animationDone = true;
     private float animationTimer;
+    public EventSystem eventSystem;
 
     private static float modListScroll;          // Used to keep track of the position of the mod list specifically. Resets if you press escape
     private static float encounterListScroll;    // Used to keep track of the position of the encounter list. Resets if you press escape
@@ -59,12 +61,14 @@ public class SelectOMatic : MonoBehaviour {
         // Bind button functions
         btnBack.GetComponent<Button>().onClick.RemoveAllListeners();
         btnBack.GetComponent<Button>().onClick.AddListener(() => {
+            eventSystem.SetSelectedGameObject(null);
             if (!animationDone) return;
             modFolderSelection();
             ScrollMods(-1);
         });
         btnNext.GetComponent<Button>().onClick.RemoveAllListeners();
         btnNext.GetComponent<Button>().onClick.AddListener(() => {
+            eventSystem.SetSelectedGameObject(null);
             if (!animationDone) return;
             modFolderSelection();
             ScrollMods( 1);
@@ -73,12 +77,14 @@ public class SelectOMatic : MonoBehaviour {
         // Give the mod list button a function
         btnList.GetComponent<Button>().onClick.RemoveAllListeners();
         btnList.GetComponent<Button>().onClick.AddListener(() => {
+            eventSystem.SetSelectedGameObject(null);
             if (animationDone)
                 modFolderMiniMenu();
         });
         // Grab the exit button, and give it some functions
         btnExit.GetComponent<Button>().onClick.RemoveAllListeners();
         btnExit.GetComponent<Button>().onClick.AddListener(() => {
+            eventSystem.SetSelectedGameObject(null);
             SceneManager.LoadScene("Disclaimer");
             DiscordControls.StartTitle();
         });
@@ -86,7 +92,10 @@ public class SelectOMatic : MonoBehaviour {
         // Add devMod button functions
         if (GlobalControls.modDev) {
             btnOptions.GetComponent<Button>().onClick.RemoveAllListeners();
-            btnOptions.GetComponent<Button>().onClick.AddListener(() => {SceneManager.LoadScene("Options");});
+            btnOptions.GetComponent<Button>().onClick.AddListener(() => {
+                eventSystem.SetSelectedGameObject(null);
+                SceneManager.LoadScene("Options");
+            });
         }
 
         // Crate Your Frisk initializer
@@ -212,8 +221,11 @@ public class SelectOMatic : MonoBehaviour {
         // Make clicking the background go to the encounter select screen
         ModBackground.GetComponent<Button>().onClick.RemoveAllListeners();
         ModBackground.GetComponent<Button>().onClick.AddListener(() => {
-            if (animationDone)
+            eventSystem.SetSelectedGameObject(null);
+            if (animationDone) {
                 encounterSelection();
+                content.transform.GetChild(selectedItem).GetComponent<MenuButton>().StartAnimation(1);
+            }
         });
 
         // Update the background
@@ -258,8 +270,8 @@ public class SelectOMatic : MonoBehaviour {
             // Make clicking the bg directly open the encounter
             ModBackground.GetComponent<Button>().onClick.RemoveAllListeners();
             ModBackground.GetComponent<Button>().onClick.AddListener(() => {
+                eventSystem.SetSelectedGameObject(null);
                 if (!animationDone) return;
-                modIsRunning = true;
                 StaticInits.ENCOUNTER = encounters[0];
                 StartCoroutine(LaunchMod());
             });
@@ -401,11 +413,8 @@ public class SelectOMatic : MonoBehaviour {
                     modFolderMiniMenu();
                     content.transform.GetChild(selectedItem).GetComponent<MenuButton>().StartAnimation(1);
                 // Open the encounter list or start the encounter (if there is only one encounter)
-                } else if (Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.Return)) {
+                } else if (Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.Return))
                     ModBackground.GetComponent<Button>().onClick.Invoke();
-                    if (!modIsRunning)
-                        content.transform.GetChild(selectedItem).GetComponent<MenuButton>().StartAnimation(1);
-                }
             }
 
             // Return to the Disclaimer screen
@@ -467,6 +476,7 @@ public class SelectOMatic : MonoBehaviour {
 
     // Shows the "mod page" screen.
     private void modFolderSelection() {
+        eventSystem.SetSelectedGameObject(null);
         UnitaleUtil.printDebuggerBeforeInit = "";
         ShowMod(CurrentSelectedMod);
 
@@ -501,6 +511,7 @@ public class SelectOMatic : MonoBehaviour {
         // Make clicking the background exit the encounter selection screen
         ModBackground.GetComponent<Button>().onClick.RemoveAllListeners();
         ModBackground.GetComponent<Button>().onClick.AddListener(() => {
+            eventSystem.SetSelectedGameObject(null);
             if (animationDone)
                 modFolderSelection();
         });
@@ -550,6 +561,7 @@ public class SelectOMatic : MonoBehaviour {
 
             button.GetComponent<Button>().onClick.RemoveAllListeners();
             button.GetComponent<Button>().onClick.AddListener(() => {
+                eventSystem.SetSelectedGameObject(null);
                 selectedItem          = tempCount;
                 StaticInits.ENCOUNTER = filename;
                 StartCoroutine(LaunchMod());
@@ -569,14 +581,16 @@ public class SelectOMatic : MonoBehaviour {
         GameObject back = content.transform.Find("Back").gameObject;
         back.GetComponent<Button>().onClick.RemoveAllListeners();
         back.GetComponent<Button>().onClick.AddListener(() => {
+            eventSystem.SetSelectedGameObject(null);
             // Reset the encounter box's position
             modListScroll = 0.0f;
             modFolderSelection();
-            });
+        });
 
         // Make clicking the background exit this menu
         ModBackground.GetComponent<Button>().onClick.RemoveAllListeners();
         ModBackground.GetComponent<Button>().onClick.AddListener(() => {
+            eventSystem.SetSelectedGameObject(null);
             if (!animationDone) return;
             // Store the encounter box's position so it can be remembered upon exiting a mod
             modListScroll = content.GetComponent<RectTransform>().anchoredPosition.y;
@@ -617,6 +631,7 @@ public class SelectOMatic : MonoBehaviour {
 
             button.GetComponent<Button>().onClick.RemoveAllListeners();
             button.GetComponent<Button>().onClick.AddListener(() => {
+                eventSystem.SetSelectedGameObject(null);
                 // Store the encounter box's position so it can be remembered upon exiting a mod
                 modListScroll = content.GetComponent<RectTransform>().anchoredPosition.y;
 
