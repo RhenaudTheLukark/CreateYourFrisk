@@ -1078,8 +1078,10 @@ public class TextManager : MonoBehaviour {
                 float HP = PlayerCharacter.instance.HP, MaxHP = PlayerCharacter.instance.MaxHP, tryHP = 0;
                 try { tryHP = ParseUtil.GetInt(args[0]); }
                 catch {
-                    Debug.LogError("[health:x] usage - You used the value \"" + args[0] + "\" to set the player's HP, but it's not a valid integer value.");
-                    return;
+                    if (args[0] != "Max" && args[0] != "Max-1" && args[0] != "kill") {
+                        Debug.LogError("[health:x] usage - You used the value \"" + args[0] + "\" to set the player's HP, but it's not a valid integer value.");
+                        return;
+                    }
                 }
 
                 if ((args[0].Contains("-") && args[0] != "Max-1") || args[0] == "kill") PlayerController.PlaySound("hurtsound");
