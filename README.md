@@ -18,13 +18,12 @@ To download the engine, go to [**the releases page**](https://github.com/Rhenaud
 
 ## Unity Version
 
-CYF's latest version is **v0.6.5.1**. It was built using **Unity Personal 2018.2.13f1**.
+CYF's latest version is **v0.6.6**. It was built using **Unity Personal 2018.4.36f1**, or Unity 2018's **Long Term Support** version.
 
 To get this version of Unity, either:
 
-* [**Download the Unity Hub**](https://unity3d.com/get-unity/download),
-* [**Find it in the Unity Version Archive**](https://unity3d.com/get-unity/download/archive) (remember, it's **2018.2.13**) or
-* [**Click here for a direct download**](https://netstorage.unity3d.com/unity/83fbdcd35118/UnityDownloadAssistant-2018.2.13f1.exe).
+* [**Download the Unity Hub**](https://unity3d.com/get-unity/download) or
+* [**Find it in the Unity Version Archive**](https://unity3d.com/get-unity/download/archive) (remember, it's **2018.4.36**).
 
 ***
 
