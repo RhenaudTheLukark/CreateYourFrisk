@@ -318,7 +318,7 @@ public class Misc {
         private static extern int MoveWindow(int hwnd, int x, int y, int nWidth, int nHeight, int bRepaint);
         [DllImport("user32.dll", EntryPoint = "GetWindowText", ExactSpelling = false, CharSet = CharSet.Auto, SetLastError = true)]
         private static extern int GetWindowText(int hwnd, StringBuilder lpWindowText, int nMaxCount);
-        [DllImport("user32.dll", EntryPoint = "SetWindowText")]
+        [DllImport("user32.dll", EntryPoint = "SetWindowText", CharSet = CharSet.Auto)]
         public static extern bool SetWindowText(int hwnd, string text);
         [DllImport("user32.dll", SetLastError = true)]
         private static extern bool GetWindowRect(int hWnd, out RECT lpRect);
