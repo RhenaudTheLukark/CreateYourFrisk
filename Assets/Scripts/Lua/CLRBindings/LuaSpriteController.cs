@@ -477,7 +477,7 @@ public class LuaSpriteController {
         }
 
         // Flip the sprite horizontally and/or vertically if its scale is negative
-        float zValue = EnemyEncounter.script.GetVar("noscalerotationbug").Boolean ? img.GetComponent<RectTransform>().eulerAngles.z : internalRotation.z;
+        float zValue = GlobalControls.isInFight && EnemyEncounter.script.GetVar("noscalerotationbug").Boolean ? img.GetComponent<RectTransform>().eulerAngles.z : internalRotation.z;
         internalRotation = new Vector3(ys < 0 ? 180 : 0, xs < 0 ? 180 : 0, zValue);
         img.GetComponent<RectTransform>().eulerAngles = internalRotation;
     }

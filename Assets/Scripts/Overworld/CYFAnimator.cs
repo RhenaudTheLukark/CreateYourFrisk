@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class CYFAnimator : MonoBehaviour {
     public int movementDirection = 0;
@@ -84,7 +85,7 @@ public class CYFAnimator : MonoBehaviour {
     private void ReplaceAnim(string animName) {
         Anim anim = GetAnimPerName(animName);
         try { sprctrl.SetAnimation(anim.anims.Replace(" ", "").Replace("{", "").Replace("}", "").Split(','), anim.transitionTime); }
-        catch { throw new CYFException("Bad animation for event \"" + gameObject.name + "\", animation \"" + animName + "\""); }
+        catch (Exception e) { throw new CYFException("Bad animation for event \"" + gameObject.name + "\", animation \"" + animName + "\":\n\n" + e.Message + "\n" + e.StackTrace); }
         beginAnim = animName;
     }
 }

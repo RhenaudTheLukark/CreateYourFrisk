@@ -31,7 +31,7 @@ class AutoloadResourcesFromRegistry : MonoBehaviour {
     private void LateStart() {
         if (!StaticInits.Initialized) return;
         loadRequested = true;
-        if (!string.IsNullOrEmpty(SpritePath)) {
+        if (!string.IsNullOrEmpty(SpritePath) && !(!GlobalControls.isInFight && StaticInits.MODFOLDER != FindObjectOfType<MapInfos>().modToLoad)) {
             Sprite spr = SpriteRegistry.Get(SpritePath);
             if (spr == null) {
                 // Needs to wait for mod loading
