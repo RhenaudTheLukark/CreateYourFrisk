@@ -11,7 +11,7 @@ public class SelectOMatic : MonoBehaviour {
     private static int CurrentSelectedMod;
     private static List<DirectoryInfo> modDirs;
     private Dictionary<string, Sprite> bgs = new Dictionary<string, Sprite>();
-    private bool animationDone = true;
+    private bool animationDone = true, modIsRunning;
     private float animationTimer;
 
     private static float modListScroll;          // Used to keep track of the position of the mod list specifically. Resets if you press escape
@@ -253,12 +253,13 @@ public class SelectOMatic : MonoBehaviour {
             EncounterCount.GetComponent<Text>().text = encounters[0];
             // crate your frisk version
             if (GlobalControls.crate)
-                EncounterCount.GetComponent<Text>().text = Temmify.Convert(encounters[0], true);
+                EncounterCount.GetComponent<Text>().text = Temmify.Convert(encounters[0],  true);
 
             // Make clicking the bg directly open the encounter
             ModBackground.GetComponent<Button>().onClick.RemoveAllListeners();
             ModBackground.GetComponent<Button>().onClick.AddListener(() => {
                 if (!animationDone) return;
+                modIsRunning = true;
                 StaticInits.ENCOUNTER = encounters[0];
                 StartCoroutine(LaunchMod());
             });
@@ -386,8 +387,8 @@ public class SelectOMatic : MonoBehaviour {
         //           Down: Move down                               //
         /////////////////////////////////////////////////////////////
 
-        // Main controls:
         if (!encounterBox.activeSelf) {
+            // Main controls:
             if (animationDone) {
                 //scroll left
                 if (Input.GetKeyDown(KeyCode.LeftArrow))
@@ -400,16 +401,18 @@ public class SelectOMatic : MonoBehaviour {
                     modFolderMiniMenu();
                     content.transform.GetChild(selectedItem).GetComponent<MenuButton>().StartAnimation(1);
                 // Open the encounter list or start the encounter (if there is only one encounter)
-                } else if (Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.Return))
+                } else if (Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.Return)) {
                     ModBackground.GetComponent<Button>().onClick.Invoke();
-                //content.transform.GetChild(selectedItem).GetComponent<MenuButton>().StartAnimation(1);
+                    if (!modIsRunning)
+                        content.transform.GetChild(selectedItem).GetComponent<MenuButton>().StartAnimation(1);
+                }
             }
 
             // Return to the Disclaimer screen
             if (Input.GetKeyDown(KeyCode.X) || Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift))
                 btnExit.GetComponent<Button>().onClick.Invoke();
-            // Encounter or Mod List controls:
         } else {
+            // Encounter or Mod List controls:
             if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow)) {
                 // Store previous value of selectedItem
                 int previousSelectedItem = selectedItem;
