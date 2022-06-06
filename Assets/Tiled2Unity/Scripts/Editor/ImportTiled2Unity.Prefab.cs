@@ -84,17 +84,9 @@ namespace Tiled2Unity
                 importComponent.ImportingAssets.Add(prefabPath);
             }
 
-            UnityEngine.Object finalPrefab = AssetDatabase.LoadAssetAtPath(prefabPath, typeof(GameObject));
-
-            if (finalPrefab == null)
-            {
-                // The prefab needs to be created
-                ImportUtils.ReadyToWrite(prefabPath);
-                finalPrefab = PrefabUtility.CreateEmptyPrefab(prefabPath);
-            }
-
             // Replace the prefab, keeping connections based on name. This imports the prefab asset as a side-effect.
-            PrefabUtility.ReplacePrefab(tempPrefab, finalPrefab, ReplacePrefabOptions.ReplaceNameBased);
+            ImportUtils.ReadyToWrite(prefabPath);
+            PrefabUtility.SaveAsPrefabAsset(tempPrefab, prefabPath);
 
             // Destroy the instance from the current scene hierarchy.
             UnityEngine.Object.DestroyImmediate(tempPrefab);
