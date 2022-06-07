@@ -169,15 +169,20 @@ public class ScreenResolution : MonoBehaviour {
     /// </summary>
     public static void BoxCameras(float newOrthographicSize, Rect rect) {
         // Grab the right camera to edit
-        Camera cam;
-        if (GlobalControls.isInFight && UIController.instance != null && (UIController.instance.encounter == null || !UIController.instance.encounter.gameOverStance))
+        Camera cam, cam2 = null;
+        if (GlobalControls.isInFight && UIController.instance != null && (UIController.instance.encounter == null || !UIController.instance.encounter.gameOverStance)) {
             cam = GameObject.Find("Main Camera").GetComponent<Camera>();
-        else
+            cam2 = GameOverBehavior.gameOverContainer.transform.GetComponentInChildren<Camera>(true);
+        } else
             cam = Camera.main;
 
         // Set displayed rect
         cam.rect = rect;
         cam.orthographicSize = newOrthographicSize;
+        if (cam2 != null) {
+            cam2.rect = rect;
+            cam2.orthographicSize = newOrthographicSize;
+        }
         orthographicSize = newOrthographicSize;
     }
 
