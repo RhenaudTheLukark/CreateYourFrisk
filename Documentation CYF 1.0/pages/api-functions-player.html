@@ -200,11 +200,11 @@ it's w3c valid, at least
                     the arena.
                 </li><br>
                 <li><span class="CYF"></span> <span class="term">Player.ForceHP(<span class="number"></span> amount)</span> - Lets you set the player's HP to a number above the
-                player's Max HP. The REAL maximum is 1.5 times the player's MaxHP.
+                player's Max HP. <span class="new"></span> The REAL maximum is 999.
                 </li><br>
                 <li><span class="CYF"></span> <span class="term">Player.SetMaxHPShift(<span class="number"></span> shift, <span class="number"></span> invulnerabilitySeconds = 1.7f, <span class="boolean"></span> set = false,
                 <span class="boolean"></span> canHeal = false, <span class="boolean"></span> playSound = true)</span> - Lets you set the Player's MaxHP, relative to their normal MaxHP. If the total MaxHP is negative or nil, it
-                    causes a GameOver.<br>
+                    causes a GameOver. The max value for the Player's MaxHP is 999.<br>
                     Formula: Player's MaxHP = Basis MaxHP + MaxHP Shift
                     <br><br>
                     <ul>

@@ -115,10 +115,7 @@
                     //HP = currentHP + 4 * (i + 1 - LV) + 3;
                 }
                 if (LV > i + 1)
-                    if (HP > 1.5 * MaxHP)
-                        HP = (int)(1.5f * MaxHP);
-                    else
-                        HP = currentHP;
+                    HP = currentHP;
                 ATK   = 8 + 2 * (i + 1);
                 LV    = i + 1;
                 MaxHP = BasisMaxHP + MaxHPShift;
