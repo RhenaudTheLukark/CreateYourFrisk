@@ -46,14 +46,14 @@ public static class SpriteFontRegistry {
         if (mod) {
             dictMod.Clear();
             foreach (FileInfo file in fInfo) {
-                string k = file.FullName.Substring(directoryPath.Length + 1);
+                string k = file.FullName;
                 FileLoader.SanitizePath(ref k, "Sprites/UI/Fonts/");
                 dictMod[k.ToLower()] = file;
             }
         } else {
             dictDefault.Clear();
             foreach (FileInfo file in fInfo) {
-                string k = file.FullName.Substring(directoryPath.Length + 1);
+                string k = file.FullName;
                 FileLoader.SanitizePath(ref k, "Sprites/UI/Fonts/");
                 dictDefault[k.ToLower()] = file;
             }
