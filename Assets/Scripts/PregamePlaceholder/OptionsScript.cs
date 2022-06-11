@@ -18,7 +18,7 @@ public class OptionsScript : MonoBehaviour {
     private bool CrateUnlocked;
 
     // game objects
-    public GameObject ResetRG, ResetAG, ClearSave, Safe, Retro, Fullscreen, Scale, Discord, Crate, Exit;
+    public GameObject ResetRG, ResetAG, ClearSave, Safe, Retro, Scale, Discord, Crate, Exit;
     public Text Description;
 
     // Use this for initialization
@@ -50,7 +50,6 @@ public class OptionsScript : MonoBehaviour {
                 // Add useful almighties
                 LuaScriptBinder.SetAlMighty(null, "CYFSafeMode", DynValue.NewBoolean(ControlPanel.instance.Safe));
                 LuaScriptBinder.SetAlMighty(null, "CYFRetroMode", DynValue.NewBoolean(GlobalControls.retroMode));
-                LuaScriptBinder.SetAlMighty(null, "CYFPerfectFullscreen", DynValue.NewBoolean(ScreenResolution.perfectFullscreen));
                 LuaScriptBinder.SetAlMighty(null, "CYFWindowScale", DynValue.NewNumber(ScreenResolution.windowScale));
                 if (CrateUnlocked)
                     LuaScriptBinder.SetAlMighty(null, "CrateYourFrisk", DynValue.NewBoolean(GlobalControls.crate));
@@ -102,21 +101,6 @@ public class OptionsScript : MonoBehaviour {
         Retro.GetComponentInChildren<Text>().text = !LocalCrate
             ? ("Retrocompatibility Mode: " + (GlobalControls.retroMode ? "On" : "Off"))
             : ( "RETORCMOAPTIILBIYT MOD: " + (GlobalControls.retroMode ? "ON" : "OFF"));
-
-        // toggle pixel-perfect fullscreen
-        Fullscreen.GetComponent<Button>().onClick.AddListener(() => {
-            ScreenResolution.perfectFullscreen =!ScreenResolution.perfectFullscreen;
-
-            // save RetroMode preferences to AlMighties
-            LuaScriptBinder.SetAlMighty(null, "CYFPerfectFullscreen", DynValue.NewBoolean(ScreenResolution.perfectFullscreen));
-
-            Fullscreen.GetComponentInChildren<Text>().text = !LocalCrate
-                ? ( "Blurless Fullscreen: " + (ScreenResolution.perfectFullscreen ? "On" : "Off"))
-                : ("NOT UGLEE FULLSCREEN: " + (ScreenResolution.perfectFullscreen ? "ON" : "OFF"));
-        });
-        Fullscreen.GetComponentInChildren<Text>().text = !LocalCrate
-            ? ( "Cropped Fullscreen: " + (ScreenResolution.perfectFullscreen ? "On" : "Off"))
-            : ("CRAPPED FULLSCREEN: " + (ScreenResolution.perfectFullscreen ? "ON" : "OFF"));
 
         // change window scale
         Scale.GetComponent<Button>().onClick.AddListener(() => {
@@ -219,11 +203,6 @@ public class OptionsScript : MonoBehaviour {
                     return response + "<b>CAUTION!\nDISABLE</b> this for mods made for CYF. This feature should only be used with Mods made for\n<b>Unitale v0.2.1a</b>.";
                 else
                     return Temmify.Convert(response) + "<b>" + Temmify.Convert("CAUTION!\nDISABLE") + "</b> " + Temmify.Convert("this for mods made for CYF.");
-            case "Fullscreen":
-                response = "Toggles cropped Fullscreen mode.\n\n"
-                         + "This controls whether fullscreen mode will display elements outside of CYF's usual screen space or not.\n\n\n"
-                         + "Press <b>F4</b> or <b>Alt+Enter</b> to toggle fullscreen.";
-                return !LocalCrate ? response : Temmify.Convert(response);
             case "Scale":
                 response = "Scales the window in Windowed mode.\n\n"
                          + "This is useful for especially large screens (such as 4k monitors).\n\n"
@@ -279,17 +258,14 @@ public class OptionsScript : MonoBehaviour {
                 // Retro
                 else if (mousePosY <= 260 && mousePosY > 220)
                     hoverItem = "Retro";
-                // Fullscreen
-                else if (mousePosY <= 220 && mousePosY > 180)
-                    hoverItem = "Fullscreen";
                 // Scale
-                else if (mousePosY <= 180 && mousePosY > 140)
+                else if (mousePosY <= 220 && mousePosY > 180)
                     hoverItem = "Scale";
                 // Discord
-                else if (mousePosY <= 140 && mousePosY > 100)
+                else if (mousePosY <= 180 && mousePosY > 140)
                     hoverItem = "Discord";
                 // Crate
-                else if (mousePosY <= 100 && mousePosY >  60 && CrateUnlocked)
+                else if (mousePosY <= 140 && mousePosY > 100 && CrateUnlocked)
                     hoverItem = "Crate";
                 // Exit
                 else if (mousePosY <=  60 && mousePosY >  20)

@@ -8,7 +8,6 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class ScreenResolution : MonoBehaviour {
     public  static bool          hasInitialized;
-    public  static bool          perfectFullscreen = true;    // "Blurless Fullscreen" option.
     public  static int           windowScale = 1;             // Global "Window Scale" option.
     public  static int           tempWindowScale = 1;         // Window Scale option used right now
     public  static bool          wideFullscreen;              // Enabled/disabled by means of Misc.SetWideFullscreen.
@@ -54,17 +53,9 @@ public class ScreenResolution : MonoBehaviour {
         DontDestroyOnLoad(BGCamera);
 
         // If this is the user's first time EVER opening the engine, force 640x480 windowed
-        if (!PlayerPrefs.HasKey("once")) {
-            SetFullScreen(false, 2);
-            PlayerPrefs.SetInt("once", 1);
-        }
+        SetFullScreen(PlayerPrefs.HasKey("once") && Screen.fullScreen, PlayerPrefs.HasKey("once") ? 0 : 2);
+        PlayerPrefs.SetInt("once", 1);
         hasInitialized = true;
-    }
-
-    private void OnDestroy() {
-        #if !UNITY_EDITOR
-            SceneManager.sceneLoaded -= BoxCameras2;
-        #endif
     }
 
     private static bool setSize;
@@ -98,8 +89,8 @@ public class ScreenResolution : MonoBehaviour {
         }
 
         Rect rect;
-        // Windowed
         if (!fullscreen) {
+            // Windowed
             int maxScale = Mathf.FloorToInt(Mathf.Min(Display.main.systemWidth / (float)width, Display.main.systemHeight / (float)height));
             tempWindowScale = Mathf.Min(windowScale, maxScale);
 
@@ -109,8 +100,8 @@ public class ScreenResolution : MonoBehaviour {
             rect = new Rect(0f, 0f, 1f, 1f);
         } else {
             int newWidth, newHeight;
-            if (setSize || !perfectFullscreen) {
-                // 4:3 FS or FS with set size
+            if (!wideFullscreen) {
+                // 4:3 FS
                 float maxScale = Mathf.Min(lastMonitorSize.x / width, lastMonitorSize.y / height);
                 newWidth = Mathf.RoundToInt(width * maxScale);
                 newHeight = Mathf.RoundToInt(height * maxScale);
@@ -187,6 +178,6 @@ public class ScreenResolution : MonoBehaviour {
     }
 
     private static void BoxCameras2(Scene scene, LoadSceneMode mode) {
-        BoxCameras(orthographicSize, Screen.fullScreen && !wideFullscreen ? FSBorderRect : NoBorderRect);
+        BoxCameras(orthographicSize, !Screen.fullScreen || wideFullscreen ? NoBorderRect : FSBorderRect);
     }
 }

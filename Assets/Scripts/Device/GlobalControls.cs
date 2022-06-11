@@ -64,17 +64,12 @@ public class GlobalControls : MonoBehaviour {
          && LuaScriptBinder.GetAlMighty(null, "CYFRetroMode").Type == DataType.Boolean)
             retroMode = LuaScriptBinder.GetAlMighty(null, "CYFRetroMode").Boolean;
 
-        // Check if fullscreen mode has a stored preference that is a boolean
-        if (LuaScriptBinder.GetAlMighty(null, "CYFPerfectFullscreen")      != null
-         && LuaScriptBinder.GetAlMighty(null, "CYFPerfectFullscreen").Type == DataType.Boolean)
-            ScreenResolution.perfectFullscreen = LuaScriptBinder.GetAlMighty(null, "CYFPerfectFullscreen").Boolean;
-
         // Check if window scale has a stored preference that is a number
         if (LuaScriptBinder.GetAlMighty(null, "CYFWindowScale")      != null
          && LuaScriptBinder.GetAlMighty(null, "CYFWindowScale").Type == DataType.Number) {
             ScreenResolution.windowScale = (int) System.Math.Min(LuaScriptBinder.GetAlMighty(null, "CYFWindowScale").Number, 1);
             if (!ScreenResolution.hasInitialized) {
-                Screen.SetResolution(640, 480, false, 0);
+                Screen.SetResolution(640, 480, Screen.fullScreen, 0);
                 ScreenResolution scrRes = FindObjectOfType<ScreenResolution>();
                 if (scrRes) scrRes.Start();
             }
@@ -182,10 +177,11 @@ public class GlobalControls : MonoBehaviour {
 
         // Enter fullscreen using given shortcuts
         if (!ScreenResolution.hasInitialized) return;
-        if (!Input.GetKeyDown(KeyCode.F4) && (!Input.GetKeyDown(KeyCode.Return) || !Input.GetKey(KeyCode.LeftAlt) && !Input.GetKey(KeyCode.RightAlt))) return; // RAlt  + Enter
-        ScreenResolution.SetFullScreen(!Screen.fullScreen);
-        if (!Screen.fullScreen)
-            StartCoroutine(UpdateMonitorSize());
+        if (Input.GetKeyDown(KeyCode.F4) || (Input.GetKeyDown(KeyCode.Return) && (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)))) {
+            ScreenResolution.SetFullScreen(!Screen.fullScreen);
+            if (!Screen.fullScreen)
+                StartCoroutine(UpdateMonitorSize());
+        }
     }
 
     /// <summary>

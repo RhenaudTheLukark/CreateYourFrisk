@@ -48,7 +48,6 @@ public static class SpriteRegistry {
 
     private static Sprite TryFetchFromMod(string origKey, string key) {
         FileInfo tryF = new FileInfo(Path.Combine(FileLoader.PathToModFile("Sprites"), origKey.TrimStart('/')) + (origKey.EndsWith(".png") ? "" : ".png"));
-        Debug.Log("Trying to fetch " + tryF.FullName + ": " + (tryF.Exists ? "it exists" : "it doesn't exist") + " (from key " + origKey + ")");
         if (!tryF.Exists) return null;
 
         dictMod[key] = tryF;
