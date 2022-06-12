@@ -37,6 +37,7 @@ public static class SpriteRegistry {
         else                                   return TryFetchFromMod(origKey, key) ?? TryFetchFromDefault(origKey, key);
         return dict[key];
     }
+
     private static Sprite TryFetchFromDefault(string origKey, string key) {
         FileInfo tryF = new FileInfo(Path.Combine(FileLoader.PathToDefaultFile("Sprites"), origKey) + (origKey.EndsWith(".png") ? "" : ".png"));
         if (!tryF.Exists) return null;

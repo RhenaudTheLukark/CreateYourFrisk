@@ -286,19 +286,17 @@ end";
 			}
 
 			// Check if the resource exists using the mod path
-			string modPath = pathSuffix;
 			string error;
 			try {
+				string modPath = pathSuffix;
 				ExplorePath(ref fileNameMod, ref modPath);
-				// Keep the mod path even if the file needs to exist
+				if (needsToExist && !new FileInfo(fileNameMod).Exists) throw new CYFException("The file " + fileNameMod + " doesn't exist.");
 				fileName = fileNameMod;
 
-				if (!needsAbsolutePath) {
-					Uri uriRel = new Uri(modPath).MakeRelativeUri(new Uri(fileName));
-					fileName = Uri.UnescapeDataString(uriRel.OriginalString);
-				}
+				if (needsAbsolutePath) return true;
 
-				if (needsToExist && !new FileInfo(fileNameMod).Exists) throw new CYFException("The file " + fileNameMod + " doesn't exist.");
+				Uri uriRel = new Uri(modPath + Path.DirectorySeparatorChar).MakeRelativeUri(new Uri(fileName));
+				fileName = Uri.UnescapeDataString(uriRel.OriginalString);
 				return true;
 			} catch (Exception e) { error = e.Message; }
 
@@ -341,9 +339,6 @@ end";
 			}
 
 			fullPath = fullPath.Replace('\\', Path.DirectorySeparatorChar).Replace('/', Path.DirectorySeparatorChar);
-
-			if (!new DirectoryInfo(pathSuffix).Exists)
-				throw new CYFException("The root folder \"" + pathSuffix + "\" doesn't exist.");
 
 			// Get the folder containing the resource to load
 			string fileName = fullPath.Substring(fullPath.LastIndexOf(Path.DirectorySeparatorChar) + 1);

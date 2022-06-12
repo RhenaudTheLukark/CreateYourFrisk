@@ -26,9 +26,30 @@ public static class SpriteFontRegistry {
         return dict.ContainsKey(key) ? dict[key] : TryLoad(k, key);
     }
 
-    public static UnderFont TryLoad(string baseKey, string key) {
-        if (!dictMod.ContainsKey(key) && !dictDefault.ContainsKey(key)) return null;
-        dict[key] = GetUnderFont(baseKey);
+    public static UnderFont TryLoad(string origKey, string key) {
+        if (!dictMod.ContainsKey(key) && !dictDefault.ContainsKey(key))
+            return TryFetchFromMod(origKey, key) ?? TryFetchFromDefault(origKey, key);
+        dict[key] = GetUnderFont(origKey);
+        return dict[key];
+    }
+
+    private static UnderFont TryFetchFromDefault(string origKey, string key) {
+        FileInfo tryF = new FileInfo(Path.Combine(FileLoader.PathToDefaultFile("Sprites/UI/Fonts/"), origKey) + (origKey.EndsWith(".png") ? "" : ".png"));
+        if (!tryF.Exists)
+            return null;
+
+        dictDefault[key] = tryF;
+        dict[key] = GetUnderFont(origKey);
+        return dict[key];
+    }
+
+    private static UnderFont TryFetchFromMod(string origKey, string key) {
+        FileInfo tryF = new FileInfo(Path.Combine(FileLoader.PathToModFile("Sprites/UI/Fonts/"), origKey.TrimStart('/')) + (origKey.EndsWith(".png") ? "" : ".png"));
+        if (!tryF.Exists)
+            return null;
+
+        dictMod[key] = tryF;
+        dict[key] = GetUnderFont(origKey);
         return dict[key];
     }
 
