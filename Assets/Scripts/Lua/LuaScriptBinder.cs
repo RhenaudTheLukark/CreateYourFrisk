@@ -441,14 +441,15 @@ public static class LuaScriptBinder {
             } else     luatm.ResetFont();
         } else         luatm.ResetFont();
 
-        if (enableLateStart)
-            luatm.lateStartWaiting = true;
-        luatm.SetText(text);
-
         // Bubble variables
         luatm.bubble = true;
         luatm.textMaxWidth = textWidth;
         luatm.bubbleHeight = bubbleHeight;
+
+        if (enableLateStart)
+            luatm.lateStartWaiting = true;
+        luatm.SetText(text);
+
         luatm.ShowBubble();
 
         if (!enableLateStart) return luatm;
