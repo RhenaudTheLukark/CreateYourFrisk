@@ -152,7 +152,7 @@ public class PlayerController : MonoBehaviour {
             }
 
             if (invulnerabilitySeconds >= 0) invulTimer = invulnerabilitySeconds;
-            if (damage != 0)                 SetHP(HP - damage, false);
+            if (damage != 0)                 SetHP(HP - damage, true);
         } else if (damage < 0) {
             if (playSound)
                 PlaySound("healsound");
@@ -160,8 +160,8 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
-    public void SetHP(float newhp, bool actualDamage = true) {
-        newhp = Mathf.Round(newhp * Mathf.Pow(10, ControlPanel.instance.MaxDigitsAfterComma)) / Mathf.Pow(10, ControlPanel.instance.MaxDigitsAfterComma);
+    public void SetHP(float newhp, bool allowOverheal = false) {
+        newhp = Mathf.Min(Mathf.Round(newhp * Mathf.Pow(10, ControlPanel.instance.MaxDigitsAfterComma)) / Mathf.Pow(10, ControlPanel.instance.MaxDigitsAfterComma), ControlPanel.instance.HPLimit);
 
         // Retromode: Make Player.hp act as an integer
         if (GlobalControls.retroMode)
@@ -212,73 +212,58 @@ public class PlayerController : MonoBehaviour {
             gameObject.GetComponent<GameOverBehavior>().StartDeath(deathText, deathMusic);
             return;
         }
-        if (newhp > PlayerCharacter.instance.MaxHP * 1.5 &&!actualDamage)
-            if (newhp > ControlPanel.instance.HPLimit) HP = ControlPanel.instance.HPLimit;
-            else                                       HP = (int)(PlayerCharacter.instance.MaxHP * 1.5f);
-        // HP greater than Max, heal, already more HP than Max
-        else if (newhp > PlayerCharacter.instance.MaxHP && actualDamage && newhp > PlayerCharacter.instance.HP && PlayerCharacter.instance.HP > PlayerCharacter.instance.MaxHP) { }
-        // HP greater than Max, heal
-        else if (newhp > PlayerCharacter.instance.MaxHP && actualDamage && newhp > PlayerCharacter.instance.HP)  HP = PlayerCharacter.instance.MaxHP;
-        else                                                                                                     HP = newhp;
-        if (HP > ControlPanel.instance.HPLimit)
-            HP = ControlPanel.instance.HPLimit;
+
+        if (allowOverheal)
+            HP = newhp;
+        else {
+            // Heal: Keep the highest value between MaxHP and the current HP and don't go past MaxHP if the current HP isn't full
+            if (newhp > PlayerCharacter.instance.MaxHP && newhp > PlayerCharacter.instance.HP)
+                HP = Mathf.Max(PlayerCharacter.instance.MaxHP, PlayerCharacter.instance.HP);
+            else
+                HP = newhp;
+        }
+
         deathEscape = true;
         if (UIStats.instance)
             UIStats.instance.setHP(HP);
     }
 
-    public void SetMaxHPShift(int shift, float invulnerabilitySeconds = 1.7f, bool set = false, bool canHeal = false, bool sound = true) {
-        invulTimer = invulnerabilitySeconds;
-        if ((PlayerCharacter.instance.MaxHP + shift <= 0 &&!set) || (shift <= 0 && set)) {
-            shift = 0;
-            set = true;
-        }
-        if (set) {
-            if (shift == 0) {
-                SetHP(0);
-                return;
-            }
+    public void SetMaxHPShift(int newMHP, float invulnerabilitySeconds = 1.7f, bool set = false, bool canHeal = false, bool sound = true) {
+        int oldMHP = PlayerCharacter.instance.MaxHP;
 
-            if (shift > 999)
-                shift = 999;
-            if (shift == PlayerCharacter.instance.MaxHP)
-                return;
-            int oldMHP = PlayerCharacter.instance.MaxHP;
-            PlayerCharacter.instance.MaxHPShift = shift - PlayerCharacter.instance.BasisMaxHP;
-            if (shift < oldMHP) {
-                if (sound) {
-                    playerAudio.clip = AudioClipRegistry.GetSound("hurtsound");
-                    playerAudio.Play();
-                }
-            } else {
-                if (sound) {
-                    playerAudio.clip = AudioClipRegistry.GetSound("healsound");
-                    playerAudio.Play();
-                }
-                if (canHeal && oldMHP < shift) {
-                    SetHP(PlayerCharacter.instance.HP + (shift - oldMHP));
-                }
-            }
-        } else {
-            if (shift + PlayerCharacter.instance.MaxHP > 999)
-                shift = 999 - PlayerCharacter.instance.MaxHP;
-            if (shift == 0)
-                return;
-            PlayerCharacter.instance.MaxHPShift += shift;
-            if (shift < 0) {
-                if (sound) {
-                    playerAudio.clip = AudioClipRegistry.GetSound("hurtsound");
-                    playerAudio.Play();
-                }
-            } else {
-                if (sound) {
-                    playerAudio.clip = AudioClipRegistry.GetSound("healsound");
-                    playerAudio.Play();
-                }
-                if (canHeal)
-                    SetHP(PlayerCharacter.instance.HP + shift);
-            }
+        if (!set) newMHP += oldMHP;
+        newMHP = Mathf.Min(newMHP, ControlPanel.instance.HPLimit);
+
+        if (sound) {
+            playerAudio.clip = AudioClipRegistry.GetSound(newMHP < oldMHP ? "hurtsound" : "healsound");
+            playerAudio.Play();
         }
+        // Add invulnerability if MaxHP was removed
+        if (oldMHP > newMHP)
+            invulTimer = invulnerabilitySeconds;
+
+        // Death
+        if (newMHP <= 0) {
+            SetHP(0);
+            return;
+        }
+
+        // No change
+        if (newMHP == oldMHP)
+            return;
+
+        PlayerCharacter.instance.MaxHPShift = newMHP - PlayerCharacter.instance.BasisMaxHP;
+
+        if (sound) {
+            playerAudio.clip = AudioClipRegistry.GetSound(newMHP < oldMHP ? "hurtsound" : "healsound");
+            playerAudio.Play();
+        }
+
+        // Heal the MaxHP difference if canHeal is true and MaxHP was added
+        if (canHeal && oldMHP < newMHP)
+            SetHP(PlayerCharacter.instance.HP + (newMHP - oldMHP));
+
+        // TODO: Remove overheal reset in 0.7
         if (PlayerCharacter.instance.HP > PlayerCharacter.instance.MaxHP)
             SetHP(PlayerCharacter.instance.MaxHP);
         if (UIStats.instance)

@@ -76,6 +76,7 @@ public static class LuaScriptBinder {
         script.Globals["UnloadSprite"] = (Action<string>)SpriteRegistry.Unload;
 
         script.Globals["CYFversion"] = GlobalControls.CYFversion;
+        script.Globals["LTSversion"] = GlobalControls.LTSversion;
         if (!UnitaleUtil.IsOverworld) {
             script.Globals["CreateSprite"] = (Func<string, string, int, DynValue>)SpriteUtil.MakeIngameSprite;
             script.Globals["CreateLayer"] = (Func<string, string, bool, bool>)SpriteUtil.CreateLayer;
@@ -441,14 +442,15 @@ public static class LuaScriptBinder {
             } else     luatm.ResetFont();
         } else         luatm.ResetFont();
 
-        if (enableLateStart)
-            luatm.lateStartWaiting = true;
-        luatm.SetText(text);
-
         // Bubble variables
         luatm.bubble = true;
         luatm.textMaxWidth = textWidth;
         luatm.bubbleHeight = bubbleHeight;
+
+        if (enableLateStart)
+            luatm.lateStartWaiting = true;
+        luatm.SetText(text);
+
         luatm.ShowBubble();
 
         if (!enableLateStart) return luatm;

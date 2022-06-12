@@ -148,8 +148,6 @@ public class LuaPlayerStatus {
         get { return PlayerCharacter.instance.LV; }
         set {
             if (PlayerCharacter.instance.LV == value) return;
-            if (PlayerCharacter.instance.HP > PlayerCharacter.instance.MaxHP * 1.5 && PlayerCharacter.instance.LV > value)
-                player.SetHP((int)(PlayerCharacter.instance.MaxHP * 1.5));
             PlayerCharacter.instance.SetLevel(value);
             if (UIStats.instance) {
                 UIStats.instance.setPlayerInfo(PlayerCharacter.instance.Name, PlayerCharacter.instance.LV);
@@ -239,9 +237,9 @@ public class LuaPlayerStatus {
     public void MoveToAbs(float x, float y, bool ignoreWalls = false) { player.SetPosition(x, y, ignoreWalls); }
 
     /// <summary>
-    /// Sets the player's HP above his HP Max. Maximum : 150% HP Max.
+    /// Sets the player's HP above his HP Max.
     /// </summary>
-    public void ForceHP(float HP) { player.SetHP(HP, false); }
+    public void ForceHP(float HP) { player.SetHP(HP, true); }
 
     /// <summary>
     /// Sets a shift for the player's Max HP. Can be settable and can modify the player's HP.

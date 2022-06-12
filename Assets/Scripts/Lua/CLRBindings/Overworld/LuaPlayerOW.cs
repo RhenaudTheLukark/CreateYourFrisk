@@ -113,23 +113,23 @@ public class LuaPlayerOW {
     }
 
     [MoonSharpHidden]
-    public void setHP(float newhp, bool forced = false) {
-        if (newhp <= 0) {
+    public void setHP(float newHP, bool allowOverheal = false) {
+        if (newHP <= 0) {
             EventManager.instance.luaGeneralOw.GameOver();
             return;
         }
-        float CheckedHP = PlayerCharacter.instance.HP;
-        UnitaleUtil.PlaySound("CollisionSoundChannel", CheckedHP - newhp >= 0 ? "hurtsound" : "healsound");
+        UnitaleUtil.PlaySound("CollisionSoundChannel", PlayerCharacter.instance.HP - newHP >= 0 ? "hurtsound" : "healsound");
 
-        newhp = Mathf.Round(newhp * Mathf.Pow(10, ControlPanel.instance.MaxDigitsAfterComma)) / Mathf.Pow(10, ControlPanel.instance.MaxDigitsAfterComma);
-
-        if (forced) CheckedHP = newhp > PlayerCharacter.instance.MaxHP * 1.5 ? (int)(PlayerCharacter.instance.MaxHP * 1.5) : newhp;
-        else        CheckedHP = newhp > PlayerCharacter.instance.MaxHP       ? PlayerCharacter.instance.MaxHP              : newhp;
-
-        if (CheckedHP > ControlPanel.instance.HPLimit)
-            CheckedHP = ControlPanel.instance.HPLimit;
-
-        PlayerCharacter.instance.HP = CheckedHP;
+        newHP = Mathf.Min(Mathf.Round(newHP * Mathf.Pow(10, ControlPanel.instance.MaxDigitsAfterComma)) / Mathf.Pow(10, ControlPanel.instance.MaxDigitsAfterComma), ControlPanel.instance.HPLimit);
+        if (allowOverheal)
+            PlayerCharacter.instance.HP = newHP;
+        else {
+            // Heal: Keep the highest value between MaxHP and the current HP and don't go past MaxHP if the current HP isn't full
+            if (newHP > PlayerCharacter.instance.MaxHP && newHP > PlayerCharacter.instance.HP)
+                PlayerCharacter.instance.HP = Mathf.Max(PlayerCharacter.instance.MaxHP, PlayerCharacter.instance.HP);
+            else
+                PlayerCharacter.instance.HP = newHP;
+        }
     }
 
     [MoonSharpHidden]
