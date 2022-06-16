@@ -51,6 +51,7 @@ public class LuaSpriteController {
         // TODO: Restore in 0.7
         //get { return img.GetComponent<Image>() ? img.GetComponent<Image>().sprite.name : img.GetComponent<SpriteRenderer>().sprite.name; }
         get { return _spritename; }
+        [MoonSharpHidden] set { _spritename = value; }
     }
 
     // The x position of the sprite, relative to the arena position and its anchor.
@@ -409,7 +410,7 @@ public class LuaSpriteController {
         }
         // TODO: Restore in 0.7
         //imgtemp.name = name;
-        _spritename = name;
+        spritename = name;
         Scale(xScale, yScale);
         if (tag == "projectile")
             img.GetComponent<Projectile>().needUpdateTex = true;
@@ -745,17 +746,17 @@ public class LuaSpriteController {
         if (k != null) {
             // TODO: Restore in 0.7
             //img.name = k.name;
-            _spritename = k.name;
+            spritename = k.name;
         } else {
             StopAnimation();
             return;
         }
 
         if (k.sprite == null) return;
-        Set(_spritename);
+        Set(spritename);
         // TODO: Remove in 0.7
         if (k == KeyframeCollection.EMPTY_KEYFRAME)
-            _spritename = "blank";
+            spritename = "blank";
     }
 
     public void SetVar(string name, DynValue value) {

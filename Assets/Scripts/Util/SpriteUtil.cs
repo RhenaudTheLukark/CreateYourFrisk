@@ -121,7 +121,7 @@ public static class SpriteUtil {
             sprCtrl = LuaSpriteController.GetOrCreate(i.gameObject);
             // TODO: Restore in 0.7
             //if (!UnitaleUtil.IsOverworld) i.name = filename;
-            if (!UnitaleUtil.IsOverworld) sprCtrl._spritename = filename;
+            sprCtrl.spritename = filename;
         } else
             throw new CYFException("You can't create a sprite object with a nil sprite!");
         if (!GameObject.Find(tag + "Layer") && tag != "none")

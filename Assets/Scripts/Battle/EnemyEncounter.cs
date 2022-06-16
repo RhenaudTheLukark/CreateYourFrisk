@@ -278,7 +278,7 @@ public class EnemyEncounter : MonoBehaviour {
         SpriteUtil.SwapSpriteFromFile(projectile, sprite);
         // TODO: Restore in 0.7
         //projectile.name = sprite;
-        projectile.GetComponent<CYFSprite>().ctrl._spritename = sprite;
+        projectile.GetComponent<CYFSprite>().ctrl.spritename = sprite;
         projectile.owner = s;
         projectile.gameObject.SetActive(true);
         projectile.ctrl.MoveToAbs(xpos, ypos);
