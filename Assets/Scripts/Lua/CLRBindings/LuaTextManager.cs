@@ -227,6 +227,16 @@ public class LuaTextManager : TextManager {
         }
     }
 
+    public void SendToTop() {
+        CheckExists();
+        transform.SetAsLastSibling();
+    }
+
+    public void SendToBottom() {
+        CheckExists();
+        transform.SetAsFirstSibling();
+    }
+
     public void MoveBelow(LuaTextManager otherText) {
         CheckExists();
         if (otherText == null || !otherText.isactive)                     throw new CYFException("The text object passed as an argument is nil or inactive.");

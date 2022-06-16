@@ -347,6 +347,17 @@ end
                 Moves a text object above another text object.<br>They must both be on the same layer.
             </p>
             <p>
+                <br><span class="function"><span class="new"></span>Text.SendToTop()</span>
+                Sends this text object to the top of its layer's hierarchy. If a sprite has 5
+                children, for instance, you can use this to rearrange this text object's position internally.
+                However, child text objects will always appear on top of their parents, regardless of this
+                function being called.
+            </p>
+            <p>
+                <br><span class="function"><span class="new"></span>Text.SendToBottom()</span>
+                Sends this text objct to the bottom of its layer's hierarchy. Similar rules apply as with <span class="term">SendToTop()</span>.
+            </p>
+            <p>
                 <br><span class="function">Text.AddText(<span class="luatable"><span class="string"></span></span> text <font style="color:#fff;">(OR)</font> <span class="string"></span> text)</span>
                 Adds the given text to the object's text table. Acts like <span class="term">Text.SetText()</span> if all the text is already done.
             </p>
