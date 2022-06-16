@@ -381,10 +381,9 @@ public class EventManager : MonoBehaviour {
         initializedEvents.Clear();
         events.Clear();
         autoDone.Clear();
-        foreach (LuaSpriteController sprCtrl in spriteControllers.Values)
-            sprCtrl.Reset();
         // Reset all loaded scripts in order to reload them later
         if (resetScripts) {
+            spriteControllers.Clear();
             eventScripts.Clear();
             ScriptWrapper.instances.Clear();
         }
