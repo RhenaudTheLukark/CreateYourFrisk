@@ -169,8 +169,7 @@ public static class FileLoader {
             if (!LoadModule.RequireFile(ref fileName, pathSuffix, !leadingSlash && errorOnFailure, needsAbsolutePath, needsToExist))
                 if (leadingSlash) {
                     // Passthrough: Remove the leading slash if the file wasn't found
-                    // TODO: Remove this on 0.7
-                    fileName = fileName.TrimStart(Path.DirectorySeparatorChar);
+                    if (!fileName.StartsWith(DataRoot)) fileName = fileName.Replace('\\', '/').TrimStart('/'); // TODO: Remove this for 0.7
                     if (!LoadModule.RequireFile(ref fileName, pathSuffix, errorOnFailure, needsAbsolutePath, needsToExist))
                         return false;
                 } else
