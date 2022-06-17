@@ -290,8 +290,9 @@ end";
 			try {
 				string modPath = pathSuffix;
 				ExplorePath(ref fileNameMod, ref modPath);
-				if (needsToExist && !new FileInfo(fileNameMod).Exists) throw new CYFException("The file " + fileNameMod + " doesn't exist.");
+				// Keep the path to the mod folder in case of failure (used to open nonexistent files!)
 				fileName = fileNameMod;
+				if (needsToExist && !new FileInfo(fileNameMod).Exists) throw new CYFException("The file " + fileNameMod + " doesn't exist.");
 
 				if (needsAbsolutePath) return true;
 
