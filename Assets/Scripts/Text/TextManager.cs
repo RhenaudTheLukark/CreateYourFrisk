@@ -255,21 +255,21 @@ public class TextManager : MonoBehaviour {
                         if (dv.Type == DataType.Number && count >= text.Table.Length - 1 && time == -1)
                             time = (float)dv.Number;
                         else if (time != -1)
-                            finalMugshot = "mugshots/" + dv.String;
+                            finalMugshot = "Mugshots/" + dv.String;
                         else
-                            mugshots.Add("mugshots/" + dv.String);
+                            mugshots.Add("Mugshots/" + dv.String);
                     }
                 } else
-                    mugshots.Add("mugshots/" + text.String);
+                    mugshots.Add("Mugshots/" + text.String);
             else
-                mugshots.Add("mugshots/");
+                mugshots.Add("Mugshots/");
         } else
-            mugshots.Add("mugshots/");
+            mugshots.Add("Mugshots/");
 
         bool mugshotSet = false;
         if (mugshot != null && mugshot.isactive) {
             mugshot.StopAnimation();
-            if ((mugshots.Count > 1 || (mugshots[0] != "mugshots/" && mugshots[0] != "mugshots/null")) && text != null) {
+            if ((mugshots.Count > 1 || (mugshots[0] != "Mugshots/" && mugshots[0] != "Mugshots/null")) && text != null) {
                 try {
                     if (mugshots.Count > 1) {
                         time = time > 0f ? time : 0.2f;
