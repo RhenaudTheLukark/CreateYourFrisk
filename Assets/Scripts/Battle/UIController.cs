@@ -581,6 +581,7 @@ public class UIController : MonoBehaviour {
     public static void SwitchStateOnString(Script scr, string state) {
         if (state == null)
             throw new CYFException("State: Argument cannot be nil.");
+        state = state.ToUpper();
         if (instance.encounter.gameOverStance) return;
         if (!instance.UIStates.Contains(state))
             throw new CYFException("The state \"" + state + "\" is not a valid state. Are you sure it exists?\n\nPlease double-check in the Misc. Functions section of the docs for a list of every default valid state.");

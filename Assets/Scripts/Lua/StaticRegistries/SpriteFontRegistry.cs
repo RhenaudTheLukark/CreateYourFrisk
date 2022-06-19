@@ -115,27 +115,35 @@ public static class SpriteFontRegistry {
         return underfont;
     }
 
+    private static void AddLetter(Dictionary<char, Sprite> letters, char letter, Sprite s, string fontPath) {
+        if (letters.ContainsKey(letter)) {
+            UnitaleUtil.DisplayLuaError("", "Error while loading the font " + fontPath + "\n\nThe letter \" " + letter + " \" has been added several times to the font!", true);
+            return;
+        }
+        letters.Add(letter, s);
+    }
+
     private static Dictionary<char, Sprite> LoadBuiltInFont(XmlNode sheetNode, string fontPath) {
         Sprite[] letterSprites = SpriteUtil.AtlasFromXml(sheetNode, SpriteUtil.FromFile(fontPath, "Sprites/UI/Fonts/"));
         Dictionary<char, Sprite> letters = new Dictionary<char, Sprite>();
         foreach (Sprite s in letterSprites) {
             string name = s.name;
             if (name.Length == 1)
-                letters.Add(name[0], s);
+                AddLetter(letters, name[0], s, fontPath);
             else
                 switch (name) {
-                    case "slash":         letters.Add('/', s);   break;
-                    case "dot":           letters.Add('.', s);   break;
-                    case "pipe":          letters.Add('|', s);   break;
-                    case "backslash":     letters.Add('\\', s);  break;
-                    case "colon":         letters.Add(':', s);   break;
-                    case "questionmark":  letters.Add('?', s);   break;
-                    case "doublequote":   letters.Add('"', s);   break;
-                    case "asterisk":      letters.Add('*', s);   break;
-                    case "space":         letters.Add(' ', s);   break;
-                    case "lt":            letters.Add('<', s);   break;
-                    case "rt":            letters.Add('>', s);   break;
-                    case "ampersand":     letters.Add('&', s);   break;
+                    case "slash":         AddLetter(letters, '/', s, fontPath);   break;
+                    case "dot":           AddLetter(letters, '.', s, fontPath);   break;
+                    case "pipe":          AddLetter(letters, '|', s, fontPath);   break;
+                    case "backslash":     AddLetter(letters, '\\', s, fontPath);  break;
+                    case "colon":         AddLetter(letters, ':', s, fontPath);   break;
+                    case "questionmark":  AddLetter(letters, '?', s, fontPath);   break;
+                    case "doublequote":   AddLetter(letters, '"', s, fontPath);   break;
+                    case "asterisk":      AddLetter(letters, '*', s, fontPath);   break;
+                    case "space":         AddLetter(letters, ' ', s, fontPath);   break;
+                    case "lt":            AddLetter(letters, '<', s, fontPath);   break;
+                    case "rt":            AddLetter(letters, '>', s, fontPath);   break;
+                    case "ampersand":     AddLetter(letters, '&', s, fontPath);   break;
                 }
         }
         return letters;

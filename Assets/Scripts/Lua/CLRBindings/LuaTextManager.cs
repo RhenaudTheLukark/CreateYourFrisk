@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using MoonSharp.Interpreter;
 
 public class LuaTextManager : TextManager {
@@ -22,6 +23,7 @@ public class LuaTextManager : TextManager {
     private float xScale = 1;
     private float yScale = 1;
     [MoonSharpHidden] public bool autoSetLayer = true;
+    private readonly Dictionary<string, DynValue> vars = new Dictionary<string, DynValue>();
 
     public bool isactive {
         get { return !removed && !hidden; }
@@ -223,6 +225,16 @@ public class LuaTextManager : TextManager {
             }
             catch { throw new CYFException("The layer \"" + value + "\" doesn't exist."); }
         }
+    }
+
+    public void SendToTop() {
+        CheckExists();
+        transform.SetAsLastSibling();
+    }
+
+    public void SendToBottom() {
+        CheckExists();
+        transform.SetAsFirstSibling();
     }
 
     public void MoveBelow(LuaTextManager otherText) {
@@ -641,5 +653,23 @@ public class LuaTextManager : TextManager {
     public int GetTextHeight() {
         CheckExists();
         return (int)UnitaleUtil.CalcTextHeight(this);
+    }
+
+    public void SetVar(string key, DynValue value) {
+        if (key == null)
+            throw new CYFException("text.SetVar: The first argument (the index) is nil.\n\nSee the documentation for proper usage.");
+        vars[key] = value;
+    }
+
+    public DynValue GetVar(string key) {
+        if (key == null)
+            throw new CYFException("text.GetVar: The first argument (the index) is nil.\n\nSee the documentation for proper usage.");
+        DynValue retval;
+        return vars.TryGetValue(key, out retval) ? retval : DynValue.NewNil();
+    }
+
+    public DynValue this[string key] {
+        get { return GetVar(key); }
+        set { SetVar(key, value); }
     }
 }

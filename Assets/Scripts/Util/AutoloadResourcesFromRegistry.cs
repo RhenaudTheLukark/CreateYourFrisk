@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
@@ -31,8 +30,15 @@ class AutoloadResourcesFromRegistry : MonoBehaviour {
     private void LateStart() {
         if (!StaticInits.Initialized) return;
         loadRequested = true;
-        if (!string.IsNullOrEmpty(SpritePath) && !(!GlobalControls.isInFight && StaticInits.MODFOLDER != FindObjectOfType<MapInfos>().modToLoad)) {
-            Sprite spr = SpriteRegistry.Get(SpritePath);
+        if (string.IsNullOrEmpty(SpritePath))
+            Destroy(this);
+        else if (GlobalControls.isInFight || StaticInits.MODFOLDER == FindObjectOfType<MapInfos>().modToLoad) {
+            Sprite spr = null;
+            try { spr = SpriteRegistry.Get(SpritePath); }
+            catch (MoonSharp.Interpreter.ScriptRuntimeException ex) {
+                UnitaleUtil.DisplayLuaError("Autoloading a resource - " + SpritePath, ex.DecoratedMessage != null ? UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message : ex.Message);
+            }
+
             if (spr == null) {
                 // Needs to wait for mod loading
                 if (tries < 10) tries++;
@@ -48,10 +54,10 @@ class AutoloadResourcesFromRegistry : MonoBehaviour {
             } else if (img3 != null)
                 img3.material.mainTexture = spr.texture;
             else
-                throw new CYFException("The GameObject " + gameObject.name + " doesn't have an Image, Sprite Renderer or Particle System component.");
-        }
+                throw new CYFException("The GameObject " + name + " doesn't have an Image, Sprite Renderer or Particle System component.");
 
-        Destroy(this);
+            Destroy(this);
+        }
     }
 
     public void Update() {

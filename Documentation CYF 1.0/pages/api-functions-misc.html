@@ -199,8 +199,7 @@ CreateProjectileAbs("bullet", 0 - widthOnEachSide, 240) -- creates a bullet at t
             <h3>File Functions</h3>
             <br>
             <br><span class="function"><span class="boolean"></span> Misc.FileExists(<span class="string"></span> path)</span>
-            Use this function to check if a file <u>in your Mod folder ONLY</u> exists.<br>
-            Using <span class="term">../</span> to go up a folder is NOT allowed.
+            Use this function to check if a file exists.
             <br><br>
             <ul>
                 <li><span class="term">path</span>: Path to the file to open, relative to your Mod folder.<br>
@@ -209,8 +208,7 @@ CreateProjectileAbs("bullet", 0 - widthOnEachSide, 240) -- creates a bullet at t
             Use this before <span class="term">Misc.OpenFile</span> if you plan to read from a file.
             <br><br>
             <br><span class="function"><span class="luatable"><span class="string"></span></span> Misc.ListDir(<span class="string"></span> path, <span class="boolean"></span> getFolders = false)</span>
-            This function returns a list of either files or folders <u>in your Mod folder ONLY</u>.<br>
-            Using <span class="term">../</span> to go up a folder is NOT allowed.
+            This function returns a list of either files or folders.
             <br><br>
             <ul>
                 <li><span class="term">path</span>: Path to the file to open, relative to your Mod folder.<br>
@@ -220,29 +218,25 @@ CreateProjectileAbs("bullet", 0 - widthOnEachSide, 240) -- creates a bullet at t
             </ul>
             <br><br>
             <br><span class="function"><span class="boolean"></span> Misc.DirExists(<span class="string"></span> path)</span>
-            Use this function to check if a folder <u>in your Mod folder ONLY</u> exists.<br>
-            Using <span class="term">../</span> to go up a folder is NOT allowed.
+            Use this function to check if a folder exists.
             <br><br>
             <ul>
                 <li><span class="term">path</span>: Path to the file to open, relative to your Mod folder.<br>
                     Can enter subfolders such as <span class="term">Lua</span>.</li><br>
             </ul>
             <br><span class="function"><span class="boolean"></span> Misc.CreateDir(<span class="string"></span> path)</span>
-            Attempts to create a folder with the path <span class="term">path</span> relative to your Mod folder.<br>
-            Using <span class="term">../</span> to go up a folder is NOT allowed.
+            Attempts to create a folder with the path <span class="term">path</span> relative to your Mod folder.
             <br><br>
             Returns <span class="term">true</span> if the operation was successful, <span class="term">false</span> otherwise.
             <br><br>
             <br><span class="function"><span class="boolean"></span> Misc.MoveDir(<span class="string"></span> path, <span class="string"></span> newPath)</span>
             Attempts to move a folder with the path <span class="term">path</span> relative to your Mod folder to a new location <span class="term">newPath</span>
-            also relative to your mod folder.<br>
-            Using <span class="term">../</span> to go up a folder is NOT allowed.
+            also relative to your mod folder.
             <br><br>
             Returns <span class="term">true</span> if the operation was successful, <span class="term">false</span> otherwise.
             <br><br>
             <br><span class="function"><span class="boolean"></span> Misc.RemoveDir(<span class="string"></span> path, <span class="boolean"></span> force = false)</span>
-            Attempts to delete a folder with the path <span class="term">path</span> relative to your Mod folder.<br>
-            Using <span class="term">../</span> to go up a folder is NOT allowed.
+            Attempts to delete a folder with the path <span class="term">path</span> relative to your Mod folder.
             <br><br>
             <ul>
                 <li><span class="term">force</span>: If true, this function will forcefully remove a folder. Otherwise, a folder will only be removed if it is empty.</li>
@@ -250,8 +244,7 @@ CreateProjectileAbs("bullet", 0 - widthOnEachSide, 240) -- creates a bullet at t
             Returns <span class="term">true</span> if the operation was successful, <span class="term">false</span> otherwise.
             <br><br>
             <br><span class="function">Misc.OpenFile(<span class="string"></span> path, <span class="string"></span> mode = "rw") returns <span class="userdata">File</span></span>
-            This function opens a file <u>in your Mod folder ONLY</u>, for reading and writing.<br>
-            Using <span class="term">../</span> to go up a folder is NOT allowed.
+            This function opens a file <u>in CYF's Mods folder ONLY</u> for writing and anywhere for reading.
             <br><br>
             <ul>
                 <li><span class="term">path</span>: Path to the file to open, relative to your Mod folder.<br>

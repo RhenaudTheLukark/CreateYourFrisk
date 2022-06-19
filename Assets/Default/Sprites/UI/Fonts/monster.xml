@@ -143,9 +143,6 @@
     <sprite name="W">
         <rect x="22" y="62" w="8" h="12"/>
     </sprite>
-    <sprite name="Wcopyorsomethingidk">
-        <rect x="24" y="112" w="9" h="12"/>
-    </sprite>
     <sprite name="X">
         <rect x="22" y="78" w="8" h="12"/>
     </sprite>
@@ -267,10 +264,10 @@
     <sprite name="unnamed_2015_45">
         <rect x="111" y="62" w="7" h="11"/>
     </sprite>
-    <sprite name="unnamed_2015_lt">
+    <sprite name="lt">
         <rect x="73" y="32" w="8" h="7"/>
     </sprite>
-    <sprite name="unnamed_2015_rt">
+    <sprite name="rt">
         <rect x="83" y="32" w="8" h="7"/>
     </sprite>
     <sprite name="v">

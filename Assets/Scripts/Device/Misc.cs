@@ -157,19 +157,19 @@ public class Misc {
     public static LuaFile OpenFile(string path, string mode = "rw") { return new LuaFile(path, mode); }
 
     public bool FileExists(string path) {
-        path = path.Replace('\\', '/').TrimStart('/'); // TODO: Remove this for 0.7
+        if (!path.StartsWith(FileLoader.DataRoot)) path = path.Replace('\\', '/').TrimStart('/'); // TODO: Remove this for 0.7
         FileLoader.SanitizePath(ref path, "", false, true, false);
         return File.Exists(path);
     }
 
     public bool DirExists(string path) {
-        path = path.Replace('\\', '/').TrimStart('/'); // TODO: Remove this for 0.7
+        if (!path.StartsWith(FileLoader.DataRoot)) path = path.Replace('\\', '/').TrimStart('/'); // TODO: Remove this for 0.7
         FileLoader.SanitizePath(ref path, "", false, true, false);
         return Directory.Exists(path);
     }
 
     public bool CreateDir(string path) {
-        path = path.Replace('\\', '/').TrimStart('/'); // TODO: Remove this for 0.7
+        if (!path.StartsWith(FileLoader.DataRoot)) path = path.Replace('\\', '/').TrimStart('/'); // TODO: Remove this for 0.7
         FileLoader.SanitizePath(ref path, "", false, true, false);
         if (Directory.Exists(path)) return false;
         Directory.CreateDirectory(path);
@@ -179,8 +179,8 @@ public class Misc {
     private static bool PathValid(string path) { return path != " " && path != "" && path != "/" && path != "\\" && path != "." && path != "./" && path != ".\\"; }
 
     public bool MoveDir(string path, string newPath) {
-        path = path.Replace('\\', '/').TrimStart('/'); // TODO: Remove this for 0.7
-        newPath = newPath.Replace('\\', '/').TrimStart('/'); // TODO: Remove this for 0.7
+        if (!path.StartsWith(FileLoader.DataRoot))    path = path.Replace('\\', '/').TrimStart('/');       // TODO: Remove this for 0.7
+        if (!newPath.StartsWith(FileLoader.DataRoot)) newPath = newPath.Replace('\\', '/').TrimStart('/'); // TODO: Remove this for 0.7
         if (!DirExists(path) || DirExists(newPath) || !PathValid(path)) return false;
 
         FileLoader.SanitizePath(ref path,    "", false, true, false);
@@ -190,7 +190,7 @@ public class Misc {
     }
 
     public bool RemoveDir(string path, bool force = false) {
-        path = path.Replace('\\', '/').TrimStart('/'); // TODO: Remove this for 0.7
+        if (!path.StartsWith(FileLoader.DataRoot)) path = path.Replace('\\', '/').TrimStart('/'); // TODO: Remove this for 0.7
         FileLoader.SanitizePath(ref path, "", false, true, false);
 
         if (!Directory.Exists(path)) return false;
@@ -204,7 +204,7 @@ public class Misc {
         if (path == null) throw new CYFException("Cannot list a directory with a nil path.");
 
         string origPath = path;
-        path = path.Replace('\\', '/').TrimStart('/'); // TODO: Remove this for 0.7
+        if (!path.StartsWith(FileLoader.DataRoot)) path = path.Replace('\\', '/').TrimStart('/'); // TODO: Remove this for 0.7
         FileLoader.SanitizePath(ref path, "", false, true, false);
         if (!Directory.Exists(path))
             throw new CYFException("Invalid path:\n\n\"" + origPath + "\"");

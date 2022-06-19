@@ -375,15 +375,15 @@ public class EventManager : MonoBehaviour {
     /// <summary>
     /// Resets the events by counting them all again, stopping the current events and destroying all the current images.
     /// </summary>
-    /// <param name="resetScripts">SEt to true if you want all scripts to be reloaded as well.</param>
+    /// <param name="resetScripts">Set to true if you want all scripts to be reloaded as well.</param>
     public void ResetEvents(bool resetScripts = true) {
         coroutines.Clear();
         initializedEvents.Clear();
         events.Clear();
         autoDone.Clear();
-        spriteControllers.Clear();
         // Reset all loaded scripts in order to reload them later
         if (resetScripts) {
+            spriteControllers.Clear();
             eventScripts.Clear();
             ScriptWrapper.instances.Clear();
         }
@@ -784,9 +784,11 @@ end";
                     CurrPage = ev.actualPage,
                     CurrSpriteNameOrCYFAnim = ev.GetComponent<CYFAnimator>()
                         ? ev.GetComponent<CYFAnimator>().specialHeader
-                        : instance.spriteControllers[ev.name].img.GetComponent<SpriteRenderer>()
-                            ? instance.spriteControllers[ev.name].img.GetComponent<SpriteRenderer>().sprite.name
-                            : instance.spriteControllers[ev.name].img.GetComponent<Image>().sprite.name,
+                        : spriteControllers[ev.name].spritename != "empty"
+                            ? spriteControllers[ev.name].spritename
+                            : instance.spriteControllers[ev.name].img.GetComponent<SpriteRenderer>()
+                                ? instance.spriteControllers[ev.name].img.GetComponent<SpriteRenderer>().sprite.name
+                                : instance.spriteControllers[ev.name].img.GetComponent<Image>().sprite.name,
                     NoCollision = ev.gameObject.layer == 0,
                     Anchor = UnitaleUtil.VectorToVect(ev.GetComponent<RectTransform>().anchorMax),
                     Pivot = UnitaleUtil.VectorToVect(ev.GetComponent<RectTransform>().pivot)
@@ -1019,13 +1021,21 @@ end";
                     ev.actualPage = ei.CurrPage;
                     ev.gameObject.layer = ei.NoCollision ? 0 : 21;
 
-                    // Sets data to the event's animator if it exists
-                    if (ev.GetComponent<CYFAnimator>())                        ev.GetComponent<CYFAnimator>().specialHeader = ei.CurrSpriteNameOrCYFAnim;
-                    // Sets the event's sprite using auto-load if it exists
-                    else if (ev.GetComponent<AutoloadResourcesFromRegistry>()) ev.GetComponent<AutoloadResourcesFromRegistry>().SpritePath = ei.CurrSpriteNameOrCYFAnim;
-                    // Sets the event's sprite directly otherwise
-                    else if (ev.GetComponent<Image>())                         ev.GetComponent<Image>().sprite = SpriteRegistry.Get(ei.CurrSpriteNameOrCYFAnim);
-                    else                                                       ev.GetComponent<SpriteRenderer>().sprite = SpriteRegistry.Get(ei.CurrSpriteNameOrCYFAnim);
+                    try {
+                        // Sets data to the event's animator if it exists
+                        if (ev.GetComponent<CYFAnimator>())
+                            ev.GetComponent<CYFAnimator>().specialHeader = ei.CurrSpriteNameOrCYFAnim;
+                        // Sets the event's sprite using auto-load if it exists
+                        else if (ev.GetComponent<AutoloadResourcesFromRegistry>())
+                            ev.GetComponent<AutoloadResourcesFromRegistry>().SpritePath = ei.CurrSpriteNameOrCYFAnim;
+                        // Sets the event's sprite directly otherwise
+                        else if (ev.GetComponent<Image>())
+                            ev.GetComponent<Image>().sprite = SpriteRegistry.Get(ei.CurrSpriteNameOrCYFAnim);
+                        else ev.GetComponent<SpriteRenderer>().sprite = SpriteRegistry.Get(ei.CurrSpriteNameOrCYFAnim);
+                    } catch {
+                        Debug.LogWarning("Map loading: Couldn't load sprite " + ei.CurrSpriteNameOrCYFAnim + " for object " + ev.name);
+                        // ignored
+                    }
                 }
                 go.GetComponent<RectTransform>().anchorMax = UnitaleUtil.VectToVector(ei.Anchor);
                 go.GetComponent<RectTransform>().anchorMin = UnitaleUtil.VectToVector(ei.Anchor);
