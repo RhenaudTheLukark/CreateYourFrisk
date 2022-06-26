@@ -204,7 +204,7 @@ function EventPage1()
         phase = 6
     elseif phase == 6 then
         for i = 1, #chars do
-            if chars[i]["cross"].alpha != 0 then
+            if chars[i]["cross"].alpha ~= 0 then
                 chars[i]["cross"].alpha = fadeCount - 2
             end
             chars[i]["sprite"].alpha = fadeCount - 2
@@ -269,13 +269,13 @@ function HandleInput(forcedInput)
         elseif Input.Left == 1 or forcedInput == "Left" then
             lastInput = "Left"
             local temp = (currentChar + 2) % 3
-            if currentChar < 4 then ChangeTarget(temp != 0 and temp or 3)
+            if currentChar < 4 then ChangeTarget(temp ~= 0 and temp or 3)
             else                    ChangeTarget((currentChar - 3) % 2 + 1 + 3)
             end
         elseif Input.Down == 1 or Input.Up == 1 or forcedInput == "Down" or forcedInput == "Up" then
             lastInput = Input.Down == 1 or forcedInput == "Down" and "Down" or "Up"
             local temp = (currentChar + (currentChar > 3 and 2 or 3)) % 5
-            ChangeTarget(currentChar != 3 and (temp != 0 and temp or 5) or 5)
+            ChangeTarget(currentChar ~= 3 and (temp ~= 0 and temp or 5) or 5)
         end
     end
     if Input.Confirm == 1 then

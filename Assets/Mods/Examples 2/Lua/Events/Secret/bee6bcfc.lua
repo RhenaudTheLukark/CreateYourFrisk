@@ -31,7 +31,7 @@ function EventPage2()
     Event.SetDirection("Player", 6)
     Event.SetDirection(Event.GetName(), 4)
     General.Wait(30)
-    General.SetDialog({"[noskip][voice:punderbolt]Hello th[mugshot:Punder/intimidated][waitall:2]ere... [w:25][waitall:1]May I help you?"}, true, {"punder/normal"})
+    General.SetDialog({"[noskip][voice:punderbolt]Hello th[mugshot:Punder/intimidated][waitall:2]ere... [w:25][waitall:1]May I help you?"}, true, {"Punder/normal"})
     for i = 1, 30 do
         Audio.Volume((30 - i) / 30)
         General.Wait(1)
@@ -148,10 +148,10 @@ function EventPage1()
         else
             text = "Hey...[w:25]you look kinda menacing...[w:25]\nBe good, [w:15]alright?"
         end
-        mugshot = "punder/intimidated"
+        mugshot = "Punder/intimidated"
     elseif Event.GetAnimHeader("Player") == "Asriel" then
         text = "Oh hi kid! [w:25]You're cute, [w:15]you know that?"
-        mugshot = "punder/veryHappy"
+        mugshot = "Punder/veryHappy"
     else
         text = "Hey, [w:15]how's it going?"
     end
