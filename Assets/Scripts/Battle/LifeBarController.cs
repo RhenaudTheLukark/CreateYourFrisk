@@ -110,16 +110,6 @@ public class LifeBarController : MonoBehaviour {
     }
 
     /// <summary>
-    /// Start a linear-time transition from current fill to this value.
-    /// </summary>
-    /// <param name="fillValue">Value the healthbar should be at when finished, in range of [0.0, 1.0].</param>
-    /// <param name="time">Time for the healthbar to reach its destination in frames.</param>
-    /// <param name="allowNonClamped">True if values outside of the range [0.0, 1.0] should be kept.</param>
-    public void SetLerp(float fillValue, int time = 60, bool allowNonClamped = false) {
-        SetLerp(currentFill, fillValue, time, allowNonClamped);
-    }
-
-    /// <summary>
     /// Start a linear-time transition from first value to second value.
     /// </summary>
     /// <param name="originalValue">Value to start the healthbar at, in range of [0.0, 1.0].</param>
