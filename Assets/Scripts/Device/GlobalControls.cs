@@ -91,7 +91,7 @@ public class GlobalControls : MonoBehaviour {
         #endif
     }
 
-    #if UNITY_STANDALONE_WIN
+    #if UNITY_STANDALONE_WIN && !UNITY_EDITOR
         /// <summary>
         /// Used to reposition the window in the middle of the screen after exiting fullscreen.
         /// </summary>
@@ -125,7 +125,7 @@ public class GlobalControls : MonoBehaviour {
         // Update Discord RPC
         DiscordControls.Update();
 
-        #if UNITY_STANDALONE_WIN
+        #if UNITY_STANDALONE_WIN && !UNITY_EDITOR
             // Reposition the window to the middle of the screen after exiting fullscreen
             if (fullscreenSwitch == 1)
                 StartCoroutine(RepositionWindow());
