@@ -229,12 +229,12 @@ public class LuaTextManager : TextManager {
 
     public void SendToTop() {
         CheckExists();
-        transform.SetAsLastSibling();
+        container.transform.SetAsLastSibling();
     }
 
     public void SendToBottom() {
         CheckExists();
-        transform.SetAsFirstSibling();
+        container.transform.SetAsFirstSibling();
     }
 
     public void MoveBelow(LuaTextManager otherText) {
