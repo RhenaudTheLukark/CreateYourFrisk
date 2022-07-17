@@ -236,6 +236,12 @@ it's w3c valid, at least
                 <br><br>Any text commands that you have in your active line of text will be ignored by this number, as it only counts the visible characters, and not the length of the string you put into the text object.
             </p>
             <p>
+                <br><span class="new function"><span class="number"></span> Text.rotation</span>
+                Gets or sets a text object's rotation, in degrees. Will also rotate the text object's b ubble if it has any.
+                <br><br>The text object will rotate around the bottom left corner of the first letter of the text object.
+                <br><br>It's clamped between 0 and 360, so if you set it to 365, it will become 5.
+            </p>
+            <p>
                 <br><span class="function"><span class="number"></span> Text.currentLine</span>
                 Returns the number of the line (page) that the text is currently on, starting from 0.
                 <br><br>So, if your text object's text table is <span class="term">{"Text 1", "Text 2"}</span>, then <span class="term">"Text 1"</span> is line 0, and <span class="term">"Text 2"</span> is line 1.

@@ -176,7 +176,6 @@ public static class UnitaleUtil {
         for (int i = fromLetter; i <= toLetter; i++) {
             switch (txtmgr.textQueue[txtmgr.currentLine].Text[i]) {
                 case '[':
-
                     string str = ParseCommandInline(txtmgr.textQueue[txtmgr.currentLine].Text, ref i);
                     if (str == null) {
                         if (txtmgr.Charset.Letters.ContainsKey(txtmgr.textQueue[txtmgr.currentLine].Text[i]))

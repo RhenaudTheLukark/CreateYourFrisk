@@ -29,6 +29,16 @@ public class LuaTextManager : TextManager {
         get { return !removed && !hidden; }
     }
 
+    // The rotation of the text object
+    public new float rotation {
+        get { return internalRotation.z; }
+        set {
+            // We mod the value from 0 to 360 because angles are between 0 and 360 normally
+            internalRotation.z = Math.Mod(value, 360);
+            container.transform.eulerAngles = internalRotation;
+        }
+    }
+
     private enum BubbleSide { LEFT = 0, DOWN = 90, RIGHT = 180, UP = 270, NONE = -1 }
     private enum ProgressMode { AUTO, MANUAL, NONE }
 
@@ -203,7 +213,7 @@ public class LuaTextManager : TextManager {
         xScale = xs;
         yScale = ys;
 
-        container.gameObject.GetComponent<RectTransform>().localScale = new Vector3(xs, ys, 1.0f);
+        container.transform.localScale = new Vector3(xs, ys, 1.0f);
     }
 
     public string layer {
