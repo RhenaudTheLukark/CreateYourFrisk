@@ -151,7 +151,7 @@ public class TextManager : MonoBehaviour {
         System.Diagnostics.Debug.Assert(default_charset != null, "default_charset != null");
         letterSound = defaultVoice ?? default_charset.SoundName;
         fontDefaultColor = default_charset.DefaultColor;
-        if (GetType() == typeof(LuaTextManager) && !((LuaTextManager) this).hasColorBeenSet)
+        if (GetType() != typeof(LuaTextManager) || GetType() == typeof(LuaTextManager) && !((LuaTextManager) this).hasColorBeenSet)
             defaultColor = fontDefaultColor;
 
         // Default voice in the overworld
