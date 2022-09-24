@@ -14,12 +14,16 @@ public class TextManager : MonoBehaviour {
     protected UnderFont default_charset;
     protected string defaultVoice;
     [MoonSharpHidden] public string letterSound;
+
     protected TextEffect textEffect;
     private string letterEffect = "none";
+    private float letterEffectStep;
+    private float letterEffectStepCount;
+    private float letterIntensity;
+
     public static string[] commandList = { "color", "alpha", "charspacing", "linespacing", "starcolor", "instant", "font", "effect", "noskip", "w", "waitall", "novoice",
                                            "next", "finished", "nextthisnow", "noskipatall", "waitfor", "speed", "letters", "voice", "func", "mugshot",
                                            "music", "sound", "health", "lettereffect"};
-    private float letterIntensity;
     public int currentLine;
     [MoonSharpHidden] public int _textMaxWidth;
     private int currentCharacter;
@@ -698,11 +702,12 @@ public class TextManager : MonoBehaviour {
         if (letterIndexes.Values.Contains(currentCharacter)) {
             Image im = letterIndexes.First(i => i.Value == currentCharacter).Key;
             im.enabled = true;
+            letterEffectStepCount += letterEffectStep;
             switch (letterEffect.ToLower()) {
-                case "twitch": im.GetComponent<Letter>().effect = new TwitchEffectLetter(im.GetComponent<Letter>(), letterIntensity);   break;
-                case "rotate": im.GetComponent<Letter>().effect = new RotatingEffectLetter(im.GetComponent<Letter>(), letterIntensity); break;
-                case "shake":  im.GetComponent<Letter>().effect = new ShakeEffectLetter(im.GetComponent<Letter>(), letterIntensity);    break;
-                default:       im.GetComponent<Letter>().effect = null;                                                                 break;
+                case "twitch": im.GetComponent<Letter>().effect = new TwitchEffectLetter(im.GetComponent<Letter>(), letterIntensity, (int)letterEffectStep);   break;
+                case "rotate": im.GetComponent<Letter>().effect = new RotatingEffectLetter(im.GetComponent<Letter>(), letterIntensity, letterEffectStepCount); break;
+                case "shake":  im.GetComponent<Letter>().effect = new ShakeEffectLetter(im.GetComponent<Letter>(), letterIntensity);                           break;
+                default:       im.GetComponent<Letter>().effect = null;                                                                                        break;
             }
         }
 
@@ -786,11 +791,12 @@ public class TextManager : MonoBehaviour {
                 break;
 
             case "effect":
+                float step = args.Length > 2 ? ParseUtil.GetFloat(args[2]) : 0;
                 switch (cmds[1].ToUpper()) {
-                    case "NONE":   textEffect = null;                                                                           break;
-                    case "TWITCH": textEffect = new TwitchEffect(this, args.Length > 1 ? ParseUtil.GetFloat(args[1]) : 2);      break;
-                    case "SHAKE":  textEffect = new ShakeEffect(this, args.Length > 1 ? ParseUtil.GetFloat(args[1]) : 1);       break;
-                    case "ROTATE": textEffect = new RotatingEffect(this, args.Length > 1 ? ParseUtil.GetFloat(args[1]) : 1.5f); break;
+                    case "NONE":   textEffect = null;                                                                                 break;
+                    case "TWITCH": textEffect = new TwitchEffect(this, args.Length > 1 ? ParseUtil.GetFloat(args[1]) : 2, (int)step); break;
+                    case "SHAKE":  textEffect = new ShakeEffect(this, args.Length > 1 ? ParseUtil.GetFloat(args[1]) : 1);             break;
+                    case "ROTATE": textEffect = new RotatingEffect(this, args.Length > 1 ? ParseUtil.GetFloat(args[1]) : 1.5f, step); break;
                 }
                 break;
         }
@@ -1015,9 +1021,22 @@ public class TextManager : MonoBehaviour {
 
             case "lettereffect":
                 letterEffect = args[0];
-                if (args.Length == 2)
+
+                if (args.Length > 1) {
                     try { letterIntensity = ParseUtil.GetFloat(args[1]); }
                     catch { Debug.LogError("[lettereffect:x] usage - You used the value \"" + args[1] + "\" to set the letter effect's intensity, but it's not a valid number value."); }
+                } else
+                    letterIntensity = 0;
+
+                if (args.Length > 2) {
+                    try {
+                        letterEffectStep = ParseUtil.GetFloat(args[2]);
+                        letterEffectStepCount = 0;
+                    } catch { Debug.LogError("[lettereffect:x] usage - You used the value \"" + args[2] + "\" to set the letter effect's step, but it's not a valid number value."); }
+                } else {
+                    letterEffectStep = 0;
+                    letterEffectStepCount = 0;
+                }
                 break;
         }
     }

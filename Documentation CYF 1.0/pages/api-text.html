@@ -177,16 +177,21 @@ it's w3c valid, at least
             </p>
 
             <p class="exblock">
-                <br><span class="function">[effect:x] or [effect:x,intensity]</span>
+                <br><span class="function">[effect:x] or [effect:x,intensity] or <span class="new"></span>[effect:x,intensity,step]</span>
                 Sets the text effect for <i>the entire message, regardless of position</i>. You can use the following
                 effects:</p>
             <ul>
                 <li><span class="term">none</span>: No effect on the text.</li><br>
                 <li><span class="term">rotate</span>: Rotating text, most random monsters have this by default. Intensity sets how far letters
                     rotate, in pixels. Default is 1.5.
+                    <br>
+                    <span class="new"> Step allows shifting the frequency of the twitching effect. Default is 48 frames.
+                    The value will be varied by about <span class="term">33%</span> every time the delay until the next twitch effect show up is computed.
                 </li><br>
                 <li><span class="term">shake</span>: Shaking text. Flowey uses this sometimes. Intensity sets how far the letters offset, in
                     pixels. Default is 1.0.
+                    <br>
+                    <span class="new"> Step allows shifting the rotation animation of the letters by a given degree in radians.
                 </li><br>
                 <li><span class="term">twitch</span>: Letters twitch occasionally - the battle UI has this by default. Intensity sets how far a letter
                     should shake. Default is 2.0.
@@ -198,12 +203,16 @@ it's w3c valid, at least
             </p>
 
             <p class="exblock">
-                <br><span class="function"><span class="CYF"></span> [lettereffect:x] or [lettereffect:x,intensity]</span>
-                This works the same as <span class="term">[effect:x]</span> / <span class="term">[effect:x,intensity]</span>, but it works <b>inline</b>.
+                <br><span class="function"><span class="CYF"></span> [lettereffect:x] or [lettereffect:x,intensity] or <span class="new"></span>[lettereffect:x,intensity,step]</span>
+                This works the same as <span class="term">[effect:x]</span>, but it works <b>inline</b>.
                 This means you can have <i>multiple</i> different text effects in a single line!
                 <br><br>
                 Keep in mind that, like all other inline text commands, this command will not execute if the player skips over it with X -
                 unless you set <span class="term">playerskipdocommand</span> to <span class="term">true</span>, first.
+                <br><br>
+                <span class="new">On top of that, the default step value for the shake effect is now 500. The value will be varied by about
+                <span class="term">80%</span> every time the delay until the next twitch effect show up is computed. It's high
+                so the twitch effects of all letters can play at various times!
             </ul>
 
             <p class="exblock">
