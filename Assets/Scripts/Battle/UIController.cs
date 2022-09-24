@@ -1598,14 +1598,15 @@ public class UIController : MonoBehaviour {
         else if (InputUtil.Pressed(GlobalControls.input.Confirm))
             SwitchState("DONE");
 
-        if ((state == "ATTACKING" || needOnDeath) && fightUI.Finished()) {
+        if (state == "ATTACKING" && fightUI.Finished() || needOnDeath) {
             bool noOnDeath = true;
-            onDeathSwitch = true;
             bool playSound = true;
             foreach (EnemyController enemyController in encounter.EnabledEnemies) {
                 if (enemyController.HP > 0 || enemyController.Unkillable) continue;
                 // fightUI.disableImmediate();
+                onDeathSwitch = true;
                 if (UnitaleUtil.TryCall(enemyController.script, "OnDeath")) continue;
+                onDeathSwitch = false;
                 noOnDeath = false;
                 enemyController.DoKill(playSound);
                 playSound = false;
@@ -1616,7 +1617,6 @@ public class UIController : MonoBehaviour {
                 //    checkAndTriggerVictory();
             }
 
-            onDeathSwitch = false;
             if (state == "ATTACKING" && fightUI.Finished()) {
                 if (lastNewState != "UNUSED") {
                     SwitchState(lastNewState);
