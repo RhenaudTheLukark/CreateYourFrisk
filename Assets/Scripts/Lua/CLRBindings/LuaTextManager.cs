@@ -389,6 +389,7 @@ public class LuaTextManager : TextManager {
             key++;
             LuaSpriteController letter = LuaSpriteController.GetOrCreate(im.gameObject);
             letter.tag = "letter";
+            letter.spritename = textQueue[currentLine].Text[letterIndexes[im]].ToString();
             table.Set(key, UserData.Create(letter, LuaSpriteController.data));
         }
 
