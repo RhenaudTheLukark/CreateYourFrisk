@@ -561,7 +561,7 @@ public class UIController : MonoBehaviour {
                         monsterMessages[j] = new MonsterMessage(encounter.EnabledEnemies[i].DialoguePrefix + message[j]);
 
                     sbTextMan.SetTextQueue(monsterMessages);
-                    speechBubImg.color = new Color(speechBubImg.color.r, speechBubImg.color.g, speechBubImg.color.b, sbTextMan.letterReferences.Count(ltr => ltr != null) == 0 ? 0 : 1);
+                    speechBubImg.color = new Color(speechBubImg.color.r, speechBubImg.color.g, speechBubImg.color.b, sbTextMan.letterReferences.Count == 0 ? 0 : 1);
 
                     speechBub.GetComponent<Image>().enabled = true;
                     if (encounter.EnabledEnemies[i].Voice != "")
@@ -644,7 +644,7 @@ public class UIController : MonoBehaviour {
                 sbTextMan._textMaxWidth = (int)enemy.bubbleWidth;
                 readyToNextLine[i] = false;
                 Image speechBubImg = speechBub.GetComponent<Image>();
-                speechBubImg.color = new Color(speechBubImg.color.r, speechBubImg.color.g, speechBubImg.color.b, sbTextMan.letterReferences.Count(ltr => ltr != null) == 0 ? 0 : 1);
+                speechBubImg.color = new Color(speechBubImg.color.r, speechBubImg.color.g, speechBubImg.color.b, sbTextMan.letterReferences.Count == 0 ? 0 : 1);
 
                 SpriteUtil.SwapSpriteFromFile(speechBubImg, enemy.DialogBubble, monsterDialogueID);
                 Sprite speechBubSpr = speechBubImg.sprite;
@@ -776,8 +776,8 @@ public class UIController : MonoBehaviour {
         for (int i = 0; i < monsterDialogues.Length; i++) {
             if (monsterDialogues[i] == null) continue;
             monsterDialogues[i].SetMute(true);
-            if (monsterDialogues[i].AllLinesComplete() || monsterDialogues[i].letterReferences.Length <= longestTextLen) continue;
-            longestTextLen      = monsterDialogues[i].letterReferences.Length - monsterDialogues[i].currentReferenceCharacter;
+            if (monsterDialogues[i].AllLinesComplete() || monsterDialogues[i].textQueue[monsterDialogues[i].currentLine].Text.Length <= longestTextLen) continue;
+            longestTextLen = monsterDialogues[i].textQueue[monsterDialogues[i].currentLine].Text.Length;
             longestTextMgrIndex = i;
         }
 

@@ -14,7 +14,7 @@ public class ProgrammaticFontTest : MonoBehaviour {
     private const float timePerLetter = 1.0f / 30;
     private int currentLetter;
     private AudioSource letterSound;
-    private Image[] letterReferences;
+    private List<Image> letterReferences;
     private Sprite[] letterSprites;
     private GameObject canvas;
     private float currentX = 15;
@@ -49,7 +49,7 @@ public class ProgrammaticFontTest : MonoBehaviour {
     }
 
     private void NewCopy() {
-        letterReferences = new Image[teststr.Length];
+        letterReferences = new List<Image>();
         for (int i = 0; i < teststr.Length; i++) {
             if (teststr[i] == '\n') {
                 currentX = 15;
@@ -65,7 +65,7 @@ public class ProgrammaticFontTest : MonoBehaviour {
 
             ltrImg.sprite = letters[letters.ContainsKey(teststr[i]) ? teststr[i] : '?'];
 
-            letterReferences[i] = ltrImg;
+            letterReferences.Add(ltrImg);
 
             ltrRect.position = new Vector2(currentX, currentY + (letters.ContainsKey(teststr[i]) ? letters[teststr[i]].border.w - letters[teststr[i]].border.y : 0));
             ltrImg.SetNativeSize();
@@ -86,7 +86,7 @@ public class ProgrammaticFontTest : MonoBehaviour {
         }*/
         letterTimer += Time.deltaTime;
         if (!(letterTimer > timePerLetter)) return;
-        if (currentLetter >= letterReferences.Length) return;
+        if (currentLetter >= letterReferences.Count) return;
         if (teststr[currentLetter] == '\n')
             letterTimer = -1.0f;
         else {

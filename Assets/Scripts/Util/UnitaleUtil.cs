@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using UnityEngine.UI;
 using Object = UnityEngine.Object;
 
 /// <summary>
@@ -206,13 +207,19 @@ public static class UnitaleUtil {
     }
 
     public static float CalcTextHeight(TextManager txtmgr, int fromLetter = -1, int toLetter = -1) {
-        float maxY = -999, minY = 999;
+        float maxY = Mathf.NegativeInfinity, minY = Mathf.Infinity;
+
         if (fromLetter == -1) fromLetter = 0;
         if (toLetter == -1)   toLetter = txtmgr.textQueue[txtmgr.currentLine].Text.Length;
         if (fromLetter > toLetter || fromLetter < 0 || toLetter > txtmgr.textQueue[txtmgr.currentLine].Text.Length) return -1;
         if (fromLetter == toLetter)                                                                                 return 0;
-        for (int i = fromLetter; i < toLetter; i++) {
-            if (!txtmgr.Charset.Letters.ContainsKey(txtmgr.textQueue[txtmgr.currentLine].Text[i])) continue;
+
+        for (int i = 0; i < txtmgr.letterReferences.Count; i++) {
+            Image im = txtmgr.letterReferences[i];
+            int index = txtmgr.letterIndexes[im];
+
+            if (index < fromLetter || index > toLetter) continue;
+
             if (txtmgr.letterPositions[i].y < minY)
                 minY = txtmgr.letterPositions[i].y;
             if (txtmgr.letterPositions[i].y + txtmgr.Charset.Letters[txtmgr.textQueue[txtmgr.currentLine].Text[i]].textureRect.size.y > maxY)

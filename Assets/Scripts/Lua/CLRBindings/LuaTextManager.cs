@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using MoonSharp.Interpreter;
 
 public class LuaTextManager : TextManager {
@@ -275,9 +276,8 @@ public class LuaTextManager : TextManager {
         if (currentColor.r == defaultColor.r && currentColor.g == defaultColor.g && currentColor.b == defaultColor.b)
             currentColor = c;
 
-        foreach (Image i in letterReferences)
-            if (i != null)
-                if (i.color == defaultColor) i.color = c;
+        foreach (var i in letterReferences.Where(i => i != null).Where(i => i.color == defaultColor))
+            i.color = c;
 
         _color = c;
         defaultColor = c;
@@ -294,9 +294,8 @@ public class LuaTextManager : TextManager {
         if (currentColor.a == defaultColor.a)
             currentColor = c;
 
-        foreach (Image i in letterReferences)
-            if (i != null)
-                if (i.color == defaultColor) i.color = c;
+        foreach (var i in letterReferences.Where(i => i.color == defaultColor))
+            i.color = c;
 
         _color.a = c.a;
         defaultColor = c;
@@ -327,9 +326,8 @@ public class LuaTextManager : TextManager {
             hasColorBeenSet = true;
             hasAlphaBeenSet = hasAlphaBeenSet || value.Length == 4;
 
-            foreach (Image i in letterReferences)
-                if (i != null)
-                    if (i.color == defaultColor) i.color = _color;
+            foreach (var i in letterReferences.Where(i => i.color == defaultColor))
+                i.color = _color;
 
             if (currentColor.r == defaultColor.r && currentColor.g == defaultColor.g && currentColor.b == defaultColor.b)
                 currentColor = _color;
@@ -387,13 +385,13 @@ public class LuaTextManager : TextManager {
         CheckExists();
         Table table = new Table(null);
         int key = 0;
-        foreach (Image i in letterReferences)
-            if (i != null) {
-                key++;
-                LuaSpriteController letter = LuaSpriteController.GetOrCreate(i.gameObject);
-                letter.tag = "letter";
-                table.Set(key, UserData.Create(letter, LuaSpriteController.data));
-            }
+        foreach (Image im in letterReferences) {
+            key++;
+            LuaSpriteController letter = LuaSpriteController.GetOrCreate(im.gameObject);
+            letter.tag = "letter";
+            table.Set(key, UserData.Create(letter, LuaSpriteController.data));
+        }
+
         return DynValue.NewTable(table);
     }
 

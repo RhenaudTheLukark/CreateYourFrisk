@@ -7,8 +7,9 @@ using UnityEngine.UI;
 
 // TODO less code duplicate-y way of pulling commands out of the text.
 public class TextManager : MonoBehaviour {
-    internal Image[] letterReferences;
-    internal Vector2[] letterPositions;
+    internal Dictionary<Image, int> letterIndexes;
+    internal List<Image> letterReferences;
+    internal List<Vector2> letterPositions;
 
     protected UnderFont default_charset;
     protected string defaultVoice;
@@ -22,7 +23,6 @@ public class TextManager : MonoBehaviour {
     public int currentLine;
     [MoonSharpHidden] public int _textMaxWidth;
     private int currentCharacter;
-    public int currentReferenceCharacter;
     private bool currentSkippable = true;
     private bool decoratedTextOffset;
     [MoonSharpHidden] public bool nextMonsterDialogueOnce, wasStated;
@@ -95,7 +95,6 @@ public class TextManager : MonoBehaviour {
         currentLine = 0;
         _textMaxWidth = 0;
         currentCharacter = 0;
-        currentReferenceCharacter = 0;
         decoratedTextOffset = false;
         wasStated = false;
         instantActive = false;
@@ -173,7 +172,7 @@ public class TextManager : MonoBehaviour {
     [MoonSharpHidden] public bool IsFinished() {
         if (letterReferences == null)
             return false;
-        return currentCharacter >= letterReferences.Length;
+        return currentCharacter >= textQueue[currentLine].Text.Length;
     }
 
     [MoonSharpHidden] public void SetMute(bool newMuted) { muted = newMuted; }
@@ -198,7 +197,6 @@ public class TextManager : MonoBehaviour {
 
     [MoonSharpHidden] public void ResetCurrentCharacter() {
         currentCharacter = 0;
-        currentReferenceCharacter = 0;
     }
 
     [MoonSharpHidden] public void AddToTextQueue(TextMessage text) { AddToTextQueue(new[] { text }); }
@@ -233,7 +231,7 @@ public class TextManager : MonoBehaviour {
     public bool LineComplete() {
         if (letterReferences == null)
             return false;
-        return (instantActive || currentCharacter == letterReferences.Length);
+        return instantActive || currentCharacter == textQueue[currentLine].Text.Length;
     }
 
     [MoonSharpHidden] public bool AllLinesComplete() {
@@ -323,7 +321,6 @@ public class TextManager : MonoBehaviour {
         DestroyChars();
         currentLine = line;
         currentCharacter          = 0;
-        currentReferenceCharacter = 0;
         letterEffect              = "none";
         instantActive = textQueue[line].ShowImmediate;
         SpawnText(forceNoAutoLineBreak);
@@ -391,13 +388,9 @@ public class TextManager : MonoBehaviour {
 
     public virtual void SkipLine() {
         if (noSkip1stFrame) return;
-        while (currentCharacter < letterReferences.Length) {
-            if (letterReferences[currentCharacter] != null && Charset.Letters.ContainsKey(textQueue[currentLine].Text[currentCharacter])) {
-                letterReferences[currentCharacter].enabled = true;
-                currentReferenceCharacter++;
-            }
-            currentCharacter++;
-        }
+        foreach (Image im in letterReferences)
+            im.enabled = true;
+        currentCharacter = textQueue[currentLine].Text.Length;
     }
 
     public void SetEffect(TextEffect effect) { textEffect = effect; }
@@ -440,20 +433,11 @@ public class TextManager : MonoBehaviour {
             } else
                 // Line is too long
                 currentText2 = currentText2.Substring(0, wordBeginIndex - 1) + "\n" + (decorated ? "  " : "") + currentText2.Substring(wordBeginIndex, currentText.Length - wordBeginIndex);
-
-            Array.Resize(ref letterReferences, currentText2.Length);
-            Array.Resize(ref letterPositions, currentText2.Length);
         }
         textQueue[currentLine].Text = currentText2;
     }
 
-    private void CreateLetter(string currentText, int index, bool insert = false) {
-        if (insert)
-            for (int i = letterReferences.Length - 2; i >= index; i--) {
-                letterPositions[i + 1] = letterPositions[i];
-                letterReferences[i + 1] = letterReferences[i];
-            }
-
+    private int CreateLetter(string currentText, int index) {
         GameObject singleLtr = Instantiate(SpriteFontRegistry.LETTER_OBJECT);
         RectTransform ltrRect = singleLtr.GetComponent<RectTransform>();
 
@@ -466,8 +450,8 @@ public class TextManager : MonoBehaviour {
         ltrRect.SetParent(gameObject.transform);
         ltrImg.sprite = Charset.Letters[currentText[index]];
 
-        letterReferences[index] = ltrImg;
-
+        letterReferences.Add(ltrImg);
+        letterIndexes.Add(ltrImg, index);
         MoveLetter(currentText, index, ltrRect);
 
         ltrImg.SetNativeSize();
@@ -482,6 +466,8 @@ public class TextManager : MonoBehaviour {
         } else                                                            ltrImg.color = currentColor;
         ltrImg.GetComponent<Letter>().colorFromText = currentColor;
         ltrImg.enabled = textQueue[currentLine].ShowImmediate || (GlobalControls.retroMode && instantActive);
+
+        return letterReferences.Count - 1;
     }
 
     private void MoveLetter(string currentText, int index, RectTransform ltrRect) {
@@ -493,14 +479,15 @@ public class TextManager : MonoBehaviour {
             ltrRect.position = new Vector3(currentX, currentY + Charset.Letters[currentText[index]].border.w - Charset.Letters[currentText[index]].border.y + 2, 0);
 
         ltrRect.eulerAngles = new Vector3(0, 0, rotation);
-        letterPositions[index] = ltrRect.anchoredPosition;
+        letterPositions.Add(ltrRect.anchoredPosition);
     }
 
     private void SpawnText(bool forceNoAutoLineBreak = false) {
         noSkip1stFrame = true;
         string currentText = textQueue[currentLine].Text;
-        letterReferences = new Image[currentText.Length];
-        letterPositions = new Vector2[currentText.Length];
+        letterIndexes = new Dictionary<Image, int>();
+        letterReferences = new List<Image>();
+        letterPositions = new List<Vector2>();
         if (currentText.Length > 1 && !forceNoAutoLineBreak)
             if (!GlobalControls.isInFight || EnemyEncounter.script.GetVar("autolinebreak").Boolean || GetType() == typeof(LuaTextManager))
                 SpawnTextSpaceTest(0, currentText, out currentText);
@@ -591,9 +578,9 @@ public class TextManager : MonoBehaviour {
             if (!Charset.Letters.ContainsKey(currentText[i]))
                 continue;
 
-            CreateLetter(currentText, i);
-            currentX += (letterReferences[i].gameObject.GetComponent<RectTransform>().rect.width + hSpacing) * Mathf.Cos(rotation * Mathf.Deg2Rad); // TODO remove hardcoded letter offset
-            currentY += (letterReferences[i].gameObject.GetComponent<RectTransform>().rect.width + hSpacing) * Mathf.Sin(rotation * Mathf.Deg2Rad);
+            int letterIndex = CreateLetter(currentText, i);
+            currentX += (letterReferences[letterIndex].gameObject.GetComponent<RectTransform>().rect.width + hSpacing) * Mathf.Cos(rotation * Mathf.Deg2Rad); // TODO remove hardcoded letter offset
+            currentY += (letterReferences[letterIndex].gameObject.GetComponent<RectTransform>().rect.width + hSpacing) * Mathf.Sin(rotation * Mathf.Deg2Rad);
         }
 
         // Work-around for [instant] and [instant:allowcommand] at the beginning of a line of text
@@ -654,7 +641,7 @@ public class TextManager : MonoBehaviour {
         if (textEffect != null)
             textEffect.UpdateEffects();
 
-        if (GlobalControls.retroMode && instantActive || currentCharacter >= letterReferences.Length)
+        if (GlobalControls.retroMode && instantActive || currentCharacter >= textQueue[currentLine].Text.Length)
             return;
 
         if (waitingChar != KeyCode.None) {
@@ -704,24 +691,26 @@ public class TextManager : MonoBehaviour {
             while (CheckCommand())
                 if ((GlobalControls.retroMode && instantActive) || letterTimer != oldLetterTimer || waitingChar != KeyCode.None || letterOnceValue != oldLetterOnceValue || paused)
                     return false;
-            if (currentCharacter >= letterReferences.Length)
+            if (currentCharacter >= textQueue[currentLine].Text.Length)
                 return false;
         }
-        if (letterReferences[currentCharacter] != null) {
-            letterReferences[currentCharacter].enabled = true;
-            switch (letterEffect.ToLower()) {
-                case "twitch": letterReferences[currentCharacter].GetComponent<Letter>().effect = new TwitchEffectLetter(letterReferences[currentCharacter].GetComponent<Letter>(), letterIntensity);   break;
-                case "rotate": letterReferences[currentCharacter].GetComponent<Letter>().effect = new RotatingEffectLetter(letterReferences[currentCharacter].GetComponent<Letter>(), letterIntensity); break;
-                case "shake":  letterReferences[currentCharacter].GetComponent<Letter>().effect = new ShakeEffectLetter(letterReferences[currentCharacter].GetComponent<Letter>(), letterIntensity);    break;
-                default:       letterReferences[currentCharacter].GetComponent<Letter>().effect = null;                                                                                                 break;
-            }
 
-            if (!string.IsNullOrEmpty(letterSound) && !muted && !soundPlayed && (GlobalControls.retroMode || textQueue[currentLine].Text[currentCharacter] != ' ')) {
-                soundPlayed = true;
-                UnitaleUtil.PlayVoice("BubbleSound", letterSound);
+        if (letterIndexes.Values.Contains(currentCharacter)) {
+            Image im = letterIndexes.First(i => i.Value == currentCharacter).Key;
+            im.enabled = true;
+            switch (letterEffect.ToLower()) {
+                case "twitch": im.GetComponent<Letter>().effect = new TwitchEffectLetter(im.GetComponent<Letter>(), letterIntensity);   break;
+                case "rotate": im.GetComponent<Letter>().effect = new RotatingEffectLetter(im.GetComponent<Letter>(), letterIntensity); break;
+                case "shake":  im.GetComponent<Letter>().effect = new ShakeEffectLetter(im.GetComponent<Letter>(), letterIntensity);    break;
+                default:       im.GetComponent<Letter>().effect = null;                                                                 break;
             }
         }
-        currentReferenceCharacter++;
+
+        if (!string.IsNullOrEmpty(letterSound) && !muted && !soundPlayed && (GlobalControls.retroMode || textQueue[currentLine].Text[currentCharacter] != ' ')) {
+            soundPlayed = true;
+            UnitaleUtil.PlayVoice("BubbleSound", letterSound);
+        }
+
         currentCharacter++;
         return true;
     }
@@ -769,7 +758,8 @@ public class TextManager : MonoBehaviour {
                     Color starColor = ParseUtil.GetColor(cmds[1]);
                     int indexOfStar = textQueue[currentLine].Text.IndexOf('*'); // HACK oh my god lol
                     if (indexOfStar > -1)
-                        letterReferences[indexOfStar].color = starColor;
+                        if (letterIndexes.Any(im => im.Value == indexOfStar))
+                            letterIndexes.First(im => im.Value == indexOfStar).Key.color = starColor;
                 } catch (CYFException) {
                     Debug.LogError("[starcolor:x] usage - You used the value \"" + cmds[1] + "\" to set the color of the text's star, but it's not a valid hexadecimal color value.");
                 }
@@ -797,7 +787,7 @@ public class TextManager : MonoBehaviour {
 
             case "effect":
                 switch (cmds[1].ToUpper()) {
-                    case "NONE":   textEffect = null;                                                                                 break;
+                    case "NONE":   textEffect = null;                                                                           break;
                     case "TWITCH": textEffect = new TwitchEffect(this, args.Length > 1 ? ParseUtil.GetFloat(args[1]) : 2);      break;
                     case "SHAKE":  textEffect = new ShakeEffect(this, args.Length > 1 ? ParseUtil.GetFloat(args[1]) : 1);       break;
                     case "ROTATE": textEffect = new RotatingEffect(this, args.Length > 1 ? ParseUtil.GetFloat(args[1]) : 1.5f); break;
@@ -905,17 +895,15 @@ public class TextManager : MonoBehaviour {
                 // Third: Show all letters (and execute all commands, if applicable) between `index` and `pos`
                 bool soundPlayed = true;
                 int lastLetter = -1;
-                int destination = System.Math.Min(pos, letterReferences.Length);
+                int destination = System.Math.Min(pos, textQueue[currentLine].Text.Length);
                 while (currentCharacter < destination)
                     HandleShowLetter(ref soundPlayed, ref lastLetter);
 
                 // This is a catch-all.
                 // If a line of text starts with [instant], the above code will not display the letters it passes over,
                 // due to how HandleShowLetter is coded.
-                for (int i = index; i < pos; i++) {
-                    if (letterReferences[i] != null)
-                        letterReferences[i].enabled = true;
-                }
+                foreach (var letter in letterReferences.Where(letter => letterIndexes[letter] >= index && letterIndexes[letter] < pos))
+                    letter.enabled = true;
 
                 // Fourth:  Update variables
                 if (pos < currentText.Length) {
@@ -927,7 +915,6 @@ public class TextManager : MonoBehaviour {
                 skipFromPlayer = false;
 
                 currentCharacter = pos;
-                currentReferenceCharacter = pos;
                 break;
 
             case "func":

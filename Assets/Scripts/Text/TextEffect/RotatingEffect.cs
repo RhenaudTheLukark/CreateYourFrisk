@@ -8,9 +8,7 @@ public class RotatingEffect : TextEffect {
     public RotatingEffect(TextManager textMan, float intensity = 1.5f) : base(textMan) { this.intensity = intensity; }
 
     protected override void UpdateInternal() {
-        for (int i = 0; i < textMan.letterReferences.Length; i++) {
-            if (textMan.letterReferences[i] == null)
-                continue;
+        for (int i = 0; i < textMan.letterReferences.Count; i++) {
             RectTransform rt = textMan.letterReferences[i].GetComponent<RectTransform>();
             float iDiv = sinTimer * rotSpeed + (i / 3.0f);
             rt.anchoredPosition = new Vector2(textMan.letterPositions[i].x + intensity * -Mathf.Sin(iDiv), textMan.letterPositions[i].y + intensity * Mathf.Cos(iDiv));
