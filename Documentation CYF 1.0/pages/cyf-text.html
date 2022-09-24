@@ -125,7 +125,7 @@ it's w3c valid, at least
                     be -1, which will auto compute the height of the bubble. However, bubbles have a minimum height of 40.
                     <br>Example: <span class="term">150</span></li><br>
                 </ul>
-                NOTE: To allow for using properties such as <span class="term">Text.SetFont</span> and <span class="term">Text.color</span> on the same frame as creating the text object, a one-frame delay is implemented by default: The text object will not create its letters or start typing until one frame after you call <span class="term">CreateText</span>. As a consequence, expect a few properties such as <span class="term">Text.color</span> and <span class="term">Text.Getletters</span> to run into issues if you run them on the same frame you use <span class="term">CreateText</span>.
+                NOTE: To allow for using properties such as <span class="term">Text.SetFont</span> and <span class="term">Text.color</span> on the same frame as creating the text object, a one-frame delay is implemented by default: The text object will not create its letters or start typing until one frame after you call <span class="term">CreateText</span>. As a consequence, expect a few properties such as <span class="term">Text.color</span> and <span class="term">Text.GetLetters</span> to run into issues if you run them on the same frame you use <span class="term">CreateText</span>.
                 <br><br>
                 If you need to disable the one-frame delay, start your first line of text with the <span class="ref">Text Command</span> <span class="term">[instant]</span>. And if you need to disable <i>that</i> too, follow it up with <span class="term">[instant:stop]</span>.
             </p>
@@ -245,6 +245,11 @@ it's w3c valid, at least
                 <br><span class="function"><span class="number"></span> Text.currentLine</span>
                 Returns the number of the line (page) that the text is currently on, starting from 0.
                 <br><br>So, if your text object's text table is <span class="term">{"Text 1", "Text 2"}</span>, then <span class="term">"Text 1"</span> is line 0, and <span class="term">"Text 2"</span> is line 1.
+            </p>
+            <p>
+                <br><span class="new function"><span class="string"></span> Text.linePrefix</span>
+                This variable will be added at the beginning of each line of text the text object will display.
+                Useful for adding various text commands you want to apply to all lines of text displayed by a given text object.
             </p>
             <p>
                 <br><span class="new function"><span class="luatable"><span class="userdata">sprite</span></span> Text.GetLetters()</span>

@@ -23,6 +23,7 @@ public class LuaTextManager : TextManager {
     private Color textColor;
     private float xScale = 1;
     private float yScale = 1;
+    private string _linePrefix = "";
     [MoonSharpHidden] public bool autoSetLayer = true;
     private readonly Dictionary<string, DynValue> vars = new Dictionary<string, DynValue>();
 
@@ -381,6 +382,18 @@ public class LuaTextManager : TextManager {
         }
     }
 
+
+    public string linePrefix {
+        get {
+            CheckExists();
+            return _linePrefix;
+        }
+        set {
+            CheckExists();
+            _linePrefix = value;
+        }
+    }
+
     public DynValue GetLetters() {
         CheckExists();
         Table table = new Table(null);
@@ -439,7 +452,7 @@ public class LuaTextManager : TextManager {
 
         TextMessage[] msgs = new TextMessage[text.Table.Length];
         for (int i = 0; i < text.Table.Length; i++)
-            msgs[i] = new TextMessage(text.Table.Get(i + 1).String, false, false);
+            msgs[i] = new TextMessage(linePrefix + text.Table.Get(i + 1).String, false, false);
         if (bubble)
             containerBubble.SetActive(true);
         try { SetTextQueue(msgs); }
@@ -458,6 +471,10 @@ public class LuaTextManager : TextManager {
             yield break;
 
         letterSound = defaultVoice ?? default_charset.SoundName;
+
+        if (linePrefix != "")
+            foreach (TextMessage tm in textQueue)
+                tm.Text = linePrefix + tm.Text;
 
         // only allow inline text commands and letter sounds on the second frame
         lateStartWaiting = false;
@@ -484,7 +501,7 @@ public class LuaTextManager : TextManager {
         }
         TextMessage[] msgs = new TextMessage[text.Table.Length];
         for (int i = 0; i < text.Table.Length; i++)
-            msgs[i] = new MonsterMessage(text.Table.Get(i + 1).String);
+            msgs[i] = new MonsterMessage(linePrefix + text.Table.Get(i + 1).String);
         AddToTextQueue(msgs);
     }
 
