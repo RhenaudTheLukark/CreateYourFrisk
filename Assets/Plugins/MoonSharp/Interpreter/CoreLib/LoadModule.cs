@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Boo.Lang;
+using UnityEngine;
 
 // Disable warnings about XML documentation
 #pragma warning disable 1591
@@ -140,11 +141,13 @@ namespace MoonSharp.Interpreter.CoreLib
 		{
 			try {
 				Script S = executionContext.GetScript();
-				DynValue filename = args.AsType(0, "loadfile", DataType.String, false);
+				DynValue v = args.AsType(0, "loadfile", DataType.String, false);
 				DynValue env = args.AsType(2, "loadfile", DataType.Table, true);
 
-				string str = filename.String;
-				string suffix = "Lua/";
+				string str;
+				if (v.String.StartsWith(DataRoot)) str = v.String;
+				else                               str = (v.String.Replace("\\", "/").StartsWith("/") ? "" : "/") + v.String;
+				string suffix = str.StartsWith(DataRoot) ? DataRoot : "raw";
 				ExplorePath(ref str, ref suffix);
 				return S.LoadFile(str, env.IsNil() ? defaultEnv : env.Table);
 			} catch (SyntaxErrorException ex) {
@@ -180,8 +183,10 @@ namespace MoonSharp.Interpreter.CoreLib
 				Script S = executionContext.GetScript();
 				DynValue v = args.AsType(0, "dofile", DataType.String, false);
 
-				string str = v.String.Replace('\\', '/');
-				string suffix = str[0] == '/' ? "raw" : DataRoot;
+				string str;
+				if (v.String.StartsWith(DataRoot)) str = v.String;
+				else                               str = (v.String.Replace("\\", "/").StartsWith("/") ? "" : "/") + v.String;
+				string suffix = str.StartsWith(DataRoot) ? DataRoot : "raw";
 				ExplorePath(ref str, ref suffix);
 				DynValue fn = S.LoadFile(str);
 
@@ -328,8 +333,10 @@ end";
 		public static void ExplorePath(ref string fullPath, ref string pathSuffix) {
 			fullPath = fullPath.Replace('\\', Path.DirectorySeparatorChar).Replace('/', Path.DirectorySeparatorChar);
 
-			if      (pathSuffix == "raw")                pathSuffix = "/";
-			else if (pathSuffix.Contains(DataRoot))      { }
+			if (pathSuffix == "raw")
+				pathSuffix = "/";
+
+			if      (pathSuffix.Contains(DataRoot))      { }
 			else if (fullPath.Contains(ModDataPath))     pathSuffix = Path.Combine(ModDataPath,     pathSuffix);
 			else if (fullPath.Contains(DefaultDataPath)) pathSuffix = Path.Combine(DefaultDataPath, pathSuffix);
 			else if (fullPath.Contains(DataRoot))        pathSuffix = Path.Combine(DataRoot,        pathSuffix);
