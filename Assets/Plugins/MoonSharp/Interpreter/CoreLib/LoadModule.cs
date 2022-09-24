@@ -223,12 +223,13 @@ namespace MoonSharp.Interpreter.CoreLib
 		public static DynValue __require_clr_impl(ScriptExecutionContext executionContext, CallbackArguments args)
 		{
 			DynValue v = args.AsType(0, "__require_clr_impl", DataType.String, false);
+			string s = v.String.Replace("..", "¤").Replace(".", "/").Replace("¤", "..");
 
-			CallbackArguments newArgs = new CallbackArguments(new List<DynValue> { DynValue.NewString(ModDataPath + "Lua/" + v.String + ".lua"), args[1], args[2] }, args.IsMethodCall);
+			CallbackArguments newArgs = new CallbackArguments(new List<DynValue> { DynValue.NewString(ModDataPath + "Lua/" + s + ".lua"), args[1], args[2] }, args.IsMethodCall);
 			DynValue fn = loadfile_impl(executionContext, newArgs, null, false);
 			if (fn.Type != DataType.Nil) return fn; // tail call to dofile
 
-			newArgs = new CallbackArguments(new List<DynValue> { DynValue.NewString(ModDataPath + "Lua/Libraries/" + v.String + ".lua"), args[1], args[2] }, args.IsMethodCall);
+			newArgs = new CallbackArguments(new List<DynValue> { DynValue.NewString(ModDataPath + "Lua/Libraries/" + s + ".lua"), args[1], args[2] }, args.IsMethodCall);
 			fn = loadfile_impl(executionContext, newArgs, null);
 			return fn; // tail call to dofile
 		}
