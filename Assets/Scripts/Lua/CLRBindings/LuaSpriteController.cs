@@ -351,6 +351,14 @@ public class LuaSpriteController {
         }
     }
 
+    public int characterNumber {
+        get {
+            if (tag != "letter")
+                throw new CYFException("You can only use characterNumber on letters!");
+            return img.GetComponent<Letter>().characterNumber;
+        }
+    }
+
     /*
     public bool filter {
         get { return img.sprite.texture.filterMode != FilterMode.Point; }

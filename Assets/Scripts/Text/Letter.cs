@@ -5,6 +5,7 @@ public class Letter : MonoBehaviour {
     public Vector2 basisPos;
     public Image img;
     public TextEffectLetter effect = null;
+    public int characterNumber;
     public bool started;
     public Color colorFromText;
 

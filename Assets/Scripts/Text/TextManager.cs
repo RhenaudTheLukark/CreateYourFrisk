@@ -26,7 +26,7 @@ public class TextManager : MonoBehaviour {
                                            "music", "sound", "health", "lettereffect"};
     public int currentLine;
     [MoonSharpHidden] public int _textMaxWidth;
-    private int currentCharacter;
+    public int currentCharacter;
     private bool currentSkippable = true;
     private bool decoratedTextOffset;
     [MoonSharpHidden] public bool nextMonsterDialogueOnce, wasStated;

@@ -142,6 +142,13 @@ it's w3c valid, at least
                 Note that this happens automatically if a text object closes itself, either by having the player close it or by closing automatically if <span class="term">progressmode</span> is <span class="term">"auto"</span>.
             </p>
             <p>
+                <br><span class="new function"><span class="luatable"><span class="string"></span></span>Text.text</span>
+                Returns all lines of text the text object is holding. The texts might be different to how you added them to the text object because of how CYF handles text.
+                <br><br>
+                For example, if your text is too long to be held within one line, the text object will replace spaces with newline characters when needed. This change will
+                be visible on the current line of text and all previous ones, but not on the lines of text which have yet to be displayed.
+            </p>
+            <p>
                 <br><span class="function"><span class="boolean"></span> Text.isactive</span>
                 <b>Read-only.</b><br>
                 Tells you if a text object is active.
@@ -228,6 +235,13 @@ it's w3c valid, at least
                 <br><span class="new function">Text.ResetAlpha()</span>
                 Resets the text object's <span class="term">alpha</span> value, whether it was set through <span class="term">Text.alpha</span>,
                 <span class="term">Text.color</span> or <span class="term">Text.color32</span>, resetting the text's default alpha to the font's default alpha.
+            </p>
+            <p>
+                <br><span class="new function"><span class="number"></span> Text.currentCharacter</span>
+                Returns a number representing the total number of characters currently shown in the text object's text.
+                <br>It also works the same if your text is slowed down or sped up.
+                <br><br>Text commands are also taken in account using this variable.
+                You can easily check where the text is currently at using this value and <span class="term">Text.text</span>'s output.
             </p>
             <p>
                 <br><span class="function"><span class="number"></span> Text.currentReferenceCharacter</span>

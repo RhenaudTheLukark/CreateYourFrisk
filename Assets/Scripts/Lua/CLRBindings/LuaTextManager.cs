@@ -116,6 +116,16 @@ public class LuaTextManager : TextManager {
         SetSpeechThingPositionAndSide(bubbleSide.ToString(), bubbleLastVar);
     }
 
+    public DynValue text {
+        get {
+            CheckExists();
+            DynValue[] texts = new DynValue[textQueue.Length];
+            for (int i = 0; i < textQueue.Length; i++)
+                texts[i] = DynValue.NewString(textQueue[i].Text);
+            return DynValue.NewTable(caller.script, texts);
+        }
+    }
+
     public string progressmode {
         get {
             CheckExists();
@@ -405,6 +415,7 @@ public class LuaTextManager : TextManager {
             LuaSpriteController letter = LuaSpriteController.GetOrCreate(im.gameObject);
             letter.tag = "letter";
             letter.spritename = textQueue[currentLine].Text[letterIndexes[im]].ToString();
+            letter.img.GetComponent<Letter>().characterNumber = letterIndexes[im];
             table.Set(key, UserData.Create(letter, LuaSpriteController.data));
         }
 
