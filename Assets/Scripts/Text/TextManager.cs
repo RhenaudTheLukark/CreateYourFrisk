@@ -7,9 +7,9 @@ using UnityEngine.UI;
 
 // TODO less code duplicate-y way of pulling commands out of the text.
 public class TextManager : MonoBehaviour {
-    internal Dictionary<Image, int> letterIndexes;
-    internal List<Image> letterReferences;
-    internal List<Vector2> letterPositions;
+    internal Dictionary<Image, int> letterIndexes = new Dictionary<Image, int>();
+    internal List<Image> letterReferences = new List<Image>();
+    internal List<Vector2> letterPositions = new List<Vector2>();
 
     protected UnderFont default_charset;
     protected string defaultVoice;
@@ -489,9 +489,9 @@ public class TextManager : MonoBehaviour {
     private void SpawnText(bool forceNoAutoLineBreak = false) {
         noSkip1stFrame = true;
         string currentText = textQueue[currentLine].Text;
-        letterIndexes = new Dictionary<Image, int>();
-        letterReferences = new List<Image>();
-        letterPositions = new List<Vector2>();
+        letterIndexes.Clear();
+        letterReferences.Clear();
+        letterPositions.Clear();
         if (currentText.Length > 1 && !forceNoAutoLineBreak)
             if (!GlobalControls.isInFight || EnemyEncounter.script.GetVar("autolinebreak").Boolean || GetType() == typeof(LuaTextManager))
                 SpawnTextSpaceTest(0, currentText, out currentText);

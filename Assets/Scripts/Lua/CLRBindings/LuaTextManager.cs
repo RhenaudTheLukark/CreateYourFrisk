@@ -396,6 +396,8 @@ public class LuaTextManager : TextManager {
 
     public DynValue GetLetters() {
         CheckExists();
+        if (lateStartWaiting)
+            throw new CYFException("You cannot fetch a text object's letters on the first frame it was created, unless you use the [instant] command at the beginning of its line.");
         Table table = new Table(null);
         int key = 0;
         foreach (Image im in letterReferences) {
@@ -437,17 +439,18 @@ public class LuaTextManager : TextManager {
         catch { throw new CYFException("You tried to set a removed sprite/nil sprite as this text object's parent."); }
     }
 
-    public void SetText(DynValue text) {
+    public void SetText(DynValue text, bool resetLateStart = true) {
         CheckExists();
         hidden = false;
 
-        // disable late start if SetText is used on the same frame the text is created
-        lateStartWaiting = false;
+        // Disable late start if SetText is used on the same frame the text is created
+        if (resetLateStart)
+            lateStartWaiting = false;
 
         if (text == null || text.Type != DataType.Table && text.Type != DataType.String)
             throw new CYFException("Text.SetText: the text argument must be a non-empty array of strings or a simple string.");
 
-        // Converts the text argument into a table if it's a simple string
+        // Convert the text argument into a table if it's a simple string
         text = text.Type == DataType.String ? DynValue.NewTable(null, text) : text;
 
         TextMessage[] msgs = new TextMessage[text.Table.Length];
@@ -467,7 +470,7 @@ public class LuaTextManager : TextManager {
     private IEnumerator LateStartSetText() {
         yield return new WaitForEndOfFrame();
 
-        if (!isactive)
+        if (!isactive || !lateStartWaiting)
             yield break;
 
         letterSound = defaultVoice ?? default_charset.SoundName;
@@ -476,7 +479,7 @@ public class LuaTextManager : TextManager {
             foreach (TextMessage tm in textQueue)
                 tm.Text = linePrefix + tm.Text;
 
-        // only allow inline text commands and letter sounds on the second frame
+        // Only allow inline text commands and letter sounds on the second frame
         lateStartWaiting = false;
 
         currentLine = -1;

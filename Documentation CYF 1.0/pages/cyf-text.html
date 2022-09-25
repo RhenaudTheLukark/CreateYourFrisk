@@ -257,7 +257,7 @@ it's w3c valid, at least
                 <h4>Letter sprite objects can not have their layer changed, can not run <span class="term">sprite.Mask</span>, and can only be parented to other letter sprites. They cannot be deleted or dusted (using sprite.Dust()) as well.</h4>
                 <br>NOTE: Accessing this table generates the table anew every time. To save on resources, store this table to a local variable before doing any operations on it. Even code such as <span class="term">for i = 1, #text.GetLetters() do</span> is a bad idea.
                 <br><br>
-                It is recommended to use this property in coordination with the <span class="ref">Game Event</span> <span class="term">OnTextAdvance</span>. You may also have some difficulty if you use this on the same frame as creating the text - read the note under <span class="term">CreateText</span> for more information.
+                It is recommended to use this property in coordination with the <span class="ref">Game Event</span> <span class="term">OnTextAdvance</span>. You may also not be able to use this on the same frame as creating the text - read the note under <span class="term">CreateText</span> for more information.
                 <br><br><br>
                 Here is an example of using <span class="term">Text.GetLetters</span> to apply offset and rotation to every letter.
                 <br><div class="code-container"><pre class="brush: lua">local t = CreateText({"Some example text for testing!"}, {40, 400}, 560, "Top")

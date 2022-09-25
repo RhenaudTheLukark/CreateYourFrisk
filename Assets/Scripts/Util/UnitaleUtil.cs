@@ -219,11 +219,10 @@ public static class UnitaleUtil {
             int index = txtmgr.letterIndexes[im];
 
             if (index < fromLetter || index > toLetter) continue;
-
             if (txtmgr.letterPositions[i].y < minY)
                 minY = txtmgr.letterPositions[i].y;
-            if (txtmgr.letterPositions[i].y + txtmgr.Charset.Letters[txtmgr.textQueue[txtmgr.currentLine].Text[i]].textureRect.size.y > maxY)
-                maxY = txtmgr.letterPositions[i].y + txtmgr.Charset.Letters[txtmgr.textQueue[txtmgr.currentLine].Text[i]].textureRect.size.y;
+            if (txtmgr.letterPositions[i].y + txtmgr.Charset.Letters[txtmgr.textQueue[txtmgr.currentLine].Text[index]].textureRect.size.y > maxY)
+                maxY = txtmgr.letterPositions[i].y + txtmgr.Charset.Letters[txtmgr.textQueue[txtmgr.currentLine].Text[index]].textureRect.size.y;
         }
         return maxY - minY;
     }

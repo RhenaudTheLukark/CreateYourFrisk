@@ -449,12 +449,10 @@ public static class LuaScriptBinder {
 
         if (enableLateStart)
             luatm.lateStartWaiting = true;
-        luatm.SetText(text);
-
+        luatm.SetText(text, false);
         luatm.ShowBubble();
 
         if (!enableLateStart) return luatm;
-        luatm.DestroyChars();
         luatm.LateStart();
         return luatm;
     }
