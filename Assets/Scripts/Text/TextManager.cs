@@ -27,6 +27,7 @@ public class TextManager : MonoBehaviour {
     public int currentLine;
     [MoonSharpHidden] public int _textMaxWidth;
     public int currentCharacter;
+    public int currentReferenceCharacter;
     private bool currentSkippable = true;
     private bool decoratedTextOffset;
     [MoonSharpHidden] public bool nextMonsterDialogueOnce, wasStated;
@@ -99,6 +100,7 @@ public class TextManager : MonoBehaviour {
         currentLine = 0;
         _textMaxWidth = 0;
         currentCharacter = 0;
+        currentReferenceCharacter = 0;
         decoratedTextOffset = false;
         wasStated = false;
         instantActive = false;
@@ -201,6 +203,7 @@ public class TextManager : MonoBehaviour {
 
     [MoonSharpHidden] public void ResetCurrentCharacter() {
         currentCharacter = 0;
+        currentReferenceCharacter = 0;
     }
 
     [MoonSharpHidden] public void AddToTextQueue(TextMessage text) { AddToTextQueue(new[] { text }); }
@@ -325,6 +328,7 @@ public class TextManager : MonoBehaviour {
         DestroyChars();
         currentLine = line;
         currentCharacter          = 0;
+        currentReferenceCharacter = 0;
         letterEffect              = "none";
         instantActive = textQueue[line].ShowImmediate;
         SpawnText(forceNoAutoLineBreak);
@@ -395,6 +399,7 @@ public class TextManager : MonoBehaviour {
         foreach (Image im in letterReferences)
             im.enabled = true;
         currentCharacter = textQueue[currentLine].Text.Length;
+        currentReferenceCharacter = letterReferences.Count;
     }
 
     public void SetEffect(TextEffect effect) { textEffect = effect; }
@@ -709,6 +714,8 @@ public class TextManager : MonoBehaviour {
                 case "shake":  im.GetComponent<Letter>().effect = new ShakeEffectLetter(im.GetComponent<Letter>(), letterIntensity);                           break;
                 default:       im.GetComponent<Letter>().effect = null;                                                                                        break;
             }
+
+            currentReferenceCharacter++;
         }
 
         if (!string.IsNullOrEmpty(letterSound) && !muted && !soundPlayed && (GlobalControls.retroMode || textQueue[currentLine].Text[currentCharacter] != ' ')) {
@@ -919,8 +926,6 @@ public class TextManager : MonoBehaviour {
                 }
 
                 skipFromPlayer = false;
-
-                currentCharacter = pos;
                 break;
 
             case "func":
