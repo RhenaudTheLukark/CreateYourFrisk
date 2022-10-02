@@ -8,7 +8,7 @@ public class TwitchEffect : TextEffect {
     private readonly float intensity;
     private readonly int avgWigFrames = 48;
     private readonly int wigFrameVariety = 16;
-    private int nextWigInFrames = -100;
+    private int nextWigInFrames;
 
     public TwitchEffect(TextManager textMan, float intensity = 2.0f, int step = 0) : base(textMan) {
         this.intensity = intensity;

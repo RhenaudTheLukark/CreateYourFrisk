@@ -12,6 +12,7 @@ internal class ShakeEffect : TextEffect {
             return;
         }
         for (int i = 0; i < textMan.letterReferences.Count; i++) {
+            if (textMan.letterReferences[i] == null) continue;
             float random = Random.value * 2.0f * Mathf.PI;
             float xWig = Mathf.Sin(random) * intensity;
             float yWig = Mathf.Cos(random) * intensity;
