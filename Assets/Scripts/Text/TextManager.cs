@@ -302,7 +302,7 @@ public class TextManager : MonoBehaviour {
         _textMaxWidth = mugshotSet ? 417 : 534;
     }
 
-    protected void ShowLine(int line, bool forceNoAutoLineBreak = false) {
+    protected void ShowLine(int line) {
         if (textQueue == null) return;
         if (line >= textQueue.Length) return;
         if (textQueue[line] == null) return;
@@ -311,7 +311,7 @@ public class TextManager : MonoBehaviour {
 
         if (!offsetSet)
             SetOffset(0, 0);
-        if (GetType() != typeof(LuaTextManager))
+        if (GetType() != typeof(LuaTextManager) || ((LuaTextManager)this).needFontReset)
             ResetFont();
         currentColor     = defaultColor;
         colorSet         = false;
@@ -331,7 +331,7 @@ public class TextManager : MonoBehaviour {
         currentReferenceCharacter = 0;
         letterEffect              = "none";
         instantActive = textQueue[line].ShowImmediate;
-        SpawnText(forceNoAutoLineBreak);
+        SpawnText();
         if (UnitaleUtil.IsOverworld && this == PlayerOverworld.instance.textmgr) {
             if (textQueue[line].ActualText) {
                 if (transform.parent.GetComponent<Image>().color.a == 0)
@@ -491,14 +491,14 @@ public class TextManager : MonoBehaviour {
         letterPositions.Add(ltrRect.anchoredPosition);
     }
 
-    private void SpawnText(bool forceNoAutoLineBreak = false) {
+    private void SpawnText() {
         noSkip1stFrame = true;
         string currentText = textQueue[currentLine].Text;
         letterIndexes.Clear();
         letterReferences.Clear();
         letterPositions.Clear();
-        if (currentText.Length > 1 && !forceNoAutoLineBreak)
-            if (!GlobalControls.isInFight || EnemyEncounter.script.GetVar("autolinebreak").Boolean || GetType() == typeof(LuaTextManager))
+        if (currentText.Length > 1)
+            if (!GlobalControls.isInFight || EnemyEncounter.script.GetVar("autolinebreak").Boolean || GetType() == typeof(LuaTextManager) && !((LuaTextManager)this).noAutoLineBreak)
                 SpawnTextSpaceTest(0, currentText, out currentText);
 
         currentX = self.position.x + offset.x;
@@ -572,7 +572,7 @@ public class TextManager : MonoBehaviour {
                     currentX = !GlobalControls.isInFight ? (356 + Misc.cameraX) : 356; // HACK: bad tab usage
                     break;
                 case ' ':
-                    if (i + 1 == currentText.Length || currentText[i + 1] == ' ' || forceNoAutoLineBreak)
+                    if (i + 1 == currentText.Length || currentText[i + 1] == ' ')
                         break;
                     if (!GlobalControls.isInFight || EnemyEncounter.script.GetVar("autolinebreak").Boolean || GetType() == typeof(LuaTextManager)) {
                         SpawnTextSpaceTest(i, currentText, out currentText);

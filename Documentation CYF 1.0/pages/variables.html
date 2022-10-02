@@ -301,7 +301,24 @@ check = "Serving Size: 1 Monster\nNot monitored by the USDA"</pre>
             <p><span class="string"></span> <span class="term">dialogbubble</span> - What dialogue bubble will be used for the monster's dialogue. You can
                 change this at any time, but this <i>must</i> be initially set to something. For a list of all possible options, check the
                 <a href="../media/dialogoptions.png">dialog bubble names</a> chart; it's also in the sidebar.
-                Positioning of the bubbles is done automatically.</p>
+                Positioning of the bubbles is done automatically.
+                <br>
+                <span class="new"></span>This value can also be nil, which means the monster's text will use an automatically sized bubble much like text
+                objects do. See <span class="term">bubbleside</span> and <span class="term">bubblewidth</span> below for details.</p>
+            <p><span class="new"></span><span class="string"></span> <span class="term">bubbleside</span> - Only useful when
+                <span class="term">dialogbubble</span> is nil. Determines which side the bubble and its tail are on. Can only accept the values
+                <span class="term">RIGHT</span>, <span class="term">LEFT</span>, <span class="term">UP</span>, <span class="term">DOWN</span> and
+                <span class="term">NONE</span>.
+                <br>
+                The <span class="term">NONE</span> value places the bubble on the right side of the monster with no tail, while the other values
+                place the bubble on their corresponding side.</p>
+            <p><span class="new"></span><span class="number"></span> <span class="term">bubblewidth</span> - Only useful when
+                <span class="term">dialogbubble</span> is nil. Determines the width of the automatic bubble in pixels. This value cannot be under 16.</p>
+            <p><span class="new"></span><span class="userdata">sprite</span> <span class="term">bubblesprite</span> - Only useful when
+                <span class="term">dialogbubble</span> is not nil. This is the sprite object used for the bubble sprite used for monster dialogues.
+                This object has <span class="term">textobject</span> as child, so moving it will also move that object.</p>
+            <p><span class="new"></span><span class="userdata">text</span> <span class="term">textobject</span> - Text object used to display the
+                monster's dialogue.</p>
             <p><span class="CYF"></span> <span class="string"></span> <span class="term">dialogueprefix</span> - A string, appended to the beginning
                 of every monster's dialogue. The default is <span class="term">"[effect:rotate]"</span></p>
             <p><span class="string"></span> <span class="term">name</span> - Monster name. Fairly self-explanatory; shows up in the FIGHT/ACT menus.

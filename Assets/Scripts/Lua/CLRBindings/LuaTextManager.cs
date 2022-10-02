@@ -26,6 +26,8 @@ public class LuaTextManager : TextManager {
     private string _linePrefix = "";
     [MoonSharpHidden] public bool autoSetLayer = true;
     private readonly Dictionary<string, DynValue> vars = new Dictionary<string, DynValue>();
+    [MoonSharpHidden] public bool needFontReset = false;
+    [MoonSharpHidden] public bool noAutoLineBreak = false;
 
     public bool isactive {
         get { return !removed && !hidden; }
@@ -113,7 +115,15 @@ public class LuaTextManager : TextManager {
         UnitaleUtil.GetChildPerName(containerBubble.transform, "BackVert").GetComponent<RectTransform>().sizeDelta = new Vector2(textMaxWidth - 20, effectiveBubbleHeight);             //BackVert
         UnitaleUtil.GetChildPerName(containerBubble.transform, "CenterHorz").GetComponent<RectTransform>().sizeDelta = new Vector2(textMaxWidth + 16, effectiveBubbleHeight - 16 * 2);  //CenterHorz
         UnitaleUtil.GetChildPerName(containerBubble.transform, "CenterVert").GetComponent<RectTransform>().sizeDelta = new Vector2(textMaxWidth - 16, effectiveBubbleHeight - 4);       //CenterVert
-        SetSpeechThingPositionAndSide(bubbleSide.ToString(), bubbleLastVar);
+        SetTail(bubbleSide.ToString(), bubbleLastVar);
+    }
+
+    public Vector2 GetBubbleSize() {
+        return containerBubble.transform.GetComponent<RectTransform>().sizeDelta;
+    }
+
+    public Vector2 GetBubbleShift() {
+        return containerBubble.GetComponent<RectTransform>().localPosition;
     }
 
     public DynValue text {
@@ -586,6 +596,7 @@ public class LuaTextManager : TextManager {
                 new Vector2(bubbleSide == BubbleSide.LEFT ? 0 : bubbleSide == BubbleSide.RIGHT ? 1 : 0.5f,
                             bubbleSide == BubbleSide.DOWN ? 0 : bubbleSide == BubbleSide.UP ? 1 : 0.5f);
             speechThing.rotation = speechThingShadow.rotation = Quaternion.Euler(0, 0, (int)bubbleSide);
+            speechThing.localScale = speechThingShadow.localScale = new Vector2(speechThing.lossyScale.x < 0 ? -1 : 1, speechThing.lossyScale.y < 0 ? -1 : 1);
             bool isSide = bubbleSide == BubbleSide.LEFT || bubbleSide == BubbleSide.RIGHT;
             int size = isSide ? (int)containerBubble.GetComponent<RectTransform>().sizeDelta.y - 20 : (int)containerBubble.GetComponent<RectTransform>().sizeDelta.x - 20;
             if (position == null)

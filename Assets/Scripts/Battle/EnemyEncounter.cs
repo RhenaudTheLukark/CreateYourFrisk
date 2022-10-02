@@ -64,7 +64,9 @@ public class EnemyEncounter : MonoBehaviour {
         enemyController.GetComponent<RectTransform>().anchoredPosition = new Vector2(x, y);
         enemyController.script = new ScriptWrapper();
         enemies.Add(enemyController);
+        enemyController.CreateBubble();
         enemyController.InitializeEnemy();
+
         return UserData.Create(enemyController.script);
     }
 

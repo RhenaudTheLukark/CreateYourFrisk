@@ -9,20 +9,21 @@ public class EnemyController : MonoBehaviour {
     public GameObject bubbleObject;
     internal Sprite textBubbleSprite;
 
-    internal Vector2 textBubblePos;
-
     protected UIController ui;
 
-    public Vector2 DialogBubblePosition {
-        get {
-            Sprite diagBubbleSpr = SpriteRegistry.Get(DialogBubble);
-            RectTransform t = GetComponent<RectTransform>();
-            if (diagBubbleSpr.name.StartsWith("right"))        textBubblePos = new Vector2(t.rect.width / 2 + 5,                             diagBubbleSpr.rect.height / 2);
-            else if (diagBubbleSpr.name.StartsWith("left"))    textBubblePos = new Vector2(-t.rect.width / 2 - diagBubbleSpr.rect.width - 5, diagBubbleSpr.rect.height / 2);
-            else if (diagBubbleSpr.name.StartsWith("top"))     textBubblePos = new Vector2(-diagBubbleSpr.rect.width / 2,                    t.rect.height / 2 + diagBubbleSpr.rect.height + 5);
-            else if (diagBubbleSpr.name.StartsWith("bottom"))  textBubblePos = new Vector2(-diagBubbleSpr.rect.width / 2,                    -t.rect.height / 2 - 5);
-            else                                               textBubblePos = new Vector2(t.rect.width / 2 + 5,                             diagBubbleSpr.rect.height / 2); // rightside default
-            return textBubblePos;
+    public enum BubbleSideEnum { LEFT, RIGHT, UP, DOWN, NONE }
+    public BubbleSideEnum GetReverseBubbleSide(BubbleSideEnum val) {
+        switch (val) {
+            case BubbleSideEnum.LEFT:
+                return BubbleSideEnum.RIGHT;
+            case BubbleSideEnum.RIGHT:
+                return BubbleSideEnum.LEFT;
+            case BubbleSideEnum.UP:
+                return BubbleSideEnum.DOWN;
+            case BubbleSideEnum.DOWN:
+                return BubbleSideEnum.UP;
+            default:
+                return val;
         }
     }
 
@@ -248,6 +249,59 @@ public class EnemyController : MonoBehaviour {
         get { return GetComponent<RectTransform>().position.y; }
     }
 
+    public Vector2 DialogBubblePosition {
+        get {
+            RectTransform t = GetComponent<RectTransform>();
+            Vector2 spr = new Vector2(Mathf.Abs(t.rect.width), t.rect.height);
+            Vector2 bubSize;
+            if (DialogBubble == "UI/SpeechBubbles/") {
+                LuaTextManager text = GetComponentInChildren<LuaTextManager>();
+                bubSize = text.GetBubbleSize();
+                Vector2 bubbleShift = text.GetBubbleShift();
+                Vector2 res;
+                switch (BubbleSide) {
+                    case BubbleSideEnum.LEFT:  res = new Vector2(-spr.x / 2 - bubSize.x - 25, bubSize.y / 2);              break;
+                    case BubbleSideEnum.UP:    res = new Vector2(-bubSize.x / 2,              spr.y / 2 + bubSize.y + 25); break;
+                    case BubbleSideEnum.DOWN:  res = new Vector2(-bubSize.x / 2,              -spr.y / 2 - 25);            break;
+                    default:                   res = new Vector2(spr.x / 2 + 25,              bubSize.y / 2);              break; // rightside default
+                }
+                return res - bubbleShift;
+            }
+            Sprite diagBubbleSpr = SpriteRegistry.Get(DialogBubble);
+            bubSize = new Vector2(diagBubbleSpr.rect.width, diagBubbleSpr.rect.height);
+            if (diagBubbleSpr.name.StartsWith("left"))   return new Vector2(-spr.x / 2 - bubSize.x - 5, bubSize.y / 2);
+            if (diagBubbleSpr.name.StartsWith("top"))    return new Vector2(-bubSize.x / 2,             spr.y / 2 + bubSize.y + 5);
+            if (diagBubbleSpr.name.StartsWith("bottom")) return new Vector2(-bubSize.x / 2,             -spr.y / 2 - 5);
+                                                         return new Vector2(spr.x / 2 + 5,              bubSize.y / 2); // rightside default
+        }
+    }
+
+    public BubbleSideEnum BubbleSide {
+        get {
+            if (script.GetVar("bubbleside").Type != DataType.String)
+                throw new CYFException("The bubbleside value can only take \"LEFT\", \"RIGHT\", \"UP\", \"DOWN\" or \"NONE\", but its value isn't a string.");
+            string s = script.GetVar("bubbleside").String.ToUpper();
+            try {
+                return (BubbleSideEnum)Enum.Parse(typeof(BubbleSideEnum), s);
+            } catch { throw new CYFException("The bubbleside value can only take \"LEFT\", \"RIGHT\", \"UP\", \"DOWN\" or \"NONE\", but its value is \"" + s.ToUpper() + "\"."); }
+        }
+        set {
+            script.SetVar("bubbleside", DynValue.NewString(value.ToString()));
+        }
+    }
+
+    public double BubbleWidth {
+        get {
+            if (script.GetVar("bubblewidth").Type != DataType.Number)
+                throw new CYFException("The bubblewidth value of the monster " + Name + " isn't a number.\nIt must be a number above or equal to 16.");
+            double val = script.GetVar("bubblewidth").Number;
+            if (val < 16)
+                throw new CYFException("The bubblewidth value of the monster " + Name + " is too low (" + val + ").\nIt must be a number above or equal to 16.");
+            return val;
+        }
+        set { script.SetVar("bubblewidth", DynValue.NewNumber(value)); }
+    }
+
     public void InitializeEnemy() {
         try {
             string scriptText = FileLoader.GetScript("Monsters/" + scriptName, StaticInits.ENCOUNTER, "monster");
@@ -269,6 +323,8 @@ public class EnemyController : MonoBehaviour {
             script.SetVar("canmove", DynValue.NewBoolean(true));
             sprite = LuaSpriteController.GetOrCreate(gameObject);
             script.SetVar("monstersprite", UserData.Create(sprite, LuaSpriteController.data));
+            script.SetVar("bubblesprite", UserData.Create(LuaSpriteController.GetOrCreate(bubbleObject)));
+            script.SetVar("textobject", UserData.Create(bubbleObject.GetComponentInChildren<LuaTextManager>()));
             script.DoString(scriptText);
 
             string spriteFile = script.GetVar("sprite").String;
@@ -310,6 +366,68 @@ public class EnemyController : MonoBehaviour {
 
     protected void HandleCustomCommand(string command) {
         UnitaleUtil.TryCall(script, "HandleCustomCommand", new[] { DynValue.NewString(command) });
+    }
+
+    public void CreateBubble() {
+        GameObject speechBub = Instantiate(SpriteFontRegistry.BUBBLE_OBJECT);
+        speechBub.transform.SetParent(transform);
+
+        LuaTextManager sbTextMan = speechBub.GetComponentInChildren<LuaTextManager>();
+        sbTextMan.SetCaller(script);
+        sbTextMan.progressmode = "none";
+        sbTextMan.HideBubble();
+        sbTextMan.deleteWhenFinished = false;
+        sbTextMan.SetText(DynValue.NewString(""));
+        sbTextMan.needFontReset = true;
+        sbTextMan.GetComponent<RectTransform>().pivot = new Vector2(0, 1);
+
+        bubbleObject = speechBub;
+    }
+
+    public void UpdateBubble(int enemyID) {
+        LuaTextManager sbTextMan = bubbleObject.GetComponentInChildren<LuaTextManager>();
+
+        bool usingAutoBubble = DialogBubble == "UI/SpeechBubbles/";
+        Image speechBubImg = bubbleObject.GetComponent<Image>();
+        speechBubImg.enabled = !usingAutoBubble;
+
+        bool reversedX = sprite.xscale < 0,
+             reversedY = sprite.yscale < 0;
+
+        // Bubble management: can be a normal bubble OR an auto bubble from text objects
+        if (!usingAutoBubble) {
+            try { SpriteUtil.SwapSpriteFromFile(speechBubImg, DialogBubble, enemyID); }
+            catch {
+                UnitaleUtil.DisplayLuaError(scriptName + ": Creating a dialogue bubble", "The dialogue bubble \"" + script.GetVar("dialogbubble") + "\" doesn't exist.");
+                return;
+            }
+            Sprite speechBubSpr = speechBubImg.sprite;
+
+            sbTextMan.MoveTo((int)speechBubSpr.border.x, (int)(-speechBubSpr.border.w - sbTextMan.Charset.LineSpacing));
+            speechBubImg.color = new Color(speechBubImg.color.r, speechBubImg.color.g, speechBubImg.color.b, sbTextMan.letterReferences.Count == 0 ? 0 : 1);
+
+            sbTextMan.HideBubble();
+        } else {
+            bubbleWidth = (float)BubbleWidth;
+            if (sbTextMan.letterReferences.Count > 0) sbTextMan.ShowBubble(GetReverseBubbleSide(BubbleSide).ToString(), DynValue.NewString("50%"));
+            else                                      sbTextMan.HideBubble();
+            sbTextMan.MoveTo(0, 0);
+        }
+
+        sbTextMan.textMaxWidth = (int)bubbleWidth;
+
+        // TODO improve position setting/remove hardcoding of position setting
+        bubbleObject.GetComponent<RectTransform>().localScale = new Vector2(reversedX ? -1 : 1, reversedY ? -1 : 1);
+        bubbleObject.GetComponent<RectTransform>().anchoredPosition = new Vector2((DialogBubblePosition.x + offsets[1].x) * (reversedX ? -1 : 1),
+                                                                                  (DialogBubblePosition.y + offsets[1].y) * (reversedY ? -1 : 1));
+
+        if (Voice != "")
+            sbTextMan.letterSound = Voice;
+    }
+
+    public void HideBubble() {
+        bubbleObject.GetComponent<Image>().enabled = false;
+        bubbleObject.GetComponentInChildren<LuaTextManager>().HideBubble();
     }
 
     public void Remove() {
