@@ -1,7 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
-using Boo.Lang;
-using UnityEngine;
 
 // Disable warnings about XML documentation
 #pragma warning disable 1591
