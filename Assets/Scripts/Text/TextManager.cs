@@ -85,7 +85,7 @@ public class TextManager : MonoBehaviour {
     [MoonSharpHidden] public ScriptWrapper caller;
 
     [MoonSharpHidden] public UnderFont Charset { get; protected set; }
-    [MoonSharpHidden] public TextMessage[] textQueue;
+    [MoonSharpHidden] public TextMessage[] textQueue = null;
     //public string[] mugshotsPath;
     //public bool overworld;
     [MoonSharpHidden] public bool blockSkip;
@@ -145,8 +145,8 @@ public class TextManager : MonoBehaviour {
 
     [MoonSharpHidden] public void ResetFont() {
         if (Charset == null || default_charset == null)
-            if (GetType() == typeof(LuaTextManager))
-                ((LuaTextManager)this).SetFont(SpriteFontRegistry.UI_MONSTERTEXT_NAME);
+            if (GetType() == typeof(LuaTextManager) && !((LuaTextManager)this).isMainTextObject)
+                ((LuaTextManager) this).SetFont(SpriteFontRegistry.UI_MONSTERTEXT_NAME);
             else
                 SetFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_DEFAULT_NAME), true);
         Charset = default_charset;
@@ -405,8 +405,13 @@ public class TextManager : MonoBehaviour {
     public void SetEffect(TextEffect effect) { textEffect = effect; }
 
     [MoonSharpHidden] public void DestroyChars() {
-        foreach (Transform child in gameObject.transform)
-            Destroy(child.gameObject);
+        foreach (Transform child in gameObject.transform) {
+            if (child.GetComponent<SpriteRenderer>() == null && child.GetComponent<Image>() == null) continue;
+            LuaSpriteController.GetOrCreate(child.gameObject).Remove();
+        }
+        letterIndexes.Clear();
+        letterReferences.Clear();
+        letterPositions.Clear();
     }
 
     private void SpawnTextSpaceTest(int i, string currentText, out string currentText2) {
@@ -574,7 +579,7 @@ public class TextManager : MonoBehaviour {
                 case ' ':
                     if (i + 1 == currentText.Length || currentText[i + 1] == ' ')
                         break;
-                    if (!GlobalControls.isInFight || EnemyEncounter.script.GetVar("autolinebreak").Boolean || GetType() == typeof(LuaTextManager)) {
+                    if (!GlobalControls.isInFight || EnemyEncounter.script.GetVar("autolinebreak").Boolean || GetType() == typeof(LuaTextManager) && !((LuaTextManager)this).noAutoLineBreak) {
                         SpawnTextSpaceTest(i, currentText, out currentText);
                         if (currentText[i] != ' ') {
                             i--;
@@ -625,7 +630,7 @@ public class TextManager : MonoBehaviour {
     protected virtual void Update() {
         if (!UnitaleUtil.IsOverworld && nextMonsterDialogueOnce) {
             bool test = true;
-            foreach (TextManager mgr in UIController.instance.monsterDialogues) {
+            foreach (LuaTextManager mgr in UIController.instance.monsterDialogues) {
                 if (!mgr.IsFinished())
                     test = false;
             }
@@ -706,6 +711,7 @@ public class TextManager : MonoBehaviour {
 
         if (letterIndexes.Values.Contains(currentCharacter)) {
             Image im = letterIndexes.First(i => i.Value == currentCharacter).Key;
+            if (im == null) return false;
             im.enabled = true;
             letterEffectStepCount += letterEffectStep;
             switch (letterEffect.ToLower()) {

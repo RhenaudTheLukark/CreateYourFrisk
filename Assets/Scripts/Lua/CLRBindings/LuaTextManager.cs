@@ -19,7 +19,7 @@ public class LuaTextManager : TextManager {
     private int countFrames;
     private int _bubbleHeight = -1;
     private BubbleSide bubbleSide = BubbleSide.NONE;
-    private ProgressMode progress = ProgressMode.AUTO;
+    [SerializeField] private ProgressMode progress = ProgressMode.AUTO;
     private Color textColor;
     private float xScale = 1;
     private float yScale = 1;
@@ -28,6 +28,7 @@ public class LuaTextManager : TextManager {
     private readonly Dictionary<string, DynValue> vars = new Dictionary<string, DynValue>();
     [MoonSharpHidden] public bool needFontReset = false;
     [MoonSharpHidden] public bool noAutoLineBreak = false;
+    [MoonSharpHidden] public bool isMainTextObject = false;
 
     public bool isactive {
         get { return !removed && !hidden; }
@@ -54,8 +55,7 @@ public class LuaTextManager : TextManager {
             transform.parent.SetParent(GameObject.Find("TopLayer").transform);
         container = transform.parent.gameObject;
 
-        Transform bubbleTransform = UnitaleUtil.GetChildPerName(container.transform, "BubbleContainer");
-
+        Transform bubbleTransform = UnitaleUtil.GetChildPerName(container.transform, "BubbleContainer", true);
         if (bubbleTransform != null) {
             containerBubble = bubbleTransform.gameObject;
             speechThing = UnitaleUtil.GetChildPerName(containerBubble.transform, "SpeechThing", false, true).GetComponent<RectTransform>();
@@ -67,8 +67,8 @@ public class LuaTextManager : TextManager {
         if (hidden) return;
         base.Update();
 
+        if (!isactive || textQueue == null || textQueue.Length == 0) return;
         //Next line/EOF check
-        if (!isactive) return;
         switch (progress) {
             case ProgressMode.MANUAL: {
                 if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED && LineComplete())
@@ -486,10 +486,12 @@ public class LuaTextManager : TextManager {
             ResizeBubble();
     }
 
+    public void SpawnText() { StartCoroutine(LateStartSetText(false)); }
     [MoonSharpHidden] public void LateStart() { StartCoroutine(LateStartSetText()); }
 
-    private IEnumerator LateStartSetText() {
-        yield return new WaitForEndOfFrame();
+    private IEnumerator LateStartSetText(bool waitUntilEndOfFrame = true) {
+        if (waitUntilEndOfFrame)
+            yield return new WaitForEndOfFrame();
 
         if (!isactive || !lateStartWaiting)
             yield break;

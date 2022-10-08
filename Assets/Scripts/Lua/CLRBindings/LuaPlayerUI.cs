@@ -34,6 +34,10 @@ public class LuaPlayerUI {
         get { return UIStats.instance.hpTextMan; }
     }
 
+    public LuaTextManager maintext {
+        get { return UIController.instance.mainTextManager; }
+    }
+
 
     public static LuaSpriteController fightbtn {
         get { return LuaSpriteController.GetOrCreate(UIController.instance.fightButton.gameObject); }

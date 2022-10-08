@@ -374,11 +374,8 @@ public class EnemyController : MonoBehaviour {
 
         LuaTextManager sbTextMan = speechBub.GetComponentInChildren<LuaTextManager>();
         sbTextMan.SetCaller(script);
-        sbTextMan.progressmode = "none";
         sbTextMan.HideBubble();
-        sbTextMan.deleteWhenFinished = false;
         sbTextMan.SetText(DynValue.NewString(""));
-        sbTextMan.needFontReset = true;
         sbTextMan.GetComponent<RectTransform>().pivot = new Vector2(0, 1);
 
         bubbleObject = speechBub;

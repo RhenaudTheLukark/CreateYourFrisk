@@ -142,6 +142,22 @@ PrefabInstance:
       propertyPath: autoSetLayer
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 11462692, guid: e24fd648e823f074cb0fcadd09d5b42a, type: 3}
+      propertyPath: noAutoLineBreak
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11462692, guid: e24fd648e823f074cb0fcadd09d5b42a, type: 3}
+      propertyPath: needFontReset
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11462692, guid: e24fd648e823f074cb0fcadd09d5b42a, type: 3}
+      propertyPath: progress
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 11462692, guid: e24fd648e823f074cb0fcadd09d5b42a, type: 3}
+      propertyPath: deleteWhenFinished
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 22411304, guid: e24fd648e823f074cb0fcadd09d5b42a, type: 3}
       propertyPath: m_AnchorMin.x
       value: 0.5
