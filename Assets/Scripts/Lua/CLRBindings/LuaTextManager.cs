@@ -49,6 +49,10 @@ public class LuaTextManager : TextManager {
 
     public bool deleteWhenFinished = true;
 
+    public GameObject GetContainer() {
+        return container;
+    }
+
     protected override void Awake() {
         base.Awake();
         if (!UnitaleUtil.IsOverworld && autoSetLayer)
@@ -444,22 +448,6 @@ public class LuaTextManager : TextManager {
         }
     }
 
-    public void SetParent(LuaSpriteController parent) {
-        CheckExists();
-        if (parent != null && parent.img.transform != null && parent.img.transform.parent.name == "SpritePivot")
-            throw new CYFException("text.SetParent(): Can not use SetParent with an Overworld Event's sprite.");
-        try {
-            if (parent == null) throw new CYFException("text.SetParent(): Can't set a sprite's parent as nil.");
-            container.transform.SetParent(parent.img.transform);
-            foreach (Transform child in container.transform) {
-                MaskImage childmask = child.gameObject.GetComponent<MaskImage>();
-                if (childmask != null)
-                    childmask.inverted = parent._masked == LuaSpriteController.MaskMode.INVERTEDSPRITE || parent._masked == LuaSpriteController.MaskMode.INVERTEDSTENCIL;
-            }
-        }
-        catch { throw new CYFException("You tried to set a removed sprite/nil sprite as this text object's parent."); }
-    }
-
     public void SetText(DynValue text, bool resetLateStart = true) {
         CheckExists();
         hidden = false;
@@ -724,5 +712,42 @@ public class LuaTextManager : TextManager {
     public DynValue this[string key] {
         get { return GetVar(key); }
         set { SetVar(key, value); }
+    }
+
+    ////////////////////
+    // Children stuff //
+    ////////////////////
+
+    public string name {
+        get { return container.name; }
+    }
+
+    public int childIndex {
+        get { return container.transform.GetSiblingIndex() + 1; }
+        set { container.transform.SetSiblingIndex(value - 1); }
+    }
+    public int childCount {
+        get { return container.transform.childCount; }
+    }
+
+    public DynValue GetParent() {
+        return UnitaleUtil.GetObjectParent(container.transform);
+    }
+
+    public void SetParent(object parent) {
+        CheckExists();
+        UnitaleUtil.SetObjectParent(this, parent);
+
+        LuaSpriteController sParent = parent as LuaSpriteController;
+        ProjectileController pParent = parent as ProjectileController;
+        if (pParent != null)
+            sParent = pParent.sprite;
+        if (sParent == null)
+            return;
+        foreach (Transform child in container.transform) {
+            MaskImage childmask = child.gameObject.GetComponent<MaskImage>();
+            if (childmask != null)
+                childmask.inverted = sParent._masked == LuaSpriteController.MaskMode.INVERTEDSPRITE || sParent._masked == LuaSpriteController.MaskMode.INVERTEDSTENCIL;
+        }
     }
 }

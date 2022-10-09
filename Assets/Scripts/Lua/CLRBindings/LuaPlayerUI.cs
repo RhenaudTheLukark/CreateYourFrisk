@@ -56,6 +56,11 @@ public class LuaPlayerUI {
     }
 
 
+    public static LuaCYFObject root {
+        get { return new LuaCYFObject(Object.FindObjectOfType<Canvas>().transform); }
+    }
+
+
     public void StopUpdate(bool toggle) {
         ui.stopUIUpdate = toggle;
     }

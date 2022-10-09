@@ -39,9 +39,4 @@ public class LuaProjectile : Projectile {
         else
             PlayerController.instance.Hurt();
     }
-
-    // Sets the parent of a bullet. Can't be used on an enemy or projectile
-    public void SetParent(LuaProjectile parent) {
-        transform.SetParent(parent.transform);
-    }
 }

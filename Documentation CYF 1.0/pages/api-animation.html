@@ -97,6 +97,9 @@ it's w3c valid, at least
             <p>
                 The Sprite object has many controls intended for animation. There is a working intermediate example
                 included in the Examples folder.
+                <br>
+                <span class="new"></span> As this object exists in CYF's hierarchy, it's possible to manipulate its parent and children.
+                See the <span class="ref">General Objects</span> page for more information.
             </p><br>
 
             <p>
@@ -355,17 +358,6 @@ it's w3c valid, at least
                 <br><br>
                 <span class="new"></span> Note: Using this function with a sprite which has a parent with a different rotation will reset the sprite's rotation to its usual value.
                 Setting the variable <span class="term">noscalerotationbug</span> to true in the Encounter script prevents that effect!
-            </p><br>
-
-            <p>
-                <span class="function">sprite.SetParent(<span class="userdata">sprite</span> otherSpriteObject)</span></span>
-                Parents <span class="term">sprite</span> to <span class="term">otherSpriteObject</span>.
-                <br><br>
-                This will make the original sprite move along with the object it's parented to.
-                <br><br>
-                <span class="CYF"></span> NOTE: If you are in the <i>Overworld</i>, you can NOT use this to parent sprites to Event objects' sprites,
-                or vice versa.<br>
-                Text Object letter sprites can <i>only</i> be parented to other Text Object letter sprites.
             </p><br>
 
             <p>

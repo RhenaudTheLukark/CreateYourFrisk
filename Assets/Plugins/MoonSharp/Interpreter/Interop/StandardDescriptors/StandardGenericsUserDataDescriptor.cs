@@ -49,7 +49,7 @@ namespace MoonSharp.Interpreter.Interop
 		}
 
 		/// <inheritdoc/>
-		public string AsString(object obj)
+		public virtual string AsString(object obj)
 		{
 			return obj.ToString();
 		}

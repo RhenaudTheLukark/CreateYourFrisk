@@ -46,7 +46,6 @@ public class UserDebugger : MonoBehaviour{
 
             firstActive = true;
         }
-        transform.SetAsLastSibling();
     }
 
     private void WriteLine(string line) {

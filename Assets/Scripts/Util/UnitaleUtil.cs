@@ -661,4 +661,54 @@ public static class UnitaleUtil {
         } catch (InterpreterException ex) { DisplayLuaError(script.scriptname, FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message); }
         return true;
     }
+
+    public static Transform GetTransform(object o) {
+        LuaSpriteController sSelf = o as LuaSpriteController;
+        if (sSelf != null) return sSelf.img.transform;
+        LuaTextManager tSelf = o as LuaTextManager;
+        if (tSelf != null) return tSelf.GetContainer().transform;
+        ProjectileController pSelf = o as ProjectileController;
+        if (pSelf != null) return pSelf.sprite.img.transform;
+        LuaCYFObject oSelf = o as LuaCYFObject;
+        if (oSelf != null) return oSelf.transform;
+        return null;
+    }
+
+    public static DynValue GetObject(Transform t) {
+        if (t == null) {
+            Debug.Log("Truly nil!");
+            return DynValue.NewNil();
+        }
+
+        GameObject go = t.gameObject;
+        if (LuaSpriteController.HasSpriteController(go))
+            return UserData.Create(LuaSpriteController.GetOrCreate(go));
+        if (t.GetComponent<LuaProjectile>() != null)
+            return UserData.Create(t.GetComponent<LuaProjectile>().ctrl);
+        for (int i = 0; i < t.childCount; i++) {
+            Transform child = t.GetChild(i);
+            if (child.GetComponent<LuaTextManager>() != null)
+                return UserData.Create(child.GetComponent<LuaTextManager>());
+        }
+        return UserData.Create(new LuaCYFObject(t));
+    }
+
+    public static DynValue GetObjectParent(Transform t) {
+        return GetObject(t.parent);
+    }
+
+    public static void SetObjectParent(object self, object p) {
+        if (p == null)
+            throw new CYFException("SetParent(): Can't set nil as parent.");
+
+        LuaSpriteController sSelf = self as LuaSpriteController;
+        LuaSpriteController sParent = p as LuaSpriteController;
+
+        if (sSelf != null && sSelf.tag == "event")
+            throw new CYFException("sprite.SetParent(): Cannot set the prent of an overworld event's sprite.");
+        if ((sSelf != null && sSelf.tag == "letter") ^ (sParent != null && sParent.tag == "letter"))
+            throw new CYFException("sprite.SetParent(): Cannot be used between letter sprites and other objects.");
+
+        GetTransform(self).SetParent(GetTransform(p));
+    }
 }

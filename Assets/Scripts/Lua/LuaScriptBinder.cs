@@ -5,6 +5,11 @@ using MoonSharp.Interpreter.Loaders;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
+internal class LuaTextManagerDescriptor : MoonSharp.Interpreter.Interop.StandardGenericsUserDataDescriptor {
+    public LuaTextManagerDescriptor(Type type, InteropAccessMode accessMode) : base(type, accessMode) { }
+    public override string AsString(object obj) { return "LuaTextManager"; }
+}
+
 /// <summary>
 /// Takes care of creating <see cref="Script"/> objects with globally bound functions.
 /// Doubles as a dictionary for the SetGlobal/GetGlobal functions attached to these scripts.
@@ -31,13 +36,14 @@ public static class LuaScriptBinder {
         UserData.RegisterType<LuaSpriteController>();
         UserData.RegisterType<LuaInventory>();
         UserData.RegisterType<Misc>();
-        UserData.RegisterType<LuaTextManager>();
+        UserData.RegisterType<LuaTextManager>(new LuaTextManagerDescriptor(typeof(LuaTextManager), InteropAccessMode.Default));
         UserData.RegisterType<LuaFile>();
         UserData.RegisterType<LuaSpriteShader>();
         UserData.RegisterType<LuaSpriteShader.MatrixFourByFour>();
         UserData.RegisterType<LuaDiscord>();
         UserData.RegisterType<LuaPlayerUI>();
         UserData.RegisterType<LifeBarController>();
+        UserData.RegisterType<LuaCYFObject>();
 
         // Overworld bindings
         UserData.RegisterType<LuaEventOW>();
@@ -99,9 +105,11 @@ public static class LuaScriptBinder {
                 script.Globals["Encounter"] = EnemyEncounter.script;
 
             DynValue PlayerStatus = UserData.Create(PlayerController.luaStatus);
-            DynValue ArenaStatus = UserData.Create(ArenaManager.luaStatus);
             script.Globals.Set("Player", PlayerStatus);
+            DynValue ArenaStatus = UserData.Create(ArenaManager.luaStatus);
             script.Globals.Set("Arena", ArenaStatus);
+            DynValue LuaUI = UserData.Create(new LuaPlayerUI());
+            script.Globals.Set("UI", LuaUI);
         } else if (!GlobalControls.isInShop) {
             try {
                 DynValue PlayerOW = UserData.Create(EventManager.instance.luaPlayerOw);
@@ -143,8 +151,6 @@ public static class LuaScriptBinder {
         script.Globals.Set("Time", TimeInfo);
         DynValue DiscordMgr = UserData.Create(new LuaDiscord());
         script.Globals.Set("Discord", DiscordMgr);
-        DynValue LuaUI = UserData.Create(new LuaPlayerUI());
-        script.Globals.Set("UI", LuaUI);
         return script;
     }
 
@@ -252,11 +258,14 @@ public static class LuaScriptBinder {
         UserData.RegisterType<LuaSpriteController>();
         UserData.RegisterType<LuaInventory>();
         UserData.RegisterType<Misc>();
-        UserData.RegisterType<LuaTextManager>();
+        UserData.RegisterType<LuaTextManager>(new LuaTextManagerDescriptor(typeof(LuaTextManager), InteropAccessMode.Default));
         UserData.RegisterType<LuaFile>();
         UserData.RegisterType<LuaSpriteShader>();
         UserData.RegisterType<LuaSpriteShader.MatrixFourByFour>();
         UserData.RegisterType<LuaDiscord>();
+        UserData.RegisterType<LuaPlayerUI>();
+        UserData.RegisterType<LifeBarController>();
+        UserData.RegisterType<LuaCYFObject>();
 
         // Overworld bindings
         UserData.RegisterType<LuaEventOW>();

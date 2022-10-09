@@ -231,4 +231,47 @@ public class ProjectileController {
             return false;
         return p.isPP() ? p.HitTestPP() : p.HitTest();
     }
+
+    ////////////////////
+    // Children stuff //
+    ////////////////////
+
+    public string name {
+        get { return p.gameObject.name; }
+    }
+
+    public int childIndex {
+        get { return p.self.GetSiblingIndex() + 1; }
+        set { p.self.SetSiblingIndex(value - 1); }
+    }
+    public int childCount {
+        get { return p.self.childCount; }
+    }
+
+    public DynValue GetParent() { return UnitaleUtil.GetObjectParent(p.self); }
+
+    public void SetParent(object parent) {
+        UnitaleUtil.SetObjectParent(this, parent);
+        LuaSpriteController sParent = parent as LuaSpriteController;
+        ProjectileController pParent = parent as ProjectileController;
+        if (pParent != null)
+            sParent = pParent.sprite;
+        if (sParent == null)
+            return;
+        if (sprite.img.GetComponent<MaskImage>())
+            sprite.img.GetComponent<MaskImage>().inverted = sParent._masked == LuaSpriteController.MaskMode.INVERTEDSPRITE || sParent._masked == LuaSpriteController.MaskMode.INVERTEDSTENCIL;
+    }
+
+    public DynValue GetChild(int index) {
+        if (index > childCount)
+            throw new CYFException("This object only has " + childCount + " children yet you try to get its child #" + index);
+        return UnitaleUtil.GetObject(sprite.img.transform.GetChild(--index));
+    }
+
+    public DynValue[] GetChildren() {
+        DynValue[] tab = new DynValue[sprite.img.transform.childCount];
+        for (int i = 0; i < sprite.img.transform.childCount; i++)
+            tab[i] = GetChild(i + 1);
+        return tab;
+    }
 }

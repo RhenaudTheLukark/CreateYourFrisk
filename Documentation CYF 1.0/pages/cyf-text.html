@@ -44,6 +44,9 @@ it's w3c valid, at least
             <p>By default, a Text Object has a bubble with an automatically-set height, with no tail/speech thing. Plus, the object is hidden when
                 you enter or come out of <span class="term">ENEMYDIALOGUE</span>. If you want to change this, there are a lot of functions
                 to do so. Look down to see them!
+                <br>
+                <span class="new"></span> As this object exists in CYF's hierarchy, it's possible to manipulate its parent and children.
+                See the <span class="ref">General Objects</span> page for more information.
             </p>
             <p>
                 <br><span class="function">CreateText(<span class="luatable"><span class="string"></span></span> / <span class="string"></span> text,
@@ -277,12 +280,6 @@ end
             <p>
                 <br><span class="function">Text.SetAutoWaitTimeBetweenTexts(<span class="number"></span> time)</span>
                 Sets the number of frames to wait before automatically going to the next line of text.<br><i>Only applies to the "auto" progress mode.</i>
-            </p>
-            <p>
-                <br><span class="function">Text.SetParent(<span class="userdata">sprite</span> parent)</span>
-                Sets the text object's parent.<br>The text object will follow around the parent object as it moves.
-                <br><br>
-                NOTE: If you are in the <i>Overworld</i>, you can NOT use this to parent text objects to Event objects' sprites.
             </p>
             <p>
                 <br><span class="new function">Text.SetAnchor(<span class="number"></span> x, <span class="number"></span> y)</span>

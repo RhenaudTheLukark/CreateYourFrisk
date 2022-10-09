@@ -14,6 +14,7 @@ const tabs = [
     "Game Events",
     "",
     "Misc. Functions",
+    "General Objects",
     "The Player Object",
     "The Script Object",
     "The Audio Object",
@@ -72,6 +73,7 @@ const links = new Map([
     ["Game Events", "api-events.html"],
 
     ["Misc. Functions", "api-functions-main.html"],
+    ["General Objects", "api-functions-object.html"],
     ["The Player Object", "api-functions-player.html"],
     ["The Script Object", "api-functions-script.html"],
     ["The Audio Object", "api-functions-audio.html"],
@@ -142,7 +144,7 @@ const isNew = [
     "The Player Object", "The Text Object", "The Time Object",
     "The Misc Object", "The Arena Object", "The UI Object",
     "Misc. Functions", "The Inventory Object", "Projectile Management",
-    "Sprites &amp; Animation" ];
+    "Sprites &amp; Animation", "General Objects" ];
 
 // Categories with a <CYF> prefix
 // USed for categories only added during CYF's development
