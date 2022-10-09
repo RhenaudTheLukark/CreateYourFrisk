@@ -218,25 +218,31 @@ h4 {
     -ms-interpolation-mode: nearest-neighbor;   /* IE8+                */
 }
 
-.li-header{
-    color:#fff;
-}
-
 .linklike {
     color: #8ad;
     text-decoration:underline;
     cursor:pointer;
 }
 
-ul.nav li a, ul.nav .li-header {
+ul.nav li a, ul.nav .li-header, ul.nav .li-subheader {
     font-size: 13px;
     line-height:13px;
     height: auto !important;
-    padding-bottom: 3 !important;
-    padding-top: 0 !important;
+    padding-top: 0px;
     margin-bottom: 5px;
     left: -10px;
     width: 180px;
+}
+
+.li-subheader {
+    width: 170px;
+    color:#fff;
+    padding-top: 3px !important;
+}
+
+.li-header {
+    color:#fff;
+    padding-top: 3px !important;
 }
 
 ul.nav li a {
@@ -252,9 +258,11 @@ ul.nav li a:hover, ul.nav li a:active {
     color: #8ad;
 }
 
-ul.nav li.active a {
-    background-color:#222 !important;
-    color: #8ad;
+ul.nav li.active {
+    font-size: 13px;
+    line-height: 13px;
+    height: auto !important;
+    padding-bottom: 5px;
 }
 
 h2 {
