@@ -5,7 +5,7 @@ using MoonSharp.Interpreter.Loaders;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-internal class LuaTextManagerDescriptor : MoonSharp.Interpreter.Interop.StandardGenericsUserDataDescriptor {
+internal class LuaTextManagerDescriptor : MoonSharp.Interpreter.Interop.StandardUserDataDescriptor {
     public LuaTextManagerDescriptor(Type type, InteropAccessMode accessMode) : base(type, accessMode) { }
     public override string AsString(object obj) { return "LuaTextManager"; }
 }
