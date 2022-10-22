@@ -317,7 +317,7 @@ public class LuaSpriteController {
 
     // The rotation of the sprite
     public float rotation {
-        get { return internalRotation.z; }
+        get { return img.GetComponent<RectTransform>().eulerAngles.z; }
         set {
             // We mod the value from 0 to 360 because angles are between 0 and 360 normally
             internalRotation.z = Math.Mod(value, 360);

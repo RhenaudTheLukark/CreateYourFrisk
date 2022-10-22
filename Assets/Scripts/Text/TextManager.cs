@@ -74,7 +74,7 @@ public class TextManager : MonoBehaviour {
 
     // The rotation of the text
     public float rotation {
-        get { return internalRotation.z; }
+        get { return transform.eulerAngles.z; }
         set {
             // We mod the value from 0 to 360 because angles are between 0 and 360 normally
             internalRotation.z = Math.Mod(value, 360);
@@ -331,7 +331,20 @@ public class TextManager : MonoBehaviour {
         currentReferenceCharacter = 0;
         letterEffect              = "none";
         instantActive = textQueue[line].ShowImmediate;
+
+        float rot = rotation;
+        rotation = 0;
+        float xScale = 1, yScale = 1;
+        if (GetType() == typeof(LuaTextManager)) {
+            xScale = ((LuaTextManager)this).xscale;
+            yScale = ((LuaTextManager)this).yscale;
+            ((LuaTextManager)this).Scale(1, 1);
+        }
         SpawnText();
+        if (GetType() == typeof(LuaTextManager))
+            ((LuaTextManager)this).Scale(xScale, yScale);
+        rotation = rot;
+
         if (UnitaleUtil.IsOverworld && this == PlayerOverworld.instance.textmgr) {
             if (textQueue[line].ActualText) {
                 if (transform.parent.GetComponent<Image>().color.a == 0)
