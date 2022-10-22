@@ -127,22 +127,18 @@ it's w3c valid, at least
                 <li><span class="term">rotate</span>: Rotating text, most random monsters have this by default. Intensity sets how far letters
                     rotate, in pixels. Default is 1.5.
                     <br>
-                    <span class="new"> Step allows shifting the frequency of the twitching effect. Default is 48 frames.
-                    The value will be varied by about <span class="term">33%</span> every time the delay until the next twitch effect show up is computed.
+                    <span class="new"> Step allows shifting the rotation animation of the letters by a given degree in radians.
                 </li><br>
                 <li><span class="term">shake</span>: Shaking text. Flowey uses this sometimes. Intensity sets how far the letters offset, in
                     pixels. Default is 1.0.
                     <br>
-                    <span class="new"> Step allows shifting the rotation animation of the letters by a given degree in radians.
+                    <span class="new"> Step allows shifting the frequency of the twitching effect. Default is 48 frames.
+                    The value will be varied by about <span class="term">33%</span> every time the delay until the next twitch effect show up is computed.
                 </li><br>
                 <li><span class="term">twitch</span>: Letters twitch occasionally - the battle UI has this by default. Intensity sets how far a letter
                     should shake. Default is 2.0.
                 </li><br>
             </ul>
-            <p class="exblock">
-                Note that the twitch effect should, at a later point, let you set shake frequency. Unfortunately you
-                can't do this yet.
-            </p>
 
             <p class="exblock">
                 <br><span class="function"><span class="CYF"></span> [lettereffect:x] or [lettereffect:x,intensity] or <span class="new"></span>[lettereffect:x,intensity,step]</span>
