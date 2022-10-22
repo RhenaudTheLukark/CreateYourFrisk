@@ -25,7 +25,7 @@ public class LuaCYFObject {
     }
 
     public void SetParent(object p) {
-        UnitaleUtil.SetObjectParent(transform, p);
+        UnitaleUtil.SetObjectParent(this, p);
     }
 
     public DynValue GetChild(int index) {

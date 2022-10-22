@@ -675,10 +675,8 @@ public static class UnitaleUtil {
     }
 
     public static DynValue GetObject(Transform t) {
-        if (t == null) {
-            Debug.Log("Truly nil!");
+        if (t == null)
             return DynValue.NewNil();
-        }
 
         GameObject go = t.gameObject;
         if (LuaSpriteController.HasSpriteController(go))
