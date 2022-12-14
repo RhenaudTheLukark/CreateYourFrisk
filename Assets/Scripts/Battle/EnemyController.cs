@@ -7,7 +7,6 @@ using Random = UnityEngine.Random;
 
 public class EnemyController : MonoBehaviour {
     public GameObject bubbleObject;
-    internal Sprite textBubbleSprite;
 
     protected UIController ui;
 
@@ -337,8 +336,6 @@ public class EnemyController : MonoBehaviour {
             if (MaxHP == 0)
                 MaxHP = HP;
 
-            textBubbleSprite = Resources.Load<Sprite>("Sprites/UI/SpeechBubbles/right");
-
             /*if (script.GetVar("canspare") == null) CanSpare = false;
             if (script.GetVar("cancheck") == null) CanCheck = true;*/
         }
@@ -412,6 +409,7 @@ public class EnemyController : MonoBehaviour {
         }
 
         sbTextMan.textMaxWidth = (int)bubbleWidth;
+        speechBubImg.transform.SetAsLastSibling();
 
         // TODO improve position setting/remove hardcoding of position setting
         bubbleObject.GetComponent<RectTransform>().localScale = new Vector2(reversedX ? -1 : 1, reversedY ? -1 : 1);
