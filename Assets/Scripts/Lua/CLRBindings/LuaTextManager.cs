@@ -718,9 +718,11 @@ public class LuaTextManager : TextManager {
     // Children stuff //
     ////////////////////
 
+    #pragma warning disable 108,114
     public string name {
         get { return container.name; }
     }
+    #pragma warning restore 108,114
 
     public int childIndex {
         get { return container.transform.GetSiblingIndex() + 1; }
