@@ -309,10 +309,12 @@ public class UIController : MonoBehaviour {
             foreach (LifeBarController lbc in arenaParent.GetComponentsInChildren<LifeBarController>())
                 Destroy(lbc.gameObject);
         else if (state == "ENEMYDIALOGUE") {
-            TextManager[] textManagers = FindObjectsOfType<TextManager>();
-            foreach (TextManager textManager in textManagers)
-                if (textManager.gameObject.name.StartsWith("DialogBubble")) // game object name is hardcoded as it won't change
-                    Destroy(textManager.gameObject);
+            for (int i = 0; i < monsterDialogues.Length; i++) {
+                if (monsterDialogues[i] == null || encounter.EnabledEnemies[i] == null)
+                    continue;
+                monsterDialogues[i].DestroyChars();
+                encounter.EnabledEnemies[i].HideBubble();
+            }
         } else if (state == "DIALOGRESULT")
             mainTextManager.SetCaller(EnemyEncounter.script);
         else if (state == "ATTACKING")
