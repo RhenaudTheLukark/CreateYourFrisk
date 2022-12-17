@@ -140,10 +140,8 @@ const categoriesEnd = new Map([
 // Categories with an exclamation mark next to them
 // Used to set apart categories with new elements in them
 const isNew = [
-    "Special Variables", "Text Commands", "Game Events",
-    "The Player Object", "The Text Object", "The Time Object",
-    "The Misc Object", "The Arena Object", "The UI Object",
-    "Misc. Functions", "The Inventory Object", "Projectile Management",
+    "Special Variables", "Text Commands", "The Text Object",
+    "The Arena Object", "The UI Object", "Projectile Management",
     "Sprites &amp; Animation", "General Objects" ];
 
 // Categories with a <CYF> prefix

@@ -60,21 +60,21 @@ it's w3c valid, at least
                 <li><span class="number"></span> <span class="term">Misc.cameraY</span> - Gets or sets the current y position of the bottom-left corner of the camera.</li><br>
                 <li><span class="boolean"></span> <span class="term">Misc.FullScreen</span> - Gets or sets whether the user is in fullscreen mode.</li><br>
                 <li>
-                    <span class="new"></span><span class="boolean"></span> <span class="term">Misc.ResizeWindow(<span class="number"></span> width, <span class="number"></span> height)</span> - Resizes CYF's window to the given width and height, in pixels. The parameters <span class="term">width</span> and <span class="term">height</span> must both be positive, and the function will return <span class="term">true</span> if the window was successfully resized, false otherwise. The window will not be resized if the requested width or height are bigger than the player's screen's respective width or height.
+                    <span class="boolean"></span> <span class="term">Misc.ResizeWindow(<span class="number"></span> width, <span class="number"></span> height)</span> - Resizes CYF's window to the given width and height, in pixels. The parameters <span class="term">width</span> and <span class="term">height</span> must both be positive, and the function will return <span class="term">true</span> if the window was successfully resized, false otherwise. The window will not be resized if the requested width or height are bigger than the player's screen's respective width or height.
                     <br><br>
                     It also works in fullscreen; this function will make sure the given area will be displayed on screen at all times by adding black borders if needed.
                     <br><br>
                     <font color="red">* NOTE: Only allowed during battles.</font>
                 </li><br>
                 <li>
-                    <span class="new"></span><span class="number"></span> <span class="term">Misc.WindowWidth</span> - Returns the width of the game window when running in windowed mode (even in fullscreen).
+                    <span class="number"></span> <span class="term">Misc.WindowWidth</span> - Returns the width of the game window when running in windowed mode (even in fullscreen).
                     <br><br>
                     If set, it will set the width of CYF's window in pixels. CYF's default width is 640 pixels. Will do nothing if the player's screen's width is lower than the requested width.
                     <br><br>
                     <font color="red">* NOTE: Only allowed during battles.</font>
                 </li><br>
                 <li>
-                    <span class="new"></span><span class="number"></span> <span class="term">Misc.WindowHeight</span> - Returns the height of the game window when running in windowed mode (even in fullscreen).
+                    <span class="number"></span> <span class="term">Misc.WindowHeight</span> - Returns the height of the game window when running in windowed mode (even in fullscreen).
                     <br><br>
                     If set, it will set the height of CYF's window in pixels. CYF's default height is 480 pixels. Will do nothing if the player's screen's height is lower than the requested height.
                     <br><br>
@@ -109,14 +109,14 @@ CreateProjectileAbs("bullet", 0 - widthOnEachSide, 240) -- creates a bullet at t
 			</ul>
 			<hr>
 			<ul>
-				<li><span class="new"></span><span class="number"></span> <span class="term">Misc.debuggerX</span> - Change the debugger's x position relative to the camera's position.</li><br>
-				<li><span class="new"></span><span class="number"></span> <span class="term">Misc.debuggerY</span> - Change the debugger's y position relative to the camera's position.</li><br>
-				<li><span class="new"></span><span class="number"></span> <span class="term">Misc.debuggerAbsX</span> - Change the debugger's x position relative to the encounter's bottom-left corner, or the map's bottom-left corner if used in the overworld.</li><br>
-				<li><span class="new"></span><span class="number"></span> <span class="term">Misc.debuggerAbsY</span> - Change the debugger's y position relative to the encounter's bottom-left corner, or the map's bottom-left corner if used in the overworld.</li><br>
-				<li><span class="new"></span><span class="term">Misc.MoveDebugger(<span class="number"></span> x, <span class="number"></span> y)</span> - Move the debugger relative to its current position.</li><br>
-				<li><span class="new"></span><span class="term">Misc.MoveDebuggerTo(<span class="number"></span> x, <span class="number"></span> y)</span> - Move the debugger relative to the camera's current position.</li><br>
-				<li><span class="new"></span><span class="term">Misc.MoveDebuggerToAbs(<span class="number"></span> x, <span class="number"></span> y)</span> - Move the debugger relative to the encounter's bottom-left corner, or the map's bottom-left corner if used in the overworld.</li><br>
-				<li><span class="new"></span><span class="boolean"></span> <span class="term">Misc.isDebuggerAttachedToCamera</span> - Whether or not the camera should move the debugger along with it when it moves. True by default.</li><br>
+				<li><span class="number"></span> <span class="term">Misc.debuggerX</span> - Change the debugger's x position relative to the camera's position.</li><br>
+				<li><span class="number"></span> <span class="term">Misc.debuggerY</span> - Change the debugger's y position relative to the camera's position.</li><br>
+				<li><span class="number"></span> <span class="term">Misc.debuggerAbsX</span> - Change the debugger's x position relative to the encounter's bottom-left corner, or the map's bottom-left corner if used in the overworld.</li><br>
+				<li><span class="number"></span> <span class="term">Misc.debuggerAbsY</span> - Change the debugger's y position relative to the encounter's bottom-left corner, or the map's bottom-left corner if used in the overworld.</li><br>
+				<li><span class="term">Misc.MoveDebugger(<span class="number"></span> x, <span class="number"></span> y)</span> - Move the debugger relative to its current position.</li><br>
+				<li><span class="term">Misc.MoveDebuggerTo(<span class="number"></span> x, <span class="number"></span> y)</span> - Move the debugger relative to the camera's current position.</li><br>
+				<li><span class="term">Misc.MoveDebuggerToAbs(<span class="number"></span> x, <span class="number"></span> y)</span> - Move the debugger relative to the encounter's bottom-left corner, or the map's bottom-left corner if used in the overworld.</li><br>
+				<li><span class="boolean"></span> <span class="term">Misc.isDebuggerAttachedToCamera</span> - Whether or not the camera should move the debugger along with it when it moves. True by default.</li><br>
 				<li>Additional notes on the debugger:
 					<ul>
 						<li>The debugger's pivot point is its top-right corner.</li>

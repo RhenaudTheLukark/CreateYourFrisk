@@ -114,7 +114,7 @@ it's w3c valid, at least
                 </ul>
             </p>
             <p>
-                <br><span class="new function"><span class="boolean"></span> Text.deleteWhenFinished</span>
+                <br><span class="function"><span class="boolean"></span> Text.deleteWhenFinished</span>
                 This value is used to check whether the text object should be removed or not after the text is finished.
                 Its default value is <span class="term">true</span>, meaning the text object will be automatically removed after the end of the text.
                 You can set it to <span class="term">false</span> to automatically hide the text object once its text is complete, which allows you to reuse it later.
@@ -162,7 +162,7 @@ it's w3c valid, at least
                 The 4th value is the alpha (transparency) value of the text.
             </p>
             <p>
-                <br><span class="new function">Text.ResetColor(<span class="boolean"></span> resetAlpha = false)</span>
+                <br><span class="function">Text.ResetColor(<span class="boolean"></span> resetAlpha = false)</span>
                 Resets any previous set of the variable <span class="term">Text.color</span> or <span class="term">Text.color32</span>,
                 resetting the text's default color to the font's default color.<br>
                 This function will not reset the color's <span class="term">alpha</span> if it was set in any way unless
@@ -177,7 +177,7 @@ it's w3c valid, at least
                 Get or set the text's transparency, as an integer between 0 and 255.
             </p>
             <p>
-                <br><span class="new function">Text.ResetAlpha()</span>
+                <br><span class="function">Text.ResetAlpha()</span>
                 Resets the text object's <span class="term">alpha</span> value, whether it was set through <span class="term">Text.alpha</span>,
                 <span class="term">Text.color</span> or <span class="term">Text.color32</span>, resetting the text's default alpha to the font's default alpha.
             </p>
@@ -211,7 +211,7 @@ it's w3c valid, at least
                 Useful for adding various text commands you want to apply to all lines of text displayed by a given text object.
             </p>
             <p>
-                <br><span class="new function"><span class="luatable"><span class="userdata">sprite</span></span> Text.GetLetters()</span>
+                <br><span class="function"><span class="luatable"><span class="userdata">sprite</span></span> Text.GetLetters()</span>
                 Returns a table containing sprite objects representing every letter to be displayed in the text object's current line of text. Note that even if a text object has not finished typing yet, all characters it will type are still accessible this way.
                 <h4>Letter sprite objects can not have their layer changed, can not run <span class="term">sprite.Mask</span>, and can only be parented to other letter sprites. They cannot be deleted or dusted (using sprite.Dust()) as well.</h4>
                 <br>NOTE: Accessing this table generates the table anew every time. To save on resources, store this table to a local variable before doing any operations on it. Even code such as <span class="term">for i = 1, #text.GetLetters() do</span> is a bad idea.
@@ -270,7 +270,7 @@ end
             <p>
                 <br><span class="function">Text.NextLine()</span>
                 Shows the next line (dialogue) of the text instantly, regardless of if the current one is finished or what progress mode the object has.<br>
-                <span class="new"></span>If you run this function while this is this text object's last line, it will delete the text object if its
+                If you run this function while this is this text object's last line, it will delete the text object if its
                 <span class="term">Text.deleteWhenFinished</span> variable is set to true, othrwise it will deactive it until further use.
             </p>
             <p>
@@ -282,7 +282,7 @@ end
                 Sets the number of frames to wait before automatically going to the next line of text.<br><i>Only applies to the "auto" progress mode.</i>
             </p>
             <p>
-                <br><span class="new function">Text.SetAnchor(<span class="number"></span> x, <span class="number"></span> y)</span>
+                <br><span class="function">Text.SetAnchor(<span class="number"></span> x, <span class="number"></span> y)</span>
                 If this text object has a parent set via <span class="term">Text.SetParent</span>, this will control its anchor point
                 (the relative point on the parent sprite that the text object will follow if the parent sprite gets scaled).
                 <br><br>
@@ -311,14 +311,14 @@ end
                 Moves a text object above another text object.<br>They must both be on the same layer.
             </p>
             <p>
-                <br><span class="function"><span class="new"></span>Text.SendToTop()</span>
+                <br><span class="function">Text.SendToTop()</span>
                 Sends this text object to the top of its layer's hierarchy. If a sprite has 5
                 children, for instance, you can use this to rearrange this text object's position internally.
                 However, child text objects will always appear on top of their parents, regardless of this
                 function being called.
             </p>
             <p>
-                <br><span class="function"><span class="new"></span>Text.SendToBottom()</span>
+                <br><span class="function">Text.SendToBottom()</span>
                 Sends this text objct to the bottom of its layer's hierarchy. Similar rules apply as with <span class="term">SendToTop()</span>.
             </p>
             <p>
@@ -422,14 +422,14 @@ end
             </p>
 
             <p>
-                <span class="function"><span class="new"></span>Text.SetVar(<span class="string"></span> yourVariableName, value)
+                <span class="function">Text.SetVar(<span class="string"></span> yourVariableName, value)
                 <br></span>or <span class="function">Text[<span class="string"> yourVariableName</span>]</span></span>
                 Sets a variable in a text object that you can retrieve with <span class="term">Text.GetVar</span>.<br>
                 Identical to <span class="term">SetVar</span> in projectiles.
             </p>
 
             <p>
-                <span class="function"><span class="new"></span>Text.GetVar(<span class="string"></span> yourVariableName)
+                <span class="function">Text.GetVar(<span class="string"></span> yourVariableName)
                 <br></span>or <span class="function">Text[<span class="string"> yourVariableName</span>] = value</span></span>
                 Gets a variable in a text object that you previously set with <span class="term">Text.SetVar</span>.<br>
                 Identical to <span class="term">GetVar</span> in projectiles.

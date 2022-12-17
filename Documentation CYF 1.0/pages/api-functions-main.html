@@ -179,12 +179,12 @@ end
             </div>
 
             <p>
-                <br><span class="function"><span class="new"></span><span class="CYF"></span> CreateState(<span class="string"></span> name) [E/M/W]</span>
+                <br><span class="function"><span class="CYF"></span> CreateState(<span class="string"></span> name) [E/M/W]</span>
                 This function creates a custom state with the name <span class="term">name</span>, which will function like the NONE state. You cannot have two states with the same name.
             </p>
 
             <p>
-                <br><span class="function"><span class="new"></span><span class="CYF"></span> UnloadSprite(<span class="string"></span> path) [E/M/W]</span>
+                <br><span class="function"><span class="CYF"></span> UnloadSprite(<span class="string"></span> path) [E/M/W]</span>
                 This function removes the sprite loaded through <span class="term">path</span> from CYF's internal cache, allowing you to load it from your folder again.
                 <br><br>
                 Usually, CYF keeps all sprites it loads in an encounter in memory so the engine does not have to load it again, which may create a lag spike. However, if the sprite is changed during the mod, the file will not be reloaded, and only its first version will be kept until the encounter is over, or the mod is unloaded in the overworld.
@@ -310,7 +310,7 @@ end</pre>
             </p>
 
             <p>
-                <br><span class="function"><span class="new"></span><span class="CYF"></span> CreateEnemy(<span class="string"></span> scriptName,
+                <br><span class="function"><span class="CYF"></span> CreateEnemy(<span class="string"></span> scriptName,
                 <span class="number"></span> x, <span class="number"></span> y) [E]</span>
                 This function creates an <span class="term">enemy script</span> using the script <span class="term">scriptName</span> in the
                 <span class="term">Lua/Monsters</span> folder of your mod, which will act as a new enemy in battle, and returns a reference to it.<br><br>
@@ -321,7 +321,7 @@ end</pre>
             </p>
 
             <p>
-                <br><span class="function"><span class="new"></span><span class="CYF"></span> Flee() [E/M/W]</span>
+                <br><span class="function"><span class="CYF"></span> Flee() [E/M/W]</span>
                 This function runs the fleeing sequence.
             </p>
 
@@ -353,14 +353,14 @@ end</pre>
             </p>
 
             <p>
-                <br><span class="function"><span class="new"></span>Kill(<span class="boolean"></span> playSound = true) [M]</span>
+                <br><span class="function">Kill(<span class="boolean"></span> playSound = true) [M]</span>
                 Kills the monster immediately. If this was the last monster, the battle ends.<br>
                 Does NOT call the <span class="ref">Game Event</span> <span class="term">OnDeath</span>.<br><br>
                 If <span class="term">playSound</span> is set to <span class="term">false</span>, the dusting sound will not be played.
             </p>
 
             <p>
-                <br><span class="function"><span class="new"></span>Spare(<span class="boolean"></span> playSound = true) [M]</span>
+                <br><span class="function">Spare(<span class="boolean"></span> playSound = true) [M]</span>
                 Spares the monster immediately. Similar to <span class="term">Kill()</span>, if this was the last monster, the battle ends.<br>
                 Does NOT call the <span class="ref">Game Event</span> <span class="term">OnSpare</span>.<br><br>
                 If <span class="term">playSound</span> is set to <span class="term">false</span>, the sparing sound will not be played.
@@ -403,7 +403,7 @@ end</pre>
             </p>
 
             <p>
-                <br><span class="function"><span class="new"></span><span class="CYF"></span> Remove() [M]</span>
+                <br><span class="function"><span class="CYF"></span> Remove() [M]</span>
                 This function immediately removes this enemy from the encounter, including the script it's been called from.<br><br>
                 Be aware that removing an enemy this way will NOT remove it from the Encounter script's <span class="term">enemies</span> table, so you have
                 to manage the table yourself by removing this enemy script from it before running this function, because any reference to it will be invalid.
