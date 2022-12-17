@@ -317,14 +317,30 @@ public class LuaSpriteController {
 
     // The rotation of the sprite
     public float rotation {
-        get { return img.GetComponent<RectTransform>().eulerAngles.z; }
+        get { return Math.Mod(GetParentRot() + img.GetComponent<RectTransform>().localEulerAngles.z + (yScale < 0 ? 180 : 0), 360); }
         set {
             // We mod the value from 0 to 360 because angles are between 0 and 360 normally
             internalRotation.z = Math.Mod(value, 360);
-            img.GetComponent<RectTransform>().eulerAngles = internalRotation;
+            if (GlobalControls.isInFight && EnemyEncounter.script.GetVar("noscalerotationbug").Boolean) {
+                internalRotation.z -= GetParentRot();
+                img.GetComponent<RectTransform>().localEulerAngles = internalRotation;
+            } else
+                img.GetComponent<RectTransform>().eulerAngles = internalRotation;
+
             if (img.GetComponent<Projectile>() && img.GetComponent<Projectile>().isPP())
                 img.GetComponent<Projectile>().needSizeRefresh = true;
         }
+    }
+
+    private float GetParentRot() {
+        Transform t = spr.transform.parent;
+        while (t != null) {
+            CYFSprite sprite = t.GetComponent<CYFSprite>();
+            if (sprite != null)
+                return sprite.ctrl.rotation;
+            t = t.parent;
+        }
+        return 0;
     }
 
     // The layer of the sprite
@@ -479,9 +495,13 @@ public class LuaSpriteController {
         }
 
         // Flip the sprite horizontally and/or vertically if its scale is negative
-        float zValue = GlobalControls.isInFight && EnemyEncounter.script.GetVar("noscalerotationbug").Boolean ? img.GetComponent<RectTransform>().eulerAngles.z : internalRotation.z;
+        // The noscalerotationbug variable handles internalRotation as local rotation instead of global
+        float zValue = internalRotation.z;
         internalRotation = new Vector3(ys < 0 ? 180 : 0, xs < 0 ? 180 : 0, zValue);
-        img.GetComponent<RectTransform>().eulerAngles = internalRotation;
+        if (GlobalControls.isInFight && EnemyEncounter.script.GetVar("noscalerotationbug").Boolean)
+            img.GetComponent<RectTransform>().localEulerAngles = internalRotation;
+        else
+            img.GetComponent<RectTransform>().eulerAngles = internalRotation;
     }
 
     // Sets an animation for this instance
