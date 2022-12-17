@@ -392,6 +392,8 @@ public class EnemyEncounter : MonoBehaviour {
             foreach (LuaProjectile p in FindObjectsOfType<LuaProjectile>())
                 if (!p.ctrl.isPersistent)
                     p.ctrl.Remove();
+        if (ArenaManager.instance.showWhenWaveEnds)
+            ArenaManager.instance.Show();
         if (!death)
             CallOnSelfOrChildren("DefenseEnding");
         if (GlobalControls.retroMode)

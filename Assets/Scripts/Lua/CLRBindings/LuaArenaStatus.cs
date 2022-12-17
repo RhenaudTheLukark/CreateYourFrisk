@@ -53,8 +53,9 @@ public class LuaArenaStatus {
         ArenaManager.instance.ResizeImmediate(w, h);
     }
 
-    public void Hide() {
+    public void Hide(bool showWhenWaveEnds = false) {
         ArenaManager.instance.Hide();
+        ArenaManager.instance.showWhenWaveEnds = showWhenWaveEnds;
     }
 
     public void Show() {

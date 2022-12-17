@@ -30,6 +30,7 @@ public class ArenaManager : MonoBehaviour {
     public float desiredHeight; // Desired height of the arena; internal so the Lua Arena object may refer to it (lazy)
     public float desiredX; // Desired x of the arena; internal so the Lua Arena object may refer to it (lazy)
     public float desiredY; // Desired y of the arena; internal so the Lua Arena object may refer to it (lazy)
+    public bool showWhenWaveEnds = false; // Used to know if we need to run Arena.Show() at the end of a wave
     private bool movePlayer;
 
     /// <summary>
