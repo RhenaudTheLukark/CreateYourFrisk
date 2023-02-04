@@ -294,15 +294,18 @@ public class UIController : MonoBehaviour {
             mainTextManager.SetText(DynValue.NewString(""));
             PlayerController.instance.SetPosition(ArenaManager.instance.currentX, ArenaManager.instance.currentY + 70, true);
             PlayerController.instance.GetComponent<Image>().enabled = true;
-            fightButton.overrideSprite = null;
-            actButton.overrideSprite = null;
-            itemButton.overrideSprite = null;
-            mercyButton.overrideSprite = null;
             mainTextManager.SetPause(true);
         } else if ((state == "DEFENDING" || state == "ENEMYDIALOGUE") && newState != "DEFENDING" && newState != "ENEMYDIALOGUE") {
             ArenaManager.instance.ResetArena();
             PlayerController.instance.invulTimer = 0.0f;
             PlayerController.instance.setControlOverride(true);
+        }
+
+        if (state == "ACTIONSELECT" && newState != "ACTIONSELECT") {
+            fightButton.overrideSprite = null;
+            actButton.overrideSprite = null;
+            itemButton.overrideSprite = null;
+            mercyButton.overrideSprite = null;
         }
 
         if (state == "ENEMYSELECT" && forcedAction == Actions.FIGHT)
