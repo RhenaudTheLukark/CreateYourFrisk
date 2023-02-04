@@ -595,6 +595,7 @@ public static class UnitaleUtil {
     public static Dictionary<string, string> MapCorrespondanceList = new Dictionary<string, string>();
 
     public static void AddKeysToMapCorrespondanceList() {
+        MapCorrespondanceList.Clear();
         MapCorrespondanceList.Add("test", "Snowdin - Big boy map");
         MapCorrespondanceList.Add("test2", "Hotland - Crossroads");
         // MapCorrespondanceList.Add("test3", "The Core - The test map");
