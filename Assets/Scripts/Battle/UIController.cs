@@ -593,10 +593,10 @@ public class UIController : MonoBehaviour {
     }
 
     /// <summary>
-    /// Sets the readyToNextLine value of all bubbles to true if they don'thave any extra text to display, false otherwise
+    /// Sets the readyToNextLine value of all bubbles to true if they don't have any extra text to display, false otherwise
     /// </summary>
     public void UpdateNewlineTextState() {
-        for (int i = 0; i < encounter.enemies.Count; i++) {
+        for (int i = 0; i < encounter.EnabledEnemies.Length; i++) {
             try {
                 int monsterDialogueID = Array.IndexOf(monsterDialogueEnemyID, i);
                 readyToNextLine[i] = monsterDialogues[monsterDialogueID] == null || !monsterDialogues[monsterDialogueID].HasNext();
