@@ -522,6 +522,7 @@ public class UIController : MonoBehaviour {
 
                     GameObject speechBub = encounter.EnabledEnemies[i].bubbleObject;
                     LuaTextManager sbTextMan = speechBub.GetComponentInChildren<LuaTextManager>();
+                    sbTextMan.noSelfAdvance = true;
                     monsterDialogues[i] = sbTextMan;
                     monsterDialogueEnemyID[i] = encounter.enemies.IndexOf(encounter.EnabledEnemies[i]);
 
@@ -645,8 +646,8 @@ public class UIController : MonoBehaviour {
                 return;
 
             if (monsterDialogues[index].HasNext()) {
-                encounter.EnabledEnemies[index].UpdateBubble(index);
                 monsterDialogues[index].NextLineText();
+                encounter.EnabledEnemies[index].UpdateBubble(index);
                 someTextsHaveLinesLeft = true;
             } else {
                 monsterDialogues[index].DestroyChars();
@@ -669,16 +670,16 @@ public class UIController : MonoBehaviour {
                 // Part that autoskips text if [nextthisnow] or [finished] is introduced
                 if (monsterDialogues[i].CanAutoSkipThis() || monsterDialogues[i].CanAutoSkip()) {
                     if (monsterDialogues[i].HasNext()) {
-                        encounter.EnabledEnemies[i].UpdateBubble(i);
                         monsterDialogues[i].NextLineText();
+                        encounter.EnabledEnemies[i].UpdateBubble(i);
                     } else {
                         monsterDialogues[i].DestroyChars();
                         encounter.EnabledEnemies[i].HideBubble();
                         continue;
                     }
                 } else if (readyToNextLine[monsterDialogueEnemyID[i]]) {
-                    encounter.EnabledEnemies[i].UpdateBubble(i);
                     monsterDialogues[i].NextLineText();
+                    encounter.EnabledEnemies[i].UpdateBubble(i);
                 }
                 someTextsHaveLinesLeft = true;
             }

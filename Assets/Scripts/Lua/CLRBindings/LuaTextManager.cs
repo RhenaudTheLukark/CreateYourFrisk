@@ -29,6 +29,7 @@ public class LuaTextManager : TextManager {
     [MoonSharpHidden] public bool needFontReset = false;
     [MoonSharpHidden] public bool noAutoLineBreak = false;
     [MoonSharpHidden] public bool isMainTextObject = false;
+    [MoonSharpHidden] public bool noSelfAdvance = false;
 
     public bool isactive {
         get { return !removed && !hidden; }
@@ -89,7 +90,7 @@ public class LuaTextManager : TextManager {
                 break;
             }
         }
-        if (CanAutoSkipAll() || CanAutoSkipThis())
+        if ((CanAutoSkipAll() && !noSelfAdvance) || CanAutoSkipThis())
             Advance();
         if (CanSkip() && !LineComplete() && GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED)
             DoSkipFromPlayer();
