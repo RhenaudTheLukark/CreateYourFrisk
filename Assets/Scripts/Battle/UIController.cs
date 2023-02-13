@@ -748,7 +748,7 @@ public class UIController : MonoBehaviour {
             lifeBar.transform.SetAsFirstSibling();
             lifeBar.background.SetAnchor(0.5f, 0.5f);
             lifeBar.background.MoveTo(maxWidth, initialHealthPos.y - (i - page * 2) * mainTextManager.Charset.LineSpacing);
-            lifeBar.background.rotation = mainTextManager.rotation;
+            lifeBar.background.rotation = lifeBar.mask.rotation = lifeBar.fill.rotation = mainTextManager.rotation;
             lifeBar.SetFillColor(Color.green);
             float hpDivide = encounter.EnabledEnemies[i].HP / (float)encounter.EnabledEnemies[i].MaxHP;
             lifeBar.SetInstant(hpDivide, encounter.EnabledEnemies[i].HP < 0);
