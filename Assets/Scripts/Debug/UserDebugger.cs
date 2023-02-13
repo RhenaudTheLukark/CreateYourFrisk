@@ -5,7 +5,7 @@ using UnityEngine.UI;
 /// <summary>
 /// Behaviour you can use to print lines into a UnityEngine.UI.Text component for debugging, keeping only a set amount of lines in memory.
 /// </summary>
-public class UserDebugger : MonoBehaviour{
+public class UserDebugger : MonoBehaviour {
     public static UserDebugger instance;
     public Text text;
     public int maxLines = 7;
@@ -31,6 +31,10 @@ public class UserDebugger : MonoBehaviour{
         if (UnitaleUtil.printDebuggerBeforeInit == "") return;
         UserWriteLine(UnitaleUtil.printDebuggerBeforeInit);
         UnitaleUtil.printDebuggerBeforeInit = "";
+    }
+
+    public void Update() {
+        transform.SetAsLastSibling();
     }
 
     public void UserWriteLine(string line) {
