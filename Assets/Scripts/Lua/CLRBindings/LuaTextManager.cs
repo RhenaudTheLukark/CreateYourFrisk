@@ -673,12 +673,12 @@ public class LuaTextManager : TextManager {
 
     public void MoveTo(int newX, int newY) {
         CheckExists();
-        container.transform.localPosition = new Vector3(newX, newY, container.transform.localPosition.z);
+        container.transform.localPosition = new Vector3(newX, newY + 0.02f, container.transform.localPosition.z);
     }
 
     public void MoveToAbs(int newX, int newY) {
         CheckExists();
-        container.transform.position = new Vector3(newX, newY, container.transform.position.z);
+        container.transform.position = new Vector3(newX, newY + 0.02f, container.transform.position.z);
     }
 
     public void SetAnchor(float newX, float newY) {
