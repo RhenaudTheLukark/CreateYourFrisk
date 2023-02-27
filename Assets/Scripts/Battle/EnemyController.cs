@@ -277,12 +277,14 @@ public class EnemyController : MonoBehaviour {
 
     public BubbleSideEnum BubbleSide {
         get {
+            if (script.GetVar("bubbleside").Type == DataType.Nil)
+                throw new CYFException("You need to set the value of the variable bubbleside if you want the engine to create a text bubble automatically.\nIts possible values are \"LEFT\", \"RIGHT\", \"UP\", \"DOWN\" or \"NONE\".");
             if (script.GetVar("bubbleside").Type != DataType.String)
-                throw new CYFException("The bubbleside value can only take \"LEFT\", \"RIGHT\", \"UP\", \"DOWN\" or \"NONE\", but its value isn't a string.");
+                throw new CYFException("The bubbleside value can only be \"LEFT\", \"RIGHT\", \"UP\", \"DOWN\" or \"NONE\", but its value isn't a string.");
             string s = script.GetVar("bubbleside").String.ToUpper();
             try {
                 return (BubbleSideEnum)Enum.Parse(typeof(BubbleSideEnum), s);
-            } catch { throw new CYFException("The bubbleside value can only take \"LEFT\", \"RIGHT\", \"UP\", \"DOWN\" or \"NONE\", but its value is \"" + s.ToUpper() + "\"."); }
+            } catch { throw new CYFException("The bubbleside value can only be \"LEFT\", \"RIGHT\", \"UP\", \"DOWN\" or \"NONE\", but its value is \"" + s.ToUpper() + "\"."); }
         }
         set {
             script.SetVar("bubbleside", DynValue.NewString(value.ToString()));
@@ -402,7 +404,13 @@ public class EnemyController : MonoBehaviour {
 
             sbTextMan.HideBubble();
         } else {
-            bubbleWidth = (float)BubbleWidth;
+            try { bubbleWidth = (float)BubbleWidth; }
+            catch (Exception e) {
+                Debug.Log("a");
+                UnitaleUtil.DisplayLuaError(scriptName + ": Creating a dialogue bubble", e.Message);
+                return;
+            }
+
             if (sbTextMan.letterReferences.Count > 0) sbTextMan.ShowBubble(GetReverseBubbleSide(BubbleSide).ToString(), DynValue.NewString("50%"));
             else                                      sbTextMan.HideBubble();
             sbTextMan.MoveTo(0, 0);
