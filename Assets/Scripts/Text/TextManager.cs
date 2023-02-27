@@ -514,7 +514,6 @@ public class TextManager : MonoBehaviour {
         string currentText = textQueue[currentLine].Text;
         letterIndexes.Clear();
         letterReferences.Clear();
-        letterPositions.Clear();
         if (currentText.Length > 1)
             if (!GlobalControls.isInFight || EnemyEncounter.script.GetVar("autolinebreak").Boolean || GetType() == typeof(LuaTextManager) && !((LuaTextManager)this).noAutoLineBreak)
                 SpawnTextSpaceTest(0, currentText, out currentText);
@@ -529,7 +528,7 @@ public class TextManager : MonoBehaviour {
 
         // Work-around for [instant] and [instant:allowcommand] at the beginning of a line of text
         bool skipImmediate = false;
-        string skipCommand  = "";
+        string skipCommand = "";
 
         for (int i = 0; i < currentText.Length; i++) {
             switch (currentText[i]) {
@@ -580,15 +579,6 @@ public class TextManager : MonoBehaviour {
                         continue;
                     }
                     break;
-                case '\n':
-                    currentX = startingLineX - (vSpacing - Charset.LineSpacing) * Mathf.Sin(rotation * Mathf.Deg2Rad);
-                    currentY = startingLineY + (vSpacing - Charset.LineSpacing) * Mathf.Cos(rotation * Mathf.Deg2Rad);
-                    startingLineX = currentX;
-                    startingLineY = currentY;
-                    break;
-                case '\t':
-                    currentX = !GlobalControls.isInFight ? (356 + Misc.cameraX) : 356; // HACK: bad tab usage
-                    break;
                 case ' ':
                     if (i + 1 == currentText.Length || currentText[i + 1] == ' ')
                         break;
@@ -605,10 +595,10 @@ public class TextManager : MonoBehaviour {
             if (!Charset.Letters.ContainsKey(currentText[i]))
                 continue;
 
-            int letterIndex = CreateLetter(currentText, i);
-            currentX += (letterReferences[letterIndex].gameObject.GetComponent<RectTransform>().rect.width + hSpacing) * Mathf.Cos(rotation * Mathf.Deg2Rad); // TODO remove hardcoded letter offset
-            currentY += (letterReferences[letterIndex].gameObject.GetComponent<RectTransform>().rect.width + hSpacing) * Mathf.Sin(rotation * Mathf.Deg2Rad);
+            CreateLetter(currentText, i);
         }
+
+        MoveLetters();
 
         // Work-around for [instant] and [instant:allowcommand] at the beginning of a line of text
         if (skipImmediate)
@@ -618,6 +608,45 @@ public class TextManager : MonoBehaviour {
             mugshot.color = new float[] { 1, 1, 1 };
         if (!instantActive)
             Update();
+    }
+
+    protected void MoveLetters() {
+        letterPositions.Clear();
+
+        currentX = self.position.x;
+        currentY = self.position.y;
+        // allow Game Over fonts to enjoy the fixed text positioning, too!
+        if (GetType() != typeof(LuaTextManager) && gameObject.name != "TextParent" && gameObject.name != "ReviveText")
+            currentY -= Charset.LineSpacing;
+        startingLineX = currentX;
+        startingLineY = currentY;
+
+        LuaTextManager ltm = (LuaTextManager)this;
+        float normalizedHSpacing = GetType() == typeof(LuaTextManager) ? Mathf.Round(hSpacing                         * ltm.xscale) / ltm.xscale : hSpacing;
+        float normalizedVSpacing = GetType() == typeof(LuaTextManager) ? Mathf.Round((vSpacing - Charset.LineSpacing) * ltm.yscale)              : vSpacing - Charset.LineSpacing;
+
+        string currentText = textQueue[currentLine].Text;
+        for (int i = 0; i < currentText.Length; i++) {
+            switch (currentText[i]) {
+                case '\n':
+                    currentX = startingLineX - normalizedVSpacing * Mathf.Sin(rotation * Mathf.Deg2Rad);
+                    currentY = startingLineY + normalizedVSpacing * Mathf.Cos(rotation * Mathf.Deg2Rad);
+                    startingLineX = currentX;
+                    startingLineY = currentY;
+                    break;
+                case '\t':
+                    currentX = !GlobalControls.isInFight ? (356 + Misc.cameraX) : 356; // HACK: bad tab usage
+                    break;
+                default:
+                    if (letterIndexes.ContainsValue(i)) {
+                        RectTransform rt = letterIndexes.FirstOrDefault(x => x.Value == i).Key.gameObject.GetComponent<RectTransform>();
+                        MoveLetter(currentText, i, rt);
+                        currentX += (rt.rect.width * rt.localScale.x + normalizedHSpacing) * Mathf.Cos(rotation * Mathf.Deg2Rad) * ltm.xscale; // TODO remove hardcoded letter offset
+                        currentY += (rt.rect.width * rt.localScale.x + normalizedHSpacing) * Mathf.Sin(rotation * Mathf.Deg2Rad);
+                    }
+                    break;
+            }
+        }
     }
 
     private bool CheckCommand() {

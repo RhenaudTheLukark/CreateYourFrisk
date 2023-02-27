@@ -241,6 +241,7 @@ public class LuaTextManager : TextManager {
         yScale = ys;
 
         container.transform.localScale = new Vector3(xs, ys, 1.0f);
+        PostScaleHandling();
     }
 
     public string layer {
@@ -661,6 +662,18 @@ public class LuaTextManager : TextManager {
             if (bubble)
                 ResizeBubble();
         }
+    }
+
+    private void PostScaleHandling() {
+        foreach (Image i in letterReferences) {
+            RectTransform r = i.GetComponent<RectTransform>();
+            float xSize = r.rect.width;
+            float ySize = r.rect.height;
+            float xLocalScale = Mathf.Round(xSize * xscale) / (xscale * xSize);
+            float yLocalScale = Mathf.Round(ySize * yscale) / (yscale * ySize);
+            r.localScale = new Vector2(xLocalScale, yLocalScale);
+        }
+        MoveLetters();
     }
 
     // Shortcut to `SetAutoWaitTimeBetweenTexts`
