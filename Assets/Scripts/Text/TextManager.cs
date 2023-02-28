@@ -498,12 +498,14 @@ public class TextManager : MonoBehaviour {
     }
 
     private void MoveLetter(string currentText, int index, RectTransform ltrRect) {
+        float letterShift = Charset.Letters[currentText[index]].border.w - Charset.Letters[currentText[index]].border.y;
+        float mult = GetType() == typeof(LuaTextManager) ? ((LuaTextManager)this).yscale : 1;
         if (GetType() == typeof(LuaTextManager) || gameObject.name == "TextParent" || gameObject.name == "ReviveText")
             // Allow Game Over fonts to enjoy the fixed text positioning, too!
-            ltrRect.position = new Vector3(currentX, currentY + Charset.Letters[currentText[index]].border.w - Charset.Letters[currentText[index]].border.y, 0);
+            ltrRect.position = new Vector3(currentX, currentY + letterShift * mult, 0);
         else
             // Keep what we already have for all text boxes that are not Text Objects in an encounter
-            ltrRect.position = new Vector3(currentX, currentY + Charset.Letters[currentText[index]].border.w - Charset.Letters[currentText[index]].border.y + 2, 0);
+            ltrRect.position = new Vector3(currentX, currentY + (letterShift + 2) * mult, 0);
 
         ltrRect.eulerAngles = new Vector3(0, 0, rotation);
         letterPositions.Add(ltrRect.anchoredPosition);
@@ -621,7 +623,7 @@ public class TextManager : MonoBehaviour {
         startingLineX = currentX;
         startingLineY = currentY;
 
-        LuaTextManager ltm = (LuaTextManager)this;
+        LuaTextManager ltm = GetType() == typeof(LuaTextManager) ? (LuaTextManager)this : null;
         float normalizedHSpacing = GetType() == typeof(LuaTextManager) ? Mathf.Round(hSpacing                         * ltm.xscale) / ltm.xscale : hSpacing;
         float normalizedVSpacing = GetType() == typeof(LuaTextManager) ? Mathf.Round((vSpacing - Charset.LineSpacing) * ltm.yscale)              : vSpacing - Charset.LineSpacing;
 
@@ -641,7 +643,7 @@ public class TextManager : MonoBehaviour {
                     if (letterIndexes.ContainsValue(i)) {
                         RectTransform rt = letterIndexes.FirstOrDefault(x => x.Value == i).Key.gameObject.GetComponent<RectTransform>();
                         MoveLetter(currentText, i, rt);
-                        currentX += (rt.rect.width * rt.localScale.x + normalizedHSpacing) * Mathf.Cos(rotation * Mathf.Deg2Rad) * ltm.xscale; // TODO remove hardcoded letter offset
+                        currentX += (rt.rect.width * rt.localScale.x + normalizedHSpacing) * Mathf.Cos(rotation * Mathf.Deg2Rad) * (ltm ? ltm.xscale : 1); // TODO remove hardcoded letter offset
                         currentY += (rt.rect.width * rt.localScale.x + normalizedHSpacing) * Mathf.Sin(rotation * Mathf.Deg2Rad);
                     }
                     break;
