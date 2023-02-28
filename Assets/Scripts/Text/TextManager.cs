@@ -24,6 +24,7 @@ public class TextManager : MonoBehaviour {
     public static string[] commandList = { "color", "alpha", "charspacing", "linespacing", "starcolor", "instant", "font", "effect", "noskip", "w", "waitall", "novoice",
                                            "next", "finished", "nextthisnow", "noskipatall", "waitfor", "speed", "letters", "voice", "func", "mugshot",
                                            "music", "sound", "health", "lettereffect"};
+    public static string[] movementCommands = { "charspacing", "linespacing" };
     public int currentLine;
     [MoonSharpHidden] public int _textMaxWidth;
     public int currentCharacter;
@@ -615,11 +616,11 @@ public class TextManager : MonoBehaviour {
     protected void MoveLetters() {
         letterPositions.Clear();
 
+        float baseHSpacing = hSpacing;
+        float baseVSpacing = vSpacing;
+
         currentX = self.position.x;
         currentY = self.position.y;
-        // allow Game Over fonts to enjoy the fixed text positioning, too!
-        if (GetType() != typeof(LuaTextManager) && gameObject.name != "TextParent" && gameObject.name != "ReviveText")
-            currentY -= Charset.LineSpacing;
         startingLineX = currentX;
         startingLineY = currentY;
 
@@ -630,6 +631,14 @@ public class TextManager : MonoBehaviour {
         string currentText = textQueue[currentLine].Text;
         for (int i = 0; i < currentText.Length; i++) {
             switch (currentText[i]) {
+                case '[':
+                    int currentChar = i;
+                    string command = UnitaleUtil.ParseCommandInline(currentText, ref i);
+                    if (lateStartWaiting || command == null || !movementCommands.Contains(command))
+                        i = currentChar;
+                    else
+                        PreCreateControlCommand(command, true);
+                    break;
                 case '\n':
                     currentX = startingLineX - normalizedVSpacing * Mathf.Sin(rotation * Mathf.Deg2Rad);
                     currentY = startingLineY + normalizedVSpacing * Mathf.Cos(rotation * Mathf.Deg2Rad);
@@ -649,6 +658,9 @@ public class TextManager : MonoBehaviour {
                     break;
             }
         }
+
+        hSpacing = baseHSpacing;
+        vSpacing = baseVSpacing;
     }
 
     private bool CheckCommand() {
@@ -777,8 +789,11 @@ public class TextManager : MonoBehaviour {
         return true;
     }
 
-    private void PreCreateControlCommand(string command) {
+    private void PreCreateControlCommand(string command, bool movementCommand = false) {
         string[] cmds = UnitaleUtil.SpecialSplit(':', command);
+        // Only allow letter movement commands on the letter movement pass
+        if (!movementCommand && movementCommands.Contains(command) || movementCommand && !movementCommands.Contains(command))
+            return;
         string[] args = new string[0];
         if (cmds.Length == 2) {
             args = UnitaleUtil.SpecialSplit(',', cmds[1], true);

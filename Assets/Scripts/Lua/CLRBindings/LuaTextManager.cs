@@ -665,12 +665,24 @@ public class LuaTextManager : TextManager {
     }
 
     private void PostScaleHandling() {
-        foreach (Image i in letterReferences) {
-            RectTransform r = i.GetComponent<RectTransform>();
+        foreach (Image im in letterReferences) {
+            RectTransform r = im.GetComponent<RectTransform>();
             float xSize = r.rect.width;
             float ySize = r.rect.height;
-            float xLocalScale = Mathf.Round(xSize * xscale) / (xscale * xSize);
-            float yLocalScale = Mathf.Round(ySize * yscale) / (yscale * ySize);
+            float ratio = ySize / xSize;
+            float newXSize = xSize * xscale;
+            float newYSize = ySize * yscale;
+
+            List<float> scores = new List<float>();
+            for (int i = Mathf.FloorToInt(newXSize); i <= Mathf.CeilToInt(newXSize); i++)
+                for (int j = Mathf.FloorToInt(newYSize); j <= Mathf.CeilToInt(newYSize); j++)
+                    scores.Add(Mathf.Abs(newXSize - i + newYSize - j + 10 * (j / i - ratio)));
+
+            int chosenScoreID = scores.IndexOf(scores.Min());
+            float chosenX = chosenScoreID < 2 ? Mathf.Floor(newXSize) : Mathf.Ceil(newXSize);
+            float chosenY = chosenScoreID % 2 == 0 ? Mathf.Floor(newYSize) : Mathf.Ceil(newYSize);
+            float xLocalScale = chosenX / newXSize;
+            float yLocalScale = chosenY / newYSize;
             r.localScale = new Vector2(xLocalScale, yLocalScale);
         }
         MoveLetters();
