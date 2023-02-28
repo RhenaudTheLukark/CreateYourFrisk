@@ -621,6 +621,9 @@ public class TextManager : MonoBehaviour {
 
         currentX = self.position.x;
         currentY = self.position.y;
+        // allow Game Over fonts to enjoy the fixed text positioning, too!
+        if (GetType() != typeof(LuaTextManager) && gameObject.name != "TextParent" && gameObject.name != "ReviveText")
+            currentY -= Charset.LineSpacing;
         startingLineX = currentX;
         startingLineY = currentY;
 
