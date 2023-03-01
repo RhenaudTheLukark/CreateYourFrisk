@@ -628,8 +628,8 @@ public class TextManager : MonoBehaviour {
         startingLineY = currentY;
 
         LuaTextManager ltm = GetType() == typeof(LuaTextManager) ? (LuaTextManager)this : null;
-        float normalizedHSpacing = GetType() == typeof(LuaTextManager) ? Mathf.Round(hSpacing                         * ltm.xscale) / ltm.xscale : hSpacing;
-        float normalizedVSpacing = GetType() == typeof(LuaTextManager) ? Mathf.Round((vSpacing - Charset.LineSpacing) * ltm.yscale)              : vSpacing - Charset.LineSpacing;
+        float normalizedHSpacing = GetType() == typeof(LuaTextManager) ? Mathf.Round(hSpacing                        * ltm.xscale) / ltm.xscale : hSpacing;
+        float normalizedVSpacing = GetType() == typeof(LuaTextManager) ? Mathf.Round((vSpacing + Charset.LineSpacing) * ltm.yscale)             : vSpacing - Charset.LineSpacing;
 
         string currentText = textQueue[currentLine].Text;
         for (int i = 0; i < currentText.Length; i++) {
@@ -643,8 +643,8 @@ public class TextManager : MonoBehaviour {
                         PreCreateControlCommand(command, true);
                     break;
                 case '\n':
-                    currentX = startingLineX - normalizedVSpacing * Mathf.Sin(rotation * Mathf.Deg2Rad);
-                    currentY = startingLineY + normalizedVSpacing * Mathf.Cos(rotation * Mathf.Deg2Rad);
+                    currentX = startingLineX + normalizedVSpacing * Mathf.Sin(rotation * Mathf.Deg2Rad);
+                    currentY = startingLineY - normalizedVSpacing * Mathf.Cos(rotation * Mathf.Deg2Rad);
                     startingLineX = currentX;
                     startingLineY = currentY;
                     break;
@@ -656,7 +656,7 @@ public class TextManager : MonoBehaviour {
                         RectTransform rt = letterIndexes.FirstOrDefault(x => x.Value == i).Key.gameObject.GetComponent<RectTransform>();
                         MoveLetter(currentText, i, rt);
                         currentX += (rt.rect.width * rt.localScale.x + normalizedHSpacing) * Mathf.Cos(rotation * Mathf.Deg2Rad) * (ltm ? ltm.xscale : 1); // TODO remove hardcoded letter offset
-                        currentY += (rt.rect.width * rt.localScale.x + normalizedHSpacing) * Mathf.Sin(rotation * Mathf.Deg2Rad);
+                        currentY += (rt.rect.width * rt.localScale.x + normalizedHSpacing) * Mathf.Sin(rotation * Mathf.Deg2Rad) * (ltm ? ltm.xscale : 1);
                     }
                     break;
             }
