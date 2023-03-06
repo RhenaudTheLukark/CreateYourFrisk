@@ -12,11 +12,11 @@ public class RotatingEffect : TextEffect {
     }
 
     protected override void UpdateInternal() {
-        for (int i = 0; i < textMan.letterReferences.Count; i++) {
-            if (textMan.letterReferences[i] == null) continue;
-            RectTransform rt = textMan.letterReferences[i].GetComponent<RectTransform>();
+        for (int i = 0; i < textMan.letters.Count; i++) {
+            TextManager.LetterData data = textMan.letters[i];
+            RectTransform rt = data.image.GetComponent<RectTransform>();
             float iDiv = sinTimer * rotSpeed + i / 3.0f + effectStep * i;
-            rt.anchoredPosition = new Vector2(textMan.letterPositions[i].x + intensity * -Mathf.Sin(iDiv), textMan.letterPositions[i].y + intensity * Mathf.Cos(iDiv));
+            rt.anchoredPosition = new Vector2(data.position.x + intensity * -Mathf.Sin(iDiv), data.position.y + intensity * Mathf.Cos(iDiv));
         }
 
         sinTimer += Time.deltaTime;

@@ -20,13 +20,12 @@ public class TwitchEffect : TextEffect {
     }
 
     protected override void UpdateInternal() {
-        List<Image> letters = textMan.letterReferences;
-        if (letters.Count == 0)
+        if (textMan.letters.Count == 0)
             return;
 
         // move back last character
-        if (prevChar >= 0 && textMan.letterReferences.Count > prevChar && textMan.letterReferences[prevChar] != null)
-            textMan.letterReferences[prevChar].GetComponent<RectTransform>().anchoredPosition = textMan.letterPositions[prevChar];
+        if (prevChar >= 0 && textMan.letters.Count > prevChar)
+            textMan.letters[prevChar].image.GetComponent<RectTransform>().anchoredPosition = textMan.letters[prevChar].position;
         prevChar = -1;
 
         updateCount++;
@@ -34,15 +33,14 @@ public class TwitchEffect : TextEffect {
             return;
         updateCount = 0;
 
-        int selectedChar = Random.Range(0, letters.Count);
-        if (letters[selectedChar] == null)
-            return;
+        int selectedChar = Random.Range(0, textMan.letters.Count);
         float random = Random.value * 2.0f * Mathf.PI;
         float xWig = Mathf.Sin(random) * intensity;
         float yWig = Mathf.Cos(random) * intensity;
         nextWigInFrames = GetNextWigTime();
-        RectTransform rt = letters[selectedChar].GetComponent<RectTransform>();
-        rt.position = new Vector2(letters[selectedChar].transform.position.x + xWig, letters[selectedChar].transform.position.y + yWig);
+        TextManager.LetterData data = textMan.letters[selectedChar];
+        RectTransform rt = data.image.GetComponent<RectTransform>();
+        rt.position = new Vector2(rt.position.x + xWig, rt.position.y + yWig);
         prevChar = selectedChar;
     }
 

@@ -303,8 +303,8 @@ public class LuaTextManager : TextManager {
         if (currentColor.r == defaultColor.r && currentColor.g == defaultColor.g && currentColor.b == defaultColor.b)
             currentColor = c;
 
-        foreach (var i in letterReferences.Where(i => i != null).Where(i => i.color == defaultColor))
-            i.color = c;
+        foreach (LetterData l in letters.Where(i => i.image.color == defaultColor))
+            l.image.color = c;
 
         _color = c;
         defaultColor = c;
@@ -321,8 +321,8 @@ public class LuaTextManager : TextManager {
         if (currentColor.a == defaultColor.a)
             currentColor = c;
 
-        foreach (var i in letterReferences.Where(i => i.color == defaultColor))
-            i.color = c;
+        foreach (LetterData l in letters.Where(i => i.image.color == defaultColor))
+            l.image.color = c;
 
         _color.a = c.a;
         defaultColor = c;
@@ -353,8 +353,8 @@ public class LuaTextManager : TextManager {
             hasColorBeenSet = true;
             hasAlphaBeenSet = hasAlphaBeenSet || value.Length == 4;
 
-            foreach (var i in letterReferences.Where(i => i.color == defaultColor))
-                i.color = _color;
+            foreach (LetterData l in letters.Where(i => i.image.color == defaultColor))
+                l.image.color = _color;
 
             if (currentColor.r == defaultColor.r && currentColor.g == defaultColor.g && currentColor.b == defaultColor.b)
                 currentColor = _color;
@@ -426,12 +426,12 @@ public class LuaTextManager : TextManager {
             throw new CYFException("You cannot fetch a text object's letters on the first frame it was created, unless you use the [instant] command at the beginning of its line.");
         Table table = new Table(null);
         int key = 0;
-        foreach (Image im in letterReferences) {
+        foreach (LetterData d in letters) {
             key++;
-            LuaSpriteController letter = LuaSpriteController.GetOrCreate(im.gameObject);
+            LuaSpriteController letter = LuaSpriteController.GetOrCreate(d.image.gameObject);
             letter.tag = "letter";
-            letter.spritename = textQueue[currentLine].Text[letterIndexes[im]].ToString();
-            letter.img.GetComponent<Letter>().characterNumber = letterIndexes[im];
+            letter.spritename = textQueue[currentLine].Text[d.index].ToString();
+            letter.img.GetComponent<Letter>().characterNumber = d.index;
             table.Set(key, UserData.Create(letter, LuaSpriteController.data));
         }
 
@@ -665,8 +665,8 @@ public class LuaTextManager : TextManager {
     }
 
     private void PostScaleHandling() {
-        foreach (Image im in letterReferences) {
-            RectTransform r = im.GetComponent<RectTransform>();
+        foreach (LetterData l in letters) {
+            RectTransform r = l.image.GetComponent<RectTransform>();
             float xSize = r.rect.width;
             float ySize = r.rect.height;
             float ratio = ySize / xSize;

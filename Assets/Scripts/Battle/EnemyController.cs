@@ -400,7 +400,7 @@ public class EnemyController : MonoBehaviour {
             Sprite speechBubSpr = speechBubImg.sprite;
 
             sbTextMan.MoveTo((int)speechBubSpr.border.x, (int)(-speechBubSpr.border.w - sbTextMan.Charset.LineSpacing));
-            speechBubImg.color = new Color(speechBubImg.color.r, speechBubImg.color.g, speechBubImg.color.b, sbTextMan.letterReferences.Count == 0 ? 0 : 1);
+            speechBubImg.color = new Color(speechBubImg.color.r, speechBubImg.color.g, speechBubImg.color.b, sbTextMan.letters.Count == 0 ? 0 : 1);
 
             sbTextMan.HideBubble();
         } else {
@@ -411,8 +411,8 @@ public class EnemyController : MonoBehaviour {
                 return;
             }
 
-            if (sbTextMan.letterReferences.Count > 0) sbTextMan.ShowBubble(GetReverseBubbleSide(BubbleSide).ToString(), DynValue.NewString("50%"));
-            else                                      sbTextMan.HideBubble();
+            if (sbTextMan.letters.Count > 0) sbTextMan.ShowBubble(GetReverseBubbleSide(BubbleSide).ToString(), DynValue.NewString("50%"));
+            else                             sbTextMan.HideBubble();
             sbTextMan.MoveTo(0, 0);
         }
 

@@ -7,9 +7,18 @@ using UnityEngine.UI;
 
 // TODO less code duplicate-y way of pulling commands out of the text.
 public class TextManager : MonoBehaviour {
-    internal Dictionary<Image, int> letterIndexes = new Dictionary<Image, int>();
-    internal List<Image> letterReferences = new List<Image>();
-    internal List<Vector2> letterPositions = new List<Vector2>();
+
+    public struct LetterData {
+        public int index;
+        public Image image;
+        public Vector2 position;
+        public LetterData(int index, Image image, Vector2 position) {
+            this.index = index;
+            this.image = image;
+            this.position = position;
+        }
+    }
+    internal List<LetterData> letters = new List<LetterData>();
 
     protected UnderFont default_charset;
     protected string defaultVoice;
@@ -177,8 +186,6 @@ public class TextManager : MonoBehaviour {
     public bool IsPaused() { return paused; }
 
     [MoonSharpHidden] public bool IsFinished() {
-        if (letterReferences == null)
-            return false;
         return currentCharacter >= textQueue[currentLine].Text.Length;
     }
 
@@ -237,8 +244,6 @@ public class TextManager : MonoBehaviour {
     }
 
     public bool LineComplete() {
-        if (letterReferences == null)
-            return false;
         return instantActive || currentCharacter == textQueue[currentLine].Text.Length;
     }
 
@@ -410,10 +415,10 @@ public class TextManager : MonoBehaviour {
 
     public virtual void SkipLine() {
         if (noSkip1stFrame) return;
-        foreach (Image im in letterReferences)
-            im.enabled = true;
+        foreach (LetterData d in letters)
+            d.image.enabled = true;
         currentCharacter = textQueue[currentLine].Text.Length;
-        currentReferenceCharacter = letterReferences.Count;
+        currentReferenceCharacter = letters.Count;
     }
 
     public void SetEffect(TextEffect effect) { textEffect = effect; }
@@ -423,9 +428,7 @@ public class TextManager : MonoBehaviour {
             if (child.GetComponent<SpriteRenderer>() == null && child.GetComponent<Image>() == null) continue;
             LuaSpriteController.GetOrCreate(child.gameObject).Remove();
         }
-        letterIndexes.Clear();
-        letterReferences.Clear();
-        letterPositions.Clear();
+        letters.Clear();
     }
 
     private void SpawnTextSpaceTest(int i, string currentText, out string currentText2) {
@@ -478,9 +481,8 @@ public class TextManager : MonoBehaviour {
         ltrRect.SetParent(gameObject.transform);
         ltrImg.sprite = Charset.Letters[currentText[index]];
 
-        letterReferences.Add(ltrImg);
-        letterIndexes.Add(ltrImg, index);
-        MoveLetter(currentText, index, ltrRect);
+        letters.Add(new LetterData(index, ltrImg, Vector2.zero));
+        MoveLetter(currentText, letters.Count - 1);
 
         ltrImg.SetNativeSize();
         if (isLua) {
@@ -495,28 +497,29 @@ public class TextManager : MonoBehaviour {
         ltrImg.GetComponent<Letter>().colorFromText = currentColor;
         ltrImg.enabled = textQueue[currentLine].ShowImmediate || (GlobalControls.retroMode && instantActive);
 
-        return letterReferences.Count - 1;
+        return letters.Count - 1;
     }
 
-    private void MoveLetter(string currentText, int index, RectTransform ltrRect) {
-        float letterShift = Charset.Letters[currentText[index]].border.w - Charset.Letters[currentText[index]].border.y;
+    private void MoveLetter(string currentText, int letterIndex) {
+        LetterData letter = letters[letterIndex];
+        RectTransform rt = letter.image.GetComponent<RectTransform>();
+        float letterShift = Charset.Letters[currentText[letter.index]].border.w - Charset.Letters[currentText[letter.index]].border.y;
         float mult = GetType() == typeof(LuaTextManager) ? ((LuaTextManager)this).yscale : 1;
         if (GetType() == typeof(LuaTextManager) || gameObject.name == "TextParent" || gameObject.name == "ReviveText")
             // Allow Game Over fonts to enjoy the fixed text positioning, too!
-            ltrRect.position = new Vector3(currentX, currentY + letterShift * mult, 0);
+            rt.position = new Vector3(currentX, currentY + letterShift * mult, 0);
         else
             // Keep what we already have for all text boxes that are not Text Objects in an encounter
-            ltrRect.position = new Vector3(currentX, currentY + (letterShift + 2) * mult, 0);
+            rt.position = new Vector3(currentX, currentY + (letterShift + 2) * mult, 0);
 
-        ltrRect.eulerAngles = new Vector3(0, 0, rotation);
-        letterPositions.Add(ltrRect.anchoredPosition);
+        rt.eulerAngles = new Vector3(0, 0, rotation);
+        letters[letterIndex] = new LetterData(letter.index, letter.image, rt.anchoredPosition);
     }
 
     private void SpawnText() {
         noSkip1stFrame = true;
         string currentText = textQueue[currentLine].Text;
-        letterIndexes.Clear();
-        letterReferences.Clear();
+        letters.Clear();
         if (currentText.Length > 1)
             if (!GlobalControls.isInFight || EnemyEncounter.script.GetVar("autolinebreak").Boolean || GetType() == typeof(LuaTextManager) && !((LuaTextManager)this).noAutoLineBreak)
                 SpawnTextSpaceTest(0, currentText, out currentText);
@@ -614,8 +617,6 @@ public class TextManager : MonoBehaviour {
     }
 
     protected void MoveLetters() {
-        letterPositions.Clear();
-
         float baseHSpacing = hSpacing;
         float baseVSpacing = vSpacing;
 
@@ -652,9 +653,10 @@ public class TextManager : MonoBehaviour {
                     currentX = !GlobalControls.isInFight ? (356 + Misc.cameraX) : 356; // HACK: bad tab usage
                     break;
                 default:
-                    if (letterIndexes.ContainsValue(i)) {
-                        RectTransform rt = letterIndexes.FirstOrDefault(x => x.Value == i).Key.gameObject.GetComponent<RectTransform>();
-                        MoveLetter(currentText, i, rt);
+                    if (letters.Exists(l => l.index == i)) {
+                        LetterData letter = letters.Find(l => l.index == i);
+                        MoveLetter(currentText, letters.IndexOf(letter));
+                        RectTransform rt = letter.image.GetComponent<RectTransform>();
                         currentX += (rt.rect.width * rt.localScale.x + normalizedHSpacing) * Mathf.Cos(rotation * Mathf.Deg2Rad) * (ltm ? ltm.xscale : 1); // TODO remove hardcoded letter offset
                         currentY += (rt.rect.width * rt.localScale.x + normalizedHSpacing) * Mathf.Sin(rotation * Mathf.Deg2Rad) * (ltm ? ltm.xscale : 1);
                     }
@@ -708,7 +710,7 @@ public class TextManager : MonoBehaviour {
                     mugshot.SetAnimation(mugshotList, mugshotTimer);
             }
 
-        if (textQueue == null || textQueue.Length == 0 || paused || lateStartWaiting)
+        if (textQueue == null || textQueue.Length == 0 || textQueue[currentLine] == null || paused || lateStartWaiting)
             return;
 
         if (textEffect != null)
@@ -768,8 +770,8 @@ public class TextManager : MonoBehaviour {
                 return false;
         }
 
-        if (letterIndexes.Values.Contains(currentCharacter)) {
-            Image im = letterIndexes.First(i => i.Value == currentCharacter).Key;
+        if (letters.Exists(l => l.index == currentCharacter)) {
+            Image im = letters.Find(l => l.index == currentCharacter).image;
             if (im == null) return false;
             im.enabled = true;
             letterEffectStepCount += letterEffectStep;
@@ -838,8 +840,8 @@ public class TextManager : MonoBehaviour {
                     Color starColor = ParseUtil.GetColor(cmds[1]);
                     int indexOfStar = textQueue[currentLine].Text.IndexOf('*'); // HACK oh my god lol
                     if (indexOfStar > -1)
-                        if (letterIndexes.Any(im => im.Value == indexOfStar))
-                            letterIndexes.First(im => im.Value == indexOfStar).Key.color = starColor;
+                        if (letters.Exists(l => l.index == indexOfStar))
+                            letters.Find(l => l.index == indexOfStar).image.color = starColor;
                 } catch (CYFException) {
                     Debug.LogError("[starcolor:x] usage - You used the value \"" + cmds[1] + "\" to set the color of the text's star, but it's not a valid hexadecimal color value.");
                 }
@@ -985,8 +987,8 @@ public class TextManager : MonoBehaviour {
                 // This is a catch-all.
                 // If a line of text starts with [instant], the above code will not display the letters it passes over,
                 // due to how HandleShowLetter is coded.
-                foreach (var letter in letterReferences.Where(letter => letterIndexes[letter] >= index && letterIndexes[letter] < pos))
-                    letter.enabled = true;
+                foreach (LetterData letter in letters.Where(l => l.index >= index && l.index < pos))
+                    letter.image.enabled = true;
 
                 // Fourth:  Update variables
                 if (pos < currentText.Length) {

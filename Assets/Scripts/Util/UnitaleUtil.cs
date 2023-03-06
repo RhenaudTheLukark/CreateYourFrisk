@@ -186,8 +186,7 @@ public static class UnitaleUtil {
                     break;
                 case '\r':
                 case '\n':
-                    if (totalMaxWidth < totalWidthSpaceTest - hSpacing)
-                        totalMaxWidth = totalWidthSpaceTest - hSpacing;
+                    totalMaxWidth = Mathf.Max(totalMaxWidth, totalWidthSpaceTest - hSpacing);
                     totalWidth = 0;
                     totalWidthSpaceTest = 0;
                     break;
@@ -201,8 +200,7 @@ public static class UnitaleUtil {
                     break;
             }
         }
-        if (totalMaxWidth < totalWidthSpaceTest - hSpacing)
-            totalMaxWidth = totalWidthSpaceTest - hSpacing;
+        totalMaxWidth = Mathf.Max(totalMaxWidth, totalWidthSpaceTest - hSpacing);
         return totalMaxWidth + (getLastSpace ? hSpacing : 0);
     }
 
@@ -214,15 +212,11 @@ public static class UnitaleUtil {
         if (fromLetter > toLetter || fromLetter < 0 || toLetter > txtmgr.textQueue[txtmgr.currentLine].Text.Length) return -1;
         if (fromLetter == toLetter)                                                                                 return 0;
 
-        for (int i = 0; i < txtmgr.letterReferences.Count; i++) {
-            Image im = txtmgr.letterReferences[i];
-            int index = txtmgr.letterIndexes[im];
-
-            if (index < fromLetter || index > toLetter) continue;
-            if (txtmgr.letterPositions[i].y < minY)
-                minY = txtmgr.letterPositions[i].y;
-            if (txtmgr.letterPositions[i].y + txtmgr.Charset.Letters[txtmgr.textQueue[txtmgr.currentLine].Text[index]].textureRect.size.y > maxY)
-                maxY = txtmgr.letterPositions[i].y + txtmgr.Charset.Letters[txtmgr.textQueue[txtmgr.currentLine].Text[index]].textureRect.size.y;
+        for (int i = 0; i < txtmgr.letters.Count; i++) {
+            TextManager.LetterData l = txtmgr.letters[i];
+            if (l.index < fromLetter || l.index > toLetter) continue;
+            minY = Mathf.Min(minY, l.position.y);
+            maxY = Mathf.Max(maxY, l.position.y + txtmgr.Charset.Letters[txtmgr.textQueue[txtmgr.currentLine].Text[l.index]].textureRect.size.y);
         }
         return maxY - minY;
     }
