@@ -524,14 +524,6 @@ public class TextManager : MonoBehaviour {
             if (!GlobalControls.isInFight || EnemyEncounter.script.GetVar("autolinebreak").Boolean || GetType() == typeof(LuaTextManager) && !((LuaTextManager)this).noAutoLineBreak)
                 SpawnTextSpaceTest(0, currentText, out currentText);
 
-        currentX = self.position.x + offset.x;
-        currentY = self.position.y + offset.y;
-        // allow Game Over fonts to enjoy the fixed text positioning, too!
-        if (GetType() != typeof(LuaTextManager) && gameObject.name != "TextParent" && gameObject.name != "ReviveText")
-            currentY -= Charset.LineSpacing;
-        startingLineX = currentX;
-        startingLineY = currentY;
-
         // Work-around for [instant] and [instant:allowcommand] at the beginning of a line of text
         bool skipImmediate = false;
         string skipCommand = "";
@@ -629,8 +621,8 @@ public class TextManager : MonoBehaviour {
         startingLineY = currentY;
 
         LuaTextManager ltm = GetType() == typeof(LuaTextManager) ? (LuaTextManager)this : null;
-        float normalizedHSpacing = GetType() == typeof(LuaTextManager) ? Mathf.Round(hSpacing                        * ltm.xscale) / ltm.xscale : hSpacing;
-        float normalizedVSpacing = GetType() == typeof(LuaTextManager) ? Mathf.Round((vSpacing + Charset.LineSpacing) * ltm.yscale)             : vSpacing - Charset.LineSpacing;
+        float normalizedHSpacing = GetType() == typeof(LuaTextManager) ? Mathf.Round(hSpacing                         * ltm.xscale) / ltm.xscale : hSpacing;
+        float normalizedVSpacing = GetType() == typeof(LuaTextManager) ? Mathf.Round((vSpacing + Charset.LineSpacing) * ltm.yscale)              : vSpacing + Charset.LineSpacing;
 
         string currentText = textQueue[currentLine].Text;
         for (int i = 0; i < currentText.Length; i++) {
