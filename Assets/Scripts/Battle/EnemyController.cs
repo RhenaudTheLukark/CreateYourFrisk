@@ -399,14 +399,13 @@ public class EnemyController : MonoBehaviour {
             }
             Sprite speechBubSpr = speechBubImg.sprite;
 
-            sbTextMan.MoveTo((int)speechBubSpr.border.x, (int)(-speechBubSpr.border.w - sbTextMan.Charset.LineSpacing));
+            sbTextMan.MoveToAbs((int)(sbTextMan.transform.parent.position.x + speechBubSpr.border.x), (int)(sbTextMan.transform.parent.position.y - speechBubSpr.border.w - sbTextMan.Charset.LineSpacing));
             speechBubImg.color = new Color(speechBubImg.color.r, speechBubImg.color.g, speechBubImg.color.b, sbTextMan.letters.Count == 0 ? 0 : 1);
 
             sbTextMan.HideBubble();
         } else {
             try { bubbleWidth = (float)BubbleWidth; }
             catch (Exception e) {
-                Debug.Log("a");
                 UnitaleUtil.DisplayLuaError(scriptName + ": Creating a dialogue bubble", e.Message);
                 return;
             }

@@ -95,7 +95,7 @@ public class LuaGeneralOW {
             for (int j = 0; j < (threeLiner ? 3 : 2); j++) {
                 if (j == finalText.Count)
                     finalText.Add("");
-                finalText[j] += "[charspacing:8] [charspacing:2]" + (j >= preText.Length ? "" : preText[j]) + (i == 0 ? "\t" : "") + "[charspacing:default]";
+                finalText[j] += "[charspacing:12] [charspacing:2]" + (j >= preText.Length ? "" : preText[j]) + (i == 0 ? "\t" : "") + "[charspacing:default]";
             }
         }
 

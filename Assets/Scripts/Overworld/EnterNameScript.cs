@@ -172,7 +172,7 @@ public class EnterNameScript : MonoBehaviour {
                 }
             }
             tmName.SetTextQueue(new[] { new TextMessage(playerName, false, true) });
-            tmName.transform.localPosition = new Vector3(-calcTotalLength(tmName) / 2, tmName.transform.localPosition.y, tmName.transform.localPosition.z);
+            tmName.transform.localPosition = new Vector3(-Mathf.Round(calcTotalLength(tmName) / 2), tmName.transform.localPosition.y, tmName.transform.localPosition.z);
             uiAudio.PlayOneShot(AudioClipRegistry.GetSound("menuconfirm"));
             return;
         } else
