@@ -702,6 +702,11 @@ public static class UnitaleUtil {
         if ((sSelf != null && sSelf.tag == "letter") ^ (sParent != null && sParent.tag == "letter"))
             throw new CYFException("sprite.SetParent(): Cannot be used between letter sprites and other objects.");
 
+        Transform t = GetTransform(p);
+        if (t == null) {
+            DynValue d = p as DynValue;
+            throw new CYFException("SetParent(): Can't set an object of type " + p.GetType().ToString() + " as a parent!");
+        }
         GetTransform(self).SetParent(GetTransform(p));
     }
 }

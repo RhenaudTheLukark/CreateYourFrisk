@@ -674,8 +674,10 @@ public class LuaTextManager : TextManager {
 
             List<float> scores = new List<float>();
             for (int i = Mathf.FloorToInt(newXSize); i <= Mathf.CeilToInt(newXSize); i++)
-                for (int j = Mathf.FloorToInt(newYSize); j <= Mathf.CeilToInt(newYSize); j++)
-                    scores.Add(Mathf.Abs(newXSize - i + newYSize - j + 10 * (j / i - ratio)));
+                for (int j = Mathf.FloorToInt(newYSize); j <= Mathf.CeilToInt(newYSize); j++) {
+                    if (i == 0 || j == 0) scores.Add(Mathf.Infinity);
+                    else                  scores.Add(Mathf.Abs(newXSize - i + newYSize - j + 10 * (j / i - ratio)));
+                }
 
             int chosenScoreID = scores.IndexOf(scores.Min());
             float chosenX = chosenScoreID < 2 ? Mathf.Floor(newXSize) : Mathf.Ceil(newXSize);
