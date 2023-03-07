@@ -662,6 +662,8 @@ public class LuaTextManager : TextManager {
     }
 
     private void PostScaleHandling() {
+        if (xscale == 0 || yscale == 0)
+            return;
         foreach (LetterData l in letters) {
             RectTransform r = l.image.GetComponent<RectTransform>();
             float xSize = r.rect.width;
