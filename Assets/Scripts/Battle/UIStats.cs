@@ -70,7 +70,7 @@ public class UIStats : MonoBehaviour {
         if (!initialized || stopUIUpdate) return;
         if (lifebar.background.spritename == "bar-px")
             lifebar.Resize(Mathf.Min(120, PlayerCharacter.instance.MaxHP * 1.2f), 20);
-        hpTextMan.transform.position = new Vector3(lifebar.background.absx + lifebar.backgroundRt.sizeDelta.x + 14, hpTextMan.transform.position.y, hpTextMan.transform.position.z);
+        hpTextMan.MoveToAbs(lifebar.background.absx + lifebar.backgroundRt.sizeDelta.x + 14, hpTextMan.transform.position.y);
         setHP(PlayerCharacter.instance.HP);
     }
 

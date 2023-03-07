@@ -57,7 +57,7 @@ public class EnterNameScript : MonoBehaviour {
         if (!hackFirstString && tmName.transform.childCount != 0 && !isNewGame) {
             hackFirstString = true;
             tmName.SetTextQueue(new[] { new TextMessage(playerName, false, true) });
-            tmName.transform.localPosition = new Vector3(-calcTotalLength(tmName) / 2, tmName.transform.localPosition.y, tmName.transform.localPosition.z);
+            tmName.MoveTo(-calcTotalLength(tmName) / 2, tmName.transform.localPosition.y);
         }
         if (GlobalControls.input.Down == UndertaleInput.ButtonState.PRESSED) {
             switch (choiceLetter) {
@@ -138,7 +138,7 @@ public class EnterNameScript : MonoBehaviour {
             else
                 weirdBackspaceShift = false;
             tmName.SetTextQueue(new[] { new TextMessage(playerName, false, true) });
-            tmName.transform.localPosition = new Vector3(-calcTotalLength(tmName) / 2, tmName.transform.localPosition.y, tmName.transform.localPosition.z);
+            tmName.MoveTo(-calcTotalLength(tmName) / 2, tmName.transform.localPosition.y);
         } else if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED) {
             switch (choiceLetter) {
                 case "Quit":
@@ -172,7 +172,7 @@ public class EnterNameScript : MonoBehaviour {
                 }
             }
             tmName.SetTextQueue(new[] { new TextMessage(playerName, false, true) });
-            tmName.transform.localPosition = new Vector3(-Mathf.Round(calcTotalLength(tmName) / 2), tmName.transform.localPosition.y, tmName.transform.localPosition.z);
+            tmName.MoveTo(-calcTotalLength(tmName) / 2, tmName.transform.localPosition.y);
             uiAudio.PlayOneShot(AudioClipRegistry.GetSound("menuconfirm"));
             return;
         } else
@@ -194,17 +194,17 @@ public class EnterNameScript : MonoBehaviour {
         tmInstr.SetTextQueue(new[] { new TextMessage("[noskipatall]" + (confirmText ?? (GlobalControls.crate ? "LAL GUD???" : "[noskipatall]Is this name correct?")), false, true) });
         tmName.SetEffect(new ShakeEffect(tmName));
         GameObject.Find("Backspace").GetComponent<SpriteRenderer>().enabled = false;
-        tmLettersMaj.transform.position = new Vector3(tmLettersMaj.transform.position.x, tmLettersMaj.transform.position.y, 10000);
-        tmLettersMin.transform.position = new Vector3(tmLettersMin.transform.position.x, tmLettersMin.transform.position.y, 10000);
+        tmLettersMaj.gameObject.SetActive(false);
+        tmLettersMin.gameObject.SetActive(false);
         setColor("Quit");
         GameObject.Find("Done").GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, isForbidden ? 0 : 1);
         float diff = calcTotalLength(tmName)*2;
         float actualX = tmName.transform.localPosition.x, actualY = tmName.transform.localPosition.y;
         while (GlobalControls.input.Confirm != UndertaleInput.ButtonState.PRESSED) {
             if (tmName.transform.localScale.x < 3) {
-                tmName.transform.localScale = new Vector3(tmName.transform.localScale.x + 0.01f, tmName.transform.localScale.y + 0.01f, 1);
-                tmName.transform.localPosition = new Vector3(actualX - (tmName.transform.localScale.x - 1) * diff / 2,
-                                                             actualY - (tmName.transform.localScale.x - 1) * diff / 6, tmName.transform.localPosition.z);
+                float scale = Mathf.Min(3, tmName.transform.localScale.x + 0.01f);
+                tmName.transform.localScale = new Vector3(scale, scale, 1);
+                tmName.MoveTo(actualX - (tmName.transform.localScale.x - 1) * diff / 2, actualY - (tmName.transform.localScale.x - 1) * diff / 6);
             }
             if ((GlobalControls.input.Left == UndertaleInput.ButtonState.PRESSED || GlobalControls.input.Right == UndertaleInput.ButtonState.PRESSED)
                     && GameObject.Find("Done").GetComponent<SpriteRenderer>().enabled &&!isForbidden) {
@@ -221,10 +221,10 @@ public class EnterNameScript : MonoBehaviour {
             tmName.transform.localScale = new Vector3(1, 1, 1);
             tmName.SetEffect(null);
             tmName.SetTextQueue(new[] { new TextMessage(playerName, false, true) });
-            tmName.transform.localPosition = new Vector3(-calcTotalLength(tmName)/2, 145, tmName.transform.localPosition.z);
+            tmName.MoveTo(-calcTotalLength(tmName)/2, 145);
             tmInstr.SetTextQueue(new[] { new TextMessage("[noskipatall]" + (GlobalControls.crate ? "QWIK QWIK QWIK!!!" : "Name the fallen human."), false, true) });
-            tmLettersMaj.transform.position = new Vector3(tmLettersMaj.transform.position.x, tmLettersMaj.transform.position.y, 0);
-            tmLettersMin.transform.position = new Vector3(tmLettersMin.transform.position.x, tmLettersMin.transform.position.y, 0);
+            tmLettersMaj.gameObject.SetActive(true);
+            tmLettersMin.gameObject.SetActive(true);
             GameObject.Find("Backspace").GetComponent<SpriteRenderer>().enabled = true;
             setColor("Done");
         } else {
@@ -235,8 +235,9 @@ public class EnterNameScript : MonoBehaviour {
                 SpriteRenderer blank = GameObject.Find("Blank").GetComponent<SpriteRenderer>();
                 while (blank.color.a <= 1) {
                     if (tmName.transform.localScale.x < 3) {
-                        tmName.transform.localScale = new Vector3(tmName.transform.localScale.x + 0.01f, tmName.transform.localScale.y + 0.01f, 1);
-                        tmName.transform.localPosition = new Vector3(actualX - (tmName.transform.localScale.x - 1f) * diff / 2f, actualY - (tmName.transform.localScale.x - 1f) * diff / 6, tmName.transform.localPosition.z);
+                        float scale = Mathf.Min(3, tmName.transform.localScale.x + 0.01f);
+                        tmName.transform.localScale = new Vector3(scale, scale, 1);
+                        tmName.MoveTo(actualX - (tmName.transform.localScale.x - 1f) * diff / 2f, actualY - (tmName.transform.localScale.x - 1f) * diff / 6);
                     }
                     blank.color = new Color(blank.color.r, blank.color.g, blank.color.b, blank.color.a + 0.003f);
                     yield return 0;

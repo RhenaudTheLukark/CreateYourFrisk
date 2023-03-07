@@ -6,7 +6,6 @@ public class FightUI : MonoBehaviour {
     public LuaSpriteController slice;
     public LifeBarController lifeBar;
     public TextManager damageText;
-    private RectTransform damageTextRt;
 
     public bool shakeInProgress;
     private int[] shakeX = { 12, -12, 7, -7, 3, -3, 1, -1, 0 };
@@ -45,7 +44,6 @@ public class FightUI : MonoBehaviour {
         lifeBar.SetVisible(false);
 
         damageText = transform.GetComponentInChildren<TextManager>();
-        damageTextRt = damageText.GetComponent<RectTransform>();
         damageText.SetFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_DAMAGETEXT_NAME));
         damageText.SetMute(true);
 
@@ -125,7 +123,7 @@ public class FightUI : MonoBehaviour {
                 #endif*/
             }
             if (shakeTimer < 1.5f)
-                damageTextRt.position = new Vector3(damageTextRt.position.x, enePos.y - eneSize.y / 2 + enemy.offsets[2].y + 40 * (2 + Mathf.Sin(shakeTimer * Mathf.PI * 0.75f)), 0);
+                damageText.MoveToAbs(damageText.transform.position.x, enePos.y - eneSize.y / 2 + enemy.offsets[2].y + 40 * (2 + Mathf.Sin(shakeTimer * Mathf.PI * 0.75f)));
             shakeTimer += Time.deltaTime;
             if (shakeTimer >= totalShakeTime)
                 shakeInProgress = false;
@@ -148,9 +146,8 @@ public class FightUI : MonoBehaviour {
                     else                               damageTextStr = "[color:c0c0c0]" + enemy.DefenseMissText;
                 } else if (Damage > 0)                 damageTextStr = "[color:ff0000]" + Damage;
                 else                                   damageTextStr = "[color:00ff00]" + Damage;
-                damageTextRt.localPosition = new Vector3(0, 0, 0);
                 damageText.SetText(new TextMessage(damageTextStr, false, true));
-                damageTextRt.position = new Vector3(enePos.x - UnitaleUtil.CalcTextWidth(damageText) / 2 + enemy.offsets[2].x, enePos.y - eneSize.y / 2 + 40 + enemy.offsets[2].y, 0);
+                damageText.MoveToAbs(enePos.x - UnitaleUtil.CalcTextWidth(damageText) / 2 + enemy.offsets[2].x, enePos.y - eneSize.y / 2 + 40 + enemy.offsets[2].y);
 
                 // initiate lifebar and set lerp to its new health value
                 if (Damage != 0) {

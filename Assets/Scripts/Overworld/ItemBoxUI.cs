@@ -43,7 +43,7 @@ public class ItemBoxUI : MonoBehaviour {
             go.AddComponent<TextManager>();
             TextManager tm = go.GetComponent<TextManager>();
             tm.transform.SetParent(transform);
-            tm.transform.localPosition = new Vector3(80, 410 - (i * 32));
+            tm.MoveTo(80, 410 - (i * 32));
             inventory.Add(tm);
 
             LuaSpriteController sprite = (LuaSpriteController) (SpriteUtil.MakeIngameSprite("px", -1).UserData.Object);
@@ -61,7 +61,7 @@ public class ItemBoxUI : MonoBehaviour {
             go.AddComponent<TextManager>();
             TextManager tm = go.GetComponent<TextManager>();
             tm.transform.SetParent(transform);
-            tm.transform.localPosition = new Vector3(372, 410 - (i * 32));
+            tm.MoveTo(372, 410 - (i * 32));
             boxContents.Add(tm);
 
             LuaSpriteController sprite = (LuaSpriteController) (SpriteUtil.MakeIngameSprite("px", -1).UserData.Object);

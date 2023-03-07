@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -544,8 +543,7 @@ public class LuaTextManager : TextManager {
 
     [MoonSharpHidden] public void UpdateBubble() {
         containerBubble.GetComponent<RectTransform>().localPosition = new Vector2(-12, 24);
-        // GetComponent<RectTransform>().localPosition = new Vector2(0, 16);
-        GetComponent<RectTransform>().localPosition = new Vector2(0, 0);
+        MoveTo(0, 0);
         ResizeBubble();
     }
 
@@ -696,14 +694,17 @@ public class LuaTextManager : TextManager {
         framesWait = time;
     }
 
-    public void MoveTo(int newX, int newY) {
-        CheckExists();
-        container.transform.localPosition = new Vector3(newX, newY + 0.02f, container.transform.localPosition.z);
+    public override void Move(float newX, float newY) {
+        MoveToAbs(container.transform.position.x + newX, container.transform.position.y + newY);
     }
 
-    public void MoveToAbs(int newX, int newY) {
+    public override void MoveTo(float newX, float newY) {
+        MoveToAbs(container.transform.parent.position.x + newX, container.transform.parent.position.y + newY);
+    }
+
+    public override void MoveToAbs(float newX, float newY) {
         CheckExists();
-        container.transform.position = new Vector3(newX, newY + 0.02f, container.transform.position.z);
+        container.transform.position = new Vector3(Mathf.Round(newX), Mathf.Round(newY), container.transform.position.z);
     }
 
     public void SetAnchor(float newX, float newY) {

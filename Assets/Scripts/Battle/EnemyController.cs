@@ -399,7 +399,7 @@ public class EnemyController : MonoBehaviour {
             }
             Sprite speechBubSpr = speechBubImg.sprite;
 
-            sbTextMan.MoveToAbs((int)(sbTextMan.transform.parent.position.x + speechBubSpr.border.x), (int)(sbTextMan.transform.parent.position.y - speechBubSpr.border.w - sbTextMan.Charset.LineSpacing));
+            sbTextMan.MoveTo((int)speechBubSpr.border.x, (int)(-speechBubSpr.border.w - sbTextMan.Charset.LineSpacing));
             speechBubImg.color = new Color(speechBubImg.color.r, speechBubImg.color.g, speechBubImg.color.b, sbTextMan.letters.Count == 0 ? 0 : 1);
 
             sbTextMan.HideBubble();
@@ -422,6 +422,7 @@ public class EnemyController : MonoBehaviour {
         bubbleObject.GetComponent<RectTransform>().localScale = new Vector2(reversedX ? -1 : 1, reversedY ? -1 : 1);
         bubbleObject.GetComponent<RectTransform>().anchoredPosition = new Vector2((DialogBubblePosition.x + offsets[1].x) * (reversedX ? -1 : 1),
                                                                                   (DialogBubblePosition.y + offsets[1].y) * (reversedY ? -1 : 1));
+        sbTextMan.Move(0, 0); // Used to even out the text object's position so it's only using integers
 
         if (Voice != "")
             sbTextMan.letterSound = Voice;

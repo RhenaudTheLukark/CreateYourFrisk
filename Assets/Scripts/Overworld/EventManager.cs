@@ -1746,13 +1746,13 @@ end";
             txtName.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]" + playerName, false, true) });
             txtLevel.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]LV" + playerLevel, false, true) });
             txtTime.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]" + UnitaleUtil.TimeFormatter(SaveLoad.savedGame.playerTime), false, true) });
-            GameObject.Find("TextManagerTime").transform.localPosition = new Vector3(180f - UnitaleUtil.CalcTextWidth(txtTime), 68, 0f);
+            GameObject.Find("TextManagerTime").GetComponent<TextManager>().MoveTo(180f - UnitaleUtil.CalcTextWidth(txtTime), 68);
             txtMap.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]" + SaveLoad.savedGame.lastScene, false, true) });
         } else {
             txtName.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]EMPTY", false, true) });
             txtLevel.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]LV0", false, true) });
             txtTime.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]0:00", false, true) });
-            GameObject.Find("TextManagerTime").transform.localPosition = new Vector3(130f, 68, 0f);
+            GameObject.Find("TextManagerTime").GetComponent<TextManager>().MoveTo(130f, 68);
             txtMap.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]--", false, true) });
         }
         txtSave.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]Save", false, true) });
@@ -1786,7 +1786,7 @@ end";
                     txtName.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]" + PlayerCharacter.instance.Name, false, true) });
                     txtLevel.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]LV" + PlayerCharacter.instance.LV, false, true) });
                     txtTime.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]" + UnitaleUtil.TimeFormatter(SaveLoad.savedGame.playerTime), false, true) });
-                    GameObject.Find("TextManagerTime").transform.localPosition = new Vector3(180f - UnitaleUtil.CalcTextWidth(txtTime), 68, 0f);
+                    GameObject.Find("TextManagerTime").GetComponent<TextManager>().MoveTo(180f - UnitaleUtil.CalcTextWidth(txtTime), 68);
                     txtMap.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]" + SaveLoad.savedGame.lastScene, false, true) });
                     txtSave.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]File saved.", false, true) });
                     txtReturn.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]", false, true) });

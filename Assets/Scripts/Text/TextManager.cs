@@ -296,13 +296,13 @@ public class TextManager : MonoBehaviour {
                 mugshotTimer = time;
                 mugshotList = (string[])UnitaleUtil.ListToArray(mugshots);
                 mugshot.color = new float[] { 1, 1, 1, 1 };
-                self.localPosition = new Vector3(-150, self.localPosition.y, self.localPosition.z);
+                MoveTo(-150, self.localPosition.y);
             } else {
                 mugshot.Set("empty");
                 mugshotList = null;
                 mugshot.color = new float[] { 1, 1, 1, 0 };
                 if (gameObject.name == "TextManager OW")
-                    self.localPosition = new Vector3(-267, self.localPosition.y, self.localPosition.z);
+                    MoveTo(-267, self.localPosition.y);
             }
         }
         _textMaxWidth = mugshotSet ? 417 : 534;
@@ -382,7 +382,7 @@ public class TextManager : MonoBehaviour {
             int lines = textQueue[line].Text.Split('\n').Length;
             lines = lines >= 4 ? 4 : 3;
             Vector3 pos = gameObject.GetComponent<RectTransform>().localPosition;
-            gameObject.GetComponent<RectTransform>().localPosition = new Vector3(pos.x, 22 + ((lines - 1) * Charset.LineSpacing / 2), pos.z);
+            MoveTo(pos.x, 22 + ((lines - 1) * Charset.LineSpacing / 2));
         }
     }
 
@@ -1150,7 +1150,7 @@ public class TextManager : MonoBehaviour {
             // gameObject.transform.SetParent(null);
             // GameObject.DontDestroyOnLoad(this.gameObject);
             RectTransform rt = gameObject.GetComponent<RectTransform>();
-            rt.position = new Vector3(rt.position.x, rt.position.y, -1000);
+            MoveToAbs(rt.position.x, rt.position.y);
             gob.StartDeath();
             return;
         }
@@ -1165,6 +1165,18 @@ public class TextManager : MonoBehaviour {
         PlayerCharacter.instance.HP = HP;
         if (!UnitaleUtil.IsOverworld)
             UIStats.instance.setHP(HP);
+    }
+
+    public virtual void Move(float newX, float newY) {
+        MoveToAbs(transform.position.x + newX, transform.position.y + newY);
+    }
+
+    public virtual void MoveTo(float newX, float newY) {
+        MoveToAbs(transform.parent.position.x + newX, transform.parent.position.y + newY);
+    }
+
+    public virtual void MoveToAbs(float newX, float newY) {
+        transform.position = new Vector3(Mathf.Round(newX), Mathf.Round(newY), transform.position.z);
     }
 
     private float CreateNumber(string str) {
