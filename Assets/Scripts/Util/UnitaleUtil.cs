@@ -666,6 +666,8 @@ public static class UnitaleUtil {
         if (pSelf != null) return pSelf.sprite.img.transform;
         LuaCYFObject oSelf = o as LuaCYFObject;
         if (oSelf != null) return oSelf.transform;
+        Transform tsSelf = o as Transform;
+        if (tsSelf != null) return tsSelf;
         return null;
     }
 

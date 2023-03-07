@@ -82,6 +82,8 @@ public class TextManager : MonoBehaviour {
     private const float singleFrameTiming = 1.0f / 20;
     protected Vector3 internalRotation = Vector3.zero;
 
+    public Vector2 localPosition = Vector2.zero;
+
     // The rotation of the text
     public float rotation {
         get { return transform.eulerAngles.z; }
@@ -1168,7 +1170,7 @@ public class TextManager : MonoBehaviour {
     }
 
     public virtual void Move(float newX, float newY) {
-        MoveToAbs(transform.position.x + newX, transform.position.y + newY);
+        MoveToAbs(localPosition.x + newX, localPosition.y + newY);
     }
 
     public virtual void MoveTo(float newX, float newY) {
@@ -1177,6 +1179,7 @@ public class TextManager : MonoBehaviour {
 
     public virtual void MoveToAbs(float newX, float newY) {
         transform.position = new Vector3(Mathf.Round(newX), Mathf.Round(newY), transform.position.z);
+        localPosition = new Vector2(newX - transform.parent.position.x, newY - transform.parent.position.y);
     }
 
     private float CreateNumber(string str) {

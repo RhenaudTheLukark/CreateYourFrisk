@@ -30,6 +30,20 @@ public class LuaTextManager : TextManager {
     [MoonSharpHidden] public bool isMainTextObject = false;
     [MoonSharpHidden] public bool noSelfAdvance = false;
 
+    // Whether we correct the text's display (position, scale) to not look jagged
+    private static bool globalAdjustTextPos {
+        get { return GlobalControls.isInFight ? EnemyEncounter.script.GetVar("adjusttextdisplay").Boolean : false; }
+    }
+    private bool adjustTextDisplaySet = false;
+    private bool _adjustTextDisplay = false;
+    public bool adjustTextDisplay {
+        get { return adjustTextDisplaySet ? _adjustTextDisplay : globalAdjustTextPos; }
+        set {
+            adjustTextDisplaySet = true;
+            _adjustTextDisplay = value;
+        }
+    }
+
     public bool isactive {
         get { return !removed && !hidden; }
     }
@@ -240,7 +254,8 @@ public class LuaTextManager : TextManager {
         yScale = ys;
 
         container.transform.localScale = new Vector3(xs, ys, 1.0f);
-        PostScaleHandling();
+        if (adjustTextDisplay)
+            PostScaleHandling();
     }
 
     public string layer {
@@ -253,7 +268,7 @@ public class LuaTextManager : TextManager {
         set {
             CheckExists();
             try {
-                container.transform.SetParent(GameObject.Find(value + "Layer").transform);
+                SetParent(GameObject.Find(value + "Layer").transform);
                 foreach (Transform child in container.transform) {
                     MaskImage childmask = child.gameObject.GetComponent<MaskImage>();
                     if (childmask != null)
@@ -698,7 +713,7 @@ public class LuaTextManager : TextManager {
     }
 
     public override void Move(float newX, float newY) {
-        MoveToAbs(container.transform.position.x + newX, container.transform.position.y + newY);
+        MoveTo(localPosition.x + newX, localPosition.y + newY);
     }
 
     public override void MoveTo(float newX, float newY) {
@@ -707,7 +722,9 @@ public class LuaTextManager : TextManager {
 
     public override void MoveToAbs(float newX, float newY) {
         CheckExists();
-        container.transform.position = new Vector3(Mathf.Round(newX), Mathf.Round(newY), container.transform.position.z);
+        container.transform.position = adjustTextDisplay ? new Vector3(Mathf.Round(newX), Mathf.Round(newY), transform.position.z)
+                                                         : new Vector3(newX, newY, transform.position.z);
+        localPosition = new Vector2(newX - container.transform.parent.position.x, newY - container.transform.parent.position.y);
     }
 
     public void SetAnchor(float newX, float newY) {
@@ -768,6 +785,11 @@ public class LuaTextManager : TextManager {
 
     public void SetParent(object parent) {
         CheckExists();
+
+        Transform t = UnitaleUtil.GetTransform(parent);
+        if (t == null)
+            return;
+        localPosition += (Vector2)(GetContainer().transform.parent.position - t.position);
         UnitaleUtil.SetObjectParent(this, parent);
 
         LuaSpriteController sParent = parent as LuaSpriteController;
