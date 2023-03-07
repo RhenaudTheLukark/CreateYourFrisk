@@ -543,7 +543,6 @@ public class LuaTextManager : TextManager {
 
     [MoonSharpHidden] public void UpdateBubble() {
         containerBubble.GetComponent<RectTransform>().localPosition = new Vector2(-12, 24);
-        MoveTo(0, 0);
         ResizeBubble();
     }
 
