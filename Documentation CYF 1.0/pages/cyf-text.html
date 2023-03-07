@@ -201,6 +201,11 @@ it's w3c valid, at least
                 <br><br>It's clamped between 0 and 360, so if you set it to 365, it will become 5.
             </p>
             <p>
+                <br><span class="new function"><span class="number"></span> Text.adjustTextDisplay</span>
+                False by default. If set to true, CYF will try to adjust the text's position and scale to prevent jagged lines to appear if the text's scale or position is slightly off.
+                <br><br>Only taken in account if set, otherwise the global value set through the <span class="term">adjusttextdisplay</span> Encounter variable is used.
+            </p>
+            <p>
                 <br><span class="function"><span class="number"></span> Text.currentLine</span>
                 Returns the number of the line (page) that the text is currently on, starting from 0.
                 <br><br>So, if your text object's text table is <span class="term">{"Text 1", "Text 2"}</span>, then <span class="term">"Text 1"</span> is line 0, and <span class="term">"Text 2"</span> is line 1.
@@ -391,6 +396,10 @@ end
             <p>
                 <br><span class="function">Text.HideBubble()</span>
                 A function that hides the bubble.
+            </p>
+            <p>
+                <br><span class="new function">Text.Move(<span class="number"></span> x, <span class="number"></span> y)</span>
+                Moves the text object by x pixels horizontally and y pixels vertically from its current position.
             </p>
             <p>
                 <br><span class="function">Text.MoveTo(<span class="number"></span> x, <span class="number"></span> y)</span>
