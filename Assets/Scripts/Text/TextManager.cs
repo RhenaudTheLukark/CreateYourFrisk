@@ -628,9 +628,9 @@ public class TextManager : MonoBehaviour {
 
         string currentText = textQueue[currentLine].Text;
         for (int i = 0; i < currentText.Length; i++) {
+            int currentChar = i;
             switch (currentText[i]) {
                 case '[':
-                    int currentChar = i;
                     string command = UnitaleUtil.ParseCommandInline(currentText, ref i);
                     if (lateStartWaiting || command == null || !movementCommands.Contains(command))
                         i = currentChar;
@@ -646,15 +646,13 @@ public class TextManager : MonoBehaviour {
                 case '\t':
                     currentX = !GlobalControls.isInFight ? (356 + Misc.cameraX) : 356; // HACK: bad tab usage
                     break;
-                default:
-                    if (letters.Exists(l => l.index == i)) {
-                        LetterData letter = letters.Find(l => l.index == i);
-                        MoveLetter(currentText, letters.IndexOf(letter));
-                        RectTransform rt = letter.image.GetComponent<RectTransform>();
-                        currentX += (rt.rect.width * rt.localScale.x + normalizedHSpacing) * Mathf.Cos(rotation * Mathf.Deg2Rad) * (ltm ? ltm.xscale : 1); // TODO remove hardcoded letter offset
-                        currentY += (rt.rect.width * rt.localScale.x + normalizedHSpacing) * Mathf.Sin(rotation * Mathf.Deg2Rad) * (ltm ? ltm.xscale : 1);
-                    }
-                    break;
+            }
+            if (currentChar == i && letters.Exists(l => l.index == i)) {
+                LetterData letter = letters.Find(l => l.index == i);
+                MoveLetter(currentText, letters.IndexOf(letter));
+                RectTransform rt = letter.image.GetComponent<RectTransform>();
+                currentX += (rt.rect.width * rt.localScale.x + normalizedHSpacing) * Mathf.Cos(rotation * Mathf.Deg2Rad) * (ltm ? ltm.xscale : 1); // TODO remove hardcoded letter offset
+                currentY += (rt.rect.width * rt.localScale.x + normalizedHSpacing) * Mathf.Sin(rotation * Mathf.Deg2Rad) * (ltm ? ltm.xscale : 1);
             }
         }
 
