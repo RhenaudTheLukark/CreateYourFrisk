@@ -32,15 +32,25 @@ public class LuaTextManager : TextManager {
 
     // Whether we correct the text's display (position, scale) to not look jagged
     private static bool globalAdjustTextPos {
-        get { return GlobalControls.isInFight ? EnemyEncounter.script.GetVar("adjusttextdisplay").Boolean : false; }
+        get {
+            if (GlobalControls.isInFight)
+                return EnemyEncounter.script.GetVar("adjusttextdisplay").Boolean;
+            return false;
+        }
     }
     private bool adjustTextDisplaySet = false;
     private bool _adjustTextDisplay = false;
     public bool adjustTextDisplay {
-        get { return adjustTextDisplaySet ? _adjustTextDisplay : globalAdjustTextPos; }
+        get {
+            if (adjustTextDisplaySet)
+                return _adjustTextDisplay;
+            return globalAdjustTextPos;
+        }
         set {
             adjustTextDisplaySet = true;
             _adjustTextDisplay = value;
+            Move(0, 0);
+            Scale(xscale, yscale);
         }
     }
 
@@ -170,34 +180,34 @@ public class LuaTextManager : TextManager {
         }
     }
 
-    public int x {
+    public float x {
         get {
             CheckExists();
-            return Mathf.RoundToInt(container.transform.localPosition.x);
+            return container.transform.localPosition.x;
         }
         set { MoveTo(value, y); }
     }
 
-    public int y {
+    public float y {
         get {
             CheckExists();
-            return Mathf.RoundToInt(container.transform.localPosition.y);
+            return container.transform.localPosition.y;
         }
         set { MoveTo(x, value); }
     }
 
-    public int absx {
+    public float absx {
         get {
             CheckExists();
-            return Mathf.RoundToInt(container.transform.position.x);
+            return container.transform.position.x;
         }
         set { MoveToAbs(value, absy); }
     }
 
-    public int absy {
+    public float absy {
         get {
             CheckExists();
-            return Mathf.RoundToInt(container.transform.position.y);
+            return container.transform.position.y;
         }
         set { MoveToAbs(absx, value); }
     }
