@@ -707,7 +707,7 @@ public static class UnitaleUtil {
         Transform t = GetTransform(p);
         if (t == null) {
             DynValue d = p as DynValue;
-            throw new CYFException("SetParent(): Can't set an object of type " + p.GetType().ToString() + " as a parent!");
+            throw new CYFException("SetParent(): Can't set an object of type " + d.GetType().ToString() + " as a parent!");
         }
         GetTransform(self).SetParent(GetTransform(p));
     }
