@@ -552,16 +552,14 @@ public class LuaTextManager : TextManager {
         defaultVoice = voiceName == "none" ? null : voiceName;
     }
 
-    public void SetFont(string fontName, bool firstTime = false) {
+    public void SetFont(string fontName) {
         if (fontName == null)
             throw new CYFException("Text.SetFont: The first argument (the font name) is nil.\n\nSee the documentation for proper usage.");
         CheckExists();
         UnderFont uf = SpriteFontRegistry.Get(fontName);
         if (uf == null)
             throw new CYFException("The font \"" + fontName + "\" doesn't exist.\nYou should check if you made a typo, or if the font really is in your mod.");
-        SetFont(uf, firstTime);
-        if (!firstTime)
-            default_charset = uf;
+        SetFont(uf);
         if (bubble)
             UpdateBubble();
     }

@@ -28,7 +28,7 @@ public class UIStats : MonoBehaviour {
         hpLabel = LuaSpriteController.GetOrCreate(GameObject.Find("HPLabel"));
 
         hpTextMan = GameObject.Find("HPText").GetComponent<LuaTextManager>();
-        hpTextMan.SetFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_SMALLTEXT_NAME), false);
+        hpTextMan.SetFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_SMALLTEXT_NAME));
         hpTextMan.progressmode = "NONE";
         hpTextMan.HideBubble();
         hpTextMan.SetCaller(EnemyEncounter.script);

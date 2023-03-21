@@ -132,15 +132,16 @@ public class TextManager : MonoBehaviour {
 
     [MoonSharpHidden] public void SetCaller(ScriptWrapper s) { caller = s; }
 
-    public void SetFont(UnderFont font, bool firstTime = false) {
+    public void SetFont(UnderFont font, bool temporary = false) {
         Charset = font;
-        if (default_charset == null)
+        if (!temporary) {
             default_charset = font;
-        if (firstTime) {
-            if (letterSound == defaultVoice && font.Sound != null)
-                letterSound = font.SoundName;
+            defaultVoice = font.SoundName;
         } else if (font.Sound != null)
             letterSound = font.SoundName;
+
+        if (default_charset == null)
+            default_charset = font;
 
         vSpacing = 0;
         hSpacing = font.CharSpacing;
@@ -160,7 +161,7 @@ public class TextManager : MonoBehaviour {
             if (GetType() == typeof(LuaTextManager) && !((LuaTextManager)this).isMainTextObject)
                 ((LuaTextManager) this).SetFont(SpriteFontRegistry.UI_MONSTERTEXT_NAME);
             else
-                SetFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_DEFAULT_NAME), true);
+                SetFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_DEFAULT_NAME));
         Charset = default_charset;
         System.Diagnostics.Debug.Assert(default_charset != null, "default_charset != null");
         letterSound = defaultVoice ?? default_charset.SoundName;
@@ -175,7 +176,6 @@ public class TextManager : MonoBehaviour {
 
     protected virtual void Awake() {
         self = gameObject.GetComponent<RectTransform>();
-        // SetFont(SpriteFontRegistry.F_UI_DIALOGFONT);
         timePerLetter = singleFrameTiming;
 
         GameObject textFrameOuter = GameObject.Find("textframe_border_outer");
@@ -856,7 +856,7 @@ public class TextManager : MonoBehaviour {
                     UnitaleUtil.DisplayLuaError("", "[font:x] usage - The font \"" + cmds[1] + "\" doesn't exist.\nYou should check if you made a typo, or if the font really is in your mod.", true);
                     break;
                 }
-                SetFont(uf);
+                SetFont(uf, true);
                 if (GetType() == typeof(LuaTextManager) && ((LuaTextManager)this).bubble)
                     ((LuaTextManager) this).UpdateBubble();
                 break;
