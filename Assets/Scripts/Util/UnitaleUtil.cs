@@ -201,7 +201,7 @@ public static class UnitaleUtil {
             }
         }
         totalMaxWidth = Mathf.Max(totalMaxWidth, totalWidthSpaceTest - hSpacing);
-        return totalMaxWidth + (getLastSpace ? hSpacing : 0);
+        return Mathf.Max(totalMaxWidth + (getLastSpace ? hSpacing : 0), 0);
     }
 
     public static float CalcTextHeight(TextManager txtmgr, int fromLetter = -1, int toLetter = -1) {
@@ -218,7 +218,7 @@ public static class UnitaleUtil {
             minY = Mathf.Min(minY, l.position.y);
             maxY = Mathf.Max(maxY, l.position.y + txtmgr.Charset.Letters[txtmgr.textQueue[txtmgr.currentLine].Text[l.index]].textureRect.size.y);
         }
-        return maxY - minY;
+        return Mathf.Max(maxY - minY, 0);
     }
 
     public static DynValue RebuildTableFromString(string text) {
