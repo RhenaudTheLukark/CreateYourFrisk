@@ -24,7 +24,7 @@ public static class SpriteRegistry {
     }
 
     public static Sprite Get(string origKey) {
-        origKey += origKey.EndsWith(".png") ? "" : ".png";
+        origKey += origKey.ToLower().EndsWith(".png") ? "" : ".png";
         string key = ProcessKey(origKey);
         return dict.ContainsKey(key) ? dict[key] : TryLoad(origKey, key);
     }
@@ -39,7 +39,7 @@ public static class SpriteRegistry {
     }
 
     private static Sprite TryFetchFromDefault(string origKey, string key) {
-        FileInfo tryF = new FileInfo(Path.Combine(FileLoader.PathToDefaultFile("Sprites"), origKey) + (origKey.EndsWith(".png") ? "" : ".png"));
+        FileInfo tryF = new FileInfo(Path.Combine(FileLoader.PathToDefaultFile("Sprites"), origKey) + (origKey.ToLower().EndsWith(".png") ? "" : ".png"));
         if (!tryF.Exists) return null;
 
         dictDefault[key] = tryF;
@@ -48,7 +48,7 @@ public static class SpriteRegistry {
     }
 
     private static Sprite TryFetchFromMod(string origKey, string key) {
-        FileInfo tryF = new FileInfo(Path.Combine(FileLoader.PathToModFile("Sprites"), origKey.TrimStart('/')) + (origKey.EndsWith(".png") ? "" : ".png"));
+        FileInfo tryF = new FileInfo(Path.Combine(FileLoader.PathToModFile("Sprites"), origKey.TrimStart('/')) + (origKey.ToLower().EndsWith(".png") ? "" : ".png"));
         if (!tryF.Exists) return null;
 
         dictMod[key] = tryF;
@@ -86,7 +86,7 @@ public static class SpriteRegistry {
     }
 
     private static string ProcessKey(string key) {
-        key = key.TrimStart('/', '\\') + (key.EndsWith(".png") ? "" : ".png");
+        key = key.TrimStart('/', '\\') + (key.ToLower().EndsWith(".png") ? "" : ".png");
         FileLoader.SanitizePath(ref key, "Sprites/");
         return key.ToLower();
     }
