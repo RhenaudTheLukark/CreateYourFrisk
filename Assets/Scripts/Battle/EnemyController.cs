@@ -387,9 +387,6 @@ public class EnemyController : MonoBehaviour {
         Image speechBubImg = bubbleObject.GetComponent<Image>();
         speechBubImg.enabled = !usingAutoBubble;
 
-        bool reversedX = sprite.xscale < 0,
-             reversedY = sprite.yscale < 0;
-
         // Bubble management: can be a normal bubble OR an auto bubble from text objects
         if (!usingAutoBubble) {
             try { SpriteUtil.SwapSpriteFromFile(speechBubImg, DialogBubble, enemyID); }
@@ -419,9 +416,7 @@ public class EnemyController : MonoBehaviour {
         speechBubImg.transform.SetAsLastSibling();
 
         // TODO improve position setting/remove hardcoding of position setting
-        bubbleObject.GetComponent<RectTransform>().localScale = new Vector2(reversedX ? -1 : 1, reversedY ? -1 : 1);
-        bubbleObject.GetComponent<RectTransform>().anchoredPosition = new Vector2((DialogBubblePosition.x + offsets[1].x) * (reversedX ? -1 : 1),
-                                                                                  (DialogBubblePosition.y + offsets[1].y) * (reversedY ? -1 : 1));
+        bubbleObject.GetComponent<RectTransform>().anchoredPosition = DialogBubblePosition + offsets[1];
         sbTextMan.Move(0, 0); // Used to even out the text object's position so it's only using integers
 
         if (Voice != "")

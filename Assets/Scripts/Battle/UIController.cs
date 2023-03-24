@@ -537,7 +537,6 @@ public class UIController : MonoBehaviour {
                     encounter.EnabledEnemies[i].UpdateBubble(i);
                     sbTextMan.SetTextQueue(monsterMessages);
                     encounter.EnabledEnemies[i].UpdateBubble(i);
-
                 }
                 break;
 

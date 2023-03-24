@@ -734,7 +734,10 @@ public class LuaTextManager : TextManager {
         CheckExists();
         container.transform.position = adjustTextDisplay ? new Vector3(Mathf.Round(newX), Mathf.Round(newY), transform.position.z)
                                                          : new Vector3(newX, newY, transform.position.z);
-        localPosition = new Vector2(newX - container.transform.parent.position.x, newY - container.transform.parent.position.y);
+        float xBasis = newX - container.transform.parent.position.x;
+        float yBasis = newY - container.transform.parent.position.y;
+        float parentRot = container.transform.parent.eulerAngles.z * Mathf.Deg2Rad;
+        localPosition = new Vector2(Mathf.Cos(parentRot) * xBasis - Mathf.Sin(parentRot) * yBasis, Mathf.Sin(parentRot) * xBasis + Mathf.Cos(parentRot) * yBasis);
     }
 
     public void SetAnchor(float newX, float newY) {
