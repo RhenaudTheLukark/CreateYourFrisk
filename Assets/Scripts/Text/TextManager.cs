@@ -180,7 +180,9 @@ public class TextManager : MonoBehaviour {
 
         GameObject textFrameOuter = GameObject.Find("textframe_border_outer");
         if (!UnitaleUtil.IsOverworld || !textFrameOuter || textFrameOuter.GetComponentInChildren<TextManager>() != this) return;
-        mugshot = LuaSpriteController.GetOrCreate(GameObject.Find("Mugshot"));
+        GameObject mug = GameObject.Find("Mugshot");
+        if (mug != null)
+            mugshot = LuaSpriteController.GetOrCreate(mug);
     }
 
     public void SetPause(bool pause) { paused = pause; }
@@ -254,68 +256,65 @@ public class TextManager : MonoBehaviour {
     }
 
     private void SetMugshot(DynValue text) {
+        if (mugshot == null || text == null)
+            return;
+        if (text != null && text.Type != DataType.String && text.Type != DataType.Table && text.Type != DataType.Nil && text.Type != DataType.Void)
+            throw new CYFException("Mugshots can either be nil, strings or tables of strings ending with a number, yet it's currently a " + text.Type + ".");
+        if (text.Type == DataType.Table) {
+            Table t = text.Table;
+            for (int i = 1; i <= t.Length; i++) {
+                DynValue d = t.Get(i);
+                if (d.Type != DataType.String && i < t.Length || d.Type != DataType.Number && i == t.Length)
+                    throw new CYFException("Mugshots can either be nil, strings or tables of strings ending with a number, yet the current table has a " + d.Type + ".");
+            }
+        }
+
+        bool oldMugshotSet = mugshotList != null;
+
         List<string> mugshots = new List<string>();
-        float time = -1;
-        finalMugshot = null;
-        if (text != null) {
-            if (text.String != "null")
-                if (text.Type == DataType.Table) {
-                    int count = 0;
-                    foreach (DynValue dv in text.Table.Values) {
-                        count++;
-                        if (dv.Type == DataType.Number && count >= text.Table.Length - 1 && time == -1)
-                            time = (float)dv.Number;
-                        else if (time != -1)
-                            finalMugshot = "Mugshots/" + dv.String;
-                        else
-                            mugshots.Add("Mugshots/" + dv.String);
-                    }
-                } else
-                    mugshots.Add("Mugshots/" + text.String);
-            else
-                mugshots.Add("Mugshots/");
+        if (text != null && text.String != "null") {
+            if (text.Type == DataType.Table) {
+                foreach (DynValue dv in text.Table.Values) {
+                    if (dv.Type == DataType.String)
+                        mugshots.Add("Mugshots/" + dv.String);
+                    else if (dv.Type == DataType.Number)
+                        mugshotTimer = (float)(dv.Number > 0 ? dv.Number : 0.2f);
+                }
+            } else
+                mugshots.Add("Mugshots/" + text.String);
         } else
             mugshots.Add("Mugshots/");
 
-        bool mugshotSet = false;
-        if (mugshot != null && mugshot.isactive) {
-            mugshot.StopAnimation();
-            if ((mugshots.Count > 1 || (mugshots[0] != "Mugshots/" && mugshots[0] != "Mugshots/null")) && text != null) {
-                try {
-                    if (mugshots.Count > 1) {
-                        time = time > 0f ? time : 0.2f;
-                        mugshot.SetAnimation((string[])UnitaleUtil.ListToArray(mugshots), time);
-                        if (finalMugshot == null)
-                            finalMugshot = mugshots[mugshots.Count - 1];
-                    } else {
-                        mugshot.StopAnimation();
-                        mugshot.Set(mugshots[0]);
-                    }
-                } catch (CYFException e) {
-                    UnitaleUtil.DisplayLuaError("mugshot system", e.Message);
-                }
-                mugshotSet = true;
-                mugshotTimer = time;
-                mugshotList = (string[])UnitaleUtil.ListToArray(mugshots);
-                mugshot.color = new float[] { 1, 1, 1, 1 };
-                MoveTo(-150, self.localPosition.y);
-            } else {
-                mugshot.Set("empty");
-                mugshotList = null;
-                mugshot.color = new float[] { 1, 1, 1, 0 };
-                if (gameObject.name == "TextManager OW")
-                    MoveTo(-267, self.localPosition.y);
+        mugshot.StopAnimation();
+        bool mugshotSet = mugshots.Count > 0 && mugshots[0] != "Mugshots/" && mugshots[0] != "Mugshots/null";
+        if (mugshotSet) {
+            mugshotList = mugshots.ToArray();
+            mugshot.alpha = 1;
+            if (mugshotList.Length > 1)
+                mugshot.SetAnimation(mugshotList, mugshotTimer);
+            else
+                mugshot.Set(mugshotList[0]);
+            if (!oldMugshotSet) {
+                Move(117, 0);
+                _textMaxWidth -= 117;
+            }
+        } else {
+            mugshotList = null;
+            mugshot.alpha = 0;
+            mugshot.Set("empty");
+            if (oldMugshotSet) {
+                Move(-117, 0);
+                _textMaxWidth += 117;
             }
         }
-        _textMaxWidth = mugshotSet ? 417 : 534;
+
     }
 
     protected void ShowLine(int line) {
         if (textQueue == null) return;
         if (line >= textQueue.Length) return;
         if (textQueue[line] == null) return;
-        if ((UnitaleUtil.IsOverworld || GlobalControls.isInFight) && ((UIController.instance && this == UIController.instance.mainTextManager) || gameObject.name == "TextManager OW"))
-            SetMugshot(textQueue[line].Mugshot);
+        SetMugshot(textQueue[line].Mugshot);
 
         if (!offsetSet)
             SetOffset(0, 0);
@@ -604,8 +603,6 @@ public class TextManager : MonoBehaviour {
         if (skipImmediate)
             InUpdateControlCommand(DynValue.NewString(skipCommand));
 
-        if (mugshot != null && mugshot.alpha == 0)
-            mugshot.color = new float[] { 1, 1, 1 };
         if (!instantActive)
             Update();
     }
@@ -694,10 +691,10 @@ public class TextManager : MonoBehaviour {
                 wasStated = false;
             }
         } else if (mugshot != null && mugshotList != null)
-            if (UnitaleUtil.IsOverworld&& mugshot.alpha != 0 && mugshotList.Length > 1) {
+            if (UnitaleUtil.IsOverworld && mugshot.alpha != 0 && mugshotList.Length > 1) {
                 if (!mugshot.animcomplete && (letterTimer < 0 || LineComplete())) {
                     mugshot.StopAnimation();
-                    mugshot.Set(finalMugshot);
+                    mugshot.Set(mugshotList.Last());
                 } else if (mugshot.animcomplete && !(letterTimer < 0 || LineComplete()))
                     mugshot.SetAnimation(mugshotList, mugshotTimer);
             }
@@ -1021,8 +1018,9 @@ public class TextManager : MonoBehaviour {
                 break;
 
             case "mugshot":
-                DynValue temp;
-                temp = args[0][0] == '{' ? UnitaleUtil.RebuildTableFromString(args[0]) : DynValue.NewString(args[0]);
+                DynValue temp = DynValue.NewNil();
+                if (args.Length > 0)
+                    temp = args[0][0] == '{' ? UnitaleUtil.RebuildTableFromString(args[0]) : DynValue.NewString(args[0]);
 
                 SetMugshot(temp);
                 break;
@@ -1168,7 +1166,7 @@ public class TextManager : MonoBehaviour {
     }
 
     public virtual void Move(float newX, float newY) {
-        MoveToAbs(localPosition.x + newX, localPosition.y + newY);
+        MoveToAbs(transform.position.x + newX, transform.position.y + newY);
     }
 
     public virtual void MoveTo(float newX, float newY) {
@@ -1177,7 +1175,6 @@ public class TextManager : MonoBehaviour {
 
     public virtual void MoveToAbs(float newX, float newY) {
         transform.position = new Vector3(Mathf.Round(newX), Mathf.Round(newY), transform.position.z);
-        localPosition = new Vector2(newX - transform.parent.position.x, newY - transform.parent.position.y);
     }
 
     private float CreateNumber(string str) {

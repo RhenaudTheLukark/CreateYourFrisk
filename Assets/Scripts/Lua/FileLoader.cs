@@ -183,7 +183,7 @@ public static class FileLoader {
         if (errorOnFailure && needsToExist) {
             if (!new FileInfo(pathToTest).Exists && !new FileInfo(PathToModFile(pathToTest)).Exists && !new FileInfo(PathToDefaultFile(pathToTest)).Exists) {
                 string toDisplay = fileName.Contains(DataRoot) ? fileName : new FileInfo(PathToModFile(pathToTest)).FullName;
-                UnitaleUtil.DisplayLuaError("Loading a resource", "Attempted to load " + toDisplay + " from either a mod or default directory, but it was missing in both.");
+                throw new CYFException("Attempted to load " + toDisplay + " from either a mod or default directory, but it was missing in both.");
             }
         }
 

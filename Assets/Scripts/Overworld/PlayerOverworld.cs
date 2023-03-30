@@ -588,12 +588,8 @@ public class PlayerOverworld : MonoBehaviour {
 
         TextMessage[] textmsg = new TextMessage[textTable.Length];
 
-        if (mugshots != null)
-            for (int i = 0; i < textTable.Length; i++)
-                textmsg[i] = new TextMessage(textTable[i], rearranged, false, mugshots);
-        else
-            for (int i = 0; i < textTable.Length; i++)
-                textmsg[i] = new TextMessage(textTable[i], rearranged, false);
+        for (int i = 0; i < textTable.Length; i++)
+            textmsg[i] = new TextMessage(textTable[i], rearranged, false, mugshots);
         PlayerNoMove = true; //Old SetDialog
         EventManager.instance.passPressOnce = true;
 
