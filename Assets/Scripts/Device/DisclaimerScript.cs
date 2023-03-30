@@ -24,8 +24,10 @@ public class DisclaimerScript : MonoBehaviour {
             Version.GetComponent<Transform>().localPosition = new Vector3(0f, 160f, 0f);
             Version.GetComponent<Text>().color              = new Color(1f, 1f, 1f, 1f);
             Version.GetComponent<Text>().text               = "Not Unitale v0.2.1a";
-        } else
-            Version.GetComponent<Text>().text = "v" + GlobalControls.CYFversion;
+        } else if (GlobalControls.BetaVersion > 0)
+            Version.GetComponent<Text>().text = "v" + GlobalControls.CYFversion + "\nLTS " + (GlobalControls.LTSversion + 1) + "\n<color=\"#00ff00\">b" + GlobalControls.BetaVersion + "</color>";
+        else
+            Version.GetComponent<Text>().text = "v" + GlobalControls.CYFversion + "\nLTS " + GlobalControls.LTSversion;
     }
 
     /// <summary>
