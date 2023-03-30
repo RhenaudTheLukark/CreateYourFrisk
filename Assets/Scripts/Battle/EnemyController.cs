@@ -376,6 +376,7 @@ public class EnemyController : MonoBehaviour {
         sbTextMan.HideBubble();
         sbTextMan.SetText(DynValue.NewString(""));
         sbTextMan.GetComponent<RectTransform>().pivot = new Vector2(0, 1);
+        sbTextMan.adjustTextDisplay = true;
 
         bubbleObject = speechBub;
     }
@@ -415,7 +416,6 @@ public class EnemyController : MonoBehaviour {
         sbTextMan.textMaxWidth = (int)bubbleWidth;
         speechBubImg.transform.SetAsLastSibling();
 
-        // TODO improve position setting/remove hardcoding of position setting
         bubbleObject.GetComponent<RectTransform>().anchoredPosition = DialogBubblePosition + offsets[1];
         sbTextMan.Move(0, 0); // Used to even out the text object's position so it's only using integers
 
