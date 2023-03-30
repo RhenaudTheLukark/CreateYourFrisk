@@ -214,6 +214,16 @@ public class LuaTextManager : TextManager {
         set { MoveToAbs(absx, value); }
     }
 
+    public int width {
+        get {
+            CheckExists();
+            return _textMaxWidth;
+        }
+        set {
+            CheckExists();
+            _textMaxWidth = value < 16 ? 16 : value;
+        }
+    }
     public int textMaxWidth {
         get {
             CheckExists();
