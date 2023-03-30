@@ -62,12 +62,15 @@ public class TextManager : MonoBehaviour {
     private bool autoSkip;
     private bool skipFromPlayer;
     private bool firstChar;
+
     internal float hSpacing = 3;
     internal float vSpacing;
+
     private LuaSpriteController mugshot;
     private string[] mugshotList;
     private string finalMugshot;
     private float mugshotTimer;
+
     // private int letterSpeed = 1;
     private int letterOnceValue;
     private KeyCode waitingChar = KeyCode.None;
@@ -83,6 +86,9 @@ public class TextManager : MonoBehaviour {
     protected Vector3 internalRotation = Vector3.zero;
 
     public Vector2 localPosition = Vector2.zero;
+
+    public int columnShift = 265;
+    public int columnNumber = 2;
 
     // The rotation of the text
     public float rotation {
@@ -624,6 +630,7 @@ public class TextManager : MonoBehaviour {
         float normalizedVSpacing = GetType() == typeof(LuaTextManager) ? Mathf.Round((vSpacing + Charset.LineSpacing) * ltm.yscale)              : vSpacing + Charset.LineSpacing;
 
         string currentText = textQueue[currentLine].Text;
+        int tabCount = 0;
         for (int i = 0; i < currentText.Length; i++) {
             int currentChar = i;
             switch (currentText[i]) {
@@ -639,9 +646,10 @@ public class TextManager : MonoBehaviour {
                     currentY = startingLineY - normalizedVSpacing * Mathf.Cos(rotation * Mathf.Deg2Rad);
                     startingLineX = currentX;
                     startingLineY = currentY;
+                    tabCount = 0;
                     break;
                 case '\t':
-                    currentX = !GlobalControls.isInFight ? (356 + Misc.cameraX) : 356; // HACK: bad tab usage
+                    currentX = self.position.x + (++tabCount * columnShift);
                     break;
             }
             if (currentChar == i && letters.Exists(l => l.index == i)) {

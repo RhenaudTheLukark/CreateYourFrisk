@@ -213,7 +213,24 @@ it's w3c valid, at least
             <p>
                 <br><span class="new function"><span class="string"></span> Text.linePrefix</span>
                 This variable will be added at the beginning of each line of text the text object will display.
-                Useful for adding various text commands you want to apply to all lines of text displayed by a given text object.
+                <br><br>Useful for adding various text commands you want to apply to all lines of text displayed by a given text object.
+            </p>
+            <p>
+                <br><span class="new function"><span class="number"></span> Text.columnNumber</span>
+                Returns the number of columns used by some texts in CYF, such as the ITEM and ACT menu.
+                <br>If this is value is set, you should also consider changing <span class="term">Text.columnShift</span>.
+                <br><br>This value is only ever used by the engine, so setting it to a specific value doesn't prevent you from using the character <span class="term">\t</span> as much as you like.
+                <br>Refer to the entry on <span class="term">Text.columnShift</span> for more informations on the character <span class="term">\t</span>.
+            </p>
+            <p>
+                <br><span class="new function"><span class="number"></span> Text.columnShift</span>
+                Amount of horizontal pixels the letters moves by from its last column (or first character) whenever the character <span class="term">\t</span> is used.
+                <br><br>The <span class="term">\t</span> character is used in-engine for aligning columns of text. It affects the current line of the text and can be used several times on the same line to support more than two columns.
+                <br><br>For example, the following text will result with the following image:
+                <br><div class="code-container"><pre class="brush: lua">* Check \t * Act 1 \t * Act 2 \n
+* Act 3 \t * Act 4 \t * Act 5 \n
+\t \t * Act 6</pre></div>
+                <img src="../img/columns.png" height="140">
             </p>
             <p>
                 <br><span class="function"><span class="luatable"><span class="userdata">sprite</span></span> Text.GetLetters()</span>

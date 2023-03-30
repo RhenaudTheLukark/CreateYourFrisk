@@ -5,9 +5,9 @@
 /// Then, the text is sent to the TextMessage class.
 /// </summary>
 public class SelectMessage : TextMessage {
-    public SelectMessage(IList<string> options, bool singleList, IList<string> colorPrefixes = null) : base("", false, true) {
+    public SelectMessage(IList<string> options, bool singleList, int columns, IList<string> colorPrefixes = null) : base("", false, true) {
         string finalMessage = "";          // String that will contain all our text when finished
-        const string rowOneSpacing = "  "; // String that contains the needed shift for each normal line
+        const string itemSpacing = "  ";   // String that contains the needed shift for each item
         const string rowTwoSpacing = "\t"; // String that contains a tabulation character that puts the text to the right
         string prefix = "* ";              // Prefix used for new lines
 
@@ -60,11 +60,13 @@ public class SelectMessage : TextMessage {
             if (options[i] != null)
                 options[i] = options[i].TrimStart('*', ' ');
             // If this is a single list, we don't need text on the right side of the textbox
-            if (singleList)       finalMessage += commands + rowOneSpacing + intermedPrefix + prefix + options[i] + intermedSuffix + "\n";
-            // If the number of the option is an even number, it'll be at the left side of the textbox
-            else if (i % 2 == 0)  finalMessage += commands + rowOneSpacing + intermedPrefix + prefix + options[i] + intermedSuffix;
-            // Else, we'll put the text at the right and we'll add a chariot return
-            else                  finalMessage += commands + rowTwoSpacing + intermedPrefix + prefix + options[i]+ intermedSuffix + "\n";
+            if (singleList)                      finalMessage += commands + itemSpacing + intermedPrefix + prefix + options[i] + intermedSuffix + "\n";
+            // If the option is on the first column, it'll be at the left side of the textbox
+            else if (i % columns == 0)           finalMessage += commands + itemSpacing + intermedPrefix + prefix + options[i] + intermedSuffix;
+            // If the option is on the last column, add a chariot return
+            else if (i % columns == columns - 1) finalMessage += commands + rowTwoSpacing + itemSpacing + intermedPrefix + prefix + options[i] + intermedSuffix + "\n";
+            // Else, we'll put the textwith a tab
+            else                                 finalMessage += commands + rowTwoSpacing + itemSpacing + intermedPrefix + prefix + options[i] + intermedSuffix;
         }
 
         // This function sends finalMessage to the real text handler function

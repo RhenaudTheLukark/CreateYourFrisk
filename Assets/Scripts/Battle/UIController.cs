@@ -382,7 +382,7 @@ public class UIController : MonoBehaviour {
                 SetPlayerOnSelection(selectedAction);
                 if (!GlobalControls.retroMode)
                     mainTextManager.SetEffect(new TwitchEffect(mainTextManager));
-                mainTextManager.SetText(new SelectMessage(actions, false));
+                mainTextManager.SetText(new SelectMessage(actions, false, mainTextManager.columnNumber));
                 break;
 
             case "ITEMMENU":
@@ -391,11 +391,11 @@ public class UIController : MonoBehaviour {
                 if (Inventory.inventory.Count == 0)
                     throw new CYFException("Cannot enter state ITEMMENU with empty inventory.");
                 else {
-                    string[] items = GetInventoryPage(0);
+                    string[] items = GetInventoryPage(0, mainTextManager.columnNumber);
                     selectedItem = 0;
                     if (!GlobalControls.retroMode)
                         mainTextManager.SetEffect(new TwitchEffect(mainTextManager));
-                    mainTextManager.SetText(new SelectMessage(items, false));
+                    mainTextManager.SetText(new SelectMessage(items, false, mainTextManager.columnNumber));
                     SetPlayerOnSelection(0);
                     /*ActionDialogResult(new TextMessage[] {
                         new TextMessage("Can't open inventory.\nClogged with pasta residue.", true, false),
@@ -423,7 +423,7 @@ public class UIController : MonoBehaviour {
                 SetPlayerOnSelection(0);
                 if (!GlobalControls.retroMode)
                     mainTextManager.SetEffect(new TwitchEffect(mainTextManager));
-                mainTextManager.SetText(new SelectMessage(mercyOptions, true));
+                mainTextManager.SetText(new SelectMessage(mercyOptions, true, mainTextManager.columnNumber));
                 break;
 
             case "ENEMYSELECT":
@@ -431,27 +431,11 @@ public class UIController : MonoBehaviour {
                 if (encounter.EnabledEnemies.Length == 0)
                     throw new CYFException("Cannot enter state ENEMYSELECT with no active enemies.");
 
-                string[] names = new string[encounter.EnabledEnemies.Length];
-                string[] colorPrefixes = new string[names.Length];
-                for (int i = 0; i < encounter.EnabledEnemies.Length; i++) {
-                    names[i] = encounter.EnabledEnemies[i].Name;
-                    if (encounter.EnabledEnemies[i].CanSpare)
-                        colorPrefixes[i] = "[color:ffff00]";
-                }
-                if (encounter.EnabledEnemies.Length > 3) {
-                    selectedEnemy = 0;
-                    string[] newNames = new string[3];
-                    newNames[0] = names[0];
-                    newNames[1] = names[1];
-                    colorPrefixes[2] = "";
-                    newNames[2] = "\tPAGE 1";
-                    names = newNames;
-                }
-                for (int i = 0; i < names.Length; i++)
-                    names[i] += "[color:ffffff]";
                 if (!GlobalControls.retroMode)
                     mainTextManager.SetEffect(new TwitchEffect(mainTextManager));
-                mainTextManager.SetText(new SelectMessage(names, true, colorPrefixes));
+                string[] colors;
+                string[] textTemp = GetEnemyPage(selectedEnemy / 2, mainTextManager.columnNumber, out colors);
+                mainTextManager.SetText(new SelectMessage(textTemp, false, mainTextManager.columnNumber, colors));
                 if (forcedAction != Actions.FIGHT && forcedAction != Actions.ACT)
                     forcedAction = action;
                 if (forcedAction == Actions.FIGHT) {
@@ -477,13 +461,13 @@ public class UIController : MonoBehaviour {
                         if (encounter.EnabledEnemies.Length > 3)
                             if (i > 1)
                                 break;
-                        RenewLifeBars(0);
+                        RenewLifeBars(encounter.EnabledEnemies.Length > 3 ? selectedEnemy / 2 : 0);
                     }
                 }
 
                 if (selectedEnemy >= encounter.EnabledEnemies.Length)
                     selectedEnemy = 0;
-                SetPlayerOnSelection(selectedEnemy * 2); // single list so skip right row by multiplying x2
+                SetPlayerOnSelection((encounter.EnabledEnemies.Length > 3 ? selectedEnemy % 2 : selectedEnemy) * mainTextManager.columnNumber); // single list so skip right row by multiplying x2
                 break;
 
             case "DEFENDING":
@@ -697,40 +681,41 @@ public class UIController : MonoBehaviour {
             SwitchState("DEFENDING");
     }
 
-    private static string[] GetInventoryPage(int page) {
+    private static string[] GetInventoryPage(int page, int columns) {
         int invCount = 0;
-        for (int i = page * 4; i < page * 4 + 4; i++) {
+        int itemsPerPage = 2 * columns;
+        for (int i = page * itemsPerPage; i < (page + 1) * itemsPerPage; i++) {
             if (Inventory.inventory.Count <= i) break;
             invCount++;
         }
 
         if (invCount == 0) return null;
 
-        string[] items = new string[6];
+        string[] items = new string[3 * columns];
         for (int i = 0; i < invCount; i++)
-            items[i] = Inventory.inventory[i + page * 4].ShortName;
-        items[5] = "PAGE " + (page + 1);
+            items[i] = Inventory.inventory[i + page * itemsPerPage].ShortName;
+        items[3 * columns - 1] = "PAGE " + (++page);
         return items;
     }
 
-    private string[] GetEnemyPage(int page, out string[] colors) {
+    private string[] GetEnemyPage(int page, int columns, out string[] colors) {
         int enemyCount = 0;
         for (int i = page * 2; i < page * 2 + 2; i++) {
             if (encounter.EnabledEnemies.Length <= i)
                 break;
             enemyCount++;
         }
-        colors = new string[6];
-        string[] enemies = new string[6];
+        colors = new string[columns * 3];
+        string[] enemies = new string[columns * 3];
         enemies[0] = encounter.EnabledEnemies[page * 2].Name;
         if (enemyCount == 2)
-            enemies[2] = "* " + encounter.EnabledEnemies[page * 2 + 1].Name;
+            enemies[columns] = "* " + encounter.EnabledEnemies[page * 2 + 1].Name;
         for (int i = page * 2; i < encounter.EnabledEnemies.Length && enemyCount > 0; i++) {
             if (encounter.EnabledEnemies[i].CanSpare)
-                colors[(i - page * 2) * 2] = "[color:ffff00]";
+                colors[(i - page * 2) * columns] = "[color:ffff00]";
             enemyCount--;
         }
-        enemies[5] = "PAGE " + (page + 1);
+        enemies[columns * 3 - 1] = "PAGE " + (page + 1);
         return enemies;
     }
 
@@ -1002,6 +987,8 @@ public class UIController : MonoBehaviour {
         bool up = InputUtil.Pressed(GlobalControls.input.Up);
         bool down = InputUtil.Pressed(GlobalControls.input.Down);
 
+        int columns = mainTextManager.columnNumber;
+
         switch (state) {
             case "ACTIONSELECT":
                 if (!left &&!right)
@@ -1026,7 +1013,7 @@ public class UIController : MonoBehaviour {
             case "ENEMYSELECT":
                 bool odd = false;
                 if (encounter.EnabledEnemies.Length > 3) {
-                    if (!up &&!down &&!right &&!left) break;
+                    if (!up && !down && !right && !left) break;
                     if (right) {
                         if (selectedEnemy % 2 == 1)
                             odd = true;
@@ -1045,18 +1032,18 @@ public class UIController : MonoBehaviour {
                         selectedEnemy = selectedEnemy / 2 * 2 + (selectedEnemy % 2 + 1) % 2;
                     if (right || left) {
                         string[] colors;
-                        string[] textTemp = GetEnemyPage(selectedEnemy / 2, out colors);
-                        mainTextManager.SetText(new SelectMessage(textTemp, false, colors));
+                        string[] textTemp = GetEnemyPage(selectedEnemy / 2, columns, out colors);
+                        mainTextManager.SetText(new SelectMessage(textTemp, false, columns, colors));
                         if (forcedAction == Actions.FIGHT)
                             RenewLifeBars(selectedEnemy / 2);
                     }
-                    SetPlayerOnSelection(selectedEnemy % 2 * 2);
+                    SetPlayerOnSelection(selectedEnemy % 2 * columns);
                 } else {
                     if (!up && !down) break;
                     if (up)           selectedEnemy--;
                     else              selectedEnemy++;
                     selectedEnemy = (selectedEnemy + encounter.EnabledEnemies.Length) % encounter.EnabledEnemies.Length;
-                    SetPlayerOnSelection(selectedEnemy * 2);
+                    SetPlayerOnSelection(selectedEnemy * columns);
                 }
                 break;
 
@@ -1064,8 +1051,8 @@ public class UIController : MonoBehaviour {
                 if (!up && !down && !left && !right)
                     return;
 
-                int xCol = selectedAction % 2; // can just use remainder here, xCol will never be negative at this part
-                int yCol = selectedAction / 2;
+                int xCol = selectedAction % columns; // can just use remainder here, xCol will never be negative at this part
+                int yCol = selectedAction / columns;
 
                 if (left)       xCol--;
                 else if (right) xCol++;
@@ -1073,12 +1060,19 @@ public class UIController : MonoBehaviour {
                 else            yCol++;
 
                 int actionCount = encounter.EnabledEnemies[selectedEnemy].ActCommands.Length;
-                int leftColSize = (actionCount + 1) / 2;
-                int rightColSize = actionCount / 2;
+                List<int> colSizes = new List<int>();
+                for (int i = 0; i < columns; i++)
+                    colSizes.Add(Mathf.CeilToInt((actionCount - i) / (float)columns));
 
-                if (left || right) xCol = Math.Mod(xCol, 2);
-                if (up || down)    yCol = xCol == 0 ? Math.Mod(yCol, leftColSize) : Math.Mod(yCol, rightColSize);
-                int desiredAction = yCol * 2 + xCol;
+                if (up || down)
+                    yCol = Math.Mod(yCol, colSizes[xCol]);
+
+                if (xCol == -1)
+                    xCol = columns - 1;
+                else if (xCol == Mathf.Min(columns) || (yCol == colSizes[0] - 1 && xCol == actionCount % columns))
+                    xCol = 0;
+
+                int desiredAction = yCol * columns + xCol;
                 if (desiredAction >= 0 && desiredAction < actionCount) {
                     selectedAction = desiredAction;
                     SetPlayerOnSelection(selectedAction);
@@ -1086,55 +1080,46 @@ public class UIController : MonoBehaviour {
                 break;
 
             case "ITEMMENU":
-                if (!up &&!down &&!left &&!right)
+                if (!up && !down && !left && !right)
                     return;
 
-                int xColI = Math.Mod(selectedItem, 2);
-                int yColI = Math.Mod(selectedItem, 4) / 2;
+                int currentPage = selectedItem / (2 * columns);
+                int itemIndex = selectedItem % (2 * columns);
+                int pageItems = Mathf.Min(Inventory.inventory.Count - 2 * columns * currentPage, 2 * columns);
+                int xColI = Math.Mod(itemIndex, columns);
+                int yColI = Mathf.FloorToInt(itemIndex / columns);
 
                 if (left)       xColI--;
                 else if (right) xColI++;
                 else if (up)    yColI--;
                 else            yColI++;
 
-                // UnitaleUtil.writeInLog("xCol after controls " + xColI);
-                // UnitaleUtil.writeInLog("yCol after controls " + yColI);
+                List<int> colSizesI = new List<int>();
+                for (int i = 0; i < columns; i++)
+                    colSizesI.Add(Mathf.CeilToInt((pageItems - i) / (float)columns));
 
-                const int itemCount = 4; // HACK: should do item count based on page number...
-                const int leftColSizeI = (itemCount + 1) / 2;
-                const int rightColSizeI = itemCount / 2;
-                int desiredItem = (selectedItem / 4) * 4;
-                switch (xColI) {
-                    case -1:
-                        xColI       =  1;
-                        desiredItem -= 4;
-                        break;
-                    case 2:
-                        xColI       =  0;
-                        desiredItem += 4;
-                        break;
+                if (xColI == -1) {
+                    xColI = columns - 1;
+                    currentPage --;
+                } else if (xColI == Mathf.Min(columns) || (yColI == colSizesI[0] - 1 && xColI == pageItems % columns)) {
+                    xColI = 0;
+                    currentPage ++;
                 }
 
                 if (up || down)
-                    yColI = xColI == 0 ? Math.Mod(yColI, leftColSizeI) : Math.Mod(yColI, rightColSizeI);
-                desiredItem += (yColI * 2 + xColI);
+                    yColI = Math.Mod(yColI, colSizesI[xColI]);
+                int desiredItem = xColI + columns * yColI + currentPage * 2 * columns;
 
-                // UnitaleUtil.writeInLog("xCol after evaluation " + xColI);
-                // UnitaleUtil.writeInLog("yCol after evaluation " + yColI);
+                if (desiredItem < 0)                              desiredItem = Math.Mod(desiredItem, 2 * columns) + Inventory.inventory.Count;
+                else if (desiredItem > Inventory.inventory.Count) desiredItem = Math.Mod(desiredItem, 2 * columns);
 
-                // UnitaleUtil.writeInLog("Unchecked desired item " + desiredItem);
-
-                if (desiredItem < 0)                              desiredItem = Math.Mod(desiredItem, 4) + (Inventory.inventory.Count / 4) * 4;
-                else if (desiredItem > Inventory.inventory.Count) desiredItem = Math.Mod(desiredItem, 4);
-
-                if (desiredItem != selectedItem && desiredItem < Inventory.inventory.Count) { // 0 check not needed, done before
+                if (desiredItem != selectedItem && desiredItem < Inventory.inventory.Count) {
                     selectedItem = desiredItem;
-                    SetPlayerOnSelection(Math.Mod(selectedItem, 4));
-                    int page = selectedItem / 4;
-                    mainTextManager.SetText(new SelectMessage(GetInventoryPage(page), false));
+                    SetPlayerOnSelection(Math.Mod(selectedItem, 2 * columns));
+                    int page = selectedItem / (2 * columns);
+                    mainTextManager.SetText(new SelectMessage(GetInventoryPage(page, columns), false, columns));
                 }
 
-                // UnitaleUtil.writeInLog("Desired item index after evaluation " + desiredItem);
                 break;
 
             case "MERCYMENU":
@@ -1231,10 +1216,12 @@ public class UIController : MonoBehaviour {
     // 2    3
     // 4    5
     private void SetPlayerOnSelection(int selection) {
-        int xMv = selection % 2; // remainder safe again, selection is never negative
-        int yMv = selection / 2;
-        PlayerController.instance.SetPosition(upperLeft.x + ArenaManager.instance.currentX + xMv * 256,
-                                              upperLeft.y + ArenaManager.instance.currentY + ArenaManager.instance.currentHeight - yMv * mainTextManager.Charset.LineSpacing, true);
+        int xMv = selection % mainTextManager.columnNumber;
+        int yMv = selection / mainTextManager.columnNumber;
+
+        if (mainTextManager.letters.Count > 0)
+            PlayerController.instance.SetPosition(mainTextManager.absx + mainTextManager.letters[0].image.rectTransform.sizeDelta.x / 2 + xMv * mainTextManager.columnShift + 4,
+                                                  mainTextManager.absy + mainTextManager.letters[0].image.rectTransform.sizeDelta.y / 2 - yMv * mainTextManager.Charset.LineSpacing, true);
     }
 
     private void Start() {

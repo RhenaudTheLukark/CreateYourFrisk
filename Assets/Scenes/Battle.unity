@@ -167,6 +167,8 @@ MonoBehaviour:
   currentReferenceCharacter: 0
   nextMonsterDialogueOnce: 0
   wasStated: 0
+  localPosition: {x: 0, y: 0}
+  secondColumnPos: 303
   blockSkip: 0
   skipNowIfBlocked: 0
   lateStartWaiting: 0
@@ -2267,6 +2269,7 @@ MonoBehaviour:
   desiredHeight: 0
   desiredX: 0
   desiredY: 0
+  showWhenWaveEnds: 0
 --- !u!1001 &1197438037
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2316,7 +2319,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 22412996, guid: e24fd648e823f074cb0fcadd09d5b42a, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -10
+      value: -9.999999
       objectReference: {fileID: 0}
     - target: {fileID: 22412996, guid: e24fd648e823f074cb0fcadd09d5b42a, type: 3}
       propertyPath: m_LocalRotation.x
@@ -2352,11 +2355,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 22412996, guid: e24fd648e823f074cb0fcadd09d5b42a, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -277
+      value: -267
       objectReference: {fileID: 0}
     - target: {fileID: 22412996, guid: e24fd648e823f074cb0fcadd09d5b42a, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -32
+      value: -42
       objectReference: {fileID: 0}
     - target: {fileID: 22412996, guid: e24fd648e823f074cb0fcadd09d5b42a, type: 3}
       propertyPath: m_SizeDelta.x
@@ -2384,11 +2387,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 22412996, guid: e24fd648e823f074cb0fcadd09d5b42a, type: 3}
       propertyPath: m_Pivot.x
-      value: 0
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 22412996, guid: e24fd648e823f074cb0fcadd09d5b42a, type: 3}
       propertyPath: m_Pivot.y
-      value: 1
+      value: 0.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e24fd648e823f074cb0fcadd09d5b42a, type: 3}
@@ -2958,6 +2961,8 @@ MonoBehaviour:
   currentReferenceCharacter: 0
   nextMonsterDialogueOnce: 0
   wasStated: 0
+  localPosition: {x: 0, y: 0}
+  secondColumnPos: 303
   blockSkip: 0
   skipNowIfBlocked: 0
   lateStartWaiting: 0
@@ -2967,6 +2972,7 @@ MonoBehaviour:
   needFontReset: 0
   noAutoLineBreak: 0
   isMainTextObject: 0
+  noSelfAdvance: 0
   deleteWhenFinished: 1
   _color: {r: 1, g: 1, b: 1, a: 1}
   hasColorBeenSet: 0
@@ -3973,6 +3979,8 @@ MonoBehaviour:
   currentReferenceCharacter: 0
   nextMonsterDialogueOnce: 0
   wasStated: 0
+  localPosition: {x: 0, y: 0}
+  secondColumnPos: 303
   blockSkip: 0
   skipNowIfBlocked: 0
   lateStartWaiting: 0
@@ -5399,6 +5407,8 @@ MonoBehaviour:
   currentReferenceCharacter: 0
   nextMonsterDialogueOnce: 0
   wasStated: 0
+  localPosition: {x: 0, y: 0}
+  secondColumnPos: 303
   blockSkip: 0
   skipNowIfBlocked: 0
   lateStartWaiting: 0
@@ -5408,6 +5418,7 @@ MonoBehaviour:
   needFontReset: 0
   noAutoLineBreak: 0
   isMainTextObject: 0
+  noSelfAdvance: 0
   deleteWhenFinished: 1
   _color: {r: 1, g: 1, b: 1, a: 1}
   hasColorBeenSet: 0
