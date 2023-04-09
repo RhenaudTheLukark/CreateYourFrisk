@@ -78,10 +78,10 @@ public class LuaTextManager : TextManager {
     }
 
     protected override void Awake() {
+        container = transform.parent.gameObject;
         base.Awake();
         if (!UnitaleUtil.IsOverworld && autoSetLayer)
             transform.parent.SetParent(GameObject.Find("TopLayer").transform);
-        container = transform.parent.gameObject;
 
         Transform bubbleTransform = UnitaleUtil.GetChildPerName(container.transform, "BubbleContainer", true);
         if (bubbleTransform != null) {
@@ -733,7 +733,7 @@ public class LuaTextManager : TextManager {
     }
 
     public override void Move(float newX, float newY) {
-        MoveTo(localPosition.x + newX, localPosition.y + newY);
+        MoveToAbs(container.transform.position.x + newX, container.transform.position.y + newY);
     }
 
     public override void MoveTo(float newX, float newY) {
@@ -744,10 +744,6 @@ public class LuaTextManager : TextManager {
         CheckExists();
         container.transform.position = adjustTextDisplay ? new Vector3(Mathf.Round(newX), Mathf.Round(newY), transform.position.z)
                                                          : new Vector3(newX, newY, transform.position.z);
-        float xBasis = newX - container.transform.parent.position.x;
-        float yBasis = newY - container.transform.parent.position.y;
-        float parentRot = container.transform.parent.eulerAngles.z * Mathf.Deg2Rad;
-        localPosition = new Vector2(Mathf.Cos(parentRot) * xBasis - Mathf.Sin(parentRot) * yBasis, Mathf.Sin(parentRot) * xBasis + Mathf.Cos(parentRot) * yBasis);
     }
 
     public void SetAnchor(float newX, float newY) {
@@ -812,7 +808,6 @@ public class LuaTextManager : TextManager {
         Transform t = UnitaleUtil.GetTransform(parent);
         if (t == null)
             return;
-        localPosition += (Vector2)(GetContainer().transform.parent.position - t.position);
         UnitaleUtil.SetObjectParent(this, parent);
 
         LuaSpriteController sParent = parent as LuaSpriteController;

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MoonSharp.Interpreter;
+using System;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
@@ -36,6 +38,18 @@ public class LuaPlayerUI {
 
     public LuaTextManager maintext {
         get { return UIController.instance.mainTextManager; }
+    }
+
+    public LuaSpriteController mugshot {
+        get { return UIController.instance.mainTextManager.mugshot; }
+    }
+
+    public LuaSpriteController mugshotmask {
+        get { return UIController.instance.mainTextManager.mugshotMask; }
+    }
+
+    public DynValue enemylifebarlist {
+        get { return DynValue.NewTable(null, UIController.instance.arenaParent.GetComponentsInChildren<LifeBarController>().Select(p => UserData.Create(p)).ToArray()); }
     }
 
 

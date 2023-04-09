@@ -43,9 +43,6 @@ public class TextManager : MonoBehaviour {
     [MoonSharpHidden] public bool nextMonsterDialogueOnce, wasStated;
     private RectTransform self;
 
-    private Vector2 offset;
-    private bool offsetSet;
-
     private float currentX;
     private float currentY;
     private float startingLineX;
@@ -66,9 +63,10 @@ public class TextManager : MonoBehaviour {
     internal float hSpacing = 3;
     internal float vSpacing;
 
-    private LuaSpriteController mugshot;
+    public LuaSpriteController mugshotMask;
+    public LuaSpriteController mugshot;
     private string[] mugshotList;
-    private string finalMugshot;
+    private bool lineHasMugshot;
     private float mugshotTimer;
 
     // private int letterSpeed = 1;
@@ -84,8 +82,6 @@ public class TextManager : MonoBehaviour {
     private float timePerLetter;
     private const float singleFrameTiming = 1.0f / 20;
     protected Vector3 internalRotation = Vector3.zero;
-
-    public Vector2 localPosition = Vector2.zero;
 
     public int columnShift = 265;
     public int columnNumber = 2;
@@ -184,11 +180,12 @@ public class TextManager : MonoBehaviour {
         self = gameObject.GetComponent<RectTransform>();
         timePerLetter = singleFrameTiming;
 
-        GameObject textFrameOuter = GameObject.Find("textframe_border_outer");
-        if (!UnitaleUtil.IsOverworld || !textFrameOuter || textFrameOuter.GetComponentInChildren<TextManager>() != this) return;
-        GameObject mug = GameObject.Find("Mugshot");
-        if (mug != null)
-            mugshot = LuaSpriteController.GetOrCreate(mug);
+        Transform parent = this as LuaTextManager != null ? (this as LuaTextManager).GetContainer().transform.parent : transform.parent;
+        if (parent == null || (!parent.Find("Mugshot") && !parent.Find("MugshotMask")))
+            return;
+        mugshot = LuaSpriteController.GetOrCreate((parent.Find("Mugshot") ?? parent.Find("MugshotMask").GetChild(0)).gameObject);
+        if (parent.Find("MugshotMask"))
+            mugshotMask = LuaSpriteController.GetOrCreate(parent.Find("MugshotMask").gameObject);
     }
 
     public void SetPause(bool pause) { paused = pause; }
@@ -248,11 +245,6 @@ public class TextManager : MonoBehaviour {
         return textQueue == null ? 0 : textQueue.Length;
     }
 
-    [MoonSharpHidden] public void SetOffset(float xOff, float yOff) {
-        offset = new Vector2(xOff, yOff);
-        offsetSet = true;
-    }
-
     public bool LineComplete() {
         return instantActive || currentCharacter == textQueue[currentLine].Text.Length;
     }
@@ -261,21 +253,29 @@ public class TextManager : MonoBehaviour {
         return textQueue == null || currentLine == textQueue.Length - 1 && LineComplete();
     }
 
-    private void SetMugshot(DynValue text) {
+    public void SetMugshotShift(bool oldLineHasMugshot) {
+        if (lineHasMugshot && !oldLineHasMugshot) {
+            Move(117, 0);
+            _textMaxWidth -= 117;
+        } else if (!lineHasMugshot && oldLineHasMugshot) {
+            Move(-117, 0);
+            _textMaxWidth += 117;
+        }
+    }
+
+    public void SetMugshot(DynValue text) {
         if (mugshot == null || text == null)
             return;
-        if (text != null && text.Type != DataType.String && text.Type != DataType.Table && text.Type != DataType.Nil && text.Type != DataType.Void)
+        if (text.Type != DataType.String && text.Type != DataType.Table && text.Type != DataType.Nil && text.Type != DataType.Void)
             throw new CYFException("Mugshots can either be nil, strings or tables of strings ending with a number, yet it's currently a " + text.Type + ".");
         if (text.Type == DataType.Table) {
             Table t = text.Table;
             for (int i = 1; i <= t.Length; i++) {
                 DynValue d = t.Get(i);
-                if (d.Type != DataType.String && i < t.Length || d.Type != DataType.Number && i == t.Length)
+                if (d.Type != DataType.String && !(d.Type == DataType.Number && i == t.Length))
                     throw new CYFException("Mugshots can either be nil, strings or tables of strings ending with a number, yet the current table has a " + d.Type + ".");
             }
         }
-
-        bool oldMugshotSet = mugshotList != null;
 
         List<string> mugshots = new List<string>();
         if (text != null && text.String != "null") {
@@ -300,20 +300,11 @@ public class TextManager : MonoBehaviour {
                 mugshot.SetAnimation(mugshotList, mugshotTimer);
             else
                 mugshot.Set(mugshotList[0]);
-            if (!oldMugshotSet) {
-                Move(117, 0);
-                _textMaxWidth -= 117;
-            }
         } else {
             mugshotList = null;
             mugshot.alpha = 0;
             mugshot.Set("empty");
-            if (oldMugshotSet) {
-                Move(-117, 0);
-                _textMaxWidth += 117;
-            }
         }
-
     }
 
     protected void ShowLine(int line) {
@@ -321,9 +312,8 @@ public class TextManager : MonoBehaviour {
         if (line >= textQueue.Length) return;
         if (textQueue[line] == null) return;
         SetMugshot(textQueue[line].Mugshot);
+        bool oldLineHasMugshot = lineHasMugshot;
 
-        if (!offsetSet)
-            SetOffset(0, 0);
         if (GetType() != typeof(LuaTextManager) || ((LuaTextManager)this).needFontReset)
             ResetFont();
         currentColor     = defaultColor;
@@ -335,6 +325,9 @@ public class TextManager : MonoBehaviour {
         instantCommand   = false;
         skipFromPlayer   = false;
         firstChar        = false;
+        lineHasMugshot   = mugshotList != null;
+
+        SetMugshotShift(oldLineHasMugshot);
 
         timePerLetter = singleFrameTiming;
         letterTimer   = 0.0f;
@@ -874,6 +867,17 @@ public class TextManager : MonoBehaviour {
                     case "SHAKE":  textEffect = new ShakeEffect(this, args.Length > 1 ? ParseUtil.GetFloat(args[1]) : 1);             break;
                     case "ROTATE": textEffect = new RotatingEffect(this, args.Length > 1 ? ParseUtil.GetFloat(args[1]) : 1.5f, step); break;
                 }
+                break;
+
+            case "mugshot":
+                DynValue temp = DynValue.NewNil();
+                if (args.Length > 0)
+                    temp = args[0][0] == '{' ? UnitaleUtil.RebuildTableFromString(args[0]) : DynValue.NewString(args[0]);
+
+                bool oldLineHasMugshot = lineHasMugshot;
+                if (temp.Type != DataType.Nil && temp.Type != DataType.Void && !(temp.Type == DataType.String && (temp.String == "null" || temp.String == "")))
+                    lineHasMugshot = true;
+                SetMugshotShift(oldLineHasMugshot);
                 break;
         }
     }
