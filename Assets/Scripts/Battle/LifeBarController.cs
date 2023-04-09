@@ -37,6 +37,10 @@ public class LifeBarController : MonoBehaviour {
         }
     }
 
+    public bool isactive {
+        get { return background.isactive; }
+    }
+
     /// <summary>
     /// Creates a bar object using its position and size.
     /// </summary>
@@ -151,6 +155,7 @@ public class LifeBarController : MonoBehaviour {
     /// <param name="g">Green color of the outline.</param>
     /// <param name="b">Blue color of the outline.</param>
     public void AddOutline(int thickness, float r = 0, float g = 0, float b = 0) {
+        if (!isactive) return;
         if (outlineRt) RemoveOutline();
 
         outline = (LuaSpriteController)SpriteUtil.MakeIngameSprite("bar-px", -1).UserData.Object;
@@ -174,6 +179,7 @@ public class LifeBarController : MonoBehaviour {
     /// Removes the bar object's outline if it has one.
     /// </summary>
     public void RemoveOutline() {
+        if (!isactive) return;
         if (!outlineRt) return;
         backgroundRt.SetParent(outlineRt.parent);
         backgroundRt.SetSiblingIndex(outlineRt.GetSiblingIndex());
@@ -190,6 +196,7 @@ public class LifeBarController : MonoBehaviour {
     /// <param name="height">New y scale of the bar object.</param>
     /// <param name="updateOutline">True of the outline should be resized as well.</param>
     public void Resize(float width, float height, bool updateOutline = true) {
+        if (!isactive) return;
         // Update the position and size of the outline
         if (outlineRt && updateOutline) {
             outline.Scale((width + outlineThickness * 2) * background.width / outline.width, (height + outlineThickness * 2) * background.height / outline.height);
@@ -212,6 +219,7 @@ public class LifeBarController : MonoBehaviour {
     /// <param name="mSprite">New sprite for the bar object's mask. Will do nothing if null or empty.</param>
     /// <param name="oSprite">New sprite for the bar object's background. Will do nothing if there's no outline, or if null or empty.</param>
     public void SetSprites(string bgSprite, string fSprite = null, string mSprite = null, string oSprite = null) {
+        if (!isactive) return;
         background.Set(bgSprite);
         fill.Set(string.IsNullOrEmpty(fSprite) ? bgSprite : fSprite);
         if (!string.IsNullOrEmpty(mSprite)) mask.Set(mSprite);
@@ -224,6 +232,7 @@ public class LifeBarController : MonoBehaviour {
     /// </summary>
     /// <param name="c">Color for present health.</param>
     [MoonSharpHidden] public void SetFillColor(Color c) {
+        if (!isactive) return;
         fill.color = new[] { c.r, c.g, c.b, c.a };
     }
 
@@ -232,6 +241,7 @@ public class LifeBarController : MonoBehaviour {
     /// </summary>
     /// <param name="c">Color for missing health.</param>
     [MoonSharpHidden] public void SetBackgroundColor(Color c) {
+        if (!isactive) return;
         background.color = new[] { c.r, c.g, c.b, c.a };
     }
 
@@ -240,6 +250,7 @@ public class LifeBarController : MonoBehaviour {
     /// </summary>
     /// <param name="visible">True for visible, false for hidden.</param>
     public void SetVisible(bool visible) {
+        if (!isactive) return;
         foreach (Image img in (outlineRt ?? backgroundRt).GetComponentsInChildren<Image>())
             img.enabled = visible;
     }
@@ -248,6 +259,7 @@ public class LifeBarController : MonoBehaviour {
     /// Destroys this bar object's instance.
     /// </summary>
     public void Remove() {
+        if (!isactive) return;
         if (this == UIStats.instance.lifebar) throw new CYFException("You can't remove the player's lifebar!");
         if (hasOutline) outline.Remove();
         background.Remove();
@@ -257,6 +269,7 @@ public class LifeBarController : MonoBehaviour {
     /// Takes care of moving the healthbar to its intended position.
     /// </summary>
     private void Update() {
+        if (!isactive) return;
         if (!needInstant) {
             if (!inLerp)
                 return;
