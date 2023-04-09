@@ -35,6 +35,8 @@ it's w3c valid, at least
                 This section details the various elements you can use to manipulate CYF's internal user interface.
                 <br><br>
                 If you want to manipulate UI elements related to the enemy (attack animation, health bar, position of the damage text), I suggest visiting the <span class="term">Misc. Functions</span> section of the documentation.
+                <br><br>
+                Keep in mind that removing any of these elements has a great chance of making the engine unstable, so take caution when manipulating the UI.
             </p>
 
             <p>
@@ -65,6 +67,21 @@ it's w3c valid, at least
             <p>
                 <br><span class="new function"> <span class="userdata">text</span> UI.maintext</span>
                 Text object used in the Arena to display most things. Take caution when handling this object, as it's used absolutely everywhere in encounters.
+            </p>
+
+            <p>
+                <br><span class="new function"> <span class="userdata">sprite</span> UI.mugshot</span>
+                Sprite used to display a character's face sprite on the left side of the arena, through the usage of the <span class="term">[mugshot:x]</span> text command.
+            </p>
+
+            <p>
+                <br><span class="new function"> <span class="userdata">sprite</span> UI.mugshotmask</span>
+                Mask sprite used to keep the mugshot within the bounds of the arena. Its size is usually 130x130, although its height scales with the arena's, meaning changing its height may not work as intended. Changing its anchor will stop that effect from happening.
+            </p>
+
+            <p>
+                <br><span class="new function"> <span class="luatable"><span class="userdata">bar</span></span> UI.enemylifebarlist</span>
+                List of life bars displayed next to each enemy whenever the Player selects the FIGHT button. All life bars are destroyed whenever the Player changes the current page if there are more than 3 active enemies, so you need to get this variable again to fetch the new life bars if the page is changed
             </p>
 
             <p>
@@ -256,6 +273,11 @@ it's w3c valid, at least
                 Returns the thickness in pixels of the <span class="term">outline</span> sprite. Returns 0 if the outline doesn't exist.
                 <br><br>
                 Can be set to resize the outline's thickness.
+            </p>
+
+            <p>
+                <br><span class="new function"> <span class="number"></span> Bar.isactive</span>
+                True if the lifebar hasn't been removed, false otherwise.
             </p>
 
             <p>

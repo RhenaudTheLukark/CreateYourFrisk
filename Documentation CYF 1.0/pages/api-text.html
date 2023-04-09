@@ -364,7 +364,7 @@ end</pre>
 
             <p class="exblock">
                 <br><span class="function"><span class="CYF"></span> [mugshot:face], [mugshot:null] or [mugshot:{face1,face2,...,time}]</span>
-                <u>Overworld only.</u>
+                <u><span class="new"></span>Only usable with the Overworld's main text as well as the main text object in battles.</u>
                 <br><br>
                 Displays a set face sprite (or sequence of face sprites) next to your dialogue set by <span class="term">General.SetDialog</span>.<br>
                 Note that the overworld's automatic line break system will not account for face sprites set this way; instead, it's recommended to
@@ -372,13 +372,16 @@ end</pre>
                 <br><br>
                 This function loads face sprites from <span class="term">YOUR MOD/Sprites/Mugshots</span>. You may put folder names in here, such as
                 <span class="term">[mugshot:Papyrus/suspicious]</span> for <span class="term">YOUR MOD/Sprites/Mugshots/Papyrus/suspicious.png</span>.<br>
-                Use <span class="term">[mugshot:null]</span> to revert the overworld text box back to normal.<br>
+                Use <span class="term">[mugshot:null]</span> or <span class="term">[mugshot]</span> to revert the text box back to normal.<br>
                 <br><br>
                 To use a sequence of face sprites, enter something such as<br><span class="term">[mugshot:{Papyrus/happy,Papyrus/suspicious,0.1}]</span>.<br>
                 This is a list of normal paths to put into <span class="term">[mugshot:x]</span> as described above, followed by the amount of real time
                 seconds between faces (such as with <span class="term">sprite.SetAnimation</span>).
                 <br><br>
-                If you do not provide a time, or the time you enter is &lt;= 0, a default value of <span class="term">0.2</span> will be used.
+                If you do not provide a time, or the time you enter is lower than 0, a default value of <span class="term">0.2</span> will be used.
+                <br><br>
+                NOTE: While the overworld's mugshots have a size of 140x140, in battles, the mugshots are 130x130, so if bigger mugshots are applied in
+                battles, 5 pixels around each edge are hidden.
             </p>
 
             <p class="exblock">
