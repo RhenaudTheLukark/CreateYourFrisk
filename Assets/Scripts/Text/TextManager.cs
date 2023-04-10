@@ -205,6 +205,11 @@ public class TextManager : MonoBehaviour {
             PlayerOverworld.AutoSetUIPos();
 
         ResetFont();
+        if (mugshot != null) {
+            bool oldLineHasMugshot = lineHasMugshot;
+            SetMugshot(DynValue.NewNil());
+            SetMugshotShift(oldLineHasMugshot);
+        }
         textQueue = newTextQueue;
         currentLine = 0;
         ShowLine(0);
@@ -311,8 +316,8 @@ public class TextManager : MonoBehaviour {
         if (textQueue == null) return;
         if (line >= textQueue.Length) return;
         if (textQueue[line] == null) return;
-        SetMugshot(textQueue[line].Mugshot);
         bool oldLineHasMugshot = lineHasMugshot;
+        SetMugshot(textQueue[line].Mugshot);
 
         if (GetType() != typeof(LuaTextManager) || ((LuaTextManager)this).needFontReset)
             ResetFont();
