@@ -434,8 +434,10 @@ public class UIController : MonoBehaviour {
 
                 if (!GlobalControls.retroMode)
                     mainTextManager.SetEffect(new TwitchEffect(mainTextManager));
+
+                int enemyPage = encounter.EnabledEnemies.Length <= 3 ? 0 : selectedEnemy / 2;
                 string[] colors;
-                string[] textTemp = GetEnemyPage(selectedEnemy / 2, mainTextManager.columnNumber, out colors);
+                string[] textTemp = GetEnemyPage(enemyPage, mainTextManager.columnNumber, out colors);
                 mainTextManager.SetText(new SelectMessage(textTemp, false, mainTextManager.columnNumber, colors));
                 if (forcedAction != Actions.FIGHT && forcedAction != Actions.ACT)
                     forcedAction = action;
@@ -682,41 +684,55 @@ public class UIController : MonoBehaviour {
             SwitchState("DEFENDING");
     }
 
-    private static string[] GetInventoryPage(int page, int columns) {
-        int invCount = 0;
-        int itemsPerPage = 2 * columns;
-        for (int i = page * itemsPerPage; i < (page + 1) * itemsPerPage; i++) {
-            if (Inventory.inventory.Count <= i) break;
-            invCount++;
-        }
+    private string[] GetActPage(string[] acts, int page, int columns) {
+        string[] items = new string[3 * columns];
 
-        if (invCount == 0) return null;
+        int actsPerPage = 3 * columns;
+        int maxPages = Mathf.CeilToInt(acts.Length / (float)actsPerPage);
+        // Add the page number text if too many acts
+        if (maxPages > 1) {
+            actsPerPage--;
+            maxPages = Mathf.CeilToInt(acts.Length / (float)actsPerPage);
+        }
+        int pageActNumber = Mathf.Min(acts.Length - (actsPerPage * page), 2 * columns);
+
+        for (int i = 0; i < pageActNumber; i++)
+            items[i] = acts[i + page * actsPerPage];
+        if (maxPages > 1)
+            items[3 * columns - 1] = "PAGE " + (page + 1);
+        return items;
+    }
+
+    private string[] GetInventoryPage(int page, int columns) {
+        int itemsPerPage = 2 * columns;
+        int pageItemNumber = Mathf.Min(Inventory.inventory.Count - (itemsPerPage * page), 2 * columns);
+        int maxPages = Mathf.CeilToInt(Inventory.inventory.Count / (float)itemsPerPage);
+        if (pageItemNumber == 0) return null;
 
         string[] items = new string[3 * columns];
-        for (int i = 0; i < invCount; i++)
+        for (int i = 0; i < pageItemNumber; i++)
             items[i] = Inventory.inventory[i + page * itemsPerPage].ShortName;
-        items[3 * columns - 1] = "PAGE " + (++page);
+        if (maxPages > 1)
+            items[3 * columns - 1] = "PAGE " + (page + 1);
         return items;
     }
 
     private string[] GetEnemyPage(int page, int columns, out string[] colors) {
-        int enemyCount = 0;
-        for (int i = page * 2; i < page * 2 + 2; i++) {
-            if (encounter.EnabledEnemies.Length <= i)
-                break;
-            enemyCount++;
-        }
         colors = new string[columns * 3];
+
+        int enemyCount = encounter.EnabledEnemies.Length <= 3 ? encounter.EnabledEnemies.Length : Mathf.RoundToInt(Mathf.Clamp(encounter.EnabledEnemies.Length - page * 2, 0, 2));
+        int maxPages = encounter.EnabledEnemies.Length <= 3 ? 1 : Mathf.CeilToInt(encounter.EnabledEnemies.Length / 2f);
         string[] enemies = new string[columns * 3];
-        enemies[0] = encounter.EnabledEnemies[page * 2].Name;
-        if (enemyCount == 2)
-            enemies[columns] = "* " + encounter.EnabledEnemies[page * 2 + 1].Name;
+        for (int i = 0; i < enemyCount; i++) {
+            enemies[columns * i] = encounter.EnabledEnemies[page * 2 + i].Name;
+        }
         for (int i = page * 2; i < encounter.EnabledEnemies.Length && enemyCount > 0; i++) {
             if (encounter.EnabledEnemies[i].CanSpare)
                 colors[(i - page * 2) * columns] = "[color:ffff00]";
             enemyCount--;
         }
-        enemies[columns * 3 - 1] = "PAGE " + (page + 1);
+        if (maxPages > 1)
+            enemies[columns * 3 - 1] = "PAGE " + (page + 1);
         return enemies;
     }
 
@@ -727,7 +743,8 @@ public class UIController : MonoBehaviour {
         int mNameWidth = (int)UnitaleUtil.CalcTextWidth(mainTextManager) + 50;
         if (mNameWidth > maxWidth)
             maxWidth = mNameWidth;
-        for (int i = page * 2; i <= page * 2 + 1 && i < encounter.EnabledEnemies.Length; i++) {
+        int enemiesToShow = encounter.EnabledEnemies.Length <= 3 ? 3 : 2;
+        for (int i = page * 2; i <= page * 2 + enemiesToShow - 1 && i < encounter.EnabledEnemies.Length; i++) {
             LifeBarController lifeBar = LifeBarController.Create(0, 0, 90);
             lifeBar.transform.SetParent(mainTextManager.transform);
             lifeBar.transform.SetAsFirstSibling();
@@ -988,11 +1005,13 @@ public class UIController : MonoBehaviour {
         bool up = InputUtil.Pressed(GlobalControls.input.Up);
         bool down = InputUtil.Pressed(GlobalControls.input.Down);
 
+        int xMov = left ? -1 : right ? 1 : 0;
+        int yMov = up ? -1 : down ? 1 : 0;
         int columns = mainTextManager.columnNumber;
 
         switch (state) {
             case "ACTIONSELECT":
-                if (!left &&!right)
+                if (xMov == 0)
                     break;
 
                 int oldActionIndex = (int)action;
@@ -1012,123 +1031,48 @@ public class UIController : MonoBehaviour {
                 break;
 
             case "ENEMYSELECT":
-                bool odd = false;
-                if (encounter.EnabledEnemies.Length > 3) {
-                    if (!up && !down && !right && !left) break;
-                    if (right) {
-                        if (selectedEnemy % 2 == 1)
-                            odd = true;
-                        selectedEnemy = (selectedEnemy + 2) % encounter.EnabledEnemies.Length;
-                        if (encounter.EnabledEnemies.Length % 2 == 1 && selectedEnemy < 2) selectedEnemy = odd ? 1 : 0;
-                    } else if (left) {
-                        if (selectedEnemy % 2 == 1)
-                            odd = true;
-                        selectedEnemy = (selectedEnemy - 2 + encounter.EnabledEnemies.Length) % encounter.EnabledEnemies.Length;
-                        if (encounter.EnabledEnemies.Length % 2 == 1 && selectedEnemy > encounter.EnabledEnemies.Length - 3)
-                            if (odd && encounter.EnabledEnemies.Length % 2 == 0)      selectedEnemy = encounter.EnabledEnemies.Length - 1;
-                            else if (odd && encounter.EnabledEnemies.Length % 2 == 1) selectedEnemy = encounter.EnabledEnemies.Length - 2;
-                            else if (!odd && encounter.EnabledEnemies.Length % 2 == 0) selectedEnemy = encounter.EnabledEnemies.Length - 2;
-                            else if (!odd && encounter.EnabledEnemies.Length % 2 == 1) selectedEnemy = encounter.EnabledEnemies.Length - 1;
-                    } else if (selectedEnemy / 2 * 2 + (selectedEnemy % 2 + 1) % 2 < encounter.EnabledEnemies.Length)
-                        selectedEnemy = selectedEnemy / 2 * 2 + (selectedEnemy % 2 + 1) % 2;
-                    if (right || left) {
-                        string[] colors;
-                        string[] textTemp = GetEnemyPage(selectedEnemy / 2, columns, out colors);
-                        mainTextManager.SetText(new SelectMessage(textTemp, false, columns, colors));
-                        if (forcedAction == Actions.FIGHT)
-                            RenewLifeBars(selectedEnemy / 2);
-                    }
-                    SetPlayerOnSelection(selectedEnemy % 2 * columns);
-                } else {
-                    if (!up && !down) break;
-                    if (up)           selectedEnemy--;
-                    else              selectedEnemy++;
-                    selectedEnemy = (selectedEnemy + encounter.EnabledEnemies.Length) % encounter.EnabledEnemies.Length;
-                    SetPlayerOnSelection(selectedEnemy * columns);
+                if (xMov == 0 && yMov == 0)
+                    return;
+
+                selectedEnemy = UnitaleUtil.SelectionChoice(encounter.EnabledEnemies.Length, selectedEnemy, xMov, yMov, encounter.EnabledEnemies.Length <= 3 ? 3 : 2, 1);
+                int enemyPage = encounter.EnabledEnemies.Length <= 3 ? 0 : selectedEnemy / 2;
+
+                if (xMov != 0) {
+                    string[] colors;
+                    mainTextManager.SetText(new SelectMessage(GetEnemyPage(enemyPage, columns, out colors), false, columns, colors));
+                    if (forcedAction == Actions.FIGHT)
+                        RenewLifeBars(enemyPage);
                 }
+                SetPlayerOnSelection(Math.Mod(selectedEnemy, encounter.EnabledEnemies.Length <= 3 ? 3 : 2) * 2);
                 break;
 
             case "ACTMENU":
-                if (!up && !down && !left && !right)
+                if (xMov == 0 && yMov == 0)
                     return;
 
-                int xCol = selectedAction % columns; // can just use remainder here, xCol will never be negative at this part
-                int yCol = selectedAction / columns;
-
-                if (left)       xCol--;
-                else if (right) xCol++;
-                else if (up)    yCol--;
-                else            yCol++;
-
-                int actionCount = encounter.EnabledEnemies[selectedEnemy].ActCommands.Length;
-                List<int> colSizes = new List<int>();
-                for (int i = 0; i < columns; i++)
-                    colSizes.Add(Mathf.CeilToInt((actionCount - i) / (float)columns));
-
-                if (up || down)
-                    yCol = Math.Mod(yCol, colSizes[xCol]);
-
-                if (xCol == -1)
-                    xCol = columns - 1;
-                else if (xCol == Mathf.Min(columns) || (yCol == colSizes[0] - 1 && xCol == actionCount % columns))
-                    xCol = 0;
-
-                int desiredAction = yCol * columns + xCol;
-                if (desiredAction >= 0 && desiredAction < actionCount) {
-                    selectedAction = desiredAction;
-                    SetPlayerOnSelection(selectedAction);
-                }
+                string[] acts = encounter.EnabledEnemies[selectedEnemy].ActCommands;
+                selectedAction = UnitaleUtil.SelectionChoice(acts.Length, selectedAction, xMov, yMov, 3, columns);
+                SetPlayerOnSelection(Math.Mod(selectedAction, 3 * columns - (acts.Length > 3 * columns ? 1 : 0)));
+                int actPage = acts.Length <= 3 * columns ? 0 : Mathf.FloorToInt((float)acts.Length / (3 * columns - 1));
+                mainTextManager.SetText(new SelectMessage(GetActPage(acts, actPage, columns), false, columns));
                 break;
 
             case "ITEMMENU":
-                if (!up && !down && !left && !right)
+                if (xMov == 0 && yMov == 0)
                     return;
 
-                int currentPage = selectedItem / (2 * columns);
-                int itemIndex = selectedItem % (2 * columns);
-                int pageItems = Mathf.Min(Inventory.inventory.Count - 2 * columns * currentPage, 2 * columns);
-                int xColI = Math.Mod(itemIndex, columns);
-                int yColI = Mathf.FloorToInt(itemIndex / columns);
-
-                if (left)       xColI--;
-                else if (right) xColI++;
-                else if (up)    yColI--;
-                else            yColI++;
-
-                List<int> colSizesI = new List<int>();
-                for (int i = 0; i < columns; i++)
-                    colSizesI.Add(Mathf.CeilToInt((pageItems - i) / (float)columns));
-
-                if (xColI == -1) {
-                    xColI = columns - 1;
-                    currentPage --;
-                } else if (xColI == Mathf.Min(columns) || (yColI == colSizesI[0] - 1 && xColI == pageItems % columns)) {
-                    xColI = 0;
-                    currentPage ++;
-                }
-
-                if (up || down)
-                    yColI = Math.Mod(yColI, colSizesI[xColI]);
-                int desiredItem = xColI + columns * yColI + currentPage * 2 * columns;
-
-                if (desiredItem < 0)                              desiredItem = Math.Mod(desiredItem, 2 * columns) + Inventory.inventory.Count;
-                else if (desiredItem > Inventory.inventory.Count) desiredItem = Math.Mod(desiredItem, 2 * columns);
-
-                if (desiredItem != selectedItem && desiredItem < Inventory.inventory.Count) {
-                    selectedItem = desiredItem;
-                    SetPlayerOnSelection(Math.Mod(selectedItem, 2 * columns));
-                    int page = selectedItem / (2 * columns);
-                    mainTextManager.SetText(new SelectMessage(GetInventoryPage(page, columns), false, columns));
-                }
+                selectedItem = UnitaleUtil.SelectionChoice(Inventory.inventory.Count, selectedItem, xMov, yMov, 2, columns);
+                SetPlayerOnSelection(Math.Mod(selectedItem, 2 * columns));
+                int itemPage = Mathf.FloorToInt(selectedItem / (2f * columns));
+                mainTextManager.SetText(new SelectMessage(GetInventoryPage(itemPage, columns), false, columns));
 
                 break;
 
             case "MERCYMENU":
-                if (!up && !down) break;
-                if (up)           selectedMercy--;
-                else              selectedMercy++;
-                selectedMercy = encounter.CanRun ? Math.Mod(selectedMercy, 2) : 0;
+                if (yMov == 0)
+                    break;
 
+                selectedMercy = UnitaleUtil.SelectionChoice(encounter.CanRun ? 2 : 1, selectedMercy, 0, yMov, 2, 1);
                 SetPlayerOnSelection(selectedMercy * 2);
                 break;
         }

@@ -657,6 +657,64 @@ public static class UnitaleUtil {
         return true;
     }
 
+    public static int SelectionChoice(int items, int current, int xMov, int yMov, int rows, int columns, bool verticalRollaround = true) {
+        int pageItems = rows * columns;
+        int pageNumber = Mathf.CeilToInt(items / (float)pageItems);
+        int currentPage = current / pageItems;
+        int currentItem = current % pageItems;
+        int lastPageItemNumber = Math.Mod(items - 1, pageItems) + 1;
+        int xPos = currentItem % columns;
+        int yPos = currentItem / columns;
+
+        xPos += xMov;
+        yPos += yMov;
+
+        // Horizontal movement
+        if (xMov != 0) {
+            // Right bound
+            if (xPos >= columns || (currentPage == pageNumber - 1 && xPos >= lastPageItemNumber - yPos * columns)) {
+                xPos = 0;
+                if (verticalRollaround)
+                    currentPage++;
+            }
+            // Left bound
+            if (xPos < 0) {
+                if (currentPage == 0) xPos = Math.Mod(lastPageItemNumber - yPos * columns - 1, columns);
+                else                  xPos = columns - 1;
+                if (verticalRollaround)
+                    currentPage--;
+            }
+        }
+
+        // Vertical movement
+        // Down bound
+        if (yPos >= rows || (currentPage == pageNumber - 1 && yPos >= Mathf.CeilToInt((lastPageItemNumber - xPos) / (float)columns))) {
+            yPos = 0;
+            if (!verticalRollaround)
+                currentPage++;
+        }
+        // Up bound
+        if (yPos < 0) {
+            if (currentPage == pageNumber - 1) yPos = Mathf.CeilToInt((lastPageItemNumber - xPos) / (float)columns) - 1;
+            else                               yPos = rows - 1;
+            if (!verticalRollaround)
+                currentPage--;
+        }
+
+        // Page underflow
+        while (currentPage < 0)
+            currentPage += pageNumber;
+        // Page overflow
+        while (currentPage >= pageNumber)
+            currentPage -= pageNumber;
+
+        int result = xPos + yPos * columns + currentPage * pageItems;
+        if (result >= items)
+            result = items - 1;
+
+        return result;
+    }
+
     public static Transform GetTransform(object o) {
         LuaSpriteController sSelf = o as LuaSpriteController;
         if (sSelf != null) return sSelf.img.transform;

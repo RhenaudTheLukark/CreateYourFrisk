@@ -229,9 +229,8 @@ public class ShopScript : MonoBehaviour {
         if (tm == null) return;
 
         int usedSelection = selection;
-        if (currentState == State.SELL && selection == numberOfChoices - 1) usedSelection = 8;
-        else if (currentState == State.BUYCONFIRM) usedSelection += 3;
-        else if (currentState == State.SELLCONFIRM) usedSelection++;
+        if (currentState == State.BUYCONFIRM)  usedSelection += 3;
+        if (currentState == State.SELLCONFIRM) usedSelection += 6;
 
         Vector3 v = tm.letters[GetIndexFirstCharOfGivenLine(tm, usedSelection)].image.transform.position;
         utHeart.transform.position = new Vector3(v.x - 16, v.y + 8, v.z);
@@ -265,7 +264,7 @@ public class ShopScript : MonoBehaviour {
                 case '\t':
                     choiceIndex--;
                     columnsUsed++;
-                    break;
+                    continue;
             }
 
             if (bracketCount == 0 && choiceIndex <= 0) return count;
@@ -371,7 +370,7 @@ public class ShopScript : MonoBehaviour {
                 }
                 break;
             case State.SELL:
-                if (selection == numberOfChoices - 1) HandleCancel();
+                if (selection == 8) HandleCancel();
                 else {
                     ChangeState(State.SELLCONFIRM, 0);
                     if (Inventory.NametoPrice[Inventory.inventory[currentItemIndex].Name] == 0) {
@@ -416,6 +415,7 @@ public class ShopScript : MonoBehaviour {
                         currentItemIndex--;
                 }
                 if (!interrupted) {
+                    currentItemIndex = 0;
                     selection = currentItemIndex;
                     HandleCancel();
                 }
@@ -436,34 +436,25 @@ public class ShopScript : MonoBehaviour {
 
     private void SelectionInputManager() {
         utHeart.GetComponent<Image>().enabled = true;
-        if (GlobalControls.input.Down == UndertaleInput.ButtonState.PRESSED) {
-            if (currentState == State.SELL) {
-                if (selection == numberOfChoices - 2)                                  selection = numberOfChoices - 1;
-                else if (selection == numberOfChoices - 1)                             selection = 0;
-                else if (selection == numberOfChoices - 3 && numberOfChoices % 2 == 0) selection = (selection + 1) % numberOfChoices;
-                else                                                                   selection = (selection + 2) % numberOfChoices;
-            } else                                                                     selection = (selection + 1) % numberOfChoices;
-            SetPlayerOnSelection();
-        } else if (GlobalControls.input.Right == UndertaleInput.ButtonState.PRESSED) {
-            if (currentState == State.SELL) {
-                if (selection == numberOfChoices - 1)                                                          { }
-                else if (selection % 2 == 1 || (selection == numberOfChoices - 2 && numberOfChoices % 2 == 0)) selection = (selection + numberOfChoices - 1) % numberOfChoices;
-                else                                                                                           selection = (selection + 1) % numberOfChoices;
-            } else                                                                                             selection = (selection + 1) % numberOfChoices;
-            SetPlayerOnSelection();
-        } else if (GlobalControls.input.Up == UndertaleInput.ButtonState.PRESSED) {
-            if (currentState == State.SELL) {
-                if (selection == 0)                                                    selection = numberOfChoices - 1;
-                else if (selection == numberOfChoices - 1 && numberOfChoices % 2 == 0) selection = (selection + numberOfChoices - 1) % numberOfChoices;
-                else                                                                   selection = (selection + numberOfChoices - 2) % numberOfChoices;
-            } else                                                                     selection = (selection + numberOfChoices - 1) % numberOfChoices;
-            SetPlayerOnSelection();
-        } else if (GlobalControls.input.Left == UndertaleInput.ButtonState.PRESSED) {
-            if (currentState == State.SELL) {
-                if (selection == numberOfChoices - 1)                                                          { }
-                else if (selection % 2 == 1 || (selection == numberOfChoices - 2 && numberOfChoices % 2 == 0)) selection = (selection + numberOfChoices - 1) % numberOfChoices;
-                else                                                                                           selection = (selection + 1) % numberOfChoices;
-            } else                                                                                             selection = (selection + numberOfChoices - 1) % numberOfChoices;
+        int xMov = GlobalControls.input.Left == UndertaleInput.ButtonState.PRESSED ? -1 : GlobalControls.input.Right == UndertaleInput.ButtonState.PRESSED ? 1 : 0;
+        int yMov = GlobalControls.input.Up   == UndertaleInput.ButtonState.PRESSED ? -1 : GlobalControls.input.Down  == UndertaleInput.ButtonState.PRESSED ? 1 : 0;
+        if (xMov != 0 || yMov != 0) {
+            switch (currentState) {
+                case State.MENU:        selection = UnitaleUtil.SelectionChoice(4, selection, xMov, yMov, 4, 1); break;
+                case State.TALK:
+                case State.BUY:         selection = UnitaleUtil.SelectionChoice(numberOfChoices, selection, xMov, yMov, numberOfChoices, 1); break;
+                case State.BUYCONFIRM:  selection = UnitaleUtil.SelectionChoice(2, selection, xMov, yMov, 2, 1); break;
+                case State.SELLCONFIRM: selection = UnitaleUtil.SelectionChoice(2, selection, xMov, yMov, 1, 2, false); break;
+                case State.SELL:
+                    if (selection == 8 && yMov == -1)
+                        selection = numberOfChoices - 2 - (numberOfChoices - 2) % 2;
+                    else
+                        selection = UnitaleUtil.SelectionChoice(selection < 8 && (xMov != 0 || selection % 2 == 1) ? numberOfChoices - 1 : 9, selection, xMov, yMov, 5, 2);
+
+                    if (currentState == State.SELL && selection >= numberOfChoices - 1)
+                        selection = 8;
+                    break;
+            }
             SetPlayerOnSelection();
         } else if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED)
             HandleAction();

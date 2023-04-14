@@ -1203,9 +1203,10 @@ end";
 
         // Main loop of the choice dialogue
         while (true) {
+            int xMov = GlobalControls.input.Right == UndertaleInput.ButtonState.PRESSED ? 1 : GlobalControls.input.Left == UndertaleInput.ButtonState.PRESSED ? -1 : 0;
             // Move the soul in front of the current selected option if one of the Left or Right keys are pressed
-            if (GlobalControls.input.Right == UndertaleInput.ButtonState.PRESSED || GlobalControls.input.Left == UndertaleInput.ButtonState.PRESSED) {
-                actualChoice = (actualChoice + 1) % 2;
+            if (xMov != 0) {
+                actualChoice = UnitaleUtil.SelectionChoice(2, actualChoice, xMov, 0, 1, 2, false);
                 SetPlayerOnSelection(actualChoice, question, !oneLiners[actualChoice]);
             // Confirm the selected option if a Confirm key is pressed
             } else if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED)
