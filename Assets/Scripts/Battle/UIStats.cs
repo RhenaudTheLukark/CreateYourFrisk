@@ -51,7 +51,8 @@ public class UIStats : MonoBehaviour {
         nameLevelTextMan.MoveTo(0, -11);
         hpLabel.MoveTo(0, -9);
         lifebar.background.MoveTo(31, -14);
-        hpTextMan.MoveTo(70, -11);
+        hpTextMan.MoveTo(0, -11);
+        setMaxHP();
         hpRect.transform.localPosition = new Vector3(PlayerCharacter.instance.Name.Length > 6 ? 286 : 215, 0, 0);
     }
 
