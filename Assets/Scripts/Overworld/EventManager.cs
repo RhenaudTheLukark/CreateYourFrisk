@@ -694,14 +694,15 @@ end";
             if (threeLines)  selection += 2;
             else             selection += 4;
         }
-        // Position of the soul if selection was 0
-        Vector2 upperLeft = new Vector2(61 + Camera.main.transform.position.x - 320,
-                                        GameObject.Find("letter(Clone)").GetComponent<RectTransform>().position.y + (GameObject.Find("letter(Clone)").GetComponent<RectTransform>().sizeDelta.y / 2) - 1);
-        // Compute the horizontal and vertical shift of the soul
-        int xMv = selection % 2;
-        int yMv = selection / 2;
-        // Move the soul where it should be, hardcoded
-        GameObject.Find("tempHeart").GetComponent<RectTransform>().position = new Vector2(upperLeft.x + xMv * 303, upperLeft.y - yMv * _textManager.Charset.LineSpacing);
+
+        int xMv = selection % _textManager.columnNumber;
+        int yMv = selection / _textManager.columnNumber;
+
+        if (_textManager.letters.Count > 0)
+            GameObject.Find("tempHeart").GetComponent<RectTransform>().position =
+                new Vector3(_textManager.letters[0].image.transform.position.x + xMv * _textManager.columnShift,
+                            _textManager.letters[0].image.transform.position.y - yMv * _textManager.Charset.LineSpacing + 9,
+                            GameObject.Find("tempHeart").GetComponent<RectTransform>().position.z);
     }
 
     /// <summary>
