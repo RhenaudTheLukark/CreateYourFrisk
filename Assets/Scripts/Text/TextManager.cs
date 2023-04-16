@@ -282,6 +282,7 @@ public class TextManager : MonoBehaviour {
             }
         }
 
+        mugshotTimer = 0.2f;
         List<string> mugshots = new List<string>();
         if (text != null && text.String != "null") {
             if (text.Type == DataType.Table) {
@@ -301,10 +302,14 @@ public class TextManager : MonoBehaviour {
         if (mugshotSet) {
             mugshotList = mugshots.ToArray();
             mugshot.alpha = 1;
-            if (mugshotList.Length > 1)
-                mugshot.SetAnimation(mugshotList, mugshotTimer);
-            else
-                mugshot.Set(mugshotList[0]);
+            try {
+                if (mugshotList.Length > 1)
+                    mugshot.SetAnimation(mugshotList, mugshotTimer);
+                else
+                    mugshot.Set(mugshotList[0]);
+            } catch (CYFException e) {
+                UnitaleUtil.DisplayLuaError("Setting a mugshot", e.Message);
+            }
         } else {
             mugshotList = null;
             mugshot.alpha = 0;
