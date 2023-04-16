@@ -25,7 +25,7 @@ jobs:
   deploy:
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}/feature
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -37,6 +37,10 @@ jobs:
         with:
           # Upload entire repository
           path: 'Documentation CYF 1.0'
+          branch: 'feature'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
+      - name: Override page_url
+        id: change-page-url
+        run: echo "new_page_url=${{ steps.deployment.outputs.page_url }}feature/" >> $GITHUB_OUTPUT
