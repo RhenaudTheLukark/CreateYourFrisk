@@ -125,14 +125,10 @@ public class SelectOMatic : MonoBehaviour {
         modFolderSelection();
         if (StaticInits.ENCOUNTER != "") {
             //Check to see if there is more than one encounter in the mod just exited from
-            List<string>  encounters = new List<string>();
-            DirectoryInfo di2        = new DirectoryInfo(Path.Combine(FileLoader.ModDataPath, "Lua/Encounters"));
-            foreach (FileInfo f in di2.GetFiles("*.lua")) {
-                if (encounters.Count < 2)
-                    encounters.Add(Path.GetFileNameWithoutExtension(f.Name));
-            }
+            DirectoryInfo di2 = new DirectoryInfo(Path.Combine(FileLoader.ModDataPath, "Lua/Encounters"));
+            string[] encounters = di2.GetFiles("*.lua").Select(f => Path.GetFileNameWithoutExtension(f.Name)).Where(f => !f.StartsWith("@")).ToArray();
 
-            if (encounters.Count > 1) {
+            if (encounters.Length > 1) {
                 // Highlight the chosen encounter whenever the user exits the mod menu
                 int temp = selectedItem;
                 encounterSelection();
@@ -251,7 +247,7 @@ public class SelectOMatic : MonoBehaviour {
 
         // Get all encounters in the mod's Encounters folder
         DirectoryInfo di        = new DirectoryInfo(Path.Combine(FileLoader.ModDataPath, "Lua/Encounters"));
-        List<string> encounters = di.GetFiles("*.lua").Select(f => Path.GetFileNameWithoutExtension(f.Name)).ToList();
+        string[] encounters = di.GetFiles("*.lua").Select(f => Path.GetFileNameWithoutExtension(f.Name)).Where(f => !f.StartsWith("@")).ToArray();
 
         // Update the text
         ModTitle.GetComponent<Text>().text = modDirs[id].Name;
@@ -261,7 +257,7 @@ public class SelectOMatic : MonoBehaviour {
         ModTitleShadow.GetComponent<Text>().text = ModTitle.GetComponent<Text>().text;
 
         // List # of encounters, or name of encounter if there is only one
-        if (encounters.Count == 1) {
+        if (encounters.Length == 1) {
             EncounterCount.GetComponent<Text>().text = encounters[0];
             // crate your frisk version
             if (GlobalControls.crate)
@@ -276,10 +272,10 @@ public class SelectOMatic : MonoBehaviour {
                 StartCoroutine(LaunchMod());
             });
         } else {
-            EncounterCount.GetComponent<Text>().text = "Has " + encounters.Count + " encounters";
+            EncounterCount.GetComponent<Text>().text = "Has " + encounters.Length + " encounters";
             // crate your frisk version
             if (GlobalControls.crate)
-                EncounterCount.GetComponent<Text>().text = "HSA " + encounters.Count + " ENCUOTNERS";
+                EncounterCount.GetComponent<Text>().text = "HSA " + encounters.Length + " ENCUOTNERS";
         }
         EncounterCountShadow.GetComponent<Text>().text = EncounterCount.GetComponent<Text>().text;
 
@@ -527,10 +523,10 @@ public class SelectOMatic : MonoBehaviour {
 
         DirectoryInfo di = new DirectoryInfo(Path.Combine(FileLoader.DataRoot, "Mods/" + StaticInits.MODFOLDER + "/Lua/Encounters"));
         if (!di.Exists || di.GetFiles().Length <= 0) return;
-        FileInfo[] encounterFiles = di.GetFiles("*.lua");
+        string[] encounters = di.GetFiles("*.lua").Select(f => Path.GetFileNameWithoutExtension(f.Name)).Where(f => !f.StartsWith("@")).ToArray();
 
         int count = 0;
-        foreach (FileInfo encounter in encounterFiles) {
+        foreach (string encounter in encounters) {
             count += 1;
 
             //create a button for each encounter file
@@ -550,12 +546,12 @@ public class SelectOMatic : MonoBehaviour {
             button.transform.Find("Fill").GetComponent<Image>().color = new Color(0.5f,  0.5f,  0.5f,  0.5f);
 
             // set text
-            button.transform.Find("Text").GetComponent<Text>().text = Path.GetFileNameWithoutExtension(encounter.Name);
+            button.transform.Find("Text").GetComponent<Text>().text = Path.GetFileNameWithoutExtension(encounter);
             if (GlobalControls.crate)
-                button.transform.Find("Text").GetComponent<Text>().text = Temmify.Convert(Path.GetFileNameWithoutExtension(encounter.Name), true);
+                button.transform.Find("Text").GetComponent<Text>().text = Temmify.Convert(Path.GetFileNameWithoutExtension(encounter), true);
 
             //finally, set function!
-            string filename = Path.GetFileNameWithoutExtension(encounter.Name);
+            string filename = Path.GetFileNameWithoutExtension(encounter);
 
             int tempCount = count;
 
