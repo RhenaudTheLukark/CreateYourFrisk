@@ -397,7 +397,10 @@ public class EnemyController : MonoBehaviour {
             }
             Sprite speechBubSpr = speechBubImg.sprite;
 
-            sbTextMan.MoveTo((int)speechBubSpr.border.x, (int)(-speechBubSpr.border.w - sbTextMan.Charset.LineSpacing));
+            float xMov = speechBubSpr.border.x;
+            float yMov = -speechBubSpr.border.w - sbTextMan.Charset.LineSpacing;
+            float angle = sbTextMan.rotation * Mathf.Deg2Rad;
+            sbTextMan.MoveTo((int)(Mathf.Cos(angle) * xMov - Mathf.Sin(angle) * yMov), (int)(Mathf.Sin(angle) * xMov + Mathf.Cos(angle) * yMov));
             speechBubImg.color = new Color(speechBubImg.color.r, speechBubImg.color.g, speechBubImg.color.b, sbTextMan.letters.Count == 0 ? 0 : 1);
 
             sbTextMan.HideBubble();
