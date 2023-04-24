@@ -16,18 +16,18 @@ public class SelectOMatic : MonoBehaviour {
     private float animationTimer;
     public EventSystem eventSystem;
 
-    private static float modListScroll;          // Used to keep track of the position of the mod list specifically. Resets if you press escape
-    private static float encounterListScroll;    // Used to keep track of the position of the encounter list. Resets if you press escape
+    private static float modListScroll;         // Used to keep track of the position of the mod list specifically. Resets if you press escape
+    private static float encounterListScroll;   // Used to keep track of the position of the encounter list. Resets if you press escape
 
-    private float ExitButtonAlpha = 5f;                 // Used to fade the "Exit" button in and out
-    private float OptionsButtonAlpha = 5f;              // Used to fade the "Options" button in and out
+    private float ExitButtonAlpha = 5f;         // Used to fade the "Exit" button in and out
+    private float OptionsButtonAlpha = 5f;      // Used to fade the "Options" button in and out
 
-    private static int selectedItem;                // Used to let users navigate the mod and encounter menus with the arrow keys!
+    private static int selectedItem;            // Used to let users navigate the mod and encounter menus with the arrow keys!
 
     public GameObject encounterBox, devMod, content, retromodeWarning;
     public GameObject btnList,              btnBack,              btnNext,              btnExit,              btnOptions;
     public Text       ListText, ListShadow, BackText, BackShadow, NextText, NextShadow, ExitText, ExitShadow, OptionsText, OptionsShadow;
-    public GameObject  ModContainer,     ModBackground,     ModTitle,     ModTitleShadow,     EncounterCount,     EncounterCountShadow;
+    public GameObject ModContainer,  ModBackground,     ModTitle,     ModTitleShadow,     EncounterCount,     EncounterCountShadow;
     public GameObject AnimContainer, AnimModBackground, AnimModTitle, AnimModTitleShadow, AnimEncounterCount, AnimEncounterCountShadow;
 
     // Use this for initialization
@@ -43,16 +43,19 @@ public class SelectOMatic : MonoBehaviour {
         var modDirsTemp = di.GetDirectories();
 
         // Remove mods with 0 encounters and hidden mods from the list
-        List<DirectoryInfo> purged = (from modDir in modDirsTemp where new DirectoryInfo(Path.Combine(FileLoader.DataRoot, "Mods/" + modDir.Name + "/Lua/Encounters")).Exists
-                                      let hasEncounters = new DirectoryInfo(Path.Combine(FileLoader.DataRoot, "Mods/" + modDir.Name + "/Lua/Encounters")).GetFiles("*.lua").Any() where hasEncounters && (modDir.Attributes & FileAttributes.Hidden) != FileAttributes.Hidden && !modDir.Name.StartsWith("@")
+        List<DirectoryInfo> purged = (from modDir in modDirsTemp
+                                      let encPath = Path.Combine(FileLoader.DataRoot, "Mods/" + modDir.Name + "/Lua/Encounters")
+                                      where new DirectoryInfo(encPath).Exists
+                                      let hasEncounters = new DirectoryInfo(encPath).GetFiles("*.lua").Where(e => !e.Name.StartsWith("@")).Any()
+                                      where hasEncounters && (modDir.Attributes & FileAttributes.Hidden) != FileAttributes.Hidden && !modDir.Name.StartsWith("@")
                                       select modDir).ToList();
         modDirs = purged;
 
         // Make sure that there is at least one playable mod present
-        if (purged.Count == 0) {
+        if (modDirs.Count == 0) {
             GlobalControls.modDev = false;
             UnitaleUtil.DisplayLuaError("loading", "<b>Your mod folder is empty!</b>\nYou need at least 1 playable mod to use the Mod Selector.\n\n"
-                + "Remember:\n1. Mods whose names start with \"@\" do not count\n2. Folders without encounter files do not count");
+                + "Remember:\n1. Mods whose names start with \"@\" do not count\n2. Folders without encounter files or with only encounters whose names start with \"@\" do not count");
             return;
         }
 
