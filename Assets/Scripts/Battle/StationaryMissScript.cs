@@ -9,8 +9,8 @@ public class StationaryMissScript : MonoBehaviour {
     private float despawnTimer;
     public string text = "MISS";
 
-    public void setXPosition(float xpos) {
-        mgr.MoveToAbs(xpos - 55, 430); // 55 is the the fairly static 1/2 width of the miss text
+    public void setPosition(float xPos, float yPos) {
+        mgr.transform.position = new Vector2(xPos - UnitaleUtil.CalcTextWidth(mgr) / 2, Mathf.Min(yPos, 430));
     }
 
     public void SetText(string _text) { text = _text; }

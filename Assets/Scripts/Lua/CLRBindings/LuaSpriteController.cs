@@ -322,7 +322,7 @@ public class LuaSpriteController {
             // We mod the value from 0 to 360 because angles are between 0 and 360 normally
             internalRotation.z = Math.Mod(value, 360);
             if (GlobalControls.isInFight && EnemyEncounter.script.GetVar("noscalerotationbug").Boolean) {
-                internalRotation.z -= GetParentRot();
+                internalRotation.z = Math.Mod(internalRotation.z - GetParentRot(), 360);
                 img.GetComponent<RectTransform>().localEulerAngles = internalRotation;
             } else
                 img.GetComponent<RectTransform>().eulerAngles = internalRotation;
