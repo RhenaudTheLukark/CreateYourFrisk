@@ -279,24 +279,7 @@ end
                 If you implement this function in your script, you have to manually define what should happen after
                 bullet collision. This is what allows you to create orange, cyan and green projectiles, and much much
                 more. If you don't implement this function in your script, it'll stick to the default of dealing 3
-                damage on hit.<!-- Below are multiple examples of how to use this function. -->
-            </p>
-            <p>
-                <br><span class="function">OnTextAdvance(<span class="userdata">text</span> text, <span class="boolean"></span> final)</span>
-                Every time a <span class="ref">Text Object</span> automatically advances to the next line of text (that's
-                by any means <i>except</i> <span class="term">Text.NextLine()</span>), this function gets called in the
-                script that created the text object. This function is the best place to manipulate the letters from
-                <span class="term">Text.GetLetters</span>.
-                <br><br>
-                <span class="term">text</span> is the text object in question, while <span class="term">final</span> is
-                true only if the text object just advanced past its last line and deleted itself now that it's finished.
-                <br><br>
-                Text objects have a one-frame delay by default - see <span class="term">CreateText</span> in
-                <span class="ref">The Text Object</span>. If the text object is using this delay, then this function will
-                additionally be called on the first frame it starts to type (so one frame after it gets created). But if
-                you disable the one-frame delay, this function will <i>not</i> be called for the first line of text, since
-                you would already be able to access <span class="term">Text.GetLetters</span> and similar properties right
-                after calling <span class="term">CreateText</span>.
+                damage on hit.
             </p>
         </div>
 

@@ -142,12 +142,13 @@ const categoriesEnd = new Map([
 // Categories with an exclamation mark next to them
 // Used to set apart categories with new elements in them
 const isNew = [
-    "Special Variables", "Text Commands", "The Text Object",
-    "The Arena Object", "The UI Object", "Projectile Management",
-    "Sprites &amp; Animation", "General Objects", "Item List" ];
+    "Special Variables", "Text Commands", "Game Events",
+    "The Text Object", "The Arena Object", "The UI Object",
+    "Projectile Management", "Sprites &amp; Animation",
+    "General Objects", "Item List" ];
 
 // Categories with a <CYF> prefix
-// USed for categories only added during CYF's development
+// Used for categories only added during CYF's development
 const isCYF = [
     "Unity Setup (Optional)", "The NewAudio Object",
     "The Text Object", "The Inventory Object",

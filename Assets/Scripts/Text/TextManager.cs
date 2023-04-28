@@ -526,7 +526,7 @@ public class TextManager : MonoBehaviour {
         letters[letterIndex] = new LetterData(letter.index, letter.image, rt.anchoredPosition);
     }
 
-    private void SpawnText() {
+    protected virtual void SpawnText() {
         noSkip1stFrame = true;
         string currentText = textQueue[currentLine].Text;
         letters.Clear();
@@ -1030,9 +1030,10 @@ public class TextManager : MonoBehaviour {
                         DynValue[] argsbis = new DynValue[args.Length - 1];
                         for (int i = 1; i < args.Length; i++)
                             argsbis[i - 1] = ComputeArgument(args[i]);
-                        if (caller != null) caller.Call(args[0], argsbis, true); //ADD TRY
-                        //caller.Call(args[0], DynValue.NewString(args[1]));
-                    } else if (caller != null) caller.Call(cmds[1], null, true);
+                        if (caller != null)
+                            caller.Call(args[0], argsbis, true);
+                    } else if (caller != null)
+                        caller.Call(cmds[1], null, true);
 
                     if (cmds[1] == "State")
                         wasStated = true;

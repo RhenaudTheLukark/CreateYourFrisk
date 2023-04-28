@@ -100,13 +100,13 @@ public class LuaTextManager : TextManager {
         switch (progress) {
             case ProgressMode.MANUAL: {
                 if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED && LineComplete())
-                    Advance();
+                    NextLine();
                 break;
             }
             case ProgressMode.AUTO: {
                 if (LineComplete())
                     if (countFrames == framesWait) {
-                        Advance();
+                        NextLine();
                         countFrames = 0;
                     } else
                         countFrames++;
@@ -114,7 +114,7 @@ public class LuaTextManager : TextManager {
             }
         }
         if ((CanAutoSkipAll() && !noSelfAdvance) || CanAutoSkipThis())
-            Advance();
+            NextLine();
         if (CanSkip() && !LineComplete() && GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED)
             DoSkipFromPlayer();
     }
@@ -456,6 +456,18 @@ public class LuaTextManager : TextManager {
         }
     }
 
+    private DynValue _OnTextDisplay = DynValue.Nil;
+    public DynValue OnTextDisplay {
+        get { return _OnTextDisplay; }
+        set {
+            if (value.Type != DataType.Nil && value.Type != DataType.Function)
+                throw new CYFException("Text.OnTextDisplay: This variable has to be a function!");
+            if (value.Type == DataType.Function && value.Function.OwnerScript != caller.script)
+                throw new CYFException("Text.OnTextDisplay: You can only use a function created in the same script as the text object!");
+            _OnTextDisplay = value;
+        }
+    }
+
     public DynValue GetLetters() {
         CheckExists();
         if (lateStartWaiting)
@@ -512,7 +524,13 @@ public class LuaTextManager : TextManager {
             ResizeBubble();
     }
 
-    public void SpawnText() { StartCoroutine(LateStartSetText(false)); }
+    protected override void SpawnText() {
+        base.SpawnText();
+
+        if (OnTextDisplay.Type == DataType.Function)
+            caller.Call(OnTextDisplay, "OnTextDisplay", UserData.Create(this));
+    }
+
     [MoonSharpHidden] public void LateStart() { StartCoroutine(LateStartSetText()); }
 
     private IEnumerator LateStartSetText(bool waitUntilEndOfFrame = true) {
@@ -532,7 +550,7 @@ public class LuaTextManager : TextManager {
         lateStartWaiting = false;
 
         currentLine = -1;
-        Advance();
+        NextLine();
         if (bubble)
             ResizeBubble();
     }
@@ -670,14 +688,6 @@ public class LuaTextManager : TextManager {
             DoSkipFromPlayer();
         else
             base.SkipLine();
-    }
-
-    private void Advance() {
-        NextLine();
-        if (caller == null) return;
-        if (caller.script.Globals["OnTextAdvance"] == null || caller.script.Globals.Get("OnTextAdvance") == null) return;
-        try {caller.script.Call(caller.script.Globals["OnTextAdvance"], this, removed); }
-        catch (ScriptRuntimeException ex) { UnitaleUtil.DisplayLuaError(caller.scriptname, UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message, ex.DoNotDecorateMessage); }
     }
 
     public void NextLine() {

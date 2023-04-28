@@ -270,6 +270,16 @@ end
             </pre></div>
             </p>
             <p>
+                <br><span class="function"><span class="userdata">function</span> Text.OnTextDisplay(<span class="userdata">text</span> text)</span>
+                Every time this text object's letters are created, this function gets called. This function is the best
+                place to manipulate the letters from <span class="term">Text.GetLetters</span>.
+                <br><br>
+                The argument <span class="term">text</span> is the text object itself.
+                <br><br>
+                If this value isn't set and the function <span class="term">OnTextDisplay()</span> exists in the script
+                the text object has been created in, it will call it with the text object as its argument.
+            </p>
+            <p>
                 <br><span class="function">Text.SkipLine()</span>
                 This function skips to the end of the text object's current text, as if using the text command <span class="term">[instant]</span>.<br>
                 If <span class="term">playerskipdocommand</span> is true, this function will behave the same as a player skip.
