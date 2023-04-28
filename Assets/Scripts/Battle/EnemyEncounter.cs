@@ -197,13 +197,6 @@ public class EnemyEncounter : MonoBehaviour {
             if (!GlobalControls.retroMode)
                 UIController.instance.mainTextManager.SetEffect(new TwitchEffect(UIController.instance.mainTextManager));
 
-            // Fetch the script this function has been called from as its caller
-            foreach (ScriptWrapper scrWrap in ScriptWrapper.instances) {
-                if (scrWrap.script != scr) continue;
-                UIController.instance.mainTextManager.SetCaller(scrWrap);
-                break;
-            }
-
             UIController.instance.ActionDialogResult(msgs);
         }
     }
@@ -310,7 +303,7 @@ public class EnemyEncounter : MonoBehaviour {
         try {
             for (int i = 0; i < waves.Length; i++) {
                 currentScript = waveNames[i];
-                try { waves[i].script.Call(waves[i].script.Globals["Update"]); }
+                try { waves[i].Call("Update"); }
                 catch (InterpreterException ex) {
                     UnitaleUtil.DisplayLuaError(currentScript, UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message);
                     return;
@@ -384,7 +377,7 @@ public class EnemyEncounter : MonoBehaviour {
         if (!death)
             foreach (DynValue obj in t.Keys) {
                 try {
-                    ((ScriptWrapper)t[obj]).Call("EndingWave");
+                    (t[obj] as ScriptWrapper).Call("EndingWave");
                     ScriptWrapper.instances.Remove((ScriptWrapper)t[obj]);
                 } catch { UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, "You shouldn't override Wave, now you get an error :P"); }
             }

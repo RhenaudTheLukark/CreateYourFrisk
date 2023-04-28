@@ -316,9 +316,7 @@ public class UIController : MonoBehaviour {
                 monsterDialogues[i].DestroyChars();
                 encounter.EnabledEnemies[i].HideBubble();
             }
-        } else if (state == "DIALOGRESULT")
-            mainTextManager.SetCaller(EnemyEncounter.script);
-        else if (state == "ATTACKING")
+        } else if (state == "ATTACKING")
             FightUIController.instance.HideAttackingUI();
 
         string oldState = state;

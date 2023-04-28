@@ -94,6 +94,30 @@ public static class UnitaleUtil {
         ScreenResolution.wideFullscreen = true;
     }
 
+    /// <summary>
+    /// Handles most CYF errors related to script execution
+    /// </summary>
+    /// <param name="scriptname">Name of the script, used for the error message</param>
+    /// <param name="function">Name of the function, used for the error message</param>
+    /// <param name="e">Exception to handle</param>
+    public static void HandleError(string scriptname, string function, Exception e) {
+        if (e as InterpreterException != null) {
+            InterpreterException ie = e as InterpreterException;
+            DisplayLuaError(scriptname, ie.DecoratedMessage == null ? ie.Message : FormatErrorSource(ie.DecoratedMessage, ie.Message) + ie.Message, ie.DoNotDecorateMessage);
+        } else if (GlobalControls.retroMode)
+            return;
+        else if (e.GetType().ToString() == "System.IndexOutOfRangeException" && e.StackTrace.Contains("at MoonSharp.Interpreter.DataStructs.FastStack`1[MoonSharp.Interpreter.DynValue].Push"))
+            DisplayLuaError(scriptname + ", calling the function " + function, "<b>Possible infinite loop</b>\n\nThis is a " + e.GetType() + " error."
+                                                                             + "\n\nYou almost definitely have an infinite loop in your code. A function tried to call itself infinitely. It could be a normal function or a metatable function."
+                                                                             + "\n\nFull stracktrace (see CYF output log at <b>" + Application.persistentDataPath + "/output_log.txt</b>):"
+                                                                             + "\n" + e.StackTrace);
+        else
+            DisplayLuaError(scriptname + ", calling the function " + function, "This is a " + e.GetType() + " error. Contact a dev and show them this screen, this must be an engine-side error."
+                                                                             + "\n\n" + e.Message
+                                                                             + "\n\nFull stracktrace (see CYF output log at <b>" + Application.persistentDataPath + "/output_log.txt</b>):"
+                                                                             + "\n" + e.StackTrace + "\n");
+    }
+
     public static string FormatErrorSource(string DecoratedMessage, string message) {
         string source = DecoratedMessage.Substring(0, DecoratedMessage.Length - message.Length);
         Regex validator = new Regex(@"\(\d+,\d+(-[\d,]+)?\)"); //Finds `(13,9-16)` or `(13,9-14,10)` or `(20,0)`
@@ -649,11 +673,9 @@ public static class UnitaleUtil {
 
     public static bool TryCall(ScriptWrapper script, string func, DynValue param) { return TryCall(script, func, new[] { param }); }
     public static bool TryCall(ScriptWrapper script, string func, DynValue[] param = null) {
-        try {
-            DynValue sval = script.GetVar(func);
-            if (sval == null || sval.Type == DataType.Nil) return false;
-            script.Call(func, param);
-        } catch (InterpreterException ex) { DisplayLuaError(script.scriptname, FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message); }
+        DynValue sval = script.GetVar(func);
+        if (sval == null || sval.Type == DataType.Nil) return false;
+        script.Call(func, param);
         return true;
     }
 
