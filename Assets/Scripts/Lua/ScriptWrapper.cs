@@ -82,7 +82,7 @@ public class ScriptWrapper {
     public DynValue Call(DynValue function, string functionName, DynValue[] args = null) {
         try { return script.Call(function, args ?? new DynValue[0]); }
         catch (Exception e) {
-            if (args[0].Type == DataType.Table && args.Length == 1) {
+            if (args != null && args[0].Type == DataType.Table && args.Length == 1) {
                 DynValue[] argsNew = UnitaleUtil.TableToDynValueArray(args[0].Table);
                 try { return script.Call(function, argsNew); }
                 catch (Exception e2) {
