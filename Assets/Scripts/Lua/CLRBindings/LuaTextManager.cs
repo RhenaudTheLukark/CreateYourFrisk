@@ -529,6 +529,8 @@ public class LuaTextManager : TextManager {
 
         if (OnTextDisplay.Type == DataType.Function)
             caller.Call(OnTextDisplay, "OnTextDisplay", UserData.Create(this));
+        else if (GlobalControls.isInFight && EnemyEncounter.script.script.Globals.Get("OnTextDisplay").Type == DataType.Function)
+            EnemyEncounter.script.Call("OnTextDisplay", UserData.Create(this));
     }
 
     [MoonSharpHidden] public void LateStart() { StartCoroutine(LateStartSetText()); }
@@ -540,8 +542,6 @@ public class LuaTextManager : TextManager {
         if (!isactive || !lateStartWaiting)
             yield break;
 
-        letterSound = defaultVoice ?? default_charset.SoundName;
-
         if (linePrefix != "")
             foreach (TextMessage tm in textQueue)
                 tm.Text = linePrefix + tm.Text;
@@ -549,10 +549,9 @@ public class LuaTextManager : TextManager {
         // Only allow inline text commands and letter sounds on the second frame
         lateStartWaiting = false;
 
-        currentLine = -1;
-        NextLine();
+        ShowLine(0);
         if (bubble)
-            ResizeBubble();
+            UpdateBubble();
     }
 
     public void AddText(DynValue text) {

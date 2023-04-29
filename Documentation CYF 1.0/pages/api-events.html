@@ -167,6 +167,16 @@ end
                 If you use <span class="term">Player.hp</span> or <span class="term">Player.Heal</span> here to bring the
                 Player's hp back to greater than 0, they will live and the Game Over sequence will be cancelled.
             </p>
+            <p>
+                <br><span class="new function">OnTextDisplay(<span class="userdata">text</span> text)</span>
+                Every time any text object's letters are created, this function gets called. This function is the best
+                place to manipulate the text object's letters using <span class="term">Text.GetLetters</span>.
+                <br><br>
+                The argument <span class="term">text</span> is the text object itself.
+                <br><br>
+                This event isn't called for text objects which have their own <span class="term">Text.OnTextDisplay()
+                </span> function.
+            </p>
             <br><br>
             <hr>
             <h4>Monster script events</h4>

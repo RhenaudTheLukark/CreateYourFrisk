@@ -321,6 +321,7 @@ public class TextManager : MonoBehaviour {
         if (textQueue == null) return;
         if (line >= textQueue.Length) return;
         if (textQueue[line] == null) return;
+        if (lateStartWaiting) return;
         bool oldLineHasMugshot = lineHasMugshot;
         SetMugshot(textQueue[line].Mugshot);
 
@@ -543,7 +544,7 @@ public class TextManager : MonoBehaviour {
                 case '[':
                     int currentChar = i;
                     string command = UnitaleUtil.ParseCommandInline(currentText, ref i);
-                    if (command == null || lateStartWaiting)
+                    if (command == null)
                         i = currentChar;
                     else {
                         // Work-around for [noskip], [instant] and [instant:allowcommand]
@@ -639,7 +640,7 @@ public class TextManager : MonoBehaviour {
             switch (currentText[i]) {
                 case '[':
                     string command = UnitaleUtil.ParseCommandInline(currentText, ref i);
-                    if (lateStartWaiting || command == null || !movementCommands.Contains(command))
+                    if (command == null || !movementCommands.Contains(command))
                         i = currentChar;
                     else
                         PreCreateControlCommand(command, true);
