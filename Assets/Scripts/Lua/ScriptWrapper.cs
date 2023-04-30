@@ -74,25 +74,27 @@ public class ScriptWrapper {
                 UnitaleUtil.DisplayLuaError(scriptname, "Attempted to call the function \"" + function + "\", but it didn't exist.");
             return DynValue.Nil;
         }
-        return Call(script.Globals.Get(function), function, args);
+        return Call(script.Globals.Get(function), function, args, checkExist);
     }
 
-    public DynValue Call(DynValue function, string functionName, DynValue arg) { return Call(function, functionName, new[] { arg }); }
+    public DynValue Call(DynValue function, string functionName, DynValue arg, bool checkExist = false) { return Call(function, functionName, new[] { arg }, checkExist); }
 
-    public DynValue Call(DynValue function, string functionName, DynValue[] args = null) {
-        try { return script.Call(function, args ?? new DynValue[0]); }
-        catch (Exception e) {
-            if (args != null && args[0].Type == DataType.Table && args.Length == 1) {
-                DynValue[] argsNew = UnitaleUtil.TableToDynValueArray(args[0].Table);
-                try { return script.Call(function, argsNew); }
-                catch (Exception e2) {
-                    if (e2 as InterpreterException != null)
-                        e = e2;
+    public DynValue Call(DynValue function, string functionName, DynValue[] args = null, bool checkExist = false) {
+        if (function.Type != DataType.Function) {
+            if (checkExist)
+                UnitaleUtil.DisplayLuaError(scriptname, "Attempted to call the function \"" + functionName + "\", but it didn't exist.");
+        } else
+            try { return script.Call(function, args ?? new DynValue[0]); } catch (Exception e) {
+                if (args != null && args[0].Type == DataType.Table && args.Length == 1) {
+                    DynValue[] argsNew = UnitaleUtil.TableToDynValueArray(args[0].Table);
+                    try { return script.Call(function, argsNew); } catch (Exception e2) {
+                        if (e2 as InterpreterException != null)
+                            e = e2;
+                    }
                 }
-            }
 
-            UnitaleUtil.HandleError(scriptname, functionName, e);
-        }
+                UnitaleUtil.HandleError(scriptname, functionName, e);
+            }
         return DynValue.Nil;
     }
 
