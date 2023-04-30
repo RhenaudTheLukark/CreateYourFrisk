@@ -12,10 +12,13 @@ public class TextManager : MonoBehaviour {
         public int index;
         public Image image;
         public Vector2 position;
-        public LetterData(int index, Image image, Vector2 position) {
+        public bool commandColorSet, commandAlphaSet;
+        public LetterData(int index, Image image, Vector2 position, bool commandColorSet, bool commandAlphaSet) {
             this.index = index;
             this.image = image;
             this.position = position;
+            this.commandColorSet = commandColorSet;
+            this.commandAlphaSet = commandAlphaSet;
         }
     }
     internal List<LetterData> letters = new List<LetterData>();
@@ -73,10 +76,10 @@ public class TextManager : MonoBehaviour {
     private int letterOnceValue;
     private KeyCode waitingChar = KeyCode.None;
 
-    protected Color currentColor = Color.white;
-    private bool colorSet;
+    protected Color commandColor = Color.white;
     protected Color defaultColor = Color.white;
     protected Color fontDefaultColor = Color.white;
+    protected bool commandColorSet, commandAlphaSet;
 
     private float letterTimer;
     private float timePerLetter;
@@ -126,7 +129,8 @@ public class TextManager : MonoBehaviour {
         vSpacing = 0;
         mugshotList = null;
         letterOnceValue = 0;
-        colorSet = false;
+        commandColorSet = false;
+        commandAlphaSet = false;
         letterTimer = 0.0f;
         textQueue = null;
         blockSkip = false;
@@ -148,11 +152,11 @@ public class TextManager : MonoBehaviour {
         vSpacing = 0;
         hSpacing = font.CharSpacing;
         fontDefaultColor = defaultColor = font.DefaultColor;
-        if (GetType() == typeof(LuaTextManager)) {
-            if (((LuaTextManager) this).hasColorBeenSet) defaultColor = ((LuaTextManager) this)._color;
-            if (((LuaTextManager) this).hasAlphaBeenSet) defaultColor.a = ((LuaTextManager) this).alpha;
+        if (this as LuaTextManager) {
+            if ((this as LuaTextManager).textColorSet) defaultColor =   ((LuaTextManager) this)._color;
+            if ((this as LuaTextManager).textAlphaSet) defaultColor.a = ((LuaTextManager) this).alpha;
         }
-        currentColor = defaultColor;
+        commandColor = defaultColor;
     }
 
     [MoonSharpHidden] public void SetHorizontalSpacing(float spacing = 3) { hSpacing = spacing; }
@@ -168,8 +172,18 @@ public class TextManager : MonoBehaviour {
         System.Diagnostics.Debug.Assert(default_charset != null, "default_charset != null");
         letterSound = defaultVoice ?? default_charset.SoundName;
         fontDefaultColor = default_charset.DefaultColor;
-        if (GetType() != typeof(LuaTextManager) || GetType() == typeof(LuaTextManager) && !((LuaTextManager) this).hasColorBeenSet)
+
+        if (!(this as LuaTextManager))
             defaultColor = fontDefaultColor;
+        else {
+            if (!(this as LuaTextManager).textColorSet) {
+                defaultColor.r = fontDefaultColor.r;
+                defaultColor.g = fontDefaultColor.g;
+                defaultColor.b = fontDefaultColor.b;
+            }
+            if (!(this as LuaTextManager).textAlphaSet)
+                defaultColor.a = fontDefaultColor.a;
+        }
 
         // Default voice in the overworld
         if (gameObject.name == "TextManager OW")
@@ -180,7 +194,7 @@ public class TextManager : MonoBehaviour {
         self = gameObject.GetComponent<RectTransform>();
         timePerLetter = singleFrameTiming;
 
-        Transform parent = this as LuaTextManager != null ? (this as LuaTextManager).GetContainer().transform.parent : transform.parent;
+        Transform parent = this as LuaTextManager ? (this as LuaTextManager).GetContainer().transform.parent : transform.parent;
         if (parent == null || (!parent.Find("Mugshot") && !parent.Find("MugshotMask")))
             return;
         mugshot = LuaSpriteController.GetOrCreate((parent.Find("Mugshot") ?? parent.Find("MugshotMask").GetChild(0)).gameObject);
@@ -325,10 +339,11 @@ public class TextManager : MonoBehaviour {
         bool oldLineHasMugshot = lineHasMugshot;
         SetMugshot(textQueue[line].Mugshot);
 
-        if (GetType() != typeof(LuaTextManager) || ((LuaTextManager)this).needFontReset)
+        if (!(this as LuaTextManager) || (this as LuaTextManager).needFontReset)
             ResetFont();
-        currentColor     = defaultColor;
-        colorSet         = false;
+        commandColor     = defaultColor;
+        commandColorSet  = false;
+        commandAlphaSet  = false;
         currentSkippable = true;
         autoSkipThis     = false;
         autoSkip         = false;
@@ -483,8 +498,8 @@ public class TextManager : MonoBehaviour {
         GameObject singleLtr = Instantiate(SpriteFontRegistry.LETTER_OBJECT);
         RectTransform ltrRect = singleLtr.GetComponent<RectTransform>();
 
-        bool isLua = GetType() == typeof(LuaTextManager);
-        LuaTextManager luaThis = isLua ? ((LuaTextManager) this) : null;
+        LuaTextManager luaThis = this as LuaTextManager;
+        bool isLua = luaThis != null;
 
         ltrRect.localScale = new Vector3(isLua ? luaThis.xscale : 1f, isLua ? luaThis.yscale : 1f, ltrRect.localScale.z);
 
@@ -492,20 +507,22 @@ public class TextManager : MonoBehaviour {
         ltrRect.SetParent(gameObject.transform);
         ltrImg.sprite = Charset.Letters[currentText[index]];
 
-        letters.Add(new LetterData(index, ltrImg, Vector2.zero));
+        letters.Add(new LetterData(index, ltrImg, Vector2.zero, commandColorSet, commandAlphaSet));
         MoveLetter(currentText, letters.Count - 1);
 
         ltrImg.SetNativeSize();
+
+        Color resultColor = commandColor;
         if (isLua) {
-            Color luaColor = luaThis._color;
-            if (!colorSet) {
-                if (!luaThis.hasAlphaBeenSet && !luaThis.hasColorBeenSet) ltrImg.color = currentColor;
-                else if (!luaThis.hasColorBeenSet)                        ltrImg.color = new Color(currentColor.r, currentColor.g, currentColor.b, luaColor.a    );
-                else if (!luaThis.hasAlphaBeenSet)                        ltrImg.color = new Color(luaColor.r,     luaColor.g,     luaColor.b,     currentColor.a);
-                else                                                      ltrImg.color = luaColor;
-            } else                                                        ltrImg.color = currentColor;
-        } else                                                            ltrImg.color = currentColor;
-        ltrImg.GetComponent<Letter>().colorFromText = currentColor;
+            if (!commandColorSet && luaThis.textColorSet) {
+                resultColor.r = luaThis._color.r;
+                resultColor.g = luaThis._color.g;
+                resultColor.b = luaThis._color.b;
+            }
+            if (!commandAlphaSet && luaThis.textAlphaSet)
+                resultColor.a = commandColor.a;
+        }
+        ltrImg.color = resultColor;
         ltrImg.enabled = textQueue[currentLine].ShowImmediate || (GlobalControls.retroMode && instantActive);
 
         return letters.Count - 1;
@@ -524,7 +541,7 @@ public class TextManager : MonoBehaviour {
             rt.position = new Vector3(currentX, currentY + (letterShift + 2) * mult, 0);
 
         rt.eulerAngles = new Vector3(0, 0, rotation);
-        letters[letterIndex] = new LetterData(letter.index, letter.image, rt.anchoredPosition);
+        letters[letterIndex] = new LetterData(letter.index, letter.image, rt.anchoredPosition, letters[letterIndex].commandColorSet, letters[letterIndex].commandAlphaSet);
     }
 
     protected virtual void SpawnText() {
@@ -808,14 +825,15 @@ public class TextManager : MonoBehaviour {
         // TODO: Restore errors for 0.7
         switch (cmds[0].ToLower()) {
             case "color":
-                float oldAlpha = currentColor.a;
-                colorSet = args.Length == 1;
-                try { currentColor = colorSet ? ParseUtil.GetColor(cmds[1]) : defaultColor; }
+                float oldAlpha = commandColor.a;
+                commandColorSet = args.Length >= 1;
+                try { commandColor = commandColorSet ? ParseUtil.GetColor(cmds[1]) : defaultColor; }
                 catch { Debug.LogError("[color:x] usage - You used the value \"" + cmds[1] + "\" to set the text's color but it's not a valid hexadecimal color value."); }
-                currentColor.a = oldAlpha;
+                commandColor.a = oldAlpha;
                 break;
             case "alpha":
-                try { currentColor.a = args.Length == 1 ? ParseUtil.GetByte(cmds[1]) / 255 : defaultColor.a; }
+                commandAlphaSet = args.Length >= 1;
+                try { commandColor.a = commandAlphaSet ? ParseUtil.GetByte(cmds[1]) / 255 : defaultColor.a; }
                 catch { Debug.LogError("[alpha:x] usage - You used the value \"" + cmds[1] + "\" to set the text's alpha but it's not a valid hexadecimal value."); }
 
                 break;

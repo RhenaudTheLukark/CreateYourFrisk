@@ -19,7 +19,6 @@ public class LuaTextManager : TextManager {
     private int _bubbleHeight = -1;
     private BubbleSide bubbleSide = BubbleSide.NONE;
     [SerializeField] private ProgressMode progress = ProgressMode.AUTO;
-    private Color textColor;
     private float xScale = 1;
     private float yScale = 1;
     private string _linePrefix = "";
@@ -333,41 +332,20 @@ public class LuaTextManager : TextManager {
 
     public void ResetColor(bool resetAlpha = false) {
         CheckExists();
-        Color c = fontDefaultColor;
-        if (!resetAlpha) c.a = alpha;
-
-        if (currentColor.r == defaultColor.r && currentColor.g == defaultColor.g && currentColor.b == defaultColor.b)
-            currentColor = c;
-
-        foreach (LetterData l in letters.Where(i => i.image.color == defaultColor))
-            l.image.color = c;
-
-        _color = c;
-        defaultColor = c;
-
-        hasColorBeenSet = false;
-        hasAlphaBeenSet = !resetAlpha && hasAlphaBeenSet;
+        if (resetAlpha)
+            ResetAlpha();
+        color = new[] { fontDefaultColor.r, fontDefaultColor.g, fontDefaultColor.b };
+        textColorSet = false;
     }
 
     public void ResetAlpha() {
         CheckExists();
-        Color c = currentColor;
-        c.a = fontDefaultColor.a;
-
-        if (currentColor.a == defaultColor.a)
-            currentColor = c;
-
-        foreach (LetterData l in letters.Where(i => i.image.color == defaultColor))
-            l.image.color = c;
-
-        _color.a = c.a;
-        defaultColor = c;
-        hasAlphaBeenSet = false;
+        alpha = fontDefaultColor.a;
+        textAlphaSet = false;
     }
 
     [MoonSharpHidden] public Color _color = Color.white;
-    [MoonSharpHidden] public bool hasColorBeenSet;
-    [MoonSharpHidden] public bool hasAlphaBeenSet;
+    [MoonSharpHidden] public bool textColorSet, textAlphaSet;
     // The color of the text. It uses an array of three floats between 0 and 1
     public float[] color {
         get {
@@ -378,22 +356,22 @@ public class LuaTextManager : TextManager {
             CheckExists();
             if (value == null)
                 throw new CYFException("text.color can not be set to a nil value.");
-            switch (value.Length) {
-                // If we don't have three or four floats, we throw an error
-                case 3: _color = new Color(value[0], value[1], value[2], alpha);    break;
-                case 4: _color = new Color(value[0], value[1], value[2], value[3]); break;
-                default:
-                    throw new CYFException("You need 3 or 4 numeric values when setting a text's color.");
-            }
+            if (value.Length < 3 || value.Length > 4)
+                throw new CYFException("You need 3 or 4 numeric values when setting a text's color.");
 
-            hasColorBeenSet = true;
-            hasAlphaBeenSet = hasAlphaBeenSet || value.Length == 4;
+            _color.r = value[0];
+            _color.g = value[1];
+            _color.b = value[2];
+            if (value.Length == 4)
+                alpha = value[3];
 
-            foreach (LetterData l in letters.Where(i => i.image.color == defaultColor))
-                l.image.color = _color;
+            textColorSet = true;
 
-            if (currentColor.r == defaultColor.r && currentColor.g == defaultColor.g && currentColor.b == defaultColor.b)
-                currentColor = _color;
+            foreach (LetterData l in letters.Where(i => !i.commandColorSet))
+                l.image.color = new Color(_color.r, _color.g, _color.b, l.image.color.a);
+
+            if (!commandColorSet)
+                commandColor = _color;
             defaultColor = _color;
         }
     }
@@ -409,13 +387,9 @@ public class LuaTextManager : TextManager {
             CheckExists();
             if (value == null)
                 throw new CYFException("text.color32 can not be set to a nil value.");
-            switch (value.Length) {
-                // If we don't have three or four floats, we throw an error
-                case 3: color = new[] { value[0] / 255, value[1] / 255, value[2] / 255, alpha };          break;
-                case 4: color = new[] { value[0] / 255, value[1] / 255, value[2] / 255, value[3] / 255 }; break;
-                default:
-                    throw new CYFException("You need 3 or 4 numeric values when setting a text's color.");
-            }
+            if (value.Length < 3 || value.Length > 4)
+                throw new CYFException("You need 3 or 4 numeric values when setting a text's color.");
+            color = value.Select(v => v / 255).ToArray();
         }
     }
 
@@ -427,8 +401,15 @@ public class LuaTextManager : TextManager {
         }
         set {
             CheckExists();
-            color = new[] { _color.r, _color.g, _color.b, Mathf.Clamp01(value) };
-            hasAlphaBeenSet = true;
+            _color.a = Mathf.Clamp01(value);
+            textAlphaSet = true;
+
+            foreach (LetterData l in letters.Where(i => !i.commandAlphaSet))
+                l.image.color = new Color(l.image.color.r, l.image.color.g, l.image.color.b, _color.a);
+
+            if (!commandAlphaSet)
+                commandColor.a = _color.a;
+            _color.a = defaultColor.a = _color.a;
         }
     }
 

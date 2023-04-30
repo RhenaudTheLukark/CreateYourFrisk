@@ -7,7 +7,6 @@ public class Letter : MonoBehaviour {
     public TextEffectLetter effect = null;
     public int characterNumber;
     public bool started;
-    public Color colorFromText;
 
     private void Start() {
         img = GetComponent<Image>();
