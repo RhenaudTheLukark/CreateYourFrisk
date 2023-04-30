@@ -646,9 +646,9 @@ public class TextManager : MonoBehaviour {
         startingLineX = currentX;
         startingLineY = currentY;
 
-        LuaTextManager ltm = GetType() == typeof(LuaTextManager) ? (LuaTextManager)this : null;
-        float normalizedHSpacing = GetType() == typeof(LuaTextManager) ? Mathf.Round(hSpacing                         * ltm.xscale) / ltm.xscale : hSpacing;
-        float normalizedVSpacing = GetType() == typeof(LuaTextManager) ? Mathf.Round((vSpacing + Charset.LineSpacing) * ltm.yscale)              : vSpacing + Charset.LineSpacing;
+        LuaTextManager ltm = this as LuaTextManager;
+        float normalizedHSpacing = hSpacing;
+        float normalizedVSpacing = (ltm != null ? ltm.yscale : 1) * vSpacing + Charset.LineSpacing;
 
         string currentText = textQueue[currentLine].Text;
         int tabCount = 0;
