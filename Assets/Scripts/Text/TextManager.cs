@@ -531,14 +531,27 @@ public class TextManager : MonoBehaviour {
     private void MoveLetter(string currentText, int letterIndex) {
         LetterData letter = letters[letterIndex];
         RectTransform rt = letter.image.GetComponent<RectTransform>();
+
         float letterShift = Charset.Letters[currentText[letter.index]].border.w - Charset.Letters[currentText[letter.index]].border.y;
-        float mult = GetType() == typeof(LuaTextManager) ? ((LuaTextManager)this).yscale : 1;
+        float xScale = 1, yScale = 1;
+        float xPos = currentX, yPos = currentY;
+
+        LuaTextManager luaThis = this as LuaTextManager;
+        if (luaThis && luaThis.adjustTextDisplay) {
+            xScale = luaThis.xscale;
+            yScale = luaThis.yscale;
+            xPos = Mathf.Round(xPos * xScale) / xScale;
+            yPos = Mathf.Round(yPos * yScale) / yScale;
+        }
+        xPos += 0.01f;
+        yPos += 0.01f;
+
         if (GetType() == typeof(LuaTextManager) || gameObject.name == "TextParent" || gameObject.name == "ReviveText")
             // Allow Game Over fonts to enjoy the fixed text positioning, too!
-            rt.position = new Vector3(currentX, currentY + letterShift * mult, 0);
+            rt.localPosition = new Vector3(xPos, yPos + letterShift * yScale, 0);
         else
             // Keep what we already have for all text boxes that are not Text Objects in an encounter
-            rt.position = new Vector3(currentX, currentY + (letterShift + 2) * mult, 0);
+            rt.localPosition = new Vector3(xPos, yPos + (letterShift + 2) * yScale, 0);
 
         rt.eulerAngles = new Vector3(0, 0, rotation);
         letters[letterIndex] = new LetterData(letter.index, letter.image, rt.anchoredPosition, letters[letterIndex].commandColorSet, letters[letterIndex].commandAlphaSet);
@@ -638,10 +651,10 @@ public class TextManager : MonoBehaviour {
         float baseHSpacing = hSpacing;
         float baseVSpacing = vSpacing;
 
-        currentX = self.position.x;
-        currentY = self.position.y;
+        currentX = 0;
+        currentY = 0;
         // allow Game Over fonts to enjoy the fixed text positioning, too!
-        if (GetType() != typeof(LuaTextManager) && gameObject.name != "TextParent" && gameObject.name != "ReviveText")
+        if (!(this as LuaTextManager) && gameObject.name != "TextParent" && gameObject.name != "ReviveText")
             currentY -= Charset.LineSpacing;
         startingLineX = currentX;
         startingLineY = currentY;
@@ -677,8 +690,8 @@ public class TextManager : MonoBehaviour {
                 LetterData letter = letters.Find(l => l.index == i);
                 MoveLetter(currentText, letters.IndexOf(letter));
                 RectTransform rt = letter.image.GetComponent<RectTransform>();
-                currentX += (rt.rect.width * rt.localScale.x + normalizedHSpacing) * Mathf.Cos(rotation * Mathf.Deg2Rad) * (ltm ? ltm.xscale : 1); // TODO remove hardcoded letter offset
-                currentY += (rt.rect.width * rt.localScale.x + normalizedHSpacing) * Mathf.Sin(rotation * Mathf.Deg2Rad) * (ltm ? ltm.xscale : 1);
+                currentX += (rt.rect.width + normalizedHSpacing) * Mathf.Cos(rotation * Mathf.Deg2Rad);
+                currentY += (rt.rect.width + normalizedHSpacing) * Mathf.Sin(rotation * Mathf.Deg2Rad);
             }
         }
 
