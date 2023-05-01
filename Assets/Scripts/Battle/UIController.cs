@@ -60,7 +60,6 @@ public class UIController : MonoBehaviour {
     private string stateAfterDialogs = "DEFENDING";      // State to enter after the current arena dialogue is done. Only used after a proper call to BattleDialog()
     private string lastNewState = "UNUSED";              // Allows the detection of state changes during an OnDeath() call so the engine can switch to it properly
 
-    private bool encounterHasUpdate;                                // True if the encounter has an Update function, false otherwise
     private bool parentStateCall = true;                            // Used to stop the execution of a previous State() call if a new call has been done and to prevent infinite EnteringState() loops
     private bool childStateCalled;                                  // Used to stop the execution of a previous State() call if a new call has been done and to prevent infinite EnteringState() loops
     private bool fleeSwitch;                                        // True if the Player fled, and the encounter can be ended
@@ -1240,8 +1239,6 @@ public class UIController : MonoBehaviour {
         ControlPanel.instance.FrameBasedMovement = false;
 
         LuaScriptBinder.CopyToBattleVar();
-        if (EnemyEncounter.script.GetVar("Update") != null)
-            encounterHasUpdate = true;
         GameObject.Find("Main Camera").GetComponent<ProjectileHitboxRenderer>().enabled = !GameObject.Find("Main Camera").GetComponent<ProjectileHitboxRenderer>().enabled;
         //There are scene init bugs, let's fix them!
         /*if (GameObject.Find("TopLayer").transform.parent != GameObject.Find("Canvas").transform) {
@@ -1392,8 +1389,7 @@ public class UIController : MonoBehaviour {
         stateSwitched = false;
         if (encounter.gameOverStance)
             return;
-        if (encounterHasUpdate)
-            UnitaleUtil.TryCall(EnemyEncounter.script, "Update");
+        UnitaleUtil.TryCall(EnemyEncounter.script, "Update");
 
         if (frozenState != "PAUSE")
             return;
