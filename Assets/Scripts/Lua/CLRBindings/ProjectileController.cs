@@ -199,7 +199,7 @@ public class ProjectileController {
     public DynValue OnHit {
         get { return _OnHit; }
         set {
-            if (value.Type != DataType.Nil && value.Type != DataType.Function)
+            if ((value.Type & (DataType.Nil | DataType.Function | DataType.ClrFunction)) == 0)
                 throw new CYFException("bullet.OnHit: This variable has to be a function!");
             if (value.Type == DataType.Function && value.Function.OwnerScript != p.owner)
                 throw new CYFException("bullet.OnHit: You can only use a function created in the same script as the projectile!");

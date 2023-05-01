@@ -68,20 +68,13 @@ public class ScriptWrapper {
 
     public DynValue Call(string function, DynValue arg) { return Call(function, new[] { arg }); }
 
-    public DynValue Call(string function, DynValue[] args = null, bool checkExist = false) {
-        if (script.Globals[function] == null || script.Globals.Get(function) == null) {
-            if (checkExist && !GlobalControls.retroMode)
-                UnitaleUtil.DisplayLuaError(scriptname, "Attempted to call the function \"" + function + "\", but it didn't exist.");
-            return DynValue.Nil;
-        }
-        return Call(script.Globals.Get(function), function, args, checkExist);
-    }
+    public DynValue Call(string function, DynValue[] args = null, bool checkExist = false) { return Call(script.Globals.Get(function), function, args, checkExist); }
 
     public DynValue Call(DynValue function, string functionName, DynValue arg, bool checkExist = false) { return Call(function, functionName, new[] { arg }, checkExist); }
 
     public DynValue Call(DynValue function, string functionName, DynValue[] args = null, bool checkExist = false) {
-        if (function.Type != DataType.Function) {
-            if (checkExist)
+        if ((function.Type & (DataType.ClrFunction | DataType.Function)) == 0) {
+            if (checkExist && !GlobalControls.retroMode)
                 UnitaleUtil.DisplayLuaError(scriptname, "Attempted to call the function \"" + functionName + "\", but it didn't exist.");
         } else
             try { return script.Call(function, args ?? new DynValue[0]); } catch (Exception e) {
@@ -99,5 +92,4 @@ public class ScriptWrapper {
     }
 
     internal void Bind(string key, object func)      { script.Globals[key] = func; }
-    internal void BindDyn(string key, DynValue func) { script.Globals[key] = func; }
 }

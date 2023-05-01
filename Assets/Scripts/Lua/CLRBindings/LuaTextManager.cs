@@ -441,7 +441,7 @@ public class LuaTextManager : TextManager {
     public DynValue OnTextDisplay {
         get { return _OnTextDisplay; }
         set {
-            if (value.Type != DataType.Nil && value.Type != DataType.Function)
+            if ((value.Type & (DataType.Nil | DataType.Function | DataType.ClrFunction)) == 0)
                 throw new CYFException("Text.OnTextDisplay: This variable has to be a function!");
             if (value.Type == DataType.Function && value.Function.OwnerScript != caller.script)
                 throw new CYFException("Text.OnTextDisplay: You can only use a function created in the same script as the text object!");
@@ -507,10 +507,9 @@ public class LuaTextManager : TextManager {
 
     protected override void SpawnText() {
         base.SpawnText();
-
-        if (OnTextDisplay.Type == DataType.Function)
+        if ((OnTextDisplay.Type & (DataType.Function | DataType.ClrFunction)) != 0)
             caller.Call(OnTextDisplay, "OnTextDisplay", UserData.Create(this));
-        else if (GlobalControls.isInFight && EnemyEncounter.script.script.Globals.Get("OnTextDisplay").Type == DataType.Function)
+        else if (GlobalControls.isInFight && (EnemyEncounter.script.script.Globals.Get("OnTextDisplay").Type & (DataType.Function | DataType.ClrFunction)) != 0)
             EnemyEncounter.script.Call("OnTextDisplay", UserData.Create(this));
     }
 
