@@ -56,90 +56,50 @@ public class LuaSpriteController {
 
     // The x position of the sprite, relative to the arena position and its anchor.
     public float x {
-        get {
-            float val = img.GetComponent<RectTransform>().anchoredPosition.x;
-            if (img.transform.parent == null) return val;
-            if (img.transform.parent.name == "SpritePivot")
-                val += img.transform.parent.localPosition.x;
-            return val;
-        }
-        set {
-            if (img.transform.parent != null && img.transform.parent.name == "SpritePivot")
-                img.transform.parent.localPosition = new Vector3(value, img.transform.parent.localPosition.y, img.transform.parent.localPosition.z) - (Vector3)img.GetComponent<RectTransform>().anchoredPosition;
-            else
-                img.GetComponent<RectTransform>().anchoredPosition = new Vector2(value, img.GetComponent<RectTransform>().anchoredPosition.y);
-        }
+        get { return GetTarget().anchoredPosition.x + (GetTarget().gameObject != img ? img.transform.localPosition.x : 0); }
+        set { MoveTo(value, y); }
     }
 
     // The y position of the sprite, relative to the arena position and its anchor.
     public float y {
-        get {
-            float val = img.GetComponent<RectTransform>().anchoredPosition.y;
-            if (img.transform.parent == null) return val;
-            if (img.transform.parent.name == "SpritePivot")
-                val += img.transform.parent.localPosition.y;
-            return val;
-        }
-        set {
-            if (img.transform.parent != null && img.transform.parent.name == "SpritePivot")
-                img.transform.parent.localPosition = new Vector3(img.transform.parent.localPosition.x, value, img.transform.parent.localPosition.z) - (Vector3)img.GetComponent<RectTransform>().anchoredPosition;
-            else
-                img.GetComponent<RectTransform>().anchoredPosition = new Vector2(img.GetComponent<RectTransform>().anchoredPosition.x, value);
-        }
+        get { return GetTarget().anchoredPosition.y + (GetTarget().gameObject != img ? img.transform.localPosition.y : 0); }
+        set { MoveTo(x, value); }
     }
 
     // The z position of the sprite, relative to the arena position and its anchor. (Only useful in the overworld)
     public float z {
         get { return GetTarget().localPosition.z; }
-        set {
-            Transform target = GetTarget();
-            target.localPosition = new Vector3(target.localPosition.x, target.localPosition.y, value);
-        }
+        set { MoveTo(x, y, value); }
     }
 
     // The x position of the sprite, relative to the bottom left corner of the screen.
     public float absx {
         get { return GetTarget().position.x; }
-        set {
-            Transform target = GetTarget();
-            target.position = new Vector3(value, target.position.y, target.position.z);
-        }
+        set { MoveToAbs(value, absy); }
     }
 
     // The y position of the sprite, relative to the bottom left corner of the screen.
     public float absy {
         get { return GetTarget().position.y; }
-        set {
-            Transform target = GetTarget();
-            target.position = new Vector3(target.position.x, value, target.position.z);
-        }
+        set { MoveToAbs(absx, value); }
     }
 
     // The z position of the sprite, relative to the bottom left corner of the screen. (Only useful in the overworld)
     public float absz {
         get { return GetTarget().position.z; }
-        set {
-            Transform target = GetTarget();
-            target.position = new Vector3(target.position.x, target.position.y, value);
-        }
+        set { MoveToAbs(absx, absy, value); }
     }
 
     // The x scale of the sprite. This variable is used for the same purpose as img, to be able to do other things when setting the variable
     public float xscale {
         get { return xScale; }
-        set {
-            xScale = value;
-            Scale(xScale, yScale);
-        }
+        set { Scale(value, yScale); }
     }
 
     // The y scale of the sprite.
     public float yscale {
         get { return yScale; }
-        set {
-            yScale = value;
-            Scale(xScale, yScale);
-        }
+        set { Scale(xScale, value); }
     }
 
     // Is the sprite active? True if the image of the sprite isn't null, false otherwise
@@ -180,10 +140,9 @@ public class LuaSpriteController {
     // Is the current animation finished? True if there is a finished animation, false otherwise
     public bool animcomplete {
         get {
-            if (keyframes == null)
-                if (img.GetComponent<KeyframeCollection>())
-                    keyframes = img.GetComponent<KeyframeCollection>();
-            if (keyframes == null) return false;
+            if (keyframes == null && img.GetComponent<KeyframeCollection>())
+                keyframes = img.GetComponent<KeyframeCollection>();
+            if (keyframes == null)                        return false;
             if (keyframes.enabled == false)               return true;
             if (loop == KeyframeCollection.LoopMode.LOOP) return false;
             return keyframes.enabled && keyframes.animationComplete();
@@ -251,8 +210,7 @@ public class LuaSpriteController {
             if (value == null)
                 throw new CYFException("sprite.color can't be nil.");
             for (int i = 0; i < value.Length; i++)
-                if (value[i] < 0)        value[i] = 0;
-                else if (value[i] > 255) value[i] = 255;
+                value[i] = Mathf.Clamp(value[0], 0, 255);
             if (img.GetComponent<Image>()) {
                 Image imgtemp = img.GetComponent<Image>();
                 // If we don't have three/four floats, we throw an error
@@ -307,10 +265,10 @@ public class LuaSpriteController {
         set {
             if (img.GetComponent<Image>()) {
                 Image imgtemp = img.GetComponent<Image>();
-                imgtemp.color = new Color32(((Color32)imgtemp.color).r, ((Color32)imgtemp.color).g, ((Color32)imgtemp.color).b, (byte)value);
+                imgtemp.color = new Color32(((Color32)imgtemp.color).r, ((Color32)imgtemp.color).g, ((Color32)imgtemp.color).b, (byte)Mathf.Clamp(value, 0, 255));
             } else {
                 SpriteRenderer imgtemp = img.GetComponent<SpriteRenderer>();
-                imgtemp.color = new Color32(((Color32)imgtemp.color).r, ((Color32)imgtemp.color).g, ((Color32)imgtemp.color).b, (byte)value);
+                imgtemp.color = new Color32(((Color32)imgtemp.color).r, ((Color32)imgtemp.color).g, ((Color32)imgtemp.color).b, (byte)Mathf.Clamp(value, 0, 255));
             }
         }
     }
@@ -458,22 +416,32 @@ public class LuaSpriteController {
         img.GetComponent<RectTransform>().anchorMax = new Vector2(x, y);
     }
 
-    public void Move(float x, float y) {
-        if (img.transform.parent != null && img.transform.parent.name == "SpritePivot")
-            img.transform.parent.localPosition = new Vector3(x + this.x, y + this.y, img.transform.parent.localPosition.z) - (Vector3)img.GetComponent<RectTransform>().anchoredPosition;
-        else
-            img.GetComponent<RectTransform>().anchoredPosition = new Vector2(x + this.x, y + this.y);
-    }
+    public void Move(float x, float y) { MoveTo(this.x + x, this.y + y); }
+    public void Move(float x, float y, float z) { MoveTo(this.x, this.y, this.z); }
 
     public void MoveTo(float x, float y) {
         if (img.transform.parent != null && img.transform.parent.name == "SpritePivot")
             img.transform.parent.localPosition = new Vector3(x, y, img.transform.parent.localPosition.z) - (Vector3)img.GetComponent<RectTransform>().anchoredPosition;
+        else if (tag == "letter" && (GetParent().UserData.Object as LuaTextManager).adjustTextDisplay)
+            img.GetComponent<RectTransform>().anchoredPosition = new Vector2(Mathf.Round(x) - 0.01f, Mathf.Round(y) - 0.01f);
         else
             img.GetComponent<RectTransform>().anchoredPosition = new Vector2(x, y);
     }
+    public void MoveTo(float x, float y, float z) {
+        if (img.transform.parent != null && img.transform.parent.name == "SpritePivot")
+            img.transform.parent.localPosition = new Vector3(x, y, z) - (Vector3)img.GetComponent<RectTransform>().anchoredPosition;
+        else
+            MoveTo(x, y);
+    }
 
     public void MoveToAbs(float x, float y) {
-        GetTarget().position = new Vector3(x, y, GetTarget().position.z);
+        if (tag == "letter" && (GetParent().UserData.Object as LuaTextManager).adjustTextDisplay)
+            GetTarget().position = new Vector3(Mathf.Round(x) - 0.01f, Mathf.Round(y) - 0.01f, GetTarget().position.z);
+        else
+            GetTarget().position = new Vector3(x, y, GetTarget().position.z);
+    }
+    public void MoveToAbs(float x, float y, float z) {
+        GetTarget().position = new Vector3(x, y, z);
     }
 
     // Sets both xScale and yScale of a sprite
@@ -798,10 +766,10 @@ public class LuaSpriteController {
         set { SetVar(key, value); }
     }
 
-    private Transform GetTarget() {
-        Transform target = img.transform;
-        if (img.transform.parent != null && img.transform.parent.name == "SpritePivot")
-            target = target.parent;
+    private RectTransform GetTarget() {
+        RectTransform target = img.GetComponent<RectTransform>();
+        if (target.parent != null && target.parent.name == "SpritePivot")
+            return target.parent.GetComponent<RectTransform>();
         return target;
     }
 

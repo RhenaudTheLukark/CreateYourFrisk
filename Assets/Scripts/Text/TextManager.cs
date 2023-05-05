@@ -542,16 +542,17 @@ public class TextManager : MonoBehaviour {
             yScale = luaThis.yscale;
             xPos = Mathf.Round(xPos * xScale) / xScale;
             yPos = Mathf.Round(yPos * yScale) / yScale;
+            letterShift = Mathf.Round(letterShift * xScale) / xScale;
         }
-        xPos += 0.01f;
-        yPos += 0.01f;
+        xPos -= 0.01f;
+        yPos -= 0.01f;
 
         if (GetType() == typeof(LuaTextManager) || gameObject.name == "TextParent" || gameObject.name == "ReviveText")
             // Allow Game Over fonts to enjoy the fixed text positioning, too!
-            rt.localPosition = new Vector3(xPos, yPos + letterShift * yScale, 0);
+            rt.localPosition = new Vector3(xPos, yPos + letterShift, 0);
         else
             // Keep what we already have for all text boxes that are not Text Objects in an encounter
-            rt.localPosition = new Vector3(xPos, yPos + (letterShift + 2) * yScale, 0);
+            rt.localPosition = new Vector3(xPos, yPos + (letterShift + 2), 0);
 
         rt.eulerAngles = new Vector3(0, 0, rotation);
         letters[letterIndex] = new LetterData(letter.index, letter.image, rt.anchoredPosition, letters[letterIndex].commandColorSet, letters[letterIndex].commandAlphaSet);
@@ -660,7 +661,7 @@ public class TextManager : MonoBehaviour {
         startingLineY = currentY;
 
         LuaTextManager ltm = this as LuaTextManager;
-        float normalizedHSpacing = hSpacing;
+        float normalizedHSpacing = ltm != null && hSpacing > 0 ? Mathf.Max(1 / ltm.xscale, hSpacing) : hSpacing;
         float normalizedVSpacing = (ltm != null ? ltm.yscale : 1) * vSpacing + Charset.LineSpacing;
 
         string currentText = textQueue[currentLine].Text;
@@ -690,8 +691,8 @@ public class TextManager : MonoBehaviour {
                 LetterData letter = letters.Find(l => l.index == i);
                 MoveLetter(currentText, letters.IndexOf(letter));
                 RectTransform rt = letter.image.GetComponent<RectTransform>();
-                currentX += (rt.rect.width + normalizedHSpacing) * Mathf.Cos(rotation * Mathf.Deg2Rad);
-                currentY += (rt.rect.width + normalizedHSpacing) * Mathf.Sin(rotation * Mathf.Deg2Rad);
+                currentX += (rt.rect.width * rt.localScale.x + normalizedHSpacing) * Mathf.Cos(rotation * Mathf.Deg2Rad);
+                currentY += (rt.rect.width * rt.localScale.y + normalizedHSpacing) * Mathf.Sin(rotation * Mathf.Deg2Rad);
             }
         }
 

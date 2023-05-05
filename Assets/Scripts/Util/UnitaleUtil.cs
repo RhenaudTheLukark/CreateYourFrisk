@@ -759,6 +759,8 @@ public static class UnitaleUtil {
             return UserData.Create(LuaSpriteController.GetOrCreate(go));
         if (t.GetComponent<LuaProjectile>() != null)
             return UserData.Create(t.GetComponent<LuaProjectile>().ctrl);
+        if (t.GetComponent<LuaTextManager>() != null)
+            return UserData.Create(t.GetComponent<LuaTextManager>());
         for (int i = 0; i < t.childCount; i++) {
             Transform child = t.GetChild(i);
             if (child.GetComponent<LuaTextManager>() != null)
