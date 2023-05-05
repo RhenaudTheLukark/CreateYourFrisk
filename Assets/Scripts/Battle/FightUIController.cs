@@ -133,7 +133,7 @@ public class FightUIController : MonoBehaviour {
     public bool Finished() {
         if (!stopped)
             return targetRt.anchoredPosition.x < borderX;
-        return boundFightUiInstances.All(fight => fight.Finished());
+        return boundFightUiInstances.Count == 0 || boundFightUiInstances.All(fight => fight.Finished());
     }
 
     public void InitFade() {

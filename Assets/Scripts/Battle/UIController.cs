@@ -1434,18 +1434,18 @@ public class UIController : MonoBehaviour {
             bool playSound = true;
             foreach (EnemyController enemyController in encounter.EnabledEnemies) {
                 if (enemyController.HP > 0 || enemyController.Unkillable) continue;
-                // fightUI.disableImmediate();
                 onDeathSwitch = true;
-                if (UnitaleUtil.TryCall(enemyController.script, "OnDeath")) continue;
+                bool hasOnDeath = UnitaleUtil.TryCall(enemyController.script, "OnDeath");
                 onDeathSwitch = false;
-                noOnDeath = false;
+                if (hasOnDeath) {
+                    noOnDeath = false;
+                    continue;
+                }
                 enemyController.DoKill(playSound);
                 playSound = false;
 
                 if (encounter.EnabledEnemies.Length > 0)
                     SwitchState("ENEMYDIALOGUE");
-                //else
-                //    checkAndTriggerVictory();
             }
 
             if (state == "ATTACKING" && fightUI.Finished()) {
@@ -1457,8 +1457,5 @@ public class UIController : MonoBehaviour {
             }
             needOnDeath = false;
         }
-        //if (state == UIState.ENEMYDIALOGUE)
-        //    if ((Vector2)arenaParent.transform.position == new Vector2(320, 90))
-        //        PlayerController.instance.setControlOverride(false);
     }
 }
