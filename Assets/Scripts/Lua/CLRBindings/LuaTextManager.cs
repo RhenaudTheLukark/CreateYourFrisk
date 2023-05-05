@@ -274,9 +274,14 @@ public class LuaTextManager : TextManager {
         xScale = xs;
         yScale = ys;
 
-        container.transform.localScale = new Vector3(xs, ys, 1.0f);
+        container.transform.localScale = new Vector2(xs, ys);
         if (adjustTextDisplay)
             PostScaleHandling();
+        else
+            foreach (LetterData l in letters)
+                l.image.GetComponent<RectTransform>().localScale = Vector2.one;
+
+        MoveLetters();
     }
 
     public string layer {
@@ -690,27 +695,14 @@ public class LuaTextManager : TextManager {
             return;
         foreach (LetterData l in letters) {
             RectTransform r = l.image.GetComponent<RectTransform>();
-            float xSize = r.rect.width;
-            float ySize = r.rect.height;
-            float ratio = ySize / xSize;
-            float newXSize = xSize * xscale;
-            float newYSize = ySize * yscale;
-
-            List<float> scores = new List<float>();
-            for (int i = Mathf.FloorToInt(newXSize); i <= Mathf.CeilToInt(newXSize); i++)
-                for (int j = Mathf.FloorToInt(newYSize); j <= Mathf.CeilToInt(newYSize); j++) {
-                    if (i == 0 || j == 0) scores.Add(Mathf.Infinity);
-                    else                  scores.Add(Mathf.Abs(newXSize - i + newYSize - j + 10 * (j / i - ratio)));
-                }
-
-            int chosenScoreID = scores.IndexOf(scores.Min());
-            float chosenX = chosenScoreID < 2 ? Mathf.Floor(newXSize) : Mathf.Ceil(newXSize);
-            float chosenY = chosenScoreID % 2 == 0 ? Mathf.Floor(newYSize) : Mathf.Ceil(newYSize);
-            float xLocalScale = chosenX / newXSize;
-            float yLocalScale = chosenY / newYSize;
+            float newXSize = r.rect.width * xscale,
+                  newYSize = r.rect.height * yscale,
+                  chosenX = newXSize % 1 == 0.5 ? newXSize : Mathf.Round(newXSize),
+                  chosenY = newYSize % 1 == 0.5 ? newYSize : Mathf.Round(newYSize),
+                  xLocalScale = chosenX / newXSize,
+                  yLocalScale = chosenY / newYSize;
             r.localScale = new Vector2(xLocalScale, yLocalScale);
         }
-        MoveLetters();
     }
 
     // Shortcut to `SetAutoWaitTimeBetweenTexts`
