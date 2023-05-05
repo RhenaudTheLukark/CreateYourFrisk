@@ -409,7 +409,7 @@ public class LuaTextManager : TextManager {
 
             if (!commandAlphaSet)
                 commandColor.a = _color.a;
-            _color.a = defaultColor.a = _color.a;
+            defaultColor.a = _color.a;
         }
     }
 
