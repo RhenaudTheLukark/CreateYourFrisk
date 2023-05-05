@@ -684,7 +684,7 @@ public class TextManager : MonoBehaviour {
                     tabCount = 0;
                     break;
                 case '\t':
-                    currentX = self.position.x + (++tabCount * columnShift);
+                    currentX = ++tabCount * columnShift;
                     break;
             }
             if (currentChar == i && letters.Exists(l => l.index == i)) {

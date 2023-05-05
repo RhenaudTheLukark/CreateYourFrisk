@@ -380,7 +380,7 @@ public class UIController : MonoBehaviour {
                 SetPlayerOnSelection(selectedAction);
                 if (!GlobalControls.retroMode)
                     mainTextManager.SetEffect(new TwitchEffect(mainTextManager));
-                mainTextManager.SetText(new SelectMessage(actions, false, mainTextManager.columnNumber));
+                mainTextManager.SetText(new SelectMessage(GetActPage(actions, 0, mainTextManager.columnNumber), false, mainTextManager.columnNumber));
                 break;
 
             case "ITEMMENU":
@@ -688,10 +688,10 @@ public class UIController : MonoBehaviour {
         int maxPages = Mathf.CeilToInt(acts.Length / (float)actsPerPage);
         // Add the page number text if too many acts
         if (maxPages > 1) {
-            actsPerPage--;
+            actsPerPage -= columns;
             maxPages = Mathf.CeilToInt(acts.Length / (float)actsPerPage);
         }
-        int pageActNumber = Mathf.Min(acts.Length - (actsPerPage * page), 2 * columns);
+        int pageActNumber = Mathf.Min(acts.Length - (actsPerPage * page), actsPerPage);
 
         for (int i = 0; i < pageActNumber; i++)
             items[i] = acts[i + page * actsPerPage];
