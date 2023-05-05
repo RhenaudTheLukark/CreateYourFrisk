@@ -1048,9 +1048,10 @@ public class UIController : MonoBehaviour {
                     return;
 
                 string[] acts = encounter.EnabledEnemies[selectedEnemy].ActCommands;
-                selectedAction = UnitaleUtil.SelectionChoice(acts.Length, selectedAction, xMov, yMov, 3, columns);
-                SetPlayerOnSelection(Math.Mod(selectedAction, 3 * columns - (acts.Length > 3 * columns ? 1 : 0)));
-                int actPage = acts.Length <= 3 * columns ? 0 : Mathf.FloorToInt((float)acts.Length / (3 * columns - 1));
+                bool onePage = acts.Length <= 3 * columns;
+                selectedAction = UnitaleUtil.SelectionChoice(acts.Length, selectedAction, xMov, yMov, onePage ? 3 : 2, columns);
+                SetPlayerOnSelection(selectedAction % ((onePage ? 3 : 2) * columns));
+                int actPage = onePage ? 0 : Mathf.FloorToInt((float)selectedAction / (2 * columns));
                 mainTextManager.SetText(new SelectMessage(GetActPage(acts, actPage, columns), false, columns));
                 break;
 
