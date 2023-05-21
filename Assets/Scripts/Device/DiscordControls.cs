@@ -1,6 +1,7 @@
 ﻿using Discord;
 using System;
 using MoonSharp.Interpreter;
+using UnityEngine;
 
 public static class DiscordControls {
     public static Discord.Discord discord;
@@ -28,8 +29,10 @@ public static class DiscordControls {
             discord = new Discord.Discord(711497963771527219, (ulong)CreateFlags.NoRequireDiscord);
             activityManager = discord.GetActivityManager();
             isActive = true;
-        } catch (Exception) {
+            Debug.Log("Discord Status: Success");
+        } catch (Exception e) {
             isActive = false;
+            Debug.Log("Discord Status: Failed - " + e.Message);
         }
 
         // Gets Discord Visibility Setting
@@ -71,21 +74,22 @@ public static class DiscordControls {
         if (spd > 0)
             LuaScriptBinder.SetAlMighty(null, "CYFDiscord", DynValue.NewNumber(curr_setting), true);
 
-        switch (curr_setting) {
-            case 0:
-                StartModSelect(false);
-                break;
-            case 1:
-                activity.Details          = "";
-                activity.State            = "";
-                activity.Timestamps.Start = 0;
-                activity.Timestamps.End   = 0;
-                UpdatePresence(true);
-                break;
-            default:
-                Clear();
-                break;
-        }
+        if (isActive)
+            switch (curr_setting) {
+                case 0:
+                    StartModSelect(false);
+                    break;
+                case 1:
+                    activity.Details          = "";
+                    activity.State            = "";
+                    activity.Timestamps.Start = 0;
+                    activity.Timestamps.End   = 0;
+                    UpdatePresence(true);
+                    break;
+                default:
+                    Clear();
+                    break;
+            }
 
         return GlobalControls.crate ? Temmify.Convert(settingNames[curr_setting]) : settingNames[curr_setting];
     }
@@ -94,8 +98,6 @@ public static class DiscordControls {
     /// Sets the status when you're on the title screen, erasing details and timer
     /// </summary>
     public static void StartTitle() {
-        if (!isActive) return;
-
         activity.Details = "Title Screen";
         activity.State = "";
 
@@ -106,8 +108,6 @@ public static class DiscordControls {
     /// Sets the status when you're entering the Overworld, erasing details and timer
     /// </summary>
     public static void StartOW() {
-        if (!isActive) return;
-
         activity.Details = "In the Overworld";
         activity.State = "";
         ClearTime(false);
@@ -119,8 +119,6 @@ public static class DiscordControls {
     /// This function runs whenever showing a scene
     /// </summary>
     public static void ShowOWScene(string mapName) {
-        if (!isActive) return;
-
         activity.Details = "In the Overworld";
         activity.State = mapName;
         UnitaleUtil.MapCorrespondanceList.TryGetValue(mapName, out activity.State);
@@ -138,8 +136,6 @@ public static class DiscordControls {
     /// </summary>
     /// <param name="reset">Whether to reset the timer when loading the mod select scene.</param>
     public static void StartModSelect(bool reset = true) {
-        if (!isActive) return;
-
         activity.Details = "Selecting a Mod";
         activity.State = "";
         if (reset)
@@ -155,8 +151,6 @@ public static class DiscordControls {
     /// <param name="modName">The name of the mod.</param>
     /// <param name="encounterName">The name of the encounter.</param>
     public static void StartBattle(string modName, string encounterName) {
-        if (!isActive) return;
-
         activity.Details = "Playing Mod: " + modName;
         activity.State = encounterName;
         oldTime = GetCurrentTime();
@@ -183,7 +177,8 @@ public static class DiscordControls {
     /// This function will be called one time, on the frame after applying settings, to prevent abuse of the activity manager.
     /// </summary>
     private static void UpdateActivity() {
-        activityManager.UpdateActivity(activity, (res) => {});
+        if (isActive)
+            activityManager.UpdateActivity(activity, (res) => {});
         updateQueued = false;
     }
 
@@ -192,8 +187,6 @@ public static class DiscordControls {
     /// </summary>
     /// <param name="name">New text to display.</param>
     public static void SetName(string name) {
-        if (!isActive) return;
-
         // Work around a very strange bug in the Discord SDK
         if (name.Length == 1)
             name += " ";
@@ -206,8 +199,6 @@ public static class DiscordControls {
     /// </summary>
     /// <param name="reset">If true, text will be reset to its initial value. Otherwise, it will be cleared from the status.</param>
     public static void ClearName(bool reset) {
-        if (!isActive) return;
-
         activity.Details = reset ? oldDetails : "";
     }
 
@@ -216,8 +207,6 @@ public static class DiscordControls {
     /// </summary>
     /// <param name="details">New text to display.</param>
     public static void SetDetails(string details) {
-        if (!isActive) return;
-
         // Work around a very strange bug in the Discord SDK
         if (details.Length == 1)
             details += " ";
@@ -230,8 +219,6 @@ public static class DiscordControls {
     /// </summary>
     /// <param name="reset">If true, text will be reset to its initial value. Otherwise, it will be cleared from the status.</param>
     public static void ClearDetails(bool reset) {
-        if (!isActive) return;
-
         activity.State = reset ? oldState : "";
     }
 
@@ -241,8 +228,6 @@ public static class DiscordControls {
     /// <param name="seconds">Number of seconds to display in the timer.</param>
     /// <param name="countdown">If true, the timer will count down from this value instead of counting up.</param>
     public static void SetTime(int seconds, bool countdown) {
-        if (!isActive) return;
-
         if (!countdown) {
             activity.Timestamps.Start = GetCurrentTime() - seconds;
             activity.Timestamps.End = 0;
@@ -257,8 +242,6 @@ public static class DiscordControls {
     /// </summary>
     /// <param name="reset">If true, text will be reset to its initial value. Otherwise, it will be cleared from the status.</param>
     public static void ClearTime(bool reset) {
-        if (!isActive) return;
-
         if (reset) {
             activity.Timestamps.Start = oldTime;
             activity.Timestamps.End = 0;
@@ -276,7 +259,10 @@ public static class DiscordControls {
     /// <summary>
     /// Internal use function that clears the discord rich presence status.
     /// </summary>
-    public static void Clear() { activityManager.ClearActivity((result) => {}); }
+    public static void Clear() {
+        if (isActive)
+            activityManager.ClearActivity((result) => {});
+    }
 
     // Update is called once per frame
     public static void Update() {
