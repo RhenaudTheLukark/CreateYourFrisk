@@ -459,7 +459,7 @@ public class TextManager : MonoBehaviour {
     private void SpawnTextSpaceTest(int i, string currentText, out string currentText2) {
         currentText2 = currentText;
         bool decorated = textQueue[currentLine].Decorated;
-        float decorationLength = decorated ? UnitaleUtil.CalcTextWidth(this, 0, 1, true, true) : 0;
+        float decorationLength = decorated ? UnitaleUtil.PredictTextWidth(this, 0, 1, true) : 0;
 
         // Gets the first character of the line and the last character after the current space
         int finalIndex = i + 1, beginIndex = i;
@@ -474,13 +474,13 @@ public class TextManager : MonoBehaviour {
         if (currentText[beginIndex] == '\n' || currentText[beginIndex] == '\r')                                   beginIndex++;
         if (currentText[finalIndex] == '\n' || currentText[finalIndex] == ' ' || currentText[finalIndex] == '\r') finalIndex--;
 
-        if (UnitaleUtil.CalcTextWidth(this, beginIndex, finalIndex, true) > _textMaxWidth && _textMaxWidth > 0) {
+        if (UnitaleUtil.PredictTextWidth(this, beginIndex, finalIndex, true) > _textMaxWidth && _textMaxWidth > 0) {
             // If the line's too long, do something!
             int wordBeginIndex = currentText2[i] == ' ' ? i + 1 : i;
-            if (UnitaleUtil.CalcTextWidth(this, wordBeginIndex, finalIndex) > _textMaxWidth - decorationLength) {
+            if (UnitaleUtil.PredictTextWidth(this, wordBeginIndex, finalIndex) > _textMaxWidth - decorationLength) {
                 // Word is taking the entire line
                 for (int currentIndex = wordBeginIndex; currentIndex <= finalIndex; currentIndex++) {
-                    if (!(UnitaleUtil.CalcTextWidth(this, beginIndex, currentIndex) > _textMaxWidth)) continue;
+                    if (!(UnitaleUtil.PredictTextWidth(this, beginIndex, currentIndex) > _textMaxWidth)) continue;
                     currentText2                =  currentText2.Substring(0, currentIndex) + "\n" + (decorated ? "  " : "") + currentText2.Substring(currentIndex, currentText2.Length - currentIndex);
                     textQueue[currentLine].Text =  currentText2;
                     finalIndex                  += decorated ? 3 : 1;

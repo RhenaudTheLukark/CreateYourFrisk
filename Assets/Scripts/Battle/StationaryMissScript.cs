@@ -10,7 +10,7 @@ public class StationaryMissScript : MonoBehaviour {
     public string text = "MISS";
 
     public void setPosition(float xPos, float yPos) {
-        mgr.transform.position = new Vector2(xPos - UnitaleUtil.CalcTextWidth(mgr) / 2, Mathf.Min(yPos, 430));
+        mgr.transform.position = new Vector2(xPos - UnitaleUtil.PredictTextWidth(mgr) / 2, Mathf.Min(yPos, 430));
     }
 
     public void SetText(string _text) { text = _text; }

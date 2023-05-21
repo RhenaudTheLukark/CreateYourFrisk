@@ -761,14 +761,32 @@ public class LuaTextManager : TextManager {
         container.GetComponent<RectTransform>().anchorMax = new Vector2(newX, newY);
     }
 
-    public int GetTextWidth() {
+    public int GetTextWidth(int firstLetter = 0, int lastLetter = 999999) {
         CheckExists();
-        return (int)UnitaleUtil.CalcTextWidth(this);
+        if (textQueue == null || textQueue[currentLine] == null)
+            return 0;
+
+        if (firstLetter < 0) firstLetter += textQueue[currentLine].Text.Length - 1;
+        if (lastLetter < 0) lastLetter += textQueue[currentLine].Text.Length - 1;
+
+        if (firstLetter > textQueue[currentLine].Text.Length) firstLetter = textQueue[currentLine].Text.Length - 1;
+        if (lastLetter > textQueue[currentLine].Text.Length) lastLetter = textQueue[currentLine].Text.Length - 1;
+
+        return (int)UnitaleUtil.CalcTextWidth(this, firstLetter, lastLetter);
     }
 
-    public int GetTextHeight() {
+    public int GetTextHeight(int firstLetter = 0, int lastLetter = 999999) {
         CheckExists();
-        return (int)UnitaleUtil.CalcTextHeight(this);
+        if (textQueue == null || textQueue[currentLine] == null)
+            return 0;
+
+        if (firstLetter < 0) firstLetter += textQueue[currentLine].Text.Length;
+        if (lastLetter < 0) lastLetter += textQueue[currentLine].Text.Length;
+
+        if (firstLetter > textQueue[currentLine].Text.Length) firstLetter = textQueue[currentLine].Text.Length - 1;
+        if (lastLetter > textQueue[currentLine].Text.Length) lastLetter = textQueue[currentLine].Text.Length - 1;
+
+        return (int)UnitaleUtil.CalcTextHeight(this, firstLetter, lastLetter);
     }
 
     public void SetVar(string key, DynValue value) {

@@ -455,7 +455,7 @@ public class UIController : MonoBehaviour {
                         count++;
                         //int mNameWidth = (int)UnitaleUtil.calcTotalLength(mainTextManager, lastCount, count);
                         for (int j = 0; j <= 1 && j < encounter.EnabledEnemies.Length; j++) {
-                            int mNameWidth = (int)UnitaleUtil.CalcTextWidth(mainTextManager) + 50;
+                            int mNameWidth = (int)UnitaleUtil.PredictTextWidth(mainTextManager) + 50;
                             if (mNameWidth > maxWidth)
                                 maxWidth = mNameWidth;
                         }
@@ -751,7 +751,7 @@ public class UIController : MonoBehaviour {
         int maxWidth = (int)initialHealthPos.x;
         foreach (LifeBarController lbc in arenaParent.GetComponentsInChildren<LifeBarController>())
             Destroy(lbc.gameObject);
-        int mNameWidth = (int)UnitaleUtil.CalcTextWidth(mainTextManager) + 50;
+        int mNameWidth = (int)UnitaleUtil.PredictTextWidth(mainTextManager) + 50;
         if (mNameWidth > maxWidth)
             maxWidth = mNameWidth;
         int enemiesToShow = encounter.EnabledEnemies.Length <= 3 ? 3 : 2;

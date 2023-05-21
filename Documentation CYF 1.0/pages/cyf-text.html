@@ -437,35 +437,51 @@ end
                 Moves the text to a new position, relative to the bottom left corner of the window.
             </p>
             <p>
-                <br><span class="function"><span class="number"></span> Text.GetTextWidth()</span>
-                Returns the width of the currently set text in pixels.
+                <br><span class="new function"><span class="number"></span> Text.GetTextWidth(<span class="number"></span> firstLetter = 0,
+                <span class="number"></span> lastLetter = 999999)</span>
+                Returns the width of the currently set text in pixels. Useful if you want to center your text.
                 <br>
                 Will give the same result even if the text isn't finished typing.
                 <br><br>
                 Also ignores <span class="term">Text.xscale</span>.
                 <br><br>
-                Useful if you want to center your text.
+                <span class="term">firstLetter</span> chooses the index of the first letter from which the text's width should
+                be computed, while <span class="term">lastLetter</span> chooses the index of the last letter, and both start
+                with <span class="term">0</span> as the index for the first letter.
+                <br><br>
+                The values of these arguments can be negative, in which case it will start from the end, pointing at the xth last
+                letter of the text. For example, using <span class="term">Text.GetTextHeight(-4)</span> on the text
+                <span class="term">I want some text</span> will start counting the text's width from the first t of "text", or
+                the 4th letter from the end of the text.
             </p>
             <p>
-                <br><span class="function"><span class="number"></span> Text.GetTextHeight()</span>
+                <br><span class="new function"><span class="number"></span> Text.GetTextHeight(<span class="number"></span> firstLetter = 0,
+                <span class="number"></span> lastLetter = 999999)</span>
                 Returns the height of the curently set text in pixels.
                 <br>
                 Will give the same result even if the text isn't finished typing.
                 <br><br>
                 Also ignores <span class="term">Text.yscale</span>.
                 <br><br>
-                <span style="color:#fff"> <b>Note:</b> This function is not 100% accurate.</span><br><br>
+                <span class="term">firstLetter</span> chooses the index of the first letter from which the text's height should
+                be computed, while <span class="term">lastLetter</span> chooses the index of the last letter, and both start
+                with <span class="term">0</span> as the index for the first letter.
+                <br><br>
+                The values of these arguments can be negative, in which case it will start from the end, pointing at the xth last
+                letter of the text. For example, using <span class="term">Text.GetTextHeight(-4)</span> on the text
+                <span class="term">I want some text</span> will start counting the text's height from the first t of "text", or
+                the 4th letter from the end of the text.
             </p>
 
             <p>
-                <span class="function">Text.SetVar(<span class="string"></span> yourVariableName, value)
+                <br><span class="function">Text.SetVar(<span class="string"></span> yourVariableName, value)
                 <br></span>or <span class="function">Text[<span class="string"> yourVariableName</span>]</span></span>
                 Sets a variable in a text object that you can retrieve with <span class="term">Text.GetVar</span>.<br>
                 Identical to <span class="term">SetVar</span> in projectiles.
             </p>
 
             <p>
-                <span class="function">Text.GetVar(<span class="string"></span> yourVariableName)
+                <br><span class="function">Text.GetVar(<span class="string"></span> yourVariableName)
                 <br></span>or <span class="function">Text[<span class="string"> yourVariableName</span>] = value</span></span>
                 Gets a variable in a text object that you previously set with <span class="term">Text.SetVar</span>.<br>
                 Identical to <span class="term">GetVar</span> in projectiles.

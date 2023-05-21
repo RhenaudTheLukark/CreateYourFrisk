@@ -190,7 +190,7 @@ public static class UnitaleUtil {
         return null;
     }
 
-    public static float CalcTextWidth(TextManager txtmgr, int fromLetter = -1, int toLetter = -1, bool countEOLSpace = false, bool getLastSpace = false) {
+    public static float PredictTextWidth(TextManager txtmgr, int fromLetter = -1, int toLetter = -1, bool countEOLSpace = false, bool getLastSpace = false) {
         float totalWidth = 0, totalWidthSpaceTest = 0, totalMaxWidth = 0, hSpacing = txtmgr.Charset.CharSpacing;
         if (fromLetter == -1)                                                                                       fromLetter = 0;
         if (txtmgr.textQueue == null)                                                                               return 0;
@@ -228,21 +228,52 @@ public static class UnitaleUtil {
         return Mathf.Max(totalMaxWidth + (getLastSpace ? hSpacing : 0), 0);
     }
 
-    public static float CalcTextHeight(TextManager txtmgr, int fromLetter = -1, int toLetter = -1) {
-        float maxY = Mathf.NegativeInfinity, minY = Mathf.Infinity;
+    public static float CalcTextWidth(TextManager txtmgr, int fromLetter = -1, int toLetter = -1, bool countEOLSpace = false) {
+        if (txtmgr.textQueue == null || txtmgr.textQueue[txtmgr.currentLine] == null)                                return 0;
+        if (fromLetter > toLetter || fromLetter < -1 || toLetter > txtmgr.textQueue[txtmgr.currentLine].Text.Length) return 0;
+        if (fromLetter == -1)                                                                                        fromLetter = 0;
+        if (toLetter == -1)                                                                                          toLetter = txtmgr.textQueue[txtmgr.currentLine].Text.Length - 1;
 
-        if (fromLetter == -1) fromLetter = 0;
-        if (toLetter == -1)   toLetter = txtmgr.textQueue[txtmgr.currentLine].Text.Length;
-        if (fromLetter > toLetter || fromLetter < 0 || toLetter > txtmgr.textQueue[txtmgr.currentLine].Text.Length) return -1;
-        if (fromLetter == toLetter)                                                                                 return 0;
+        float maxX = Mathf.NegativeInfinity, minX = Mathf.Infinity;
+        LuaTextManager ltm = txtmgr as LuaTextManager;
 
-        for (int i = 0; i < txtmgr.letters.Count; i++) {
-            TextManager.LetterData l = txtmgr.letters[i];
-            if (l.index < fromLetter || l.index > toLetter) continue;
-            minY = Mathf.Min(minY, l.position.y);
-            maxY = Mathf.Max(maxY, l.position.y + txtmgr.Charset.Letters[txtmgr.textQueue[txtmgr.currentLine].Text[l.index]].textureRect.size.y);
+        for (int i = fromLetter; i <= toLetter; i++) {
+            if (!txtmgr.letters.Any(l => l.index == i))
+                continue;
+            if (txtmgr.textQueue[txtmgr.currentLine].Text[i] == ' ' && !countEOLSpace)
+                continue;
+
+            TextManager.LetterData letter = txtmgr.letters.Find(l => l.index == i);
+            float letterPosMin = letter.image.rectTransform.position.x,
+                  letterPosMax = letter.image.rectTransform.position.x + letter.image.rectTransform.rect.width * letter.image.rectTransform.localScale.x;
+            minX = Mathf.Min(minX, letterPosMin, letterPosMax);
+            maxX = Mathf.Max(maxX, letterPosMin, letterPosMax);
         }
-        return Mathf.Max(maxY - minY, 0);
+        return Mathf.Max(maxX - minX, 0) / (ltm ? ltm.xscale : 1);
+    }
+
+    public static float CalcTextHeight(TextManager txtmgr, int fromLetter = -1, int toLetter = -1, bool countEOLSpace = false) {
+        if (txtmgr.textQueue == null || txtmgr.textQueue[txtmgr.currentLine] == null)                               return 0;
+        if (fromLetter == -1)                                                                                       fromLetter = 0;
+        if (toLetter == -1)                                                                                         toLetter = txtmgr.textQueue[txtmgr.currentLine].Text.Length - 1;
+        if (fromLetter > toLetter || fromLetter < 0 || toLetter > txtmgr.textQueue[txtmgr.currentLine].Text.Length) return 0;
+
+        float maxY = Mathf.NegativeInfinity, minY = Mathf.Infinity;
+        LuaTextManager ltm = txtmgr as LuaTextManager;
+
+        for (int i = fromLetter; i <= toLetter; i++) {
+            if (!txtmgr.letters.Any(l => l.index == i))
+                continue;
+            if (txtmgr.textQueue[txtmgr.currentLine].Text[i] == ' ' && !countEOLSpace)
+                continue;
+
+            TextManager.LetterData letter = txtmgr.letters.Find(l => l.index == i);
+            float letterPosMin = letter.image.rectTransform.position.y,
+                  letterPosMax = letter.image.rectTransform.position.y + letter.image.rectTransform.rect.height * letter.image.rectTransform.localScale.y;
+            minY = Mathf.Min(minY, letterPosMin, letterPosMax);
+            maxY = Mathf.Max(maxY, letterPosMin, letterPosMax);
+        }
+        return Mathf.Max(maxY - minY, 0) / (ltm ? ltm.yscale : 1);
     }
 
     public static DynValue RebuildTableFromString(string text) {

@@ -1748,7 +1748,7 @@ end";
             txtName.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]" + playerName, false, true) });
             txtLevel.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]LV" + playerLevel, false, true) });
             txtTime.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]" + UnitaleUtil.TimeFormatter(SaveLoad.savedGame.playerTime), false, true) });
-            GameObject.Find("TextManagerTime").GetComponent<TextManager>().MoveTo(180f - UnitaleUtil.CalcTextWidth(txtTime), 68);
+            GameObject.Find("TextManagerTime").GetComponent<TextManager>().MoveTo(180f - UnitaleUtil.PredictTextWidth(txtTime), 68);
             txtMap.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]" + SaveLoad.savedGame.lastScene, false, true) });
         } else {
             txtName.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]EMPTY", false, true) });
@@ -1788,7 +1788,7 @@ end";
                     txtName.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]" + PlayerCharacter.instance.Name, false, true) });
                     txtLevel.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]LV" + PlayerCharacter.instance.LV, false, true) });
                     txtTime.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]" + UnitaleUtil.TimeFormatter(SaveLoad.savedGame.playerTime), false, true) });
-                    GameObject.Find("TextManagerTime").GetComponent<TextManager>().MoveTo(180f - UnitaleUtil.CalcTextWidth(txtTime), 68);
+                    GameObject.Find("TextManagerTime").GetComponent<TextManager>().MoveTo(180f - UnitaleUtil.PredictTextWidth(txtTime), 68);
                     txtMap.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]" + SaveLoad.savedGame.lastScene, false, true) });
                     txtSave.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]File saved.", false, true) });
                     txtReturn.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]", false, true) });
