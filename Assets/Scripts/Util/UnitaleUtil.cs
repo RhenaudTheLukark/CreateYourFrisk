@@ -675,7 +675,7 @@ public static class UnitaleUtil {
     public static bool TryCall(ScriptWrapper script, string func, DynValue[] param = null) {
         DynValue sval = script.GetVar(func);
         script.Call(func, param);
-        return (sval.Type & (DataType.Function | DataType.ClrFunction)) == 0;
+        return (sval.Type & (DataType.Function | DataType.ClrFunction)) != 0;
     }
 
     public static int SelectionChoice(int items, int current, int xMov, int yMov, int rows, int columns, bool verticalRollaround = true) {
