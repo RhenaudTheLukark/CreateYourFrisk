@@ -209,8 +209,6 @@ public class LuaSpriteController {
         set {
             if (value == null)
                 throw new CYFException("sprite.color can't be nil.");
-            for (int i = 0; i < value.Length; i++)
-                value[i] = Mathf.Clamp(value[0], 0, 255);
             if (img.GetComponent<Image>()) {
                 Image imgtemp = img.GetComponent<Image>();
                 // If we don't have three/four floats, we throw an error
@@ -265,10 +263,10 @@ public class LuaSpriteController {
         set {
             if (img.GetComponent<Image>()) {
                 Image imgtemp = img.GetComponent<Image>();
-                imgtemp.color = new Color32(((Color32)imgtemp.color).r, ((Color32)imgtemp.color).g, ((Color32)imgtemp.color).b, (byte)Mathf.Clamp(value, 0, 255));
+                imgtemp.color = new Color32(((Color32)imgtemp.color).r, ((Color32)imgtemp.color).g, ((Color32)imgtemp.color).b, (byte)value);
             } else {
                 SpriteRenderer imgtemp = img.GetComponent<SpriteRenderer>();
-                imgtemp.color = new Color32(((Color32)imgtemp.color).r, ((Color32)imgtemp.color).g, ((Color32)imgtemp.color).b, (byte)Mathf.Clamp(value, 0, 255));
+                imgtemp.color = new Color32(((Color32)imgtemp.color).r, ((Color32)imgtemp.color).g, ((Color32)imgtemp.color).b, (byte)value);
             }
         }
     }
