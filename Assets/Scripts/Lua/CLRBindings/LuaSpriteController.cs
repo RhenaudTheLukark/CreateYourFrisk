@@ -414,27 +414,19 @@ public class LuaSpriteController {
         img.GetComponent<RectTransform>().anchorMax = new Vector2(x, y);
     }
 
-    public void Move(float x, float y, float z = 0) { MoveTo(this.x + x, this.y + y, this.z + z); }
-    public void MoveTo(float x, float y, float z = Mathf.Infinity) {
-        if (z == Mathf.Infinity) z = GetTarget().parent.position.z;
-        float xScaler = 1, yScaler = 1;
-        LuaTextManager ltm = GetParent().UserData.Object as LuaTextManager;
-        if (tag == "letter" && ltm) {
-            xScaler = ltm.xscale;
-            yScaler = ltm.yscale;
-        }
-        MoveToAbs(GetTarget().parent.position.x + x * xScaler,
-                  GetTarget().parent.position.y + y * yScaler,
-                  GetTarget().parent.position.z + z);
-    }
-    public void MoveToAbs(float x, float y, float z = Mathf.Infinity) {
-        if (z == Mathf.Infinity) z = GetTarget().position.z;
-
-        if (tag == "letter" && (GetParent().UserData.Object as LuaTextManager).adjustTextDisplay)
-            GetTarget().position = new Vector3(Mathf.Round(x) + 0.01f, Mathf.Round(y) + 0.01f, z);
+    public void Move(float x, float y) { Move(x, y, 0); }
+    public void Move(float x, float y, float z) { MoveTo(this.x + x, this.y + y, this.z + z); }
+    public void MoveTo(float x, float y) { MoveTo(x, y, GetTarget().localPosition.z); }
+    public void MoveTo(float x, float y, float z) {
+        if (img.transform.parent != null && img.transform.parent.name == "SpritePivot")
+            GetTarget().localPosition = new Vector3(x, y, GetTarget().localPosition.z) - (Vector3)img.GetComponent<RectTransform>().anchoredPosition;
         else
-            GetTarget().position = new Vector3(x, y, z);
-
+            img.GetComponent<RectTransform>().anchoredPosition = new Vector2(x, y);
+        UnitaleUtil.TextObjectMoveChecker(GetTarget());
+    }
+    public void MoveToAbs(float x, float y) { MoveToAbs(x, y, GetTarget().position.z); }
+    public void MoveToAbs(float x, float y, float z) {
+       GetTarget().position = new Vector3(x, y, z);
        UnitaleUtil.TextObjectMoveChecker(GetTarget());
     }
 
