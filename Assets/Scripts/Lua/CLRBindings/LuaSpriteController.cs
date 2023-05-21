@@ -56,13 +56,13 @@ public class LuaSpriteController {
 
     // The x position of the sprite, relative to the arena position and its anchor.
     public float x {
-        get { return GetTarget().anchoredPosition.x + (GetTarget().gameObject != img ? img.transform.localPosition.x : 0); }
+        get { return img.GetComponent<RectTransform>().anchoredPosition.x + (GetTarget().gameObject != img ? img.transform.localPosition.x : 0); }
         set { MoveTo(value, y); }
     }
 
     // The y position of the sprite, relative to the arena position and its anchor.
     public float y {
-        get { return GetTarget().anchoredPosition.y + (GetTarget().gameObject != img ? img.transform.localPosition.y : 0); }
+        get { return img.GetComponent<RectTransform>().anchoredPosition.y + (GetTarget().gameObject != img ? img.transform.localPosition.y : 0); }
         set { MoveTo(x, value); }
     }
 
@@ -752,10 +752,10 @@ public class LuaSpriteController {
         set { SetVar(key, value); }
     }
 
-    private RectTransform GetTarget() {
-        RectTransform target = img.GetComponent<RectTransform>();
-        if (target.parent != null && target.parent.name == "SpritePivot")
-            return target.parent.GetComponent<RectTransform>();
+    private Transform GetTarget() {
+        Transform target = img.transform;
+        if (target.parent && target.parent.name == "SpritePivot")
+            return target.parent.transform;
         return target;
     }
 
