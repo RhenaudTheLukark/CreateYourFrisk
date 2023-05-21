@@ -391,8 +391,8 @@ public class EnemyController : MonoBehaviour {
         // Bubble management: can be a normal bubble OR an auto bubble from text objects
         if (!usingAutoBubble) {
             try { SpriteUtil.SwapSpriteFromFile(speechBubImg, DialogBubble, enemyID); }
-            catch {
-                UnitaleUtil.DisplayLuaError(scriptName + ": Creating a dialogue bubble", "The dialogue bubble \"" + script.GetVar("dialogbubble") + "\" doesn't exist.");
+            catch (Exception e) {
+                UnitaleUtil.DisplayLuaError(scriptName + ": Creating a dialogue bubble", "An error was encountered. It's highly possible the dialogue bubble " + script.GetVar("dialogbubble") + " doesn't exist.\n\nError: " + e.Message);
                 return;
             }
             Sprite speechBubSpr = speechBubImg.sprite;

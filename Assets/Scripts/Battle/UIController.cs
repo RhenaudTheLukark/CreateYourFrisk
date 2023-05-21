@@ -309,11 +309,14 @@ public class UIController : MonoBehaviour {
             foreach (LifeBarController lbc in arenaParent.GetComponentsInChildren<LifeBarController>())
                 Destroy(lbc.gameObject);
         else if (state == "ENEMYDIALOGUE") {
-            for (int i = 0; i < monsterDialogues.Length; i++) {
-                if (monsterDialogues[i] == null || encounter.EnabledEnemies[i] == null)
+            foreach (EnemyController enemy in encounter.enemies) {
+                enemy.HideBubble();
+                if (!enemy.bubbleObject)
                     continue;
-                monsterDialogues[i].DestroyChars();
-                encounter.EnabledEnemies[i].HideBubble();
+                LuaTextManager sbTextMan = enemy.bubbleObject.GetComponentInChildren<LuaTextManager>();
+                if (!sbTextMan)
+                    continue;
+                sbTextMan.DestroyChars();
             }
         } else if (state == "ATTACKING")
             FightUIController.instance.HideAttackingUI();
@@ -639,36 +642,47 @@ public class UIController : MonoBehaviour {
                         someTextsHaveLinesLeft = true;
             }
         } else if (!singleLineAll) {
-            for (int i = 0; i < monsterDialogues.Length; i++) {
-                if (monsterDialogues[i] == null)
+            for (int i = 0; i < encounter.enemies.Count; i++) {
+                EnemyController enemy = encounter.enemies[i];
+                if (!enemy.bubbleObject)
+                    continue;
+                LuaTextManager sbTextMan = enemy.bubbleObject.GetComponentInChildren<LuaTextManager>();
+                if (!sbTextMan)
                     continue;
 
-                if (monsterDialogues[i].AllLinesComplete() && monsterDialogues[i].LineCount() != 0 || (!monsterDialogues[i].HasNext() && readyToNextLine[i])) {
-                    monsterDialogues[i].DestroyChars();
-                    encounter.EnabledEnemies[i].HideBubble();
+                if (sbTextMan.AllLinesComplete() && sbTextMan.LineCount() != 0 || (!sbTextMan.HasNext() && readyToNextLine[i])) {
+                    sbTextMan.DestroyChars();
+                    enemy.HideBubble();
                     continue;
                 }
 
                 // Part that autoskips text if [nextthisnow] or [finished] is introduced
-                if (monsterDialogues[i].CanAutoSkipThis() || monsterDialogues[i].CanAutoSkip()) {
-                    if (monsterDialogues[i].HasNext()) {
-                        monsterDialogues[i].NextLineText();
-                        encounter.EnabledEnemies[i].UpdateBubble(i);
+                if (sbTextMan.CanAutoSkipThis() || sbTextMan.CanAutoSkip()) {
+                    if (sbTextMan.HasNext()) {
+                        sbTextMan.NextLineText();
+                        enemy.UpdateBubble(i);
                     } else {
-                        monsterDialogues[i].DestroyChars();
-                        encounter.EnabledEnemies[i].HideBubble();
+                        sbTextMan.DestroyChars();
+                        enemy.HideBubble();
                         continue;
                     }
                 } else if (readyToNextLine[monsterDialogueEnemyID[i]]) {
-                    monsterDialogues[i].NextLineText();
-                    encounter.EnabledEnemies[i].UpdateBubble(i);
+                    sbTextMan.NextLineText();
+                    enemy.UpdateBubble(i);
                 }
                 someTextsHaveLinesLeft = true;
             }
         } else
-            for (int i = 0; i < monsterDialogues.Length; i++) {
-                monsterDialogues[i].DestroyChars();
-                encounter.EnabledEnemies[i].HideBubble();
+            for (int i = 0; i < encounter.enemies.Count; i++) {
+                EnemyController enemy = encounter.enemies[i];
+                if (!enemy.bubbleObject)
+                    continue;
+                LuaTextManager sbTextMan = enemy.bubbleObject.GetComponentInChildren<LuaTextManager>();
+                if (!sbTextMan)
+                    continue;
+
+                sbTextMan.DestroyChars();
+                enemy.HideBubble();
             }
 
         if (someTextsHaveLinesLeft)
