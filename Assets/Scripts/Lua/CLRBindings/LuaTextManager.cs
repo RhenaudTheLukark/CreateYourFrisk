@@ -417,9 +417,11 @@ public class LuaTextManager : TextManager {
             CheckExists();
             _color.a = Mathf.Clamp01(value);
             textAlphaSet = true;
+            textColorSet = true; // TODO: Remove in 0.7
 
             foreach (LetterData l in letters.Where(i => !i.commandAlphaSet))
-                l.image.color = new Color(l.image.color.r, l.image.color.g, l.image.color.b, _color.a);
+                //l.image.color = new Color(l.image.color.r, l.image.color.g, l.image.color.b, _color.a); // TODO: Remove in 0.7
+                l.image.color = _color;
 
             if (!commandAlphaSet)
                 commandColor.a = _color.a;
