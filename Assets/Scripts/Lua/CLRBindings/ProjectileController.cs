@@ -25,37 +25,25 @@ public class ProjectileController {
     // The x position of the sprite, relative to the arena position and its anchor.
     public float x {
         get { return p == null ? lastX : p.self.anchoredPosition.x - ArenaManager.arenaCenter.x; }
-        set {
-            if (p != null)
-                p.self.anchoredPosition = new Vector2(value + ArenaManager.arenaCenter.x, p.self.anchoredPosition.y);
-        }
+        set { MoveTo(value + ArenaManager.arenaCenter.x, y); }
     }
 
     // The y position of the sprite, relative to the arena position and its anchor.
     public float y {
         get { return p == null ? lastY : p.self.anchoredPosition.y - ArenaManager.arenaCenter.y; }
-        set {
-            if (p != null)
-                p.self.anchoredPosition = new Vector2(p.self.anchoredPosition.x, value + ArenaManager.arenaCenter.y);
-        }
+        set { MoveTo(x, value + ArenaManager.arenaCenter.y); }
     }
 
     // The x position of the sprite, relative to the bottom left corner of the screen.
     public float absx {
         get { return p == null ? lastAbsX : p.self.position.x; }
-        set {
-            if (p != null)
-                p.self.position = new Vector2(value, p.self.position.y);
-        }
+        set { MoveToAbs(value, absy); }
     }
 
     // The y position of the sprite, relative to the bottom left corner of the screen.
     public float absy {
         get { return p == null ? lastAbsY : p.self.position.y; }
-        set {
-            if (p != null)
-                p.self.position = new Vector2(p.self.position.x, value);
-        }
+        set { MoveToAbs(absx, value); }
     }
 
     //Bullet.Duplicate() has been suspended because of some bugs. Maybe that I'll get on it later.
