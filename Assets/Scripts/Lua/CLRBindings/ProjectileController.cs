@@ -177,6 +177,7 @@ public class ProjectileController {
 
         if (GlobalControls.retroMode) p.self.anchoredPosition = new Vector2(newX, newY);
         else                          p.self.position = new Vector2(newX, newY);
+        UnitaleUtil.TextObjectMoveChecker(p.self);
     }
 
     public void SendToTop() { p.self.SetAsLastSibling(); }

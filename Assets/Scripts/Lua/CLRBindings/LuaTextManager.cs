@@ -29,25 +29,37 @@ public class LuaTextManager : TextManager {
     [MoonSharpHidden] public bool isMainTextObject = false;
     [MoonSharpHidden] public bool noSelfAdvance = false;
 
+    // Variables used to store text display adjustment variables
+    public Dictionary<int, float> xScaleSizes = new Dictionary<int, float>();
+    public Dictionary<int, float> yScaleSizes = new Dictionary<int, float>();
+    private float lastXScale = 1, lastYScale = 1;
+
     // Whether we correct the text's display (position, scale) to not look jagged
     private static bool globalAdjustTextPos {
         get {
-            if (GlobalControls.isInFight)
-                return EnemyEncounter.script.GetVar("adjusttextdisplay").Boolean;
-            return false;
+            if (!GlobalControls.isInFight)
+                return false;
+            if (EnemyEncounter.script.GetVar("noadjusttextdisplay").Type == DataType.Boolean)
+                return !EnemyEncounter.script.GetVar("noadjusttextdisplay").Boolean;
+            return true;
         }
     }
     private bool adjustTextDisplaySet = false;
-    private bool _adjustTextDisplay = false;
+    private bool _adjustTextDisplay = true;
     public bool adjustTextDisplay {
         get {
             if (adjustTextDisplaySet)
                 return _adjustTextDisplay;
+            if (rotation % 90 != 0)
+                return false;
             return globalAdjustTextPos;
         }
         set {
             adjustTextDisplaySet = true;
             _adjustTextDisplay = value;
+            if (!adjustTextDisplay)
+                foreach (LetterData l in letters)
+                    l.image.GetComponent<RectTransform>().localScale = Vector2.one;
             Move(0, 0);
             Scale(xscale, yscale);
         }
@@ -275,13 +287,10 @@ public class LuaTextManager : TextManager {
         yScale = ys;
 
         container.transform.localScale = new Vector2(xs, ys);
-        if (adjustTextDisplay)
+        if (adjustTextDisplay) {
             PostScaleHandling();
-        else
-            foreach (LetterData l in letters)
-                l.image.GetComponent<RectTransform>().localScale = Vector2.one;
-
-        MoveLetters();
+            MoveLetters();
+        }
     }
 
     public string layer {
@@ -689,18 +698,35 @@ public class LuaTextManager : TextManager {
                 ResizeBubble();
         }
     }
-
     private void PostScaleHandling() {
         if (xscale == 0 || yscale == 0)
             return;
+
+        if (xscale != lastXScale) xScaleSizes.Clear();
+        if (yscale != lastYScale) yScaleSizes.Clear();
+
         foreach (LetterData l in letters) {
             RectTransform r = l.image.GetComponent<RectTransform>();
-            float newXSize = r.rect.width * xscale,
-                  newYSize = r.rect.height * yscale,
-                  chosenX = newXSize % 1 == 0.5 ? newXSize : Mathf.Round(newXSize),
-                  chosenY = newYSize % 1 == 0.5 ? newYSize : Mathf.Round(newYSize),
-                  xLocalScale = chosenX / newXSize,
-                  yLocalScale = chosenY / newYSize;
+
+            float xLocalScale;
+            if (xScaleSizes.ContainsKey(Mathf.RoundToInt(r.rect.width)))
+                xLocalScale = xScaleSizes[Mathf.RoundToInt(r.rect.width)];
+            else {
+                float newXSize = r.rect.width * xscale,
+                      chosenX = Mathf.Round(newXSize - 0.001f);
+                xLocalScale = chosenX / newXSize;
+                xScaleSizes[Mathf.RoundToInt(r.rect.width)] = xLocalScale;
+            }
+
+            float yLocalScale;
+            if (yScaleSizes.ContainsKey(Mathf.RoundToInt(r.rect.height)))
+                yLocalScale = yScaleSizes[Mathf.RoundToInt(r.rect.height)];
+            else {
+                float newYSize = r.rect.height * yscale,
+                      chosenY = Mathf.Round(newYSize - 0.001f);
+                yLocalScale = chosenY / newYSize;
+                yScaleSizes[Mathf.RoundToInt(r.rect.height)] = yLocalScale;
+            }
             r.localScale = new Vector2(xLocalScale, yLocalScale);
         }
     }
