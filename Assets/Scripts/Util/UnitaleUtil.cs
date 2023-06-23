@@ -208,6 +208,9 @@ public static class UnitaleUtil {
                     } else if (str.Split(':')[0] == "charspacing")
                         hSpacing = str.Split(':')[1].ToLower() == "default" ? txtmgr.Charset.CharSpacing : ParseUtil.GetFloat(str.Split(':')[1]);
                     break;
+                case '\t':
+                    totalWidth += txtmgr.columnShift;
+                    break;
                 case '\r':
                 case '\n':
                     totalMaxWidth = Mathf.Max(totalMaxWidth, totalWidthSpaceTest - hSpacing);
@@ -236,6 +239,12 @@ public static class UnitaleUtil {
 
         float maxX = Mathf.NegativeInfinity, minX = Mathf.Infinity;
         LuaTextManager ltm = txtmgr as LuaTextManager;
+
+        // Add text pos in case of tab
+        if (fromLetter == 0) {
+            minX = Mathf.Min(minX, ltm.absx);
+            maxX = Mathf.Max(maxX, ltm.absx);
+        }
 
         for (int i = fromLetter; i <= toLetter; i++) {
             if (!txtmgr.letters.Any(l => l.index == i))
