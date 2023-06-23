@@ -190,6 +190,15 @@ public static class UnitaleUtil {
         return null;
     }
 
+    /// <summary>
+    /// Predicts the length of the text using the letters' size and various tags.
+    /// </summary>
+    /// <param name="txtmgr">Text object</param>
+    /// <param name="fromLetter">Letter of the current line of text to count from</param>
+    /// <param name="toLetter">Letter of the current line of text to count to</param>
+    /// <param name="countEOLSpace">True if we count spaces (spaces are usually skipped)</param>
+    /// <param name="getLastSpace">True if we count the letter spacing after the last letter of the text</param>
+    /// <returns>The length of the text in pixels</returns>
     public static float PredictTextWidth(TextManager txtmgr, int fromLetter = -1, int toLetter = -1, bool countEOLSpace = false, bool getLastSpace = false) {
         float totalWidth = 0, totalWidthSpaceTest = 0, totalMaxWidth = 0, hSpacing = txtmgr.Charset.CharSpacing;
         if (fromLetter == -1)                                                                                       fromLetter = 0;
@@ -220,7 +229,7 @@ public static class UnitaleUtil {
                 default:
                     if (txtmgr.Charset.Letters.ContainsKey(txtmgr.textQueue[txtmgr.currentLine].Text[i])) {
                         totalWidth += txtmgr.Charset.Letters[txtmgr.textQueue[txtmgr.currentLine].Text[i]].textureRect.size.x + hSpacing;
-                        // Do not count end of line spaces
+                        // Do not count spaces
                         if (txtmgr.textQueue[txtmgr.currentLine].Text[i] != ' ' || countEOLSpace)
                             totalWidthSpaceTest = totalWidth;
                     }
@@ -231,6 +240,15 @@ public static class UnitaleUtil {
         return Mathf.Max(totalMaxWidth + (getLastSpace ? hSpacing : 0), 0);
     }
 
+    /// <summary>
+    /// Computes the text's width using the x position of all of the text's letters.
+    /// This function assumes the text's letters have been created.
+    /// </summary>
+    /// <param name="txtmgr">Text object</param>
+    /// <param name="fromLetter">Letter of the current line of text to count from</param>
+    /// <param name="toLetter">Letter of the current line of text to count to</param>
+    /// <param name="countEOLSpace">True if we count spaces (spaces are usually skipped)</param>
+    /// <returns>The length of the text in pixels</returns>
     public static float CalcTextWidth(TextManager txtmgr, int fromLetter = -1, int toLetter = -1, bool countEOLSpace = false) {
         if (txtmgr.textQueue == null || txtmgr.textQueue[txtmgr.currentLine] == null)                                return 0;
         if (fromLetter > toLetter || fromLetter < -1 || toLetter > txtmgr.textQueue[txtmgr.currentLine].Text.Length) return 0;
