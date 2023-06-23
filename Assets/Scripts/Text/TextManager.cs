@@ -11,11 +11,13 @@ public class TextManager : MonoBehaviour {
     public struct LetterData {
         public int index;
         public Image image;
+        public Sprite sprite;
         public Vector2 position;
         public bool commandColorSet, commandAlphaSet;
-        public LetterData(int index, Image image, Vector2 position, bool commandColorSet, bool commandAlphaSet) {
+        public LetterData(int index, Image image, Sprite sprite, Vector2 position, bool commandColorSet, bool commandAlphaSet) {
             this.index = index;
             this.image = image;
+            this.sprite = sprite;
             this.position = position;
             this.commandColorSet = commandColorSet;
             this.commandAlphaSet = commandAlphaSet;
@@ -36,7 +38,7 @@ public class TextManager : MonoBehaviour {
     public static string[] commandList = { "color", "alpha", "charspacing", "linespacing", "starcolor", "instant", "font", "effect", "noskip", "w", "waitall", "novoice",
                                            "next", "finished", "nextthisnow", "noskipatall", "waitfor", "speed", "letters", "voice", "func", "mugshot",
                                            "music", "sound", "health", "lettereffect"};
-    public static string[] movementCommands = { "charspacing", "linespacing" };
+    public static string[] movementCommands = { "charspacing", "linespacing", "font" };
     public int currentLine;
     [MoonSharpHidden] public int _textMaxWidth;
     public int currentCharacter;
@@ -170,8 +172,10 @@ public class TextManager : MonoBehaviour {
                 SetFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_DEFAULT_NAME));
         Charset = default_charset;
         System.Diagnostics.Debug.Assert(default_charset != null, "default_charset != null");
-        letterSound = defaultVoice ?? default_charset.SoundName;
-        fontDefaultColor = default_charset.DefaultColor;
+        letterSound = defaultVoice ?? Charset.SoundName;
+        fontDefaultColor = Charset.DefaultColor;
+        hSpacing = Charset.CharSpacing;
+        vSpacing = Charset.LineSpacing;
 
         if (!(this as LuaTextManager))
             defaultColor = fontDefaultColor;
@@ -506,7 +510,7 @@ public class TextManager : MonoBehaviour {
         ltrRect.SetParent(gameObject.transform);
         ltrImg.sprite = Charset.Letters[currentText[index]];
 
-        letters.Add(new LetterData(index, ltrImg, Vector2.zero, commandColorSet, commandAlphaSet));
+        letters.Add(new LetterData(index, ltrImg, Charset.Letters[currentText[index]], Vector2.zero, commandColorSet, commandAlphaSet));
 
         ltrImg.SetNativeSize();
 
@@ -530,7 +534,7 @@ public class TextManager : MonoBehaviour {
         LetterData letter = letters[letterIndex];
         RectTransform rt = letter.image.GetComponent<RectTransform>();
 
-        float letterShift = Charset.Letters[currentText[letter.index]].border.w - Charset.Letters[currentText[letter.index]].border.y;
+        float letterShift = letter.sprite.border.w - letter.sprite.border.y;
 
         LuaTextManager ltm = this as LuaTextManager;
         if (ltm && ltm.adjustTextDisplay)
@@ -544,7 +548,7 @@ public class TextManager : MonoBehaviour {
             rt.localPosition = new Vector3(currentX, currentY + (letterShift + 2), 0);
 
         rt.eulerAngles = new Vector3(0, 0, rotation);
-        letters[letterIndex] = new LetterData(letter.index, letter.image, rt.anchoredPosition, letters[letterIndex].commandColorSet, letters[letterIndex].commandAlphaSet);
+        letters[letterIndex] = new LetterData(letter.index, letter.image, letter.sprite, rt.anchoredPosition, letters[letterIndex].commandColorSet, letters[letterIndex].commandAlphaSet);
     }
 
     protected virtual void SpawnText() {
@@ -639,7 +643,35 @@ public class TextManager : MonoBehaviour {
             Update();
     }
 
+    private float[] ComputeTextSpacings() {
+        LuaTextManager ltm = this as LuaTextManager;
+        float normalizedHSpacing = hSpacing;
+        float normalizedVSpacing = vSpacing + Charset.LineSpacing;
+        if (ltm && ltm.adjustTextDisplay) {
+            float spaceHeight = Charset.Letters[' '].rect.height;
+
+            // Normalize shifts so they're integers
+            bool isNormalizedHSpacingPositive = normalizedHSpacing >= 0.001f;
+            normalizedHSpacing = Mathf.Round((normalizedHSpacing - 0.001f) * ltm.xscale);
+            if (isNormalizedHSpacingPositive)
+                normalizedHSpacing = Mathf.Max(1, normalizedHSpacing);
+            normalizedHSpacing /= ltm.xscale;
+
+            float relativeVSpacing = normalizedVSpacing - spaceHeight;
+            bool isRelativeVSpacingPositive = relativeVSpacing >= 0.001f;
+            relativeVSpacing = Mathf.Round((relativeVSpacing - 0.001f) * ltm.yscale);
+            if (isRelativeVSpacingPositive)
+                relativeVSpacing = Mathf.Max(1, relativeVSpacing);
+            relativeVSpacing /= ltm.yscale;
+            normalizedVSpacing = relativeVSpacing + spaceHeight;
+        }
+
+        return new float[] { normalizedHSpacing, normalizedVSpacing };
+    }
+
     public void MoveLetters() {
+        ResetFont();
+
         float baseHSpacing = hSpacing;
         float baseVSpacing = vSpacing;
 
@@ -660,24 +692,9 @@ public class TextManager : MonoBehaviour {
         startingLineX = currentX;
         startingLineY = currentY;
 
-        float normalizedHSpacing = hSpacing;
-        float normalizedVSpacing = vSpacing + Charset.LineSpacing;
-        if (ltm && ltm.adjustTextDisplay) {
-            float spaceHeight = Charset.Letters[' '].rect.height;
-
-            // Normalize shifts so they're integers
-            bool isNormalizedHSpacingPositive = normalizedHSpacing >= 0.001f;
-            normalizedHSpacing = Mathf.Round((normalizedHSpacing - 0.001f) * ltm.xscale);
-            if (isNormalizedHSpacingPositive) normalizedHSpacing = Mathf.Max(1, normalizedHSpacing);
-            normalizedHSpacing /= ltm.xscale;
-
-            float relativeVSpacing = normalizedVSpacing - spaceHeight;
-            bool isRelativeVSpacingPositive = relativeVSpacing >= 0.001f;
-            relativeVSpacing = Mathf.Round((relativeVSpacing - 0.001f) * ltm.yscale);
-            if (isRelativeVSpacingPositive) relativeVSpacing = Mathf.Max(1, relativeVSpacing);
-            relativeVSpacing /= ltm.yscale;
-            normalizedVSpacing = relativeVSpacing + spaceHeight;
-        }
+        float[] spacings = ComputeTextSpacings();
+        float normalizedHSpacing = spacings[0];
+        float normalizedVSpacing = spacings[1];
 
         string currentText = textQueue[currentLine].Text;
         int tabCount = 0;
@@ -686,10 +703,14 @@ public class TextManager : MonoBehaviour {
             switch (currentText[i]) {
                 case '[':
                     string command = UnitaleUtil.ParseCommandInline(currentText, ref i);
-                    if (command == null || !movementCommands.Contains(command))
+                    if (command == null || !movementCommands.Contains(command.Split(':')[0]))
                         i = currentChar;
-                    else
+                    else {
                         PreCreateControlCommand(command, true);
+                        spacings = ComputeTextSpacings();
+                        normalizedHSpacing = spacings[0];
+                        normalizedVSpacing = spacings[1];
+                    }
                     break;
                 case '\n':
                     currentX = startingLineX + normalizedVSpacing * Mathf.Sin(rotation * Mathf.Deg2Rad);
@@ -870,7 +891,7 @@ public class TextManager : MonoBehaviour {
     private void PreCreateControlCommand(string command, bool movementCommand = false) {
         string[] cmds = UnitaleUtil.SpecialSplit(':', command);
         // Only allow letter movement commands on the letter movement pass
-        if (!movementCommand && movementCommands.Contains(command) || movementCommand && !movementCommands.Contains(command))
+        if (movementCommand && !movementCommands.Contains(cmds[0]))
             return;
         string[] args = new string[0];
         if (cmds.Length == 2) {
