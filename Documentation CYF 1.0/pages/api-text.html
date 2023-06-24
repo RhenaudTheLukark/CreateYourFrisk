@@ -268,8 +268,9 @@ it's w3c valid, at least
                 Removes the voice for the letters after this command. It resets per dialogue.
                 <span style="color:#000">Useful for when you should be burning in hell.</span>
                 <br><span class="function">[next]</span>
-                Skips to the next dialogue automatically. You can also use this for textbox trickery. Here's an example
-                to replicate Flowey's text-changing effect if you dodge the Friendliness Pellets(tm) twice.
+                Skips to the next dialogue of all monsters automatically, without concern for the other monsters' dialogue's state.
+                You can also use this for textbox trickery. Here's an example to replicate Flowey's text-changing effect if you dodge
+                the Friendliness Pellets(tm) twice.
             </p>
             <div class="code-container">
    <pre class="brush: lua;">first line:  "[noskip][voice:flowey][effect:none]RUN. [w:30]INTO. [w:30]THE.\n[w:30]BULLETS!![w:30][next]"
@@ -284,7 +285,8 @@ second line: "[instant][effect:none]RUN. INTO. THE.\nfriendliness\npellets"</pre
 
             <p class="exblock">
                 <br><span class="function"><span class="CYF"></span> [nextthisnow]</span>
-                Skips to the next dialogue of all monsters automatically, without concern for the other monsters' dialogue's state.
+                Skips to the next dialogue of the current monster. It acts much like <span class="term">[next]</span> except it only affects
+                the current monster.
             </p>
 
             <p class="exblock">
