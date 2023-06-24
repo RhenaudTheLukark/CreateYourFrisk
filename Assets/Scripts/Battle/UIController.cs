@@ -65,7 +65,7 @@ public class UIController : MonoBehaviour {
     private bool fleeSwitch;                                        // True if the Player fled, and the encounter can be ended
     public Dictionary<int, string[]> messages;                      // Stores the messages enemies will say in the state ENEMYDIALOGUE
     public bool[] readyToNextLine;                                  // Used to know which enemy bubbles are done displaying their text
-    public bool needOnDeath;                                        // Used to force the check on whether the enemies are dead or not
+    public bool checkDeathCall;                                        // Used to force the check on whether the enemies are dead or not
     private bool onDeathSwitch;                                     // Allows to switch to a given state if State() was used in OnDeath()
     public bool stateSwitched;                                      // True if the state has been changed this frame, false otherwise
     public bool battleDialogueStarted;                              // True if the battle dialog is being displayed, false otherwise. Only used for the state ITEMMENU, and not updated outside of it
@@ -1444,7 +1444,7 @@ public class UIController : MonoBehaviour {
         else if (InputUtil.Pressed(GlobalControls.input.Confirm))
             SwitchState("DONE");
 
-        if (state == "ATTACKING" && fightUI.Finished() || needOnDeath) {
+        if (state == "ATTACKING" && fightUI.Finished() || checkDeathCall) {
             bool noOnDeath = true;
             bool playSound = true;
             foreach (EnemyController enemyController in encounter.EnabledEnemies) {
@@ -1459,7 +1459,7 @@ public class UIController : MonoBehaviour {
                 enemyController.DoKill(playSound);
                 playSound = false;
 
-                if (encounter.EnabledEnemies.Length > 0)
+                if (encounter.EnabledEnemies.Length > 0 && !checkDeathCall)
                     SwitchState("ENEMYDIALOGUE");
             }
 
@@ -1470,7 +1470,7 @@ public class UIController : MonoBehaviour {
                 } else if (noOnDeath)
                     SwitchState("ENEMYDIALOGUE");
             }
-            needOnDeath = false;
+            checkDeathCall = false;
         }
     }
 }
