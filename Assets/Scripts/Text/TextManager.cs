@@ -175,7 +175,6 @@ public class TextManager : MonoBehaviour {
         letterSound = defaultVoice ?? Charset.SoundName;
         fontDefaultColor = Charset.DefaultColor;
         hSpacing = Charset.CharSpacing;
-        vSpacing = Charset.LineSpacing;
 
         if (!(this as LuaTextManager))
             defaultColor = fontDefaultColor;
