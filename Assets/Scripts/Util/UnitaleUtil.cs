@@ -200,7 +200,8 @@ public static class UnitaleUtil {
     /// <param name="getLastSpace">True if we count the letter spacing after the last letter of the text</param>
     /// <returns>The length of the text in pixels</returns>
     public static float PredictTextWidth(TextManager txtmgr, int fromLetter = -1, int toLetter = -1, bool countEOLSpace = false, bool getLastSpace = false) {
-        float totalWidth = 0, totalWidthSpaceTest = 0, totalMaxWidth = 0, hSpacing = txtmgr.Charset.CharSpacing;
+        float totalWidth = 0, totalWidthSpaceTest = 0, totalMaxWidth = 0, hSpacing = txtmgr.Charset.CharSpacing, columns = 0;
+        List<float> columnsMaxWidth = new List<float>();
         if (fromLetter == -1)                                                                                       fromLetter = 0;
         if (txtmgr.textQueue == null)                                                                               return 0;
         if (txtmgr.textQueue[txtmgr.currentLine] == null)                                                           return 0;
@@ -218,13 +219,22 @@ public static class UnitaleUtil {
                         hSpacing = str.Split(':')[1].ToLower() == "default" ? txtmgr.Charset.CharSpacing : ParseUtil.GetFloat(str.Split(':')[1]);
                     break;
                 case '\t':
-                    totalWidth += txtmgr.columnShift;
+                    // Add columns if they're not empty or filled with spaces
+                    if (totalWidthSpaceTest == totalWidth)
+                        columnsMaxWidth.Add(totalWidth);
+                    totalWidth = txtmgr.columnShift * ++columns;
+                    if (countEOLSpace)
+                        totalWidthSpaceTest = totalWidth;
                     break;
                 case '\r':
                 case '\n':
+                    columns = 0;
+                    columnsMaxWidth.Add(totalWidthSpaceTest);
+                    totalWidthSpaceTest = columnsMaxWidth.Max(w => w);
                     totalMaxWidth = Mathf.Max(totalMaxWidth, totalWidthSpaceTest - hSpacing);
                     totalWidth = 0;
                     totalWidthSpaceTest = 0;
+                    columnsMaxWidth.Clear();
                     break;
                 default:
                     if (txtmgr.Charset.Letters.ContainsKey(txtmgr.textQueue[txtmgr.currentLine].Text[i])) {

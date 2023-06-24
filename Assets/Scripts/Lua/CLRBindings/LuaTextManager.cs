@@ -25,7 +25,6 @@ public class LuaTextManager : TextManager {
     [MoonSharpHidden] public bool autoSetLayer = true;
     private readonly Dictionary<string, DynValue> vars = new Dictionary<string, DynValue>();
     [MoonSharpHidden] public bool needFontReset = false;
-    [MoonSharpHidden] public bool noAutoLineBreak = false;
     [MoonSharpHidden] public bool isMainTextObject = false;
     [MoonSharpHidden] public bool noSelfAdvance = false;
 

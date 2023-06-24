@@ -217,6 +217,12 @@ public class TextManager : MonoBehaviour {
 
     public void SetText(TextMessage text) { SetTextQueue(new[] { text }); }
 
+    public bool GetAutoLineBreak() {
+        if (textQueue[currentLine].ForceNoAutoLineBreak) return false;
+        if (!GlobalControls.isInFight || EnemyEncounter.script.GetVar("autolinebreak").Boolean) return true;
+        return false;
+    }
+
     [MoonSharpHidden] public void SetTextQueue(TextMessage[] newTextQueue) {
         if (UnitaleUtil.IsOverworld && (gameObject.name == "TextManager OW"))
             PlayerOverworld.AutoSetUIPos();
@@ -554,9 +560,8 @@ public class TextManager : MonoBehaviour {
         noSkip1stFrame = true;
         string currentText = textQueue[currentLine].Text;
         letters.Clear();
-        if (currentText.Length > 1)
-            if (!GlobalControls.isInFight || EnemyEncounter.script.GetVar("autolinebreak").Boolean || GetType() == typeof(LuaTextManager) && !((LuaTextManager)this).noAutoLineBreak)
-                SpawnTextSpaceTest(0, currentText, out currentText);
+        if (currentText.Length > 1 && GetAutoLineBreak())
+            SpawnTextSpaceTest(0, currentText, out currentText);
 
         // Work-around for [instant] and [instant:allowcommand] at the beginning of a line of text
         bool skipImmediate = false;
@@ -614,7 +619,7 @@ public class TextManager : MonoBehaviour {
                 case ' ':
                     if (i + 1 == currentText.Length || currentText[i + 1] == ' ')
                         break;
-                    if (!GlobalControls.isInFight || EnemyEncounter.script.GetVar("autolinebreak").Boolean || GetType() == typeof(LuaTextManager) && !((LuaTextManager)this).noAutoLineBreak) {
+                    if (GetAutoLineBreak()) {
                         SpawnTextSpaceTest(i, currentText, out currentText);
                         if (currentText[i] != ' ') {
                             i--;

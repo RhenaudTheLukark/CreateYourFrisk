@@ -70,6 +70,6 @@ public class SelectMessage : TextMessage {
         }
 
         // This function sends finalMessage to the real text handler function
-        Setup(finalMessage, false, true);
+        Setup(finalMessage, false, true, true, true);
     }
 }

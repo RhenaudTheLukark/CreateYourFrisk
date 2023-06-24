@@ -2,32 +2,32 @@
 
 public class TextMessage {
     public TextMessage(string text, bool decorated, bool showImmediate, bool actualText = true, DynValue mugshot = null) {
-        Setup(text, decorated, showImmediate, actualText, mugshot);
+        Setup(text, decorated, showImmediate, actualText, false, mugshot);
     }
 
     public TextMessage(string text, bool decorated, bool showImmediate, DynValue mugshot, bool actualText = true) {
-        Setup(text, decorated, showImmediate, actualText, mugshot);
+        Setup(text, decorated, showImmediate, actualText, false, mugshot);
     }
 
     public string Text { get; set; }
     public bool Decorated { get; private set; }
     public bool ShowImmediate { get; private set; }
     public bool ActualText { get; private set; }
+    public bool ForceNoAutoLineBreak { get; private set; }
     public DynValue Mugshot { get; private set; }
 
     public void AddToText(string textToAdd) { Text += textToAdd; }
 
-    protected void Setup(string text, bool decorated, bool showImmediate, bool actualText, DynValue mugshot) {
+    protected void Setup(string text, bool decorated, bool showImmediate, bool actualText = true, bool forceNoAutoLineBreak = false, DynValue mugshot = null) {
         text = Unescape(text); // compensate for unity inspector autoescaping control characters
         text = text.Replace("[name]", PlayerCharacter.instance.Name);
         Text = decorated ? DecorateText(text) : text;
         Decorated = decorated;
         ShowImmediate = showImmediate;
         ActualText = actualText;
+        ForceNoAutoLineBreak = forceNoAutoLineBreak;
         Mugshot = mugshot;
     }
-
-    protected void Setup(string text, bool formatted, bool showImmediate) { Setup(text, formatted, showImmediate, true, null); }
 
     public void SetText(string text) { Text = text; }
 
