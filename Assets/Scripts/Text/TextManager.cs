@@ -880,7 +880,8 @@ public class TextManager : MonoBehaviour {
 
         if (!string.IsNullOrEmpty(letterSound) && !muted && !soundPlayed && (GlobalControls.retroMode || textQueue[currentLine].Text[currentCharacter] != ' ')) {
             soundPlayed = true;
-            UnitaleUtil.PlayVoice("BubbleSound", letterSound);
+            try { UnitaleUtil.PlayVoice("BubbleSound", letterSound); }
+            catch (CYFException e) { UnitaleUtil.DisplayLuaError("Playing a voice", e.Message); }
         }
 
         currentCharacter++;
