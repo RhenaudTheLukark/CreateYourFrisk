@@ -31,6 +31,12 @@ jobs:
         with:
           targetPlatform: StandaloneWindows64
 
+      # Copy Assets to Build
+      - run: mkdir -p "build/Assets/Default" "build/Assets/Mods"
+      - run: cp -R "Assets/Default/*" "build/Assets/Default/"
+      - run: cp -R "Assets/Mods/*" "build/Assets/Mods/"
+      - run: find ./build/ -name "*.meta" -type f -delete
+
       # Output
       - uses: actions/upload-artifact@v2
         with:
