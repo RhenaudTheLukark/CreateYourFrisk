@@ -50,7 +50,6 @@ namespace UnityBuilderAction {
                 bool flagHasValue = next < args.Length && !args[next].StartsWith("-");
                 string value = flagHasValue ? args[next].TrimStart('-') : "";
                 bool secret = Secrets.Contains(flag);
-                string displayValue = secret ? "*HIDDEN*" : "\"" + value + "\"";
 
                 // Assign
                 providedArguments.Add(flag, value);
