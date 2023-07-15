@@ -220,7 +220,7 @@ public class TextManager : MonoBehaviour {
     public bool GetAutoLineBreak() {
         if (textQueue[currentLine].ForceNoAutoLineBreak) return false;
         if (!GlobalControls.isInFight || EnemyEncounter.script.GetVar("autolinebreak").Boolean) return true;
-        return false;
+        return (this as LuaTextManager) != null && this != UIController.instance.mainTextManager;
     }
 
     [MoonSharpHidden] public void SetTextQueue(TextMessage[] newTextQueue) {
