@@ -124,7 +124,7 @@ namespace UnityBuilderAction
 
         private static Dictionary<string, string> ParseCommandLineArguments()
         {
-            providedArguments = new Dictionary<string, string>();
+            var providedArguments = new Dictionary<string, string>();
             string[] args = Environment.GetCommandLineArgs();
 
             // Extract flags with optional values
