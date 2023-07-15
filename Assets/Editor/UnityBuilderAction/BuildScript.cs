@@ -81,7 +81,7 @@ namespace UnityBuilderAction
 
         private static Dictionary<string, string> GetValidatedOptions()
         {
-            ParseCommandLineArguments(out Dictionary<string, string> validatedOptions);
+            Dictionary<string, string> validatedOptions = ParseCommandLineArguments();
 
             // if (!validatedOptions.TryGetValue("projectPath", out string _))
             // {
@@ -122,7 +122,7 @@ namespace UnityBuilderAction
             return validatedOptions;
         }
 
-        private static void ParseCommandLineArguments(out Dictionary<string, string> providedArguments)
+        private static void ParseCommandLineArguments()
         {
             providedArguments = new Dictionary<string, string>();
             string[] args = Environment.GetCommandLineArgs();
