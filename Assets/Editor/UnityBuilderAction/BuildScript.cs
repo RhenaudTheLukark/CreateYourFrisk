@@ -122,7 +122,7 @@ namespace UnityBuilderAction
             return validatedOptions;
         }
 
-        private static void ParseCommandLineArguments()
+        private static Dictionary<string, string> ParseCommandLineArguments()
         {
             providedArguments = new Dictionary<string, string>();
             string[] args = Environment.GetCommandLineArgs();
@@ -145,6 +145,7 @@ namespace UnityBuilderAction
                 // Console.WriteLine($"Found flag \"{flag}\" with value {displayValue}.");
                 providedArguments.Add(flag, value);
             }
+            return providedArguments;
         }
 
         private static void Build(BuildTarget buildTarget, int buildSubtarget, string filePath)
