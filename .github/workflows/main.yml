@@ -33,9 +33,9 @@ jobs:
           buildMethod: UnityBuilderAction.BuildScript.Build
 
       # Copy Assets to Build
-      - run: mkdir -p "build/Assets/Default" "build/Assets/Mods"
-      - run: cp -Rv "Assets/Default/*" "build/Assets/Default/"
-      - run: cp -Rv "Assets/Mods/*" "build/Assets/Mods/"
+      - run: mkdir -p "build/Default" "build/Mods"
+      - run: cp -Rv "Assets/Default/*" "build/Default/"
+      - run: cp -Rv "Assets/Mods/*" "build/Mods/"
       - run: find ./build/ -name "*.meta" -type f -delete
 
       # Output
