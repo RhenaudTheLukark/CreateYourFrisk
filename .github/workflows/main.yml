@@ -37,6 +37,7 @@ jobs:
       - run: sudo mkdir -v "${{ github.workspace }}/build/StandaloneWindows64/Default" "${{ github.workspace }}/build/StandaloneWindows64/Mods"
       - run: sudo cp -Rv "${{ github.workspace }}/Assets/Default/" "${{ github.workspace }}/build/StandaloneWindows64/"
       - run: sudo cp -Rv "${{ github.workspace }}/Assets/Mods/" "${{ github.workspace }}/build/StandaloneWindows64/"
+      - run: sudo cp -Rv "${{ github.workspace }}/Documentation CYF 1.0/" "${{ github.workspace }}/build"
       - run: sudo find ${{ github.workspace }}/build/StandaloneWindows64/ -name "*.meta" -type f -delete
       - run: sudo mv ${{ github.workspace }}/build/StandaloneWindows64/ ${{ github.workspace }}/build/CreateYourFrisk/
 
@@ -80,6 +81,7 @@ jobs:
       - run: sudo mkdir -v "${{ github.workspace }}/build/StandaloneOSX/Default" "${{ github.workspace }}/build/StandaloneOSX/Mods"
       - run: sudo cp -Rv "${{ github.workspace }}/Assets/Default/" "${{ github.workspace }}/build/StandaloneOSX/"
       - run: sudo cp -Rv "${{ github.workspace }}/Assets/Mods/" "${{ github.workspace }}/build/StandaloneOSX/"
+      - run: sudo cp -Rv "${{ github.workspace }}/Documentation CYF 1.0/" "${{ github.workspace }}/build"
       - run: sudo find ${{ github.workspace }}/build/StandaloneOSX/ -name "*.meta" -type f -delete
       - run: sudo mv ${{ github.workspace }}/build/StandaloneOSX/ ${{ github.workspace }}/build/CreateYourFrisk/
 
@@ -123,6 +125,7 @@ jobs:
       - run: sudo mkdir -v "${{ github.workspace }}/build/StandaloneLinux64/Default" "${{ github.workspace }}/build/StandaloneLinux64/Mods"
       - run: sudo cp -Rv "${{ github.workspace }}/Assets/Default/" "${{ github.workspace }}/build/StandaloneLinux64/"
       - run: sudo cp -Rv "${{ github.workspace }}/Assets/Mods/" "${{ github.workspace }}/build/StandaloneLinux64/"
+      - run: sudo cp -Rv "${{ github.workspace }}/Documentation CYF 1.0/" "${{ github.workspace }}/build"
       - run: sudo find ${{ github.workspace }}/build/StandaloneLinux64/ -name "*.meta" -type f -delete
       - run: sudo mv ${{ github.workspace }}/build/StandaloneLinux64/ ${{ github.workspace }}/build/CreateYourFrisk/
 
