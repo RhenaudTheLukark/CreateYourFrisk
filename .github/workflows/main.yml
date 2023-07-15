@@ -34,11 +34,11 @@ jobs:
           buildName: CreateYourFrisk-win64
 
       # Copy Assets to Build
-      - run: mkdir -v "${{ github.workspace }}/build/StandaloneWindows64/Default" "${{ github.workspace }}/build/StandaloneWindows64/Mods"
-      - run: cp -Rv "Assets/Default/*" "${{ github.workspace }}/build/StandaloneWindows64/Default/"
-      - run: cp -Rv "Assets/Mods/*" "${{ github.workspace }}/build/StandaloneWindows64/Mods/"
-      - run: find ${{ github.workspace }}/build/StandaloneWindows64/ -name "*.meta" -type f -delete
-      - run: mv ${{ github.workspace }}/build/StandaloneWindows64/ ${{ github.workspace }}/build/CreateYourFrisk/
+      - run: sudo mkdir -v "${{ github.workspace }}/build/StandaloneWindows64/Default" "${{ github.workspace }}/build/StandaloneWindows64/Mods"
+      - run: sudo cp -Rv "Assets/Default/*" "${{ github.workspace }}/build/StandaloneWindows64/Default/"
+      - run: sudo cp -Rv "Assets/Mods/*" "${{ github.workspace }}/build/StandaloneWindows64/Mods/"
+      - run: sudo find ${{ github.workspace }}/build/StandaloneWindows64/ -name "*.meta" -type f -delete
+      - run: sudo mv ${{ github.workspace }}/build/StandaloneWindows64/ ${{ github.workspace }}/build/CreateYourFrisk/
 
       # Output
       - uses: actions/upload-artifact@v2
