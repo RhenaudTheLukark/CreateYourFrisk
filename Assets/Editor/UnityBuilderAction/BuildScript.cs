@@ -28,58 +28,52 @@ namespace UnityBuilderAction
 
             // Apply build target
             var buildTarget = (BuildTarget) Enum.Parse(typeof(BuildTarget), options["buildTarget"]);
-            switch (buildTarget)
-            {
-                case BuildTarget.Android:
-                {
-                    EditorUserBuildSettings.buildAppBundle = options["customBuildPath"].EndsWith(".aab");
-                    if (options.TryGetValue("androidKeystoreName", out string keystoreName) &&
-                        !string.IsNullOrEmpty(keystoreName))
-                    {
-                      PlayerSettings.Android.useCustomKeystore = true;
-                      PlayerSettings.Android.keystoreName = keystoreName;
-                    }
-                    if (options.TryGetValue("androidKeystorePass", out string keystorePass) &&
-                        !string.IsNullOrEmpty(keystorePass))
-                        PlayerSettings.Android.keystorePass = keystorePass;
-                    if (options.TryGetValue("androidKeyaliasName", out string keyaliasName) &&
-                        !string.IsNullOrEmpty(keyaliasName))
-                        PlayerSettings.Android.keyaliasName = keyaliasName;
-                    if (options.TryGetValue("androidKeyaliasPass", out string keyaliasPass) &&
-                        !string.IsNullOrEmpty(keyaliasPass))
-                        PlayerSettings.Android.keyaliasPass = keyaliasPass;
-                    if (options.TryGetValue("androidTargetSdkVersion", out string androidTargetSdkVersion) &&
-                        !string.IsNullOrEmpty(androidTargetSdkVersion))
-                    {
-                        var targetSdkVersion = AndroidSdkVersions.AndroidApiLevelAuto;
-                        try
-                        {
-                            targetSdkVersion =
-                                (AndroidSdkVersions) Enum.Parse(typeof(AndroidSdkVersions), androidTargetSdkVersion);
-                        }
-                        catch
-                        {
-                            UnityEngine.Debug.Log("Failed to parse androidTargetSdkVersion! Fallback to AndroidApiLevelAuto");
-                        }
+            // switch (buildTarget)
+            // {
+            //     case BuildTarget.Android:
+            //     {
+            //         EditorUserBuildSettings.buildAppBundle = options["customBuildPath"].EndsWith(".aab");
+            //         if (options.TryGetValue("androidKeystoreName", out string keystoreName) &&
+            //             !string.IsNullOrEmpty(keystoreName))
+            //         {
+            //           PlayerSettings.Android.useCustomKeystore = true;
+            //           PlayerSettings.Android.keystoreName = keystoreName;
+            //         }
+            //         if (options.TryGetValue("androidKeystorePass", out string keystorePass) &&
+            //             !string.IsNullOrEmpty(keystorePass))
+            //             PlayerSettings.Android.keystorePass = keystorePass;
+            //         if (options.TryGetValue("androidKeyaliasName", out string keyaliasName) &&
+            //             !string.IsNullOrEmpty(keyaliasName))
+            //             PlayerSettings.Android.keyaliasName = keyaliasName;
+            //         if (options.TryGetValue("androidKeyaliasPass", out string keyaliasPass) &&
+            //             !string.IsNullOrEmpty(keyaliasPass))
+            //             PlayerSettings.Android.keyaliasPass = keyaliasPass;
+            //         if (options.TryGetValue("androidTargetSdkVersion", out string androidTargetSdkVersion) &&
+            //             !string.IsNullOrEmpty(androidTargetSdkVersion))
+            //         {
+            //             var targetSdkVersion = AndroidSdkVersions.AndroidApiLevelAuto;
+            //             try
+            //             {
+            //                 targetSdkVersion =
+            //                     (AndroidSdkVersions) Enum.Parse(typeof(AndroidSdkVersions), androidTargetSdkVersion);
+            //             }
+            //             catch
+            //             {
+            //                 UnityEngine.Debug.Log("Failed to parse androidTargetSdkVersion! Fallback to AndroidApiLevelAuto");
+            //             }
 
-                        PlayerSettings.Android.targetSdkVersion = targetSdkVersion;
-                    }
+            //             PlayerSettings.Android.targetSdkVersion = targetSdkVersion;
+            //         }
 
-                    break;
-                }
-                case BuildTarget.StandaloneOSX:
-                    PlayerSettings.SetScriptingBackend(BuildTargetGroup.Standalone, ScriptingImplementation.Mono2x);
-                    break;
-            }
+            //         break;
+            //     }
+            //     case BuildTarget.StandaloneOSX:
+            //         PlayerSettings.SetScriptingBackend(BuildTargetGroup.Standalone, ScriptingImplementation.Mono2x);
+            //         break;
+            // }
 
             // Determine subtarget
             int buildSubtarget = 0;
-#if UNITY_2021_2_OR_NEWER
-            if (!options.TryGetValue("standaloneBuildSubtarget", out var subtargetValue) || !Enum.TryParse(subtargetValue, out StandaloneBuildSubtarget buildSubtargetValue)) {
-                buildSubtargetValue = default;
-            }
-            buildSubtarget = (int) buildSubtargetValue;
-#endif
 
             // Custom build
             Build(buildTarget, buildSubtarget, options["customBuildPath"]);
@@ -89,41 +83,41 @@ namespace UnityBuilderAction
         {
             ParseCommandLineArguments(out Dictionary<string, string> validatedOptions);
 
-            if (!validatedOptions.TryGetValue("projectPath", out string _))
-            {
-                Console.WriteLine("Missing argument -projectPath");
-                EditorApplication.Exit(110);
-            }
+            // if (!validatedOptions.TryGetValue("projectPath", out string _))
+            // {
+            //     Console.WriteLine("Missing argument -projectPath");
+            //     EditorApplication.Exit(110);
+            // }
 
-            if (!validatedOptions.TryGetValue("buildTarget", out string buildTarget))
-            {
-                Console.WriteLine("Missing argument -buildTarget");
-                EditorApplication.Exit(120);
-            }
+            // if (!validatedOptions.TryGetValue("buildTarget", out string buildTarget))
+            // {
+            //     Console.WriteLine("Missing argument -buildTarget");
+            //     EditorApplication.Exit(120);
+            // }
 
-            if (!Enum.IsDefined(typeof(BuildTarget), buildTarget ?? string.Empty))
-            {
-                Console.WriteLine($"{buildTarget} is not a defined {nameof(BuildTarget)}");
-                EditorApplication.Exit(121);
-            }
+            // if (!Enum.IsDefined(typeof(BuildTarget), buildTarget ?? string.Empty))
+            // {
+            //     Console.WriteLine($"{buildTarget} is not a defined {nameof(BuildTarget)}");
+            //     EditorApplication.Exit(121);
+            // }
 
-            if (!validatedOptions.TryGetValue("customBuildPath", out string _))
-            {
-                Console.WriteLine("Missing argument -customBuildPath");
-                EditorApplication.Exit(130);
-            }
+            // if (!validatedOptions.TryGetValue("customBuildPath", out string _))
+            // {
+            //     Console.WriteLine("Missing argument -customBuildPath");
+            //     EditorApplication.Exit(130);
+            // }
 
-            const string defaultCustomBuildName = "TestBuild";
-            if (!validatedOptions.TryGetValue("customBuildName", out string customBuildName))
-            {
-                Console.WriteLine($"Missing argument -customBuildName, defaulting to {defaultCustomBuildName}.");
-                validatedOptions.Add("customBuildName", defaultCustomBuildName);
-            }
-            else if (customBuildName == "")
-            {
-                Console.WriteLine($"Invalid argument -customBuildName, defaulting to {defaultCustomBuildName}.");
-                validatedOptions.Add("customBuildName", defaultCustomBuildName);
-            }
+            // const string defaultCustomBuildName = "TestBuild";
+            // if (!validatedOptions.TryGetValue("customBuildName", out string customBuildName))
+            // {
+            //     Console.WriteLine($"Missing argument -customBuildName, defaulting to {defaultCustomBuildName}.");
+            //     validatedOptions.Add("customBuildName", defaultCustomBuildName);
+            // }
+            // else if (customBuildName == "")
+            // {
+            //     Console.WriteLine($"Invalid argument -customBuildName, defaulting to {defaultCustomBuildName}.");
+            //     validatedOptions.Add("customBuildName", defaultCustomBuildName);
+            // }
 
             return validatedOptions;
         }
