@@ -3,8 +3,8 @@ name: Build CYF
 on: [push, pull_request]
 
 jobs:
-  build:
-    name: Build CYF
+  buildWindows:
+    name: Build CYF (Windows)
     runs-on: ubuntu-latest
     steps:
       # Checkout
@@ -31,13 +31,13 @@ jobs:
         with:
           targetPlatform: StandaloneWindows64
           buildMethod: UnityBuilderAction.BuildScript.Build
+          buildName: CreateYourFrisk-win64
 
       # Copy Assets to Build
-      # - run: find /home/runner/work/
-      # - run: mkdir -v "/home/runner/work/CreateYourFrisk/CreateYourFrisk/build/Default" "/home/runner/work/CreateYourFrisk/CreateYourFrisk/build/Mods"
-      # - run: cp -Rv "Assets/Default/*" "build/Default/"
-      # - run: cp -Rv "Assets/Mods/*" "build/Mods/"
-      # - run: find ./build/ -name "*.meta" -type f -delete
+      - run: mkdir -v "${{ github.workspace }}/build/CreateYourFrisk-win64/Default" "${{ github.workspace }}/build/CreateYourFrisk-win64/Mods"
+      - run: cp -Rv "Assets/Default/*" "${{ github.workspace }}/build/CreateYourFrisk-win64/Default/"
+      - run: cp -Rv "Assets/Mods/*" "${{ github.workspace }}/build/CreateYourFrisk-win64/Mods/"
+      - run: find ${{ github.workspace }}/build/CreateYourFrisk-win64/ -name "*.meta" -type f -delete
 
       # Output
       - uses: actions/upload-artifact@v2
