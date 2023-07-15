@@ -1,10 +1,10 @@
-name: Actions 😎
+name: Build CYF
 
 on: [push, pull_request]
 
 jobs:
   build:
-    name: Build my project ✨
+    name: Build CYF
     runs-on: ubuntu-latest
     steps:
       # Checkout
