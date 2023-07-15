@@ -74,7 +74,7 @@ jobs:
         with:
           targetPlatform: StandaloneLinux64
           buildMethod: UnityBuilderAction.BuildScript.Build
-          buildName: CreateYourFrisk-win64
+          buildName: CreateYourFrisk-lin64
 
       # Copy Assets to Build
       - run: sudo mkdir -v "${{ github.workspace }}/build/StandaloneLinux64/Default" "${{ github.workspace }}/build/StandaloneLinux64/Mods"
@@ -86,5 +86,5 @@ jobs:
       # Output
       - uses: actions/upload-artifact@v2
         with:
-          name: CreateYourFrisk-win64
+          name: CreateYourFrisk-lin4
           path: build
