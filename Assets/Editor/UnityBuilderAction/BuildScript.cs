@@ -1,25 +1,19 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using UnityEditor;
 using UnityEditor.Build.Reporting;
 
-namespace UnityBuilderAction
-{
-    public static class BuildScript
-    {
+namespace UnityBuilderAction {
+    public static class BuildScript {
         private static readonly string Eol = Environment.NewLine;
 
         private static readonly string[] Secrets =
             {"androidKeystorePass", "androidKeyaliasName", "androidKeyaliasPass"};
 
-        public static void Build()
-        {
+        public static void Build() {
             // Gather values from args
             Dictionary<string, string> options = GetValidatedOptions();
-
-            // PlayerSettings.SetApiCompatibilityLevel(EditorUserBuildSettings.selectedBuildTargetGroup, ApiCompatibilityLevel.NET_4_6);
 
             // Set version for this build
             PlayerSettings.bundleVersion = options["buildVersion"];
@@ -36,23 +30,17 @@ namespace UnityBuilderAction
             Build(buildTarget, buildSubtarget, options["customBuildPath"]);
         }
 
-        private static Dictionary<string, string> GetValidatedOptions()
-        {
+        private static Dictionary<string, string> GetValidatedOptions() {
             Dictionary<string, string> validatedOptions = ParseCommandLineArguments();
-
-            // Oh God.
-
             return validatedOptions;
         }
 
-        private static Dictionary<string, string> ParseCommandLineArguments()
-        {
+        private static Dictionary<string, string> ParseCommandLineArguments() {
             var providedArguments = new Dictionary<string, string>();
             string[] args = Environment.GetCommandLineArgs();
 
             // Extract flags with optional values
-            for (int current = 0, next = 1; current < args.Length; current++, next++)
-            {
+            for (int current = 0, next = 1; current < args.Length; current++, next++) {
                 // Parse flag
                 bool isFlag = args[current].StartsWith("-");
                 if (!isFlag) continue;
@@ -65,32 +53,25 @@ namespace UnityBuilderAction
                 string displayValue = secret ? "*HIDDEN*" : "\"" + value + "\"";
 
                 // Assign
-                // Console.WriteLine($"Found flag \"{flag}\" with value {displayValue}.");
                 providedArguments.Add(flag, value);
             }
             return providedArguments;
         }
 
-        private static void Build(BuildTarget buildTarget, int buildSubtarget, string filePath)
-        {
+        private static void Build(BuildTarget buildTarget, int buildSubtarget, string filePath) {
             string[] scenes = EditorBuildSettings.scenes.Where(scene => scene.enabled).Select(s => s.path).ToArray();
-            var buildPlayerOptions = new BuildPlayerOptions
-            {
+            var buildPlayerOptions = new BuildPlayerOptions {
                 scenes = scenes,
                 target = buildTarget,
-//                targetGroup = BuildPipeline.GetBuildTargetGroup(buildTarget),
                 locationPathName = filePath,
-//                options = UnityEditor.BuildOptions.Development
             };
 
             BuildSummary buildSummary = BuildPipeline.BuildPlayer(buildPlayerOptions).summary;
             ExitWithResult(buildSummary.result);
         }
 
-        private static void ExitWithResult(BuildResult result)
-        {
-            switch (result)
-            {
+        private static void ExitWithResult(BuildResult result) {
+            switch (result) {
                 case BuildResult.Succeeded:
                     Console.WriteLine("Build succeeded!");
                     EditorApplication.Exit(0);

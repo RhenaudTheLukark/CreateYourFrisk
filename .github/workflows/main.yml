@@ -82,6 +82,7 @@ jobs:
       - run: sudo cp -Rv "${{ github.workspace }}/Assets/Default/" "${{ github.workspace }}/build/StandaloneOSX/"
       - run: sudo cp -Rv "${{ github.workspace }}/Assets/Mods/" "${{ github.workspace }}/build/StandaloneOSX/"
       - run: sudo cp -Rv "${{ github.workspace }}/Documentation CYF 1.0/" "${{ github.workspace }}/build"
+      - run: sudo cp "${{ github.workspace }}/How to use CYF and add mods (Mac).txt" "${{ github.workspace }}/build/StandaloneOSX/"
       - run: sudo find ${{ github.workspace }}/build/StandaloneOSX/ -name "*.meta" -type f -delete
       - run: sudo mv ${{ github.workspace }}/build/StandaloneOSX/ ${{ github.workspace }}/build/CreateYourFrisk/
 
