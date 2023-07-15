@@ -34,6 +34,7 @@ jobs:
           buildName: CreateYourFrisk-win64
 
       # Copy Assets to Build
+      - run: ls -R ${{ github.workspace }}
       - run: mkdir -v "${{ github.workspace }}/build/CreateYourFrisk-win64/Default" "${{ github.workspace }}/build/CreateYourFrisk-win64/Mods"
       - run: cp -Rv "Assets/Default/*" "${{ github.workspace }}/build/CreateYourFrisk-win64/Default/"
       - run: cp -Rv "Assets/Mods/*" "${{ github.workspace }}/build/CreateYourFrisk-win64/Mods/"
