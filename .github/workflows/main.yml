@@ -43,5 +43,48 @@ jobs:
       # Output
       - uses: actions/upload-artifact@v2
         with:
-          name: Build
+          name: CreateYourFrisk-win64
+          path: build
+
+  buildLinux:
+    name: Build CYF (Linux)
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          lfs: true
+
+      # Cache
+      - uses: actions/cache@v2
+        with:
+          path: Library
+          key: Library-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-
+
+      # Build
+      - name: Build project
+        uses: game-ci/unity-builder@v2
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          targetPlatform: StandaloneLinux64
+          buildMethod: UnityBuilderAction.BuildScript.Build
+          buildName: CreateYourFrisk-win64
+
+      # Copy Assets to Build
+      - run: sudo mkdir -v "${{ github.workspace }}/build/StandaloneLinux64/Default" "${{ github.workspace }}/build/StandaloneLinux64/Mods"
+      - run: sudo cp -Rv "${{ github.workspace }}/Assets/Default/" "${{ github.workspace }}/build/StandaloneLinux64/"
+      - run: sudo cp -Rv "${{ github.workspace }}/Assets/Mods/" "${{ github.workspace }}/build/StandaloneLinux64/"
+      - run: sudo find ${{ github.workspace }}/build/StandaloneLinux64/ -name "*.meta" -type f -delete
+      - run: sudo mv ${{ github.workspace }}/build/StandaloneLinux64/ ${{ github.workspace }}/build/CreateYourFrisk/
+
+      # Output
+      - uses: actions/upload-artifact@v2
+        with:
+          name: CreateYourFrisk-win64
           path: build
