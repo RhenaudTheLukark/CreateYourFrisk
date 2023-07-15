@@ -35,8 +35,8 @@ jobs:
 
       # Copy Assets to Build
       - run: sudo mkdir -v "${{ github.workspace }}/build/StandaloneWindows64/Default" "${{ github.workspace }}/build/StandaloneWindows64/Mods"
-      - run: sudo cp -Rv "${{ github.workspace }}/Assets/Default/*" "${{ github.workspace }}/build/StandaloneWindows64/Default/"
-      - run: sudo cp -Rv "${{ github.workspace }}/Assets/Mods/*" "${{ github.workspace }}/build/StandaloneWindows64/Mods/"
+      - run: sudo cp -Rv "${{ github.workspace }}/Assets/Default/" "${{ github.workspace }}/build/StandaloneWindows64/"
+      - run: sudo cp -Rv "${{ github.workspace }}/Assets/Mods/" "${{ github.workspace }}/build/StandaloneWindows64/"
       - run: sudo find ${{ github.workspace }}/build/StandaloneWindows64/ -name "*.meta" -type f -delete
       - run: sudo mv ${{ github.workspace }}/build/StandaloneWindows64/ ${{ github.workspace }}/build/CreateYourFrisk/
 
