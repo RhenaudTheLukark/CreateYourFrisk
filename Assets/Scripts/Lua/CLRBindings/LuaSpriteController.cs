@@ -273,12 +273,16 @@ public class LuaSpriteController {
 
     // The rotation of the sprite
     public float rotation {
-        get { return Math.Mod(GetParentRot() + img.GetComponent<RectTransform>().localEulerAngles.z + (yScale < 0 ? 180 : 0), 360); }
+        get {
+            if (GlobalControls.isInFight && EnemyEncounter.script.GetVar("noscalerotationbug").Boolean) {
+                return Math.Mod(img.GetComponent<RectTransform>().localEulerAngles.z + (yScale < 0 ? 180 : 0), 360);
+            }
+            return internalRotation.z;
+        }
         set {
             // We mod the value from 0 to 360 because angles are between 0 and 360 normally
             internalRotation.z = Math.Mod(value, 360);
             if (GlobalControls.isInFight && EnemyEncounter.script.GetVar("noscalerotationbug").Boolean) {
-                internalRotation.z = Math.Mod(internalRotation.z - GetParentRot(), 360);
                 img.GetComponent<RectTransform>().localEulerAngles = internalRotation;
             } else
                 img.GetComponent<RectTransform>().eulerAngles = internalRotation;
