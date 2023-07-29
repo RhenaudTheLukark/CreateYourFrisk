@@ -760,7 +760,7 @@ public class UIController : MonoBehaviour {
             lifeBar.transform.SetParent(mainTextManager.transform);
             lifeBar.transform.SetAsFirstSibling();
             lifeBar.background.SetAnchor(0.5f, 0.5f);
-            lifeBar.background.MoveTo(maxWidth, initialHealthPos.y - (i - page * 2) * mainTextManager.Charset.LineSpacing);
+            lifeBar.background.MoveTo(maxWidth, initialHealthPos.y - (i - page * 2) * mainTextManager.font.LineSpacing);
             lifeBar.fill.rotation = lifeBar.mask.rotation = lifeBar.background.rotation = mainTextManager.rotation;
             lifeBar.SetFillColor(Color.green);
             float hpDivide = encounter.EnabledEnemies[i].HP / (float)encounter.EnabledEnemies[i].MaxHP;
@@ -1178,7 +1178,7 @@ public class UIController : MonoBehaviour {
 
         if (mainTextManager.letters.Count > 0)
             PlayerController.instance.SetPosition(mainTextManager.absx + mainTextManager.letters[0].image.rectTransform.sizeDelta.x / 2 + xMv * mainTextManager.columnShift + 4,
-                                                  mainTextManager.absy + mainTextManager.letters[0].image.rectTransform.sizeDelta.y / 2 - yMv * mainTextManager.Charset.LineSpacing, true);
+                                                  mainTextManager.absy + mainTextManager.letters[0].image.rectTransform.sizeDelta.y / 2 - yMv * mainTextManager.font.LineSpacing, true);
     }
 
     private void Start() {

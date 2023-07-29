@@ -204,7 +204,7 @@ public class PlayerOverworld : MonoBehaviour {
             textmgr.transform.parent.parent.SetAsFirstSibling();
             textmgr.SetTextQueue(null);
             textmgr.DestroyChars();
-            textmgr.SetHorizontalSpacing(textmgr.Charset.CharSpacing);
+            textmgr.SetHorizontalSpacing(textmgr.font.CharSpacing);
             textmgr.SetVerticalSpacing();
             textmgr.SetTextFrameAlpha(0);
             if (EventManager.instance.script != null)

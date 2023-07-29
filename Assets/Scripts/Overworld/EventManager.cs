@@ -701,7 +701,7 @@ end";
         if (_textManager.letters.Count > 0)
             GameObject.Find("tempHeart").GetComponent<RectTransform>().position =
                 new Vector3(_textManager.letters[0].image.transform.position.x + xMv * _textManager.columnShift,
-                            _textManager.letters[0].image.transform.position.y - yMv * _textManager.Charset.LineSpacing + 9,
+                            _textManager.letters[0].image.transform.position.y - yMv * _textManager.font.LineSpacing + 9,
                             GameObject.Find("tempHeart").GetComponent<RectTransform>().position.z);
     }
 

@@ -200,7 +200,7 @@ public static class UnitaleUtil {
     /// <param name="getLastSpace">True if we count the letter spacing after the last letter of the text</param>
     /// <returns>The length of the text in pixels</returns>
     public static float PredictTextWidth(TextManager txtmgr, int fromLetter = -1, int toLetter = -1, bool countEOLSpace = false, bool getLastSpace = false) {
-        float totalWidth = 0, totalWidthSpaceTest = 0, totalMaxWidth = 0, hSpacing = txtmgr.Charset.CharSpacing, columns = 0;
+        float totalWidth = 0, totalWidthSpaceTest = 0, totalMaxWidth = 0, hSpacing = txtmgr.font.CharSpacing, columns = 0;
         List<float> columnsMaxWidth = new List<float>();
         if (fromLetter == -1)                                                                                       fromLetter = 0;
         if (txtmgr.textQueue == null)                                                                               return 0;
@@ -213,10 +213,10 @@ public static class UnitaleUtil {
                 case '[':
                     string str = ParseCommandInline(txtmgr.textQueue[txtmgr.currentLine].Text, ref i);
                     if (str == null) {
-                        if (txtmgr.Charset.Letters.ContainsKey(txtmgr.textQueue[txtmgr.currentLine].Text[i]))
-                            totalWidth += txtmgr.Charset.Letters[txtmgr.textQueue[txtmgr.currentLine].Text[i]].textureRect.size.x + hSpacing;
+                        if (txtmgr.font.Letters.ContainsKey(txtmgr.textQueue[txtmgr.currentLine].Text[i]))
+                            totalWidth += txtmgr.font.Letters[txtmgr.textQueue[txtmgr.currentLine].Text[i]].textureRect.size.x + hSpacing;
                     } else if (str.Split(':')[0] == "charspacing")
-                        hSpacing = str.Split(':')[1].ToLower() == "default" ? txtmgr.Charset.CharSpacing : ParseUtil.GetFloat(str.Split(':')[1]);
+                        hSpacing = str.Split(':')[1].ToLower() == "default" ? txtmgr.font.CharSpacing : ParseUtil.GetFloat(str.Split(':')[1]);
                     break;
                 case '\t':
                     // Add columns if they're not empty or filled with spaces
@@ -237,8 +237,8 @@ public static class UnitaleUtil {
                     columnsMaxWidth.Clear();
                     break;
                 default:
-                    if (txtmgr.Charset.Letters.ContainsKey(txtmgr.textQueue[txtmgr.currentLine].Text[i])) {
-                        totalWidth += txtmgr.Charset.Letters[txtmgr.textQueue[txtmgr.currentLine].Text[i]].textureRect.size.x + hSpacing;
+                    if (txtmgr.font.Letters.ContainsKey(txtmgr.textQueue[txtmgr.currentLine].Text[i])) {
+                        totalWidth += txtmgr.font.Letters[txtmgr.textQueue[txtmgr.currentLine].Text[i]].textureRect.size.x + hSpacing;
                         // Do not count spaces
                         if (txtmgr.textQueue[txtmgr.currentLine].Text[i] != ' ' || countEOLSpace)
                             totalWidthSpaceTest = totalWidth;

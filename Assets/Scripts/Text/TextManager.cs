@@ -25,9 +25,11 @@ public class TextManager : MonoBehaviour {
     }
     internal List<LetterData> letters = new List<LetterData>();
 
-    protected UnderFont default_charset;
+    protected UnderFont defaultFont;
     protected string defaultVoice;
-    [MoonSharpHidden] public string letterSound;
+    [MoonSharpHidden] public UnderFont font { get; protected set; }
+    [MoonSharpHidden] public string fontVoice;
+    private string commandVoice;
 
     protected TextEffect textEffect;
     private string letterEffect = "none";
@@ -103,7 +105,6 @@ public class TextManager : MonoBehaviour {
 
     [MoonSharpHidden] public ScriptWrapper caller;
 
-    [MoonSharpHidden] public UnderFont Charset { get; protected set; }
     [MoonSharpHidden] public TextMessage[] textQueue = null;
     //public string[] mugshotsPath;
     //public bool overworld;
@@ -141,15 +142,15 @@ public class TextManager : MonoBehaviour {
     [MoonSharpHidden] public void SetCaller(ScriptWrapper s) { caller = s; }
 
     public void SetFont(UnderFont font, bool temporary = false) {
-        Charset = font;
+        this.font = font;
         if (!temporary) {
-            default_charset = font;
+            defaultFont = font;
             defaultVoice = font.SoundName;
         } else if (font.Sound != null)
-            letterSound = font.SoundName;
+            fontVoice = font.SoundName;
 
-        if (default_charset == null)
-            default_charset = font;
+        if (defaultFont == null)
+            defaultFont = font;
 
         vSpacing = 0;
         hSpacing = font.CharSpacing;
@@ -161,20 +162,25 @@ public class TextManager : MonoBehaviour {
         commandColor = defaultColor;
     }
 
+    public string GetVoice() {
+        string voice = commandVoice ?? fontVoice;
+        return voice != "none" ? voice : null;
+    }
+
     [MoonSharpHidden] public void SetHorizontalSpacing(float spacing = 3) { hSpacing = spacing; }
     [MoonSharpHidden] public void SetVerticalSpacing(float spacing = 0) { vSpacing = spacing; }
 
     [MoonSharpHidden] public void ResetFont() {
-        if (Charset == null || default_charset == null)
+        if (font == null || defaultFont == null)
             if (GetType() == typeof(LuaTextManager) && !((LuaTextManager)this).isMainTextObject)
                 ((LuaTextManager) this).SetFont(SpriteFontRegistry.UI_MONSTERTEXT_NAME);
             else
                 SetFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_DEFAULT_NAME));
-        Charset = default_charset;
-        System.Diagnostics.Debug.Assert(default_charset != null, "default_charset != null");
-        letterSound = defaultVoice ?? Charset.SoundName;
-        fontDefaultColor = Charset.DefaultColor;
-        hSpacing = Charset.CharSpacing;
+        font = defaultFont;
+        System.Diagnostics.Debug.Assert(defaultFont != null, "defaultFont != null");
+        fontVoice = defaultVoice ?? font.SoundName;
+        fontDefaultColor = font.DefaultColor;
+        hSpacing = font.CharSpacing;
 
         if (!(this as LuaTextManager))
             defaultColor = fontDefaultColor;
@@ -416,7 +422,7 @@ public class TextManager : MonoBehaviour {
             int lines = textQueue[line].Text.Split('\n').Length;
             lines = lines >= 4 ? 4 : 3;
             Vector3 pos = gameObject.GetComponent<RectTransform>().localPosition;
-            MoveTo(pos.x, 22 + ((lines - 1) * Charset.LineSpacing / 2));
+            MoveTo(pos.x, 22 + ((lines - 1) * font.LineSpacing / 2));
         }
     }
 
@@ -513,9 +519,9 @@ public class TextManager : MonoBehaviour {
 
         Image ltrImg = singleLtr.GetComponent<Image>();
         ltrRect.SetParent(gameObject.transform);
-        ltrImg.sprite = Charset.Letters[currentText[index]];
+        ltrImg.sprite = font.Letters[currentText[index]];
 
-        letters.Add(new LetterData(index, ltrImg, Charset.Letters[currentText[index]], Vector2.zero, commandColorSet, commandAlphaSet));
+        letters.Add(new LetterData(index, ltrImg, font.Letters[currentText[index]], Vector2.zero, commandColorSet, commandAlphaSet));
 
         ltrImg.SetNativeSize();
 
@@ -629,7 +635,7 @@ public class TextManager : MonoBehaviour {
                     break;
             }
 
-            if (!Charset.Letters.ContainsKey(currentText[i]))
+            if (!font.Letters.ContainsKey(currentText[i]))
                 continue;
 
             CreateLetter(currentText, i);
@@ -650,9 +656,9 @@ public class TextManager : MonoBehaviour {
     private float[] ComputeTextSpacings() {
         LuaTextManager ltm = this as LuaTextManager;
         float normalizedHSpacing = hSpacing;
-        float normalizedVSpacing = vSpacing + Charset.LineSpacing;
+        float normalizedVSpacing = vSpacing + font.LineSpacing;
         if (ltm && ltm.adjustTextDisplay) {
-            float spaceHeight = Charset.Letters[' '].rect.height;
+            float spaceHeight = font.Letters[' '].rect.height;
 
             // Normalize shifts so they're integers
             bool isNormalizedHSpacingPositive = normalizedHSpacing >= 0.001f;
@@ -691,7 +697,7 @@ public class TextManager : MonoBehaviour {
             currentY = 0.01f;
             // allow Game Over fonts to enjoy the fixed text positioning, too!
             if (!ltm && gameObject.name != "TextParent" && gameObject.name != "ReviveText")
-                currentY -= Charset.LineSpacing;
+                currentY -= font.LineSpacing;
         }
         startingLineX = currentX;
         startingLineY = currentY;
@@ -883,9 +889,9 @@ public class TextManager : MonoBehaviour {
             currentReferenceCharacter++;
         }
 
-        if (!string.IsNullOrEmpty(letterSound) && !muted && !soundPlayed && (GlobalControls.retroMode || textQueue[currentLine].Text[currentCharacter] != ' ')) {
+        if (!string.IsNullOrEmpty(GetVoice()) && !muted && !soundPlayed && (GlobalControls.retroMode || textQueue[currentLine].Text[currentCharacter] != ' ')) {
             soundPlayed = true;
-            try { UnitaleUtil.PlayVoice("BubbleSound", letterSound); }
+            try { UnitaleUtil.PlayVoice("BubbleSound", GetVoice()); }
             catch (CYFException e) { UnitaleUtil.DisplayLuaError("Playing a voice", e.Message); }
         }
 
@@ -920,7 +926,7 @@ public class TextManager : MonoBehaviour {
                 break;
             case "charspacing":
                 try {
-                    if (cmds.Length > 1 && cmds[1].ToLower() == "default") SetHorizontalSpacing(Charset.CharSpacing);
+                    if (cmds.Length > 1 && cmds[1].ToLower() == "default") SetHorizontalSpacing(font.CharSpacing);
                     else                                                   SetHorizontalSpacing(ParseUtil.GetFloat(cmds[1]));
                 } catch (CYFException) {
                     Debug.LogError("[charspacing:x] usage - You used the value \"" + cmds[1] + "\" to set the text's horizontal spacing but it's not a valid number value.");
@@ -1026,7 +1032,7 @@ public class TextManager : MonoBehaviour {
                 catch { Debug.LogError("[waitall:x] usage - You used the value \"" + cmds[1] + "\" to set the text's waiting time between letters, but it's not a valid integer value."); }
                 break;
 
-            case "novoice":     letterSound = null;                                            break;
+            case "novoice":     commandVoice = "none";                                         break;
             case "next":        autoSkipAll = true;                                            break;
             case "finished":    autoSkipThis = true;                                           break;
             case "nextthisnow": autoSkip = true;                                               break;
@@ -1054,10 +1060,10 @@ public class TextManager : MonoBehaviour {
                 if (cmds[1].ToLower() != "default") {
                     try {
                         AudioClipRegistry.GetVoice(cmds[1].ToLower());
-                        letterSound = cmds[1].ToLower();
+                        commandVoice = cmds[1].ToLower();
                     } catch (InterpreterException) { UnitaleUtil.Warn("The voice file " + cmds[1].ToLower() + " doesn't exist. Note that all sound files use lowercase letters only.", false); }
                 } else
-                    letterSound = SpriteFontRegistry.UI_DEFAULT_NAME;
+                    commandVoice = null;
                 break;
 
             case "instant":
