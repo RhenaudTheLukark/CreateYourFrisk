@@ -364,6 +364,7 @@ public class TextManager : MonoBehaviour {
         skipFromPlayer   = false;
         firstChar        = false;
         lineHasMugshot   = mugshotList != null;
+        commandVoice     = null;
 
         SetMugshotShift(oldLineHasMugshot);
 
