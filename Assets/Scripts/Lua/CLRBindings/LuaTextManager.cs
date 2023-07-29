@@ -26,7 +26,6 @@ public class LuaTextManager : TextManager {
     private readonly Dictionary<string, DynValue> vars = new Dictionary<string, DynValue>();
     [MoonSharpHidden] public bool needFontReset = false;
     [MoonSharpHidden] public bool isMainTextObject = false;
-    [MoonSharpHidden] public bool noSelfAdvance = false;
 
     // Variables used to store text display adjustment variables
     public Dictionary<int, float> xScaleSizes = new Dictionary<int, float>();
@@ -123,7 +122,7 @@ public class LuaTextManager : TextManager {
                 break;
             }
         }
-        if ((CanAutoSkipAll() && !noSelfAdvance) || CanAutoSkipThis())
+        if ((CanAutoSkipAll() || CanAutoSkipThis()) && (!UIController.instance || !UIController.instance.monsterDialogues.Contains(this)))
             NextLine();
         if (CanSkip() && !LineComplete() && GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED)
             DoSkipFromPlayer();

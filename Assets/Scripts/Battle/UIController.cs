@@ -37,8 +37,8 @@ public class UIController : MonoBehaviour {
 
     private readonly Vector2 initialHealthPos = new Vector2(250, -2); // Initial health bar position for target selection
 
-    public LuaTextManager[] monsterDialogues;   // Enemies' dialogue bubbles' text objects appearing in the state ENEMYDIALOGUE
-    public int[] monsterDialogueEnemyID;        // Stores the ID of the associated enemy
+    public LuaTextManager[] monsterDialogues = new LuaTextManager[0]; // Enemies' dialogue bubbles' text objects appearing in the state ENEMYDIALOGUE
+    public int[] monsterDialogueEnemyID;                              // Stores the ID of the associated enemy
 
     private bool musicPausedFromRunning;    // Used to pause the BGM when trying to flee in retromode for a comedic effect
     private int runAwayAttempts;            // Amount of times the Player tried to flee unsuccessfully in this encounter
@@ -508,7 +508,6 @@ public class UIController : MonoBehaviour {
 
                     GameObject speechBub = encounter.EnabledEnemies[i].bubbleObject;
                     LuaTextManager sbTextMan = speechBub.GetComponentInChildren<LuaTextManager>();
-                    sbTextMan.noSelfAdvance = true;
                     monsterDialogues[i] = sbTextMan;
                     monsterDialogueEnemyID[i] = encounter.enemies.IndexOf(encounter.EnabledEnemies[i]);
 
@@ -595,20 +594,21 @@ public class UIController : MonoBehaviour {
     private void UpdateMonsterDialogue() {
         bool allGood = true;
         for (int i = 0; i < monsterDialogues.Length; i++) {
-            if (readyToNextLine[monsterDialogueEnemyID[i]]) continue;
-            if (monsterDialogues[i] == null) {
-                readyToNextLine[monsterDialogueEnemyID[i]] = true;
-                continue;
-            }
-            if (monsterDialogues[i].CanAutoSkip()) {
-                readyToNextLine[monsterDialogueEnemyID[i]] = true;
-                DoNextMonsterDialogue(false, i);
-            }
             if (monsterDialogues[i].CanAutoSkipAll()) {
                 for (int j = 0; j < monsterDialogues.Length; j++)
                     readyToNextLine[monsterDialogueEnemyID[j]] = true;
                 DoNextMonsterDialogue();
                 return;
+            }
+            if (monsterDialogues[i].CanAutoSkip()) {
+                readyToNextLine[monsterDialogueEnemyID[i]] = true;
+                DoNextMonsterDialogue(false, i);
+            }
+
+            if (readyToNextLine[monsterDialogueEnemyID[i]]) continue;
+            if (monsterDialogues[i] == null) {
+                readyToNextLine[monsterDialogueEnemyID[i]] = true;
+                continue;
             }
 
             if ((!monsterDialogues[i].AllLinesComplete() || monsterDialogues[i].LineCount() == 0) && !monsterDialogues[i].CanAutoSkipThis() && (monsterDialogues[i].AllLinesComplete() || !monsterDialogues[i].LineComplete())) {
@@ -627,6 +627,7 @@ public class UIController : MonoBehaviour {
     public void DoNextMonsterDialogue(bool singleLineAll = false, int index = -1) {
         bool someTextsHaveLinesLeft = false;
         if (index != -1) {
+            // Forcefully skips only one monster text object
             if (monsterDialogues[index] == null)
                 return;
 
@@ -657,7 +658,7 @@ public class UIController : MonoBehaviour {
                 }
 
                 // Part that autoskips text if [nextthisnow] or [finished] is introduced
-                if (sbTextMan.CanAutoSkipThis() || sbTextMan.CanAutoSkip()) {
+                if (sbTextMan.CanAutoSkipThis() || sbTextMan.CanAutoSkip() || readyToNextLine[monsterDialogueEnemyID[i]]) {
                     if (sbTextMan.HasNext()) {
                         sbTextMan.NextLineText();
                         enemy.UpdateBubble(i);
@@ -666,9 +667,6 @@ public class UIController : MonoBehaviour {
                         enemy.HideBubble();
                         continue;
                     }
-                } else if (readyToNextLine[monsterDialogueEnemyID[i]]) {
-                    sbTextMan.NextLineText();
-                    enemy.UpdateBubble(i);
                 }
                 someTextsHaveLinesLeft = true;
             }
@@ -1421,7 +1419,7 @@ public class UIController : MonoBehaviour {
 
         if (state == "ENEMYDIALOGUE") {
             if (monsterDialogues.All(mgr => mgr.CanAutoSkipThis())) DoNextMonsterDialogue();
-            else                                                             UpdateMonsterDialogue();
+            else                                                    UpdateMonsterDialogue();
         }
 
         if (state == "DEFENDING") {
