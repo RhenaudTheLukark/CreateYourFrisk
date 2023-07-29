@@ -7,7 +7,7 @@ public class MaskImage : Image {
     public bool inverted = false;
     public override Material materialForRendering {
         get {
-            Material result = base.materialForRendering;
+            Material result = Instantiate(base.materialForRendering);
             if (result.HasProperty("_StencilComp"))
                 result.SetInt("_StencilComp", inverted ? 6 : result.GetInt("_StencilComp"));
             if (inverted)
