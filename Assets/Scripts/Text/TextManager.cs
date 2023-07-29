@@ -108,7 +108,6 @@ public class TextManager : MonoBehaviour {
     [MoonSharpHidden] public TextMessage[] textQueue = null;
     //public string[] mugshotsPath;
     //public bool overworld;
-    [MoonSharpHidden] public bool blockSkip;
     [MoonSharpHidden] public bool skipNowIfBlocked = false;
     internal bool noSkip1stFrame = true;
 
@@ -136,7 +135,6 @@ public class TextManager : MonoBehaviour {
         commandAlphaSet = false;
         letterTimer = 0.0f;
         textQueue = null;
-        blockSkip = false;
     }
 
     [MoonSharpHidden] public void SetCaller(ScriptWrapper s) { caller = s; }
@@ -270,7 +268,6 @@ public class TextManager : MonoBehaviour {
     }
 
     [MoonSharpHidden] public bool CanSkip() { return currentSkippable; }
-
     [MoonSharpHidden] public bool CanAutoSkip() { return autoSkip; }
     [MoonSharpHidden] public bool CanAutoSkipThis() { return autoSkipThis; }
     [MoonSharpHidden] public bool CanAutoSkipAll() { return autoSkipAll; }
@@ -395,11 +392,9 @@ public class TextManager : MonoBehaviour {
             if (textQueue[line].ActualText) {
                 if (transform.parent.GetComponent<Image>().color.a == 0)
                     SetTextFrameAlpha(1);
-                blockSkip = false;
             } else {
                 if (transform.parent.GetComponent<Image>().color.a == 1)
                     SetTextFrameAlpha(0);
-                blockSkip = true;
                 DestroyChars();
             }
         }
@@ -1036,7 +1031,6 @@ public class TextManager : MonoBehaviour {
             case "next":        autoSkipAll = true;                                            break;
             case "finished":    autoSkipThis = true;                                           break;
             case "nextthisnow": autoSkip = true;                                               break;
-            case "noskipatall": blockSkip = true;                                              break;
             case "speed":
                 try {
                     //you can only set text speed to a number >= 0

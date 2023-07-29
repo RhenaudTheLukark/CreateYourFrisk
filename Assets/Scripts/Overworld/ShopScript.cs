@@ -32,7 +32,7 @@ public class ShopScript : MonoBehaviour {
     private void Start() {
         FindObjectOfType<Fading>().BeginFade(-1);
 
-        tmBigTalk.SetTextQueue(new[] { new TextMessage("[noskipatall][novoice]", false, true) });
+        tmBigTalk.SetTextQueue(new[] { new TextMessage("[novoice]", false, true) });
         EnableBigText(false);
 
         if (scriptName == null)
@@ -57,11 +57,11 @@ public class ShopScript : MonoBehaviour {
             tmInfo.SetCaller(script);
             tmBigTalk.SetCaller(script);
 
-            tmMain.SetTextQueue(new[] { new TextMessage("[noskipatall][linespacing:11]" + script.GetVar("maintalk").String, true, false) });
-            tmChoice.SetTextQueue(new[] { new TextMessage("[noskipatall][novoice][font:uidialoglilspace][linespacing:9]    Buy\n    Sell\n    Talk\n    Exit", false, true) });
-            tmGold.SetTextQueue(new[] { new TextMessage("[noskipatall][novoice]" + PlayerCharacter.instance.Gold + "G", false, true) });
-            tmItem.SetTextQueue(new[] { new TextMessage("[noskipatall][novoice]" + Inventory.inventory.Count + "/8", false, true) });
-            tmInfo.SetTextQueue(new[] { new TextMessage("[noskipatall][novoice]", false, true) });
+            tmMain.SetTextQueue(new[] { new TextMessage("[linespacing:11]" + script.GetVar("maintalk").String, true, false) });
+            tmChoice.SetTextQueue(new[] { new TextMessage("[novoice][font:uidialoglilspace][linespacing:9]    Buy\n    Sell\n    Talk\n    Exit", false, true) });
+            tmGold.SetTextQueue(new[] { new TextMessage("[novoice]" + PlayerCharacter.instance.Gold + "G", false, true) });
+            tmItem.SetTextQueue(new[] { new TextMessage("[novoice]" + Inventory.inventory.Count + "/8", false, true) });
+            tmInfo.SetTextQueue(new[] { new TextMessage("[novoice]", false, true) });
 
             Camera.main.GetComponent<AudioSource>().clip = AudioClipRegistry.GetMusic(script.GetVar("music").String);
             Camera.main.GetComponent<AudioSource>().time = 0;
@@ -118,10 +118,10 @@ public class ShopScript : MonoBehaviour {
                     if (select != -1)
                         selection = select;
                     numberOfChoices = 4;
-                    tmChoice.SetTextQueue(new[] { new TextMessage("[noskipatall][novoice][font:uidialoglilspace][linespacing:9]    Buy\n    Sell\n    Talk\n    Exit", false, true) });
-                    tmMain.SetTextQueue(new[] { new TextMessage("[noskipatall][linespacing:11]" + script.GetVar("maintalk").String, true, false) });
-                    tmGold.SetTextQueue(new[] { new TextMessage("[noskipatall][novoice]" + PlayerCharacter.instance.Gold + "G", false, true) });
-                    tmItem.SetTextQueue(new[] { new TextMessage("[noskipatall][novoice]" + Inventory.inventory.Count + "/8", false, true) });
+                    tmChoice.SetTextQueue(new[] { new TextMessage("[novoice][font:uidialoglilspace][linespacing:9]    Buy\n    Sell\n    Talk\n    Exit", false, true) });
+                    tmMain.SetTextQueue(new[] { new TextMessage("[linespacing:11]" + script.GetVar("maintalk").String, true, false) });
+                    tmGold.SetTextQueue(new[] { new TextMessage("[novoice]" + PlayerCharacter.instance.Gold + "G", false, true) });
+                    tmItem.SetTextQueue(new[] { new TextMessage("[novoice]" + Inventory.inventory.Count + "/8", false, true) });
                     infoActive = false;
                     tmInfoParent.transform.position = new Vector3(tmInfoParent.transform.position.x, 70, tmInfoParent.transform.position.z);
                 }
@@ -130,13 +130,13 @@ public class ShopScript : MonoBehaviour {
                 currentItemIndex = selection;
                 selection = 1;
                 numberOfChoices = 2;
-                tmChoice.SetTextQueue(new[] { new TextMessage("[noskipatall][font:uidialoglilspace][linespacing:0][novoice]Buy for\n" + mainPrice[currentItemIndex] + "G?\n\n    Yes\n    No", false, true) });
+                tmChoice.SetTextQueue(new[] { new TextMessage("[font:uidialoglilspace][linespacing:0][novoice]Buy for\n" + mainPrice[currentItemIndex] + "G?\n\n    Yes\n    No", false, true) });
                 break;
             case State.SELLCONFIRM:
                 currentItemIndex = selection;
                 selection = 1;
                 numberOfChoices = 2;
-                tmBigTalk.SetTextQueue(new[] { new TextMessage("\n[linespacing:11][noskipatall][font:uidialoglilspace][novoice]          Sell the " + Inventory.inventory[currentItemIndex].Name + " for " +
+                tmBigTalk.SetTextQueue(new[] { new TextMessage("\n[linespacing:11][font:uidialoglilspace][novoice]          Sell the " + Inventory.inventory[currentItemIndex].Name + " for " +
                                                                Inventory.NametoPrice[Inventory.inventory[currentItemIndex].Name] / 5 + "G?\n\n              Yes\tNo" +
                                                                "\n\n\t   [color:ffff00](" + PlayerCharacter.instance.Gold + "G)", false, true) });
                 break;
@@ -147,10 +147,10 @@ public class ShopScript : MonoBehaviour {
                         selection = select;
                     text = BuildBuyString().Replace("\n", " \n").Replace("\r", " \r").Replace("\t", " \t");
                     numberOfChoices = text.Split('\n', '\r', '\t').Length;
-                    tmChoice.SetTextQueue(new[] { new TextMessage("[noskipatall][linespacing:9][font:uidialoglilspace]" + script.GetVar("buytalk").String, false, false) });
-                    tmMain.SetTextQueue(new[] { new TextMessage("[noskipatall][novoice][linespacing:11][font:uidialoglilspace]" + text, false, true) });
-                    tmGold.SetTextQueue(new[] { new TextMessage("[noskipatall][novoice]" + PlayerCharacter.instance.Gold + "G", false, true) });
-                    tmItem.SetTextQueue(new[] { new TextMessage("[noskipatall][novoice]" + Inventory.inventory.Count + "/8", false, true) });
+                    tmChoice.SetTextQueue(new[] { new TextMessage("[linespacing:9][font:uidialoglilspace]" + script.GetVar("buytalk").String, false, false) });
+                    tmMain.SetTextQueue(new[] { new TextMessage("[novoice][linespacing:11][font:uidialoglilspace]" + text, false, true) });
+                    tmGold.SetTextQueue(new[] { new TextMessage("[novoice]" + PlayerCharacter.instance.Gold + "G", false, true) });
+                    tmItem.SetTextQueue(new[] { new TextMessage("[novoice]" + Inventory.inventory.Count + "/8", false, true) });
                 }
                 break;
             case State.SELL:
@@ -162,7 +162,7 @@ public class ShopScript : MonoBehaviour {
                         sellItem = Inventory.inventory.Count;
                     text = BuildSellString();
                     numberOfChoices = Inventory.inventory.Count + 1;
-                    tmBigTalk.SetTextQueue(new[] { new TextMessage("[noskipatall][novoice][font:uidialoglilspace][linespacing:11]" + text, false, true) });
+                    tmBigTalk.SetTextQueue(new[] { new TextMessage("[novoice][font:uidialoglilspace][linespacing:11]" + text, false, true) });
                     if (Inventory.inventory.Count == 0) {
                         UnitaleUtil.TryCall(script, "FailSell", DynValue.NewString("empty"));
                         if (!interrupted)
@@ -177,8 +177,8 @@ public class ShopScript : MonoBehaviour {
                         selection = select;
                     text = BuildTalkString();
                     numberOfChoices = mainName.Length + 1;
-                    tmMain.SetTextQueue(new[] { new TextMessage("[noskipatall][linespacing:11]" + text, false, true) });
-                    tmChoice.SetTextQueue(new[] { new TextMessage("[noskipatall][font:uidialoglilspace][linespacing:9]" + script.GetVar("talktalk").String, false, false) });
+                    tmMain.SetTextQueue(new[] { new TextMessage("[linespacing:11]" + text, false, true) });
+                    tmChoice.SetTextQueue(new[] { new TextMessage("[font:uidialoglilspace][linespacing:9]" + script.GetVar("talktalk").String, false, false) });
                 }
                 break;
             case State.TALKINPROGRESS:
@@ -238,7 +238,7 @@ public class ShopScript : MonoBehaviour {
         infoActive = selection != numberOfChoices - 1;
         if (!infoActive) return;
         string info = mainPrice[selection] == 0 ? "SOLD OUT" : mainInfo[selection].String;
-        tmInfo.SetTextQueue(new[] { new TextMessage("[noskipatall][novoice][font:uidialoglilspace]" + info, false, true) });
+        tmInfo.SetTextQueue(new[] { new TextMessage("[novoice][font:uidialoglilspace]" + info, false, true) });
     }
 
     private static int GetIndexFirstCharOfGivenLine(TextManager tm, int choiceIndex = 0) {
@@ -395,8 +395,8 @@ public class ShopScript : MonoBehaviour {
                         UnitaleUtil.PlaySound("SeparateSound", "ShopSuccess");
                         PlayerCharacter.instance.SetGold(PlayerCharacter.instance.Gold - mainPrice[currentItemIndex]);
                         Inventory.AddItem(mainName[currentItemIndex]);
-                        tmGold.SetTextQueue(new[] { new TextMessage("[noskipatall][novoice]" + PlayerCharacter.instance.Gold + "G", false, true) });
-                        tmItem.SetTextQueue(new[] { new TextMessage("[noskipatall][novoice]" + Inventory.inventory.Count + "/8", false, true) });
+                        tmGold.SetTextQueue(new[] { new TextMessage("[novoice]" + PlayerCharacter.instance.Gold + "G", false, true) });
+                        tmItem.SetTextQueue(new[] { new TextMessage("[novoice]" + Inventory.inventory.Count + "/8", false, true) });
                     }
                 }
                 if (!interrupted) {
@@ -463,7 +463,7 @@ public class ShopScript : MonoBehaviour {
     }
 
     private void TextInputManager() {
-        if (GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED && !tmBigTalk.blockSkip && !tmBigTalk.LineComplete() && tmBigTalk.CanSkip()) {
+        if (GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED && !tmBigTalk.LineComplete() && tmBigTalk.CanSkip()) {
             if (script.GetVar("playerskipdocommand").Boolean)
                 tmBigTalk.DoSkipFromPlayer();
             else

@@ -1210,7 +1210,7 @@ end";
                 SetPlayerOnSelection(actualChoice, question, !oneLiners[actualChoice]);
             // Confirm the selected option if a Confirm key is pressed
             } else if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED)
-                if (!_textManager.blockSkip && !_textManager.LineComplete() && _textManager.CanSkip())
+                if (!_textManager.LineComplete() && _textManager.CanSkip())
                     _textManager.SkipLine();
                 else
                     break;
@@ -1745,20 +1745,20 @@ end";
             var playerName = SaveLoad.savedGame.player.Name;
             double playerLevel = SaveLoad.savedGame.player.LV;
 
-            txtName.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]" + playerName, false, true) });
-            txtLevel.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]LV" + playerLevel, false, true) });
-            txtTime.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]" + UnitaleUtil.TimeFormatter(SaveLoad.savedGame.playerTime), false, true) });
+            txtName.SetTextQueue(new[] { new TextMessage("[charspacing:2]" + playerName, false, true) });
+            txtLevel.SetTextQueue(new[] { new TextMessage("[charspacing:2]LV" + playerLevel, false, true) });
+            txtTime.SetTextQueue(new[] { new TextMessage("[charspacing:2]" + UnitaleUtil.TimeFormatter(SaveLoad.savedGame.playerTime), false, true) });
             GameObject.Find("TextManagerTime").GetComponent<TextManager>().MoveTo(180f - UnitaleUtil.PredictTextWidth(txtTime), 68);
-            txtMap.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]" + SaveLoad.savedGame.lastScene, false, true) });
+            txtMap.SetTextQueue(new[] { new TextMessage("[charspacing:2]" + SaveLoad.savedGame.lastScene, false, true) });
         } else {
-            txtName.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]EMPTY", false, true) });
-            txtLevel.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]LV0", false, true) });
-            txtTime.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]0:00", false, true) });
+            txtName.SetTextQueue(new[] { new TextMessage("[charspacing:2]EMPTY", false, true) });
+            txtLevel.SetTextQueue(new[] { new TextMessage("[charspacing:2]LV0", false, true) });
+            txtTime.SetTextQueue(new[] { new TextMessage("[charspacing:2]0:00", false, true) });
             GameObject.Find("TextManagerTime").GetComponent<TextManager>().MoveTo(130f, 68);
-            txtMap.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]--", false, true) });
+            txtMap.SetTextQueue(new[] { new TextMessage("[charspacing:2]--", false, true) });
         }
-        txtSave.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]Save", false, true) });
-        txtReturn.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]Return", false, true) });
+        txtSave.SetTextQueue(new[] { new TextMessage("[charspacing:2]Save", false, true) });
+        txtReturn.SetTextQueue(new[] { new TextMessage("[charspacing:2]Return", false, true) });
 
         // Hide the text dialogue box
         GameObject.Find("Mugshot").GetComponent<Image>().color = new Color(1, 1, 1, 0);
@@ -1785,13 +1785,13 @@ end";
                     SaveLoad.Save(true);
                     // Update the save dialogue box's data
                     PlayerOverworld.instance.utHeart.color = new Color(c.r, c.g, c.b, 0);
-                    txtName.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]" + PlayerCharacter.instance.Name, false, true) });
-                    txtLevel.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]LV" + PlayerCharacter.instance.LV, false, true) });
-                    txtTime.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]" + UnitaleUtil.TimeFormatter(SaveLoad.savedGame.playerTime), false, true) });
+                    txtName.SetTextQueue(new[] { new TextMessage("[charspacing:2]" + PlayerCharacter.instance.Name, false, true) });
+                    txtLevel.SetTextQueue(new[] { new TextMessage("[charspacing:2]LV" + PlayerCharacter.instance.LV, false, true) });
+                    txtTime.SetTextQueue(new[] { new TextMessage("[charspacing:2]" + UnitaleUtil.TimeFormatter(SaveLoad.savedGame.playerTime), false, true) });
                     GameObject.Find("TextManagerTime").GetComponent<TextManager>().MoveTo(180f - UnitaleUtil.PredictTextWidth(txtTime), 68);
-                    txtMap.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]" + SaveLoad.savedGame.lastScene, false, true) });
-                    txtSave.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]File saved.", false, true) });
-                    txtReturn.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]", false, true) });
+                    txtMap.SetTextQueue(new[] { new TextMessage("[charspacing:2]" + SaveLoad.savedGame.lastScene, false, true) });
+                    txtSave.SetTextQueue(new[] { new TextMessage("[charspacing:2]File saved.", false, true) });
+                    txtReturn.SetTextQueue(new[] { new TextMessage("[charspacing:2]", false, true) });
                     foreach (Image img in GameObject.Find("save_interior").transform.GetComponentsInChildren<Image>())
                         img.color = new Color(1, 1, 0, 1);
                     GameObject.Find("save_interior").GetComponent<Image>().color = new Color(0, 0, 0, 1);
