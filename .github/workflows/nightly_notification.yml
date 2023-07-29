@@ -16,5 +16,3 @@ jobs:
       with:
         webhook-url: ${{ secrets.NIGHTLY_WEBHOOK_LINK }}
         content: "The last CYF nightly is ready to be used! Enjoy!"
-        username: "GitHub"
-        avatar-url: "https://avatars.githubusercontent.com/u/21269430?v=4"
