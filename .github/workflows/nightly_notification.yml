@@ -1,4 +1,4 @@
-name: Send a message to the channel #cyf-nightly
+name: Send a message to the channel cyf-nightly
 
 on:
   workflow_run:
