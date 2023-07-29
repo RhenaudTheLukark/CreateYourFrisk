@@ -14,7 +14,7 @@ jobs:
     - name: Discord Webhook Action
       uses: tsickert/discord-webhook@v5.3.0
       with:
-        webhook-url: ${{ secrets.NIGHTLY_WEBHOOK_URL }}
+        webhook-url: ${{ secrets.NIGHTLY_WEBHOOK_LINK }}
         content: "The last CYF nightly is ready to be used! Enjoy!"
         username: "GitHub"
         avatar-url: "https://avatars.githubusercontent.com/u/21269430?v=4"
