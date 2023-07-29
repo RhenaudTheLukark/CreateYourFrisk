@@ -150,7 +150,7 @@ public class FightUI : MonoBehaviour {
                     int newHP = enemy.HP - Damage;
                     lifeBar.outline.img.transform.localPosition = new Vector2(enemy.offsets[2].x - 1, -eneSize.y / 2 + 20 + enemy.offsets[2].y - 1);
                     lifeBar.Resize(enemy.GetComponent<RectTransform>().rect.width, 13);
-                    lifeBar.SetLerp(enemy.HP / (float)enemy.MaxHP, newHP / (float)enemy.MaxHP);
+                    lifeBar.SetLerpFull(enemy.HP / (float)enemy.MaxHP, newHP / (float)enemy.MaxHP);
                     lifeBar.SetVisible(true);
                     enemy.doDamage(Damage);
                 }

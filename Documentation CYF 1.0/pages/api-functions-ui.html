@@ -290,7 +290,16 @@ it's w3c valid, at least
             </p>
 
             <p>
-                <br><span class="function"> Bar.SetLerp(<span class="number"></span> originalValue, <span class="number"></span> fillValue, <span class="number"></span> time = 60, <span class="boolean"></span> allowNonClamped = false)</span>
+                <br><span class="new function"> Bar.SetLerp(<span class="number"></span> fillValue, <span class="number"></span> time = 60, <span class="boolean"></span> allowNonClamped = false)</span>
+                Gradually sets the fill percentage of the bar object between 0 and 1 from the bar's current fill to <span class="term">fillValue</span> over <span class="term">time</span> frames, with 60 frames being equal to one second. <span class="term">0</span> means the bar is empty, while <span class="term">1</span> means it is full.
+                <br><br>
+                If <span class="term">allowNonClamped</span> is set to true, you can use values lower than 0 and higher than 1.
+                <br><br>
+                Note that the bar will be updated properly when <span class="term">fillValue</span> is beyond its usual bounds only if the <span class="term">bar-px</span> sprite is used for all of the bar's sprites.
+            </p>
+
+            <p>
+                <br><span class="new function"> Bar.SetLerpFull(<span class="number"></span> originalValue, <span class="number"></span> fillValue, <span class="number"></span> time = 60, <span class="boolean"></span> allowNonClamped = false)</span>
                 Gradually sets the fill percentage of the bar object between 0 and 1 from <span class="term">originalValue</span> to <span class="term">fillValue</span> over <span class="term">time</span> frames, with 60 frames being equal to one second. <span class="term">0</span> means the bar is empty, while <span class="term">1</span> means it is full.
                 <br><br>
                 If <span class="term">allowNonClamped</span> is set to true, you can use values lower than 0 and higher than 1.
