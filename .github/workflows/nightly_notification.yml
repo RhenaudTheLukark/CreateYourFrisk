@@ -5,6 +5,7 @@ on:
     workflows: ["Build CYF"]
     types:
       - completed
+  workflow_dispatch:
 
 jobs:
   message:
