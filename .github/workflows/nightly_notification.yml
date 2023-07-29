@@ -5,7 +5,6 @@ on:
     workflows: ["Build CYF"]
     types:
       - completed
-  push:
 
 jobs:
   message:
@@ -17,4 +16,4 @@ jobs:
         webhook-url: ${{ secrets.NIGHTLY_WEBHOOK_URL }}
         content: "The last CYF nightly is ready to be used! Enjoy!"
         username: "GitHub"
-        avatar_url: "https://avatars.githubusercontent.com/u/21269430?v=4"
+        avatar-url: "https://avatars.githubusercontent.com/u/21269430?v=4"
