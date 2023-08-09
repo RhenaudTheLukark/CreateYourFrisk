@@ -320,6 +320,8 @@ public class UIController : MonoBehaviour {
             }
         } else if (state == "ATTACKING")
             FightUIController.instance.HideAttackingUI();
+        else if (state == "DIALOGRESULT")
+            mainTextManager.SetCaller(EnemyEncounter.script);
 
         string oldState = state;
         state = newState;

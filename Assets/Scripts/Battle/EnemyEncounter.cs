@@ -178,6 +178,9 @@ public class EnemyEncounter : MonoBehaviour {
             UnitaleUtil.Warn("BattleDialog can only be used as early as EncounterStarting.");
         else {
             UIController.instance.battleDialogueStarted = true;
+            EnemyController enemy = UIController.instance.encounter.enemies.Find(e => e.script.script == scr);
+            if (enemy)
+                UIController.instance.mainTextManager.SetCaller(enemy.script);
             TextMessage[] msgs = null;
             if (arg.Type == DataType.String)
                 msgs = new TextMessage[]{new RegularMessage(arg.String)};
