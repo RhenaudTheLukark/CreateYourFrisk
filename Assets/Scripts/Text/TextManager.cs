@@ -485,7 +485,7 @@ public class TextManager : MonoBehaviour {
         if (currentText[beginIndex] == '\n' || currentText[beginIndex] == '\r')                                   beginIndex++;
         if (currentText[finalIndex] == '\n' || currentText[finalIndex] == ' ' || currentText[finalIndex] == '\r') finalIndex--;
 
-        if (UnitaleUtil.PredictTextWidth(this, beginIndex, finalIndex, true) > _textMaxWidth && _textMaxWidth > 0) {
+        if (_textMaxWidth > 0 && UnitaleUtil.PredictTextWidth(this, beginIndex, finalIndex, true) > _textMaxWidth) {
             // If the line's too long, do something!
             int wordBeginIndex = currentText2[i] == ' ' ? i + 1 : i;
             if (UnitaleUtil.PredictTextWidth(this, wordBeginIndex, finalIndex) > _textMaxWidth - decorationLength) {

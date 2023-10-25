@@ -403,6 +403,9 @@ public class EnemyController : MonoBehaviour {
             sbTextMan.MoveTo((int)(Mathf.Cos(angle) * xMov - Mathf.Sin(angle) * yMov), (int)(Mathf.Sin(angle) * xMov + Mathf.Cos(angle) * yMov));
             speechBubImg.color = new Color(speechBubImg.color.r, speechBubImg.color.g, speechBubImg.color.b, sbTextMan.letters.Count == 0 ? 0 : 1);
 
+            if (bubbleWidth == 0)
+                bubbleWidth = speechBubSpr.textureRect.width - speechBubSpr.border.x - speechBubSpr.border.z;
+
             sbTextMan.HideBubble();
         } else {
             try { bubbleWidth = (float)BubbleWidth; }
@@ -416,7 +419,7 @@ public class EnemyController : MonoBehaviour {
             sbTextMan.MoveTo(0, 0);
         }
 
-        sbTextMan.textMaxWidth = (int)bubbleWidth;
+        sbTextMan._textMaxWidth = (int)bubbleWidth;
         speechBubImg.transform.SetAsLastSibling();
 
         bubbleObject.GetComponent<RectTransform>().anchoredPosition = DialogBubblePosition + offsets[1];

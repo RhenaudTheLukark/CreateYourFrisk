@@ -454,7 +454,7 @@ public static class LuaScriptBinder {
 
         // Bubble variables
         luatm.bubble = true;
-        luatm.textMaxWidth = textWidth;
+        luatm._textMaxWidth = textWidth;
         luatm.bubbleHeight = bubbleHeight;
 
         if (enableLateStart)
