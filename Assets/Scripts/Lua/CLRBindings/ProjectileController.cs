@@ -24,13 +24,13 @@ public class ProjectileController {
 
     // The x position of the sprite, relative to the arena position and its anchor.
     public float x {
-        get { return p == null ? lastX : p.self.anchoredPosition.x - ArenaManager.arenaCenter.x; }
+        get { return p == null ? lastX : p.self.position.x - ArenaManager.arenaCenter.x; }
         set { MoveTo(value, y); }
     }
 
     // The y position of the sprite, relative to the arena position and its anchor.
     public float y {
-        get { return p == null ? lastY : p.self.anchoredPosition.y - ArenaManager.arenaCenter.y; }
+        get { return p == null ? lastY : p.self.position.y - ArenaManager.arenaCenter.y; }
         set { MoveTo(x, value); }
     }
 
