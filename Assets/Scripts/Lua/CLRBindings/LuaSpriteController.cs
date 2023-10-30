@@ -424,7 +424,7 @@ public class LuaSpriteController {
     public void SetPivot(float x, float y) {
         img.GetComponent<RectTransform>().pivot = new Vector2(x, y);
         if (img.transform.parent != null && img.transform.parent.name == "SpritePivot")
-            img.GetComponent<RectTransform>().localPosition = new Vector3(0, 0, 0);
+            img.transform.localPosition = new Vector3(0, 0, 0);
     }
 
     // Sets the anchor of a sprite
@@ -461,20 +461,16 @@ public class LuaSpriteController {
         } else if (img.GetComponent<Image>()) { // In battle
             nativeSizeDelta = new Vector2(img.GetComponent<Image>().sprite.texture.width, img.GetComponent<Image>().sprite.texture.height);
             img.GetComponent<RectTransform>().sizeDelta = new Vector2(nativeSizeDelta.x * Mathf.Abs(xScale), nativeSizeDelta.y * Mathf.Abs(yScale));
-            // img.GetComponent<RectTransform>().localScale = new Vector3(xs < 0 ? -1 : 1, ys < 0 ? -1 : 1, 1);
+            // img.transform.localScale = new Vector3(xs < 0 ? -1 : 1, ys < 0 ? -1 : 1, 1);
         } else { // In overworld
             nativeSizeDelta = new Vector2(img.GetComponent<SpriteRenderer>().sprite.texture.width, img.GetComponent<SpriteRenderer>().sprite.texture.height);
-            img.GetComponent<RectTransform>().localScale = new Vector3(100 * Mathf.Abs(xScale), 100 * Mathf.Abs(yScale), 1);
+            img.transform.localScale = new Vector3(100 * Mathf.Abs(xScale), 100 * Mathf.Abs(yScale), 1);
         }
 
         // Flip the sprite horizontally and/or vertically if its scale is negative
-        // The noscalerotationbug variable handles internalRotation as local rotation instead of global
         float zValue = internalRotation.z;
         internalRotation = new Vector3(ys < 0 ? 180 : 0, xs < 0 ? 180 : 0, zValue);
-        if (GlobalControls.isInFight && EnemyEncounter.script.GetVar("noscalerotationbug").Boolean)
-            img.GetComponent<RectTransform>().localEulerAngles = internalRotation;
-        else
-            img.GetComponent<RectTransform>().eulerAngles = internalRotation;
+        img.transform.eulerAngles = internalRotation;
     }
 
     // Sets an animation for this instance

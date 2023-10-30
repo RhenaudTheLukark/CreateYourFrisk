@@ -34,6 +34,7 @@ public abstract class Projectile : MonoBehaviour {
     public bool ppchanged;
 
     public bool needSizeRefresh;
+    private float internalRotation = -1;
 
     /// <summary>
     /// Built-in Unity function run for initialization
@@ -82,8 +83,9 @@ public abstract class Projectile : MonoBehaviour {
     private void Update() {
         //ctrl.UpdatePosition();
         //OnUpdate();
-        if (!GlobalControls.retroMode && needSizeRefresh)
+        if (!GlobalControls.retroMode && (needSizeRefresh || internalRotation != self.eulerAngles.z))
             UpdateHitRect();
+        internalRotation = self.eulerAngles.z;
 
         float Offsetx, Offsety;
         if (self.pivot.x != 0.5f || self.pivot.y != 0.5f) {
@@ -131,7 +133,7 @@ public abstract class Projectile : MonoBehaviour {
     /// </summary>
     public virtual void UpdateHitRect() {
         if (ppcollision && ppchanged || ProjectileController.globalPixelPerfectCollision && !ppchanged) {
-            float cst = ctrl.sprite.rotation * Mathf.Deg2Rad;
+            float cst = self.eulerAngles.z * Mathf.Deg2Rad;
             selfAbs.width = Mathf.CeilToInt(self.sizeDelta.x * Mathf.Abs(Mathf.Cos(cst)) + self.sizeDelta.y * Mathf.Abs(Mathf.Sin(cst)));
             selfAbs.height = Mathf.CeilToInt(self.sizeDelta.y * Mathf.Abs(Mathf.Cos(cst)) + self.sizeDelta.x * Mathf.Abs(Mathf.Sin(cst)));
         } else {
