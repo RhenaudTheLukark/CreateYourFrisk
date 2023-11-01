@@ -645,8 +645,8 @@ public class UIController : MonoBehaviour {
                         someTextsHaveLinesLeft = true;
             }
         } else if (!singleLineAll) {
-            for (int i = 0; i < encounter.enemies.Count; i++) {
-                EnemyController enemy = encounter.enemies[i];
+            for (int i = 0; i < encounter.EnabledEnemies.Length; i++) {
+                EnemyController enemy = encounter.EnabledEnemies[i];
                 if (!enemy.bubbleObject)
                     continue;
                 LuaTextManager sbTextMan = enemy.bubbleObject.GetComponentInChildren<LuaTextManager>();
