@@ -767,8 +767,8 @@ public class LuaTextManager : TextManager {
         if (firstLetter < 0) firstLetter += textQueue[currentLine].Text.Length - 1;
         if (lastLetter < 0) lastLetter += textQueue[currentLine].Text.Length - 1;
 
-        if (firstLetter > textQueue[currentLine].Text.Length) firstLetter = textQueue[currentLine].Text.Length - 1;
-        if (lastLetter > textQueue[currentLine].Text.Length) lastLetter = textQueue[currentLine].Text.Length - 1;
+        if (firstLetter >= textQueue[currentLine].Text.Length) firstLetter = textQueue[currentLine].Text.Length - 1;
+        if (lastLetter >= textQueue[currentLine].Text.Length) lastLetter = textQueue[currentLine].Text.Length - 1;
 
         return (int)UnitaleUtil.CalcTextWidth(this, firstLetter, lastLetter);
     }
@@ -781,8 +781,8 @@ public class LuaTextManager : TextManager {
         if (firstLetter < 0) firstLetter += textQueue[currentLine].Text.Length;
         if (lastLetter < 0) lastLetter += textQueue[currentLine].Text.Length;
 
-        if (firstLetter > textQueue[currentLine].Text.Length) firstLetter = textQueue[currentLine].Text.Length - 1;
-        if (lastLetter > textQueue[currentLine].Text.Length) lastLetter = textQueue[currentLine].Text.Length - 1;
+        if (firstLetter >= textQueue[currentLine].Text.Length) firstLetter = textQueue[currentLine].Text.Length - 1;
+        if (lastLetter >= textQueue[currentLine].Text.Length) lastLetter = textQueue[currentLine].Text.Length - 1;
 
         return (int)UnitaleUtil.CalcTextHeight(this, firstLetter, lastLetter);
     }

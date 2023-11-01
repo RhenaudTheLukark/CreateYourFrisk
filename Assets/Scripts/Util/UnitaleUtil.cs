@@ -199,7 +199,7 @@ public static class UnitaleUtil {
     /// <param name="countEOLSpace">True if we count spaces (spaces are usually skipped)</param>
     /// <param name="getLastSpace">True if we count the letter spacing after the last letter of the text</param>
     /// <returns>The length of the text in pixels</returns>
-    public static float PredictTextWidth(TextManager txtmgr, int fromLetter = -1, int toLetter = -1, bool countEOLSpace = false, bool getLastSpace = false) {
+    public static float PredictTextWidth(TextManager txtmgr, int fromLetter = -1, int toLetter = -1, bool countEOLSpace = false) {
         float totalWidth = 0, totalWidthSpaceTest = 0, totalMaxWidth = 0, hSpacing = txtmgr.font.CharSpacing, columns = 0;
         List<float> columnsMaxWidth = new List<float>();
         if (fromLetter == -1)                                                                                       fromLetter = 0;
@@ -247,7 +247,7 @@ public static class UnitaleUtil {
             }
         }
         totalMaxWidth = Mathf.Max(totalMaxWidth, totalWidthSpaceTest - hSpacing);
-        return Mathf.Max(totalMaxWidth + (getLastSpace ? hSpacing : 0), 0);
+        return Mathf.Max(totalMaxWidth, 0);
     }
 
     /// <summary>
