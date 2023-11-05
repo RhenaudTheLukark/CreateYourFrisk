@@ -585,8 +585,7 @@ public class UIController : MonoBehaviour {
     public void UpdateNewlineTextState() {
         for (int i = 0; i < encounter.EnabledEnemies.Length; i++) {
             try {
-                int monsterDialogueID = Array.IndexOf(monsterDialogueEnemyID, i);
-                readyToNextLine[i] = monsterDialogues[monsterDialogueID] == null || !monsterDialogues[monsterDialogueID].HasNext();
+                readyToNextLine[monsterDialogueEnemyID[i]] = monsterDialogues[i] == null || !monsterDialogues[i].HasNext();
             } catch (Exception e) {
                 throw new CYFException("Error while updating monster #" + i + ": \n" + e.Message + "\n\n" + e.StackTrace);
             }
@@ -653,7 +652,7 @@ public class UIController : MonoBehaviour {
                 if (!sbTextMan)
                     continue;
 
-                if (sbTextMan.AllLinesComplete() && sbTextMan.LineCount() != 0 || (!sbTextMan.HasNext() && readyToNextLine[i])) {
+                if (sbTextMan.AllLinesComplete() && sbTextMan.LineCount() != 0 || (!sbTextMan.HasNext() && readyToNextLine[monsterDialogueEnemyID[i]])) {
                     sbTextMan.DestroyChars();
                     enemy.HideBubble();
                     continue;
