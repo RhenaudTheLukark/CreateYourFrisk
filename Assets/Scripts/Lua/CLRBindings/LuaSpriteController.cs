@@ -36,6 +36,7 @@ public class LuaSpriteController {
         img.GetComponent<Image>().color = new Color(1, 1, 1, 1);
 
         Mask("OFF");
+        img.GetComponent<MaskImage>().inverted = false;
         shader.Revert();
 
         StopAnimation();
