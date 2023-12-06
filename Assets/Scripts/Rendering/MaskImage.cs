@@ -5,9 +5,16 @@ using UnityEngine.UI;
 
 public class MaskImage : Image {
     public bool inverted = false;
+
+    protected override void Start() {
+        base.Start();
+        if (material.name == "Default UI Material")
+            material = Instantiate(material);
+    }
+
     public override Material materialForRendering {
         get {
-            Material result = Instantiate(base.materialForRendering);
+            Material result = base.materialForRendering;
             if (result.HasProperty("_StencilComp"))
                 result.SetInt("_StencilComp", inverted ? 6 : result.GetInt("_StencilComp"));
             if (inverted)
