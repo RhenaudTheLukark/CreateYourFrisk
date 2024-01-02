@@ -38,7 +38,7 @@ public class TextManager : MonoBehaviour {
     private float letterIntensity;
 
     public static string[] commandList = { "color", "alpha", "charspacing", "linespacing", "starcolor", "instant", "font", "effect", "noskip", "w", "waitall", "novoice",
-                                           "next", "finished", "nextthisnow", "noskipatall", "waitfor", "speed", "letters", "voice", "func", "mugshot",
+                                           "next", "finished", "nextthisnow", "noskipatall", "waitfor", "speed", "letters", "lettersperframe", "voice", "func", "mugshot",
                                            "music", "sound", "health", "lettereffect"};
     public static string[] movementCommands = { "charspacing", "linespacing", "font" };
     public int currentLine;
@@ -77,7 +77,8 @@ public class TextManager : MonoBehaviour {
     private float mugshotTimer;
 
     // private int letterSpeed = 1;
-    private int letterOnceValue;
+    private int lettersToDisplay;
+    private int lettersToDisplayOnce;
     private KeyCode waitingChar = KeyCode.None;
 
     protected Color commandColor = Color.white;
@@ -130,7 +131,8 @@ public class TextManager : MonoBehaviour {
         firstChar = false;
         vSpacing = 0;
         mugshotList = null;
-        letterOnceValue = 0;
+        lettersToDisplay = 1;
+        lettersToDisplayOnce = 0;
         commandColorSet = false;
         commandAlphaSet = false;
         letterTimer = 0.0f;
@@ -830,14 +832,16 @@ public class TextManager : MonoBehaviour {
         if ((letterTimer >= timePerLetter || firstChar) && !LineComplete()) {
             int repeats = timePerLetter == 0f ? 1 : (int)Mathf.Floor(letterTimer / timePerLetter);
 
-            bool soundPlayed = false;
+            bool soundPlayed = firstChar && lettersToDisplay > 1;
             int lastLetter = -1;
 
             for (int i = 0; i < repeats; i++) {
-                if (!HandleShowLetter(ref soundPlayed, ref lastLetter)) {
+                if (lettersToDisplayOnce > 0)
                     HandleShowLettersOnce(ref soundPlayed, ref lastLetter);
-                    return;
-                }
+                else
+                    for (int j = 0; j < lettersToDisplay; j++)
+                        if (!HandleShowLetter(ref soundPlayed, ref lastLetter))
+                            break;
 
                 if (!firstChar)
                     letterTimer -= timePerLetter;
@@ -852,20 +856,24 @@ public class TextManager : MonoBehaviour {
     }
 
     private void HandleShowLettersOnce(ref bool soundPlayed, ref int lastLetter) {
-        while (letterOnceValue != 0 && !instantCommand) {
-            if (!HandleShowLetter(ref soundPlayed, ref lastLetter)) return;
-            letterOnceValue--;
+        while (lettersToDisplayOnce != 0 && !instantCommand) {
+            if (!HandleShowLetter(ref soundPlayed, ref lastLetter, true)) return;
+            lettersToDisplayOnce--;
         }
     }
 
-    private bool HandleShowLetter(ref bool soundPlayed, ref int lastLetter) {
+    private bool HandleShowLetter(ref bool soundPlayed, ref int lastLetter, bool fromOnce = false) {
         if (lastLetter != currentCharacter && ((!GlobalControls.retroMode && (!instantActive || instantCommand)) || GlobalControls.retroMode)) {
             float oldLetterTimer = letterTimer;
-            int oldLetterOnceValue = letterOnceValue;
+            int oldLettersToDisplay = lettersToDisplay;
+            int oldLettersToDisplayOnce = lettersToDisplayOnce;
             lastLetter = currentCharacter;
-            while (CheckCommand())
-                if ((GlobalControls.retroMode && instantActive) || letterTimer != oldLetterTimer || waitingChar != KeyCode.None || letterOnceValue != oldLetterOnceValue || paused)
+            while (CheckCommand()) {
+                if ((fromOnce && lettersToDisplayOnce != oldLettersToDisplayOnce) || (!fromOnce && lettersToDisplay != oldLettersToDisplay))
                     return false;
+                if ((GlobalControls.retroMode && instantActive) || letterTimer != oldLetterTimer || waitingChar != KeyCode.None || paused)
+                    return false;
+            }
             if (currentCharacter >= textQueue[currentLine].Text.Length)
                 return false;
         }
@@ -1047,8 +1055,16 @@ public class TextManager : MonoBehaviour {
                 break;
 
             case "letters":
-                try { letterOnceValue = ParseUtil.GetInt(args[0]); }
-                catch { Debug.LogError("[letters:x] usage - You used the value \"" + args[0] + "\" to display a given amount of letters instantly, but it's not a valid integer value."); }
+                try {
+                    lettersToDisplayOnce = ParseUtil.GetInt(args[0]);
+                    firstChar = true;
+                    Update();
+                } catch { Debug.LogError("[letters:x] usage - You used the value \"" + args[0] + "\" to display a given amount of letters instantly, but it's not a valid integer value."); }
+                break;
+
+            case "lettersperframe":
+                try { lettersToDisplay = ParseUtil.GetInt(args[0]); }
+                catch { Debug.LogError("[lettersperframe:x] usage - You used the value \"" + args[0] + "\" to display a given amount of letters every frame, but it's not a valid integer value."); }
                 break;
 
             case "voice":
