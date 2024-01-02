@@ -419,8 +419,10 @@ public class UIController : MonoBehaviour {
                 selectedMercy = 0;
                 string[] mercyOptions = new string[1 + (encounter.CanRun ? 1 : 0)];
                 mercyOptions[0] = "Spare";
-                if (encounter.EnabledEnemies.Any(enemy => enemy.CanSpare))
-                    mercyOptions[0] = "[starcolor:ffff00][color:ffff00]" + mercyOptions[0] + "[color:ffffff]";
+                if (encounter.EnabledEnemies.Any(enemy => enemy.CanSpare)) {
+                    string hexColor = ParseUtil.GetBytesFromColor(encounter.SpareColor, true);
+                    mercyOptions[0] = "[alpha:" + hexColor.Substring(6) + "][starcolor:" + hexColor.Substring(0, 6) + "][color:" + hexColor.Substring(0, 6) + "]" + mercyOptions[0] + "[color:ffffff]";
+                }
                 if (encounter.CanRun)
                     mercyOptions[1] = "Flee";
                 SetPlayerOnSelection(0);
@@ -737,8 +739,10 @@ public class UIController : MonoBehaviour {
             enemies[columns * i] = encounter.EnabledEnemies[page * 2 + i].Name;
         }
         for (int i = page * 2; i < encounter.EnabledEnemies.Length && enemyCount > 0; i++) {
-            if (encounter.EnabledEnemies[i].CanSpare)
-                colors[(i - page * 2) * columns] = "[color:ffff00]";
+            if (encounter.EnabledEnemies[i].CanSpare) {
+                string hexColor = ParseUtil.GetBytesFromColor(encounter.EnabledEnemies[i].SpareColor, true);
+                colors[(i - page * 2) * columns] = "[color:" + hexColor.Substring(0, 6) + "][alpha:" + hexColor.Substring(6) + "]";
+            }
             enemyCount--;
         }
         if (maxPages > 1)

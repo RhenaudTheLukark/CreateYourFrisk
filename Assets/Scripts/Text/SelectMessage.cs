@@ -22,7 +22,7 @@ public class SelectMessage : TextMessage {
             // If the option isn't null, has an existing color and this color isn't null or empty, we'll add the color as a prefix and put a white color tag as a suffix
             if (colorPrefixes != null && i < colorPrefixes.Count && !string.IsNullOrEmpty(colorPrefixes[i])) {
                 intermedPrefix = colorPrefixes[i];
-                intermedSuffix = "[color:ffffff]";
+                intermedSuffix = "[color:ffffff][alpha:ff]";
             }
             int index = 0;
             string commands = "";

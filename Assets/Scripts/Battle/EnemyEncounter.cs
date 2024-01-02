@@ -101,6 +101,38 @@ public class EnemyEncounter : MonoBehaviour {
         }
     }
 
+    public Color SpareColor {
+        get {
+            DynValue spareColor = script.GetVar("sparecolor");
+            DynValue spareColor32 = script.GetVar("sparecolor32");
+            DynValue val = spareColor.IsNotNil() ? spareColor : spareColor32;
+            if (val.IsNil())
+                return new Color(1, 1, 0, 1);
+
+            if (val.Type != DataType.Table)
+                throw new CYFException("An enemy's spare color must be a table with 3 or 4 numbers: type is " + val.Type.ToString() + ".");
+
+            Table tab = val.Table;
+            if (tab.Length < 3 || tab.Length > 4)
+                throw new CYFException("An enemy's spare color must be a table with 3 or 4 numbers: the table has " + tab.Length + " elements.");
+
+            foreach (TablePair p in tab.Pairs) {
+                if (p.Key.Type != DataType.Number)
+                    throw new CYFException("An enemy's spare color must be a table with 3 or 4 numbers: the table's " + p.Key.ToString() + " value doesn't have a numbered key.");
+                if (p.Value.Type != DataType.Number)
+                    throw new CYFException("An enemy's spare color must be a table with 3 or 4 numbers: the table's " + p.Key.ToString() + " value is of type " + p.Value.Type.ToString() + ".");
+            }
+
+            bool is32 = spareColor.IsNil();
+            return new Color(
+                Mathf.Clamp01((float)tab.Get(1).Number / (is32 ? 255 : 1)),
+                Mathf.Clamp01((float)tab.Get(2).Number / (is32 ? 255 : 1)),
+                Mathf.Clamp01((float)tab.Get(3).Number / (is32 ? 255 : 1)),
+                tab.Get(4).Type == DataType.Nil ? 1 : Mathf.Clamp01((float)tab.Get(4).Number / (is32 ? 255 : 1))
+            );
+        }
+    }
+
     protected void LoadEnemiesAndPositions() {
         AudioSource musicSource = GameObject.Find("Main Camera").GetComponent<AudioSource>();
         EncounterText = script.GetVar("encountertext").String;
@@ -144,6 +176,7 @@ public class EnemyEncounter : MonoBehaviour {
         if (enemyCount > enemyPositions.Length) {
             UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, "All enemies in an encounter must have a screen position defined. Either your enemypositions table is missing, "
                 + "or there are more enemies than available positions. Refer to the documentation's Basic Setup section on how to do this.");
+            return;
         }
 
         Table luaEnemyTable = script.GetVar("enemies").Table;

@@ -33,4 +33,11 @@ public static class ParseUtil {
         float b = (intColor         & 255) / 255.0f;
         return new Color(r, g, b);
     }
+
+    public static string GetBytesFromColor(Color c, bool allowAlpha = false) {
+        ulong intColor = ((ulong)Mathf.RoundToInt(c.r * 255) << 16) + ((ulong)Mathf.RoundToInt(c.g * 255) << 8) + (ulong)Mathf.RoundToInt(c.b * 255);
+        if (allowAlpha)
+            intColor = (intColor << 8) + (ulong)Mathf.RoundToInt(c.a * 255);
+        return intColor.ToString("X" + (allowAlpha ? 8 : 6));
+    }
 }

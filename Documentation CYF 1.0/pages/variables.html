@@ -182,6 +182,14 @@ deathtext = {
             <br><p><span class="new"></span><span class="boolean"></span> <span class="term">adjusttextdisplay</span> - False if not set. If set to true,
             CYF will try to adjust the text's position and scale to prevent jagged lines to appear if the text's scale or position is slightly off.
             <br>Can be overridden for each text object by setting their <span class="term">adjustTextDisplay</span> value.</p>
+            <br><p><span class="new"></span><span class="luatable"><span class="number"></span>, <span class="number"></span>, <span class="number"></span>,
+            <span class="number"></span> = 1 </span> <span class="term">sparecolor</span> - Changes the RGBA color of the Spare option in the Mercy menu if
+            one or several enemies are spareable. Each given number will be clamped between 0 and 1.
+            <br>If neither this or <span class="term">sparecolor32</span> are set, the default color is <span class="term">{ 1, 1, 0 }</span>, or yellow.
+            <br><p><span class="new"></span><span class="luatable"><span class="number"></span>, <span class="number"></span>, <span class="number"></span>,
+            <span class="number"></span> = 255 </span> <span class="term">sparecolor32</span> - Changes the RGBA color of the Spare option in the Mercy menu
+            if one or several enemies are spareable. Each given number will be clamped between 0 and 255.
+            <br>This value is ignored if <span class="term">sparecolor</span> is set.
 
             <hr>
             <h4>Monster script variables</h4>
@@ -284,13 +292,22 @@ check = "Serving Size: 1 Monster\nNot monitored by the USDA"</pre>
                 the monster's name, ATK and DEF.</p>
             <p><span class="CYF"></span> <span class="boolean"></span> <span class="term">unkillable</span> - Set it to true and the monster will not
                 be killed if it has less than 1 HP. However, it can still be killed with <span class="term">Kill()</span>.</p>
-            <p><span class="CYF"></span> <span class="boolean"></span> <span class="term">canmove</span> - Deprecated, always returns true. <br>Old behavior: Returns true if you are able to move or unbind <span class="term">monstersprite</span>, false otherwise.</p>
+            <p><span class="CYF"></span> <span class="boolean"></span> <span class="term">canmove</span> - Deprecated, always returns true.
+                <br>Old behavior: Returns true if you are able to move or unbind <span class="term">monstersprite</span>, false otherwise.</p>
             <p><span class="CYF"></span> <span class="number"></span> <span class="term">posx</span> - The x position of the enemy's sprite.</p>
             <p><span class="CYF"></span> <span class="number"></span> <span class="term">posy</span> - The y position of the enemy's sprite.</p>
             <p><span class="CYF"></span> <span class="string"></span> <span class="term">font</span> - The default font used by the monster. Set it to
             <span class="term">nil</span> if you want to use the normal monster font.</p>
             <p><span class="CYF"></span> <span class="string"></span> <span class="term">voice</span> - The default voice used by the monster. Set it
             to <span class="term">nil</span> if you want to use the default voice.</p>
+            <br><p><span class="new"></span><span class="luatable"><span class="number"></span>, <span class="number"></span>, <span class="number"></span>,
+            <span class="number"></span> = 1 </span> <span class="term">sparecolor</span> - Changes the RGBA color of the enemy's name in the enemy
+            choice menu if they are spareable. Each given number will be clamped between 0 and 1.
+            <br>If neither this or <span class="term">sparecolor32</span> are set, the default color is <span class="term">{ 1, 1, 0 }</span>, or yellow.
+            <br><p><span class="new"></span><span class="luatable"><span class="number"></span>, <span class="number"></span>, <span class="number"></span>,
+            <span class="number"></span> = 255 </span> <span class="term">sparecolor32</span> - Changes the RGBA color of the enemy's name in the enemy
+            choice menu if they are spareable. Each given number will be clamped between 0 and 255.
+            <br>This value is ignored if <span class="term">sparecolor</span> is set.
             <hr>
 
             <h4>Wave script variables</h4>
