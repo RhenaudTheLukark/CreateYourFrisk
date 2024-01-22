@@ -124,6 +124,7 @@ public class UIController : MonoBehaviour {
         if (GlobalControls.modDev) //Empty the inventory if not in the overworld
             Inventory.inventory.Clear();
         Inventory.RemoveAddedItems();
+        KeyboardInput.ResetEncounterInputs();
         if (GlobalControls.modDev)
             PlayerCharacter.instance.MaxHPShift = 0;
         PlayerCharacter.instance.ATK = 8 + 2 * PlayerCharacter.instance.LV;
@@ -1283,6 +1284,8 @@ public class UIController : MonoBehaviour {
         if (toAdd)
             rts[indexText].SetParent(rts[indexDeb]);*/
         //}
+
+        KeyboardInput.ResetEncounterInputs();
 
         // If retromode is enabled, set the inventory to the one with TESTDOGs (can be overridden)
         if (GlobalControls.retroMode && GlobalControls.modDev) {

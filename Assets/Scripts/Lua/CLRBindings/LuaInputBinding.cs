@@ -1,10 +1,18 @@
 ﻿using UnityEngine;
 using System;
+using MoonSharp.Interpreter;
+using System.Linq;
+using System.Collections.Generic;
 
 public class LuaInputBinding {
     private readonly UndertaleInput input;
     public LuaInputBinding(UndertaleInput baseInput) { input = baseInput; }
 
+    //////////////////
+    // Basic inputs //
+    //////////////////
+
+    // Create Your Frisk's basic keys
     public int Confirm { get { return (int)input.Confirm; } }
     public int Cancel  { get { return (int)input.Cancel;  } }
     public int Menu    { get { return (int)input.Menu;    } }
@@ -17,6 +25,10 @@ public class LuaInputBinding {
         try { return (int)input.Key(Key); }
         catch (Exception) { throw new CYFException("Input.GetKey(): The key \"" + Key + "\" doesn't exist."); }
     }
+
+    //////////////////////////
+    // Mouse-related inputs //
+    //////////////////////////
 
     // X and Y position of the mouse
     // The X position of the mouse is taken from ScreenResolution so that the value is correct even if WideScreen is enabled
@@ -37,4 +49,38 @@ public class LuaInputBinding {
 
     public float mouseScroll { get { return Input.mouseScrollDelta.y; } }
     public float MouseScroll { get { return mouseScroll; } }
+
+    //////////////
+    // Keybinds //
+    //////////////
+
+    public void CreateKeybind(string keybind, string[] keysToBind = null) { KeyboardInput.CreateKeybind(keybind, keysToBind); }
+    public void SetKeybindKeys(string keybind, string[] keysToBind = null) { KeyboardInput.SetKeybindKeys(keybind, keysToBind); }
+
+    public bool AddKeyToKeybind(string keybind, string keyToAdd) { return KeyboardInput.AddKeyToKeybind(keybind, keyToAdd); }
+    public bool RemoveKeyFromKeybind(string keybind, string keyToRemove) { return KeyboardInput.RemoveKeyFromKeybind(keybind, keyToRemove); }
+
+    public int GetKeybind(string keybind) { return (int)KeyboardInput.StateFor(keybind); }
+
+    public string[] GetKeybindKeys(string keybind) { return KeyboardInput.GetKeybindKeys(keybind); }
+    public string[][] GetKeybindConflicts() {
+        Dictionary<KeyCode, string[]> conflicts = KeyboardInput.GetConflicts(KeyboardInput.encounterKeys);
+        return conflicts.Select(
+            (p) => {
+                List<string> temp = p.Value.ToList();
+                temp.Insert(0, p.Key.ToString());
+                return temp.ToArray();
+            }).ToArray();
+    }
+
+    public void ResetKeybinds() { KeyboardInput.LoadPlayerKeys(); }
+
+    public DynValue this[string keybind] {
+        get { return DynValue.NewNumber(GetKeybind(keybind)); }
+        set {
+            if (value.Type != DataType.Table || !value.Table.Values.All(d => d.Type == DataType.String))
+                throw new CYFException("You need to provide a table of keys as strings to set the keybind to.");
+            SetKeybindKeys(keybind, value.Table.Values.Select(d => d.String).ToArray());
+        }
+    }
 }

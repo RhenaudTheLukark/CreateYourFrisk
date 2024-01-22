@@ -18,7 +18,7 @@ public class OptionsScript : MonoBehaviour {
     private bool CrateUnlocked;
 
     // game objects
-    public GameObject ResetRG, ResetAG, ClearSave, Safe, Retro, Scale, Discord, Crate, Exit;
+    public GameObject ResetRG, ResetAG, ClearSave, Safe, Retro, Scale, Discord, Keys, Crate, Exit;
     public Text Description;
 
     // Use this for initialization
@@ -138,6 +138,10 @@ public class OptionsScript : MonoBehaviour {
         });
         Discord.GetComponentInChildren<Text>().text = (!LocalCrate ? "Discord Display: " : "DEESCORD DESPLAY: ") + DiscordControls.ChangeVisibilitySetting(0);
 
+        Keys.GetComponent<Button>().onClick.AddListener(() => {
+            SceneManager.LoadScene("KeybindSettings");
+        });
+
         // Enable / Disable Crate Your Frisk
         Crate.GetComponent<Button>().onClick.AddListener(() => {
             GlobalControls.crate = !GlobalControls.crate;
@@ -215,6 +219,10 @@ public class OptionsScript : MonoBehaviour {
                          + "<b>Nothing</b>: Disables Discord Rich Presence entirely.\n\n"
                          + "If CYF's connection to Discord is lost, you will have to restart CYF if you want your rich presence back.";
                 return !LocalCrate ? response : Temmify.Convert(response);
+            case "Keys":
+                response = "Allows you to change the keys bound to CYF's default keybinds, such as Confirm or Cancel.\n\n"
+                         + "That way, you can make so your wild keyboard scheme still works properly (and comfortably) with CYF!";
+                return !LocalCrate ? response : Temmify.Convert(response);
             case "Crate":
                 response = "Enables or disables the Crate Your Frisk mode of the engine.\n\n"
                          + "This mode adds several surprises such as scrambled text or modified Player battle choices.\n\n"
@@ -264,8 +272,11 @@ public class OptionsScript : MonoBehaviour {
                 // Discord
                 else if (mousePosY <= 180 && mousePosY > 140)
                     hoverItem = "Discord";
+                // Keys
+                else if (mousePosY <= 140 && mousePosY > 100)
+                    hoverItem = "Keys";
                 // Crate
-                else if (mousePosY <= 140 && mousePosY > 100 && CrateUnlocked)
+                else if (mousePosY <= 100 && mousePosY >  60 && CrateUnlocked)
                     hoverItem = "Crate";
                 // Exit
                 else if (mousePosY <=  60 && mousePosY >  20)
