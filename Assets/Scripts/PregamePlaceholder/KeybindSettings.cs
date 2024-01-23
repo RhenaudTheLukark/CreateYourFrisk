@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Timers;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -11,15 +10,19 @@ public class KeybindSettings : MonoBehaviour {
     public Text Listening;
     public Button Save, ResetAll, Restore, Back;
 
-    private Dictionary<string, KeyCode[]> tempKeybinds = new Dictionary<string, KeyCode[]>(KeyboardInput.generalKeys);
+    private Dictionary<string, List<KeyCode>> tempKeybinds = new Dictionary<string, List<KeyCode>>(KeyboardInput.generalKeys);
 
-    private Timer saveTimer;
-    private Timer resetAllTimer;
-    private Timer restoreTimer;
+    private CYFTimer textHijackTimer;
+    private CYFTimer resetAllTimer;
+    private CYFTimer restoreTimer;
 
     [HideInInspector] public KeybindEntry listening = null;
 
     void Start() {
+        textHijackTimer = new CYFTimer(3, UpdateListeningText);
+        resetAllTimer = new CYFTimer(3, CancelResetAll);
+        restoreTimer = new CYFTimer(3, CancelRestore);
+
         Save.onClick.AddListener(() => {
             if (listening != null)
                 StopListening();
@@ -28,31 +31,25 @@ public class KeybindSettings : MonoBehaviour {
         ResetAll.onClick.AddListener(() => {
             if (listening != null)
                 StopListening();
-            if (resetAllTimer != null) {
+            if (resetAllTimer.IsElapsing()) {
+                resetAllTimer.Stop();
                 ResetAll.GetComponentInChildren<Text>().text = "Reset All";
                 Reload(true);
-                resetAllTimer.Elapsed -= CancelResetAll;
-                resetAllTimer = null;
             } else {
-                ResetAll.GetComponentInChildren<Text>().text = "You sure?";
-                resetAllTimer = new Timer(3000);
-                resetAllTimer.Elapsed += CancelResetAll;
                 resetAllTimer.Start();
+                ResetAll.GetComponentInChildren<Text>().text = "You sure?";
             }
         });
         Restore.onClick.AddListener(() => {
             if (listening != null)
                 StopListening();
-            if (restoreTimer != null) {
+            if (restoreTimer.IsElapsing()) {
+                restoreTimer.Stop();
                 Restore.GetComponentInChildren<Text>().text = "Restore";
                 FactoryResetKeybinds();
-                restoreTimer.Elapsed -= CancelRestore;
-                restoreTimer = null;
             } else {
-                Restore.GetComponentInChildren<Text>().text = "You sure?";
-                restoreTimer = new Timer(3000);
-                restoreTimer.Elapsed += CancelRestore;
                 restoreTimer.Start();
+                Restore.GetComponentInChildren<Text>().text = "You sure?";
             }
         });
         Back.onClick.AddListener(() => {
@@ -64,26 +61,43 @@ public class KeybindSettings : MonoBehaviour {
         Reload();
     }
 
-    public void CancelResetAll(object source, ElapsedEventArgs e) {
+    public void CancelResetAll() {
         ResetAll.GetComponentInChildren<Text>().text = "Reset All";
-        resetAllTimer.Elapsed -= CancelResetAll;
-        resetAllTimer = null;
     }
-    public void CancelRestore(object source, ElapsedEventArgs e) {
+    public void CancelRestore() {
         Restore.GetComponentInChildren<Text>().text = "Restore";
-        restoreTimer.Elapsed -= CancelRestore;
-        restoreTimer = null;
     }
 
     public void LoadKeybinds() {
         KeyboardInput.LoadPlayerKeys();
-        tempKeybinds = new Dictionary<string, KeyCode[]>(KeyboardInput.generalKeys);
+        tempKeybinds = new Dictionary<string, List<KeyCode>>(KeyboardInput.generalKeys);
         foreach (KeybindEntry keybind in new KeybindEntry[] { Confirm, Cancel, Menu, Up, Left, Down, Right })
             UpdateKeyList(keybind);
         UpdateColor();
     }
 
     public void SaveKeybinds() {
+        string invalidReason = null;
+
+        Dictionary<KeyCode, string[]> conflicts = KeyboardInput.GetConflicts(tempKeybinds);
+        if (conflicts.Count > 0) {
+            string[] conflict = conflicts[conflicts.Keys.First()];
+            invalidReason = "Please get rid of key conflicts before saving this configuration.";
+        }
+
+        if (invalidReason == null)
+            foreach (KeyValuePair<string, List<KeyCode>> p in tempKeybinds)
+                if (p.Value.Count == 0) {
+                    invalidReason = "The keybind \"" + p.Key + "\" is unbound! Please add at least one key to it.";
+                    break;
+                }
+
+        if (invalidReason != null) {
+            UnitaleUtil.PlaySound("Reset", "hurtsound");
+            HijackListeningText(invalidReason, "ff0000");
+            return;
+        }
+
         KeyboardInput.SaveKeybinds(tempKeybinds);
         Reload();
 
@@ -91,13 +105,11 @@ public class KeybindSettings : MonoBehaviour {
         HijackListeningText("Keybinds saved!");
     }
 
-    public void HijackListeningText(string text) {
-        Listening.text = "<color=#ffff00>" + text + "</color>";
-        if (saveTimer != null)
-            saveTimer.Elapsed -= UpdateListeningText;
-        saveTimer = new Timer(5000);
-        saveTimer.Elapsed += UpdateListeningText;
-        saveTimer.Start();
+    public void HijackListeningText(string text, string color = "ffff00") {
+        Listening.text = "<color=#" + color + ">" + text + "</color>";
+        if (textHijackTimer.IsElapsing())
+            textHijackTimer.Stop();
+        textHijackTimer.Start();
     }
 
     public void Reload(bool isReset = false) {
@@ -110,7 +122,7 @@ public class KeybindSettings : MonoBehaviour {
     }
 
     public void FactoryResetKeybinds() {
-        tempKeybinds = new Dictionary<string, KeyCode[]>(KeyboardInput.defaultKeys);
+        tempKeybinds = new Dictionary<string, List<KeyCode>>(KeyboardInput.defaultKeys);
         foreach (KeybindEntry keybind in new KeybindEntry[] { Confirm, Cancel, Menu, Up, Left, Down, Right })
             UpdateKeyList(keybind);
         UpdateColor();
@@ -130,6 +142,7 @@ public class KeybindSettings : MonoBehaviour {
         foreach (KeybindEntry keybind in new KeybindEntry[] { Confirm, Cancel, Menu, Up, Left, Down, Right }) {
             Color c;
             if (listening != null && listening.Name == keybind.Name)                                     c = new Color(1, 1, 0);
+            else if (tempKeybinds[keybind.Name].Count == 0)                                              c = new Color(1, 0, 0);
             else if (conflictingKeybinds.Contains(keybind.Name))                                         c = new Color(1, 0, 0);
             else if (!tempKeybinds[keybind.Name].SequenceEqual(KeyboardInput.generalKeys[keybind.Name])) c = new Color(1, 1, 1);
             else                                                                                         c = new Color(0.7f, 0.7f, 0.7f);
@@ -142,22 +155,20 @@ public class KeybindSettings : MonoBehaviour {
     }
 
     public void AddKeyToKeybind(KeybindEntry keybind, KeyCode key) {
-        KeyCode[] keys;
+        List<KeyCode> keys;
         tempKeybinds.TryGetValue(keybind.Name, out keys);
-        List<KeyCode> keysList = keys.ToList();
-        keysList.Add(key);
-        tempKeybinds[keybind.Name] = keysList.ToArray();
+        keys.Add(key);
+        tempKeybinds[keybind.Name] = keys;
 
         UpdateKeyList(keybind);
         UpdateColor();
     }
 
     public void RemoveKeyFromKeybind(KeybindEntry keybind, KeyCode key) {
-        KeyCode[] keys;
+        List<KeyCode> keys;
         tempKeybinds.TryGetValue(keybind.Name, out keys);
-        List<KeyCode> keysList = keys.ToList();
-        keysList.Remove(key);
-        tempKeybinds[keybind.Name] = keysList.ToArray();
+        keys.Remove(key);
+        tempKeybinds[keybind.Name] = keys;
 
         UpdateKeyList(keybind);
         UpdateColor();
@@ -166,7 +177,7 @@ public class KeybindSettings : MonoBehaviour {
     public void ResetKeybind(KeybindEntry keybind) {
         if (listening != null)
             StopListening();
-        KeyboardInput.generalKeys[keybind.Name].CopyTo(tempKeybinds[keybind.Name], 0);
+        KeyboardInput.generalKeys[keybind.Name] = new List<KeyCode>(tempKeybinds[keybind.Name]);
 
         UpdateKeyList(keybind);
         UpdateColor();
@@ -176,7 +187,7 @@ public class KeybindSettings : MonoBehaviour {
         if (listening != null)
             StopListening();
 
-        tempKeybinds[keybind.Name] = new KeyCode[0];
+        tempKeybinds[keybind.Name].Clear();
 
         UpdateKeyList(keybind);
         UpdateColor();
@@ -201,12 +212,8 @@ public class KeybindSettings : MonoBehaviour {
         UpdateColor();
     }
 
-    public void UpdateListeningText(object source, ElapsedEventArgs e) {
-        saveTimer.Elapsed -= UpdateListeningText;
-        saveTimer = null;
-        UpdateListeningText();
-    }
     public void UpdateListeningText() {
+        textHijackTimer.Stop();
         Dictionary<KeyCode, string[]> conflicts = KeyboardInput.GetConflicts(tempKeybinds);
         if (listening)
             Listening.text = "Listening for " + listening.Name + ". Press a key to add/remove it! ESC to stop.";
@@ -219,6 +226,10 @@ public class KeybindSettings : MonoBehaviour {
     }
 
     void Update() {
+        textHijackTimer.Update();
+        resetAllTimer.Update();
+        restoreTimer.Update();
+
         if (listening != null)
             foreach (KeyCode key in Enum.GetValues(typeof(KeyCode)))
                 if (Input.GetKeyDown(key)) {

@@ -8,25 +8,25 @@ public class KeyboardInput : UndertaleInput {
     /// <summary>
     /// Dictionary storing the various default keybindings of Create Your Frisk.
     /// </summary>
-    public readonly static Dictionary<string, KeyCode[]> defaultKeys = new Dictionary<string, KeyCode[]>() {
-        { "Confirm", new KeyCode[] { KeyCode.Z, KeyCode.Return } },
-        { "Cancel", new KeyCode[] { KeyCode.X, KeyCode.LeftShift, KeyCode.RightShift } },
-        { "Menu", new KeyCode[] { KeyCode.C, KeyCode.LeftControl, KeyCode.RightControl } },
-        { "Up", new KeyCode[] { KeyCode.W, KeyCode.UpArrow } },
-        { "Down", new KeyCode[] { KeyCode.S, KeyCode.DownArrow } },
-        { "Left", new KeyCode[] { KeyCode.A, KeyCode.LeftArrow } },
-        { "Right", new KeyCode[] { KeyCode.D, KeyCode.RightArrow } },
+    public readonly static Dictionary<string, List<KeyCode>> defaultKeys = new Dictionary<string, List<KeyCode>>() {
+        { "Confirm", new List<KeyCode> { KeyCode.Z, KeyCode.Return } },
+        { "Cancel", new List<KeyCode> { KeyCode.X, KeyCode.LeftShift, KeyCode.RightShift } },
+        { "Menu", new List<KeyCode> { KeyCode.C, KeyCode.LeftControl, KeyCode.RightControl } },
+        { "Up", new List<KeyCode> { KeyCode.W, KeyCode.UpArrow } },
+        { "Down", new List<KeyCode> { KeyCode.S, KeyCode.DownArrow } },
+        { "Left", new List<KeyCode> { KeyCode.A, KeyCode.LeftArrow } },
+        { "Right", new List<KeyCode> { KeyCode.D, KeyCode.RightArrow } },
     };
     /// <summary>
     /// Dictionary storing the various keybindings set by the user.
     /// Can be modified through Create Your Frisk's Options menu.
     /// </summary>
-    public static Dictionary<string, KeyCode[]> generalKeys = new Dictionary<string, KeyCode[]>(defaultKeys);
+    public static Dictionary<string, List<KeyCode>> generalKeys = new Dictionary<string, List<KeyCode>>(defaultKeys);
     /// <summary>
     /// Dictionary storing the various keybindings in effect during the current encounter.
     /// Can be modified through various Input functions.
     /// </summary>
-    public static Dictionary<string, KeyCode[]> encounterKeys = new Dictionary<string, KeyCode[]>(generalKeys);
+    public static Dictionary<string, List<KeyCode>> encounterKeys = new Dictionary<string, List<KeyCode>>(generalKeys);
 
     /// <summary>
     /// This function is executed whenever this object is created.
@@ -39,13 +39,13 @@ public class KeyboardInput : UndertaleInput {
     /// This function resets the user's keybindings after a battle, in case they were tampered with during it.
     /// </summary>
     public static void ResetEncounterInputs() {
-        encounterKeys = new Dictionary<string, KeyCode[]>(generalKeys);
+        encounterKeys = new Dictionary<string, List<KeyCode>>(generalKeys);
     }
     /// <summary>
     /// This function resets the user's keybindings, it should only be used when the user asks to reset all keybindings to their default.
     /// </summary>
     public static void ResetInputs() {
-        generalKeys = new Dictionary<string, KeyCode[]>(defaultKeys);
+        generalKeys = new Dictionary<string, List<KeyCode>>(defaultKeys);
         ResetEncounterInputs();
     }
     /// <summary>
@@ -72,7 +72,7 @@ public class KeyboardInput : UndertaleInput {
             foreach (string key in keysToBind)
                 keyCodesToBind.Add((KeyCode)Enum.Parse(typeof(KeyCode), key));
 
-        encounterKeys.Add(keybind, keyCodesToBind.ToArray());
+        encounterKeys.Add(keybind, keyCodesToBind);
     }
 
     /// <summary>
@@ -86,10 +86,10 @@ public class KeyboardInput : UndertaleInput {
         return encounterKeys[keybind].Select(k => k.ToString()).ToArray();
     }
 
-    public static Dictionary<KeyCode, string[]> GetConflicts(Dictionary<string, KeyCode[]> keybinds) {
+    public static Dictionary<KeyCode, string[]> GetConflicts(Dictionary<string, List<KeyCode>> keybinds) {
         Dictionary<KeyCode, string[]> conflicts = new Dictionary<KeyCode, string[]>();
 
-        foreach (KeyValuePair<string, KeyCode[]> keybind in keybinds)
+        foreach (KeyValuePair<string, List<KeyCode>> keybind in keybinds)
             foreach (KeyCode key in keybind.Value) {
                 List<string> linkedKeybinds = conflicts.ContainsKey(key) ? conflicts[key].ToList() : new List<string>();
                 linkedKeybinds.Add(keybind.Key);
@@ -113,7 +113,7 @@ public class KeyboardInput : UndertaleInput {
             foreach (string key in keysToBind)
                 keyCodesToBind.Add((KeyCode)Enum.Parse(typeof(KeyCode), key));
 
-        encounterKeys[keybind] = keyCodesToBind.ToArray();
+        encounterKeys[keybind] = keyCodesToBind;
     }
 
     /// <summary>
@@ -122,16 +122,15 @@ public class KeyboardInput : UndertaleInput {
     /// <param name="keybind">Name of the keybind to add a key to.</param>
     /// <param name="key">Key to add to the keybind.</param>
     public static bool AddKeyToKeybind(string keybind, string key) {
-        KeyCode[] keys;
+        List<KeyCode> keys;
         encounterKeys.TryGetValue(keybind, out keys);
         if (keys == null)
             throw new CYFException("The keybind \"" + keybind + "\" doesn't exist.");
-        List<KeyCode> keysList = keys.ToList();
 
         KeyCode keycode = (KeyCode)Enum.Parse(typeof(KeyCode), key);
-        if (!keysList.Contains(keycode)) {
-            keysList.Add(keycode);
-            encounterKeys[keybind] = keysList.ToArray();
+        if (!keys.Contains(keycode)) {
+            keys.Add(keycode);
+            encounterKeys[keybind] = keys;
             return true;
         }
         return false;
@@ -142,16 +141,15 @@ public class KeyboardInput : UndertaleInput {
     /// <param name="keybind">Name of the keybind to remove a key from.</param>
     /// <param name="key">Key to remove from the keybind.</param>
     public static bool RemoveKeyFromKeybind(string keybind, string key) {
-        KeyCode[] keys;
+        List<KeyCode> keys;
         encounterKeys.TryGetValue(keybind, out keys);
         if (keys == null)
             throw new CYFException("The keybind \"" + keybind + "\" doesn't exist.");
-        List<KeyCode> keysList = keys.ToList();
 
         KeyCode keycode = (KeyCode)Enum.Parse(typeof(KeyCode), key);
-        if (keysList.Contains(keycode)) {
-            keysList.Remove(keycode);
-            encounterKeys[keybind] = keysList.ToArray();
+        if (keys.Contains(keycode)) {
+            keys.Remove(keycode);
+            encounterKeys[keybind] = keys;
             return true;
         }
         return false;
@@ -161,12 +159,12 @@ public class KeyboardInput : UndertaleInput {
     /// This function loads the player's keybinding configuration stored in their AlMightyGlobals.
     /// </summary>
     public static void LoadPlayerKeys() {
-        Dictionary<string, KeyCode[]> keys = new Dictionary<string, KeyCode[]>(generalKeys);
+        Dictionary<string, List<KeyCode>> keys = new Dictionary<string, List<KeyCode>>(generalKeys);
         foreach (string key in keys.Keys) {
             DynValue keysString = LuaScriptBinder.GetAlMighty(null, "CYFKeybind" + key);
-            if (keysString == null || keysString.Type != DataType.String)
+            if (keysString == null || keysString.Type != DataType.String || keysString.String == "")
                 continue;
-            KeyCode[] keycodes = keysString.String.Split('|').Select(k => (KeyCode)Enum.Parse(typeof(KeyCode), k)).ToArray();
+            List<KeyCode> keycodes = keysString.String.Split('|').Select(k => (KeyCode)Enum.Parse(typeof(KeyCode), k)).ToList();
             generalKeys[key] = keycodes;
         }
         ResetEncounterInputs();
@@ -174,9 +172,9 @@ public class KeyboardInput : UndertaleInput {
     /// <summary>
     /// This function loads the player's keybinding configuration stored in their AlMightyGlobals.
     /// </summary>
-    public static void SaveKeybinds(Dictionary<string, KeyCode[]> newKeys) {
+    public static void SaveKeybinds(Dictionary<string, List<KeyCode>> newKeys) {
         foreach (string key in newKeys.Keys) {
-            KeyCode[] keys = newKeys[key];
+            List<KeyCode> keys = newKeys[key];
             string keysString = string.Join("|", keys.Select(k => k.ToString()).ToArray());
             LuaScriptBinder.SetAlMighty(null, "CYFKeybind" + key, DynValue.NewString(keysString));
         }
@@ -226,7 +224,7 @@ public class KeyboardInput : UndertaleInput {
     /// <param name="keybind">Named key to check for (ex: Confirm).</param>
     /// <returns>State of the key with the highest priority among the set.</returns>
     public static ButtonState StateFor(string keybind) {
-        KeyCode[] keys;
+        List<KeyCode> keys;
         encounterKeys.TryGetValue(keybind, out keys);
         if (keys == null)
             throw new CYFException("The keybind \"" + keybind + "\" doesn't exist.");
