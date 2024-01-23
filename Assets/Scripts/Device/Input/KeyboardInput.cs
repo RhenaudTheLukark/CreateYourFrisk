@@ -40,7 +40,7 @@ public class KeyboardInput : IUndertaleInput {
     /// Dictionary storing the various keybindings set by the user.
     /// Can be modified through Create Your Frisk's Options menu.
     /// </summary>
-    public static Dictionary<string, List<string>> generalKeys = new Dictionary<string, List<string>>();
+    public static Dictionary<string, List<string>> playerKeys = new Dictionary<string, List<string>>();
     /// <summary>
     /// Dictionary storing the various keybindings in effect during the current encounter.
     /// Can be modified through various Input functions.
@@ -52,7 +52,7 @@ public class KeyboardInput : IUndertaleInput {
     /// </summary>
     public KeyboardInput() {
         foreach (KeyValuePair<string, List<string>> keybind in defaultKeys) {
-            generalKeys[keybind.Key] = new List<string>(keybind.Value);
+            playerKeys[keybind.Key] = new List<string>(keybind.Value);
             encounterKeys[keybind.Key] = new List<string>(keybind.Value);
         }
 
@@ -69,8 +69,6 @@ public class KeyboardInput : IUndertaleInput {
                 axes[axisName] = 0;
             }
         }
-
-        LoadPlayerKeys();
     }
 
     /// <summary>
@@ -78,16 +76,16 @@ public class KeyboardInput : IUndertaleInput {
     /// </summary>
     public static void ResetEncounterInputs() {
         encounterKeys.Clear();
-        foreach (KeyValuePair<string, List<string>> keybind in generalKeys)
+        foreach (KeyValuePair<string, List<string>> keybind in playerKeys)
             encounterKeys[keybind.Key] = new List<string>(keybind.Value);
     }
     /// <summary>
     /// This function resets the user's keybindings, it should only be used when the user asks to reset all keybindings to their default.
     /// </summary>
     public static void ResetInputs() {
-        generalKeys.Clear();
+        playerKeys.Clear();
         foreach (KeyValuePair<string, List<string>> keybind in defaultKeys)
-            generalKeys[keybind.Key] = new List<string>(keybind.Value);
+            playerKeys[keybind.Key] = new List<string>(keybind.Value);
         ResetEncounterInputs();
     }
     /// <summary>
@@ -97,7 +95,7 @@ public class KeyboardInput : IUndertaleInput {
     public static void ResetSpecificInput(string keybind) {
         if (defaultKeys[keybind] == null)
             throw new CYFException("CYF doesn't know the default keybind \"" + keybind + "\". Please refer to the list of known default keybinds in the Input object page of the documentation.");
-        generalKeys[keybind] = new List<string>(defaultKeys[keybind]);
+        playerKeys[keybind] = new List<string>(defaultKeys[keybind]);
     }
 
     /// <summary>
@@ -224,7 +222,7 @@ public class KeyboardInput : IUndertaleInput {
     /// This function loads the player's keybinding configuration stored in their AlMightyGlobals.
     /// </summary>
     public static void LoadPlayerKeys() {
-        Dictionary<string, List<string>> keybinds = new Dictionary<string, List<string>>(generalKeys);
+        Dictionary<string, List<string>> keybinds = new Dictionary<string, List<string>>(playerKeys);
         foreach (string keybind in keybinds.Keys) {
             DynValue keysString = LuaScriptBinder.GetAlMighty(null, "CYFKeybind" + keybind);
             if (keysString == null || keysString.Type != DataType.String || keysString.String == "")
@@ -235,7 +233,7 @@ public class KeyboardInput : IUndertaleInput {
                 if (!CheckKeyValidity(key))
                     throw new CYFException("The key \"" + key + "\" isn't recognized by CYF.");
 
-            generalKeys[keybind] = keys;
+            playerKeys[keybind] = keys;
         }
         ResetEncounterInputs();
     }
@@ -248,9 +246,9 @@ public class KeyboardInput : IUndertaleInput {
             string keysString = string.Join("|", keys.ToArray());
             LuaScriptBinder.SetAlMighty(null, "CYFKeybind" + key, DynValue.NewString(keysString));
         }
-        generalKeys.Clear();
+        playerKeys.Clear();
         foreach (KeyValuePair<string, List<string>> keybind in newKeys)
-            generalKeys[keybind.Key] = new List<string>(keybind.Value);
+            playerKeys[keybind.Key] = new List<string>(keybind.Value);
         ResetEncounterInputs();
     }
 

@@ -34,21 +34,21 @@ public class DisclaimerScript : MonoBehaviour {
     /// Checks if you pressed one of the things the disclaimer tells you to. It's pretty straightforward.
     /// </summary>
     private void Update() {
-        // Try to hook on to the game window when the user interacts
-        #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
-            if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.O) || Input.GetKeyDown(KeyCode.F4)
-             || Input.GetKeyDown(KeyCode.Return) && (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)))  // LAlt/RAlt + Enter
-                Misc.RetargetWindow();
-        #endif
-
         if (!ScreenResolution.hasInitialized) return;
-        if (Input.GetKeyDown(KeyCode.O)) {
+        if (GlobalControls.input.Menu == ButtonState.PRESSED) {
+            #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
+                Misc.RetargetWindow();
+            #endif
             StaticInits.InitAll(StaticInits.EDITOR_MODFOLDER);
             GlobalControls.modDev = false;
             SceneManager.LoadScene("Intro");
             Destroy(this);
-        } else if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Return))
+        } else if (GlobalControls.input.Confirm == ButtonState.PRESSED || Input.GetMouseButtonDown(0)) {
+            #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
+                Misc.RetargetWindow();
+            #endif
             StartCoroutine(ModSelect());
+        }
     }
 
     // The mod select screen can take some extra time to load,

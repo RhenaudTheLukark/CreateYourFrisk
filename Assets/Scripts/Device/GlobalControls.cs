@@ -50,6 +50,8 @@ public class GlobalControls : MonoBehaviour {
         SaveLoad.LoadAlMighty();
         LuaScriptBinder.Set(null, "ModFolder", DynValue.NewString("@Title"));
 
+        KeyboardInput.LoadPlayerKeys();
+
         // Load map names for the overworld
         UnitaleUtil.AddKeysToMapCorrespondanceList();
 

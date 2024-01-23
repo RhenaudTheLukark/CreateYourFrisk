@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.IO;
 using MoonSharp.Interpreter;
+using System.Collections.Generic;
 
 public class OptionsScript : MonoBehaviour {
     // used to prevent the player from erasing real/almighty globals or their save by accident
@@ -21,10 +22,28 @@ public class OptionsScript : MonoBehaviour {
     public GameObject ResetRG, ResetAG, ClearSave, Safe, Retro, Scale, Discord, Keys, Crate, Exit;
     public Text Description;
 
+    // Used for controller selection
+    private int selectedButton = -99;
+    private List<MenuButton> buttons = new List<MenuButton>();
+
     // Use this for initialization
     private void Start() {
         LocalCrate = GlobalControls.crate;
         CrateUnlocked = LuaScriptBinder.GetAlMighty(null, "CrateYourFrisk") != null;
+
+        buttons.AddRange(new MenuButton[] {
+            ResetRG.GetComponent<MenuButton>(),
+            ResetAG.GetComponent<MenuButton>(),
+            ClearSave.GetComponent<MenuButton>(),
+            Safe.GetComponent<MenuButton>(),
+            Retro.GetComponent<MenuButton>(),
+            Scale.GetComponent<MenuButton>(),
+            Discord.GetComponent<MenuButton>(),
+            Keys.GetComponent<MenuButton>(),
+            Exit.GetComponent<MenuButton>()
+        });
+        if (CrateUnlocked)
+            buttons.Insert(buttons.Count - 1, Crate.GetComponent<MenuButton>());
 
         // add button functions
 
@@ -237,56 +256,73 @@ public class OptionsScript : MonoBehaviour {
         }
     }
 
+    private void SelectButton(int dir) {
+        // Deselect the old button
+        if (selectedButton >= 0) {
+            buttons[selectedButton].lockAnimation = false;
+            buttons[selectedButton].StartAnimation(-1);
+        }
+
+        selectedButton += dir;
+
+        // Clamp the button number between existing buttons
+        if (selectedButton < -10)                    selectedButton = 0;
+        else if (selectedButton < 0)                 selectedButton = buttons.Count - 1;
+        else if (selectedButton > buttons.Count - 1) selectedButton = 0;
+
+        // Select the new button
+        buttons[selectedButton].StartAnimation(1);
+        buttons[selectedButton].lockAnimation = true;
+    }
+
     // Used to animate scrolling left or right.
     private void Update() {
-        // update the description every 1/6th of a second
+        // Button controls
+        // Press the currently selected button
+        if (GlobalControls.input.Confirm == ButtonState.PRESSED && selectedButton >= 0)
+            buttons[selectedButton].GetComponent<Button>().onClick.Invoke();
+        // Exit the Options menu
+        if (GlobalControls.input.Cancel == ButtonState.PRESSED)
+            buttons[buttons.Count - 1].GetComponent<Button>().onClick.Invoke();
+        // Move up and down to navigate the buttons
+        if (GlobalControls.input.Up == ButtonState.PRESSED)
+            SelectButton(-1);
+        if (GlobalControls.input.Down == ButtonState.PRESSED)
+            SelectButton(1);
+
+        // Update the description every 1/6th of a second
         if (DescriptionTimer > 0)
             DescriptionTimer--;
         else {
             DescriptionTimer = 10;
 
-            // try to find which button the player is hovering over
-            string hoverItem = "";
-            // if the player is within the range of the buttons
+            // Try to find which button the player is hovering over
+            string hoverItem = null;
+            // If the player is within the range of the buttons
             int mousePosX = (int)((ScreenResolution.mousePosition.x / ScreenResolution.displayedSize.x) * 640);
             int mousePosY = (int)((Input.mousePosition.y / ScreenResolution.displayedSize.y) * 480);
             if (mousePosX >= 40 && mousePosX <= 290) {
-                // ResetRG
-                if      (mousePosY <= 420 && mousePosY > 380)
-                    hoverItem = "ResetRG";
-                // ResetAG
-                else if (mousePosY <= 380 && mousePosY > 340)
-                    hoverItem = "ResetAG";
-                // ClearSave
-                else if (mousePosY <= 340 && mousePosY > 300)
-                    hoverItem = "ClearSave";
-                // Safe
-                else if (mousePosY <= 300 && mousePosY > 260)
-                    hoverItem = "Safe";
-                // Retro
-                else if (mousePosY <= 260 && mousePosY > 220)
-                    hoverItem = "Retro";
-                // Scale
-                else if (mousePosY <= 220 && mousePosY > 180)
-                    hoverItem = "Scale";
-                // Discord
-                else if (mousePosY <= 180 && mousePosY > 140)
-                    hoverItem = "Discord";
-                // Keys
-                else if (mousePosY <= 140 && mousePosY > 100)
-                    hoverItem = "Keys";
-                // Crate
-                else if (mousePosY <= 100 && mousePosY >  60 && CrateUnlocked)
-                    hoverItem = "Crate";
-                // Exit
-                else if (mousePosY <=  60 && mousePosY >  20)
-                    hoverItem = "Exit";
+                if      (mousePosY <= 420 && mousePosY > 380) hoverItem = "ResetRG";
+                else if (mousePosY <= 380 && mousePosY > 340) hoverItem = "ResetAG";
+                else if (mousePosY <= 340 && mousePosY > 300) hoverItem = "ClearSave";
+                else if (mousePosY <= 300 && mousePosY > 260) hoverItem = "Safe";
+                else if (mousePosY <= 260 && mousePosY > 220) hoverItem = "Retro";
+                else if (mousePosY <= 220 && mousePosY > 180) hoverItem = "Scale";
+                else if (mousePosY <= 180 && mousePosY > 140) hoverItem = "Discord";
+                else if (mousePosY <= 140 && mousePosY > 100) hoverItem = "Keys";
+                else if (mousePosY <= 100 && mousePosY >  60 && CrateUnlocked) hoverItem = "Crate";
+                else if (mousePosY <=  60 && mousePosY >  20) hoverItem = "Exit";
             }
 
-            Description.GetComponent<Text>().text = GetDescription(hoverItem);
+            // Change the description to the current one
+            if (hoverItem != null)        Description.GetComponent<Text>().text = GetDescription(hoverItem);
+            // Else go back to the one selected by the inputs
+            else if (selectedButton >= 0) Description.GetComponent<Text>().text = GetDescription(buttons[selectedButton].name);
+            // Else pick the default description
+            else                          Description.GetComponent<Text>().text = GetDescription("");
         }
 
-        // make the player click twice to reset RG or AG, or to wipe their save
+        // Make the player click twice to reset RG or AG, or to wipe their save
         if (RealGlobalCooldown > 0)
             RealGlobalCooldown -= 1;
         else if (RealGlobalCooldown == 0) {

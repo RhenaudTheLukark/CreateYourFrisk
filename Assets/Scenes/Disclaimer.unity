@@ -297,7 +297,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -125, y: 0}
+  m_AnchoredPosition: {x: -140, y: 0}
   m_SizeDelta: {x: 1000, y: 500}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &643272690
@@ -331,11 +331,11 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: 'Press <b>O</b>
+  m_Text: 'Press <color="#ff0">Menu</color>
 
     to access the
 
-    <color="#ffff00"><b>Overworld</b></color>'
+    <color="#ff0">Overworld</color>'
 --- !u!222 &643272691
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -356,7 +356,7 @@ GameObject:
   - component: {fileID: 890690847}
   - component: {fileID: 890690846}
   m_Layer: 5
-  m_Name: RedditPlug
+  m_Name: DiscordPlug
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -412,8 +412,8 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: For support and newest versions, go to <color="#ffff00">r/Unitale</color>
-    or <color="#ffff00">Unitale's Discord Server</color>.
+  m_Text: For support and newest versions, go to the <color="#ffff00">Unitale Discord
+    Server</color>.
 --- !u!222 &890690847
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -456,8 +456,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 200, y: 0}
-  m_SizeDelta: {x: 1400, y: 500}
+  m_AnchoredPosition: {x: 190, y: 0}
+  m_SizeDelta: {x: 1500, y: 500}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1020003807
 MonoBehaviour:
@@ -490,11 +490,11 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Press <b>Space</b> or <b>Click</b>
+  m_Text: 'Press <color="#ff0">Confirm</color> or
 
-    to access the
+    <color="#ff0">Click</color> to access the
 
-    <color="#ffff00"><b>Mod Selection Screen</b></color>'
+    <color="#ff0">Mod Selection Screen</color>'
 --- !u!222 &1020003808
 CanvasRenderer:
   m_ObjectHideFlags: 0

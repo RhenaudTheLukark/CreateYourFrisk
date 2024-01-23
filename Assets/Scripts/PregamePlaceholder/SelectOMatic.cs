@@ -385,65 +385,58 @@ public class SelectOMatic : MonoBehaviour {
         // Controls:
 
         ////////////////// Main: ////////////////////////////////////
-        //    Z or Return: Start encounter (if mod has only one    //
+        //        Confirm: Start encounter (if mod has only one    //
         //                 encounter), or open encounter list      //
-        //     Shift or X: Return to Disclaimer screen             //
-        //        Up or C: Open the mod list                       //
+        //         Cancel: Return to Disclaimer screen             //
+        //             Up: Open the mod list                       //
+        //           Menu: Open the options menu                   //
         //           Left: Scroll left                             //
         //          Right: Scroll right                            //
         ////////////////// Encounter or Mod list: ///////////////////
-        //    Z or Return: Start an encounter, or select a mod     //
-        //     Shift or X: Exit                                    //
+        //        Confirm: Start an encounter, or select a mod     //
+        //         Cancel: Exit                                    //
         //             Up: Move up                                 //
         //           Down: Move down                               //
         /////////////////////////////////////////////////////////////
 
         if (!encounterBox.activeSelf) {
-            // Main controls:
+            // Main controls
             if (animationDone) {
-                //scroll left
-                if (Input.GetKeyDown(KeyCode.LeftArrow))
-                    ScrollMods(-1);
-                //scroll right
-                else if (Input.GetKeyDown(KeyCode.RightArrow))
-                    ScrollMods(1);
-                //open the mod list
-                else if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.C)) {
+                // Move left
+                if (GlobalControls.input.Left == ButtonState.PRESSED)       ScrollMods(-1);
+                // Move right
+                else if (GlobalControls.input.Right == ButtonState.PRESSED) ScrollMods(1);
+                // Open the mod list
+                else if (GlobalControls.input.Up == ButtonState.PRESSED) {
                     modFolderMiniMenu();
                     content.transform.GetChild(selectedItem).GetComponent<MenuButton>().StartAnimation(1);
                 // Open the encounter list or start the encounter (if there is only one encounter)
-                } else if (Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.Return))
+                } else if (GlobalControls.input.Confirm == ButtonState.PRESSED)
                     ModBackground.GetComponent<Button>().onClick.Invoke();
             }
 
+            // Access the Options menu
+            if (GlobalControls.input.Menu == ButtonState.PRESSED)
+                btnOptions.GetComponent<Button>().onClick.Invoke();
             // Return to the Disclaimer screen
-            if (Input.GetKeyDown(KeyCode.X) || Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift))
+            if (GlobalControls.input.Cancel == ButtonState.PRESSED)
                 btnExit.GetComponent<Button>().onClick.Invoke();
         } else {
-            // Encounter or Mod List controls:
-            if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow)) {
+            // Encounter or Mod List controls
+            if (GlobalControls.input.Up == ButtonState.PRESSED || GlobalControls.input.Down == ButtonState.PRESSED) {
                 // Store previous value of selectedItem
                 int previousSelectedItem = selectedItem;
 
-                //move up
-                if (Input.GetKeyDown(KeyCode.UpArrow))
-                    selectedItem -= 1;
-                //move down
-                else if (Input.GetKeyDown(KeyCode.DownArrow))
-                    selectedItem += 1;
+                // Move up or down the list
+                selectedItem += GlobalControls.input.Up == ButtonState.PRESSED ? -1 : 1;
 
-                // Keep the selector in-bounds!
-                if (selectedItem < 0)
-                    selectedItem = content.transform.childCount - 1;
-                else if (selectedItem > content.transform.childCount - 1)
-                    selectedItem = 0;
-
-                // Update the buttons!
+                // Keep the selector in-bounds
+                if (selectedItem < 0)                                     selectedItem = content.transform.childCount - 1;
+                else if (selectedItem > content.transform.childCount - 1) selectedItem = 0;
 
                 // Animate the old button
                 GameObject previousButton = content.transform.GetChild(previousSelectedItem).gameObject;
                 previousButton.GetComponent<MenuButton>().StartAnimation(-1);
-                //previousButton.spriteState = SpriteState.
 
                 // Animate the new button
                 GameObject newButton = content.transform.GetChild(selectedItem).gameObject;
@@ -456,19 +449,19 @@ public class SelectOMatic : MonoBehaviour {
                 float topEdge    = content.GetComponent<RectTransform>().anchoredPosition.y;
                 float bottomEdge = content.GetComponent<RectTransform>().anchoredPosition.y + 230;
 
-                //button is above the top of the scrolly bit
-                if      (topEdge    > buttonTopEdge)
+                // Button is above the top of the view
+                if (topEdge > buttonTopEdge)
                     content.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, buttonTopEdge);
-                //button is below the bottom of the scrolly bit
+                // Button is below the bottom of the view
                 else if (bottomEdge < buttonBottomEdge)
                     content.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, buttonBottomEdge - 230);
             }
 
             // Exit
-            if (Input.GetKeyDown(KeyCode.X) || Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift))
+            if (GlobalControls.input.Cancel == ButtonState.PRESSED)
                 ModBackground.GetComponent<Button>().onClick.Invoke();
             // Select the mod or encounter
-            else if (Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.Return))
+            else if (GlobalControls.input.Confirm == ButtonState.PRESSED)
                 content.transform.GetChild(selectedItem).gameObject.GetComponent<Button>().onClick.Invoke();
         }
     }
