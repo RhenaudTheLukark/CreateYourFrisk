@@ -10,7 +10,7 @@ public class KeybindSettings : MonoBehaviour {
     public Text Listening;
     public Button Save, ResetAll, Restore, Back;
 
-    private Dictionary<string, List<string>> tempKeybinds = new Dictionary<string, List<string>>(KeyboardInput.generalKeys);
+    private Dictionary<string, List<string>> tempKeybinds = new Dictionary<string, List<string>>();
 
     private CYFTimer textHijackTimer;
     private CYFTimer resetAllTimer;
@@ -19,6 +19,9 @@ public class KeybindSettings : MonoBehaviour {
     [HideInInspector] public KeybindEntry listening = null;
 
     void Start() {
+        foreach (KeyValuePair<string, List<string>> keybind in KeyboardInput.generalKeys)
+            tempKeybinds[keybind.Key] = new List<string>(keybind.Value);
+
         textHijackTimer = new CYFTimer(3, UpdateListeningText);
         resetAllTimer = new CYFTimer(3, CancelResetAll);
         restoreTimer = new CYFTimer(3, CancelRestore);
@@ -70,7 +73,9 @@ public class KeybindSettings : MonoBehaviour {
 
     public void LoadKeybinds() {
         KeyboardInput.LoadPlayerKeys();
-        tempKeybinds = new Dictionary<string, List<string>>(KeyboardInput.generalKeys);
+        tempKeybinds.Clear();
+        foreach (KeyValuePair<string, List<string>> keybind in KeyboardInput.generalKeys)
+            tempKeybinds[keybind.Key] = new List<string>(keybind.Value);
         foreach (KeybindEntry keybind in new KeybindEntry[] { Confirm, Cancel, Menu, Up, Left, Down, Right })
             UpdateKeyList(keybind);
         UpdateColor();
@@ -122,7 +127,9 @@ public class KeybindSettings : MonoBehaviour {
     }
 
     public void FactoryResetKeybinds() {
-        tempKeybinds = new Dictionary<string, List<string>>(KeyboardInput.defaultKeys);
+        tempKeybinds.Clear();
+        foreach (KeyValuePair<string, List<string>> keybind in KeyboardInput.defaultKeys)
+            tempKeybinds[keybind.Key] = new List<string>(keybind.Value);
         foreach (KeybindEntry keybind in new KeybindEntry[] { Confirm, Cancel, Menu, Up, Left, Down, Right })
             UpdateKeyList(keybind);
         UpdateColor();
@@ -151,25 +158,17 @@ public class KeybindSettings : MonoBehaviour {
     }
 
     public void UpdateKeyList(KeybindEntry keybind) {
-        keybind.SetKeyList(string.Join(", ", tempKeybinds[keybind.Name].Select(k => k.ToString()).ToArray()));
+        keybind.SetKeyList(string.Join(", ", tempKeybinds[keybind.Name].OrderBy(k => k.Length).ToArray()));
     }
 
     public void AddKeyToKeybind(KeybindEntry keybind, string key) {
-        List<string> keys;
-        tempKeybinds.TryGetValue(keybind.Name, out keys);
-        keys.Add(key);
-        tempKeybinds[keybind.Name] = keys;
-
+        tempKeybinds[keybind.Name].Add(key);
         UpdateKeyList(keybind);
         UpdateColor();
     }
 
     public void RemoveKeyFromKeybind(KeybindEntry keybind, string key) {
-        List<string> keys;
-        tempKeybinds.TryGetValue(keybind.Name, out keys);
-        keys.Remove(key);
-        tempKeybinds[keybind.Name] = keys;
-
+        tempKeybinds[keybind.Name].Remove(key);
         UpdateKeyList(keybind);
         UpdateColor();
     }
@@ -177,7 +176,7 @@ public class KeybindSettings : MonoBehaviour {
     public void ResetKeybind(KeybindEntry keybind) {
         if (listening != null)
             StopListening();
-        KeyboardInput.generalKeys[keybind.Name] = new List<string>(tempKeybinds[keybind.Name]);
+        tempKeybinds[keybind.Name] = new List<string>(KeyboardInput.generalKeys[keybind.Name]);
 
         UpdateKeyList(keybind);
         UpdateColor();

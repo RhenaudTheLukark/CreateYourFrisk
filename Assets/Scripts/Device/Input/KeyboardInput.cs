@@ -10,6 +10,10 @@ public class KeyboardInput : IUndertaleInput {
     /// </summary>
     public static readonly Dictionary<string, float> axes = new Dictionary<string, float>();
     /// <summary>
+    /// List of known axes keys, for quick computation.
+    /// </summary>
+    private static List<string> knownAxes = new List<string>();
+    /// <summary>
     /// Number of controllers handled by CYF.
     /// Add more inputs in CYF's Input settings if you wanna handle more controllers!
     /// </summary>
@@ -36,22 +40,22 @@ public class KeyboardInput : IUndertaleInput {
     /// Dictionary storing the various keybindings set by the user.
     /// Can be modified through Create Your Frisk's Options menu.
     /// </summary>
-    public static Dictionary<string, List<string>> generalKeys = new Dictionary<string, List<string>>(defaultKeys);
+    public static Dictionary<string, List<string>> generalKeys = new Dictionary<string, List<string>>();
     /// <summary>
     /// Dictionary storing the various keybindings in effect during the current encounter.
     /// Can be modified through various Input functions.
     /// </summary>
-    public static Dictionary<string, List<string>> encounterKeys = new Dictionary<string, List<string>>(generalKeys);
-
-    /// <summary>
-    /// List of known axes keys, for quick computation
-    /// </summary>
-    private static List<string> knownAxes = new List<string>();
+    public static Dictionary<string, List<string>> encounterKeys = new Dictionary<string, List<string>>();
 
     /// <summary>
     /// This function is executed whenever this object is created.
     /// </summary>
     public KeyboardInput() {
+        foreach (KeyValuePair<string, List<string>> keybind in defaultKeys) {
+            generalKeys[keybind.Key] = new List<string>(keybind.Value);
+            encounterKeys[keybind.Key] = new List<string>(keybind.Value);
+        }
+
         for (int controller = 1; controller <= controllers; controller++) {
             for (int axis = 1; axis <= axesNumber; axis++) {
                 string axisName;
@@ -73,13 +77,17 @@ public class KeyboardInput : IUndertaleInput {
     /// This function resets the user's keybindings after a battle, in case they were tampered with during it.
     /// </summary>
     public static void ResetEncounterInputs() {
-        encounterKeys = new Dictionary<string, List<string>>(generalKeys);
+        encounterKeys.Clear();
+        foreach (KeyValuePair<string, List<string>> keybind in generalKeys)
+            encounterKeys[keybind.Key] = new List<string>(keybind.Value);
     }
     /// <summary>
     /// This function resets the user's keybindings, it should only be used when the user asks to reset all keybindings to their default.
     /// </summary>
     public static void ResetInputs() {
-        generalKeys = new Dictionary<string, List<string>>(defaultKeys);
+        generalKeys.Clear();
+        foreach (KeyValuePair<string, List<string>> keybind in defaultKeys)
+            generalKeys[keybind.Key] = new List<string>(keybind.Value);
         ResetEncounterInputs();
     }
     /// <summary>
@@ -89,7 +97,7 @@ public class KeyboardInput : IUndertaleInput {
     public static void ResetSpecificInput(string keybind) {
         if (defaultKeys[keybind] == null)
             throw new CYFException("CYF doesn't know the default keybind \"" + keybind + "\". Please refer to the list of known default keybinds in the Input object page of the documentation.");
-        generalKeys[keybind] = defaultKeys[keybind];
+        generalKeys[keybind] = new List<string>(defaultKeys[keybind]);
     }
 
     /// <summary>
@@ -232,7 +240,7 @@ public class KeyboardInput : IUndertaleInput {
         ResetEncounterInputs();
     }
     /// <summary>
-    /// This function loads the player's keybinding configuration stored in their AlMightyGlobals.
+    /// This function saves the player's keybinding configuration into their AlMightyGlobals.
     /// </summary>
     public static void SaveKeybinds(Dictionary<string, List<string>> newKeys) {
         foreach (string key in newKeys.Keys) {
@@ -240,7 +248,9 @@ public class KeyboardInput : IUndertaleInput {
             string keysString = string.Join("|", keys.ToArray());
             LuaScriptBinder.SetAlMighty(null, "CYFKeybind" + key, DynValue.NewString(keysString));
         }
-        generalKeys = newKeys;
+        generalKeys.Clear();
+        foreach (KeyValuePair<string, List<string>> keybind in newKeys)
+            generalKeys[keybind.Key] = new List<string>(keybind.Value);
         ResetEncounterInputs();
     }
 
@@ -338,6 +348,11 @@ public class KeyboardInput : IUndertaleInput {
         return result;
     }
 
+    /// <summary>
+    /// This function returns the state of the selected axis key.
+    /// </summary>
+    /// <param name="axisKey">Axis key to check for.</param>
+    /// <returns>The state of the selected axis key</returns>
     public static ButtonState StateForAxis(string axisKey) {
         int state = 0;
         string axisName = axisKey.Substring(0, axisKey.Length - 2);
@@ -356,6 +371,9 @@ public class KeyboardInput : IUndertaleInput {
         return (ButtonState)state;
     }
 
+    /// <summary>
+    /// This function is run after all other Update() calls within the engine are run.
+    /// </summary>
     public void LateUpdate() {
         string[] axesNames = axes.Keys.ToArray();
         foreach (string axis in axesNames)
