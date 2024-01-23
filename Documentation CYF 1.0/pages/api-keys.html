@@ -497,6 +497,27 @@ it's w3c valid, at least
                 </tr>
             </table>
             </p>
+
+            <br><p>
+            <h4><span class="new">Controller Buttons:</span></h4>
+            All controller buttons follow the same format: <span class="term">JoystickXButtonY</span>
+            <br>X represents the number of the controller currently in use, between 1 and 8.
+            <br>Y represents the number of the button checked, between 0 and 19.
+            <br><br><u>Note:</u> It is not recommended to directly query a user's controller inputs, as these can greatly vary between users.
+            It would be best to make a keybind and let the user bind their controller buttons to it, or to restrict yourself to standard CYF keys.
+            </p>
+
+            <br><p>
+            <h4><span class="new">Controller Axes (Joysticks, D-Pad, Triggers...):</h4>
+            Most controller axes follow the same format: <span class="term">AxisX-Y +</span> or <span class="term">AxisX-Y -</span>
+            <br>X represents the number of the axis currently checked, between 3 and 10.
+            <br>Y represents the number of the controller currently in use, between 1 and 2. CYF currently only handles axes for up to 2 controllers.
+            <br><br>Axes 1 and 2 have specific names: Axis 1 is named <span class="term">HorizontalY</span>, while Axis 2 is named
+            <span class="term">VerticalY</span>, following the same scheme as above.
+            <br><br><u>Note:</u> It is not recommended to directly query a user's controller inputs except for <span class="term">HorizontalY</span> and
+            <span class="term">VerticalY</span>, as these can greatly vary between users.
+            It would be best to make a keybind and let the user bind their controller buttons to it, or to restrict yourself to standard CYF keys.
+            </p>
         </div>
 
         <div class="tab-pane text-style" id="mercy">
