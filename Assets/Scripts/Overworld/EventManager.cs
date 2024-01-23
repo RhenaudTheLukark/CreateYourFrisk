@@ -211,7 +211,7 @@ public class EventManager : MonoBehaviour {
                 // Run an available auto event
                 if (TestEventAuto()) return;
                 // If the Player pressed the Confirm key, check if it's in range of a button press event
-                if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED && !passPressOnce && (GameObject.Find("FadingBlack") == null || GameObject.Find("FadingBlack").GetComponent<Fading>().alpha <= 0)) {
+                if (GlobalControls.input.Confirm == ButtonState.PRESSED && !passPressOnce && (GameObject.Find("FadingBlack") == null || GameObject.Find("FadingBlack").GetComponent<Fading>().alpha <= 0)) {
                     RaycastHit2D hit;
                     TestEventPress(PlayerOverworld.instance.lastMove.x, PlayerOverworld.instance.lastMove.y, out hit);
                 } else
@@ -1203,13 +1203,13 @@ end";
 
         // Main loop of the choice dialogue
         while (true) {
-            int xMov = GlobalControls.input.Right == UndertaleInput.ButtonState.PRESSED ? 1 : GlobalControls.input.Left == UndertaleInput.ButtonState.PRESSED ? -1 : 0;
+            int xMov = GlobalControls.input.Right == ButtonState.PRESSED ? 1 : GlobalControls.input.Left == ButtonState.PRESSED ? -1 : 0;
             // Move the soul in front of the current selected option if one of the Left or Right keys are pressed
             if (xMov != 0) {
                 actualChoice = UnitaleUtil.SelectionChoice(2, actualChoice, xMov, 0, 1, 2, false);
                 SetPlayerOnSelection(actualChoice, question, !oneLiners[actualChoice]);
             // Confirm the selected option if a Confirm key is pressed
-            } else if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED)
+            } else if (GlobalControls.input.Confirm == ButtonState.PRESSED)
                 if (!_textManager.LineComplete() && _textManager.CanSkip())
                     _textManager.SkipLine();
                 else
@@ -1381,7 +1381,7 @@ end";
         }
 
         // Wait until the Player presses a Confirm key
-        while (GlobalControls.input.Confirm != UndertaleInput.ButtonState.PRESSED)
+        while (GlobalControls.input.Confirm != ButtonState.PRESSED)
             yield return 0;
 
         scr.Call("CYFEventNextCommand");
@@ -1770,16 +1770,16 @@ end";
         bool end = false;
         while (true) {
             // Move the soul in front of the current selected option if one of the Left or Right keys are pressed
-            if (GlobalControls.input.Left == UndertaleInput.ButtonState.PRESSED || GlobalControls.input.Right == UndertaleInput.ButtonState.PRESSED) {
+            if (GlobalControls.input.Left == ButtonState.PRESSED || GlobalControls.input.Right == ButtonState.PRESSED) {
                 PlayerOverworld.instance.utHeart.transform.position = new Vector3((save ? 331 : 151) + Camera.main.transform.position.x - 320,
                                                                                   PlayerOverworld.instance.utHeart.transform.position.y,
                                                                                   PlayerOverworld.instance.utHeart.transform.position.z);
                 save = !save;
             // Select automatically "Return" if a Cancel key has been pressed
-            } else if (GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED) {
+            } else if (GlobalControls.input.Cancel == ButtonState.PRESSED) {
                 end = true;
             // Choose the currently selected option if a Confirm key has been pressed
-            } else if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED) {
+            } else if (GlobalControls.input.Confirm == ButtonState.PRESSED) {
                 if (save) {
                     // Save the game
                     SaveLoad.Save(true);
@@ -1803,7 +1803,7 @@ end";
                     do {
                         passPressOnce = true;
                         yield return 0;
-                    } while (GlobalControls.input.Confirm != UndertaleInput.ButtonState.PRESSED);
+                    } while (GlobalControls.input.Confirm != ButtonState.PRESSED);
                 }
                 end = true;
             }

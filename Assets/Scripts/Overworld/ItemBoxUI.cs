@@ -77,7 +77,7 @@ public class ItemBoxUI : MonoBehaviour {
 
     // Update is called once per frame
     private void Update() {
-        if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED) {
+        if (GlobalControls.input.Confirm == ButtonState.PRESSED) {
             List<UnderItem> selectedInv = inventoryColumn ? Inventory.inventory : ItemBox.items;
             List<UnderItem> otherInv = inventoryColumn ? ItemBox.items : Inventory.inventory;
             int otherInvCapacity = inventoryColumn ? ItemBox.capacity : Inventory.inventorySize;
@@ -99,27 +99,27 @@ public class ItemBoxUI : MonoBehaviour {
                 UnitaleUtil.PlaySound("SeparateSound", "menumove");
             RefreshDisplay();
 
-        } else if (GlobalControls.input.Up == UndertaleInput.ButtonState.PRESSED) {
+        } else if (GlobalControls.input.Up == ButtonState.PRESSED) {
             lineIndex--;
             if (lineIndex < 0)
                 lineIndex = (inventoryColumn ? Inventory.inventorySize : ItemBox.capacity) - 1;
             UnitaleUtil.PlaySound("SeparateSound", "menumove");
             RefreshDisplay();
 
-        } else if (GlobalControls.input.Down == UndertaleInput.ButtonState.PRESSED) {
+        } else if (GlobalControls.input.Down == ButtonState.PRESSED) {
             lineIndex++;
             if (lineIndex >= (inventoryColumn ? Inventory.inventorySize : ItemBox.capacity))
                 lineIndex = 0;
             UnitaleUtil.PlaySound("SeparateSound", "menumove");
             RefreshDisplay();
 
-        } else if (GlobalControls.input.Left == UndertaleInput.ButtonState.PRESSED || GlobalControls.input.Right == UndertaleInput.ButtonState.PRESSED) {
+        } else if (GlobalControls.input.Left == ButtonState.PRESSED || GlobalControls.input.Right == ButtonState.PRESSED) {
             if (lineIndex >= Inventory.inventorySize || lineIndex >= ItemBox.capacity) return;
             inventoryColumn = !inventoryColumn;
             UnitaleUtil.PlaySound("SeparateSound", "menumove");
             RefreshDisplay();
 
-        } else if (GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED) {
+        } else if (GlobalControls.input.Cancel == ButtonState.PRESSED) {
             UnitaleUtil.PlaySound("SeparateSound", "menumove");
             DestroySelf();
         }

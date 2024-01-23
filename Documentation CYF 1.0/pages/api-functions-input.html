@@ -66,17 +66,44 @@ it's w3c valid, at least
             <br>
             <p>
                 Here follows a list of other variables and functions available within the Input object.
-            </p>
+                <br><span class="new"></span> Keep in mind that the <span class="ref">Key List</span> page shows a list of most available keys within the engine.
+            </p><br>
             <ul>
                 <li><span class="CYF"></span> <span class="number"></span> <span class="term">Input.MousePosX</span> (readonly) - Returns the X position of the mouse relative to the
                 bottom left corner of the screen. (from <span class="term">0</span> to <span class="term">639</span>)</li><br>
+
                 <li><span class="CYF"></span> <span class="number"></span> <span class="term">Input.MousePosY</span> (readonly) - Returns the Y position of the mouse relative to the
                 bottom left corner of the screen. (from <span class="term">0</span> to <span class="term">479</span>)</li><br>
+
                 <li><span class="CYF"></span> <span class="boolean"></span> <span class="term">Input.IsMouseInWindow</span> (readonly) - Returns true if the mouse is in the window, false
                 otherwise.</li><br>
+
                 <li><span class="CYF"></span> <span class="number"></span> <span class="term">Input.MouseScroll</span> (readonly) - Returns a number representing the change in the user's scroll wheel position (or movement supplied by the trackpad when using a Mac). <span class="term">0</span> represents no movement, while a positive number means the user is scrolling up, and a negative number means the user is scrolling down.</li><br>
-                <li><span class="CYF"></span> <span class="number"></span> <span class="term">Input.GetKey(<span class="string"></span> keyname)</span> - Gets the state of the given key.
-                <br>Check the <span class="ref">Key List</span> page to see the available keys.</li><br>
+
+                <li><span class="CYF"></span> <span class="number"></span> <span class="term">Input.GetKey(<span class="string"></span> keyname)</span> - Gets the state of the given key.</li><br>
+
+                <li><span class="CYF new"></span> <span class="term">Input.CreateKeybind(<span class="string"></span> name, <span class="luatable"><span class="string"></span></span> keys = { })</span> - Creates a keybind, which can be used as a shortcut to get the state of several keys at the same time.
+                <br>For quick setup, you can give it a list of keys to bind to it immediately, or you can only give it a name and use the functions <span class="term">Input.SetKeybindKeys()</span> or <span class="term">Input.BindKeyToKeybind()</span> to bind keys to it afterwards.</li><br>
+
+                <li><span class="CYF new"></span> <span class="term">Input.RemoveKeybind(<span class="string"></span> name</span> - Completely removes an existing keybind.
+                <br>Note that base CYF keybinds cannot be deleted, as it would cause errors when the engine tries to fetch them.</li><br>
+
+                <li><span class="CYF new"></span> <span class="term">Input.SetKeybindKeys(<span class="string"></span> name, <span class="luatable"><span class="string"></span></span> keys)</span> OR <span class="term">Input[<span class="string"></span> name] = <span class="luatable"><span class="string"></span></span> keys</span>  - Replaces a keybind's list of bound keys with the given list of keys, erasing any keys set before running this function.</li><br>
+
+                <li><span class="CYF new"></span> <span class="boolean"></span> <span class="term">Input.BindKeyToKeybind(<span class="string"></span> name, <span class="string"></span> key)</span> - Adds a key to the keys bound to the given keybind. Returns true if the key was successfully bound to the keybind, false otherwise.
+                <br>If the key is already bound to the given keybind, nothing will happen and this function will return false.</li><br>
+
+                <li><span class="CYF new"></span> <span class="boolean"></span> <span class="term">Input.UnbindKeyFromKeybind(<span class="string"></span> name, <span class="string"></span> key)</span> - Removes a key from the keys bound to the given keybind. Returns true if the key was successfully unbound from the keybind, false otherwise.
+                <br>If the key is not bound to the given keybind, nothing will happen and this function will return false.</li><br>
+
+                <li><span class="CYF new"></span> <span class="number"></span> <span class="term">Input.GetKeybind(<span class="string"></span> name)</span> OR <span class="term">Input[<span class="string"></span> name]</span> - Gets the state of the given keybind.</li><br>
+
+                <li><span class="CYF new"></span> <span class="luatable"><span class="string"></span></span> <span class="term">Input.GetKeybindKeys(<span class="string"></span> name)</span> - Returns a table of the keys currently bound to the given keybind.</li><br>
+
+                <li><span class="CYF new"></span> <span class="luatable"><span class="luatable"><span class="string"></span></span></span> <span class="term">Input.GetKeybindConflicts()</span> - Returns a table containing one table for each existing keybind conflict. Each conflict table contains as its first value the key that currently has a conflict, with each following values being the keybinds containing this key.
+                <br>Example: If the key <span class="term">T</span> is bound to both keybinds <span class="term">Confirm</span> and <span class="term">Cancel</span>, then the resulting conflict table will be <span class="term">{ "T", "Confirm", "Cancel" }</span>.</li><br>
+
+                <li><span class="CYF new"></span> <span class="term">Input.ResetKeybinds()</span></span> - Resets all created and modified keybinds within the encounter, effectively wiping any keybind changes made in this encounter.</li><br>
             </ul>
         </div>
 

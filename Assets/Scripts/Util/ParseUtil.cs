@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using UnityEngine;
 
 public static class ParseUtil {
@@ -39,5 +40,15 @@ public static class ParseUtil {
         if (allowAlpha)
             intColor = (intColor << 8) + (ulong)Mathf.RoundToInt(c.a * 255);
         return intColor.ToString("X" + (allowAlpha ? 8 : 6));
+    }
+
+    public static bool TryParseEnum<T>(Type type, string value, out T result) {
+        try {
+            result = (T)Enum.Parse(type, value);
+        } catch {
+            result = default(T);
+            return false;
+        }
+        return true;
     }
 }

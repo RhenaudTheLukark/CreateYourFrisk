@@ -59,7 +59,7 @@ public class EnterNameScript : MonoBehaviour {
             tmName.SetTextQueue(new[] { new TextMessage(playerName, false, true) });
             tmName.MoveTo(-calcTotalLength(tmName) / 2, tmName.transform.localPosition.y);
         }
-        if (GlobalControls.input.Down == UndertaleInput.ButtonState.PRESSED) {
+        if (GlobalControls.input.Down == ButtonState.PRESSED) {
             switch (choiceLetter) {
                 case "Quit":      setColor("A");                  break;
                 case "Backspace": setColor("D");                  break;
@@ -80,7 +80,7 @@ public class EnterNameScript : MonoBehaviour {
                 case "z":         setColor("Backspace");          break;
                 default:          setColor(choiceLetter[0] + 7);  break;
             }
-        } else if (GlobalControls.input.Up == UndertaleInput.ButtonState.PRESSED) {
+        } else if (GlobalControls.input.Up == ButtonState.PRESSED) {
             switch (choiceLetter) {
                 case "Quit":      setColor("v");                  break;
                 case "Backspace": setColor("y");                  break;
@@ -101,7 +101,7 @@ public class EnterNameScript : MonoBehaviour {
                 case "G":         setColor("Done");               break;
                 default:          setColor(choiceLetter[0] - 7);  break;
             }
-        } else if (GlobalControls.input.Right == UndertaleInput.ButtonState.PRESSED) {
+        } else if (GlobalControls.input.Right == ButtonState.PRESSED) {
             switch (choiceLetter) {
                 case "Quit":      setColor("Backspace");         break;
                 case "Backspace": setColor("Done");              break;
@@ -116,7 +116,7 @@ public class EnterNameScript : MonoBehaviour {
                 case "z":         setColor(choiceLetter[0] - 4); break;
                 default:          setColor(choiceLetter[0] + 1); break;
             }
-        } else if (GlobalControls.input.Left == UndertaleInput.ButtonState.PRESSED) {
+        } else if (GlobalControls.input.Left == ButtonState.PRESSED) {
             switch (choiceLetter) {
                 case "Quit":      setColor("Done");              break;
                 case "Backspace": setColor("Quit");              break;
@@ -131,7 +131,7 @@ public class EnterNameScript : MonoBehaviour {
                 case "v":         setColor(choiceLetter[0] + 4); break;
                 default:          setColor(choiceLetter[0] - 1); break;
             }
-        } else if (GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED) {
+        } else if (GlobalControls.input.Cancel == ButtonState.PRESSED) {
             weirdBackspaceShift = true;
             if (playerName.Length > 0)
                 playerName = playerName.Substring(0, playerName.Length - 1);
@@ -139,7 +139,7 @@ public class EnterNameScript : MonoBehaviour {
                 weirdBackspaceShift = false;
             tmName.SetTextQueue(new[] { new TextMessage(playerName, false, true) });
             tmName.MoveTo(-calcTotalLength(tmName) / 2, tmName.transform.localPosition.y);
-        } else if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED) {
+        } else if (GlobalControls.input.Confirm == ButtonState.PRESSED) {
             switch (choiceLetter) {
                 case "Quit":
                     GameObject.Find("Main Camera").GetComponent<AudioSource>().Stop();
@@ -200,13 +200,13 @@ public class EnterNameScript : MonoBehaviour {
         GameObject.Find("Done").GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, isForbidden ? 0 : 1);
         float diff = calcTotalLength(tmName)*2;
         float actualX = tmName.transform.localPosition.x, actualY = tmName.transform.localPosition.y;
-        while (GlobalControls.input.Confirm != UndertaleInput.ButtonState.PRESSED) {
+        while (GlobalControls.input.Confirm != ButtonState.PRESSED) {
             if (tmName.transform.localScale.x < 3) {
                 float scale = Mathf.Min(3, tmName.transform.localScale.x + 0.01f);
                 tmName.transform.localScale = new Vector3(scale, scale, 1);
                 tmName.MoveTo(actualX - (tmName.transform.localScale.x - 1) * diff / 2, actualY - (tmName.transform.localScale.x - 1) * diff / 6);
             }
-            if ((GlobalControls.input.Left == UndertaleInput.ButtonState.PRESSED || GlobalControls.input.Right == UndertaleInput.ButtonState.PRESSED)
+            if ((GlobalControls.input.Left == ButtonState.PRESSED || GlobalControls.input.Right == ButtonState.PRESSED)
                     && GameObject.Find("Done").GetComponent<SpriteRenderer>().enabled &&!isForbidden) {
                 setColor(choiceLetter == "Quit" ? "Done": "Quit");
                 uiAudio.PlayOneShot(AudioClipRegistry.GetSound("menumove"));

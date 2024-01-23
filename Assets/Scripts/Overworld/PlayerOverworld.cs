@@ -222,12 +222,12 @@ public class PlayerOverworld : MonoBehaviour {
             try {
                 if (textmgr.CanAutoSkipAll())
                     NextText();
-                if (GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED && !textmgr.LineComplete() && textmgr.CanSkip()) {
+                if (GlobalControls.input.Cancel == ButtonState.PRESSED && !textmgr.LineComplete() && textmgr.CanSkip()) {
                     if (EventManager.instance.script != null && EventManager.instance.script.GetVar("playerskipdocommand").Boolean)
                         textmgr.DoSkipFromPlayer();
                     else
                         textmgr.SkipLine();
-                } else if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED && !EventManager.instance.passPressOnce)
+                } else if (GlobalControls.input.Confirm == ButtonState.PRESSED && !EventManager.instance.passPressOnce)
                     NextText();
             } catch { /* ignored */ }
         }
@@ -259,8 +259,8 @@ public class PlayerOverworld : MonoBehaviour {
         int currentDirection = 0;
         //If you locked the player, do nothing
         if (!PlayerNoMove) {
-            horizontal = (int)(Input.GetAxisRaw("Horizontal"));
-            vertical = (int)(Input.GetAxisRaw("Vertical"));
+            horizontal = (int)(Input.GetAxisRaw("Horizontal1"));
+            vertical = (int)(Input.GetAxisRaw("Vertical1"));
             //Just some animations switches
             if (animator.movementDirection == 0) {
                 if (GlobalControls.input.Up > 0)         currentDirection = 8;
@@ -268,10 +268,10 @@ public class PlayerOverworld : MonoBehaviour {
                 else if (GlobalControls.input.Right > 0) currentDirection = 6;
                 else if (GlobalControls.input.Left > 0)  currentDirection = 4;
             }
-            if (GlobalControls.input.Up == UndertaleInput.ButtonState.PRESSED)         currentDirection = 8;
-            else if (GlobalControls.input.Right == UndertaleInput.ButtonState.PRESSED) currentDirection = 6;
-            else if (GlobalControls.input.Left == UndertaleInput.ButtonState.PRESSED)  currentDirection = 4;
-            else if (GlobalControls.input.Down == UndertaleInput.ButtonState.PRESSED)  currentDirection = 2;
+            if (GlobalControls.input.Up == ButtonState.PRESSED)         currentDirection = 8;
+            else if (GlobalControls.input.Right == ButtonState.PRESSED) currentDirection = 6;
+            else if (GlobalControls.input.Left == ButtonState.PRESSED)  currentDirection = 4;
+            else if (GlobalControls.input.Down == ButtonState.PRESSED)  currentDirection = 2;
             if ((animator.beginAnim.Contains("Up") && GlobalControls.input.Up <= 0) ||  (animator.beginAnim.Contains("Right") && GlobalControls.input.Right <= 0) ||
                 (animator.beginAnim.Contains("Left") && GlobalControls.input.Left <= 0) ||  (animator.beginAnim.Contains("Down") && GlobalControls.input.Down <= 0)) {
                 if (horizontal < 0)      currentDirection = 4;
@@ -286,7 +286,7 @@ public class PlayerOverworld : MonoBehaviour {
         if (!isBeingMoved)
             isMoving = AttemptMove(horizontal, vertical);
 
-        if (GlobalControls.input.Menu == UndertaleInput.ButtonState.PRESSED)
+        if (GlobalControls.input.Menu == ButtonState.PRESSED)
             if (menuRunning[2] && !menuRunning[3] && !menuRunning[4])
                 CloseMenu(true);
         menuRunning[4] = false;
@@ -702,13 +702,13 @@ public class PlayerOverworld : MonoBehaviour {
         yield return 0;
         while (!instance.menuRunning[3]) {
             if (!instance.menuRunning[0]) {
-                if (GlobalControls.input.Up == UndertaleInput.ButtonState.PRESSED) {
+                if (GlobalControls.input.Up == ButtonState.PRESSED) {
                     choice = (choice + 1) % 3;
                     GameObject.Find("utHeartMenu").transform.localPosition = new Vector3(-255, 35 - ((2 - choice % 3) * 36), GameObject.Find("utHeartMenu").transform.position.z);
-                } else if (GlobalControls.input.Down == UndertaleInput.ButtonState.PRESSED) {
+                } else if (GlobalControls.input.Down == ButtonState.PRESSED) {
                     choice = (choice + 2) % 3;
                     GameObject.Find("utHeartMenu").transform.localPosition = new Vector3(-255, 35 - ((2 - choice % 3) * 36), GameObject.Find("utHeartMenu").transform.position.z);
-                } else if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED) {
+                } else if (GlobalControls.input.Confirm == ButtonState.PRESSED) {
                     instance.uiAudio.PlayOneShot(AudioClipRegistry.GetSound("menuconfirm"));
                     instance.menuRunning[0] = true;
                     switch (choice) {
@@ -738,15 +738,15 @@ public class PlayerOverworld : MonoBehaviour {
                                 int index = 0;
                                 yield return 0;
                                 while (instance.menuRunning[0] && !instance.menuRunning[1] && !instance.menuRunning[3]) {
-                                    if (GlobalControls.input.Down == UndertaleInput.ButtonState.PRESSED) {
+                                    if (GlobalControls.input.Down == ButtonState.PRESSED) {
                                         index = (index + 1) % invCount;
                                         instance.uiAudio.PlayOneShot(AudioClipRegistry.GetSound("menumove"));
                                         GameObject.Find("utHeartMenu").transform.localPosition = new Vector3(-48, 143 - 32 * index, GameObject.Find("utHeartMenu").transform.position.z);
-                                    } else if (GlobalControls.input.Up == UndertaleInput.ButtonState.PRESSED) {
+                                    } else if (GlobalControls.input.Up == ButtonState.PRESSED) {
                                         index = (index + invCount - 1) % invCount;
                                         instance.uiAudio.PlayOneShot(AudioClipRegistry.GetSound("menumove"));
                                         GameObject.Find("utHeartMenu").transform.localPosition = new Vector3(-48, 143 - 32 * index, GameObject.Find("utHeartMenu").transform.position.z);
-                                    } else if (GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED) {
+                                    } else if (GlobalControls.input.Cancel == ButtonState.PRESSED) {
                                         instance.menuRunning[0] = false;
                                         for (int i = 7; i <= 17; i++) txtmgrs[i].DestroyChars();
                                         GameObject.Find("Mugshot").GetComponent<Image>().color                = new Color(1, 1, 1, 0);
@@ -755,14 +755,14 @@ public class PlayerOverworld : MonoBehaviour {
                                         GameObject.Find("item_border_outer").GetComponent<Image>().color      = new Color(1, 1, 1, 0);
                                         GameObject.Find("item_interior").GetComponent<Image>().color          = new Color(0, 0, 0, 0);
                                         GameObject.Find("utHeartMenu").transform.localPosition                = new Vector3(-255, 35 - ((2 - choice % 3) * 36), GameObject.Find("utHeartMenu").transform.position.z);
-                                    } else if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED) {
+                                    } else if (GlobalControls.input.Confirm == ButtonState.PRESSED) {
                                         instance.menuRunning[1] = true;
                                         instance.uiAudio.PlayOneShot(AudioClipRegistry.GetSound("menuconfirm"));
                                         int index2 = 0;
                                         GameObject.Find("utHeartMenu").transform.localPosition = new Vector3(-48, -137, GameObject.Find("utHeartMenu").transform.position.z); // -53,42,156
                                         yield return 0;
                                         while (instance.menuRunning[1] && !instance.menuRunning[3]) {
-                                            if (GlobalControls.input.Left == UndertaleInput.ButtonState.PRESSED) {
+                                            if (GlobalControls.input.Left == ButtonState.PRESSED) {
                                                 instance.uiAudio.PlayOneShot(AudioClipRegistry.GetSound("menumove"));
                                                 index2 = (index2 + 2) % 3;
                                                 switch (index2) {
@@ -770,7 +770,7 @@ public class PlayerOverworld : MonoBehaviour {
                                                     case 1: GameObject.Find("utHeartMenu").transform.localPosition = new Vector3(47,  -137, GameObject.Find("utHeartMenu").transform.position.z); break;
                                                     case 2: GameObject.Find("utHeartMenu").transform.localPosition = new Vector3(161, -137, GameObject.Find("utHeartMenu").transform.position.z); break;
                                                 }
-                                            } else if (GlobalControls.input.Right == UndertaleInput.ButtonState.PRESSED) {
+                                            } else if (GlobalControls.input.Right == ButtonState.PRESSED) {
                                                 instance.uiAudio.PlayOneShot(AudioClipRegistry.GetSound("menumove"));
                                                 index2 = (index2 + 1) % 3;
                                                 switch (index2) {
@@ -778,10 +778,10 @@ public class PlayerOverworld : MonoBehaviour {
                                                     case 1: GameObject.Find("utHeartMenu").transform.localPosition = new Vector3(47,  -137, GameObject.Find("utHeartMenu").transform.position.z); break;
                                                     case 2: GameObject.Find("utHeartMenu").transform.localPosition = new Vector3(161, -137, GameObject.Find("utHeartMenu").transform.position.z); break;
                                                 }
-                                            } else if (GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED) {
+                                            } else if (GlobalControls.input.Cancel == ButtonState.PRESSED) {
                                                 GameObject.Find("utHeartMenu").transform.localPosition = new Vector3(-48, 143 - 32 * index, GameObject.Find("utHeartMenu").transform.position.z);
                                                 instance.menuRunning[1]                                = false;
-                                            } else if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED) {
+                                            } else if (GlobalControls.input.Confirm == ButtonState.PRESSED) {
                                                 instance.uiAudio.PlayOneShot(AudioClipRegistry.GetSound("menuconfirm"));
                                                 for (int i = 7; i <= 17; i++) txtmgrs[i].DestroyChars();
                                                 GameObject.Find("item_border_outer").GetComponent<Image>().color = new Color(1,   1,   1,   0);
@@ -867,7 +867,7 @@ public class PlayerOverworld : MonoBehaviour {
                             GameObject.Find("stat_interior").GetComponent<Image>().color          = new Color(0, 0, 0, 1);
                             yield return 0;
                             while (instance.menuRunning[0] && !instance.menuRunning[3]) {
-                                if (GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED || GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED) {
+                                if (GlobalControls.input.Cancel == ButtonState.PRESSED || GlobalControls.input.Confirm == ButtonState.PRESSED) {
                                     GameObject.Find("utHeartMenu").GetComponent<Image>().color = new Color(c.r, c.g, c.b, 1);
                                     instance.uiAudio.PlayOneShot(AudioClipRegistry.GetSound("menuconfirm"));
                                     instance.menuRunning[0] = false;
@@ -889,7 +889,7 @@ public class PlayerOverworld : MonoBehaviour {
                             instance.textmgr.transform.parent.parent.SetAsLastSibling();
                             break;
                     }
-                } else if (GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED)
+                } else if (GlobalControls.input.Cancel == ButtonState.PRESSED)
                     yield return CloseMenu(true);
             }
             yield return 0;

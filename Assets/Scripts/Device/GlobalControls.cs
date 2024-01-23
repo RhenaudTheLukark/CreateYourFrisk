@@ -17,7 +17,7 @@ public class GlobalControls : MonoBehaviour {
     public static int frame;                        // Frame counter used for logging purposes
     public static float overworldTimestamp = 0f;    // Timestamp of the creation of the save file, mostly used to know the time spent in this save in the save and load screen
 
-    public static UndertaleInput input = new KeyboardInput();               // KeyboardInput singleton, registering any key press the Player does and handling them
+    public static IUndertaleInput input = new KeyboardInput();              // KeyboardInput singleton, registering any key press the Player does and handling them
     public static LuaInputBinding luaInput = new LuaInputBinding(input);    // Input Lua object, usable on the Lua side
 
     public static string realName;      // Player's name in the overworld, given through the scene EnterName
@@ -30,7 +30,7 @@ public class GlobalControls : MonoBehaviour {
     public static bool allowWipeSave;   // Allows you to wipe your save in the Error scene if it couldn't load properly
     private bool screenShaking;         // True if a screenshake is occuring, false otherwise
 
-    public static string[] nonOWScenes = { "Battle", "Error", "ModSelect", "Options", "TitleScreen", "Disclaimer", "EnterName", "TransitionOverworld", "Intro" };   // Scenes in which you're not considered to be in the overworld
+    public static string[] nonOWScenes = { "Battle", "Error", "ModSelect", "Options", "TitleScreen", "Disclaimer", "EnterName", "TransitionOverworld", "Intro", "KeybindSettings" };   // Scenes in which you're not considered to be in the overworld
     public static string[] canTransOW = { "Battle", "Error" };  // Scenes from which you can enter the overworld
 
     public static Dictionary<string, GameState.MapData> GameMapData = new Dictionary<string, GameState.MapData>();              // Main save data on each map the Player has visited before
@@ -167,7 +167,7 @@ public class GlobalControls : MonoBehaviour {
             else                                                          UIController.EndBattle();
         }
         // Open the Menu in the Overworld
-        else if (input.Menu == UndertaleInput.ButtonState.PRESSED && !nonOWScenes.Contains(sceneName) && !isInFight && !isInShop && (!GameOverBehavior.gameOverContainerOw || !GameOverBehavior.gameOverContainerOw.activeInHierarchy)) {
+        else if (input.Menu == ButtonState.PRESSED && !nonOWScenes.Contains(sceneName) && !isInFight && !isInShop && (!GameOverBehavior.gameOverContainerOw || !GameOverBehavior.gameOverContainerOw.activeInHierarchy)) {
             if (!PlayerOverworld.instance.PlayerNoMove && EventManager.instance.script == null && !PlayerOverworld.instance.menuRunning[2] && !PlayerOverworld.instance.menuRunning[4] && (GameObject.Find("FadingBlack") == null || GameObject.Find("FadingBlack").GetComponent<Fading>().alpha <= 0))
                 StartCoroutine(PlayerOverworld.LaunchMenu());
         }
@@ -184,6 +184,13 @@ public class GlobalControls : MonoBehaviour {
             if (!Screen.fullScreen)
                 StartCoroutine(UpdateMonitorSize());
         }
+    }
+
+    /// <summary>
+    /// Runs pnce per frame, after all other update functions are run.
+    /// </summary>
+    public void LateUpdate() {
+        input.LateUpdate();
     }
 
     /// <summary>

@@ -145,7 +145,7 @@ const isNew = [
     "Special Variables", "Text Commands", "Game Events",
     "The Text Object", "The Arena Object", "The UI Object",
     "Projectile Management", "Sprites &amp; Animation",
-    "General Objects", "Item List" ];
+    "General Objects", "Item List", "The Input Object" ];
 
 // Categories with a <CYF> prefix
 // Used for categories only added during CYF's development

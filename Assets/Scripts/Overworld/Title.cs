@@ -58,7 +58,7 @@ public class Title : MonoBehaviour {
 
     // Update is called once per frame
     private void Update() {
-        if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED && phase == 0) {
+        if (GlobalControls.input.Confirm == ButtonState.PRESSED && phase == 0) {
             phase++;
             Camera.main.GetComponent<AudioSource>().Stop();
             Destroy(RetromodeCanvas);
@@ -106,11 +106,11 @@ public class Title : MonoBehaviour {
                                                                              + "Tell me if you have any more problems, and thanks for following my fork! ^^\n\n");
                     }
                 } else {
-                    if (GlobalControls.input.Right == UndertaleInput.ButtonState.PRESSED || GlobalControls.input.Left == UndertaleInput.ButtonState.PRESSED)
+                    if (GlobalControls.input.Right == ButtonState.PRESSED || GlobalControls.input.Left == ButtonState.PRESSED)
                         setColor(choiceLetter == 2 ? 2 : (choiceLetter + 1) % 2);
-                    if (GlobalControls.input.Up == UndertaleInput.ButtonState.PRESSED || GlobalControls.input.Down == UndertaleInput.ButtonState.PRESSED)
+                    if (GlobalControls.input.Up == ButtonState.PRESSED || GlobalControls.input.Down == ButtonState.PRESSED)
                         setColor(choiceLetter == 2 ? 0 : 2);
-                    else if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED)
+                    else if (GlobalControls.input.Confirm == ButtonState.PRESSED)
                         switch (choiceLetter) {
                             case 0:
                                 phase = -1;
@@ -137,9 +137,9 @@ public class Title : MonoBehaviour {
                     tmName.MoveTo(actualX - ((tmName.transform.localScale.x - 1) * diff / 2),
                                   actualY - ((tmName.transform.localScale.x - 1) * diff / 6));
                 }
-                if (GlobalControls.input.Right == UndertaleInput.ButtonState.PRESSED || GlobalControls.input.Left == UndertaleInput.ButtonState.PRESSED)
+                if (GlobalControls.input.Right == ButtonState.PRESSED || GlobalControls.input.Left == ButtonState.PRESSED)
                     setColor((choiceLetter + 1) % 2, 2);
-                else if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED) {
+                else if (GlobalControls.input.Confirm == ButtonState.PRESSED) {
                     if (choiceLetter == 1) {
                         Camera.main.GetComponent<AudioSource>().Stop();
                         Camera.main.GetComponent<AudioSource>().PlayOneShot(AudioClipRegistry.GetSound("intro_holdup"));

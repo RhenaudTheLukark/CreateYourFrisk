@@ -436,8 +436,8 @@ public class ShopScript : MonoBehaviour {
 
     private void SelectionInputManager() {
         utHeart.GetComponent<Image>().enabled = true;
-        int xMov = GlobalControls.input.Left == UndertaleInput.ButtonState.PRESSED ? -1 : GlobalControls.input.Right == UndertaleInput.ButtonState.PRESSED ? 1 : 0;
-        int yMov = GlobalControls.input.Up   == UndertaleInput.ButtonState.PRESSED ? -1 : GlobalControls.input.Down  == UndertaleInput.ButtonState.PRESSED ? 1 : 0;
+        int xMov = GlobalControls.input.Left == ButtonState.PRESSED ? -1 : GlobalControls.input.Right == ButtonState.PRESSED ? 1 : 0;
+        int yMov = GlobalControls.input.Up   == ButtonState.PRESSED ? -1 : GlobalControls.input.Down  == ButtonState.PRESSED ? 1 : 0;
         if (xMov != 0 || yMov != 0) {
             switch (currentState) {
                 case State.MENU:        selection = UnitaleUtil.SelectionChoice(4, selection, xMov, yMov, 4, 1); break;
@@ -456,21 +456,21 @@ public class ShopScript : MonoBehaviour {
                     break;
             }
             SetPlayerOnSelection();
-        } else if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED)
+        } else if (GlobalControls.input.Confirm == ButtonState.PRESSED)
             HandleAction();
-        else if (GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED)
+        else if (GlobalControls.input.Cancel == ButtonState.PRESSED)
             HandleCancel(true);
     }
 
     private void TextInputManager() {
-        if (GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED && !tmBigTalk.LineComplete() && tmBigTalk.CanSkip()) {
+        if (GlobalControls.input.Cancel == ButtonState.PRESSED && !tmBigTalk.LineComplete() && tmBigTalk.CanSkip()) {
             if (script.GetVar("playerskipdocommand").Boolean)
                 tmBigTalk.DoSkipFromPlayer();
             else
                 tmBigTalk.SkipLine();
-        } else if ((GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED || tmBigTalk.CanAutoSkipAll()) && tmBigTalk.LineComplete() && !tmBigTalk.AllLinesComplete())
+        } else if ((GlobalControls.input.Confirm == ButtonState.PRESSED || tmBigTalk.CanAutoSkipAll()) && tmBigTalk.LineComplete() && !tmBigTalk.AllLinesComplete())
             tmBigTalk.NextLineText();
-        else if ((GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED || tmBigTalk.CanAutoSkipAll()) && tmBigTalk.AllLinesComplete()) {
+        else if ((GlobalControls.input.Confirm == ButtonState.PRESSED || tmBigTalk.CanAutoSkipAll()) && tmBigTalk.AllLinesComplete()) {
             switch (currentState) {
                 case State.TALKINPROGRESS:
                     ChangeState(State.TALK);

@@ -10,7 +10,7 @@ public class KeybindSettings : MonoBehaviour {
     public Text Listening;
     public Button Save, ResetAll, Restore, Back;
 
-    private Dictionary<string, List<KeyCode>> tempKeybinds = new Dictionary<string, List<KeyCode>>(KeyboardInput.generalKeys);
+    private Dictionary<string, List<string>> tempKeybinds = new Dictionary<string, List<string>>(KeyboardInput.generalKeys);
 
     private CYFTimer textHijackTimer;
     private CYFTimer resetAllTimer;
@@ -70,7 +70,7 @@ public class KeybindSettings : MonoBehaviour {
 
     public void LoadKeybinds() {
         KeyboardInput.LoadPlayerKeys();
-        tempKeybinds = new Dictionary<string, List<KeyCode>>(KeyboardInput.generalKeys);
+        tempKeybinds = new Dictionary<string, List<string>>(KeyboardInput.generalKeys);
         foreach (KeybindEntry keybind in new KeybindEntry[] { Confirm, Cancel, Menu, Up, Left, Down, Right })
             UpdateKeyList(keybind);
         UpdateColor();
@@ -79,14 +79,14 @@ public class KeybindSettings : MonoBehaviour {
     public void SaveKeybinds() {
         string invalidReason = null;
 
-        Dictionary<KeyCode, string[]> conflicts = KeyboardInput.GetConflicts(tempKeybinds);
+        Dictionary<string, string[]> conflicts = KeyboardInput.GetConflicts(tempKeybinds);
         if (conflicts.Count > 0) {
             string[] conflict = conflicts[conflicts.Keys.First()];
             invalidReason = "Please get rid of key conflicts before saving this configuration.";
         }
 
         if (invalidReason == null)
-            foreach (KeyValuePair<string, List<KeyCode>> p in tempKeybinds)
+            foreach (KeyValuePair<string, List<string>> p in tempKeybinds)
                 if (p.Value.Count == 0) {
                     invalidReason = "The keybind \"" + p.Key + "\" is unbound! Please add at least one key to it.";
                     break;
@@ -122,7 +122,7 @@ public class KeybindSettings : MonoBehaviour {
     }
 
     public void FactoryResetKeybinds() {
-        tempKeybinds = new Dictionary<string, List<KeyCode>>(KeyboardInput.defaultKeys);
+        tempKeybinds = new Dictionary<string, List<string>>(KeyboardInput.defaultKeys);
         foreach (KeybindEntry keybind in new KeybindEntry[] { Confirm, Cancel, Menu, Up, Left, Down, Right })
             UpdateKeyList(keybind);
         UpdateColor();
@@ -133,7 +133,7 @@ public class KeybindSettings : MonoBehaviour {
 
     public void UpdateColor() {
         List<string> conflictingKeybinds = new List<string>();
-        Dictionary<KeyCode, string[]> conflicts = KeyboardInput.GetConflicts(tempKeybinds);
+        Dictionary<string, string[]> conflicts = KeyboardInput.GetConflicts(tempKeybinds);
         foreach (string[] conflictArray in conflicts.Values)
             foreach (string conflict in conflictArray)
                 if (!conflictingKeybinds.Contains(conflict))
@@ -154,8 +154,8 @@ public class KeybindSettings : MonoBehaviour {
         keybind.SetKeyList(string.Join(", ", tempKeybinds[keybind.Name].Select(k => k.ToString()).ToArray()));
     }
 
-    public void AddKeyToKeybind(KeybindEntry keybind, KeyCode key) {
-        List<KeyCode> keys;
+    public void AddKeyToKeybind(KeybindEntry keybind, string key) {
+        List<string> keys;
         tempKeybinds.TryGetValue(keybind.Name, out keys);
         keys.Add(key);
         tempKeybinds[keybind.Name] = keys;
@@ -164,8 +164,8 @@ public class KeybindSettings : MonoBehaviour {
         UpdateColor();
     }
 
-    public void RemoveKeyFromKeybind(KeybindEntry keybind, KeyCode key) {
-        List<KeyCode> keys;
+    public void RemoveKeyFromKeybind(KeybindEntry keybind, string key) {
+        List<string> keys;
         tempKeybinds.TryGetValue(keybind.Name, out keys);
         keys.Remove(key);
         tempKeybinds[keybind.Name] = keys;
@@ -177,7 +177,7 @@ public class KeybindSettings : MonoBehaviour {
     public void ResetKeybind(KeybindEntry keybind) {
         if (listening != null)
             StopListening();
-        KeyboardInput.generalKeys[keybind.Name] = new List<KeyCode>(tempKeybinds[keybind.Name]);
+        KeyboardInput.generalKeys[keybind.Name] = new List<string>(tempKeybinds[keybind.Name]);
 
         UpdateKeyList(keybind);
         UpdateColor();
@@ -214,7 +214,7 @@ public class KeybindSettings : MonoBehaviour {
 
     public void UpdateListeningText() {
         textHijackTimer.Stop();
-        Dictionary<KeyCode, string[]> conflicts = KeyboardInput.GetConflicts(tempKeybinds);
+        Dictionary<string, string[]> conflicts = KeyboardInput.GetConflicts(tempKeybinds);
         if (listening)
             Listening.text = "Listening for " + listening.Name + ". Press a key to add/remove it! ESC to stop.";
         else if (conflicts.Count == 0)
@@ -230,12 +230,28 @@ public class KeybindSettings : MonoBehaviour {
         resetAllTimer.Update();
         restoreTimer.Update();
 
-        if (listening != null)
-            foreach (KeyCode key in Enum.GetValues(typeof(KeyCode)))
-                if (Input.GetKeyDown(key)) {
-                    if (key == KeyCode.Escape)                           StopListening();
-                    else if (tempKeybinds[listening.Name].Contains(key)) RemoveKeyFromKeybind(listening, key);
-                    else if (key != KeyCode.Mouse0)                      AddKeyToKeybind(listening, key);
+        if (listening != null) {
+            foreach (KeyCode keycode in Enum.GetValues(typeof(KeyCode))) {
+                string key = keycode.ToString();
+                if (Input.GetKeyDown(keycode)) {
+                    if (keycode == KeyCode.Escape)                                           StopListening();
+                    else if (tempKeybinds[listening.Name].Contains(key))                     RemoveKeyFromKeybind(listening, key);
+                    else if (keycode != KeyCode.Mouse0 && !key.StartsWith("JoystickButton")) AddKeyToKeybind(listening, key);
                 }
+            }
+
+            foreach (KeyValuePair<string, float> axis in KeyboardInput.axes) {
+                string axisName = null;
+                float state = Input.GetAxis(axis.Key);
+                if (state >= 0.7f && axis.Value < 0.7f)        axisName = axis.Key + " +";
+                else if (state <= -0.7f && axis.Value > -0.7f) axisName = axis.Key + " -";
+
+                if (axisName == null)
+                    continue;
+
+                if (tempKeybinds[listening.Name].Contains(axisName)) RemoveKeyFromKeybind(listening, axisName);
+                else                                                 AddKeyToKeybind(listening, axisName);
+            }
+        }
     }
 }

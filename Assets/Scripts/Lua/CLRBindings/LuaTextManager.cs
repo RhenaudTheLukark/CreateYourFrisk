@@ -108,7 +108,7 @@ public class LuaTextManager : TextManager {
         //Next line/EOF check
         switch (progress) {
             case ProgressMode.MANUAL: {
-                if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED && LineComplete())
+                if (GlobalControls.input.Confirm == ButtonState.PRESSED && LineComplete())
                     NextLine();
                 break;
             }
@@ -124,7 +124,7 @@ public class LuaTextManager : TextManager {
         }
         if ((CanAutoSkipAll() || CanAutoSkipThis()) && (!UIController.instance || !UIController.instance.monsterDialogues.Contains(this)))
             NextLine();
-        if (CanSkip() && !LineComplete() && GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED)
+        if (CanSkip() && !LineComplete() && GlobalControls.input.Cancel == ButtonState.PRESSED)
             DoSkipFromPlayer();
     }
 

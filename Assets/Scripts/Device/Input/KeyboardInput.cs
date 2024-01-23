@@ -4,34 +4,68 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class KeyboardInput : UndertaleInput {
+public class KeyboardInput : IUndertaleInput {
+    /// <summary>
+    /// List of axes handled by CYF.
+    /// </summary>
+    public static readonly Dictionary<string, float> axes = new Dictionary<string, float>();
+    /// <summary>
+    /// Number of controllers handled by CYF.
+    /// Add more inputs in CYF's Input settings if you wanna handle more controllers!
+    /// </summary>
+    private const int controllers = 2;
+    /// <summary>
+    /// Number of axes handled by CYF.
+    /// Add more inputs in CYF's Input settings if you wanna handle more axes!
+    /// </summary>
+    private const int axesNumber = 10;
+
     /// <summary>
     /// Dictionary storing the various default keybindings of Create Your Frisk.
     /// </summary>
-    public readonly static Dictionary<string, List<KeyCode>> defaultKeys = new Dictionary<string, List<KeyCode>>() {
-        { "Confirm", new List<KeyCode> { KeyCode.Z, KeyCode.Return } },
-        { "Cancel", new List<KeyCode> { KeyCode.X, KeyCode.LeftShift, KeyCode.RightShift } },
-        { "Menu", new List<KeyCode> { KeyCode.C, KeyCode.LeftControl, KeyCode.RightControl } },
-        { "Up", new List<KeyCode> { KeyCode.W, KeyCode.UpArrow } },
-        { "Down", new List<KeyCode> { KeyCode.S, KeyCode.DownArrow } },
-        { "Left", new List<KeyCode> { KeyCode.A, KeyCode.LeftArrow } },
-        { "Right", new List<KeyCode> { KeyCode.D, KeyCode.RightArrow } },
+    public readonly static Dictionary<string, List<string>> defaultKeys = new Dictionary<string, List<string>>() {
+        { "Confirm", new List<string> { "Z", "Return" } },
+        { "Cancel", new List<string> { "X", "LeftShift", "RightShift" } },
+        { "Menu", new List<string> { "C", "LeftControl", "RightControl" } },
+        { "Up", new List<string> { "W", "UpArrow", "Vertical1 +" } },
+        { "Down", new List<string> { "S", "DownArrow", "Vertical1 -" } },
+        { "Left", new List<string> { "A", "LeftArrow", "Horizontal1 -" } },
+        { "Right", new List<string> { "D", "RightArrow", "Horizontal1 +" } },
     };
     /// <summary>
     /// Dictionary storing the various keybindings set by the user.
     /// Can be modified through Create Your Frisk's Options menu.
     /// </summary>
-    public static Dictionary<string, List<KeyCode>> generalKeys = new Dictionary<string, List<KeyCode>>(defaultKeys);
+    public static Dictionary<string, List<string>> generalKeys = new Dictionary<string, List<string>>(defaultKeys);
     /// <summary>
     /// Dictionary storing the various keybindings in effect during the current encounter.
     /// Can be modified through various Input functions.
     /// </summary>
-    public static Dictionary<string, List<KeyCode>> encounterKeys = new Dictionary<string, List<KeyCode>>(generalKeys);
+    public static Dictionary<string, List<string>> encounterKeys = new Dictionary<string, List<string>>(generalKeys);
+
+    /// <summary>
+    /// List of known axes keys, for quick computation
+    /// </summary>
+    private static List<string> knownAxes = new List<string>();
 
     /// <summary>
     /// This function is executed whenever this object is created.
     /// </summary>
-    void Start() {
+    public KeyboardInput() {
+        for (int controller = 1; controller <= controllers; controller++) {
+            for (int axis = 1; axis <= axesNumber; axis++) {
+                string axisName;
+                if (axis == 1)      axisName = "Horizontal";
+                else if (axis == 2) axisName = "Vertical";
+                else                axisName = "Axis" + axis + "-";
+                axisName += controller;
+
+                knownAxes.Add(axisName + " +");
+                knownAxes.Add(axisName + " -");
+                axes[axisName] = 0;
+            }
+        }
+
         LoadPlayerKeys();
     }
 
@@ -39,13 +73,13 @@ public class KeyboardInput : UndertaleInput {
     /// This function resets the user's keybindings after a battle, in case they were tampered with during it.
     /// </summary>
     public static void ResetEncounterInputs() {
-        encounterKeys = new Dictionary<string, List<KeyCode>>(generalKeys);
+        encounterKeys = new Dictionary<string, List<string>>(generalKeys);
     }
     /// <summary>
     /// This function resets the user's keybindings, it should only be used when the user asks to reset all keybindings to their default.
     /// </summary>
     public static void ResetInputs() {
-        generalKeys = new Dictionary<string, List<KeyCode>>(defaultKeys);
+        generalKeys = new Dictionary<string, List<string>>(defaultKeys);
         ResetEncounterInputs();
     }
     /// <summary>
@@ -67,12 +101,23 @@ public class KeyboardInput : UndertaleInput {
         if (encounterKeys.ContainsKey(keybind))
             throw new CYFException("The keybind \"" + keybind + "\" already exists yet you tried creating it again.");
 
-        List<KeyCode> keyCodesToBind = new List<KeyCode>();
+        List<string> keyCodesToBind = new List<string>();
         if (keysToBind != null)
             foreach (string key in keysToBind)
-                keyCodesToBind.Add((KeyCode)Enum.Parse(typeof(KeyCode), key));
+                keyCodesToBind.Add(key);
 
         encounterKeys.Add(keybind, keyCodesToBind);
+    }
+
+    /// <summary>
+    /// This function completely deletes a keybind from the doctionary of keybinds.
+    /// Note that base CYF keybinds cannot be deleted, as it would cause errors when the engine tries to fetch them.
+    /// </summary>
+    /// <param name="keybind">The keybind to delete.</param>
+    public static void DeleteKeybind(string keybind) {
+        if (defaultKeys.ContainsKey(keybind))
+            throw new CYFException("CYF's base keybinds cannot be deleted!");
+        encounterKeys.Remove(keybind);
     }
 
     /// <summary>
@@ -86,11 +131,16 @@ public class KeyboardInput : UndertaleInput {
         return encounterKeys[keybind].Select(k => k.ToString()).ToArray();
     }
 
-    public static Dictionary<KeyCode, string[]> GetConflicts(Dictionary<string, List<KeyCode>> keybinds) {
-        Dictionary<KeyCode, string[]> conflicts = new Dictionary<KeyCode, string[]>();
+    /// <summary>
+    /// This function returns the keys bound to several keybinds.
+    /// </summary>
+    /// <param name="keybinds">Keybind collection to check for conflicts.</param>
+    /// <returns>Dictionary of conflicts found within the collection.</returns>
+    public static Dictionary<string, string[]> GetConflicts(Dictionary<string, List<string>> keybinds) {
+        Dictionary<string, string[]> conflicts = new Dictionary<string, string[]>();
 
-        foreach (KeyValuePair<string, List<KeyCode>> keybind in keybinds)
-            foreach (KeyCode key in keybind.Value) {
+        foreach (KeyValuePair<string, List<string>> keybind in keybinds)
+            foreach (string key in keybind.Value) {
                 List<string> linkedKeybinds = conflicts.ContainsKey(key) ? conflicts[key].ToList() : new List<string>();
                 linkedKeybinds.Add(keybind.Key);
                 conflicts[key] = linkedKeybinds.ToArray();
@@ -108,10 +158,13 @@ public class KeyboardInput : UndertaleInput {
         if (!encounterKeys.ContainsKey(keybind))
             throw new CYFException("The keybind \"" + keybind + "\" doesn't exist.");
 
-        List<KeyCode> keyCodesToBind = new List<KeyCode>();
+        List<string> keyCodesToBind = new List<string>();
         if (keysToBind != null)
-            foreach (string key in keysToBind)
-                keyCodesToBind.Add((KeyCode)Enum.Parse(typeof(KeyCode), key));
+            foreach (string key in keysToBind) {
+                if (!CheckKeyValidity(key))
+                    throw new CYFException("The key \"" + key + "\" isn't recognized by CYF.");
+                keyCodesToBind.Add(key);
+            }
 
         encounterKeys[keybind] = keyCodesToBind;
     }
@@ -122,14 +175,16 @@ public class KeyboardInput : UndertaleInput {
     /// <param name="keybind">Name of the keybind to add a key to.</param>
     /// <param name="key">Key to add to the keybind.</param>
     public static bool AddKeyToKeybind(string keybind, string key) {
-        List<KeyCode> keys;
+        List<string> keys;
         encounterKeys.TryGetValue(keybind, out keys);
         if (keys == null)
             throw new CYFException("The keybind \"" + keybind + "\" doesn't exist.");
 
-        KeyCode keycode = (KeyCode)Enum.Parse(typeof(KeyCode), key);
-        if (!keys.Contains(keycode)) {
-            keys.Add(keycode);
+        if (!CheckKeyValidity(key))
+            throw new CYFException("The key \"" + key + "\" isn't recognized by CYF.");
+
+        if (!keys.Contains(key)) {
+            keys.Add(key);
             encounterKeys[keybind] = keys;
             return true;
         }
@@ -141,14 +196,16 @@ public class KeyboardInput : UndertaleInput {
     /// <param name="keybind">Name of the keybind to remove a key from.</param>
     /// <param name="key">Key to remove from the keybind.</param>
     public static bool RemoveKeyFromKeybind(string keybind, string key) {
-        List<KeyCode> keys;
+        List<string> keys;
         encounterKeys.TryGetValue(keybind, out keys);
         if (keys == null)
             throw new CYFException("The keybind \"" + keybind + "\" doesn't exist.");
 
-        KeyCode keycode = (KeyCode)Enum.Parse(typeof(KeyCode), key);
-        if (keys.Contains(keycode)) {
-            keys.Remove(keycode);
+        if (!CheckKeyValidity(key))
+            throw new CYFException("The key \"" + key + "\" isn't recognized by CYF.");
+
+        if (keys.Contains(key)) {
+            keys.Remove(key);
             encounterKeys[keybind] = keys;
             return true;
         }
@@ -159,44 +216,69 @@ public class KeyboardInput : UndertaleInput {
     /// This function loads the player's keybinding configuration stored in their AlMightyGlobals.
     /// </summary>
     public static void LoadPlayerKeys() {
-        Dictionary<string, List<KeyCode>> keys = new Dictionary<string, List<KeyCode>>(generalKeys);
-        foreach (string key in keys.Keys) {
-            DynValue keysString = LuaScriptBinder.GetAlMighty(null, "CYFKeybind" + key);
+        Dictionary<string, List<string>> keybinds = new Dictionary<string, List<string>>(generalKeys);
+        foreach (string keybind in keybinds.Keys) {
+            DynValue keysString = LuaScriptBinder.GetAlMighty(null, "CYFKeybind" + keybind);
             if (keysString == null || keysString.Type != DataType.String || keysString.String == "")
                 continue;
-            List<KeyCode> keycodes = keysString.String.Split('|').Select(k => (KeyCode)Enum.Parse(typeof(KeyCode), k)).ToList();
-            generalKeys[key] = keycodes;
+
+            List<string> keys = keysString.String.Split('|').ToList();
+            foreach (string key in keys)
+                if (!CheckKeyValidity(key))
+                    throw new CYFException("The key \"" + key + "\" isn't recognized by CYF.");
+
+            generalKeys[keybind] = keys;
         }
         ResetEncounterInputs();
     }
     /// <summary>
     /// This function loads the player's keybinding configuration stored in their AlMightyGlobals.
     /// </summary>
-    public static void SaveKeybinds(Dictionary<string, List<KeyCode>> newKeys) {
+    public static void SaveKeybinds(Dictionary<string, List<string>> newKeys) {
         foreach (string key in newKeys.Keys) {
-            List<KeyCode> keys = newKeys[key];
-            string keysString = string.Join("|", keys.Select(k => k.ToString()).ToArray());
+            List<string> keys = newKeys[key];
+            string keysString = string.Join("|", keys.ToArray());
             LuaScriptBinder.SetAlMighty(null, "CYFKeybind" + key, DynValue.NewString(keysString));
         }
         generalKeys = newKeys;
         ResetEncounterInputs();
     }
 
+    /// <summary>
+    /// This function returns whether a given key is recognized by CYF or not.
+    /// </summary>
+    /// <param name="key">KEy to check for.</param>
+    /// <returns>True if the key is valid, false otherwise.</returns>
+    public static bool CheckKeyValidity(string key) {
+        KeyCode keycode;
+        if (ParseUtil.TryParseEnum(typeof(KeyCode), key, out keycode))
+            return true;
+
+        if (knownAxes.Contains(key))
+            return true;
+
+        return false;
+    }
+
     // Shortcuts for existing keys
-    public override ButtonState Confirm { get { return StateFor("Confirm"); } }
-    public override ButtonState Cancel { get { return StateFor("Cancel"); } }
-    public override ButtonState Menu { get { return StateFor("Menu"); } }
-    public override ButtonState Up { get { return StateFor("Up"); } }
-    public override ButtonState Down { get { return StateFor("Down"); } }
-    public override ButtonState Left { get { return StateFor("Left"); } }
-    public override ButtonState Right { get { return StateFor("Right"); } }
+    public ButtonState Confirm { get { return StateFor("Confirm"); } }
+    public ButtonState Cancel { get { return StateFor("Cancel"); } }
+    public ButtonState Menu { get { return StateFor("Menu"); } }
+    public ButtonState Up { get { return StateFor("Up"); } }
+    public ButtonState Down { get { return StateFor("Down"); } }
+    public ButtonState Left { get { return StateFor("Left"); } }
+    public ButtonState Right { get { return StateFor("Right"); } }
 
     /// <summary>
-    /// This function queries the current state of an existing keyboard key.
+    /// This function queries the current state of an existing keyboard key or axis.
     /// </summary>
-    /// <param name="Key">A keyboard key known by Unity.</param>
+    /// <param name="Key">A keyboard key known by Unity, or axis.</param>
     /// <returns>ButtonState depending on the state of the key (pressed, held, released, none).</returns>
-    public override ButtonState Key(string Key) { return StateFor((KeyCode)Enum.Parse(typeof(KeyCode), Key)); }
+    public ButtonState Key(string key) {
+        if (knownAxes.Contains(key))
+            return StateForAxis(key);
+        return StateFor((KeyCode)Enum.Parse(typeof(KeyCode), key));
+    }
 
     /// <summary>
     /// This function returns the state of the selected key.
@@ -224,14 +306,25 @@ public class KeyboardInput : UndertaleInput {
     /// <param name="keybind">Named key to check for (ex: Confirm).</param>
     /// <returns>State of the key with the highest priority among the set.</returns>
     public static ButtonState StateFor(string keybind) {
-        List<KeyCode> keys;
+        List<string> keys;
         encounterKeys.TryGetValue(keybind, out keys);
         if (keys == null)
-            throw new CYFException("The keybind \"" + keybind + "\" doesn't exist.");
+            throw new CYFException("The keybind or key \"" + keybind + "\" doesn't exist.");
+
+        List<KeyCode> keycodes = new List<KeyCode>();
+        List<string> axes = new List<string>();
+
+        foreach (string key in keys) {
+            if (knownAxes.Contains(key)) axes.Add(key);
+            else                         keycodes.Add((KeyCode)Enum.Parse(typeof(KeyCode), key));
+        }
+
+        List<ButtonState> states = keycodes.Select(k => StateFor(k)).ToList();
+        foreach (string axis in axes)
+            states.Add(StateForAxis(axis));
 
         ButtonState result = ButtonState.NONE;
         int resultPriority = Array.IndexOf(priority, (int)result);
-        ButtonState[] states = keys.Select(k => StateFor(k)).ToArray();
         foreach (ButtonState state in states) {
             int statePriority = Array.IndexOf(priority, (int)state);
             if (statePriority < resultPriority) {
@@ -243,5 +336,29 @@ public class KeyboardInput : UndertaleInput {
         }
 
         return result;
+    }
+
+    public static ButtonState StateForAxis(string axisKey) {
+        int state = 0;
+        string axisName = axisKey.Substring(0, axisKey.Length - 2);
+        float axisState = Input.GetAxis(axisName);
+        if (axisKey.Substring(axisKey.Length - 1).Equals("+")) {
+            if (axes[axisName] >= 0.7f)
+                state -= 1;
+            if (axisState > 0.7f)
+                state = -state + 1;
+        } else {
+            if (axes[axisName] <= -0.7f)
+                state -= 1;
+            if (axisState < -0.7f)
+                state = -state + 1;
+        }
+        return (ButtonState)state;
+    }
+
+    public void LateUpdate() {
+        string[] axesNames = axes.Keys.ToArray();
+        foreach (string axis in axesNames)
+            axes[axis] = Input.GetAxis(axis);
     }
 }

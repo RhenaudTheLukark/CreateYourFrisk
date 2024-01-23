@@ -5,8 +5,8 @@ using System.Linq;
 using System.Collections.Generic;
 
 public class LuaInputBinding {
-    private readonly UndertaleInput input;
-    public LuaInputBinding(UndertaleInput baseInput) { input = baseInput; }
+    private readonly IUndertaleInput input;
+    public LuaInputBinding(IUndertaleInput baseInput) { input = baseInput; }
 
     //////////////////
     // Basic inputs //
@@ -23,7 +23,7 @@ public class LuaInputBinding {
 
     public int GetKey(string Key) {
         try { return (int)input.Key(Key); }
-        catch (Exception) { throw new CYFException("Input.GetKey(): The key \"" + Key + "\" doesn't exist."); }
+        catch (Exception e) { throw new CYFException("Input.GetKey(): The key \"" + Key + "\" doesn't exist.\n\n" + e.Message); }
     }
 
     //////////////////////////
@@ -53,22 +53,22 @@ public class LuaInputBinding {
     //////////////
     // Keybinds //
     //////////////
-
     public void CreateKeybind(string keybind, string[] keysToBind = null) { KeyboardInput.CreateKeybind(keybind, keysToBind); }
+    public void RemoveKeybind(string keybind) { KeyboardInput.DeleteKeybind(keybind); }
     public void SetKeybindKeys(string keybind, string[] keysToBind = null) { KeyboardInput.SetKeybindKeys(keybind, keysToBind); }
 
-    public bool AddKeyToKeybind(string keybind, string keyToAdd) { return KeyboardInput.AddKeyToKeybind(keybind, keyToAdd); }
-    public bool RemoveKeyFromKeybind(string keybind, string keyToRemove) { return KeyboardInput.RemoveKeyFromKeybind(keybind, keyToRemove); }
+    public bool BindKeyToKeybind(string keybind, string keyToAdd) { return KeyboardInput.AddKeyToKeybind(keybind, keyToAdd); }
+    public bool UnbindKeyFromKeybind(string keybind, string keyToRemove) { return KeyboardInput.RemoveKeyFromKeybind(keybind, keyToRemove); }
 
     public int GetKeybind(string keybind) { return (int)KeyboardInput.StateFor(keybind); }
 
     public string[] GetKeybindKeys(string keybind) { return KeyboardInput.GetKeybindKeys(keybind); }
     public string[][] GetKeybindConflicts() {
-        Dictionary<KeyCode, string[]> conflicts = KeyboardInput.GetConflicts(KeyboardInput.encounterKeys);
+        Dictionary<string, string[]> conflicts = KeyboardInput.GetConflicts(KeyboardInput.encounterKeys);
         return conflicts.Select(
             (p) => {
                 List<string> temp = p.Value.ToList();
-                temp.Insert(0, p.Key.ToString());
+                temp.Insert(0, p.Key);
                 return temp.ToArray();
             }).ToArray();
     }

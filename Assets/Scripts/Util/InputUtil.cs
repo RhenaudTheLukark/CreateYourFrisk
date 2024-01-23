@@ -1,5 +1,5 @@
 ﻿public static class InputUtil {
-    public static bool Released(UndertaleInput.ButtonState s) { return s == UndertaleInput.ButtonState.RELEASED; }
-    public static bool Pressed(UndertaleInput.ButtonState s)  { return s == UndertaleInput.ButtonState.PRESSED; }
-    public static bool Held(UndertaleInput.ButtonState s)     { return s > 0; }
+    public static bool Released(ButtonState s) { return s == ButtonState.RELEASED; }
+    public static bool Pressed(ButtonState s)  { return s == ButtonState.PRESSED; }
+    public static bool Held(ButtonState s)     { return s > 0; }
 }
