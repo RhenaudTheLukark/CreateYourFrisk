@@ -18,7 +18,6 @@ enemypositions = {
 possible_attacks = {"bullettest_bouncy", "bullettest_chaserorb", "bullettest_touhou"}
 
 function EncounterStarting()
-    SetAlMightyGlobal("CrateYourFrisk", true)
     -- If you want to change the game state immediately, this is the place.
 end
 
