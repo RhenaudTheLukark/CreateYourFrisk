@@ -1795,9 +1795,7 @@ PrefabInstance:
     - target: {fileID: 6195791463972921763, guid: 5c826c0d5339343438211217ebd3152c,
         type: 3}
       propertyPath: m_Text
-      value: 'Menu
-
-'
+      value: Menu
       objectReference: {fileID: 0}
     - target: {fileID: 6195791464691190922, guid: 5c826c0d5339343438211217ebd3152c,
         type: 3}
@@ -2423,6 +2421,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1235065859}
     m_Modifications:
+    - target: {fileID: 6195791463972921763, guid: 5c826c0d5339343438211217ebd3152c,
+        type: 3}
+      propertyPath: m_Text
+      value: Confirm
+      objectReference: {fileID: 0}
     - target: {fileID: 6195791464691190922, guid: 5c826c0d5339343438211217ebd3152c,
         type: 3}
       propertyPath: m_Name

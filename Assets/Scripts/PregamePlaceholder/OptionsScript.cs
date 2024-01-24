@@ -160,6 +160,7 @@ public class OptionsScript : MonoBehaviour {
         Keys.GetComponent<Button>().onClick.AddListener(() => {
             SceneManager.LoadScene("KeybindSettings");
         });
+        Keys.GetComponentInChildren<Text>().text = !LocalCrate ? "Keybinds..." : "KEEBLEDS!1!!!1";
 
         // Enable / Disable Crate Your Frisk
         Crate.GetComponent<Button>().onClick.AddListener(() => {

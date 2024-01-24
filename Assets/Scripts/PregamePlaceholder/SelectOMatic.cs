@@ -104,14 +104,12 @@ public class SelectOMatic : MonoBehaviour {
         // Crate Your Frisk initializer
         if (GlobalControls.crate) {
             //Exit button
-            ExitText.text   = "← BYEE";
+            ExitText.text   = "← BYEE (RATIO'D)";
             ExitShadow.text = ExitText.text;
 
             //Options button
-            if (GlobalControls.modDev) {
-                OptionsText.text   = "OPSHUNZ →";
-                OptionsShadow.text = OptionsText.text;
-            }
+            OptionsText.text   = "OPSHUNZ (YUMMY) →";
+            OptionsShadow.text = OptionsText.text;
 
             //Back button within scrolling list
             content.transform.Find("Back/Text").GetComponent<Text>().text = "← BCAK";

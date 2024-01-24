@@ -28,6 +28,12 @@ public class KeybindSettings : MonoBehaviour {
         restoreTimer = new CYFTimer(3, CancelRestore);
         notSavedExitTimer = new CYFTimer(3, CancelNoSaveExit);
 
+        Save.GetComponentInChildren<Text>().text = GlobalControls.crate ? "SAV" : "Save";
+        CancelResetAll();
+        CancelRestore();
+        CancelNoSaveExit();
+        UpdateListeningText();
+
         Save.onClick.AddListener(() => {
             if (listening != null)
                 StopListening();
@@ -38,11 +44,11 @@ public class KeybindSettings : MonoBehaviour {
                 StopListening();
             if (resetAllTimer.IsElapsing()) {
                 resetAllTimer.Stop();
-                ResetAll.GetComponentInChildren<Text>().text = "Reset All";
+                ResetAll.GetComponentInChildren<Text>().text = GlobalControls.crate ? "BYEEEE" : "Reset All";
                 Reload(true);
             } else {
                 resetAllTimer.Start();
-                ResetAll.GetComponentInChildren<Text>().text = "You sure?";
+                ResetAll.GetComponentInChildren<Text>().text = GlobalControls.crate ? "DONUT!1" : "You sure?";
             }
         });
         Restore.onClick.AddListener(() => {
@@ -50,11 +56,11 @@ public class KeybindSettings : MonoBehaviour {
                 StopListening();
             if (restoreTimer.IsElapsing()) {
                 restoreTimer.Stop();
-                Restore.GetComponentInChildren<Text>().text = "Restore";
+                Restore.GetComponentInChildren<Text>().text = GlobalControls.crate ? "GO OLD" : "Restore";
                 FactoryResetKeybinds();
             } else {
                 restoreTimer.Start();
-                Restore.GetComponentInChildren<Text>().text = "You sure?";
+                Restore.GetComponentInChildren<Text>().text = GlobalControls.crate ? "DONUT!1" : "You sure?";
             }
         });
         Back.onClick.AddListener(() => {
@@ -73,9 +79,10 @@ public class KeybindSettings : MonoBehaviour {
                 SceneManager.LoadScene("Options");
             } else {
                 notSavedExitTimer.Start();
-                Back.GetComponentInChildren<Text>().text = "You sure?";
+                Back.GetComponentInChildren<Text>().text = GlobalControls.crate ? "DONUT!1" : "You sure?";
                 UnitaleUtil.PlaySound("Reset", "hurtsound");
-                HijackListeningText("Some keys have not been saved! Are you sure you wanna exit?", "ff0000");
+                HijackListeningText(GlobalControls.crate ? "ONO BAD DID NO SAV NO GO AAAA"
+                                                         : "Some keys have not been saved! Are you sure you wanna exit?", "ff0000");
             }
         });
 
@@ -83,13 +90,13 @@ public class KeybindSettings : MonoBehaviour {
     }
 
     public void CancelResetAll() {
-        ResetAll.GetComponentInChildren<Text>().text = "Reset All";
+        ResetAll.GetComponentInChildren<Text>().text = GlobalControls.crate ? "LAL BAD" : "Reset All";
     }
     public void CancelRestore() {
-        Restore.GetComponentInChildren<Text>().text = "Restore";
+        Restore.GetComponentInChildren<Text>().text = GlobalControls.crate ? "GO OLD" : "Restore";
     }
     public void CancelNoSaveExit() {
-        Back.GetComponentInChildren<Text>().text = "Back";
+        Back.GetComponentInChildren<Text>().text = GlobalControls.crate ? "BYEEEE" : "Back";
     }
 
     public void LoadKeybinds() {
@@ -120,7 +127,7 @@ public class KeybindSettings : MonoBehaviour {
 
         if (invalidReason != null) {
             UnitaleUtil.PlaySound("Reset", "hurtsound");
-            HijackListeningText(invalidReason, "ff0000");
+            HijackListeningText(GlobalControls.crate ? "BAD KEEBLEDS NOOOO GO AWAY" : invalidReason, "ff0000");
             return;
         }
 
@@ -128,7 +135,7 @@ public class KeybindSettings : MonoBehaviour {
         Reload();
 
         UnitaleUtil.PlaySound("Save", "saved");
-        HijackListeningText("Keybinds saved!");
+        HijackListeningText(GlobalControls.crate ? "KEEBLEDS OKOK!1!!1!" : "Keybinds saved!");
     }
 
     public void HijackListeningText(string text, string color = "ffff00") {
@@ -143,7 +150,7 @@ public class KeybindSettings : MonoBehaviour {
 
         if (isReset) {
             UnitaleUtil.PlaySound("Reset", "hurtsound");
-            HijackListeningText("Keybinds reset!");
+            HijackListeningText(GlobalControls.crate ? "KEEBLEDS BYEEEE!1!1!!" : "Keybinds reset!");
         }
     }
 
@@ -156,7 +163,7 @@ public class KeybindSettings : MonoBehaviour {
         UpdateColor();
 
         UnitaleUtil.PlaySound("Reset", "hurtsound");
-        HijackListeningText("Keybinds restored to their default state!");
+        HijackListeningText(GlobalControls.crate ? "KEEBLEDS OLD NOWWW!!1!!!" : "Keybinds restored to their default state!");
     }
 
     public void UpdateColor() {
@@ -179,7 +186,8 @@ public class KeybindSettings : MonoBehaviour {
     }
 
     public void UpdateKeyList(KeybindEntry keybind) {
-        keybind.SetKeyList(string.Join(", ", tempKeybinds[keybind.Name].OrderBy(k => k.Length).ToArray()));
+        string keyList = string.Join(", ", tempKeybinds[keybind.Name].OrderBy(k => k.Length).ToArray());
+        keybind.SetKeyList(GlobalControls.crate ? Temmify.Convert(keyList) : keyList);
     }
 
     public void AddKeyToKeybind(KeybindEntry keybind, string key) {
@@ -217,7 +225,7 @@ public class KeybindSettings : MonoBehaviour {
         if (listening != null)
             StopListening();
         listening = keybind;
-        listening.SetEditText("Stop");
+        listening.SetEditText(GlobalControls.crate ? "NO GO" : "Stop");
 
         UpdateListeningText();
         UpdateColor();
@@ -225,7 +233,7 @@ public class KeybindSettings : MonoBehaviour {
 
     public void StopListening() {
         if (listening != null)
-            listening.SetEditText("Edit");
+            listening.SetEditText(GlobalControls.crate ? "GO" : "Edit");
         listening = null;
 
         UpdateListeningText();
@@ -235,13 +243,27 @@ public class KeybindSettings : MonoBehaviour {
     public void UpdateListeningText() {
         textHijackTimer.Stop();
         Dictionary<string, string[]> conflicts = KeyboardInput.GetConflicts(tempKeybinds);
-        if (listening)
-            Listening.text = "Listening for " + listening.Name + ". Press a key to add/remove it! ESC to stop.";
-        else if (conflicts.Count == 0)
-            Listening.text = "<color=#b5b5b5>Not currently listening...</color>";
+        if (listening) {
+            string crateText = "WAAAT";
+            switch (listening.Name) {
+                case "Confirm": crateText = "YASS GO"; break;
+                case "Cancel":  crateText = "RATIO'D"; break;
+                case "Menu":    crateText = "YUMMY";   break;
+                case "Up":      crateText = "EYUP";    break;
+                case "Down":    crateText = "DONN";    break;
+                case "Left":    crateText = "LETFE";   break;
+                case "Right":   crateText = "RITE";    break;
+                default:                               break;
+            }
+            Listening.text = GlobalControls.crate ? "NO DEF! ME HER GUD! HER " + crateText + "1!!1!1"
+                                                  : "Listening for " + listening.Name + ". Press a key to add/remove it! ESC to stop.";
+        } else if (conflicts.Count == 0)
+            Listening.text = GlobalControls.crate ? "<color=#b5b5b5>ME DEF! NO HER GUD! HLEP1!!1!1</color>"
+                                                  : "<color=#b5b5b5>Not currently listening...</color>";
         else {
             string[] conflict = conflicts[conflicts.Keys.First()];
-            Listening.text = "Conflict detected: " + conflicts.Keys.First().ToString() + " used for both " + conflict[0] + " and " + conflict[1] + ".";
+            Listening.text = GlobalControls.crate ? "BAD KEEBLEDS NOOOO GO AWAY"
+                                                  : "Conflict detected: " + conflicts.Keys.First().ToString() + " used for both " + conflict[0] + " and " + conflict[1] + ".";
         }
     }
 

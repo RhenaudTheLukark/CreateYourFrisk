@@ -23,6 +23,23 @@ public class KeybindEntry : MonoBehaviour {
         Clear.onClick.AddListener(() => {
             controller.ClearKeybind(this);
         });
+
+        if (GlobalControls.crate) {
+            Edit.GetComponentInChildren<Text>().text = "GO";
+            Reset.GetComponentInChildren<Text>().text = "OLD";
+            Clear.GetComponentInChildren<Text>().text = "BYEE";
+            switch (Text.text) {
+                case "Confirm": Text.text = "YASS GO"; break;
+                case "Cancel":  Text.text = "RATIO'D"; break;
+                case "Menu":    Text.text = "YUMMY";   break;
+                case "Up":      Text.text = "EYUP";    break;
+                case "Down":    Text.text = "DONN";    break;
+                case "Left":    Text.text = "LETFE";   break;
+                case "Right":   Text.text = "RITE";    break;
+                default:                               break;
+            }
+            KeyList.text = Temmify.Convert(KeyList.text);
+        }
     }
 
     public void SetKeyList(string keyList) { KeyList.text = keyList; }
