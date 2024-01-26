@@ -863,7 +863,7 @@ public class TextManager : MonoBehaviour {
     }
 
     private bool HandleShowLetter(ref bool soundPlayed, ref int lastLetter, bool fromOnce = false) {
-        if (lastLetter != currentCharacter && ((!GlobalControls.retroMode && (!instantActive || instantCommand)) || GlobalControls.retroMode)) {
+        if (lastLetter != currentCharacter) {
             float oldLetterTimer = letterTimer;
             int oldLettersToDisplay = lettersToDisplay;
             int oldLettersToDisplayOnce = lettersToDisplayOnce;
@@ -1005,15 +1005,11 @@ public class TextManager : MonoBehaviour {
     private void InUpdateControlCommand(DynValue command, int index = 0) {
         string[] cmds = UnitaleUtil.SpecialSplit(':', command.String);
         string[] args = new string[0];
-        if (cmds.Length >= 2) {
-            if (cmds.Length == 3) {
-                if (cmds[2] == "skipover" && instantCommand) return;
-                if (cmds[2] == "skiponly" && !instantCommand) return;
-            } else if (cmds[1] == "skipover" && instantCommand) return;
-            else if (cmds[1] == "skiponly" && !instantCommand) return;
-            args = UnitaleUtil.SpecialSplit(',', cmds[1], true);
-            cmds[1] = args[0];
-        }
+
+        string tag = cmds[cmds.Length - 1];
+        if (tag == "skipover" && instantActive) return;
+        if (tag == "skiponly" && !instantActive) return;
+
         // TODO: Restore errors for 0.7
         switch (cmds[0].ToLower()) {
             case "noskip":
@@ -1036,10 +1032,10 @@ public class TextManager : MonoBehaviour {
                 catch { Debug.LogError("[waitall:x] usage - You used the value \"" + cmds[1] + "\" to set the text's waiting time between letters, but it's not a valid integer value."); }
                 break;
 
-            case "novoice":     commandVoice = "none";                                         break;
-            case "next":        autoSkipAll = true;                                            break;
-            case "finished":    autoSkipThis = true;                                           break;
-            case "nextthisnow": autoSkip = true;                                               break;
+            case "novoice":     commandVoice = "none"; break;
+            case "next":        autoSkipAll = true;    break;
+            case "finished":    autoSkipThis = true;   break;
+            case "nextthisnow": autoSkip = true;       break;
             case "speed":
                 try {
                     //you can only set text speed to a number >= 0

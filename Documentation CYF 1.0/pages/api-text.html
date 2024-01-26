@@ -339,7 +339,8 @@ end</pre>
             <p class="exblock">
             <br><span class="function"><span class="CYF"></span> [letters:x]</span>
                 For this frame only, the text box will show the next x characters.
-                <br><span class="new"></span>If used with the command <span class="term">[lettersperframe:y]</span>, the next <span class="term">x+y-1</span> letters will be displayed.
+                <br><span class="new"></span>If used with the command <span class="term">[lettersperframe:y]</span>, the next <span class="term">x+y-1</span>
+                letters will be displayed.
             </p>
 
             <p class="exblock">
@@ -390,8 +391,8 @@ end</pre>
                 <br><br>
                 If you do not provide a time, or the time you enter is lower than 0, a default value of <span class="term">0.2</span> will be used.
                 <br><br>
-                <span class="new"></span><u>NOTE:</u> While the overworld's mugshots have a size of 140x140, in battles, the mugshots are 130x130, so if bigger mugshots are applied in
-                battles, 5 pixels around each edge are hidden.
+                <span class="new"></span><u>NOTE:</u> While the overworld's mugshots have a size of 140x140, in battles, the mugshots are 130x130, so if bigger
+                mugshots are applied in battles, 5 pixels around each edge are hidden.
             </p>
 
             <p class="exblock">
@@ -430,17 +431,15 @@ end</pre>
 
             <p class="exblock">
                 <br><span class="function">skipover</span>
-                Makes a command only be activated when the text is not skipped (by using any <span class="term">[instant]</span> command or the
-                player's skip if <span class="term">playerskipdocommand</span> is set to true). Has no effect on <span class="term">[w]</span> and
-                <span class="term">[letters]</span>.
+                Makes a command only be activated when the text is not skipped (by using any <span class="term">[instant]</span> command or by the
+                player skipping). Has no effect on the commands <span class="term">[w]</span> and <span class="term">[letters]</span>.
             </p>
 
             <p class="exblock">
                 <br><span class="function">skiponly</span>
-                The command this is attached to will only be activated if the text has been skipped by using any
-                <span class="term">[instant]</span> command, or if the player skips it manually and
-                <span class="term">playerskipdocommand</span> is set to true.
-                This tag disables the <span class="term">[w]</span> and <span class="term">[letters]</span> commands if used on them.
+                The command this is attached to will only be activated if the text has been skipped by using any <span class="term">[instant]</span>
+                command, or if the player skips it manually.
+                This tag disables the commands <span class="term">[w]</span> and <span class="term">[letters]</span> if used with them.
             </p>
         </div>
 
