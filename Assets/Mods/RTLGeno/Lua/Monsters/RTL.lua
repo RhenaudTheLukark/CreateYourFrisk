@@ -46,6 +46,7 @@ function HandleCustomCommand(command)
 end
 
 function OnDeath()
+    SetAlMightyGlobal("RTLGenoIntro", false)
     hp = 30
     def = 1
     Audio.Pause()
@@ -53,7 +54,7 @@ function OnDeath()
         SetAlMightyGlobal("RTLGenoIntro", true)
         currentdialogue = { "[noskip][effect:none]Heh... [w:15][func:SetAnimRTL,happy]Hahahaha![w:20][next]",
                             "[noskip][effect:none][func:SetAnimRTL,angry]You're pathetic. [w:15]Did you REALLY think I would just keel over and die against you?[w:20][next]",
-                            "[noskip][effect:none][func:SetAnimRTL,angryhurt]Well you're [effect:shake][voice:v_floweymad][waitall:2]wrong,[waitall:1][voice:monsterfont][effect:none] [w:20]buckaroo.[w:20][next]",
+                            "[noskip][effect:none][func:SetAnimRTL,angryhurt]Well you're [effect:shake][voice:v_floweymad][waitall:2]wrong,[waitall:1] [voice:monsterfont][effect:none][w:20]buckaroo.[w:20][next]",
                             "[noskip][effect:none]Now, I'll send you right where you belong, [w:10]and I'll do it by force if I have to!",
                             "[noskip][func:PlaySE,Asriel TF][func:StartTransformation][w:80][next]",
                             "[noskip][effect:shake][voice:v_floweymad][func:SetLukarkFace,mad]Your rampage will stop right now![w:20][func:SetLukark][func:State,ACTIONSELECT]" }
