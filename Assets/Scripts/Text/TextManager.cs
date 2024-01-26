@@ -1005,6 +1005,10 @@ public class TextManager : MonoBehaviour {
     private void InUpdateControlCommand(DynValue command, int index = 0) {
         string[] cmds = UnitaleUtil.SpecialSplit(':', command.String);
         string[] args = new string[0];
+        if (cmds.Length > 1) {
+            args = UnitaleUtil.SpecialSplit(',', cmds[1], true);
+            cmds[1] = args[0];
+        }
 
         string tag = cmds[cmds.Length - 1];
         if (tag == "skipover" && instantActive) return;
