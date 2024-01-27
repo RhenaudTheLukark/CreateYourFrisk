@@ -47,6 +47,15 @@ public class LuaInputBinding {
     }
     public bool IsMouseInWindow { get { return isMouseInWindow; } }
 
+    public bool isMouseVisible {
+        get { return Cursor.visible; }
+        set { Cursor.visible = value; }
+    }
+    public bool IsMouseVisible {
+        get { return isMouseVisible; }
+        set { isMouseVisible = value; }
+    }
+
     public float mouseScroll { get { return Input.mouseScrollDelta.y; } }
     public float MouseScroll { get { return mouseScroll; } }
 
