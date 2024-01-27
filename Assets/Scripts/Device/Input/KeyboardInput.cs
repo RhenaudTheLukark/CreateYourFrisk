@@ -219,6 +219,15 @@ public class KeyboardInput : IUndertaleInput {
     }
 
     /// <summary>
+    /// This function returns true if the keybind exists, false otherwise.
+    /// </summary>
+    /// <param name="keybind">The keybind to check the existence of.</param>
+    /// <returns>True if the keybind exists, false otherwise.</returns>
+    public static bool KeybindExists(string keybind) {
+        return encounterKeys.ContainsKey(keybind);
+    }
+
+    /// <summary>
     /// This function loads the player's keybinding configuration stored in their AlMightyGlobals.
     /// </summary>
     public static void LoadPlayerKeys() {

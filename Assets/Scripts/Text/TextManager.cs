@@ -80,6 +80,7 @@ public class TextManager : MonoBehaviour {
     private int lettersToDisplay;
     private int lettersToDisplayOnce;
     private KeyCode waitingChar = KeyCode.None;
+    private string waitingKeybind = null;
 
     protected Color commandColor = Color.white;
     protected Color defaultColor = Color.white;
@@ -819,10 +820,12 @@ public class TextManager : MonoBehaviour {
             return;
 
         if (waitingChar != KeyCode.None) {
-            if (Input.GetKeyDown(waitingChar))
-                waitingChar = KeyCode.None;
-            else
-                return;
+            if (Input.GetKeyDown(waitingChar)) waitingChar = KeyCode.None;
+            else                               return;
+        }
+        if (waitingKeybind != null) {
+            if (KeyboardInput.StateFor(waitingKeybind) == ButtonState.PRESSED) waitingKeybind = null;
+            else                                                               return;
         }
 
         letterTimer += Time.deltaTime;
@@ -1019,8 +1022,14 @@ public class TextManager : MonoBehaviour {
                 break;
 
             case "waitfor":
-                try { waitingChar = (KeyCode)Enum.Parse(typeof(KeyCode), cmds[1]); }
-                catch { Debug.LogError("[waitfor:x] usage - The key \"" + cmds[1] + "\" isn't a valid key."); }
+                try {
+                    if (KeyboardInput.KeybindExists(cmds[1])) {
+                        waitingKeybind = cmds[1];
+                        return;
+                    }
+                    waitingChar = (KeyCode)Enum.Parse(typeof(KeyCode), cmds[1]);
+                }
+                catch { Debug.LogError("[waitfor:x] usage - The key \"" + cmds[1] + "\" is neither a valid key or a known keybind."); }
                 break;
 
             case "w":
