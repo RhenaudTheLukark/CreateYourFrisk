@@ -208,6 +208,7 @@ public class KeybindSettings : MonoBehaviour {
         tempKeybinds[keybind.Name] = new List<string>(KeyboardInput.playerKeys[keybind.Name]);
 
         UpdateKeyList(keybind);
+        UpdateListeningText();
         UpdateColor();
     }
 
@@ -218,6 +219,7 @@ public class KeybindSettings : MonoBehaviour {
         tempKeybinds[keybind.Name].Clear();
 
         UpdateKeyList(keybind);
+        UpdateListeningText();
         UpdateColor();
     }
 
