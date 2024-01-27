@@ -216,7 +216,7 @@ public static class UnitaleUtil {
                         if (txtmgr.font.Letters.ContainsKey(txtmgr.textQueue[txtmgr.currentLine].Text[i]))
                             totalWidth += txtmgr.font.Letters[txtmgr.textQueue[txtmgr.currentLine].Text[i]].textureRect.size.x + hSpacing;
                     } else if (str.Split(':')[0] == "charspacing")
-                        hSpacing = str.Split(':')[1].ToLower() == "default" ? txtmgr.font.CharSpacing : ParseUtil.GetFloat(str.Split(':')[1]);
+                        hSpacing = str.Split(':')[1].ToLower().Trim() == "default" ? txtmgr.font.CharSpacing : ParseUtil.GetFloat(str.Split(':')[1]);
                     break;
                 case '\t':
                     // Add columns if they're not empty or filled with spaces
