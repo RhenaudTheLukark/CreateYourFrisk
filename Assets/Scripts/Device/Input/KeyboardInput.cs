@@ -1,7 +1,8 @@
-﻿using MoonSharp.Interpreter;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 using UnityEngine;
 
 public class KeyboardInput : IUndertaleInput {
@@ -231,18 +232,36 @@ public class KeyboardInput : IUndertaleInput {
     /// This function loads the player's keybinding configuration stored in their AlMightyGlobals.
     /// </summary>
     public static void LoadPlayerKeys() {
-        Dictionary<string, List<string>> keybinds = new Dictionary<string, List<string>>(playerKeys);
-        foreach (string keybind in keybinds.Keys) {
-            DynValue keysString = LuaScriptBinder.GetAlMighty(null, "CYFKeybind" + keybind);
-            if (keysString == null || keysString.Type != DataType.String || keysString.String == "")
-                continue;
+        if (!File.Exists(Application.persistentDataPath + "/keybinds.gd"))
+            return;
 
-            List<string> keys = keysString.String.Split('|').ToList();
-            foreach (string key in keys)
-                if (!CheckKeyValidity(key))
-                    throw new CYFException("The key \"" + key + "\" isn't recognized by CYF.");
+        UTF8Encoding utf8 = new UTF8Encoding();
+        string fileContents = "";
+        using (FileStream file = File.OpenRead(Application.persistentDataPath + "/keybinds.gd")) {
+            byte[] buffer = new byte[1024];
+            int offset = 0;
+            while (offset < file.Length - 1) {
+                offset += file.Read(buffer, offset, 1024);
+                fileContents += utf8.GetString(buffer);
+            }
+            file.Dispose();
+        }
 
-            playerKeys[keybind] = keys;
+        try {
+            foreach (string keybind in fileContents.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)) {
+                string[] keyValue = keybind.Split(':');
+                if (keyValue.Length != 2)
+                    throw new Exception("The keybind format of the line " + keybind + " doesn't follow CYF's standard keybind format.");
+
+                List<string> keys = keyValue[1].Split('|').Select(k => k.TrimEnd('\0')).ToList();
+                foreach (string key in keys)
+                    if (!CheckKeyValidity(key))
+                        throw new CYFException("The key \"" + key + "\" isn't recognized by CYF for the keybind \"" + keyValue[0] + "\".");
+
+                playerKeys[keyValue[0]] = keys;
+            }
+        } catch (Exception e) {
+            UnitaleUtil.DisplayLuaError("keybind loading", "Error while loading the user's keybind configuration.\nPlease delete the file named \"keybinds.gd\" in CYF's save folder, in this path:\n\n<b>" + Application.persistentDataPath + "/keybinds.gd</b>\n\nActual error:\n" + e.Message, true);
         }
         ResetEncounterInputs();
     }
@@ -250,10 +269,21 @@ public class KeyboardInput : IUndertaleInput {
     /// This function saves the player's keybinding configuration into their AlMightyGlobals.
     /// </summary>
     public static void SaveKeybinds(Dictionary<string, List<string>> newKeys) {
-        foreach (string key in newKeys.Keys) {
-            List<string> keys = newKeys[key];
-            string keysString = string.Join("|", keys.ToArray());
-            LuaScriptBinder.SetAlMighty(null, "CYFKeybind" + key, DynValue.NewString(keysString));
+        if (File.Exists(Application.persistentDataPath + "/keybinds.gd"))
+            File.Delete(Application.persistentDataPath + "/keybinds.gd");
+
+        UTF8Encoding utf8 = new UTF8Encoding();
+        string debugFile = "";
+        using (FileStream file = File.OpenWrite(Application.persistentDataPath + "/keybinds.gd")) {
+            int fileLength = 0;
+            foreach (KeyValuePair<string, List<string>> keybind in newKeys) {
+                string keybindString = (fileLength > 0 ? Environment.NewLine : "") + keybind.Key + ":" + string.Join("|", keybind.Value.OrderBy(k => k.Length).ToArray());
+                debugFile += keybindString;
+                file.Write(utf8.GetBytes(keybindString), 0, keybindString.Length);
+                file.Flush();
+                fileLength += keybindString.Length;
+            }
+            file.Dispose();
         }
         playerKeys.Clear();
         foreach (KeyValuePair<string, List<string>> keybind in newKeys)
