@@ -63,7 +63,7 @@ public class UIController : MonoBehaviour {
     private bool parentStateCall = true;                            // Used to stop the execution of a previous State() call if a new call has been done and to prevent infinite EnteringState() loops
     private bool childStateCalled;                                  // Used to stop the execution of a previous State() call if a new call has been done and to prevent infinite EnteringState() loops
     private bool fleeSwitch;                                        // True if the Player fled, and the encounter can be ended
-    public Dictionary<int, string[]> messages;                      // Stores the messages enemies will say in the state ENEMYDIALOGUE
+    public List<string[]> messages = new List<string[]>();          // Stores the messages enemies will say in the state ENEMYDIALOGUE
     public bool[] readyToNextLine;                                  // Used to know which enemy bubbles are done displaying their text
     public bool checkDeathCall;                                     // Used to force the check on whether the enemies are dead or not
     private bool onDeathSwitch;                                     // Allows to switch to a given state if State() was used in OnDeath()
@@ -501,9 +501,9 @@ public class UIController : MonoBehaviour {
                 monsterDialogues = new LuaTextManager[encounter.EnabledEnemies.Length];
                 monsterDialogueEnemy = new EnemyController[encounter.EnabledEnemies.Length];
                 readyToNextLine = new bool[encounter.enemies.Count];
+                messages.Clear();
                 for (int i = 0; i < encounter.EnabledEnemies.Length; i++) {
-                    messages.Remove(i);
-                    messages.Add(i, encounter.EnabledEnemies[i].GetDefenseDialog());
+                    messages.Add(encounter.EnabledEnemies[i].GetDefenseDialog());
                     string[] message = messages[i];
                     if (message == null) {
                         UnitaleUtil.Warn("Entered ENEMYDIALOGUE, but no current/random dialogue was set for " + encounter.EnabledEnemies[i].Name);
@@ -1176,7 +1176,6 @@ public class UIController : MonoBehaviour {
     }
 
     private void Start() {
-        messages = new Dictionary<int, string[]>();
         // reset GlobalControls' frame timer
         GlobalControls.frame = 0;
         arenaParent = GameObject.Find("arena_border_outer");
