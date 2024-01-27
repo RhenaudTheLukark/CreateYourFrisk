@@ -12,7 +12,7 @@ public class GlobalControls : MonoBehaviour {
     public static string CYFversion       = "0.6.6";    // Current version of CYF displayed in the main menu and usable in scripts
     public static string OverworldVersion = "0.6.6";    // Last version in which the overworld was changed, notifying any user with an old save to delete it
     public static int    LTSversion       = 2;          // LTS version, mainly used for CYF 0.6.6
-    public static int    BetaVersion      = 23;         // Only used for beta versions
+    public static int    BetaVersion      = 24;         // Only used for beta versions
 
     public static int frame;                        // Frame counter used for logging purposes
     public static float overworldTimestamp = 0f;    // Timestamp of the creation of the save file, mostly used to know the time spent in this save in the save and load screen
