@@ -142,13 +142,9 @@ public class OptionsScript : MonoBehaviour {
                 ? "Window Scale: "  + ScreenResolution.windowScale + "x"
                 : "WEENDO STRECH: " + ScreenResolution.windowScale + "X";
         });
-        #if UNITY_EDITOR
-            Scale.GetComponent<Button>().onClick.Invoke();
-        #else
-            Scale.GetComponentInChildren<Text>().text = !LocalCrate
-                ? "Window Scale: " + ScreenResolution.windowScale  + "x"
-                : "WEENDO STRECH: " + ScreenResolution.windowScale + "X";
-        #endif
+        Scale.GetComponentInChildren<Text>().text = !LocalCrate
+            ? "Window Scale: " + ScreenResolution.windowScale  + "x"
+            : "WEENDO STRECH: " + ScreenResolution.windowScale + "X";
 
         // Discord Rich Presence
         // Change Discord Status Visibility

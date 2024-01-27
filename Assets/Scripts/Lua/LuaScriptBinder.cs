@@ -225,7 +225,7 @@ public static class LuaScriptBinder {
             alMightyDict.Remove(key);
         alMightyDict.Add(key, value);
         if (reload)
-            SaveLoad.SaveAlMighty();
+            SaveLoad.SaveAlMighty(key);
     }
 
     /// <summary>
