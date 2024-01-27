@@ -381,8 +381,6 @@ public class EnemyController : MonoBehaviour {
 
     public string[] GetDefenseDialog() {
         DynValue dialogues = script.GetVar("currentdialogue");
-        if (dialogues == null)
-            return null;
         if (dialogues.Table == null)
             if (dialogues.String != null)  return new[] { dialogues.String };
             else if (Dialogue == null)     return null;
