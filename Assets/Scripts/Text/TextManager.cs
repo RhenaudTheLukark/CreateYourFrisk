@@ -141,13 +141,10 @@ public class TextManager : MonoBehaviour {
 
     [MoonSharpHidden] public void SetCaller(ScriptWrapper s) { caller = s; }
 
-    public void SetFont(UnderFont font, bool temporary = false) {
+    public void SetFont(UnderFont font) {
         this.font = font;
-        if (!temporary) {
-            defaultFont = font;
-            defaultVoice = font.SoundName;
-        } else if (font.Sound != null)
-            fontVoice = font.SoundName;
+        defaultFont = font;
+        defaultVoice = font.SoundName;
 
         if (defaultFont == null)
             defaultFont = font;
@@ -974,7 +971,7 @@ public class TextManager : MonoBehaviour {
                     UnitaleUtil.DisplayLuaError("", "[font:x] usage - The font \"" + cmds[1] + "\" doesn't exist.\nYou should check if you made a typo, or if the font really is in your mod.", true);
                     break;
                 }
-                SetFont(uf, true);
+                SetFont(uf);
                 if (GetType() == typeof(LuaTextManager) && ((LuaTextManager)this).bubble)
                     ((LuaTextManager) this).UpdateBubble();
                 break;

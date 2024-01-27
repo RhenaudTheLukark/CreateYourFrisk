@@ -447,7 +447,7 @@ public static class LuaScriptBinder {
                     UnderFont font = SpriteFontRegistry.Get(fontPartTwo);
                     if (font == null)
                         throw new CYFException("The font \"" + fontPartTwo + "\" doesn't exist.\nYou should check if you made a typo, or if the font really is in your mod.");
-                    luatm.SetFont(font, true);
+                    luatm.SetFont(font);
                 } else luatm.ResetFont();
             } else     luatm.ResetFont();
         } else         luatm.ResetFont();
