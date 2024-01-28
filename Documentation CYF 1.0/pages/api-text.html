@@ -272,9 +272,9 @@ it's w3c valid, at least
 
             <p class="exblock">
                 <br><span class="function">[next]</span>
-                Skips to the next dialogue of all monsters automatically, without concern for the other monsters' dialogue's state.
-                You can also use this for textbox trickery. Here's an example to replicate Flowey's text-changing effect if you dodge
-                the Friendliness Pellets(tm) twice.
+                Skips to the next dialogue of the current monster only, even if several monsters are speaking, effectively desyncing their text.
+                You can also use this for textbox trickery.
+                Here's an example to replicate Flowey's text-changing effect if you dodge the Friendliness Pellets(tm) twice.
             </p>
             <div class="code-container">
    <pre class="brush: lua;">first line:  "[noskip][voice:flowey][effect:none]RUN. [w:30]INTO. [w:30]THE.\n[w:30]BULLETS!![w:30][next]"
@@ -282,15 +282,15 @@ second line: "[instant][effect:none]RUN. INTO. THE.\nfriendliness\npellets"</pre
             </div>
 
             <p class="exblock">
-                <br><span class="function"><span class="CYF"></span> [finished]</span>
-                Sets this dialogue box as "finished". To go through the next dialogue box, you'll have to wait until the other
-                monsters' dialogue boxes are also finished.
+                <br><span class="function"><span class="CYF"></span> [nextthisnow]</span>
+                Skips to the next dialogue of all monsters automatically, without concern for the other monsters' dialogue's state.
+                It acts much like <span class="term">[next]</span> except it affects all monsters.
             </p>
 
             <p class="exblock">
-                <br><span class="function"><span class="CYF"></span> [nextthisnow]</span>
-                Skips to the next dialogue of the current monster. It acts much like <span class="term">[next]</span> except it only affects
-                the current monster.
+                <br><span class="function"><span class="CYF"></span> [finished]</span>
+                Sets this dialogue box as "finished". To go through the next dialogue box, you'll have to wait until the other
+                monsters' dialogue boxes are also finished.
             </p>
 
             <p class="exblock">

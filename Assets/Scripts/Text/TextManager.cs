@@ -1043,9 +1043,9 @@ public class TextManager : MonoBehaviour {
                 break;
 
             case "novoice":     commandVoice = "none"; break;
-            case "next":        autoSkipAll = true;    break;
+            case "next":        autoSkip = true;       break;
             case "finished":    autoSkipThis = true;   break;
-            case "nextthisnow": autoSkip = true;       break;
+            case "nextthisnow": autoSkipAll = true;    break;
             case "speed":
                 try {
                     //you can only set text speed to a number >= 0
