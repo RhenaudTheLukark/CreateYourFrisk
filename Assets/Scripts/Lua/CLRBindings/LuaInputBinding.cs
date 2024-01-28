@@ -21,9 +21,15 @@ public class LuaInputBinding {
     public int Left    { get { return (int)input.Left;    } }
     public int Right   { get { return (int)input.Right;   } }
 
-    public int GetKey(string Key) {
-        try { return (int)input.Key(Key); }
-        catch (Exception e) { throw new CYFException("Input.GetKey(): The key \"" + Key + "\" doesn't exist.\n\n" + e.Message); }
+    public int GetKey(string key) {
+        try { return (int)input.Key(key); }
+        catch { throw new CYFException("Input.GetKey(): The key \"" + key + "\" doesn't exist."); }
+    }
+
+    public float GetAxisRaw(string axis) {
+        if (!KeyboardInput.axes.ContainsKey(axis))
+            throw new CYFException("Input.GetAxisRaw(): The axis \"" + axis + "\" doesn't exist.");
+        return Input.GetAxisRaw(axis);
     }
 
     //////////////////////////
