@@ -155,6 +155,7 @@ public class UIController : MonoBehaviour {
 
         LuaScriptBinder.ClearBattleVar();
         GlobalControls.stopScreenShake = true;
+        Cursor.visible = true;
         MusicManager.hiddenDictionary.Clear();
         if (GlobalControls.modDev) {
             List<string> toDelete = NewMusicManager.audioname.Keys.Where(str => str != "src").ToList();
