@@ -458,6 +458,27 @@ public class TextManager : MonoBehaviour {
     }
 
     public void SetEffect(TextEffect effect) { textEffect = effect; }
+    public void SetEffect(string effect, float intensity = -1, float step = 0) {
+        if (effect == null)
+            throw new CYFException("Text.SetEffect: The first argument (the effect name) is nil.\n\nSee the documentation for proper usage.");
+        switch (effect.ToLower()) {
+            case "none":
+                textEffect = null;
+                break;
+            case "twitch":
+                textEffect = new TwitchEffect(this, intensity != -1 ? intensity : 2, (int)step);
+                break;
+            case "shake":
+                textEffect = new ShakeEffect(this, intensity != -1 ? intensity : 1);
+                break;
+            case "rotate":
+                textEffect = new RotatingEffect(this, intensity != -1 ? intensity : 1.5f, step);
+                break;
+
+            default:
+                throw new CYFException("The effect \"" + effect + "\" doesn't exist.\nYou can only choose between \"none\", \"twitch\", \"shake\" and \"rotate\".");
+        }
+    }
 
     [MoonSharpHidden] public void DestroyChars() {
         foreach (Transform child in gameObject.transform) {
@@ -981,12 +1002,7 @@ public class TextManager : MonoBehaviour {
 
             case "effect":
                 float step = args.Length > 2 ? ParseUtil.GetFloat(args[2]) : 0;
-                switch (cmds[1].ToUpper()) {
-                    case "NONE":   textEffect = null;                                                                                 break;
-                    case "TWITCH": textEffect = new TwitchEffect(this, args.Length > 1 ? ParseUtil.GetFloat(args[1]) : 2, (int)step); break;
-                    case "SHAKE":  textEffect = new ShakeEffect(this, args.Length > 1 ? ParseUtil.GetFloat(args[1]) : 1);             break;
-                    case "ROTATE": textEffect = new RotatingEffect(this, args.Length > 1 ? ParseUtil.GetFloat(args[1]) : 1.5f, step); break;
-                }
+                SetEffect(cmds[1].ToLower(), args.Length > 1 ? ParseUtil.GetFloat(args[1]) : -1, step);
                 break;
 
             case "mugshot":

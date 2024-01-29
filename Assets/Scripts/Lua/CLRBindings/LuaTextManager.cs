@@ -592,21 +592,6 @@ public class LuaTextManager : TextManager {
         ResizeBubble();
     }
 
-    public void SetEffect(string effect, float intensity = -1, float step = 0) {
-        if (effect == null)
-            throw new CYFException("Text.SetEffect: The first argument (the effect name) is nil.\n\nSee the documentation for proper usage.");
-        CheckExists();
-        switch (effect.ToLower()) {
-            case "none":   textEffect = null;                                                               break;
-            case "twitch": textEffect = new TwitchEffect(this, intensity != -1 ? intensity : 2, (int)step); break;
-            case "shake":  textEffect = new ShakeEffect(this, intensity != -1 ? intensity : 1);             break;
-            case "rotate": textEffect = new RotatingEffect(this, intensity != -1 ? intensity : 1.5f, step); break;
-
-            default:
-                throw new CYFException("The effect \"" + effect + "\" doesn't exist.\nYou can only choose between \"none\", \"twitch\", \"shake\" and \"rotate\".");
-        }
-    }
-
     public void ShowBubble(string side = null, DynValue position = null) {
         CheckExists();
         bubble = true;

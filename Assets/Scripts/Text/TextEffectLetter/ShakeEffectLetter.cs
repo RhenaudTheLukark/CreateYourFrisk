@@ -4,19 +4,22 @@ public class ShakeEffectLetter : TextEffectLetter {
     private readonly float intensity;
     private bool skipNextFrame;
 
-    public ShakeEffectLetter(Letter letter, float intensity = 1.0f) : base(letter) { this.intensity = intensity != 0 ? intensity : 1.0f; }
+    public ShakeEffectLetter(Letter letter, float intensity = 1.0f) : base(letter) {
+        this.intensity = intensity > 0 ? intensity : 1.0f;
+    }
 
     protected override void UpdateInternal() {
         if (skipNextFrame) {
             skipNextFrame = false;
             return;
         }
+        skipNextFrame = true;
 
         float random = Random.value * 2.0f * Mathf.PI;
-        float xWig = Mathf.Sin(random) * intensity;
-        float yWig = Mathf.Cos(random) * intensity;
-        RectTransform rt = letter.GetComponent<RectTransform>();
-        rt.position = new Vector2(letter.basisPos.x + xWig, letter.basisPos.y + yWig);
-        skipNextFrame = true;
+        float oldXPos = xPos;
+        float oldYPos = yPos;
+        xPos = Mathf.Sin(random) * intensity;
+        yPos = Mathf.Cos(random) * intensity;
+        rt.position += new Vector3(xPos - oldXPos, yPos - oldYPos, 0);
     }
 }
