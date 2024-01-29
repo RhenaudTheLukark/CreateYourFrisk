@@ -25,7 +25,7 @@ public class TwitchEffect : TextEffect {
 
         // Move back last character
         if (updateCount == 0 && selectedChar >= 0 && selectedChar < textMan.letters.Count && rt) {
-            rt.position -= (Vector3)positions[selectedChar];
+            rt.localPosition -= (Vector3)positions[selectedChar];
             positions[selectedChar] = new Vector2();
         }
 
@@ -39,7 +39,7 @@ public class TwitchEffect : TextEffect {
         selectedChar = Random.Range(0, textMan.letters.Count);
         positions[selectedChar] = new Vector2(Mathf.Sin(random) * intensity, Mathf.Cos(random) * intensity);
         rt = textMan.letters[selectedChar].image.GetComponent<RectTransform>();
-        rt.position += (Vector3)positions[selectedChar];
+        rt.localPosition += (Vector3)positions[selectedChar];
     }
 
     private int GetNextWigTime() { return avgWigFrames + Mathf.RoundToInt(wigFrameVariety * (Random.value * 2 - 1)); }

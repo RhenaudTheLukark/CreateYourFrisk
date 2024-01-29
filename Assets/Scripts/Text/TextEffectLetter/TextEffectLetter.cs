@@ -15,6 +15,6 @@ public abstract class TextEffectLetter {
 
     ~TextEffectLetter() {
         if (letter)
-            rt.position -= new Vector3(xPos, yPos, 0);
+            rt.localPosition -= new Vector3(xPos, yPos, 0);
     }
 }

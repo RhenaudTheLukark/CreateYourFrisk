@@ -20,7 +20,7 @@ internal class ShakeEffect : TextEffect {
             float random = Random.value * 2.0f * Mathf.PI;
             Vector2 oldPosition = positions[i];
             positions[i] = new Vector2(Mathf.Sin(random) * intensity, Mathf.Cos(random) * intensity);
-            rt.position += (Vector3)(positions[i] - oldPosition);
+            rt.localPosition += (Vector3)(positions[i] - oldPosition);
         }
     }
 }

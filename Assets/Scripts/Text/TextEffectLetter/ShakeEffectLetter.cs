@@ -20,6 +20,6 @@ public class ShakeEffectLetter : TextEffectLetter {
         float oldYPos = yPos;
         xPos = Mathf.Sin(random) * intensity;
         yPos = Mathf.Cos(random) * intensity;
-        rt.position += new Vector3(xPos - oldXPos, yPos - oldYPos, 0);
+        rt.localPosition += new Vector3(xPos - oldXPos, yPos - oldYPos, 0);
     }
 }

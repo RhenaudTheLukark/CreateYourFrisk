@@ -18,7 +18,7 @@ public class RotatingEffect : TextEffect {
             RectTransform rt = textMan.letters[i].image.GetComponent<RectTransform>();
             Vector2 oldPosition = positions[i];
             positions[i] = new Vector2(intensity * -Mathf.Sin(iDiv), intensity * Mathf.Cos(iDiv));
-            rt.position += (Vector3)(positions[i] - oldPosition);
+            rt.localPosition += (Vector3)(positions[i] - oldPosition);
         }
 
         sinTimer += Time.deltaTime;

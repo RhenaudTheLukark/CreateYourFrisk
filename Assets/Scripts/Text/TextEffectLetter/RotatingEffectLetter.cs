@@ -19,6 +19,6 @@ public class RotatingEffectLetter : TextEffectLetter {
         float oldYPos = yPos;
         xPos = intensity * -Mathf.Sin(iDiv);
         yPos = intensity * Mathf.Cos(iDiv);
-        rt.position += new Vector3(xPos - oldXPos, yPos - oldYPos, 0);
+        rt.localPosition += new Vector3(xPos - oldXPos, yPos - oldYPos, 0);
     }
 }
