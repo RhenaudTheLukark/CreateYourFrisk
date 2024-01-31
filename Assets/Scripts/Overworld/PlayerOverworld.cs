@@ -259,8 +259,8 @@ public class PlayerOverworld : MonoBehaviour {
         int currentDirection = 0;
         //If you locked the player, do nothing
         if (!PlayerNoMove) {
-            horizontal = (int)(Input.GetAxisRaw("Horizontal1"));
-            vertical = (int)(Input.GetAxisRaw("Vertical1"));
+            horizontal = (int)Input.GetAxisRaw("Horizontal");
+            vertical = (int)Input.GetAxisRaw("Vertical");
             //Just some animations switches
             if (animator.movementDirection == 0) {
                 if (GlobalControls.input.Up > 0)         currentDirection = 8;
