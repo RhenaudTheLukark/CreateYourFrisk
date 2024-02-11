@@ -300,13 +300,6 @@ public class UIController : MonoBehaviour {
             PlayerController.instance.setControlOverride(true);
         }
 
-        if (state == "ACTIONSELECT" && newState != "ACTIONSELECT") {
-            fightButton.overrideSprite = null;
-            actButton.overrideSprite = null;
-            itemButton.overrideSprite = null;
-            mercyButton.overrideSprite = null;
-        }
-
         if (state == "ENEMYSELECT" && forcedAction == Actions.FIGHT)
             foreach (LifeBarController lbc in arenaParent.GetComponentsInChildren<LifeBarController>())
                 Destroy(lbc.gameObject);
@@ -337,6 +330,7 @@ public class UIController : MonoBehaviour {
         }
 
         mainTextManager.SetMugshot(DynValue.NewNil());
+        SetPlayerOnAction(action);
 
         switch (state) {
             case "ATTACKING":
@@ -363,7 +357,6 @@ public class UIController : MonoBehaviour {
                 forcedAction = Actions.NONE;
                 PlayerController.instance.setControlOverride(true);
                 PlayerController.instance.GetComponent<Image>().enabled = true;
-                SetPlayerOnAction(action);
                 mainTextManager.SetPause(ArenaManager.instance.isResizeInProgress());
                 if (!GlobalControls.retroMode) {
                     mainTextManager.SetEffect(new TwitchEffect(mainTextManager));
@@ -1024,14 +1017,7 @@ public class UIController : MonoBehaviour {
                 action = FindAvailableAction(left ? -1 : 1);
                 int actionIndex = (int)action;
 
-                if (oldActionIndex != actionIndex) {
-                    fightButton.overrideSprite = null;
-                    actButton.overrideSprite = null;
-                    itemButton.overrideSprite = null;
-                    mercyButton.overrideSprite = null;
-
-                    SetPlayerOnAction(action);
-                }
+                SetPlayerOnAction(action);
 
                 PlaySound(AudioClipRegistry.GetSound("menumove"));
                 break;
@@ -1140,24 +1126,25 @@ public class UIController : MonoBehaviour {
     }
 
     private void SetPlayerOnAction(Actions newAction) {
-        switch (newAction) {
-            case Actions.FIGHT: fightButton.overrideSprite = fightButtonSprite; break;
-            case Actions.ACT:   actButton.overrideSprite   = actButtonSprite;   break;
-            case Actions.ITEM:  itemButton.overrideSprite  = itemButtonSprite;  break;
-            case Actions.MERCY: mercyButton.overrideSprite = mercyButtonSprite; break;
-            default:            return;
-        }
-
-        if (state == "ACTIONSELECT")
-            PlayerController.instance.SetPosition(FindPlayerOffsetForAction(newAction).x, FindPlayerOffsetForAction(newAction).y, true);
-    }
-
-    public void MovePlayerToAction(Actions act) {
         fightButton.overrideSprite = null;
         actButton.overrideSprite = null;
         itemButton.overrideSprite = null;
         mercyButton.overrideSprite = null;
 
+        if (state == "ACTIONSELECT") {
+            switch (newAction) {
+                case Actions.FIGHT: fightButton.overrideSprite = fightButtonSprite; break;
+                case Actions.ACT:   actButton.overrideSprite   = actButtonSprite;   break;
+                case Actions.ITEM:  itemButton.overrideSprite  = itemButtonSprite;  break;
+                case Actions.MERCY: mercyButton.overrideSprite = mercyButtonSprite; break;
+                default:            return;
+            }
+
+            PlayerController.instance.SetPosition(FindPlayerOffsetForAction(newAction).x, FindPlayerOffsetForAction(newAction).y, true);
+        }
+    }
+
+    public void MovePlayerToAction(Actions act) {
         action = act;
         action = FindAvailableAction(0);
         SetPlayerOnAction(action);
@@ -1212,10 +1199,10 @@ public class UIController : MonoBehaviour {
         buttonSpriteDictionary.Add("ACT", actButtonSprite);
         buttonSpriteDictionary.Add("ITEM", itemButtonSprite);
         buttonSpriteDictionary.Add("MERCY", mercyButtonSprite);
-        buttonBasePositions.Add("FIGHT", new Vector2(32, 6));
-        buttonBasePositions.Add("ACT", new Vector2(185, 6));
-        buttonBasePositions.Add("ITEM", new Vector2(355, 6));
-        buttonBasePositions.Add("MERCY", new Vector2(500, 6));
+        buttonBasePositions.Add("FIGHT", new Vector2(0, 0));
+        buttonBasePositions.Add("ACT", new Vector2(154, 0));
+        buttonBasePositions.Add("ITEM", new Vector2(313, 0));
+        buttonBasePositions.Add("MERCY", new Vector2(467, 0));
         buttonBasePlayerPositions.Add("FIGHT", new Vector2(16, 19));
         buttonBasePlayerPositions.Add("ACT", new Vector2(16, 19));
         buttonBasePlayerPositions.Add("ITEM", new Vector2(16, 19));

@@ -166,7 +166,7 @@ public class LuaPlayerUI {
         if (!UIController.instance.buttonDictionary.TryGetValue(btn, out image))
             throw new CYFException("ResetButtonPosition() can only take \"FIGHT\", \"ACT\", \"ITEM\" or \"MERCY\", but you entered \"" + btn + "\".");
         UIController.instance.buttonBasePositions.TryGetValue(btn, out basePos);
-        image.transform.position = new Vector3(resetX ? basePos.x : image.transform.position.x, resetY ? basePos.y : image.transform.position.y);
+        image.rectTransform.anchoredPosition = new Vector3(resetX ? basePos.x : image.transform.position.x, resetY ? basePos.y : image.transform.position.y);
         UpdateButtons();
     }
 
