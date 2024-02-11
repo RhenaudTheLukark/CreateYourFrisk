@@ -457,10 +457,16 @@ public class TextManager : MonoBehaviour {
         currentReferenceCharacter = letters.Count;
     }
 
-    public void SetEffect(TextEffect effect) { textEffect = effect; }
+    public void SetEffect(TextEffect effect) {
+        if (textEffect != null)
+            textEffect.ResetPositions();
+        textEffect = effect;
+    }
     public void SetEffect(string effect, float intensity = -1, float step = 0) {
         if (effect == null)
             throw new CYFException("Text.SetEffect: The first argument (the effect name) is nil.\n\nSee the documentation for proper usage.");
+        if (textEffect != null)
+            textEffect.ResetPositions();
         switch (effect.ToLower()) {
             case "none":
                 textEffect = null;
@@ -904,6 +910,8 @@ public class TextManager : MonoBehaviour {
             if (im == null) return false;
             im.enabled = true;
             letterEffectStepCount += letterEffectStep;
+            if (im.GetComponent<Letter>().effect != null)
+                im.GetComponent<Letter>().effect.ResetPositions();
             switch (letterEffect.ToLower()) {
                 case "twitch": im.GetComponent<Letter>().effect = new TwitchEffectLetter(im.GetComponent<Letter>(), letterIntensity, (int)letterEffectStep);   break;
                 case "rotate": im.GetComponent<Letter>().effect = new RotatingEffectLetter(im.GetComponent<Letter>(), letterIntensity, letterEffectStepCount); break;

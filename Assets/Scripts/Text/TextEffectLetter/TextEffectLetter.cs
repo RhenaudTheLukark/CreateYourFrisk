@@ -13,7 +13,7 @@ public abstract class TextEffectLetter {
     public void UpdateEffects() { UpdateInternal(); }
     protected abstract void UpdateInternal();
 
-    ~TextEffectLetter() {
+    public void ResetPositions() {
         if (letter)
             rt.localPosition -= new Vector3(xPos, yPos, 0);
     }

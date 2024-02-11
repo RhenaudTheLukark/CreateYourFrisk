@@ -19,7 +19,7 @@ public abstract class TextEffect {
     }
     protected abstract void UpdateInternal();
 
-    ~TextEffect() {
+    public void ResetPositions() {
         for (int i = 0; i < positions.Count; i++)
             if (textMan != null && textMan.letters[i].image != null)
                 textMan.letters[i].image.rectTransform.anchoredPosition = textMan.letters[i].position;
