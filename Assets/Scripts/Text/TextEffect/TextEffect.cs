@@ -22,6 +22,6 @@ public abstract class TextEffect {
     public void ResetPositions() {
         for (int i = 0; i < positions.Count; i++)
             if (textMan != null && textMan.letters[i].image != null)
-                textMan.letters[i].image.rectTransform.anchoredPosition = textMan.letters[i].position;
+                textMan.letters[i].image.transform.position -= (Vector3)positions[i];
     }
 }
