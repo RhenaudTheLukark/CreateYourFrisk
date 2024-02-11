@@ -8,7 +8,6 @@ using MoonSharp.Interpreter;
 public class LuaTextManager : TextManager {
     private GameObject container;
     private bool removed;
-    private bool hidden;
     private GameObject containerBubble;
     private RectTransform speechThing;
     private RectTransform speechThingShadow;
@@ -63,8 +62,8 @@ public class LuaTextManager : TextManager {
         }
     }
 
-    public bool isactive {
-        get { return !removed && !hidden; }
+    public override bool isactive {
+        get { return base.isactive && !removed; }
     }
 
     // The rotation of the text object
@@ -104,7 +103,7 @@ public class LuaTextManager : TextManager {
         if (hidden) return;
         base.Update();
 
-        if (!isactive || textQueue == null || textQueue.Length == 0) return;
+        if (!isactive) return;
         //Next line/EOF check
         switch (progress) {
             case ProgressMode.MANUAL: {
@@ -138,11 +137,6 @@ public class LuaTextManager : TextManager {
     public void DestroyText() {
         if (!removed) Destroy(transform.parent.gameObject);
         removed = true;
-    }
-
-    [MoonSharpHidden] public void HideTextObject() {
-        DestroyChars();
-        hidden = true;
     }
 
     private void ResizeBubble() {
@@ -495,7 +489,6 @@ public class LuaTextManager : TextManager {
 
     public void SetText(DynValue text, bool resetLateStart = true) {
         CheckExists();
-        hidden = false;
 
         // Disable late start if SetText is used on the same frame the text is created
         if (resetLateStart)

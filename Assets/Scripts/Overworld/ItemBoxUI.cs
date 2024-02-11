@@ -149,14 +149,14 @@ public class ItemBoxUI : MonoBehaviour {
 
     private void DestroySelf() {
         while (inventory.Count > 0) {
-            inventory[0].DestroyChars();
+            inventory[0].HideTextObject();
             Destroy(inventory[0].gameObject);
             inventory.RemoveAt(0);
             inventorySprites[0].Remove();
             inventorySprites.RemoveAt(0);
         }
         while (boxContents.Count > 0) {
-            boxContents[0].DestroyChars();
+            boxContents[0].HideTextObject();
             Destroy(boxContents[0].gameObject);
             boxContents.RemoveAt(0);
             boxContentsSprites[0].Remove();

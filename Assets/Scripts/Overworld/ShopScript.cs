@@ -494,7 +494,7 @@ public class ShopScript : MonoBehaviour {
                     else if (script.GetVar("returndir").Number > 8 || script.GetVar("returndir").Number < 2 || script.GetVar("returndir").Number % 2 == 1)
                         throw new CYFException("The variable \"returndir\" must be either 2 (Down), 4 (Left), 6 (Right) or 8 (Up).");
 
-                    tmBigTalk.DestroyChars();
+                    tmBigTalk.HideTextObject();
 
                     tp = Instantiate(Resources.Load<TPHandler>("Prefabs/TP On-the-fly"));
                     tp.sceneName = script.GetVar("returnscene").String;

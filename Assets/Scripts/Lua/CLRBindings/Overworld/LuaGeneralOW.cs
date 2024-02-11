@@ -124,8 +124,8 @@ public class LuaGeneralOW {
         if (textmgr != null && textmgr.GetComponent<UnityEngine.UI.Image>().color.a != 0) {
             // Clean up text manager
             textmgr.SetTextFrameAlpha(0);
-            textmgr.textQueue = new TextMessage[] { };
-            textmgr.DestroyChars();
+            textmgr.SetTextQueue(new TextMessage[] { });
+            textmgr.HideTextObject();
 
             // Clean up SetChoice if applicable
             if (EventManager.instance.script != null && EventManager.instance.script == textmgr.caller) {

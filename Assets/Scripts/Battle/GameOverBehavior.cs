@@ -89,7 +89,7 @@ public class GameOverBehavior : MonoBehaviour {
         internalTimer = 0.0f;
         internalTimerRevive = 0.0f;
         gameOverFadeTimer = 0.0f;
-        gameOverTxt.textQueue = null;
+        gameOverTxt.HideTextObject();
         started = false;
         done = false;
         exiting = false;
@@ -391,7 +391,7 @@ public class GameOverBehavior : MonoBehaviour {
             heartShardRelocs[i].y -= 100f * Time.deltaTime;
         }
 
-        if (gameOverTxt.textQueue == null) return;
+        if (!gameOverTxt.isactive) return;
         if (!exiting && gameOverTxt.AllLinesComplete() && gameOverTxt.LineCount() != 0) {
             exiting = true;
             gameOverFadeTimer = 1.0f;

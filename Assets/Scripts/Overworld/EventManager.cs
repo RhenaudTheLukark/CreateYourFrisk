@@ -1050,8 +1050,7 @@ end";
     /// </summary>
     public void EndEvent() {
         PlayerOverworld.instance.textmgr.SetTextFrameAlpha(0);
-        PlayerOverworld.instance.textmgr.textQueue = new TextMessage[] { };
-        PlayerOverworld.instance.textmgr.DestroyChars();
+        PlayerOverworld.instance.textmgr.SetTextQueue(new TextMessage[] { });
         PlayerOverworld.instance.PlayerNoMove = false;
         PlayerOverworld.instance.UIPos = 0;
         ScriptRunning = false;
@@ -1811,7 +1810,7 @@ end";
             // Hides the save dialogue box
             if (end) {
                 PlayerOverworld.instance.utHeart.color = new Color(c.r, c.g, c.b, 0);
-                txtName.DestroyChars(); txtLevel.DestroyChars(); txtTime.DestroyChars(); txtMap.DestroyChars(); txtSave.DestroyChars(); txtReturn.DestroyChars();
+                txtName.HideTextObject(); txtLevel.HideTextObject(); txtTime.HideTextObject(); txtMap.HideTextObject(); txtSave.HideTextObject(); txtReturn.HideTextObject();
                 GameObject.Find("save_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 0);
                 GameObject.Find("save_interior").GetComponent<Image>().color = new Color(0, 0, 0, 0);
                 script.Call("CYFEventNextCommand");
