@@ -272,6 +272,7 @@ public class TextManager : MonoBehaviour {
     [MoonSharpHidden] public bool CanAutoSkip() { return autoSkip; }
     [MoonSharpHidden] public bool CanAutoSkipThis() { return autoSkipThis; }
     [MoonSharpHidden] public bool CanAutoSkipAll() { return autoSkipAll; }
+    [MoonSharpHidden] public bool CanAutoSkipAny() { return CanAutoSkip() || CanAutoSkipThis() || CanAutoSkipAll(); }
 
     public int LineCount() {
         return textQueue == null ? 0 : textQueue.Length;

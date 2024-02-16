@@ -646,7 +646,7 @@ public class UIController : MonoBehaviour {
                 }
 
                 // Part that autoskips text if [nextthisnow] or [finished] is introduced
-                if (sbTextMan.CanAutoSkipThis() || sbTextMan.CanAutoSkip() || readyToNextLine[encounter.enemies.IndexOf(monsterDialogueEnemy[i])]) {
+                if (sbTextMan.CanAutoSkipAny() || readyToNextLine[encounter.enemies.IndexOf(monsterDialogueEnemy[i])]) {
                     if (sbTextMan.HasNext()) {
                         sbTextMan.NextLineText();
                         enemy.UpdateBubble(i);
@@ -1400,7 +1400,7 @@ public class UIController : MonoBehaviour {
             mainTextManager.SetPause(false);
 
         if (state == "DIALOGRESULT")
-            if (mainTextManager.CanAutoSkipAll() || (mainTextManager.CanAutoSkipThis() && mainTextManager.LineComplete()))
+            if (mainTextManager.CanAutoSkipAll() || mainTextManager.CanAutoSkip() || (mainTextManager.CanAutoSkipThis() && mainTextManager.LineComplete()))
                 if (mainTextManager.HasNext())
                     mainTextManager.NextLineText();
                 else

@@ -121,7 +121,7 @@ public class LuaTextManager : TextManager {
                 break;
             }
         }
-        if ((CanAutoSkipAll() || CanAutoSkipThis()) && (!UIController.instance || !UIController.instance.monsterDialogues.Contains(this)))
+        if (CanAutoSkipAny() && (!UIController.instance || !UIController.instance.monsterDialogues.Contains(this)))
             NextLine();
         if (CanSkip() && !LineComplete() && GlobalControls.input.Cancel == ButtonState.PRESSED)
             DoSkipFromPlayer();
