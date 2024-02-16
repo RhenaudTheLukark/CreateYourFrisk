@@ -20,7 +20,7 @@ function BeforeDamageCalculation()
     Encounter.Call("SetRTLAnimation", "attacked")
 end
 
--- Happens after the slash animation but before 
+-- Happens after the slash animation but before
 function HandleAttack(attackstatus)
     if attackstatus == -1 then
         -- player pressed fight but didn't press Z afterwards
@@ -31,7 +31,7 @@ function HandleAttack(attackstatus)
         Encounter.Call("SetRTLAnimation", "hurt")
     end
 end
- 
+
 -- This handles the commands; all-caps versions of the commands list you have above.
 function HandleCustomCommand(command)
     if command == "CHECK" then
@@ -53,9 +53,9 @@ function OnDeath()
     if not GetAlMightyGlobal("RTLGenoIntro") then
         SetAlMightyGlobal("RTLGenoIntro", true)
         currentdialogue = { "[noskip][effect:none]Heh... [w:15][func:SetAnimRTL,happy]Hahahaha![w:20][next]",
-                            "[noskip][effect:none][func:SetAnimRTL,angry]You're pathetic. [w:15]Did you REALLY think I would just keel over and die against you?[w:20][next]",
+                            "[noskip][effect:none][func:SetAnimRTL,angry]You're pathetic. [w:15]Did you REALLY think I would just keel over and die like that?[w:20][next]",
                             "[noskip][effect:none][func:SetAnimRTL,angryhurt]Well you're [effect:shake][voice:v_floweymad][waitall:2]wrong,[waitall:1] [voice:monsterfont][effect:none][w:20]buckaroo.[w:20][next]",
-                            "[noskip][effect:none]Now, I'll send you right where you belong, [w:10]and I'll do it by force if I have to!",
+                            "[noskip][effect:none]Now, I'll send you right where you belong, [w:10]and I'll do it by force if I have to![w:20][next]",
                             "[noskip][func:PlaySE,Asriel TF][func:StartTransformation][w:80][next]",
                             "[noskip][effect:shake][voice:v_floweymad][func:SetLukarkFace,mad]Your rampage will stop right now![w:20][func:SetLukark][func:State,ACTIONSELECT]" }
                             --"[noskip][effect:none][func:SetAnimRTL,happy][func:PlaySE,mus_dogsong_tf]" .. "What were you expecting, seriously?\n[w:20]Well there's nothing here, I'll just die and that's it.[w:20][func:Unpause][func:Kill][next]"}
@@ -73,7 +73,7 @@ function OnDeath()
             "Oh lawd he comin!",
             "Hey am I like at least 20% Sans if I can remember stuff? [w:15]Neat...?"
         }
-        currentdialogue = { "[effect:none]Gah, what's the point. [w:15]Let's just get it over with already.",
+        currentdialogue = { "[effect:none]Bah, what's the point. [w:15]Let's just get it over with already.",
                             "[noskip][func:PlaySE,Asriel TF][func:StartTransformation][w:80][next]",
                             "[noskip][effect:shake][voice:v_floweymad][func:SetLukarkFace,mad]" .. (math.random() < 0.04 and sillyShouts[math.random(#sillyShouts)] or shouts[math.random(#shouts)]) .. "[w:20][func:SetLukark][func:State,ACTIONSELECT]" }
 

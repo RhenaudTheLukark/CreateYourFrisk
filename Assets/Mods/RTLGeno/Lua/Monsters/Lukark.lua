@@ -5,7 +5,7 @@ comments = { "Lukark is vengeful.", "Lukark prepares his next move.", "Lukark fr
 commands = { "Pardon" }
 randomdialogue = { "[effect:none][func:SetFace,angry]Come back here!",
                    "[effect:none][func:SetFace,angry]You can't escape me now!",
-                   "[effect:none][func:SetFace,angry]I'll get you no matter what.",
+                   "[effect:none][func:SetFace,angry]I'll get you no matter what!",
                    "[effect:none][func:SetFace,angry]Take this!" }
 
 sprite = "Lukark/full" --Always PNG. Extension is added automatically.
@@ -25,13 +25,13 @@ anim = "normal"
 SetActive(false)
 effect = "none"
 
--- Happens after the slash animation but before 
+-- Happens after the slash animation but before
 function HandleAttack(attackstatus)
     if attackstatus > 0 then
         SetFace("hurt")
     end
 end
- 
+
 -- This handles the commands; all-caps versions of the commands list you have above.
 function HandleCustomCommand(command)
     if command == "PARDON" then
@@ -45,7 +45,7 @@ function HandleCustomCommand(command)
             BattleDialog({ "A tear roll down your cheek as you bow in front of Lukark, pleading him to stop this nonsense." })
             currentdialogue = { "[effect:none]......[noskip][w:20][func:SetFace,happy][noskip:off]Please stop. We both know this has gone too far by now.", "[next]" }
         else
-            BattleDialog({ "You ask for Lukark's forgiveness once more...", "But he ignores you." })
+            BattleDialog({ "You ask for Lukark's forgiveness once more, but he ignores you." })
         end
         pardonCount = pardonCount + 1
     end
