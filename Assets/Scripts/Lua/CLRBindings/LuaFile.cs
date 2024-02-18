@@ -123,8 +123,9 @@ public class LuaFile {
         string origNewPath = newPath;
         FileLoader.SanitizePath(ref newPath, "", false, true, false);
 
-        if (!File.Exists(filePath)) throw new CYFException("The file at the path \"" + filePath + "\" doesn't exist, so you can't move it.");
+        if (!File.Exists(filePath)) throw new CYFException("The file at the path \"" + filePath + "\" doesn't exist, so you can't copy it.");
         if (File.Exists(newPath) && !overwrite) throw new CYFException("The file at the path \"" + origNewPath + "\" already exists.");
+        if (newPath == filePath) throw new CYFException("Cannot copy a file to its own location!");
 
         try { File.Copy(filePath, newPath, overwrite); }
         catch (DirectoryNotFoundException) { throw new CYFException("File.Copy: Could not find part or all of the path:\n\"" + origNewPath + "\"\n\nMake sure the path specified is valid, and its total length (" + origNewPath.Length + " characters, " + newPath.Length + " after sanitization) is not too long."); }
