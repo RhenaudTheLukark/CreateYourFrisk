@@ -420,10 +420,10 @@ public class UIController : MonoBehaviour {
                 }
                 if (encounter.CanRun)
                     mercyOptions[1] = "Flee";
-                SetPlayerOnSelection(0);
                 if (!GlobalControls.retroMode)
                     mainTextManager.SetEffect(new TwitchEffect(mainTextManager));
                 mainTextManager.SetText(new SelectMessage(mercyOptions, true, mainTextManager.columnNumber));
+                SetPlayerOnSelection(0);
                 break;
 
             case "ENEMYSELECT":
