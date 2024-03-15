@@ -45,7 +45,7 @@ public class TextManager : MonoBehaviour {
     [MoonSharpHidden] public int _textMaxWidth;
     public int currentCharacter;
     public int currentReferenceCharacter;
-    private bool currentSkippable = true;
+    public bool currentSkippable = true;
     private bool decoratedTextOffset;
     private RectTransform self;
 

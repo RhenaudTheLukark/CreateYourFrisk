@@ -123,7 +123,7 @@ public class LuaTextManager : TextManager {
         }
         if (CanAutoSkipAny() && (!UIController.instance || !UIController.instance.monsterDialogues.Contains(this)))
             NextLine();
-        if (CanSkip() && !LineComplete() && GlobalControls.input.Cancel == ButtonState.PRESSED)
+        if (GlobalControls.input.Cancel == ButtonState.PRESSED && CanSkip() && !LineComplete() && (!UIController.instance || this != UIController.instance.mainTextManager || !UIController.instance.stateSwitched))
             DoSkipFromPlayer();
     }
 

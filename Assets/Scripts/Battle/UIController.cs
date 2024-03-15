@@ -783,18 +783,14 @@ public class UIController : MonoBehaviour {
                         case Actions.FIGHT:
                             if (encounter.EnabledEnemies.Length > 0)
                                 SwitchState("ENEMYSELECT");
-                            else
-                                mainTextManager.DoSkipFromPlayer();
                             break;
 
                         case Actions.ACT:
                             if (GlobalControls.crate)
                                 if (ControlPanel.instance.Safe) UnitaleUtil.PlaySound("MEOW", "sounds/meow" + Math.RandomRange(1, 8));
-                                else UnitaleUtil.PlaySound("MEOW", "sounds/meow" + Math.RandomRange(1, 9));
+                                else                            UnitaleUtil.PlaySound("MEOW", "sounds/meow" + Math.RandomRange(1, 9));
                             else if (encounter.EnabledEnemies.Length > 0)
                                 SwitchState("ENEMYSELECT");
-                            else
-                                mainTextManager.DoSkipFromPlayer();
                             break;
 
                         case Actions.ITEM:
@@ -807,9 +803,7 @@ public class UIController : MonoBehaviour {
 
                             } else {
                                 if (Inventory.inventory.Count == 0) {
-                                    //ActionDialogResult(new TextMessage("Your Inventory is empty.", true, false), UIState.ACTIONSELECT);
                                     PlaySound(AudioClipRegistry.GetSound("menuconfirm"));
-                                    mainTextManager.DoSkipFromPlayer();
                                     return;
                                 }
                                 SwitchState("ITEMMENU");
@@ -1076,7 +1070,7 @@ public class UIController : MonoBehaviour {
         switch (state) {
             case "ACTIONSELECT":
             case "DIALOGRESULT":
-                if (mainTextManager.CanSkip() &&!mainTextManager.LineComplete())
+                if (mainTextManager.CanSkip() && !mainTextManager.LineComplete())
                     mainTextManager.DoSkipFromPlayer();
                 break;
 
