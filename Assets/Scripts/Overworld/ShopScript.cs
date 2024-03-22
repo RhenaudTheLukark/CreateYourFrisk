@@ -468,9 +468,9 @@ public class ShopScript : MonoBehaviour {
                 tmBigTalk.DoSkipFromPlayer();
             else
                 tmBigTalk.SkipLine();
-        } else if ((GlobalControls.input.Confirm == ButtonState.PRESSED || tmBigTalk.CanAutoSkipAll()) && tmBigTalk.LineComplete() && !tmBigTalk.AllLinesComplete())
+        } else if ((GlobalControls.input.Confirm == ButtonState.PRESSED || tmBigTalk.CanAutoSkipAny(true)) && tmBigTalk.LineComplete() && !tmBigTalk.AllLinesComplete())
             tmBigTalk.NextLineText();
-        else if ((GlobalControls.input.Confirm == ButtonState.PRESSED || tmBigTalk.CanAutoSkipAll()) && tmBigTalk.AllLinesComplete()) {
+        else if ((GlobalControls.input.Confirm == ButtonState.PRESSED || tmBigTalk.CanAutoSkipAny(true)) && tmBigTalk.AllLinesComplete()) {
             switch (currentState) {
                 case State.TALKINPROGRESS:
                     ChangeState(State.TALK);

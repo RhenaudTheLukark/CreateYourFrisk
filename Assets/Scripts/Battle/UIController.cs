@@ -599,7 +599,7 @@ public class UIController : MonoBehaviour {
                 continue;
             }
 
-            if ((!monsterDialogues[i].AllLinesComplete() || monsterDialogues[i].LineCount() == 0) && !monsterDialogues[i].CanAutoSkipThis() && (monsterDialogues[i].AllLinesComplete() || !monsterDialogues[i].LineComplete())) {
+            if (!monsterDialogues[i].AllLinesComplete() && (!monsterDialogues[i].CanSkipToNextLine() || !monsterDialogues[i].LineComplete())) {
                 allGood = false;
                 continue;
             }
@@ -1394,15 +1394,15 @@ public class UIController : MonoBehaviour {
             mainTextManager.SetPause(false);
 
         if (state == "DIALOGRESULT")
-            if (mainTextManager.CanAutoSkipAll() || mainTextManager.CanAutoSkip() || (mainTextManager.CanAutoSkipThis() && mainTextManager.LineComplete()))
+            if (mainTextManager.CanAutoSkipAny(true))
                 if (mainTextManager.HasNext())
                     mainTextManager.NextLineText();
                 else
                     SwitchState(stateAfterDialogs);
 
         if (state == "ENEMYDIALOGUE") {
-            if (monsterDialogues.Where(mgr => mgr != null && mgr.isactive).All(mgr => mgr.CanAutoSkipThis())) DoNextMonsterDialogue();
-            else                                                                                              UpdateMonsterDialogue();
+            if (monsterDialogues.Where(mgr => mgr != null && mgr.isactive).All(mgr => mgr.CanSkipToNextLine())) DoNextMonsterDialogue();
+            else                                                                                                UpdateMonsterDialogue();
         }
 
         if (state == "DEFENDING") {

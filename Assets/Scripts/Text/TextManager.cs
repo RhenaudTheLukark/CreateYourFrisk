@@ -60,7 +60,7 @@ public class TextManager : MonoBehaviour {
 
     private bool paused;
     private bool muted;
-    private bool autoSkipThis;
+    private bool skippableToNextLine;
     private bool autoSkipAll;
     private bool autoSkip;
     private bool skipFromPlayer;
@@ -142,17 +142,19 @@ public class TextManager : MonoBehaviour {
 
     [MoonSharpHidden] public void SetCaller(ScriptWrapper s) { caller = s; }
 
-    public void SetFont(UnderFont font) {
+    public void SetFont(UnderFont font, bool inline = false) {
         this.font = font;
-        defaultFont = font;
-        defaultVoice = font.SoundName;
 
-        if (defaultFont == null)
+        if (!inline || defaultFont == null) {
             defaultFont = font;
+            defaultVoice = font.SoundName;
+            fontDefaultColor = font.DefaultColor;
+        }
 
         vSpacing = 0;
         hSpacing = font.CharSpacing;
-        fontDefaultColor = defaultColor = font.DefaultColor;
+
+        defaultColor = font.DefaultColor;
         if (this as LuaTextManager) {
             if ((this as LuaTextManager).textColorSet) defaultColor =   ((LuaTextManager) this)._color;
             if ((this as LuaTextManager).textAlphaSet) defaultColor.a = ((LuaTextManager) this).alpha;
@@ -228,11 +230,14 @@ public class TextManager : MonoBehaviour {
     }
 
     [MoonSharpHidden] public void SetTextQueue(TextMessage[] newTextQueue) {
+        if (newTextQueue == null)
+            newTextQueue = new TextMessage[] { };
+
         if (UnitaleUtil.IsOverworld && (gameObject.name == "TextManager OW"))
             PlayerOverworld.AutoSetUIPos();
 
         ResetFont();
-        if (mugshot != null) {
+        if (mugshotList != null) {
             bool oldLineHasMugshot = lineHasMugshot;
             SetMugshot(DynValue.NewNil());
             SetMugshotShift(oldLineHasMugshot);
@@ -270,9 +275,9 @@ public class TextManager : MonoBehaviour {
 
     [MoonSharpHidden] public bool CanSkip() { return currentSkippable; }
     [MoonSharpHidden] public bool CanAutoSkip() { return autoSkip; }
-    [MoonSharpHidden] public bool CanAutoSkipThis() { return autoSkipThis; }
+    [MoonSharpHidden] public bool CanSkipToNextLine() { return skippableToNextLine; }
     [MoonSharpHidden] public bool CanAutoSkipAll() { return autoSkipAll; }
-    [MoonSharpHidden] public bool CanAutoSkipAny() { return CanAutoSkip() || CanAutoSkipThis() || CanAutoSkipAll(); }
+    [MoonSharpHidden] public bool CanAutoSkipAny(bool onlySkippableIfConfirm = false) { return CanAutoSkip() || (CanSkipToNextLine() && (!onlySkippableIfConfirm || GlobalControls.input.Confirm == ButtonState.PRESSED)) || CanAutoSkipAll(); }
 
     public int LineCount() {
         return textQueue == null ? 0 : textQueue.Length;
@@ -359,7 +364,7 @@ public class TextManager : MonoBehaviour {
         commandColorSet  = false;
         commandAlphaSet  = false;
         currentSkippable = true;
-        autoSkipThis     = false;
+        skippableToNextLine = false;
         autoSkip         = false;
         autoSkipAll      = false;
         instantCommand   = false;
@@ -823,7 +828,7 @@ public class TextManager : MonoBehaviour {
     }
 
     protected virtual void Update() {
-        if (mugshot != null && mugshotList != null)
+        if (mugshotList != null)
             if (UnitaleUtil.IsOverworld && mugshot.alpha != 0 && mugshotList.Length > 1) {
                 if (!mugshot.animcomplete && (letterTimer < 0 || LineComplete())) {
                     mugshot.StopAnimation();
@@ -998,7 +1003,7 @@ public class TextManager : MonoBehaviour {
                     UnitaleUtil.DisplayLuaError("", "[font:x] usage - The font \"" + cmds[1] + "\" doesn't exist.\nYou should check if you made a typo, or if the font really is in your mod.", true);
                     break;
                 }
-                SetFont(uf);
+                SetFont(uf, true);
                 if (GetType() == typeof(LuaTextManager) && ((LuaTextManager)this).bubble)
                     ((LuaTextManager) this).UpdateBubble();
                 break;
@@ -1061,10 +1066,10 @@ public class TextManager : MonoBehaviour {
                 catch { Debug.LogError("[waitall:x] usage - You used the value \"" + cmds[1] + "\" to set the text's waiting time between letters, but it's not a valid integer value."); }
                 break;
 
-            case "novoice":     commandVoice = "none"; break;
-            case "next":        autoSkip = true;       break;
-            case "finished":    autoSkipThis = true;   break;
-            case "nextthisnow": autoSkipAll = true;    break;
+            case "novoice":     commandVoice = "none";      break;
+            case "next":        autoSkip = true;            break;
+            case "finished":    skippableToNextLine = true; break;
+            case "nextthisnow": autoSkipAll = true;         break;
             case "speed":
                 try {
                     //you can only set text speed to a number >= 0

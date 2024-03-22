@@ -197,20 +197,22 @@ public class PlayerOverworld : MonoBehaviour {
     private void FinishFade() { PlayerNoMove = false; } // Scene loaded
 
     private void NextText() {
-        if (!textmgr.AllLinesComplete() && (textmgr.CanAutoSkipAll() || textmgr.LineComplete()))
-            textmgr.NextLineText();
-        else if ((textmgr.AllLinesComplete() || textmgr.CanAutoSkipAll()) && textmgr.LineCount() != 0) {
-            EventManager.instance.passPressOnce = true;
-            textmgr.transform.parent.parent.SetAsFirstSibling();
-            textmgr.SetTextQueue(null);
-            textmgr.HideTextObject();
-            textmgr.SetHorizontalSpacing(textmgr.font.CharSpacing);
-            textmgr.SetVerticalSpacing();
-            textmgr.SetTextFrameAlpha(0);
-            if (EventManager.instance.script != null)
-                EventManager.instance.script.Call("CYFEventNextCommand");
-            else
-                PlayerNoMove = false; //End text no event
+        if (textmgr.CanAutoSkipAny(true) || textmgr.LineComplete()) {
+            if (!textmgr.AllLinesComplete())
+                textmgr.NextLineText();
+            else if (textmgr.LineCount() != 0) {
+                EventManager.instance.passPressOnce = true;
+                textmgr.transform.parent.parent.SetAsFirstSibling();
+                textmgr.SetTextQueue(null);
+                textmgr.HideTextObject();
+                textmgr.SetHorizontalSpacing(textmgr.font.CharSpacing);
+                textmgr.SetVerticalSpacing();
+                textmgr.SetTextFrameAlpha(0);
+                if (EventManager.instance.script != null)
+                    EventManager.instance.script.Call("CYFEventNextCommand");
+                else
+                    PlayerNoMove = false; //End text no event
+            }
         }
     }
 
@@ -220,7 +222,7 @@ public class PlayerOverworld : MonoBehaviour {
             if (!GameObject.Find("textframe_border_outer")) continue;
             if (GameObject.Find("textframe_border_outer").GetComponent<Image>().color.a == 0) continue;
             try {
-                if (textmgr.CanAutoSkipAll())
+                if (textmgr.CanAutoSkipAny(true))
                     NextText();
                 if (GlobalControls.input.Cancel == ButtonState.PRESSED && !textmgr.LineComplete() && textmgr.CanSkip()) {
                     if (EventManager.instance.script != null && EventManager.instance.script.GetVar("playerskipdocommand").Boolean)
