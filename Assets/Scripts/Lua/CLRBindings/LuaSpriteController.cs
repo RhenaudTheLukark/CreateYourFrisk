@@ -57,19 +57,19 @@ public class LuaSpriteController {
 
     // The x position of the sprite, relative to the arena position and its anchor.
     public float x {
-        get { return img.GetComponent<RectTransform>().anchoredPosition.x + (GetTarget().gameObject != img ? img.transform.localPosition.x : 0); }
+        get { return img.GetComponent<RectTransform>().anchoredPosition.x + (GetTarget().gameObject != img ? GetTarget().transform.localPosition.x : 0); }
         set { MoveTo(value, y); }
     }
 
     // The y position of the sprite, relative to the arena position and its anchor.
     public float y {
-        get { return img.GetComponent<RectTransform>().anchoredPosition.y + (GetTarget().gameObject != img ? img.transform.localPosition.y : 0); }
+        get { return img.GetComponent<RectTransform>().anchoredPosition.y + (GetTarget().gameObject != img ? GetTarget().transform.localPosition.y : 0); }
         set { MoveTo(x, value); }
     }
 
     // The z position of the sprite, relative to the arena position and its anchor. (Only useful in the overworld)
     public float z {
-        get { return GetTarget().localPosition.z; }
+        get { return img.GetComponent<RectTransform>().localPosition.z + (GetTarget().gameObject != img ? GetTarget().transform.localPosition.z : 0); }
         set { MoveTo(x, y, value); }
     }
 
@@ -439,7 +439,7 @@ public class LuaSpriteController {
     public void MoveTo(float x, float y) { MoveTo(x, y, GetTarget().localPosition.z); }
     public void MoveTo(float x, float y, float z) {
         if (img.transform.parent != null && img.transform.parent.name == "SpritePivot")
-            GetTarget().localPosition = new Vector3(x, y, GetTarget().localPosition.z) - (Vector3)img.GetComponent<RectTransform>().anchoredPosition;
+            GetTarget().localPosition = new Vector3(x, y, z) - (Vector3)img.GetComponent<RectTransform>().anchoredPosition;
         else
             img.GetComponent<RectTransform>().anchoredPosition = new Vector2(x, y);
         UnitaleUtil.TextObjectMoveChecker(GetTarget());
