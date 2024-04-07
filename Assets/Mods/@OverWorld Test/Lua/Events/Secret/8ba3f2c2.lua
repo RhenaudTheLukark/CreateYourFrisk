@@ -12,8 +12,8 @@ function EventPage1()
 
     Event.MoveToPoint("Player", 380, 200, true)
     Event.SetDirection("Player", 2)
-    General.SetDialog({"[noskip]Man, the Core is a nice place... [w:25][mugshot:MK/sad]but I'm very far away from home...",
-                       "[noskip]I told my parents I went exploring the world, [w:25][mugshot:MK/sad2]but man, this place is scary...",
+    General.SetDialog({"[noskip]Man, [w:15]the Core is a nice place... [w:25][mugshot:MK/sad]but I'm very far away from home...",
+                       "[noskip]I told my parents I went exploring the world, [w:15][mugshot:MK/sad2]but man, [w:15]this place is scary...",
                        "[noskip]I better move on."}, true, {"MK/stars", "MK/normal", "MK/determined"})
     Event.MoveToPoint("Player", 400, 200, true)
 	Event.Teleport("8ba3f2c2 (1)", 40, 200)

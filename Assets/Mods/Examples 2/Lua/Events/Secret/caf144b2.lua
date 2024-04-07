@@ -19,14 +19,14 @@ function EventPage1()
     General.SetDialog({"[noskip]Heeeeeeey!"}, true)
     Event.MoveToPoint("caf144b2 (1)", 900, playerPos[2], true)
 
-    General.SetDialog({"[noskip]I was running after you, [w:10]you know!",
+    General.SetDialog({"[noskip]I was looking for you, [w:10]you know!",
                        "[noskip]ahem[next]",
                        "[noskip]You're a human, [w:10]right?"}, true, {"Chara/angry", "Chara/ahem", "Chara/badsmile"})
     General.SetChoice({"Yes", "No"})
     if lastChoice == 0 then
         NewAudio.CreateChannel("temp")
         General.SetDialog({"[noskip]Oh, [w:10]cool!",
-                           "[noskip]You know,[mugshot:Chara/normal] [w:10]I came by not a long time ago too.",
+                           "[noskip]You know,[mugshot:Chara/normal] [w:10]I came by not long ago too.",
                            "[noskip]I know the place a bit now, [w:10][mugshot:Chara/smile]would you like me to show you around?",
                            "[noskip]No? [w:20]Excellent, [w:10]follow me!"}, true, {"Chara/smile", "Chara/thinking", "Chara/normal", "Chara/smile"})
         Event.SetAnimHeader("caf144b2 (2)", "")
