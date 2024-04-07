@@ -870,6 +870,9 @@ public class TextManager : MonoBehaviour {
                         if (!HandleShowLetter(ref soundPlayed, ref lastLetter))
                             break;
 
+                if (letterTimer < timePerLetter)
+                    break;
+
                 if (!firstChar)
                     letterTimer -= timePerLetter;
                 else {
@@ -922,7 +925,7 @@ public class TextManager : MonoBehaviour {
             currentReferenceCharacter++;
         }
 
-        if (!string.IsNullOrEmpty(GetVoice()) && !muted && !soundPlayed && (GlobalControls.retroMode || textQueue[currentLine].Text[currentCharacter] != ' ')) {
+        if (!string.IsNullOrEmpty(GetVoice()) && !muted && !soundPlayed && (GlobalControls.retroMode || (currentCharacter < textQueue[currentLine].Text.Length && textQueue[currentLine].Text[currentCharacter] != ' '))) {
             soundPlayed = true;
             try { UnitaleUtil.PlayVoice("BubbleSound", GetVoice()); }
             catch (CYFException e) { UnitaleUtil.DisplayLuaError("Playing a voice", e.Message); }
@@ -1067,9 +1070,9 @@ public class TextManager : MonoBehaviour {
                 break;
 
             case "novoice":     commandVoice = "none";      break;
-            case "next":        autoSkip = true;            break;
+            case "next":        autoSkipAll = true;         break;
             case "finished":    skippableToNextLine = true; break;
-            case "nextthisnow": autoSkipAll = true;         break;
+            case "nextthisnow": autoSkip = true;            break;
             case "speed":
                 try {
                     //you can only set text speed to a number >= 0

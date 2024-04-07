@@ -272,7 +272,8 @@ it's w3c valid, at least
 
             <p class="exblock">
                 <br><span class="function">[next]</span>
-                Skips to the next dialogue of the current monster only, even if several monsters are speaking, effectively desyncing their text.
+                Skips to the next line of the current text object automatically.
+                If used in a monster's text object, skipe the dialogue of all monsters, without concern for the other monsters' dialogue's state.
                 You can also use this for textbox trickery.
                 Here's an example to replicate Flowey's text-changing effect if you dodge the Friendliness Pellets(tm) twice.
             </p>
@@ -283,8 +284,9 @@ second line: "[instant][effect:none]RUN. INTO. THE.\nfriendliness\npellets"</pre
 
             <p class="exblock">
                 <br><span class="function"><span class="CYF"></span> [nextthisnow]</span>
-                Skips to the next dialogue of all monsters automatically, without concern for the other monsters' dialogue's state.
-                It acts much like <span class="term">[next]</span> except it affects all monsters.
+                Skips to the next dialogue of the current monster only, even if several monsters are speaking, effectively desyncing their text.
+                It acts like <span class="term">[next]</span> outside of monster text objects, its only difference is that it only affects the current monster
+                if used on a monster's text object.
             </p>
 
             <p class="exblock">
