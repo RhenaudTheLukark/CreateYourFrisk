@@ -284,7 +284,7 @@ public class TextManager : MonoBehaviour {
     }
 
     public bool LineComplete() {
-        return instantActive || currentCharacter == textQueue[currentLine].Text.Length;
+        return textQueue == null || instantActive || currentCharacter == textQueue[currentLine].Text.Length;
     }
 
     [MoonSharpHidden] public bool AllLinesComplete() {
@@ -684,9 +684,6 @@ public class TextManager : MonoBehaviour {
         // Work-around for [instant] and [instant:allowcommand] at the beginning of a line of text
         if (skipImmediate)
             InUpdateControlCommand(DynValue.NewString(skipCommand));
-
-        if (!instantActive)
-            Update();
     }
 
     private float[] ComputeTextSpacings() {
