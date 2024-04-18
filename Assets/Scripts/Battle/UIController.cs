@@ -494,7 +494,7 @@ public class UIController : MonoBehaviour {
                     return;
                 monsterDialogues = new LuaTextManager[encounter.EnabledEnemies.Length];
                 monsterDialogueEnemy = new EnemyController[encounter.EnabledEnemies.Length];
-                readyToNextLine = new bool[encounter.enemies.Count];
+                readyToNextLine = encounter.enemies.Select(e => !monsterDialogueEnemy.Contains(e)).ToArray();
                 messages.Clear();
                 for (int i = 0; i < encounter.EnabledEnemies.Length; i++) {
                     messages.Add(encounter.EnabledEnemies[i].GetDefenseDialog());
