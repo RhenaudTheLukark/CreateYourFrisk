@@ -69,6 +69,11 @@ public class LifeBarController : MonoBehaviour {
         lifebar.Start();
         lifebar.background.MoveToAbs(x, y);
         lifebar.SetSprites(backgroundSprite, fillSprite);
+
+        lifebar.background.color = lifebar.fill.color = new float[] { 1, 1, 1 };
+        if (lifebar.outlineRt)
+            lifebar.outline.color = lifebar.background.color;
+
         return lifebar;
     }
 
@@ -143,7 +148,7 @@ public class LifeBarController : MonoBehaviour {
     /// <param name="time">Time for the healthbar to reach its destination in frames.</param>
     /// <param name="allowNonClamped">True if values outside of the range [0.0, 1.0] should be kept.</param>
     public void SetLerp(float fillValue, int time = 60, bool allowNonClamped = false) {
-        SetLerpFull(desiredFill, fillValue, time, allowNonClamped);
+        SetLerpFull(currentFill, fillValue, time, allowNonClamped);
     }
 
     /// <summary>
