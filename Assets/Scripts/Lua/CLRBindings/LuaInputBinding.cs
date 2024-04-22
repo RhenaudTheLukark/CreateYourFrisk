@@ -22,8 +22,11 @@ public class LuaInputBinding {
     public int Right   { get { return (int)input.Right;   } }
 
     public int GetKey(string key) {
-        try { return (int)input.Key(key); }
-        catch { throw new CYFException("Input.GetKey(): The key \"" + key + "\" doesn't exist."); }
+        try {
+            if (!keyStateNeedsReload)
+                return keyStates[key];
+            return (int)input.Key(key);
+        } catch { throw new CYFException("Input.GetKey(): The key \"" + key + "\" doesn't exist."); }
     }
 
     public float GetAxisRaw(string axis) {
@@ -64,6 +67,37 @@ public class LuaInputBinding {
 
     public float mouseScroll { get { return Input.mouseScrollDelta.y; } }
     public float MouseScroll { get { return mouseScroll; } }
+
+    ////////////////////////
+    // Keystate recording //
+    ////////////////////////
+    [MoonSharpHidden] private readonly Dictionary<string, int> keyStates = new Dictionary<string, int>();
+    [MoonSharpHidden] private bool keyStateNeedsReload = true;
+
+    [MoonSharpHidden] public void Update() { keyStateNeedsReload = true; }
+
+    [MoonSharpHidden] public void ReloadKeyStates() {
+        keyStates.Clear();
+        foreach (string k in Enum.GetNames(typeof(KeyCode)))
+            keyStates.Add(k, GetKey(k));
+        keyStateNeedsReload = false;
+    }
+
+    public string[] GetPressedKeys() {
+        if (keyStateNeedsReload)
+            ReloadKeyStates();
+        return keyStates.Where(kv => kv.Value == 1).Select(kv => kv.Key).ToArray();
+    }
+    public string[] GetHeldKeys() {
+        if (keyStateNeedsReload)
+            ReloadKeyStates();
+        return keyStates.Where(kv => kv.Value == 2).Select(kv => kv.Key).ToArray();
+    }
+    public string[] GetReleasedKeys() {
+        if (keyStateNeedsReload)
+            ReloadKeyStates();
+        return keyStates.Where(kv => kv.Value == -1).Select(kv => kv.Key).ToArray();
+    }
 
     //////////////
     // Keybinds //

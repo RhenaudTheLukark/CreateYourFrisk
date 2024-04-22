@@ -140,6 +140,8 @@ public class GlobalControls : MonoBehaviour {
         if (isInFight || UnitaleUtil.IsOverworld)
             frame ++;
 
+        luaInput.Update();
+
         string sceneName = SceneManager.GetActiveScene().name;
 
         // Activate Debugger

@@ -98,6 +98,18 @@ it's w3c valid, at least
                 <span class="string"></span> axisName)</span> - Gets the precise state of the given axis (joystick, trigger,
                 D-Pad), between <span class="term">-1</span> and <span class="term">1</span>.</li><br>
 
+                <li><span class="CYF new"></span> <span class="luatable"><span class="string"></span></span> <span class="term">
+                Input.GetPressedKeys()</span> - Gets a list of all the keys which are currently pressed. This function only takes
+                keys in account, not axes.</li><br>
+
+                <li><span class="CYF new"></span> <span class="luatable"><span class="string"></span></span> <span class="term">
+                Input.GetHeldKeys()</span> - Gets a list of all the keys which are currently held. This function only takes keys
+                in account, not axes.</li><br>
+
+                <li><span class="CYF new"></span> <span class="luatable"><span class="string"></span></span> <span class="term">
+                Input.GetReleasedKeys()</span> - Gets a list of all the keys which are currently being released. This function
+                only takes keys in account, not axes.</li><br>
+
                 <li><span class="CYF new"></span> <span class="term">Input.CreateKeybind(<span class="string"></span> name,
                 <span class="luatable"><span class="string"></span></span> keys = { })</span> - Creates a keybind, which can be
                 used as a shortcut to get the state of several keys at the same time.
