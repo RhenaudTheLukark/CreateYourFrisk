@@ -47,26 +47,20 @@ public class LuaInputBinding {
     public int MousePosAbsX { get { return (int) (Input.mousePosition.x / ScreenResolution.displayedSize.x * 640); } }
     public int MousePosAbsY { get { return (int) (Input.mousePosition.y / ScreenResolution.displayedSize.y * 480); } }
 
-    public bool isMouseInWindow {
+    public bool IsMouseInWindow {
         get {
             if (ScreenResolution.wideFullscreen && Screen.fullScreen) return true;
             Rect screenRect = new Rect(0, 0, ScreenResolution.displayedSize.x, Screen.height);
             return screenRect.Contains(ScreenResolution.mousePosition);
         }
     }
-    public bool IsMouseInWindow { get { return isMouseInWindow; } }
 
-    public bool isMouseVisible {
+    public bool IsMouseVisible {
         get { return Cursor.visible; }
         set { Cursor.visible = value; }
     }
-    public bool IsMouseVisible {
-        get { return isMouseVisible; }
-        set { isMouseVisible = value; }
-    }
 
-    public float mouseScroll { get { return Input.mouseScrollDelta.y; } }
-    public float MouseScroll { get { return mouseScroll; } }
+    public float MouseScroll { get { return Input.mouseScrollDelta.y; } }
 
     ////////////////////////
     // Keystate recording //
