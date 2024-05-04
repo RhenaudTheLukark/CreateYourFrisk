@@ -494,7 +494,6 @@ public class UIController : MonoBehaviour {
                     return;
                 monsterDialogues = new LuaTextManager[encounter.EnabledEnemies.Length];
                 monsterDialogueEnemy = new EnemyController[encounter.EnabledEnemies.Length];
-                readyToNextLine = encounter.enemies.Select(e => !monsterDialogueEnemy.Contains(e)).ToArray();
                 messages.Clear();
                 for (int i = 0; i < encounter.EnabledEnemies.Length; i++) {
                     messages.Add(encounter.EnabledEnemies[i].GetDefenseDialog());
@@ -523,6 +522,7 @@ public class UIController : MonoBehaviour {
                     sbTextMan.SetTextQueue(monsterMessages);
                     encounter.EnabledEnemies[i].UpdateBubble(i);
                 }
+                readyToNextLine = encounter.enemies.Select(e => !monsterDialogueEnemy.Contains(e)).ToArray();
                 break;
 
             case "DONE":
