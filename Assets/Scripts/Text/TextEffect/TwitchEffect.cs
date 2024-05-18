@@ -7,7 +7,7 @@ public class TwitchEffect : TextEffect {
     private readonly int avgWigFrames = 48;
     private readonly int wigFrameVariety = 16;
     private int nextWigInFrames;
-    private RectTransform rt;
+    private LuaSpriteController ctrl;
 
     public TwitchEffect(TextManager textMan, float intensity = 2.0f, int step = 0) : base(textMan) {
         this.intensity = intensity > 0 ? intensity : 2.0f;
@@ -24,8 +24,8 @@ public class TwitchEffect : TextEffect {
             return;
 
         // Move back last character
-        if (updateCount == 0 && selectedChar >= 0 && selectedChar < textMan.letters.Count && rt) {
-            rt.localPosition -= (Vector3)positions[selectedChar];
+        if (updateCount == 0 && selectedChar >= 0 && selectedChar < textMan.letters.Count && ctrl != null) {
+            ctrl.Move(-positions[selectedChar].x, -positions[selectedChar].y);
             positions[selectedChar] = new Vector2();
         }
 
@@ -38,8 +38,9 @@ public class TwitchEffect : TextEffect {
         float random = Random.value * 2.0f * Mathf.PI;
         selectedChar = Random.Range(0, textMan.letters.Count);
         positions[selectedChar] = new Vector2(Mathf.Sin(random) * intensity, Mathf.Cos(random) * intensity);
-        rt = textMan.letters[selectedChar].image.GetComponent<RectTransform>();
-        rt.localPosition += (Vector3)positions[selectedChar];
+
+        ctrl = LuaSpriteController.GetOrCreate(textMan.letters[selectedChar].image.gameObject);
+        ctrl.Move(positions[selectedChar].x, positions[selectedChar].y);
     }
 
     private int GetNextWigTime() { return avgWigFrames + Mathf.RoundToInt(wigFrameVariety * (Random.value * 2 - 1)); }

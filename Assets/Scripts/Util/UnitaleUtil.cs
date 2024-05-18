@@ -804,13 +804,6 @@ public static class UnitaleUtil {
         return result;
     }
 
-    public static void TextObjectMoveChecker(Transform t) {
-        LuaTextManager[] ltms = t.GetComponentsInChildren<LuaTextManager>();
-        foreach (LuaTextManager ltm in ltms)
-            if (ltm.transform != t && ltm.adjustTextDisplay)
-                ltm.AlignLetters();
-    }
-
     public static Transform GetTransform(object o) {
         LuaSpriteController sSelf = o as LuaSpriteController;
         if (sSelf != null) return sSelf.img.transform;

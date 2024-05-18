@@ -15,10 +15,10 @@ public class RotatingEffect : TextEffect {
         for (int i = 0; i < textMan.letters.Count; i++) {
             float iDiv = sinTimer * rotSpeed + i / 3.0f + effectStep * i;
 
-            RectTransform rt = textMan.letters[i].image.GetComponent<RectTransform>();
+            LuaSpriteController ctrl = LuaSpriteController.GetOrCreate(textMan.letters[i].image.gameObject);
             Vector2 oldPosition = positions[i];
             positions[i] = new Vector2(intensity * -Mathf.Sin(iDiv), intensity * Mathf.Cos(iDiv));
-            rt.localPosition += (Vector3)(positions[i] - oldPosition);
+            ctrl.Move(positions[i].x - oldPosition.x, positions[i].y - oldPosition.y);
         }
 
         sinTimer += Time.deltaTime;

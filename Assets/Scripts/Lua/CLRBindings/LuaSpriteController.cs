@@ -57,13 +57,26 @@ public class LuaSpriteController {
 
     // The x position of the sprite, relative to the arena position and its anchor.
     public float x {
-        get { return img.GetComponent<RectTransform>().anchoredPosition.x + (GetTarget().gameObject != img ? GetTarget().transform.localPosition.x : 0); }
+        get {
+            float letterAdjustShift = 0;
+            if (tag == "letter") {
+                TextManager tm = img.transform.parent.GetComponent<TextManager>();
+                letterAdjustShift = tm.letterAdjustShifts[tm.letters.FindIndex(l => l.image.gameObject == img)].x;
+            }
+            return letterAdjustShift + img.GetComponent<RectTransform>().anchoredPosition.x + (GetTarget().gameObject != img ? GetTarget().transform.localPosition.x : 0);
+        }
         set { MoveTo(value, y); }
     }
 
     // The y position of the sprite, relative to the arena position and its anchor.
     public float y {
-        get { return img.GetComponent<RectTransform>().anchoredPosition.y + (GetTarget().gameObject != img ? GetTarget().transform.localPosition.y : 0); }
+        get {
+            float letterAdjustShift = 0;
+            if (tag == "letter") {
+                TextManager tm = img.transform.parent.GetComponent<TextManager>();
+                letterAdjustShift = tm.letterAdjustShifts[tm.letters.FindIndex(l => l.image.gameObject == img)].y;
+            }
+            return letterAdjustShift + img.GetComponent<RectTransform>().anchoredPosition.y + (GetTarget().gameObject != img ? GetTarget().transform.localPosition.y : 0); }
         set { MoveTo(x, value); }
     }
 
@@ -75,13 +88,27 @@ public class LuaSpriteController {
 
     // The x position of the sprite, relative to the bottom left corner of the screen.
     public float absx {
-        get { return GetTarget().position.x; }
+        get {
+            float letterAdjustShift = 0;
+            if (tag == "letter") {
+                TextManager tm = img.transform.parent.GetComponent<TextManager>();
+                letterAdjustShift = tm.letterAdjustShifts[tm.letters.FindIndex(l => l.image.gameObject == img)].x;
+            }
+            return letterAdjustShift + GetTarget().position.x;
+        }
         set { MoveToAbs(value, absy); }
     }
 
     // The y position of the sprite, relative to the bottom left corner of the screen.
     public float absy {
-        get { return GetTarget().position.y; }
+        get {
+            float letterAdjustShift = 0;
+            if (tag == "letter") {
+                TextManager tm = img.transform.parent.GetComponent<TextManager>();
+                letterAdjustShift = tm.letterAdjustShifts[tm.letters.FindIndex(l => l.image.gameObject == img)].y;
+            }
+            return letterAdjustShift + GetTarget().position.y;
+        }
         set { MoveToAbs(absx, value); }
     }
 
@@ -442,12 +469,10 @@ public class LuaSpriteController {
             GetTarget().localPosition = new Vector3(x, y, z) - (Vector3)img.GetComponent<RectTransform>().anchoredPosition;
         else
             img.GetComponent<RectTransform>().anchoredPosition = new Vector2(x, y);
-        UnitaleUtil.TextObjectMoveChecker(GetTarget());
     }
     public void MoveToAbs(float x, float y) { MoveToAbs(x, y, GetTarget().position.z); }
     public void MoveToAbs(float x, float y, float z) {
-       GetTarget().position = new Vector3(x, y, z);
-       UnitaleUtil.TextObjectMoveChecker(GetTarget());
+        GetTarget().position = new Vector3(x, y, z);
     }
 
     // Sets both xScale and yScale of a sprite

@@ -18,10 +18,8 @@ public class TwitchEffectLetter : TextEffectLetter {
     }
 
     protected override void UpdateInternal() {
-        if (updateCount == 0) {
-            rt.localPosition -= new Vector3(xPos, yPos);
-            xPos = yPos = 0;
-        }
+        if (updateCount == 0)
+            ctrl.Move(-xPos, -yPos);
 
         updateCount++;
         if (updateCount < nextWigInFrames)
@@ -32,7 +30,7 @@ public class TwitchEffectLetter : TextEffectLetter {
         float random = Random.value * 2.0f * Mathf.PI;
         xPos = Mathf.Sin(random) * intensity;
         yPos = Mathf.Cos(random) * intensity;
-        rt.localPosition += new Vector3(xPos, yPos);
+        ctrl.Move(xPos, yPos);
     }
 
     private int GetNextWigTime() { return avgWigFrames + Mathf.RoundToInt(wigFrameVariety * (Random.value * 2 - 1)); }

@@ -24,6 +24,7 @@ public class TextManager : MonoBehaviour {
         }
     }
     internal List<LetterData> letters = new List<LetterData>();
+    public List<Vector2> letterAdjustShifts = new List<Vector2>();
 
     protected UnderFont defaultFont;
     protected string defaultVoice;
@@ -497,8 +498,8 @@ public class TextManager : MonoBehaviour {
             if (child.GetComponent<SpriteRenderer>() == null && child.GetComponent<Image>() == null) continue;
             LuaSpriteController.GetOrCreate(child.gameObject).Remove();
         }
-        textEffect = null;
         letters.Clear();
+        letterAdjustShifts.Clear();
     }
 
     [MoonSharpHidden] public void HideTextObject() {
@@ -556,7 +557,8 @@ public class TextManager : MonoBehaviour {
         ltrRect.SetParent(gameObject.transform);
         ltrImg.sprite = font.Letters[currentText[index]];
 
-        letters.Add(new LetterData(index, ltrImg, font.Letters[currentText[index]], Vector2.zero, commandColorSet, commandAlphaSet));
+        letters.Add(new LetterData(index, ltrImg, font.Letters[currentText[index]], new Vector2(), commandColorSet, commandAlphaSet));
+        letterAdjustShifts.Add(new Vector2());
 
         ltrImg.SetNativeSize();
 
@@ -582,10 +584,6 @@ public class TextManager : MonoBehaviour {
 
         float letterShift = letter.sprite.border.w - letter.sprite.border.y;
 
-        LuaTextManager ltm = this as LuaTextManager;
-        if (ltm && ltm.adjustTextDisplay)
-            letterShift = Mathf.Round(letterShift * ltm.yscale) / ltm.yscale;
-
         if (GetType() == typeof(LuaTextManager) || gameObject.name == "TextParent" || gameObject.name == "ReviveText")
             // Allow Game Over fonts to enjoy the fixed text positioning, too!
             rt.localPosition = new Vector3(currentX, currentY + letterShift, 0);
@@ -600,6 +598,7 @@ public class TextManager : MonoBehaviour {
     protected virtual void SpawnText() {
         string currentText = textQueue[currentLine].Text;
         letters.Clear();
+        letterAdjustShifts.Clear();
         if (currentText.Length > 1 && GetAutoLineBreak())
             SpawnTextSpaceTest(0, currentText, out currentText);
 
@@ -716,20 +715,14 @@ public class TextManager : MonoBehaviour {
         float baseHSpacing = hSpacing;
         float baseVSpacing = vSpacing;
 
+        currentX = 0.01f;
+        currentY = 0.01f;
+
+        // allow Game Over fonts to enjoy the fixed text positioning, too!
         LuaTextManager ltm = this as LuaTextManager;
-        if (ltm && ltm.adjustTextDisplay) {
-            // Compute letter shift to align it to the integer position grid
-            float xPos = ltm.GetContainer().transform.position.x,
-                  yPos = ltm.GetContainer().transform.position.y;
-            currentX = (Mathf.Round(xPos) - xPos + 0.01f) / ltm.xscale;
-            currentY = (Mathf.Round(yPos) - yPos + 0.01f) / ltm.yscale;
-        } else {
-            currentX = 0.01f;
-            currentY = 0.01f;
-            // allow Game Over fonts to enjoy the fixed text positioning, too!
-            if (!ltm && gameObject.name != "TextParent" && gameObject.name != "ReviveText")
-                currentY -= font.LineSpacing;
-        }
+        if (!ltm && gameObject.name != "TextParent" && gameObject.name != "ReviveText")
+            currentY -= font.LineSpacing;
+
         startingLineX = currentX;
         startingLineY = currentY;
 
@@ -775,32 +768,6 @@ public class TextManager : MonoBehaviour {
 
         hSpacing = baseHSpacing;
         vSpacing = baseVSpacing;
-    }
-
-    public void AlignLetters() {
-        LuaTextManager ltm = this as LuaTextManager;
-        if (!ltm || !ltm.adjustTextDisplay || ltm.xscale == 0 || ltm.yscale == 0 || letters.Count == 0 || !letters.Any(l => Mathf.Abs(l.image.GetComponent<RectTransform>().localPosition.x) < 1))
-            return;
-
-        LetterData letter = letters.Find(l => Mathf.Abs(l.image.GetComponent<RectTransform>().localPosition.x) < 1);
-        Vector2 positionBase = letter.image.GetComponent<RectTransform>().position;
-        Vector2 localPositionBase = letter.image.GetComponent<RectTransform>().localPosition;
-
-        float xShift = 0, yShift = 0;
-
-        float xDiff = Mathf.Abs(positionBase.x % 1 - 0.01f);
-        if (xDiff >= 0.001f)
-            xShift = -positionBase.x % 1 + 0.01f - Mathf.Round(localPositionBase.x - xDiff);
-
-        float yDiff = Mathf.Abs(positionBase.y % 1 - 0.01f);
-        if (yDiff >= 0.001f)
-            yShift = -positionBase.y % 1 + 0.01f - Mathf.Round(localPositionBase.y - yDiff);
-
-        if (xShift == 0 && yShift == 0)
-            return;
-
-        foreach (LetterData l in letters)
-            l.image.GetComponent<RectTransform>().localPosition += new Vector3(xShift / ltm.xscale, yShift / ltm.yscale);
     }
 
     private bool CheckCommand() {
@@ -1336,11 +1303,8 @@ public class TextManager : MonoBehaviour {
         MoveToAbs(transform.parent.position.x + newX, transform.parent.position.y + newY);
     }
 
-    public virtual void MoveToAbs(float newX, float newY) {
+    public virtual void MoveToAbs(float newX, float newY, bool resetAdjustShift = false) {
         transform.position = new Vector3(Mathf.Round(newX), Mathf.Round(newY), transform.position.z);
-        LuaTextManager ltm = this as LuaTextManager;
-        if (ltm && ltm.adjustTextDisplay)
-            MoveLetters();
     }
 
     private float CreateNumber(string str) {

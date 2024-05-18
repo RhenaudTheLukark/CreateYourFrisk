@@ -1,13 +1,11 @@
-﻿using UnityEngine;
-
-public abstract class TextEffectLetter {
+﻿public abstract class TextEffectLetter {
     protected Letter letter;
-    protected RectTransform rt;
+    protected LuaSpriteController ctrl;
     protected float xPos = 0, yPos = 0;
 
     protected TextEffectLetter(Letter letter) {
         this.letter = letter;
-        rt = letter.GetComponent<RectTransform>();
+        ctrl = LuaSpriteController.GetOrCreate(letter.gameObject);
     }
 
     public void UpdateEffects() { UpdateInternal(); }
@@ -15,6 +13,6 @@ public abstract class TextEffectLetter {
 
     public void ResetPositions() {
         if (letter)
-            rt.localPosition -= new Vector3(xPos, yPos, 0);
+            ctrl.Move(-xPos, -yPos);
     }
 }

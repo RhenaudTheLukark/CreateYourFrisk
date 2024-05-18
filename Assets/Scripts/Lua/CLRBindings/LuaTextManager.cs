@@ -104,6 +104,9 @@ public class LuaTextManager : TextManager {
         base.Update();
 
         if (!isactive) return;
+
+        AlignLetters();
+
         //Next line/EOF check
         switch (progress) {
             case ProgressMode.MANUAL: {
@@ -719,17 +722,19 @@ public class LuaTextManager : TextManager {
     }
 
     public override void Move(float newX, float newY) {
-        MoveToAbs(container.transform.position.x + newX, container.transform.position.y + newY);
+        MoveToAbs(container.transform.position.x + newX, container.transform.position.y + newY, false);
     }
 
     public override void MoveTo(float newX, float newY) {
         MoveToAbs(container.transform.parent.position.x + newX, container.transform.parent.position.y + newY);
     }
 
-    public override void MoveToAbs(float newX, float newY) {
+    public override void MoveToAbs(float newX, float newY, bool resetAdjustShift = true) {
         CheckExists();
-        container.transform.position = adjustTextDisplay ? new Vector3(Mathf.Round(newX), Mathf.Round(newY), transform.position.z)
-                                                         : new Vector3(newX, newY, transform.position.z);
+        if (resetAdjustShift)
+            for (int i = 0; i < letterAdjustShifts.Count; i++)
+                letterAdjustShifts[i] = new Vector2();
+        container.transform.position = new Vector3(newX, newY, transform.position.z);
     }
 
     public void SetAnchor(float newX, float newY) {
@@ -773,6 +778,31 @@ public class LuaTextManager : TextManager {
         if (key == null)
             throw new CYFException("text.SetVar: The first argument (the index) is nil.\n\nSee the documentation for proper usage.");
         vars[key] = value;
+    }
+
+    public void AlignLetters() {
+        if (!adjustTextDisplay || xscale == 0 || yscale == 0)
+            return;
+
+        for (int i = 0; i < letters.Count; i++) {
+            LetterData letter = letters[i];
+            Vector2 adjustShift = letterAdjustShifts[i];
+            Vector2 realPosition = (Vector2)letter.image.transform.position + adjustShift;
+
+            float xShift = realPosition.x % xscale;
+            if (xShift > xscale / 2)
+                xShift -= xscale;
+
+            float yShift = realPosition.y % yscale;
+            if (yShift > yscale / 2)
+                yShift -= yscale;
+
+            Vector2 newShift = new Vector2(xShift, yShift);
+            if ((newShift - adjustShift).magnitude > 0.001f) {
+                letter.image.rectTransform.position = realPosition - newShift;
+                letterAdjustShifts[i] = newShift;
+            }
+        }
     }
 
     public DynValue GetVar(string key) {

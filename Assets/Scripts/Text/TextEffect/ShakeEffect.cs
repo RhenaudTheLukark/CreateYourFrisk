@@ -16,11 +16,11 @@ internal class ShakeEffect : TextEffect {
         skipNextFrame = true;
 
         for (int i = 0; i < textMan.letters.Count; i++) {
-            RectTransform rt = textMan.letters[i].image.GetComponent<RectTransform>();
+            LuaSpriteController ctrl = LuaSpriteController.GetOrCreate(textMan.letters[i].image.gameObject);
             float random = Random.value * 2.0f * Mathf.PI;
             Vector2 oldPosition = positions[i];
             positions[i] = new Vector2(Mathf.Sin(random) * intensity, Mathf.Cos(random) * intensity);
-            rt.localPosition += (Vector3)(positions[i] - oldPosition);
+            ctrl.Move(positions[i].x - oldPosition.x, positions[i].y - oldPosition.y);
         }
     }
 }
