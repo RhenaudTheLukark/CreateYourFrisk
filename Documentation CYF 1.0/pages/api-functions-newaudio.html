@@ -88,7 +88,8 @@ it's w3c valid, at least
                 Voices played are loaded from your mod's <span class="term">Sounds/Voices</span> folder, as .ogg or .wav files. Don't include the file extension.</li><br>
 
                 <li><span class="term">NewAudio.SetPitch(<span class="string"></span> name, <span class="number"></span> value)</span> - Sets the pitch (and speed) of the audio channel <span class="term">name</span>.
-                <br>1.0 is normal pitch/speed.</li><br>
+                <br>1.0 is normal pitch/speed.
+                <br>If the value becomes negative, the audio will be played in reverse.</li><br>
                 <li><span class="number"></span> <span class="term">NewAudio.GetPitch(<span class="string"></span> name)</span> - Gets the pitch of the audio channel <span class="term">name</span>.</li><br>
                 <li><span class="term">NewAudio.SetVolume(<span class="string"></span> name, <span class="number"></span> value)</span> - Sets the volume of the audio channel <span class="term">name</span>.
                 <br>0.75 is the default value.</li><br>
