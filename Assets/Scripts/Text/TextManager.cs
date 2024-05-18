@@ -112,7 +112,6 @@ public class TextManager : MonoBehaviour {
     //public string[] mugshotsPath;
     //public bool overworld;
     [MoonSharpHidden] public bool skipNowIfBlocked = false;
-    internal bool noSkip1stFrame = true;
 
     [MoonSharpHidden] public bool lateStartWaiting = false; // Lua text objects will use a late start
     public TextManager() {
@@ -457,7 +456,7 @@ public class TextManager : MonoBehaviour {
     }
 
     public virtual void SkipLine() {
-        if (noSkip1stFrame) return;
+        if (lateStartWaiting) return;
         foreach (LetterData d in letters)
             d.image.enabled = true;
         currentCharacter = textQueue[currentLine].Text.Length;
@@ -599,7 +598,6 @@ public class TextManager : MonoBehaviour {
     }
 
     protected virtual void SpawnText() {
-        noSkip1stFrame = true;
         string currentText = textQueue[currentLine].Text;
         letters.Clear();
         if (currentText.Length > 1 && GetAutoLineBreak())
@@ -878,8 +876,6 @@ public class TextManager : MonoBehaviour {
                 }
             }
         }
-
-        noSkip1stFrame = false;
     }
 
     private void HandleShowLettersOnce(ref bool soundPlayed, ref int lastLetter) {
