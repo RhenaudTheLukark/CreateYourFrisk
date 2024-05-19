@@ -12,7 +12,7 @@
     protected abstract void UpdateInternal();
 
     public void ResetPositions() {
-        if (letter)
+        if (letter && ctrl != null)
             ctrl.Move(-xPos, -yPos);
     }
 }
