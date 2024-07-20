@@ -43,7 +43,7 @@ public class ItemBoxUI : MonoBehaviour {
             go.AddComponent<TextManager>();
             TextManager tm = go.GetComponent<TextManager>();
             tm.transform.SetParent(transform);
-            tm.transform.localPosition = new Vector3(80, 410 - (i * 32));
+            tm.MoveTo(80, 410 - (i * 32));
             inventory.Add(tm);
 
             LuaSpriteController sprite = (LuaSpriteController) (SpriteUtil.MakeIngameSprite("px", -1).UserData.Object);
@@ -61,7 +61,7 @@ public class ItemBoxUI : MonoBehaviour {
             go.AddComponent<TextManager>();
             TextManager tm = go.GetComponent<TextManager>();
             tm.transform.SetParent(transform);
-            tm.transform.localPosition = new Vector3(372, 410 - (i * 32));
+            tm.MoveTo(372, 410 - (i * 32));
             boxContents.Add(tm);
 
             LuaSpriteController sprite = (LuaSpriteController) (SpriteUtil.MakeIngameSprite("px", -1).UserData.Object);
@@ -77,7 +77,7 @@ public class ItemBoxUI : MonoBehaviour {
 
     // Update is called once per frame
     private void Update() {
-        if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED) {
+        if (GlobalControls.input.Confirm == ButtonState.PRESSED) {
             List<UnderItem> selectedInv = inventoryColumn ? Inventory.inventory : ItemBox.items;
             List<UnderItem> otherInv = inventoryColumn ? ItemBox.items : Inventory.inventory;
             int otherInvCapacity = inventoryColumn ? ItemBox.capacity : Inventory.inventorySize;
@@ -99,27 +99,27 @@ public class ItemBoxUI : MonoBehaviour {
                 UnitaleUtil.PlaySound("SeparateSound", "menumove");
             RefreshDisplay();
 
-        } else if (GlobalControls.input.Up == UndertaleInput.ButtonState.PRESSED) {
+        } else if (GlobalControls.input.Up == ButtonState.PRESSED) {
             lineIndex--;
             if (lineIndex < 0)
                 lineIndex = (inventoryColumn ? Inventory.inventorySize : ItemBox.capacity) - 1;
             UnitaleUtil.PlaySound("SeparateSound", "menumove");
             RefreshDisplay();
 
-        } else if (GlobalControls.input.Down == UndertaleInput.ButtonState.PRESSED) {
+        } else if (GlobalControls.input.Down == ButtonState.PRESSED) {
             lineIndex++;
             if (lineIndex >= (inventoryColumn ? Inventory.inventorySize : ItemBox.capacity))
                 lineIndex = 0;
             UnitaleUtil.PlaySound("SeparateSound", "menumove");
             RefreshDisplay();
 
-        } else if (GlobalControls.input.Left == UndertaleInput.ButtonState.PRESSED || GlobalControls.input.Right == UndertaleInput.ButtonState.PRESSED) {
+        } else if (GlobalControls.input.Left == ButtonState.PRESSED || GlobalControls.input.Right == ButtonState.PRESSED) {
             if (lineIndex >= Inventory.inventorySize || lineIndex >= ItemBox.capacity) return;
             inventoryColumn = !inventoryColumn;
             UnitaleUtil.PlaySound("SeparateSound", "menumove");
             RefreshDisplay();
 
-        } else if (GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED) {
+        } else if (GlobalControls.input.Cancel == ButtonState.PRESSED) {
             UnitaleUtil.PlaySound("SeparateSound", "menumove");
             DestroySelf();
         }
@@ -149,14 +149,14 @@ public class ItemBoxUI : MonoBehaviour {
 
     private void DestroySelf() {
         while (inventory.Count > 0) {
-            inventory[0].DestroyChars();
+            inventory[0].HideTextObject();
             Destroy(inventory[0].gameObject);
             inventory.RemoveAt(0);
             inventorySprites[0].Remove();
             inventorySprites.RemoveAt(0);
         }
         while (boxContents.Count > 0) {
-            boxContents[0].DestroyChars();
+            boxContents[0].HideTextObject();
             Destroy(boxContents[0].gameObject);
             boxContents.RemoveAt(0);
             boxContentsSprites[0].Remove();

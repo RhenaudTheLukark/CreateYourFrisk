@@ -12,8 +12,8 @@ beginfade = false
 endfade = false
 alphaup = false
 
-enemies = {"poseur"}
-enemypositions = { {0, 0} }
+enemies = {"scruffle", "static"}
+enemypositions = {{-80, 2}, {80, 0}}
 
 possible_attacks = {"bullettest_bouncy", "bullettest_chaserorb", "bullettest_touhou"}
 
@@ -24,10 +24,16 @@ function EncounterStarting()
 	fade.x = 320
 	fade.y = 240
 	fade.Scale(640, 480)
-	fade.alpha = 1
-    enemies[1]["currentdialogue"] = {"[noskip][func:LaunchFade, true][w:30][next]",
+
+	for i = 1, #enemies do
+		enemies[i].Call("EncounterStarting")
+		enemies[i]["enemyNumber"] = i
+	end
+
+	enemies[1]["currentdialogue"] = {"[noskip][func:LaunchFade, true][w:30][next]",
 									 "[noskip][effect:none]After two months of hard work,[w:10] RhenaudTheLukark released CYF 0.1.[w:30][next]",
-									 "[noskip][effect:none]He did everything he could to keep the upcoming engine a secret,[w:10] but was too excited about showing it to the world.[w:30][next]",
+									 "[noskip][effect:none]He did everything he could to keep the upcoming engine a secret,[w:10] but was too excited about showing it to the world.[w:30][next]"}
+	enemies[2]["currentdialogue"] = {"", "", "",
 									 "[noskip][effect:none]This new engine wasn't very well known,[w:10] as the official Unitale 0.2.1a version was still used by a good part of the community.[w:30][next]",
 									 "[noskip][effect:none]The only new thing was the overworld system,[w:10] but it was unusable without giving away the sources.[w:30][next]",
 									 "[noskip][effect:none]Then,[w:10] the developer decided to extend his engine to make it more useful for the community.[w:30][next]",
@@ -61,6 +67,9 @@ function Update()
 		end
 		if fade.alpha > 1 then fade.alpha = 1 end
 		if fade.alpha < 0 then fade.alpha = 0 end
+	end
+	for i = 1, #enemies do
+		enemies[i].Call("Update")
 	end
 end
 require "Waves/bullettest_bouncy"

@@ -211,7 +211,7 @@ public class EventManager : MonoBehaviour {
                 // Run an available auto event
                 if (TestEventAuto()) return;
                 // If the Player pressed the Confirm key, check if it's in range of a button press event
-                if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED && !passPressOnce && (GameObject.Find("FadingBlack") == null || GameObject.Find("FadingBlack").GetComponent<Fading>().alpha <= 0)) {
+                if (GlobalControls.input.Confirm == ButtonState.PRESSED && !passPressOnce && (GameObject.Find("FadingBlack") == null || GameObject.Find("FadingBlack").GetComponent<Fading>().alpha <= 0)) {
                     RaycastHit2D hit;
                     TestEventPress(PlayerOverworld.instance.lastMove.x, PlayerOverworld.instance.lastMove.y, out hit);
                 } else
@@ -694,14 +694,15 @@ end";
             if (threeLines)  selection += 2;
             else             selection += 4;
         }
-        // Position of the soul if selection was 0
-        Vector2 upperLeft = new Vector2(61 + Camera.main.transform.position.x - 320,
-                                        GameObject.Find("letter(Clone)").GetComponent<RectTransform>().position.y + (GameObject.Find("letter(Clone)").GetComponent<RectTransform>().sizeDelta.y / 2) - 1);
-        // Compute the horizontal and vertical shift of the soul
-        int xMv = selection % 2;
-        int yMv = selection / 2;
-        // Move the soul where it should be, hardcoded
-        GameObject.Find("tempHeart").GetComponent<RectTransform>().position = new Vector2(upperLeft.x + xMv * 303, upperLeft.y - yMv * _textManager.Charset.LineSpacing);
+
+        int xMv = selection % _textManager.columnNumber;
+        int yMv = selection / _textManager.columnNumber;
+
+        if (_textManager.letters.Count > 0)
+            GameObject.Find("tempHeart").GetComponent<RectTransform>().position =
+                new Vector3(_textManager.letters[0].image.transform.position.x + xMv * _textManager.columnShift,
+                            _textManager.letters[0].image.transform.position.y - yMv * _textManager.font.LineSpacing + 9,
+                            GameObject.Find("tempHeart").GetComponent<RectTransform>().position.z);
     }
 
     /// <summary>
@@ -1049,8 +1050,7 @@ end";
     /// </summary>
     public void EndEvent() {
         PlayerOverworld.instance.textmgr.SetTextFrameAlpha(0);
-        PlayerOverworld.instance.textmgr.textQueue = new TextMessage[] { };
-        PlayerOverworld.instance.textmgr.DestroyChars();
+        PlayerOverworld.instance.textmgr.SetTextQueue(new TextMessage[] { });
         PlayerOverworld.instance.PlayerNoMove = false;
         PlayerOverworld.instance.UIPos = 0;
         ScriptRunning = false;
@@ -1202,13 +1202,14 @@ end";
 
         // Main loop of the choice dialogue
         while (true) {
+            int xMov = GlobalControls.input.Right == ButtonState.PRESSED ? 1 : GlobalControls.input.Left == ButtonState.PRESSED ? -1 : 0;
             // Move the soul in front of the current selected option if one of the Left or Right keys are pressed
-            if (GlobalControls.input.Right == UndertaleInput.ButtonState.PRESSED || GlobalControls.input.Left == UndertaleInput.ButtonState.PRESSED) {
-                actualChoice = (actualChoice + 1) % 2;
+            if (xMov != 0) {
+                actualChoice = UnitaleUtil.SelectionChoice(2, actualChoice, xMov, 0, 1, 2, false);
                 SetPlayerOnSelection(actualChoice, question, !oneLiners[actualChoice]);
             // Confirm the selected option if a Confirm key is pressed
-            } else if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED)
-                if (!_textManager.blockSkip && !_textManager.LineComplete() && _textManager.CanSkip())
+            } else if (GlobalControls.input.Confirm == ButtonState.PRESSED)
+                if (!_textManager.LineComplete() && _textManager.CanSkip())
                     _textManager.SkipLine();
                 else
                     break;
@@ -1379,7 +1380,7 @@ end";
         }
 
         // Wait until the Player presses a Confirm key
-        while (GlobalControls.input.Confirm != UndertaleInput.ButtonState.PRESSED)
+        while (GlobalControls.input.Confirm != ButtonState.PRESSED)
             yield return 0;
 
         scr.Call("CYFEventNextCommand");
@@ -1743,20 +1744,20 @@ end";
             var playerName = SaveLoad.savedGame.player.Name;
             double playerLevel = SaveLoad.savedGame.player.LV;
 
-            txtName.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]" + playerName, false, true) });
-            txtLevel.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]LV" + playerLevel, false, true) });
-            txtTime.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]" + UnitaleUtil.TimeFormatter(SaveLoad.savedGame.playerTime), false, true) });
-            GameObject.Find("TextManagerTime").transform.localPosition = new Vector3(180f - UnitaleUtil.CalcTextWidth(txtTime), 68, 0f);
-            txtMap.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]" + SaveLoad.savedGame.lastScene, false, true) });
+            txtName.SetTextQueue(new[] { new TextMessage("[charspacing:2]" + playerName, false, true) });
+            txtLevel.SetTextQueue(new[] { new TextMessage("[charspacing:2]LV" + playerLevel, false, true) });
+            txtTime.SetTextQueue(new[] { new TextMessage("[charspacing:2]" + UnitaleUtil.TimeFormatter(SaveLoad.savedGame.playerTime), false, true) });
+            GameObject.Find("TextManagerTime").GetComponent<TextManager>().MoveTo(180f - UnitaleUtil.PredictTextWidth(txtTime), 68);
+            txtMap.SetTextQueue(new[] { new TextMessage("[charspacing:2]" + SaveLoad.savedGame.lastScene, false, true) });
         } else {
-            txtName.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]EMPTY", false, true) });
-            txtLevel.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]LV0", false, true) });
-            txtTime.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]0:00", false, true) });
-            GameObject.Find("TextManagerTime").transform.localPosition = new Vector3(130f, 68, 0f);
-            txtMap.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]--", false, true) });
+            txtName.SetTextQueue(new[] { new TextMessage("[charspacing:2]EMPTY", false, true) });
+            txtLevel.SetTextQueue(new[] { new TextMessage("[charspacing:2]LV0", false, true) });
+            txtTime.SetTextQueue(new[] { new TextMessage("[charspacing:2]0:00", false, true) });
+            GameObject.Find("TextManagerTime").GetComponent<TextManager>().MoveTo(130f, 68);
+            txtMap.SetTextQueue(new[] { new TextMessage("[charspacing:2]--", false, true) });
         }
-        txtSave.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]Save", false, true) });
-        txtReturn.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]Return", false, true) });
+        txtSave.SetTextQueue(new[] { new TextMessage("[charspacing:2]Save", false, true) });
+        txtReturn.SetTextQueue(new[] { new TextMessage("[charspacing:2]Return", false, true) });
 
         // Hide the text dialogue box
         GameObject.Find("Mugshot").GetComponent<Image>().color = new Color(1, 1, 1, 0);
@@ -1768,28 +1769,28 @@ end";
         bool end = false;
         while (true) {
             // Move the soul in front of the current selected option if one of the Left or Right keys are pressed
-            if (GlobalControls.input.Left == UndertaleInput.ButtonState.PRESSED || GlobalControls.input.Right == UndertaleInput.ButtonState.PRESSED) {
+            if (GlobalControls.input.Left == ButtonState.PRESSED || GlobalControls.input.Right == ButtonState.PRESSED) {
                 PlayerOverworld.instance.utHeart.transform.position = new Vector3((save ? 331 : 151) + Camera.main.transform.position.x - 320,
                                                                                   PlayerOverworld.instance.utHeart.transform.position.y,
                                                                                   PlayerOverworld.instance.utHeart.transform.position.z);
                 save = !save;
             // Select automatically "Return" if a Cancel key has been pressed
-            } else if (GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED) {
+            } else if (GlobalControls.input.Cancel == ButtonState.PRESSED) {
                 end = true;
             // Choose the currently selected option if a Confirm key has been pressed
-            } else if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED) {
+            } else if (GlobalControls.input.Confirm == ButtonState.PRESSED) {
                 if (save) {
                     // Save the game
                     SaveLoad.Save(true);
                     // Update the save dialogue box's data
                     PlayerOverworld.instance.utHeart.color = new Color(c.r, c.g, c.b, 0);
-                    txtName.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]" + PlayerCharacter.instance.Name, false, true) });
-                    txtLevel.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]LV" + PlayerCharacter.instance.LV, false, true) });
-                    txtTime.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]" + UnitaleUtil.TimeFormatter(SaveLoad.savedGame.playerTime), false, true) });
-                    GameObject.Find("TextManagerTime").transform.localPosition = new Vector3(180f - UnitaleUtil.CalcTextWidth(txtTime), 68, 0f);
-                    txtMap.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]" + SaveLoad.savedGame.lastScene, false, true) });
-                    txtSave.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]File saved.", false, true) });
-                    txtReturn.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:2]", false, true) });
+                    txtName.SetTextQueue(new[] { new TextMessage("[charspacing:2]" + PlayerCharacter.instance.Name, false, true) });
+                    txtLevel.SetTextQueue(new[] { new TextMessage("[charspacing:2]LV" + PlayerCharacter.instance.LV, false, true) });
+                    txtTime.SetTextQueue(new[] { new TextMessage("[charspacing:2]" + UnitaleUtil.TimeFormatter(SaveLoad.savedGame.playerTime), false, true) });
+                    GameObject.Find("TextManagerTime").GetComponent<TextManager>().MoveTo(180f - UnitaleUtil.PredictTextWidth(txtTime), 68);
+                    txtMap.SetTextQueue(new[] { new TextMessage("[charspacing:2]" + SaveLoad.savedGame.lastScene, false, true) });
+                    txtSave.SetTextQueue(new[] { new TextMessage("[charspacing:2]File saved.", false, true) });
+                    txtReturn.SetTextQueue(new[] { new TextMessage("[charspacing:2]", false, true) });
                     foreach (Image img in GameObject.Find("save_interior").transform.GetComponentsInChildren<Image>())
                         img.color = new Color(1, 1, 0, 1);
                     GameObject.Find("save_interior").GetComponent<Image>().color = new Color(0, 0, 0, 1);
@@ -1801,7 +1802,7 @@ end";
                     do {
                         passPressOnce = true;
                         yield return 0;
-                    } while (GlobalControls.input.Confirm != UndertaleInput.ButtonState.PRESSED);
+                    } while (GlobalControls.input.Confirm != ButtonState.PRESSED);
                 }
                 end = true;
             }
@@ -1809,7 +1810,7 @@ end";
             // Hides the save dialogue box
             if (end) {
                 PlayerOverworld.instance.utHeart.color = new Color(c.r, c.g, c.b, 0);
-                txtName.DestroyChars(); txtLevel.DestroyChars(); txtTime.DestroyChars(); txtMap.DestroyChars(); txtSave.DestroyChars(); txtReturn.DestroyChars();
+                txtName.HideTextObject(); txtLevel.HideTextObject(); txtTime.HideTextObject(); txtMap.HideTextObject(); txtSave.HideTextObject(); txtReturn.HideTextObject();
                 GameObject.Find("save_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 0);
                 GameObject.Find("save_interior").GetComponent<Image>().color = new Color(0, 0, 0, 0);
                 script.Call("CYFEventNextCommand");

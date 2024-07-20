@@ -15,8 +15,9 @@ public static class MoonSharpUtil {
                     t.Table.Set(pair.Key, newOwnedSubtable);
                     break;
                 }
-                case DataType.Function: t.Table.Set(pair.Key, DynValue.NewClosure(pair.Value.Function)); break;
-                default:                t.Table.Set(pair.Key, pair.Value);                               break;
+                case DataType.ClrFunction: t.Table.Set(pair.Key, DynValue.NewCallback(pair.Value.Callback)); break;
+                case DataType.Function:    t.Table.Set(pair.Key, DynValue.NewClosure(pair.Value.Function));  break;
+                default:                   t.Table.Set(pair.Key, pair.Value);                                break;
             }
         }
         return t;

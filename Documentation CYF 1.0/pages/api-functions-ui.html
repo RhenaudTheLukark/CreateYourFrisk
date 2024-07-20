@@ -12,7 +12,7 @@ it's w3c valid, at least
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="icon" href="favicon.ico">
+    <link rel="icon" href="../img/icon.png">
 
     <title>CYF Documentation - The UI Object</title>
     <link href="../css/bootstrap.min.css" rel="stylesheet">
@@ -23,68 +23,10 @@ it's w3c valid, at least
 <body>
 <img src="../img/bg2.png" alt="Undertale background" class="backimg">
 <div class="container arena black">
-    <div class="col-md-2">
-        <!--navigation-->
-        <nav class="nav-sidebar">
-            <ul class="nav tabs">
-                <li class="li-header">Basics</li>
-                    <li><a href="../index.html">Welcome</a></li>
-                    <li><a href="howtoread.html">How to read this documentation</a></li>
-                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
-                    <li><a href="controls.html">Controls</a></li>
-                    <li><a href="basic.html">Basic setup</a></li>
-                    <li><a href="unity.html"><span class="CYF"></span> Unity Setup (Optional)</a></li>
-                    <li class="new"><a href="variables.html">Special Variables</a></li>
-                    <li><a href="terms.html">Terminology</a></li>
-                <li class="li-header">API</li>
-                    <li class="new"><a href="api-text.html">Text commands</a></li>
-                    <li class="new"><a href="api-events.html">Game events</a></li>
-                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
-                    <li class="li-indent">Functions &amp; Objects:</li>
-                        <li class="li-indent new"><a href="api-functions-main.html">Misc. Functions</a></li>
-                        <li class="li-indent new"><a href="api-functions-player.html">The Player Object</a></li>
-                        <li class="li-indent"><a href="api-functions-script.html">The Script Object</a></li>
-                        <li class="li-indent"><a href="api-functions-audio.html">The Audio Object</a></li>
-                        <li class="li-indent"><a href="api-functions-newaudio.html"><span class="CYF"></span> The NewAudio Object</a></li>
-                        <li class="li-indent"><a href="api-functions-input.html">The Input Object</a></li>
-                        <li class="li-indent new"><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
-                        <li class="li-indent new"><a href="api-functions-time.html">The Time Object</a></li>
-                        <li class="li-indent new"><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
-                        <li class="li-indent new"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
-                        <li class="li-indent"><a href="api-functions-discord.html"><span class="CYF"></span> The Discord Object</a></li>
-                        <li class="li-indent new"><a href="api-functions-waves.html">The Arena Object</a></li>
-                        <li class="li-indent new active" style="margin-left:5px;">&gt; <span class="CYF"></span> The UI Object &lt;</li>
-                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
-                    <li class="new"><a href="api-projectile.html">Projectile management</a></li>
-                    <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
-                    <li class="new"><a href="api-animation.html">Sprites &amp; Animation</a></li>
-                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
-                <li class="li-header"></span><span class="CYF"></span> Shaders</li>
-                    <li><a href="shaders.html">Introduction</a></li>
-                    <li><a href="shaders-object.html">The Shader Object</a></li>
-                    <li><a href="shaders-coding.html">Coding a Shader</a></li>
-                    <hr style="margin-top:10px;margin-bottom:10px;">
-                <li class="li-header"><span class="CYF"></span> Overworld</li>
-                    <li><a href="overworld.html">Basics</a></li>
-                    <li><a href="overworld-howto-map.html">How to create a map</a></li>
-                    <li><a href="overworld-howto-event.html">How to create an event</a></li>
-                    <li><a href="overworld-howto-animevent.html">How to animate an event</a></li>
-                    <li><a href="overworld-howto-shop.html">How to create a shop</a></li>
-                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
-                    <li class="li-indent"><span class="CYF"></span> Overworld Objects:</li>
-                        <li class="li-indent"><a href="overworld-object-general.html">The General Object</a></li>
-                        <li class="li-indent"><a href="overworld-object-event.html">The Event Object</a></li>
-                        <li class="li-indent"><a href="overworld-object-player.html">The Player Object</a></li>
-                        <li class="li-indent"><a href="overworld-object-screen.html">The Screen Object</a></li>
-                        <li class="li-indent"><a href="overworld-object-inventory.html">The Inventory Object</a></li>
-                        <li class="li-indent"><a href="overworld-object-map.html">The Map Object</a></li>
-                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
-                <li class="li-header">Resources</li>
-                    <li><a href="../media/dialogoptions.png">Dialog bubble names</a></li>
-                    <li><a href="api-keys.html"><span class="CYF"></span> Key List</a></li>
-            </ul>
-        </nav>
-    </div>
+    <!--navigation-->
+    <script type="text/javascript" src="../js/SideBar.js"></script>
+    <script type="text/javascript"> CreateSideBar("The UI Object"); </script>
+
     <!--tabs'n'shit-->
     <div class="tab-content col-md-10">
         <div class="tab-pane active text-style" id="api-functions-main">
@@ -93,6 +35,8 @@ it's w3c valid, at least
                 This section details the various elements you can use to manipulate CYF's internal user interface.
                 <br><br>
                 If you want to manipulate UI elements related to the enemy (attack animation, health bar, position of the damage text), I suggest visiting the <span class="term">Misc. Functions</span> section of the documentation.
+                <br><br>
+                Keep in mind that removing any of these elements has a great chance of making the engine unstable, so take caution when manipulating the UI.
             </p>
 
             <p>
@@ -101,7 +45,7 @@ it's w3c valid, at least
             </p>
 
             <p>
-                <br><span class="function"> <span class="userdata">textObject</span> UI.namelv</span>
+                <br><span class="function"> <span class="userdata">text</span> UI.namelv</span>
                 Text object displaying the Player's name as well as its level. Its contents is usually the Player's name followed by two spaces, the text <span class="term">LV</span>, another space, then finally the Player's level.
             </p>
 
@@ -116,8 +60,28 @@ it's w3c valid, at least
             </p>
 
             <p>
-                <br><span class="function"> <span class="userdata">textObject</span> UI.hptext</span>
+                <br><span class="function"> <span class="userdata">text</span> UI.hptext</span>
                 Text object displaying the Player's HP. Its contents display the Player's current HP, a space, a slash, another space, and finally the Player's max HP.
+            </p>
+
+            <p>
+                <br><span class="new function"> <span class="userdata">text</span> UI.maintext</span>
+                Text object used in the Arena to display most things. Take caution when handling this object, as it's used absolutely everywhere in encounters.
+            </p>
+
+            <p>
+                <br><span class="new function"> <span class="userdata">sprite</span> UI.mugshot</span>
+                Sprite used to display a character's face sprite on the left side of the arena, through the usage of the <span class="term">[mugshot:x]</span> text command.
+            </p>
+
+            <p>
+                <br><span class="new function"> <span class="userdata">sprite</span> UI.mugshotmask</span>
+                Mask sprite used to keep the mugshot within the bounds of the arena. Its size is usually 130x130, although its height scales with the arena's, meaning changing its height may not work as intended. Changing its anchor will stop that effect from happening.
+            </p>
+
+            <p>
+                <br><span class="new function"> <span class="luatable"><span class="userdata">bar</span></span> UI.enemylifebarlist</span>
+                List of life bars displayed next to each enemy whenever the Player selects the FIGHT button. All life bars are destroyed whenever the Player changes the current page if there are more than 3 active enemies, so you need to get this variable again to fetch the new life bars if the page is changed
             </p>
 
             <p>
@@ -138,6 +102,11 @@ it's w3c valid, at least
             <p>
                 <br><span class="function"> <span class="userdata">sprite</span> UI.mercybtn</span>
                 Sprite for the <span class="term">MERCY</span> button. Do not remove it in any way, or it may cause unexpected errors. If you want to remove it, set its alpha to 0 instead.
+            </p>
+
+            <p>
+                <br><span class="new function"> <span class="userdata">object</span> UI.root</span>
+                Root of the entire battle scene. See the <span class="ref">General Objects</span> for more information on how to handle this object.
             </p>
 
             <p>
@@ -189,14 +158,14 @@ it's w3c valid, at least
             </p>
 
             <p>
-                <br><span class="function">UI.GetPlayerXPosOnButton(<span class="string"></span> button)</span>
+                <br><span class="function">UI.GetPlayerXPosOnButton(<span class="string"></span> button) returns <span class="number"></span></span>
                 Returns the player's horizontal position offset when selecting the given button, starting from the button's bottom left corner. The default value for all buttons is <span class="term">16</span>.
                 <br><br>
                 Accepted values for the <span class="term">button</span> argument are <span class="term">FIGHT</span>, <span class="term">ACT</span>, <span class="term">ITEM</span> or <span class="term">MERCY</span>.
             </p>
 
             <p>
-                <br><span class="function">UI.GetPlayerYPosOnButton(<span class="string"></span> button)</span>
+                <br><span class="function">UI.GetPlayerYPosOnButton(<span class="string"></span> button) returns <span class="number"></span></span>
                 Returns the player's vertical position offset when selecting the given button, starting from the button's bottom left corner. The default value for all buttons is <span class="term">19</span>.
                 <br><br>
                 Accepted values for the <span class="term">button</span> argument are <span class="term">FIGHT</span>, <span class="term">ACT</span>, <span class="term">ITEM</span> or <span class="term">MERCY</span>.
@@ -300,10 +269,15 @@ it's w3c valid, at least
             </p>
 
             <p>
-                <br><span class="function"> <span class="boolean"></span> Bar.outlineThickness</span>
+                <br><span class="function"> <span class="number"></span> Bar.outlineThickness</span>
                 Returns the thickness in pixels of the <span class="term">outline</span> sprite. Returns 0 if the outline doesn't exist.
                 <br><br>
                 Can be set to resize the outline's thickness.
+            </p>
+
+            <p>
+                <br><span class="new function"> <span class="number"></span> Bar.isactive</span>
+                True if the lifebar hasn't been removed, false otherwise.
             </p>
 
             <p>
@@ -316,8 +290,8 @@ it's w3c valid, at least
             </p>
 
             <p>
-                <br><span class="function"> Bar.SetLerp(<span class="number"></span> fillValue, <span class="number"></span> time = 60, <span class="boolean"></span> allowNonClamped = false)</span>
-                Gradually sets the fill percentage of the bar object between 0 and 1 to <span class="term">fillValue</span> over <span class="term">time</span> frames, with 60 frames being equal to one second. <span class="term">0</span> means the bar is empty, while <span class="term">1</span> means it is full.
+                <br><span class="new function"> Bar.SetLerp(<span class="number"></span> fillValue, <span class="number"></span> time = 60, <span class="boolean"></span> allowNonClamped = false)</span>
+                Gradually sets the fill percentage of the bar object between 0 and 1 from the bar's current fill to <span class="term">fillValue</span> over <span class="term">time</span> frames, with 60 frames being equal to one second. <span class="term">0</span> means the bar is empty, while <span class="term">1</span> means it is full.
                 <br><br>
                 If <span class="term">allowNonClamped</span> is set to true, you can use values lower than 0 and higher than 1.
                 <br><br>
@@ -325,8 +299,12 @@ it's w3c valid, at least
             </p>
 
             <p>
-                <br><span class="function"> Bar.SetLerp(<span class="number"></span> originalValue, <span class="number"></span> fillValue, <span class="number"></span> time = 60, <span class="boolean"></span> allowNonClamped = false)</span>
-                Acts like the function above, except you can set the initial fill percentage of the bar object using <span class="term">originalValue</span>.
+                <br><span class="new function"> Bar.SetLerpFull(<span class="number"></span> originalValue, <span class="number"></span> fillValue, <span class="number"></span> time = 60, <span class="boolean"></span> allowNonClamped = false)</span>
+                Gradually sets the fill percentage of the bar object between 0 and 1 from <span class="term">originalValue</span> to <span class="term">fillValue</span> over <span class="term">time</span> frames, with 60 frames being equal to one second. <span class="term">0</span> means the bar is empty, while <span class="term">1</span> means it is full.
+                <br><br>
+                If <span class="term">allowNonClamped</span> is set to true, you can use values lower than 0 and higher than 1.
+                <br><br>
+                Note that the bar will be updated properly when <span class="term">fillValue</span> is beyond its usual bounds only if the <span class="term">bar-px</span> sprite is used for all of the bar's sprites.
             </p>
 
             <p>

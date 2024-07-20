@@ -25,7 +25,7 @@ public class EnterNameScript : MonoBehaviour {
         isNewGame = SaveLoad.savedGame == null;
         try { GameObject.Find("textframe_border_outer").SetActive(false); }
         catch { /* ignored */ }
-        tmInstr.SetTextQueue(new[] { new TextMessage("[noskipatall]" + (GlobalControls.crate ? "GIV HMI A NAME!!!" : "Name the fallen human."), false, true) });
+        tmInstr.SetTextQueue(new[] { new TextMessage((GlobalControls.crate ? "GIV HMI A NAME!!!" : "Name the fallen human."), false, true) });
         tmInstr.SetHorizontalSpacing(2);
         tmName.SetHorizontalSpacing(2);
         GameObject firstCamera = GameObject.Find("Main Camera");
@@ -40,9 +40,9 @@ public class EnterNameScript : MonoBehaviour {
             Camera.main.GetComponent<AudioSource>().Play();
         }
         tmName.SetTextQueue(new[] { new TextMessage(playerName, false, true) });
-        tmLettersMaj.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:52.2][linespacing:-1]ABCDEFG\nHIJKLMN\nOPQRSTU\nVWXYZ", false, true) });
+        tmLettersMaj.SetTextQueue(new[] { new TextMessage("[charspacing:52.2][linespacing:-1]ABCDEFG\nHIJKLMN\nOPQRSTU\nVWXYZ", false, true) });
         tmLettersMaj.SetEffect(new ShakeEffect(tmLettersMaj));
-        tmLettersMin.SetTextQueue(new[] { new TextMessage("[noskipatall][charspacing:52.2][linespacing:-1]abcdefg\nhijklmn\nopqrstu\nvwxyz", false, true) });
+        tmLettersMin.SetTextQueue(new[] { new TextMessage("[charspacing:52.2][linespacing:-1]abcdefg\nhijklmn\nopqrstu\nvwxyz", false, true) });
         tmLettersMin.SetEffect(new ShakeEffect(tmLettersMin));
         for (int i = 0; i < tmLettersMaj.GetComponentsInChildren<Image>().Length; i ++)
             tmLettersMaj.GetComponentsInChildren<Image>()[i].name = tmLettersMaj.GetComponentsInChildren<Image>()[i].sprite.name;
@@ -57,9 +57,9 @@ public class EnterNameScript : MonoBehaviour {
         if (!hackFirstString && tmName.transform.childCount != 0 && !isNewGame) {
             hackFirstString = true;
             tmName.SetTextQueue(new[] { new TextMessage(playerName, false, true) });
-            tmName.transform.localPosition = new Vector3(-calcTotalLength(tmName) / 2, tmName.transform.localPosition.y, tmName.transform.localPosition.z);
+            tmName.MoveTo(-calcTotalLength(tmName) / 2, tmName.transform.localPosition.y);
         }
-        if (GlobalControls.input.Down == UndertaleInput.ButtonState.PRESSED) {
+        if (GlobalControls.input.Down == ButtonState.PRESSED) {
             switch (choiceLetter) {
                 case "Quit":      setColor("A");                  break;
                 case "Backspace": setColor("D");                  break;
@@ -80,7 +80,7 @@ public class EnterNameScript : MonoBehaviour {
                 case "z":         setColor("Backspace");          break;
                 default:          setColor(choiceLetter[0] + 7);  break;
             }
-        } else if (GlobalControls.input.Up == UndertaleInput.ButtonState.PRESSED) {
+        } else if (GlobalControls.input.Up == ButtonState.PRESSED) {
             switch (choiceLetter) {
                 case "Quit":      setColor("v");                  break;
                 case "Backspace": setColor("y");                  break;
@@ -101,7 +101,7 @@ public class EnterNameScript : MonoBehaviour {
                 case "G":         setColor("Done");               break;
                 default:          setColor(choiceLetter[0] - 7);  break;
             }
-        } else if (GlobalControls.input.Right == UndertaleInput.ButtonState.PRESSED) {
+        } else if (GlobalControls.input.Right == ButtonState.PRESSED) {
             switch (choiceLetter) {
                 case "Quit":      setColor("Backspace");         break;
                 case "Backspace": setColor("Done");              break;
@@ -116,7 +116,7 @@ public class EnterNameScript : MonoBehaviour {
                 case "z":         setColor(choiceLetter[0] - 4); break;
                 default:          setColor(choiceLetter[0] + 1); break;
             }
-        } else if (GlobalControls.input.Left == UndertaleInput.ButtonState.PRESSED) {
+        } else if (GlobalControls.input.Left == ButtonState.PRESSED) {
             switch (choiceLetter) {
                 case "Quit":      setColor("Done");              break;
                 case "Backspace": setColor("Quit");              break;
@@ -131,15 +131,15 @@ public class EnterNameScript : MonoBehaviour {
                 case "v":         setColor(choiceLetter[0] + 4); break;
                 default:          setColor(choiceLetter[0] - 1); break;
             }
-        } else if (GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED) {
+        } else if (GlobalControls.input.Cancel == ButtonState.PRESSED) {
             weirdBackspaceShift = true;
             if (playerName.Length > 0)
                 playerName = playerName.Substring(0, playerName.Length - 1);
             else
                 weirdBackspaceShift = false;
             tmName.SetTextQueue(new[] { new TextMessage(playerName, false, true) });
-            tmName.transform.localPosition = new Vector3(-calcTotalLength(tmName) / 2, tmName.transform.localPosition.y, tmName.transform.localPosition.z);
-        } else if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED) {
+            tmName.MoveTo(-calcTotalLength(tmName) / 2, tmName.transform.localPosition.y);
+        } else if (GlobalControls.input.Confirm == ButtonState.PRESSED) {
             switch (choiceLetter) {
                 case "Quit":
                     GameObject.Find("Main Camera").GetComponent<AudioSource>().Stop();
@@ -172,7 +172,7 @@ public class EnterNameScript : MonoBehaviour {
                 }
             }
             tmName.SetTextQueue(new[] { new TextMessage(playerName, false, true) });
-            tmName.transform.localPosition = new Vector3(-calcTotalLength(tmName) / 2, tmName.transform.localPosition.y, tmName.transform.localPosition.z);
+            tmName.MoveTo(-calcTotalLength(tmName) / 2, tmName.transform.localPosition.y);
             uiAudio.PlayOneShot(AudioClipRegistry.GetSound("menuconfirm"));
             return;
         } else
@@ -191,22 +191,22 @@ public class EnterNameScript : MonoBehaviour {
 
     private IEnumerator waitConfirm(bool isForbidden = false) {
         yield return 0;
-        tmInstr.SetTextQueue(new[] { new TextMessage("[noskipatall]" + (confirmText ?? (GlobalControls.crate ? "LAL GUD???" : "[noskipatall]Is this name correct?")), false, true) });
+        tmInstr.SetTextQueue(new[] { new TextMessage((confirmText ?? (GlobalControls.crate ? "LAL GUD???" : "Is this name correct?")), false, true) });
         tmName.SetEffect(new ShakeEffect(tmName));
         GameObject.Find("Backspace").GetComponent<SpriteRenderer>().enabled = false;
-        tmLettersMaj.transform.position = new Vector3(tmLettersMaj.transform.position.x, tmLettersMaj.transform.position.y, 10000);
-        tmLettersMin.transform.position = new Vector3(tmLettersMin.transform.position.x, tmLettersMin.transform.position.y, 10000);
+        tmLettersMaj.gameObject.SetActive(false);
+        tmLettersMin.gameObject.SetActive(false);
         setColor("Quit");
         GameObject.Find("Done").GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, isForbidden ? 0 : 1);
         float diff = calcTotalLength(tmName)*2;
         float actualX = tmName.transform.localPosition.x, actualY = tmName.transform.localPosition.y;
-        while (GlobalControls.input.Confirm != UndertaleInput.ButtonState.PRESSED) {
+        while (GlobalControls.input.Confirm != ButtonState.PRESSED) {
             if (tmName.transform.localScale.x < 3) {
-                tmName.transform.localScale = new Vector3(tmName.transform.localScale.x + 0.01f, tmName.transform.localScale.y + 0.01f, 1);
-                tmName.transform.localPosition = new Vector3(actualX - (tmName.transform.localScale.x - 1) * diff / 2,
-                                                             actualY - (tmName.transform.localScale.x - 1) * diff / 6, tmName.transform.localPosition.z);
+                float scale = Mathf.Min(3, tmName.transform.localScale.x + 0.01f);
+                tmName.transform.localScale = new Vector3(scale, scale, 1);
+                tmName.MoveTo(actualX - (tmName.transform.localScale.x - 1) * diff / 2, actualY - (tmName.transform.localScale.x - 1) * diff / 6);
             }
-            if ((GlobalControls.input.Left == UndertaleInput.ButtonState.PRESSED || GlobalControls.input.Right == UndertaleInput.ButtonState.PRESSED)
+            if ((GlobalControls.input.Left == ButtonState.PRESSED || GlobalControls.input.Right == ButtonState.PRESSED)
                     && GameObject.Find("Done").GetComponent<SpriteRenderer>().enabled &&!isForbidden) {
                 setColor(choiceLetter == "Quit" ? "Done": "Quit");
                 uiAudio.PlayOneShot(AudioClipRegistry.GetSound("menumove"));
@@ -221,10 +221,10 @@ public class EnterNameScript : MonoBehaviour {
             tmName.transform.localScale = new Vector3(1, 1, 1);
             tmName.SetEffect(null);
             tmName.SetTextQueue(new[] { new TextMessage(playerName, false, true) });
-            tmName.transform.localPosition = new Vector3(-calcTotalLength(tmName)/2, 145, tmName.transform.localPosition.z);
-            tmInstr.SetTextQueue(new[] { new TextMessage("[noskipatall]" + (GlobalControls.crate ? "QWIK QWIK QWIK!!!" : "Name the fallen human."), false, true) });
-            tmLettersMaj.transform.position = new Vector3(tmLettersMaj.transform.position.x, tmLettersMaj.transform.position.y, 0);
-            tmLettersMin.transform.position = new Vector3(tmLettersMin.transform.position.x, tmLettersMin.transform.position.y, 0);
+            tmName.MoveTo(-calcTotalLength(tmName)/2, 145);
+            tmInstr.SetTextQueue(new[] { new TextMessage((GlobalControls.crate ? "QWIK QWIK QWIK!!!" : "Name the fallen human."), false, true) });
+            tmLettersMaj.gameObject.SetActive(true);
+            tmLettersMin.gameObject.SetActive(true);
             GameObject.Find("Backspace").GetComponent<SpriteRenderer>().enabled = true;
             setColor("Done");
         } else {
@@ -235,8 +235,9 @@ public class EnterNameScript : MonoBehaviour {
                 SpriteRenderer blank = GameObject.Find("Blank").GetComponent<SpriteRenderer>();
                 while (blank.color.a <= 1) {
                     if (tmName.transform.localScale.x < 3) {
-                        tmName.transform.localScale = new Vector3(tmName.transform.localScale.x + 0.01f, tmName.transform.localScale.y + 0.01f, 1);
-                        tmName.transform.localPosition = new Vector3(actualX - (tmName.transform.localScale.x - 1f) * diff / 2f, actualY - (tmName.transform.localScale.x - 1f) * diff / 6, tmName.transform.localPosition.z);
+                        float scale = Mathf.Min(3, tmName.transform.localScale.x + 0.01f);
+                        tmName.transform.localScale = new Vector3(scale, scale, 1);
+                        tmName.MoveTo(actualX - (tmName.transform.localScale.x - 1f) * diff / 2f, actualY - (tmName.transform.localScale.x - 1f) * diff / 6);
                     }
                     blank.color = new Color(blank.color.r, blank.color.g, blank.color.b, blank.color.a + 0.003f);
                     yield return 0;

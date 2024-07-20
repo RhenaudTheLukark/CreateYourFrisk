@@ -11,7 +11,7 @@ public class LuaInventoryOW {
     [MoonSharpHidden] public void SetEquip(string itemName) {
         if (!Inventory.ItemExists(itemName))           throw new CYFException("The item \"" + itemName + "\" doesn't exist in the item list.");
         if (Inventory.InventoryNumber(itemName) == -1) throw new CYFException("You can't equip an item that isn't in the inventory.");
-        Inventory.ChangeEquipment(Inventory.InventoryNumber(itemName));
+        Inventory.ChangeEquipment(Inventory.InventoryNumber(itemName), true);
         appliedScript.Call("CYFEventNextCommand");
     }
 

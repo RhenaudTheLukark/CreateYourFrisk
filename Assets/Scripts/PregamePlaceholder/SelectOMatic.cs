@@ -16,18 +16,18 @@ public class SelectOMatic : MonoBehaviour {
     private float animationTimer;
     public EventSystem eventSystem;
 
-    private static float modListScroll;          // Used to keep track of the position of the mod list specifically. Resets if you press escape
-    private static float encounterListScroll;    // Used to keep track of the position of the encounter list. Resets if you press escape
+    private static float modListScroll;         // Used to keep track of the position of the mod list specifically. Resets if you press escape
+    private static float encounterListScroll;   // Used to keep track of the position of the encounter list. Resets if you press escape
 
-    private float ExitButtonAlpha = 5f;                 // Used to fade the "Exit" button in and out
-    private float OptionsButtonAlpha = 5f;              // Used to fade the "Options" button in and out
+    private float ExitButtonAlpha = 5f;         // Used to fade the "Exit" button in and out
+    private float OptionsButtonAlpha = 5f;      // Used to fade the "Options" button in and out
 
-    private static int selectedItem;                // Used to let users navigate the mod and encounter menus with the arrow keys!
+    private static int selectedItem;            // Used to let users navigate the mod and encounter menus with the arrow keys!
 
     public GameObject encounterBox, devMod, content, retromodeWarning;
     public GameObject btnList,              btnBack,              btnNext,              btnExit,              btnOptions;
     public Text       ListText, ListShadow, BackText, BackShadow, NextText, NextShadow, ExitText, ExitShadow, OptionsText, OptionsShadow;
-    public GameObject  ModContainer,     ModBackground,     ModTitle,     ModTitleShadow,     EncounterCount,     EncounterCountShadow;
+    public GameObject ModContainer,  ModBackground,     ModTitle,     ModTitleShadow,     EncounterCount,     EncounterCountShadow;
     public GameObject AnimContainer, AnimModBackground, AnimModTitle, AnimModTitleShadow, AnimEncounterCount, AnimEncounterCountShadow;
 
     // Use this for initialization
@@ -43,16 +43,19 @@ public class SelectOMatic : MonoBehaviour {
         var modDirsTemp = di.GetDirectories();
 
         // Remove mods with 0 encounters and hidden mods from the list
-        List<DirectoryInfo> purged = (from modDir in modDirsTemp where new DirectoryInfo(Path.Combine(FileLoader.DataRoot, "Mods/" + modDir.Name + "/Lua/Encounters")).Exists
-                                      let hasEncounters = new DirectoryInfo(Path.Combine(FileLoader.DataRoot, "Mods/" + modDir.Name + "/Lua/Encounters")).GetFiles("*.lua").Any() where hasEncounters && (modDir.Attributes & FileAttributes.Hidden) != FileAttributes.Hidden && !modDir.Name.StartsWith("@")
+        List<DirectoryInfo> purged = (from modDir in modDirsTemp
+                                      let encPath = Path.Combine(FileLoader.DataRoot, "Mods/" + modDir.Name + "/Lua/Encounters")
+                                      where new DirectoryInfo(encPath).Exists
+                                      let hasEncounters = new DirectoryInfo(encPath).GetFiles("*.lua").Where(e => !e.Name.StartsWith("@")).Any()
+                                      where hasEncounters && (modDir.Attributes & FileAttributes.Hidden) != FileAttributes.Hidden && !modDir.Name.StartsWith("@")
                                       select modDir).ToList();
         modDirs = purged;
 
         // Make sure that there is at least one playable mod present
-        if (purged.Count == 0) {
+        if (modDirs.Count == 0) {
             GlobalControls.modDev = false;
             UnitaleUtil.DisplayLuaError("loading", "<b>Your mod folder is empty!</b>\nYou need at least 1 playable mod to use the Mod Selector.\n\n"
-                + "Remember:\n1. Mods whose names start with \"@\" do not count\n2. Folders without encounter files do not count");
+                + "Remember:\n1. Mods whose names start with \"@\" do not count\n2. Folders without encounter files or with only encounters whose names start with \"@\" do not count");
             return;
         }
 
@@ -101,14 +104,12 @@ public class SelectOMatic : MonoBehaviour {
         // Crate Your Frisk initializer
         if (GlobalControls.crate) {
             //Exit button
-            ExitText.text   = "← BYEE";
+            ExitText.text   = "← BYEE (RATIO'D)";
             ExitShadow.text = ExitText.text;
 
             //Options button
-            if (GlobalControls.modDev) {
-                OptionsText.text   = "OPSHUNZ →";
-                OptionsShadow.text = OptionsText.text;
-            }
+            OptionsText.text   = "OPSHUNZ (YUMMY) →";
+            OptionsShadow.text = OptionsText.text;
 
             //Back button within scrolling list
             content.transform.Find("Back/Text").GetComponent<Text>().text = "← BCAK";
@@ -125,14 +126,10 @@ public class SelectOMatic : MonoBehaviour {
         modFolderSelection();
         if (StaticInits.ENCOUNTER != "") {
             //Check to see if there is more than one encounter in the mod just exited from
-            List<string>  encounters = new List<string>();
-            DirectoryInfo di2        = new DirectoryInfo(Path.Combine(FileLoader.ModDataPath, "Lua/Encounters"));
-            foreach (FileInfo f in di2.GetFiles("*.lua")) {
-                if (encounters.Count < 2)
-                    encounters.Add(Path.GetFileNameWithoutExtension(f.Name));
-            }
+            DirectoryInfo di2 = new DirectoryInfo(Path.Combine(FileLoader.ModDataPath, "Lua/Encounters"));
+            string[] encounters = di2.GetFiles("*.lua").Select(f => Path.GetFileNameWithoutExtension(f.Name)).Where(f => !f.StartsWith("@")).ToArray();
 
-            if (encounters.Count > 1) {
+            if (encounters.Length > 1) {
                 // Highlight the chosen encounter whenever the user exits the mod menu
                 int temp = selectedItem;
                 encounterSelection();
@@ -251,7 +248,7 @@ public class SelectOMatic : MonoBehaviour {
 
         // Get all encounters in the mod's Encounters folder
         DirectoryInfo di        = new DirectoryInfo(Path.Combine(FileLoader.ModDataPath, "Lua/Encounters"));
-        List<string> encounters = di.GetFiles("*.lua").Select(f => Path.GetFileNameWithoutExtension(f.Name)).ToList();
+        string[] encounters = di.GetFiles("*.lua").Select(f => Path.GetFileNameWithoutExtension(f.Name)).Where(f => !f.StartsWith("@")).ToArray();
 
         // Update the text
         ModTitle.GetComponent<Text>().text = modDirs[id].Name;
@@ -261,7 +258,7 @@ public class SelectOMatic : MonoBehaviour {
         ModTitleShadow.GetComponent<Text>().text = ModTitle.GetComponent<Text>().text;
 
         // List # of encounters, or name of encounter if there is only one
-        if (encounters.Count == 1) {
+        if (encounters.Length == 1) {
             EncounterCount.GetComponent<Text>().text = encounters[0];
             // crate your frisk version
             if (GlobalControls.crate)
@@ -276,10 +273,10 @@ public class SelectOMatic : MonoBehaviour {
                 StartCoroutine(LaunchMod());
             });
         } else {
-            EncounterCount.GetComponent<Text>().text = "Has " + encounters.Count + " encounters";
+            EncounterCount.GetComponent<Text>().text = "Has " + encounters.Length + " encounters";
             // crate your frisk version
             if (GlobalControls.crate)
-                EncounterCount.GetComponent<Text>().text = "HSA " + encounters.Count + " ENCUOTNERS";
+                EncounterCount.GetComponent<Text>().text = "HSA " + encounters.Length + " ENCUOTNERS";
         }
         EncounterCountShadow.GetComponent<Text>().text = EncounterCount.GetComponent<Text>().text;
 
@@ -386,65 +383,58 @@ public class SelectOMatic : MonoBehaviour {
         // Controls:
 
         ////////////////// Main: ////////////////////////////////////
-        //    Z or Return: Start encounter (if mod has only one    //
+        //        Confirm: Start encounter (if mod has only one    //
         //                 encounter), or open encounter list      //
-        //     Shift or X: Return to Disclaimer screen             //
-        //        Up or C: Open the mod list                       //
+        //         Cancel: Return to Disclaimer screen             //
+        //             Up: Open the mod list                       //
+        //           Menu: Open the options menu                   //
         //           Left: Scroll left                             //
         //          Right: Scroll right                            //
         ////////////////// Encounter or Mod list: ///////////////////
-        //    Z or Return: Start an encounter, or select a mod     //
-        //     Shift or X: Exit                                    //
+        //        Confirm: Start an encounter, or select a mod     //
+        //         Cancel: Exit                                    //
         //             Up: Move up                                 //
         //           Down: Move down                               //
         /////////////////////////////////////////////////////////////
 
         if (!encounterBox.activeSelf) {
-            // Main controls:
+            // Main controls
             if (animationDone) {
-                //scroll left
-                if (Input.GetKeyDown(KeyCode.LeftArrow))
-                    ScrollMods(-1);
-                //scroll right
-                else if (Input.GetKeyDown(KeyCode.RightArrow))
-                    ScrollMods(1);
-                //open the mod list
-                else if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.C)) {
+                // Move left
+                if (GlobalControls.input.Left == ButtonState.PRESSED)       ScrollMods(-1);
+                // Move right
+                else if (GlobalControls.input.Right == ButtonState.PRESSED) ScrollMods(1);
+                // Open the mod list
+                else if (GlobalControls.input.Up == ButtonState.PRESSED) {
                     modFolderMiniMenu();
                     content.transform.GetChild(selectedItem).GetComponent<MenuButton>().StartAnimation(1);
                 // Open the encounter list or start the encounter (if there is only one encounter)
-                } else if (Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.Return))
+                } else if (GlobalControls.input.Confirm == ButtonState.PRESSED)
                     ModBackground.GetComponent<Button>().onClick.Invoke();
             }
 
+            // Access the Options menu
+            if (GlobalControls.input.Menu == ButtonState.PRESSED)
+                btnOptions.GetComponent<Button>().onClick.Invoke();
             // Return to the Disclaimer screen
-            if (Input.GetKeyDown(KeyCode.X) || Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift))
+            if (GlobalControls.input.Cancel == ButtonState.PRESSED)
                 btnExit.GetComponent<Button>().onClick.Invoke();
         } else {
-            // Encounter or Mod List controls:
-            if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow)) {
+            // Encounter or Mod List controls
+            if (GlobalControls.input.Up == ButtonState.PRESSED || GlobalControls.input.Down == ButtonState.PRESSED) {
                 // Store previous value of selectedItem
                 int previousSelectedItem = selectedItem;
 
-                //move up
-                if (Input.GetKeyDown(KeyCode.UpArrow))
-                    selectedItem -= 1;
-                //move down
-                else if (Input.GetKeyDown(KeyCode.DownArrow))
-                    selectedItem += 1;
+                // Move up or down the list
+                selectedItem += GlobalControls.input.Up == ButtonState.PRESSED ? -1 : 1;
 
-                // Keep the selector in-bounds!
-                if (selectedItem < 0)
-                    selectedItem = content.transform.childCount - 1;
-                else if (selectedItem > content.transform.childCount - 1)
-                    selectedItem = 0;
-
-                // Update the buttons!
+                // Keep the selector in-bounds
+                if (selectedItem < 0)                                     selectedItem = content.transform.childCount - 1;
+                else if (selectedItem > content.transform.childCount - 1) selectedItem = 0;
 
                 // Animate the old button
                 GameObject previousButton = content.transform.GetChild(previousSelectedItem).gameObject;
                 previousButton.GetComponent<MenuButton>().StartAnimation(-1);
-                //previousButton.spriteState = SpriteState.
 
                 // Animate the new button
                 GameObject newButton = content.transform.GetChild(selectedItem).gameObject;
@@ -457,19 +447,19 @@ public class SelectOMatic : MonoBehaviour {
                 float topEdge    = content.GetComponent<RectTransform>().anchoredPosition.y;
                 float bottomEdge = content.GetComponent<RectTransform>().anchoredPosition.y + 230;
 
-                //button is above the top of the scrolly bit
-                if      (topEdge    > buttonTopEdge)
+                // Button is above the top of the view
+                if (topEdge > buttonTopEdge)
                     content.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, buttonTopEdge);
-                //button is below the bottom of the scrolly bit
+                // Button is below the bottom of the view
                 else if (bottomEdge < buttonBottomEdge)
                     content.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, buttonBottomEdge - 230);
             }
 
             // Exit
-            if (Input.GetKeyDown(KeyCode.X) || Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift))
+            if (GlobalControls.input.Cancel == ButtonState.PRESSED)
                 ModBackground.GetComponent<Button>().onClick.Invoke();
             // Select the mod or encounter
-            else if (Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.Return))
+            else if (GlobalControls.input.Confirm == ButtonState.PRESSED)
                 content.transform.GetChild(selectedItem).gameObject.GetComponent<Button>().onClick.Invoke();
         }
     }
@@ -527,10 +517,10 @@ public class SelectOMatic : MonoBehaviour {
 
         DirectoryInfo di = new DirectoryInfo(Path.Combine(FileLoader.DataRoot, "Mods/" + StaticInits.MODFOLDER + "/Lua/Encounters"));
         if (!di.Exists || di.GetFiles().Length <= 0) return;
-        FileInfo[] encounterFiles = di.GetFiles("*.lua");
+        string[] encounters = di.GetFiles("*.lua").Select(f => Path.GetFileNameWithoutExtension(f.Name)).Where(f => !f.StartsWith("@")).ToArray();
 
         int count = 0;
-        foreach (FileInfo encounter in encounterFiles) {
+        foreach (string encounter in encounters) {
             count += 1;
 
             //create a button for each encounter file
@@ -550,12 +540,12 @@ public class SelectOMatic : MonoBehaviour {
             button.transform.Find("Fill").GetComponent<Image>().color = new Color(0.5f,  0.5f,  0.5f,  0.5f);
 
             // set text
-            button.transform.Find("Text").GetComponent<Text>().text = Path.GetFileNameWithoutExtension(encounter.Name);
+            button.transform.Find("Text").GetComponent<Text>().text = Path.GetFileNameWithoutExtension(encounter);
             if (GlobalControls.crate)
-                button.transform.Find("Text").GetComponent<Text>().text = Temmify.Convert(Path.GetFileNameWithoutExtension(encounter.Name), true);
+                button.transform.Find("Text").GetComponent<Text>().text = Temmify.Convert(Path.GetFileNameWithoutExtension(encounter), true);
 
             //finally, set function!
-            string filename = Path.GetFileNameWithoutExtension(encounter.Name);
+            string filename = Path.GetFileNameWithoutExtension(encounter);
 
             int tempCount = count;
 

@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
-using Boo.Lang;
 
 // Disable warnings about XML documentation
 #pragma warning disable 1591
@@ -140,13 +140,17 @@ namespace MoonSharp.Interpreter.CoreLib
 		{
 			try {
 				Script S = executionContext.GetScript();
-				DynValue filename = args.AsType(0, "loadfile", DataType.String, false);
+				DynValue v = args.AsType(0, "loadfile", DataType.String, false);
 				DynValue env = args.AsType(2, "loadfile", DataType.Table, true);
 
-				string str = filename.String;
-				string suffix = "Lua/";
+				string str;
+				if (v.String.StartsWith(DataRoot)) str = v.String;
+				else                               str = (v.String.Replace("\\", "/").StartsWith("/") ? "" : "/") + v.String;
+				string suffix = str.StartsWith(DataRoot) ? DataRoot : "raw";
 				ExplorePath(ref str, ref suffix);
 				return S.LoadFile(str, env.IsNil() ? defaultEnv : env.Table);
+			} catch (FileNotFoundException ex) {
+				throw new CYFException(ex.Message);
 			} catch (SyntaxErrorException ex) {
 				return DynValue.NewTuple(DynValue.Nil, DynValue.NewString(ex.DecoratedMessage ?? ex.Message));
 			} catch (Exception) {
@@ -173,22 +177,22 @@ namespace MoonSharp.Interpreter.CoreLib
 		//dofile executes the contents of the standard input (stdin). Returns all values returned by the chunk.
 		//In case of errors, dofile propagates the error to its caller (that is, dofile does not run in protected mode).
 		[MoonSharpModuleMethod]
-		public static DynValue dofile(ScriptExecutionContext executionContext, CallbackArguments args)
-		{
-			try
-			{
+		public static DynValue dofile(ScriptExecutionContext executionContext, CallbackArguments args) {
+			try {
 				Script S = executionContext.GetScript();
 				DynValue v = args.AsType(0, "dofile", DataType.String, false);
 
-				string str = v.String.Replace('\\', '/');
-				string suffix = str[0] == '/' ? "raw" : DataRoot;
+				string str;
+				if (v.String.StartsWith(DataRoot)) str = v.String;
+				else                               str = (v.String.Replace("\\", "/").StartsWith("/") ? "" : "/") + v.String;
+				string suffix = str.StartsWith(DataRoot) ? DataRoot : "raw";
 				ExplorePath(ref str, ref suffix);
 				DynValue fn = S.LoadFile(str);
 
 				return DynValue.NewTailCallReq(fn); // tail call to dofile
-			}
-			catch (SyntaxErrorException ex)
-			{
+			} catch (FileNotFoundException ex) {
+				throw new CYFException(ex.Message);
+			} catch (SyntaxErrorException ex) {
 				throw new ScriptRuntimeException(ex);
 			}
 		}
@@ -218,13 +222,21 @@ namespace MoonSharp.Interpreter.CoreLib
 		public static DynValue __require_clr_impl(ScriptExecutionContext executionContext, CallbackArguments args)
 		{
 			DynValue v = args.AsType(0, "__require_clr_impl", DataType.String, false);
+			string s = v.String.Replace("..", "¤").Replace(".", "/").Replace("¤", "..");
 
-			CallbackArguments newArgs = new CallbackArguments(new List<DynValue> { DynValue.NewString(ModDataPath + "Lua/" + v.String + ".lua"), args[1], args[2] }, args.IsMethodCall);
-			DynValue fn = loadfile_impl(executionContext, newArgs, null, false);
+			CallbackArguments newArgs = new CallbackArguments(new List<DynValue> { DynValue.NewString(ModDataPath + "Lua/" + s + ".lua"), args[1], args[2] }, args.IsMethodCall);
+			Exception e = null;
+			DynValue fn = DynValue.Nil;
+			try { fn = loadfile_impl(executionContext, newArgs, null); }
+			catch (Exception ex) { e = ex; }
 			if (fn.Type != DataType.Nil) return fn; // tail call to dofile
 
-			newArgs = new CallbackArguments(new List<DynValue> { DynValue.NewString(ModDataPath + "Lua/Libraries/" + v.String + ".lua"), args[1], args[2] }, args.IsMethodCall);
-			fn = loadfile_impl(executionContext, newArgs, null);
+			newArgs = new CallbackArguments(new List<DynValue> { DynValue.NewString(ModDataPath + "Lua/Libraries/" + s + ".lua"), args[1], args[2] }, args.IsMethodCall);
+			try { fn = loadfile_impl(executionContext, newArgs, null); }
+			catch (Exception ex) {
+				if (e != null) throw e;
+				throw ex;
+			}
 			return fn; // tail call to dofile
 		}
 
@@ -328,8 +340,10 @@ end";
 		public static void ExplorePath(ref string fullPath, ref string pathSuffix) {
 			fullPath = fullPath.Replace('\\', Path.DirectorySeparatorChar).Replace('/', Path.DirectorySeparatorChar);
 
-			if      (pathSuffix == "raw")                pathSuffix = "/";
-			else if (pathSuffix.Contains(DataRoot))      { }
+			if (pathSuffix == "raw")
+				pathSuffix = "/";
+
+			if      (pathSuffix.Contains(DataRoot))      { }
 			else if (fullPath.Contains(ModDataPath))     pathSuffix = Path.Combine(ModDataPath,     pathSuffix);
 			else if (fullPath.Contains(DefaultDataPath)) pathSuffix = Path.Combine(DefaultDataPath, pathSuffix);
 			else if (fullPath.Contains(DataRoot))        pathSuffix = Path.Combine(DataRoot,        pathSuffix);

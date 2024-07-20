@@ -12,7 +12,7 @@ it's w3c valid, at least
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="icon" href="favicon.ico">
+    <link rel="icon" href="../img/icon.png">
 
     <title>CYF Documentation - Sprites &amp; Animation</title>
     <link href="../css/bootstrap.min.css" rel="stylesheet">
@@ -28,68 +28,10 @@ it's w3c valid, at least
 <body>
 <img src="../img/bg2.png" alt="Undertale background" class="backimg">
 <div class="container arena black">
-    <div class="col-md-2">
-        <!--navigation-->
-        <nav class="nav-sidebar">
-            <ul class="nav tabs">
-                <li class="li-header">Basics</li>
-                    <li><a href="../index.html">Welcome</a></li>
-                    <li><a href="howtoread.html">How to read this documentation</a></li>
-                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
-                    <li><a href="controls.html">Controls</a></li>
-                    <li><a href="basic.html">Basic setup</a></li>
-                    <li><a href="unity.html"><span class="CYF"></span> Unity Setup (Optional)</a></li>
-                    <li class="new"><a href="variables.html">Special Variables</a></li>
-                    <li><a href="terms.html">Terminology</a></li>
-                <li class="li-header">API</li>
-                    <li class="new"><a href="api-text.html">Text commands</a></li>
-                    <li class="new"><a href="api-events.html">Game events</a></li>
-                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
-                    <li class="li-indent">Functions &amp; Objects:</li>
-                        <li class="li-indent new"><a href="api-functions-main.html">Misc. Functions</a></li>
-                        <li class="li-indent new"><a href="api-functions-player.html">The Player Object</a></li>
-                        <li class="li-indent"><a href="api-functions-script.html">The Script Object</a></li>
-                        <li class="li-indent"><a href="api-functions-audio.html">The Audio Object</a></li>
-                        <li class="li-indent"><a href="api-functions-newaudio.html"><span class="CYF"></span> The NewAudio Object</a></li>
-                        <li class="li-indent"><a href="api-functions-input.html">The Input Object</a></li>
-                        <li class="li-indent new"><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
-                        <li class="li-indent new"><a href="api-functions-time.html">The Time Object</a></li>
-                        <li class="li-indent new"><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
-                        <li class="li-indent new"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
-                        <li class="li-indent"><a href="api-functions-discord.html"><span class="CYF"></span> The Discord Object</a></li>
-                        <li class="li-indent new"><a href="api-functions-waves.html">The Arena Object</a></li>
-                        <li class="li-indent new"><a href="api-functions-ui.html"><span class="CYF"></span> The UI Object</a></li>
-                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
-                    <li class="new"><a href="api-projectile.html">Projectile management</a></li>
-                    <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
-                    <li class="new active" style="margin-left:5px;">&gt; Sprites &amp; Animation &lt;</li>
-                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
-                <li class="li-header"></span><span class="CYF"></span> Shaders</li>
-                    <li><a href="shaders.html">Introduction</a></li>
-                    <li><a href="shaders-object.html">The Shader Object</a></li>
-                    <li><a href="shaders-coding.html">Coding a Shader</a></li>
-                    <hr style="margin-top:10px;margin-bottom:10px;">
-                <li class="li-header"><span class="CYF"></span> Overworld</li>
-                    <li><a href="overworld.html">Basics</a></li>
-                    <li><a href="overworld-howto-map.html">How to create a map</a></li>
-                    <li><a href="overworld-howto-event.html">How to create an event</a></li>
-                    <li><a href="overworld-howto-animevent.html">How to animate an event</a></li>
-                    <li><a href="overworld-howto-shop.html">How to create a shop</a></li>
-                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
-                    <li class="li-indent"><span class="CYF"></span> Overworld Objects:</li>
-                        <li class="li-indent"><a href="overworld-object-general.html">The General Object</a></li>
-                        <li class="li-indent"><a href="overworld-object-event.html">The Event Object</a></li>
-                        <li class="li-indent"><a href="overworld-object-player.html">The Player Object</a></li>
-                        <li class="li-indent"><a href="overworld-object-screen.html">The Screen Object</a></li>
-                        <li class="li-indent"><a href="overworld-object-inventory.html">The Inventory Object</a></li>
-                        <li class="li-indent"><a href="overworld-object-map.html">The Map Object</a></li>
-                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
-                <li class="li-header">Resources</li>
-                    <li><a href="../media/dialogoptions.png">Dialog bubble names</a></li>
-                    <li><a href="api-keys.html"><span class="CYF"></span> Key List</a></li>
-            </ul>
-        </nav>
-    </div>
+    <!--navigation-->
+    <script type="text/javascript" src="../js/SideBar.js"></script>
+    <script type="text/javascript"> CreateSideBar("Sprites &amp; Animation"); </script>
+
     <!--tabs'n'shit-->
     <div class="tab-content col-md-10">
         <div class="tab-pane active text-style" id="api-animation">
@@ -155,6 +97,9 @@ it's w3c valid, at least
             <p>
                 The Sprite object has many controls intended for animation. There is a working intermediate example
                 included in the Examples folder.
+                <br>
+                <span class="new"></span> As this object exists in CYF's hierarchy, it's possible to manipulate its parent and children.
+                See the <span class="ref">General Objects</span> page for more information.
             </p><br>
 
             <p>
@@ -383,6 +328,13 @@ it's w3c valid, at least
             </p><br>
 
             <p>
+                <span class="new function"><span class="CYF"></span> <span class="number"></span> sprite.localRotation</span></span>
+                Gets or sets a sprite's local rotation, as in its rotation compared to its parent, in degrees.
+                <br><br>
+                It's clamped between 0 and 360, so if you set it to 365, it will become 5.
+            </p><br>
+
+            <p>
                 <span class="function"><span class="CYF"></span> <span class="string"></span> sprite.layer</span></span>
                 Gets or sets the current layer a sprite is on. Does nothing if you set it to a layer that doesn't exist.
                 <br><br>
@@ -390,9 +342,19 @@ it's w3c valid, at least
                 <br><br>
                 Overworld Event sprites and Text Objects letter sprites can not have their layers set.
                 <br><br>
-                <span class="new"></span>Note: It is common practice to use <span class="term">sprite.layer</span> to deparent
+                Note: It is common practice to use <span class="term">sprite.layer</span> to deparent
                 a sprite if you need to do so. Setting it again will parent the sprite to the given layer, removing its previous
                 parenting altogether.
+            </p><br>
+
+            <p>
+                <span class="new function"><span class="CYF"></span> <span class="number"></span> sprite.characterNumber</span></span>
+                Only used for letters fetched through <span class="term">Text.GetLetters()</span>. Gets the index of the character this
+                sprite displays. If the current letter shows the first character of the text object, then its number will be
+                <span class="term">0</span>.
+                <br><br>
+                Non-displayed letters and text commands are taken in account, meaning if text commands are before the first shown letter
+                of the text, its index won't be 0.
             </p><br>
 
             <p>
@@ -401,19 +363,8 @@ it's w3c valid, at least
                 <br><br>
                 If you have an animation running with <span class="term">SetAnimation</span>, the animation will override your sprite change.
                 <br><br>
-                <span class="new"></span> Note: Using this function with a sprite which has a parent with a different rotation will reset the sprite's rotation to its usual value.
+                Note: Using this function with a sprite which has a parent with a different rotation will reset the sprite's rotation to its usual value.
                 Setting the variable <span class="term">noscalerotationbug</span> to true in the Encounter script prevents that effect!
-            </p><br>
-
-            <p>
-                <span class="function">sprite.SetParent(<span class="userdata">sprite</span> otherSpriteObject)</span></span>
-                Parents <span class="term">sprite</span> to <span class="term">otherSpriteObject</span>.
-                <br><br>
-                This will make the original sprite move along with the object it's parented to.
-                <br><br>
-                <span class="CYF"></span> NOTE: If you are in the <i>Overworld</i>, you can NOT use this to parent sprites to Event objects' sprites,
-                or vice versa.<br>
-                Text Object letter sprites can <i>only</i> be parented to other Text Object letter sprites.
             </p><br>
 
             <p>
@@ -511,7 +462,7 @@ it's w3c valid, at least
                 <br><br>
                 See <span class="term">sprite.xscale</span> and <span class="term">sprite.yscale</span>.
                 <br><br>
-                <span class="new"></span> Note: Using this function with a sprite which has a parent with a different rotation will reset the sprite's rotation to its usual value.
+                Note: Using this function with a sprite which has a parent with a different rotation will reset the sprite's rotation to its usual value.
                 Setting the variable <span class="term">noscalerotationbug</span> to true in the Encounter script prevents that effect!
             </p><br>
 
@@ -530,7 +481,7 @@ it's w3c valid, at least
                 <br><br>
                 <span class="CYF"></span> This can use sprites with different sizes!
                 <br><br>
-                <span class="new"></span> Note: Using this function with a sprite which has a parent with a different rotation will reset the sprite's rotation to its usual value.
+                Note: Using this function with a sprite which has a parent with a different rotation will reset the sprite's rotation to its usual value.
                 Setting the variable <span class="term">noscalerotationbug</span> to true in the Encounter script prevents that effect!
             </p><br>
 
@@ -573,20 +524,20 @@ it's w3c valid, at least
 
             <p>
                 <span class="function"><span class="CYF"></span> sprite.SetVar(<span class="string"></span> yourVariableName, value)
-                <br></span>or <span class="function">sprite[<span class="string"> yourVariableName</span>]</span></span>
+                <br></span>or <span class="function">sprite[<span class="string"> yourVariableName</span>] = value</span></span>
                 Sets a variable in a sprite object that you can retrieve with <span class="term">sprite.GetVar</span>.<br>
                 Identical to <span class="term">SetVar</span> in projectiles.
             </p><br>
 
             <p>
                 <span class="function"><span class="CYF"></span> sprite.GetVar(<span class="string"></span> yourVariableName)
-                <br></span>or <span class="function">sprite[<span class="string"> yourVariableName</span>] = value</span></span>
+                <br></span>or <span class="function">sprite[<span class="string"> yourVariableName</span>]</span></span>
                 Gets a variable in a sprite object that you previously set with <span class="term">sprite.SetVar</span>.<br>
                 Identical to <span class="term">GetVar</span> in projectiles.
             </p><br>
 
             <p>
-                <span class="function"><span class="CYF"></span> sprite.Dust(<span class="boolean"></span> playSound=true, <span class="boolean"></span> removeObject = false)</span></span>
+                <span class="function"><span class="CYF"></span> sprite.Dust(<span class="boolean"></span> playSound = true, <span class="boolean"></span> removeObject = false)</span></span>
                 Turns a sprite into dust, just like what happens in Undertale when an enemy is killed.
                 <br><br>
                 Will remove a <strike>bullet or</strike> sprite if <span class="term">removeObject</span> is set to true.

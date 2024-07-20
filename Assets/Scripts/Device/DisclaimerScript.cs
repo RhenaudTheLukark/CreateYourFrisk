@@ -15,8 +15,8 @@ public class DisclaimerScript : MonoBehaviour {
             LogoCrate.GetComponent<Image>().enabled = true;
             RedditPlug.GetComponent<Text>().text = "GO TO /R/UNITLAE. FOR UPDTAES!!!!!";
             LegalStuff.GetComponent<Text>().text = "NO RELESLING HERE!!! IT'S RFEE!!! OR TUBY FEX WILL BE ANGER!!! U'LL HVAE A BED TMIE!!!";
-            ModSelection.GetComponent<Text>().text = "SPACE OR KLIK TO\n<color='#ff0000'>PALY MODS!!!!!</color>";
-            Overworld.GetComponent<Text>().text = "PRSES O TO\n<color='#ffff00'>OOVERWURL!!!!!</color>";
+            ModSelection.GetComponent<Text>().text = "YASS GO OR KLIK TO\n<color='#ff0000'>PALY MODS!!!!!</color>";
+            Overworld.GetComponent<Text>().text = "PRSES YUMMY 2\n<color='#ffff00'>OOVERWURL!!!!!</color>";
             LuaKnowledgeDisclaimer.GetComponent<Text>().text = "<b><color='red'>KNOW YUOR CODE</color> R U'LL HVAE A BED TMIE!!!</b>";
             Version.GetComponent<Text>().text = "v" + Random.Range(0,9) + "." + Random.Range(0,9) + "." + Random.Range(0,9);
         } else if (Random.Range(0, 1000) == 021) {
@@ -24,29 +24,31 @@ public class DisclaimerScript : MonoBehaviour {
             Version.GetComponent<Transform>().localPosition = new Vector3(0f, 160f, 0f);
             Version.GetComponent<Text>().color              = new Color(1f, 1f, 1f, 1f);
             Version.GetComponent<Text>().text               = "Not Unitale v0.2.1a";
-        } else
-            Version.GetComponent<Text>().text = "v" + GlobalControls.CYFversion;
+        } else if (GlobalControls.BetaVersion > 0)
+            Version.GetComponent<Text>().text = "v" + GlobalControls.CYFversion + "\nLTS " + (GlobalControls.LTSversion + 1) + "\n<color=\"#00ff00\">b" + GlobalControls.BetaVersion + "</color>";
+        else
+            Version.GetComponent<Text>().text = "v" + GlobalControls.CYFversion + "\nLTS " + GlobalControls.LTSversion;
     }
 
     /// <summary>
     /// Checks if you pressed one of the things the disclaimer tells you to. It's pretty straightforward.
     /// </summary>
     private void Update() {
-        // Try to hook on to the game window when the user interacts
-        #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
-            if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.O) || Input.GetKeyDown(KeyCode.F4)
-             || Input.GetKeyDown(KeyCode.Return) && (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)))  // LAlt/RAlt + Enter
-                Misc.RetargetWindow();
-        #endif
-
         if (!ScreenResolution.hasInitialized) return;
-        if (Input.GetKeyDown(KeyCode.O)) {
+        if (GlobalControls.input.Menu == ButtonState.PRESSED) {
+            #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
+                Misc.RetargetWindow();
+            #endif
             StaticInits.InitAll(StaticInits.EDITOR_MODFOLDER);
             GlobalControls.modDev = false;
             SceneManager.LoadScene("Intro");
             Destroy(this);
-        } else if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Return))
+        } else if (GlobalControls.input.Confirm == ButtonState.PRESSED || Input.GetMouseButtonDown(0)) {
+            #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
+                Misc.RetargetWindow();
+            #endif
             StartCoroutine(ModSelect());
+        }
     }
 
     // The mod select screen can take some extra time to load,

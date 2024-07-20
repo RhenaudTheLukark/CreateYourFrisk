@@ -372,5 +372,5 @@ public class LuaPlayerStatus {
         UIController.instance.fightUI.QuickInit(damage);
     }
 
-    public void CheckDeath() { UIController.instance.needOnDeath = true; }
+    public void CheckDeath() { UIController.instance.checkDeathCall = true; }
 }

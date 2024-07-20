@@ -86,6 +86,6 @@ public class LuaInventory {
     }
 
     public void SetAmount(int amount) {
-        Inventory.tempAmount = amount;
+        Inventory.itemStatAmount = amount;
     }
 }

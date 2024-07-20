@@ -12,7 +12,7 @@ it's w3c valid, at least
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="icon" href="favicon.ico">
+    <link rel="icon" href="../img/icon.png">
 
     <title>CYF Documentation - Special Variables</title>
     <link href="../css/bootstrap.min.css" rel="stylesheet">
@@ -28,68 +28,10 @@ it's w3c valid, at least
 <body>
 <img src="../img/bg2.png" alt="Undertale background" class="backimg">
 <div class="container arena black">
-    <div class="col-md-2">
-        <!--navigation-->
-        <nav class="nav-sidebar">
-            <ul class="nav tabs">
-                <li class="li-header">Basics</li>
-                    <li><a href="../index.html">Welcome</a></li>
-                    <li><a href="howtoread.html">How to read this documentation</a></li>
-                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
-                    <li><a href="controls.html">Controls</a></li>
-                    <li><a href="basic.html">Basic setup</a></li>
-                    <li><a href="unity.html"><span class="CYF"></span> Unity Setup (Optional)</a></li>
-                    <li class="active new" style="margin-left:5px;">&gt; Special Variables &lt;</li>
-                    <li><a href="terms.html">Terminology</a></li>
-                <li class="li-header">API</li>
-                    <li class="new"><a href="api-text.html">Text commands</a></li>
-                    <li class="new"><a href="api-events.html">Game events</a></li>
-                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
-                    <li class="li-indent">Functions &amp; Objects:</li>
-                        <li class="li-indent new"><a href="api-functions-main.html">Misc. Functions</a></li>
-                        <li class="li-indent new"><a href="api-functions-player.html">The Player Object</a></li>
-                        <li class="li-indent"><a href="api-functions-script.html">The Script Object</a></li>
-                        <li class="li-indent"><a href="api-functions-audio.html">The Audio Object</a></li>
-                        <li class="li-indent"><a href="api-functions-newaudio.html"><span class="CYF"></span> The NewAudio Object</a></li>
-                        <li class="li-indent"><a href="api-functions-input.html">The Input Object</a></li>
-                        <li class="li-indent new"><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
-                        <li class="li-indent new"><a href="api-functions-time.html">The Time Object</a></li>
-                        <li class="li-indent new"><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
-                        <li class="li-indent new"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
-                        <li class="li-indent"><a href="api-functions-discord.html"><span class="CYF"></span> The Discord Object</a></li>
-                        <li class="li-indent new"><a href="api-functions-waves.html">The Arena Object</a></li>
-                        <li class="li-indent new"><a href="api-functions-ui.html"><span class="CYF"></span> The UI Object</a></li>
-                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
-                    <li class="new"><a href="api-projectile.html">Projectile management</a></li>
-                    <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
-                    <li class="new"><a href="api-animation.html">Sprites &amp; Animation</a></li>
-                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
-                <li class="li-header"></span><span class="CYF"></span> Shaders</li>
-                    <li><a href="shaders.html">Introduction</a></li>
-                    <li><a href="shaders-object.html">The Shader Object</a></li>
-                    <li><a href="shaders-coding.html">Coding a Shader</a></li>
-                    <hr style="margin-top:10px;margin-bottom:10px;">
-                <li class="li-header"><span class="CYF"></span> Overworld</li>
-                    <li><a href="overworld.html">Basics</a></li>
-                    <li><a href="overworld-howto-map.html">How to create a map</a></li>
-                    <li><a href="overworld-howto-event.html">How to create an event</a></li>
-                    <li><a href="overworld-howto-animevent.html">How to animate an event</a></li>
-                    <li><a href="overworld-howto-shop.html">How to create a shop</a></li>
-                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
-                    <li class="li-indent"><span class="CYF"></span> Overworld Objects:</li>
-                        <li class="li-indent"><a href="overworld-object-general.html">The General Object</a></li>
-                        <li class="li-indent"><a href="overworld-object-event.html">The Event Object</a></li>
-                        <li class="li-indent"><a href="overworld-object-player.html">The Player Object</a></li>
-                        <li class="li-indent"><a href="overworld-object-screen.html">The Screen Object</a></li>
-                        <li class="li-indent"><a href="overworld-object-inventory.html">The Inventory Object</a></li>
-                        <li class="li-indent"><a href="overworld-object-map.html">The Map Object</a></li>
-                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
-                <li class="li-header">Resources</li>
-                    <li><a href="../media/dialogoptions.png">Dialog bubble names</a></li>
-                    <li><a href="api-keys.html"><span class="CYF"></span> Key List</a></li>
-            </ul>
-        </nav>
-    </div>
+    <!--navigation-->
+    <script type="text/javascript" src="../js/SideBar.js"></script>
+    <script type="text/javascript"> CreateSideBar("Special Variables"); </script>
+
     <!--tabs'n'shit-->
     <div class="tab-content col-md-10">
         <div class="tab-pane active text-style" id="variables">
@@ -108,7 +50,7 @@ it's w3c valid, at least
             </p>
 
             <p>
-                <br><span class="function new"><span class="CYF"></span> <span class="boolean"></span> isRetro [E/M/W]</span>
+                <br><span class="function"><span class="CYF"></span> <span class="boolean"></span> isRetro [E/M/W]</span>
                 A value which is true whenever CYF's retrocompatibility mode is active and false when it isn't. Test it with
                 <span class="term">if not isRetro then</span> or <span class="term">if isRetro then</span>.
             </p>
@@ -141,7 +83,7 @@ it's w3c valid, at least
             </p>
 
             <p>
-                <br><span class="function"><span class="new"></span><span class="CYF"></span> <span class="number"></span> LTSversion [E/M/W]</span>
+                <br><span class="function"><span class="CYF"></span> <span class="number"></span> LTSversion [E/M/W]</span>
                 Returns a different number based on the LTS version of CYF you are using.<br><br>
                 You can compare this number to your own values to make sure the right version of CYF is used to play your mod, if needed.<br><br>
                 You may also want to check if this value exists at all in case older versions of CYF are used to play your mod.
@@ -234,9 +176,20 @@ deathtext = {
             if <span class="term">revive</span> is not set.</p>
             <br><p><span class="CYF"></span> <span class="luatable"><span class="userdata">script</span></span> <span class="term">Wave</span> - A table
             returning the current wave scripts used. Returns a table with a length of 0 if not in the state DEFENDING.</p>
-            <br><p><span class="new"></span><span class="CYF"></span> <span class="boolean"></span> <span class="term">noscalerotationbug</span> - If this
+            <br><p><span class="CYF"></span> <span class="boolean"></span> <span class="term">noscalerotationbug</span> - If this
             variable is set to true, the rotation of any child sprite with a rotated parent will no longer be reset after either changing its sprite in any
             way or scaling it.</p>
+            <br><p><span class="new"></span><span class="boolean"></span> <span class="term">adjusttextdisplay</span> - False if not set. If set to true,
+            CYF will try to adjust the text's position and scale to prevent jagged lines to appear if the text's scale or position is slightly off.
+            <br>Can be overridden for each text object by setting their <span class="term">adjustTextDisplay</span> value.</p>
+            <br><p><span class="new"></span><span class="luatable"><span class="number"></span>, <span class="number"></span>, <span class="number"></span>,
+            <span class="number"></span> = 1 </span> <span class="term">sparecolor</span> - Changes the RGBA color of the Spare option in the Mercy menu if
+            one or several enemies are spareable. Each given number will be clamped between 0 and 1.
+            <br>If neither this or <span class="term">sparecolor32</span> are set, the default color is <span class="term">{ 1, 1, 0 }</span>, or yellow.
+            <br><p><span class="new"></span><span class="luatable"><span class="number"></span>, <span class="number"></span>, <span class="number"></span>,
+            <span class="number"></span> = 255 </span> <span class="term">sparecolor32</span> - Changes the RGBA color of the Spare option in the Mercy menu
+            if one or several enemies are spareable. Each given number will be clamped between 0 and 255.
+            <br>This value is ignored if <span class="term">sparecolor</span> is set.
 
             <hr>
             <h4>Monster script variables</h4>
@@ -301,7 +254,24 @@ check = "Serving Size: 1 Monster\nNot monitored by the USDA"</pre>
             <p><span class="string"></span> <span class="term">dialogbubble</span> - What dialogue bubble will be used for the monster's dialogue. You can
                 change this at any time, but this <i>must</i> be initially set to something. For a list of all possible options, check the
                 <a href="../media/dialogoptions.png">dialog bubble names</a> chart; it's also in the sidebar.
-                Positioning of the bubbles is done automatically.</p>
+                Positioning of the bubbles is done automatically.
+                <br>
+                <span class="new"></span>This value can also be nil, which means the monster's text will use an automatically sized bubble much like text
+                objects do. In which case, you need to set the value of the variables <span class="term">bubbleside</span> and <span class="term">bubblewidth</span>. See their entries below for details.</p>
+            <p><span class="new"></span><span class="string"></span> <span class="term">bubbleside</span> - Only useful when
+                <span class="term">dialogbubble</span> is nil. Determines which side the bubble and its tail are on. Can only accept the values
+                <span class="term">RIGHT</span>, <span class="term">LEFT</span>, <span class="term">UP</span>, <span class="term">DOWN</span> and
+                <span class="term">NONE</span>.
+                <br>
+                The <span class="term">NONE</span> value places the bubble on the right side of the monster with no tail, while the other values
+                place the bubble on their corresponding side.</p>
+            <p><span class="new"></span><span class="number"></span> <span class="term">bubblewidth</span> - Only useful when
+                <span class="term">dialogbubble</span> is nil. Determines the width of the automatic bubble in pixels. This value cannot be under 16.</p>
+            <p><span class="new"></span><span class="userdata">sprite</span> <span class="term">bubblesprite</span> - Only useful when
+                <span class="term">dialogbubble</span> is not nil. This is the sprite object used for the bubble sprite used for monster dialogues.
+                This object has <span class="term">textobject</span> as child, so moving it will also move that object.</p>
+            <p><span class="new"></span><span class="userdata">text</span> <span class="term">textobject</span> - Text object used to display the
+                monster's dialogue. Moving it also moves the dialog bubble if dialogbubble is nil.</p>
             <p><span class="CYF"></span> <span class="string"></span> <span class="term">dialogueprefix</span> - A string, appended to the beginning
                 of every monster's dialogue. The default is <span class="term">"[effect:rotate]"</span></p>
             <p><span class="string"></span> <span class="term">name</span> - Monster name. Fairly self-explanatory; shows up in the FIGHT/ACT menus.
@@ -322,13 +292,22 @@ check = "Serving Size: 1 Monster\nNot monitored by the USDA"</pre>
                 the monster's name, ATK and DEF.</p>
             <p><span class="CYF"></span> <span class="boolean"></span> <span class="term">unkillable</span> - Set it to true and the monster will not
                 be killed if it has less than 1 HP. However, it can still be killed with <span class="term">Kill()</span>.</p>
-            <p><span class="CYF"></span> <span class="boolean"></span> <span class="term">canmove</span> - Deprecated, always returns true. <br>Old behavior: Returns true if you are able to move or unbind <span class="term">monstersprite</span>, false otherwise.</p>
+            <p><span class="CYF"></span> <span class="boolean"></span> <span class="term">canmove</span> - Deprecated, always returns true.
+                <br>Old behavior: Returns true if you are able to move or unbind <span class="term">monstersprite</span>, false otherwise.</p>
             <p><span class="CYF"></span> <span class="number"></span> <span class="term">posx</span> - The x position of the enemy's sprite.</p>
             <p><span class="CYF"></span> <span class="number"></span> <span class="term">posy</span> - The y position of the enemy's sprite.</p>
             <p><span class="CYF"></span> <span class="string"></span> <span class="term">font</span> - The default font used by the monster. Set it to
             <span class="term">nil</span> if you want to use the normal monster font.</p>
             <p><span class="CYF"></span> <span class="string"></span> <span class="term">voice</span> - The default voice used by the monster. Set it
             to <span class="term">nil</span> if you want to use the default voice.</p>
+            <br><p><span class="new"></span><span class="luatable"><span class="number"></span>, <span class="number"></span>, <span class="number"></span>,
+            <span class="number"></span> = 1 </span> <span class="term">sparecolor</span> - Changes the RGBA color of the enemy's name in the enemy
+            choice menu if they are spareable. Each given number will be clamped between 0 and 1.
+            <br>If neither this or <span class="term">sparecolor32</span> are set, the default color is <span class="term">{ 1, 1, 0 }</span>, or yellow.
+            <br><p><span class="new"></span><span class="luatable"><span class="number"></span>, <span class="number"></span>, <span class="number"></span>,
+            <span class="number"></span> = 255 </span> <span class="term">sparecolor32</span> - Changes the RGBA color of the enemy's name in the enemy
+            choice menu if they are spareable. Each given number will be clamped between 0 and 255.
+            <br>This value is ignored if <span class="term">sparecolor</span> is set.
             <hr>
 
             <h4>Wave script variables</h4>

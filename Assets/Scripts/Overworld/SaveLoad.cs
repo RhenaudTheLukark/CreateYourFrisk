@@ -72,7 +72,7 @@ public static class SaveLoad {
         return false;
     }
 
-    public static void SaveAlMighty() {
+    public static void SaveAlMighty(string key = null) {
         almightycurrentGame = new AlMightyGameState();
         almightycurrentGame.UpdateVariables();
         File.Delete(Application.persistentDataPath + "/AlMightySave.gd");
@@ -80,7 +80,7 @@ public static class SaveLoad {
         //Application.persistentDataPath is a string, so if you wanted you can put that into unitaleutil.writeinlog if you want to know where save games are located
         FileStream file = File.Create(Application.persistentDataPath + "/AlMightySave.gd");
         bf.Serialize(file, almightycurrentGame);
-        Debug.Log("AlMighty Save created at this location : " + Application.persistentDataPath + "/AlMightySave.gd");
+        Debug.Log(key == null ? "AlMighties have been saved!" : "The AlMighty \"" + key + "\" has been saved!");
         file.Close();
     }
 

@@ -58,7 +58,7 @@ public class Title : MonoBehaviour {
 
     // Update is called once per frame
     private void Update() {
-        if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED && phase == 0) {
+        if (GlobalControls.input.Confirm == ButtonState.PRESSED && phase == 0) {
             phase++;
             Camera.main.GetComponent<AudioSource>().Stop();
             Destroy(RetromodeCanvas);
@@ -82,10 +82,10 @@ public class Title : MonoBehaviour {
                             TextManagerLevel.SetHorizontalSpacing(2);
                             TextManagerTime.SetHorizontalSpacing(2);
                             TextManagerMap.SetHorizontalSpacing(2);
-                            TextManagerName.SetTextQueue(new[] { new TextMessage("[noskipatall]" + PlayerCharacter.instance.Name, false, true) });
-                            TextManagerLevel.SetTextQueue(new[] { new TextMessage("[noskipatall]" + (GlobalControls.crate ? "VL" : "LV") + PlayerCharacter.instance.LV, false, true) });
-                            TextManagerTime.SetTextQueue(new[] {new TextMessage("[noskipatall]" + UnitaleUtil.TimeFormatter(SaveLoad.savedGame.playerTime), false, true) });
-                            TextManagerMap.SetTextQueue(new[] { new TextMessage("[noskipatall]" + SaveLoad.savedGame.lastScene, false, true) });
+                            TextManagerName.SetTextQueue(new[] { new TextMessage(PlayerCharacter.instance.Name, false, true) });
+                            TextManagerLevel.SetTextQueue(new[] { new TextMessage((GlobalControls.crate ? "VL" : "LV") + PlayerCharacter.instance.LV, false, true) });
+                            TextManagerTime.SetTextQueue(new[] {new TextMessage(UnitaleUtil.TimeFormatter(SaveLoad.savedGame.playerTime), false, true) });
+                            TextManagerMap.SetTextQueue(new[] { new TextMessage(SaveLoad.savedGame.lastScene, false, true) });
                             tmName.SetTextQueue(new[] { new TextMessage(PlayerCharacter.instance.Name, false, true) });
                             diff = calcTotalLength(tmName);
                             tmName.SetEffect(new ShakeEffect(tmName));
@@ -106,11 +106,11 @@ public class Title : MonoBehaviour {
                                                                              + "Tell me if you have any more problems, and thanks for following my fork! ^^\n\n");
                     }
                 } else {
-                    if (GlobalControls.input.Right == UndertaleInput.ButtonState.PRESSED || GlobalControls.input.Left == UndertaleInput.ButtonState.PRESSED)
+                    if (GlobalControls.input.Right == ButtonState.PRESSED || GlobalControls.input.Left == ButtonState.PRESSED)
                         setColor(choiceLetter == 2 ? 2 : (choiceLetter + 1) % 2);
-                    if (GlobalControls.input.Up == UndertaleInput.ButtonState.PRESSED || GlobalControls.input.Down == UndertaleInput.ButtonState.PRESSED)
+                    if (GlobalControls.input.Up == ButtonState.PRESSED || GlobalControls.input.Down == ButtonState.PRESSED)
                         setColor(choiceLetter == 2 ? 0 : 2);
-                    else if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED)
+                    else if (GlobalControls.input.Confirm == ButtonState.PRESSED)
                         switch (choiceLetter) {
                             case 0:
                                 phase = -1;
@@ -132,13 +132,14 @@ public class Title : MonoBehaviour {
             }
             case 2: {
                 if (tmName.transform.localScale.x < 3) {
-                    tmName.transform.localScale = new Vector3(tmName.transform.localScale.x + 0.01f, tmName.transform.localScale.y + 0.01f, 1);
-                    tmName.transform.localPosition = new Vector3(actualX - (((tmName.transform.localScale.x - 1) * diff) / 2),
-                                                                 actualY - (((tmName.transform.localScale.x - 1) * diff) / 6), tmName.transform.localPosition.z);
+                    float scale = Mathf.Min(3, tmName.transform.localScale.x + 0.01f);
+                    tmName.transform.localScale = new Vector3(scale, scale, 1);
+                    tmName.MoveTo(actualX - ((tmName.transform.localScale.x - 1) * diff / 2),
+                                  actualY - ((tmName.transform.localScale.x - 1) * diff / 6));
                 }
-                if (GlobalControls.input.Right == UndertaleInput.ButtonState.PRESSED || GlobalControls.input.Left == UndertaleInput.ButtonState.PRESSED)
+                if (GlobalControls.input.Right == ButtonState.PRESSED || GlobalControls.input.Left == ButtonState.PRESSED)
                     setColor((choiceLetter + 1) % 2, 2);
-                else if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED) {
+                else if (GlobalControls.input.Confirm == ButtonState.PRESSED) {
                     if (choiceLetter == 1) {
                         Camera.main.GetComponent<AudioSource>().Stop();
                         Camera.main.GetComponent<AudioSource>().PlayOneShot(AudioClipRegistry.GetSound("intro_holdup"));
@@ -185,9 +186,10 @@ public class Title : MonoBehaviour {
         SpriteRenderer blank = GameObject.Find("Blank").GetComponent<SpriteRenderer>();
         while (blank.color.a <= 1) {
             if (tmName.transform.localScale.x < 3) {
-                tmName.transform.localScale = new Vector3(tmName.transform.localScale.x + 0.01f, tmName.transform.localScale.y + 0.01f, 1);
-                tmName.transform.localPosition = new Vector3(actualX - (((tmName.transform.localScale.x - 1) * diff) / 2),
-                                                             actualY - (((tmName.transform.localScale.x - 1) * diff) / 6), tmName.transform.localPosition.z);
+                float scale = Mathf.Min(3, tmName.transform.localScale.x + 0.01f);
+                tmName.transform.localScale = new Vector3(scale, scale, 1);
+                tmName.MoveTo(actualX - ((tmName.transform.localScale.x - 1) * diff / 2),
+                              actualY - ((tmName.transform.localScale.x - 1) * diff / 6));
             }
             blank.color = new Color(blank.color.r, blank.color.g, blank.color.b, blank.color.a + 0.003f);
             yield return 0;

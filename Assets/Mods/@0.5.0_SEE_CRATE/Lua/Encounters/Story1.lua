@@ -29,7 +29,7 @@ function EncounterStarting()
 	                                 "[noskip]If you came here,[w:10] it must be for a good reason.[w:30][next]",
 									 "[noskip]We'll tell you the story of Create Your Frisk.[w:30][next]",
 									 "[noskip]In February 2016,[w:10] RhenaudTheLukark,[w:10] the creator of Create Your Frisk decided,[w:10] with some of their friends,[w:10] to create their own AU.[w:30][next]",
-									 "[noskip]They concluded that Unitale was the easiest way to do it.[w:30][next]",
+									 "[noskip]They concluded that Unitale was the easiest way to make it.[w:30][next]",
 									 "[noskip]If we had told him what would have happened,[w:10] he'd have laughed at it.[w:30][next]",
 									 "[noskip][func:LaunchFade, false][w:35][func:State,DONE]"}
 	require "Waves/bullettest_touhou"

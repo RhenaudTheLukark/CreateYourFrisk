@@ -5,6 +5,13 @@ using UnityEngine.UI;
 
 public class MaskImage : Image {
     public bool inverted = false;
+
+    protected override void Start() {
+        base.Start();
+        if (material.name == "Default UI Material")
+            material = Instantiate(material);
+    }
+
     public override Material materialForRendering {
         get {
             Material result = base.materialForRendering;

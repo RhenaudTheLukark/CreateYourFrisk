@@ -7,22 +7,22 @@ using Random = UnityEngine.Random;
 
 public class EnemyController : MonoBehaviour {
     public GameObject bubbleObject;
-    internal Sprite textBubbleSprite;
-
-    internal Vector2 textBubblePos;
 
     protected UIController ui;
 
-    public Vector2 DialogBubblePosition {
-        get {
-            Sprite diagBubbleSpr = SpriteRegistry.Get(DialogBubble);
-            RectTransform t = GetComponent<RectTransform>();
-            if (diagBubbleSpr.name.StartsWith("right"))        textBubblePos = new Vector2(t.rect.width / 2 + 5,                             diagBubbleSpr.rect.height / 2);
-            else if (diagBubbleSpr.name.StartsWith("left"))    textBubblePos = new Vector2(-t.rect.width / 2 - diagBubbleSpr.rect.width - 5, diagBubbleSpr.rect.height / 2);
-            else if (diagBubbleSpr.name.StartsWith("top"))     textBubblePos = new Vector2(-diagBubbleSpr.rect.width / 2,                    t.rect.height / 2 + diagBubbleSpr.rect.height + 5);
-            else if (diagBubbleSpr.name.StartsWith("bottom"))  textBubblePos = new Vector2(-diagBubbleSpr.rect.width / 2,                    -t.rect.height / 2 - 5);
-            else                                               textBubblePos = new Vector2(t.rect.width / 2 + 5,                             diagBubbleSpr.rect.height / 2); // rightside default
-            return textBubblePos;
+    public enum BubbleSideEnum { LEFT, RIGHT, UP, DOWN, NONE }
+    public BubbleSideEnum GetReverseBubbleSide(BubbleSideEnum val) {
+        switch (val) {
+            case BubbleSideEnum.LEFT:
+                return BubbleSideEnum.RIGHT;
+            case BubbleSideEnum.RIGHT:
+                return BubbleSideEnum.LEFT;
+            case BubbleSideEnum.UP:
+                return BubbleSideEnum.DOWN;
+            case BubbleSideEnum.DOWN:
+                return BubbleSideEnum.UP;
+            default:
+                return val;
         }
     }
 
@@ -240,12 +240,99 @@ public class EnemyController : MonoBehaviour {
         set { script.SetVar("noattackmisstext", DynValue.NewString(value)); }
     }
 
+    public Color SpareColor {
+        get {
+            DynValue spareColor = script.GetVar("sparecolor");
+            DynValue spareColor32 = script.GetVar("sparecolor32");
+            DynValue val = spareColor.IsNotNil() ? spareColor : spareColor32;
+            if (val.IsNil())
+                return new Color(1, 1, 0, 1);
+
+            if (val.Type != DataType.Table)
+                throw new CYFException("An enemy's spare color must be a table with 3 or 4 numbers: type is " + val.Type.ToString() + ".");
+
+            Table tab = val.Table;
+            if (tab.Length < 3 || tab.Length > 4)
+                throw new CYFException("An enemy's spare color must be a table with 3 or 4 numbers: the table has " + tab.Length + " elements.");
+
+            foreach (TablePair p in tab.Pairs) {
+                if (p.Key.Type != DataType.Number)
+                    throw new CYFException("An enemy's spare color must be a table with 3 or 4 numbers: the table's " + p.Key.ToString() + " value doesn't have a numbered key.");
+                if (p.Value.Type != DataType.Number)
+                    throw new CYFException("An enemy's spare color must be a table with 3 or 4 numbers: the table's " + p.Key.ToString() + " value is of type " + p.Value.Type.ToString() + ".");
+            }
+
+            bool is32 = spareColor.IsNil();
+            return new Color(
+                Mathf.Clamp01((float)tab.Get(1).Number / (is32 ? 255 : 1)),
+                Mathf.Clamp01((float)tab.Get(2).Number / (is32 ? 255 : 1)),
+                Mathf.Clamp01((float)tab.Get(3).Number / (is32 ? 255 : 1)),
+                tab.Get(4).Type == DataType.Nil ? 1 : Mathf.Clamp01((float)tab.Get(4).Number / (is32 ? 255 : 1))
+            );
+        }
+    }
+
     public float PosX {
         get { return GetComponent<RectTransform>().position.x; }
     }
 
     public float PosY {
         get { return GetComponent<RectTransform>().position.y; }
+    }
+
+    public Vector2 DialogBubblePosition {
+        get {
+            RectTransform t = GetComponent<RectTransform>();
+            Vector2 spr = new Vector2(Mathf.Abs(t.rect.width), t.rect.height);
+            Vector2 bubSize;
+            if (DialogBubble == "UI/SpeechBubbles/") {
+                LuaTextManager text = GetComponentInChildren<LuaTextManager>();
+                bubSize = text.GetBubbleSize();
+                Vector2 bubbleShift = text.GetBubbleShift();
+                Vector2 res;
+                switch (BubbleSide) {
+                    case BubbleSideEnum.LEFT:  res = new Vector2(-spr.x / 2 - bubSize.x - 25, bubSize.y / 2);              break;
+                    case BubbleSideEnum.UP:    res = new Vector2(-bubSize.x / 2,              spr.y / 2 + bubSize.y + 25); break;
+                    case BubbleSideEnum.DOWN:  res = new Vector2(-bubSize.x / 2,              -spr.y / 2 - 25);            break;
+                    default:                   res = new Vector2(spr.x / 2 + 25,              bubSize.y / 2);              break; // rightside default
+                }
+                return res - bubbleShift;
+            }
+            Sprite diagBubbleSpr = SpriteRegistry.Get(DialogBubble);
+            bubSize = new Vector2(diagBubbleSpr.rect.width, diagBubbleSpr.rect.height);
+            if (diagBubbleSpr.name.StartsWith("left"))   return new Vector2(-spr.x / 2 - bubSize.x - 5, bubSize.y / 2);
+            if (diagBubbleSpr.name.StartsWith("top"))    return new Vector2(-bubSize.x / 2,             spr.y / 2 + bubSize.y + 5);
+            if (diagBubbleSpr.name.StartsWith("bottom")) return new Vector2(-bubSize.x / 2,             -spr.y / 2 - 5);
+                                                         return new Vector2(spr.x / 2 + 5,              bubSize.y / 2); // rightside default
+        }
+    }
+
+    public BubbleSideEnum BubbleSide {
+        get {
+            if (script.GetVar("bubbleside").Type == DataType.Nil)
+                throw new CYFException("You need to set the value of the variable bubbleside if you want the engine to create a text bubble automatically.\nIts possible values are \"LEFT\", \"RIGHT\", \"UP\", \"DOWN\" or \"NONE\".");
+            if (script.GetVar("bubbleside").Type != DataType.String)
+                throw new CYFException("The bubbleside value can only be \"LEFT\", \"RIGHT\", \"UP\", \"DOWN\" or \"NONE\", but its value isn't a string.");
+            string s = script.GetVar("bubbleside").String.ToUpper();
+            try {
+                return (BubbleSideEnum)Enum.Parse(typeof(BubbleSideEnum), s);
+            } catch { throw new CYFException("The bubbleside value can only be \"LEFT\", \"RIGHT\", \"UP\", \"DOWN\" or \"NONE\", but its value is \"" + s.ToUpper() + "\"."); }
+        }
+        set {
+            script.SetVar("bubbleside", DynValue.NewString(value.ToString()));
+        }
+    }
+
+    public double BubbleWidth {
+        get {
+            if (script.GetVar("bubblewidth").Type != DataType.Number)
+                throw new CYFException("The bubblewidth value of the monster " + Name + " isn't a number.\nIt must be a number above or equal to 16.");
+            double val = script.GetVar("bubblewidth").Number;
+            if (val < 16)
+                throw new CYFException("The bubblewidth value of the monster " + Name + " is too low (" + val + ").\nIt must be a number above or equal to 16.");
+            return val;
+        }
+        set { script.SetVar("bubblewidth", DynValue.NewNumber(value)); }
     }
 
     public void InitializeEnemy() {
@@ -269,6 +356,8 @@ public class EnemyController : MonoBehaviour {
             script.SetVar("canmove", DynValue.NewBoolean(true));
             sprite = LuaSpriteController.GetOrCreate(gameObject);
             script.SetVar("monstersprite", UserData.Create(sprite, LuaSpriteController.data));
+            script.SetVar("bubblesprite", UserData.Create(LuaSpriteController.GetOrCreate(bubbleObject)));
+            script.SetVar("textobject", UserData.Create(bubbleObject.GetComponentInChildren<LuaTextManager>()));
             script.DoString(scriptText);
 
             string spriteFile = script.GetVar("sprite").String;
@@ -281,8 +370,6 @@ public class EnemyController : MonoBehaviour {
             if (MaxHP == 0)
                 MaxHP = HP;
 
-            textBubbleSprite = Resources.Load<Sprite>("Sprites/UI/SpeechBubbles/right");
-
             /*if (script.GetVar("canspare") == null) CanSpare = false;
             if (script.GetVar("cancheck") == null) CanCheck = true;*/
         }
@@ -294,8 +381,6 @@ public class EnemyController : MonoBehaviour {
 
     public string[] GetDefenseDialog() {
         DynValue dialogues = script.GetVar("currentdialogue");
-        if (dialogues == null)
-            return null;
         if (dialogues.Table == null)
             if (dialogues.String != null)  return new[] { dialogues.String };
             else if (Dialogue == null)     return null;
@@ -310,6 +395,73 @@ public class EnemyController : MonoBehaviour {
 
     protected void HandleCustomCommand(string command) {
         UnitaleUtil.TryCall(script, "HandleCustomCommand", new[] { DynValue.NewString(command) });
+    }
+
+    public void CreateBubble() {
+        GameObject speechBub = Instantiate(SpriteFontRegistry.BUBBLE_OBJECT);
+        speechBub.transform.SetParent(transform);
+
+        LuaTextManager sbTextMan = speechBub.GetComponentInChildren<LuaTextManager>();
+        sbTextMan.SetCaller(script);
+        sbTextMan.HideBubble();
+        sbTextMan.SetText(DynValue.NewString(""));
+        sbTextMan.GetComponent<RectTransform>().pivot = new Vector2(0, 1);
+        sbTextMan.adjustTextDisplay = true;
+
+        bubbleObject = speechBub;
+    }
+
+    public void UpdateBubble(int enemyID) {
+        LuaTextManager sbTextMan = bubbleObject.GetComponentInChildren<LuaTextManager>();
+
+        bool usingAutoBubble = DialogBubble == "UI/SpeechBubbles/";
+        Image speechBubImg = bubbleObject.GetComponent<Image>();
+        speechBubImg.enabled = !usingAutoBubble;
+
+        // Bubble management: can be a normal bubble OR an auto bubble from text objects
+        if (!usingAutoBubble) {
+            try { SpriteUtil.SwapSpriteFromFile(speechBubImg, DialogBubble, enemyID); }
+            catch (Exception e) {
+                UnitaleUtil.DisplayLuaError(scriptName + ": Creating a dialogue bubble", "An error was encountered. It's highly possible the dialogue bubble " + script.GetVar("dialogbubble") + " doesn't exist.\n\nError: " + e.Message);
+                return;
+            }
+            Sprite speechBubSpr = speechBubImg.sprite;
+
+            float xMov = speechBubSpr.border.x;
+            float yMov = -speechBubSpr.border.w - sbTextMan.font.LineSpacing;
+            float angle = sbTextMan.rotation * Mathf.Deg2Rad;
+            sbTextMan.MoveTo((int)(Mathf.Cos(angle) * xMov - Mathf.Sin(angle) * yMov), (int)(Mathf.Sin(angle) * xMov + Mathf.Cos(angle) * yMov));
+            speechBubImg.color = new Color(speechBubImg.color.r, speechBubImg.color.g, speechBubImg.color.b, sbTextMan.letters.Count == 0 ? 0 : 1);
+
+            if (bubbleWidth == 0)
+                bubbleWidth = speechBubSpr.textureRect.width - speechBubSpr.border.x - speechBubSpr.border.z;
+
+            sbTextMan.HideBubble();
+        } else {
+            try { bubbleWidth = (float)BubbleWidth; }
+            catch (Exception e) {
+                UnitaleUtil.DisplayLuaError(scriptName + ": Creating a dialogue bubble", e.Message);
+                return;
+            }
+
+            if (sbTextMan.letters.Count > 0) sbTextMan.ShowBubble(GetReverseBubbleSide(BubbleSide).ToString(), DynValue.NewString("50%"));
+            else                             sbTextMan.HideBubble();
+            sbTextMan.MoveTo(0, 0);
+        }
+
+        sbTextMan._textMaxWidth = (int)bubbleWidth;
+        speechBubImg.transform.SetAsLastSibling();
+
+        bubbleObject.GetComponent<RectTransform>().anchoredPosition = DialogBubblePosition + offsets[1];
+        sbTextMan.Move(0, 0); // Used to even out the text object's position so it's only using integers
+
+        if (Voice != "")
+            sbTextMan.fontVoice = Voice;
+    }
+
+    public void HideBubble() {
+        bubbleObject.GetComponent<Image>().enabled = false;
+        bubbleObject.GetComponentInChildren<LuaTextManager>().HideBubble();
     }
 
     public void Remove() {

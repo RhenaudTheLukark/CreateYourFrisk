@@ -12,7 +12,7 @@ public static class Inventory {
     public static List<int> addedItemsTypes = new List<int>();
     public static LuaInventory luaInventory;
     public static int inventorySize = 8;
-    public static int tempAmount;
+    public static int itemStatAmount;
     public static Dictionary<string, string> NametoDesc = new Dictionary<string, string>(), NametoShortName = new Dictionary<string, string>();
     public static Dictionary<string, int> NametoType = new Dictionary<string, int>(), NametoPrice = new Dictionary<string, int>();
     public static bool usedItemNoDelete;
@@ -73,34 +73,35 @@ public static class Inventory {
 
     public static void UseItem(int ID) {
         usedItemNoDelete = false;
-        tempAmount = 0;
-        string Name = inventory[ID].Name, replacement;
+        itemStatAmount = 0;
+        string Name = inventory[ID].Name, replacement = "";
         int type = inventory[ID].Type;
-        float amount;
+        float amount = -991;
         TryCall("HandleItem", new[] { DynValue.NewString(Name.ToUpper()), DynValue.NewNumber(ID + 1) });
 
-        TextMessage[] mess = { };
-        if (addedItems.Count != 0) {
-            if (addedItems.Any(t => string.Equals(t, Name, StringComparison.CurrentCultureIgnoreCase))) {
-                if (type == 1 || type == 2)
-                    mess = ChangeEquipment(ID, mess);
-                if (!usedItemNoDelete && type == 0)
-                    inventory.RemoveAt(ID);
-                if ((type == 1 || type == 2) && mess.Length != 0 && !UIController.instance.battleDialogueStarted)
-                    UIController.instance.ActionDialogResult(mess);
-                return;
-            }
-        }
-        ItemLibrary(Name, type, out mess, out amount, out replacement);
+        // Check if the current item has been added to the list of custom items
+        bool foundCustomItem = false;
+        if (addedItems.Count != 0 && !UnitaleUtil.IsOverworld)
+            if (addedItems.Any(t => string.Equals(t, Name, StringComparison.CurrentCultureIgnoreCase)))
+                foundCustomItem = true;
+
+        TextMessage[] mess = null;
+        // Check the standard CYF item dictionary
+        if (!foundCustomItem) ItemLibrary(Name, type, out mess, out amount, out replacement);
+
         if (type == 1 || type == 2) {
-            tempAmount = (int)amount;
-            mess = ChangeEquipment(ID, mess);
-        }
-        if (replacement != null) {
+            // Equip the item if it's a weapon or armor
+            if ((int)amount != -991)
+                itemStatAmount = (int)amount;
+            mess = ChangeEquipment(ID);
+        } else if (replacement != "") {
+            // Replace the current item with another if it has a replacement item
             inventory.RemoveAt(ID);
             inventory.Insert(ID, new UnderItem(replacement));
-        } else if (type == 0)
+        } else if (!usedItemNoDelete && type == 0)
+            // Delete the item if it's a standard consumable
             inventory.RemoveAt(ID);
+
         if (!UnitaleUtil.IsOverworld) {
             if (!UIController.instance.battleDialogueStarted && mess != null)
                 UIController.instance.ActionDialogResult(mess);
@@ -277,7 +278,7 @@ public static class Inventory {
     }
 
     public static void ItemLibrary(string name, int type, out TextMessage[] mess, out float amount, out string replacement) {
-        mess = null; amount = 0; replacement = null;
+        mess = null; amount = 0; replacement = "";
         switch (type) {
             case 0:
                 switch (name) {
@@ -445,7 +446,7 @@ public static class Inventory {
                         mess = new[] { new TextMessage("Through DETERMINATION, the dream\rbecame true." + HPRecoverString(amount), true, false) };
                         break;
                     default:
-                        UnitaleUtil.Warn("The item " + name + " doesn't exist in CYF's usable item pool.");
+                        UnitaleUtil.Warn("The item " + name + " doesn't exist in CYF's consumable item pool.");
                         break;
                 }
                 if (amount != 0)
@@ -521,13 +522,13 @@ public static class Inventory {
 
         switch (mode) {
             case 1:
-                PlayerCharacter.instance.WeaponATK = tempAmount;
+                PlayerCharacter.instance.WeaponATK = itemStatAmount;
                 RemoveItem(ID);
                 AddItem(PlayerCharacter.instance.Weapon);
                 PlayerCharacter.instance.Weapon = Name;
                 break;
             case 2:
-                PlayerCharacter.instance.ArmorDEF = tempAmount;
+                PlayerCharacter.instance.ArmorDEF = itemStatAmount;
                 RemoveItem(ID);
                 AddItem(PlayerCharacter.instance.Armor);
                 PlayerCharacter.instance.Armor = Name;
@@ -537,13 +538,10 @@ public static class Inventory {
         }
     }
 
-    public static void ChangeEquipment(int itemIndex) { SetEquip(itemIndex); }
-
-    public static TextMessage[] ChangeEquipment(int ID, TextMessage[] mess) {
+    public static TextMessage[] ChangeEquipment(int ID, bool silent = false) {
         string name = inventory[ID].Name;
         SetEquip(ID);
-        mess = mess.Length == 0 ? new[] { new TextMessage("You equipped the " + name + ".", true, false) } : new TextMessage[] { };
-        return mess;
+        return silent ? null : new[] { new TextMessage("You equipped the " + name + ".", true, false) };
     }
 
     public static void RemoveAddedItems() {

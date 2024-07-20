@@ -24,38 +24,26 @@ public class ProjectileController {
 
     // The x position of the sprite, relative to the arena position and its anchor.
     public float x {
-        get { return p == null ? lastX : p.self.anchoredPosition.x - ArenaManager.arenaCenter.x; }
-        set {
-            if (p != null)
-                p.self.anchoredPosition = new Vector2(value + ArenaManager.arenaCenter.x, p.self.anchoredPosition.y);
-        }
+        get { return p == null ? lastX : p.self.position.x - ArenaManager.arenaCenter.x; }
+        set { MoveTo(value, y); }
     }
 
     // The y position of the sprite, relative to the arena position and its anchor.
     public float y {
-        get { return p == null ? lastY : p.self.anchoredPosition.y - ArenaManager.arenaCenter.y; }
-        set {
-            if (p != null)
-                p.self.anchoredPosition = new Vector2(p.self.anchoredPosition.x, value + ArenaManager.arenaCenter.y);
-        }
+        get { return p == null ? lastY : p.self.position.y - ArenaManager.arenaCenter.y; }
+        set { MoveTo(x, value); }
     }
 
     // The x position of the sprite, relative to the bottom left corner of the screen.
     public float absx {
         get { return p == null ? lastAbsX : p.self.position.x; }
-        set {
-            if (p != null)
-                p.self.position = new Vector2(value, p.self.position.y);
-        }
+        set { MoveToAbs(value, absy); }
     }
 
     // The y position of the sprite, relative to the bottom left corner of the screen.
     public float absy {
         get { return p == null ? lastAbsY : p.self.position.y; }
-        set {
-            if (p != null)
-                p.self.position = new Vector2(p.self.position.x, value);
-        }
+        set { MoveToAbs(absx, value); }
     }
 
     //Bullet.Duplicate() has been suspended because of some bugs. Maybe that I'll get on it later.
@@ -199,7 +187,7 @@ public class ProjectileController {
     public DynValue OnHit {
         get { return _OnHit; }
         set {
-            if (value.Type != DataType.Nil && value.Type != DataType.Function)
+            if ((value.Type & (DataType.Nil | DataType.Function | DataType.ClrFunction)) == 0)
                 throw new CYFException("bullet.OnHit: This variable has to be a function!");
             if (value.Type == DataType.Function && value.Function.OwnerScript != p.owner)
                 throw new CYFException("bullet.OnHit: You can only use a function created in the same script as the projectile!");
@@ -230,5 +218,48 @@ public class ProjectileController {
         if (p == null)
             return false;
         return p.isPP() ? p.HitTestPP() : p.HitTest();
+    }
+
+    ////////////////////
+    // Children stuff //
+    ////////////////////
+
+    public string name {
+        get { return p.gameObject.name; }
+    }
+
+    public int childIndex {
+        get { return p.self.GetSiblingIndex() + 1; }
+        set { p.self.SetSiblingIndex(value - 1); }
+    }
+    public int childCount {
+        get { return p.self.childCount; }
+    }
+
+    public DynValue GetParent() { return UnitaleUtil.GetObjectParent(p.self); }
+
+    public void SetParent(object parent) {
+        UnitaleUtil.SetObjectParent(this, parent);
+        LuaSpriteController sParent = parent as LuaSpriteController;
+        ProjectileController pParent = parent as ProjectileController;
+        if (pParent != null)
+            sParent = pParent.sprite;
+        if (sParent == null)
+            return;
+        if (sprite.img.GetComponent<MaskImage>())
+            sprite.img.GetComponent<MaskImage>().inverted = sParent._masked == LuaSpriteController.MaskMode.INVERTEDSPRITE || sParent._masked == LuaSpriteController.MaskMode.INVERTEDSTENCIL;
+    }
+
+    public DynValue GetChild(int index) {
+        if (index > childCount)
+            throw new CYFException("This object only has " + childCount + " children yet you try to get its child #" + index);
+        return UnitaleUtil.GetObject(sprite.img.transform.GetChild(--index));
+    }
+
+    public DynValue[] GetChildren() {
+        DynValue[] tab = new DynValue[sprite.img.transform.childCount];
+        for (int i = 0; i < sprite.img.transform.childCount; i++)
+            tab[i] = GetChild(i + 1);
+        return tab;
     }
 }

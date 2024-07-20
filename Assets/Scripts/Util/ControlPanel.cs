@@ -11,8 +11,8 @@
     public float PlayerMovementPerSec = 120.0f;
     public float MinimumAlpha = 0.5f;
     public string BasisName = "Rhenao";
-    public string WindowBasisName = "Create Your Frisk";
-    public string WinodwBsaisNmae = "Crate Your Frisk";
+    public string WindowBasisName = "Create Your Frisk v" + GlobalControls.CYFversion + " LTS " + (GlobalControls.BetaVersion > 0 ? (GlobalControls.LTSversion + 1) + " b" + GlobalControls.BetaVersion : "" + GlobalControls.LTSversion);
+    public string WinodwBsaisNmae = "Crate Your Frisk v" + GlobalControls.CYFversion + " LTS " + (GlobalControls.BetaVersion > 0 ? (GlobalControls.LTSversion + 1) + " b" + GlobalControls.BetaVersion : "" + GlobalControls.LTSversion);
     public bool FrameBasedMovement = false;
     public bool Safe = false;
     #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN

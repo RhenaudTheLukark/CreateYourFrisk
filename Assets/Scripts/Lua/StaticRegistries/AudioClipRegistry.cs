@@ -23,8 +23,8 @@ public class AudioClipRegistry {
         string k = key;
 
         key = key.TrimStart('/', '\\');
-        string oggKey = key + (key.EndsWith(".ogg") ? "" : ".ogg");
-        string wavKey = key + (key.EndsWith(".wav") ? "" : ".wav");
+        string oggKey = key + (key.ToLower().EndsWith(".ogg") ? "" : ".ogg");
+        string wavKey = key + (key.ToLower().EndsWith(".wav") ? "" : ".wav");
         if (!FileLoader.SanitizePath(ref oggKey, "", false)) {
             FileLoader.SanitizePath(ref wavKey, "", !GlobalControls.retroMode);
             key = wavKey;
@@ -124,9 +124,9 @@ public class AudioClipRegistry {
     /// <returns>AudioClip object on successful load, otherwise null.</returns>
     public static AudioClip GetAudioClip(string musicFilePath) {
         AudioType type;
-        if (musicFilePath.EndsWith(".ogg"))      type = AudioType.OGGVORBIS;
-        else if (musicFilePath.EndsWith(".wav")) type = AudioType.WAV;
-        else                                     return null;
+        if (musicFilePath.ToLower().EndsWith(".ogg"))      type = AudioType.OGGVORBIS;
+        else if (musicFilePath.ToLower().EndsWith(".wav")) type = AudioType.WAV;
+        else                                               return null;
 
         UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(new Uri(musicFilePath).AbsoluteUri.Replace("+", "%2B"), type);
         www.SendWebRequest();

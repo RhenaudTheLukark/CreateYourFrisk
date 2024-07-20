@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using UnityEngine.UI;
 using Object = UnityEngine.Object;
 
 /// <summary>
@@ -93,6 +94,30 @@ public static class UnitaleUtil {
         ScreenResolution.wideFullscreen = true;
     }
 
+    /// <summary>
+    /// Handles most CYF errors related to script execution
+    /// </summary>
+    /// <param name="scriptname">Name of the script, used for the error message</param>
+    /// <param name="function">Name of the function, used for the error message</param>
+    /// <param name="e">Exception to handle</param>
+    public static void HandleError(string scriptname, string function, Exception e) {
+        if (e as InterpreterException != null) {
+            InterpreterException ie = e as InterpreterException;
+            DisplayLuaError(scriptname, ie.DecoratedMessage == null ? ie.Message : FormatErrorSource(ie.DecoratedMessage, ie.Message) + ie.Message, ie.DoNotDecorateMessage);
+        } else if (GlobalControls.retroMode)
+            return;
+        else if (e.GetType().ToString() == "System.IndexOutOfRangeException" && e.StackTrace.Contains("at MoonSharp.Interpreter.DataStructs.FastStack`1[MoonSharp.Interpreter.DynValue].Push"))
+            DisplayLuaError(scriptname + ", calling the function " + function, "<b>Possible infinite loop</b>\n\nThis is a " + e.GetType() + " error."
+                                                                             + "\n\nYou almost definitely have an infinite loop in your code. A function tried to call itself infinitely. It could be a normal function or a metatable function."
+                                                                             + "\n\nFull stracktrace (see CYF output log at <b>" + Application.persistentDataPath + "/output_log.txt</b>):"
+                                                                             + "\n" + e.StackTrace);
+        else
+            DisplayLuaError(scriptname + ", calling the function " + function, "This is a " + e.GetType() + " error. Contact a dev and show them this screen, this must be an engine-side error."
+                                                                             + "\n\n" + e.Message
+                                                                             + "\n\nFull stracktrace (see CYF output log at <b>" + Application.persistentDataPath + "/output_log.txt</b>):"
+                                                                             + "\n" + e.StackTrace + "\n");
+    }
+
     public static string FormatErrorSource(string DecoratedMessage, string message) {
         string source = DecoratedMessage.Substring(0, DecoratedMessage.Length - message.Length);
         Regex validator = new Regex(@"\(\d+,\d+(-[\d,]+)?\)"); //Finds `(13,9-16)` or `(13,9-14,10)` or `(20,0)`
@@ -165,8 +190,18 @@ public static class UnitaleUtil {
         return null;
     }
 
-    public static float CalcTextWidth(TextManager txtmgr, int fromLetter = -1, int toLetter = -1, bool countEOLSpace = false, bool getLastSpace = false) {
-        float totalWidth = 0, totalWidthSpaceTest = 0, totalMaxWidth = 0, hSpacing = txtmgr.Charset.CharSpacing;
+    /// <summary>
+    /// Predicts the length of the text using the letters' size and various tags.
+    /// </summary>
+    /// <param name="txtmgr">Text object</param>
+    /// <param name="fromLetter">Letter of the current line of text to count from</param>
+    /// <param name="toLetter">Letter of the current line of text to count to</param>
+    /// <param name="countEOLSpace">True if we count spaces (spaces are usually skipped)</param>
+    /// <param name="getLastSpace">True if we count the letter spacing after the last letter of the text</param>
+    /// <returns>The length of the text in pixels</returns>
+    public static float PredictTextWidth(TextManager txtmgr, int fromLetter = -1, int toLetter = -1, bool countEOLSpace = false) {
+        float totalWidth = 0, totalWidthSpaceTest = 0, totalMaxWidth = 0, hSpacing = txtmgr.font.CharSpacing, columns = 0;
+        List<float> columnsMaxWidth = new List<float>();
         if (fromLetter == -1)                                                                                       fromLetter = 0;
         if (txtmgr.textQueue == null)                                                                               return 0;
         if (txtmgr.textQueue[txtmgr.currentLine] == null)                                                           return 0;
@@ -176,50 +211,106 @@ public static class UnitaleUtil {
         for (int i = fromLetter; i <= toLetter; i++) {
             switch (txtmgr.textQueue[txtmgr.currentLine].Text[i]) {
                 case '[':
-
                     string str = ParseCommandInline(txtmgr.textQueue[txtmgr.currentLine].Text, ref i);
                     if (str == null) {
-                        if (txtmgr.Charset.Letters.ContainsKey(txtmgr.textQueue[txtmgr.currentLine].Text[i]))
-                            totalWidth += txtmgr.Charset.Letters[txtmgr.textQueue[txtmgr.currentLine].Text[i]].textureRect.size.x + hSpacing;
+                        if (txtmgr.font.Letters.ContainsKey(txtmgr.textQueue[txtmgr.currentLine].Text[i]))
+                            totalWidth += txtmgr.font.Letters[txtmgr.textQueue[txtmgr.currentLine].Text[i]].textureRect.size.x + hSpacing;
                     } else if (str.Split(':')[0] == "charspacing")
-                        hSpacing = str.Split(':')[1].ToLower() == "default" ? txtmgr.Charset.CharSpacing : ParseUtil.GetFloat(str.Split(':')[1]);
+                        hSpacing = str.Split(':')[1].ToLower().Trim() == "default" ? txtmgr.font.CharSpacing : ParseUtil.GetFloat(str.Split(':')[1]);
+                    break;
+                case '\t':
+                    // Add columns if they're not empty or filled with spaces
+                    if (totalWidthSpaceTest == totalWidth)
+                        columnsMaxWidth.Add(totalWidth);
+                    totalWidth = txtmgr.columnShift * ++columns;
+                    if (countEOLSpace)
+                        totalWidthSpaceTest = totalWidth;
                     break;
                 case '\r':
                 case '\n':
-                    if (totalMaxWidth < totalWidthSpaceTest - hSpacing)
-                        totalMaxWidth = totalWidthSpaceTest - hSpacing;
+                    columns = 0;
+                    columnsMaxWidth.Add(totalWidthSpaceTest);
+                    totalWidthSpaceTest = columnsMaxWidth.Max(w => w);
+                    totalMaxWidth = Mathf.Max(totalMaxWidth, totalWidthSpaceTest - hSpacing);
                     totalWidth = 0;
                     totalWidthSpaceTest = 0;
+                    columnsMaxWidth.Clear();
                     break;
                 default:
-                    if (txtmgr.Charset.Letters.ContainsKey(txtmgr.textQueue[txtmgr.currentLine].Text[i])) {
-                        totalWidth += txtmgr.Charset.Letters[txtmgr.textQueue[txtmgr.currentLine].Text[i]].textureRect.size.x + hSpacing;
-                        // Do not count end of line spaces
+                    if (txtmgr.font.Letters.ContainsKey(txtmgr.textQueue[txtmgr.currentLine].Text[i])) {
+                        totalWidth += txtmgr.font.Letters[txtmgr.textQueue[txtmgr.currentLine].Text[i]].textureRect.size.x + hSpacing;
+                        // Do not count spaces
                         if (txtmgr.textQueue[txtmgr.currentLine].Text[i] != ' ' || countEOLSpace)
                             totalWidthSpaceTest = totalWidth;
                     }
                     break;
             }
         }
-        if (totalMaxWidth < totalWidthSpaceTest - hSpacing)
-            totalMaxWidth = totalWidthSpaceTest - hSpacing;
-        return totalMaxWidth + (getLastSpace ? hSpacing : 0);
+        totalMaxWidth = Mathf.Max(totalMaxWidth, totalWidthSpaceTest - hSpacing);
+        return Mathf.Max(totalMaxWidth, 0);
     }
 
-    public static float CalcTextHeight(TextManager txtmgr, int fromLetter = -1, int toLetter = -1) {
-        float maxY = -999, minY = 999;
-        if (fromLetter == -1) fromLetter = 0;
-        if (toLetter == -1)   toLetter = txtmgr.textQueue[txtmgr.currentLine].Text.Length;
-        if (fromLetter > toLetter || fromLetter < 0 || toLetter > txtmgr.textQueue[txtmgr.currentLine].Text.Length) return -1;
-        if (fromLetter == toLetter)                                                                                 return 0;
-        for (int i = fromLetter; i < toLetter; i++) {
-            if (!txtmgr.Charset.Letters.ContainsKey(txtmgr.textQueue[txtmgr.currentLine].Text[i])) continue;
-            if (txtmgr.letterPositions[i].y < minY)
-                minY = txtmgr.letterPositions[i].y;
-            if (txtmgr.letterPositions[i].y + txtmgr.Charset.Letters[txtmgr.textQueue[txtmgr.currentLine].Text[i]].textureRect.size.y > maxY)
-                maxY = txtmgr.letterPositions[i].y + txtmgr.Charset.Letters[txtmgr.textQueue[txtmgr.currentLine].Text[i]].textureRect.size.y;
+    /// <summary>
+    /// Computes the text's width using the x position of all of the text's letters.
+    /// This function assumes the text's letters have been created.
+    /// </summary>
+    /// <param name="txtmgr">Text object</param>
+    /// <param name="fromLetter">Letter of the current line of text to count from</param>
+    /// <param name="toLetter">Letter of the current line of text to count to</param>
+    /// <param name="countEOLSpace">True if we count spaces (spaces are usually skipped)</param>
+    /// <returns>The length of the text in pixels</returns>
+    public static float CalcTextWidth(TextManager txtmgr, int fromLetter = -1, int toLetter = -1, bool countEOLSpace = false) {
+        if (txtmgr.textQueue == null || txtmgr.textQueue[txtmgr.currentLine] == null)                                return 0;
+        if (fromLetter > toLetter || fromLetter < -1 || toLetter > txtmgr.textQueue[txtmgr.currentLine].Text.Length) return 0;
+        if (fromLetter == -1)                                                                                        fromLetter = 0;
+        if (toLetter == -1)                                                                                          toLetter = txtmgr.textQueue[txtmgr.currentLine].Text.Length - 1;
+
+        float maxX = Mathf.NegativeInfinity, minX = Mathf.Infinity;
+        LuaTextManager ltm = txtmgr as LuaTextManager;
+
+        // Add text pos in case of tab
+        if (fromLetter == 0) {
+            minX = Mathf.Min(minX, ltm.absx);
+            maxX = Mathf.Max(maxX, ltm.absx);
         }
-        return maxY - minY;
+
+        for (int i = fromLetter; i <= toLetter; i++) {
+            if (!txtmgr.letters.Any(l => l.index == i))
+                continue;
+            if (txtmgr.textQueue[txtmgr.currentLine].Text[i] == ' ' && !countEOLSpace)
+                continue;
+
+            TextManager.LetterData letter = txtmgr.letters.Find(l => l.index == i);
+            float letterPosMin = letter.image.rectTransform.position.x,
+                  letterPosMax = letter.image.rectTransform.position.x + letter.image.rectTransform.rect.width * letter.image.rectTransform.localScale.x;
+            minX = Mathf.Min(minX, letterPosMin, letterPosMax);
+            maxX = Mathf.Max(maxX, letterPosMin, letterPosMax);
+        }
+        return Mathf.Max(maxX - minX, 0) / (ltm ? ltm.xscale : 1);
+    }
+
+    public static float CalcTextHeight(TextManager txtmgr, int fromLetter = -1, int toLetter = -1, bool countEOLSpace = false) {
+        if (txtmgr.textQueue == null || txtmgr.textQueue[txtmgr.currentLine] == null)                               return 0;
+        if (fromLetter == -1)                                                                                       fromLetter = 0;
+        if (toLetter == -1)                                                                                         toLetter = txtmgr.textQueue[txtmgr.currentLine].Text.Length - 1;
+        if (fromLetter > toLetter || fromLetter < 0 || toLetter > txtmgr.textQueue[txtmgr.currentLine].Text.Length) return 0;
+
+        float maxY = Mathf.NegativeInfinity, minY = Mathf.Infinity;
+        LuaTextManager ltm = txtmgr as LuaTextManager;
+
+        for (int i = fromLetter; i <= toLetter; i++) {
+            if (!txtmgr.letters.Any(l => l.index == i))
+                continue;
+            if (txtmgr.textQueue[txtmgr.currentLine].Text[i] == ' ' && !countEOLSpace)
+                continue;
+
+            TextManager.LetterData letter = txtmgr.letters.Find(l => l.index == i);
+            float letterPosMin = letter.image.rectTransform.position.y,
+                  letterPosMax = letter.image.rectTransform.position.y + letter.image.rectTransform.rect.height * letter.image.rectTransform.localScale.y;
+            minY = Mathf.Min(minY, letterPosMin, letterPosMax);
+            maxY = Mathf.Max(maxY, letterPosMin, letterPosMax);
+        }
+        return Mathf.Max(maxY - minY, 0) / (ltm ? ltm.yscale : 1);
     }
 
     public static DynValue RebuildTableFromString(string text) {
@@ -590,6 +681,7 @@ public static class UnitaleUtil {
     public static Dictionary<string, string> MapCorrespondanceList = new Dictionary<string, string>();
 
     public static void AddKeysToMapCorrespondanceList() {
+        MapCorrespondanceList.Clear();
         MapCorrespondanceList.Add("test", "Snowdin - Big boy map");
         MapCorrespondanceList.Add("test2", "Hotland - Crossroads");
         // MapCorrespondanceList.Add("test3", "The Core - The test map");
@@ -649,11 +741,123 @@ public static class UnitaleUtil {
 
     public static bool TryCall(ScriptWrapper script, string func, DynValue param) { return TryCall(script, func, new[] { param }); }
     public static bool TryCall(ScriptWrapper script, string func, DynValue[] param = null) {
-        try {
-            DynValue sval = script.GetVar(func);
-            if (sval == null || sval.Type == DataType.Nil) return false;
-            script.Call(func, param);
-        } catch (InterpreterException ex) { DisplayLuaError(script.scriptname, FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message); }
-        return true;
+        DynValue sval = script.GetVar(func);
+        script.Call(func, param);
+        return (sval.Type & (DataType.Function | DataType.ClrFunction)) != 0;
+    }
+
+    public static int SelectionChoice(int items, int current, int xMov, int yMov, int rows, int columns, bool verticalRollaround = true) {
+        int pageItems = rows * columns;
+        int pageNumber = Mathf.CeilToInt(items / (float)pageItems);
+        int currentPage = current / pageItems;
+        int currentItem = current % pageItems;
+        int lastPageItemNumber = Math.Mod(items - 1, pageItems) + 1;
+        int xPos = currentItem % columns;
+        int yPos = currentItem / columns;
+
+        xPos += xMov;
+        yPos += yMov;
+
+        // Horizontal movement
+        if (xMov != 0) {
+            // Right bound
+            if (xPos >= columns || (currentPage == pageNumber - 1 && xPos >= lastPageItemNumber - yPos * columns)) {
+                xPos = 0;
+                if (verticalRollaround)
+                    currentPage++;
+            }
+            // Left bound
+            if (xPos < 0) {
+                if (currentPage == 0) xPos = Math.Mod(lastPageItemNumber - yPos * columns - 1, columns);
+                else                  xPos = columns - 1;
+                if (verticalRollaround)
+                    currentPage--;
+            }
+        }
+
+        // Vertical movement
+        // Down bound
+        if (yPos >= rows || (currentPage == pageNumber - 1 && yPos >= Mathf.CeilToInt((lastPageItemNumber - xPos) / (float)columns))) {
+            yPos = 0;
+            if (!verticalRollaround)
+                currentPage++;
+        }
+        // Up bound
+        if (yPos < 0) {
+            if (currentPage == pageNumber - 1) yPos = Mathf.CeilToInt((lastPageItemNumber - xPos) / (float)columns) - 1;
+            else                               yPos = rows - 1;
+            if (!verticalRollaround)
+                currentPage--;
+        }
+
+        // Page underflow
+        while (currentPage < 0)
+            currentPage += pageNumber;
+        // Page overflow
+        while (currentPage >= pageNumber)
+            currentPage -= pageNumber;
+
+        int result = xPos + yPos * columns + currentPage * pageItems;
+        if (result >= items)
+            result = items - 1;
+
+        return result;
+    }
+
+    public static Transform GetTransform(object o) {
+        LuaSpriteController sSelf = o as LuaSpriteController;
+        if (sSelf != null) return sSelf.img.transform;
+        LuaTextManager tSelf = o as LuaTextManager;
+        if (tSelf != null) return tSelf.GetContainer().transform;
+        ProjectileController pSelf = o as ProjectileController;
+        if (pSelf != null) return pSelf.sprite.img.transform;
+        LuaCYFObject oSelf = o as LuaCYFObject;
+        if (oSelf != null) return oSelf.transform;
+        Transform tsSelf = o as Transform;
+        if (tsSelf != null) return tsSelf;
+        return null;
+    }
+
+    public static DynValue GetObject(Transform t) {
+        if (t == null)
+            return DynValue.NewNil();
+
+        GameObject go = t.gameObject;
+        if (LuaSpriteController.HasSpriteController(go))
+            return UserData.Create(LuaSpriteController.GetOrCreate(go));
+        if (t.GetComponent<LuaProjectile>() != null)
+            return UserData.Create(t.GetComponent<LuaProjectile>().ctrl);
+        if (t.GetComponent<LuaTextManager>() != null)
+            return UserData.Create(t.GetComponent<LuaTextManager>());
+        for (int i = 0; i < t.childCount; i++) {
+            Transform child = t.GetChild(i);
+            if (child.GetComponent<LuaTextManager>() != null)
+                return UserData.Create(child.GetComponent<LuaTextManager>());
+        }
+        return UserData.Create(new LuaCYFObject(t));
+    }
+
+    public static DynValue GetObjectParent(Transform t) {
+        return GetObject(t.parent);
+    }
+
+    public static void SetObjectParent(object self, object p) {
+        if (p == null)
+            throw new CYFException("SetParent(): Can't set nil as parent.");
+
+        LuaSpriteController sSelf = self as LuaSpriteController;
+        LuaSpriteController sParent = p as LuaSpriteController;
+
+        if (sSelf != null && sSelf.tag == "event")
+            throw new CYFException("sprite.SetParent(): Cannot set the prent of an overworld event's sprite.");
+        if ((sSelf != null && sSelf.tag == "letter") ^ (sParent != null && sParent.tag == "letter"))
+            throw new CYFException("sprite.SetParent(): Cannot be used between letter sprites and other objects.");
+
+        Transform t = GetTransform(p);
+        if (t == null) {
+            DynValue d = p as DynValue;
+            throw new CYFException("SetParent(): Can't set an object of type " + d.GetType().ToString() + " as a parent!");
+        }
+        GetTransform(self).SetParent(GetTransform(p));
     }
 }

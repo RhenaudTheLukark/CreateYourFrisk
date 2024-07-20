@@ -64,7 +64,9 @@ public class EnemyEncounter : MonoBehaviour {
         enemyController.GetComponent<RectTransform>().anchoredPosition = new Vector2(x, y);
         enemyController.script = new ScriptWrapper();
         enemies.Add(enemyController);
+        enemyController.CreateBubble();
         enemyController.InitializeEnemy();
+
         return UserData.Create(enemyController.script);
     }
 
@@ -96,6 +98,38 @@ public class EnemyEncounter : MonoBehaviour {
             if (size.Get(1).Number < 16 || size.Get(2).Number < 16) // TODO remove hardcoding (but player never changes size so nobody cares)
                 return new Vector2(size.Get(1).Number > 16 ? (int)size.Get(1).Number : 16, size.Get(2).Number > 16 ? (int)size.Get(2).Number : 16);
             return new Vector2((int)size.Get(1).Number, (int)size.Get(2).Number);
+        }
+    }
+
+    public Color SpareColor {
+        get {
+            DynValue spareColor = script.GetVar("sparecolor");
+            DynValue spareColor32 = script.GetVar("sparecolor32");
+            DynValue val = spareColor.IsNotNil() ? spareColor : spareColor32;
+            if (val.IsNil())
+                return new Color(1, 1, 0, 1);
+
+            if (val.Type != DataType.Table)
+                throw new CYFException("An enemy's spare color must be a table with 3 or 4 numbers: type is " + val.Type.ToString() + ".");
+
+            Table tab = val.Table;
+            if (tab.Length < 3 || tab.Length > 4)
+                throw new CYFException("An enemy's spare color must be a table with 3 or 4 numbers: the table has " + tab.Length + " elements.");
+
+            foreach (TablePair p in tab.Pairs) {
+                if (p.Key.Type != DataType.Number)
+                    throw new CYFException("An enemy's spare color must be a table with 3 or 4 numbers: the table's " + p.Key.ToString() + " value doesn't have a numbered key.");
+                if (p.Value.Type != DataType.Number)
+                    throw new CYFException("An enemy's spare color must be a table with 3 or 4 numbers: the table's " + p.Key.ToString() + " value is of type " + p.Value.Type.ToString() + ".");
+            }
+
+            bool is32 = spareColor.IsNil();
+            return new Color(
+                Mathf.Clamp01((float)tab.Get(1).Number / (is32 ? 255 : 1)),
+                Mathf.Clamp01((float)tab.Get(2).Number / (is32 ? 255 : 1)),
+                Mathf.Clamp01((float)tab.Get(3).Number / (is32 ? 255 : 1)),
+                tab.Get(4).Type == DataType.Nil ? 1 : Mathf.Clamp01((float)tab.Get(4).Number / (is32 ? 255 : 1))
+            );
         }
     }
 
@@ -142,6 +176,7 @@ public class EnemyEncounter : MonoBehaviour {
         if (enemyCount > enemyPositions.Length) {
             UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, "All enemies in an encounter must have a screen position defined. Either your enemypositions table is missing, "
                 + "or there are more enemies than available positions. Refer to the documentation's Basic Setup section on how to do this.");
+            return;
         }
 
         Table luaEnemyTable = script.GetVar("enemies").Table;
@@ -176,6 +211,9 @@ public class EnemyEncounter : MonoBehaviour {
             UnitaleUtil.Warn("BattleDialog can only be used as early as EncounterStarting.");
         else {
             UIController.instance.battleDialogueStarted = true;
+            EnemyController enemy = UIController.instance.encounter.enemies.Find(e => e.script.script == scr);
+            if (enemy)
+                UIController.instance.mainTextManager.SetCaller(enemy.script);
             TextMessage[] msgs = null;
             if (arg.Type == DataType.String)
                 msgs = new TextMessage[]{new RegularMessage(arg.String)};
@@ -194,13 +232,6 @@ public class EnemyEncounter : MonoBehaviour {
                                        "\n\nIf you're sure that you've entered what's needed, you may contact the dev.");
             if (!GlobalControls.retroMode)
                 UIController.instance.mainTextManager.SetEffect(new TwitchEffect(UIController.instance.mainTextManager));
-
-            // Fetch the script this function has been called from as its caller
-            foreach (ScriptWrapper scrWrap in ScriptWrapper.instances) {
-                if (scrWrap.script != scr) continue;
-                UIController.instance.mainTextManager.SetCaller(scrWrap);
-                break;
-            }
 
             UIController.instance.ActionDialogResult(msgs);
         }
@@ -308,7 +339,7 @@ public class EnemyEncounter : MonoBehaviour {
         try {
             for (int i = 0; i < waves.Length; i++) {
                 currentScript = waveNames[i];
-                try { waves[i].script.Call(waves[i].script.Globals["Update"]); }
+                try { waves[i].Call("Update"); }
                 catch (InterpreterException ex) {
                     UnitaleUtil.DisplayLuaError(currentScript, UnitaleUtil.FormatErrorSource(ex.DecoratedMessage, ex.Message) + ex.Message);
                     return;
@@ -382,7 +413,7 @@ public class EnemyEncounter : MonoBehaviour {
         if (!death)
             foreach (DynValue obj in t.Keys) {
                 try {
-                    ((ScriptWrapper)t[obj]).Call("EndingWave");
+                    (t[obj] as ScriptWrapper).Call("EndingWave");
                     ScriptWrapper.instances.Remove((ScriptWrapper)t[obj]);
                 } catch { UnitaleUtil.DisplayLuaError(StaticInits.ENCOUNTER, "You shouldn't override Wave, now you get an error :P"); }
             }
@@ -390,6 +421,8 @@ public class EnemyEncounter : MonoBehaviour {
             foreach (LuaProjectile p in FindObjectsOfType<LuaProjectile>())
                 if (!p.ctrl.isPersistent)
                     p.ctrl.Remove();
+        if (ArenaManager.instance.showWhenWaveEnds)
+            ArenaManager.instance.Show();
         if (!death)
             CallOnSelfOrChildren("DefenseEnding");
         if (GlobalControls.retroMode)

@@ -133,7 +133,7 @@ public class FightUIController : MonoBehaviour {
     public bool Finished() {
         if (!stopped)
             return targetRt.anchoredPosition.x < borderX;
-        return boundFightUiInstances.All(fight => fight.Finished());
+        return boundFightUiInstances.Count == 0 || boundFightUiInstances.All(fight => fight.Finished());
     }
 
     public void InitFade() {
@@ -217,9 +217,7 @@ public class FightUIController : MonoBehaviour {
             if (fightUi.enemy.NoAttackMissText != null)
                 smc2.SetText(fightUi.enemy.NoAttackMissText);
             smc2.transform.SetParent(GameObject.Find("Canvas").transform);
-            if (fightUi.enemy.NoAttackMissText != null)
-                smc2.setXPosition(fightUi.enePos.x - 10 * fightUi.enemy.NoAttackMissText.Length + 20);
-            else smc2.setXPosition(fightUi.enePos.x);
+            smc2.setPosition(fightUi.transform.position.x, fightUi.transform.position.y + fightUi.eneSize.y / 2 + 40);
         }
         InitFade();
     }

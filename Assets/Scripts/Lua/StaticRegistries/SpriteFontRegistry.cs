@@ -20,7 +20,7 @@ public static class SpriteFontRegistry {
 
     public static UnderFont Get(string key) {
         string k = key;
-        key = key.TrimStart('/', '\\') + (key.EndsWith(".png") ? "" : ".png");
+        key = key.TrimStart('/', '\\') + (key.ToLower().EndsWith(".png") ? "" : ".png");
         FileLoader.SanitizePath(ref key, "Sprites/UI/Fonts/", false);
         key = key.ToLower();
         return dict.ContainsKey(key) ? dict[key] : TryLoad(k, key);
@@ -34,7 +34,7 @@ public static class SpriteFontRegistry {
     }
 
     private static UnderFont TryFetchFromDefault(string origKey, string key) {
-        FileInfo tryF = new FileInfo(Path.Combine(FileLoader.PathToDefaultFile("Sprites/UI/Fonts/"), origKey) + (origKey.EndsWith(".png") ? "" : ".png"));
+        FileInfo tryF = new FileInfo(Path.Combine(FileLoader.PathToDefaultFile("Sprites/UI/Fonts/"), origKey) + (origKey.ToLower().EndsWith(".png") ? "" : ".png"));
         if (!tryF.Exists)
             return null;
 
@@ -44,7 +44,7 @@ public static class SpriteFontRegistry {
     }
 
     private static UnderFont TryFetchFromMod(string origKey, string key) {
-        FileInfo tryF = new FileInfo(Path.Combine(FileLoader.PathToModFile("Sprites/UI/Fonts/"), origKey.TrimStart('/')) + (origKey.EndsWith(".png") ? "" : ".png"));
+        FileInfo tryF = new FileInfo(Path.Combine(FileLoader.PathToModFile("Sprites/UI/Fonts/"), origKey.TrimStart('/')) + (origKey.ToLower().EndsWith(".png") ? "" : ".png"));
         if (!tryF.Exists)
             return null;
 

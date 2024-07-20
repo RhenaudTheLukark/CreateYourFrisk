@@ -197,20 +197,22 @@ public class PlayerOverworld : MonoBehaviour {
     private void FinishFade() { PlayerNoMove = false; } // Scene loaded
 
     private void NextText() {
-        if (!textmgr.AllLinesComplete() && (textmgr.CanAutoSkipAll() || textmgr.LineComplete()))
-            textmgr.NextLineText();
-        else if ((textmgr.AllLinesComplete() || textmgr.CanAutoSkipAll()) && textmgr.LineCount() != 0) {
-            EventManager.instance.passPressOnce = true;
-            textmgr.transform.parent.parent.SetAsFirstSibling();
-            textmgr.SetTextQueue(null);
-            textmgr.DestroyChars();
-            textmgr.SetHorizontalSpacing(textmgr.Charset.CharSpacing);
-            textmgr.SetVerticalSpacing();
-            textmgr.SetTextFrameAlpha(0);
-            if (EventManager.instance.script != null)
-                EventManager.instance.script.Call("CYFEventNextCommand");
-            else
-                PlayerNoMove = false; //End text no event
+        if (textmgr.CanAutoSkipAny(true) || textmgr.LineComplete()) {
+            if (!textmgr.AllLinesComplete())
+                textmgr.NextLineText();
+            else if (textmgr.LineCount() != 0) {
+                EventManager.instance.passPressOnce = true;
+                textmgr.transform.parent.parent.SetAsFirstSibling();
+                textmgr.SetTextQueue(null);
+                textmgr.HideTextObject();
+                textmgr.SetHorizontalSpacing(textmgr.font.CharSpacing);
+                textmgr.SetVerticalSpacing();
+                textmgr.SetTextFrameAlpha(0);
+                if (EventManager.instance.script != null)
+                    EventManager.instance.script.Call("CYFEventNextCommand");
+                else
+                    PlayerNoMove = false; //End text no event
+            }
         }
     }
 
@@ -220,14 +222,14 @@ public class PlayerOverworld : MonoBehaviour {
             if (!GameObject.Find("textframe_border_outer")) continue;
             if (GameObject.Find("textframe_border_outer").GetComponent<Image>().color.a == 0) continue;
             try {
-                if (textmgr.CanAutoSkipAll())
+                if (textmgr.CanAutoSkipAny(true))
                     NextText();
-                if (GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED && !textmgr.blockSkip && !textmgr.LineComplete() && textmgr.CanSkip()) {
+                if (GlobalControls.input.Cancel == ButtonState.PRESSED && !textmgr.LineComplete() && textmgr.CanSkip()) {
                     if (EventManager.instance.script != null && EventManager.instance.script.GetVar("playerskipdocommand").Boolean)
                         textmgr.DoSkipFromPlayer();
                     else
                         textmgr.SkipLine();
-                } else if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED && !textmgr.blockSkip && !EventManager.instance.passPressOnce)
+                } else if (GlobalControls.input.Confirm == ButtonState.PRESSED && !EventManager.instance.passPressOnce)
                     NextText();
             } catch { /* ignored */ }
         }
@@ -259,8 +261,8 @@ public class PlayerOverworld : MonoBehaviour {
         int currentDirection = 0;
         //If you locked the player, do nothing
         if (!PlayerNoMove) {
-            horizontal = (int)(Input.GetAxisRaw("Horizontal"));
-            vertical = (int)(Input.GetAxisRaw("Vertical"));
+            horizontal = (int)Input.GetAxisRaw("Horizontal");
+            vertical = (int)Input.GetAxisRaw("Vertical");
             //Just some animations switches
             if (animator.movementDirection == 0) {
                 if (GlobalControls.input.Up > 0)         currentDirection = 8;
@@ -268,10 +270,10 @@ public class PlayerOverworld : MonoBehaviour {
                 else if (GlobalControls.input.Right > 0) currentDirection = 6;
                 else if (GlobalControls.input.Left > 0)  currentDirection = 4;
             }
-            if (GlobalControls.input.Up == UndertaleInput.ButtonState.PRESSED)         currentDirection = 8;
-            else if (GlobalControls.input.Right == UndertaleInput.ButtonState.PRESSED) currentDirection = 6;
-            else if (GlobalControls.input.Left == UndertaleInput.ButtonState.PRESSED)  currentDirection = 4;
-            else if (GlobalControls.input.Down == UndertaleInput.ButtonState.PRESSED)  currentDirection = 2;
+            if (GlobalControls.input.Up == ButtonState.PRESSED)         currentDirection = 8;
+            else if (GlobalControls.input.Right == ButtonState.PRESSED) currentDirection = 6;
+            else if (GlobalControls.input.Left == ButtonState.PRESSED)  currentDirection = 4;
+            else if (GlobalControls.input.Down == ButtonState.PRESSED)  currentDirection = 2;
             if ((animator.beginAnim.Contains("Up") && GlobalControls.input.Up <= 0) ||  (animator.beginAnim.Contains("Right") && GlobalControls.input.Right <= 0) ||
                 (animator.beginAnim.Contains("Left") && GlobalControls.input.Left <= 0) ||  (animator.beginAnim.Contains("Down") && GlobalControls.input.Down <= 0)) {
                 if (horizontal < 0)      currentDirection = 4;
@@ -286,7 +288,7 @@ public class PlayerOverworld : MonoBehaviour {
         if (!isBeingMoved)
             isMoving = AttemptMove(horizontal, vertical);
 
-        if (GlobalControls.input.Menu == UndertaleInput.ButtonState.PRESSED)
+        if (GlobalControls.input.Menu == ButtonState.PRESSED)
             if (menuRunning[2] && !menuRunning[3] && !menuRunning[4])
                 CloseMenu(true);
         menuRunning[4] = false;
@@ -588,17 +590,12 @@ public class PlayerOverworld : MonoBehaviour {
 
         TextMessage[] textmsg = new TextMessage[textTable.Length];
 
-        if (mugshots != null)
-            for (int i = 0; i < textTable.Length; i++)
-                textmsg[i] = new TextMessage(textTable[i], rearranged, false, mugshots);
-        else
-            for (int i = 0; i < textTable.Length; i++)
-                textmsg[i] = new TextMessage(textTable[i], rearranged, false);
+        for (int i = 0; i < textTable.Length; i++)
+            textmsg[i] = new TextMessage(textTable[i], rearranged, false, mugshots);
         PlayerNoMove = true; //Old SetDialog
         EventManager.instance.passPressOnce = true;
 
         textmgr.SetTextFrameAlpha(1);
-        textmgr.blockSkip = false;
 
         //textmgr.setTextQueue(textmsg, mugshots);
         textmgr.SetTextQueue(textmsg);
@@ -675,27 +672,27 @@ public class PlayerOverworld : MonoBehaviour {
         instance.UIPos = 0;
         AutoSetUIPos();
 
-        GameObject.Find("TextManager OW").GetComponent<TextManager>().SetText(new TextMessage("[noskipatall]", false, false));
+        GameObject.Find("TextManager OW").GetComponent<TextManager>().SetText(new TextMessage("", false, false));
         GameObject.Find("menustat_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 1);
         GameObject.Find("menuchoice_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 1);
         GameObject.Find("menustat_interior").GetComponent<Image>().color = new Color(0, 0, 0, 1);
         GameObject.Find("menuchoice_interior").GetComponent<Image>().color = new Color(0, 0, 0, 1);
 
-        txtmgrs[0].SetText(new TextMessage("[noskipatall]" + PlayerCharacter.instance.Name, false, true));
+        txtmgrs[0].SetText(new TextMessage("" + PlayerCharacter.instance.Name, false, true));
         if (GlobalControls.crate) {
-            txtmgrs[1].SetText(new TextMessage("[noskipatall][font:menu]LV " + PlayerCharacter.instance.LV, false, true));
-            txtmgrs[2].SetText(new TextMessage("[noskipatall][font:menu]PH " + (int)PlayerCharacter.instance.HP + "/" + PlayerCharacter.instance.MaxHP, false, true));
-            txtmgrs[3].SetText(new TextMessage("[noskipatall][font:menu]G  " + PlayerCharacter.instance.Gold, false, true));
-            txtmgrs[4].SetText(new TextMessage("[noskipatall]" + (Inventory.inventory.Count > 0 ? "" : "[color:808080]") + "TEM", false, true));
-            txtmgrs[5].SetText(new TextMessage("[noskipatall]TAST", false, true));
-            txtmgrs[6].SetText(new TextMessage("[noskipatall]LECL", false, true));
+            txtmgrs[1].SetText(new TextMessage("[font:menu]LV " + PlayerCharacter.instance.LV, false, true));
+            txtmgrs[2].SetText(new TextMessage("[font:menu]PH " + (int)PlayerCharacter.instance.HP + "/" + PlayerCharacter.instance.MaxHP, false, true));
+            txtmgrs[3].SetText(new TextMessage("[font:menu]G  " + PlayerCharacter.instance.Gold, false, true));
+            txtmgrs[4].SetText(new TextMessage((Inventory.inventory.Count > 0 ? "" : "[color:808080]") + "TEM", false, true));
+            txtmgrs[5].SetText(new TextMessage("TAST", false, true));
+            txtmgrs[6].SetText(new TextMessage("LECL", false, true));
         } else {
-            txtmgrs[1].SetText(new TextMessage("[noskipatall][font:menu]LV " + PlayerCharacter.instance.LV, false, true));
-            txtmgrs[2].SetText(new TextMessage("[noskipatall][font:menu]HP " + (int)PlayerCharacter.instance.HP + "/" + PlayerCharacter.instance.MaxHP, false, true));
-            txtmgrs[3].SetText(new TextMessage("[noskipatall][font:menu]G  " + PlayerCharacter.instance.Gold, false, true));
-            txtmgrs[4].SetText(new TextMessage("[noskipatall]" + (Inventory.inventory.Count > 0 ? "" : "[color:808080]") + "ITEM", false, true));
-            txtmgrs[5].SetText(new TextMessage("[noskipatall]STAT", false, true));
-            txtmgrs[6].SetText(new TextMessage("[noskipatall]CELL", false, true));
+            txtmgrs[1].SetText(new TextMessage("[font:menu]LV " + PlayerCharacter.instance.LV, false, true));
+            txtmgrs[2].SetText(new TextMessage("[font:menu]HP " + (int)PlayerCharacter.instance.HP + "/" + PlayerCharacter.instance.MaxHP, false, true));
+            txtmgrs[3].SetText(new TextMessage("[font:menu]G  " + PlayerCharacter.instance.Gold, false, true));
+            txtmgrs[4].SetText(new TextMessage((Inventory.inventory.Count > 0 ? "" : "[color:808080]") + "ITEM", false, true));
+            txtmgrs[5].SetText(new TextMessage("STAT", false, true));
+            txtmgrs[6].SetText(new TextMessage("CELL", false, true));
         }
         GameObject.Find("Mugshot").GetComponent<Image>().color = new Color(1, 1, 1, 0);
         GameObject.Find("textframe_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 0);
@@ -707,13 +704,13 @@ public class PlayerOverworld : MonoBehaviour {
         yield return 0;
         while (!instance.menuRunning[3]) {
             if (!instance.menuRunning[0]) {
-                if (GlobalControls.input.Up == UndertaleInput.ButtonState.PRESSED) {
+                if (GlobalControls.input.Up == ButtonState.PRESSED) {
                     choice = (choice + 1) % 3;
                     GameObject.Find("utHeartMenu").transform.localPosition = new Vector3(-255, 35 - ((2 - choice % 3) * 36), GameObject.Find("utHeartMenu").transform.position.z);
-                } else if (GlobalControls.input.Down == UndertaleInput.ButtonState.PRESSED) {
+                } else if (GlobalControls.input.Down == ButtonState.PRESSED) {
                     choice = (choice + 2) % 3;
                     GameObject.Find("utHeartMenu").transform.localPosition = new Vector3(-255, 35 - ((2 - choice % 3) * 36), GameObject.Find("utHeartMenu").transform.position.z);
-                } else if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED) {
+                } else if (GlobalControls.input.Confirm == ButtonState.PRESSED) {
                     instance.uiAudio.PlayOneShot(AudioClipRegistry.GetSound("menuconfirm"));
                     instance.menuRunning[0] = true;
                     switch (choice) {
@@ -724,15 +721,15 @@ public class PlayerOverworld : MonoBehaviour {
                                 instance.menuRunning[0] = false;
                             } else {
                                 for (int i = 0; i != invCount; i++)
-                                    txtmgrs[i + 7].SetText(new TextMessage("[noskipatall]" + Inventory.inventory[i].Name, false, true));
+                                    txtmgrs[i + 7].SetText(new TextMessage(Inventory.inventory[i].Name, false, true));
                                 if (GlobalControls.crate) {
-                                    txtmgrs[15].SetText(new TextMessage("[noskipatall]SUE",  false, true));
-                                    txtmgrs[16].SetText(new TextMessage("[noskipatall]FINO", false, true));
-                                    txtmgrs[17].SetText(new TextMessage("[noskipatall]DORP", false, true));
+                                    txtmgrs[15].SetText(new TextMessage("SUE",  false, true));
+                                    txtmgrs[16].SetText(new TextMessage("FINO", false, true));
+                                    txtmgrs[17].SetText(new TextMessage("DORP", false, true));
                                 } else {
-                                    txtmgrs[15].SetText(new TextMessage("[noskipatall]USE",  false, true));
-                                    txtmgrs[16].SetText(new TextMessage("[noskipatall]INFO", false, true));
-                                    txtmgrs[17].SetText(new TextMessage("[noskipatall]DROP", false, true));
+                                    txtmgrs[15].SetText(new TextMessage("USE",  false, true));
+                                    txtmgrs[16].SetText(new TextMessage("INFO", false, true));
+                                    txtmgrs[17].SetText(new TextMessage("DROP", false, true));
                                 }
                                 GameObject.Find("Mugshot").GetComponent<Image>().color                = new Color(1, 1, 1, 0);
                                 GameObject.Find("textframe_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 0);
@@ -743,31 +740,31 @@ public class PlayerOverworld : MonoBehaviour {
                                 int index = 0;
                                 yield return 0;
                                 while (instance.menuRunning[0] && !instance.menuRunning[1] && !instance.menuRunning[3]) {
-                                    if (GlobalControls.input.Down == UndertaleInput.ButtonState.PRESSED) {
+                                    if (GlobalControls.input.Down == ButtonState.PRESSED) {
                                         index = (index + 1) % invCount;
                                         instance.uiAudio.PlayOneShot(AudioClipRegistry.GetSound("menumove"));
                                         GameObject.Find("utHeartMenu").transform.localPosition = new Vector3(-48, 143 - 32 * index, GameObject.Find("utHeartMenu").transform.position.z);
-                                    } else if (GlobalControls.input.Up == UndertaleInput.ButtonState.PRESSED) {
+                                    } else if (GlobalControls.input.Up == ButtonState.PRESSED) {
                                         index = (index + invCount - 1) % invCount;
                                         instance.uiAudio.PlayOneShot(AudioClipRegistry.GetSound("menumove"));
                                         GameObject.Find("utHeartMenu").transform.localPosition = new Vector3(-48, 143 - 32 * index, GameObject.Find("utHeartMenu").transform.position.z);
-                                    } else if (GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED) {
+                                    } else if (GlobalControls.input.Cancel == ButtonState.PRESSED) {
                                         instance.menuRunning[0] = false;
-                                        for (int i = 7; i <= 17; i++) txtmgrs[i].DestroyChars();
+                                        for (int i = 7; i <= 17; i++) txtmgrs[i].HideTextObject();
                                         GameObject.Find("Mugshot").GetComponent<Image>().color                = new Color(1, 1, 1, 0);
                                         GameObject.Find("textframe_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 0);
                                         GameObject.Find("textframe_interior").GetComponent<Image>().color     = new Color(0, 0, 0, 0);
                                         GameObject.Find("item_border_outer").GetComponent<Image>().color      = new Color(1, 1, 1, 0);
                                         GameObject.Find("item_interior").GetComponent<Image>().color          = new Color(0, 0, 0, 0);
                                         GameObject.Find("utHeartMenu").transform.localPosition                = new Vector3(-255, 35 - ((2 - choice % 3) * 36), GameObject.Find("utHeartMenu").transform.position.z);
-                                    } else if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED) {
+                                    } else if (GlobalControls.input.Confirm == ButtonState.PRESSED) {
                                         instance.menuRunning[1] = true;
                                         instance.uiAudio.PlayOneShot(AudioClipRegistry.GetSound("menuconfirm"));
                                         int index2 = 0;
                                         GameObject.Find("utHeartMenu").transform.localPosition = new Vector3(-48, -137, GameObject.Find("utHeartMenu").transform.position.z); // -53,42,156
                                         yield return 0;
                                         while (instance.menuRunning[1] && !instance.menuRunning[3]) {
-                                            if (GlobalControls.input.Left == UndertaleInput.ButtonState.PRESSED) {
+                                            if (GlobalControls.input.Left == ButtonState.PRESSED) {
                                                 instance.uiAudio.PlayOneShot(AudioClipRegistry.GetSound("menumove"));
                                                 index2 = (index2 + 2) % 3;
                                                 switch (index2) {
@@ -775,7 +772,7 @@ public class PlayerOverworld : MonoBehaviour {
                                                     case 1: GameObject.Find("utHeartMenu").transform.localPosition = new Vector3(47,  -137, GameObject.Find("utHeartMenu").transform.position.z); break;
                                                     case 2: GameObject.Find("utHeartMenu").transform.localPosition = new Vector3(161, -137, GameObject.Find("utHeartMenu").transform.position.z); break;
                                                 }
-                                            } else if (GlobalControls.input.Right == UndertaleInput.ButtonState.PRESSED) {
+                                            } else if (GlobalControls.input.Right == ButtonState.PRESSED) {
                                                 instance.uiAudio.PlayOneShot(AudioClipRegistry.GetSound("menumove"));
                                                 index2 = (index2 + 1) % 3;
                                                 switch (index2) {
@@ -783,12 +780,12 @@ public class PlayerOverworld : MonoBehaviour {
                                                     case 1: GameObject.Find("utHeartMenu").transform.localPosition = new Vector3(47,  -137, GameObject.Find("utHeartMenu").transform.position.z); break;
                                                     case 2: GameObject.Find("utHeartMenu").transform.localPosition = new Vector3(161, -137, GameObject.Find("utHeartMenu").transform.position.z); break;
                                                 }
-                                            } else if (GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED) {
+                                            } else if (GlobalControls.input.Cancel == ButtonState.PRESSED) {
                                                 GameObject.Find("utHeartMenu").transform.localPosition = new Vector3(-48, 143 - 32 * index, GameObject.Find("utHeartMenu").transform.position.z);
                                                 instance.menuRunning[1]                                = false;
-                                            } else if (GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED) {
+                                            } else if (GlobalControls.input.Confirm == ButtonState.PRESSED) {
                                                 instance.uiAudio.PlayOneShot(AudioClipRegistry.GetSound("menuconfirm"));
-                                                for (int i = 7; i <= 17; i++) txtmgrs[i].DestroyChars();
+                                                for (int i = 7; i <= 17; i++) txtmgrs[i].HideTextObject();
                                                 GameObject.Find("item_border_outer").GetComponent<Image>().color = new Color(1,   1,   1,   0);
                                                 GameObject.Find("item_interior").GetComponent<Image>().color     = new Color(0,   0,   0,   0);
                                                 GameObject.Find("utHeartMenu").GetComponent<Image>().color       = new Color(c.r, c.g, c.b, 0);
@@ -798,21 +795,21 @@ public class PlayerOverworld : MonoBehaviour {
                                                         instance.textmgr.SetEffect(null);
                                                         Inventory.UseItem(index);
                                                         //Update the stat text managers again, which means you can see the item's effects immediately
-                                                        txtmgrs[0].SetText(new TextMessage("[noskipatall]" + PlayerCharacter.instance.Name, false, true));
+                                                        txtmgrs[0].SetText(new TextMessage("" + PlayerCharacter.instance.Name, false, true));
                                                         if (GlobalControls.crate) {
-                                                            txtmgrs[1].SetText(new TextMessage("[noskipatall][font:menu]LV "                                             + PlayerCharacter.instance.LV,    false, true));
-                                                            txtmgrs[2].SetText(new TextMessage("[noskipatall][font:menu]PH " + (int)PlayerCharacter.instance.HP + "/"    + PlayerCharacter.instance.MaxHP, false, true));
-                                                            txtmgrs[3].SetText(new TextMessage("[noskipatall][font:menu]G  "                                             + PlayerCharacter.instance.Gold,  false, true));
-                                                            txtmgrs[4].SetText(new TextMessage("[noskipatall]" + (Inventory.inventory.Count > 0 ? "" : "[color:808080]") + "TEM",                          false, true));
-                                                            txtmgrs[5].SetText(new TextMessage("[noskipatall]TAST",                                                                                        false, true));
-                                                            txtmgrs[6].SetText(new TextMessage("[noskipatall]LECL",                                                                                        false, true));
+                                                            txtmgrs[1].SetText(new TextMessage("[font:menu]LV " + PlayerCharacter.instance.LV, false, true));
+                                                            txtmgrs[2].SetText(new TextMessage("[font:menu]PH " + (int)PlayerCharacter.instance.HP + "/" + PlayerCharacter.instance.MaxHP, false, true));
+                                                            txtmgrs[3].SetText(new TextMessage("[font:menu]G  " + PlayerCharacter.instance.Gold, false, true));
+                                                            txtmgrs[4].SetText(new TextMessage((Inventory.inventory.Count > 0 ? "" : "[color:808080]") + "TEM", false, true));
+                                                            txtmgrs[5].SetText(new TextMessage("TAST", false, true));
+                                                            txtmgrs[6].SetText(new TextMessage("LECL", false, true));
                                                         } else {
-                                                            txtmgrs[1].SetText(new TextMessage("[noskipatall][font:menu]LV "                                             + PlayerCharacter.instance.LV,    false, true));
-                                                            txtmgrs[2].SetText(new TextMessage("[noskipatall][font:menu]HP " + (int)PlayerCharacter.instance.HP + "/"    + PlayerCharacter.instance.MaxHP, false, true));
-                                                            txtmgrs[3].SetText(new TextMessage("[noskipatall][font:menu]G  "                                             + PlayerCharacter.instance.Gold,  false, true));
-                                                            txtmgrs[4].SetText(new TextMessage("[noskipatall]" + (Inventory.inventory.Count > 0 ? "" : "[color:808080]") + "ITEM",                         false, true));
-                                                            txtmgrs[5].SetText(new TextMessage("[noskipatall]STAT",                                                                                        false, true));
-                                                            txtmgrs[6].SetText(new TextMessage("[noskipatall]CELL",                                                                                        false, true));
+                                                            txtmgrs[1].SetText(new TextMessage("[font:menu]LV " + PlayerCharacter.instance.LV, false, true));
+                                                            txtmgrs[2].SetText(new TextMessage("[font:menu]HP " + (int)PlayerCharacter.instance.HP + "/" + PlayerCharacter.instance.MaxHP, false, true));
+                                                            txtmgrs[3].SetText(new TextMessage("[font:menu]G  " + PlayerCharacter.instance.Gold, false, true));
+                                                            txtmgrs[4].SetText(new TextMessage((Inventory.inventory.Count > 0 ? "" : "[color:808080]") + "ITEM", false, true));
+                                                            txtmgrs[5].SetText(new TextMessage("STAT", false, true));
+                                                            txtmgrs[6].SetText(new TextMessage("CELL", false, true));
                                                         }
                                                         break;
                                                     case 1:
@@ -824,8 +821,8 @@ public class PlayerOverworld : MonoBehaviour {
                                                         break;
                                                     case 2:
                                                         instance.textmgr.SetEffect(null);
-                                                        instance.textmgr.SetText(new TextMessage(GlobalControls.crate ? "U DORPED TEH " + Inventory.inventory[index].Name + "!!!!!" :
-                                                                                                     "You dropped the " + Inventory.inventory[index].Name                 + ".", true, false));
+                                                        instance.textmgr.SetText(new TextMessage(GlobalControls.crate ? ("U DORPED TEH " + Inventory.inventory[index].Name + "!!!!!")
+                                                                                                                      : "You dropped the " + Inventory.inventory[index].Name + ".", true, false));
                                                         instance.textmgr.transform.parent.parent.SetAsLastSibling();
                                                         Inventory.RemoveItem(index);
                                                         break;
@@ -845,25 +842,25 @@ public class PlayerOverworld : MonoBehaviour {
                         case 1: {
                             // STAT
                             GameObject.Find("utHeartMenu").GetComponent<Image>().color = new Color(c.r, c.g, c.b, 0);
-                            txtmgrs[18].SetText(new TextMessage("[noskipatall]\"" + PlayerCharacter.instance.Name      + "\"",                           false, true));
-                            txtmgrs[19].SetText(new TextMessage("[noskipatall]LV "                                     + PlayerCharacter.instance.LV,    false, true));
-                            txtmgrs[20].SetText(new TextMessage("[noskipatall]HP " + PlayerCharacter.instance.HP + "/" + PlayerCharacter.instance.MaxHP, false, true));
+                            txtmgrs[18].SetText(new TextMessage("\"" + PlayerCharacter.instance.Name      + "\"",                           false, true));
+                            txtmgrs[19].SetText(new TextMessage("LV "                                     + PlayerCharacter.instance.LV,    false, true));
+                            txtmgrs[20].SetText(new TextMessage("HP " + PlayerCharacter.instance.HP + "/" + PlayerCharacter.instance.MaxHP, false, true));
                             if (GlobalControls.crate) {
-                                txtmgrs[21].SetText(new TextMessage("[noskipatall]TA " + (PlayerCharacter.instance.ATK + PlayerCharacter.instance.WeaponATK) + " (" + PlayerCharacter.instance.WeaponATK + ")",                                false, true));
-                                txtmgrs[22].SetText(new TextMessage("[noskipatall]DF " + (PlayerCharacter.instance.DEF + PlayerCharacter.instance.ArmorDEF) + " (" + PlayerCharacter.instance.ArmorDEF   + ")",                                false, true));
-                                txtmgrs[23].SetText(new TextMessage("[noskipatall]EPX: "                                                                                                                 + PlayerCharacter.instance.EXP,       false, true));
-                                txtmgrs[24].SetText(new TextMessage("[noskipatall]NETX: "                                                                                                                + PlayerCharacter.instance.GetNext(), false, true));
-                                txtmgrs[25].SetText(new TextMessage("[noskipatall]WAEPON: "                                                                                                              + PlayerCharacter.instance.Weapon,    false, true));
-                                txtmgrs[26].SetText(new TextMessage("[noskipatall]AROMR: "                                                                                                               + PlayerCharacter.instance.Armor,     false, true));
-                                txtmgrs[27].SetText(new TextMessage("[noskipatall]GLOD: "                                                                                                                + PlayerCharacter.instance.Gold,      false, true));
+                                txtmgrs[21].SetText(new TextMessage("TA " + (PlayerCharacter.instance.ATK + PlayerCharacter.instance.WeaponATK) + " (" + PlayerCharacter.instance.WeaponATK + ")", false, true));
+                                txtmgrs[22].SetText(new TextMessage("DF " + (PlayerCharacter.instance.DEF + PlayerCharacter.instance.ArmorDEF) + " (" + PlayerCharacter.instance.ArmorDEF + ")", false, true));
+                                txtmgrs[23].SetText(new TextMessage("EPX: " + PlayerCharacter.instance.EXP, false, true));
+                                txtmgrs[24].SetText(new TextMessage("NETX: " + PlayerCharacter.instance.GetNext(), false, true));
+                                txtmgrs[25].SetText(new TextMessage("WAEPON: " + PlayerCharacter.instance.Weapon, false, true));
+                                txtmgrs[26].SetText(new TextMessage("AROMR: " + PlayerCharacter.instance.Armor, false, true));
+                                txtmgrs[27].SetText(new TextMessage("GLOD: " + PlayerCharacter.instance.Gold, false, true));
                             } else {
-                                txtmgrs[21].SetText(new TextMessage("[noskipatall]AT " + (PlayerCharacter.instance.ATK + PlayerCharacter.instance.WeaponATK) + " (" + PlayerCharacter.instance.WeaponATK + ")",                                false, true));
-                                txtmgrs[22].SetText(new TextMessage("[noskipatall]DF " + (PlayerCharacter.instance.DEF + PlayerCharacter.instance.ArmorDEF) + " (" + PlayerCharacter.instance.ArmorDEF   + ")",                                false, true));
-                                txtmgrs[23].SetText(new TextMessage("[noskipatall]EXP: "                                                                                                                 + PlayerCharacter.instance.EXP,       false, true));
-                                txtmgrs[24].SetText(new TextMessage("[noskipatall]NEXT: "                                                                                                                + PlayerCharacter.instance.GetNext(), false, true));
-                                txtmgrs[25].SetText(new TextMessage("[noskipatall]WEAPON: "                                                                                                              + PlayerCharacter.instance.Weapon,    false, true));
-                                txtmgrs[26].SetText(new TextMessage("[noskipatall]ARMOR: "                                                                                                               + PlayerCharacter.instance.Armor,     false, true));
-                                txtmgrs[27].SetText(new TextMessage("[noskipatall]GOLD: "                                                                                                                + PlayerCharacter.instance.Gold,      false, true));
+                                txtmgrs[21].SetText(new TextMessage("AT " + (PlayerCharacter.instance.ATK + PlayerCharacter.instance.WeaponATK) + " (" + PlayerCharacter.instance.WeaponATK + ")", false, true));
+                                txtmgrs[22].SetText(new TextMessage("DF " + (PlayerCharacter.instance.DEF + PlayerCharacter.instance.ArmorDEF) + " (" + PlayerCharacter.instance.ArmorDEF + ")", false, true));
+                                txtmgrs[23].SetText(new TextMessage("EXP: " + PlayerCharacter.instance.EXP, false, true));
+                                txtmgrs[24].SetText(new TextMessage("NEXT: " + PlayerCharacter.instance.GetNext(), false, true));
+                                txtmgrs[25].SetText(new TextMessage("WEAPON: " + PlayerCharacter.instance.Weapon, false, true));
+                                txtmgrs[26].SetText(new TextMessage("ARMOR: " + PlayerCharacter.instance.Armor, false, true));
+                                txtmgrs[27].SetText(new TextMessage("GOLD: " + PlayerCharacter.instance.Gold, false, true));
                             }
                             GameObject.Find("Mugshot").GetComponent<Image>().color                = new Color(1, 1, 1, 0);
                             GameObject.Find("textframe_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 0);
@@ -872,11 +869,11 @@ public class PlayerOverworld : MonoBehaviour {
                             GameObject.Find("stat_interior").GetComponent<Image>().color          = new Color(0, 0, 0, 1);
                             yield return 0;
                             while (instance.menuRunning[0] && !instance.menuRunning[3]) {
-                                if (GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED || GlobalControls.input.Confirm == UndertaleInput.ButtonState.PRESSED) {
+                                if (GlobalControls.input.Cancel == ButtonState.PRESSED || GlobalControls.input.Confirm == ButtonState.PRESSED) {
                                     GameObject.Find("utHeartMenu").GetComponent<Image>().color = new Color(c.r, c.g, c.b, 1);
                                     instance.uiAudio.PlayOneShot(AudioClipRegistry.GetSound("menuconfirm"));
                                     instance.menuRunning[0] = false;
-                                    for (int i = 18; i <= 27; i++) txtmgrs[i].DestroyChars();
+                                    for (int i = 18; i <= 27; i++) txtmgrs[i].HideTextObject();
                                     GameObject.Find("Mugshot").GetComponent<Image>().color                = new Color(1, 1, 1, 0);
                                     GameObject.Find("textframe_border_outer").GetComponent<Image>().color = new Color(1, 1, 1, 0);
                                     GameObject.Find("textframe_interior").GetComponent<Image>().color     = new Color(0, 0, 0, 0);
@@ -894,7 +891,7 @@ public class PlayerOverworld : MonoBehaviour {
                             instance.textmgr.transform.parent.parent.SetAsLastSibling();
                             break;
                     }
-                } else if (GlobalControls.input.Cancel == UndertaleInput.ButtonState.PRESSED)
+                } else if (GlobalControls.input.Cancel == ButtonState.PRESSED)
                     yield return CloseMenu(true);
             }
             yield return 0;
@@ -910,7 +907,7 @@ public class PlayerOverworld : MonoBehaviour {
             if (tf.GetComponent<Image>()) tf.gameObject.GetComponent<Image>().color = new Color(tf.gameObject.GetComponent<Image>().color.r,
                                                                                                 tf.gameObject.GetComponent<Image>().color.b,
                                                                                                 tf.gameObject.GetComponent<Image>().color.g, 0);
-            if (tf.GetComponent<TextManager>()) tf.gameObject.GetComponent<TextManager>().DestroyChars();
+            if (tf.GetComponent<TextManager>()) tf.gameObject.GetComponent<TextManager>().HideTextObject();
         }
         instance.menuRunning = new[] { false, false, !endOfInText, true, true };
         GameObject.Find("Mugshot").GetComponent<Image>().color = new Color(1, 1, 1, 0);

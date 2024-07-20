@@ -128,7 +128,7 @@ public static class SpriteUtil {
             if ((!UnitaleUtil.IsOverworld && tag == "BelowArena") || (UnitaleUtil.IsOverworld && tag == "Default"))
                 i.transform.SetParent(GameObject.Find(canvas).transform);
             else
-                UnitaleUtil.DisplayLuaError("Creating a sprite", "The sprite layer " + tag + " doesn't exist.");
+                throw new CYFException("The sprite layer " + tag + " doesn't exist.");
         else {
             i.transform.SetParent(GameObject.Find(tag == "none" ? canvas : tag + "Layer").transform, true);
             if (childNumber != -1)

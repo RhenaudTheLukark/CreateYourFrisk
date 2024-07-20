@@ -68,4 +68,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/SpecialAnnouncement.unity
     guid: f9d2349a99292a24c91eaee50a95a87e
+  - enabled: 1
+    path: Assets/Scenes/KeybindSettings.unity
+    guid: c7340ada0080ba74ebc7e5bf2a43e8b5
   m_configObjects: {}

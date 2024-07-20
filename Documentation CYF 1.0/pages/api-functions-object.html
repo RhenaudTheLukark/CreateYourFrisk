@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<!--
+since you're here anyway: there's a small easter egg on the text commands page but it's probably not worth finding, sorry
+you may notice this page's code is garbage: i'm not a web designer! ;-;
+it's w3c valid, at least
+-->
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../img/icon.png">
+
+    <title>CYF Documentation - General Objects</title>
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="../css/themesidebar.css" rel="stylesheet">
+    <link href="../css/shThemeRDark.css" rel="stylesheet">
+
+    <!-- Syntax highlighting -->
+    <script type="text/javascript" src="../js/shCore.js"></script>
+    <script type="text/javascript" src="../js/shBrushLua.js"></script>
+    <script type="text/javascript">SyntaxHighlighter.all();</script>
+</head>
+<body>
+<img src="../img/bg2.png" alt="Undertale background" class="backimg">
+<div class="container arena black">
+    <!--navigation-->
+    <script type="text/javascript" src="../js/SideBar.js"></script>
+    <script type="text/javascript"> CreateSideBar("General Objects"); </script>
+
+    <!--tabs'n'shit-->
+    <div class="tab-content col-md-10">
+        <div class="tab-pane active text-style" id="api-functions-audio">
+            <h2>General object functions and the CYFObject object</h2><br><br>
+            <p>
+                Usually, in CYF, you handle given objects such as text objects, sprites and the like.
+                <br>
+                However, in certain situations, you may have to manipulate some elements which you
+                can't normally use, such as internal elements used by Unity.
+                <br><br>
+                The <span class="term">CYFObject</span> object's goal is to be able to manipulate
+                these objects, mostly by moving the various elements of the battle's hierarchy.
+                All of its functions and variables are also usable for
+                <span class="term">text objects</span>, <span class="term">sprites</span> and
+                <span class="term">bullets</span> unless said otherwise.
+            </p>
+
+            <p>
+                <br><span class="function"><span class="string"></span> object.name
+                (readonly)</span>
+
+                The name of the object in Unity. Different from sprites'
+                <span class="term">spritename</span> variable.
+            </p>
+
+            <p>
+                <br><span class="function"><span class="number"></span> object.childIndex</span>
+
+                The position of this object in its parent's children list, between 1 and
+                <span class="term">childCount</span>. The first child will be displayed under all
+                other children, while the last child will be displayed above all others.
+                <br><br>
+                For example, if an object has 5 children and this value is 2, then this object is
+                its parent's second child, and will appear above the parent's first child and
+                below all of its other children.
+                <br><br>
+                Setting this value will change the current object's child index, reordering it in
+                its parent's children list.
+            </p>
+
+            <p>
+                <br><span class="function"><span class="number"></span> object.childCount
+                (readonly)</span>
+
+                The number of children this object has.
+            </p>
+
+            <p>
+                <br><span class="function"> object.GetParent() returns <span class="userdata">object
+                </span></span>
+
+                Returns the parent of this object. Can be either a <span class="term">sprite</span>, a
+                <span class="term">bullet</span> or a <span class="term">CYFObject</span>.
+                <br><br>
+                If you don't know by advance the type of this object's parent, you can use the function
+                <span class="term">tostring</span> on the parent to know which kind of object it is.
+                The values are as follows:
+                <ul>
+                    <li>Sprites will return <span class="term">"LuaSpriteController"</span>,</li>
+                    <li>Bullets will return <span class="term">"ProjectileController"</span>,</li>
+                    <li>CYFObjects will return <span class="term">"LuaCYFObject"</span>.</li>
+                </ul>
+            </p>
+
+            <p>
+                <br><span class="function"> object.SetParent(<span class="userdata">object</span>
+                otherObject)</span>
+
+                Parents <span class="term">object</span> to <span class="term">otherObject</span>.
+                <br>
+                This will make the original object move along with the object it's parented to.
+                <br><br>
+                You can parent any <span class="term">sprite</span>, <span class="term">bullet</span>,
+                <span class="term">CYFObject</span> or <span class="term">text object</span> to
+                <span class="term">sprites</span>, <span class="term">bullets</span> and
+                <span class="term">CYFObjects</span>, although <span class="term">text objects</span>
+                cannot be the parent of another object.
+                <br><br>
+                <span class="CYF"></span> NOTE: If you are in the <i>Overworld</i>, you can NOT use
+                this to parent sprites to Event objects' sprites, or vice versa.<br>
+                Text object letter sprites can <i>only</i> be parented to other Text object letter
+                sprites.
+            </p>
+
+            <p>
+                <br><span class="function"> object.GetChild(<span class="number"></span> childIndex)
+                returns <span class="userdata">object</span></span>
+
+                Returns the child at index <span class="term">childIndex</span> of this object. Can
+                be either a <span class="term">sprite</span>, a <span class="term">bullet</span>, a
+                <span class="term">text object</span> or a <span class="term">CYFObject</span>.
+                <br><br>
+                If you don't know by advance the type of this object's child, you can use the function
+                <span class="term">tostring</span> on the child to know which kind of object it is.
+                The values are as follows:
+                <ul>
+                    <li>Sprites will return <span class="term">"LuaSpriteController"</span>,</li>
+                    <li>Bullets will return <span class="term">"ProjectileController"</span>,</li>
+                    <li>Text objects will return <span class="term">"LuaTextManager"</span>,</li>
+                    <li>CYFObjects will return <span class="term">"LuaCYFObject"</span>.</li>
+                </ul>
+            </p>
+
+            <p>
+                <br><span class="function"> object.GetChildren() returns
+                <span class="luatable"><span class="userdata">object</span></span></span>
+
+                Returns a table with all of this object's children. See
+                <span class="term">object.GetChild()</span> for more information.
+            </p>
+        </div>
+
+        <div class="tab-pane text-style" id="mercy">
+            <h2 style="text-decoration: none; line-height:50px;">
+                * YOU WON!<br>
+                * You earned 0 EXP and 0 gold.<br>
+                * also the nav menu is broken now
+            </h2><br>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="col-xs-3"><img class="centerbt black" alt="Undertale fake button" src="../img/fightbt_0.png" height="42">
+    </div>
+    <div class="col-xs-3"><img class="centerbt black" alt="Undertale fake button" src="../img/actbt_0.png" height="42">
+    </div>
+    <div class="col-xs-3"><img class="centerbt black" alt="Undertale fake button" src="../img/itembt_0.png" height="42">
+    </div>
+    <div class="col-xs-3"><a href="#mercy" data-toggle="tab"><img class="centerbt black" alt="Undertale fake button"
+                                                                  src="../img/mercybt_0.png" height="42"></a>
+    </div>
+</div>
+<br>
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="../js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../js/show_hide_comments.js"></script>
+
+<script type="text/javascript" src="../js/FontToggleButton.js"></script>
+</body>
+</html>

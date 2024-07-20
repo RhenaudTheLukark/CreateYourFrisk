@@ -116,9 +116,6 @@ public class NewMusicManager {
 
     public static void SetPitch(string name, float value) {
         if (!audiolist.ContainsKey(name)) throw new CYFException("The audio channel " + name + " doesn't exist.");
-        if (value < -3) value = -3;
-        if (value > 3)  value = 3;
-        if (Mathf.Abs(value) < 0.01f) value = 0.01f * Mathf.Sign(value);
         ((AudioSource)audiolist[name]).pitch = value;
     }
 

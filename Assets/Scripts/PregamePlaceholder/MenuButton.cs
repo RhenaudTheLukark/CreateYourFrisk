@@ -9,6 +9,7 @@ public class MenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     private const float animateTimerMaxValue = 2; // number of frames it takes to animate
     private float animateTimer;
     private int animateDirection = -1; // -1 for Fade Out, 1 for Fade In
+    public bool lockAnimation = false;
 
     public void Update() {
         if (animateDirection == 1 && animateTimer < animateTimerMaxValue) {
@@ -46,10 +47,12 @@ public class MenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     }
 
     public void OnPointerEnter(PointerEventData ped) {
-        StartAnimation( 1);
+        if (!lockAnimation)
+            StartAnimation(1);
     }
 
-    public void OnPointerExit (PointerEventData ped) {
-        StartAnimation(-1);
+    public void OnPointerExit(PointerEventData ped) {
+        if (!lockAnimation)
+            StartAnimation(-1);
     }
 }

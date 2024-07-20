@@ -12,7 +12,7 @@ it's w3c valid, at least
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="icon" href="favicon.ico">
+    <link rel="icon" href="../img/icon.png">
 
     <title>CYF Documentation - Text Commands</title>
     <link href="../css/bootstrap.min.css" rel="stylesheet">
@@ -28,68 +28,10 @@ it's w3c valid, at least
 <body>
 <img src="../img/bg2.png" alt="Undertale background" class="backimg">
 <div class="container arena black">
-    <div class="col-md-2">
-        <!--navigation-->
-        <nav class="nav-sidebar">
-            <ul class="nav tabs">
-                <li class="li-header">Basics</li>
-                    <li><a href="../index.html">Welcome</a></li>
-                    <li><a href="howtoread.html">How to read this documentation</a></li>
-                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
-                    <li><a href="controls.html">Controls</a></li>
-                    <li><a href="basic.html">Basic setup</a></li>
-                    <li><a href="unity.html"><span class="CYF"></span> Unity Setup (Optional)</a></li>
-                    <li class="new"><a href="variables.html">Special Variables</a></li>
-                    <li><a href="terms.html">Terminology</a></li>
-                <li class="li-header">API</li>
-                    <li class="new active" style="margin-left:5px;">&gt; Text commands &lt;</li>
-                    <li class="new"><a href="api-events.html">Game events</a></li>
-                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
-                    <li class="li-indent">Functions &amp; Objects:</li>
-                        <li class="li-indent new"><a href="api-functions-main.html">Misc. Functions</a></li>
-                        <li class="li-indent new"><a href="api-functions-player.html">The Player Object</a></li>
-                        <li class="li-indent"><a href="api-functions-script.html">The Script Object</a></li>
-                        <li class="li-indent"><a href="api-functions-audio.html">The Audio Object</a></li>
-                        <li class="li-indent"><a href="api-functions-newaudio.html"><span class="CYF"></span> The NewAudio Object</a></li>
-                        <li class="li-indent"><a href="api-functions-input.html">The Input Object</a></li>
-                        <li class="li-indent new"><a href="cyf-text.html"><span class="CYF"></span> The Text Object</a></li>
-                        <li class="li-indent new"><a href="api-functions-time.html">The Time Object</a></li>
-                        <li class="li-indent new"><a href="cyf-inventory.html"><span class="CYF"></span> The Inventory Object</a></li>
-                        <li class="li-indent new"><a href="api-functions-misc.html"><span class="CYF"></span>The Misc Object</a></li>
-                        <li class="li-indent"><a href="api-functions-discord.html"><span class="CYF"></span> The Discord Object</a></li>
-                        <li class="li-indent new"><a href="api-functions-waves.html">The Arena Object</a></li>
-                        <li class="li-indent new"><a href="api-functions-ui.html"><span class="CYF"></span> The UI Object</a></li>
-                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
-                    <li class="new"><a href="api-projectile.html">Projectile management</a></li>
-                    <li><a href="cyf-ppcollision.html"><span class="CYF"></span> The Pixel-Perfect Collision System</a></li>
-                    <li class="new"><a href="api-animation.html">Sprites &amp; Animation</a></li>
-                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
-                <li class="li-header"></span><span class="CYF"></span> Shaders</li>
-                    <li><a href="shaders.html">Introduction</a></li>
-                    <li><a href="shaders-object.html">The Shader Object</a></li>
-                    <li><a href="shaders-coding.html">Coding a Shader</a></li>
-                    <hr style="margin-top:10px;margin-bottom:10px;">
-                <li class="li-header"><span class="CYF"></span> Overworld</li>
-                    <li><a href="overworld.html">Basics</a></li>
-                    <li><a href="overworld-howto-map.html">How to create a map</a></li>
-                    <li><a href="overworld-howto-event.html">How to create an event</a></li>
-                    <li><a href="overworld-howto-animevent.html">How to animate an event</a></li>
-                    <li><a href="overworld-howto-shop.html">How to create a shop</a></li>
-                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
-                    <li class="li-indent"><span class="CYF"></span> Overworld Objects:</li>
-                        <li class="li-indent"><a href="overworld-object-general.html">The General Object</a></li>
-                        <li class="li-indent"><a href="overworld-object-event.html">The Event Object</a></li>
-                        <li class="li-indent"><a href="overworld-object-player.html">The Player Object</a></li>
-                        <li class="li-indent"><a href="overworld-object-screen.html">The Screen Object</a></li>
-                        <li class="li-indent"><a href="overworld-object-inventory.html">The Inventory Object</a></li>
-                        <li class="li-indent"><a href="overworld-object-map.html">The Map Object</a></li>
-                    <hr style="margin-top:-2.5px;margin-bottom:2.5px;">
-                <li class="li-header">Resources</li>
-                    <li><a href="../media/dialogoptions.png">Dialog bubble names</a></li>
-                    <li><a href="api-keys.html"><span class="CYF"></span> Key List</a></li>
-            </ul>
-        </nav>
-    </div>
+    <!--navigation-->
+    <script type="text/javascript" src="../js/SideBar.js"></script>
+    <script type="text/javascript"> CreateSideBar("Text Commands"); </script>
+
     <!--tabs'n'shit-->
     <div class="tab-content col-md-10">
         <div class="tab-pane active text-style" id="api-text">
@@ -152,7 +94,7 @@ it's w3c valid, at least
             </p>
 
             <p class="exblock">
-                <br><span class="new function"><span class="CYF"></span> [color]</span>
+                <br><span class="function"><span class="CYF"></span> [color]</span>
                 This command resets any previous usage of the <span class="term">[color:rrggbb]</span> command, displaying any following text in the font's default color.
             </p>
 
@@ -164,7 +106,7 @@ it's w3c valid, at least
             </p>
 
             <p class="exblock">
-                <br><span class="new function"><span class="CYF"></span> [alpha]</span>
+                <br><span class="function"><span class="CYF"></span> [alpha]</span>
                 This command resets any previous usage of the <span class="term">[alpha:aa]</span> command, displaying any following text in the font's default alpha.
             </p>
 
@@ -177,33 +119,38 @@ it's w3c valid, at least
             </p>
 
             <p class="exblock">
-                <br><span class="function">[effect:x] or [effect:x,intensity]</span>
+                <br><span class="function">[effect:x] or [effect:x,intensity] or <span class="new"></span>[effect:x,intensity,step]</span>
                 Sets the text effect for <i>the entire message, regardless of position</i>. You can use the following
                 effects:</p>
             <ul>
                 <li><span class="term">none</span>: No effect on the text.</li><br>
                 <li><span class="term">rotate</span>: Rotating text, most random monsters have this by default. Intensity sets how far letters
                     rotate, in pixels. Default is 1.5.
+                    <br>
+                    <span class="new"> Step allows shifting the rotation animation of the letters by a given degree in radians.
                 </li><br>
                 <li><span class="term">shake</span>: Shaking text. Flowey uses this sometimes. Intensity sets how far the letters offset, in
                     pixels. Default is 1.0.
+                    <br>
+                    <span class="new"> Step allows shifting the frequency of the twitching effect. Default is 48 frames.
+                    The value will be varied by about <span class="term">33%</span> every time the delay until the next twitch effect show up is computed.
                 </li><br>
                 <li><span class="term">twitch</span>: Letters twitch occasionally - the battle UI has this by default. Intensity sets how far a letter
                     should shake. Default is 2.0.
                 </li><br>
             </ul>
-            <p class="exblock">
-                Note that the twitch effect should, at a later point, let you set shake frequency. Unfortunately you
-                can't do this yet.
-            </p>
 
             <p class="exblock">
-                <br><span class="function"><span class="CYF"></span> [lettereffect:x] or [lettereffect:x,intensity]</span>
-                This works the same as <span class="term">[effect:x]</span> / <span class="term">[effect:x,intensity]</span>, but it works <b>inline</b>.
+                <br><span class="function"><span class="CYF"></span> [lettereffect:x] or [lettereffect:x,intensity] or <span class="new"></span>[lettereffect:x,intensity,step]</span>
+                This works the same as <span class="term">[effect:x]</span>, but it works <b>inline</b>.
                 This means you can have <i>multiple</i> different text effects in a single line!
                 <br><br>
                 Keep in mind that, like all other inline text commands, this command will not execute if the player skips over it with X -
                 unless you set <span class="term">playerskipdocommand</span> to <span class="term">true</span>, first.
+                <br><br>
+                <span class="new">On top of that, the default step value for the shake effect is now 500. The value will be varied by about
+                <span class="term">80%</span> every time the delay until the next twitch effect show up is computed. It's high
+                so the twitch effects of all letters can play at various times!
             </ul>
 
             <p class="exblock">
@@ -293,7 +240,8 @@ it's w3c valid, at least
                 The wait command. Pauses your textbox temporarily based on the number you enter.
                 <br><br>
                 Technically: This will pause the textbox for <span class="term">x * 4</span> in-game frames.<br>
-                Calling <span class="term">[w:1]</span> will freeze the textbox for 4 in-game frames.<br>
+                Calling <span class="term">[w:1]</span> will freeze the textbox for 4 in-game frames.
+                <br><br>
                 <span class="term">[w:4]</span> is 16 in-game frames, <span class="term">[w:10]</span> is 40, and so on.
             </p>
 
@@ -312,22 +260,34 @@ it's w3c valid, at least
                 Sets the voice (sound per letter) to a sound located in <span class="term">YOUR MOD/Sounds/Voices</span>. Applies to all letters
                 after the command. It resets per dialogue. This has to be a .wav file, and you shouldn't include the
                 file extension when using <span class="term">[voice]</span>. If your voice sound is <span class="term">YOUR MOD/Sounds/Voices/mettaton.wav</span>, you can
-                use it with <span class="term">[voice:mettaton]</span>.<br>
+                use it with <span class="term">[voice:mettaton]</span>.
+                <br><br>
                 <span class="term">[voice:default]</span> resets to the default voice (beeps). If you have a voice sound named 'default', it will
                 be ignored.</p>
 
             <p class="exblock">
                 <br><span class="function">[novoice]</span>
                 Removes the voice for the letters after this command. It resets per dialogue.
-                <span style="color:#000">Useful for when you should be burning in hell.</span>
+                <span style="color:#000">Useful for when you should be burning in hell.</span></p>
+
+            <p class="exblock">
                 <br><span class="function">[next]</span>
-                Skips to the next dialogue automatically. You can also use this for textbox trickery. Here's an example
-                to replicate Flowey's text-changing effect if you dodge the Friendliness Pellets(tm) twice.
+                Skips to the next line of the current text object automatically.
+                If used in a monster's text object, skips the dialogue of all monsters, without concern for the other monsters' dialogue's state.
+                You can also use this for textbox trickery.
+                Here's an example to replicate Flowey's text-changing effect if you dodge the Friendliness Pellets(tm) twice.
             </p>
             <div class="code-container">
    <pre class="brush: lua;">first line:  "[noskip][voice:flowey][effect:none]RUN. [w:30]INTO. [w:30]THE.\n[w:30]BULLETS!![w:30][next]"
 second line: "[instant][effect:none]RUN. INTO. THE.\nfriendliness\npellets"</pre>
             </div>
+
+            <p class="exblock">
+                <br><span class="function"><span class="CYF"></span> [nextthisnow]</span>
+                Skips to the next dialogue of the current monster only, even if several monsters are speaking, effectively desyncing their text.
+                It acts like <span class="term">[next]</span> outside of monster text objects, its only difference is that it only affects the current monster
+                if used on a monster's text object.
+            </p>
 
             <p class="exblock">
                 <br><span class="function"><span class="CYF"></span> [finished]</span>
@@ -336,14 +296,12 @@ second line: "[instant][effect:none]RUN. INTO. THE.\nfriendliness\npellets"</pre
             </p>
 
             <p class="exblock">
-                <br><span class="function"><span class="CYF"></span> [nextthisnow]</span>
-                Skips to the next dialogue of all monsters automatically, without concern for the other monsters' dialogue's state.
-            </p>
-
-            <p class="exblock">
                 <br><span class="function"><span class="CYF"></span> [waitfor:key]</span>
                 Waits for the user to press the given key to continue the message.
                 Check the <span class="ref">Key List</span> to see the available keys.
+                <br><br>
+                <font style='color: #fff;'>* Note that keybinds are also accepted here.
+                For more info, check the page on <span class="ref">The Input Object</span></font>
             </p>
 
             <p class="exblock">
@@ -390,6 +348,13 @@ end</pre>
             <p class="exblock">
             <br><span class="function"><span class="CYF"></span> [letters:x]</span>
                 For this frame only, the text box will show the next x characters.
+                <br><span class="new"></span>If used with the command <span class="term">[lettersperframe:y]</span>, the next <span class="term">x+y-1</span>
+                letters will be displayed.
+            </p>
+
+            <p class="exblock">
+            <br><span class="new function"> [lettersperframe:x]</span>
+                For the rest of the line, the text box will show the next x characters every time one character should be displayed.
             </p>
 
             <p class="exblock">
@@ -417,21 +382,26 @@ end</pre>
 
             <p class="exblock">
                 <br><span class="function"><span class="CYF"></span> [mugshot:face], [mugshot:null] or [mugshot:{face1,face2,...,time}]</span>
-                <u>Overworld only.</u>
+                <u><span class="new"></span>Only usable with the Overworld's main text as well as the main text object in battles.</u>
                 <br><br>
                 Displays a set face sprite (or sequence of face sprites) next to your dialogue set by <span class="term">General.SetDialog</span>.<br>
                 Note that the overworld's automatic line break system will not account for face sprites set this way; instead, it's recommended to
                 set a face sprite in <span class="term">General.SetDialog</span> (see <span class="ref">The General Object</span>).
                 <br><br>
-                This function loads face sprites from <span class="term">YOUR MOD/Sprites/Mugshots</span>. You may put folder names in here, such as
-                <span class="term">[mugshot:Papyrus/suspicious]</span> for <span class="term">YOUR MOD/Sprites/Mugshots/Papyrus/suspicious.png</span>.<br>
-                Use <span class="term">[mugshot:null]</span> to revert the overworld text box back to normal.<br>
+                This function loads face sprites from <span class="term">YOUR MOD/Sprites/Mugshots</span>, and if none exists, from
+                <span class="term">Default/Sprites/Mugshots</span>. You may put folder names in here, such as
+                <span class="term">[mugshot:Papyrus/suspicious]</span> to get the file <span class="term">YOUR MOD/Sprites/Mugshots/Papyrus/suspicious.png</span>,
+                or if it doesn't exist, <span class="term">Default/Sprites/Mugshots/Papyrus/suspicious.png</span>.<br>
+                Use <span class="term">[mugshot:null]</span> or <span class="term">[mugshot]</span> to revert the text box back to normal.<br>
                 <br><br>
                 To use a sequence of face sprites, enter something such as<br><span class="term">[mugshot:{Papyrus/happy,Papyrus/suspicious,0.1}]</span>.<br>
                 This is a list of normal paths to put into <span class="term">[mugshot:x]</span> as described above, followed by the amount of real time
                 seconds between faces (such as with <span class="term">sprite.SetAnimation</span>).
                 <br><br>
-                If you do not provide a time, or the time you enter is &lt;= 0, a default value of <span class="term">0.2</span> will be used.
+                If you do not provide a time, or the time you enter is lower than 0, a default value of <span class="term">0.2</span> will be used.
+                <br><br>
+                <span class="new"></span><u>NOTE:</u> While the overworld's mugshots have a size of 140x140, in battles, the mugshots are 130x130, so if bigger
+                mugshots are applied in battles, 5 pixels around each edge are hidden.
             </p>
 
             <p class="exblock">
@@ -470,17 +440,15 @@ end</pre>
 
             <p class="exblock">
                 <br><span class="function">skipover</span>
-                Makes a command only be activated when the text is not skipped (by using any <span class="term">[instant]</span> command or the
-                player's skip if <span class="term">playerskipdocommand</span> is set to true). Has no effect on <span class="term">[w]</span> and
-                <span class="term">[letters]</span>.
+                Makes a command only be activated when the text is not skipped (by using any <span class="term">[instant]</span> command or by the
+                player skipping). Has no effect on the commands <span class="term">[w]</span> and <span class="term">[letters]</span>.
             </p>
 
             <p class="exblock">
                 <br><span class="function">skiponly</span>
-                The command this is attached to will only be activated if the text has been skipped by using any
-                <span class="term">[instant]</span> command, or if the player skips it manually and
-                <span class="term">playerskipdocommand</span> is set to true.
-                This tag disables the <span class="term">[w]</span> and <span class="term">[letters]</span> commands if used on them.
+                The command this is attached to will only be activated if the text has been skipped by using any <span class="term">[instant]</span>
+                command, or if the player skips it manually.
+                This tag disables the commands <span class="term">[w]</span> and <span class="term">[letters]</span> if used with them.
             </p>
         </div>
 

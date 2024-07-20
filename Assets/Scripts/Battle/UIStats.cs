@@ -28,7 +28,7 @@ public class UIStats : MonoBehaviour {
         hpLabel = LuaSpriteController.GetOrCreate(GameObject.Find("HPLabel"));
 
         hpTextMan = GameObject.Find("HPText").GetComponent<LuaTextManager>();
-        hpTextMan.SetFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_SMALLTEXT_NAME), false);
+        hpTextMan.SetFont(SpriteFontRegistry.Get(SpriteFontRegistry.UI_SMALLTEXT_NAME));
         hpTextMan.progressmode = "NONE";
         hpTextMan.HideBubble();
         hpTextMan.SetCaller(EnemyEncounter.script);
@@ -51,7 +51,8 @@ public class UIStats : MonoBehaviour {
         nameLevelTextMan.MoveTo(0, -11);
         hpLabel.MoveTo(0, -9);
         lifebar.background.MoveTo(31, -14);
-        hpTextMan.MoveTo(70, -11);
+        hpTextMan.MoveTo(0, -11);
+        setMaxHP();
         hpRect.transform.localPosition = new Vector3(PlayerCharacter.instance.Name.Length > 6 ? 286 : 215, 0, 0);
     }
 
@@ -70,7 +71,7 @@ public class UIStats : MonoBehaviour {
         if (!initialized || stopUIUpdate) return;
         if (lifebar.background.spritename == "bar-px")
             lifebar.Resize(Mathf.Min(120, PlayerCharacter.instance.MaxHP * 1.2f), 20);
-        hpTextMan.transform.position = new Vector3(lifebar.background.absx + lifebar.backgroundRt.sizeDelta.x + 14, hpTextMan.transform.position.y, hpTextMan.transform.position.z);
+        hpTextMan.MoveToAbs(lifebar.background.absx + lifebar.backgroundRt.sizeDelta.x + 14, hpTextMan.transform.position.y);
         setHP(PlayerCharacter.instance.HP);
     }
 

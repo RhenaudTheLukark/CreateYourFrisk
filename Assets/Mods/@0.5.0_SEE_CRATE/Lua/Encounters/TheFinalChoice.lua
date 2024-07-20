@@ -25,54 +25,54 @@ function EncounterStarting()
 	fade.x = 320
 	fade.y = 240
 	fade.Scale(640, 480)
-	fade.alpha = 1
-    enemies[1].Call("SetSprite", "Punderbolt/normal")
-    enemies[2]["currentdialogue"] = {"[noskip][func:LaunchFade, true][w:30][next]",
-                                     "[noskip][func:Animate, smile]Here we are.[w:30][next]",
-                                     "[noskip][func:Animate, normal]Now that we're together,[w:10] what will you do?[w:30][next]",
-                                     "[noskip][func:Animate, angry]Will you attempt to fight me?[w:30][next]",
-									 "[noskip][func:Animate, happy]Or will you leave me alone?[w:30][next]",
-									 "[noskip][func:Animate, normal][func:Unpause]It's your choice,[w:10] now.[w:30][next]",
+	enemies[1].Call("SetSprite", "Punderbolt/normal")
+	enemies[2].Call("SetBubbleOffset", {0, 30})
+	enemies[2]["currentdialogue"] = {"[noskip][func:LaunchFade, true][w:30][next]",
+									 "[noskip][effect:none][func:Animate, smile]Here we are.[w:30][next]",
+									 "[noskip][effect:none][func:Animate, normal]Now that we're together,[w:10] what will you do?[w:30][next]",
+									 "[noskip][effect:none][func:Animate, angry]Will you attempt to fight me?[w:30][next]",
+									 "[noskip][effect:none][func:Animate, happy]Or will you leave me alone?[w:30][next]",
+									 "[noskip][effect:none][func:Animate, normal][func:Unpause]It's your choice,[w:10] now.[w:30][next]",
 									 "[func:State, DEFENDING][next]"}
 	enemies[1]["randomdialogue"] = {""}
 	require "Waves/bullettest_touhou"
-    State("ENEMYDIALOGUE")
+	State("ENEMYDIALOGUE")
 end
 
 function LaunchFade(begin, whitee)
-    if whitee == nil then whitee = false end
-    white = whitee
-    if whitee then fade.Set("white") end
-    if begin then
-	    beginfade = true
-	    fade.alpha = 1
+	if whitee == nil then whitee = false end
+	white = whitee
+	if whitee then fade.Set("white") end
+	if begin then
+		beginfade = true
+		fade.alpha = 1
 	else
-	    endfade = true
-	    fade.alpha = 0
-    end
+		endfade = true
+		fade.alpha = 0
+	end
 end
 
 function Update()
 	if (beginfade or endfade) and Time.time - currentTime >= 1/3 then
-	    alphaup = endfade
+		alphaup = endfade
 		endfade = false
 		beginfade = false
-		if alphaup then  fade.alpha = fade.alpha + Time.dt
-		else  		     fade.alpha = fade.alpha - Time.dt
+		if alphaup then fade.alpha = fade.alpha + Time.dt
+		else  			fade.alpha = fade.alpha - Time.dt
 		end
 	end
 	if (fade.alpha * 1000) % 1000 ~= 1000 and (fade.alpha * 1000) % 1000 ~= 0 then
-		if alphaup then  fade.alpha = fade.alpha + Time.dt
-		else  		     fade.alpha = fade.alpha - Time.dt
+		if alphaup then fade.alpha = fade.alpha + Time.dt
+		else  			fade.alpha = fade.alpha - Time.dt
 		end
 		if fade.alpha > 1 then fade.alpha = 1 end
 		if fade.alpha < 0 then fade.alpha = 0 end
-		if white and (fade.alpha * 1000) % 1000 > 500 and enemies[1]["name"] == "Punderbolt" then enemies[1].Call("Kill") enemies[2].Call("Kill") end
+		if white and (fade.alpha * 1000) % 1000 > 500 then enemies[1].Call("Kill") enemies[2].Call("Kill") end
 	elseif white then
-	    count = count + 1
+		count = count + 1
 		if count == 30 then
-		    SetAlMightyGlobal("CrateYourFrisk", true)
-		    Misc.DestroyWindow()
+			SetAlMightyGlobal("CrateYourFrisk", true)
+			Misc.DestroyWindow()
 		end
 	end
 end

@@ -68,7 +68,6 @@ sysinfo.txt
 /.vs/*
 /.vscode/*
 /.bin/*
-/.github
 
 # GIMP project files
 *.xcf

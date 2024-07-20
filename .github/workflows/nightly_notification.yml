@@ -1,0 +1,23 @@
+name: Send a message to the channel cyf-nightly
+
+on:
+  workflow_run:
+    workflows: ["Build CYF"]
+    types:
+      - completed
+  workflow_dispatch:
+
+jobs:
+  message:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Discord Webhook Action
+      uses: tsickert/discord-webhook@v5.3.0
+      with:
+        webhook-url: ${{ secrets.NIGHTLY_WEBHOOK_LINK }}
+        username: Poseur Mail Service
+        avatar-url: https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png
+        content: |
+          The last CYF nightly is ready to be used! Enjoy!
+          The links are stored here: https://discord.com/channels/110129114882543616/220238710271115265/1129795830317064314
+        

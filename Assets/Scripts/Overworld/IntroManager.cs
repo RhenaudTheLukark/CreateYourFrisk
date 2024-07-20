@@ -82,7 +82,7 @@ public class IntroManager : MonoBehaviour {
                 //Check end of intro
                 if (text.AllLinesComplete()) {
                     fadeMusic = true;
-                    text.DestroyChars();
+                    text.HideTextObject();
                 } else {
                     img.sprite = SpriteRegistry.Get("Intro/" + imagePaths[++currentIndex]);
                     img.SetNativeSize();

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MoonSharp.Interpreter;
+using System;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
@@ -34,6 +36,22 @@ public class LuaPlayerUI {
         get { return UIStats.instance.hpTextMan; }
     }
 
+    public LuaTextManager maintext {
+        get { return UIController.instance.mainTextManager; }
+    }
+
+    public LuaSpriteController mugshot {
+        get { return UIController.instance.mainTextManager.mugshot; }
+    }
+
+    public LuaSpriteController mugshotmask {
+        get { return UIController.instance.mainTextManager.mugshotMask; }
+    }
+
+    public DynValue enemylifebarlist {
+        get { return DynValue.NewTable(null, UIController.instance.arenaParent.GetComponentsInChildren<LifeBarController>().Select(p => UserData.Create(p)).ToArray()); }
+    }
+
 
     public static LuaSpriteController fightbtn {
         get { return LuaSpriteController.GetOrCreate(UIController.instance.fightButton.gameObject); }
@@ -52,6 +70,11 @@ public class LuaPlayerUI {
     }
 
 
+    public static LuaCYFObject root {
+        get { return new LuaCYFObject(Object.FindObjectOfType<Canvas>().transform); }
+    }
+
+
     public void StopUpdate(bool toggle) {
         ui.stopUIUpdate = toggle;
     }
@@ -62,7 +85,7 @@ public class LuaPlayerUI {
 
     public void RepositionHPElements() {
         hpbar.transform.position = new Vector3(ui.hpLabel.absx + ui.hpLabel.spr.GetComponent<RectTransform>().sizeDelta.x + 8, hpbar.transform.position.y, hpbar.transform.position.z);
-        ui.hpTextMan.transform.position = new Vector3(hpbar.background.absx + hpbar.backgroundRt.sizeDelta.x + 14, ui.hpTextMan.transform.position.y, ui.hpTextMan.transform.position.z);
+        ui.hpTextMan.MoveToAbs(hpbar.background.absx + hpbar.backgroundRt.sizeDelta.x + 14, ui.hpTextMan.transform.position.y);
     }
 
     public void Reset() {
@@ -143,7 +166,7 @@ public class LuaPlayerUI {
         if (!UIController.instance.buttonDictionary.TryGetValue(btn, out image))
             throw new CYFException("ResetButtonPosition() can only take \"FIGHT\", \"ACT\", \"ITEM\" or \"MERCY\", but you entered \"" + btn + "\".");
         UIController.instance.buttonBasePositions.TryGetValue(btn, out basePos);
-        image.transform.position = new Vector3(resetX ? basePos.x : image.transform.position.x, resetY ? basePos.y : image.transform.position.y);
+        image.rectTransform.anchoredPosition = new Vector3(resetX ? basePos.x : image.transform.position.x, resetY ? basePos.y : image.transform.position.y);
         UpdateButtons();
     }
 

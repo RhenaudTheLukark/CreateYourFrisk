@@ -5,6 +5,11 @@ using MoonSharp.Interpreter.Loaders;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
+internal class LuaTextManagerDescriptor : MoonSharp.Interpreter.Interop.StandardUserDataDescriptor {
+    public LuaTextManagerDescriptor(Type type, InteropAccessMode accessMode) : base(type, accessMode) { }
+    public override string AsString(object obj) { return "LuaTextManager"; }
+}
+
 /// <summary>
 /// Takes care of creating <see cref="Script"/> objects with globally bound functions.
 /// Doubles as a dictionary for the SetGlobal/GetGlobal functions attached to these scripts.
@@ -31,13 +36,14 @@ public static class LuaScriptBinder {
         UserData.RegisterType<LuaSpriteController>();
         UserData.RegisterType<LuaInventory>();
         UserData.RegisterType<Misc>();
-        UserData.RegisterType<LuaTextManager>();
+        UserData.RegisterType<LuaTextManager>(new LuaTextManagerDescriptor(typeof(LuaTextManager), InteropAccessMode.Default));
         UserData.RegisterType<LuaFile>();
         UserData.RegisterType<LuaSpriteShader>();
         UserData.RegisterType<LuaSpriteShader.MatrixFourByFour>();
         UserData.RegisterType<LuaDiscord>();
         UserData.RegisterType<LuaPlayerUI>();
         UserData.RegisterType<LifeBarController>();
+        UserData.RegisterType<LuaCYFObject>();
 
         // Overworld bindings
         UserData.RegisterType<LuaEventOW>();
@@ -99,9 +105,11 @@ public static class LuaScriptBinder {
                 script.Globals["Encounter"] = EnemyEncounter.script;
 
             DynValue PlayerStatus = UserData.Create(PlayerController.luaStatus);
-            DynValue ArenaStatus = UserData.Create(ArenaManager.luaStatus);
             script.Globals.Set("Player", PlayerStatus);
+            DynValue ArenaStatus = UserData.Create(ArenaManager.luaStatus);
             script.Globals.Set("Arena", ArenaStatus);
+            DynValue LuaUI = UserData.Create(new LuaPlayerUI());
+            script.Globals.Set("UI", LuaUI);
         } else if (!GlobalControls.isInShop) {
             try {
                 DynValue PlayerOW = UserData.Create(EventManager.instance.luaPlayerOw);
@@ -143,8 +151,6 @@ public static class LuaScriptBinder {
         script.Globals.Set("Time", TimeInfo);
         DynValue DiscordMgr = UserData.Create(new LuaDiscord());
         script.Globals.Set("Discord", DiscordMgr);
-        DynValue LuaUI = UserData.Create(new LuaPlayerUI());
-        script.Globals.Set("UI", LuaUI);
         return script;
     }
 
@@ -219,7 +225,7 @@ public static class LuaScriptBinder {
             alMightyDict.Remove(key);
         alMightyDict.Add(key, value);
         if (reload)
-            SaveLoad.SaveAlMighty();
+            SaveLoad.SaveAlMighty(key);
     }
 
     /// <summary>
@@ -252,11 +258,14 @@ public static class LuaScriptBinder {
         UserData.RegisterType<LuaSpriteController>();
         UserData.RegisterType<LuaInventory>();
         UserData.RegisterType<Misc>();
-        UserData.RegisterType<LuaTextManager>();
+        UserData.RegisterType<LuaTextManager>(new LuaTextManagerDescriptor(typeof(LuaTextManager), InteropAccessMode.Default));
         UserData.RegisterType<LuaFile>();
         UserData.RegisterType<LuaSpriteShader>();
         UserData.RegisterType<LuaSpriteShader.MatrixFourByFour>();
         UserData.RegisterType<LuaDiscord>();
+        UserData.RegisterType<LuaPlayerUI>();
+        UserData.RegisterType<LifeBarController>();
+        UserData.RegisterType<LuaCYFObject>();
 
         // Overworld bindings
         UserData.RegisterType<LuaEventOW>();
@@ -353,7 +362,7 @@ public static class LuaScriptBinder {
 
         GameObject go = Object.Instantiate(Resources.Load<GameObject>("Prefabs/CstmTxtContainer"));
         LuaTextManager luatm = go.GetComponentInChildren<LuaTextManager>();
-        go.GetComponent<RectTransform>().position = new Vector2((float)position.Table.Get(1).Number, (float)position.Table.Get(2).Number);
+        luatm.MoveToAbs((float)position.Table.Get(1).Number, (float)position.Table.Get(2).Number);
 
         UnitaleUtil.GetChildPerName(go.transform, "BubbleContainer").GetComponent<RectTransform>().pivot = new Vector2(0, 1);
         UnitaleUtil.GetChildPerName(go.transform, "BubbleContainer").GetComponent<RectTransform>().localPosition = new Vector2(-12, 8);
@@ -362,6 +371,7 @@ public static class LuaScriptBinder {
         UnitaleUtil.GetChildPerName(go.transform, "BackVert").GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth - 20, 100);            //BackVert
         UnitaleUtil.GetChildPerName(go.transform, "CenterHorz").GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth + 16, 96 - 16 * 2);  //CenterHorz
         UnitaleUtil.GetChildPerName(go.transform, "CenterVert").GetComponent<RectTransform>().sizeDelta = new Vector2(textWidth - 16, 96);           //CenterVert
+        luatm.Move(0, 0);
         foreach (ScriptWrapper scrWrap in ScriptWrapper.instances) {
             if (scrWrap.script != scr) continue;
             luatm.SetCaller(scrWrap);
@@ -437,24 +447,22 @@ public static class LuaScriptBinder {
                     UnderFont font = SpriteFontRegistry.Get(fontPartTwo);
                     if (font == null)
                         throw new CYFException("The font \"" + fontPartTwo + "\" doesn't exist.\nYou should check if you made a typo, or if the font really is in your mod.");
-                    luatm.SetFont(font, true);
+                    luatm.SetFont(font);
                 } else luatm.ResetFont();
             } else     luatm.ResetFont();
         } else         luatm.ResetFont();
 
         // Bubble variables
         luatm.bubble = true;
-        luatm.textMaxWidth = textWidth;
+        luatm._textMaxWidth = textWidth;
         luatm.bubbleHeight = bubbleHeight;
 
         if (enableLateStart)
             luatm.lateStartWaiting = true;
-        luatm.SetText(text);
-
+        luatm.SetText(text, false);
         luatm.ShowBubble();
 
         if (!enableLateStart) return luatm;
-        luatm.DestroyChars();
         luatm.LateStart();
         return luatm;
     }

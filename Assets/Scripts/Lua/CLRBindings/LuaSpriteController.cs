@@ -36,6 +36,7 @@ public class LuaSpriteController {
         img.GetComponent<Image>().color = new Color(1, 1, 1, 1);
 
         Mask("OFF");
+        img.GetComponent<MaskImage>().inverted = false;
         shader.Revert();
 
         StopAnimation();
@@ -57,89 +58,76 @@ public class LuaSpriteController {
     // The x position of the sprite, relative to the arena position and its anchor.
     public float x {
         get {
-            float val = img.GetComponent<RectTransform>().anchoredPosition.x;
-            if (img.transform.parent == null) return val;
-            if (img.transform.parent.name == "SpritePivot")
-                val += img.transform.parent.localPosition.x;
-            return val;
+            float letterAdjustShift = 0;
+            if (tag == "letter") {
+                TextManager tm = img.transform.parent.GetComponent<TextManager>();
+                letterAdjustShift = tm.letterAdjustShifts[tm.letters.FindIndex(l => l.image.gameObject == img)].x;
+            }
+            return letterAdjustShift + img.GetComponent<RectTransform>().anchoredPosition.x + (GetTarget().gameObject != img ? GetTarget().transform.localPosition.x : 0);
         }
-        set {
-            if (img.transform.parent != null && img.transform.parent.name == "SpritePivot")
-                img.transform.parent.localPosition = new Vector3(value, img.transform.parent.localPosition.y, img.transform.parent.localPosition.z) - (Vector3)img.GetComponent<RectTransform>().anchoredPosition;
-            else
-                img.GetComponent<RectTransform>().anchoredPosition = new Vector2(value, img.GetComponent<RectTransform>().anchoredPosition.y);
-        }
+        set { MoveTo(value, y); }
     }
 
     // The y position of the sprite, relative to the arena position and its anchor.
     public float y {
         get {
-            float val = img.GetComponent<RectTransform>().anchoredPosition.y;
-            if (img.transform.parent == null) return val;
-            if (img.transform.parent.name == "SpritePivot")
-                val += img.transform.parent.localPosition.y;
-            return val;
-        }
-        set {
-            if (img.transform.parent != null && img.transform.parent.name == "SpritePivot")
-                img.transform.parent.localPosition = new Vector3(img.transform.parent.localPosition.x, value, img.transform.parent.localPosition.z) - (Vector3)img.GetComponent<RectTransform>().anchoredPosition;
-            else
-                img.GetComponent<RectTransform>().anchoredPosition = new Vector2(img.GetComponent<RectTransform>().anchoredPosition.x, value);
-        }
+            float letterAdjustShift = 0;
+            if (tag == "letter") {
+                TextManager tm = img.transform.parent.GetComponent<TextManager>();
+                letterAdjustShift = tm.letterAdjustShifts[tm.letters.FindIndex(l => l.image.gameObject == img)].y;
+            }
+            return letterAdjustShift + img.GetComponent<RectTransform>().anchoredPosition.y + (GetTarget().gameObject != img ? GetTarget().transform.localPosition.y : 0); }
+        set { MoveTo(x, value); }
     }
 
     // The z position of the sprite, relative to the arena position and its anchor. (Only useful in the overworld)
     public float z {
-        get { return GetTarget().localPosition.z; }
-        set {
-            Transform target = GetTarget();
-            target.localPosition = new Vector3(target.localPosition.x, target.localPosition.y, value);
-        }
+        get { return img.GetComponent<RectTransform>().localPosition.z + (GetTarget().gameObject != img ? GetTarget().transform.localPosition.z : 0); }
+        set { MoveTo(x, y, value); }
     }
 
     // The x position of the sprite, relative to the bottom left corner of the screen.
     public float absx {
-        get { return GetTarget().position.x; }
-        set {
-            Transform target = GetTarget();
-            target.position = new Vector3(value, target.position.y, target.position.z);
+        get {
+            float letterAdjustShift = 0;
+            if (tag == "letter") {
+                TextManager tm = img.transform.parent.GetComponent<TextManager>();
+                letterAdjustShift = tm.letterAdjustShifts[tm.letters.FindIndex(l => l.image.gameObject == img)].x;
+            }
+            return letterAdjustShift + GetTarget().position.x;
         }
+        set { MoveToAbs(value, absy); }
     }
 
     // The y position of the sprite, relative to the bottom left corner of the screen.
     public float absy {
-        get { return GetTarget().position.y; }
-        set {
-            Transform target = GetTarget();
-            target.position = new Vector3(target.position.x, value, target.position.z);
+        get {
+            float letterAdjustShift = 0;
+            if (tag == "letter") {
+                TextManager tm = img.transform.parent.GetComponent<TextManager>();
+                letterAdjustShift = tm.letterAdjustShifts[tm.letters.FindIndex(l => l.image.gameObject == img)].y;
+            }
+            return letterAdjustShift + GetTarget().position.y;
         }
+        set { MoveToAbs(absx, value); }
     }
 
     // The z position of the sprite, relative to the bottom left corner of the screen. (Only useful in the overworld)
     public float absz {
         get { return GetTarget().position.z; }
-        set {
-            Transform target = GetTarget();
-            target.position = new Vector3(target.position.x, target.position.y, value);
-        }
+        set { MoveToAbs(absx, absy, value); }
     }
 
     // The x scale of the sprite. This variable is used for the same purpose as img, to be able to do other things when setting the variable
     public float xscale {
         get { return xScale; }
-        set {
-            xScale = value;
-            Scale(xScale, yScale);
-        }
+        set { Scale(value, yScale); }
     }
 
     // The y scale of the sprite.
     public float yscale {
         get { return yScale; }
-        set {
-            yScale = value;
-            Scale(xScale, yScale);
-        }
+        set { Scale(xScale, value); }
     }
 
     // Is the sprite active? True if the image of the sprite isn't null, false otherwise
@@ -180,10 +168,9 @@ public class LuaSpriteController {
     // Is the current animation finished? True if there is a finished animation, false otherwise
     public bool animcomplete {
         get {
-            if (keyframes == null)
-                if (img.GetComponent<KeyframeCollection>())
-                    keyframes = img.GetComponent<KeyframeCollection>();
-            if (keyframes == null) return false;
+            if (keyframes == null && img.GetComponent<KeyframeCollection>())
+                keyframes = img.GetComponent<KeyframeCollection>();
+            if (keyframes == null)                        return false;
             if (keyframes.enabled == false)               return true;
             if (loop == KeyframeCollection.LoopMode.LOOP) return false;
             return keyframes.enabled && keyframes.animationComplete();
@@ -250,9 +237,6 @@ public class LuaSpriteController {
         set {
             if (value == null)
                 throw new CYFException("sprite.color can't be nil.");
-            for (int i = 0; i < value.Length; i++)
-                if (value[i] < 0)        value[i] = 0;
-                else if (value[i] > 255) value[i] = 255;
             if (img.GetComponent<Image>()) {
                 Image imgtemp = img.GetComponent<Image>();
                 // If we don't have three/four floats, we throw an error
@@ -315,16 +299,51 @@ public class LuaSpriteController {
         }
     }
 
-    // The rotation of the sprite
-    public float rotation {
-        get { return internalRotation.z; }
+    // The local rotation of the sprite
+    public float localRotation {
+        get {
+            if (GlobalControls.isInFight && EnemyEncounter.script.GetVar("noscalerotationbug").Boolean) {
+                return Math.Mod(img.transform.localEulerAngles.z + (yScale < 0 ? 180 : 0), 360);
+            }
+            return Math.Mod(internalRotation.z - img.transform.parent.eulerAngles.z, 360);
+        }
         set {
             // We mod the value from 0 to 360 because angles are between 0 and 360 normally
-            internalRotation.z = Math.Mod(value, 360);
-            img.GetComponent<RectTransform>().eulerAngles = internalRotation;
+            internalRotation.z = Math.Mod(img.transform.parent.eulerAngles.z + value, 360);
+            img.transform.eulerAngles = internalRotation;
+
             if (img.GetComponent<Projectile>() && img.GetComponent<Projectile>().isPP())
                 img.GetComponent<Projectile>().needSizeRefresh = true;
         }
+    }
+
+    // The rotation of the sprite
+    public float rotation {
+        get {
+            if (GlobalControls.isInFight && EnemyEncounter.script.GetVar("noscalerotationbug").Boolean) {
+                return Math.Mod(img.transform.eulerAngles.z + (yScale < 0 ? 180 : 0), 360);
+            }
+            return internalRotation.z;
+        }
+        set {
+            // We mod the value from 0 to 360 because angles are between 0 and 360 normally
+            internalRotation.z = Math.Mod(value, 360);
+            img.transform.eulerAngles = internalRotation;
+
+            if (img.GetComponent<Projectile>() && img.GetComponent<Projectile>().isPP())
+                img.GetComponent<Projectile>().needSizeRefresh = true;
+        }
+    }
+
+    private float GetParentRot() {
+        Transform t = spr.transform.parent;
+        while (t != null) {
+            CYFSprite sprite = t.GetComponent<CYFSprite>();
+            if (sprite != null)
+                return sprite.ctrl.rotation;
+            t = t.parent;
+        }
+        return 0;
     }
 
     // The layer of the sprite
@@ -348,6 +367,14 @@ public class LuaSpriteController {
                 target.SetParent(GameObject.Find(value + "Layer").transform);
                 img.GetComponent<MaskImage>().inverted = false;
             } catch { target.SetParent(parent); }
+        }
+    }
+
+    public int characterNumber {
+        get {
+            if (tag != "letter")
+                throw new CYFException("You can only use characterNumber on letters!");
+            return img.GetComponent<Letter>().characterNumber;
         }
     }
 
@@ -392,6 +419,11 @@ public class LuaSpriteController {
         return ctrl;
     }
 
+    public static bool HasSpriteController(GameObject go) {
+        CYFSprite newSpr = go.GetComponent<CYFSprite>();
+        return newSpr != null && newSpr.ctrl != null;
+    }
+
     // Changes the sprite of this instance
     public void Set(string name) {
         // Change the sprite
@@ -416,23 +448,11 @@ public class LuaSpriteController {
             img.GetComponent<Projectile>().needUpdateTex = true;
     }
 
-    // Sets the parent of a sprite.
-    public void SetParent(LuaSpriteController parent) {
-        if (parent == null)                                               throw new CYFException("sprite.SetParent() can't set null as the sprite's parent.");
-        if (tag == "event" || parent != null && parent.tag == "event")    throw new CYFException("sprite.SetParent() can not be used with an Overworld Event's sprite.");
-        if (tag == "letter" ^ (parent != null && parent.tag == "letter")) throw new CYFException("sprite.SetParent() can not be used between letter sprites and other sprites.");
-        try {
-            GetTarget().SetParent(parent.img.transform);
-            if (img.GetComponent<MaskImage>())
-                img.GetComponent<MaskImage>().inverted = parent._masked == MaskMode.INVERTEDSPRITE || parent._masked == MaskMode.INVERTEDSTENCIL;
-        } catch { throw new CYFException("sprite.SetParent(): You tried to set a removed sprite/nil sprite as this sprite's parent."); }
-    }
-
     // Sets the pivot of a sprite (its rotation point)
     public void SetPivot(float x, float y) {
         img.GetComponent<RectTransform>().pivot = new Vector2(x, y);
         if (img.transform.parent != null && img.transform.parent.name == "SpritePivot")
-            img.GetComponent<RectTransform>().localPosition = new Vector3(0, 0, 0);
+            img.transform.localPosition = new Vector3(0, 0, 0);
     }
 
     // Sets the anchor of a sprite
@@ -441,22 +461,18 @@ public class LuaSpriteController {
         img.GetComponent<RectTransform>().anchorMax = new Vector2(x, y);
     }
 
-    public void Move(float x, float y) {
+    public void Move(float x, float y) { Move(x, y, 0); }
+    public void Move(float x, float y, float z) { MoveTo(this.x + x, this.y + y, this.z + z); }
+    public void MoveTo(float x, float y) { MoveTo(x, y, GetTarget().localPosition.z); }
+    public void MoveTo(float x, float y, float z) {
         if (img.transform.parent != null && img.transform.parent.name == "SpritePivot")
-            img.transform.parent.localPosition = new Vector3(x + this.x, y + this.y, img.transform.parent.localPosition.z) - (Vector3)img.GetComponent<RectTransform>().anchoredPosition;
-        else
-            img.GetComponent<RectTransform>().anchoredPosition = new Vector2(x + this.x, y + this.y);
-    }
-
-    public void MoveTo(float x, float y) {
-        if (img.transform.parent != null && img.transform.parent.name == "SpritePivot")
-            img.transform.parent.localPosition = new Vector3(x, y, img.transform.parent.localPosition.z) - (Vector3)img.GetComponent<RectTransform>().anchoredPosition;
+            GetTarget().localPosition = new Vector3(x, y, z) - (Vector3)img.GetComponent<RectTransform>().anchoredPosition;
         else
             img.GetComponent<RectTransform>().anchoredPosition = new Vector2(x, y);
     }
-
-    public void MoveToAbs(float x, float y) {
-        GetTarget().position = new Vector3(x, y, GetTarget().position.z);
+    public void MoveToAbs(float x, float y) { MoveToAbs(x, y, GetTarget().position.z); }
+    public void MoveToAbs(float x, float y, float z) {
+        GetTarget().position = new Vector3(x, y, z);
     }
 
     // Sets both xScale and yScale of a sprite
@@ -471,16 +487,16 @@ public class LuaSpriteController {
         } else if (img.GetComponent<Image>()) { // In battle
             nativeSizeDelta = new Vector2(img.GetComponent<Image>().sprite.texture.width, img.GetComponent<Image>().sprite.texture.height);
             img.GetComponent<RectTransform>().sizeDelta = new Vector2(nativeSizeDelta.x * Mathf.Abs(xScale), nativeSizeDelta.y * Mathf.Abs(yScale));
-            // img.GetComponent<RectTransform>().localScale = new Vector3(xs < 0 ? -1 : 1, ys < 0 ? -1 : 1, 1);
+            // img.transform.localScale = new Vector3(xs < 0 ? -1 : 1, ys < 0 ? -1 : 1, 1);
         } else { // In overworld
             nativeSizeDelta = new Vector2(img.GetComponent<SpriteRenderer>().sprite.texture.width, img.GetComponent<SpriteRenderer>().sprite.texture.height);
-            img.GetComponent<RectTransform>().localScale = new Vector3(100 * Mathf.Abs(xScale), 100 * Mathf.Abs(yScale), 1);
+            img.transform.localScale = new Vector3(100 * Mathf.Abs(xScale), 100 * Mathf.Abs(yScale), 1);
         }
 
         // Flip the sprite horizontally and/or vertically if its scale is negative
-        float zValue = GlobalControls.isInFight && EnemyEncounter.script.GetVar("noscalerotationbug").Boolean ? img.GetComponent<RectTransform>().eulerAngles.z : internalRotation.z;
+        float zValue = internalRotation.z;
         internalRotation = new Vector3(ys < 0 ? 180 : 0, xs < 0 ? 180 : 0, zValue);
-        img.GetComponent<RectTransform>().eulerAngles = internalRotation;
+        img.transform.eulerAngles = internalRotation;
     }
 
     // Sets an animation for this instance
@@ -779,8 +795,53 @@ public class LuaSpriteController {
 
     private Transform GetTarget() {
         Transform target = img.transform;
-        if (img.transform.parent != null && img.transform.parent.name == "SpritePivot")
-            target = target.parent;
+        if (target.parent && target.parent.name == "SpritePivot")
+            return target.parent.transform;
         return target;
+    }
+
+    ////////////////////
+    // Children stuff //
+    ////////////////////
+
+    public string name {
+        get { return img.name; }
+    }
+
+    public int childIndex {
+        get { return img.transform.GetSiblingIndex() + 1; }
+        set { img.transform.SetSiblingIndex(value - 1); }
+    }
+    public int childCount {
+        get { return img.transform.childCount; }
+    }
+
+    public DynValue GetParent() {
+        return UnitaleUtil.GetObjectParent(img.transform);
+    }
+
+    public void SetParent(object parent) {
+        UnitaleUtil.SetObjectParent(this, parent);
+        LuaSpriteController sParent = parent as LuaSpriteController;
+        ProjectileController pParent = parent as ProjectileController;
+        if (pParent != null)
+            sParent = pParent.sprite;
+        if (sParent == null)
+            return;
+        if (img.GetComponent<MaskImage>())
+            img.GetComponent<MaskImage>().inverted = sParent._masked == MaskMode.INVERTEDSPRITE || sParent._masked == MaskMode.INVERTEDSTENCIL;
+    }
+
+    public DynValue GetChild(int index) {
+        if (index > childCount)
+            throw new CYFException("This object only has " + childCount + " children yet you try to get its child #" + index);
+        return UnitaleUtil.GetObject(img.transform.GetChild(--index));
+    }
+
+    public DynValue[] GetChildren() {
+        DynValue[] tab = new DynValue[img.transform.childCount];
+        for (int i = 0; i < img.transform.childCount; i++)
+            tab[i] = GetChild(i + 1);
+        return tab;
     }
 }
