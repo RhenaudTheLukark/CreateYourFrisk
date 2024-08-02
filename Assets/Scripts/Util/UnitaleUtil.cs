@@ -5,8 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using UnityEngine.UI;
 using Object = UnityEngine.Object;
+using System.IO;
 
 /// <summary>
 /// Utility class for the Unitale engine.
@@ -737,6 +737,36 @@ public static class UnitaleUtil {
 
     public static bool IsSpecialAnnouncement(string str) {
         return str == "4eab1af3ab6a932c23b3cdb8ef618b1af9c02088";
+    }
+
+    /// <summary>
+    /// Creates a relative path from one file or folder to another.
+    /// </summary>
+    /// <param name="fromPath">Contains the directory that defines the start of the relative path.</param>
+    /// <param name="toPath">Contains the path that defines the endpoint of the relative path.</param>
+    /// <returns>The relative path from the start directory to the end path or <c>toPath</c> if the paths are not related.</returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="UriFormatException"></exception>
+    /// <exception cref="InvalidOperationException"></exception>
+    public static string MakeRelativePath(string fromPath, string toPath) {
+        if (string.IsNullOrEmpty(fromPath))
+            throw new ArgumentNullException("fromPath");
+        if (string.IsNullOrEmpty(toPath))
+            throw new ArgumentNullException("toPath");
+
+        Uri fromUri = new Uri(fromPath);
+        Uri toUri = new Uri(toPath);
+
+        if (fromUri.Scheme != toUri.Scheme) { return toPath; } // path can't be made relative.
+
+        Uri relativeUri = fromUri.MakeRelativeUri(toUri);
+        string relativePath = Uri.UnescapeDataString(relativeUri.ToString());
+
+        if (toUri.Scheme.Equals("file", StringComparison.InvariantCultureIgnoreCase)) {
+            relativePath = relativePath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+        }
+
+        return relativePath;
     }
 
     public static bool TryCall(ScriptWrapper script, string func, DynValue param) { return TryCall(script, func, new[] { param }); }

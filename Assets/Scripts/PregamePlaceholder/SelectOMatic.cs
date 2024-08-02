@@ -27,8 +27,8 @@ public class SelectOMatic : MonoBehaviour {
     public GameObject encounterBox, devMod, content, retromodeWarning;
     public GameObject btnList,              btnBack,              btnNext,              btnExit,              btnOptions;
     public Text       ListText, ListShadow, BackText, BackShadow, NextText, NextShadow, ExitText, ExitShadow, OptionsText, OptionsShadow;
-    public GameObject ModContainer,  ModBackground,     ModTitle,     ModTitleShadow,     EncounterCount,     EncounterCountShadow;
-    public GameObject AnimContainer, AnimModBackground, AnimModTitle, AnimModTitleShadow, AnimEncounterCount, AnimEncounterCountShadow;
+    public GameObject ModContainer,  ModBackground,     ModTitle,     ModTitleShadow,     EncounterCount,     EncounterCountShadow,     FolderText,     FolderTextShadow;
+    public GameObject AnimContainer, AnimModBackground, AnimModTitle, AnimModTitleShadow, AnimEncounterCount, AnimEncounterCountShadow, AnimFolderText, AnimFolderTextShadow;
 
     // Use this for initialization
     private void Start() {
@@ -39,17 +39,10 @@ public class SelectOMatic : MonoBehaviour {
         UnitaleUtil.firstErrorShown = false;
 
         // Load directory info
-        DirectoryInfo di = new DirectoryInfo(Path.Combine(FileLoader.DataRoot, "Mods"));
-        var modDirsTemp = di.GetDirectories();
+        DirectoryInfo modsFolder = new DirectoryInfo(Path.Combine(FileLoader.DataRoot, "Mods"));
 
-        // Remove mods with 0 encounters and hidden mods from the list
-        List<DirectoryInfo> purged = (from modDir in modDirsTemp
-                                      let encPath = Path.Combine(FileLoader.DataRoot, "Mods/" + modDir.Name + "/Lua/Encounters")
-                                      where new DirectoryInfo(encPath).Exists
-                                      let hasEncounters = new DirectoryInfo(encPath).GetFiles("*.lua").Where(e => !e.Name.StartsWith("@")).Any()
-                                      where hasEncounters && (modDir.Attributes & FileAttributes.Hidden) != FileAttributes.Hidden && !modDir.Name.StartsWith("@")
-                                      select modDir).ToList();
-        modDirs = purged;
+        // Deep mod detection in CYF's Mods folder
+        modDirs = DeepModSearch(modsFolder);
 
         // Make sure that there is at least one playable mod present
         if (modDirs.Count == 0) {
@@ -119,7 +112,8 @@ public class SelectOMatic : MonoBehaviour {
             ListShadow.gameObject.GetComponent<Text>().text = "MDO LITS";
         }
 
-        retromodeWarning.SetActive(GlobalControls.retroMode);
+        if (retromodeWarning)
+            retromodeWarning.SetActive(GlobalControls.retroMode);
 
         // This check will be true if we just exited out of an encounter
         // If that's the case, we want to open the encounter list so the user only has to click once to re enter
@@ -162,6 +156,57 @@ public class SelectOMatic : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// This function performs a deep search for mods in the selected folder.
+    /// Note that the function is recursive: it calls itself on subfolders if it finds any.
+    /// A mod must satisfy a few conditions to be detected:
+    /// - It must contain the folders Sprites and Lua/Encounters.
+    /// - Its Lua/Encounters folder must contain at least one sprite.
+    /// - Its root folder must not be CYF's Mods folder.
+    /// - Its root folder must not be hidden nor start with the character @.
+    /// </summary>
+    /// <param name="dir"></param>
+    /// <param name="currentDepth"></param>
+    /// <param name="maxDepth"></param>
+    /// <returns></returns>
+    private List<DirectoryInfo> DeepModSearch(DirectoryInfo dir, int currentDepth = 0, int maxDepth = 8) {
+        List<DirectoryInfo> mods = new List<DirectoryInfo>();
+        foreach (DirectoryInfo encountersFolder in dir.GetDirectories()) {
+            // Recursive call
+            if (currentDepth < maxDepth && encountersFolder.GetDirectories().Length > 0)
+                mods.AddRange(DeepModSearch(encountersFolder, currentDepth + 1, maxDepth));
+
+            // The current folder should be named Encounters and must contain at least one file.
+            if (encountersFolder.Name != "Encounters" || encountersFolder.GetFiles().Length == 0)
+                continue;
+
+            DirectoryInfo luaFolder = encountersFolder.Parent;
+            // The Encounters folder's parent should be named Lua.
+            if (luaFolder == null || luaFolder.Name != "Lua")
+                continue;
+
+            DirectoryInfo modRootFolder = luaFolder.Parent;
+            // The root of the mod should not be the CYF Mods folder.
+            if (modRootFolder == null || modRootFolder.FullName == Path.Combine(FileLoader.DataRoot, "Mods"))
+                continue;
+            // The root of the mod should not start with the symbol @.
+            if (modRootFolder.Name.StartsWith("@"))
+                continue;
+            // The root of the mod should not be hidden.
+            if ((modRootFolder.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden)
+                continue;
+
+            // The Lua folder should have a sibling folder named Sprites.
+            DirectoryInfo spritesFolder = modRootFolder.GetDirectories().SingleOrDefault(d => d.Name == "Sprites");
+            if (spritesFolder == null)
+                continue;
+
+            mods.Add(modRootFolder);
+        }
+
+        return mods;
+    }
+
     // A special function used specifically for error handling
     // It re-generates the mod list, and selects the first mod
     // Used for cases where the player selects a mod or encounter that no longer exists
@@ -174,8 +219,8 @@ public class SelectOMatic : MonoBehaviour {
 
     private IEnumerator LaunchMod() {
         // First: make sure the mod is still here and can be opened
-        if (!new DirectoryInfo(Path.Combine(FileLoader.DataRoot, "Mods/" + modDirs[CurrentSelectedMod].Name + "/Lua/Encounters/")).Exists
-         || !File.Exists(Path.Combine(FileLoader.DataRoot, "Mods/" + modDirs[CurrentSelectedMod].Name + "/Lua/Encounters/" + StaticInits.ENCOUNTER + ".lua"))) {
+        if (!new DirectoryInfo(modDirs[CurrentSelectedMod].FullName + "/Lua/Encounters/").Exists
+         || !File.Exists(modDirs[CurrentSelectedMod].FullName + "/Lua/Encounters/" + StaticInits.ENCOUNTER + ".lua")) {
             HandleErrors();
             yield break;
         }
@@ -206,14 +251,14 @@ public class SelectOMatic : MonoBehaviour {
         // Error handler
         // If current index is now out of range OR currently selected mod is not present:
         if (id < 0 || id > modDirs.Count - 1
-            || !new DirectoryInfo(Path.Combine(FileLoader.DataRoot, "Mods/" + modDirs[id].Name + "/Lua/Encounters")).Exists
-            ||  new DirectoryInfo(Path.Combine(FileLoader.DataRoot, "Mods/" + modDirs[id].Name + "/Lua/Encounters")).GetFiles("*.lua").Length == 0) {
+            || !new DirectoryInfo(modDirs[id].FullName + "/Lua/Encounters").Exists
+            ||  new DirectoryInfo(modDirs[id].FullName + "/Lua/Encounters").GetFiles("*.lua").Length == 0) {
             HandleErrors();
             return;
         }
 
         // Update currently selected mod folder
-        StaticInits.MODFOLDER = modDirs[id].Name;
+        StaticInits.MODFOLDER = UnitaleUtil.MakeRelativePath(Path.Combine(FileLoader.DataRoot, "Mods/"), modDirs[id].FullName);
 
         // Make clicking the background go to the encounter select screen
         ModBackground.GetComponent<Button>().onClick.RemoveAllListeners();
@@ -247,8 +292,8 @@ public class SelectOMatic : MonoBehaviour {
         }
 
         // Get all encounters in the mod's Encounters folder
-        DirectoryInfo di        = new DirectoryInfo(Path.Combine(FileLoader.ModDataPath, "Lua/Encounters"));
-        string[] encounters = di.GetFiles("*.lua").Select(f => Path.GetFileNameWithoutExtension(f.Name)).Where(f => !f.StartsWith("@")).ToArray();
+        DirectoryInfo encountersFolder = new DirectoryInfo(Path.Combine(FileLoader.ModDataPath, "Lua/Encounters"));
+        string[] encounters = encountersFolder.GetFiles("*.lua").Select(f => Path.GetFileNameWithoutExtension(f.Name)).Where(f => !f.StartsWith("@")).ToArray();
 
         // Update the text
         ModTitle.GetComponent<Text>().text = modDirs[id].Name;
@@ -279,6 +324,16 @@ public class SelectOMatic : MonoBehaviour {
                 EncounterCount.GetComponent<Text>().text = "HSA " + encounters.Length + " ENCUOTNERS";
         }
         EncounterCountShadow.GetComponent<Text>().text = EncounterCount.GetComponent<Text>().text;
+
+        // Give the parent folder if the mod is nested
+        if (StaticInits.MODFOLDER.Contains(Path.DirectorySeparatorChar)) {
+            List<string> folders = StaticInits.MODFOLDER.Split(Path.DirectorySeparatorChar).ToList();
+            folders.RemoveAt(folders.Count - 1);
+            FolderText.GetComponent<Text>().text = "Belongs to the folder " + string.Join(Path.DirectorySeparatorChar + "", folders.ToArray());
+        } else {
+            FolderText.GetComponent<Text>().text = "";
+        }
+        FolderTextShadow.GetComponent<Text>().text = FolderText.GetComponent<Text>().text;
 
         // Update the color of the arrows
         if (id == 0 && modDirs.Count == 1)
@@ -311,6 +366,8 @@ public class SelectOMatic : MonoBehaviour {
         AnimModTitle            .GetComponent<Text>().text    = ModTitle.GetComponent<Text>().text;
         AnimEncounterCountShadow.GetComponent<Text>().text    = EncounterCountShadow.GetComponent<Text>().text;
         AnimEncounterCount      .GetComponent<Text>().text    = EncounterCount.GetComponent<Text>().text;
+        AnimFolderTextShadow    .GetComponent<Text>().text    = FolderTextShadow.GetComponent<Text>().text;
+        AnimFolderText          .GetComponent<Text>().text    = FolderText.GetComponent<Text>().text;
 
         // Move all real assets to the side
         ModBackground.transform.Translate(640        * dir, 0, 0);
@@ -318,6 +375,8 @@ public class SelectOMatic : MonoBehaviour {
         ModTitle.transform.Translate(640             * dir, 0, 0);
         EncounterCountShadow.transform.Translate(640 * dir, 0, 0);
         EncounterCount.transform.Translate(640       * dir, 0, 0);
+        FolderTextShadow.transform.Translate(640     * dir, 0, 0);
+        FolderText.transform.Translate(640           * dir, 0, 0);
 
         // Actually choose the new mod
         CurrentSelectedMod = (CurrentSelectedMod + dir) % modDirs.Count;
