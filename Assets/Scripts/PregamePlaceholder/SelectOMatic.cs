@@ -193,7 +193,7 @@ public class SelectOMatic : MonoBehaviour {
     /// - Its root folder must not be CYF's Mods folder.
     /// - Its root folder must not be hidden nor start with the character @.
     /// </summary>
-    /// <param name="dir">Directory to start the deep search from (usuallt the Mods folder)</param>
+    /// <param name="dir">Directory to start the deep search from (usually the Mods folder)</param>
     /// <param name="currentDepth">Current depth of the search</param>
     /// <param name="maxDepth">Maximum depth of the search</param>
     /// <returns>The mods and notable folders found during the deep search</returns>
@@ -203,6 +203,10 @@ public class SelectOMatic : MonoBehaviour {
         DirectoryInfo modsDirectory = new DirectoryInfo(Path.Combine(FileLoader.DataRoot, "Mods"));
 
         foreach (DirectoryInfo encountersFolder in dir.GetDirectories()) {
+            // Do not explore symlinks/junctions!
+            if ((encountersFolder.Attributes & FileAttributes.ReparsePoint) == FileAttributes.ReparsePoint)
+                continue;
+
             // Recursive call
             if (currentDepth < maxDepth && encountersFolder.GetDirectories().Length > 0) {
                 List<DirectoryInfo>[] childData = DeepModSearch(encountersFolder, currentDepth + 1, maxDepth);
