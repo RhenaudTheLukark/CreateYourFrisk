@@ -739,6 +739,16 @@ public static class UnitaleUtil {
         return str == "4eab1af3ab6a932c23b3cdb8ef618b1af9c02088";
     }
 
+    public static string NormalizePath(string path) {
+        return Path.GetFullPath(new Uri(path).LocalPath)
+                   .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
+                   .ToUpperInvariant();
+    }
+
+    public static bool DirectoryPathsEqual(DirectoryInfo a, DirectoryInfo b) {
+        return NormalizePath(a.FullName) == NormalizePath(b.FullName);
+    }
+
     /// <summary>
     /// Creates a relative path from one file or folder to another.
     /// </summary>
