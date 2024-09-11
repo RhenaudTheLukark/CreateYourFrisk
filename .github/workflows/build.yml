@@ -42,7 +42,7 @@ jobs:
       - run: sudo mv ${{ github.workspace }}/build/StandaloneWindows64/ ${{ github.workspace }}/build/CreateYourFrisk/
 
       # Output
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: CreateYourFrisk-win64
           path: build
@@ -87,7 +87,7 @@ jobs:
       - run: sudo mv ${{ github.workspace }}/build/StandaloneOSX/ ${{ github.workspace }}/build/CreateYourFrisk/
 
       # Output
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: CreateYourFrisk-macos64
           path: build
@@ -131,7 +131,7 @@ jobs:
       - run: sudo mv ${{ github.workspace }}/build/StandaloneLinux64/ ${{ github.workspace }}/build/CreateYourFrisk/
 
       # Output
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: CreateYourFrisk-lin64
           path: build
