@@ -149,11 +149,12 @@ public class SelectOMatic : MonoBehaviour {
         // If that's the case, we want to open the encounter list so the user only has to click once to re enter
         if (StaticInits.ENCOUNTER != "") {
             // Check to see if there is more than one encounter in the mod just exited from
-            DirectoryInfo di2 = new DirectoryInfo(Path.Combine(FileLoader.ModDataPath, "Lua/Encounters"));
-            string[] encounters = di2.GetFiles("*.lua").Select(f => Path.GetFileNameWithoutExtension(f.Name)).Where(f => !f.StartsWith("@")).ToArray();
+            // Note: Encounters starting with @ are ignored
+            DirectoryInfo encounterFiles = new DirectoryInfo(Path.Combine(FileLoader.ModDataPath, "Lua/Encounters"));
+            string[] encounterNames = encounterFiles.GetFiles("*.lua").Select(f => Path.GetFileNameWithoutExtension(f.Name)).Where(f => !f.StartsWith("@")).ToArray();
 
             // Highlight the chosen encounter whenever the user exits the mod menu
-            if (encounters.Length > 1) {
+            if (encounterNames.Length > 1) {
                 int temp = selectedItem;
                 encounterSelection();
                 selectedItem = temp;
@@ -203,7 +204,11 @@ public class SelectOMatic : MonoBehaviour {
         DirectoryInfo modsDirectory = new DirectoryInfo(Path.Combine(FileLoader.DataRoot, "Mods"));
 
         foreach (DirectoryInfo encountersFolder in dir.GetDirectories()) {
-            // Do not explore symlinks/junctions!
+            // Ignore folders whose name start with @
+            if (encountersFolder.Name.StartsWith("@"))
+                continue;
+
+            // Do not explore junctions!
             if ((encountersFolder.Attributes & FileAttributes.ReparsePoint) == FileAttributes.ReparsePoint)
                 continue;
 
@@ -226,9 +231,6 @@ public class SelectOMatic : MonoBehaviour {
             DirectoryInfo modRootFolder = luaFolder.Parent;
             // The root of the mod should not be the CYF Mods folder.
             if (modRootFolder == null || modRootFolder.FullName == Path.Combine(FileLoader.DataRoot, "Mods"))
-                continue;
-            // The root of the mod should not start with the symbol @.
-            if (modRootFolder.Name.StartsWith("@"))
                 continue;
             // The root of the mod should not be hidden.
             if ((modRootFolder.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden)
