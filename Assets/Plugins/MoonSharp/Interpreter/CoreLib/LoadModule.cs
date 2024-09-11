@@ -271,16 +271,16 @@ end";
 		public static string DefaultDataPath { get { return Path.Combine(DataRoot, "Default" + Path.DirectorySeparatorChar);                                        } }
 		public static string ModFolder;
 
-		/// <summary>
-		/// Checks if a file exists in CYF's Default or Mods folder and returns a clean path to it.
-		/// </summary>
-		/// <param name="fileName">Path to the file to require, relative or absolute. Will also contain the clean path to the existing resource if found.</param>
-		/// <param name="pathSuffix">String to add to the tested path to check in the given folder.</param>
-		/// <param name="errorOnFailure">Defines whether the error screen should be displayed if the file isn't in either folder.</param>
-		/// <param name="needsAbsolutePath">True if you want to get the absolute path to the file, false otherwise.</param>
-		/// <param name="needsToExist">True if the file you're looking for needs to exist.</param>
-		/// <returns>True if the sanitization was successful, false otherwise.</returns>
-		public static bool RequireFile(ref string fileName, string pathSuffix, bool errorOnFailure = true, bool needsAbsolutePath = false, bool needsToExist = true) {
+        /// <summary>
+        /// Checks if a file exists in CYF's Default or Mods folder and returns a clean path to it.
+        /// </summary>
+        /// <param name="fileName">Path to the file to require, relative or absolute. Will also contain the clean path to the existing resource if found.</param>
+        /// <param name="pathSuffix">String to add to the tested path to check in the given folder.</param>
+        /// <param name="needsToExist">True if the file you're looking for needs to exist.</param>
+        /// <param name="needsAbsolutePath">True if you want to get the absolute path to the file, false otherwise.</param>
+        /// <param name="errorOnFailure">Defines whether the error screen should be displayed if the file isn't in either folder.</param>
+        /// <returns>True if the sanitization was successful, false otherwise.</returns>
+        public static bool RequireFile(ref string fileName, string pathSuffix, bool needsToExist = true, bool needsAbsolutePath = false, bool errorOnFailure = true) {
 			string baseFileName = fileName;
 			string fileNameMod, fileNameDefault;
 			// Get the presumed absolute path to the mod and default folder to this resource if it's a relative path
@@ -297,12 +297,12 @@ end";
 				fileNameDefault = fileName;
 			}
 
+            string errorString = "";
 			// Check if the resource exists using the mod path
-			string error;
 			try {
 				string modPath = pathSuffix;
 				ExplorePath(ref fileNameMod, ref modPath);
-				// Keep the path to the mod folder in case of failure (used to open nonexistent files!)
+				// Keep the path to the mod folder in case of failure (used to open non-existent files!)
 				fileName = fileNameMod;
 				if (needsToExist && !new FileInfo(fileNameMod).Exists) throw new CYFException("The file " + fileNameMod + " doesn't exist.");
 
@@ -311,25 +311,33 @@ end";
 				Uri uriRel = new Uri(modPath + Path.DirectorySeparatorChar).MakeRelativeUri(new Uri(fileName));
 				fileName = Uri.UnescapeDataString(uriRel.OriginalString);
 				return true;
-			} catch (Exception e) { error = e.Message; }
+			} catch (Exception e) { errorString = e.Message; }
 
-			// Check if the resource exists using the default path
-			try {
-				string defaultPath = pathSuffix;
-				ExplorePath(ref fileNameDefault, ref defaultPath);
-				if (needsToExist && !new FileInfo(fileNameDefault).Exists) throw new CYFException("The file " + fileNameDefault + " doesn't exist.");
-				fileName = fileNameDefault;
+            if (!errorString.Contains("µImportantµ")) {
+			    // Check if the resource exists using the default path
+			    try {
+				    string defaultPath = pathSuffix;
+				    ExplorePath(ref fileNameDefault, ref defaultPath);
+				    if (needsToExist && !new FileInfo(fileNameDefault).Exists) throw new CYFException("The file " + fileNameDefault + " doesn't exist.");
+				    fileName = fileNameDefault;
 
-				if (needsAbsolutePath) return true;
+				    if (needsAbsolutePath) return true;
 
-				Uri uriRel = new Uri(defaultPath).MakeRelativeUri(new Uri(fileName));
-				fileName = Uri.UnescapeDataString(uriRel.OriginalString);
-				return true;
-			} catch (Exception e) { error = "Mod path error: " + error + "\n\nDefault path error: " + e.Message; }
+				    Uri uriRel = new Uri(defaultPath).MakeRelativeUri(new Uri(fileName));
+				    fileName = Uri.UnescapeDataString(uriRel.OriginalString);
+				    return true;
+			    } catch (Exception e) { errorString = "Mod path error: " + errorString + "\n\nDefault path error: " + e.Message; }
+            }
 
-			if (needsToExist && errorOnFailure)
-				throw new CYFException("Attempted to load " + baseFileName + " from either a mod or default directory, but it was missing in both.\n\n" + error);
-			return false;
+            if (needsToExist && !errorString.Contains("µImportantµ"))
+                errorString = "Attempted to load \"" + baseFileName + "\" from either a mod or default directory, but it was missing in both.\n\n" + errorString;
+            else
+                errorString = "Error while trying to fetch a resource with the given path \"" + baseFileName + "\".\n\n" + errorString;
+
+            // Display important errors
+            if ((errorOnFailure && needsToExist) || errorString.Contains("µImportantµ"))
+                throw new CYFException(errorString.Replace("µImportantµ", ""));
+            return false;
 		}
 
 		/// <summary>
@@ -355,7 +363,7 @@ end";
 
 			fullPath = fullPath.Replace('\\', Path.DirectorySeparatorChar).Replace('/', Path.DirectorySeparatorChar);
 
-			// Get the folder containing the resource to load
+			// Get the folder containing the resource to load and check if it exists
 			string fileName = fullPath.Substring(fullPath.LastIndexOf(Path.DirectorySeparatorChar) + 1);
 			DirectoryInfo endFolder = new DirectoryInfo(fullPath.Substring(0, fullPath.LastIndexOf(Path.DirectorySeparatorChar)));
 			if (!endFolder.Exists)
@@ -363,17 +371,35 @@ end";
 
 			// Check if the final directory is a child of CYF's root directory
 			if (!endFolder.FullName.StartsWith(Path.Combine(DataRoot, "Mods")) && !endFolder.FullName.StartsWith(Path.Combine(DataRoot, "Default")))
-				throw new CYFException("The folder \"" + endFolder.FullName + "\" isn't inside of CYF's allowed folders (CYF's path is \"" + DataRoot + "\"). Please only fetch files from inside CYF's Mods or Default folders.");
+				throw new CYFException("µImportantµThe folder \"" + endFolder.FullName + "\" isn't inside of CYF's allowed folders (CYF's path is \"" + DataRoot + "\"). Please only fetch files from inside CYF's Mods or Default folders.");
+
+            // Check for symlink usage, and throw an error if there's one
+            DirectoryInfo fullPathInfo = new DirectoryInfo(fullPath);
+            while (!DirectoryPathsEqual(fullPathInfo, new DirectoryInfo(DataRoot))) {
+                if ((fullPathInfo.Attributes & FileAttributes.ReparsePoint) == FileAttributes.ReparsePoint)
+                    throw new CYFException("µImportantµSymbolic link detected in \"" + fullPathInfo.FullName + "\". Please do not use symbolic links in Create Your Frisk.");
+                fullPathInfo = fullPathInfo.Parent;
+            };
 
 			fullPath = endFolder.FullName;
 			if (!fullPath.EndsWith(Path.DirectorySeparatorChar.ToString())) fullPath += Path.DirectorySeparatorChar;
 			if (!pathSuffix.EndsWith(Path.DirectorySeparatorChar.ToString())) pathSuffix += Path.DirectorySeparatorChar;
 
 			fullPath = Path.Combine(fullPath, fileName).Replace('\\', Path.DirectorySeparatorChar).Replace('/', Path.DirectorySeparatorChar);
-		}
-	}
+        }
 
-	public class CYFException : ScriptRuntimeException {
+        public static string NormalizePath(string path) {
+            return Path.GetFullPath(new Uri(path).LocalPath)
+                       .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
+                       .ToUpperInvariant();
+        }
+
+        public static bool DirectoryPathsEqual(DirectoryInfo a, DirectoryInfo b) {
+            return NormalizePath(a.FullName) == NormalizePath(b.FullName);
+        }
+    }
+
+    public class CYFException : ScriptRuntimeException {
 		public CYFException(string message) : base(message) { }
 	}
 }

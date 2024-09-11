@@ -25,8 +25,8 @@ public class AudioClipRegistry {
         key = key.TrimStart('/', '\\');
         string oggKey = key + (key.ToLower().EndsWith(".ogg") ? "" : ".ogg");
         string wavKey = key + (key.ToLower().EndsWith(".wav") ? "" : ".wav");
-        if (!FileLoader.SanitizePath(ref oggKey, "", false)) {
-            FileLoader.SanitizePath(ref wavKey, "", !GlobalControls.retroMode);
+        if (!FileLoader.SanitizePath(ref oggKey, "", true, false, false)) {
+            FileLoader.SanitizePath(ref wavKey, "", true, false, !GlobalControls.retroMode);
             key = wavKey;
         } else
             key = oggKey;

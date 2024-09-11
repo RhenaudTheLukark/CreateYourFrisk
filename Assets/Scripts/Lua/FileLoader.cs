@@ -145,11 +145,11 @@ public static class FileLoader {
     /// </summary>
     /// <param name="fileName">Path to the file to require, relative or absolute. Will also contain the clean path to the existing resource if found.</param>
     /// <param name="pathSuffix">String to add to the tested path to check in the given folder.</param>
-    /// <param name="errorOnFailure">Defines whether the error screen should be displayed if the file isn't in either folder.</param>
-    /// <param name="needsAbsolutePath">True if you want to get the absolute path to the file, false otherwise.</param>
     /// <param name="needsToExist">True if the file you are looking for needs to exist. In this case, the function will return false if it doesn't exist.</param>
+    /// <param name="needsAbsolutePath">True if you want to get the absolute path to the file, false otherwise.</param>
+    /// <param name="errorOnFailure">Defines whether the error screen should be displayed if the file isn't in either folder.</param>
     /// <returns>True if the sanitization was successful, false otherwise.</returns>
-    public static bool SanitizePath(ref string fileName, string pathSuffix, bool errorOnFailure = true, bool needsAbsolutePath = false, bool needsToExist = true) {
+    public static bool SanitizePath(ref string fileName, string pathSuffix, bool needsToExist = true, bool needsAbsolutePath = false, bool errorOnFailure = true) {
         string pathToTest = fileName.Contains(DataRoot) ? fileName : pathSuffix + fileName;
         fileName = fileName.Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar);
 
@@ -165,11 +165,11 @@ public static class FileLoader {
 
         // Sanitize if path from CYF root, need to transform a relative path to an absolute path and vice-versa, or if there's an occurence of ..
         bool leadingSlash = fileName.StartsWith(Path.DirectorySeparatorChar.ToString()) && !fileName.Contains(DataRoot);
-        if (!LoadModule.RequireFile(ref fileName, pathSuffix, !leadingSlash && errorOnFailure, needsAbsolutePath, needsToExist))
+        if (!LoadModule.RequireFile(ref fileName, pathSuffix, needsToExist, needsAbsolutePath, errorOnFailure))
             if (leadingSlash) {
                 // Passthrough: Remove the leading slash if the file wasn't found
                 if (!fileName.StartsWith(DataRoot)) fileName = fileName.Replace('\\', '/').TrimStart('/'); // TODO: Remove this for 0.7
-                if (!LoadModule.RequireFile(ref fileName, pathSuffix, errorOnFailure, needsAbsolutePath, needsToExist))
+                if (!LoadModule.RequireFile(ref fileName, pathSuffix, needsToExist, needsAbsolutePath, errorOnFailure))
                     return false;
             } else
                 return false;

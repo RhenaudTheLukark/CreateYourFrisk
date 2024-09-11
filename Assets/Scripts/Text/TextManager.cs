@@ -963,7 +963,7 @@ public class TextManager : MonoBehaviour {
             case "font":
                 UnderFont uf = SpriteFontRegistry.Get(cmds[1]);
                 if (uf == null) {
-                    UnitaleUtil.DisplayLuaError("", "[font:x] usage - The font \"" + cmds[1] + "\" doesn't exist.\nYou should check if you made a typo, or if the font really is in your mod.", true);
+                    UnitaleUtil.DisplayLuaError("[font:x] usage", "The font \"" + cmds[1] + "\" doesn't exist.\nYou should check if you made a typo, or if the font really is in your mod.", false);
                     break;
                 }
                 SetFont(uf, true);

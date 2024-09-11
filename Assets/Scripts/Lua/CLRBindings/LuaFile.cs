@@ -12,8 +12,7 @@ public class LuaFile {
         if (!path.StartsWith(FileLoader.DataRoot)) path = path.Replace('\\', '/').TrimStart('/'); // TODO: Remove this for 0.7
         if (path == null)                                                                      throw new CYFException("Cannot open a file with a nil path.");
         if (mode != "r" && mode != "w" && mode != "rw" && mode != "wr")                        throw new CYFException("A file's open mode can only be \"r\" (read), \"w\" (write) or \"rw\" (read + write).");
-        if (!FileLoader.SanitizePath(ref path, "", true, false, false))                        throw new CYFException("You can't open a file outside of CYF's folder.");
-        if (!FileLoader.SanitizePath(ref path, "", false, true) && mode == "r")                throw new CYFException("You can't open a file that doesn't exist (" + path + ") in read-only mode.");
+        if (!FileLoader.SanitizePath(ref path, "", true, true, false) && mode == "r")          throw new CYFException("You can't open a file that doesn't exist (" + path + ") in read-only mode.");
         if (!Directory.Exists(path.Substring(0, path.Length - Path.GetFileName(path).Length))) throw new CYFException("Invalid path:\n\n\"" + path + "\"");
 
         filePath = path;
@@ -108,7 +107,7 @@ public class LuaFile {
 
     public void Move(string newPath) {
         string origNewPath = newPath;
-        FileLoader.SanitizePath(ref newPath, "", false, true, false);
+        FileLoader.SanitizePath(ref newPath, "", false, true);
 
         if (!File.Exists(filePath)) throw new CYFException("The file at the path \"" + filePath + "\" doesn't exist, so you can't move it.");
         if (File.Exists(newPath))   throw new CYFException("The file at the path \"" + origNewPath + "\" already exists.");
@@ -122,7 +121,7 @@ public class LuaFile {
 
     public void Copy(string newPath, bool overwrite = false) {
         string origNewPath = newPath;
-        FileLoader.SanitizePath(ref newPath, "", false, true, false);
+        FileLoader.SanitizePath(ref newPath, "", false, true);
 
         if (!File.Exists(filePath)) throw new CYFException("The file at the path \"" + filePath + "\" doesn't exist, so you can't copy it.");
         if (File.Exists(newPath) && !overwrite) throw new CYFException("The file at the path \"" + origNewPath + "\" already exists.");
