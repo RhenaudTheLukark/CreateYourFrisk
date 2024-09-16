@@ -84,7 +84,7 @@ public static class SpriteFontRegistry {
     private static UnderFont GetUnderFont(string fontName) {
         XmlDocument xml = new XmlDocument();
         string xmlPath = fontName + ".xml";
-        if (!FileLoader.SanitizePath(ref xmlPath, "Sprites/UI/Fonts/", false, true))
+        if (!FileLoader.SanitizePath(ref xmlPath, "Sprites/UI/Fonts/", true, true))
             return null;
         try { xml.Load(xmlPath); }
         catch (XmlException ex) {
