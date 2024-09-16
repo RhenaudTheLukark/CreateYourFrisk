@@ -1100,7 +1100,7 @@ end";
         luaPlayerOw.CanMove(false);
         // This very weird RealGlobal is used in order to know if we should delete the event spawning CYF v0.6's secret
         // Makes the event disappear the next time it's encountered
-        LuaScriptBinder.Set(null, "1a6377e26b5119334e651552be9f17f8d92e83c9", DynValue.NewBoolean(false));
+        LuaScriptBinder.SetSessionGlobal("1a6377e26b5119334e651552be9f17f8d92e83c9", DynValue.NewBoolean(false));
 
         // Get all sprites from the Resources/Sprites folder
         Sprite[] resourceSprites = Resources.LoadAll<Sprite>("Sprites");

@@ -25,8 +25,8 @@ public class Title : MonoBehaviour {
             #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
                 Misc.WindowName = GlobalControls.crate ? ControlPanel.instance.WinodwBsaisNmae : ControlPanel.instance.WindowBasisName;
             #endif
-            SaveLoad.LoadAlMighty();
-            LuaScriptBinder.Set(null, "ModFolder", MoonSharp.Interpreter.DynValue.NewString("@Title"));
+            SaveLoad.LoadPermanentGlobals();
+            LuaScriptBinder.SetSessionGlobal("ModFolder", MoonSharp.Interpreter.DynValue.NewString("@Title"));
             UnitaleUtil.AddKeysToMapCorrespondanceList();
         }
         GameObject firstCamera = GameObject.Find("Main Camera");
@@ -176,7 +176,7 @@ public class Title : MonoBehaviour {
         yield return 0;
         //yield return Application.isLoadingLevel;
         //GameObject.Find("Player").transform.position = new Vector3(;
-        StaticInits.InitAll(LuaScriptBinder.Get(null, "ModFolder").String, true);
+        StaticInits.InitAll(LuaScriptBinder.GetSessionGlobal("ModFolder").String, true);
         if (GameObject.Find("Main Camera"))
             Destroy(GameObject.Find("Main Camera"));
         Destroy(gameObject);

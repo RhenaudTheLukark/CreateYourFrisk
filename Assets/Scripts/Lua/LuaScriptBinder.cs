@@ -16,7 +16,9 @@ internal class LuaTextManagerDescriptor : MoonSharp.Interpreter.Interop.Standard
 /// Is also used to store global variables from the game, to be accessed from Lua scripts.
 /// </summary>
 public static class LuaScriptBinder {
-    private static Dictionary<string, DynValue> dict = new Dictionary<string, DynValue>(), battleDict = new Dictionary<string, DynValue>(), alMightyDict = new Dictionary<string, DynValue>();
+    private static Dictionary<string, DynValue> battleGlobals = new Dictionary<string, DynValue>();
+    private static Dictionary<string, DynValue> sessionGlobals = new Dictionary<string, DynValue>();
+    private static Dictionary<string, DynValue> permanentGlobals = new Dictionary<string, DynValue>();
     private static readonly MusicManager mgr = new MusicManager();
     private static readonly NewMusicManager newmgr = new NewMusicManager();
 
@@ -58,17 +60,17 @@ public static class LuaScriptBinder {
     /// Generates Script object with globally defined functions and objects bound, and the os/io/file modules taken out.
     /// </summary>
     /// <returns>Script object for use within Unitale</returns>
-    public static Script BoundScript(/*bool overworld = false*/) {
+    public static Script BindScript() {
         Script script = new Script(CoreModules.Preset_Complete ^ CoreModules.IO ^ CoreModules.OS_System) { Options = { ScriptLoader = new FileSystemScriptLoader() } };
         // library support
         ((ScriptLoaderBase)script.Options.ScriptLoader).ModulePaths = new[] { FileLoader.PathToModFile("Lua/?.lua"), FileLoader.PathToDefaultFile("Lua/?.lua"), FileLoader.PathToModFile("Lua/Libraries/?.lua"), FileLoader.PathToDefaultFile("Lua/Libraries/?.lua") };
         // separate function bindings
-        script.Globals["SetGlobal"] = (Action<Script, string, DynValue>)SetBattle;
-        script.Globals["GetGlobal"] = (Func<Script, string, DynValue>)GetBattle;
-        script.Globals["SetRealGlobal"] = (Action<Script, string, DynValue>)Set;
-        script.Globals["GetRealGlobal"] = (Func<Script, string, DynValue>)Get;
-        script.Globals["SetAlMightyGlobal"] = (Action<Script, string, DynValue>)SetAlMighty;
-        script.Globals["GetAlMightyGlobal"] = (Func<Script, string, DynValue>)GetAlMighty;
+        script.Globals["SetGlobal"] = (Action<string, DynValue>)SetBattleGlobal;
+        script.Globals["GetGlobal"] = (Func<string, DynValue>)GetBattleGlobal;
+        script.Globals["SetRealGlobal"] = (Action<string, DynValue>)SetSessionGlobal;
+        script.Globals["GetRealGlobal"] = (Func<string, DynValue>)GetSessionGlobal;
+        script.Globals["SetAlMightyGlobal"] = (Action<string, DynValue>)SetPermanentGlobal;
+        script.Globals["GetAlMightyGlobal"] = (Func<string, DynValue>)GetPermanentGlobal;
 
         script.Globals["isCYF"] = true;
         script.Globals["isRetro"] = GlobalControls.retroMode;
@@ -162,90 +164,74 @@ public static class LuaScriptBinder {
         catch { return "NONE (error)"; }
     }
 
-    public static DynValue Get(Script script, string key) {
-        if (key == null)
-            throw new CYFException("GetRealGlobal: The first argument (the index) is nil.\n\nSee the documentation for proper usage.");
-        if (!dict.ContainsKey(key))
-            return null;
-        return dict[key];
+    public static DynValue GetBattleGlobal(string key) {
+        return GetGeneralGlobal(battleGlobals, "GetGlobal", key);
     }
 
-    public static void Set(Script script, string key, DynValue value) {
-        if (key == null)
-            throw new CYFException("SetRealGlobal: The first argument (the index) is nil.\n\nSee the documentation for proper usage.");
+    public static void SetBattleGlobal(string key, DynValue value) {
+        SetGeneralGlobal(battleGlobals, "SetGlobal", key, value);
+    }
 
+    public static DynValue GetSessionGlobal(string key) {
+        return GetGeneralGlobal(sessionGlobals, "GetRealGlobal", key);
+    }
+
+    public static void SetSessionGlobal(string key, DynValue value) {
+        SetGeneralGlobal(sessionGlobals, "SetRealGlobal", key, value);
+    }
+
+    public static DynValue GetPermanentGlobal(string key) {
+        return GetGeneralGlobal(permanentGlobals, "GetAlMightyGlobal", key);
+    }
+
+    public static void SetPermanentGlobal(string key, DynValue value) { SetPermanentGlobal(key, value, true); }
+    public static void SetPermanentGlobal(string key, DynValue value, bool reload) {
         if (value.Type != DataType.Number && value.Type != DataType.String && value.Type != DataType.Boolean && value.Type != DataType.Nil) {
-            UnitaleUtil.WriteInLogAndDebugger("SetRealGlobal: The value \"" + key + "\" can't be saved in the savefile because it is a " + value.Type.ToString().ToLower() + ".");
+            UnitaleUtil.WriteInLogAndDebugger("SetAlMightyGlobal: The value \"" + key + "\" can't be saved as permanent data because it is a " + value.Type.ToString().ToLower() + ".");
             return;
         }
 
-        if (dict.ContainsKey(key)) dict[key] = value;
-        else                       dict.Add(key, value);
+        SetGeneralGlobal(permanentGlobals, "SetAlMightyGlobal", key, value);
+        if (reload)
+            SaveLoad.SavePermanentGlobals(key);
     }
 
-    public static DynValue GetBattle(Script script, string key) {
-        if (key == null)
-            throw new CYFException("GetGlobal: The first argument (the index) is nil.\n\nSee the documentation for proper usage.");
-        if (!battleDict.ContainsKey(key)) return null;
+    private static DynValue GetGeneralGlobal(Dictionary<string, DynValue> dict, string funcName, string key) {
+        if (dict == null || key == null)
+            throw new CYFException(funcName + ": The first argument (the index) is nil.\n\nSee the documentation for proper usage.");
+        if (!dict.ContainsKey(key))
+            return null;
+        if (dict[key].Type != DataType.Table)
+            return dict[key];
+
         // Due to how MoonSharp tables require an owner, we have to create an entirely new table if we want to work with it in other scripts.
-        if (battleDict[key].Type != DataType.Table) return battleDict[key];
-        DynValue t = DynValue.NewTable(script);
-        foreach (TablePair pair in battleDict[key].Table.Pairs)
+        DynValue t = DynValue.NewTable(new Table(null));
+        foreach (TablePair pair in dict[key].Table.Pairs)
             t.Table.Set(pair.Key, pair.Value);
         return t;
     }
 
-    public static void SetBattle(Script script, string key, DynValue value) {
-        if (key == null)
-            throw new CYFException("SetGlobal: The first argument (the index) is nil.\n\nSee the documentation for proper usage.");
-        if (battleDict.ContainsKey(key))
-            battleDict.Remove(key);
-        battleDict.Add(key, value);
-    }
-
-    public static DynValue GetAlMighty(Script script, string key) {
-        if (key == null)
-            throw new CYFException("GetAlMightyGlobal: The first argument (the index) is nil.\n\nSee the documentation for proper usage.");
-        if (!alMightyDict.ContainsKey(key))
-            return null;
-        return alMightyDict[key];
-    }
-
-    public static void SetAlMighty(Script script, string key, DynValue value) { SetAlMighty(script, key, value, true); }
-    public static void SetAlMighty(Script script, string key, DynValue value, bool reload) {
-        if (key == null)
-            throw new CYFException("SetAlMightyGlobal: The first argument (the index) is nil.\n\nSee the documentation for proper usage.");
-
-        if (value.Type != DataType.Number && value.Type != DataType.String && value.Type != DataType.Boolean && value.Type != DataType.Nil) {
-            UnitaleUtil.WriteInLogAndDebugger("SetAlMightyGlobal: The value \"" + key + "\" can't be saved in the almighties because it is a " + value.Type.ToString().ToLower() + ".");
-            return;
-        }
-
-        if (alMightyDict.ContainsKey(key))
-            alMightyDict.Remove(key);
-        alMightyDict.Add(key, value);
-        if (reload)
-            SaveLoad.SaveAlMighty(key);
+    private static void SetGeneralGlobal(Dictionary<string, DynValue> dict, string funcName, string key, DynValue value) {
+        if (dict == null || key == null)
+            throw new CYFException(funcName + ": The first argument (the index) is nil.\n\nSee the documentation for proper usage.");
+        if (dict.ContainsKey(key))
+            dict.Remove(key);
+        dict.Add(key, value);
     }
 
     /// <summary>
     /// Clears the global dictionary. Used in the reset functionality, as everything is reinitialized.
     /// </summary>
-    public static void Clear() { dict.Clear(); }
-
-    public static void ClearBattleVar() {
-        Dictionary<string, DynValue> a = dict;
-        battleDict.Clear();
-        dict = a;
-    }
-
-    public static void ClearAlMighty() {
-        alMightyDict.Clear();
-        SaveLoad.SaveAlMighty();
+    public static void ClearBattleGlobals() { battleGlobals.Clear(); }
+    public static void ClearSessionGlobals() { sessionGlobals.Clear(); }
+    public static void ClearPermanentGlobals() {
+        permanentGlobals.Clear();
+        SaveLoad.SavePermanentGlobals();
     }
 
     public static void ClearVariables() {
-        dict.Clear();
+        ClearSessionGlobals();
+
         // Battle bindings
         UserData.RegisterType<MusicManager>();
         UserData.RegisterType<NewMusicManager>();
@@ -280,32 +266,32 @@ public static class LuaScriptBinder {
     /// Returns this script's dictionaries
     /// </summary>
     /// <returns></returns>
-    public static Dictionary<string, DynValue> GetSavedDictionary()     { return dict; }
-    public static Dictionary<string, DynValue> GetBattleDictionary()    { return battleDict; }
-    public static Dictionary<string, DynValue> GetAlMightyDictionary()  { return alMightyDict; }
+    public static Dictionary<string, DynValue> GetAllBattleGlobals()    { return battleGlobals; }
+    public static Dictionary<string, DynValue> GetAllSessionGlobals()   { return sessionGlobals; }
+    public static Dictionary<string, DynValue> GetAllPermanentGlobals() { return permanentGlobals; }
 
     /// <summary>
     /// Replaces the current dictionary with the given one.
     /// /!\ THIS ERASES THE CURRENT DICTIONARY /!\
     /// </summary>
     /// <param name="newDict"></param>
-    public static void SetSavedDictionary(Dictionary<string, DynValue> newDict)          { dict = newDict; }
-    public static void SetBattleDictionary(Dictionary<string, DynValue> newDict)    { battleDict = newDict; }
-    public static void SetAlMightyDictionary(Dictionary<string, DynValue> newDict)  { alMightyDict = newDict; }
+    public static void SetAllBattleGlobals(Dictionary<string, DynValue> newDict)    { battleGlobals = newDict; }
+    public static void SetAllSessionGlobals(Dictionary<string, DynValue> newDict)   { sessionGlobals = newDict; }
+    public static void SetAllPermanentGlobals(Dictionary<string, DynValue> newDict) { permanentGlobals = newDict; }
 
     /// <summary>
     /// Removes one or several keys from the dictionaries.
     /// </summary>
     /// <param name="str"></param>
-    public static void Remove(string str)                { dict.Remove(str); }
-    public static void Remove(List<string> list)         { foreach (string str in list) dict.Remove(str); }
-    public static void Remove(string[] strs)             { foreach (string str in strs) dict.Remove(str); }
-    public static void RemoveBattle(string str)          { battleDict.Remove(str); }
-    public static void RemoveBattle(List<string> list)   { foreach (string str in list) battleDict.Remove(str); }
-    public static void RemoveBattle(string[] strs)       { foreach (string str in strs) battleDict.Remove(str); }
-    public static void RemoveAlMighty(string str)        { alMightyDict.Remove(str); }
-    public static void RemoveAlMighty(List<string> list) { foreach (string str in list) alMightyDict.Remove(str); }
-    public static void RemoveAlMighty(string[] strs)     { foreach (string str in strs) alMightyDict.Remove(str); }
+    public static void RemoveBattleGlobal(string str)            { battleGlobals.Remove(str); }
+    public static void RemoveBattleGlobals(List<string> list)    { foreach (string str in list) battleGlobals.Remove(str); }
+    public static void RemoveBattleGlobals(string[] strs)        { foreach (string str in strs) battleGlobals.Remove(str); }
+    public static void RemoveSessionGlobal(string str) { sessionGlobals.Remove(str); }
+    public static void RemoveSessionGlobals(List<string> list) { foreach (string str in list) sessionGlobals.Remove(str); }
+    public static void RemoveSessionGlobals(string[] strs) { foreach (string str in strs) sessionGlobals.Remove(str); }
+    public static void RemovePermanentGlobal(string str)         { permanentGlobals.Remove(str); }
+    public static void RemovePermanentGlobals(List<string> list) { foreach (string str in list) permanentGlobals.Remove(str); }
+    public static void RemovePermanentGlobals(string[] strs)     { foreach (string str in strs) permanentGlobals.Remove(str); }
 
     /// <summary>
     /// Returns a list that contains all keys that contains the string given in argument.
@@ -314,18 +300,18 @@ public static class LuaScriptBinder {
     /// <returns></returns>
     public static List<string> GetKeysWithString(string str) {
         List<string> list = new List<string>();
-        foreach (string key in dict.Keys)
+        foreach (string key in sessionGlobals.Keys)
             if (key.Contains(str))
                 list.Add(key);
         return list;
     }
 
-    public static void CopyToBattleVar() {
-        dict["CYFSwitch"] = DynValue.NewBoolean(true);
-        foreach (string key in dict.Keys) {
+    public static void CopySessionGlobalsToBattleGlobals() {
+        sessionGlobals["CYFSwitch"] = DynValue.NewBoolean(true);
+        foreach (string key in sessionGlobals.Keys) {
             DynValue temp;
-            dict.TryGetValue(key, out temp);
-            SetBattle(null, key, temp);
+            sessionGlobals.TryGetValue(key, out temp);
+            SetBattleGlobal(key, temp);
         }
     }
 

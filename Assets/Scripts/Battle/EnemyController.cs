@@ -351,7 +351,7 @@ public class EnemyController : MonoBehaviour {
             script.Bind("SetBubbleOffset", (Action<int, int>)SetBubbleOffset);
             script.Bind("SetDamageUIOffset", (Action<int, int>)SetDamageUIOffset);
             script.Bind("SetSliceAnimOffset", (Action<int, int>)SetSliceAnimOffset);
-            script.Bind("State", (Action<Script, string>)UIController.SwitchStateOnString);
+            script.Bind("State", (Action<string>)UIController.SwitchStateOnString);
             script.Bind("Remove", (Action)Remove);
             script.SetVar("canmove", DynValue.NewBoolean(true));
             sprite = LuaSpriteController.GetOrCreate(gameObject);

@@ -46,32 +46,32 @@ public class GlobalControls : MonoBehaviour {
         SaveLoad.Start();
         new ControlPanel();
         new PlayerCharacter();
-        // Load AlMighty globals
-        SaveLoad.LoadAlMighty();
-        LuaScriptBinder.Set(null, "ModFolder", DynValue.NewString("@Title"));
+        // Load permanent globals
+        SaveLoad.LoadPermanentGlobals();
+        LuaScriptBinder.SetSessionGlobal("ModFolder", DynValue.NewString("@Title"));
 
         KeyboardInput.LoadPlayerKeys();
 
         // Load map names for the overworld
         UnitaleUtil.AddKeysToMapCorrespondanceList();
 
-        // Use AlMightyGlobals to load Crate Your Frisk, Safe Mode, Retromode and Fullscreen mode preferences
+        // Use permanent globals to load Crate Your Frisk, Safe Mode, Retromode and Fullscreen mode preferences
         ReloadCrate();
 
         // Check if safe mode has a stored preference that is a boolean
-        if (LuaScriptBinder.GetAlMighty(null, "CYFSafeMode")      != null
-         && LuaScriptBinder.GetAlMighty(null, "CYFSafeMode").Type == DataType.Boolean)
-            ControlPanel.instance.Safe = LuaScriptBinder.GetAlMighty(null, "CYFSafeMode").Boolean;
+        if (LuaScriptBinder.GetPermanentGlobal("CYFSafeMode") != null
+         && LuaScriptBinder.GetPermanentGlobal("CYFSafeMode").Type == DataType.Boolean)
+            ControlPanel.instance.Safe = LuaScriptBinder.GetPermanentGlobal("CYFSafeMode").Boolean;
 
         // Check if retro mode has a stored preference that is a boolean
-        if (LuaScriptBinder.GetAlMighty(null, "CYFRetroMode")      != null
-         && LuaScriptBinder.GetAlMighty(null, "CYFRetroMode").Type == DataType.Boolean)
-            retroMode = LuaScriptBinder.GetAlMighty(null, "CYFRetroMode").Boolean;
+        if (LuaScriptBinder.GetPermanentGlobal("CYFRetroMode") != null
+         && LuaScriptBinder.GetPermanentGlobal("CYFRetroMode").Type == DataType.Boolean)
+            retroMode = LuaScriptBinder.GetPermanentGlobal("CYFRetroMode").Boolean;
 
         // Check if window scale has a stored preference that is a number
-        if (LuaScriptBinder.GetAlMighty(null, "CYFWindowScale")      != null
-         && LuaScriptBinder.GetAlMighty(null, "CYFWindowScale").Type == DataType.Number) {
-            ScreenResolution.windowScale = (int) System.Math.Max(LuaScriptBinder.GetAlMighty(null, "CYFWindowScale").Number, 1);
+        if (LuaScriptBinder.GetPermanentGlobal("CYFWindowScale") != null
+         && LuaScriptBinder.GetPermanentGlobal("CYFWindowScale").Type == DataType.Number) {
+            ScreenResolution.windowScale = (int) System.Math.Max(LuaScriptBinder.GetPermanentGlobal("CYFWindowScale").Number, 1);
             if (!ScreenResolution.hasInitialized) {
                 Screen.SetResolution(640, 480, Screen.fullScreen, 0);
                 ScreenResolution scrRes = FindObjectOfType<ScreenResolution>();
@@ -80,14 +80,14 @@ public class GlobalControls : MonoBehaviour {
             ScreenResolution.ResetAfterBattle();
         }
 
-        // Start Discord RPC (also checks for an AlMightyGlobal within)
+        // Start Discord RPC (also checks for a permanent global within)
         DiscordControls.Start();
 
         awakened = true;
     }
 
     public static void ReloadCrate() {
-        if (LuaScriptBinder.GetAlMighty(null, "CrateYourFrisk") != null && LuaScriptBinder.GetAlMighty(null, "CrateYourFrisk").Boolean)
+        if (LuaScriptBinder.GetPermanentGlobal("CrateYourFrisk") != null && LuaScriptBinder.GetPermanentGlobal("CrateYourFrisk").Boolean)
             crate = true;
         #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
             Misc.WindowName = crate ? ControlPanel.instance.WinodwBsaisNmae : ControlPanel.instance.WindowBasisName;

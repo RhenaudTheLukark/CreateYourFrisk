@@ -6,9 +6,9 @@ using MoonSharp.Interpreter;
 using System.Collections.Generic;
 
 public class OptionsScript : MonoBehaviour {
-    // used to prevent the player from erasing real/almighty globals or their save by accident
-    private int RealGlobalCooldown;
-    private int AlMightyGlobalCooldown;
+    // used to prevent the player from erasing session/permanent globals or their save by accident
+    private int SessionGlobalResetCooldown;
+    private int PermanentGlobalResetCooldown;
     private int SaveCooldown;
 
     // used to update the Description periodically
@@ -19,7 +19,7 @@ public class OptionsScript : MonoBehaviour {
     private bool CrateUnlocked;
 
     // game objects
-    public GameObject ResetRG, ResetAG, ClearSave, Safe, Retro, Scale, Discord, Keys, Crate, Exit;
+    public GameObject ResetSG, ResetPG, ClearSave, Safe, Retro, Scale, Discord, Keys, Crate, Exit;
     public Text Description;
 
     // Used for controller selection
@@ -29,11 +29,11 @@ public class OptionsScript : MonoBehaviour {
     // Use this for initialization
     private void Start() {
         LocalCrate = GlobalControls.crate;
-        CrateUnlocked = LuaScriptBinder.GetAlMighty(null, "CrateYourFrisk") != null;
+        CrateUnlocked = LuaScriptBinder.GetPermanentGlobal("CrateYourFrisk") != null;
 
         buttons.AddRange(new MenuButton[] {
-            ResetRG.GetComponent<MenuButton>(),
-            ResetAG.GetComponent<MenuButton>(),
+            ResetSG.GetComponent<MenuButton>(),
+            ResetPG.GetComponent<MenuButton>(),
             ClearSave.GetComponent<MenuButton>(),
             Safe.GetComponent<MenuButton>(),
             Retro.GetComponent<MenuButton>(),
@@ -47,35 +47,35 @@ public class OptionsScript : MonoBehaviour {
 
         // add button functions
 
-        // reset RealGlobals
-        ResetRG.GetComponent<Button>().onClick.AddListener(() => {
-            if (RealGlobalCooldown > 0) {
+        // reset session globals
+        ResetSG.GetComponent<Button>().onClick.AddListener(() => {
+            if (SessionGlobalResetCooldown > 0) {
                 LuaScriptBinder.ClearVariables();
-                RealGlobalCooldown = 60 * 2;
-                ResetRG.GetComponentInChildren<Text>().text = !LocalCrate ? "Real Globals Erased!" : "REEL GOLBELZ DELEET!!!!!";
+                SessionGlobalResetCooldown = 60 * 2;
+                ResetSG.GetComponentInChildren<Text>().text = !LocalCrate ? "Session Globals Erased!" : "SEESHUN GOLBELZ DELEET!!!!!";
             } else {
-                RealGlobalCooldown = 60 * 2;
-                ResetRG.GetComponentInChildren<Text>().text = !LocalCrate ? "Are you sure?" : "R U SUR???";
+                SessionGlobalResetCooldown = 60 * 2;
+                ResetSG.GetComponentInChildren<Text>().text = !LocalCrate ? "Are you sure?" : "R U SUR???";
             }
         });
 
-        // reset AlMightyGlobals
-        ResetAG.GetComponent<Button>().onClick.AddListener(() => {
-            if (AlMightyGlobalCooldown > 0) {
-                LuaScriptBinder.ClearAlMighty();
-                AlMightyGlobalCooldown = 60 * 2;
-                ResetAG.GetComponentInChildren<Text>().text = !LocalCrate ? "AlMighty Globals Erased!" : "ALMEIGHTIZ DELEET!!!!!";
+        // reset permanent globals
+        ResetPG.GetComponent<Button>().onClick.AddListener(() => {
+            if (PermanentGlobalResetCooldown > 0) {
+                LuaScriptBinder.ClearPermanentGlobals();
+                PermanentGlobalResetCooldown = 60 * 2;
+                ResetPG.GetComponentInChildren<Text>().text = !LocalCrate ? "Permanent Globals Erased!" : "PREMZ GOLBELZ DELEET!!!!!";
 
-                // Add useful almighties
-                LuaScriptBinder.SetAlMighty(null, "CYFSafeMode", DynValue.NewBoolean(ControlPanel.instance.Safe));
-                LuaScriptBinder.SetAlMighty(null, "CYFRetroMode", DynValue.NewBoolean(GlobalControls.retroMode));
-                LuaScriptBinder.SetAlMighty(null, "CYFWindowScale", DynValue.NewNumber(ScreenResolution.windowScale));
+                // Add useful permanent globals
+                LuaScriptBinder.SetPermanentGlobal("CYFSafeMode", DynValue.NewBoolean(ControlPanel.instance.Safe));
+                LuaScriptBinder.SetPermanentGlobal("CYFRetroMode", DynValue.NewBoolean(GlobalControls.retroMode));
+                LuaScriptBinder.SetPermanentGlobal("CYFWindowScale", DynValue.NewNumber(ScreenResolution.windowScale));
                 if (CrateUnlocked)
-                    LuaScriptBinder.SetAlMighty(null, "CrateYourFrisk", DynValue.NewBoolean(GlobalControls.crate));
+                    LuaScriptBinder.SetPermanentGlobal("CrateYourFrisk", DynValue.NewBoolean(GlobalControls.crate));
 
             } else {
-                AlMightyGlobalCooldown = 60 * 2;
-                ResetAG.GetComponentInChildren<Text>().text = !LocalCrate ? "Are you sure?" : "R U SUR???";
+                PermanentGlobalResetCooldown = 60 * 2;
+                ResetPG.GetComponentInChildren<Text>().text = !LocalCrate ? "Are you sure?" : "R U SUR???";
             }
         });
 
@@ -95,8 +95,8 @@ public class OptionsScript : MonoBehaviour {
         Safe.GetComponent<Button>().onClick.AddListener(() => {
             ControlPanel.instance.Safe = !ControlPanel.instance.Safe;
 
-            // save Safe Mode preferences to AlMighties
-            LuaScriptBinder.SetAlMighty(null, "CYFSafeMode", DynValue.NewBoolean(ControlPanel.instance.Safe));
+            // save Safe Mode preferences to permanent globals
+            LuaScriptBinder.SetPermanentGlobal("CYFSafeMode", DynValue.NewBoolean(ControlPanel.instance.Safe));
 
             Safe.GetComponentInChildren<Text>().text = !LocalCrate
                 ? ("Safe mode: " + (ControlPanel.instance.Safe ? "On" : "Off"))
@@ -110,8 +110,8 @@ public class OptionsScript : MonoBehaviour {
         Retro.GetComponent<Button>().onClick.AddListener(() => {
             GlobalControls.retroMode =!GlobalControls.retroMode;
 
-            // save RetroMode preferences to AlMighties
-            LuaScriptBinder.SetAlMighty(null, "CYFRetroMode", DynValue.NewBoolean(GlobalControls.retroMode));
+            // save RetroMode preferences to permanent globals
+            LuaScriptBinder.SetPermanentGlobal("CYFRetroMode", DynValue.NewBoolean(GlobalControls.retroMode));
 
             Retro.GetComponentInChildren<Text>().text = !LocalCrate
                 ? ("Retrocompatibility Mode: " + (GlobalControls.retroMode ? "On" : "Off"))
@@ -135,8 +135,8 @@ public class OptionsScript : MonoBehaviour {
             ScreenResolution.tempWindowScale = ScreenResolution.windowScale;
             ScreenResolution.SetFullScreen(Screen.fullScreen);
 
-            // save RetroMode preferences to AlMighties
-            LuaScriptBinder.SetAlMighty(null, "CYFWindowScale", DynValue.NewNumber(ScreenResolution.windowScale));
+            // save RetroMode preferences to permanent globals
+            LuaScriptBinder.SetPermanentGlobal("CYFWindowScale", DynValue.NewNumber(ScreenResolution.windowScale));
 
             Scale.GetComponentInChildren<Text>().text = !LocalCrate
                 ? "Window Scale: "  + ScreenResolution.windowScale + "x"
@@ -161,7 +161,7 @@ public class OptionsScript : MonoBehaviour {
         // Enable / Disable Crate Your Frisk
         Crate.GetComponent<Button>().onClick.AddListener(() => {
             GlobalControls.crate = !GlobalControls.crate;
-            LuaScriptBinder.SetAlMighty(null, "CrateYourFrisk", DynValue.NewBoolean(GlobalControls.crate));
+            LuaScriptBinder.SetPermanentGlobal("CrateYourFrisk", DynValue.NewBoolean(GlobalControls.crate));
 
             Crate.GetComponentInChildren<Text>().text = !LocalCrate
                 ? "Crate Your Frisk: " + (GlobalControls.crate ? "On" : "Off")
@@ -184,8 +184,8 @@ public class OptionsScript : MonoBehaviour {
         GameObject.Find("DescriptionLabel").GetComponent<Text>().text = "MORE TXET";
 
         // buttons
-        ResetRG.GetComponentInChildren<Text>().text   = "RESTE RELA GOLBALZ";
-        ResetAG.GetComponentInChildren<Text>().text   = "RESTE ALMIGTY GOLBALZ";
+        ResetSG.GetComponentInChildren<Text>().text   = "RESTE SESSHUN GOLBALZ";
+        ResetPG.GetComponentInChildren<Text>().text   = "RESTE PERMZ GOLBALZ";
         ClearSave.GetComponentInChildren<Text>().text = "WYPE SAV";
         Exit.GetComponentInChildren<Text>().text      = "EXIT TOO MAD SELCT";
     }
@@ -194,14 +194,14 @@ public class OptionsScript : MonoBehaviour {
     private string GetDescription(string buttonName) {
         string response;
         switch(buttonName) {
-            case "ResetRG":
-                response = "Resets all Real Globals.\n\n"
-                         + "Real Globals are variables that persist through battles, but are deleted when CYF is closed.";
+            case "ResetSG":
+                response = "Resets all Session Global, also known as Real Globals.\n\n"
+                         + "Session Globals are variables that persist through battles, but are deleted when CYF is closed.";
                 return !LocalCrate ? response : Temmify.Convert(response);
-            case "ResetAG":
-                response = "Resets all AlMighty Globals.\n\n"
-                         + "AlMighty Globals are variables that are saved to a file, and stay even when you close CYF.\n\n"
-                         + "The options on this screen are stored as AlMighties.";
+            case "ResetPG":
+                response = "Resets all Permanent Globals, also known as AlMighty Globals.\n\n"
+                         + "Permanent Globals are variables that are saved to a file, and stay even after you close CYF.\n\n"
+                         + "The options on this screen are stored as Permanent Globals.";
                 return !LocalCrate ? response : Temmify.Convert(response);
             case "ClearSave":
                 response = "Clears your save file.\n\n"
@@ -299,8 +299,8 @@ public class OptionsScript : MonoBehaviour {
             int mousePosX = (int)((ScreenResolution.mousePosition.x / ScreenResolution.displayedSize.x) * 640);
             int mousePosY = (int)((Input.mousePosition.y / ScreenResolution.displayedSize.y) * 480);
             if (mousePosX >= 40 && mousePosX <= 290) {
-                if      (mousePosY <= 420 && mousePosY > 380) hoverItem = "ResetRG";
-                else if (mousePosY <= 380 && mousePosY > 340) hoverItem = "ResetAG";
+                if      (mousePosY <= 420 && mousePosY > 380) hoverItem = "ResetSG";
+                else if (mousePosY <= 380 && mousePosY > 340) hoverItem = "ResetPG";
                 else if (mousePosY <= 340 && mousePosY > 300) hoverItem = "ClearSave";
                 else if (mousePosY <= 300 && mousePosY > 260) hoverItem = "Safe";
                 else if (mousePosY <= 260 && mousePosY > 220) hoverItem = "Retro";
@@ -320,18 +320,18 @@ public class OptionsScript : MonoBehaviour {
         }
 
         // Make the player click twice to reset RG or AG, or to wipe their save
-        if (RealGlobalCooldown > 0)
-            RealGlobalCooldown -= 1;
-        else if (RealGlobalCooldown == 0) {
-            RealGlobalCooldown = -1;
-            ResetRG.GetComponentInChildren<Text>().text = !LocalCrate ? "Reset Real Globals" : "RSETE RAEL GLOBALS";
+        if (SessionGlobalResetCooldown > 0)
+            SessionGlobalResetCooldown -= 1;
+        else if (SessionGlobalResetCooldown == 0) {
+            SessionGlobalResetCooldown = -1;
+            ResetSG.GetComponentInChildren<Text>().text = !LocalCrate ? "Reset Session Globals" : "RSETE SESSHUN GOLBELZ";
         }
 
-        if (AlMightyGlobalCooldown > 0)
-            AlMightyGlobalCooldown -= 1;
-        else if (AlMightyGlobalCooldown == 0) {
-            AlMightyGlobalCooldown = -1;
-            ResetAG.GetComponentInChildren<Text>().text = !LocalCrate ? "Reset AlMighty Globals" : "RESET ALIMGHTY";
+        if (PermanentGlobalResetCooldown > 0)
+            PermanentGlobalResetCooldown -= 1;
+        else if (PermanentGlobalResetCooldown == 0) {
+            PermanentGlobalResetCooldown = -1;
+            ResetPG.GetComponentInChildren<Text>().text = !LocalCrate ? "Reset Permanent Globals" : "RESET PERMZ GOLBELZ";
         }
 
         if (SaveCooldown > 0)

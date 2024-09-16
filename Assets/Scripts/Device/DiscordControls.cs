@@ -36,8 +36,8 @@ public static class DiscordControls {
         }
 
         // Gets Discord Visibility Setting
-        if (LuaScriptBinder.GetAlMighty(null, "CYFDiscord") == null) curr_setting = 0;
-        else                                                         curr_setting = (int)LuaScriptBinder.GetAlMighty(null, "CYFDiscord").Number;
+        if (LuaScriptBinder.GetPermanentGlobal("CYFDiscord") == null) curr_setting = 0;
+        else                                                          curr_setting = (int)LuaScriptBinder.GetPermanentGlobal("CYFDiscord").Number;
 
         // Creates the activity objects that will be modified and used as needed
         activity = new Activity {
@@ -72,7 +72,7 @@ public static class DiscordControls {
             curr_setting = 0;
 
         if (spd > 0)
-            LuaScriptBinder.SetAlMighty(null, "CYFDiscord", DynValue.NewNumber(curr_setting), true);
+            LuaScriptBinder.SetPermanentGlobal("CYFDiscord", DynValue.NewNumber(curr_setting), true);
 
         if (isActive)
             switch (curr_setting) {

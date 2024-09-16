@@ -190,12 +190,12 @@ public class LuaGeneralOW {
 
         //Saves our most recent map and position to control where the player respawns
         string mapName = UnitaleUtil.MapCorrespondanceList.ContainsKey(SceneManager.GetActiveScene().name) ? UnitaleUtil.MapCorrespondanceList[SceneManager.GetActiveScene().name] : SceneManager.GetActiveScene().name;
-        LuaScriptBinder.Set(null, "PlayerMap", DynValue.NewString(mapName));
+        LuaScriptBinder.SetSessionGlobal("PlayerMap", DynValue.NewString(mapName));
 
         Transform tf = GameObject.Find("Player").transform;
-        LuaScriptBinder.Set(null, "PlayerPosX", DynValue.NewNumber(tf.position.x));
-        LuaScriptBinder.Set(null, "PlayerPosY", DynValue.NewNumber(tf.position.y));
-        LuaScriptBinder.Set(null, "PlayerPosZ", DynValue.NewNumber(tf.position.z));
+        LuaScriptBinder.SetSessionGlobal("PlayerPosX", DynValue.NewNumber(tf.position.x));
+        LuaScriptBinder.SetSessionGlobal("PlayerPosY", DynValue.NewNumber(tf.position.y));
+        LuaScriptBinder.SetSessionGlobal("PlayerPosZ", DynValue.NewNumber(tf.position.z));
 
         Object.FindObjectOfType<GameOverBehavior>().StartDeath(deathTable, deathMusic);
 

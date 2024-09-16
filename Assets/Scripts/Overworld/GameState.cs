@@ -70,13 +70,13 @@ public class GameState {
 
         try {
             GameObject Player = GameObject.Find("Player");
-            LuaScriptBinder.Set(null, "PlayerPosX", DynValue.NewNumber(Player.transform.position.x));
-            LuaScriptBinder.Set(null, "PlayerPosY", DynValue.NewNumber(Player.transform.position.y));
-            LuaScriptBinder.Set(null, "PlayerPosZ", DynValue.NewNumber(Player.transform.position.z));
+            LuaScriptBinder.SetSessionGlobal("PlayerPosX", DynValue.NewNumber(Player.transform.position.x));
+            LuaScriptBinder.SetSessionGlobal("PlayerPosY", DynValue.NewNumber(Player.transform.position.y));
+            LuaScriptBinder.SetSessionGlobal("PlayerPosZ", DynValue.NewNumber(Player.transform.position.z));
         } catch {
-            LuaScriptBinder.Set(null, "PlayerPosX", DynValue.NewNumber(SaveLoad.savedGame.playerVariablesNum["PlayerPosX"]));
-            LuaScriptBinder.Set(null, "PlayerPosY", DynValue.NewNumber(SaveLoad.savedGame.playerVariablesNum["PlayerPosY"]));
-            LuaScriptBinder.Set(null, "PlayerPosZ", DynValue.NewNumber(SaveLoad.savedGame.playerVariablesNum["PlayerPosZ"]));
+            LuaScriptBinder.SetSessionGlobal("PlayerPosX", DynValue.NewNumber(SaveLoad.savedGame.playerVariablesNum["PlayerPosX"]));
+            LuaScriptBinder.SetSessionGlobal("PlayerPosY", DynValue.NewNumber(SaveLoad.savedGame.playerVariablesNum["PlayerPosY"]));
+            LuaScriptBinder.SetSessionGlobal("PlayerPosZ", DynValue.NewNumber(SaveLoad.savedGame.playerVariablesNum["PlayerPosZ"]));
         }
 
         string mapName;
@@ -100,17 +100,17 @@ public class GameState {
         playerTime = Time.time - GlobalControls.overworldTimestamp;
 
         try {
-            foreach (string key in LuaScriptBinder.GetSavedDictionary().Keys) {
+            foreach (string key in LuaScriptBinder.GetAllSessionGlobals().Keys) {
                 DynValue dv;
-                LuaScriptBinder.GetSavedDictionary().TryGetValue(key, out dv);
+                LuaScriptBinder.GetAllSessionGlobals().TryGetValue(key, out dv);
                 switch (dv.Type) {
                     case DataType.Number:  playerVariablesNum.Add(key, dv.Number);   break;
                     case DataType.String:  playerVariablesStr.Add(key, dv.String);   break;
                     case DataType.Boolean: playerVariablesBool.Add(key, dv.Boolean); break;
-                    case DataType.Nil:     LuaScriptBinder.Remove(key);              break;
+                    case DataType.Nil:     LuaScriptBinder.RemoveSessionGlobal(key);              break;
                     default:
                         UnitaleUtil.WriteInLogAndDebugger("The saved value \"" + key + "\" is erroneous because a " + dv.Type.ToString().ToLower() + " can't be saved. Deleting it now.");
-                        LuaScriptBinder.Remove(key);
+                        LuaScriptBinder.RemoveSessionGlobal(key);
                         break;
                 }
             }
@@ -128,19 +128,19 @@ public class GameState {
             if (!loadGlobals && !key.Contains("PlayerPos")) continue;
             double a;
             playerVariablesNum.TryGetValue(key, out a);
-            LuaScriptBinder.Set(null, key, DynValue.NewNumber(a));
+            LuaScriptBinder.SetSessionGlobal(key, DynValue.NewNumber(a));
         }
         if (loadGlobals) {
             foreach (string key in playerVariablesStr.Keys) {
                 string a;
                 playerVariablesStr.TryGetValue(key, out a);
-                LuaScriptBinder.Set(null, key, DynValue.NewString(a));
+                LuaScriptBinder.SetSessionGlobal(key, DynValue.NewString(a));
             }
 
             foreach (string key in playerVariablesBool.Keys) {
                 bool a;
                 playerVariablesBool.TryGetValue(key, out a);
-                LuaScriptBinder.Set(null, key, DynValue.NewBoolean(a));
+                LuaScriptBinder.SetSessionGlobal(key, DynValue.NewBoolean(a));
             }
         }
 
@@ -158,7 +158,7 @@ public class GameState {
 
         string mapName = UnitaleUtil.MapCorrespondanceList.ContainsValue(lastScene) ? UnitaleUtil.MapCorrespondanceList.FirstOrDefault(x => x.Value == lastScene).Key : lastScene;
 
-        LuaScriptBinder.Set(null, "PlayerMap", DynValue.NewString(mapName));
+        LuaScriptBinder.SetSessionGlobal("PlayerMap", DynValue.NewString(mapName));
     }
 }
 

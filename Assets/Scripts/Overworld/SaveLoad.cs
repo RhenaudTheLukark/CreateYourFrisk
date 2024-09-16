@@ -7,8 +7,8 @@ using System.IO;
 /// A static class that is used to load and save a gamestate.
 /// </summary>
 public static class SaveLoad {
-    public static GameState savedGame;                     // The save
-    public static AlMightyGameState almightycurrentGame;   // The almighty save
+    public static GameState savedGame;                     // The current session save
+    public static AlMightyGameState permanentGameState;   // The permanent save
     public static bool started;
 
     public static void Start() {
@@ -72,29 +72,29 @@ public static class SaveLoad {
         return false;
     }
 
-    public static void SaveAlMighty(string key = null) {
-        almightycurrentGame = new AlMightyGameState();
-        almightycurrentGame.UpdateVariables();
+    public static void SavePermanentGlobals(string key = null) {
+        permanentGameState = new AlMightyGameState();
+        permanentGameState.SaveAllGlobals();
         File.Delete(Application.persistentDataPath + "/AlMightySave.gd");
         BinaryFormatter bf = new BinaryFormatter();
         //Application.persistentDataPath is a string, so if you wanted you can put that into unitaleutil.writeinlog if you want to know where save games are located
         FileStream file = File.Create(Application.persistentDataPath + "/AlMightySave.gd");
-        bf.Serialize(file, almightycurrentGame);
-        Debug.Log(key == null ? "AlMighties have been saved!" : "The AlMighty \"" + key + "\" has been saved!");
+        bf.Serialize(file, permanentGameState);
+        Debug.Log(key == null ? "Permanent globals have been saved!" : "The permanent global \"" + key + "\" has been saved!");
         file.Close();
     }
 
-    public static bool LoadAlMighty() {
+    public static bool LoadPermanentGlobals() {
         if (File.Exists(Application.persistentDataPath + "/AlMightySave.gd")) {
-            Debug.Log("We found an almighty save at this location : " + Application.persistentDataPath + "/AlMightySave.gd");
+            Debug.Log("We found a permanent save at this location : " + Application.persistentDataPath + "/AlMightySave.gd");
             BinaryFormatter bf = new BinaryFormatter();
             FileStream file = File.Open(Application.persistentDataPath + "/AlMightySave.gd", FileMode.Open);
-            almightycurrentGame = (AlMightyGameState)bf.Deserialize(file);
-            almightycurrentGame.LoadVariables();
+            permanentGameState = (AlMightyGameState)bf.Deserialize(file);
+            permanentGameState.LoadAllGlobals();
             file.Close();
             return true;
         }
-        Debug.Log("There's no almighty save to load.");
+        Debug.Log("There is no permanent save to load.");
         return false;
     }
 }

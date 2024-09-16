@@ -17,7 +17,7 @@ public class TransitionOverworld : MonoBehaviour {
         // Forcefully disable retromode if it is on
         if (GlobalControls.retroMode) {
             GlobalControls.retroMode = false;
-            try { LuaScriptBinder.SetAlMighty(null, "CYFRetroMode", DynValue.NewBoolean(false), true); }
+            try { LuaScriptBinder.SetPermanentGlobal("CYFRetroMode", DynValue.NewBoolean(false), true); }
             catch { /* ignored */ }
         }
 
@@ -30,20 +30,20 @@ public class TransitionOverworld : MonoBehaviour {
         }
         DontDestroyOnLoad(GameOverBehavior.gameOverContainerOw);
 
-        if (LuaScriptBinder.Get(null, "PlayerPosX") == null || LuaScriptBinder.Get(null, "PlayerPosY") == null || LuaScriptBinder.Get(null, "PlayerPosZ") == null) {
-            LuaScriptBinder.Set(null, "PlayerPosX", DynValue.NewNumber(BeginningPosition.x));
-            LuaScriptBinder.Set(null, "PlayerPosY", DynValue.NewNumber(BeginningPosition.y));
-            LuaScriptBinder.Set(null, "PlayerPosZ", DynValue.NewNumber(0));
+        if (LuaScriptBinder.GetSessionGlobal("PlayerPosX") == null || LuaScriptBinder.GetSessionGlobal("PlayerPosY") == null || LuaScriptBinder.GetSessionGlobal("PlayerPosZ") == null) {
+            LuaScriptBinder.SetSessionGlobal("PlayerPosX", DynValue.NewNumber(BeginningPosition.x));
+            LuaScriptBinder.SetSessionGlobal("PlayerPosY", DynValue.NewNumber(BeginningPosition.y));
+            LuaScriptBinder.SetSessionGlobal("PlayerPosZ", DynValue.NewNumber(0));
         }
         if (GameObject.Find("Main Camera"))
             Destroy(GameObject.Find("Main Camera"));
         //Used only for the 1st scene
-        if (LuaScriptBinder.Get(null, "PlayerMap") == null) {
+        if (LuaScriptBinder.GetSessionGlobal("PlayerMap") == null) {
             isStart = true;
             SaveLoad.Start();
 
             string mapName2 = UnitaleUtil.MapCorrespondanceList.ContainsKey(FirstLevelToLoad) ? UnitaleUtil.MapCorrespondanceList[FirstLevelToLoad] : FirstLevelToLoad;
-            LuaScriptBinder.Set(null, "PlayerMap", DynValue.NewString(mapName2));
+            LuaScriptBinder.SetSessionGlobal("PlayerMap", DynValue.NewString(mapName2));
 
             StaticInits.MODFOLDER = "";
             /*StaticInits.Initialized = false;
@@ -71,10 +71,10 @@ public class TransitionOverworld : MonoBehaviour {
         string mapName;
         if (!isStart)
             try {
-                mapName = UnitaleUtil.MapCorrespondanceList.ContainsValue(LuaScriptBinder.Get(null, "PlayerMap").String)
-                    ? UnitaleUtil.MapCorrespondanceList.FirstOrDefault(x => x.Value == LuaScriptBinder.Get(null, "PlayerMap").String).Key
-                    : LuaScriptBinder.Get(null, "PlayerMap").String;
-            } catch { mapName = LuaScriptBinder.Get(null, "PlayerMap").String; }
+                mapName = UnitaleUtil.MapCorrespondanceList.ContainsValue(LuaScriptBinder.GetSessionGlobal("PlayerMap").String)
+                    ? UnitaleUtil.MapCorrespondanceList.FirstOrDefault(x => x.Value == LuaScriptBinder.GetSessionGlobal("PlayerMap").String).Key
+                    : LuaScriptBinder.GetSessionGlobal("PlayerMap").String;
+            } catch { mapName = LuaScriptBinder.GetSessionGlobal("PlayerMap").String; }
         else
             mapName = FirstLevelToLoad;
 
@@ -123,7 +123,7 @@ public class TransitionOverworld : MonoBehaviour {
         MapInfos mi = GameObject.Find("Background").GetComponent<MapInfos>();
         if (StaticInits.MODFOLDER != mi.modToLoad) {
             StaticInits.InitAll(mi.modToLoad, true);
-            LuaScriptBinder.Set(null, "ModFolder", DynValue.NewString(StaticInits.MODFOLDER));
+            LuaScriptBinder.SetSessionGlobal("ModFolder", DynValue.NewString(StaticInits.MODFOLDER));
             if (call == "transitionoverworld") {
                 EventManager.instance.ScriptRunning = false;
                 EventManager.instance.script = null;

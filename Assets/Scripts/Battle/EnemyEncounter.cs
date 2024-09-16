@@ -41,7 +41,7 @@ public class EnemyEncounter : MonoBehaviour {
         script = new ScriptWrapper { scriptname = StaticInits.ENCOUNTER };
 
         script.DoString(FileLoader.GetScript("Encounters/" + StaticInits.ENCOUNTER, StaticInits.ENCOUNTER, "encounter"));
-        script.Bind("State", (Action<Script, string>)UIController.SwitchStateOnString);
+        script.Bind("State", (Action<string>)UIController.SwitchStateOnString);
         script.Bind("RandomEncounterText", (Func<string>)RandomEncounterText);
         script.Bind("CreateProjectile", (Func<Script, string, float, float, string, DynValue>)CreateProjectile);
         script.Bind("CreateProjectileAbs", (Func<Script, string, float, float, string, DynValue>)CreateProjectileAbs);
@@ -378,7 +378,7 @@ public class EnemyEncounter : MonoBehaviour {
                 currentWaveScript = i;
                 waves[i] = new ScriptWrapper { scriptname = nextWaves.Table.Get(i + 1).String };
                 waves[i].script.Globals["EndWave"] = (Action)EndWaveTimer;
-                waves[i].script.Globals["State"] = (Action<Script, string>)UIController.SwitchStateOnString;
+                waves[i].script.Globals["State"] = (Action<string>)UIController.SwitchStateOnString;
                 waves[i].script.Globals["CreateProjectile"] = (Func<Script, string, float, float, string, DynValue>)CreateProjectile;
                 waves[i].script.Globals["CreateProjectileAbs"] = (Func<Script, string, float, float, string, DynValue>)CreateProjectileAbs;
                 if (nextWaves.Table.Get(i + 1).Type != DataType.String){

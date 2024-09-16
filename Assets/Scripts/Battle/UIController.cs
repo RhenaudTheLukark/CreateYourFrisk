@@ -153,7 +153,7 @@ public class UIController : MonoBehaviour {
         //Properly set "isInFight" to false, as it shouldn't be true anymore
         GlobalControls.isInFight = false;
 
-        LuaScriptBinder.ClearBattleVar();
+        LuaScriptBinder.ClearBattleGlobals();
         GlobalControls.stopScreenShake = true;
         Cursor.visible = true;
         MusicManager.hiddenDictionary.Clear();
@@ -403,9 +403,9 @@ public class UIController : MonoBehaviour {
                 break;
 
             case "MERCYMENU":
-                if (LuaScriptBinder.Get(null, "ForceNoFlee") != null) {
+                if (LuaScriptBinder.GetSessionGlobal("ForceNoFlee") != null) {
                     EnemyEncounter.script.SetVar("flee", DynValue.NewBoolean(false));
-                    LuaScriptBinder.Remove("ForceNoFlee");
+                    LuaScriptBinder.RemoveSessionGlobal("ForceNoFlee");
                 }
                 if (!EnemyEncounter.script.GetVar("flee").Boolean && EnemyEncounter.script.GetVar("flee").Type != DataType.Nil)
                     encounter.CanRun = false;
@@ -533,7 +533,7 @@ public class UIController : MonoBehaviour {
         }
     }
 
-    public static void SwitchStateOnString(Script scr, string state) {
+    public static void SwitchStateOnString(string state) {
         if (state == null)
             throw new CYFException("State: Argument cannot be nil.");
         state = state.ToUpper();
@@ -1196,7 +1196,7 @@ public class UIController : MonoBehaviour {
         ProjectileController.globalPixelPerfectCollision = false;
         ControlPanel.instance.FrameBasedMovement = false;
 
-        LuaScriptBinder.CopyToBattleVar();
+        LuaScriptBinder.CopySessionGlobalsToBattleGlobals();
         GameObject.Find("Main Camera").GetComponent<ProjectileHitboxRenderer>().enabled = !GameObject.Find("Main Camera").GetComponent<ProjectileHitboxRenderer>().enabled;
         //There are scene init bugs, let's fix them!
         /*if (GameObject.Find("TopLayer").transform.parent != GameObject.Find("Canvas").transform) {

@@ -97,8 +97,8 @@ public class SpecialAnnouncementScript : MonoBehaviour {
         #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
             Misc.WindowName = GlobalControls.crate ? ControlPanel.instance.WinodwBsaisNmae : ControlPanel.instance.WindowBasisName;
         #endif
-        // Load CYF's AlMighty save file
-        SaveLoad.LoadAlMighty();
+        // Load CYF's permanent globals
+        SaveLoad.LoadPermanentGlobals();
 
         // Load all resources needed for this animation to play
         Sprite[] punderSprs = Resources.LoadAll<Sprite>("Sprites/Punder");

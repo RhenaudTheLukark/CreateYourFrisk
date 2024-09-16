@@ -229,7 +229,7 @@ public class KeyboardInput : IUndertaleInput {
     }
 
     /// <summary>
-    /// This function loads the player's keybinding configuration stored in their AlMightyGlobals.
+    /// This function loads the player's keybinding configuration stored in their permanent globals.
     /// </summary>
     public static void LoadPlayerKeys() {
         if (!File.Exists(Application.persistentDataPath + "/keybinds.gd"))
@@ -266,7 +266,7 @@ public class KeyboardInput : IUndertaleInput {
         ResetEncounterInputs();
     }
     /// <summary>
-    /// This function saves the player's keybinding configuration into their AlMightyGlobals.
+    /// This function saves the player's keybinding configuration into their permanent globals.
     /// </summary>
     public static void SaveKeybinds(Dictionary<string, List<string>> newKeys) {
         if (File.Exists(Application.persistentDataPath + "/keybinds.gd"))

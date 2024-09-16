@@ -66,8 +66,8 @@ public class PlayerOverworld : MonoBehaviour {
         PlayerPos = Player.transform.parent;
 
         //If the player's position already exists, move the player to it
-        if (LuaScriptBinder.Get(null, "PlayerPosX") != null && LuaScriptBinder.Get(null, "PlayerPosY") != null && LuaScriptBinder.Get(null, "PlayerPosZ") != null) {
-            Vector2 temp = new Vector3((float)LuaScriptBinder.Get(null, "PlayerPosX").Number, (float)LuaScriptBinder.Get(null, "PlayerPosY").Number, (float)LuaScriptBinder.Get(null, "PlayerPosZ").Number);
+        if (LuaScriptBinder.GetSessionGlobal("PlayerPosX") != null && LuaScriptBinder.GetSessionGlobal("PlayerPosY") != null && LuaScriptBinder.GetSessionGlobal("PlayerPosZ") != null) {
+            Vector2 temp = new Vector3((float)LuaScriptBinder.GetSessionGlobal("PlayerPosX").Number, (float)LuaScriptBinder.GetSessionGlobal("PlayerPosY").Number, (float)LuaScriptBinder.GetSessionGlobal("PlayerPosZ").Number);
             PlayerPos.position = temp;
         } else
             PlayerPos.position = Vector3.zero;
@@ -513,17 +513,17 @@ public class PlayerOverworld : MonoBehaviour {
     private IEnumerator SetEncounter(string encounterName = "", bool ForceNoFlee = false, bool instant = false) {
         //Saves our last map and the position of our player, before the battle
         string mapName = UnitaleUtil.MapCorrespondanceList.ContainsKey(SceneManager.GetActiveScene().name) ? UnitaleUtil.MapCorrespondanceList[SceneManager.GetActiveScene().name] : SceneManager.GetActiveScene().name;
-        LuaScriptBinder.Set(null, "PlayerMap", DynValue.NewString(mapName));
+        LuaScriptBinder.SetSessionGlobal("PlayerMap", DynValue.NewString(mapName));
         Transform tf = rb2D.transform;
-        LuaScriptBinder.Set(null, "PlayerPosX", DynValue.NewNumber(tf.position.x));
-        LuaScriptBinder.Set(null, "PlayerPosY", DynValue.NewNumber(tf.position.y));
-        LuaScriptBinder.Set(null, "PlayerPosZ", DynValue.NewNumber(tf.position.z));
+        LuaScriptBinder.SetSessionGlobal("PlayerPosX", DynValue.NewNumber(tf.position.x));
+        LuaScriptBinder.SetSessionGlobal("PlayerPosY", DynValue.NewNumber(tf.position.y));
+        LuaScriptBinder.SetSessionGlobal("PlayerPosZ", DynValue.NewNumber(tf.position.z));
 
         //Sets the mod's folder and the encounter file's name to know what file we have to load
         string ModFolder = StaticInits.MODFOLDER, Encounter;
-        LuaScriptBinder.Set(null, "ModFolder", DynValue.NewString(ModFolder));
+        LuaScriptBinder.SetSessionGlobal("ModFolder", DynValue.NewString(ModFolder));
         if (ForceNoFlee)
-            LuaScriptBinder.Set(null, "ForceNoFlee", DynValue.NewBoolean(true));
+            LuaScriptBinder.SetSessionGlobal("ForceNoFlee", DynValue.NewBoolean(true));
 
         DirectoryInfo di = new DirectoryInfo(Path.Combine(FileLoader.DataRoot, "Mods/" + StaticInits.MODFOLDER + "/Lua/Encounters"));
         FileInfo[] encounterFiles = di.GetFiles();
@@ -556,7 +556,7 @@ public class PlayerOverworld : MonoBehaviour {
         //We save the state of the events.
         EventManager.instance.SetEventStates(true);
 
-        LuaScriptBinder.ClearBattleVar();
+        LuaScriptBinder.ClearBattleGlobals();
 
         if (!instant)
             yield return new WaitForEndOfFrame();

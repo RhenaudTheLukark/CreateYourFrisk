@@ -1924,7 +1924,7 @@ PrefabInstance:
     - target: {fileID: 6408004042313889263, guid: 06a74376a3db7d744b36f7bb52973cf7,
         type: 3}
       propertyPath: m_Text
-      value: Reset Almighty Globals
+      value: Reset Permanent Globals
       objectReference: {fileID: 0}
     - target: {fileID: 6408004042703340344, guid: 06a74376a3db7d744b36f7bb52973cf7,
         type: 3}
@@ -1984,7 +1984,7 @@ PrefabInstance:
     - target: {fileID: 6408004043003039568, guid: 06a74376a3db7d744b36f7bb52973cf7,
         type: 3}
       propertyPath: m_Name
-      value: ResetAG
+      value: ResetPG
       objectReference: {fileID: 0}
     - target: {fileID: 6408004043003039569, guid: 06a74376a3db7d744b36f7bb52973cf7,
         type: 3}
@@ -2737,7 +2737,7 @@ PrefabInstance:
     - target: {fileID: 6408004042313889263, guid: 06a74376a3db7d744b36f7bb52973cf7,
         type: 3}
       propertyPath: m_Text
-      value: Reset Real Globals
+      value: Reset Session Globals
       objectReference: {fileID: 0}
     - target: {fileID: 6408004042703340344, guid: 06a74376a3db7d744b36f7bb52973cf7,
         type: 3}
@@ -2797,7 +2797,7 @@ PrefabInstance:
     - target: {fileID: 6408004043003039568, guid: 06a74376a3db7d744b36f7bb52973cf7,
         type: 3}
       propertyPath: m_Name
-      value: ResetRG
+      value: ResetSG
       objectReference: {fileID: 0}
     - target: {fileID: 6408004043003039569, guid: 06a74376a3db7d744b36f7bb52973cf7,
         type: 3}
@@ -3099,8 +3099,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2ea8601668b5c64488fed0712837d69, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ResetRG: {fileID: 1826168420}
-  ResetAG: {fileID: 1212751806}
+  ResetSG: {fileID: 1826168420}
+  ResetPG: {fileID: 1212751806}
   ClearSave: {fileID: 110168062}
   Safe: {fileID: 73542488}
   Retro: {fileID: 763680581}
