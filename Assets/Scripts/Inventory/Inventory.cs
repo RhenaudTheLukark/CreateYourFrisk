@@ -71,13 +71,13 @@ public static class Inventory {
         return !UnitaleUtil.IsOverworld && UnitaleUtil.TryCall(EnemyEncounter.script, func, param);
     }
 
-    public static void UseItem(int ID) {
+    public static void UseItem(int ID, bool silent = false) {
         usedItemNoDelete = false;
         itemStatAmount = 0;
         string Name = inventory[ID].Name, replacement = "";
         int type = inventory[ID].Type;
         float amount = -991;
-        TryCall("HandleItem", new[] { DynValue.NewString(Name.ToUpper()), DynValue.NewNumber(ID + 1) });
+        TryCall("HandleItem", new[] { DynValue.NewString(Name.ToUpper()), DynValue.NewNumber(ID + 1), DynValue.NewBoolean(silent) });
 
         // Check if the current item has been added to the list of custom items
         bool foundCustomItem = false;
@@ -101,6 +101,9 @@ public static class Inventory {
         } else if (!usedItemNoDelete && type == 0)
             // Delete the item if it's a standard consumable
             inventory.RemoveAt(ID);
+
+        if (silent)
+            return;
 
         if (!UnitaleUtil.IsOverworld) {
             if (!UIController.instance.battleDialogueStarted && mess != null)
@@ -512,7 +515,7 @@ public static class Inventory {
         catch { /* ignored */ }
     }
 
-    private static void SetEquip(int ID) {
+    public static void SetEquip(int ID) {
         string Name = inventory[ID].Name;
         int mode;
 
