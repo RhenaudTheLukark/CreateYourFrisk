@@ -1032,7 +1032,8 @@ end";
                         // Sets the event's sprite directly otherwise
                         else if (ev.GetComponent<Image>())
                             ev.GetComponent<Image>().sprite = SpriteRegistry.Get(ei.CurrSpriteNameOrCYFAnim);
-                        else ev.GetComponent<SpriteRenderer>().sprite = SpriteRegistry.Get(ei.CurrSpriteNameOrCYFAnim);
+                        else
+                            ev.GetComponent<SpriteRenderer>().sprite = SpriteRegistry.Get(ei.CurrSpriteNameOrCYFAnim);
                     } catch {
                         Debug.LogWarning("Map loading: Couldn't load sprite " + ei.CurrSpriteNameOrCYFAnim + " for object " + ev.name);
                         // ignored

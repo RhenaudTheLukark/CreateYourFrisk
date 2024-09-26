@@ -158,19 +158,19 @@ public class Misc {
 
     public bool FileExists(string path) {
         if (!path.StartsWith(FileLoader.DataRoot)) path = path.Replace('\\', '/').TrimStart('/'); // TODO: Remove this for 0.7
-        FileLoader.SanitizePath(ref path, "", false);
+        FileLoader.SanitizePath(ref path, "", false, true);
         return File.Exists(path);
     }
 
     public bool DirExists(string path) {
         if (!path.StartsWith(FileLoader.DataRoot)) path = path.Replace('\\', '/').TrimStart('/'); // TODO: Remove this for 0.7
-        FileLoader.SanitizePath(ref path, "", false);
+        FileLoader.SanitizePath(ref path, "", false, true);
         return Directory.Exists(path);
     }
 
     public bool CreateDir(string path) {
         if (!path.StartsWith(FileLoader.DataRoot)) path = path.Replace('\\', '/').TrimStart('/'); // TODO: Remove this for 0.7
-        FileLoader.SanitizePath(ref path, "", false);
+        FileLoader.SanitizePath(ref path, "", false, true);
         if (Directory.Exists(path)) return false;
         Directory.CreateDirectory(path);
         return true;
@@ -183,15 +183,15 @@ public class Misc {
         if (!newPath.StartsWith(FileLoader.DataRoot)) newPath = newPath.Replace('\\', '/').TrimStart('/'); // TODO: Remove this for 0.7
         if (!DirExists(path) || DirExists(newPath) || !PathValid(path)) return false;
 
-        FileLoader.SanitizePath(ref path, "");
-        FileLoader.SanitizePath(ref newPath, "", false);
+        FileLoader.SanitizePath(ref path, "", true, true);
+        FileLoader.SanitizePath(ref newPath, "", false, true);
         Directory.Move(path, newPath);
         return true;
     }
 
     public bool RemoveDir(string path, bool force = false) {
         if (!path.StartsWith(FileLoader.DataRoot)) path = path.Replace('\\', '/').TrimStart('/'); // TODO: Remove this for 0.7
-        FileLoader.SanitizePath(ref path, "");
+        FileLoader.SanitizePath(ref path, "", true, true);
 
         if (!Directory.Exists(path)) return false;
         try { Directory.Delete(path, force); }
@@ -205,7 +205,7 @@ public class Misc {
 
         string origPath = path;
         if (!path.StartsWith(FileLoader.DataRoot)) path = path.Replace('\\', '/').TrimStart('/'); // TODO: Remove this for 0.7
-        FileLoader.SanitizePath(ref path, "");
+        FileLoader.SanitizePath(ref path, "", false, true);
         if (!Directory.Exists(path))
             throw new CYFException("Invalid path:\n\n\"" + origPath + "\"");
 

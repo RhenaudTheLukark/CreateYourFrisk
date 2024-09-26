@@ -25,8 +25,8 @@ public class AudioClipRegistry {
         key = key.TrimStart('/', '\\');
         string oggKey = key + (key.ToLower().EndsWith(".ogg") ? "" : ".ogg");
         string wavKey = key + (key.ToLower().EndsWith(".wav") ? "" : ".wav");
-        if (!FileLoader.SanitizePath(ref oggKey, "", true, false, false)) {
-            FileLoader.SanitizePath(ref wavKey, "", true, false, !GlobalControls.retroMode);
+        if (!FileLoader.SanitizePath(ref oggKey, prefix, true, false, false)) {
+            FileLoader.SanitizePath(ref wavKey, prefix, true, false, !GlobalControls.retroMode);
             key = wavKey;
         } else
             key = oggKey;
@@ -36,18 +36,18 @@ public class AudioClipRegistry {
     }
 
     public static AudioClip GetVoice(string key) {
-        if (key.Length < 14 || key.Substring(0, 14).ToLower() != "sounds/voices/") key = "Sounds/Voices/" + key;
+        if (key.Length >= 14 && key.Substring(0, 14).ToLower() == "sounds/voices/") key = key.Substring(14);
         return Get(key, "Sounds/Voices/");
     }
 
     public static AudioClip GetSound(string key) {
         key = (string)MusicManager.hiddenDictionary[key] ?? key;
-        if (key.Length < 7 || key.Substring(0, 7).ToLower() != "sounds/") key = "Sounds/" + key;
+        if (key.Length >= 7 && key.Substring(0, 7).ToLower() == "sounds/") key = key.Substring(7);
         return Get(key, "Sounds/");
     }
 
     public static AudioClip GetMusic(string key) {
-        if (key.Length < 6 || key.Substring(0, 6).ToLower() != "audio/") key = "Audio/" + key;
+        if (key.Length >= 6 && key.Substring(0, 6).ToLower() == "audio/") key = key.Substring(6);
         return Get(key, "Audio/");
     }
 
@@ -56,8 +56,8 @@ public class AudioClipRegistry {
         if (dictMod.ContainsKey(lowerKey))          dict[lowerKey] = GetAudioClip(dictMod[lowerKey].FullName);
         else if (dictDefault.ContainsKey(lowerKey)) dict[lowerKey] = GetAudioClip(dictDefault[lowerKey].FullName);
         else {
-            AudioClip audio = TryFetchFromMod(origKey, key, prefix);
-            if (audio == null) audio = TryFetchFromDefault(origKey, key, prefix);
+            AudioClip audio = TryFetchFromMod(origKey, prefix + key);
+            if (audio == null) audio = TryFetchFromDefault(origKey, prefix + key);
             if (audio == null) {
                 UnitaleUtil.Warn("The audio file \"" + origKey + "\" doesn't exist.");
                 return null;
@@ -67,7 +67,7 @@ public class AudioClipRegistry {
         return dict[lowerKey];
     }
 
-    private static AudioClip TryFetchFromDefault(string origKey, string key, string prefix) {
+    private static AudioClip TryFetchFromDefault(string origKey, string key) {
         FileInfo tryF = new FileInfo(Path.Combine(FileLoader.PathToDefaultFile(""), key));
         if (!tryF.Exists)
             return null;
@@ -77,7 +77,7 @@ public class AudioClipRegistry {
         return dict[key];
     }
 
-    private static AudioClip TryFetchFromMod(string origKey, string key, string prefix) {
+    private static AudioClip TryFetchFromMod(string origKey, string key) {
         FileInfo tryF = new FileInfo(Path.Combine(FileLoader.PathToModFile(""), key));
         if (!tryF.Exists)
             return null;

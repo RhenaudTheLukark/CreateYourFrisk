@@ -308,7 +308,7 @@ end";
 
 				if (needsAbsolutePath) return true;
 
-				Uri uriRel = new Uri(modPath + Path.DirectorySeparatorChar).MakeRelativeUri(new Uri(fileName));
+				Uri uriRel = new Uri(modPath).MakeRelativeUri(new Uri(fileName));
 				fileName = Uri.UnescapeDataString(uriRel.OriginalString);
 				return true;
 			} catch (Exception e) { errorString = e.Message; }

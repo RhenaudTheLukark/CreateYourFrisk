@@ -179,7 +179,7 @@ public static class FileLoader {
         else                   relativeSanitizationDictionary.Add(pathToTest, fileName);
 
         // If the file doesn't exist but its existence is needed, throw an error
-        bool exists = new FileInfo(fileName).Exists || new FileInfo(pathToTest).Exists || new FileInfo(PathToModFile(pathToTest)).Exists || new FileInfo(PathToDefaultFile(pathToTest)).Exists;
+        bool exists = pathToTest == "" || new FileInfo(fileName).Exists || new FileInfo(pathToTest).Exists || new FileInfo(PathToModFile(pathToTest)).Exists || new FileInfo(PathToDefaultFile(pathToTest)).Exists;
         if (needsToExist && !exists) {
             string toDisplay = fileName.Contains(DataRoot) ? fileName : new FileInfo(PathToModFile(pathToTest)).FullName;
             throw new CYFException("Attempted to load " + toDisplay + " from either a mod or default directory, but it was missing in both.");
