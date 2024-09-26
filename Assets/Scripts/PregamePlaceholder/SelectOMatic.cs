@@ -198,56 +198,50 @@ public class SelectOMatic : MonoBehaviour {
     /// <param name="currentDepth">Current depth of the search</param>
     /// <param name="maxDepth">Maximum depth of the search</param>
     /// <returns>The mods and notable folders found during the deep search</returns>
-    private List<DirectoryInfo>[] DeepModSearch(DirectoryInfo dir, int currentDepth = 0, int maxDepth = 8) {
+    private List<DirectoryInfo>[] DeepModSearch(DirectoryInfo dir, int currentDepth = 0, int maxDepth = 4) {
         List<DirectoryInfo> mods = new List<DirectoryInfo>();
         List<DirectoryInfo> folders = new List<DirectoryInfo>();
         DirectoryInfo modsDirectory = new DirectoryInfo(Path.Combine(FileLoader.DataRoot, "Mods"));
 
-        foreach (DirectoryInfo encountersFolder in dir.GetDirectories()) {
-            // Ignore folders whose name start with @
-            if (encountersFolder.Name.StartsWith("@"))
+        foreach (DirectoryInfo modFolder in dir.GetDirectories()) {
+            // Ignore folders whose name start with @.
+            if (modFolder.Name.StartsWith("@"))
+                continue;
+
+            // The mod folder should not be hidden.
+            if ((modFolder.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden)
                 continue;
 
             // Do not explore junctions!
-            if ((encountersFolder.Attributes & FileAttributes.ReparsePoint) == FileAttributes.ReparsePoint)
+            if ((modFolder.Attributes & FileAttributes.ReparsePoint) == FileAttributes.ReparsePoint)
                 continue;
 
+            // Check if the current folder is a valid mod.
+            try {
+                // The mod folder should contain a Lua folder.
+                DirectoryInfo luaFolder = modFolder.GetDirectories().First(d => d.Name == "Lua");
+                // The mod's Lua folder should contain an Encounters folder.
+                DirectoryInfo encountersFolder = luaFolder.GetDirectories().First(d => d.Name == "Encounters");
+                // The mod's Encounters folder should contain at least one selectable Encounter.
+                if (!encountersFolder.GetFiles().Any(p => !p.Name.StartsWith("@")))
+                    throw new InvalidOperationException();
+                // The mod folder should contain a Sprites folder.
+                DirectoryInfo spritesFolder = modFolder.GetDirectories().First(d => d.Name == "Sprites");
+
+                // If all conditions are satisfied, add the current folder as a mod.
+                mods.Add(modFolder);
+                DirectoryInfo modParentFolder = modFolder.Parent;
+                if (!folders.Where(d => UnitaleUtil.DirectoryPathsEqual(d, modParentFolder)).Any() && !UnitaleUtil.DirectoryPathsEqual(modParentFolder, modsDirectory))
+                    folders.Add(modParentFolder);
+                continue;
+            } catch { }
+
             // Recursive call
-            if (currentDepth < maxDepth && encountersFolder.GetDirectories().Length > 0) {
-                List<DirectoryInfo>[] childData = DeepModSearch(encountersFolder, currentDepth + 1, maxDepth);
+            if (currentDepth < maxDepth && modFolder.GetDirectories().Length > 0) {
+                List<DirectoryInfo>[] childData = DeepModSearch(modFolder, currentDepth + 1, maxDepth);
                 mods.AddRange(childData[0]);
                 folders.AddRange(childData[1]);
             }
-
-            // The current folder should be named Encounters and must contain at least one file.
-            if (encountersFolder.Name != "Encounters" || encountersFolder.GetFiles().Length == 0)
-                continue;
-
-            DirectoryInfo luaFolder = encountersFolder.Parent;
-            // The Encounters folder's parent should be named Lua.
-            if (luaFolder == null || luaFolder.Name != "Lua")
-                continue;
-
-            DirectoryInfo modRootFolder = luaFolder.Parent;
-            // The root of the mod should not be the CYF Mods folder.
-            if (modRootFolder == null || modRootFolder.FullName == Path.Combine(FileLoader.DataRoot, "Mods"))
-                continue;
-            // The root of the mod should not be hidden.
-            if ((modRootFolder.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden)
-                continue;
-
-            // The Lua folder should have a sibling folder named Sprites.
-            DirectoryInfo spritesFolder = modRootFolder.GetDirectories().SingleOrDefault(d => d.Name == "Sprites");
-            if (spritesFolder == null)
-                continue;
-
-            DirectoryInfo modParentFolder = modRootFolder.Parent;
-            if (modParentFolder == null)
-                continue;
-
-            mods.Add(modRootFolder);
-            if (!folders.Where(d => UnitaleUtil.DirectoryPathsEqual(d, modParentFolder)).Any() && !UnitaleUtil.DirectoryPathsEqual(modParentFolder, modsDirectory))
-                folders.Add(modParentFolder);
         }
 
         // Prevent folder duplicates
