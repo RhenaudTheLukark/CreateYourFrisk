@@ -38,6 +38,8 @@ function HandleSpare()
     State("ENEMYDIALOGUE")
 end
 
-function HandleItem(ItemID)
-    BattleDialog({"Selected item " .. ItemID .. "."})
+function HandleItem(ItemID, ItemIndex, IsSilent)
+    if not IsSilent then
+        BattleDialog({"Selected item " .. ItemID .. "."})
+    end
 end

@@ -13,10 +13,10 @@ public class LuaInventory {
         return -1;
     }
 
-    public void UseItem(int ID) {
+    public void UseItem(int ID, bool silent = false) {
         if (ID < 1) throw new CYFException("Inventory.UseItem: The item's ID must be positive!");
         if (ID > Inventory.inventory.Count) throw new CYFException("Inventory.UseItem: You tried to use the item #" + ID + ", but the player only has " + Inventory.inventory.Count + " items.");
-        Inventory.UseItem(ID - 1);
+        Inventory.UseItem(ID - 1, silent);
     }
 
     public void SetItem(int index, string Name) { Inventory.SetItem(index-1, Name); }

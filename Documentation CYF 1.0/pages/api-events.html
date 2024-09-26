@@ -90,12 +90,13 @@ it's w3c valid, at least
                 </ul>
             </p>
             <p>
-                <br><span class="function">HandleItem(<span class="string"></span> item_ID, <span class="number"></span> position)</span>
+                <br><span class="function">HandleItem(<span class="string"></span> item_ID, <span class="number"></span> position, <span class="boolean"></span> silent)</span>
                 Happens when you select an item from the item menu. <br>
                 <ul>
                     <li><span class="term">item_ID</span>: The name of the item used, <b><u>IN ALL CAPS</u></b>.
                     Similar to <span class="term">HandleCustomCommand</span> in monster scripts.</li>
                     <li><span class="term">position</span>: The position of the item used in the player's inventory. The first item is number 1.</li>
+                    <li><span class="term">silent</span>: If this is true, avoid doing things like writing battle text.</li>
                 </ul>
                 <br><span class="CYF"></span> In CYF, you can use the Inventory object to edit the player's inventory.
                 The items' names will be in caps, like with <span class="term">HandleCustomCommand()</span>.
