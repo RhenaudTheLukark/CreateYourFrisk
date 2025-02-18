@@ -2,15 +2,19 @@
 HOW TO RUN CYF ON MAC
 =====================
 
-1: Open a command prompt in the folder containing CYF's app
+1: Open a command prompt in the folder containing CYF's application file.
 2: Run the command
-	   sudo chmod +x "Create Your Frisk 0.6.6.app"
-   with "Create Your Frisk 0.6.6.app" the name of the CYF app, which you have to change in the command if necessary
+	   sudo chmod +x "<application file>"
+   "<application file>" is the name of the CYF app in the CreateYourFrisk folder.
+   Here's an example of a potentially valid full command: sudo chmod +x "CreateYourFrisk-macos64.app", if the CYF app is named "CreateYourFrisk-macos64.app".
    If the command does not work because of administrator right issues, remove the "sudo" word and try again.
 3: Run the command
-	   sudo chmod +x "Create Your Frisk 0.6.6.app/Contents/MacOS/Create Your Frisk 0.6.6"
-   with "Create Your Frisk 0.6.6.app" the name of the CYF app, which you have to change in the command if necessary
-   and the second "Create Your Frisk 0.6.6" being CYF's name plus its version
+	   sudo chmod +x "<application file>/Contents/MacOS/<internal file>"
+   "<application file>" is the name of the CYF app in the CreateYourFrisk folder.
+   "<internal file>" is the name of the executable nested within the application file.
+   To access it, right click on CYF's aplication file and click the option "Show Package Contents".
+   Once you do, navigate to the folder "Contents/MacOS", the file in that folder is the one you want to copy the name of and replace that part with in the path above.
+   Here's an example of a potentially valid full command: sudo chmod +x "CreateYourFrisk-macos64.app/Contents/MacOS/CreateYourFrisk-macos64", if the CYF app is named "CreateYourFrisk-macos64.app" and its internal executable is named "CreateYourFrisk-macos64".
    If the command does not work because of administrator right issues, remove the "sudo" word and try again.
 4: Now the app should be able to run!
 
@@ -20,8 +24,9 @@ HOW TO RUN CYF ON MAC
 HOW TO ADD MODS TO CYF ON MAC
 =============================
 
-1: Click on Create Your Frisk
-2: Click on the Gear icon in Finder
+1: Click on Create Your Frisk's application file
+2: Click on the Gear icon in Finder OR Right click on Create Your Frisk's application file
 3: Click on "Show package contents"
 4: Open "Mods"
 5: Place all downloaded mods here!
+
