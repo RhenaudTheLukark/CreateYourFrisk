@@ -155,6 +155,7 @@ public class TextManager : MonoBehaviour {
         hSpacing = font.CharSpacing;
 
         defaultColor = font.DefaultColor;
+        fontVoice = font.SoundName;
         if (this as LuaTextManager) {
             if ((this as LuaTextManager).textColorSet) defaultColor =   ((LuaTextManager) this)._color;
             if ((this as LuaTextManager).textAlphaSet) defaultColor.a = ((LuaTextManager) this).alpha;
