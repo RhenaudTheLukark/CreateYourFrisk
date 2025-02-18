@@ -609,6 +609,7 @@ public class UIController : MonoBehaviour {
                 return;
 
             if (monsterDialogues[index].HasNext()) {
+                monsterDialogueEnemy[index].UpdateBubble(index);
                 monsterDialogues[index].NextLineText();
                 monsterDialogueEnemy[index].UpdateBubble(index);
             } else {
@@ -630,6 +631,7 @@ public class UIController : MonoBehaviour {
                     continue;
 
                 if (sbTextMan.HasNext()) {
+                    enemy.UpdateBubble(i);
                     sbTextMan.NextLineText();
                     enemy.UpdateBubble(i);
                     someTextsHaveLinesLeft = true;
