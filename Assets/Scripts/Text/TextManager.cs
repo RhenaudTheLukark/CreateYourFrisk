@@ -1259,6 +1259,10 @@ public class TextManager : MonoBehaviour {
     }
 
     private void SetHP(float newhp) {
+        if (GlobalControls.isInFight) {
+            PlayerController.instance.SetHP(newhp);
+            return;
+        }
         float HP;
         newhp = Mathf.Round(newhp * Mathf.Pow(10, ControlPanel.instance.MaxDigitsAfterComma)) / Mathf.Pow(10, ControlPanel.instance.MaxDigitsAfterComma);
         if (newhp <= 0) {
@@ -1276,8 +1280,6 @@ public class TextManager : MonoBehaviour {
                 gob.music = null;
             }
             PlayerCharacter.instance.HP = 0;
-            // gameObject.transform.SetParent(null);
-            // GameObject.DontDestroyOnLoad(this.gameObject);
             RectTransform rt = gameObject.GetComponent<RectTransform>();
             MoveToAbs(rt.position.x, rt.position.y);
             gob.StartDeath();
@@ -1292,8 +1294,6 @@ public class TextManager : MonoBehaviour {
         else                                                                                    HP = newhp;
         if (HP > ControlPanel.instance.HPLimit)                                                 HP = ControlPanel.instance.HPLimit;
         PlayerCharacter.instance.HP = HP;
-        if (!UnitaleUtil.IsOverworld)
-            UIStats.instance.setHP(HP);
     }
 
     public virtual void Move(float newX, float newY) {
