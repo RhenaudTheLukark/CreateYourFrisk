@@ -121,7 +121,13 @@ public class ProjectileController {
     public bool isPersistent = false;
 
     public string layer {
-        get { return spr.img.transform.parent.name == "BulletPool" ? "" : spr.img.transform.parent.name.Substring(0, spr.img.transform.parent.name.Length - 6); }
+        get {
+            string parentName = spr.img.transform.parent.name;
+            if (parentName == "BulletPool") return "";
+            if (parentName.EndsWith("Bullet")) return parentName.Substring(0, parentName.Length - 6);
+            if (parentName.EndsWith("Layer")) return parentName.Substring(0, parentName.Length - 5);
+            return parentName;
+        }
         set {
             Transform parent = spr.img.transform.parent;
             try {
