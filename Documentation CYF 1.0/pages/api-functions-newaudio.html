@@ -70,20 +70,22 @@ it's w3c valid, at least
                 Songs played are loaded from your mod's <span class="term">Audio</span> folder, as .ogg or .wav files. Don't include the file extension.</li><br>
 
                 <li><span class="term">NewAudio.PlaySound(<span class="string"></span> name, <span class="string"></span> sound,
-                <span class="boolean"></span> loop = false, <span class="number"></span> volume = 0.65)</span> - Plays the sound
+                <span class="boolean"></span> loop = false, <span class="number"></span> volume = 0.65, <span class="boolean"></span> interrupt = true)</span> - Plays the sound
                 <span class="term">sound</span> on the channel <span class="term">name</span>.
                 <br><br>
                 <span class="term">loop</span> tells the engine if it should loop the sound or not;<br>
-                <span class="term">volume</span> is the volume of the sound.
+                <span class="term">volume</span> is the volume of the sound;<br>
+                <span class="term">interrupt</span> determines whether previously playing sounds on the channel should be stopped.
                 <br><br>
                 Sounds played are loaded from your mod's <span class="term">Sounds</span> folder, as .ogg or .wav files. Don't include the file extension.</li><br>
 
                 <li><span class="term">NewAudio.PlayVoice(<span class="string"></span> name, <span class="string"></span> voice,
-                <span class="boolean"></span> loop = false, <span class="number"></span> volume = 0.65)</span> - Plays the voice
+                <span class="boolean"></span> loop = false, <span class="number"></span> volume = 0.65, <span class="boolean"></span> interrupt = true)</span> - Plays the voice
                 <span class="term">voice</span> on the channel <span class="term">name</span>.
                 <br><br>
                 <span class="term">loop</span> tells the engine if it should loop the voice or not;<br>
-                <span class="term">volume</span> is the volume of the voice.
+                <span class="term">volume</span> is the volume of the voice;<br>
+                <span class="term">interrupt</span> determines whether previously playing sounds on the channel should be stopped.
                 <br><br>
                 Voices played are loaded from your mod's <span class="term">Sounds/Voices</span> folder, as .ogg or .wav files. Don't include the file extension.</li><br>
 

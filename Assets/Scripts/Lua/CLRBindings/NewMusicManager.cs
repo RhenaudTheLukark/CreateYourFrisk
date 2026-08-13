@@ -82,36 +82,54 @@ public class NewMusicManager {
         ((AudioSource)audiolist[name]).Play();
     }
 
-    public static void PlaySound(string name, string sound, bool loop = false, float volume = 0.65f) {
+    public static void PlaySound(string name, string sound, bool loop = false, float volume = 0.65f, bool interrupt = true) {
         if (name == null)  throw new CYFException("NewAudio.PlaySound: The first argument (the channel name) is nil.\n\nSee the documentation for proper usage.");
         if (sound == null) throw new CYFException("NewAudio.PlaySound: The second argument (the sound name) is nil.\n\nSee the documentation for proper usage.");
         if (!audiolist.ContainsKey(name)) throw new CYFException("The audio channel " + name + " doesn't exist.");
 
-        ((AudioSource)audiolist[name]).Stop();
-        ((AudioSource)audiolist[name]).loop = loop;
-        ((AudioSource)audiolist[name]).volume = volume;
-        ((AudioSource)audiolist[name]).clip = AudioClipRegistry.GetSound(sound);
-        audiolist[name] = ((AudioSource)audiolist[name]);
-        audioname[name] = "sound:" + sound.ToLower();
-        if (name == "src")
-            MusicManager.filename = "sound:" + sound.ToLower();
-        ((AudioSource)audiolist[name]).Play();
+        AudioSource source = (AudioSource)audiolist[name];
+        if (interrupt) {
+            source.Stop();
+            source.loop = loop;
+            source.volume = volume;
+            source.clip = AudioClipRegistry.GetSound(sound);
+            audioname[name] = "sound:" + sound.ToLower();
+            if (name == "src")
+                MusicManager.filename = "sound:" + sound.ToLower();
+            source.Play();
+        } else {
+            source.volume = volume;
+            source.loop = loop;
+            source.PlayOneShot(AudioClipRegistry.GetSound(sound), volume);
+            audioname[name] = "sound:" + sound.ToLower();
+            if (name == "src")
+                MusicManager.filename = "sound:" + sound.ToLower();
+        }
     }
 
-    public static void PlayVoice(string name, string voice, bool loop = false, float volume = 0.65f) {
+    public static void PlayVoice(string name, string voice, bool loop = false, float volume = 0.65f, bool interrupt = true) {
         if (name == null)  throw new CYFException("NewAudio.PlayVoice: The first argument (the channel name) is nil.\n\nSee the documentation for proper usage.");
         if (voice == null) throw new CYFException("NewAudio.PlayVoice: The second argument (the voice name) is nil.\n\nSee the documentation for proper usage.");
         if (!audiolist.ContainsKey(name)) throw new CYFException("The audio channel " + name + " doesn't exist.");
 
-        ((AudioSource)audiolist[name]).Stop();
-        ((AudioSource)audiolist[name]).loop = loop;
-        ((AudioSource)audiolist[name]).volume = volume;
-        ((AudioSource)audiolist[name]).clip = AudioClipRegistry.GetVoice(voice);
-        audiolist[name] = ((AudioSource)audiolist[name]);
-        audioname[name] = "voice:" + voice.ToLower();
-        if (name == "src")
-            MusicManager.filename = "voice:" + voice.ToLower();
-        ((AudioSource)audiolist[name]).Play();
+        AudioSource source = (AudioSource)audiolist[name];
+        if (interrupt) {
+            source.Stop();
+            source.loop = loop;
+            source.volume = volume;
+            source.clip = AudioClipRegistry.GetVoice(voice);
+            audioname[name] = "voice:" + voice.ToLower();
+            if (name == "src")
+                MusicManager.filename = "voice:" + voice.ToLower();
+            source.Play();
+        } else {
+            source.volume = volume;
+            source.loop = loop;
+            source.PlayOneShot(AudioClipRegistry.GetVoice(voice), volume);
+            audioname[name] = "voice:" + voice.ToLower();
+            if (name == "src")
+                MusicManager.filename = "voice:" + voice.ToLower();
+        }
     }
 
     public static void SetPitch(string name, float value) {
