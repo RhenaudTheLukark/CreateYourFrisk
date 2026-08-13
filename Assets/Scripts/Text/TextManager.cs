@@ -818,7 +818,7 @@ public class TextManager : MonoBehaviour {
             else                                                               return;
         }
 
-        letterTimer += Time.deltaTime;
+        letterTimer += Time.unscaledDeltaTime;
         if ((letterTimer >= timePerLetter || firstChar) && !LineComplete()) {
             int repeats = timePerLetter == 0f ? 1 : (int)Mathf.Floor(letterTimer / timePerLetter);
 
