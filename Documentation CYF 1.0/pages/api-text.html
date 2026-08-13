@@ -145,8 +145,7 @@ it's w3c valid, at least
                 This works the same as <span class="term">[effect:x]</span>, but it works <b>inline</b>.
                 This means you can have <i>multiple</i> different text effects in a single line!
                 <br><br>
-                Keep in mind that, like all other inline text commands, this command will not execute if the player skips over it with X -
-                unless you set <span class="term">playerskipdocommand</span> to <span class="term">true</span>, first.
+                This command ignores the <span class="term">playerskipdocommand</span> setting and runs even when text is skipped or displayed instantly.
                 <br><br>
                 <span class="new">On top of that, the default step value for the shake effect is now 500. The value will be varied by about
                 <span class="term">80%</span> every time the delay until the next twitch effect show up is computed. It's high
