@@ -240,7 +240,10 @@ public class GlobalControls : MonoBehaviour {
     /// <param name="intensity">The amount of pixels the screen can move out of its original position at maximum.</param>
     /// <param name="isIntensityDecreasing">True if the screenshake effect should be reduced over time, false otherwise.</param>
     public void ShakeScreen(float duration, float intensity, bool isIntensityDecreasing) {
-        if (screenShaking) return;
+        if (screenShaking) {
+            Misc.ResetCamera();
+            StopCoroutine("IShakeScreen");
+        }
         screenShaking   = true;
         stopScreenShake = false;
         StartCoroutine("IShakeScreen", new object[] { duration, intensity, isIntensityDecreasing });
