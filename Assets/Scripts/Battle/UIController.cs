@@ -291,7 +291,9 @@ public class UIController : MonoBehaviour {
         if (newState == "DEFENDING" || newState == "ENEMYDIALOGUE") {
             PlayerController.instance.setControlOverride(newState != "DEFENDING");
             mainTextManager.SetText(DynValue.NewString(""));
-            PlayerController.instance.SetPosition(ArenaManager.instance.currentX, ArenaManager.instance.currentY + 70, true);
+            if (PlayerController.instance.autocenter) {
+                PlayerController.instance.SetPosition(ArenaManager.instance.currentX, ArenaManager.instance.currentY + 70, true);
+            }
             PlayerController.instance.GetComponent<Image>().enabled = true;
             mainTextManager.SetPause(true);
         } else if ((state == "DEFENDING" || state == "ENEMYDIALOGUE") && newState != "DEFENDING" && newState != "ENEMYDIALOGUE") {

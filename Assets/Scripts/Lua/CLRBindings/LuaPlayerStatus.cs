@@ -190,6 +190,14 @@ public class LuaPlayerStatus {
     }
 
     /// <summary>
+    /// Move player to the center of the arena when entering DEFENDING or ENEMYDIALOGUE
+    /// </summary>
+    public bool autocenter {
+        get { return player.autocenter; }
+        set { player.autocenter = value; }
+    }
+
+    /// <summary>
     /// Hurts the player with the given damage and invulnerabilty time. If this gets the player to 0 (or less) HP, you get the game over screen.
     /// </summary>
     /// <param name="damage">Damage to deal to the player</param>

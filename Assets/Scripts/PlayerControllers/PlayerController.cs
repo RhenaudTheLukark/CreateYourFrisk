@@ -122,6 +122,11 @@ public class PlayerController : MonoBehaviour {
     private int soundDelay;
 
     /// <summary>
+    /// Move player to the center of the arena when entering DEFENDING or ENEMYDIALOGUE
+    /// </summary>
+    public bool autocenter = true;
+
+    /// <summary>
     /// Hurts the player and makes them invulnerable for invulnerabilitySeconds.
     /// </summary>
     /// <param name="damage">Damage to deal to the player.</param>
