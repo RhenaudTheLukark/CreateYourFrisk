@@ -290,6 +290,16 @@ end
                 script, it will call it with the text object as its argument.
             </p>
             <p>
+                <br><span class="new function"><span class="userdata">function</span> Text.OnTextComplete(<span class="userdata">text</span> text)</span>
+                This function gets called whenever the text object finishes displaying all of its lines (i.e. when it would
+                be deactivated or destroyed). This is the best place to run code that should happen once the text is done being shown.
+                <br><br>
+                The argument <span class="term">text</span> is the text object itself.
+                <br><br>
+                If this value isn't set and the function <span class="term">OnTextComplete()</span> exists in the Encounter
+                script, it will call it with the text object as its argument.
+            </p>
+            <p>
                 <br><span class="function">Text.SkipLine()</span>
                 This function skips to the end of the text object's current text, as if using the text command <span class="term">[instant]</span>.<br>
                 If <span class="term">playerskipdocommand</span> is true, this function will behave the same as a player skip.

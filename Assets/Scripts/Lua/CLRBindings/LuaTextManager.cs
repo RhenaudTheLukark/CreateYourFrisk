@@ -509,6 +509,18 @@ public class LuaTextManager : TextManager {
         }
     }
 
+    private DynValue _OnTextComplete = DynValue.Nil;
+    public DynValue OnTextComplete {
+        get { return _OnTextComplete; }
+        set {
+            if ((value.Type & (DataType.Nil | DataType.Function | DataType.ClrFunction)) == 0)
+                throw new CYFException("Text.OnTextComplete: This variable has to be a function!");
+            if (value.Type == DataType.Function && value.Function.OwnerScript != caller.script)
+                throw new CYFException("Text.OnTextComplete: You can only use a function created in the same script as the text object!");
+            _OnTextComplete = value;
+        }
+    }
+
     public DynValue GetLetters() {
         CheckExists();
         if (lateStartWaiting)
@@ -717,6 +729,10 @@ public class LuaTextManager : TextManager {
     public void NextLine() {
         CheckExists();
         if (AllLinesComplete() || currentLine + 1 == LineCount()) {
+            if ((OnTextComplete.Type & (DataType.Function | DataType.ClrFunction)) != 0)
+                caller.Call(OnTextComplete, "OnTextComplete", UserData.Create(this));
+            else if (GlobalControls.isInFight && (EnemyEncounter.script.script.Globals.Get("OnTextComplete").Type & (DataType.Function | DataType.ClrFunction)) != 0)
+                EnemyEncounter.script.Call("OnTextComplete", UserData.Create(this));
             if (!deleteWhenFinished) {
                 HideTextObject();
                 if (bubble)
