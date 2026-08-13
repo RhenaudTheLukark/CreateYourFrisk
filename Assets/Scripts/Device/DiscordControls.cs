@@ -24,20 +24,15 @@ public static class DiscordControls {
 
     // Use this for initialization
     public static void Start() {
-        // Creates the object that manages the Rich Presence Commands. The first argument is the APPID, the second tells the libraries if Discord must be started or not.
-        try {
-            discord = new Discord.Discord(711497963771527219, (ulong)CreateFlags.NoRequireDiscord);
-            activityManager = discord.GetActivityManager();
-            isActive = true;
-            Debug.Log("Discord Status: Success");
-        } catch (Exception e) {
-            isActive = false;
-            Debug.Log("Discord Status: Failed - " + e.Message);
-        }
-
         // Gets Discord Visibility Setting
         if (LuaScriptBinder.GetPermanentGlobal("CYFDiscord") == null) curr_setting = 0;
         else                                                          curr_setting = (int)LuaScriptBinder.GetPermanentGlobal("CYFDiscord").Number;
+
+        if (curr_setting != 2) {
+            InitializeDiscord();
+        } else {
+            isActive = false;
+        }
 
         // Creates the activity objects that will be modified and used as needed
         activity = new Activity {
@@ -55,10 +50,38 @@ public static class DiscordControls {
         };
 
         // Set initial activity properties and status
-        ChangeVisibilitySetting(0);
-        oldTime = GetCurrentTime();
-        ClearTime(true);
-        StartTitle();
+        if (curr_setting != 2) {
+            ChangeVisibilitySetting(0);
+            oldTime = GetCurrentTime();
+            ClearTime(true);
+            StartTitle();
+        } else {
+            DisposeDiscord();
+        }
+    }
+
+    public static void InitializeDiscord() {
+        if (curr_setting == 2) return;
+        // Creates the object that manages the Rich Presence Commands. The first argument is the APPID, the second tells the libraries if Discord must be started or not.
+        try {
+            discord = new Discord.Discord(711497963771527219, (ulong)CreateFlags.NoRequireDiscord);
+            activityManager = discord.GetActivityManager();
+            isActive = true;
+            Debug.Log("Discord Status: Success");
+        } catch (Exception e) {
+            isActive = false;
+            Debug.Log("Discord Status: Failed - " + e.Message);
+        }
+    }
+
+    public static void DisposeDiscord() {
+        try {
+            if (discord != null)
+                discord.Dispose();
+        } catch {}
+        discord = null;
+        activityManager = null;
+        isActive = false;
     }
 
     /// <summary>
@@ -74,22 +97,24 @@ public static class DiscordControls {
         if (spd > 0)
             LuaScriptBinder.SetPermanentGlobal("CYFDiscord", DynValue.NewNumber(curr_setting), true);
 
-        if (isActive)
-            switch (curr_setting) {
-                case 0:
-                    StartModSelect(false);
-                    break;
-                case 1:
-                    activity.Details          = "";
-                    activity.State            = "";
-                    activity.Timestamps.Start = 0;
-                    activity.Timestamps.End   = 0;
-                    UpdatePresence(true);
-                    break;
-                default:
-                    Clear();
-                    break;
-            }
+        switch (curr_setting) {
+            case 0:
+                if (!isActive) InitializeDiscord();
+                StartModSelect(false);
+                break;
+            case 1:
+                if (!isActive) InitializeDiscord();
+                activity.Details          = "";
+                activity.State            = "";
+                activity.Timestamps.Start = 0;
+                activity.Timestamps.End   = 0;
+                UpdatePresence(true);
+                break;
+            default:
+                Clear();
+                DisposeDiscord();
+                break;
+        }
 
         return GlobalControls.crate ? Temmify.Convert(settingNames[curr_setting]) : settingNames[curr_setting];
     }
