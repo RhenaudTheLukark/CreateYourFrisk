@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -355,6 +356,7 @@ public class LuaTextManager : TextManager {
 
     [MoonSharpHidden] public Color _color = Color.white;
     [MoonSharpHidden] public bool textColorSet, textAlphaSet;
+    [MoonSharpHidden] public Color _bubbleColor = Color.white;
     // The color of the text. It uses an array of three floats between 0 and 1
     public float[] color {
         get {
@@ -436,6 +438,53 @@ public class LuaTextManager : TextManager {
         }
     }
 
+
+    public float[] bubbleColor {
+        get {
+            CheckExists();
+            return new[] { _bubbleColor.r, _bubbleColor.g, _bubbleColor.b };
+        }
+        set {
+            CheckExists();
+            if (value == null)
+                throw new CYFException("text.bubbleColor can not be set to a nil value.");
+            if (value.Length != 3)
+                throw new CYFException("You need 3 numeric values when setting a text's bubble color.");
+
+            _bubbleColor.r = value[0];
+            _bubbleColor.g = value[1];
+            _bubbleColor.b = value[2];
+
+            ApplyBubbleColor();
+        }
+    }
+
+    public float[] bubbleColor32 {
+        get {
+            CheckExists();
+            return new float[] { ((Color32)_bubbleColor).r, ((Color32)_bubbleColor).g, ((Color32)_bubbleColor).b };
+        }
+        set {
+            CheckExists();
+            if (value == null)
+                throw new CYFException("text.bubbleColor32 can not be set to a nil value.");
+            if (value.Length != 3)
+                throw new CYFException("You need 3 numeric values when setting a text's bubble color.");
+            bubbleColor = value.Select(v => v / 255).ToArray();
+        }
+    }
+
+    private void ApplyBubbleColor() {
+        if (containerBubble == null)
+            return;
+        foreach (Image img in containerBubble.GetComponentsInChildren<Image>(true)) {
+            // The black outer borders and the tail's shadow must stay black
+            string n = img.name;
+            if (n == "BackHorz" || n == "BackVert" || n.Contains("Shadow"))
+                continue;
+            img.color = new Color(_bubbleColor.r, _bubbleColor.g, _bubbleColor.b, img.color.a);
+        }
+    }
 
     public string linePrefix {
         get {
