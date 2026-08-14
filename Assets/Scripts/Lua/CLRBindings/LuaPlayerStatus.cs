@@ -1,4 +1,6 @@
-﻿/// <summary>
+﻿using MoonSharp.Interpreter;
+
+/// <summary>
 /// Lua binding to set and retrieve information for the on-screen player.
 /// </summary>
 public class LuaPlayerStatus {
@@ -190,9 +192,11 @@ public class LuaPlayerStatus {
     }
 
     /// <summary>
-    /// Move player to the center of the arena when entering DEFENDING or ENEMYDIALOGUE
+    /// Controls when the player is automatically moved to the center of the arena upon entering DEFENDING or ENEMYDIALOGUE.
+    /// Accepts either a boolean (true always centers, false never centers) or a table of strings. When a table is given,
+    /// centering only happens if the previous state matches one of its entries. nil is treated as true.
     /// </summary>
-    public bool autocenter {
+    public DynValue autocenter {
         get { return player.autocenter; }
         set { player.autocenter = value; }
     }
