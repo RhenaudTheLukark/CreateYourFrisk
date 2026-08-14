@@ -105,10 +105,11 @@ it's w3c valid, at least
                 Will always be false while not in a wave script.
                 <br>NOTE: This only will change with the default control scheme (see <span class="term">Player.SetControlOverride</span> below).
                 </li><br>
-                <li><span class="new boolean"></span><span class="CYF"></span> <span class="term">Player.autocenter</span> - Automatically move the player to the center of the arena when entering <span class="term">DEFENDING</span> or <span class="term">ENEMYDIALOGUE</span>. <span class="term">true</span> by default.
-                    <br><br>Set it to <span class="term">false</span> to disable auto-centering entirely, or to a table of state names (for example,
-                    <span class="term">Player.autocenter = {"ATTACKING", "DEFENDING"}</span>) to center the player only when
-                    transitioning from one of those listed states.
+                <li><span class="new boolean"></span><span class="CYF"></span> <span class="term">Player.autocenter</span> - Automatically move the player to the center of the arena when entering <span class="term">DEFENDING</span> or <span class="term">ENEMYDIALOGUE</span>.
+                    <span class="term">true</span> by default.
+                    <br><br>Set it to <span class="term">false</span> to disable auto-centering entirely, or to a table of state names to center the player only when transitioning from one of those listed states.
+                    <br><br>For example, if you just want to prevent the player's soul centering when transitioning from one wave to another, set
+                    <span class="term">Player.autocenter = {"ATTACKING", "DIALOGRESULT", "MERCYMENU", "ITEMMENU"}</span> to cover only normal cases.
                 </li><br>
                 <li><span class="term">Player.Hurt(<span class="number"></span> damage, <span class="number"></span> invul_time = 1.7, <span class="boolean"></span> ignoreDef = false, <span class="boolean"></span> playSound = true)</span>
                 - deals damage to the player, and makes them invincible for <span class="term">invul_time</span> seconds.
