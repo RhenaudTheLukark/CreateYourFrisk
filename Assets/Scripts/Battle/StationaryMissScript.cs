@@ -13,7 +13,10 @@ public class StationaryMissScript : MonoBehaviour {
         mgr.transform.position = new Vector2(xPos - UnitaleUtil.PredictTextWidth(mgr) / 2, Mathf.Min(yPos, 430));
     }
 
-    public void SetText(string _text) { text = _text; }
+    public void SetText(string _text) {
+        text = _text;
+        mgr.SetText(new TextMessage("[color:c0c0c0]" + text, false, true));
+    }
 
     private void Awake() {
         mgr = GetComponent<TextManager>();
