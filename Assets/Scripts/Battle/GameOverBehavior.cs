@@ -116,7 +116,7 @@ public class GameOverBehavior : MonoBehaviour {
     }
 
     private IEnumerator StartDeathRoutine(string[] newDeathText = null, string newDeathMusic = null) {
-        yield return null;
+        yield return new WaitForEndOfFrame();
         isDying = false;
         Time.timeScale = 1;
         PlayerOverworld.audioCurrTime = 0;
