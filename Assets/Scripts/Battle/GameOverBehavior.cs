@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using MoonSharp.Interpreter;
 using UnityEngine;
@@ -40,6 +41,7 @@ public class GameOverBehavior : MonoBehaviour {
     private float internalTimer;
     private float internalTimerRevive;
     private float gameOverFadeTimer;
+    private bool isDying;
     private bool started;
     private bool done;
     private bool exiting;
@@ -90,6 +92,8 @@ public class GameOverBehavior : MonoBehaviour {
         internalTimerRevive = 0.0f;
         gameOverFadeTimer = 0.0f;
         gameOverTxt.HideTextObject();
+        StopAllCoroutines();
+        isDying = false;
         started = false;
         done = false;
         exiting = false;
@@ -105,6 +109,16 @@ public class GameOverBehavior : MonoBehaviour {
     public void Revive() { revived = true; }
 
     public void StartDeath(string[] newDeathText = null, string newDeathMusic = null) {
+        if (started || isDying)
+            return;
+        isDying = true;
+        StartCoroutine(StartDeathRoutine(newDeathText, newDeathMusic));
+    }
+
+    private IEnumerator StartDeathRoutine(string[] newDeathText = null, string newDeathMusic = null) {
+        yield return new WaitForEndOfFrame();
+        isDying = false;
+        Time.timeScale = 1;
         PlayerOverworld.audioCurrTime = 0;
         if (!UnitaleUtil.IsOverworld) {
             UIController.instance.encounter.EndWave(true);

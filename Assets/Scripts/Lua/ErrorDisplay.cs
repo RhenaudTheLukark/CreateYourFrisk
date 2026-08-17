@@ -15,6 +15,7 @@ public class ErrorDisplay : MonoBehaviour {
             Destroy(GameObject.Find("Player"));
         }
         UnitaleUtil.firstErrorShown = false;
+        Time.timeScale = 1;
         string mess = !GlobalControls.modDev ? "restart CYF" : "reload";
         GetComponent<Text>().text = Message + "\n\nPress ESC to " + mess;
     }
