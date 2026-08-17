@@ -28,7 +28,7 @@ public class GlobalControls : MonoBehaviour {
     public static bool isInFight;       // True if we're in a battle, false otherwise
     public static bool isInShop;        // True if we're in a shop, false otherwise
     public static bool allowWipeSave;   // Allows you to wipe your save in the Error scene if it couldn't load properly
-    private bool screenShaking;         // True if a screenshake is occuring, false otherwise
+    private static int screenShakeId;   // Incremented for each screen shake, allowing an old shake's coroutine to detect it has been replaced
 
     public static string[] nonOWScenes = { "Battle", "Error", "ModSelect", "Options", "TitleScreen", "Disclaimer", "EnterName", "TransitionOverworld", "Intro", "KeybindSettings" };   // Scenes in which you're not considered to be in the overworld
     public static string[] canTransOW = { "Battle", "Error" };  // Scenes from which you can enter the overworld
@@ -217,9 +217,9 @@ public class GlobalControls : MonoBehaviour {
 
         Vector2 totalShift = new Vector2(0, 0);
         float frameCount = 0, intensityBasis = intensity;
-        while (frameCount < frames) {
-            if (stopScreenShake)
-                break;
+        int id = screenShakeId; // If a newer shake starts, this one will exit and revert its shift
+
+        while (frameCount < frames && !stopScreenShake && id == screenShakeId) {
             if (fade)
                 intensity = intensityBasis * (1 - (frameCount / frames));
             Vector2 shift = new Vector2((Random.value - 0.5f) * 2 * intensity, (Random.value - 0.5f) * 2 * intensity);
@@ -229,8 +229,8 @@ public class GlobalControls : MonoBehaviour {
             frameCount++;
             yield return 0;
         }
+
         Misc.MoveCamera(-totalShift.x, -totalShift.y);
-        screenShaking = false;
     }
 
     /// <summary>
@@ -240,8 +240,7 @@ public class GlobalControls : MonoBehaviour {
     /// <param name="intensity">The amount of pixels the screen can move out of its original position at maximum.</param>
     /// <param name="isIntensityDecreasing">True if the screenshake effect should be reduced over time, false otherwise.</param>
     public void ShakeScreen(float duration, float intensity, bool isIntensityDecreasing) {
-        if (screenShaking) return;
-        screenShaking   = true;
+        screenShakeId++;
         stopScreenShake = false;
         StartCoroutine("IShakeScreen", new object[] { duration, intensity, isIntensityDecreasing });
     }
