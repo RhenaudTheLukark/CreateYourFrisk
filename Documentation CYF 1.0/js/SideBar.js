@@ -146,7 +146,7 @@ const isNew = [
     "The Text Object", "The Arena Object", "The UI Object",
     "Projectile Management", "Sprites &amp; Animation",
     "General Objects", "Item List", "Key List",
-    "The Input Object" ];
+    "The Input Object", "The Player Object"];
 
 // Categories with a <CYF> prefix
 // Used for categories only added during CYF's development

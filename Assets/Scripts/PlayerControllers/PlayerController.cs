@@ -122,6 +122,32 @@ public class PlayerController : MonoBehaviour {
     private int soundDelay;
 
     /// <summary>
+    /// Controls when the player is automatically moved to the center of the arena upon entering DEFENDING or ENEMYDIALOGUE.
+    /// Accepts either a boolean (true always centers, false never centers) or a table of strings. When a table is given,
+    /// centering only happens if the previous state matches one of its entries. nil is treated as true.
+    /// </summary>
+    public DynValue autocenter = DynValue.NewBoolean(true);
+
+    public bool ShouldAutoCenter(string fromState) {
+        DynValue value = autocenter;
+
+        if (value == null || value.IsNil())
+            return true;
+
+        if (value.Type == DataType.Boolean)
+            return value.Boolean;
+
+        if (value.Type == DataType.Table) {
+            foreach (TablePair pair in value.Table.Pairs)
+                if (pair.Value.String == fromState)
+                    return true;
+            return false;
+        }
+
+        return false;
+    }
+
+    /// <summary>
     /// Hurts the player and makes them invulnerable for invulnerabilitySeconds.
     /// </summary>
     /// <param name="damage">Damage to deal to the player.</param>
