@@ -145,7 +145,7 @@ const isNew = [
     "Special Variables", "Text Commands", "Game Events",
     "The Text Object", "The Arena Object", "The UI Object",
     "Projectile Management", "Sprites &amp; Animation",
-    "General Objects", "Item List", "Key List",
+    "General Objects", "Item List", "Key List", "The NewAudio Object",
     "The Input Object" ];
 
 // Categories with a <CYF> prefix
