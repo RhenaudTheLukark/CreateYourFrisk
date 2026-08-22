@@ -162,6 +162,16 @@ it's w3c valid, at least
                 The 4th value is the alpha (transparency) value of the text.
             </p>
             <p>
+                <br><span class="new function"><span class="luatable"><span class="number"></span>, <span class="number"></span>,
+                <span class="number"></span> = 1 </span> Text.bubbleColor</span>
+                Get or set the color of the text object's bubble graphics, as a table of 3 values from 0 to 1.
+            </p>
+            <p>
+                <br><span class="new function"><span class="luatable"><span class="number"></span>, <span class="number"></span>,
+                <span class="number"></span> = 255 </span> Text.bubbleColor32</span>
+                Get or set the color of the text object's bubble graphics, as a table of 3 integer values from 0 to 255.
+            </p>
+            <p>
                 <br><span class="function">Text.ResetColor(<span class="boolean"></span> resetAlpha = false)</span>
                 Resets any previous set of the variable <span class="term">Text.color</span> or <span class="term">Text.color32</span>,
                 resetting the text's default color to the font's default color.<br>
@@ -277,6 +287,16 @@ end
                 The argument <span class="term">text</span> is the text object itself.
                 <br><br>
                 If this value isn't set and the function <span class="term">OnTextDisplay()</span> exists in the Encounter
+                script, it will call it with the text object as its argument.
+            </p>
+            <p>
+                <br><span class="new function"><span class="userdata">function</span> Text.OnTextComplete(<span class="userdata">text</span> text)</span>
+                This function gets called whenever the text object finishes displaying all of its lines (i.e. when it would
+                be deactivated or destroyed). This is the best place to run code that should happen once the text is done being shown.
+                <br><br>
+                The argument <span class="term">text</span> is the text object itself.
+                <br><br>
+                If this value isn't set and the function <span class="term">OnTextComplete()</span> exists in the Encounter
                 script, it will call it with the text object as its argument.
             </p>
             <p>

@@ -371,6 +371,8 @@ public class TextManager : MonoBehaviour {
         instantCommand   = false;
         skipFromPlayer   = false;
         firstChar        = false;
+        waitingChar      = KeyCode.None;
+        waitingKeybind   = null;
         lineHasMugshot   = mugshotList != null;
         commandVoice     = null;
 
@@ -575,6 +577,11 @@ public class TextManager : MonoBehaviour {
         }
         ltrImg.color = resultColor;
         ltrImg.enabled = textQueue[currentLine].ShowImmediate || (GlobalControls.retroMode && instantActive);
+
+        // For immediately-displayed text (e.g. enemy command lists), apply the letter
+        // effect as each letter is created, since HandleShowLetter never runs for them.
+        if (textQueue[currentLine].ShowImmediate)
+            ApplyLetterEffect(ltrImg);
 
         return letters.Count - 1;
     }
@@ -819,30 +826,32 @@ public class TextManager : MonoBehaviour {
         }
 
         letterTimer += Time.deltaTime;
-        if ((letterTimer >= timePerLetter || firstChar) && !LineComplete()) {
-            int repeats = timePerLetter == 0f ? 1 : (int)Mathf.Floor(letterTimer / timePerLetter);
+        bool soundPlayed = firstChar && lettersToDisplay > 1;
+        int lastLetter = -1;
 
-            bool soundPlayed = firstChar && lettersToDisplay > 1;
-            int lastLetter = -1;
-
-            for (int i = 0; i < repeats; i++) {
-                if (lettersToDisplayOnce > 0)
-                    HandleShowLettersOnce(ref soundPlayed, ref lastLetter);
-                else
-                    for (int j = 0; j < lettersToDisplay; j++)
-                        if (!HandleShowLetter(ref soundPlayed, ref lastLetter))
-                            break;
-
-                if (letterTimer < timePerLetter)
-                    break;
-
-                if (!firstChar)
-                    letterTimer -= timePerLetter;
-                else {
-                    firstChar = false;
-                    return;
+        while ((firstChar || letterTimer >= timePerLetter) && !LineComplete()) {
+            if (lettersToDisplayOnce > 0)
+                HandleShowLettersOnce(ref soundPlayed, ref lastLetter);
+            else {
+                int shown = 0;
+                for (int j = 0; j < lettersToDisplay; j++) {
+                    if (!HandleShowLetter(ref soundPlayed, ref lastLetter))
+                        break;
+                    shown++;
                 }
+                if (shown == 0)
+                    break;
             }
+
+            if (firstChar) {
+                firstChar = false;
+                break;
+            }
+
+            if (timePerLetter > 0f)
+                letterTimer -= timePerLetter;
+            else
+                break;
         }
     }
 
@@ -873,15 +882,7 @@ public class TextManager : MonoBehaviour {
             Image im = letters.Find(l => l.index == currentCharacter).image;
             if (im == null) return false;
             im.enabled = true;
-            letterEffectStepCount += letterEffectStep;
-            if (im.GetComponent<Letter>().effect != null)
-                im.GetComponent<Letter>().effect.ResetPositions();
-            switch (letterEffect.ToLower()) {
-                case "twitch": im.GetComponent<Letter>().effect = new TwitchEffectLetter(im.GetComponent<Letter>(), letterIntensity, (int)letterEffectStep);   break;
-                case "rotate": im.GetComponent<Letter>().effect = new RotatingEffectLetter(im.GetComponent<Letter>(), letterIntensity, letterEffectStepCount); break;
-                case "shake":  im.GetComponent<Letter>().effect = new ShakeEffectLetter(im.GetComponent<Letter>(), letterIntensity);                           break;
-                default:       im.GetComponent<Letter>().effect = null;                                                                                        break;
-            }
+            ApplyLetterEffect(im);
 
             currentReferenceCharacter++;
         }
@@ -894,6 +895,19 @@ public class TextManager : MonoBehaviour {
 
         currentCharacter++;
         return true;
+    }
+
+    private void ApplyLetterEffect(Image im) {
+        letterEffectStepCount += letterEffectStep;
+        Letter letter = im.GetComponent<Letter>();
+        if (letter.effect != null)
+            letter.effect.ResetPositions();
+        switch (letterEffect.ToLower()) {
+            case "twitch": letter.effect = new TwitchEffectLetter(letter, letterIntensity, (int)letterEffectStep);   break;
+            case "rotate": letter.effect = new RotatingEffectLetter(letter, letterIntensity, letterEffectStepCount); break;
+            case "shake":  letter.effect = new ShakeEffectLetter(letter, letterIntensity);                           break;
+            default:       letter.effect = null;                                                                      break;
+        }
     }
 
     private void PreCreateControlCommand(string command, bool movementCommand = false) {
@@ -975,6 +989,10 @@ public class TextManager : MonoBehaviour {
             case "effect":
                 float step = args.Length > 2 ? ParseUtil.GetFloat(args[2]) : 0;
                 SetEffect(cmds[1].ToLower(), args.Length > 1 ? ParseUtil.GetFloat(args[1]) : -1, step);
+                break;
+
+            case "lettereffect":
+                SetLetterEffect(args);
                 break;
 
             case "mugshot":
@@ -1218,24 +1236,28 @@ public class TextManager : MonoBehaviour {
                 break;
 
             case "lettereffect":
-                letterEffect = args[0];
-
-                if (args.Length > 1) {
-                    try { letterIntensity = ParseUtil.GetFloat(args[1]); }
-                    catch { Debug.LogError("[lettereffect:x] usage - You used the value \"" + args[1] + "\" to set the letter effect's intensity, but it's not a valid number value."); }
-                } else
-                    letterIntensity = 0;
-
-                if (args.Length > 2) {
-                    try {
-                        letterEffectStep = ParseUtil.GetFloat(args[2]);
-                        letterEffectStepCount = 0;
-                    } catch { Debug.LogError("[lettereffect:x] usage - You used the value \"" + args[2] + "\" to set the letter effect's step, but it's not a valid number value."); }
-                } else {
-                    letterEffectStep = 0;
-                    letterEffectStepCount = 0;
-                }
+                SetLetterEffect(args);
                 break;
+        }
+    }
+
+    private void SetLetterEffect(string[] args) {
+        letterEffect = args[0];
+
+        if (args.Length > 1) {
+            try { letterIntensity = ParseUtil.GetFloat(args[1]); }
+            catch { Debug.LogError("[lettereffect:x] usage - You used the value \"" + args[1] + "\" to set the letter effect's intensity, but it's not a valid number value."); }
+        } else
+            letterIntensity = 0;
+
+        if (args.Length > 2) {
+            try {
+                letterEffectStep = ParseUtil.GetFloat(args[2]);
+                letterEffectStepCount = 0;
+            } catch { Debug.LogError("[lettereffect:x] usage - You used the value \"" + args[2] + "\" to set the letter effect's step, but it's not a valid number value."); }
+        } else {
+            letterEffectStep = 0;
+            letterEffectStepCount = 0;
         }
     }
 
