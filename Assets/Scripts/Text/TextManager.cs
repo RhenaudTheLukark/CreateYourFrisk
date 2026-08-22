@@ -371,6 +371,8 @@ public class TextManager : MonoBehaviour {
         instantCommand   = false;
         skipFromPlayer   = false;
         firstChar        = false;
+        waitingChar      = KeyCode.None;
+        waitingKeybind   = null;
         lineHasMugshot   = mugshotList != null;
         commandVoice     = null;
 
@@ -823,31 +825,33 @@ public class TextManager : MonoBehaviour {
             else                                                               return;
         }
 
-        letterTimer += Time.unscaledDeltaTime;
-        if ((letterTimer >= timePerLetter || firstChar) && !LineComplete()) {
-            int repeats = timePerLetter == 0f ? 1 : (int)Mathf.Floor(letterTimer / timePerLetter);
+        letterTimer += Time.deltaTime;
+        bool soundPlayed = firstChar && lettersToDisplay > 1;
+        int lastLetter = -1;
 
-            bool soundPlayed = firstChar && lettersToDisplay > 1;
-            int lastLetter = -1;
-
-            for (int i = 0; i < repeats; i++) {
-                if (lettersToDisplayOnce > 0)
-                    HandleShowLettersOnce(ref soundPlayed, ref lastLetter);
-                else
-                    for (int j = 0; j < lettersToDisplay; j++)
-                        if (!HandleShowLetter(ref soundPlayed, ref lastLetter))
-                            break;
-
-                if (letterTimer < timePerLetter)
-                    break;
-
-                if (!firstChar)
-                    letterTimer -= timePerLetter;
-                else {
-                    firstChar = false;
-                    return;
+        while ((firstChar || letterTimer >= timePerLetter) && !LineComplete()) {
+            if (lettersToDisplayOnce > 0)
+                HandleShowLettersOnce(ref soundPlayed, ref lastLetter);
+            else {
+                int shown = 0;
+                for (int j = 0; j < lettersToDisplay; j++) {
+                    if (!HandleShowLetter(ref soundPlayed, ref lastLetter))
+                        break;
+                    shown++;
                 }
+                if (shown == 0)
+                    break;
             }
+
+            if (firstChar) {
+                firstChar = false;
+                break;
+            }
+
+            if (timePerLetter > 0f)
+                letterTimer -= timePerLetter;
+            else
+                break;
         }
     }
 
