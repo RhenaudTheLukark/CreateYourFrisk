@@ -23,6 +23,13 @@ public class LuaArenaStatus {
     public bool isModifying { get { return isMoving || isResizing;                     } }
     public bool ismodifying { get { return isModifying; } }
 
+    public LuaSpriteController innerSprite {
+        get { return ArenaManager.instance.innerSprite; }
+    }
+    public LuaSpriteController outerSprite {
+        get { return ArenaManager.instance.outerSprite; }
+    }
+
     public float[] innerColor {
         get { return ArenaManager.instance.innerSprite.color; }
         set { ArenaManager.instance.innerSprite.color = value; }

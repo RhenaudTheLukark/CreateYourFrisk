@@ -45,12 +45,24 @@ public class ArenaManager : MonoBehaviour {
         inner = outer.GetChild(outer.childCount - 1).GetComponent<RectTransform>();
         innerSprite = LuaSpriteController.GetOrCreate(GameObject.Find("arena"));
         outerSprite = LuaSpriteController.GetOrCreate(GameObject.Find("arena_border_outer"));
+
+        // To be able to use Arena.innerSprite/outerSprite.Mask()
+        AddMaskComponents(innerSprite);
+        AddMaskComponents(outerSprite);
+
         desiredX = outer.position.x;
         desiredY = outer.position.y;
         desiredWidth = currentWidth;
         desiredHeight = currentHeight;
         instance = this;
         luaStatus = new LuaArenaStatus();
+    }
+
+    private void AddMaskComponents(LuaSpriteController sprite) {
+        Mask mask = sprite.img.AddComponent<Mask>();
+        mask.enabled = false;
+        RectMask2D box = sprite.img.AddComponent<RectMask2D>();
+        box.enabled = false;
     }
 
     private void Start() {
